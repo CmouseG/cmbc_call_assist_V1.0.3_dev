@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="guiyu-auth-api" />
+        <module name="guiyu-auth-dal" />
+        <module name="guiyu-auth-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="guiyu-auth-api" target="1.8" />
+      <module name="guiyu-auth-dal" target="1.8" />
+      <module name="guiyu-auth-parent" target="1.8" />
+      <module name="guiyu-auth-web" target="1.8" />
+      <module name="guiyu-parent" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/guiyu-auth-api.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/guiyu-auth-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/guiyu-auth-dal.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/guiyu-auth-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-parent.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/guiyu-auth-web.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/guiyu-auth-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-parent.iml" filepath="$PROJECT_DIR$/guiyu-parent.iml" />
+    </modules>
+  </component>
+</project>

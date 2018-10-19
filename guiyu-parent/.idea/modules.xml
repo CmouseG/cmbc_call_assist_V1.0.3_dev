@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-api/guiyu-ai-api.iml" filepath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-api/guiyu-ai-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-dal/guiyu-ai-dal.iml" filepath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-dal/guiyu-ai-dal.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" filepath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-web/guiyu-ai-web.iml" filepath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-web/guiyu-ai-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/guiyu-auth-api.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/guiyu-auth-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/guiyu-auth-dal.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/guiyu-auth-dal.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-parent.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-parent.iml" />

@@ -8,6 +8,7 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/guiyu-ai-parent/pom.xml" />
         <option value="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-gateway/pom.xml" />
         <option value="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-getway/pom.xml" />
         <option value="$PROJECT_DIR$/guiyu-common-parent/pom.xml" />

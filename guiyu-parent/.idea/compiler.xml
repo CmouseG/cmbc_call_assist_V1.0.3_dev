@@ -6,7 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="guiyu-ai-parent" />
+        <module name="guiyu-ai-api" />
+        <module name="guiyu-ai-dal" />
+        <module name="guiyu-ai-web" />
         <module name="guiyu-auth-api" />
         <module name="guiyu-auth-dal" />
         <module name="guiyu-auth-web" />
@@ -34,7 +36,10 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="guiyu-ai-api" target="1.8" />
+      <module name="guiyu-ai-dal" target="1.8" />
       <module name="guiyu-ai-parent" target="1.8" />
+      <module name="guiyu-ai-web" target="1.8" />
       <module name="guiyu-auth-api" target="1.8" />
       <module name="guiyu-auth-dal" target="1.8" />
       <module name="guiyu-auth-parent" target="1.8" />

@@ -2,21 +2,110 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6919a233-0148-4278-88fa-44635c253b75" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-api/guiyu-ai-api.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-api/pom.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-dal/guiyu-ai-dal.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-dal/pom.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-web/guiyu-ai-web.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-web/pom.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-web/src/main/java/com.guiji.ai/Application.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-web/src/main/resources/application.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="$PROJECT_DIR$/.idea/encodings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/target/guiyu-auth-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/target/guiyu-auth-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/target/guiyu-auth-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/target/guiyu-auth-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/guiyu-auth-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/guiyu-auth-web-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/target/guiyu-callCenter-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/target/guiyu-callCenter-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/target/guiyu-callCenter-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/target/guiyu-callCenter-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/guiyu-callCenter-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/guiyu-callCenter-web-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/target/guiyu-cache-parent-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/target/guiyu-cache-parent-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/target/guiyu-datadic-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/target/guiyu-datadic-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/target/guiyu-utils-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/target/guiyu-utils-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/target/guiyu-dispatch-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/target/guiyu-dispatch-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/target/guiyu-dispatch-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/target/guiyu-dispatch-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/guiyu-dispatch-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/guiyu-dispatch-web-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/target/guiyu-nas-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/target/guiyu-nas-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/target/guiyu-nas-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/target/guiyu-nas-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/guiyu-nas-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/guiyu-nas-web-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/target/guiyu-notice-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/target/guiyu-notice-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/target/guiyu-notice-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/target/guiyu-notice-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/guiyu-notice-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/guiyu-notice-web-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/target/guiyu-robot-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/target/guiyu-robot-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/target/guiyu-robot-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/target/guiyu-robot-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/guiyu-robot-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/guiyu-robot-web-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/target/guiyu-timerTask-api-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/target/guiyu-timerTask-api-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/target/guiyu-timerTask-dal-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/target/guiyu-timerTask-dal-1.0-SNAPSHOT.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/guiyu-timerTask-web-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/guiyu-timerTask-web-1.0-SNAPSHOT.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-ai-parent/pom.xml" afterPath="$PROJECT_DIR$/guiyu-ai-parent/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" afterPath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-archiver/pom.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -74,21 +163,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/guiyu-ai-parent/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="pom.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+            <state relative-caret-position="525">
+              <caret line="64" column="25" lean-forward="true" selection-start-line="64" selection-start-column="25" selection-end-line="64" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -174,7 +253,32 @@
     </option>
   </component>
   <component name="MavenProjectNavigator">
-    <treeState />
+    <treeState>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="guiyu-parent" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="guiyu-parent" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
+        </PATH_ELEMENT>
+      </PATH>
+    </treeState>
   </component>
   <component name="MavenRunner">
     <option name="vmOptions" value="-Xms128m -Xmx512m -Duser.language=zh -Dfile.encoding=UTF-8" />
@@ -216,102 +320,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-parent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiyu-callCenter-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="call" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
@@ -319,7 +327,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../ws11/guojiang-parent" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -345,39 +353,7 @@
       <recent name="D:\workspace\ws10\guiyu-parent\guiyu-notice-parent\src\main\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Application (1)">
-    <configuration default="false" name="Application (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.guiji.auth.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="SPRING_BOOT_MAIN_CLASS" value="com.guiji.auth.Application" />
-      <module name="guiyu-auth-web" />
-      <envs />
-      <method />
-    </configuration>
-    <configuration default="false" name="Application" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.guiji.call.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="MAIN_CLASS_NAME" value="com.guiji.call.Application" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="guiyu-callCenter-web" />
-      <envs />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Spring Boot.Application (2)">
     <configuration default="false" name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -419,6 +395,30 @@
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="guiyu-timerTask-web" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="RegistrationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.guiji.cloud.registeration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.guiji.cloud.registeration.RegistrationApplication" />
+      <module name="guiyu-cloud-registeration" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Application (2)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.guiji.call.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.guiji.call.Application" />
+      <module name="guiyu-callCenter-web" />
       <envs />
       <method />
     </configuration>
@@ -905,19 +905,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Spring Boot.Application (1)" />
-      <item index="1" class="java.lang.String" itemvalue="Application.Application" />
-      <item index="2" class="java.lang.String" itemvalue="Spring Boot.Application" />
-      <item index="3" class="java.lang.String" itemvalue="Spring Boot.Application (4)" />
-      <item index="4" class="java.lang.String" itemvalue="Application.Application (1)" />
+      <item index="0" class="java.lang.String" itemvalue="Spring Boot.Application" />
+      <item index="1" class="java.lang.String" itemvalue="Spring Boot.Application (4)" />
+      <item index="2" class="java.lang.String" itemvalue="Application.Application (1)" />
+      <item index="3" class="java.lang.String" itemvalue="Spring Boot.RegistrationApplication" />
+      <item index="4" class="java.lang.String" itemvalue="Spring Boot.Application (2)" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Application.Application (1)" />
-        <item index="1" class="java.lang.String" itemvalue="Spring Boot.Application (4)" />
-        <item index="2" class="java.lang.String" itemvalue="Spring Boot.Application" />
-        <item index="3" class="java.lang.String" itemvalue="Spring Boot.Application (1)" />
-        <item index="4" class="java.lang.String" itemvalue="Application.Application" />
+        <item index="0" class="java.lang.String" itemvalue="Spring Boot.Application (2)" />
+        <item index="1" class="java.lang.String" itemvalue="Spring Boot.RegistrationApplication" />
+        <item index="2" class="java.lang.String" itemvalue="Application.Application (1)" />
+        <item index="3" class="java.lang.String" itemvalue="Spring Boot.Application (4)" />
+        <item index="4" class="java.lang.String" itemvalue="Spring Boot.Application" />
       </list>
     </recent_temporary>
   </component>
@@ -933,15 +933,15 @@
       <updated>1539839130118</updated>
       <workItem from="1539839133169" duration="24571000" />
       <workItem from="1539911258069" duration="2048000" />
-      <workItem from="1539914273454" duration="527000" />
+      <workItem from="1539914273454" duration="5090000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="27146000" />
+    <option name="totallyTimeSpent" value="31709000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="0" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -957,6 +957,7 @@
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997735" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -964,7 +965,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295583" sideWeight="0.49785638" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295583" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295583" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2561629" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -973,7 +974,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="combo" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1258,14 +1258,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-registeration/src/main/java/com/guiji/cloud/registeration/RegistrationApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/src/main/java/com/guiji/dispatch/Application.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
@@ -1277,14 +1269,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="18" column="1" lean-forward="true" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/src/main/java/com/guiji/call/Application.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="15" column="10" lean-forward="true" selection-start-line="15" selection-start-column="10" selection-end-line="15" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1378,10 +1362,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-registeration/src/main/java/com/guiji/cloud/registeration/RegistrationApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="11" column="31" lean-forward="false" selection-start-line="11" selection-start-column="31" selection-end-line="11" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/src/main/java/com/guiji/call/Application.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="17" column="5" lean-forward="true" selection-start-line="17" selection-start-column="5" selection-end-line="17" selection-end-column="5" />
+          <folding>
+            <element signature="e#596#597#0" expanded="true" />
+            <element signature="e#658#659#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+        <state relative-caret-position="525">
+          <caret line="64" column="25" lean-forward="true" selection-start-line="64" selection-start-column="25" selection-end-line="64" selection-end-column="25" />
           <folding />
         </state>
       </provider>

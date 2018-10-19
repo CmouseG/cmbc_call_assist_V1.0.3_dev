@@ -37,3 +37,13 @@ http://192.168.1.187:8081/
 
 ## 配置规范 ##
 路径：/home/apps/configs/服务/子服务/application.yml 
+
+## 需要提前安装的软件 ##
+软件安装：
+1. Docker
+2. Git
+3. JDk1.8
+4. FastDFS
+5. Mysql5.7版本，并配置主从
+6. FreeSwitch
+7. Redis

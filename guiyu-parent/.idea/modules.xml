@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" filepath="$PROJECT_DIR$/guiyu-ai-parent/guiyu-ai-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/guiyu-auth-api.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-api/guiyu-auth-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/guiyu-auth-dal.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-dal/guiyu-auth-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-parent.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/guiyu-auth-web.iml" filepath="$PROJECT_DIR$/guiyu-auth-parent/guiyu-auth-web/guiyu-auth-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/guiyu-cache-parent.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-cache-parent/guiyu-cache-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/guiyu-callCenter-api.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-api/guiyu-callCenter-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/guiyu-callCenter-dal.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/guiyu-callCenter-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-parent.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/guiyu-callCenter-web.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/guiyu-callCenter-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-parent.iml" filepath="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-registeration/guiyu-cloud-registeration.iml" filepath="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-registeration/guiyu-cloud-registeration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-common-parent.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-common-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/guiyu-datadic.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/guiyu-datadic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/guiyu-dispatch-api.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/guiyu-dispatch-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/guiyu-dispatch-dal.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/guiyu-dispatch-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-parent.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/guiyu-dispatch-web.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/guiyu-dispatch-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/guiyu-nas-api.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/guiyu-nas-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/guiyu-nas-dal.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/guiyu-nas-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-parent.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/guiyu-nas-web.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-web/guiyu-nas-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/guiyu-notice-api.iml" filepath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-api/guiyu-notice-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/guiyu-notice-dal.iml" filepath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-dal/guiyu-notice-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-parent.iml" filepath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/guiyu-notice-web.iml" filepath="$PROJECT_DIR$/guiyu-notice-parent/guiyu-notice-web/guiyu-notice-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-parent.iml" filepath="$PROJECT_DIR$/guiyu-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/guiyu-robot-api.iml" filepath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-api/guiyu-robot-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/guiyu-robot-dal.iml" filepath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-dal/guiyu-robot-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-parent.iml" filepath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/guiyu-robot-web.iml" filepath="$PROJECT_DIR$/guiyu-robot-parent/guiyu-robot-web/guiyu-robot-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/guiyu-timerTask-api.iml" filepath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-api/guiyu-timerTask-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/guiyu-timerTask-dal.iml" filepath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-dal/guiyu-timerTask-dal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-parent.iml" filepath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/guiyu-timerTask-web.iml" filepath="$PROJECT_DIR$/guiyu-timerTask-parent/guiyu-timerTask-web/guiyu-timerTask-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/guiyu-utils.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-utils/guiyu-utils.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="guiyu-ai-parent" />
+        <module name="guiyu-auth-api" />
+        <module name="guiyu-auth-dal" />
+        <module name="guiyu-auth-web" />
+        <module name="guiyu-cache-parent" />
+        <module name="guiyu-callCenter-api" />
+        <module name="guiyu-callCenter-dal" />
+        <module name="guiyu-callCenter-web" />
+        <module name="guiyu-datadic" />
+        <module name="guiyu-dispatch-api" />
+        <module name="guiyu-dispatch-dal" />
+        <module name="guiyu-dispatch-web" />
+        <module name="guiyu-nas-api" />
+        <module name="guiyu-nas-dal" />
+        <module name="guiyu-nas-web" />
+        <module name="guiyu-notice-api" />
+        <module name="guiyu-notice-dal" />
+        <module name="guiyu-notice-web" />
+        <module name="guiyu-robot-api" />
+        <module name="guiyu-robot-dal" />
+        <module name="guiyu-robot-web" />
+        <module name="guiyu-timerTask-api" />
+        <module name="guiyu-timerTask-dal" />
+        <module name="guiyu-timerTask-web" />
+        <module name="guiyu-utils" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="guiyu-ai-parent" target="1.8" />
+      <module name="guiyu-auth-api" target="1.8" />
+      <module name="guiyu-auth-dal" target="1.8" />
+      <module name="guiyu-auth-parent" target="1.8" />
+      <module name="guiyu-auth-web" target="1.8" />
+      <module name="guiyu-cache-parent" target="1.8" />
+      <module name="guiyu-callCenter-api" target="1.8" />
+      <module name="guiyu-callCenter-dal" target="1.8" />
+      <module name="guiyu-callCenter-parent" target="1.8" />
+      <module name="guiyu-callCenter-web" target="1.8" />
+      <module name="guiyu-cloud-gateway" target="1.8" />
+      <module name="guiyu-cloud-getway" target="1.8" />
+      <module name="guiyu-cloud-parent" target="1.8" />
+      <module name="guiyu-cloud-registeration" target="1.8" />
+      <module name="guiyu-common-parent" target="1.8" />
+      <module name="guiyu-datadic" target="1.8" />
+      <module name="guiyu-dispatch-api" target="1.8" />
+      <module name="guiyu-dispatch-dal" target="1.8" />
+      <module name="guiyu-dispatch-parent" target="1.8" />
+      <module name="guiyu-dispatch-web" target="1.8" />
+      <module name="guiyu-nas-api" target="1.8" />
+      <module name="guiyu-nas-dal" target="1.8" />
+      <module name="guiyu-nas-parent" target="1.8" />
+      <module name="guiyu-nas-web" target="1.8" />
+      <module name="guiyu-notice-api" target="1.8" />
+      <module name="guiyu-notice-dal" target="1.8" />
+      <module name="guiyu-notice-parent" target="1.8" />
+      <module name="guiyu-notice-web" target="1.8" />
+      <module name="guiyu-parent" target="1.8" />
+      <module name="guiyu-robot-api" target="1.8" />
+      <module name="guiyu-robot-dal" target="1.8" />
+      <module name="guiyu-robot-parent" target="1.8" />
+      <module name="guiyu-robot-web" target="1.8" />
+      <module name="guiyu-timerTask-api" target="1.8" />
+      <module name="guiyu-timerTask-dal" target="1.8" />
+      <module name="guiyu-timerTask-parent" target="1.8" />
+      <module name="guiyu-timerTask-web" target="1.8" />
+      <module name="guiyu-utils" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-encoding utf-8" />
+  </component>
+</project>

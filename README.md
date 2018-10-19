@@ -24,6 +24,7 @@ Spring Boot 选择1.5.17
 
 前端框架使用Vue 2.0, UI库使用Element 2.0
 
+
 ## 代码仓库 ##
 http://192.168.1.68/si-talk/si-talk
 
@@ -39,11 +40,10 @@ http://192.168.1.187:8081/
 路径：/home/apps/configs/服务/子服务/application.yml 
 
 ## 需要提前安装的软件 ##
-软件安装：
 1. Docker
 2. Git
 3. JDk1.8
 4. FastDFS
 5. Mysql5.7版本，并配置主从
 6. FreeSwitch
-7. Redis
+7. Redis5.0

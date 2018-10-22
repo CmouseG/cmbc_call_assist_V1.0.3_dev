@@ -15,6 +15,7 @@
         <module>guiyu-cache-parent</module>
         <module>guiyu-utils</module>
         <module>guiyu-datadic</module>
+        <module>guiyu-mybatis-generator</module>
     </modules>
 
 

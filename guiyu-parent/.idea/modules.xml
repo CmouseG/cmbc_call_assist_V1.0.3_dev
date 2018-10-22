@@ -15,14 +15,17 @@
       <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/guiyu-callCenter-dal.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-dal/guiyu-callCenter-dal.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-parent.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/guiyu-callCenter-web.iml" filepath="$PROJECT_DIR$/guiyu-callCenter-parent/guiyu-callCenter-web/guiyu-callCenter-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-monitor/guiyu-cloud-monitor.iml" filepath="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-monitor/guiyu-cloud-monitor.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-parent.iml" filepath="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-registeration/guiyu-cloud-registeration.iml" filepath="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-registeration/guiyu-cloud-registeration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-zuul/guiyu-cloud-zuul.iml" filepath="$PROJECT_DIR$/guiyu-cloud-parent/guiyu-cloud-zuul/guiyu-cloud-zuul.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-common-parent.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-common-parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/guiyu-datadic.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-datadic/guiyu-datadic.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/guiyu-dispatch-api.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-api/guiyu-dispatch-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/guiyu-dispatch-dal.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-dal/guiyu-dispatch-dal.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-parent.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-parent.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/guiyu-dispatch-web.iml" filepath="$PROJECT_DIR$/guiyu-dispatch-parent/guiyu-dispatch-web/guiyu-dispatch-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guiyu-common-parent/guiyu-mybatis-generator/guiyu-mybatis-generator.iml" filepath="$PROJECT_DIR$/guiyu-common-parent/guiyu-mybatis-generator/guiyu-mybatis-generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/guiyu-nas-api.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-api/guiyu-nas-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/guiyu-nas-dal.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-dal/guiyu-nas-dal.iml" />
       <module fileurl="file://$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-parent.iml" filepath="$PROJECT_DIR$/guiyu-nas-parent/guiyu-nas-parent.iml" />

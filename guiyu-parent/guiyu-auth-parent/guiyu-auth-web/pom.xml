@@ -11,10 +11,10 @@
 
     <artifactId>guiyu-auth-web</artifactId>
     <dependencies>
+        <!--注册中心-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-netflix-eureka-server</artifactId>
-            <version>RELEASE</version>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
     </dependencies>
 

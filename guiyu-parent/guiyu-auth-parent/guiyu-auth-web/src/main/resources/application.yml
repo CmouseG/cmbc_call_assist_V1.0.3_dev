@@ -15,3 +15,21 @@ eureka:
   client:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18081/eureka/
+#网关地址
+gateway:
+   host: http://guiyu-cloud-zuul:18080/
+
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false

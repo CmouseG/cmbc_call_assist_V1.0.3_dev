@@ -1,1 +1,2 @@
 com\guiji\auth\Application.class
+com\guiji\auth\controller\UserController.class

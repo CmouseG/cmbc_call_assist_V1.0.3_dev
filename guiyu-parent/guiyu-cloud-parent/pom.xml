@@ -13,6 +13,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-cloud-registeration</module>
+        <module>guiyu-cloud-monitor</module>
+        <module>guiyu-cloud-zuul</module>
     </modules>
 
 

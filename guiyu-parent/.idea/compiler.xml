@@ -20,6 +20,7 @@
         <module name="guiyu-dispatch-api" />
         <module name="guiyu-dispatch-dal" />
         <module name="guiyu-dispatch-web" />
+        <module name="guiyu-mybatis-generator" />
         <module name="guiyu-nas-api" />
         <module name="guiyu-nas-dal" />
         <module name="guiyu-nas-web" />
@@ -51,14 +52,17 @@
       <module name="guiyu-callCenter-web" target="1.8" />
       <module name="guiyu-cloud-gateway" target="1.8" />
       <module name="guiyu-cloud-getway" target="1.8" />
+      <module name="guiyu-cloud-monitor" target="1.8" />
       <module name="guiyu-cloud-parent" target="1.8" />
       <module name="guiyu-cloud-registeration" target="1.8" />
+      <module name="guiyu-cloud-zuul" target="1.8" />
       <module name="guiyu-common-parent" target="1.8" />
       <module name="guiyu-datadic" target="1.8" />
       <module name="guiyu-dispatch-api" target="1.8" />
       <module name="guiyu-dispatch-dal" target="1.8" />
       <module name="guiyu-dispatch-parent" target="1.8" />
       <module name="guiyu-dispatch-web" target="1.8" />
+      <module name="guiyu-mybatis-generator" target="1.8" />
       <module name="guiyu-nas-api" target="1.8" />
       <module name="guiyu-nas-dal" target="1.8" />
       <module name="guiyu-nas-parent" target="1.8" />

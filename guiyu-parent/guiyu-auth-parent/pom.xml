@@ -16,6 +16,18 @@
         <module>guiyu-auth-dal</module>
         <module>guiyu-auth-web</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

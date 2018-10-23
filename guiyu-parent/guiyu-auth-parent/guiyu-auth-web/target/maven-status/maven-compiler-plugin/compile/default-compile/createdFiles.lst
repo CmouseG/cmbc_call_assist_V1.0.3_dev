@@ -1,2 +1,3 @@
+com\guiji\auth\config\SwaggerConfig.class
 com\guiji\auth\Application.class
 com\guiji\auth\controller\UserController.class

@@ -62,10 +62,11 @@ public interface IJssPlanService {
      * 返回可以拨打的任务给呼叫中心
      *
      * @param userId 用户id
+     * @param taskNum 获取任务数量
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse queryAvailableSchedule(final String userId) throws Exception;
+    CommonResponse queryAvailableSchedule(final String userId,final String taskNum) throws Exception;
 
     /**
      * 查询任务提交处理结果

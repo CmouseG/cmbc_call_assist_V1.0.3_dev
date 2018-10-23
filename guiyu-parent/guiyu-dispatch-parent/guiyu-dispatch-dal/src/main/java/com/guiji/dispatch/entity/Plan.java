@@ -17,11 +17,11 @@ public class Plan {
 
     private String params;
 
-    private Boolean statusPlan;
+    private Byte statusPlan;
 
-    private Boolean statusSync;
+    private Byte statusSync;
 
-    private Boolean recall;
+    private Byte recall;
 
     private String recallParams;
 
@@ -29,7 +29,7 @@ public class Plan {
 
     private String callAgent;
 
-    private Boolean clean;
+    private Byte clean;
 
     private Integer callData;
 
@@ -95,27 +95,27 @@ public class Plan {
         this.params = params == null ? null : params.trim();
     }
 
-    public Boolean getStatusPlan() {
+    public Byte getStatusPlan() {
         return statusPlan;
     }
 
-    public void setStatusPlan(Boolean statusPlan) {
+    public void setStatusPlan(Byte statusPlan) {
         this.statusPlan = statusPlan;
     }
 
-    public Boolean getStatusSync() {
+    public Byte getStatusSync() {
         return statusSync;
     }
 
-    public void setStatusSync(Boolean statusSync) {
+    public void setStatusSync(Byte statusSync) {
         this.statusSync = statusSync;
     }
 
-    public Boolean getRecall() {
+    public Byte getRecall() {
         return recall;
     }
 
-    public void setRecall(Boolean recall) {
+    public void setRecall(Byte recall) {
         this.recall = recall;
     }
 
@@ -143,11 +143,11 @@ public class Plan {
         this.callAgent = callAgent == null ? null : callAgent.trim();
     }
 
-    public Boolean getClean() {
+    public Byte getClean() {
         return clean;
     }
 
-    public void setClean(Boolean clean) {
+    public void setClean(Byte clean) {
         this.clean = clean;
     }
 

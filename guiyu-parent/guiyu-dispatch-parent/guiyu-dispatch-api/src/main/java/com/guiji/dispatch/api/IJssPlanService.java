@@ -2,6 +2,7 @@ package com.guiji.dispatch.api;
 
 import com.guiji.dispatch.model.CommonResponse;
 import com.guiji.dispatch.model.Schedule;
+import org.springframework.stereotype.Service;
 
 /**
  * 调度中心任务调度接口
@@ -11,6 +12,7 @@ import com.guiji.dispatch.model.Schedule;
  * @author: gaojianfeng
  * @date: 2018.10.22
  */
+@Service
 public interface IJssPlanService {
 
     /**
@@ -61,12 +63,12 @@ public interface IJssPlanService {
     /**
      * 返回可以拨打的任务给呼叫中心
      *
-     * @param userId 用户id
+     * @param userId  用户id
      * @param taskNum 获取任务数量
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse queryAvailableSchedule(final String userId,final String taskNum) throws Exception;
+    CommonResponse queryAvailableSchedule(final String userId, final String taskNum) throws Exception;
 
     /**
      * 查询任务提交处理结果

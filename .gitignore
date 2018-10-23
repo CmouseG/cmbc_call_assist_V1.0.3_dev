@@ -1,9 +1,0 @@
-*/.idea/
-.idea
-vendor
-.DS_Store
-*/.DS_Store
-.iml
-*/.iml
-target
-*/target

@@ -11,6 +11,11 @@ public class CommonResponse {
     //响应内容
     private Object content;
 
+    public CommonResponse(String respCode, String respMsg) {
+        this.respCode = respCode;
+        this.respMsg = respMsg;
+    }
+
     public String getRespCode() {
         return respCode;
     }

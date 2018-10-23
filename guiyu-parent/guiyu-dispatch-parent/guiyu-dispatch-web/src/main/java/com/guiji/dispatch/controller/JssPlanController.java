@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class JssPlanController {
 
-    @Autowired
     private IJssPlanService jssPlanService;
 
     /**

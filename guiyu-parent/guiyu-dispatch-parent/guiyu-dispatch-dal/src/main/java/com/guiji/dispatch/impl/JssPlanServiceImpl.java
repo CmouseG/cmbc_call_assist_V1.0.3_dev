@@ -1,15 +1,35 @@
 package com.guiji.dispatch.impl;
 
 import com.guiji.dispatch.api.IJssPlanService;
+import com.guiji.dispatch.dao.PlanMapper;
+import com.guiji.dispatch.entity.Plan;
 import com.guiji.dispatch.model.CommonResponse;
 import com.guiji.dispatch.model.Schedule;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class JssPlanServiceImpl implements IJssPlanService {
+
+    @Autowired
+    private PlanMapper mapper;
+
     @Override
     public CommonResponse addSchedule(Schedule schedule) throws Exception {
-        return null;
+        final Plan plan = new Plan();
+        plan.setPlanUuid(UUID.randomUUID().toString().replace("-", "").toLowerCase());
+        plan.setAttach(schedule.getAttach());
+        final CommonResponse response = new CommonResponse("00001000", "success");
+        try {
+            mapper.insert(plan);
+        } catch (final Exception e) {
+            response.setRespCode("00001001");
+            response.setRespMsg("failed");
+        }
+        return response;
     }
 
     @Override

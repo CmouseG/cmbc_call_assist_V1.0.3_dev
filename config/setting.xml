@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    
+    <pluginGroups />
+    <proxies />
+    <!--私服的验证信息-->
+	<servers>
+		<server>
+			<id>releases</id>
+			<username>admin</username>
+			<password>admin123</password>
+		</server>
+		<server>
+			<id>snapshots</id>
+			<username>admin</username>
+			<password>admin123</password>
+		</server>
+	</servers>
+    
+    <localRepository>D:/server/maven/repository</localRepository>
+    
+    <mirrors>       
+        <mirror>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+		<mirror>
+            <id>central</id>
+            <name>Local Repository</name>
+            <url>http://192.168.1.187:8081/repository/maven-public/</url>
+            <mirrorOf>*</mirrorOf>
+        </mirror>       
+    </mirrors>
+	
+	<profile>
+      <id>central</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <name>central</name>
+          <url>http://192.168.1.187:8081/repository/maven-public/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <properties>
+        <snapshotRepository.id>central</snapshotRepository.id>
+        <snapshotRepository.name>local Snapshot Repository</snapshotRepository.name>
+        <snapshotRepository.url>http://192.168.1.187:8081/repository/maven-snapshots/</snapshotRepository.url>
+
+        <repository.id>central</repository.id>
+        <repository.name>local Releases Repository</repository.name>
+        <repository.url>http://192.168.1.187:8081/repository/maven-releases/</repository.url>
+      </properties>
+    </profile>
+    
+</settings>

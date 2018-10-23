@@ -3,7 +3,8 @@
 vendor
 .DS_Store
 */.DS_Store
-.iml
-*/.iml
+*.iml
+*/*.iml
 target
 */target
+*/target/*

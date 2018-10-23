@@ -23,6 +23,7 @@ http://192.168.1.68/si-talk/si-talk-web
 
 ## Maven 私服 ##
 http://192.168.1.187:8081/
+本地maven配置私服参考config/setting.xml
 
 ## 日志规范 ##
 路径: /home/apps/logs/服务/子服务/类型_描述[日期].log

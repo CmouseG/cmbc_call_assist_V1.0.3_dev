@@ -5,9 +5,13 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-/**
- * Created by ty on 2018/10/22.
- */
+/** 
+* @ClassName: ServerResult 
+* @Description: 所有后台服务公共返回通用对象
+* @author: weiyunbo
+* @date 2018年6月12日 下午8:25:20 
+* @version V1.0  
+*/
 @ApiModel(description= "返回响应数据")
 public class ServerResult<T> implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -99,8 +103,8 @@ public class ServerResult<T> implements Serializable{
     * @version V1.0  
     */
     public enum ResponseCodeEnum {
-    	SUCCESS("0000000","SUCCESS"),
-        ERROR("0000999","系统异常，请联系管理员");
+    	SUCCESS("000000","SUCCESS"),
+        ERROR("999999","系统异常，请联系管理员");
     	//返回码
         private String rspCode;  
         //返回信息

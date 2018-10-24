@@ -12,14 +12,20 @@ eureka:
   client:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18081/eureka/
+      instance:
+          status-page-url: http://localhost:18080/swagger-ui.html
 ##网关地址
 #gateway:
 #   host: http://guiyu-cloud-zuul:18080/
 zuul:
   routes:
     guiyu-auth-web:
-      path: /auth/*
-      serviceId: guiyu-auth-web
+      path: /auth/**
+      service-id: guiyu-auth-web
+    host:
+        connect-timeout-millis: 10000
+        socket-timeout-millis: 60000
+        ribbon-isolation-strategy: thread
 hystrix:
   command:
     default:

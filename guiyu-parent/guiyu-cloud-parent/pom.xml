@@ -17,5 +17,17 @@
         <module>guiyu-cloud-zuul</module>
     </modules>
 
-
+    <dependencies>
+        <!--swagger ui-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+    </dependencies>
 </project>

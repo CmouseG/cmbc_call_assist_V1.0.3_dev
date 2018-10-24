@@ -1,103 +1,56 @@
-CREATE TABLE `call_out_plan` (   
-    `uuid` varchar(32) NOT NULL,   
-    `phone_num` varchar(30) DEFAULT NULL,​   
-    `customer_id` varchar(255) DEFAULT NULL,​   
-    `temp_id` varchar(255) DEFAULT NULL,​   
-    `lineId` varchar(255) DEFAULT NULL, ​​   
-    `agent_id` varchar(255) DEFAULT NULL,​   
-    `agent_answer_time` varchar(255) DEFAULT NULL,   
-    `agent_channel_uuid` varchar(255) DEFAULT NULL,   
-    `agent_group_id` varchar(255) DEFAULT NULL,   
-    `agent_start_time` varchar(255) DEFAULT NULL, ​ 
-    `create_time` varchar(255) DEFAULT NULL,​ 
-    `schedule_time` varchar(255) DEFAULT NULL,​ 
-    `hangup_time` varchar(255) DEFAULT NULL,​   
-    `answer_time` varchar(255) DEFAULT NULL,   
-    `duration` int(11) DEFAULT NULL,​   
-    `bill_sec` int(11) DEFAULT NULL, ​   
-    `call_direction` int(11) DEFAULT NULL,   
-    `call_state` int(11) DEFAULT NULL, 
-    `hangup_direction` 机器人挂断/用户挂断 ！！！​  
-    `accurate_intent​` varchar(20) DEFAULT NULL,   
-    `hangup_code` varchar(255) DEFAULT NULL,   
-    `originate_cmd` varchar(500) DEFAULT NULL,   
-    `record_file` varchar(255) DEFAULT NULL,   
-    `record_file_url` varchar(255) DEFAULT NULL,   
-    `remarks` varchar(255) DEFAULT NULL,     
-    PRIMARY KEY (`uuid`) 
-) ENGINE=Innodb DEFAULT CHARSET=utf8;
 
-CREATE TABLE `call_in_plan` (   
-    `uuid` varchar(32) NOT NULL,   
-    `phone_num` varchar(30) DEFAULT NULL,​   
-    `customer_id` varchar(255) DEFAULT NULL,​   
-    `temp_id` varchar(255) DEFAULT NULL,​   
-    `lineId` varchar(255) DEFAULT NULL, ​​   
-    `agent_id` varchar(255) DEFAULT NULL,​   
-    `agent_answer_time` varchar(255) DEFAULT NULL,   
-    `agent_channel_uuid` varchar(255) DEFAULT NULL,   
-    `agent_group_id` varchar(255) DEFAULT NULL,   
-    `agent_start_time` varchar(255) DEFAULT NULL, ​ 
-    `create_time` varchar(255) DEFAULT NULL,​ 
-    `schedule_time` varchar(255) DEFAULT NULL,​ 
-    `hangup_time` varchar(255) DEFAULT NULL,​   
-    `answer_time` varchar(255) DEFAULT NULL,   
-    `duration` int(11) DEFAULT NULL,​   
-    `bill_sec` int(11) DEFAULT NULL, ​   
-    `call_direction` int(11) DEFAULT NULL,   
-    `call_state` int(11) DEFAULT NULL, 
-    `hangup_direction` 机器人挂断/用户挂断 ！！！​  
-    `accurate_intent​` varchar(20) DEFAULT NULL,   
-    `hangup_code` varchar(255) DEFAULT NULL,   
-    `originate_cmd` varchar(500) DEFAULT NULL,   
-    `record_file` varchar(255) DEFAULT NULL,   
-    `record_file_url` varchar(255) DEFAULT NULL,   
-    `remarks` varchar(255) DEFAULT NULL,     
-    PRIMARY KEY (`uuid`) 
-) ENGINE=Innodb DEFAULT CHARSET=utf8;
 
-CREATE TABLE `call_out_detail` (   
-    `cid` bigint(20) NOT NULL,   
-    `accurate_intent` varchar(255) DEFAULT NULL,   
-    `agent_answer_text` varchar(255) DEFAULT NULL,   
-    `agent_answer_time` varchar(255) DEFAULT NULL,   
-    `agent_record_file` varchar(255) DEFAULT NULL,   
-    `agent_record_url` varchar(255) DEFAULT NULL,   
-    `ai_duration` bigint(20) DEFAULT NULL,   
-    `asr_duration` bigint(20) DEFAULT NULL,   
-    `bot_answer_text` varchar(800) DEFAULT NULL,   
-    `bot_answer_time` varchar(255) DEFAULT NULL,   
-    `bot_answer_wav_file` varchar(255) DEFAULT NULL,   
-    `call_detail_type` int(11) DEFAULT NULL,   
-    `call_plan_id` varchar(255) DEFAULT NULL,   
-    `customer_say_text` varchar(255) DEFAULT NULL,   
-    `customer_say_time` varchar(255) DEFAULT NULL,   
-    `customer_say_wav_file` varchar(255) DEFAULT NULL,   
-    `customer_say_wav_file_url` varchar(255) DEFAULT NULL,  
-    `reason` varchar(255) DEFAULT NULL,   
-    `total_duration` bigint(20) DEFAULT NULL,   
-    PRIMARY KEY (`cid`) 
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `call_in_detail` (   
-    `cid` bigint(20) NOT NULL,   
-    `accurate_intent` varchar(255) DEFAULT NULL,   
-    `agent_answer_text` varchar(255) DEFAULT NULL,   
-    `agent_answer_time` varchar(255) DEFAULT NULL,   
-    `agent_record_file` varchar(255) DEFAULT NULL,   
-    `agent_record_url` varchar(255) DEFAULT NULL,   
-    `ai_duration` bigint(20) DEFAULT NULL,   
-    `asr_duration` bigint(20) DEFAULT NULL,   
-    `bot_answer_text` varchar(800) DEFAULT NULL,   
-    `bot_answer_time` varchar(255) DEFAULT NULL,   
-    `bot_answer_wav_file` varchar(255) DEFAULT NULL,   
-    `call_detail_type` int(11) DEFAULT NULL,   
-    `call_plan_id` varchar(255) DEFAULT NULL,   
-    `customer_say_text` varchar(255) DEFAULT NULL,   
-    `customer_say_time` varchar(255) DEFAULT NULL,   
-    `customer_say_wav_file` varchar(255) DEFAULT NULL,   
-    `customer_say_wav_file_url` varchar(255) DEFAULT NULL,   
-    `reason` varchar(255) DEFAULT NULL,   
-    `total_duration` bigint(20) DEFAULT NULL,   
-    PRIMARY KEY (`cid`) 
-) ENGINE=INNODB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `dispatch_log`;
+CREATE TABLE `dispatch_log`  (
+  `id` int(11) NOT NULL COMMENT 'Id',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `module` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模块',
+  `action` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '动作',
+  `params` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '参数',
+  `gmt_create` datetime(0) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(0) NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志' ROW_FORMAT = Dynamic;
+
+
+
+
+DROP TABLE IF EXISTS `dispatch_plan`;
+CREATE TABLE `dispatch_plan`  (
+  `id` int(11) NOT NULL COMMENT 'Id',
+  `plan_uuid` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务UUID;任务全局唯一ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `batch_id` int(11) NOT NULL COMMENT '批次ID;批次ID',
+  `phone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '手机号',
+  `attach` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '附加参数;可以作为第三方系统的唯一标识',
+  `params` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '变量;多个变量用|分隔',
+  `status_plan` tinyint(1) NOT NULL COMMENT '计划状态;0未计划1计划中2计划完成3暂停计划4停止计划',
+  `status_sync` tinyint(1) NOT NULL COMMENT '同步状态;0未同步1已同步',
+  `recall` tinyint(1) NOT NULL COMMENT '重播;0不重播非0表示重播次数',
+  `recall_params` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '重播条件;重播次数json格式',
+  `robot` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '呼叫机器人',
+  `call_agent` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '转人工坐席号',
+  `clean` tinyint(1) NOT NULL COMMENT '当日清除;当日夜间清除未完成计划',
+  `call_data` int(11) NOT NULL COMMENT '外呼日期',
+  `call_hour` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '外呼时间',
+  `gmt_create` datetime(0) NOT NULL COMMENT '创建时间',
+  `gmt_modified` datetime(0) NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '计划任务' ROW_FORMAT = Dynamic;
+
+
+
+
+DROP TABLE IF EXISTS `dispatch_plan_batch`;
+CREATE TABLE `dispatch_plan_batch`  (
+  `id` int(11) NOT NULL COMMENT 'Id',
+  `user_id` int(11) NOT NULL COMMENT '用户ID;用户ID',
+  `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '批次号;批次号',
+  `status_show` tinyint(1) NOT NULL COMMENT '是否显示;显示状态1显示0隐藏',
+  `status_notify` tinyint(1) NOT NULL COMMENT '通知状态;通知状态1等待2失败3成功',
+  `times` tinyint(1) NOT NULL COMMENT '通知次数;通知次数',
+  `gmt_create` datetime(0) NOT NULL COMMENT '创建时间;创建时间',
+  `gmt_modified` datetime(0) NOT NULL COMMENT '更新时间;更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '计划批次信息' ROW_FORMAT = Dynamic;

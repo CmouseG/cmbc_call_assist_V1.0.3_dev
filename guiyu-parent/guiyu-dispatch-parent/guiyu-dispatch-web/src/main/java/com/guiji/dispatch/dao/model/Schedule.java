@@ -8,10 +8,10 @@ public class Schedule {
     private String planUuid;
 
     //用户id
-    private String userId;
+    private int userId;
 
     //批次id
-    private String batchId;
+    private int batchId;
 
     //手机号
     private String phone;
@@ -22,13 +22,13 @@ public class Schedule {
     private String params;
 
     //计划状态;0未计划1计划中2计划完成3暂停计划4停止计划',
-    private String statusPlan;
+    private Byte statusPlan;
 
     //同步状态;0未同步1已同步',
-    private String statusSync;
+    private Byte statusSync;
 
     //重播;0不重播非0表示重播次数',
-    private String recall;
+    private Byte recall;
 
     //重播条件;重播次数json格式
     private String recallParams;
@@ -40,9 +40,9 @@ public class Schedule {
     private String callAgent;
 
     //当日清除;当日夜间清除未完成计划
-    private String clean;
+    private Byte clean;
 
-    private String callDate;
+    private int callDate;
 
     private String callHour;
 
@@ -66,19 +66,19 @@ public class Schedule {
         this.planUuid = planUuid;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public String getBatchId() {
+    public int getBatchId() {
         return batchId;
     }
 
-    public void setBatchId(String batchId) {
+    public void setBatchId(int batchId) {
         this.batchId = batchId;
     }
 
@@ -106,27 +106,27 @@ public class Schedule {
         this.params = params;
     }
 
-    public String getStatusPlan() {
+    public Byte getStatusPlan() {
         return statusPlan;
     }
 
-    public void setStatusPlan(String statusPlan) {
+    public void setStatusPlan(Byte statusPlan) {
         this.statusPlan = statusPlan;
     }
 
-    public String getStatusSync() {
+    public Byte getStatusSync() {
         return statusSync;
     }
 
-    public void setStatusSync(String statusSync) {
+    public void setStatusSync(Byte statusSync) {
         this.statusSync = statusSync;
     }
 
-    public String getRecall() {
+    public Byte getRecall() {
         return recall;
     }
 
-    public void setRecall(String recall) {
+    public void setRecall(Byte recall) {
         this.recall = recall;
     }
 
@@ -154,19 +154,19 @@ public class Schedule {
         this.callAgent = callAgent;
     }
 
-    public String getClean() {
+    public Byte getClean() {
         return clean;
     }
 
-    public void setClean(String clean) {
+    public void setClean(Byte clean) {
         this.clean = clean;
     }
 
-    public String getCallDate() {
+    public int getCallDate() {
         return callDate;
     }
 
-    public void setCallDate(String callDate) {
+    public void setCallDate(int callDate) {
         this.callDate = callDate;
     }
 

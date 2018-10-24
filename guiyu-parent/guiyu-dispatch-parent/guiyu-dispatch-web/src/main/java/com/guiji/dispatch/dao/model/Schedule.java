@@ -36,6 +36,9 @@ public class Schedule {
     //机器人模板
     private String robot;
 
+    //线路
+    private String line;
+
     //转人工坐席号
     private String callAgent;
 
@@ -144,6 +147,14 @@ public class Schedule {
 
     public void setRobot(String robot) {
         this.robot = robot;
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public void setLine(String line) {
+        this.line = line;
     }
 
     public String getCallAgent() {

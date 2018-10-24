@@ -1,4 +1,4 @@
-package com.guiji.dispatch.model;
+package com.guiji.dispatch.dao.model;
 
 public class Schedule {
 
@@ -16,37 +16,34 @@ public class Schedule {
     //手机号
     private String phone;
 
-    //附加参数，第三方系统唯一标识
     private String attach;
 
-    //变量，多个参数用|分割
+    //变量
     private String params;
 
-    //计划状态，0：未计划 1：计划中 2：计划完成 3：暂停计划 4：停止计划
+    //计划状态;0未计划1计划中2计划完成3暂停计划4停止计划',
     private String statusPlan;
 
-    //同步状态，0：未同步 1：已同步
+    //同步状态;0未同步1已同步',
     private String statusSync;
 
-    //重播，0：不重播 非0为重播次数
+    //重播;0不重播非0表示重播次数',
     private String recall;
 
-    //重播条件
+    //重播条件;重播次数json格式
     private String recallParams;
 
-    //呼叫机器人
+    //机器人模板
     private String robot;
 
     //转人工坐席号
     private String callAgent;
 
-    //当日清除未完成计划
+    //当日清除;当日夜间清除未完成计划
     private String clean;
 
-    //呼叫日期
     private String callDate;
 
-    //呼叫时间
     private String callHour;
 
     private String gmtCreate;

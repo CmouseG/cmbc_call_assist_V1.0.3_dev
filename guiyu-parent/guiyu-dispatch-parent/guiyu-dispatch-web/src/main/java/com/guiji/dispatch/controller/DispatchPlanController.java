@@ -1,16 +1,16 @@
 package com.guiji.dispatch.controller;
 
-import com.guiji.dispatch.api.IJssPlanService;
-import com.guiji.dispatch.model.CommonResponse;
-import com.guiji.dispatch.model.Schedule;
+import com.guiji.dispatch.api.IDispatchPlanService;
+import com.guiji.dispatch.dao.model.CommonResponse;
+import com.guiji.dispatch.dao.model.Schedule;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class JssPlanController {
-
-    private IJssPlanService jssPlanService;
+public class DispatchPlanController {
+    @Autowired
+    private IDispatchPlanService jssPlanService;
 
     /**
      * 向调度中心提交任务
@@ -114,5 +114,17 @@ public class JssPlanController {
     @RequestMapping(value = "/queryExecuteResult", method = RequestMethod.GET)
     CommonResponse queryExecuteResult(@RequestParam final String planUuid) throws Exception {
         return jssPlanService.queryExecuteResult(planUuid);
+    }
+
+    /**
+     * 查看app运行情况
+     *
+     * @return 响应报文
+     * @throws Exception 异常
+     */
+    @ApiOperation(value = "查看app运行情况", notes = "查看app运行情况")
+    @RequestMapping(value = "/appver", method = RequestMethod.GET)
+    CommonResponse appver() throws Exception {
+        return new CommonResponse("00000000", "success");
     }
 }

@@ -1,4 +1,4 @@
-package com.guiji.dispatch.model;
+package com.guiji.dispatch.dao.model;
 
 public class CommonResponse {
 
@@ -8,13 +8,8 @@ public class CommonResponse {
     //返回消息
     private String respMsg;
 
-    //响应内容
+    //返回内容
     private Object content;
-
-    public CommonResponse(String respCode, String respMsg) {
-        this.respCode = respCode;
-        this.respMsg = respMsg;
-    }
 
     public String getRespCode() {
         return respCode;
@@ -38,5 +33,10 @@ public class CommonResponse {
 
     public void setContent(Object content) {
         this.content = content;
+    }
+
+    public CommonResponse(String respCode, String respMsg) {
+        this.respCode = respCode;
+        this.respMsg = respMsg;
     }
 }

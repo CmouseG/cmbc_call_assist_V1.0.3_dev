@@ -1,7 +1,7 @@
 package com.guiji.dispatch.api;
 
-import com.guiji.dispatch.model.CommonResponse;
-import com.guiji.dispatch.model.Schedule;
+import com.guiji.dispatch.dao.model.CommonResponse;
+import com.guiji.dispatch.dao.model.Schedule;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * @date: 2018.10.22
  */
 @Service
-public interface IJssPlanService {
+public interface IDispatchPlanService {
 
     /**
      * 向调度中心提交任务

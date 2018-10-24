@@ -1,21 +1,22 @@
 package com.guiji.dispatch.impl;
 
-import com.guiji.dispatch.api.IJssPlanService;
+import com.guiji.dispatch.api.IDispatchPlanService;
 import com.guiji.dispatch.dao.PlanMapper;
-import com.guiji.dispatch.entity.Plan;
-import com.guiji.dispatch.model.CommonResponse;
-import com.guiji.dispatch.model.Schedule;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.guiji.dispatch.dao.entity.Plan;
+import com.guiji.dispatch.dao.model.CommonResponse;
+import com.guiji.dispatch.dao.model.Schedule;
+import com.guiji.dispatch.util.MybatisUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
 import java.util.UUID;
 
 @Service
-public class JssPlanServiceImpl implements IJssPlanService {
+public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
-    @Autowired
-    private PlanMapper mapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DispatchPlanServiceImpl.class);
+    private PlanMapper mapper = MybatisUtil.getSqlSession().getMapper(PlanMapper.class);
 
     @Override
     public CommonResponse addSchedule(Schedule schedule) throws Exception {
@@ -24,8 +25,10 @@ public class JssPlanServiceImpl implements IJssPlanService {
         plan.setAttach(schedule.getAttach());
         final CommonResponse response = new CommonResponse("00001000", "success");
         try {
+
             mapper.insert(plan);
         } catch (final Exception e) {
+            LOGGER.error("exception is ", e);
             response.setRespCode("00001001");
             response.setRespMsg("failed");
         }

@@ -9,8 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>guiyu-cloud-registration</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>guiyu-cloud-registeration</artifactId>
 
     <dependencies>
         <dependency>

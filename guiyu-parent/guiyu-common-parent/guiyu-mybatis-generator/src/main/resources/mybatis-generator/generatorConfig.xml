@@ -60,8 +60,8 @@
                enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true"
                selectByExampleQueryId="true">
             <property name="useActualColumnNames" value="false"/>
-            <!-- 数据库表主键 -->
-            <generatedKey column="${generatedKey}" sqlStatement="${sqlStatement}" identity="false"/>
+            <!-- 数据库表主键
+            <generatedKey column="${generatedKey}" sqlStatement="${sqlStatement}" identity="false"/>-->
         </table>
     </context>
 </generatorConfiguration>

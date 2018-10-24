@@ -3,21 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>guiyu-parent</artifactId>
+        <artifactId>guiyu-common-parent</artifactId>
         <groupId>guiji.ai</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>guiyu-common-parent</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>guiyu-cache-parent</module>
-        <module>guiyu-utils</module>
-        <module>guiyu-datadic</module>
-        <module>guiyu-mybatis-generator</module>
-        <module>guiyu-model</module>
-    </modules>
+    <artifactId>guiyu-model</artifactId>
 
 
 </project>

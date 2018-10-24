@@ -22,10 +22,6 @@ zuul:
     guiyu-auth-web:
       path: /auth/**
       service-id: guiyu-auth-web
-    host:
-        connect-timeout-millis: 10000
-        socket-timeout-millis: 60000
-        ribbon-isolation-strategy: thread
 hystrix:
   command:
     default:

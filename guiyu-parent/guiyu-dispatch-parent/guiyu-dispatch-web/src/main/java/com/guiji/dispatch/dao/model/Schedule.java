@@ -1,5 +1,7 @@
 package com.guiji.dispatch.dao.model;
 
+import java.util.List;
+
 public class Schedule {
 
     private String id;
@@ -14,7 +16,7 @@ public class Schedule {
     private int batchId;
 
     //手机号
-    private String phone;
+    private List<String> phones;
 
     private String attach;
 
@@ -85,12 +87,12 @@ public class Schedule {
         this.batchId = batchId;
     }
 
-    public String getPhone() {
-        return phone;
+    public List<String> getPhones() {
+        return phones;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 
     public String getAttach() {

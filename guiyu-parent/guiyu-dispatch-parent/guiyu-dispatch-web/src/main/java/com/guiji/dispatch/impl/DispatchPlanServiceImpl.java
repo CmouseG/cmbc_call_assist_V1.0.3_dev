@@ -1,16 +1,19 @@
 package com.guiji.dispatch.impl;
 
+import com.google.common.primitives.Bytes;
 import com.guiji.dispatch.api.IDispatchPlanService;
 import com.guiji.dispatch.dao.PlanMapper;
 import com.guiji.dispatch.dao.entity.Plan;
 import com.guiji.dispatch.dao.model.CommonResponse;
 import com.guiji.dispatch.dao.model.Schedule;
+import com.guiji.dispatch.dao.model.ScheduleList;
 import com.guiji.dispatch.util.MybatisUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,15 +30,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
     @Override
     public CommonResponse addSchedule(Schedule schedule) throws Exception {
         LOGGER.info("addSchedule,request is {}", schedule);
-        if(CollectionUtils.isEmpty(schedule.getPhones()))
-        {
+        if (CollectionUtils.isEmpty(schedule.getPhones())) {
             LOGGER.error("phone is empty");
             final CommonResponse response = new CommonResponse("00001001", "failed");
             return response;
         }
         final List<Plan> plans = new ArrayList<>();
-        for(final String phone:schedule.getPhones())
-        {
+        for (final String phone : schedule.getPhones()) {
             final Plan plan = new Plan();
             plan.setUserId(schedule.getUserId());
             plan.setPlanUuid(UUID.randomUUID().toString().replaceAll("-", "").toLowerCase());
@@ -98,5 +99,40 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
     @Override
     public CommonResponse queryExecuteResult(String planUuid) throws Exception {
         return null;
+    }
+
+    @Override
+    public CommonResponse updatePlanBatch(final ScheduleList scheduleList) throws Exception {
+        LOGGER.info("updatePlanBatch,planUuids is {},status is {}", scheduleList.getPlanUuid(), scheduleList.getStatusPlan());
+        if (StringUtils.isEmpty(scheduleList.getPlanUuid())) {
+            LOGGER.error("scheduleList is empty");
+            final CommonResponse response = new CommonResponse("00001001", "failed");
+            return response;
+        }
+        final List<Plan> plans = new ArrayList<>();
+        for (final String planUuid : scheduleList.getPlanUuid()) {
+            final Plan plan = new Plan();
+            plan.setPlanUuid(planUuid);
+            if (!StringUtils.isEmpty(scheduleList.getStatusPlan())) {
+                plan.setStatusPlan(new Byte(scheduleList.getStatusPlan()));
+            }
+            if (!StringUtils.isEmpty(scheduleList.getStatusSync())) {
+                plan.setStatusSync(new Byte(scheduleList.getStatusSync()));
+            }
+            plan.setResult(scheduleList.getResult());
+
+            plans.add(plan);
+        }
+
+        final CommonResponse response = new CommonResponse("00001000", "success");
+        try {
+            mapper.updateByPrimaryKey(plans);
+            session.commit();
+        } catch (final Exception e) {
+            LOGGER.error("exception is ", e);
+            response.setRespCode("00001001");
+            response.setRespMsg("failed");
+        }
+        return response;
     }
 }

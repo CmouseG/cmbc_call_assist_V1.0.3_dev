@@ -3,9 +3,13 @@ package com.guiji.dispatch.controller;
 import com.guiji.dispatch.api.IDispatchPlanService;
 import com.guiji.dispatch.dao.model.CommonResponse;
 import com.guiji.dispatch.dao.model.Schedule;
+import com.guiji.dispatch.dao.model.ScheduleList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 public class DispatchPlanController {
@@ -114,6 +118,19 @@ public class DispatchPlanController {
     @RequestMapping(value = "/queryExecuteResult", method = RequestMethod.GET)
     CommonResponse queryExecuteResult(@RequestParam final String planUuid) throws Exception {
         return jssPlanService.queryExecuteResult(planUuid);
+    }
+
+    /**
+     * 查询任务提交处理结果
+     *
+     * @param scheduleList 任务id
+     * @return 响应报文
+     * @throws Exception 异常
+     */
+    @ApiOperation(value = "更新任务状态", notes = "更新任务状态")
+    @RequestMapping(value = "/updatePlanBatch", method = RequestMethod.POST)
+    CommonResponse updatePlanBatch(@RequestBody final ScheduleList scheduleList) throws Exception {
+        return jssPlanService.updatePlanBatch(scheduleList);
     }
 
     /**

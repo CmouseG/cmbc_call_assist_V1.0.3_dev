@@ -42,5 +42,5 @@ public interface PlanMapper {
      *
      * @mbggenerated
      */
-    int updateByPrimaryKey(Plan record);
+    int updateByPrimaryKey(List<Plan> record);
 }

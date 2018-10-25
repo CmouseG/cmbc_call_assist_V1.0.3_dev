@@ -2,7 +2,10 @@ package com.guiji.dispatch.api;
 
 import com.guiji.dispatch.dao.model.CommonResponse;
 import com.guiji.dispatch.dao.model.Schedule;
+import com.guiji.dispatch.dao.model.ScheduleList;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 调度中心任务调度接口
@@ -78,4 +81,13 @@ public interface IDispatchPlanService {
      * @throws Exception 异常
      */
     CommonResponse queryExecuteResult(final String planUuid) throws Exception;
+
+    /**
+     * 查询任务提交处理结果
+     *
+     * @param scheduleList 任务id
+     * @return 响应报文
+     * @throws Exception 异常
+     */
+    CommonResponse updatePlanBatch(final ScheduleList scheduleList) throws Exception;
 }

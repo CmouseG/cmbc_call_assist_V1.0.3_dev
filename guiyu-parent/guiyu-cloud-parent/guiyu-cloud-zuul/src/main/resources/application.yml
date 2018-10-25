@@ -22,6 +22,9 @@ zuul:
     guiyu-auth-web:
       path: /auth/**
       service-id: guiyu-auth-web
+    guiyu-dispatch-web:
+      path: /dispatch/**
+      service-id: guiyu-dispatch-web
 hystrix:
   command:
     default:

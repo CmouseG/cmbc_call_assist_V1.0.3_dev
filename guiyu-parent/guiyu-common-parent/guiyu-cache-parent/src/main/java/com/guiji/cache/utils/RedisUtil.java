@@ -1,6 +1,8 @@
-package com.guiji.utils;
+package com.guiji.cache.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -14,14 +16,12 @@ import java.util.concurrent.TimeUnit;
  *@date:2018年6月21日 下午9:27:57
  *@history:
  *@Version:v1.0
+ *
  */
+@Component
 public class RedisUtil {
-	private RedisTemplate<String, Object> redisTemplate;
-
-    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
-    //=============================common============================
+    @Autowired
+	private RedisTemplate redisTemplate;
     /**
      * 指定缓存失效时间
      * @param key 键

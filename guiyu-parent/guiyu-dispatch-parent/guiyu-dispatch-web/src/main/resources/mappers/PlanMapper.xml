@@ -125,7 +125,7 @@
         recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour,
         gmt_create, gmt_modified
         from dispatch_plan
-        where user_id = #{userId,jdbcType=INTEGER}
+        where user_id = #{userId,jdbcType=INTEGER} limit #{taskNum,jdbcType=INTEGER}
     </select>
     <select id="selectAll" resultMap="BaseResultMap">
         <!--

@@ -85,7 +85,7 @@ public class DispatchPlanController {
     /**
      * 返回可以拨打的任务给呼叫中心
      *
-     * @param userId 用户id
+     * @param schedule 用户id
      * @return 响应报文
      * @throws Exception 异常
      */

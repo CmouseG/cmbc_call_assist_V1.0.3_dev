@@ -102,7 +102,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
         final CommonResponse response = new CommonResponse("00001000", "success");
         try {
-            mapper.selectByUserId(Integer.valueOf(schedule.getUserId()));
+            final List<Plan> plans = mapper.selectByUserId(Integer.valueOf(schedule.getUserId()), schedule.getTaskNum());
+            response.setContent(plans);
             session.commit();
         } catch (final Exception e) {
             LOGGER.error("exception is ", e);

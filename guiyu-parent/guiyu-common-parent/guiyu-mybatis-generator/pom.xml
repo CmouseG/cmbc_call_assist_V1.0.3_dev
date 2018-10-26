@@ -24,11 +24,6 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mybatis.generator</groupId>
-            <artifactId>mybatis-generator-core</artifactId>
-            <version>RELEASE</version>
-        </dependency>
     </dependencies>
 
 </project>

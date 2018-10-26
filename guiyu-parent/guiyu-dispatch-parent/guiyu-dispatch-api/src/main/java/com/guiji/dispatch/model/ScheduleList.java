@@ -1,4 +1,4 @@
-package com.guiji.dispatch.dao.model;
+package com.guiji.dispatch.model;
 
 import java.util.List;
 
@@ -46,5 +46,15 @@ public class ScheduleList {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return "ScheduleList{" +
+                "planUuid=" + planUuid +
+                ", statusPlan='" + statusPlan + '\'' +
+                ", statusSync='" + statusSync + '\'' +
+                ", result='" + result + '\'' +
+                '}';
     }
 }

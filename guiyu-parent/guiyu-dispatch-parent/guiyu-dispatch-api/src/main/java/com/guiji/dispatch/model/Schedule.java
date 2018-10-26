@@ -1,4 +1,4 @@
-package com.guiji.dispatch.dao.model;
+package com.guiji.dispatch.model;
 
 import java.util.List;
 
@@ -50,6 +50,9 @@ public class Schedule {
     private int callDate;
 
     private String callHour;
+
+    //每次查询的任务数
+    private String taskNum;
 
     private String gmtCreate;
 
@@ -205,5 +208,39 @@ public class Schedule {
 
     public void setGmtUpdate(String gmtUpdate) {
         this.gmtUpdate = gmtUpdate;
+    }
+
+    public String getTaskNum() {
+        return taskNum;
+    }
+
+    public void setTaskNum(String taskNum) {
+        this.taskNum = taskNum;
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "id='" + id + '\'' +
+                ", planUuid='" + planUuid + '\'' +
+                ", userId=" + userId +
+                ", batchId=" + batchId +
+                ", phones=" + phones +
+                ", attach='" + attach + '\'' +
+                ", params='" + params + '\'' +
+                ", statusPlan=" + statusPlan +
+                ", statusSync=" + statusSync +
+                ", recall=" + recall +
+                ", recallParams='" + recallParams + '\'' +
+                ", robot='" + robot + '\'' +
+                ", line='" + line + '\'' +
+                ", callAgent='" + callAgent + '\'' +
+                ", clean=" + clean +
+                ", callDate=" + callDate +
+                ", callHour='" + callHour + '\'' +
+                ", taskNum='" + taskNum + '\'' +
+                ", gmtCreate='" + gmtCreate + '\'' +
+                ", gmtUpdate='" + gmtUpdate + '\'' +
+                '}';
     }
 }

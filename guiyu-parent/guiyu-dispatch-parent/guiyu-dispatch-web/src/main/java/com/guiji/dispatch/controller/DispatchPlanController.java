@@ -1,15 +1,16 @@
 package com.guiji.dispatch.controller;
 
 import com.guiji.dispatch.api.IDispatchPlanService;
-import com.guiji.dispatch.dao.model.CommonResponse;
-import com.guiji.dispatch.dao.model.Schedule;
-import com.guiji.dispatch.dao.model.ScheduleList;
+import com.guiji.dispatch.model.CommonResponse;
+import com.guiji.dispatch.model.Schedule;
+import com.guiji.dispatch.model.ScheduleList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DispatchPlanController {
@@ -89,9 +90,9 @@ public class DispatchPlanController {
      * @throws Exception 异常
      */
     @ApiOperation(value = "返回可以拨打的任务给呼叫中心", notes = "返回可以拨打的任务给呼叫中心")
-    @RequestMapping(value = "/queryAvailableSchedule", method = RequestMethod.GET)
-    CommonResponse queryAvailableSchedule(@RequestParam final String userId, @RequestParam final String taskNum) throws Exception {
-        return jssPlanService.queryAvailableSchedule(userId, taskNum);
+    @RequestMapping(value = "/queryAvailableSchedules", method = RequestMethod.POST)
+    CommonResponse queryAvailableSchedule(@RequestBody final Schedule schedule) throws Exception {
+        return jssPlanService.queryAvailableSchedules(schedule);
     }
 
     /**

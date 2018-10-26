@@ -4,9 +4,9 @@ import com.google.common.primitives.Bytes;
 import com.guiji.dispatch.api.IDispatchPlanService;
 import com.guiji.dispatch.dao.PlanMapper;
 import com.guiji.dispatch.dao.entity.Plan;
-import com.guiji.dispatch.dao.model.CommonResponse;
-import com.guiji.dispatch.dao.model.Schedule;
-import com.guiji.dispatch.dao.model.ScheduleList;
+import com.guiji.dispatch.model.CommonResponse;
+import com.guiji.dispatch.model.Schedule;
+import com.guiji.dispatch.model.ScheduleList;
 import com.guiji.dispatch.util.MybatisUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -92,8 +92,24 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
     }
 
     @Override
-    public CommonResponse queryAvailableSchedule(String userId, String taskNum) throws Exception {
-        return null;
+    public CommonResponse queryAvailableSchedules(final Schedule schedule) throws Exception {
+        LOGGER.info("queryAvailableSchedules,schedule is {}", schedule);
+        if (StringUtils.isEmpty(schedule.getUserId()) || StringUtils.isEmpty(schedule.getTaskNum())) {
+            LOGGER.error("userId or taskNum is empty");
+            final CommonResponse response = new CommonResponse("00001001", "failed");
+            return response;
+        }
+
+        final CommonResponse response = new CommonResponse("00001000", "success");
+        try {
+            mapper.selectByUserId(Integer.valueOf(schedule.getUserId()));
+            session.commit();
+        } catch (final Exception e) {
+            LOGGER.error("exception is ", e);
+            response.setRespCode("00001001");
+            response.setRespMsg("failed");
+        }
+        return response;
     }
 
     @Override
@@ -103,7 +119,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
     @Override
     public CommonResponse updatePlanBatch(final ScheduleList scheduleList) throws Exception {
-        LOGGER.info("updatePlanBatch,planUuids is {},status is {}", scheduleList.getPlanUuid(), scheduleList.getStatusPlan());
+        LOGGER.info("updatePlanBatch,scheduleList is {}", scheduleList);
         if (StringUtils.isEmpty(scheduleList.getPlanUuid())) {
             LOGGER.error("scheduleList is empty");
             final CommonResponse response = new CommonResponse("00001001", "failed");

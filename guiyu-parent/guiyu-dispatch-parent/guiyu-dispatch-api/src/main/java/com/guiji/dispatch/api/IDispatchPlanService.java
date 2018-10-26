@@ -1,7 +1,8 @@
 package com.guiji.dispatch.api;
 
-import com.guiji.dispatch.dao.model.CommonResponse;
-import com.guiji.dispatch.dao.model.Schedule;
+import com.guiji.dispatch.model.CommonResponse;
+import com.guiji.dispatch.model.Schedule;
+import com.guiji.dispatch.model.ScheduleList;
 import org.springframework.stereotype.Service;
 
 /**
@@ -63,12 +64,11 @@ public interface IDispatchPlanService {
     /**
      * 返回可以拨打的任务给呼叫中心
      *
-     * @param userId  用户id
-     * @param taskNum 获取任务数量
+     * @param schedule 请求参数
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse queryAvailableSchedule(final String userId, final String taskNum) throws Exception;
+    CommonResponse queryAvailableSchedules(final Schedule schedule) throws Exception;
 
     /**
      * 查询任务提交处理结果
@@ -78,4 +78,13 @@ public interface IDispatchPlanService {
      * @throws Exception 异常
      */
     CommonResponse queryExecuteResult(final String planUuid) throws Exception;
+
+    /**
+     * 查询任务提交处理结果
+     *
+     * @param scheduleList 任务id
+     * @return 响应报文
+     * @throws Exception 异常
+     */
+    CommonResponse updatePlanBatch(final ScheduleList scheduleList) throws Exception;
 }

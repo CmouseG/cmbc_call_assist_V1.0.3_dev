@@ -1,4 +1,6 @@
-package com.guiji.dispatch.dao.model;
+package com.guiji.dispatch.model;
+
+import java.util.List;
 
 public class Schedule {
 
@@ -14,7 +16,7 @@ public class Schedule {
     private int batchId;
 
     //手机号
-    private String phone;
+    private List<String> phones;
 
     private String attach;
 
@@ -48,6 +50,9 @@ public class Schedule {
     private int callDate;
 
     private String callHour;
+
+    //每次查询的任务数
+    private int taskNum;
 
     private String gmtCreate;
 
@@ -85,12 +90,12 @@ public class Schedule {
         this.batchId = batchId;
     }
 
-    public String getPhone() {
-        return phone;
+    public List<String> getPhones() {
+        return phones;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 
     public String getAttach() {
@@ -203,5 +208,39 @@ public class Schedule {
 
     public void setGmtUpdate(String gmtUpdate) {
         this.gmtUpdate = gmtUpdate;
+    }
+
+    public int getTaskNum() {
+        return taskNum;
+    }
+
+    public void setTaskNum(int taskNum) {
+        this.taskNum = taskNum;
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "id='" + id + '\'' +
+                ", planUuid='" + planUuid + '\'' +
+                ", userId=" + userId +
+                ", batchId=" + batchId +
+                ", phones=" + phones +
+                ", attach='" + attach + '\'' +
+                ", params='" + params + '\'' +
+                ", statusPlan=" + statusPlan +
+                ", statusSync=" + statusSync +
+                ", recall=" + recall +
+                ", recallParams='" + recallParams + '\'' +
+                ", robot='" + robot + '\'' +
+                ", line='" + line + '\'' +
+                ", callAgent='" + callAgent + '\'' +
+                ", clean=" + clean +
+                ", callDate=" + callDate +
+                ", callHour='" + callHour + '\'' +
+                ", taskNum='" + taskNum + '\'' +
+                ", gmtCreate='" + gmtCreate + '\'' +
+                ", gmtUpdate='" + gmtUpdate + '\'' +
+                '}';
     }
 }

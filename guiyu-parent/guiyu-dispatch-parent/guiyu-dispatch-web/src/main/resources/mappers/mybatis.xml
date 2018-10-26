@@ -12,7 +12,7 @@
             <dataSource type="pooled">
                 <!-- 配置与数据库交互的四个必要属性 -->
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/dispatch?tinyInt1isBit=false"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/dispatch?allowMultiQueries=true"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>

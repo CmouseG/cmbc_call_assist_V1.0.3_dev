@@ -1,4 +1,4 @@
-package com.guiji.dispatch.dao.model;
+package com.guiji.dispatch.model;
 
 public class CommonResponse {
 

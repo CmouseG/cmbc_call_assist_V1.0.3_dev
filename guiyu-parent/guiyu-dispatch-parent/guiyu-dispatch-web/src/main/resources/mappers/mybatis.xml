@@ -12,9 +12,9 @@
             <dataSource type="pooled">
                 <!-- 配置与数据库交互的四个必要属性 -->
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/dispatch?allowMultiQueries=true"/>
-                <property name="username" value="root"/>
-                <property name="password" value="123456"/>
+                <property name="url" value="jdbc:mysql://47.97.179.12:3306/guiyu_dispatch?allowMultiQueries=true"/>
+                <property name="username" value="dispatch"/>
+                <property name="password" value="dispatch@1234"/>
             </dataSource>
         </environment>
     </environments>

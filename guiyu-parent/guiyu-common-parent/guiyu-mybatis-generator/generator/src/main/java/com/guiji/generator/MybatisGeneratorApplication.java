@@ -1,19 +1,20 @@
 package com.guiji.generator;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import java.io.IOException;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-
+/**
+ * 执行该程序，maven命令：mybatis-generator:generate
+ * @author zhang.peng
+ *
+ */
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class MybatisGeneratorApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(MybatisGeneratorApplication.class, args);
-		MybatisGeneratorApplication.execCMD();
+		//SpringApplication.run(MybatisGeneratorApplication.class, args);
+		//MybatisGeneratorApplication.execCMD();
 	}
 	
     public static void execCMD(){

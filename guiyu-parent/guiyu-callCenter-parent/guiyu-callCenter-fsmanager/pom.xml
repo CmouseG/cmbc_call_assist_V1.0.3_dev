@@ -10,6 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>guiyu-callCenter-fsmanager</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>guiyu-callCenter-fsmanager-api</module>
+    </modules>
 
     <dependencies>
         <dependency>

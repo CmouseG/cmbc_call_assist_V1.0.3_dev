@@ -10,6 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>guiyu-datadic</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>guiyu-datadic-api</module>
+        <module>guiyu-datadic-dal</module>
+        <module>guiyu-datadic-web</module>
+    </modules>
 
 
 </project>

@@ -1,11 +1,16 @@
 package com.guiji.dispatch.controller;
 
 import com.guiji.dispatch.api.IDispatchPlanService;
-import com.guiji.dispatch.dao.model.CommonResponse;
-import com.guiji.dispatch.dao.model.Schedule;
+import com.guiji.dispatch.model.CommonResponse;
+import com.guiji.dispatch.model.Schedule;
+import com.guiji.dispatch.model.ScheduleList;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DispatchPlanController {
@@ -80,14 +85,14 @@ public class DispatchPlanController {
     /**
      * 返回可以拨打的任务给呼叫中心
      *
-     * @param userId 用户id
+     * @param schedule 用户id
      * @return 响应报文
      * @throws Exception 异常
      */
     @ApiOperation(value = "返回可以拨打的任务给呼叫中心", notes = "返回可以拨打的任务给呼叫中心")
-    @RequestMapping(value = "/queryAvailableSchedule", method = RequestMethod.GET)
-    CommonResponse queryAvailableSchedule(@RequestParam final String userId, @RequestParam final String taskNum) throws Exception {
-        return jssPlanService.queryAvailableSchedule(userId, taskNum);
+    @RequestMapping(value = "/queryAvailableSchedules", method = RequestMethod.POST)
+    CommonResponse queryAvailableSchedule(@RequestBody final Schedule schedule) throws Exception {
+        return jssPlanService.queryAvailableSchedules(schedule);
     }
 
     /**
@@ -114,6 +119,19 @@ public class DispatchPlanController {
     @RequestMapping(value = "/queryExecuteResult", method = RequestMethod.GET)
     CommonResponse queryExecuteResult(@RequestParam final String planUuid) throws Exception {
         return jssPlanService.queryExecuteResult(planUuid);
+    }
+
+    /**
+     * 查询任务提交处理结果
+     *
+     * @param scheduleList 任务id
+     * @return 响应报文
+     * @throws Exception 异常
+     */
+    @ApiOperation(value = "更新任务状态", notes = "更新任务状态")
+    @RequestMapping(value = "/updatePlanBatch", method = RequestMethod.POST)
+    CommonResponse updatePlanBatch(@RequestBody final ScheduleList scheduleList) throws Exception {
+        return jssPlanService.updatePlanBatch(scheduleList);
     }
 
     /**

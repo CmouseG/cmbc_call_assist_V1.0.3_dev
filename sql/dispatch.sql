@@ -1,9 +1,28 @@
+/*
+ Navicat Premium Data Transfer
 
+ Source Server         : 192.168.1.165
+ Source Server Type    : MySQL
+ Source Server Version : 50723
+ Source Host           : 192.168.1.165:3306
+ Source Schema         : guiyu_dispatch
 
+ Target Server Type    : MySQL
+ Target Server Version : 50723
+ File Encoding         : 65001
 
+ Date: 19/10/2018 15:21:31
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for dispatch_log
+-- ----------------------------
 DROP TABLE IF EXISTS `dispatch_log`;
 CREATE TABLE `dispatch_log`  (
-  `id` int(11) NOT NULL COMMENT 'Id',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id',
   `user_id` int(11) NOT NULL COMMENT '用户ID',
   `module` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模块',
   `action` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '动作',
@@ -13,12 +32,12 @@ CREATE TABLE `dispatch_log`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户操作日志' ROW_FORMAT = Dynamic;
 
-
-
-
+-- ----------------------------
+-- Table structure for dispatch_plan
+-- ----------------------------
 DROP TABLE IF EXISTS `dispatch_plan`;
 CREATE TABLE `dispatch_plan`  (
-  `id` int(11) NOT NULL COMMENT 'Id',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id',
   `plan_uuid` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '任务UUID;任务全局唯一ID',
   `user_id` int(11) NOT NULL COMMENT '用户ID',
   `batch_id` int(11) NOT NULL COMMENT '批次ID;批次ID',
@@ -30,6 +49,8 @@ CREATE TABLE `dispatch_plan`  (
   `recall` tinyint(1) NOT NULL COMMENT '重播;0不重播非0表示重播次数',
   `recall_params` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '重播条件;重播次数json格式',
   `robot` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '呼叫机器人',
+  `line` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '呼叫线路',
+  `result` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '呼出结果',
   `call_agent` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '转人工坐席号',
   `clean` tinyint(1) NOT NULL COMMENT '当日清除;当日夜间清除未完成计划',
   `call_data` int(11) NOT NULL COMMENT '外呼日期',
@@ -39,12 +60,12 @@ CREATE TABLE `dispatch_plan`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '计划任务' ROW_FORMAT = Dynamic;
 
-
-
-
+-- ----------------------------
+-- Table structure for dispatch_plan_batch
+-- ----------------------------
 DROP TABLE IF EXISTS `dispatch_plan_batch`;
 CREATE TABLE `dispatch_plan_batch`  (
-  `id` int(11) NOT NULL COMMENT 'Id',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Id',
   `user_id` int(11) NOT NULL COMMENT '用户ID;用户ID',
   `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '批次号;批次号',
   `status_show` tinyint(1) NOT NULL COMMENT '是否显示;显示状态1显示0隐藏',

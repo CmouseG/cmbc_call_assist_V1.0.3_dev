@@ -52,7 +52,7 @@ public class Schedule {
     private String callHour;
 
     //每次查询的任务数
-    private String taskNum;
+    private int taskNum;
 
     private String gmtCreate;
 
@@ -210,11 +210,11 @@ public class Schedule {
         this.gmtUpdate = gmtUpdate;
     }
 
-    public String getTaskNum() {
+    public int getTaskNum() {
         return taskNum;
     }
 
-    public void setTaskNum(String taskNum) {
+    public void setTaskNum(int taskNum) {
         this.taskNum = taskNum;
     }
 

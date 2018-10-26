@@ -3,5 +3,4 @@
 
 ##  获取自身的instance-id
     @Value("${eureka.instance.instance-id:}")  
-
     private String instanceId;

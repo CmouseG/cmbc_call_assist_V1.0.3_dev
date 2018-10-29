@@ -1,6 +1,6 @@
 package com.guiji.fsmanager.api;
 
-import com.guiji.common.model.ServerResult;
+import com.guiji.common.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -13,5 +13,5 @@ public interface TempApi {
 
     @ApiOperation(value = "下载模板录音")
     @GetMapping(value="downloadtempwav")
-    public ServerResult downloadtempwav(String tempId);
+    public Result.ReturnData downloadtempwav(String tempId);
 }

@@ -60,7 +60,7 @@ public class Result {
 			this.msg = msg;
 		}
 
-		public Object getBody() {
+		public T getBody() {
 			return body;
 		}
 

@@ -3,6 +3,7 @@ package com.guiji.utils;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.springframework.cloud.netflix.feign.support.SpringMvcContract;
 
 /**
  * @Auther: 黎阳
@@ -22,6 +23,7 @@ public class FeignBuildUtil {
       return  Feign.builder()
                .encoder(new JacksonEncoder())
                .decoder(new JacksonDecoder())
+              .contract(new SpringMvcContract())
 //               .options(new Request.Options(1000, 3500))
 //               .retryer(new Retryer.Default(5000, 5000, 3));
               .target( apiType,  url);

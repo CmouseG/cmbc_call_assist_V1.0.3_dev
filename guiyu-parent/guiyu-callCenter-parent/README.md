@@ -8,6 +8,7 @@
 ```java
     @Value("${eureka.instance.instance-id}")  
     private String instanceId;
+    或者使用ServerUtil的方法getUrlSelf(Registration registration)
 ```
 
     

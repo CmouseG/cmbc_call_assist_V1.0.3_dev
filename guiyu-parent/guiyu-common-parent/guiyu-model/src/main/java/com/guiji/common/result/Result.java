@@ -11,12 +11,12 @@ public class Result {
 	
 	private static Properties properties;
 	
-	public static Result.ReturnData ok(Object obj){
-		return new Result.ReturnData(obj);
+	public static <T> Result.ReturnData<T> ok(T obj){
+		return new Result.ReturnData<T>(obj);
 	}
 	
-	public static Result.ReturnData ok(){
-		return new Result.ReturnData();
+	public static <T> Result.ReturnData<T> ok(){
+		return new Result.ReturnData<T>();
 	}
 	
 	public static Result.ReturnData error(String code){
@@ -30,10 +30,10 @@ public class Result {
 	}
 
 
-	public static class ReturnData{
+	public static class ReturnData<T>{
 		public String code="0";
 		public String msg="请求成功3";
-		public Object body;
+		public T body;
 		
 		public ReturnData(){
 		}
@@ -43,7 +43,7 @@ public class Result {
 			this.msg=msg;
 		}
 		
-		public ReturnData(Object body){
+		public ReturnData(T body){
 			this.body=body;
 		}
 		
@@ -64,7 +64,7 @@ public class Result {
 			return body;
 		}
 
-		public void setBody(Object body) {
+		public void setBody(T body) {
 			this.body = body;
 		}
 	}

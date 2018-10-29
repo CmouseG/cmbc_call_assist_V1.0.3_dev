@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.nas.dao.SysFileMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.nas.dao.entity.SysFile" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="FILE_NAME" property="fileName" jdbcType="VARCHAR" />
+    <result column="BUSI_ID" property="busiId" jdbcType="VARCHAR" />
+    <result column="BUSI_TYPE" property="busiType" jdbcType="CHAR" />
+    <result column="FILE_TYPE" property="fileType" jdbcType="CHAR" />
+    <result column="FILE_SIZE" property="fileSize" jdbcType="DOUBLE" />
+    <result column="SK_URL" property="skUrl" jdbcType="VARCHAR" />
+    <result column="SK_THUMB_IMAGE_URL" property="skThumbImageUrl" jdbcType="VARCHAR" />
+    <result column="SYS_CODE" property="sysCode" jdbcType="VARCHAR" />
+    <result column="CRT_USER" property="crtUser" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="LST_UPDATE_USER" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="LST_UPDATE_TIME" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, FILE_NAME, BUSI_ID, BUSI_TYPE, FILE_TYPE, FILE_SIZE, SK_URL, SK_THUMB_IMAGE_URL, 
+    SYS_CODE, CRT_USER, CRT_TIME, LST_UPDATE_USER, LST_UPDATE_TIME
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.nas.dao.entity.SysFileExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from sys_file
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_file
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_file
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.nas.dao.entity.SysFileExample" >
+    delete from sys_file
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.nas.dao.entity.SysFile" >
+    insert into sys_file (id, FILE_NAME, BUSI_ID, 
+      BUSI_TYPE, FILE_TYPE, FILE_SIZE, 
+      SK_URL, SK_THUMB_IMAGE_URL, SYS_CODE, 
+      CRT_USER, CRT_TIME, LST_UPDATE_USER, 
+      LST_UPDATE_TIME)
+    values (#{id,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
+      #{busiType,jdbcType=CHAR}, #{fileType,jdbcType=CHAR}, #{fileSize,jdbcType=DOUBLE}, 
+      #{skUrl,jdbcType=VARCHAR}, #{skThumbImageUrl,jdbcType=VARCHAR}, #{sysCode,jdbcType=VARCHAR}, 
+      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
+      #{lstUpdateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.nas.dao.entity.SysFile" >
+    insert into sys_file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="fileName != null" >
+        FILE_NAME,
+      </if>
+      <if test="busiId != null" >
+        BUSI_ID,
+      </if>
+      <if test="busiType != null" >
+        BUSI_TYPE,
+      </if>
+      <if test="fileType != null" >
+        FILE_TYPE,
+      </if>
+      <if test="fileSize != null" >
+        FILE_SIZE,
+      </if>
+      <if test="skUrl != null" >
+        SK_URL,
+      </if>
+      <if test="skThumbImageUrl != null" >
+        SK_THUMB_IMAGE_URL,
+      </if>
+      <if test="sysCode != null" >
+        SYS_CODE,
+      </if>
+      <if test="crtUser != null" >
+        CRT_USER,
+      </if>
+      <if test="crtTime != null" >
+        CRT_TIME,
+      </if>
+      <if test="lstUpdateUser != null" >
+        LST_UPDATE_USER,
+      </if>
+      <if test="lstUpdateTime != null" >
+        LST_UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="busiId != null" >
+        #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiType != null" >
+        #{busiType,jdbcType=CHAR},
+      </if>
+      <if test="fileType != null" >
+        #{fileType,jdbcType=CHAR},
+      </if>
+      <if test="fileSize != null" >
+        #{fileSize,jdbcType=DOUBLE},
+      </if>
+      <if test="skUrl != null" >
+        #{skUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="skThumbImageUrl != null" >
+        #{skThumbImageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sysCode != null" >
+        #{sysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.nas.dao.entity.SysFileExample" resultType="java.lang.Integer" >
+    select count(*) from sys_file
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sys_file
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileName != null" >
+        FILE_NAME = #{record.fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.busiId != null" >
+        BUSI_ID = #{record.busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.busiType != null" >
+        BUSI_TYPE = #{record.busiType,jdbcType=CHAR},
+      </if>
+      <if test="record.fileType != null" >
+        FILE_TYPE = #{record.fileType,jdbcType=CHAR},
+      </if>
+      <if test="record.fileSize != null" >
+        FILE_SIZE = #{record.fileSize,jdbcType=DOUBLE},
+      </if>
+      <if test="record.skUrl != null" >
+        SK_URL = #{record.skUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.skThumbImageUrl != null" >
+        SK_THUMB_IMAGE_URL = #{record.skThumbImageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sysCode != null" >
+        SYS_CODE = #{record.sysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtUser != null" >
+        CRT_USER = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        CRT_TIME = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        LST_UPDATE_USER = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        LST_UPDATE_TIME = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sys_file
+    set id = #{record.id,jdbcType=VARCHAR},
+      FILE_NAME = #{record.fileName,jdbcType=VARCHAR},
+      BUSI_ID = #{record.busiId,jdbcType=VARCHAR},
+      BUSI_TYPE = #{record.busiType,jdbcType=CHAR},
+      FILE_TYPE = #{record.fileType,jdbcType=CHAR},
+      FILE_SIZE = #{record.fileSize,jdbcType=DOUBLE},
+      SK_URL = #{record.skUrl,jdbcType=VARCHAR},
+      SK_THUMB_IMAGE_URL = #{record.skThumbImageUrl,jdbcType=VARCHAR},
+      SYS_CODE = #{record.sysCode,jdbcType=VARCHAR},
+      CRT_USER = #{record.crtUser,jdbcType=VARCHAR},
+      CRT_TIME = #{record.crtTime,jdbcType=TIMESTAMP},
+      LST_UPDATE_USER = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      LST_UPDATE_TIME = #{record.lstUpdateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.nas.dao.entity.SysFile" >
+    update sys_file
+    <set >
+      <if test="fileName != null" >
+        FILE_NAME = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="busiId != null" >
+        BUSI_ID = #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiType != null" >
+        BUSI_TYPE = #{busiType,jdbcType=CHAR},
+      </if>
+      <if test="fileType != null" >
+        FILE_TYPE = #{fileType,jdbcType=CHAR},
+      </if>
+      <if test="fileSize != null" >
+        FILE_SIZE = #{fileSize,jdbcType=DOUBLE},
+      </if>
+      <if test="skUrl != null" >
+        SK_URL = #{skUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="skThumbImageUrl != null" >
+        SK_THUMB_IMAGE_URL = #{skThumbImageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sysCode != null" >
+        SYS_CODE = #{sysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        CRT_USER = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        CRT_TIME = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        LST_UPDATE_USER = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        LST_UPDATE_TIME = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.nas.dao.entity.SysFile" >
+    update sys_file
+    set FILE_NAME = #{fileName,jdbcType=VARCHAR},
+      BUSI_ID = #{busiId,jdbcType=VARCHAR},
+      BUSI_TYPE = #{busiType,jdbcType=CHAR},
+      FILE_TYPE = #{fileType,jdbcType=CHAR},
+      FILE_SIZE = #{fileSize,jdbcType=DOUBLE},
+      SK_URL = #{skUrl,jdbcType=VARCHAR},
+      SK_THUMB_IMAGE_URL = #{skThumbImageUrl,jdbcType=VARCHAR},
+      SYS_CODE = #{sysCode,jdbcType=VARCHAR},
+      CRT_USER = #{crtUser,jdbcType=VARCHAR},
+      CRT_TIME = #{crtTime,jdbcType=TIMESTAMP},
+      LST_UPDATE_USER = #{lstUpdateUser,jdbcType=VARCHAR},
+      LST_UPDATE_TIME = #{lstUpdateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

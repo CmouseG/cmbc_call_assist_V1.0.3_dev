@@ -4,7 +4,7 @@
     ServerUtil.getInstances(discoveryClient,"guiyu-callcenter-ccmanager");
 ```
 
-#####  获取服务自身的instance-id
+#####  获取服务自身的ip和端口
 ```
    使用ServerUtil的方法getUrlSelf(Registration registration)
 ```

@@ -3,16 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>guiyu-callCenter-parent</artifactId>
+        <artifactId>guiyu-callCenter-fsline</artifactId>
         <groupId>guiji.ai</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>guiyu-callCenter-calloutserver</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>guiyu-callCenter-calloutserver-api</module>
-        <module>guiyu-callCenter-calloutserver-service</module>
-    </modules>
+    <artifactId>guiyu-callCenter-fsline-service</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-callCenter-fsline-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

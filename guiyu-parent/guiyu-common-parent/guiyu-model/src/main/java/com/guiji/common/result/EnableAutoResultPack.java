@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(ApplicationContextConfig.class)
+@Import({ApplicationContextConfig.class,ErrorMessage.class,Result.class})
 public @interface EnableAutoResultPack {
 
 }

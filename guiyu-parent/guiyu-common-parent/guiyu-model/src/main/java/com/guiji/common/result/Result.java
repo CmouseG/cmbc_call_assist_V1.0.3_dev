@@ -32,7 +32,7 @@ public class Result {
 
 	public static class ReturnData{
 		public String code="0";
-		public String msg="请求成功";
+		public String msg="请求成功3";
 		public Object body;
 		
 		public ReturnData(){

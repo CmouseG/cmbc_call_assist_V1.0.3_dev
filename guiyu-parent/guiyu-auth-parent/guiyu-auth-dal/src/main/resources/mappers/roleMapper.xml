@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.user.dao.RoleMapper">
+	
+	<insert id="insert">
+		insert into sys_role(name,create_time) values(#{name},now())
+	</insert>
+	
+	<update id="delete">
+		update sys_role set del_flag=1 , update_time=now() where id=#{id}
+	</update>
+	
+	<update id="update">
+		update sys_role set name=#{name} ,update_time=now() where id=#{id}
+	</update>
+	
+	<select id="getRoleId" resultType="role">
+		select id,name from sys_role where id=#{id} and del_flag=0
+	</select>
+	
+	<select id="getRoles" resultType="role">
+		select id,name from sys_role where del_flag=0
+	</select>
+</mapper>
+

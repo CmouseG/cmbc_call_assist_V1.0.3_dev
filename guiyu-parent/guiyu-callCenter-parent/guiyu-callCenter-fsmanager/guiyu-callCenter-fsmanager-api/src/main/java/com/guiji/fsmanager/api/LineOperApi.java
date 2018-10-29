@@ -4,7 +4,6 @@ import com.guiji.common.result.Result;
 import com.guiji.fsmanager.entity.FsBind;
 import com.guiji.fsmanager.entity.LineInfo;
 import com.guiji.fsmanager.entity.LineXmlnfo;
-import feign.RequestLine;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 

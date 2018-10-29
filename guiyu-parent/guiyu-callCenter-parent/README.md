@@ -6,7 +6,7 @@
 
 #####  获取服务自身的instance-id
 ```
-   或者使用ServerUtil的方法getUrlSelf(Registration registration)
+   使用ServerUtil的方法getUrlSelf(Registration registration)
 ```
 
     

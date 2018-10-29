@@ -5,10 +5,8 @@
 ```
 
 #####  获取服务自身的instance-id
-```java
-    @Value("${eureka.instance.instance-id}")  
-    private String instanceId;
-    //或者使用ServerUtil的方法getUrlSelf(Registration registration)
+```
+   或者使用ServerUtil的方法getUrlSelf(Registration registration)
 ```
 
     

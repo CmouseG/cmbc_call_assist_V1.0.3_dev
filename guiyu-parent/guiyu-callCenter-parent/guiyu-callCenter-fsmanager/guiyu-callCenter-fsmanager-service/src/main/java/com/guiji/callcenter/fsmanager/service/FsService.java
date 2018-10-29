@@ -3,6 +3,7 @@ package com.guiji.callcenter.fsmanager.service;
 import com.guiji.common.result.Result;
 import com.guiji.fsmanager.api.FsResourceApi;
 import com.guiji.fsmanager.entity.FsBind;
+import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 @RestController
 public class FsService implements FsResourceApi{
     @Override
-    public Result.ReturnData applyfs(String serviceId, String serviceType) {
+    public Result.ReturnData applyfs(String serviceId, ServiceTypeEnum serviceType) {
         FsBind fs =new FsBind();
         fs.setServiceId("nanjing");
         fs.setFsAgentId("xx");

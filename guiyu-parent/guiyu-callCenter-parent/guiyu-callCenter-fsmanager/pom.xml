@@ -13,7 +13,15 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-callCenter-fsmanager-api</module>
+        <module>guiyu-callCenter-fsmanager-service</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-callCenter-dal</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>

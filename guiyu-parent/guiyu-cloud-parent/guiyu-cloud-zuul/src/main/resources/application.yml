@@ -26,8 +26,8 @@ zuul:
       path: /dispatch/**
       service-id: guiyu-dispatch-web
     guiyu-nas-web:
-          path: /nas/**
-          service-id: guiyu-nas-web
+      path: /nas/**
+      service-id: guiyu-nas-web
 hystrix:
   command:
     default:

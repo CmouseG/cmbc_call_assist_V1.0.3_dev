@@ -1,40 +1,41 @@
-/** 
- *@Copyright:Copyright (c) 2008 - 2100 
- *@Company:guojaing
- */  
-package com.guiji.common.model;
+package com.guiji.nas.model;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
 /** 
- *@Description: 
- *@Author:weiyunbo
- *@date:2018年6月26日 上午10:41:03
- *@history:
- *@Version:v1.0 
- */
+* @ClassName: SkFileInfo 
+* @Description: 文件上传到文件服务器后返回的文件信息
+* @author: weiyunbo
+* @date 2018年6月12日 下午8:40:38 
+* @version V1.0  
+*/
+@ApiModel(value="skFileInfoRsp对象",description="文件上传到文件服务器后返回的文件信息")
 public class SkFileInfoRsp implements Serializable{
 	private static final long serialVersionUID = 1L;
+	@ApiModelProperty(value="ID",required=true)
 	private String id;
-	//文件名称
+	@ApiModelProperty(value="文件名称",required=true)
 	private String fileName;
-	//文件类型
+	@ApiModelProperty(value="文件类型",example="JPG,JPEG,DOC")
 	private String fileType;
-	//文件业务编号
+	@ApiModelProperty(value="文件业务编号")
 	private String busiId;
-	//文件业务类型
+	@ApiModelProperty(value="文件业务类型")
 	private String busiType;
-	//文件大小
+	@ApiModelProperty(value="文件大小")
 	private double fileSize;
-	//文件系统URL
+	@ApiModelProperty(value="文件系统URL",required=true)
 	private String skUrl;
-	//缩略图URL
+	@ApiModelProperty(value="缩略图URL")
 	private String skThumbImageUrl;
-	//文件上传系统码
+	@ApiModelProperty(value="文件上传系统码")
 	private String sysCode;
-	//文件创建人
+	@ApiModelProperty(value="文件创建人")
 	private String crtUser;
-	//文件创建时间
+	@ApiModelProperty(value="文件创建时间")
 	private String crtTime;
 	/** 
 	 * @return the id 
@@ -190,4 +191,3 @@ public class SkFileInfoRsp implements Serializable{
 	}
 	
 }
-  

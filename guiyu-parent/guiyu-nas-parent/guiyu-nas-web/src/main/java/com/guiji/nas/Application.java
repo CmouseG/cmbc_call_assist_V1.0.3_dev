@@ -1,5 +1,6 @@
 package com.guiji.nas;
 
+import com.guiji.common.result.EnableAutoResultPack;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +12,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@EnableAutoResultPack
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

@@ -18,7 +18,7 @@ public class FeignBuildUtil {
     * @param <T> 请求接口
     * @return
     */
-   public <T> T feignBuilderTarget(Class<T> apiType, String url){
+   public static  <T> T feignBuilderTarget(Class<T> apiType, String url){
       return  Feign.builder()
                .encoder(new JacksonEncoder())
                .decoder(new JacksonDecoder())

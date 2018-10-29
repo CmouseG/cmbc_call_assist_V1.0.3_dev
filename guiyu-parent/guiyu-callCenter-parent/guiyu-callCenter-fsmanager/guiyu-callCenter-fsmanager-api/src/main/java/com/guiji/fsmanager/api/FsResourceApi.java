@@ -14,7 +14,7 @@ public interface FsResourceApi {
 
     @ApiOperation(value = "申请freeswitch资源接口")
     @GetMapping(value="applyfs")
-    public Result.ReturnData applyfs(String serviceId, String serviceType);
+    public Result.ReturnData<FsBind> applyfs(String serviceId, String serviceType);
 
     @ApiOperation(value = "释放freeswitch资源接口")
     @GetMapping(value="releasefs")

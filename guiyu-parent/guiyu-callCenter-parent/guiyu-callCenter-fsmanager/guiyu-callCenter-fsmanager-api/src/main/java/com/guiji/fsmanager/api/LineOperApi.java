@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * @Auther: 黎阳
@@ -30,10 +31,10 @@ public interface LineOperApi {
 
     @ApiOperation(value = "获取线路配置文件接口")
     @GetMapping(value="/linexmlinfos/{lineId}")
-    public Result.ReturnData linexmlinfos(@PathVariable String lineId);
+    public Result.ReturnData<List<LineXmlnfo>> linexmlinfos(@PathVariable String lineId);
 
     @ApiOperation(value = "获取所有配置文件接口")
     @GetMapping(value="/linexmlinfos")
-    public Result.ReturnData  linexmlinfosAll();
+    public Result.ReturnData<List<LineXmlnfo>>  linexmlinfosAll();
 
 }

@@ -14,4 +14,8 @@ public interface TempApi {
     @ApiOperation(value = "下载模板录音")
     @GetMapping(value="downloadtempwav")
     public Result.ReturnData downloadtempwav(String tempId);
+
+    @ApiOperation(value = "模板是否存在")
+    @GetMapping(value="istempexist")
+    public Result.ReturnData<Boolean> istempexist(String tempId);
 }

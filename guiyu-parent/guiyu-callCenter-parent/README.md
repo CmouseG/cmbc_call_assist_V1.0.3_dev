@@ -4,10 +4,9 @@
     ServerUtil.getInstances(discoveryClient,"guiyu-callcenter-ccmanager");
 ```
 
-#####  获取服务自身的instance-id
-```java
-    @Value("${eureka.instance.instance-id}")  
-    private String instanceId;
+#####  获取服务自身的ip和端口
+```
+   使用ServerUtil的方法getUrlSelf(Registration registration)
 ```
 
     

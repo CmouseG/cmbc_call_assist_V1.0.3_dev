@@ -1,5 +1,6 @@
 package com.guiji.ccmanager;
 
+import com.guiji.common.result.EnableAutoResultPack;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableSwagger2
 @EnableFeignClients
+@EnableAutoResultPack
 @MapperScan("com.guiji.*.dao")
 public class CcManagerApplication{
     public static void main(String[] args) {

@@ -1,52 +1,59 @@
 package com.guiji.ccmanager.vo;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class LineInfoVO implements Serializable {
 
-    private Integer lineid;
-    private String linename;
-    private String sipip;
-    private String sipport;
+    private String customerId;
+
+    private String lineName;
+
+    private String sipIp;
+
+    private String sipPort;
+
     private String codec;
-    private String callernum;
-    private String calleeprefix;
-    private Integer maxconcurrentcalls;
+
+    private String callerNum;
+
+    private String calleePrefix;
+
+    private Integer maxConcurrentCalls;
+
     private String remark;
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getLineid() {
-        return lineid;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setLineid(Integer lineid) {
-        this.lineid = lineid;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId == null ? null : customerId.trim();
     }
 
-    public String getLinename() {
-        return linename;
+    public String getLineName() {
+        return lineName;
     }
 
-    public void setLinename(String linename) {
-        this.linename = linename;
+    public void setLineName(String lineName) {
+        this.lineName = lineName == null ? null : lineName.trim();
     }
 
-    public String getSipip() {
-        return sipip;
+    public String getSipIp() {
+        return sipIp;
     }
 
-    public void setSipip(String sipip) {
-        this.sipip = sipip;
+    public void setSipIp(String sipIp) {
+        this.sipIp = sipIp == null ? null : sipIp.trim();
     }
 
-    public String getSipport() {
-        return sipport;
+    public String getSipPort() {
+        return sipPort;
     }
 
-    public void setSipport(String sipport) {
-        this.sipport = sipport;
+    public void setSipPort(String sipPort) {
+        this.sipPort = sipPort == null ? null : sipPort.trim();
     }
 
     public String getCodec() {
@@ -54,31 +61,31 @@ public class LineInfoVO implements Serializable {
     }
 
     public void setCodec(String codec) {
-        this.codec = codec;
+        this.codec = codec == null ? null : codec.trim();
     }
 
-    public String getCallernum() {
-        return callernum;
+    public String getCallerNum() {
+        return callerNum;
     }
 
-    public void setCallernum(String callernum) {
-        this.callernum = callernum;
+    public void setCallerNum(String callerNum) {
+        this.callerNum = callerNum == null ? null : callerNum.trim();
     }
 
-    public String getCalleeprefix() {
-        return calleeprefix;
+    public String getCalleePrefix() {
+        return calleePrefix;
     }
 
-    public void setCalleeprefix(String calleeprefix) {
-        this.calleeprefix = calleeprefix;
+    public void setCalleePrefix(String calleePrefix) {
+        this.calleePrefix = calleePrefix == null ? null : calleePrefix.trim();
     }
 
-    public Integer getMaxconcurrentcalls() {
-        return maxconcurrentcalls;
+    public Integer getMaxConcurrentCalls() {
+        return maxConcurrentCalls;
     }
 
-    public void setMaxconcurrentcalls(Integer maxconcurrentcalls) {
-        this.maxconcurrentcalls = maxconcurrentcalls;
+    public void setMaxConcurrentCalls(Integer maxConcurrentCalls) {
+        this.maxConcurrentCalls = maxConcurrentCalls;
     }
 
     public String getRemark() {
@@ -86,6 +93,26 @@ public class LineInfoVO implements Serializable {
     }
 
     public void setRemark(String remark) {
-        this.remark = remark;
+        this.remark = remark == null ? null : remark.trim();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", customerId=").append(customerId);
+        sb.append(", lineName=").append(lineName);
+        sb.append(", sipIp=").append(sipIp);
+        sb.append(", sipPort=").append(sipPort);
+        sb.append(", codec=").append(codec);
+        sb.append(", callerNum=").append(callerNum);
+        sb.append(", calleePrefix=").append(calleePrefix);
+        sb.append(", maxConcurrentCalls=").append(maxConcurrentCalls);
+        sb.append(", remark=").append(remark);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append("]");
+        return sb.toString();
     }
 }

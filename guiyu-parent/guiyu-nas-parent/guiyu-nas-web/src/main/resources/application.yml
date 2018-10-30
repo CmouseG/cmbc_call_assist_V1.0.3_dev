@@ -11,9 +11,9 @@ spring:
       file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
       location: /  # 上传的临时目录
   datasource:
-    url: jdbc:mysql://localhost:3306/test
-    username: root
-    password: 1234
+    url: jdbc:mysql://47.97.179.12:3306/guiyu_base
+    username: base
+    password: base@1234
     driver-class-name: com.mysql.jdbc.Driver
 
   #数据库连接配置

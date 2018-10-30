@@ -7,6 +7,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.feign.LineOperApiFeign;
 import com.guiji.ccmanager.service.LineInfoService;
+import com.guiji.ccmanager.vo.LineConcurrent;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.common.result.Result;
 import com.guiji.utils.BeanUtil;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,5 +90,18 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineCountExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(Integer.valueOf(id));
         lineCountMapper.deleteByExample(example);
+    }
+
+
+    @Override
+    public List<LineInfo> outLineinfos(String customerId) {
+
+       // 从lineinfos表中读取相应的信息返回即可
+        LineInfoExample example = new LineInfoExample();
+        LineInfoExample.Criteria criteria = example.createCriteria();
+        criteria.andCustomerIdEqualTo(customerId);
+        List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
+
+        return lineInfos;
     }
 }

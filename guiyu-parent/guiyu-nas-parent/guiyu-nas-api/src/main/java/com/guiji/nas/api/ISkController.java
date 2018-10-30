@@ -47,12 +47,12 @@ public interface ISkController {
 	
 	/**
 	 * 删除影像
-	 * @param skId
+	 * @param id
 	 * @return
 	 */
 	@ApiOperation(value="删除文件", notes="根据文件系统ID删除文件信息")
 	@ApiImplicitParams({
-	    @ApiImplicitParam(name="id",value="文件系统ID",required=true)
+	    @ApiImplicitParam(name="skId",value="文件系统ID",required=true)
 	})
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public Result.ReturnData deleteFile(String id);

@@ -15,7 +15,9 @@ import com.guiji.nas.model.SkFileInfoRsp;
 import com.guiji.nas.model.SkFileQueryReq;
 import com.guiji.nas.service.SKService;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.StrUtils;
+import com.thoughtworks.xstream.core.ReferenceByIdMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,7 @@ public class SKServiceImpl implements SKService {
 			skFile.setCrtTime(new Date());	//创建时间
 			skFile.setLstUpdateUser(loginId);	//最后更新人
 			skFile.setLstUpdateTime(new Date()); //最后创建时间
+			skFile.setId(IdGenUtil.uuid());
 			sysFileMapper.insert(skFile);
 			SkFileInfoRsp rsp = new SkFileInfoRsp();
 			//拷贝返回信息

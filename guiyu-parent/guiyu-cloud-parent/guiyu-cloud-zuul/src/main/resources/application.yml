@@ -28,6 +28,9 @@ zuul:
     guiyu-nas-web:
       path: /nas/**
       service-id: guiyu-nas-web
+    guiyu-cache:
+          path: /cache/**
+          service-id: guiyu-cache
 hystrix:
   command:
     default:

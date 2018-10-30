@@ -10,12 +10,12 @@ import com.guiji.common.result.Result.ReturnData;
 public class ErrorController {
 	
 	@RequestMapping("noLogin")
-	public ReturnData noLogin(){
+	public ReturnData<?> noLogin(){
 		return Result.error("0001001");
 	}
 	
 	@RequestMapping("notAuth")
-	public ReturnData notAuth(){
+	public ReturnData<?> notAuth(){
 		return Result.error("0001002");
 	}
 }

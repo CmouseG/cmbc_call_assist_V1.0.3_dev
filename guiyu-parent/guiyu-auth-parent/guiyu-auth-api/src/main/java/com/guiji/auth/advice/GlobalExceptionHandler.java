@@ -21,9 +21,9 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler
     @ResponseBody
-    public ReturnData handleException(Exception e){
+    public ReturnData<?> handleException(Exception e){
 		logger.error("",e);
-		ReturnData result=null;
+		ReturnData<?> result=null;
         if(e instanceof  AccountException){
         	result=Result.error("0001002");
         }else if(e instanceof AuthenticationException){

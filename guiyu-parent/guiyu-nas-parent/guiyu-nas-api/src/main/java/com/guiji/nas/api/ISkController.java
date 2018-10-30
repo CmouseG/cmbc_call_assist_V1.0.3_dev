@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public interface ISkController {
 	    @ApiImplicitParam(name="file",value="文件流",required=true)
 	})
 	@RequestMapping(value = "/sk/uploadFile", method = RequestMethod.POST)
-	public Result.ReturnData uploadFile(SkFileInfoReq skFileInfoReq, MultipartFile file);
+	public Result.ReturnData<SkFileInfoRsp> uploadFile(SkFileInfoReq skFileInfoReq, MultipartFile file);
 	
 	
 	/**
@@ -42,7 +43,7 @@ public interface ISkController {
 	 */
 	@ApiOperation(value="查询文件信息", notes="根据文件系统ID查询文件信息")
 	@RequestMapping(value = "/sk/querySkFileInfo", method = RequestMethod.POST)
-	public Result.ReturnData querySkFileInfo(SkFileQueryReq skFileQueryReq);
+	public Result.ReturnData<List<SkFileInfoRsp>> querySkFileInfo(SkFileQueryReq skFileQueryReq);
 	
 	/**
 	 * 删除影像
@@ -53,7 +54,19 @@ public interface ISkController {
 	@ApiImplicitParams({
 	    @ApiImplicitParam(name="skId",value="文件系统ID",required=true)
 	})
-	@RequestMapping(value = "/sk/deletefile", method = RequestMethod.POST)
-	public Result.ReturnData deletefile(String skId);
+	@RequestMapping(value = "/sk/deleteFile", method = RequestMethod.POST)
+	public Result.ReturnData deleteFile(String skId);
+
+	/**
+	 * 下载影像
+	 * @param url
+	 * @return
+	 */
+	@ApiOperation(value="下载文件", notes="根据文件url下载文件")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="url",value="文件url",required=true)
+	})
+	@RequestMapping(value = "/sk/downloadFile", method = RequestMethod.GET)
+	public Result.ReturnData downloadFile(String url,HttpServletResponse response);
 	
 }

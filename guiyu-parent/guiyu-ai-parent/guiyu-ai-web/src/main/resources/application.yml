@@ -1,5 +1,5 @@
 server:
-  port: 19086
+  port: 18051
 spring:
   application:
     name: guiyu-ai-web
@@ -10,4 +10,4 @@ eureka:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
       service-url:
-        defaultZone: http://guiyu-cloud-registeration:18081/eureka/
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/

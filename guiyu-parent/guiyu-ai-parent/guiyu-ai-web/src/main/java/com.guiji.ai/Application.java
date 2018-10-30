@@ -1,4 +1,4 @@
-package com.guiji.call;
+package com.guiji.ai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

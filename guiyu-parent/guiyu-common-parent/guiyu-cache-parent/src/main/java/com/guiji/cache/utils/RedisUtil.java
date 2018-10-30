@@ -11,12 +11,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- *@Description: 封装redis常用方法
- *@Author:weiyunbo
- *@date:2018年6月21日 下午9:27:57
- *@history:
- *@Version:v1.0
- *
+ * 封装redis常用方法
  */
 @Component
 public class RedisUtil {

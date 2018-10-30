@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>guiyu-callCenter-calloutserver</artifactId>
-
-
+    <packaging>pom</packaging>
+    <modules>
+        <module>guiyu-callCenter-calloutserver-api</module>
+        <module>guiyu-callCenter-calloutserver-service</module>
+    </modules>
 </project>

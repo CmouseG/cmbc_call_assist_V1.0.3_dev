@@ -3,7 +3,7 @@ package com.guiji.fsmanager.entity;
 import java.io.Serializable;
 
 public class LineInfo implements Serializable {
-    private Integer lineId;
+    private String lineId;
 
     private String sipIp;
 
@@ -18,11 +18,11 @@ public class LineInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    public Integer getLineId() {
+    public String getLineId() {
         return lineId;
     }
 
-    public void setLineId(Integer lineId) {
+    public void setLineId(String lineId) {
         this.lineId = lineId;
     }
 

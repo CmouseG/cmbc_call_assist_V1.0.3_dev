@@ -1,0 +1,15 @@
+server:
+  port: 18002
+
+spring:
+  application:
+    name: guiyu-callcenter-fsline
+
+#注册中心配置      
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18000/eureka/

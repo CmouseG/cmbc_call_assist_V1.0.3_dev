@@ -49,4 +49,6 @@ public class LineXmlnfo implements Serializable {
                 ", fileData='" + fileData + '\'' +
                 '}';
     }
+
+
 }

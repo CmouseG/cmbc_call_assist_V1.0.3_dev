@@ -1,8 +1,26 @@
 server:
-  port: 19085
+  port: 18012
 spring:
   application:
     name: guiyu-nas-web
+  http:
+    multipart:
+      enabled: true   # 启用http上传处理
+      max-file-size: 100MB # 设置单个文件的最大长度
+      max-request-size: 100MB # 设置最大的请求文件的大小
+      file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
+      location: /  # 上传的临时目录
+  datasource:
+    url: jdbc:mysql://localhost:3306/test
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.jdbc.Driver
+
+  #数据库连接配置
+  mybatis:
+    mapper-locations: classpath*:mappers/**/*.xml
+  jdbc:
+    type: mysql
 #注册中心配置      
 eureka:
   instance:
@@ -10,4 +28,16 @@ eureka:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
       service-url:
-        defaultZone: http://guiyu-cloud-registeration:18081/eureka/
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+#fastdfs配置
+fdfs:
+  soTimeout: 1500         #获取文件超时时间
+  connectTimeout: 600     #连接超时时间
+  thumbImage:             #缩略图生成参数
+    width: 150
+    height: 150
+  trackerList:            #TrackerList参数,支持多个
+    - 47.96.151.197:22122  #内网172.16.167.213
+  pool:
+    jmx-enabled: false
+  webServerUrl: http://116.62.211.11:8080/

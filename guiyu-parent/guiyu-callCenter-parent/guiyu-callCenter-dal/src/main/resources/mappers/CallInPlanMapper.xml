@@ -127,9 +127,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInPlan" >
-    <selectKey resultType="java.lang.String" keyProperty="callId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_in_plan (call_id, phone_num, customer_id, 
       temp_id, line_id, serverId, 
       agent_id, agent_answer_time, agent_channel_uuid, 
@@ -150,12 +147,11 @@
       #{remarks,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInPlan" >
-    <selectKey resultType="java.lang.String" keyProperty="callId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_in_plan
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      call_id,
+      <if test="callId != null" >
+        call_id,
+      </if>
       <if test="phoneNum != null" >
         phone_num,
       </if>
@@ -230,7 +226,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{callId,jdbcType=VARCHAR},
+      <if test="callId != null" >
+        #{callId,jdbcType=VARCHAR},
+      </if>
       <if test="phoneNum != null" >
         #{phoneNum,jdbcType=VARCHAR},
       </if>

@@ -115,9 +115,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail" >
-    <selectKey resultType="java.lang.Integer" keyProperty="callDetailId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_out_detail (call_detail_id, call_id, accurate_intent, 
       agent_answer_text, agent_answer_time, ai_duration, 
       asr_duration, bot_answer_text, bot_answer_time, 
@@ -130,12 +127,11 @@
       #{reason,jdbcType=VARCHAR}, #{totalDuration,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail" >
-    <selectKey resultType="java.lang.Integer" keyProperty="callDetailId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_out_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      call_detail_id,
+      <if test="callDetailId != null" >
+        call_detail_id,
+      </if>
       <if test="callId != null" >
         call_id,
       </if>
@@ -177,7 +173,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{callDetailId,jdbcType=INTEGER},
+      <if test="callDetailId != null" >
+        #{callDetailId,jdbcType=INTEGER},
+      </if>
       <if test="callId != null" >
         #{callId,jdbcType=VARCHAR},
       </if>

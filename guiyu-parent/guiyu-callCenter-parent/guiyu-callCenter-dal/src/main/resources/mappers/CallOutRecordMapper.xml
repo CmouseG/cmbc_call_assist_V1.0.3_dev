@@ -102,21 +102,17 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutRecord" >
-    <selectKey resultType="java.lang.String" keyProperty="callId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_out_record (call_id, record_file, record_url
       )
     values (#{callId,jdbcType=VARCHAR}, #{recordFile,jdbcType=VARCHAR}, #{recordUrl,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutRecord" >
-    <selectKey resultType="java.lang.String" keyProperty="callId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_out_record
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      call_id,
+      <if test="callId != null" >
+        call_id,
+      </if>
       <if test="recordFile != null" >
         record_file,
       </if>
@@ -125,7 +121,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{callId,jdbcType=VARCHAR},
+      <if test="callId != null" >
+        #{callId,jdbcType=VARCHAR},
+      </if>
       <if test="recordFile != null" >
         #{recordFile,jdbcType=VARCHAR},
       </if>

@@ -1,8 +1,8 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
+import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.LineInfoService;
-import com.guiji.ccmanager.vo.LineConcurrent;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.utils.BeanUtil;
 import io.swagger.annotations.ApiOperation;
@@ -56,18 +56,6 @@ public class LineInfoController {
         return true;
     }
 
-    @ApiOperation(value = "用于获取用户所有的线路列表及并发数")
-    @GetMapping(value="out/lineinfos")
-    public List<LineConcurrent> outLineinfos(String customerId){
 
-        List<LineInfo> lineInfos = lineInfoService.outLineinfos(customerId);
-        List<LineConcurrent> resList = new ArrayList<LineConcurrent>();
-        for(LineInfo lineInfo:lineInfos){
-            LineConcurrent target = new LineConcurrent();
-            BeanUtil.copyProperties(lineInfo,target);
-            resList.add(target);
-        }
-        return resList;
-    }
 
 }

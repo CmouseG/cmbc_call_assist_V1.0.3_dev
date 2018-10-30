@@ -7,7 +7,6 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.feign.LineOperApiFeign;
 import com.guiji.ccmanager.service.LineInfoService;
-import com.guiji.ccmanager.vo.LineConcurrent;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.common.result.Result;
 import com.guiji.utils.BeanUtil;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

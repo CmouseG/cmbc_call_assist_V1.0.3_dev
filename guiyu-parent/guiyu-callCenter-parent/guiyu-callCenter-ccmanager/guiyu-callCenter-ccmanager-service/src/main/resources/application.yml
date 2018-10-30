@@ -1,5 +1,5 @@
 server:
-  port: 19085
+  port: 18004
 spring:
   application:
     name: guiyu-callCenter-ccmanager2

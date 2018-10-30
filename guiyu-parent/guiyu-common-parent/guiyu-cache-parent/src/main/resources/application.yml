@@ -1,5 +1,5 @@
 server:
-  port: 19091
+  port: 18014
 spring:
   application:
     name: guiyu-cache
@@ -31,7 +31,7 @@ eureka:
           status-page-url: http://localhost:18080/eureka//swagger-ui.html
 #网关地址
 gateway:
-   host: http://guiyu-cloud-zuul:18080/
+   host: http://guiyu-cloud-zuul:18000/
 
 ribbon:
   ReadTimeout: 30000 #请求处理的超时时间

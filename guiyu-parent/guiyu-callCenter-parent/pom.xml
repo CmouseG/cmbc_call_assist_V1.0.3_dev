@@ -16,7 +16,6 @@
         <module>guiyu-callCenter-fsline</module>
         <module>guiyu-callCenter-fsagent</module>
         <module>guiyu-callCenter-fsmanager</module>
-        <module>guiyu-callCenter-calloutserver</module>
         <module>guiyu-callCenter-ccmanager</module>
         <module>guiyu-callCenter-calloutserver</module>
     </modules>
@@ -54,16 +53,4 @@
             <version>20.0</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

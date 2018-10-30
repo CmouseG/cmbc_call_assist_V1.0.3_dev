@@ -650,7 +650,6 @@ public final class DateUtil {
 	 *     当前日期20161031 ，目标20161130 tue
 	 *     当前日期20161201 ，目标20161130 false
 	 * @param targetDate 要比较的目标月份
-	 * @throws CommonException 
 	 */
 	public static boolean isBeforeCurrentMonth(String targetDate){
 		if(StrUtils.isEmpty(targetDate)) throw new RuntimeException("日前不能位空");
@@ -689,11 +688,11 @@ public final class DateUtil {
     public static String formatCommonSysDate(String date){
     	return DateUtil.dateToString(DateUtil.stringToDate(date,"yyyyMMdd"),null);
     }
-    
+
     /**
      * 日期转星期
-     * 
-     * @param datetime
+     * @param date
+     * @param weekDays
      * @return
      */
     public static String dateToWeek(Date date,String[] weekDays) {

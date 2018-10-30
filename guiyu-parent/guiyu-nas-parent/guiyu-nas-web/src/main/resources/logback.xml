@@ -40,7 +40,7 @@
     <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/apps/logs/guiyu-nas/sql.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/apps/logs/guiyu-auth/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>/apps/logs/guiyu-nas/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

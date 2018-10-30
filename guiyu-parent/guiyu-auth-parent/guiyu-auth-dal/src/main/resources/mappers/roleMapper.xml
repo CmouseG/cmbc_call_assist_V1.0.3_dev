@@ -23,5 +23,14 @@
 	<select id="getRoles" resultType="role">
 		select id,name from sys_role where del_flag=0
 	</select>
+	
+	<insert id="addMenus">
+		delete from sys_menu_role where role_id=#{roleId};
+		insert into sys_menu_role(role_id,menu_id,create_time,update_time) values
+		<foreach collection="menuIds" item="item" separator=",">
+		(#{roleId},#{item},now(),now())
+		</foreach>
+		;
+	</insert>
 </mapper>
 

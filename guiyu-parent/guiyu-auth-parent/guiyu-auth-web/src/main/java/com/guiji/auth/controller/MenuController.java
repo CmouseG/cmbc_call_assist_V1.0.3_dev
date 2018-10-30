@@ -1,9 +1,12 @@
 package com.guiji.auth.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.entity.MenuTree;
 import com.guiji.auth.service.MenuService;
 import com.guiji.user.dao.entity.Menu;
 
@@ -34,13 +37,8 @@ public class MenuController {
 		return service.getMenuById(id);
 	}
 	
-	@RequestMapping("test")
-	public String test(){
-		return "ss33";
-	}
-	
-	@RequestMapping("test23")
-	public void test2(){
-		System.out.println("sdfsd");
+	@RequestMapping("getMenus")
+	public List<MenuTree> getMenus(String userId){
+		return service.getMenus(userId);
 	}
 }

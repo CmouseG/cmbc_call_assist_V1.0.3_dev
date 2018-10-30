@@ -16,23 +16,33 @@ public class RoleController {
 	@Autowired
 	private RoleService service;
 	
+	@RequestMapping("insert")
 	public void insert(Role role){
 		service.insert(role);
 	}
 	
+	@RequestMapping("delete")
 	public void delete(String id){
 		service.delete(id);
 	}
 	
+	@RequestMapping("update")
 	public void update(Role role){
 		service.update(role);
 	}
 	
+	@RequestMapping("getRoleId")
 	public Role getRoleId(String id){
 		return service.getRoleId(id);
 	}
 	
+	@RequestMapping("getRoles")
 	public List<Role> getRoles(){
 		return service.getRoles();
+	}
+	
+	@RequestMapping("addMenus")
+	public void addMenus(String roleId,String[] menuIds){
+		service.addMenus(roleId,menuIds);
 	}
 }

@@ -10,7 +10,8 @@ package com.guiji.nas.constants;
  */
 public enum SKErrorEnum {
 	QUERY_NULL("0700001","文件查询请求信息附件ID、业务ID不能都为空"),
-	UPLOAD_ERROR("0700002","文件上传失败！");
+	UPLOAD_ERROR("0700002","文件上传失败！"),
+	DOWNLOAD_ERROR("0700003","文件下载失败！");
 	
 	//返回码
     private String errorCode;  

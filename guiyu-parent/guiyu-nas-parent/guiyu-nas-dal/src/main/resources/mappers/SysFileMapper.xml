@@ -113,15 +113,15 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.nas.dao.entity.SysFile" >
-    insert into sys_file (id, FILE_NAME, BUSI_ID, 
+    insert into sys_file(id, FILE_NAME, BUSI_ID,
       BUSI_TYPE, FILE_TYPE, FILE_SIZE, 
       SK_URL, SK_THUMB_IMAGE_URL, SYS_CODE, 
       CRT_USER, CRT_TIME, LST_UPDATE_USER, 
       LST_UPDATE_TIME)
-    values (#{id,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
-      #{busiType,jdbcType=CHAR}, #{fileType,jdbcType=CHAR}, #{fileSize,jdbcType=DOUBLE}, 
-      #{skUrl,jdbcType=VARCHAR}, #{skThumbImageUrl,jdbcType=VARCHAR}, #{sysCode,jdbcType=VARCHAR}, 
-      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR},
+      #{busiType,jdbcType=CHAR}, #{fileType,jdbcType=CHAR}, #{fileSize,jdbcType=DOUBLE},
+      #{skUrl,jdbcType=VARCHAR}, #{skThumbImageUrl,jdbcType=VARCHAR}, #{sysCode,jdbcType=VARCHAR},
+      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR},
       #{lstUpdateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.nas.dao.entity.SysFile" >

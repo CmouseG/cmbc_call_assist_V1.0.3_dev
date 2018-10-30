@@ -27,10 +27,4 @@ public interface SysDictMapper {
     int updateByPrimaryKeySelective(SysDict record);
 
     int updateByPrimaryKey(SysDict record);
-
-    List<String> findTypeList(SysDict sysDict);
-
-    String getLabel(SysDict sysDict);
-
-    String findTypeLabel(SysDict sysDict);
 }

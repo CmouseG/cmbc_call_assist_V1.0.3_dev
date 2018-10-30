@@ -1,5 +1,5 @@
 server:
-  port: 19081
+  port: 18011
 #myconfig
 spring:
   application:
@@ -19,40 +19,55 @@ spring:
     testWhileIdle: true  
     testOnBorrow: false  
     testOnReturn: false    
+  redis:
+    database: 0
+    host: localhost
+    password: 123456
+    port: 6379  
+    pool:
+      max-active: 8
+      max-wait: -1
+      min-idle: 0
+      max-idle: 8
+  cache:
+    type: redis
+    cache-names: shiro.session,shiro.time 
     
 mybatis:   
   mapperLocations: classpath*:mappers/*.xml  
   config-location: classpath:config/mybatis-config.xml      
+  
+
 #注册中心配置      
-#eureka:
-#  instance:
-#    prefer-ip-address: true
-#    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-#    ##续约更新时间间隔设置5秒，m默认30s
-#    lease-renewal-interval-in-seconds: 5
-#    ##续约到期时间10秒，默认是90秒
-#    lease-expiration-duration-in-seconds: 10
-#  client:
-#      service-url:
-#        defaultZone: http://guiyu-cloud-registeration:18081/eureka/
-#      instance:
-#          status-page-url: http://localhost:18080/eureka//swagger-ui.html
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+      instance:
+          status-page-url: http://localhost:18000/eureka//swagger-ui.html
 ##网关地址
-#gateway:
-#   host: http://guiyu-cloud-zuul:18080/
-#
-#ribbon:
-#  ReadTimeout: 30000 #请求处理的超时时间
-#  ConnectTimeout: 30000  #请求连接的超时时间
-#  MaxAutoRetries: 0   #对当前实例的重试次数
-#  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
-#  eureka:
-#    enabled: true
-#endpoints:
-#  health:
-#    sensitive: false
-#    enabled: true
-#management:
-#  security:
-#    enabled: false 
+gateway:
+   host: http://guiyu-cloud-zuul:18000/
+
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
 

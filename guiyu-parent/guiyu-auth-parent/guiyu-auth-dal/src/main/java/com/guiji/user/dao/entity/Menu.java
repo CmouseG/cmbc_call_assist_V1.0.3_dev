@@ -10,6 +10,7 @@ public class Menu {
 	private String permission;
 	private String type;
 	private String appid;
+	private String level;
 	private String remarks;
 	
 	public String getId() {
@@ -65,6 +66,12 @@ public class Menu {
 	}
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+	public String getLevel() {
+		return level;
+	}
+	public void setLevel(String level) {
+		this.level = level;
 	}
 	
 }

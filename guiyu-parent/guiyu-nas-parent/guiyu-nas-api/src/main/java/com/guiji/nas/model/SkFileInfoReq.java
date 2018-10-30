@@ -15,7 +15,7 @@ import java.io.Serializable;
 @ApiModel(value="skFileInfoReq对象",description="文件上传文件服务器时，除文件流外，其他附带信息")
 public class SkFileInfoReq implements Serializable{
 private static final long serialVersionUID = 1L;
-	@ApiModelProperty(value="文件上传系统码",example="如：aiSale.customer")
+	@ApiModelProperty(value="文件上传系统码",example="如：guiyu.robot")
 	private String sysCode;
 	@ApiModelProperty(value="上传的影像文件关联的业务ID")
 	private String busiId;

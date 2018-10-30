@@ -14,8 +14,6 @@ public class SysDict implements Serializable {
 
     private String description;
 
-    private Long pid;
-
     private String remarks;
 
     private String delFlag;
@@ -66,14 +64,6 @@ public class SysDict implements Serializable {
         this.description = description == null ? null : description.trim();
     }
 
-    public Long getPid() {
-        return pid;
-    }
-
-    public void setPid(Long pid) {
-        this.pid = pid;
-    }
-
     public String getRemarks() {
         return remarks;
     }
@@ -117,7 +107,6 @@ public class SysDict implements Serializable {
         sb.append(", dictValue=").append(dictValue);
         sb.append(", dictType=").append(dictType);
         sb.append(", description=").append(description);
-        sb.append(", pid=").append(pid);
         sb.append(", remarks=").append(remarks);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", createTime=").append(createTime);

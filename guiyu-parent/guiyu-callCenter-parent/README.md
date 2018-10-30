@@ -1,18 +1,16 @@
-
 ## 测试服务器 ##
 部署路径：/home/apps/callcenter
 
-### 端口分配 ###
-euraka：18000    
-fsmanager：18001    
-fsline：18002   
-ccmanager：18003    
-calloutserver：18004    
+### 端口分配 ###    
+fsmanager：18021    
+fsline：18022   
+ccmanager：18023    
+calloutserver：18024    
 
-fsagent2：18006    
-freeswitch esl2：18007    
-fsagent1：18008    
-freeswitch esl1：18009    
+fsagent2：18026    
+freeswitch esl2：18027    
+fsagent1：18028    
+freeswitch esl1：18029    
     
 ## 错误码 ##
 ### 错误码格式 ###
@@ -44,3 +42,6 @@ freeswitch esl1：18009
 
 ### 获取服务自身的ip和端口 ###
 使用ServerUtil的方法getUrlSelf(Registration registration)
+
+### 请求动态url的接口 ###
+使用FeignBuildUtil的方法feignBuilderTarget(Class<T> apiType, String url)

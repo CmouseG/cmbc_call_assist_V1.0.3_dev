@@ -1,5 +1,5 @@
 server:
-  port: 18081
+  port: 18001
 spring:
   application:
     name: guiyu-cloud-registeration

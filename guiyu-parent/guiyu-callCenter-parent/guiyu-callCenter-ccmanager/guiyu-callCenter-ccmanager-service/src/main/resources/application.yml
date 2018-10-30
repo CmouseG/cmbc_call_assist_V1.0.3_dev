@@ -1,12 +1,14 @@
 server:
-  port: 18004
+  port: 18003
 spring:
   application:
-    name: guiyu-callCenter-ccmanager2
+    name: guiyu-callCenter-ccmanager
   datasource:
+  #内网
+    #url: jdbc:mysql://172.16.167.215:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8
     url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8
-    username: root
-    password: guiyu@1234
+    username: callcenter
+    password: callcenter@1234
     driver-class-name: com.mysql.jdbc.Driver
 #数据库连接配置
 mybatis:
@@ -21,4 +23,4 @@ eureka:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
       service-url:
-        defaultZone: http://127.0.0.1:18081/eureka/
+        defaultZone: http://127.0.0.1:18000/eureka/

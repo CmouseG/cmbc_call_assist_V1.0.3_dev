@@ -1,5 +1,5 @@
 server:
-  port: 18080
+  port: 18000
 spring:
   application:
     name: guiyu-cloud-zuul
@@ -11,9 +11,9 @@ eureka:
     lease-expiration-duration-in-seconds: 10
   client:
       service-url:
-        defaultZone: http://guiyu-cloud-registeration:18081/eureka/
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
       instance:
-          status-page-url: http://localhost:18080/swagger-ui.html
+          status-page-url: http://localhost:18000/swagger-ui.html
 ##网关地址
 #gateway:
 #   host: http://guiyu-cloud-zuul:18080/

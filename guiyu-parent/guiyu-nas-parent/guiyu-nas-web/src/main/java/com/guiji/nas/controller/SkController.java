@@ -76,6 +76,7 @@ public class SkController implements ISkController {
      */
 	@Override
 	public Result.ReturnData<List<SkFileInfoRsp>> querySkFileInfo(SkFileQueryReq skFileQueryReq) {
+		logger.info("开始查询!");
 		List<SysFile> fileList = skService.querySkFileByCondition(skFileQueryReq);
 		if(fileList != null) {
 			List<SkFileInfoRsp> fileRspList = new ArrayList<SkFileInfoRsp>();
@@ -94,12 +95,13 @@ public class SkController implements ISkController {
 			}
 			return Result.ok(fileRspList);
 		}
+		logger.info("完成查询!");
 		return Result.ok();
 	}
 
 	@Override
-	public Result.ReturnData deleteFile(String skId) {
-		skService.deleteById(skId);
+	public Result.ReturnData deleteFile(String id) {
+		skService.deleteById(id);
 		return Result.ok();
 	}
 

@@ -32,7 +32,7 @@ public interface ISkController {
 	@ApiImplicitParams({
 	    @ApiImplicitParam(name="file",value="文件流",required=true)
 	})
-	@RequestMapping(value = "/sk/uploadFile", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public Result.ReturnData<SkFileInfoRsp> uploadFile(SkFileInfoReq skFileInfoReq, MultipartFile file);
 	
 	
@@ -42,7 +42,7 @@ public interface ISkController {
 	 * @return
 	 */
 	@ApiOperation(value="查询文件信息", notes="根据文件系统ID查询文件信息")
-	@RequestMapping(value = "/sk/querySkFileInfo", method = RequestMethod.POST)
+	@RequestMapping(value = "/query", method = RequestMethod.POST)
 	public Result.ReturnData<List<SkFileInfoRsp>> querySkFileInfo(SkFileQueryReq skFileQueryReq);
 	
 	/**
@@ -52,10 +52,10 @@ public interface ISkController {
 	 */
 	@ApiOperation(value="删除文件", notes="根据文件系统ID删除文件信息")
 	@ApiImplicitParams({
-	    @ApiImplicitParam(name="skId",value="文件系统ID",required=true)
+	    @ApiImplicitParam(name="id",value="文件系统ID",required=true)
 	})
-	@RequestMapping(value = "/sk/deleteFile", method = RequestMethod.POST)
-	public Result.ReturnData deleteFile(String skId);
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public Result.ReturnData deleteFile(String id);
 
 	/**
 	 * 下载影像
@@ -66,7 +66,7 @@ public interface ISkController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name="url",value="文件url",required=true)
 	})
-	@RequestMapping(value = "/sk/downloadFile", method = RequestMethod.GET)
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
 	public Result.ReturnData downloadFile(String url,HttpServletResponse response);
 	
 }

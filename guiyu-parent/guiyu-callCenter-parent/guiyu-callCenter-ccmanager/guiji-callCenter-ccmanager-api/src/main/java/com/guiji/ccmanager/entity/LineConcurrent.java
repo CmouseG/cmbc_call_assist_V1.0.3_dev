@@ -1,4 +1,4 @@
-package com.guiji.ccmanager.vo;
+package com.guiji.ccmanager.entity;
 
 /**
  * @Auther: 黎阳

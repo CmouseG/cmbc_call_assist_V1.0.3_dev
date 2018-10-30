@@ -1,18 +1,10 @@
 package com.guiji.ccmanager.controller;
 
-import com.guiji.ccmanager.feign.LineOperApiFeign;
 import com.guiji.common.result.Result;
-import com.guiji.fsmanager.api.LineOperApi;
-import com.guiji.fsmanager.entity.LineInfo;
-import com.guiji.fsmanager.entity.LineXmlnfo;
-import com.guiji.utils.FeignBuildUtil;
-import feign.RequestLine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 /**
  * @Auther: 黎阳

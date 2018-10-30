@@ -1,7 +1,6 @@
 package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.ccmanager.vo.LineConcurrent;
 import com.guiji.ccmanager.vo.LineInfoVO;
 
 import java.util.List;

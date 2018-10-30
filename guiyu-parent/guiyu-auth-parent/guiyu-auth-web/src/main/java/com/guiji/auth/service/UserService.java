@@ -44,4 +44,13 @@ public class UserService {
 	public void changeStatus(User user){
 		mapper.changeStatus(user);
 	}
+	
+	/**
+	 * 添加角色
+	 * @param userId
+	 * @param roleIds
+	 */
+	public void addRole(String userId,String[] roleIds){
+		mapper.addRole(userId,roleIds);
+	}
 }

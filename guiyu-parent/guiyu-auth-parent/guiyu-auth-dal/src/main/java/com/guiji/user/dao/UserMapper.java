@@ -1,6 +1,9 @@
 package com.guiji.user.dao;
 
+import java.util.Set;
+
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.guiji.user.dao.entity.User;
 
@@ -30,5 +33,19 @@ public interface UserMapper {
 	 * @param user
 	 */
 	public void changeStatus(User user);
+	
+	
+	/**
+	 * 获取用户的权限
+	 */
+	public Set<String> getPermissions(String principal);
+	
+	/**
+	 * 获取用户的密码
+	 */
+	public String getPassword(String principal);
+	
+	
+	public void addRole(@Param("userId")String userId,@Param("roleIds")String[] roleIds);
 	
 }

@@ -19,10 +19,25 @@ spring:
     testWhileIdle: true  
     testOnBorrow: false  
     testOnReturn: false    
+  redis:
+    database: 0
+    host: localhost
+    password: 123456
+    port: 6379  
+    pool:
+      max-active: 8
+      max-wait: -1
+      min-idle: 0
+      max-idle: 8
+  cache:
+    type: redis
+    cache-names: shiro.session,shiro.time 
     
 mybatis:   
   mapperLocations: classpath*:mappers/*.xml  
   config-location: classpath:config/mybatis-config.xml      
+  
+
 #注册中心配置      
 #eureka:
 #  instance:

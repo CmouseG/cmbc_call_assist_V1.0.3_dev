@@ -33,4 +33,8 @@ public class RoleService {
 	public List<Role> getRoles(){
 		return mapper.getRoles();
 	}
+	
+	public void addMenus(String roleId,String[] menuIds){
+		mapper.addMenus(roleId,menuIds);
+	}
 }

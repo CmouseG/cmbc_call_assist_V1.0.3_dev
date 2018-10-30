@@ -11,15 +11,36 @@
 	
 	
 	<update id="changePassword">
-		update sys_user set password=#{password} where id=#{id}
+		update sys_user set password=#{password},update_time=now() where id=#{id}
 	</update>
 	
 	<update id="delete">
-		update sys_user set del_flag=1 where id=#{id}
+		update sys_user set del_flag=1,update_time=now() where id=#{id}
 	</update>
 	
 	<update id="changeStatus">
-		update sys_user set status=#{status} where id=#{id}
+		update sys_user set status=#{status},update_time=now() where id=#{id}
 	</update>
+	
+	<select id="getPassword" resultType="string">
+		select password from sys_user where username=#{userName}
+	</select>
+	
+	<select id="getPermissions" resultType="string">
+		select d.permission from sys_user a 
+		LEFT JOIN sys_role_user b on a.id=b.user_id
+		LEFT JOIN sys_menu_role c on b.role_id =c.role_id
+		LEFT JOIN sys_menu d on d.id=c.menu_id
+		where a.username=#{userName} and d.permission is not null
+	</select>
+	
+	<insert id="addRole">
+		delete from sys_role_user where user_id=#{userId};
+		insert into sys_role_user(user_id,role_id,create_time) values
+		<foreach collection="roleIds" item="item" separator=",">
+		(#{userId},#{item},now())
+		</foreach>
+		;
+	</insert>
 </mapper>
 

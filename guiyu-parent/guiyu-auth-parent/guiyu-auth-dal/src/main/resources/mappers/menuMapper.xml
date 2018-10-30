@@ -5,8 +5,8 @@
 <mapper namespace="com.guiji.user.dao.MenuMapper">
 	
 	<insert id="insert">
-		insert into sys_menu(name,description,url,permission,type,appid,remarks,create_time) 
-		values(#{name},#{description},#{url},#{permission},#{type},#{appid},#{remarks},now())
+		insert into sys_menu(name,description,pid,url,permission,type,level,appid,remarks,create_time) 
+		values(#{name},#{description},#{pid},#{url},#{permission},#{type},#{level},#{appid},#{remarks},now())
 	</insert>
 	
 	<update id="delete">
@@ -14,15 +14,25 @@
 	</update>
 	
 	<update id="update">
-		update sys_menu set name=#{name},description=#{description},url=#{url},
+		update sys_menu set name=#{name},description=#{description},url=#{url},pid=#{pid},level=#{level},
 		permission=#{permission},type=#{type},appid=#{appid},remarks=#{remarks},update_time=now() 
 		where id=#{id}
 	</update>
 	
 	<select id="getMenuById" resultType="menu">
-		select name,description,url,permission,type,appid,remarks 
+		select id,name,description,pid,url,permission,type,level,appid,remarks
+		from sys_menu
 		where id=#{id} and del_flag=0
 	</select>
 	
+	<select id="getMenuByUserId" resultType="menu">
+		select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
+		from sys_user a
+		LEFT JOIN sys_role_user b on a.id=b.user_id
+		LEFT JOIN sys_menu_role c on b.role_id=c.role_id
+		LEFT JOIN sys_menu d on d.id=c.menu_id
+		where a.id=1 and d.del_flag=0
+		ORDER by pid
+	</select>
 </mapper>
 

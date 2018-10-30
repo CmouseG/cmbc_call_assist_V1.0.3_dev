@@ -1,5 +1,6 @@
 package com.guiji.dict;
 
+import com.guiji.common.result.EnableAutoResultPack;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +14,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@EnableAutoResultPack
 public class DictApplication {
     public static void main(String[] args) {
         SpringApplication.run(DictApplication.class, args);

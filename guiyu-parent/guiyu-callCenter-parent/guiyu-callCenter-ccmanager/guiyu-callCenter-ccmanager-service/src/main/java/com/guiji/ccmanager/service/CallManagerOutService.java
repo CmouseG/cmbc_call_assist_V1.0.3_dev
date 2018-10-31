@@ -1,5 +1,7 @@
 package com.guiji.ccmanager.service;
 
+import com.guiji.common.result.Result;
+
 /**
  * @Auther: 黎阳
  * @Date: 2018/10/30 0030 13:45
@@ -7,5 +9,5 @@ package com.guiji.ccmanager.service;
  */
 public interface CallManagerOutService {
 
-    public void startcallplan(String customerId, String tempId, String lineId);
+    public Result.ReturnData<Object> startcallplan(String customerId, String tempId, String lineId);
 }

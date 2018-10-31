@@ -55,8 +55,12 @@ public class CallManagerOutApiController implements ICallManagerOutApi {
             return Result.error(Constant.ERROR_PARAM);
         }
 
-        callManagerOutService.startcallplan(customerId,tempId,lineId);
+        Result.ReturnData<Object>  result = callManagerOutService.startcallplan(customerId,tempId,lineId);
+        if(result.getCode().equals(Constant.SUCCESS_COMMON)){
+            return Result.ok(true);
+        }else{
+            return Result.error(result.getCode());
+        }
 
-        return Result.ok(true);
     }
 }

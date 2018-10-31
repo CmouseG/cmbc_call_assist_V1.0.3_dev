@@ -22,5 +22,19 @@ public class Constant {
     public static final String SERVER_NAME_FSLINE = "guiyu-callcenter-fsline";
 
     public static final String ERROR_PARAM = "0303001";
+    public static final String ERROR_LINE_NOTEXIST = "0303002";
+    public static final String ERROR_LINE_RUNNING = "0303003";
+    public static final String ERROR_TEMP_NOTEXIST = "0303004";
+
+
+
+
+    public static final int CALLSTATE_INIT = 0;//刚加入的计划，等待调度
+    public static final int CALLSTATE_SCHEDULED = 1;//被排入呼叫计划，等待FreeSWITCH返回通道状态
+    public static final int CALLSTATE_PROGRESS = 2;//呼叫振铃
+    public static final int CALLSTATE_ANSWER = 3;//呼叫被接听
+    public static final int CALLSTATE_TO_AGENT = 4;//转人工
+    public static final int CALLSTATE_AGENT_ANSWER = 5;//座席应答管段刚加入的计划，等待调度
+    public static final int CALLSTATE_HANGUP = 6;//挂断
 
 }

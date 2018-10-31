@@ -1,8 +1,12 @@
 package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.CallOutPlanMapper;
+import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
+import com.guiji.callcenter.dao.entity.LineInfo;
+import com.guiji.calloutserver.api.ICallPlanApi;
+import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.feign.TempApiFeign;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.common.result.Result;
@@ -20,29 +24,43 @@ import java.util.List;
 public class CallManagerOutServiceImpl implements CallManagerOutService {
 
     @Autowired
+    private LineInfoMapper lineInfoMapper;
+    @Autowired
     private CallOutPlanMapper callOutPlanMapper;
     @Autowired
     private TempApiFeign tempApiFeign;
+    @Autowired
+    private ICallPlanApi callPlanApi;
+
 
     @Override
-    public void startcallplan(String customerId, String tempId, String lineId) {
+    public Result.ReturnData<Object> startcallplan(String customerId, String tempId, String lineId) {
 
-        //根据customerId、tempId、lineId到callplan表中查询是否已存在计划中、拨打中的任务，有则退出后续处理
+        //根据线路id到lineinfo表中查询线路是否存在，不存在则返回线路不存在错误，并报警
+        LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(Integer.parseInt(lineId));
+        if(lineInfoDB==null){
+            return Result.error(Constant.ERROR_LINE_NOTEXIST);
+        }
+        //到calloutplan中查询该线路是否存在待呼叫或进行中的计划，存在则返回线路繁忙错误，并报警
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
-        criteria.andCustomerIdEqualTo(customerId);
-        criteria.andTempIdEqualTo(tempId);
         criteria.andLineIdEqualTo(Integer.valueOf(lineId));
+        criteria.andCallStateBetween(Constant.CALLSTATE_INIT,Constant.CALLSTATE_AGENT_ANSWER);
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);
-        if(existList==null || existList.size()==0){
-            return;
+        if(existList!=null && existList.size()>0){
+            return Result.error(Constant.ERROR_LINE_RUNNING);
         }
 
-        //收到请求后，调用fsmanager下载模板录音
-        Result.ReturnData result = tempApiFeign.downloadtempwav(tempId);
-
-        //根据线路id获取并发数
-        //下载完成后，调用调度中心的获取客户呼叫计划(请求数=并发数)，获取初始呼叫计划
-        //发起呼叫，在每通呼叫挂断后请求新的计划（请求数=1）
+        //调用fsmanager的模板是否存在接口，模板不存在处理如下
+        Result.ReturnData<Boolean> resultTemp = tempApiFeign.istempexist(tempId);
+        if(resultTemp.getCode().equals(Constant.SUCCESS_COMMON) && resultTemp.getBody() == false){
+            //返回模板不存在错误，并报警
+//            return Result.error(Constant.ERROR_TEMP_NOTEXIST);
+            //调用fsmanager的下载模板接口
+            Result.ReturnData result = tempApiFeign.downloadtempwav(tempId);
+        }
+        //调用所有calloutserver的启动客户呼叫计划接口
+        Result.ReturnData result = callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+        return result;
     }
 }

@@ -13,5 +13,8 @@ public interface LineService {
 
     public void editLineinfos(String filePath,String lineId,LineInfo lineInfo) throws Exception;
 
-    public List<LineXmlnfo> linexmlinfos(String lineId) ;
+    public List<LineXmlnfo> linexmlinfos(String filepath,String lineId) ;
+
+    public List<LineXmlnfo> linexmlinfosAll(String filepath) ;
+
 }

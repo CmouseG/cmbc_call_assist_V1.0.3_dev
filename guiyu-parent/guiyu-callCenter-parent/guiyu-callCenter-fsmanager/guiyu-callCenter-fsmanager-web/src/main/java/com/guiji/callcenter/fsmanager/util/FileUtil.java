@@ -1,6 +1,9 @@
 package com.guiji.callcenter.fsmanager.util;
 
+import sun.misc.BASE64Encoder;
+
 import java.io.File;
+import java.io.FileInputStream;
 
 public class FileUtil {
     /**
@@ -22,5 +25,20 @@ public class FileUtil {
         File file = new File(fileName);
         return file.exists();
     }
+
+    /**
+     * 将文件转换为base64
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    public  static  String fileToBase64(String fileName) throws Exception{
+         FileInputStream inputFile  = new FileInputStream(fileName);
+         byte[] buffer = new byte[(int)fileName.length()];
+         inputFile.read(buffer);
+         inputFile.close();
+         return  new BASE64Encoder().encode(buffer);
+    }
+
 
 }

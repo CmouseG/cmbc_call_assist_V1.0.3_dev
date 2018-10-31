@@ -10,14 +10,13 @@ import com.guiji.nas.dao.SysFileMapper;
 import com.guiji.nas.dao.entity.SysFile;
 import com.guiji.nas.dao.entity.SysFileExample;
 import com.guiji.nas.exception.SKException;
-import com.guiji.nas.model.SkFileInfoReq;
-import com.guiji.nas.model.SkFileInfoRsp;
-import com.guiji.nas.model.SkFileQueryReq;
-import com.guiji.nas.service.SKService;
+import com.guiji.nas.service.NasService;
+import com.guiji.nas.vo.SysFileQueryReqVO;
+import com.guiji.nas.vo.SysFileReqVO;
+import com.guiji.nas.vo.SysFileRspVO;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.StrUtils;
-import com.thoughtworks.xstream.core.ReferenceByIdMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,8 @@ import java.util.List;
  * SK文件系统服务
  */
 @Service
-public class SKServiceImpl implements SKService {
-	static Logger logger = LoggerFactory.getLogger(SKServiceImpl.class);
+public class NasServiceImpl implements NasService {
+	static Logger logger = LoggerFactory.getLogger(NasServiceImpl.class);
 	@Resource  
     private FastDFSClientImpl fwc;
 	@Autowired
@@ -48,12 +47,12 @@ public class SKServiceImpl implements SKService {
 	 * 文件上传
 	 * 1、先上传
 	 * 2、再更新本地表
-	 * @param skFileInfoReq
+	 * @param sysFileReqVO
 	 * @param file
-	 * @return SkFileInfoRsp
+	 * @return SysFileRspVO
 	 * @throws IOException 
 	 */
-	public SkFileInfoRsp uploadFile(SkFileInfoReq skFileInfoReq, MultipartFile file) throws IOException {
+	public SysFileRspVO uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file) throws IOException {
 		if(file != null) {
 			//1、先上传FS，然后再本地进行保存
 			//2、保存文件信息到本地表
@@ -64,14 +63,14 @@ public class SKServiceImpl implements SKService {
 			logger.info("附件上传成功..."+url);
 			String thumbUrl = null;	//缩略图URL
 			SysFile skFile = new SysFile();
-			if(skFileInfoReq != null) {
-				if(SKConstants.THUMB_IMAGE_FILAG_Y.equals(skFileInfoReq.getThumbImageFlag()) && isPic(ext)) {
+			if(sysFileReqVO != null) {
+				if(SKConstants.THUMB_IMAGE_FILAG_Y.equals(sysFileReqVO.getThumbImageFlag()) && isPic(ext)) {
 					//如果上传时要求生成缩略图，且上传文件为图片，那么生成缩略图
 					thumbUrl = fwc.uploadImageAndCrtThumbImage(file);//小图  
 				}
-				skFile.setBusiId(skFileInfoReq.getBusiId()); //业务ID
-				skFile.setBusiType(skFileInfoReq.getBusiType()); //文件类型（业务类型）
-				skFile.setSysCode(skFileInfoReq.getSysCode()); //系统代码
+				skFile.setBusiId(sysFileReqVO.getBusiId()); //业务ID
+				skFile.setBusiType(sysFileReqVO.getBusiType()); //文件类型（业务类型）
+				skFile.setSysCode(sysFileReqVO.getSysCode()); //系统代码
 			}
 			skFile.setFileName(fileName); //文件名称
 			skFile.setFileSize(Double.longBitsToDouble(file.getSize())); //文件大小
@@ -85,7 +84,7 @@ public class SKServiceImpl implements SKService {
 			skFile.setLstUpdateTime(new Date()); //最后创建时间
 			skFile.setId(IdGenUtil.uuid());
 			sysFileMapper.insert(skFile);
-			SkFileInfoRsp rsp = new SkFileInfoRsp();
+			SysFileRspVO rsp = new SysFileRspVO();
 			//拷贝返回信息
 			BeanUtil.copyProperties(skFile, rsp);
 			return rsp;
@@ -119,14 +118,14 @@ public class SKServiceImpl implements SKService {
 	/**
 	 * 根据条件查询文件信息列表
 	 * @date:2018年6月25日 下午10:14:17 
-	 * @param skFileQueryReq
-	 * @return List<SkFileInfo>
+	 * @param sysFileQueryReqVO
+	 * @return List<SysFile>
 	 */
-	public List<SysFile> querySkFileByCondition(SkFileQueryReq skFileQueryReq){
-		String id = skFileQueryReq.getId();
-		String sysCode = skFileQueryReq.getSysCode();
-		String busiId = skFileQueryReq.getBusiId();
-		String busiType = skFileQueryReq.getBusiType();
+	public List<SysFile> querySkFileByCondition(SysFileQueryReqVO sysFileQueryReqVO){
+		String id = sysFileQueryReqVO.getId();
+		String sysCode = sysFileQueryReqVO.getSysCode();
+		String busiId = sysFileQueryReqVO.getBusiId();
+		String busiType = sysFileQueryReqVO.getBusiType();
 		if(StrUtils.isEmpty(id) && StrUtils.isEmpty(busiId)) {
 			logger.error("附件请求信息附件ID、业务ID不能都为空!");
     		//注册信息为空异常

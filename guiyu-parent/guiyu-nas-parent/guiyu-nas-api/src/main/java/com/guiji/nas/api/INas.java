@@ -1,9 +1,10 @@
 package com.guiji.nas.api;
 
 import com.guiji.common.result.Result;
-import com.guiji.nas.model.SkFileInfoReq;
-import com.guiji.nas.model.SkFileInfoRsp;
-import com.guiji.nas.model.SkFileQueryReq;
+import com.guiji.common.result.Result.ReturnData;
+import com.guiji.nas.vo.SysFileQueryReqVO;
+import com.guiji.nas.vo.SysFileReqVO;
+import com.guiji.nas.vo.SysFileRspVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,10 +22,10 @@ import java.util.List;
  */
 @Api(tags="影像系统接口")
 @FeignClient("nas")
-public interface ISkController {
+public interface INas {
 	/**
 	 * 文件上传文件服务器
-	 * @param skFileInfoReq
+	 * @param sysFileReqVO
 	 * @param file
 	 * @return
 	 */
@@ -33,17 +34,17 @@ public interface ISkController {
 	    @ApiImplicitParam(name="file",value="文件流",required=true)
 	})
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public Result.ReturnData<SkFileInfoRsp> uploadFile(SkFileInfoReq skFileInfoReq, MultipartFile file);
+	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file);
 	
 	
 	/**
 	 * 根据文件系统ID查询文件信息
-	 * @param skFileQueryReq
+	 * @param sysFileQueryReqVO
 	 * @return
 	 */
 	@ApiOperation(value="查询文件信息", notes="根据文件系统ID查询文件信息")
 	@RequestMapping(value = "/query", method = RequestMethod.POST)
-	public Result.ReturnData<List<SkFileInfoRsp>> querySkFileInfo(SkFileQueryReq skFileQueryReq);
+	public ReturnData<List<SysFileRspVO>> querySkFileInfo(SysFileQueryReqVO sysFileQueryReqVO);
 	
 	/**
 	 * 删除影像
@@ -52,21 +53,8 @@ public interface ISkController {
 	 */
 	@ApiOperation(value="删除文件", notes="根据文件系统ID删除文件信息")
 	@ApiImplicitParams({
-	    @ApiImplicitParam(name="skId",value="文件系统ID",required=true)
+	    @ApiImplicitParam(name="id",value="文件系统ID",required=true)
 	})
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public Result.ReturnData deleteFile(String id);
-
-	/**
-	 * 下载影像
-	 * @param url
-	 * @return
-	 */
-	@ApiOperation(value="下载文件", notes="根据文件url下载文件")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="url",value="文件url",required=true)
-	})
-	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public Result.ReturnData downloadFile(String url,HttpServletResponse response);
-	
+	public ReturnData deleteFile(String id);
 }

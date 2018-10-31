@@ -32,7 +32,7 @@ public class FsLineController {
     public List getLinePorts(){
 
        // 从Eureka获取所有的fsline服务列表
-        List<String> serverList = ServerUtil.getInstances(discoveryClient,"guiyu-callcenter-fsline");
+        List<String> serverList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_FSLINE);
         // 调用fsline的获取基本信息接口，从里面提取fslineId、fsIp和fsOutPort，拼装后返回
         List<LinePort> list = new ArrayList<LinePort>();
         for(String server:serverList){

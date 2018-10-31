@@ -111,7 +111,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"   keyProperty="lineId" >
     insert into line_info (line_id, customer_id, line_name, 
       sip_ip, sip_port, codec, 
       caller_num, callee_prefix, max_concurrent_calls, 
@@ -123,7 +123,7 @@
       #{createDate,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"  keyProperty="lineId">
     insert into line_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="lineId != null" >

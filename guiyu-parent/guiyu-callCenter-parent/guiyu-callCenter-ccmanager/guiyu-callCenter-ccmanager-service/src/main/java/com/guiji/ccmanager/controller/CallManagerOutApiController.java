@@ -1,7 +1,8 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.ccmanager.api.CallManagerOutApi;
+import com.guiji.ccmanager.api.ICallManagerOutApi;
+import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.ccmanager.service.LineInfoService;
@@ -20,7 +21,7 @@ import java.util.List;
  * @Description:
  */
 @RestController
-public class CallManagerOutApiController implements CallManagerOutApi {
+public class CallManagerOutApiController implements ICallManagerOutApi {
 
     @Autowired
     private LineInfoService lineInfoService;
@@ -32,6 +33,9 @@ public class CallManagerOutApiController implements CallManagerOutApi {
     @GetMapping(value="out/lineinfos")
     public Result.ReturnData<List<LineConcurrent>> outLineinfos(String customerId){
 
+        if(StringUtils.isBlank(customerId)){
+            return Result.error(Constant.ERROR_PARAM);
+        }
         List<LineInfo> lineInfos = lineInfoService.outLineinfos(customerId);
         List<LineConcurrent> resList = new ArrayList<LineConcurrent>();
         for(LineInfo lineInfo:lineInfos){
@@ -40,19 +44,6 @@ public class CallManagerOutApiController implements CallManagerOutApi {
             target.setConcurrent(lineInfo.getMaxConcurrentCalls());
             resList.add(target);
         }
-        if(resList!=null && resList.size()>0){
-            return Result.ok(resList);
-        }
-//test
-        LineConcurrent lineConcurrent1 = new LineConcurrent();
-        lineConcurrent1.setConcurrent(30);
-        lineConcurrent1.setLineId("111");
-        LineConcurrent lineConcurrent2 = new LineConcurrent();
-        lineConcurrent2.setConcurrent(32);
-        lineConcurrent2.setLineId("222");
-        resList.add(lineConcurrent1);
-        resList.add(lineConcurrent2);
-
         return Result.ok(resList);
     }
 
@@ -60,18 +51,11 @@ public class CallManagerOutApiController implements CallManagerOutApi {
     @GetMapping(value="out/startcallplan")
     public Result.ReturnData<Boolean> startcallplan(String customerId, String tempId, String lineId) {
 
-        if(StringUtils.isBlank(customerId)){
-            return Result.ok(false);
-        }
-        if(StringUtils.isBlank(tempId)){
-            return Result.ok(false);
-        }
-        if(StringUtils.isBlank(tempId)){
-            return Result.ok(false);
+        if(StringUtils.isBlank(customerId) || StringUtils.isBlank(tempId) || StringUtils.isBlank(lineId) ){
+            return Result.error(Constant.ERROR_PARAM);
         }
 
         callManagerOutService.startcallplan(customerId,tempId,lineId);
-
 
         return Result.ok(true);
     }

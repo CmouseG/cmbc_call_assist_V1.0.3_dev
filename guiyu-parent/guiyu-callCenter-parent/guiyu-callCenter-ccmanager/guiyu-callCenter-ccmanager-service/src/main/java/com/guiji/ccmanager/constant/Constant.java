@@ -19,5 +19,8 @@ public class Constant {
     public static final String SUCCESS_COMMON = "0";
 
     public static final String SERVER_NAME_CALLOUTSERVER = "guiyu-callcenter-calloutserver";
+    public static final String SERVER_NAME_FSLINE = "guiyu-callcenter-fsline";
+
+    public static final String ERROR_PARAM = "0303001";
 
 }

@@ -1,8 +1,10 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
+import com.guiji.common.result.Result;
 import com.guiji.utils.DateUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -33,16 +35,19 @@ public class CallDetailController {
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="callrecord")
-    public List<CallOutPlan> callrecord(String startDate, String endDate, String customerId){
-        Date start = null;
-        Date end = null;
-        if(StringUtils.isNotBlank(startDate)){
-            start = DateUtil.stringToDate(startDate,"yyyy-MM-dd HH:mm:ss");
+    public Result.ReturnData<List<CallOutPlan>> callrecord(String startDate, String endDate, String customerId){
+
+        if(StringUtils.isBlank(startDate) || StringUtils.isBlank(customerId)){
+            return Result.error(Constant.ERROR_PARAM);
         }
+        Date end = null;
+        Date start = DateUtil.stringToDate(startDate,"yyyy-MM-dd HH:mm:ss");
         if(StringUtils.isNotBlank(endDate)){
             end = DateUtil.stringToDate(endDate,"yyyy-MM-dd HH:mm:ss");
         }
-        return callDetailService.callrecord(start,end,customerId);
+
+        List<CallOutPlan> list = callDetailService.callrecord(start,end,customerId);
+        return Result.ok(list);
     }
 
 
@@ -51,11 +56,13 @@ public class CallDetailController {
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query")
     })
     @GetMapping(value="getCallDetail")
-    public CallOutPlanVO getCallDetail(String callId){
-        if(StringUtils.isNotBlank(callId)){
-        return callDetailService.getCallDetail(callId);
+    public Result.ReturnData<CallOutPlanVO> getCallDetail(String callId){
+
+        if(StringUtils.isBlank(callId)){
+            return Result.error(Constant.ERROR_PARAM);
         }
-        return null;//应该放回缺少参数
+        CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(callId);
+        return Result.ok(callOutPlanVO);
     }
 
 }

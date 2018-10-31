@@ -22,7 +22,7 @@
     <result column="call_direction" property="callDirection" jdbcType="INTEGER" />
     <result column="call_state" property="callState" jdbcType="INTEGER" />
     <result column="hangup_direction" property="hangupDirection" jdbcType="INTEGER" />
-    <result column="accurate_intent​" property="accurateIntent​" jdbcType="VARCHAR" />
+    <result column="accurate_intent​" property="accurateIntent" jdbcType="VARCHAR" />
     <result column="reason" property="reason" jdbcType="VARCHAR" />
     <result column="hangup_code" property="hangupCode" jdbcType="VARCHAR" />
     <result column="originate_cmd" property="originateCmd" jdbcType="VARCHAR" />

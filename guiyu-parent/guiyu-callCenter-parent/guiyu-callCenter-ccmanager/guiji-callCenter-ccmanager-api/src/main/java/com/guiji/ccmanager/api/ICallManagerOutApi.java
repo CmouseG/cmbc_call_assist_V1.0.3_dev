@@ -17,7 +17,7 @@ import java.util.List;
  * @Description:
  */
 @FeignClient("guiyu-callcenter-ccmanager")
-public interface CallManagerOutApi {
+public interface ICallManagerOutApi {
 
     @ApiOperation(value = "获取客户线路列表")
     @ApiImplicitParams({

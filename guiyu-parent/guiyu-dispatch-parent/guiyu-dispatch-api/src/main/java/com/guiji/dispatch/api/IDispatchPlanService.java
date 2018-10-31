@@ -1,10 +1,14 @@
 package com.guiji.dispatch.api;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.guiji.dispatch.model.CommonResponse;
+import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.Schedule;
 import com.guiji.dispatch.model.ScheduleList;
-import org.springframework.stereotype.Service;
-
 /**
  * 调度中心任务调度接口
  *
@@ -23,7 +27,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse addSchedule(final Schedule schedule) throws Exception;
+  boolean addSchedule( DispatchPlan dispatchPlan) throws Exception;
 
     /**
      * 查询任务列表
@@ -32,7 +36,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse querySchedules(final String userId) throws Exception;
+  List<DispatchPlan> querySchedules(final String userId) throws Exception;
 
     /**
      * 暂停任务
@@ -41,7 +45,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse pauseSchedule(final String planUuid) throws Exception;
+    boolean pauseSchedule(final String planUuid) throws Exception;
 
     /**
      * 恢复任务
@@ -50,7 +54,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse resumeSchedule(final String planUuid) throws Exception;
+    boolean resumeSchedule(final String planUuid) throws Exception;
 
     /**
      * 停止任务
@@ -59,7 +63,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse stopSchedule(final String planUuid) throws Exception;
+    boolean stopSchedule(final String planUuid) throws Exception;
 
     /**
      * 返回可以拨打的任务给呼叫中心
@@ -68,7 +72,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse queryAvailableSchedules(final Schedule schedule) throws Exception;
+    List<DispatchPlan> queryAvailableSchedules(final Schedule schedule) throws Exception;
 
     /**
      * 查询任务提交处理结果
@@ -77,7 +81,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse queryExecuteResult(final String planUuid) throws Exception;
+    List<DispatchPlan> queryExecuteResult(final String planUuid) throws Exception;
 
     /**
      * 查询任务提交处理结果
@@ -86,5 +90,15 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 异常
      */
-    CommonResponse updatePlanBatch(final ScheduleList scheduleList) throws Exception;
+    boolean updatePlanBatch(final ScheduleList scheduleList) throws Exception;
+    
+    /**
+     * 批量导入
+     * @param fileName
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public boolean batchImport(String fileName, MultipartFile file) throws Exception;
 }
+

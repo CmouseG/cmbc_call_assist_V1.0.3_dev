@@ -11,3 +11,8 @@ eureka:
   client:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18081/eureka/
+mybatis:
+  mapper-locations: classpath*:config/mapper/*Mapper.xml
+jdbc:
+  type: mysql
+        

@@ -1,7 +1,7 @@
 package com.guiji.fsagent.entity;
 
 public class FsInfo {
-    private String fslineId;
+    private String fsAgentId;
 
     private String fsIp;
 
@@ -13,12 +13,12 @@ public class FsInfo {
 
     private String fsEslPwd;
 
-    public String getFslineId() {
-        return fslineId;
+    public String getFsAgentId() {
+        return fsAgentId;
     }
 
-    public void setFslineId(String fslineId) {
-        this.fslineId = fslineId;
+    public void setFsAgentId(String fsAgentId) {
+        this.fsAgentId = fsAgentId;
     }
 
     public String getFsIp() {

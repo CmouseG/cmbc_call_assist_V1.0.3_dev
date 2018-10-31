@@ -30,8 +30,11 @@ public class FreeSWITCH {
 
     private FsEslClient fsEslClient;
 
-    public FreeSWITCH(String fsName, String baseDir){
-        this.fsName = fsName;
+    private String fsEslPort;
+
+    private String fsEslPwd;
+
+    public FreeSWITCH( String baseDir){
         this.baseDir = baseDir;
         this.confDir = baseDir + "/conf";
         this.cdrDir = baseDir + "/log";
@@ -145,6 +148,22 @@ public class FreeSWITCH {
         this.fsEslClient = fsEslClient;
     }
 
+    public String getFsEslPort() {
+        return fsEslPort;
+    }
+
+    public void setFsEslPort(String fsEslPort) {
+        this.fsEslPort = fsEslPort;
+    }
+
+    public String getFsEslPwd() {
+        return fsEslPwd;
+    }
+
+    public void setFsEslPwd(String fsEslPwd) {
+        this.fsEslPwd = fsEslPwd;
+    }
+
     /**
      * 初始化全局变量
      */
@@ -153,7 +172,7 @@ public class FreeSWITCH {
         globalVar.setDomain(fsEslClient.execute("global_getvar domain"));
         globalVar.setExternal_sip_port(fsEslClient.execute("global_getvar external_sip_port"));
         globalVar.setGc_docker_ip(fsEslClient.execute("global_getvar gc_docker_ip"));
-        globalVar.setInternal_sip_port(fsEslClient.execute("global_getvar internal_sip_port"));
+        globalVar.setInternal_sip_port(fsEslClient.execute("global_getvar internal_sip_port1"));
 
         logger.debug("freeswitch[{}]全局变量为[{}]", fsName, globalVar.toString());
     }
@@ -183,8 +202,9 @@ public class FreeSWITCH {
         } catch (Exception e) {
             logger.warn("在读取event_socket.conf.xml文件出现异常, fs:"+fsName, e);
         }
-
-        fsEslClient = new FsEslClient(fsName, "127.0.0.1", eslPort, elsPwd);
+        fsEslPort=eslPort;
+        fsEslPwd = elsPwd;
+        fsEslClient = new FsEslClient("127.0.0.1", eslPort, elsPwd);
     }
 
 //    public void rotateCdr(){

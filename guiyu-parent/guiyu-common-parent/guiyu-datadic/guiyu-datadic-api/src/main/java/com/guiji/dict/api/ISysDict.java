@@ -1,7 +1,9 @@
 package com.guiji.dict.api;
 
 import com.guiji.common.result.Result;
+import com.guiji.common.result.Result.ReturnData;
 import com.guiji.dict.dao.entity.SysDict;
+import com.guiji.dict.vo.SysDictVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -17,19 +19,19 @@ import java.util.List;
  */
 @Api(tags="数据字典接口(Feign接口)")
 @FeignClient("datadic")
-public interface IDictControllerRemote {
+public interface ISysDict {
     @ApiOperation(value="查询字典", notes="根据字典类型")
     @ApiImplicitParams({
             @ApiImplicitParam(name="dictType",value="字典类型",required=true)
     })
-    @RequestMapping(value = "/remote/getDictByType", method = RequestMethod.POST)
-    public Result.ReturnData<List<SysDict>> getDictByType(String dictType);
+    @RequestMapping(value = "/getDictByType", method = RequestMethod.POST)
+    public ReturnData<List<SysDictVO>> getDictByType(String dictType);
 
     @ApiOperation(value="查询字典", notes="根据字典类型和字典标签名")
     @ApiImplicitParams({
             @ApiImplicitParam(name="dictType",value="字典类型",required=true),
             @ApiImplicitParam(name="dictKey",value="字典标签",required=true)
     })
-    @RequestMapping(value = "/remote/getDictValue", method = RequestMethod.POST)
-    public Result.ReturnData<List<SysDict>> getDictValue(String dictType, String dictKey);
+    @RequestMapping(value = "/getDictValue", method = RequestMethod.POST)
+    public ReturnData<List<SysDictVO>> getDictValue(String dictType, String dictKey);
 }

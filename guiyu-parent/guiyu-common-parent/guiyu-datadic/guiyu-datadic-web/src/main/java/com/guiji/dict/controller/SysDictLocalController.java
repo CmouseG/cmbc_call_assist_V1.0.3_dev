@@ -17,8 +17,8 @@ import java.util.List;
  * Created by ty on 2018/10/29.
  */
 @RestController
-public class DictControllerLocal {
-    Logger logger = LoggerFactory.getLogger(DictControllerLocal.class);
+public class SysDictLocalController {
+    Logger logger = LoggerFactory.getLogger(SysDictLocalController.class);
 
     @Autowired
     private SysDictService sysDictService;

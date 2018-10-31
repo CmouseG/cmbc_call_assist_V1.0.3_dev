@@ -19,9 +19,9 @@ public class Result {
 		return new Result.ReturnData<T>();
 	}
 	
-	public static Result.ReturnData<?> error(String code){
+	public static Result.ReturnData error(String code){
 		String msg=properties.getProperty(code);
-		return new Result.ReturnData<Object>(code,msg);
+		return new Result.ReturnData(code,msg);
 	}
 	
 	@Autowired(required = true)

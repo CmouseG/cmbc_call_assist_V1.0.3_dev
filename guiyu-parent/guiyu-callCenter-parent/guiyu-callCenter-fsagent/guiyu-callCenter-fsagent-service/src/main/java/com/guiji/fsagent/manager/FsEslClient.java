@@ -16,18 +16,16 @@ import java.util.List;
 public class FsEslClient {
     private final Logger logger = LoggerFactory.getLogger(FsEslClient.class);
 
-    private String fsName;
     private Client eslClient;
     private String eslIp;
     private String eslPort;
     private String eslPwd;
 
-    public FsEslClient(String fsName, String eslIp, String eslPort, String eslPwd){
+    public FsEslClient( String eslIp, String eslPort, String eslPwd){
         Preconditions.checkArgument(!Strings.isNullOrEmpty(eslIp), "null eslIp");
         Preconditions.checkArgument(!Strings.isNullOrEmpty(eslPort), "null eslPort");
         Preconditions.checkArgument(!Strings.isNullOrEmpty(eslPwd), "null eslPwd");
 
-        this.fsName = fsName;
         this.eslIp = eslIp;
         this.eslPort = eslPort;
         this.eslPwd = eslPwd;

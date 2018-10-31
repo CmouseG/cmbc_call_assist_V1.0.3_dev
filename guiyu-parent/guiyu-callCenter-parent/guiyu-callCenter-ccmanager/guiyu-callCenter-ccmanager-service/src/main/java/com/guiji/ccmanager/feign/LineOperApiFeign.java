@@ -8,7 +8,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
  * @Date: 2018/10/26 0026 15:22
  * @Description:
  */
-@FeignClient("guiyu-callcenter-fsmanager")
+@FeignClient("GUIYU-CALLCENTER-FSMANAGER-SERVICE")
 public interface LineOperApiFeign extends LineOperApi {
 
 }

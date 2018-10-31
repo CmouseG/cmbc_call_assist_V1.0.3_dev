@@ -1,6 +1,12 @@
 package com.guiji.ccmanager.controller;
 
+import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.vo.LinePort;
+import com.guiji.common.result.Result;
+import com.guiji.fsline.api.IFsLineApi;
+import com.guiji.fsline.entity.FsLineInfo;
+import com.guiji.utils.FeignBuildUtil;
+import com.guiji.utils.ServerUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -25,22 +31,17 @@ public class FsLineController {
     @GetMapping(value="fsoutlines")
     public List getLinePorts(){
 
-/*        // 从Eureka获取所有的fsline服务列表
-        List<String> serverList = ServerUtil.getInstances(discoveryClient,"gui-callCenter-fsline");
+       // 从Eureka获取所有的fsline服务列表
+        List<String> serverList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_FSLINE);
         // 调用fsline的获取基本信息接口，从里面提取fslineId、fsIp和fsOutPort，拼装后返回
+        List<LinePort> list = new ArrayList<LinePort>();
         for(String server:serverList){
-            FeignBuildUtil.feignBuilderTarget(xxx.calss,server);
-        }*/
-
-        LinePort linePort1 = new LinePort("xx","192.168.1.1:8081");
-        LinePort linePort2 = new LinePort("yy","192.168.1.2:8082");
-        LinePort linePort3 = new LinePort("zz","192.168.1.3:8083");
-
-        List list = new ArrayList();
-        list.add(linePort1);
-        list.add(linePort2);
-        list.add(linePort3);
-
+            IFsLineApi fsLineApi = FeignBuildUtil.feignBuilderTarget(IFsLineApi.class,Constant.PROTOCOL +server);
+            Result.ReturnData<FsLineInfo> result = fsLineApi.getFsInfo();
+            FsLineInfo fsLineInfo = result.getBody();
+            LinePort linePort = new LinePort(fsLineInfo.getFsLineId(),fsLineInfo.getFsIp()+":"+fsLineInfo.getFsOutPort());
+            list.add(linePort);
+        }
         return list;
     }
 

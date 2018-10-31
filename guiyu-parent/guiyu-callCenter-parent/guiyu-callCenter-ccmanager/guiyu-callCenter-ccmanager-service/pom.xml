@@ -28,6 +28,11 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <artifactId>guiyu-callCenter-fsline-api</artifactId>
+            <groupId>guiji.ai</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.34</version>
@@ -35,6 +40,15 @@
         <dependency>
             <groupId>guiji.ai</groupId>
             <artifactId>guiyu-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-callCenter-calloutserver-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

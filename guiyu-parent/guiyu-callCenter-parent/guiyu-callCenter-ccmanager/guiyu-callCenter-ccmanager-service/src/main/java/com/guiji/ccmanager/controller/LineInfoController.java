@@ -1,21 +1,19 @@
 package com.guiji.ccmanager.controller;
 
-import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
-import com.guiji.utils.BeanUtil;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @Auther: 黎阳
  * @Date: 2018/10/25 0025 17:31
- * @Description:
+ * @Description: 线路的增删改查
  */
 @RestController
 public class LineInfoController {
@@ -25,6 +23,9 @@ public class LineInfoController {
 
 
     @ApiOperation(value = "查看客户所有线路接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query")
+    })
     @GetMapping(value="lineinfos")
     public List getLineInfoByCustom(String customerId){
 
@@ -34,26 +35,22 @@ public class LineInfoController {
 
     @ApiOperation(value = "增加线路接口")
     @PostMapping(value="lineinfos")
-    public Boolean addLineInfo(LineInfoVO lineInfoVO){
-
-        lineInfoService.addLineInfo(lineInfoVO);
-        return true;
+    public Boolean addLineInfo(@RequestBody LineInfoVO lineInfoVO){
+        return lineInfoService.addLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "修改线路接口")
     @PutMapping(value="lineinfos/{id}")
-    public Boolean updateLineInfo(@PathVariable("id") String id,LineInfoVO lineInfoVO){
+    public Boolean updateLineInfo(@PathVariable("id") String id,@RequestBody LineInfoVO lineInfoVO){
 
-        lineInfoService.updateLineInfo(lineInfoVO);
-        return true;
+         return lineInfoService.updateLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "删除线路接口")
     @DeleteMapping(value="lineinfos/{id}")
     public Boolean deleteLineInfo(@PathVariable("id") String id){
 
-        lineInfoService.delLineInfo(id);
-        return true;
+        return lineInfoService.delLineInfo(id);
     }
 
 

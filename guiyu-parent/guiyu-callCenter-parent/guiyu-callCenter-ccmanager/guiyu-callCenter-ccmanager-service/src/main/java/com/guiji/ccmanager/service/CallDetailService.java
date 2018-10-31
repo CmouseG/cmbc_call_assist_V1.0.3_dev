@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.ccmanager.vo.CallOutPlanVO;
 
 import java.util.Date;
 import java.util.List;
@@ -12,4 +13,6 @@ import java.util.List;
  */
 public interface CallDetailService {
     public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId);
+
+    public CallOutPlanVO getCallDetail(String callId);
 }

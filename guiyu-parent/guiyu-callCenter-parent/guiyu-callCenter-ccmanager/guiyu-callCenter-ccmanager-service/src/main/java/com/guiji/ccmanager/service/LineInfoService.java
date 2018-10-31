@@ -14,11 +14,11 @@ public interface LineInfoService {
 
     public List<LineInfo> getLineInfoByCustom(String customerId);
 
-    public void addLineInfo(LineInfoVO lineInfoVO);
+    public boolean addLineInfo(LineInfoVO lineInfoVO);
 
-    public void updateLineInfo(LineInfoVO lineInfoVO);
+    public boolean updateLineInfo(LineInfoVO lineInfoVO);
 
-    public void delLineInfo(String id);
+    public boolean delLineInfo(String id);
 
     public List<LineInfo> outLineinfos(String customerId);
 }

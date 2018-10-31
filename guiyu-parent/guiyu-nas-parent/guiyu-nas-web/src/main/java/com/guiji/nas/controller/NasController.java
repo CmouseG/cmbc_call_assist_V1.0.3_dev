@@ -31,7 +31,7 @@ import java.util.List;
 public class NasController implements INas {
 	static Logger logger = LoggerFactory.getLogger(NasController.class);
 	@Autowired
-	private NasService skService;
+	private NasService nasService;
 	@Autowired
 	private FastDFSClientImpl fastDFSClientImpl;
 	@Value("${fdfs.webServerUrl}")
@@ -47,7 +47,7 @@ public class NasController implements INas {
 	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, @RequestParam(value="file", required=true) MultipartFile file) {
 		logger.info("文件开始上传!",file.getName());
 		try {
-			SysFileRspVO sysFileRspVO = skService.uploadFile(sysFileReqVO, file);
+			SysFileRspVO sysFileRspVO = nasService.uploadFile(sysFileReqVO, file);
 			if(StrUtils.isNotEmpty(sysFileRspVO.getSkUrl())) {
 				//返回的URL加上访问主机地址
 				sysFileRspVO.setSkUrl(hostUrl + sysFileRspVO.getSkUrl());
@@ -74,7 +74,7 @@ public class NasController implements INas {
 	@Override
 	public ReturnData<List<SysFileRspVO>> querySkFileInfo(SysFileQueryReqVO sysFileQueryReqVO) {
 		logger.info("开始查询!");
-		List<SysFile> fileList = skService.querySkFileByCondition(sysFileQueryReqVO);
+		List<SysFile> fileList = nasService.querySkFileByCondition(sysFileQueryReqVO);
 		if(fileList != null) {
 			List<SysFileRspVO> fileRspList = new ArrayList<SysFileRspVO>();
 			for(SysFile sysFile : fileList) {
@@ -98,7 +98,7 @@ public class NasController implements INas {
 
 	@Override
 	public ReturnData deleteFile(String id) {
-		skService.deleteById(id);
+		nasService.deleteById(id);
 		return Result.ok();
 	}
 }

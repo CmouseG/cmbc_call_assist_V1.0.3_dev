@@ -1,8 +1,9 @@
-package com.guiji.cache.config;
+package com.guiji.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.guiji.utils.RedisUtil;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -58,5 +59,12 @@ public class RedisConfig {
         StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
         stringRedisTemplate.setConnectionFactory(factory);
         return stringRedisTemplate;
+    }
+
+    @Bean(name = "redisUtil")
+    public RedisUtil redisUtil(RedisTemplate<String, Object> redisTemplate) {
+        RedisUtil redisUtil = new RedisUtil();
+        redisUtil.setRedisTemplate(redisTemplate);
+        return redisUtil;
     }
 }

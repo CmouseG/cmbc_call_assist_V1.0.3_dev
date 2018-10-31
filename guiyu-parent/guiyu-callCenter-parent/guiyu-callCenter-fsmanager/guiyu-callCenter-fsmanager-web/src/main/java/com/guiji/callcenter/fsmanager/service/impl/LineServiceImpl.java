@@ -6,11 +6,16 @@ import com.guiji.callcenter.fsmanager.service.LineService;
 import com.guiji.callcenter.fsmanager.util.FileUtil;
 import com.guiji.fsmanager.entity.LineInfo;
 import com.guiji.fsmanager.entity.LineXmlnfo;
+import org.bouncycastle.util.encoders.Base64Encoder;
 import org.springframework.stereotype.Service;
+import sun.misc.BASE64Encoder;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -51,12 +56,6 @@ public class LineServiceImpl implements LineService {
         buildDialplan(filePathDialplan, request);
     }
 
-    @Override
-    public List<LineXmlnfo> linexmlinfos(String lineId) {
-        return null;
-    }
-
-
     /**
      * 删除线路
      * @param filePath
@@ -69,18 +68,59 @@ public class LineServiceImpl implements LineService {
     }
 
 
+    @Override
+    public List<LineXmlnfo> linexmlinfos(String filePath,String lineId) {
+        String filePathDialplan = filePath+"01_"+lineId+".xml";
+        String filePathGateway = filePath+"gw_"+lineId+".xml";
+        List<LineXmlnfo> list = new ArrayList<LineXmlnfo>();
+        try {
+            if (FileUtil.isExist(filePathDialplan)) {
+                LineXmlnfo info = new LineXmlnfo();
+                info.setConfigType("dialplan");
+                info.setFileName("01_" + lineId + ".xml");
+                String base = FileUtil.fileToBase64(filePathDialplan);
+                info.setFileData(base);
+                list.add(info);
+            }
+            if (FileUtil.isExist(filePathGateway)) {
+                LineXmlnfo info = new LineXmlnfo();
+                info.setConfigType("gateway");
+                info.setFileName("gw_" + lineId + ".xml");
+                String base = FileUtil.fileToBase64(filePathGateway);
+                info.setFileData(base);
+                list.add(info);
+            }
+        }catch (Exception e){
 
+        }
 
+        return list;
+    }
 
+    @Override
+    public List<LineXmlnfo> linexmlinfosAll(String filepath) {
+        List<LineXmlnfo> list = new ArrayList<LineXmlnfo>();
+        try {
+            File[] files = new File(filepath).listFiles();
+            for (File file : files) {
+                LineXmlnfo info = new LineXmlnfo();
+                String fileName = file.getName();
+                info.setFileName(fileName);
+                if (fileName.indexOf("gw_") > 0) {
+                    info.setConfigType("gateway");
+                } else {
+                    info.setConfigType("dialplan");
+                }
+                String base = FileUtil.fileToBase64(fileName);
+                info.setFileData(base);
+                list.add(info);
+            }
+        }catch (Exception e){
 
+        }
+        return list;
 
-
-
-
-
-
-
-
+    }
 
 
     /**

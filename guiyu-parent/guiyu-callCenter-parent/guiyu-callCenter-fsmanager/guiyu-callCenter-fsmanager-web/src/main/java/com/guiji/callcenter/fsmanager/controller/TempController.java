@@ -1,4 +1,4 @@
-package com.guiji.callcenter.fsmanager.service;
+package com.guiji.callcenter.fsmanager.controller;
 
 import com.guiji.common.result.Result;
 import com.guiji.fsmanager.api.TempApi;

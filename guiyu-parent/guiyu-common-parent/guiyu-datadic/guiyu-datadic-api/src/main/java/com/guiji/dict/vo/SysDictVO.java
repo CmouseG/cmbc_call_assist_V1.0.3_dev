@@ -1,9 +1,12 @@
-package com.guiji.dict.dao.entity;
+package com.guiji.dict.vo;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class SysDict implements Serializable {
+/**
+ * Created by ty on 2018/10/31.
+ */
+public class SysDictVO implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private Long id;

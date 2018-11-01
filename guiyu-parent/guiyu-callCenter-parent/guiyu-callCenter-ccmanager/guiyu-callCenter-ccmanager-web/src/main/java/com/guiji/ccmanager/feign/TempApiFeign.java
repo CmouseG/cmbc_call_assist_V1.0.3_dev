@@ -1,6 +1,6 @@
 package com.guiji.ccmanager.feign;
 
-import com.guiji.fsmanager.api.TempApi;
+import com.guiji.fsmanager.api.ITempApi;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**
@@ -9,6 +9,6 @@ import org.springframework.cloud.netflix.feign.FeignClient;
  * @Description:
  */
 @FeignClient("GUIYU-CALLCENTER-FSAGENT-SERVICE")
-public interface TempApiFeign extends TempApi {
+public interface TempApiFeign extends ITempApi {
 
 }

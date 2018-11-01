@@ -1,5 +1,6 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
+import com.guiji.callcenter.fsmanager.config.Constant;
 import com.guiji.callcenter.fsmanager.entity.DialplanEntity;
 import com.guiji.callcenter.fsmanager.entity.GatewayEntity;
 import com.guiji.callcenter.fsmanager.service.LineService;
@@ -76,7 +77,7 @@ public class LineServiceImpl implements LineService {
         try {
             if (FileUtil.isExist(filePathDialplan)) {
                 LineXmlnfo info = new LineXmlnfo();
-                info.setConfigType("dialplan");
+                info.setConfigType(Constant.CONFIG_TYPE_DIALPLAN);
                 info.setFileName("01_" + lineId + ".xml");
                 String base = FileUtil.fileToBase64(filePathDialplan);
                 info.setFileData(base);
@@ -84,7 +85,7 @@ public class LineServiceImpl implements LineService {
             }
             if (FileUtil.isExist(filePathGateway)) {
                 LineXmlnfo info = new LineXmlnfo();
-                info.setConfigType("gateway");
+                info.setConfigType(Constant.CONFIG_TYPE_GATEWAY);
                 info.setFileName("gw_" + lineId + ".xml");
                 String base = FileUtil.fileToBase64(filePathGateway);
                 info.setFileData(base);
@@ -107,9 +108,9 @@ public class LineServiceImpl implements LineService {
                 String fileName = file.getName();
                 info.setFileName(fileName);
                 if (fileName.indexOf("gw_") > 0) {
-                    info.setConfigType("gateway");
+                    info.setConfigType(Constant.CONFIG_TYPE_GATEWAY);
                 } else {
-                    info.setConfigType("dialplan");
+                    info.setConfigType(Constant.CONFIG_TYPE_DIALPLAN);
                 }
                 String base = FileUtil.fileToBase64(fileName);
                 info.setFileData(base);

@@ -1,4 +1,4 @@
 package com.guiji.fsagent.service;
 
-public interface LineOperService {
+public interface LineOperateService {
 }

@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-callCenter-fsagent-api</module>
-        <module>guiyu-callCenter-fsagent-service</module>
+        <module>guiyu-callCenter-fsagent-web</module>
     </modules>
 
     <dependencies>

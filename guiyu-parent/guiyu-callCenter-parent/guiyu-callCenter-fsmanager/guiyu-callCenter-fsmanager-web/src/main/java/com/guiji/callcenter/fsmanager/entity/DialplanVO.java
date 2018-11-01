@@ -8,13 +8,13 @@ import java.util.LinkedHashSet;
 @Data
 @XmlRootElement(name = "include")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DialplanEntity {
+public class DialplanVO {
     @XmlElement(name = "extension")
     Extension extension;
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Extension {
+    public static class Extension {
         @XmlAttribute(name = "name")
         String name;
         @XmlElement(name = "condition")
@@ -22,7 +22,7 @@ public class DialplanEntity {
     }
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Condition {
+    public static class Condition {
         @XmlAttribute(name = "field")
         String field;
         @XmlAttribute(name = "expression")
@@ -33,7 +33,7 @@ public class DialplanEntity {
     }
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Action {
+    public static class Action {
         @XmlAttribute(name = "application")
         String application;
         @XmlAttribute(name = "data")

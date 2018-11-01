@@ -5,19 +5,20 @@ import com.guiji.callcenter.fsmanager.config.FileDirConfig;
 import com.guiji.callcenter.fsmanager.service.LineService;
 import com.guiji.common.result.Result;
 import com.guiji.fsagent.api.LineOperateApi;
-import com.guiji.fsmanager.api.LineOperApi;
+import com.guiji.fsmanager.api.ILineOperApi;
 import com.guiji.fsmanager.entity.LineInfo;
 import com.guiji.fsmanager.entity.LineXmlnfo;
 import com.guiji.utils.FeignBuildUtil;
 import com.guiji.utils.ServerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-public class LineController implements LineOperApi {
+public class LineController implements ILineOperApi {
     @Autowired
     LineService lineService;
     @Autowired
@@ -25,9 +26,11 @@ public class LineController implements LineOperApi {
     @Autowired
      DiscoveryClient discoveryClient;
     @Override
-    public Result.ReturnData addLineinfos(LineInfo lineInfo) {
+
+
+    public Result.ReturnData addLineinfos(@RequestBody LineInfo lineInfo) {
         try {
-           if(!lineService.addLineinfos(fileDirConfig.getLineDir(),lineInfo)){
+           if(!lineService.addLineinfos(lineInfo)){
                return  Result.error("0000重名");
            }
         } catch (Exception e) {
@@ -36,14 +39,14 @@ public class LineController implements LineOperApi {
             //回滚，删除刚才创建的文件
           return  Result.error("0000异常");
         }
-        //通知fsagent
-        // 从Eureka获取所有的fsagent服务列表
-        List<String> serverList = ServerUtil.getInstances(discoveryClient, Constant.SERVER_NAME_FSAGENT);
-        for(String server:serverList){
-            LineOperateApi lineOperateApi = FeignBuildUtil.feignBuilderTarget(LineOperateApi.class,Constant.PROTOCOL +server);
-            //调用fsagent通知更新接口
-            Result.ReturnData<Boolean> result = lineOperateApi.updatenotify("line",lineInfo.getLineId());
-        }
+//        //通知fsagent
+//        // 从Eureka获取所有的fsagent服务列表
+//        List<String> serverList = ServerUtil.getInstances(discoveryClient, Constant.SERVER_NAME_FSAGENT);
+//        for(String server:serverList){
+//            LineOperateApi lineOperateApi = FeignBuildUtil.feignBuilderTarget(LineOperateApi.class,Constant.PROTOCOL +server);
+//            //调用fsagent通知更新接口
+//            Result.ReturnData<Boolean> result = lineOperateApi.updatenotify("line",lineInfo.getLineId());
+//        }
         return Result.ok();
     }
 
@@ -57,6 +60,13 @@ public class LineController implements LineOperApi {
             //回滚，删除刚才创建的文件
             return  Result.error("0000异常");
         }
+        // 从Eureka获取所有的fsagent服务列表
+        List<String> serverList = ServerUtil.getInstances(discoveryClient, Constant.SERVER_NAME_FSAGENT);
+        for(String server:serverList){
+            LineOperateApi lineOperateApi = FeignBuildUtil.feignBuilderTarget(LineOperateApi.class,Constant.PROTOCOL +server);
+            //调用fsagent通知更新接口
+            Result.ReturnData<Boolean> result = lineOperateApi.updatenotify("line",lineInfo.getLineId());
+        }
         return Result.ok();
     }
 
@@ -64,6 +74,13 @@ public class LineController implements LineOperApi {
     public Result.ReturnData deleteLineinfos(String lineId) {
         lineService.deleteLineinfos(fileDirConfig.getLineDir(),lineId);
         //通知fsagent
+        // 从Eureka获取所有的fsagent服务列表
+        List<String> serverList = ServerUtil.getInstances(discoveryClient, Constant.SERVER_NAME_FSAGENT);
+        for(String server:serverList){
+            LineOperateApi lineOperateApi = FeignBuildUtil.feignBuilderTarget(LineOperateApi.class,Constant.PROTOCOL +server);
+            //调用fsagent删除线路接口
+            Result.ReturnData<Boolean> result = lineOperateApi.deleteLineinfos(lineId);
+        }
         return Result.ok();
     }
 

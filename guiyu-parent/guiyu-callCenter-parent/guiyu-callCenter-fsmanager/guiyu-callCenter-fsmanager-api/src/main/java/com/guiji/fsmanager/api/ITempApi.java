@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Date: 2018/10/26 0026 17:19
  * @Description:
  */
-public interface TempApi {
+public interface ITempApi {
 
     @ApiOperation(value = "下载模板录音")
     @ApiImplicitParams({

@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class LineOperateController implements LineOperateApi {
     @Override
     public Result.ReturnData updatenotify(String type, String lineId) {
+          if(!type.equals("line")){
+              return Result.error("");
+          }
+
         return Result.ok(true);
     }
 

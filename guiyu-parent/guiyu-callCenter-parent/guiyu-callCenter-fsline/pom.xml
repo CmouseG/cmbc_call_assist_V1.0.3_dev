@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-callCenter-fsline-api</module>
-        <module>guiyu-callCenter-fsline-service</module>
+        <module>guiyu-callCenter-fsline-web</module>
     </modules>
 
 

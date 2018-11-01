@@ -3,8 +3,8 @@ package com.guiji.ccmanager.controller;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.vo.LinePort;
 import com.guiji.common.result.Result;
-import com.guiji.fsline.api.IFsLineApi;
-import com.guiji.fsline.entity.FsLineInfo;
+import com.guiji.fsline.api.IFsLine;
+import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.utils.FeignBuildUtil;
 import com.guiji.utils.ServerUtil;
 import io.swagger.annotations.ApiOperation;
@@ -36,9 +36,9 @@ public class FsLineController {
         // 调用fsline的获取基本信息接口，从里面提取fslineId、fsIp和fsOutPort，拼装后返回
         List<LinePort> list = new ArrayList<LinePort>();
         for(String server:serverList){
-            IFsLineApi fsLineApi = FeignBuildUtil.feignBuilderTarget(IFsLineApi.class,Constant.PROTOCOL +server);
-            Result.ReturnData<FsLineInfo> result = fsLineApi.getFsInfo();
-            FsLineInfo fsLineInfo = result.getBody();
+            IFsLine fsLineApi = FeignBuildUtil.feignBuilderTarget(IFsLine.class,Constant.PROTOCOL +server);
+            Result.ReturnData<FsLineVO> result = fsLineApi.getFsInfo();
+            FsLineVO fsLineInfo = result.getBody();
             LinePort linePort = new LinePort(fsLineInfo.getFsLineId(),fsLineInfo.getFsIp()+":"+fsLineInfo.getFsOutPort());
             list.add(linePort);
         }

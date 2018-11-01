@@ -4,12 +4,12 @@
  */  
 package com.guiji.nas.service.impl;
 
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.nas.constants.SKConstants;
-import com.guiji.nas.constants.SKErrorEnum;
+import com.guiji.nas.constants.GuiyuNasExceptionEnum;
 import com.guiji.nas.dao.SysFileMapper;
 import com.guiji.nas.dao.entity.SysFile;
 import com.guiji.nas.dao.entity.SysFileExample;
-import com.guiji.nas.exception.SKException;
 import com.guiji.nas.service.NasService;
 import com.guiji.nas.vo.SysFileQueryReqVO;
 import com.guiji.nas.vo.SysFileReqVO;
@@ -88,8 +88,9 @@ public class NasServiceImpl implements NasService {
 			//拷贝返回信息
 			BeanUtil.copyProperties(skFile, rsp);
 			return rsp;
+		} else {
+			throw new GuiyuException(GuiyuNasExceptionEnum.EXCP_NAS_UPLOAD_ERROR);
 		}
-		return null;
 	}
 	
 	
@@ -129,7 +130,7 @@ public class NasServiceImpl implements NasService {
 		if(StrUtils.isEmpty(id) && StrUtils.isEmpty(busiId)) {
 			logger.error("请求信息文件ID、业务ID不能都为空!");
     		//注册信息为空异常
-    		throw new SKException(SKErrorEnum.QUERY_NULL.getErrorCode(),SKErrorEnum.QUERY_NULL.getErrorMsg());
+    		throw new GuiyuException(GuiyuNasExceptionEnum.EXCP_NAS_QUERY_NULL);
 		}
 		SysFileExample example = new SysFileExample();
 		SysFileExample.Criteria criteria = example.createCriteria();

@@ -1,6 +1,6 @@
 package com.guiji.ccmanager.feign;
 
-import com.guiji.fsmanager.api.LineOperApi;
+import com.guiji.fsmanager.api.ILineOperApi;
 import org.springframework.cloud.netflix.feign.FeignClient;
 
 /**
@@ -9,6 +9,6 @@ import org.springframework.cloud.netflix.feign.FeignClient;
  * @Description:
  */
 @FeignClient("GUIYU-CALLCENTER-FSMANAGER-SERVICE")
-public interface LineOperApiFeign extends LineOperApi {
+public interface LineOperApiFeign extends ILineOperApi {
 
 }

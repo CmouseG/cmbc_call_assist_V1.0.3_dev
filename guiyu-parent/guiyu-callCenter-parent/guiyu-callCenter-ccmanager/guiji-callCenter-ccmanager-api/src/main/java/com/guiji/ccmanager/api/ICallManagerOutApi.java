@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface ICallManagerOutApi {
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="out/lineinfos")
-    public Result.ReturnData<List<LineConcurrent>> outLineinfos(@Param("customerId") String customerId);
+    public Result.ReturnData<List<LineConcurrent>> outLineinfos(@RequestParam("customerId") String customerId);
 
 
     @ApiOperation(value = "启动客户呼叫计划")
@@ -34,6 +35,6 @@ public interface ICallManagerOutApi {
             @ApiImplicitParam(name = "lineId", value = "线路id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="out/startcallplan")
-    public Result.ReturnData<Boolean> startcallplan(@Param("customerId") String customerId, @Param("tempId") String tempId, @Param("lineId") String lineId);
+    public Result.ReturnData<Boolean> startcallplan(@RequestParam("customerId") String customerId, @RequestParam("tempId") String tempId, @RequestParam("lineId") String lineId);
 
 }

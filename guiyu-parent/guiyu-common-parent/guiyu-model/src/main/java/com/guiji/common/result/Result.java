@@ -21,7 +21,7 @@ public class Result {
 	
 	public static <T> Result.ReturnData<T> error(String code){
 		String msg=properties.getProperty(code);
-		return new Result.ReturnData<T>(code,msg);
+		return new Result.ReturnData<T>(code,msg,false);
 	}
 	
 	@Autowired(required = true)
@@ -33,14 +33,16 @@ public class Result {
 	public static class ReturnData<T>{
 		public String code="0";
 		public String msg="请求成功";
+		public boolean success = true;
 		public T body;
 		
 		public ReturnData(){
 		}
 		
-		public ReturnData(String code,String msg){
+		public ReturnData(String code,String msg,boolean success){
 			this.code=code;
 			this.msg=msg;
+			this.success=success;
 		}
 		
 		public ReturnData(T body){

@@ -16,7 +16,7 @@ import java.util.List;
  * @Description:
  */
 @FeignClient("guiyu-callcenter-fsmanager")
-public interface LineOperApi {
+public interface ILineOperApi {
 
     @ApiOperation(value = "增加线路接口")
     @ApiImplicitParams({
@@ -28,7 +28,7 @@ public interface LineOperApi {
             @ApiImplicitParam(name = "calleePrefix", value = "前缀", dataType = "String", paramType = "query")
     })
     @PostMapping(value="lineinfos")
-    public Result.ReturnData  addLineinfos(LineInfo lineInfo);
+    public Result.ReturnData  addLineinfos(@RequestBody LineInfo lineInfo);
 
     @ApiOperation(value = "修改线路接口")
     @ApiImplicitParams({

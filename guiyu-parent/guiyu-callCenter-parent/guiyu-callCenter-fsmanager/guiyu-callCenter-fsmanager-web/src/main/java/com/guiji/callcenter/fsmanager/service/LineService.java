@@ -7,7 +7,7 @@ import com.guiji.fsmanager.entity.LineXmlnfo;
 import java.util.List;
 
 public interface LineService {
-    public Boolean addLineinfos(String filePath,LineInfo lineInfo) throws Exception;
+    public Boolean addLineinfos(LineInfo lineInfo) throws Exception;
 
     public void deleteLineinfos(String filePath,String lineId);
 

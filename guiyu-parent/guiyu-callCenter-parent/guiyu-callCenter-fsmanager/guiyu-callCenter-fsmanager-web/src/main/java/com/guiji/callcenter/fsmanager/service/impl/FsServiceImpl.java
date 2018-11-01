@@ -1,13 +1,20 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
-import com.guiji.common.result.Result;
+import com.guiji.callcenter.dao.FsBindMapper;
 import com.guiji.fsmanager.entity.FsBind;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FsServiceImpl {
+    @Autowired
+    FsBindMapper fsBindMapper;
+
     public FsBind applyfs(String serviceId, ServiceTypeEnum serviceType) {
+
+
+
         FsBind fs =new FsBind();
         fs.setServiceId("nanjing");
         fs.setFsAgentId("xx");

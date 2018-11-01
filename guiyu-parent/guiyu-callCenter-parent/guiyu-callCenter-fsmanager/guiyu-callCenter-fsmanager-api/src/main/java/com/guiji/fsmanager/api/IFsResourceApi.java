@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Date: 2018/10/26 0026 16:35
  * @Description:
  */
-public interface FsResourceApi {
+public interface IFsResourceApi {
 
     @ApiOperation(value = "申请freeswitch资源接口")
     @ApiImplicitParams({

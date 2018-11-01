@@ -8,13 +8,13 @@ import java.util.LinkedHashSet;
 @Data
 @XmlRootElement(name = "include")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GatewayEntity {
+public class GatewayVO {
     @XmlElement(name = "gateway")
     Gateway gateway;
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Gateway{
+    public static class Gateway{
         @XmlAttribute(name = "name")
         String name;
         @XmlElement(name = "param")
@@ -23,7 +23,7 @@ public class GatewayEntity {
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public class Param {
+    public static class Param {
         @XmlAttribute(name = "name")
         String name;
         @XmlAttribute(name = "value")

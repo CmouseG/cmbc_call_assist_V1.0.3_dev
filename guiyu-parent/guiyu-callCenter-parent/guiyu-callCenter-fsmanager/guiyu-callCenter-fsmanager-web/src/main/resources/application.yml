@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: guiyu-callcenter-fsmanager-service
+    name: guiyu-callcenter-fsmanager
   driverClassName: com.mysql.jdbc.Driver
   datasource:
     url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8

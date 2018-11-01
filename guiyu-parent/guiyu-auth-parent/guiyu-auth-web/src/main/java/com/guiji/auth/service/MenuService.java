@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.auth.entity.MenuTree;
+import com.guiji.auth.vo.MenuTree;
 import com.guiji.user.dao.MenuMapper;
 import com.guiji.user.dao.entity.Menu;
 

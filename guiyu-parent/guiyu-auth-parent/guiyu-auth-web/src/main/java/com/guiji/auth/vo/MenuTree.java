@@ -1,4 +1,4 @@
-package com.guiji.auth.entity;
+package com.guiji.auth.vo;
 
 import java.util.ArrayList;
 import java.util.List;

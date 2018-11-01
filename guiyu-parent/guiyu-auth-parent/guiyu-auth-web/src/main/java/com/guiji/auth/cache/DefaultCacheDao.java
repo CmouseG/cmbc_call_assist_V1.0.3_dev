@@ -1,4 +1,4 @@
-package com.guiji.auth.cache.dao;
+package com.guiji.auth.cache;
 
 import java.util.concurrent.TimeUnit;
 

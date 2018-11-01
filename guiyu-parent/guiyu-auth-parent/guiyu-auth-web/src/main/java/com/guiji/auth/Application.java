@@ -4,7 +4,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.guiji.auth.annotation.EnableAuthConfig;
 import com.guiji.common.result.EnableAutoResultPack;
 
 /**
@@ -14,7 +13,6 @@ import com.guiji.common.result.EnableAutoResultPack;
 //@EnableDiscoveryClient
 @MapperScan("com.guiji.user.dao")
 @EnableAutoResultPack
-@EnableAuthConfig
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

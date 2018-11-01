@@ -3,6 +3,16 @@ server:
 spring:
   application:
     name: guiyu-cloud-zuul
+  zipkin:
+      base-url: http://guiyu-cloud-monitor:18003
+      enabled: true
+  http:
+    multipart:
+      enabled: true   # 启用http上传处理
+      max-file-size: 100MB # 设置单个文件的最大长度
+      max-request-size: 100MB # 设置最大的请求文件的大小
+      file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
+      location: /  # 上传的临时目录
 eureka:
   instance:
     prefer-ip-address: true
@@ -11,12 +21,30 @@ eureka:
     lease-expiration-duration-in-seconds: 10
   client:
       service-url:
-        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+        defaultZone: http://guiyu-cloud-registeration1:18001/eureka/,http://guiyu-cloud-registeration2:18002/eureka/
       instance:
         status-page-url: http://localhost:18000/swagger-ui.html
 ##网关地址
-#gateway:
-#   host: http://guiyu-cloud-zuul:18080/
+gateway:
+   host: http://guiyu-cloud-zuul:18000/
+
+###actuator监控点 start####
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+##默认情况下很多端点是不允许访问的，会返回401:Unauthorized
+management:
+  security:
+    enabled: false
+###actuator监控点 end####
+
+###如下Oauth2.0配置参考##
+###https://stackoverflow.com/questions/30327269/spring-oauth-authorization-server-behind-spring-cloud-zuul-proxy##
+###https://github.com/spring-guides/tut-spring-security-and-angular-js/blob/master/oauth2-vanilla/README.adoc##
+###http://wiselyman.iteye.com/blog/2379419##
+#######
+
 zuul:
   routes:
     guiyu-auth-web:
@@ -31,6 +59,17 @@ zuul:
     guiyu-cache:
       path: /cache/**
       service-id: guiyu-cache
+#security:
+#  basic:
+#    enabled: false
+#  oauth2:
+#    client:
+#      ##网关的地址
+#      access-token-uri: ${gateway.host}cloud-auth/oauth/token
+#      user-authorization-uri: ${gateway.host}cloud-auth/oauth/authorize
+#    resource:
+#      user-info-uri:  ${gateway.host}cloud-auth/user
+#      prefer-token-info: false
 hystrix:
   command:
     default:

@@ -1,6 +1,6 @@
 package com.guiji.cache.controller;
 
-import com.guiji.cache.utils.RedisUtil;
+import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

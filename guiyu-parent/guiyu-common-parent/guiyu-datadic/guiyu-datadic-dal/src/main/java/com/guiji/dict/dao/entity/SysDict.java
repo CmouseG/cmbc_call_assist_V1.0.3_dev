@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysDict implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Long id;
 
     private String dictKey;
@@ -21,8 +23,6 @@ public class SysDict implements Serializable {
     private Date createTime;
 
     private Date updateTime;
-
-    private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;

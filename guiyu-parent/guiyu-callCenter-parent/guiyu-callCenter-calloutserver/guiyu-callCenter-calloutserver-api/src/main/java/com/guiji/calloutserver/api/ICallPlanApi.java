@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("guiyu-callcenter-calloutserver")
 public interface ICallPlanApi {
@@ -17,6 +19,6 @@ public interface ICallPlanApi {
             @ApiImplicitParam(name = "tempId", value = "模板id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "lineId", value = "线路id", dataType = "Integer", paramType = "query")
     })
-    @RequestLine("GET /startcallplan?customerId={customerId}&tempId={tempId}&lineId={lineId}")
-    Result.ReturnData startCallPlan(@Param("customerId") String customerId, @Param("tempId") String tempId, @Param("lineId") Integer lineId);
+    @GetMapping("/startcallplan")
+    Result.ReturnData startCallPlan(@RequestParam("customerId") String customerId, @RequestParam("tempId") String tempId, @RequestParam("lineId") Integer lineId);
 }

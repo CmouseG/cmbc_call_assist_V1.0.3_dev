@@ -1,4 +1,3 @@
-
 ## 测试服务器 ##
 部署路径：/home/apps/callcenter
 
@@ -43,3 +42,6 @@ freeswitch esl1：18029
 
 ### 获取服务自身的ip和端口 ###
 使用ServerUtil的方法getUrlSelf(Registration registration)
+
+### 请求动态url的接口 ###
+使用FeignBuildUtil的方法feignBuilderTarget(Class<T> apiType, String url)

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <environments default="mysql_developer">
+        <!-- mysql环境信息 -->
+        <environment id="mysql_developer">
+            <!-- mybatis使用jdbc事务管理方式 -->
+            <transactionManager type="jdbc"></transactionManager>
+            <!-- mybatis使用连接池方式来获取连接 -->
+            <dataSource type="pooled">
+                <!-- 配置与数据库交互的四个必要属性 -->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://47.97.179.12:3306/guiyu_dispatch?allowMultiQueries=true"/>
+                <property name="username" value="dispatch"/>
+                <property name="password" value="dispatch@1234"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 加载映射文件 -->
+    <mappers>
+        <mapper resource="mappers/PlanMapper.xml"/>
+    </mappers>
+</configuration>

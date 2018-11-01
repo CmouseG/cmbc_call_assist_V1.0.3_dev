@@ -27,7 +27,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("第一代硅语机器人")
                 .description("接口文档说明")
-                .termsOfServiceUrl("http://localhost:18080")
+                .termsOfServiceUrl("http://localhost:18000")
                 .version("1.0")
                 .build();
     }

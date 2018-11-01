@@ -111,10 +111,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
-    <selectKey resultType="java.lang.Integer" keyProperty="lineId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"   keyProperty="lineId" >
     insert into line_info (line_id, customer_id, line_name, 
       sip_ip, sip_port, codec, 
       caller_num, callee_prefix, max_concurrent_calls, 
@@ -126,13 +123,12 @@
       #{createDate,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
-    <selectKey resultType="java.lang.Integer" keyProperty="lineId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"  keyProperty="lineId">
     insert into line_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      line_id,
+      <if test="lineId != null" >
+        line_id,
+      </if>
       <if test="customerId != null" >
         customer_id,
       </if>
@@ -168,7 +164,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{lineId,jdbcType=INTEGER},
+      <if test="lineId != null" >
+        #{lineId,jdbcType=INTEGER},
+      </if>
       <if test="customerId != null" >
         #{customerId,jdbcType=VARCHAR},
       </if>

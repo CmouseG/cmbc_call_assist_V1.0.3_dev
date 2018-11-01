@@ -6,6 +6,7 @@ import com.guiji.fsmanager.entity.LineXmlnfo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @Date: 2018/10/26 0026 16:57
  * @Description:
  */
+@FeignClient("guiyu-callcenter-fsmanager")
 public interface LineOperApi {
 
     @ApiOperation(value = "增加线路接口")

@@ -21,7 +21,7 @@
         </constructor-arg>  
     </bean>  
          
-      <!-- 对dispatch_plan表的配置，进行分库配置，逻辑表名为dispatch_plan_0，库有实际的三张表 -->  
+      <!-- 对dispatch_plan表的配置，进行分库配置，逻辑表名为dispatch_plan，库有实际的三张表 -->  
     <bean id="dispatchTableRuleTable" class="com.dangdang.ddframe.rdb.sharding.api.rule.TableRule">  
         <constructor-arg value="dispatch_plan" index="0"/>  
         <constructor-arg index="1">  

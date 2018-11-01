@@ -108,9 +108,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
-    <selectKey resultType="java.lang.Integer" keyProperty="callDetailId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_in_detail_record (call_detail_id, call_id, agent_record_file, 
       agent_record_url, bot_record_file, bot_record_url, 
       customer_record_file, customer_record_url)
@@ -119,12 +116,11 @@
       #{customerRecordFile,jdbcType=VARCHAR}, #{customerRecordUrl,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
-    <selectKey resultType="java.lang.Integer" keyProperty="callDetailId" order="BEFORE" >
-      ${sqlStatement}
-    </selectKey>
     insert into call_in_detail_record
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      call_detail_id,
+      <if test="callDetailId != null" >
+        call_detail_id,
+      </if>
       <if test="callId != null" >
         call_id,
       </if>
@@ -148,7 +144,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{callDetailId,jdbcType=INTEGER},
+      <if test="callDetailId != null" >
+        #{callDetailId,jdbcType=INTEGER},
+      </if>
       <if test="callId != null" >
         #{callId,jdbcType=VARCHAR},
       </if>

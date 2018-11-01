@@ -1,5 +1,5 @@
 server:
-  port: 18002
+  port: 18003
 spring:
   application:
     name: guiyu-cloud-monitor
@@ -11,7 +11,7 @@ eureka:
     lease-expiration-duration-in-seconds: 10
   client:
       service-url:
-        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+        defaultZone: http://guiyu-cloud-registeration1:18001/eureka/，http://guiyu-cloud-registeration2:18002/eureka/
 endpoints:
   health:
     sensitive: false

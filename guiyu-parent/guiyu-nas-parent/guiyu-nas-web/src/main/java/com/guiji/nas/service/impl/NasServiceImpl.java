@@ -36,7 +36,7 @@ import java.util.List;
 public class NasServiceImpl implements NasService {
 	static Logger logger = LoggerFactory.getLogger(NasServiceImpl.class);
 	@Resource  
-    private FastDFSClientImpl fwc;
+    private FastDFSClientImpl client;
 	@Autowired
 	private SysFileMapper sysFileMapper;
 	@Value("${fdfs.webServerUrl}")
@@ -58,15 +58,15 @@ public class NasServiceImpl implements NasService {
 			//2、保存文件信息到本地表
 			String fileName = file.getOriginalFilename();
 	        String ext = fileName.substring(fileName.lastIndexOf(".") + 1); //文件后缀
-	        logger.info("开始上传附件...");
-			String url = fwc.uploadFile(file);//正常上传
-			logger.info("附件上传成功..."+url);
+	        logger.info("开始上传文件...");
+			String url = client.uploadFile(file);//正常上传
+			logger.info("文件上传成功..."+url);
 			String thumbUrl = null;	//缩略图URL
 			SysFile skFile = new SysFile();
 			if(sysFileReqVO != null) {
 				if(SKConstants.THUMB_IMAGE_FILAG_Y.equals(sysFileReqVO.getThumbImageFlag()) && isPic(ext)) {
 					//如果上传时要求生成缩略图，且上传文件为图片，那么生成缩略图
-					thumbUrl = fwc.uploadImageAndCrtThumbImage(file);//小图  
+					thumbUrl = client.uploadImageAndCrtThumbImage(file);//小图
 				}
 				skFile.setBusiId(sysFileReqVO.getBusiId()); //业务ID
 				skFile.setBusiType(sysFileReqVO.getBusiType()); //文件类型（业务类型）
@@ -102,11 +102,11 @@ public class NasServiceImpl implements NasService {
 		SysFile skFileInfo = sysFileMapper.selectByPrimaryKey(id);
 		if(skFileInfo != null) {
 			String filePath = skFileInfo.getSkUrl();
-			fwc.deleteFile(filePath);
+			client.deleteFile(filePath);
 			logger.info("删除文件url:"+filePath);
 			String thumbfilePath = skFileInfo.getSkThumbImageUrl();
 			if(StrUtils.isNotEmpty(thumbfilePath)) {
-				fwc.deleteFile(thumbfilePath);
+				client.deleteFile(thumbfilePath);
 				logger.info("删除缩略图url:"+thumbfilePath);
 			}
 			sysFileMapper.deleteByPrimaryKey(id);
@@ -127,7 +127,7 @@ public class NasServiceImpl implements NasService {
 		String busiId = sysFileQueryReqVO.getBusiId();
 		String busiType = sysFileQueryReqVO.getBusiType();
 		if(StrUtils.isEmpty(id) && StrUtils.isEmpty(busiId)) {
-			logger.error("附件请求信息附件ID、业务ID不能都为空!");
+			logger.error("请求信息文件ID、业务ID不能都为空!");
     		//注册信息为空异常
     		throw new SKException(SKErrorEnum.QUERY_NULL.getErrorCode(),SKErrorEnum.QUERY_NULL.getErrorMsg());
 		}

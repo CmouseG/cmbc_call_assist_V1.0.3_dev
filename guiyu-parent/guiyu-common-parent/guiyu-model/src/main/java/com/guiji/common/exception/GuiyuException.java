@@ -1,31 +1,36 @@
 package com.guiji.common.exception;
 
-public class CommonException extends RuntimeException{
+public class GuiyuException extends RuntimeException{
 	private static final long serialVersionUID = -8072930252478967506L;
 	
 	private String errorCode ;  //异常对应的返回码
     private String errorMessage;  //异常对应的描述信息
+
+	public GuiyuException(GuiyuExceptionEnum guiyuExceptionEnum) {
+		this.errorCode = guiyuExceptionEnum.getErrorCode();
+		this.errorMessage = guiyuExceptionEnum.getMsg();
+	}
 	
-	public CommonException(){
+	public GuiyuException(){
 		super();
 	}
 	
-	public CommonException(String msg){
+	public GuiyuException(String msg){
 		super(msg);
 		this.errorMessage = msg;
 	}
 	
-	public CommonException(String errorCode, String msg){
+	public GuiyuException(String errorCode, String msg){
 		super(msg);
         this.errorCode = errorCode;
         this.errorMessage = msg;
 	}
 	
-	public CommonException(Throwable throwable){
+	public GuiyuException(Throwable throwable){
 		super(throwable);
 	}
 	
-	public CommonException(String msg, Throwable throwable){
+	public GuiyuException(String msg, Throwable throwable){
 		super(msg, throwable);
 	}
 	

@@ -8,7 +8,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
  * @Date: 2018/10/30 0030 14:01
  * @Description:
  */
-@FeignClient("guiyu-callcenter-fsmanager")
+@FeignClient("GUIYU-CALLCENTER-FSAGENT-SERVICE")
 public interface TempApiFeign extends TempApi {
 
 }

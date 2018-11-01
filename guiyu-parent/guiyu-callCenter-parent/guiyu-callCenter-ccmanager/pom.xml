@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiji-callCenter-ccmanager-api</module>
-        <module>guiyu-callCenter-ccmanager-service</module>
+        <module>guiyu-callCenter-ccmanager-web</module>
     </modules>
 
 

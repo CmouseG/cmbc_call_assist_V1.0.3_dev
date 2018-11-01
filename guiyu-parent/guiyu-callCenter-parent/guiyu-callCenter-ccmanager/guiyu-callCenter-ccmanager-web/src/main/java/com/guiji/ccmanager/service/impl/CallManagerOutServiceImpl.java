@@ -55,12 +55,14 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         Result.ReturnData<Boolean> resultTemp = tempApiFeign.istempexist(tempId);
         if(resultTemp.getCode().equals(Constant.SUCCESS_COMMON) && resultTemp.getBody() == false){
             //返回模板不存在错误，并报警
-//            return Result.error(Constant.ERROR_TEMP_NOTEXIST);
-            //调用fsmanager的下载模板接口
-            Result.ReturnData result = tempApiFeign.downloadtempwav(tempId);
+            return Result.error(Constant.ERROR_TEMP_NOTEXIST);
+        }
+        //调用fsmanager的下载模板接口
+        Result.ReturnData result = tempApiFeign.downloadtempwav(tempId);
+        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){
+            return result;
         }
         //调用所有calloutserver的启动客户呼叫计划接口
-        Result.ReturnData result = callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
-        return result;
+        return callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
     }
 }

@@ -25,7 +25,7 @@ public class Constant {
     public static final String ERROR_LINE_NOTEXIST = "0303002";
     public static final String ERROR_LINE_RUNNING = "0303003";
     public static final String ERROR_TEMP_NOTEXIST = "0303004";
-
+    public static final String ERROR_TEMP_DOWNLOADFAIL = "0303005";
 
 
 

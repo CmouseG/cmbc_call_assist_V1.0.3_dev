@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guiji.common.model.Page;
 import com.guiji.dispatch.api.IDispatchPlanOutApi;
-import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
 
@@ -43,7 +41,7 @@ public class DispatchOutApiController implements IDispatchPlanOutApi{
      */
 	@Override
     @GetMapping(value="out/queryAvailableSchedules")
-	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
+	public  List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService.queryAvailableSchedules(userId, requestCount, lineId);
 		List<DispatchPlan> list = new ArrayList<>();
 		try {

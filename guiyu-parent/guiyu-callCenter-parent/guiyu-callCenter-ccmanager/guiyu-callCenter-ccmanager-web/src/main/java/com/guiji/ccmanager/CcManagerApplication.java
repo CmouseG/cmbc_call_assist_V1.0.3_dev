@@ -19,6 +19,5 @@ public class CcManagerApplication{
     public static void main(String[] args) {
         SpringApplication.run(CcManagerApplication.class, args);
     }
-
 }
 

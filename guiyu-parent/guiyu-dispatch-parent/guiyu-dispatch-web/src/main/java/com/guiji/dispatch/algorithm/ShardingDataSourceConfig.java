@@ -11,21 +11,18 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.boot.autoconfigure.jdbc.metadata.HikariDataSourcePoolMetadata;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.guiji.dispatch.util.LoadProperties;
 
 import io.shardingsphere.api.config.TableRuleConfiguration;
-import io.shardingsphere.api.config.strategy.ComplexShardingStrategyConfiguration;
-import io.shardingsphere.api.config.strategy.ShardingStrategyConfiguration;
 import io.shardingsphere.api.config.strategy.StandardShardingStrategyConfiguration;
 
 
 @Configuration
 public class ShardingDataSourceConfig {
-
 
     @Bean
     public DataSource getShardingDataSource() throws SQLException {
@@ -46,9 +43,9 @@ public class ShardingDataSourceConfig {
 
     public DataSource getDataSource(){
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:mysql://47.97.179.12:3306/guiyu_dispatch?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true");
-        dataSource.setUsername("dispatch");
-        dataSource.setPassword("dispatch@1234");
+        dataSource.setUrl(LoadProperties.getProperty("jdbc_url0"));
+        dataSource.setUsername(LoadProperties.getProperty("jdbc_username0"));
+        dataSource.setPassword(LoadProperties.getProperty("jdbc_password0"));
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         return dataSource;
     }

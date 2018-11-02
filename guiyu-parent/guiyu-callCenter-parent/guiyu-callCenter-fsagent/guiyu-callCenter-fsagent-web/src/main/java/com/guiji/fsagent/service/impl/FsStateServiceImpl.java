@@ -41,11 +41,11 @@ public class FsStateServiceImpl {
     }
 
     public FsInfo fsinfo() {
-       String sgentId = ServerUtil.getInstanceId(registration);
+       String agentId = ServerUtil.getInstanceId(registration);
         FreeSWITCH fs = fsService.getFreeSwitch();
         GlobalVar globalVar = new GlobalVar();
         FsInfo fsinfo = new FsInfo();
-        fsinfo.setFsAgentId(sgentId);
+        fsinfo.setFsAgentId(agentId);
         fsinfo.setFsIp(globalVar.getDomain());
         fsinfo.setFsInPort(globalVar.getInternal_sip_port());
         fsinfo.setFsOutPort(globalVar.getExternal_sip_port());

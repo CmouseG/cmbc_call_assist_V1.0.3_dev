@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-public interface TemplateApi {
+public interface ITemplateApi {
 
     @ApiOperation(value = "模板是否存在接口")
     @ApiImplicitParams({

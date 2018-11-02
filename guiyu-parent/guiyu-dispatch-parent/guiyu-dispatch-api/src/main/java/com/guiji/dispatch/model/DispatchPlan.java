@@ -44,6 +44,8 @@ public class DispatchPlan implements Serializable {
 
     private Date gmtModified;
 
+    private Byte isTts;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -206,6 +208,14 @@ public class DispatchPlan implements Serializable {
         this.gmtModified = gmtModified;
     }
 
+    public Byte getIsTts() {
+        return isTts;
+    }
+
+    public void setIsTts(Byte isTts) {
+        this.isTts = isTts;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -232,6 +242,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", callHour=").append(callHour);
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
+        sb.append(", isTts=").append(isTts);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

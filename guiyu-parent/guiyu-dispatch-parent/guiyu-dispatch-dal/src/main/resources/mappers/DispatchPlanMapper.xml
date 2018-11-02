@@ -9,19 +9,20 @@
     <result column="phone" property="phone" jdbcType="VARCHAR" />
     <result column="attach" property="attach" jdbcType="VARCHAR" />
     <result column="params" property="params" jdbcType="VARCHAR" />
-    <result column="status_plan" property="statusPlan" jdbcType="BIT" />
-    <result column="status_sync" property="statusSync" jdbcType="BIT" />
-    <result column="recall" property="recall" jdbcType="BIT" />
+    <result column="status_plan" property="statusPlan" jdbcType="INTEGER" />
+    <result column="status_sync" property="statusSync" jdbcType="INTEGER" />
+    <result column="recall" property="recall" jdbcType="INTEGER" />
     <result column="recall_params" property="recallParams" jdbcType="VARCHAR" />
     <result column="robot" property="robot" jdbcType="VARCHAR" />
-    <result column="line" property="line" jdbcType="VARCHAR" />
+    <result column="line" property="line" jdbcType="INTEGER" />
     <result column="result" property="result" jdbcType="VARCHAR" />
     <result column="call_agent" property="callAgent" jdbcType="VARCHAR" />
-    <result column="clean" property="clean" jdbcType="BIT" />
+    <result column="clean" property="clean" jdbcType="INTEGER" />
     <result column="call_data" property="callData" jdbcType="INTEGER" />
     <result column="call_hour" property="callHour" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
     <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="is_tts" property="isTts" jdbcType="TINYINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -84,7 +85,7 @@
   <sql id="Base_Column_List" >
     id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync, 
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour, 
-    gmt_create, gmt_modified
+    gmt_create, gmt_modified, is_tts
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
@@ -127,14 +128,16 @@
       recall, recall_params, robot, 
       line, `result`, call_agent, 
       clean, call_data, call_hour, 
-      gmt_create, gmt_modified)
+      gmt_create, gmt_modified, is_tts
+      )
     values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER}, 
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
-      #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=BIT}, #{statusSync,jdbcType=BIT}, 
-      #{recall,jdbcType=BIT}, #{recallParams,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, 
-      #{line,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
-      #{clean,jdbcType=BIT}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP})
+      #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER}, 
+      #{recall,jdbcType=INTEGER}, #{recallParams,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, 
+      #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
+      #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=TINYINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     insert into dispatch_plan
@@ -199,6 +202,9 @@
       <if test="gmtModified != null" >
         gmt_modified,
       </if>
+      <if test="isTts != null" >
+        is_tts,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -223,13 +229,13 @@
         #{params,jdbcType=VARCHAR},
       </if>
       <if test="statusPlan != null" >
-        #{statusPlan,jdbcType=BIT},
+        #{statusPlan,jdbcType=INTEGER},
       </if>
       <if test="statusSync != null" >
-        #{statusSync,jdbcType=BIT},
+        #{statusSync,jdbcType=INTEGER},
       </if>
       <if test="recall != null" >
-        #{recall,jdbcType=BIT},
+        #{recall,jdbcType=INTEGER},
       </if>
       <if test="recallParams != null" >
         #{recallParams,jdbcType=VARCHAR},
@@ -238,7 +244,7 @@
         #{robot,jdbcType=VARCHAR},
       </if>
       <if test="line != null" >
-        #{line,jdbcType=VARCHAR},
+        #{line,jdbcType=INTEGER},
       </if>
       <if test="result != null" >
         #{result,jdbcType=VARCHAR},
@@ -247,7 +253,7 @@
         #{callAgent,jdbcType=VARCHAR},
       </if>
       <if test="clean != null" >
-        #{clean,jdbcType=BIT},
+        #{clean,jdbcType=INTEGER},
       </if>
       <if test="callData != null" >
         #{callData,jdbcType=INTEGER},
@@ -260,6 +266,9 @@
       </if>
       <if test="gmtModified != null" >
         #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isTts != null" >
+        #{isTts,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -294,13 +303,13 @@
         params = #{record.params,jdbcType=VARCHAR},
       </if>
       <if test="record.statusPlan != null" >
-        status_plan = #{record.statusPlan,jdbcType=BIT},
+        status_plan = #{record.statusPlan,jdbcType=INTEGER},
       </if>
       <if test="record.statusSync != null" >
-        status_sync = #{record.statusSync,jdbcType=BIT},
+        status_sync = #{record.statusSync,jdbcType=INTEGER},
       </if>
       <if test="record.recall != null" >
-        recall = #{record.recall,jdbcType=BIT},
+        recall = #{record.recall,jdbcType=INTEGER},
       </if>
       <if test="record.recallParams != null" >
         recall_params = #{record.recallParams,jdbcType=VARCHAR},
@@ -309,7 +318,7 @@
         robot = #{record.robot,jdbcType=VARCHAR},
       </if>
       <if test="record.line != null" >
-        line = #{record.line,jdbcType=VARCHAR},
+        line = #{record.line,jdbcType=INTEGER},
       </if>
       <if test="record.result != null" >
         `result` = #{record.result,jdbcType=VARCHAR},
@@ -318,7 +327,7 @@
         call_agent = #{record.callAgent,jdbcType=VARCHAR},
       </if>
       <if test="record.clean != null" >
-        clean = #{record.clean,jdbcType=BIT},
+        clean = #{record.clean,jdbcType=INTEGER},
       </if>
       <if test="record.callData != null" >
         call_data = #{record.callData,jdbcType=INTEGER},
@@ -331,6 +340,9 @@
       </if>
       <if test="record.gmtModified != null" >
         gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isTts != null" >
+        is_tts = #{record.isTts,jdbcType=TINYINT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -346,19 +358,20 @@
       phone = #{record.phone,jdbcType=VARCHAR},
       attach = #{record.attach,jdbcType=VARCHAR},
       params = #{record.params,jdbcType=VARCHAR},
-      status_plan = #{record.statusPlan,jdbcType=BIT},
-      status_sync = #{record.statusSync,jdbcType=BIT},
-      recall = #{record.recall,jdbcType=BIT},
+      status_plan = #{record.statusPlan,jdbcType=INTEGER},
+      status_sync = #{record.statusSync,jdbcType=INTEGER},
+      recall = #{record.recall,jdbcType=INTEGER},
       recall_params = #{record.recallParams,jdbcType=VARCHAR},
       robot = #{record.robot,jdbcType=VARCHAR},
-      line = #{record.line,jdbcType=VARCHAR},
+      line = #{record.line,jdbcType=INTEGER},
       `result` = #{record.result,jdbcType=VARCHAR},
       call_agent = #{record.callAgent,jdbcType=VARCHAR},
-      clean = #{record.clean,jdbcType=BIT},
+      clean = #{record.clean,jdbcType=INTEGER},
       call_data = #{record.callData,jdbcType=INTEGER},
       call_hour = #{record.callHour,jdbcType=VARCHAR},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
-      gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP}
+      gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+      is_tts = #{record.isTts,jdbcType=TINYINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -385,13 +398,13 @@
         params = #{params,jdbcType=VARCHAR},
       </if>
       <if test="statusPlan != null" >
-        status_plan = #{statusPlan,jdbcType=BIT},
+        status_plan = #{statusPlan,jdbcType=INTEGER},
       </if>
       <if test="statusSync != null" >
-        status_sync = #{statusSync,jdbcType=BIT},
+        status_sync = #{statusSync,jdbcType=INTEGER},
       </if>
       <if test="recall != null" >
-        recall = #{recall,jdbcType=BIT},
+        recall = #{recall,jdbcType=INTEGER},
       </if>
       <if test="recallParams != null" >
         recall_params = #{recallParams,jdbcType=VARCHAR},
@@ -400,7 +413,7 @@
         robot = #{robot,jdbcType=VARCHAR},
       </if>
       <if test="line != null" >
-        line = #{line,jdbcType=VARCHAR},
+        line = #{line,jdbcType=INTEGER},
       </if>
       <if test="result != null" >
         `result` = #{result,jdbcType=VARCHAR},
@@ -409,7 +422,7 @@
         call_agent = #{callAgent,jdbcType=VARCHAR},
       </if>
       <if test="clean != null" >
-        clean = #{clean,jdbcType=BIT},
+        clean = #{clean,jdbcType=INTEGER},
       </if>
       <if test="callData != null" >
         call_data = #{callData,jdbcType=INTEGER},
@@ -423,6 +436,9 @@
       <if test="gmtModified != null" >
         gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       </if>
+      <if test="isTts != null" >
+        is_tts = #{isTts,jdbcType=TINYINT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -434,19 +450,20 @@
       phone = #{phone,jdbcType=VARCHAR},
       attach = #{attach,jdbcType=VARCHAR},
       params = #{params,jdbcType=VARCHAR},
-      status_plan = #{statusPlan,jdbcType=BIT},
-      status_sync = #{statusSync,jdbcType=BIT},
-      recall = #{recall,jdbcType=BIT},
+      status_plan = #{statusPlan,jdbcType=INTEGER},
+      status_sync = #{statusSync,jdbcType=INTEGER},
+      recall = #{recall,jdbcType=INTEGER},
       recall_params = #{recallParams,jdbcType=VARCHAR},
       robot = #{robot,jdbcType=VARCHAR},
-      line = #{line,jdbcType=VARCHAR},
+      line = #{line,jdbcType=INTEGER},
       `result` = #{result,jdbcType=VARCHAR},
       call_agent = #{callAgent,jdbcType=VARCHAR},
-      clean = #{clean,jdbcType=BIT},
+      clean = #{clean,jdbcType=INTEGER},
       call_data = #{callData,jdbcType=INTEGER},
       call_hour = #{callHour,jdbcType=VARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP}
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      is_tts = #{isTts,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

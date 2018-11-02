@@ -6,6 +6,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.guiji.common.result.Result;
 import com.guiji.dispatch.model.DispatchPlan;
 
 import io.swagger.annotations.ApiImplicitParam;

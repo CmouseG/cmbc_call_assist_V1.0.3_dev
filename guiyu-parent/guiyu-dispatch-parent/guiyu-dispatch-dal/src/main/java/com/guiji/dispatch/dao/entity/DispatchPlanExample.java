@@ -1414,6 +1414,66 @@ public class DispatchPlanExample {
             addCriterion("gmt_modified not between", value1, value2, "gmtModified");
             return (Criteria) this;
         }
+
+        public Criteria andIsTtsIsNull() {
+            addCriterion("is_tts is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsIsNotNull() {
+            addCriterion("is_tts is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsEqualTo(Byte value) {
+            addCriterion("is_tts =", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsNotEqualTo(Byte value) {
+            addCriterion("is_tts <>", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsGreaterThan(Byte value) {
+            addCriterion("is_tts >", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsGreaterThanOrEqualTo(Byte value) {
+            addCriterion("is_tts >=", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsLessThan(Byte value) {
+            addCriterion("is_tts <", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsLessThanOrEqualTo(Byte value) {
+            addCriterion("is_tts <=", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsIn(List<Byte> values) {
+            addCriterion("is_tts in", values, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsNotIn(List<Byte> values) {
+            addCriterion("is_tts not in", values, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsBetween(Byte value1, Byte value2) {
+            addCriterion("is_tts between", value1, value2, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsNotBetween(Byte value1, Byte value2) {
+            addCriterion("is_tts not between", value1, value2, "isTts");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

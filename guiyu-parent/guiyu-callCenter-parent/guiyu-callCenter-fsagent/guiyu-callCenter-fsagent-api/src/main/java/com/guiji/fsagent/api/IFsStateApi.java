@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 
-public interface FsStateApi {
+public interface IFsStateApi {
     @ApiOperation(value = "检查服务健康状态")
     @GetMapping(value="ishealthy")
     public Result.ReturnData<Boolean> ishealthy();

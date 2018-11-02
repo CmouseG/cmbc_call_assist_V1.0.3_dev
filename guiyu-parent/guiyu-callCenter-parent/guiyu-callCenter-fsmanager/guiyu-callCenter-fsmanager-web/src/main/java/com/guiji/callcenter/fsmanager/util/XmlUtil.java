@@ -1,9 +1,12 @@
 package com.guiji.callcenter.fsmanager.util;
 
+import sun.misc.BASE64Encoder;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 
 public class XmlUtil {
     /**
@@ -26,13 +29,22 @@ public class XmlUtil {
         return "";
     }
 
-    //    public void buildxml(DialplanEntity include, File file) throws Exception {
-//        JAXBContext jaxbContext = JAXBContext.newInstance(DialplanEntity.class);
-//        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-//        // output pretty printed
-//        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//        jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-//        jaxbMarshaller.marshal(include, file);
-//        jaxbMarshaller.marshal(include, System.out);
-//    }
+    /**
+     * String转base64
+     * @param str
+     * @return
+     */
+    public static String getBase64(String str) {
+        byte[] b = null;
+        String s = null;
+        try {
+            b = str.getBytes("utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (b != null) {
+            s = new BASE64Encoder().encode(b);
+        }
+        return s;
+    }
 }

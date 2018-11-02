@@ -1,6 +1,8 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
+import com.guiji.callcenter.dao.FsBindMapper;
 import com.guiji.callcenter.dao.LineConfigMapper;
+import com.guiji.callcenter.dao.entity.FsBindExample;
 import com.guiji.callcenter.dao.entity.LineConfig;
 import com.guiji.callcenter.dao.entity.LineConfigExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
@@ -16,16 +18,12 @@ import org.springframework.stereotype.Service;
 import sun.misc.BASE64Encoder;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class LineServiceImpl implements LineService {
     @Autowired
     LineConfigMapper lineConfigMapper;
-
     /**
      * 增加线路
      * @param request
@@ -42,8 +40,6 @@ public class LineServiceImpl implements LineService {
         if(list.size()>0){
             return false;
         }
-
-
         String gatewayxml = buildGateway( request);
         LineConfig recordgw = new LineConfig();
         recordgw.setLineId(request.getLineId());
@@ -60,94 +56,79 @@ public class LineServiceImpl implements LineService {
         recorddl.setFileData(gatewayxml);
         lineConfigMapper.insert(recorddl);
 
-
         return true;
     }
 
     @Override
-    public void editLineinfos(String filePath,String lineId, LineInfo request)throws Exception{
-        //先删除在
-
-//
-//        String filePathDialplan = filePath+"01_"+lineId+".xml";
-//        String filePathGateway = filePath+"gw_"+lineId+".xml";
-//        //先删除原来的配置文件
-//        FileUtil.delete(filePathDialplan);
-//        FileUtil.delete(filePathGateway);
+    public void editLineinfos(String lineId, LineInfo request)throws Exception{
+        Map<String ,String> map = new HashMap<String,String>();
+        map.put(Constant.CONFIG_TYPE_DIALPLAN,"01_"+lineId+".xml");
+        map.put(Constant.CONFIG_TYPE_GATEWAY,"01_"+lineId+".xml");
         request.setLineId(lineId);
-        //生成新的文件
-        buildGateway( request);
-        buildDialplan(request);
-
-        String gatewayxml = buildGateway( request);
-        String dialplanxml = buildDialplan(request);
-
-
+        for (String key : map.keySet()) {
+            String fileName = map.get(key);
+            LineConfig record = new LineConfig();
+            record.setLineId(request.getLineId());
+            record.setFileType(key);
+            record.setFileName(fileName);
+            if(key.equals(Constant.CONFIG_TYPE_DIALPLAN)){
+                record.setFileData(buildDialplan(request));
+            }else{
+                record.setFileData( buildGateway(request));
+            }
+            LineConfigExample example = new LineConfigExample();
+            LineConfigExample.Criteria criteria = example.createCriteria();
+            criteria.andLineIdEqualTo(request.getLineId());
+            criteria.andFileTypeEqualTo(Constant.CONFIG_TYPE_DIALPLAN);
+            lineConfigMapper.updateByExampleSelective(record,example);
+        }
     }
 
     /**
      * 删除线路
-     * @param filePath
      * @param lineId
      */
     @Override
-    public void deleteLineinfos(String filePath,String lineId){
-        FileUtil.delete(filePath+"01_"+lineId+".xml");
-        FileUtil.delete(filePath+"gw_"+lineId+".xml");
+    public void deleteLineinfos(String lineId){
+        LineConfigExample example = new LineConfigExample();
+        LineConfigExample.Criteria criteria = example.createCriteria();
+        criteria.andLineIdEqualTo(lineId);
+        lineConfigMapper.deleteByExample(example);
     }
 
 
     @Override
-    public List<LineXmlnfo> linexmlinfos(String filePath,String lineId) {
-        String filePathDialplan = filePath+"01_"+lineId+".xml";
-        String filePathGateway = filePath+"gw_"+lineId+".xml";
-        List<LineXmlnfo> list = new ArrayList<LineXmlnfo>();
-        try {
-            if (FileUtil.isExist(filePathDialplan)) {
-                LineXmlnfo info = new LineXmlnfo();
-                info.setConfigType(Constant.CONFIG_TYPE_DIALPLAN);
-                info.setFileName("01_" + lineId + ".xml");
-                String base = FileUtil.fileToBase64(filePathDialplan);
-                info.setFileData(base);
-                list.add(info);
-            }
-            if (FileUtil.isExist(filePathGateway)) {
-                LineXmlnfo info = new LineXmlnfo();
-                info.setConfigType(Constant.CONFIG_TYPE_GATEWAY);
-                info.setFileName("gw_" + lineId + ".xml");
-                String base = FileUtil.fileToBase64(filePathGateway);
-                info.setFileData(base);
-                list.add(info);
-            }
-        }catch (Exception e){
-
+    public List<LineXmlnfo> linexmlinfos(String lineId) {
+        List<LineXmlnfo> listLine = new ArrayList<LineXmlnfo>();
+        //查询数据库
+        LineConfigExample example = new LineConfigExample();
+        LineConfigExample.Criteria criteria = example.createCriteria();
+        criteria.andLineIdEqualTo(lineId);
+        List<LineConfig> list =lineConfigMapper.selectByExample(example);
+        for (LineConfig config:list) {
+            LineXmlnfo lineXmlnfo = new LineXmlnfo();
+            lineXmlnfo.setConfigType(config.getFileType());
+            lineXmlnfo.setFileName(config.getFileName());
+            lineXmlnfo.setFileData(XmlUtil.getBase64(config.getFileData()));
+            listLine.add(lineXmlnfo);
         }
-
-        return list;
+        return listLine;
     }
 
     @Override
-    public List<LineXmlnfo> linexmlinfosAll(String filepath) {
-        List<LineXmlnfo> list = new ArrayList<LineXmlnfo>();
-        try {
-            File[] files = new File(filepath).listFiles();
-            for (File file : files) {
-                LineXmlnfo info = new LineXmlnfo();
-                String fileName = file.getName();
-                info.setFileName(fileName);
-                if (fileName.indexOf("gw_") > 0) {
-                    info.setConfigType(Constant.CONFIG_TYPE_GATEWAY);
-                } else {
-                    info.setConfigType(Constant.CONFIG_TYPE_DIALPLAN);
-                }
-                String base = FileUtil.fileToBase64(fileName);
-                info.setFileData(base);
-                list.add(info);
-            }
-        }catch (Exception e){
-
+    public List<LineXmlnfo> linexmlinfosAll() {
+        List<LineXmlnfo> listLine = new ArrayList<LineXmlnfo>();
+        LineConfigExample example = new LineConfigExample();
+        LineConfigExample.Criteria criteria = example.createCriteria();
+        List<LineConfig> list =lineConfigMapper.selectByExample(example);
+        for (LineConfig config:list) {
+            LineXmlnfo lineXmlnfo = new LineXmlnfo();
+            lineXmlnfo.setConfigType(config.getFileType());
+            lineXmlnfo.setFileName(config.getFileName());
+            lineXmlnfo.setFileData(XmlUtil.getBase64(config.getFileData()));
+            listLine.add(lineXmlnfo);
         }
-        return list;
+        return listLine;
 
     }
 

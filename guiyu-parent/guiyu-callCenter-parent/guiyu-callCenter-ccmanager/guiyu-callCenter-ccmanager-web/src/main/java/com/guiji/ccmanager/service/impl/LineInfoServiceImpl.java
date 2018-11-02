@@ -92,9 +92,13 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public boolean updateLineInfo(LineInfoVO lineInfoVO){
+    public Result.ReturnData<Boolean> updateLineInfo(LineInfoVO lineInfoVO){
 
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(lineInfoVO.getLineId());
+
+        if(lineInfoDB==null){
+            return Result.error(Constant.ERROR_LINE_NOTEXIST);
+        }
 
         //本地更新数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -109,7 +113,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.editLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return false;
+            return result;
         }
 
         //若并发数有更新，则从linecount表读取线路并发数分配信息，并根据重新计算的并发数进行修改保存。
@@ -135,7 +139,7 @@ public class LineInfoServiceImpl implements LineInfoService {
                 lineCountMapper.updateByExampleSelective(lineCount,example);
             }
         }
-        return  true;
+        return  Result.ok(true);
     }
 
     @Override

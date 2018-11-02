@@ -1,6 +1,7 @@
 package com.guiji.utils;
 
-import com.guiji.common.exception.CommonException;
+import com.guiji.common.exception.GuiyuException;
+import com.guiji.common.exception.GuiyuExceptionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class NetFileDownUtil {
 			return file.getCanonicalPath();
 		} catch (Exception e) {
 			logger.info("下载URL流失败"+e.getMessage());
-			throw new CommonException("下载URL流失败"+e.getMessage());
+			throw new GuiyuException(GuiyuExceptionEnum.EXCP_COMMON_DOWNLOAD_URL_ERR);
 		} finally {
 			if (fos != null) {
 				fos.close();

@@ -7,7 +7,11 @@ public enum GuiyuExceptionEnum implements ExceptionEnum {
     /**
      * 公共异常
      */
-    EXCP_COMMON_USERNAME_OR_PASSWORD_ERR("00000001","用户名密码错误");
+    EXCP_COMMON_USERNAME_OR_PASSWORD_ERR("00000001","用户名密码错误"),
+
+
+
+    EXCP_COMMON_DOWNLOAD_URL_ERR("00000101","下载URL流失败");
 
     public String getName() {
         return this.name();

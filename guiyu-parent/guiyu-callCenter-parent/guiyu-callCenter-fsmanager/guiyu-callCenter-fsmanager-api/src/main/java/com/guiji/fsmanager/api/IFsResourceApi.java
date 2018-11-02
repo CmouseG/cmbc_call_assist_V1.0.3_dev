@@ -28,6 +28,6 @@ public interface IFsResourceApi {
             @ApiImplicitParam(name = "serviceId", value = "服务Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="releasefs")
-    public Result.ReturnData  releasefs(String serviceId);
+    public Result.ReturnData<Boolean>  releasefs(String serviceId);
 
 }

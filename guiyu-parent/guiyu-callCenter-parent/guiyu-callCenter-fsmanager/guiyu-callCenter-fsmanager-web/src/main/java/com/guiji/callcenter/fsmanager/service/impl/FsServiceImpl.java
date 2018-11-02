@@ -1,19 +1,26 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
 import com.guiji.callcenter.dao.FsBindMapper;
+import com.guiji.callcenter.dao.entity.FsBindExample;
+import com.guiji.callcenter.fsmanager.service.FsService;
 import com.guiji.fsmanager.entity.FsBind;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class FsServiceImpl {
+public class FsServiceImpl implements FsService {
     @Autowired
     FsBindMapper fsBindMapper;
 
     public FsBind applyfs(String serviceId, ServiceTypeEnum serviceType) {
 
-
+        FsBindExample example = new FsBindExample();
+        FsBindExample.Criteria criteria = example.createCriteria();
+        criteria.andServiceIdEqualTo(serviceId);
+        List<com.guiji.callcenter.dao.entity.FsBind> fsBinds = fsBindMapper.selectByExample(example);
 
         FsBind fs =new FsBind();
         fs.setServiceId("nanjing");
@@ -24,5 +31,13 @@ public class FsServiceImpl {
         fs.setFsInPort("50601");
         fs.setFsOutPort("50602");
         return fs;
+    }
+
+    @Override
+    public void releasefs(String serviceId) {
+        FsBindExample example = new FsBindExample();
+        FsBindExample.Criteria criteria = example.createCriteria();
+        criteria.andServiceIdEqualTo(serviceId);
+        fsBindMapper.deleteByExample(example);
     }
 }

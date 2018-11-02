@@ -1405,73 +1405,73 @@ public class CallOutPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​IsNull() {
-            addCriterion("accurate_intent​ is null");
+        public Criteria andAccurateIntentIsNull() {
+            addCriterion("accurate_intent is null");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​IsNotNull() {
-            addCriterion("accurate_intent​ is not null");
+        public Criteria andAccurateIntentIsNotNull() {
+            addCriterion("accurate_intent is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​EqualTo(String value) {
-            addCriterion("accurate_intent​ =", value, "accurateIntent​");
+        public Criteria andAccurateIntentEqualTo(String value) {
+            addCriterion("accurate_intent =", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​NotEqualTo(String value) {
-            addCriterion("accurate_intent​ <>", value, "accurateIntent​");
+        public Criteria andAccurateIntentNotEqualTo(String value) {
+            addCriterion("accurate_intent <>", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​GreaterThan(String value) {
-            addCriterion("accurate_intent​ >", value, "accurateIntent​");
+        public Criteria andAccurateIntentGreaterThan(String value) {
+            addCriterion("accurate_intent >", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​GreaterThanOrEqualTo(String value) {
-            addCriterion("accurate_intent​ >=", value, "accurateIntent​");
+        public Criteria andAccurateIntentGreaterThanOrEqualTo(String value) {
+            addCriterion("accurate_intent >=", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​LessThan(String value) {
-            addCriterion("accurate_intent​ <", value, "accurateIntent​");
+        public Criteria andAccurateIntentLessThan(String value) {
+            addCriterion("accurate_intent <", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​LessThanOrEqualTo(String value) {
-            addCriterion("accurate_intent​ <=", value, "accurateIntent​");
+        public Criteria andAccurateIntentLessThanOrEqualTo(String value) {
+            addCriterion("accurate_intent <=", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​Like(String value) {
-            addCriterion("accurate_intent​ like", value, "accurateIntent​");
+        public Criteria andAccurateIntentLike(String value) {
+            addCriterion("accurate_intent like", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​NotLike(String value) {
-            addCriterion("accurate_intent​ not like", value, "accurateIntent​");
+        public Criteria andAccurateIntentNotLike(String value) {
+            addCriterion("accurate_intent not like", value, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​In(List<String> values) {
-            addCriterion("accurate_intent​ in", values, "accurateIntent​");
+        public Criteria andAccurateIntentIn(List<String> values) {
+            addCriterion("accurate_intent in", values, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​NotIn(List<String> values) {
-            addCriterion("accurate_intent​ not in", values, "accurateIntent​");
+        public Criteria andAccurateIntentNotIn(List<String> values) {
+            addCriterion("accurate_intent not in", values, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​Between(String value1, String value2) {
-            addCriterion("accurate_intent​ between", value1, value2, "accurateIntent​");
+        public Criteria andAccurateIntentBetween(String value1, String value2) {
+            addCriterion("accurate_intent between", value1, value2, "accurateIntent");
             return (Criteria) this;
         }
 
-        public Criteria andAccurateIntent​NotBetween(String value1, String value2) {
-            addCriterion("accurate_intent​ not between", value1, value2, "accurateIntent​");
+        public Criteria andAccurateIntentNotBetween(String value1, String value2) {
+            addCriterion("accurate_intent not between", value1, value2, "accurateIntent");
             return (Criteria) this;
         }
 
@@ -1752,6 +1752,66 @@ public class CallOutPlanExample {
 
         public Criteria andRemarksNotBetween(String value1, String value2) {
             addCriterion("remarks not between", value1, value2, "remarks");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsIsNull() {
+            addCriterion("has_tts is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsIsNotNull() {
+            addCriterion("has_tts is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsEqualTo(Boolean value) {
+            addCriterion("has_tts =", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsNotEqualTo(Boolean value) {
+            addCriterion("has_tts <>", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsGreaterThan(Boolean value) {
+            addCriterion("has_tts >", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("has_tts >=", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsLessThan(Boolean value) {
+            addCriterion("has_tts <", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsLessThanOrEqualTo(Boolean value) {
+            addCriterion("has_tts <=", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsIn(List<Boolean> values) {
+            addCriterion("has_tts in", values, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsNotIn(List<Boolean> values) {
+            addCriterion("has_tts not in", values, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsBetween(Boolean value1, Boolean value2) {
+            addCriterion("has_tts between", value1, value2, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("has_tts not between", value1, value2, "hasTts");
             return (Criteria) this;
         }
     }

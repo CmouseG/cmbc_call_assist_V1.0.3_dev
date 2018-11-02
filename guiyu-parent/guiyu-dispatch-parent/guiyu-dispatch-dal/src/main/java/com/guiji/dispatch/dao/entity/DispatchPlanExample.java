@@ -595,52 +595,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanEqualTo(Boolean value) {
+        public Criteria andStatusPlanEqualTo(Integer value) {
             addCriterion("status_plan =", value, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanNotEqualTo(Boolean value) {
+        public Criteria andStatusPlanNotEqualTo(Integer value) {
             addCriterion("status_plan <>", value, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanGreaterThan(Boolean value) {
+        public Criteria andStatusPlanGreaterThan(Integer value) {
             addCriterion("status_plan >", value, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andStatusPlanGreaterThanOrEqualTo(Integer value) {
             addCriterion("status_plan >=", value, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanLessThan(Boolean value) {
+        public Criteria andStatusPlanLessThan(Integer value) {
             addCriterion("status_plan <", value, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanLessThanOrEqualTo(Boolean value) {
+        public Criteria andStatusPlanLessThanOrEqualTo(Integer value) {
             addCriterion("status_plan <=", value, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanIn(List<Boolean> values) {
+        public Criteria andStatusPlanIn(List<Integer> values) {
             addCriterion("status_plan in", values, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanNotIn(List<Boolean> values) {
+        public Criteria andStatusPlanNotIn(List<Integer> values) {
             addCriterion("status_plan not in", values, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanBetween(Boolean value1, Boolean value2) {
+        public Criteria andStatusPlanBetween(Integer value1, Integer value2) {
             addCriterion("status_plan between", value1, value2, "statusPlan");
             return (Criteria) this;
         }
 
-        public Criteria andStatusPlanNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andStatusPlanNotBetween(Integer value1, Integer value2) {
             addCriterion("status_plan not between", value1, value2, "statusPlan");
             return (Criteria) this;
         }
@@ -655,52 +655,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncEqualTo(Boolean value) {
+        public Criteria andStatusSyncEqualTo(Integer value) {
             addCriterion("status_sync =", value, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncNotEqualTo(Boolean value) {
+        public Criteria andStatusSyncNotEqualTo(Integer value) {
             addCriterion("status_sync <>", value, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncGreaterThan(Boolean value) {
+        public Criteria andStatusSyncGreaterThan(Integer value) {
             addCriterion("status_sync >", value, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andStatusSyncGreaterThanOrEqualTo(Integer value) {
             addCriterion("status_sync >=", value, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncLessThan(Boolean value) {
+        public Criteria andStatusSyncLessThan(Integer value) {
             addCriterion("status_sync <", value, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncLessThanOrEqualTo(Boolean value) {
+        public Criteria andStatusSyncLessThanOrEqualTo(Integer value) {
             addCriterion("status_sync <=", value, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncIn(List<Boolean> values) {
+        public Criteria andStatusSyncIn(List<Integer> values) {
             addCriterion("status_sync in", values, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncNotIn(List<Boolean> values) {
+        public Criteria andStatusSyncNotIn(List<Integer> values) {
             addCriterion("status_sync not in", values, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncBetween(Boolean value1, Boolean value2) {
+        public Criteria andStatusSyncBetween(Integer value1, Integer value2) {
             addCriterion("status_sync between", value1, value2, "statusSync");
             return (Criteria) this;
         }
 
-        public Criteria andStatusSyncNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andStatusSyncNotBetween(Integer value1, Integer value2) {
             addCriterion("status_sync not between", value1, value2, "statusSync");
             return (Criteria) this;
         }
@@ -715,52 +715,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andRecallEqualTo(Boolean value) {
+        public Criteria andRecallEqualTo(Integer value) {
             addCriterion("recall =", value, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallNotEqualTo(Boolean value) {
+        public Criteria andRecallNotEqualTo(Integer value) {
             addCriterion("recall <>", value, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallGreaterThan(Boolean value) {
+        public Criteria andRecallGreaterThan(Integer value) {
             addCriterion("recall >", value, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andRecallGreaterThanOrEqualTo(Integer value) {
             addCriterion("recall >=", value, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallLessThan(Boolean value) {
+        public Criteria andRecallLessThan(Integer value) {
             addCriterion("recall <", value, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallLessThanOrEqualTo(Boolean value) {
+        public Criteria andRecallLessThanOrEqualTo(Integer value) {
             addCriterion("recall <=", value, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallIn(List<Boolean> values) {
+        public Criteria andRecallIn(List<Integer> values) {
             addCriterion("recall in", values, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallNotIn(List<Boolean> values) {
+        public Criteria andRecallNotIn(List<Integer> values) {
             addCriterion("recall not in", values, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallBetween(Boolean value1, Boolean value2) {
+        public Criteria andRecallBetween(Integer value1, Integer value2) {
             addCriterion("recall between", value1, value2, "recall");
             return (Criteria) this;
         }
 
-        public Criteria andRecallNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andRecallNotBetween(Integer value1, Integer value2) {
             addCriterion("recall not between", value1, value2, "recall");
             return (Criteria) this;
         }
@@ -915,62 +915,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andLineEqualTo(String value) {
+        public Criteria andLineEqualTo(Integer value) {
             addCriterion("line =", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotEqualTo(String value) {
+        public Criteria andLineNotEqualTo(Integer value) {
             addCriterion("line <>", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineGreaterThan(String value) {
+        public Criteria andLineGreaterThan(Integer value) {
             addCriterion("line >", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineGreaterThanOrEqualTo(String value) {
+        public Criteria andLineGreaterThanOrEqualTo(Integer value) {
             addCriterion("line >=", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLessThan(String value) {
+        public Criteria andLineLessThan(Integer value) {
             addCriterion("line <", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLessThanOrEqualTo(String value) {
+        public Criteria andLineLessThanOrEqualTo(Integer value) {
             addCriterion("line <=", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLike(String value) {
-            addCriterion("line like", value, "line");
-            return (Criteria) this;
-        }
-
-        public Criteria andLineNotLike(String value) {
-            addCriterion("line not like", value, "line");
-            return (Criteria) this;
-        }
-
-        public Criteria andLineIn(List<String> values) {
+        public Criteria andLineIn(List<Integer> values) {
             addCriterion("line in", values, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotIn(List<String> values) {
+        public Criteria andLineNotIn(List<Integer> values) {
             addCriterion("line not in", values, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineBetween(String value1, String value2) {
+        public Criteria andLineBetween(Integer value1, Integer value2) {
             addCriterion("line between", value1, value2, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotBetween(String value1, String value2) {
+        public Criteria andLineNotBetween(Integer value1, Integer value2) {
             addCriterion("line not between", value1, value2, "line");
             return (Criteria) this;
         }
@@ -1125,52 +1115,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andCleanEqualTo(Boolean value) {
+        public Criteria andCleanEqualTo(Integer value) {
             addCriterion("clean =", value, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanNotEqualTo(Boolean value) {
+        public Criteria andCleanNotEqualTo(Integer value) {
             addCriterion("clean <>", value, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanGreaterThan(Boolean value) {
+        public Criteria andCleanGreaterThan(Integer value) {
             addCriterion("clean >", value, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andCleanGreaterThanOrEqualTo(Integer value) {
             addCriterion("clean >=", value, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanLessThan(Boolean value) {
+        public Criteria andCleanLessThan(Integer value) {
             addCriterion("clean <", value, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanLessThanOrEqualTo(Boolean value) {
+        public Criteria andCleanLessThanOrEqualTo(Integer value) {
             addCriterion("clean <=", value, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanIn(List<Boolean> values) {
+        public Criteria andCleanIn(List<Integer> values) {
             addCriterion("clean in", values, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanNotIn(List<Boolean> values) {
+        public Criteria andCleanNotIn(List<Integer> values) {
             addCriterion("clean not in", values, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanBetween(Boolean value1, Boolean value2) {
+        public Criteria andCleanBetween(Integer value1, Integer value2) {
             addCriterion("clean between", value1, value2, "clean");
             return (Criteria) this;
         }
 
-        public Criteria andCleanNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andCleanNotBetween(Integer value1, Integer value2) {
             addCriterion("clean not between", value1, value2, "clean");
             return (Criteria) this;
         }
@@ -1422,6 +1412,66 @@ public class DispatchPlanExample {
 
         public Criteria andGmtModifiedNotBetween(Date value1, Date value2) {
             addCriterion("gmt_modified not between", value1, value2, "gmtModified");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsIsNull() {
+            addCriterion("is_tts is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsIsNotNull() {
+            addCriterion("is_tts is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsEqualTo(Byte value) {
+            addCriterion("is_tts =", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsNotEqualTo(Byte value) {
+            addCriterion("is_tts <>", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsGreaterThan(Byte value) {
+            addCriterion("is_tts >", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsGreaterThanOrEqualTo(Byte value) {
+            addCriterion("is_tts >=", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsLessThan(Byte value) {
+            addCriterion("is_tts <", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsLessThanOrEqualTo(Byte value) {
+            addCriterion("is_tts <=", value, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsIn(List<Byte> values) {
+            addCriterion("is_tts in", values, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsNotIn(List<Byte> values) {
+            addCriterion("is_tts not in", values, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsBetween(Byte value1, Byte value2) {
+            addCriterion("is_tts between", value1, value2, "isTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsTtsNotBetween(Byte value1, Byte value2) {
+            addCriterion("is_tts not between", value1, value2, "isTts");
             return (Criteria) this;
         }
     }

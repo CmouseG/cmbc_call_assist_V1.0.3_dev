@@ -18,23 +18,23 @@ public class DispatchPlan implements Serializable {
 
     private String params;
 
-    private Boolean statusPlan;
+    private Integer statusPlan;
 
-    private Boolean statusSync;
+    private Integer statusSync;
 
-    private Boolean recall;
+    private Integer recall;
 
     private String recallParams;
 
     private String robot;
 
-    private String line;
+    private Integer line;
 
     private String result;
 
     private String callAgent;
 
-    private Boolean clean;
+    private Integer clean;
 
     private Integer callData;
 
@@ -43,6 +43,8 @@ public class DispatchPlan implements Serializable {
     private Date gmtCreate;
 
     private Date gmtModified;
+
+    private Byte isTts;
 
     private static final long serialVersionUID = 1L;
 
@@ -102,27 +104,27 @@ public class DispatchPlan implements Serializable {
         this.params = params == null ? null : params.trim();
     }
 
-    public Boolean getStatusPlan() {
+    public Integer getStatusPlan() {
         return statusPlan;
     }
 
-    public void setStatusPlan(Boolean statusPlan) {
+    public void setStatusPlan(Integer statusPlan) {
         this.statusPlan = statusPlan;
     }
 
-    public Boolean getStatusSync() {
+    public Integer getStatusSync() {
         return statusSync;
     }
 
-    public void setStatusSync(Boolean statusSync) {
+    public void setStatusSync(Integer statusSync) {
         this.statusSync = statusSync;
     }
 
-    public Boolean getRecall() {
+    public Integer getRecall() {
         return recall;
     }
 
-    public void setRecall(Boolean recall) {
+    public void setRecall(Integer recall) {
         this.recall = recall;
     }
 
@@ -142,12 +144,12 @@ public class DispatchPlan implements Serializable {
         this.robot = robot == null ? null : robot.trim();
     }
 
-    public String getLine() {
+    public Integer getLine() {
         return line;
     }
 
-    public void setLine(String line) {
-        this.line = line == null ? null : line.trim();
+    public void setLine(Integer line) {
+        this.line = line;
     }
 
     public String getResult() {
@@ -166,11 +168,11 @@ public class DispatchPlan implements Serializable {
         this.callAgent = callAgent == null ? null : callAgent.trim();
     }
 
-    public Boolean getClean() {
+    public Integer getClean() {
         return clean;
     }
 
-    public void setClean(Boolean clean) {
+    public void setClean(Integer clean) {
         this.clean = clean;
     }
 
@@ -206,6 +208,14 @@ public class DispatchPlan implements Serializable {
         this.gmtModified = gmtModified;
     }
 
+    public Byte getIsTts() {
+        return isTts;
+    }
+
+    public void setIsTts(Byte isTts) {
+        this.isTts = isTts;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -232,6 +242,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", callHour=").append(callHour);
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
+        sb.append(", isTts=").append(isTts);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

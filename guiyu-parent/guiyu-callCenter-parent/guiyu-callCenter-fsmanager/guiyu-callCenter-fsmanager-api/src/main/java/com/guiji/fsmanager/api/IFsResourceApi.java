@@ -6,6 +6,7 @@ import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Date: 2018/10/26 0026 16:35
  * @Description:
  */
+@FeignClient("guiyu-callcenter-fsmanager")
 public interface IFsResourceApi {
 
     @ApiOperation(value = "申请freeswitch资源接口")

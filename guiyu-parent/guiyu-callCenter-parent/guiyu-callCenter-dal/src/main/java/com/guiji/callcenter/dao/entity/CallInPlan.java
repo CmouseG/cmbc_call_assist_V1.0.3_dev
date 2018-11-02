@@ -44,7 +44,7 @@ public class CallInPlan implements Serializable {
 
     private Integer hangupDirection;
 
-    private String accurateIntent​;
+    private String accurateIntent;
 
     private String reason;
 
@@ -53,6 +53,8 @@ public class CallInPlan implements Serializable {
     private String originateCmd;
 
     private String remarks;
+
+    private Boolean hasTts;
 
     private static final long serialVersionUID = 1L;
 
@@ -216,12 +218,12 @@ public class CallInPlan implements Serializable {
         this.hangupDirection = hangupDirection;
     }
 
-    public String getAccurateIntent​() {
-        return accurateIntent​;
+    public String getAccurateIntent() {
+        return accurateIntent;
     }
 
-    public void setAccurateIntent​(String accurateIntent​) {
-        this.accurateIntent​ = accurateIntent​ == null ? null : accurateIntent​.trim();
+    public void setAccurateIntent(String accurateIntent) {
+        this.accurateIntent = accurateIntent == null ? null : accurateIntent.trim();
     }
 
     public String getReason() {
@@ -256,6 +258,14 @@ public class CallInPlan implements Serializable {
         this.remarks = remarks == null ? null : remarks.trim();
     }
 
+    public Boolean getHasTts() {
+        return hasTts;
+    }
+
+    public void setHasTts(Boolean hasTts) {
+        this.hasTts = hasTts;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -282,11 +292,12 @@ public class CallInPlan implements Serializable {
         sb.append(", callDirection=").append(callDirection);
         sb.append(", callState=").append(callState);
         sb.append(", hangupDirection=").append(hangupDirection);
-        sb.append(", accurateIntent​=").append(accurateIntent​);
+        sb.append(", accurateIntent=").append(accurateIntent);
         sb.append(", reason=").append(reason);
         sb.append(", hangupCode=").append(hangupCode);
         sb.append(", originateCmd=").append(originateCmd);
         sb.append(", remarks=").append(remarks);
+        sb.append(", hasTts=").append(hasTts);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -2,6 +2,7 @@ package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.common.result.Result;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface LineInfoService {
 
     public boolean addLineInfo(LineInfoVO lineInfoVO);
 
-    public boolean updateLineInfo(LineInfoVO lineInfoVO);
+    public Result.ReturnData<Boolean> updateLineInfo(LineInfoVO lineInfoVO);
 
     public boolean delLineInfo(String id);
 

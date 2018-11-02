@@ -7,13 +7,15 @@ import com.guiji.callcenter.dao.entity.LineCountExample;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.Constant;
-import com.guiji.ccmanager.feign.LineOperApiFeign;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.common.result.Result;
+import com.guiji.fsmanager.api.ILineOperApi;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,12 @@ import java.util.List;
 @Service
 public class LineInfoServiceImpl implements LineInfoService {
 
+    private final Logger log = LoggerFactory.getLogger(LineInfoServiceImpl.class);
+
     @Autowired
     private LineInfoMapper lineInfoMapper;
     @Autowired
-    private LineOperApiFeign lineOperApiFeign;
+    private ILineOperApi lineOperApiFeign;
     @Autowired
     private LineCountMapper lineCountMapper;
     @Autowired
@@ -62,6 +66,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         BeanUtil.copyProperties(lineInfoVO,lineInfoApi);
         Result.ReturnData result = lineOperApiFeign.addLineinfos(lineInfoApi);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+            log.warn("lineOperApiFeign.addLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
         }
@@ -87,9 +92,13 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public boolean updateLineInfo(LineInfoVO lineInfoVO){
+    public Result.ReturnData<Boolean> updateLineInfo(LineInfoVO lineInfoVO){
 
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(lineInfoVO.getLineId());
+
+        if(lineInfoDB==null){
+            return Result.error(Constant.ERROR_LINE_NOTEXIST);
+        }
 
         //本地更新数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -102,8 +111,9 @@ public class LineInfoServiceImpl implements LineInfoService {
         BeanUtil.copyProperties(lineInfoVO,lineInfoApi);
         Result.ReturnData result = lineOperApiFeign.editLineinfos(String.valueOf(lineInfoApi.getLineId()),lineInfoApi);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+            log.warn("lineOperApiFeign.editLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return false;
+            return result;
         }
 
         //若并发数有更新，则从linecount表读取线路并发数分配信息，并根据重新计算的并发数进行修改保存。
@@ -129,7 +139,7 @@ public class LineInfoServiceImpl implements LineInfoService {
                 lineCountMapper.updateByExampleSelective(lineCount,example);
             }
         }
-        return  true;
+        return  Result.ok(true);
     }
 
     @Override
@@ -139,6 +149,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         lineInfoMapper.deleteByPrimaryKey(Integer.valueOf(id));
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(id);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+            log.warn("lineOperApiFeign.deleteLineinfos,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return false;
         }

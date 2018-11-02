@@ -60,8 +60,7 @@ public class LineInfoController {
             return Result.error(Constant.ERROR_PARAM);
         }
 
-        boolean b = lineInfoService.updateLineInfo(lineInfoVO);
-        return Result.ok(b);
+        return lineInfoService.updateLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "删除线路接口")

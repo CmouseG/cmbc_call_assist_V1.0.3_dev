@@ -44,7 +44,7 @@ public class CallInPlan implements Serializable {
 
     private Integer hangupDirection;
 
-    private String accurateIntent​;
+    private String accurateIntent;
 
     private String reason;
 
@@ -218,12 +218,12 @@ public class CallInPlan implements Serializable {
         this.hangupDirection = hangupDirection;
     }
 
-    public String getAccurateIntent​() {
-        return accurateIntent​;
+    public String getAccurateIntent() {
+        return accurateIntent;
     }
 
-    public void setAccurateIntent​(String accurateIntent​) {
-        this.accurateIntent​ = accurateIntent​ == null ? null : accurateIntent​.trim();
+    public void setAccurateIntent(String accurateIntent) {
+        this.accurateIntent = accurateIntent == null ? null : accurateIntent.trim();
     }
 
     public String getReason() {
@@ -292,7 +292,7 @@ public class CallInPlan implements Serializable {
         sb.append(", callDirection=").append(callDirection);
         sb.append(", callState=").append(callState);
         sb.append(", hangupDirection=").append(hangupDirection);
-        sb.append(", accurateIntent​=").append(accurateIntent​);
+        sb.append(", accurateIntent=").append(accurateIntent);
         sb.append(", reason=").append(reason);
         sb.append(", hangupCode=").append(hangupCode);
         sb.append(", originateCmd=").append(originateCmd);

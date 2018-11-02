@@ -22,7 +22,7 @@
     <result column="call_direction" property="callDirection" jdbcType="INTEGER" />
     <result column="call_state" property="callState" jdbcType="INTEGER" />
     <result column="hangup_direction" property="hangupDirection" jdbcType="INTEGER" />
-    <result column="accurate_intent​" property="accurateIntent​" jdbcType="VARCHAR" />
+    <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR" />
     <result column="reason" property="reason" jdbcType="VARCHAR" />
     <result column="hangup_code" property="hangupCode" jdbcType="VARCHAR" />
     <result column="originate_cmd" property="originateCmd" jdbcType="VARCHAR" />
@@ -91,7 +91,7 @@
     call_id, phone_num, customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time, 
     agent_channel_uuid, agent_group_id, agent_start_time, create_time, schedule_time, 
     hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction, 
-    accurate_intent​, reason, hangup_code, originate_cmd, remarks, has_tts
+    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
     select
@@ -134,7 +134,7 @@
       agent_group_id, agent_start_time, create_time, 
       schedule_time, hangup_time, answer_time, 
       duration, bill_sec, call_direction, 
-      call_state, hangup_direction, accurate_intent​, 
+      call_state, hangup_direction, accurate_intent, 
       reason, hangup_code, originate_cmd, 
       remarks, has_tts)
     values (#{callId,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, 
@@ -143,7 +143,7 @@
       #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
       #{scheduleTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP}, #{answerTime,jdbcType=TIMESTAMP}, 
       #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER}, #{callDirection,jdbcType=INTEGER}, 
-      #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent​,jdbcType=VARCHAR}, 
+      #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, #{originateCmd,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT})
   </insert>
@@ -210,8 +210,8 @@
       <if test="hangupDirection != null" >
         hangup_direction,
       </if>
-      <if test="accurateIntent​ != null" >
-        accurate_intent​,
+      <if test="accurateIntent != null" >
+        accurate_intent,
       </if>
       <if test="reason != null" >
         reason,
@@ -290,8 +290,8 @@
       <if test="hangupDirection != null" >
         #{hangupDirection,jdbcType=INTEGER},
       </if>
-      <if test="accurateIntent​ != null" >
-        #{accurateIntent​,jdbcType=VARCHAR},
+      <if test="accurateIntent != null" >
+        #{accurateIntent,jdbcType=VARCHAR},
       </if>
       <if test="reason != null" >
         #{reason,jdbcType=VARCHAR},
@@ -379,8 +379,8 @@
       <if test="record.hangupDirection != null" >
         hangup_direction = #{record.hangupDirection,jdbcType=INTEGER},
       </if>
-      <if test="record.accurateIntent​ != null" >
-        accurate_intent​ = #{record.accurateIntent​,jdbcType=VARCHAR},
+      <if test="record.accurateIntent != null" >
+        accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
       </if>
       <if test="record.reason != null" >
         reason = #{record.reason,jdbcType=VARCHAR},
@@ -424,7 +424,7 @@
       call_direction = #{record.callDirection,jdbcType=INTEGER},
       call_state = #{record.callState,jdbcType=INTEGER},
       hangup_direction = #{record.hangupDirection,jdbcType=INTEGER},
-      accurate_intent​ = #{record.accurateIntent​,jdbcType=VARCHAR},
+      accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
       reason = #{record.reason,jdbcType=VARCHAR},
       hangup_code = #{record.hangupCode,jdbcType=VARCHAR},
       originate_cmd = #{record.originateCmd,jdbcType=VARCHAR},
@@ -494,8 +494,8 @@
       <if test="hangupDirection != null" >
         hangup_direction = #{hangupDirection,jdbcType=INTEGER},
       </if>
-      <if test="accurateIntent​ != null" >
-        accurate_intent​ = #{accurateIntent​,jdbcType=VARCHAR},
+      <if test="accurateIntent != null" >
+        accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
       </if>
       <if test="reason != null" >
         reason = #{reason,jdbcType=VARCHAR},
@@ -536,7 +536,7 @@
       call_direction = #{callDirection,jdbcType=INTEGER},
       call_state = #{callState,jdbcType=INTEGER},
       hangup_direction = #{hangupDirection,jdbcType=INTEGER},
-      accurate_intent​ = #{accurateIntent​,jdbcType=VARCHAR},
+      accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
       reason = #{reason,jdbcType=VARCHAR},
       hangup_code = #{hangupCode,jdbcType=VARCHAR},
       originate_cmd = #{originateCmd,jdbcType=VARCHAR},

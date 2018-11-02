@@ -9,17 +9,19 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Created by ty on 2018/10/18.
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.guiji")
 @EnableAutoResultPack
+@EnableSwagger2
 @Import(FdfsClientConfig.class)
 @MapperScan("com.guiji.nas.dao")
-public class NasApplication extends WebMvcConfigurerAdapter {
+public class NasApplication {
     public static void main(String[] args) {
         SpringApplication.run(NasApplication.class, args);
     }

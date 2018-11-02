@@ -18,8 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ public class NasController implements INas {
 	 * @date:2018年6月26日 上午8:23:55
 	 */
 	@Override
+	@PostMapping(value = "upload")
 	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, @RequestParam(value = "file", required = true) MultipartFile file) {
 		logger.info("文件开始上传!", file.getName());
 		try {
@@ -81,6 +81,7 @@ public class NasController implements INas {
      * @param sysFileQueryReqVO 查询文件的查询条件
      */
 	@Override
+	@PostMapping(value = "query")
 	public ReturnData<List<SysFileRspVO>> querySkFileInfo(SysFileQueryReqVO sysFileQueryReqVO) {
 		logger.info("开始查询!");
 		List<SysFile> fileList = null;
@@ -116,6 +117,7 @@ public class NasController implements INas {
 	}
 
 	@Override
+	@PostMapping(value = "delete")
 	public ReturnData deleteFile(String id) {
 		nasService.deleteById(id);
 		return Result.ok();

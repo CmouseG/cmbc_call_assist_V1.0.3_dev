@@ -1,7 +1,7 @@
 package com.guiji.fsmanager.api;
 
 import com.guiji.common.result.Result;
-import com.guiji.fsmanager.entity.FsBind;
+import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -23,7 +23,7 @@ public interface IFsResourceApi {
             @ApiImplicitParam(name = "serviceType", value = "服务类型", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="applyfs")
-    public Result.ReturnData<FsBind> applyfs(String serviceId, ServiceTypeEnum serviceType);
+    public Result.ReturnData<FsBindVO> applyfs(String serviceId, ServiceTypeEnum serviceType);
 
     @ApiOperation(value = "释放freeswitch资源接口")
     @ApiImplicitParams({

@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @Date: 2018/10/26 0026 17:16
  * @Description:
  */
-public class LineXmlnfo implements Serializable {
+public class LineXmlnfoVO implements Serializable {
 
     private String configType;
 

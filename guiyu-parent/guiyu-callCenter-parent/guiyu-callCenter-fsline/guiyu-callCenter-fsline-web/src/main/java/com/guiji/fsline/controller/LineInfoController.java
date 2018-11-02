@@ -5,8 +5,8 @@ import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.fsline.util.RequestUtil;
 import com.guiji.fsline.util.RequestUtil.RequestApi;
-import com.guiji.fsmanager.api.FsResourceApi;
-import com.guiji.fsmanager.entity.FsBind;
+import com.guiji.fsmanager.api.IFsResourceApi;
+import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import com.guiji.utils.ServerUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +25,9 @@ public class LineInfoController implements IFsLine {
     Registration registration;
 
     @Autowired
-    FsResourceApi fsResourceApi;
+    IFsResourceApi fsResourceApi;
 
-    FsBind fsBind;
+    FsBindVO fsBind;
 
     /**
      * 在启动的时候，到fsmanager申请线路
@@ -53,7 +53,7 @@ public class LineInfoController implements IFsLine {
         }
 
         if(returnData!=null && RequestUtil.isSuccess(returnData)){
-            fsBind = (FsBind)returnData.getBody();
+            fsBind = (FsBindVO)returnData.getBody();
         }else{
             log.warn("系统启动失败，因未获取到系统信息");
             System.exit(-1);

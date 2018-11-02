@@ -1,6 +1,6 @@
 package com.guiji.fsagent.entity;
 
-public class FsInfo {
+public class FsInfoVO {
     private String fsAgentId;
 
     private String fsIp;

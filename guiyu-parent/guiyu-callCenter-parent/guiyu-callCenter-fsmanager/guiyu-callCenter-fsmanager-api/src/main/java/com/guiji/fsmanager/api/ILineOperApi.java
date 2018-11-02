@@ -1,8 +1,8 @@
 package com.guiji.fsmanager.api;
 
 import com.guiji.common.result.Result;
-import com.guiji.fsmanager.entity.LineInfo;
-import com.guiji.fsmanager.entity.LineXmlnfo;
+import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +28,7 @@ public interface ILineOperApi {
             @ApiImplicitParam(name = "calleePrefix", value = "前缀", dataType = "String", paramType = "query")
     })
     @PostMapping(value="lineinfos")
-    public Result.ReturnData  addLineinfos(@RequestBody LineInfo lineInfo);
+    public Result.ReturnData  addLineinfos(@RequestBody LineInfoVO lineInfo);
 
     @ApiOperation(value = "修改线路接口")
     @ApiImplicitParams({
@@ -40,7 +40,7 @@ public interface ILineOperApi {
             @ApiImplicitParam(name = "calleePrefix", value = "前缀", dataType = "String", paramType = "query")
     })
     @PutMapping(value="/lineinfos/{lineId}")
-    public Result.ReturnData  editLineinfos(@PathVariable(value = "lineId") String lineId,LineInfo lineInfo);
+    public Result.ReturnData  editLineinfos(@PathVariable(value = "lineId") String lineId,LineInfoVO lineInfo);
 
     @ApiOperation(value = "删除线路接口")
     @ApiImplicitParams({
@@ -54,10 +54,10 @@ public interface ILineOperApi {
             @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/linexmlinfos/{lineId}")
-    public Result.ReturnData<List<LineXmlnfo>> linexmlinfos(@PathVariable(value = "lineId") String lineId);
+    public Result.ReturnData<List<LineXmlnfoVO>> linexmlinfos(@PathVariable(value = "lineId") String lineId);
 
     @ApiOperation(value = "获取所有配置文件接口")
     @GetMapping(value="/linexmlinfos")
-    public Result.ReturnData<List<LineXmlnfo>>  linexmlinfosAll();
+    public Result.ReturnData<List<LineXmlnfoVO>>  linexmlinfosAll();
 
 }

@@ -54,6 +54,8 @@ public class CallInPlan implements Serializable {
 
     private String remarks;
 
+    private Boolean hasTts;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -256,6 +258,14 @@ public class CallInPlan implements Serializable {
         this.remarks = remarks == null ? null : remarks.trim();
     }
 
+    public Boolean getHasTts() {
+        return hasTts;
+    }
+
+    public void setHasTts(Boolean hasTts) {
+        this.hasTts = hasTts;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -287,6 +297,7 @@ public class CallInPlan implements Serializable {
         sb.append(", hangupCode=").append(hangupCode);
         sb.append(", originateCmd=").append(originateCmd);
         sb.append(", remarks=").append(remarks);
+        sb.append(", hasTts=").append(hasTts);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

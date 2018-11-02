@@ -1754,6 +1754,66 @@ public class CallInPlanExample {
             addCriterion("remarks not between", value1, value2, "remarks");
             return (Criteria) this;
         }
+
+        public Criteria andHasTtsIsNull() {
+            addCriterion("has_tts is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsIsNotNull() {
+            addCriterion("has_tts is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsEqualTo(Boolean value) {
+            addCriterion("has_tts =", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsNotEqualTo(Boolean value) {
+            addCriterion("has_tts <>", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsGreaterThan(Boolean value) {
+            addCriterion("has_tts >", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("has_tts >=", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsLessThan(Boolean value) {
+            addCriterion("has_tts <", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsLessThanOrEqualTo(Boolean value) {
+            addCriterion("has_tts <=", value, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsIn(List<Boolean> values) {
+            addCriterion("has_tts in", values, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsNotIn(List<Boolean> values) {
+            addCriterion("has_tts not in", values, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsBetween(Boolean value1, Boolean value2) {
+            addCriterion("has_tts between", value1, value2, "hasTts");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasTtsNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("has_tts not between", value1, value2, "hasTts");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.DispatchPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.DispatchPlan" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="plan_uuid" property="planUuid" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="batch_id" property="batchId" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="attach" property="attach" jdbcType="VARCHAR" />
+    <result column="params" property="params" jdbcType="VARCHAR" />
+    <result column="status_plan" property="statusPlan" jdbcType="INTEGER" />
+    <result column="status_sync" property="statusSync" jdbcType="INTEGER" />
+    <result column="recall" property="recall" jdbcType="INTEGER" />
+    <result column="recall_params" property="recallParams" jdbcType="VARCHAR" />
+    <result column="robot" property="robot" jdbcType="VARCHAR" />
+    <result column="line" property="line" jdbcType="INTEGER" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="call_agent" property="callAgent" jdbcType="VARCHAR" />
+    <result column="clean" property="clean" jdbcType="INTEGER" />
+    <result column="call_data" property="callData" jdbcType="INTEGER" />
+    <result column="call_hour" property="callHour" jdbcType="VARCHAR" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="is_tts" property="isTts" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync, 
+    recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour, 
+    gmt_create, gmt_modified, is_tts
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dispatch_plan
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dispatch_plan
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dispatch_plan
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
+    delete from dispatch_plan
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
+    insert into dispatch_plan (id, plan_uuid, user_id, 
+      batch_id, phone, attach, 
+      params, status_plan, status_sync, 
+      recall, recall_params, robot, 
+      line, `result`, call_agent, 
+      clean, call_data, call_hour, 
+      gmt_create, gmt_modified, is_tts
+      )
+    values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER}, 
+      #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
+      #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER}, 
+      #{recall,jdbcType=INTEGER}, #{recallParams,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, 
+      #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
+      #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
+    insert into dispatch_plan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="planUuid != null" >
+        plan_uuid,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="batchId != null" >
+        batch_id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="attach != null" >
+        attach,
+      </if>
+      <if test="params != null" >
+        params,
+      </if>
+      <if test="statusPlan != null" >
+        status_plan,
+      </if>
+      <if test="statusSync != null" >
+        status_sync,
+      </if>
+      <if test="recall != null" >
+        recall,
+      </if>
+      <if test="recallParams != null" >
+        recall_params,
+      </if>
+      <if test="robot != null" >
+        robot,
+      </if>
+      <if test="line != null" >
+        line,
+      </if>
+      <if test="result != null" >
+        `result`,
+      </if>
+      <if test="callAgent != null" >
+        call_agent,
+      </if>
+      <if test="clean != null" >
+        clean,
+      </if>
+      <if test="callData != null" >
+        call_data,
+      </if>
+      <if test="callHour != null" >
+        call_hour,
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create,
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified,
+      </if>
+      <if test="isTts != null" >
+        is_tts,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="planUuid != null" >
+        #{planUuid,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="batchId != null" >
+        #{batchId,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="attach != null" >
+        #{attach,jdbcType=VARCHAR},
+      </if>
+      <if test="params != null" >
+        #{params,jdbcType=VARCHAR},
+      </if>
+      <if test="statusPlan != null" >
+        #{statusPlan,jdbcType=INTEGER},
+      </if>
+      <if test="statusSync != null" >
+        #{statusSync,jdbcType=INTEGER},
+      </if>
+      <if test="recall != null" >
+        #{recall,jdbcType=INTEGER},
+      </if>
+      <if test="recallParams != null" >
+        #{recallParams,jdbcType=VARCHAR},
+      </if>
+      <if test="robot != null" >
+        #{robot,jdbcType=VARCHAR},
+      </if>
+      <if test="line != null" >
+        #{line,jdbcType=INTEGER},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="callAgent != null" >
+        #{callAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="clean != null" >
+        #{clean,jdbcType=INTEGER},
+      </if>
+      <if test="callData != null" >
+        #{callData,jdbcType=INTEGER},
+      </if>
+      <if test="callHour != null" >
+        #{callHour,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isTts != null" >
+        #{isTts,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" resultType="java.lang.Integer" >
+    select count(*) from dispatch_plan
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dispatch_plan
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.planUuid != null" >
+        plan_uuid = #{record.planUuid,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.batchId != null" >
+        batch_id = #{record.batchId,jdbcType=INTEGER},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attach != null" >
+        attach = #{record.attach,jdbcType=VARCHAR},
+      </if>
+      <if test="record.params != null" >
+        params = #{record.params,jdbcType=VARCHAR},
+      </if>
+      <if test="record.statusPlan != null" >
+        status_plan = #{record.statusPlan,jdbcType=INTEGER},
+      </if>
+      <if test="record.statusSync != null" >
+        status_sync = #{record.statusSync,jdbcType=INTEGER},
+      </if>
+      <if test="record.recall != null" >
+        recall = #{record.recall,jdbcType=INTEGER},
+      </if>
+      <if test="record.recallParams != null" >
+        recall_params = #{record.recallParams,jdbcType=VARCHAR},
+      </if>
+      <if test="record.robot != null" >
+        robot = #{record.robot,jdbcType=VARCHAR},
+      </if>
+      <if test="record.line != null" >
+        line = #{record.line,jdbcType=INTEGER},
+      </if>
+      <if test="record.result != null" >
+        `result` = #{record.result,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callAgent != null" >
+        call_agent = #{record.callAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clean != null" >
+        clean = #{record.clean,jdbcType=INTEGER},
+      </if>
+      <if test="record.callData != null" >
+        call_data = #{record.callData,jdbcType=INTEGER},
+      </if>
+      <if test="record.callHour != null" >
+        call_hour = #{record.callHour,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gmtCreate != null" >
+        gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.gmtModified != null" >
+        gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isTts != null" >
+        is_tts = #{record.isTts,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dispatch_plan
+    set id = #{record.id,jdbcType=INTEGER},
+      plan_uuid = #{record.planUuid,jdbcType=CHAR},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      batch_id = #{record.batchId,jdbcType=INTEGER},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      attach = #{record.attach,jdbcType=VARCHAR},
+      params = #{record.params,jdbcType=VARCHAR},
+      status_plan = #{record.statusPlan,jdbcType=INTEGER},
+      status_sync = #{record.statusSync,jdbcType=INTEGER},
+      recall = #{record.recall,jdbcType=INTEGER},
+      recall_params = #{record.recallParams,jdbcType=VARCHAR},
+      robot = #{record.robot,jdbcType=VARCHAR},
+      line = #{record.line,jdbcType=INTEGER},
+      `result` = #{record.result,jdbcType=VARCHAR},
+      call_agent = #{record.callAgent,jdbcType=VARCHAR},
+      clean = #{record.clean,jdbcType=INTEGER},
+      call_data = #{record.callData,jdbcType=INTEGER},
+      call_hour = #{record.callHour,jdbcType=VARCHAR},
+      gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+      is_tts = #{record.isTts,jdbcType=TINYINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
+    update dispatch_plan
+    <set >
+      <if test="planUuid != null" >
+        plan_uuid = #{planUuid,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="batchId != null" >
+        batch_id = #{batchId,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="attach != null" >
+        attach = #{attach,jdbcType=VARCHAR},
+      </if>
+      <if test="params != null" >
+        params = #{params,jdbcType=VARCHAR},
+      </if>
+      <if test="statusPlan != null" >
+        status_plan = #{statusPlan,jdbcType=INTEGER},
+      </if>
+      <if test="statusSync != null" >
+        status_sync = #{statusSync,jdbcType=INTEGER},
+      </if>
+      <if test="recall != null" >
+        recall = #{recall,jdbcType=INTEGER},
+      </if>
+      <if test="recallParams != null" >
+        recall_params = #{recallParams,jdbcType=VARCHAR},
+      </if>
+      <if test="robot != null" >
+        robot = #{robot,jdbcType=VARCHAR},
+      </if>
+      <if test="line != null" >
+        line = #{line,jdbcType=INTEGER},
+      </if>
+      <if test="result != null" >
+        `result` = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="callAgent != null" >
+        call_agent = #{callAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="clean != null" >
+        clean = #{clean,jdbcType=INTEGER},
+      </if>
+      <if test="callData != null" >
+        call_data = #{callData,jdbcType=INTEGER},
+      </if>
+      <if test="callHour != null" >
+        call_hour = #{callHour,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isTts != null" >
+        is_tts = #{isTts,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
+    update dispatch_plan
+    set plan_uuid = #{planUuid,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      batch_id = #{batchId,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      attach = #{attach,jdbcType=VARCHAR},
+      params = #{params,jdbcType=VARCHAR},
+      status_plan = #{statusPlan,jdbcType=INTEGER},
+      status_sync = #{statusSync,jdbcType=INTEGER},
+      recall = #{recall,jdbcType=INTEGER},
+      recall_params = #{recallParams,jdbcType=VARCHAR},
+      robot = #{robot,jdbcType=VARCHAR},
+      line = #{line,jdbcType=INTEGER},
+      `result` = #{result,jdbcType=VARCHAR},
+      call_agent = #{callAgent,jdbcType=VARCHAR},
+      clean = #{clean,jdbcType=INTEGER},
+      call_data = #{callData,jdbcType=INTEGER},
+      call_hour = #{callHour,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      is_tts = #{isTts,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,6 +1,5 @@
 package com.guiji.nas.api;
 
-import com.guiji.common.result.Result.ReturnData;
 import com.guiji.nas.vo.SysFileQueryReqVO;
 import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.nas.vo.SysFileRspVO;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 
 import java.util.List;
 

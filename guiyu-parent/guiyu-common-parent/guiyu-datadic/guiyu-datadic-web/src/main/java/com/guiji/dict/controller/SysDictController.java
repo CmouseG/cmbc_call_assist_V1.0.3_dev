@@ -1,7 +1,7 @@
 package com.guiji.dict.controller;
 
-import com.guiji.common.result.Result;
-import com.guiji.common.result.Result.ReturnData;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dict.api.ISysDict;
 import com.guiji.dict.dao.entity.SysDict;
 import com.guiji.dict.service.SysDictService;

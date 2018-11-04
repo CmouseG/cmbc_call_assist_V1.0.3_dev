@@ -32,3 +32,5 @@ eureka:
 #网关地址
 gateway:
   host: http://guiyu-cloud-zuul:18000/
+properties:
+  error: properties/error.properties

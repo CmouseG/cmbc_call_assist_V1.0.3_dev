@@ -1,6 +1,6 @@
 package com.guiji.fsagent.entity;
 
-public class Record {
+public class RecordVO {
     private String fileName;
     private String fileUrl;
 

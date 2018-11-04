@@ -62,7 +62,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         lineInfoMapper.insertSelective(lineInfo);
 
         //调用fsmanager的增加线路接口
-        com.guiji.fsmanager.entity.LineInfo lineInfoApi = new com.guiji.fsmanager.entity.LineInfo();
+        com.guiji.fsmanager.entity.LineInfoVO lineInfoApi = new com.guiji.fsmanager.entity.LineInfoVO();
         BeanUtil.copyProperties(lineInfoVO,lineInfoApi);
         Result.ReturnData result = lineOperApiFeign.addLineinfos(lineInfoApi);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
@@ -107,7 +107,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         lineInfoMapper.updateByPrimaryKeySelective(lineInfo);
 
         //调用fsmanager的更新线路接口
-        com.guiji.fsmanager.entity.LineInfo lineInfoApi = new com.guiji.fsmanager.entity.LineInfo();
+        com.guiji.fsmanager.entity.LineInfoVO lineInfoApi = new com.guiji.fsmanager.entity.LineInfoVO();
         BeanUtil.copyProperties(lineInfoVO,lineInfoApi);
         Result.ReturnData result = lineOperApiFeign.editLineinfos(String.valueOf(lineInfoApi.getLineId()),lineInfoApi);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下

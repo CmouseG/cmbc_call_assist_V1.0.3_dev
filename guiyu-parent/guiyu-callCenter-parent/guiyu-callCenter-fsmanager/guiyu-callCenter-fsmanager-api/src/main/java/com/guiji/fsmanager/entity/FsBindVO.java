@@ -2,7 +2,7 @@ package com.guiji.fsmanager.entity;
 
 import java.io.Serializable;
 
-public class FsBind implements Serializable {
+public class FsBindVO implements Serializable {
     private String serviceId;
 
     private String fsAgentId;

@@ -2,7 +2,7 @@ package com.guiji.fsmanager.entity;
 
 import java.io.Serializable;
 
-public class LineInfo implements Serializable {
+public class LineInfoVO implements Serializable {
     private String lineId;
 
     private String sipIp;

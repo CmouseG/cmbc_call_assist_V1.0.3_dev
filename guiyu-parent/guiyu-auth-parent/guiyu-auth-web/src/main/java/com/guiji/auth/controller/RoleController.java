@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.service.RoleService;
-import com.guiji.user.dao.entity.Role;
+import com.guiji.user.dao.entity.SysRole;
 
 @RestController
 @RequestMapping("role")
@@ -17,27 +17,27 @@ public class RoleController {
 	private RoleService service;
 	
 	@RequestMapping("insert")
-	public void insert(Role role){
+	public void insert(SysRole role){
 		service.insert(role);
 	}
 	
 	@RequestMapping("delete")
-	public void delete(String id){
+	public void delete(Long id){
 		service.delete(id);
 	}
 	
 	@RequestMapping("update")
-	public void update(Role role){
+	public void update(SysRole role){
 		service.update(role);
 	}
 	
 	@RequestMapping("getRoleId")
-	public Role getRoleId(String id){
+	public SysRole getRoleId(Long id){
 		return service.getRoleId(id);
 	}
 	
 	@RequestMapping("getRoles")
-	public List<Role> getRoles(){
+	public List<SysRole> getRoles(){
 		return service.getRoles();
 	}
 	

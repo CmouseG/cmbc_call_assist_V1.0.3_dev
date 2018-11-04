@@ -8,42 +8,49 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.auth.util.PermissionResolve;
 import com.guiji.auth.vo.MenuTree;
-import com.guiji.user.dao.MenuMapper;
-import com.guiji.user.dao.entity.Menu;
+import com.guiji.user.dao.SysMenuMapper;
+import com.guiji.user.dao.entity.SysMenu;
 
 @Service
 public class MenuService {
 
 	@Autowired
-	private MenuMapper mapper;
+	private SysMenuMapper mapper;
+	
+	@Autowired
+	private PermissionResolve resolve;
 
-	public void insert(Menu menu){
-		mapper.insert(menu);
+	public void insert(SysMenu menu){
+		mapper.insertSelective(menu);
+		resolve.clean();
 	}
 
-	public void delete(String id){
-		mapper.delete(id);
+	public void delete(Long id){
+		mapper.deleteByPrimaryKey(id);
+		resolve.clean();
 	}
 
-	public void update(Menu menu){
-		mapper.update(menu);
+	public void update(SysMenu menu){
+		mapper.updateByPrimaryKeySelective(menu);
+		resolve.clean();
 	}
 
-	public Menu getMenuById(String id){
-		return mapper.getMenuById(id);
+	public SysMenu getMenuById(Long id){
+		return mapper.selectByPrimaryKey(id);
 	}
 	
-	public List<MenuTree> getMenus(String userId){
-		List<Menu> allMenu=mapper.getMenuByUserId(userId);
-		Map<String,MenuTree> map=new HashMap<>();
+	public List<MenuTree> getMenus(Long userId){
+		List<SysMenu> allMenu=mapper.getMenuByUserId(userId);
+		Map<Long,MenuTree> map=new HashMap<>();
 		List<MenuTree> list=new ArrayList<>();
 		allMenu.stream().forEach((item)->{
 			
 			MenuTree node=new MenuTree();
 			node.setParent(item);
 			
-			String pid=item.getPid();
+			Long pid=item.getPid();
 			MenuTree parent=map.get(pid);
 			if(parent==null&&"0".equals(pid)){
 				list.add(node);
@@ -53,6 +60,16 @@ public class MenuService {
 			map.put(item.getId(), node);
 		});
 		return list;
+	}
+	
+	public Map<String,String> getAllPermissions(){
+		List<Map<String,String>> permList=mapper.getAllPermissions();
+		Map<String,String> result=new HashMap<>();
+		permList.forEach((item)->{
+			result.put(item.get("url"), item.get("permission"));
+		});
+		
+		return result;
 	}
 
 }

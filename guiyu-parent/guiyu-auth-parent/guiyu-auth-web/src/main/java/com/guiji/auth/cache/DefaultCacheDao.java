@@ -17,7 +17,8 @@ public class DefaultCacheDao{
 	
 	private long timeOut=0;
 	
-	public DefaultCacheDao() {}
+	public DefaultCacheDao() {
+	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DefaultCacheDao(RedisTemplate redisTemplate,String cacheName,long timeOut){

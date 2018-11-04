@@ -1,10 +1,10 @@
-package com.guiji.common.result;
-
-import java.util.Properties;
+package result;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.Properties;
 
 @Component
 public class Result {
@@ -14,11 +14,11 @@ public class Result {
 	public static <T> Result.ReturnData<T> ok(T obj){
 		return new Result.ReturnData<T>(obj);
 	}
-	
+
 	public static <T> Result.ReturnData<T> ok(){
 		return new Result.ReturnData<T>();
 	}
-	
+
 	public static <T> Result.ReturnData<T> error(String code){
 		String msg=properties.getProperty(code);
 		return new Result.ReturnData<T>(code,msg,false);

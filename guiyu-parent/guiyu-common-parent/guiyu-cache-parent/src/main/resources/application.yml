@@ -47,3 +47,5 @@ endpoints:
 management:
   security:
     enabled: false
+properties:
+  error: properties/error.properties

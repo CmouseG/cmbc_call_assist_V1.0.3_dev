@@ -1,4 +1,4 @@
-package result;
+package com.guiji.component.result;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package result;
+package com.guiji.component.result;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;

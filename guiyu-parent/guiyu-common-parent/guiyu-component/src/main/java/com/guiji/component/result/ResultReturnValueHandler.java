@@ -1,4 +1,4 @@
-package result;
+package com.guiji.component.result;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;

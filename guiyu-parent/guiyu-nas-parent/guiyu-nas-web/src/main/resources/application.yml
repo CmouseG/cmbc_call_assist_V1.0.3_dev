@@ -41,3 +41,5 @@ fdfs:
   pool:
     jmx-enabled: false
   webServerUrl: http://116.62.211.11:8080/
+properties:
+  error: properties/error.properties

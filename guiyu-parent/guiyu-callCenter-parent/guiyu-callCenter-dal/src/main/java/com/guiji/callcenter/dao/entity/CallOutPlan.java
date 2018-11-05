@@ -28,7 +28,7 @@ public class CallOutPlan implements Serializable {
 
     private Date createTime;
 
-    private Date scheduleTime;
+    private Date callStartTime;
 
     private Date hangupTime;
 
@@ -154,12 +154,12 @@ public class CallOutPlan implements Serializable {
         this.createTime = createTime;
     }
 
-    public Date getScheduleTime() {
-        return scheduleTime;
+    public Date getCallStartTime() {
+        return callStartTime;
     }
 
-    public void setScheduleTime(Date scheduleTime) {
-        this.scheduleTime = scheduleTime;
+    public void setCallStartTime(Date callStartTime) {
+        this.callStartTime = callStartTime;
     }
 
     public Date getHangupTime() {
@@ -284,7 +284,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", agentGroupId=").append(agentGroupId);
         sb.append(", agentStartTime=").append(agentStartTime);
         sb.append(", createTime=").append(createTime);
-        sb.append(", scheduleTime=").append(scheduleTime);
+        sb.append(", callStartTime=").append(callStartTime);
         sb.append(", hangupTime=").append(hangupTime);
         sb.append(", answerTime=").append(answerTime);
         sb.append(", duration=").append(duration);

@@ -14,7 +14,7 @@
     <result column="agent_group_id" property="agentGroupId" jdbcType="VARCHAR" />
     <result column="agent_start_time" property="agentStartTime" jdbcType="TIMESTAMP" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="schedule_time" property="scheduleTime" jdbcType="TIMESTAMP" />
+    <result column="call_start_time" property="callStartTime" jdbcType="TIMESTAMP" />
     <result column="hangup_time" property="hangupTime" jdbcType="TIMESTAMP" />
     <result column="answer_time" property="answerTime" jdbcType="TIMESTAMP" />
     <result column="duration" property="duration" jdbcType="INTEGER" />
@@ -89,7 +89,7 @@
   </sql>
   <sql id="Base_Column_List" >
     call_id, phone_num, customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time, 
-    agent_channel_uuid, agent_group_id, agent_start_time, create_time, schedule_time, 
+    agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time, 
     hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction, 
     accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts
   </sql>
@@ -132,7 +132,7 @@
       temp_id, line_id, serverId, 
       agent_id, agent_answer_time, agent_channel_uuid, 
       agent_group_id, agent_start_time, create_time, 
-      schedule_time, hangup_time, answer_time, 
+      call_start_time, hangup_time, answer_time, 
       duration, bill_sec, call_direction, 
       call_state, hangup_direction, accurate_intent, 
       reason, hangup_code, originate_cmd, 
@@ -141,7 +141,7 @@
       #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{serverid,jdbcType=VARCHAR}, 
       #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{agentChannelUuid,jdbcType=VARCHAR}, 
       #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{scheduleTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP}, #{answerTime,jdbcType=TIMESTAMP}, 
+      #{callStartTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP}, #{answerTime,jdbcType=TIMESTAMP}, 
       #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER}, #{callDirection,jdbcType=INTEGER}, 
       #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, #{originateCmd,jdbcType=VARCHAR}, 
@@ -186,8 +186,8 @@
       <if test="createTime != null" >
         create_time,
       </if>
-      <if test="scheduleTime != null" >
-        schedule_time,
+      <if test="callStartTime != null" >
+        call_start_time,
       </if>
       <if test="hangupTime != null" >
         hangup_time,
@@ -266,8 +266,8 @@
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="scheduleTime != null" >
-        #{scheduleTime,jdbcType=TIMESTAMP},
+      <if test="callStartTime != null" >
+        #{callStartTime,jdbcType=TIMESTAMP},
       </if>
       <if test="hangupTime != null" >
         #{hangupTime,jdbcType=TIMESTAMP},
@@ -355,8 +355,8 @@
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.scheduleTime != null" >
-        schedule_time = #{record.scheduleTime,jdbcType=TIMESTAMP},
+      <if test="record.callStartTime != null" >
+        call_start_time = #{record.callStartTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.hangupTime != null" >
         hangup_time = #{record.hangupTime,jdbcType=TIMESTAMP},
@@ -416,7 +416,7 @@
       agent_group_id = #{record.agentGroupId,jdbcType=VARCHAR},
       agent_start_time = #{record.agentStartTime,jdbcType=TIMESTAMP},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      schedule_time = #{record.scheduleTime,jdbcType=TIMESTAMP},
+      call_start_time = #{record.callStartTime,jdbcType=TIMESTAMP},
       hangup_time = #{record.hangupTime,jdbcType=TIMESTAMP},
       answer_time = #{record.answerTime,jdbcType=TIMESTAMP},
       duration = #{record.duration,jdbcType=INTEGER},
@@ -470,8 +470,8 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="scheduleTime != null" >
-        schedule_time = #{scheduleTime,jdbcType=TIMESTAMP},
+      <if test="callStartTime != null" >
+        call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
       </if>
       <if test="hangupTime != null" >
         hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
@@ -528,7 +528,7 @@
       agent_group_id = #{agentGroupId,jdbcType=VARCHAR},
       agent_start_time = #{agentStartTime,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      schedule_time = #{scheduleTime,jdbcType=TIMESTAMP},
+      call_start_time = #{callStartTime,jdbcType=TIMESTAMP},
       hangup_time = #{hangupTime,jdbcType=TIMESTAMP},
       answer_time = #{answerTime,jdbcType=TIMESTAMP},
       duration = #{duration,jdbcType=INTEGER},

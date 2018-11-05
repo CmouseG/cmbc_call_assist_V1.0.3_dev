@@ -925,63 +925,63 @@ public class CallInPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeIsNull() {
-            addCriterion("schedule_time is null");
+        public Criteria andCallStartTimeIsNull() {
+            addCriterion("call_start_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeIsNotNull() {
-            addCriterion("schedule_time is not null");
+        public Criteria andCallStartTimeIsNotNull() {
+            addCriterion("call_start_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeEqualTo(Date value) {
-            addCriterion("schedule_time =", value, "scheduleTime");
+        public Criteria andCallStartTimeEqualTo(Date value) {
+            addCriterion("call_start_time =", value, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeNotEqualTo(Date value) {
-            addCriterion("schedule_time <>", value, "scheduleTime");
+        public Criteria andCallStartTimeNotEqualTo(Date value) {
+            addCriterion("call_start_time <>", value, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeGreaterThan(Date value) {
-            addCriterion("schedule_time >", value, "scheduleTime");
+        public Criteria andCallStartTimeGreaterThan(Date value) {
+            addCriterion("call_start_time >", value, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("schedule_time >=", value, "scheduleTime");
+        public Criteria andCallStartTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("call_start_time >=", value, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeLessThan(Date value) {
-            addCriterion("schedule_time <", value, "scheduleTime");
+        public Criteria andCallStartTimeLessThan(Date value) {
+            addCriterion("call_start_time <", value, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeLessThanOrEqualTo(Date value) {
-            addCriterion("schedule_time <=", value, "scheduleTime");
+        public Criteria andCallStartTimeLessThanOrEqualTo(Date value) {
+            addCriterion("call_start_time <=", value, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeIn(List<Date> values) {
-            addCriterion("schedule_time in", values, "scheduleTime");
+        public Criteria andCallStartTimeIn(List<Date> values) {
+            addCriterion("call_start_time in", values, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeNotIn(List<Date> values) {
-            addCriterion("schedule_time not in", values, "scheduleTime");
+        public Criteria andCallStartTimeNotIn(List<Date> values) {
+            addCriterion("call_start_time not in", values, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeBetween(Date value1, Date value2) {
-            addCriterion("schedule_time between", value1, value2, "scheduleTime");
+        public Criteria andCallStartTimeBetween(Date value1, Date value2) {
+            addCriterion("call_start_time between", value1, value2, "callStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andScheduleTimeNotBetween(Date value1, Date value2) {
-            addCriterion("schedule_time not between", value1, value2, "scheduleTime");
+        public Criteria andCallStartTimeNotBetween(Date value1, Date value2) {
+            addCriterion("call_start_time not between", value1, value2, "callStartTime");
             return (Criteria) this;
         }
 

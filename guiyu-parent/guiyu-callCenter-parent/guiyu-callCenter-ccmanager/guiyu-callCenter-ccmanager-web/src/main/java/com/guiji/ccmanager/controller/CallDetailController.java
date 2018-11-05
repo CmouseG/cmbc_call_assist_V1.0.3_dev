@@ -4,7 +4,7 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.utils.DateUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

@@ -9,7 +9,7 @@ import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOperApi;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;

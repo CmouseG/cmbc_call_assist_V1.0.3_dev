@@ -8,7 +8,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.calloutserver.api.ICallPlanApi;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallManagerOutService;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ITempApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

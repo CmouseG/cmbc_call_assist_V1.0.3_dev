@@ -1,7 +1,7 @@
 package com.guiji.ccmanager.api;
 
 import com.guiji.ccmanager.entity.LineConcurrent;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import feign.Param;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

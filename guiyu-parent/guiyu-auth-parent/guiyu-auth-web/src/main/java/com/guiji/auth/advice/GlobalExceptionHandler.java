@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.guiji.common.result.Result;
-import com.guiji.common.result.Result.ReturnData;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 
 
 @ControllerAdvice

@@ -254,4 +254,24 @@
 	<select id="getUserId" resultType="long">
 		select id from sys_user where username=#{username} and password=#{password}
 	</select>
+	
+	
+	<select id="getUserByName" resultType="com.guiji.user.dao.entity.SysUser">
+		select id,username,`password`,`status` from sys_user where username=#{username}
+	</select>
+	
+	<select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
+		select c.id,c.`name` from sys_user a
+		LEFT JOIN sys_role_user b on a.id=b.user_id
+		LEFT JOIN sys_role c on c.id=b.role_id
+		where a.id=#{id}
+	</select>
+	
+	<select id="getPermByRoleId" resultType="string">
+		select a.permission from sys_menu a
+		LEFT JOIN sys_menu_role b on a.id=b.menu_id
+		LEFT JOIN sys_role c on c.id=b.role_id
+		where c.id=#{roleId}
+	</select>
+	
 </mapper>

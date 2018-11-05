@@ -37,37 +37,38 @@ mybatis:
   mapperLocations: classpath*:mappers/*.xml  
   config-location: classpath:config/mybatis-config.xml      
   
-
+properties:
+  error: properties/error.properties
 #注册中心配置      
-#eureka:
-#  instance:
-#    prefer-ip-address: true
-#    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-#    ##续约更新时间间隔设置5秒，m默认30s
-#    lease-renewal-interval-in-seconds: 5
-#    ##续约到期时间10秒，默认是90秒
-#    lease-expiration-duration-in-seconds: 10
-#  client:
-#      service-url:
-#        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
-#      instance:
-#          status-page-url: http://localhost:18000/eureka//swagger-ui.html
-###网关地址
-#gateway:
-#   host: http://guiyu-cloud-zuul:18000/
-#
-#ribbon:
-#  ReadTimeout: 30000 #请求处理的超时时间
-#  ConnectTimeout: 30000  #请求连接的超时时间
-#  MaxAutoRetries: 0   #对当前实例的重试次数
-#  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
-#  eureka:
-#    enabled: true
-#endpoints:
-#  health:
-#    sensitive: false
-#    enabled: true
-#management:
-#  security:
-#    enabled: false
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+      instance:
+          status-page-url: http://localhost:18000/eureka//swagger-ui.html
+##网关地址
+gateway:
+   host: http://guiyu-cloud-zuul:18000/
+
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
 

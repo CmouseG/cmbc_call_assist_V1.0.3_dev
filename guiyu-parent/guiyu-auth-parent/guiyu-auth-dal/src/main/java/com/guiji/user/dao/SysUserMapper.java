@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExample;
 
@@ -39,4 +40,10 @@ public interface SysUserMapper {
     String getPassword(String principal);
     
     Long getUserId(@Param("username")String username,@Param("password")String password);
+    
+    SysUser getUserByName(String userName);
+    
+    List<SysRole> getRoleByUserId(Long id);
+    
+    List<String> getPermByRoleId(Long roleId);
 }

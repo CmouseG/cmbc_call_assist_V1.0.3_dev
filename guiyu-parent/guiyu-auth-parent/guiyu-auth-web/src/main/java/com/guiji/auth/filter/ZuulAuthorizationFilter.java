@@ -10,8 +10,8 @@ import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.guiji.auth.util.PermissionResolve;
-import com.guiji.common.result.Result;
-import com.guiji.common.result.Result.ReturnData;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 
 public class ZuulAuthorizationFilter extends AccessControlFilter {
 	

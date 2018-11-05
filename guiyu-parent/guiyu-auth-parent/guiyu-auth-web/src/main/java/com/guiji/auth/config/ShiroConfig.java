@@ -22,7 +22,7 @@ import com.guiji.auth.filter.ZuulAuthenticationFilter;
 import com.guiji.auth.filter.ZuulAuthorizationFilter;
 import com.guiji.auth.util.PermissionResolve;
 
-@Configuration
+//@Configuration
 public class ShiroConfig {
 	
 	@Autowired

@@ -3,14 +3,15 @@ package com.guiji.auth;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import com.guiji.common.result.EnableAutoResultPack;
+import com.guiji.component.result.EnableAutoResultPack;
 
 /**
  * Created by ty on 2018/10/18.
  */
 @SpringBootApplication
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @MapperScan("com.guiji.user.dao")
 @EnableAutoResultPack
 public class Application {

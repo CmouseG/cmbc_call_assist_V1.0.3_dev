@@ -14,9 +14,23 @@ public class SysMenu implements Serializable {
 
     private Long pid;
 
+    private String permission;
+
+    private Long isShow;
+
     private Date createTime;
 
     private Date updateTime;
+
+    private String type;
+
+    private String level;
+
+    private Long appid;
+
+    private String remarks;
+
+    private String delFlag;
 
     private static final long serialVersionUID = 1L;
 
@@ -60,6 +74,22 @@ public class SysMenu implements Serializable {
         this.pid = pid;
     }
 
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission == null ? null : permission.trim();
+    }
+
+    public Long getIsShow() {
+        return isShow;
+    }
+
+    public void setIsShow(Long isShow) {
+        this.isShow = isShow;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -76,6 +106,46 @@ public class SysMenu implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level == null ? null : level.trim();
+    }
+
+    public Long getAppid() {
+        return appid;
+    }
+
+    public void setAppid(Long appid) {
+        this.appid = appid;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks == null ? null : remarks.trim();
+    }
+
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag == null ? null : delFlag.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -87,8 +157,15 @@ public class SysMenu implements Serializable {
         sb.append(", description=").append(description);
         sb.append(", url=").append(url);
         sb.append(", pid=").append(pid);
+        sb.append(", permission=").append(permission);
+        sb.append(", isShow=").append(isShow);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", type=").append(type);
+        sb.append(", level=").append(level);
+        sb.append(", appid=").append(appid);
+        sb.append(", remarks=").append(remarks);
+        sb.append(", delFlag=").append(delFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

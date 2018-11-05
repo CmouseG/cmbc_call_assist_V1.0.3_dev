@@ -2,6 +2,7 @@ package com.guiji.auth.controller;
 
 import java.util.List;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,8 @@ public class MenuController {
 	}
 	
 	@RequestMapping("getMenus")
-	public List<MenuTree> getMenus(Long userId){
+	public List<MenuTree> getMenus(){
+		Long userId=(Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
 		return service.getMenus(userId);
 	}
 }

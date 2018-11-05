@@ -1,21 +1,17 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
-import com.guiji.callcenter.dao.FsBindMapper;
 import com.guiji.callcenter.dao.LineConfigMapper;
-import com.guiji.callcenter.dao.entity.FsBindExample;
 import com.guiji.callcenter.dao.entity.LineConfig;
 import com.guiji.callcenter.dao.entity.LineConfigExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
 import com.guiji.callcenter.fsmanager.entity.DialplanVO;
 import com.guiji.callcenter.fsmanager.entity.GatewayVO;
 import com.guiji.callcenter.fsmanager.service.LineService;
-import com.guiji.callcenter.fsmanager.util.FileUtil;
 import com.guiji.callcenter.fsmanager.util.XmlUtil;
-import com.guiji.fsmanager.entity.LineInfo;
-import com.guiji.fsmanager.entity.LineXmlnfo;
+import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.util.*;
@@ -31,7 +27,7 @@ public class LineServiceImpl implements LineService {
      * @throws Exception
      */
     @Override
-    public Boolean addLineinfos(LineInfo  request) throws Exception {
+    public Boolean addLineinfos(LineInfoVO  request) throws Exception {
         //查询数据库，看有无重名
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
@@ -60,7 +56,7 @@ public class LineServiceImpl implements LineService {
     }
 
     @Override
-    public void editLineinfos(String lineId, LineInfo request)throws Exception{
+    public void editLineinfos(String lineId, LineInfoVO request)throws Exception{
         Map<String ,String> map = new HashMap<String,String>();
         map.put(Constant.CONFIG_TYPE_DIALPLAN,"01_"+lineId+".xml");
         map.put(Constant.CONFIG_TYPE_GATEWAY,"01_"+lineId+".xml");
@@ -98,15 +94,15 @@ public class LineServiceImpl implements LineService {
 
 
     @Override
-    public List<LineXmlnfo> linexmlinfos(String lineId) {
-        List<LineXmlnfo> listLine = new ArrayList<LineXmlnfo>();
+    public List<LineXmlnfoVO> linexmlinfos(String lineId) {
+        List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
         //查询数据库
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(lineId);
         List<LineConfig> list =lineConfigMapper.selectByExample(example);
         for (LineConfig config:list) {
-            LineXmlnfo lineXmlnfo = new LineXmlnfo();
+            LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
             lineXmlnfo.setConfigType(config.getFileType());
             lineXmlnfo.setFileName(config.getFileName());
             lineXmlnfo.setFileData(XmlUtil.getBase64(config.getFileData()));
@@ -116,13 +112,13 @@ public class LineServiceImpl implements LineService {
     }
 
     @Override
-    public List<LineXmlnfo> linexmlinfosAll() {
-        List<LineXmlnfo> listLine = new ArrayList<LineXmlnfo>();
+    public List<LineXmlnfoVO> linexmlinfosAll() {
+        List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
         List<LineConfig> list =lineConfigMapper.selectByExample(example);
         for (LineConfig config:list) {
-            LineXmlnfo lineXmlnfo = new LineXmlnfo();
+            LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
             lineXmlnfo.setConfigType(config.getFileType());
             lineXmlnfo.setFileName(config.getFileName());
             lineXmlnfo.setFileData(XmlUtil.getBase64(config.getFileData()));
@@ -137,7 +133,7 @@ public class LineServiceImpl implements LineService {
      * 生成网关
      * @param request
      */
-    public String buildGateway(LineInfo  request)throws Exception{
+    public String buildGateway(LineInfoVO  request)throws Exception{
         LinkedHashMap<String, String> gatewayMap = new LinkedHashMap<String, String>();
         GatewayVO include = new GatewayVO();
         GatewayVO.Gateway gateway = new GatewayVO.Gateway();
@@ -173,7 +169,7 @@ public class LineServiceImpl implements LineService {
      * @param request
      * @throws Exception
      */
-    public String buildDialplan(LineInfo  request) throws Exception{
+    public String buildDialplan(LineInfoVO  request) throws Exception{
         DialplanVO include = new DialplanVO();
         DialplanVO.Extension extension = new DialplanVO.Extension();
         extension.setName(request.getLineId() + "_Extension");

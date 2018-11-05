@@ -3,21 +3,21 @@ package com.guiji.auth.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.user.dao.UserMapper;
-import com.guiji.user.dao.entity.User;
+import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysUser;
 
 
 @Service
 public class UserService {
 
 	@Autowired
-	private UserMapper mapper;
+	private SysUserMapper mapper;
 	
 	/**
 	 * 新增用户
 	 * @param user
 	 */
-	public void insert(User user){
+	public void insert(SysUser user){
 		mapper.insert(user);
 	}
 	
@@ -25,24 +25,24 @@ public class UserService {
 	 * 修改密码
 	 * @param user
 	 */
-	public void changePassword(User user){
-		mapper.changePassword(user);
+	public void changePassword(SysUser user){
+		mapper.updateByPrimaryKeySelective(user);
 	}
 	
 	/**
 	 * 删除用户
 	 * @param id
 	 */
-	public void delete(String id){
-		mapper.delete(id);
+	public void delete(Long id){
+		mapper.deleteByPrimaryKey(id);
 	}
 	
 	/**
 	 * 修改状态
 	 * @param user
 	 */
-	public void changeStatus(User user){
-		mapper.changeStatus(user);
+	public void changeStatus(SysUser user){
+		mapper.updateByPrimaryKeySelective(user);
 	}
 	
 	/**
@@ -52,5 +52,9 @@ public class UserService {
 	 */
 	public void addRole(String userId,String[] roleIds){
 		mapper.addRole(userId,roleIds);
+	}
+	
+	public Long getUserId(String username,String password){
+		return mapper.getUserId( username, password);
 	}
 }

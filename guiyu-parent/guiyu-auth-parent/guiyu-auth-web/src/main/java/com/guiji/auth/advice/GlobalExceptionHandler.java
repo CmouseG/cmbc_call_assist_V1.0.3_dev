@@ -25,11 +25,11 @@ public class GlobalExceptionHandler {
 		logger.error("",e);
 		ReturnData<?> result=null;
         if(e instanceof  AccountException){
-        	result=Result.error("0001002");
+        	result=Result.error("00010002");
         }else if(e instanceof AuthenticationException){
-        	result=Result.error("0001003");
+        	result=Result.error("00010003");
         }else if(e instanceof UnauthorizedException){
-        	result=Result.error("0001004");
+        	result=Result.error("00010004");
         }
         return result;
     }

@@ -9,6 +9,7 @@ import com.guiji.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -18,8 +19,9 @@ import java.util.List;
 /**
  * Created by ty on 2018/10/29.
  */
+@Service
 public class SysDictServiceImpl implements SysDictService {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(SysDictServiceImpl.class);
 
     @Autowired
     private SysDictMapper sysDictMapper;

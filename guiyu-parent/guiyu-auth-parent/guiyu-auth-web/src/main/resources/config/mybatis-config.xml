@@ -16,9 +16,4 @@
         <setting name="defaultStatementTimeout" value="25000" />
     </settings>
     
-    <typeAliases>
-    	<typeAlias type="com.guiji.user.dao.entity.Role" alias="role"/>
-    	<typeAlias type="com.guiji.user.dao.entity.User" alias="user"/>
-    	<typeAlias type="com.guiji.user.dao.entity.Menu" alias="menu"/>
-    </typeAliases>
 </configuration>

@@ -8,7 +8,9 @@ import javax.annotation.Resource;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RedisSessionDAO extends CachingSessionDAO {
 	
 	private DefaultCacheDao sessionCache=null;

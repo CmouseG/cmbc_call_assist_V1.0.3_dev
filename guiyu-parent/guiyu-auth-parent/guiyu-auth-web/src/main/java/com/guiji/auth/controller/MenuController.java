@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.service.MenuService;
 import com.guiji.auth.vo.MenuTree;
-import com.guiji.user.dao.entity.Menu;
+import com.guiji.user.dao.entity.SysMenu;
 
 @RestController
 @RequestMapping("menu")
@@ -18,27 +18,27 @@ public class MenuController {
 	private MenuService service;
 
 	@RequestMapping("insert")
-	public void insert(Menu menu){
+	public void insert(SysMenu menu){
 		service.insert(menu);
 	}
 
 	@RequestMapping("delete")
-	public void delete(String id){
+	public void delete(Long id){
 		service.delete(id);
 	}
 
 	@RequestMapping("update")
-	public void update(Menu menu){
+	public void update(SysMenu menu){
 		service.update(menu);
 	}
 
 	@RequestMapping("getMenuById")
-	public Menu getMenuById(String id){
+	public SysMenu getMenuById(Long id){
 		return service.getMenuById(id);
 	}
 	
 	@RequestMapping("getMenus")
-	public List<MenuTree> getMenus(String userId){
+	public List<MenuTree> getMenus(Long userId){
 		return service.getMenus(userId);
 	}
 }

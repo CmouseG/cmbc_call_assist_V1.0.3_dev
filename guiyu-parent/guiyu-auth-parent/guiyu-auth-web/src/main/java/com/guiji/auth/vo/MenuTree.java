@@ -3,17 +3,17 @@ package com.guiji.auth.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.guiji.user.dao.entity.Menu;
+import com.guiji.user.dao.entity.SysMenu;
 
 public class MenuTree {
 	
-	private Menu parent;
+	private SysMenu parent;
 	private List<MenuTree> child=new ArrayList<>();
 	
-	public Menu getParent() {
+	public SysMenu getParent() {
 		return parent;
 	}
-	public void setParent(Menu parent) {
+	public void setParent(SysMenu parent) {
 		this.parent = parent;
 	}
 	public List<MenuTree> getChild() {

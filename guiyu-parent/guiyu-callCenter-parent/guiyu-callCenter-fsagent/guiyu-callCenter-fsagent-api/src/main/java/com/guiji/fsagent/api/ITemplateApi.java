@@ -1,7 +1,7 @@
 package com.guiji.fsagent.api;
 
 import com.guiji.common.result.Result;
-import com.guiji.fsagent.entity.Record;
+import com.guiji.fsagent.entity.RecordVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -40,5 +40,5 @@ public interface ITemplateApi {
             @ApiImplicitParam(name = "fileName", value = "模板Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/uploadrecord/{fileName}")
-    public Result.ReturnData<Record> uploadrecord(@PathVariable String fileName);
+    public Result.ReturnData<RecordVO> uploadrecord(@PathVariable String fileName);
 }

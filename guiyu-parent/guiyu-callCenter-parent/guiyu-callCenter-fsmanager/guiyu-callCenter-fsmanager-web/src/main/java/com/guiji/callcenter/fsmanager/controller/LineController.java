@@ -6,8 +6,8 @@ import com.guiji.callcenter.fsmanager.service.LineService;
 import com.guiji.common.result.Result;
 import com.guiji.fsagent.api.ILineOperateApi;
 import com.guiji.fsmanager.api.ILineOperApi;
-import com.guiji.fsmanager.entity.LineInfo;
-import com.guiji.fsmanager.entity.LineXmlnfo;
+import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import com.guiji.utils.FeignBuildUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +23,7 @@ public class LineController implements ILineOperApi {
     EurekaManager eurekaManager;
 
     @Override
-    public Result.ReturnData addLineinfos(@RequestBody LineInfo lineInfo) {
+    public Result.ReturnData addLineinfos(@RequestBody LineInfoVO lineInfo) {
         try {
            if(!lineService.addLineinfos(lineInfo)){
                return  Result.error("0000重名");
@@ -49,7 +49,7 @@ public class LineController implements ILineOperApi {
     }
 
     @Override
-    public Result.ReturnData editLineinfos(String lineId, LineInfo lineInfo) {
+    public Result.ReturnData editLineinfos(String lineId, LineInfoVO lineInfo) {
         try {
            lineService.editLineinfos(lineId,lineInfo);
         } catch (Exception e) {
@@ -83,7 +83,7 @@ public class LineController implements ILineOperApi {
 
     @Override
     public Result.ReturnData linexmlinfos(String lineId) {
-        List<LineXmlnfo> list =  lineService.linexmlinfos(lineId);
+        List<LineXmlnfoVO> list =  lineService.linexmlinfos(lineId);
 
 //        List<LineXmlnfo> list = new ArrayList<LineXmlnfo>();
 //        LineXmlnfo lineXmlnfo = new LineXmlnfo();
@@ -101,7 +101,7 @@ public class LineController implements ILineOperApi {
 
     @Override
     public Result.ReturnData linexmlinfosAll() {
-        List<LineXmlnfo> list =  lineService.linexmlinfosAll();
+        List<LineXmlnfoVO> list =  lineService.linexmlinfosAll();
 //        List<LineXmlnfo> list = new ArrayList<LineXmlnfo>();
 //        LineXmlnfo lineXmlnfo = new LineXmlnfo();
 //        lineXmlnfo.setConfigType("dialplan");

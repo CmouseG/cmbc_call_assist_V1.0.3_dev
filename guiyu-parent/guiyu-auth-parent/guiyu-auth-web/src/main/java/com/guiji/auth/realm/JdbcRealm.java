@@ -21,14 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.guiji.user.dao.UserMapper;
+import com.guiji.user.dao.SysUserMapper;
 
 
 @Component
 public class JdbcRealm extends AuthorizingRealm{
 
 	@Autowired
-	private UserMapper userMapper;
+	private SysUserMapper userMapper;
 	
 
 	@PostConstruct

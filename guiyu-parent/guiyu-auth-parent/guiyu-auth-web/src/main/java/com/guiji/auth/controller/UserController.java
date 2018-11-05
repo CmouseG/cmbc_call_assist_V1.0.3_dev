@@ -1,13 +1,13 @@
 package com.guiji.auth.controller;
 
-import org.apache.shiro.crypto.hash.Sha512Hash;
-import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.service.UserService;
-import com.guiji.user.dao.entity.User;
+import com.guiji.auth.util.AuthUtil;
+import com.guiji.user.dao.entity.SysUser;
 
 /**
  * Created by ty on 2018/10/22.
@@ -20,32 +20,35 @@ public class UserController{
 	private UserService service;
 	
 	@RequestMapping("regist")
-	public void insert(User user){
-		SimpleHash hash=new SimpleHash(Sha512Hash.ALGORITHM_NAME,user.getUsername());
-		user.setPassword(hash.toString());
+	public void insert(SysUser user){
+		user.setPassword(AuthUtil.encrypt(user.getUsername()));
 		service.insert(user);
 	}
 	
 	@RequestMapping("changePassword")
-	public void changePassword(User user){
-		SimpleHash hash=new SimpleHash(Sha512Hash.ALGORITHM_NAME,user.getUsername());
-		user.setPassword(hash.toString());
+	public void changePassword(SysUser user){
+		user.setPassword(AuthUtil.encrypt(user.getUsername()));
 		service.changePassword(user);
 	}
 	
 	@RequestMapping("delete")
-	public void delete(String id){
+	public void delete(Long id){
 		service.delete(id);
 	}
 	
 	@RequestMapping("changeStatus")
-	public void changeStatus(User user){
+	public void changeStatus(SysUser user){
 		service.changeStatus(user);
 	}
 	
 	@RequestMapping("addRoles")
 	public void addRole(String userId,String[] roleIds){
 		service.addRole(userId,roleIds);
+	}
+	
+	@RequestMapping("getUserId")
+	public Long getUserId(){
+		return (Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
 	}
 	
 }

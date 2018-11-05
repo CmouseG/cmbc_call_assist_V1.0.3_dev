@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysDict implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     private Long id;
 
     private String dictKey;
@@ -16,6 +14,8 @@ public class SysDict implements Serializable {
 
     private String description;
 
+    private Long pid;
+
     private String remarks;
 
     private String delFlag;
@@ -23,6 +23,8 @@ public class SysDict implements Serializable {
     private Date createTime;
 
     private Date updateTime;
+
+    private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
@@ -62,6 +64,14 @@ public class SysDict implements Serializable {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
     }
 
     public String getRemarks() {
@@ -107,6 +117,7 @@ public class SysDict implements Serializable {
         sb.append(", dictValue=").append(dictValue);
         sb.append(", dictType=").append(dictType);
         sb.append(", description=").append(description);
+        sb.append(", pid=").append(pid);
         sb.append(", remarks=").append(remarks);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", createTime=").append(createTime);

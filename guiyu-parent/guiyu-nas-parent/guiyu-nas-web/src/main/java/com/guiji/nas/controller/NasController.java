@@ -1,8 +1,8 @@
 package com.guiji.nas.controller;
 
 import com.guiji.common.exception.GuiyuException;
-import com.guiji.common.result.Result;
-import com.guiji.common.result.Result.ReturnData;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.nas.api.INas;
 import com.guiji.nas.constants.GuiyuNasExceptionEnum;
 import com.guiji.nas.constants.NasErrorConstant;

@@ -1,7 +1,7 @@
 package com.guiji;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
-import com.guiji.common.result.EnableAutoResultPack;
+import com.guiji.component.result.EnableAutoResultPack;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

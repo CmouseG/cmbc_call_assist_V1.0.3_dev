@@ -5,32 +5,32 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.user.dao.RoleMapper;
-import com.guiji.user.dao.entity.Role;
+import com.guiji.user.dao.SysRoleMapper;
+import com.guiji.user.dao.entity.SysRole;
 
 @Service
 public class RoleService {
 	
 	@Autowired
-	private RoleMapper mapper;
+	private SysRoleMapper mapper;
 	
-	public void insert(Role role){
+	public void insert(SysRole role){
 		mapper.insert(role);
 	}
 	
-	public void delete(String id){
-		mapper.delete(id);
+	public void delete(Long id){
+		mapper.deleteByPrimaryKey(id);
 	}
 	
-	public void update(Role role){
-		mapper.update(role);
+	public void update(SysRole role){
+		mapper.updateByPrimaryKeySelective(role);
 	}
 	
-	public Role getRoleId(String id){
-		return mapper.getRoleId(id);
+	public SysRole getRoleId(Long id){
+		return mapper.selectByPrimaryKey(id);
 	}
 	
-	public List<Role> getRoles(){
+	public List<SysRole> getRoles(){
 		return mapper.getRoles();
 	}
 	

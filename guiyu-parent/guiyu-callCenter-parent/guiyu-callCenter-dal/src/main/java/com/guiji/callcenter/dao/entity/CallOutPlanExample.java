@@ -1814,6 +1814,76 @@ public class CallOutPlanExample {
             addCriterion("has_tts not between", value1, value2, "hasTts");
             return (Criteria) this;
         }
+
+        public Criteria andAiIdIsNull() {
+            addCriterion("ai_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdIsNotNull() {
+            addCriterion("ai_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdEqualTo(String value) {
+            addCriterion("ai_id =", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdNotEqualTo(String value) {
+            addCriterion("ai_id <>", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdGreaterThan(String value) {
+            addCriterion("ai_id >", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdGreaterThanOrEqualTo(String value) {
+            addCriterion("ai_id >=", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdLessThan(String value) {
+            addCriterion("ai_id <", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdLessThanOrEqualTo(String value) {
+            addCriterion("ai_id <=", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdLike(String value) {
+            addCriterion("ai_id like", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdNotLike(String value) {
+            addCriterion("ai_id not like", value, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdIn(List<String> values) {
+            addCriterion("ai_id in", values, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdNotIn(List<String> values) {
+            addCriterion("ai_id not in", values, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdBetween(String value1, String value2) {
+            addCriterion("ai_id between", value1, value2, "aiId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiIdNotBetween(String value1, String value2) {
+            addCriterion("ai_id not between", value1, value2, "aiId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

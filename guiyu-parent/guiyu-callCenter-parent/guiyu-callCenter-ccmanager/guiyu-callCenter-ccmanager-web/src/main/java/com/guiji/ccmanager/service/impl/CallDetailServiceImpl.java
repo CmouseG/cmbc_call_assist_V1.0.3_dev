@@ -38,10 +38,10 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         if(startDate!=null){
-            criteria.andCreateTimeGreaterThan(startDate);
+            criteria.andCallStartTimeGreaterThan(startDate);
         }
         if(endDate!=null){
-            criteria.andCreateTimeGreaterThan(endDate);
+            criteria.andCallStartTimeLessThan(endDate);
         }
         if(customerId!=null){
             criteria.andCustomerIdEqualTo(customerId);

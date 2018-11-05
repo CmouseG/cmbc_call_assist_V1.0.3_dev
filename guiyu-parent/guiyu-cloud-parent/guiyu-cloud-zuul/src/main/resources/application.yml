@@ -21,7 +21,7 @@ eureka:
     lease-expiration-duration-in-seconds: 10
   client:
       service-url:
-        defaultZone: http://guiyu-cloud-registeration1:18001/eureka/,http://guiyu-cloud-registeration2:18002/eureka/
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
       instance:
         status-page-url: http://localhost:18000/swagger-ui.html
 ##网关地址
@@ -59,17 +59,20 @@ zuul:
     guiyu-cache:
       path: /cache/**
       service-id: guiyu-cache
-#security:
-#  basic:
-#    enabled: false
-#  oauth2:
-#    client:
-#      ##网关的地址
-#      access-token-uri: ${gateway.host}cloud-auth/oauth/token
-#      user-authorization-uri: ${gateway.host}cloud-auth/oauth/authorize
-#    resource:
-#      user-info-uri:  ${gateway.host}cloud-auth/user
-#      prefer-token-info: false
+    guiyu-datadic:
+      path: /dict/**
+      service-id: guiyu-datadic
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      ##网关的地址
+      access-token-uri: ${gateway.host}auth/oauth/token
+      user-authorization-uri: ${gateway.host}auth/oauth/authorize
+    resource:
+      user-info-uri:  ${gateway.host}auth/user
+      prefer-token-info: false
 hystrix:
   command:
     default:

@@ -1,6 +1,6 @@
 package com.guiji.fsagent.api;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.FsInfoVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;

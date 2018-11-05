@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>guiji.ai</groupId>
-			<artifactId>guiyu-model</artifactId>
+			<artifactId>guiyu-component</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		

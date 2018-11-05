@@ -7,8 +7,8 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 
 import com.google.gson.Gson;
-import com.guiji.common.result.Result;
-import com.guiji.common.result.Result.ReturnData;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 
 /**
  * 登陆校验

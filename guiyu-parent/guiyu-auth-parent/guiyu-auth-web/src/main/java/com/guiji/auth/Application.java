@@ -4,7 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.guiji.common.result.EnableAutoResultPack;
+import com.guiji.component.result.EnableAutoResultPack;
 
 /**
  * Created by ty on 2018/10/18.

@@ -1,6 +1,7 @@
 package com.guiji.fsline.api;
 
-import com.guiji.common.result.Result;
+
+import com.guiji.component.result.Result;
 import com.guiji.fsline.entity.FsLineVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;

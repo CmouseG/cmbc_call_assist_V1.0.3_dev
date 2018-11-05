@@ -1,9 +1,12 @@
 package com.guiji.auth.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 
 
@@ -56,5 +59,21 @@ public class UserService {
 	
 	public Long getUserId(String username,String password){
 		return mapper.getUserId( username, password);
+	}
+	
+	public SysUser getUserById(Long id){
+		return mapper.selectByPrimaryKey(id);
+	}
+	
+	public SysUser getUserByName(String userName){
+		return mapper.getUserByName(userName);
+	}
+	
+	public List<SysRole> getRoleByUserId(Long id){
+		return mapper.getRoleByUserId(id);
+	}
+	
+	public List<String> getPermByRoleId(Long roleId){
+		return mapper.getPermByRoleId(roleId);
 	}
 }

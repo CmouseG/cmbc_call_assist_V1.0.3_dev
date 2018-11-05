@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.auth.dao.SysMenuMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.auth.dao.entity.SysMenu" >
+  <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysMenu" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
@@ -79,7 +79,7 @@
     id, `name`, description, url, pid, permission, is_show, create_time, update_time, 
     `type`, `level`, appid, remarks, del_flag
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.auth.dao.entity.SysMenuExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysMenuExample" >
     select
     <if test="distinct" >
       distinct
@@ -107,13 +107,13 @@
     delete from sys_menu
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.auth.dao.entity.SysMenuExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.user.dao.entity.SysMenuExample" >
     delete from sys_menu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.auth.dao.entity.SysMenu" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysMenu" >
     insert into sys_menu (id, `name`, description, 
       url, pid, permission, 
       is_show, create_time, update_time, 
@@ -125,7 +125,7 @@
       #{type,jdbcType=CHAR}, #{level,jdbcType=CHAR}, #{appid,jdbcType=BIGINT}, #{remarks,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.auth.dao.entity.SysMenu" >
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysMenu" >
     insert into sys_menu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -216,7 +216,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.auth.dao.entity.SysMenuExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.user.dao.entity.SysMenuExample" resultType="java.lang.Integer" >
     select count(*) from sys_menu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -292,7 +292,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.auth.dao.entity.SysMenu" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.user.dao.entity.SysMenu" >
     update sys_menu
     <set >
       <if test="name != null" >
@@ -337,7 +337,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.auth.dao.entity.SysMenu" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.user.dao.entity.SysMenu" >
     update sys_menu
     set `name` = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},

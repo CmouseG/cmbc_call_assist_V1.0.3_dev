@@ -2,7 +2,7 @@ package com.guiji.ccmanager.controller;
 
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.vo.LinePort;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.utils.FeignBuildUtil;

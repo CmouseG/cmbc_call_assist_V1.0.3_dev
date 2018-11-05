@@ -2,7 +2,7 @@ package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.vo.LineInfoVO;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 
 import java.util.List;
 

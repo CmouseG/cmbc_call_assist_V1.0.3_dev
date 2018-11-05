@@ -6,7 +6,7 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.ccmanager.service.LineInfoService;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

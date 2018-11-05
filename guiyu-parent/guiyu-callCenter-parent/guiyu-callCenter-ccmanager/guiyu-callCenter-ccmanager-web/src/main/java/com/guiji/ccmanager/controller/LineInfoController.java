@@ -4,7 +4,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;

@@ -1,6 +1,6 @@
 package com.guiji.ccmanager.service;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 
 /**
  * @Auther: 黎阳

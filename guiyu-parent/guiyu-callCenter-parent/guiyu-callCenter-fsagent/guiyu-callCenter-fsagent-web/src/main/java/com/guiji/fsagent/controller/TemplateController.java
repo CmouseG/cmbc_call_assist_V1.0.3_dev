@@ -1,12 +1,13 @@
 package com.guiji.fsagent.controller;
 
-import com.guiji.common.result.Result;
-import com.guiji.fsagent.api.TemplateApi;
-import com.guiji.fsagent.entity.Record;
+import com.guiji.component.result.Result;
+import com.guiji.fsagent.api.ITemplateApi;
+//import com.guiji.fsagent.api.TemplateApi;
+import com.guiji.fsagent.entity.RecordVO;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TemplateController implements TemplateApi {
+public class TemplateController implements ITemplateApi {
     @Override
     public Result.ReturnData<Boolean> istempexist(String tempId) {
         return Result.ok(true);
@@ -23,8 +24,8 @@ public class TemplateController implements TemplateApi {
     }
 
     @Override
-    public Result.ReturnData<Record> uploadrecord(String fileName) {
-        Record record = new Record();
+    public Result.ReturnData<RecordVO> uploadrecord(String fileName) {
+        RecordVO record = new RecordVO();
         record.setFileName(fileName);
         record.setFileUrl("http://192.168.1.22/"+fileName);
         return Result.ok(record);

@@ -1,6 +1,6 @@
 package com.guiji.fsline.controller;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.fsline.util.RequestUtil;

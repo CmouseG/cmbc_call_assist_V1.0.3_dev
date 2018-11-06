@@ -1,6 +1,6 @@
 package com.guiji.fsagent.api;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.RecordVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

@@ -1,6 +1,6 @@
 package com.guiji.fsmanager.api;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import io.swagger.annotations.ApiImplicitParam;

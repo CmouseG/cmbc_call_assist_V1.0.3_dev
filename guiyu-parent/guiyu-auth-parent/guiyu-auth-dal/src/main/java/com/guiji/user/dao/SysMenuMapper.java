@@ -35,4 +35,6 @@ public interface SysMenuMapper {
     List<SysMenu> getMenuByUserId(Long userId);
     
     List<Map<String,String>> getAllPermissions();
+    
+    List<SysMenu> getAllMenus();
 }

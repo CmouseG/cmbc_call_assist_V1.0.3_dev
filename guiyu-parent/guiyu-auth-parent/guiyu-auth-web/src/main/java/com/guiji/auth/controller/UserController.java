@@ -21,13 +21,13 @@ public class UserController{
 	
 	@RequestMapping("regist")
 	public void insert(SysUser user){
-		user.setPassword(AuthUtil.encrypt(user.getUsername()));
+		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		service.insert(user);
 	}
 	
 	@RequestMapping("changePassword")
 	public void changePassword(SysUser user){
-		user.setPassword(AuthUtil.encrypt(user.getUsername()));
+		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		service.changePassword(user);
 	}
 	

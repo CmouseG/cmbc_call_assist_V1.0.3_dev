@@ -147,5 +147,9 @@ public interface IDispatchPlanService {
 	 */
 	List<LineConcurrent> outLineinfos(String userId);
 	
+	/**
+	 * 根据当前当前时间查询号码
+	 * @return
+	 */
 	List<DispatchPlan> selectPhoneByDate();
 }

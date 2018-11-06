@@ -74,7 +74,7 @@ public class MenuService {
 			
 			Long pid=item.getPid();
 			MenuTree parent=map.get(pid);
-			if(parent==null&&"0".equals(pid)){
+			if(parent==null&& 0==pid){
 				list.add(node);
 			}else{
 				parent.getChild().add(node);

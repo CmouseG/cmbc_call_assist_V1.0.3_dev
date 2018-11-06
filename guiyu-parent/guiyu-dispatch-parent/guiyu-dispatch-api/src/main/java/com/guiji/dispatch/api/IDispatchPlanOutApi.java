@@ -44,7 +44,6 @@ public interface IDispatchPlanOutApi {
      *
      * @param planUuid 任务id
      * @return 接受号码呼叫完成通知
-     * @throws Exception 异常
      */
     @ApiOperation(value = "接受号码呼叫完成通知")
     @ApiImplicitParams({

@@ -261,10 +261,10 @@
 	</select>
 	
 	<select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
-		select c.id,c.`name` from sys_user a
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_role c on c.id=b.role_id
-		where a.id=#{id}
+		select * from sys_role a
+		LEFT JOIN sys_role_user b on a.id=b.role_id
+		LEFT JOIN sys_user c on c.id=b.user_id
+		where c.id=#{id}
 	</select>
 	
 	<select id="getPermByRoleId" resultType="string">

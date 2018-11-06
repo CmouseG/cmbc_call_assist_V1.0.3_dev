@@ -10,7 +10,7 @@ public interface CallOutDetailMapper {
 
     int deleteByExample(CallOutDetailExample example);
 
-    int deleteByPrimaryKey(Integer callDetailId);
+    int deleteByPrimaryKey(String callDetailId);
 
     int insert(CallOutDetail record);
 
@@ -18,7 +18,7 @@ public interface CallOutDetailMapper {
 
     List<CallOutDetail> selectByExample(CallOutDetailExample example);
 
-    CallOutDetail selectByPrimaryKey(Integer callDetailId);
+    CallOutDetail selectByPrimaryKey(String callDetailId);
 
     int updateByExampleSelective(@Param("record") CallOutDetail record, @Param("example") CallOutDetailExample example);
 

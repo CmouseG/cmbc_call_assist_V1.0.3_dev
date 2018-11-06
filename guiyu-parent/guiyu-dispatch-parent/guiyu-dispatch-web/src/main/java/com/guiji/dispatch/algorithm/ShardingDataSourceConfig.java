@@ -13,8 +13,10 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.IdGenerator;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.util.LoadProperties;
 
 import io.shardingsphere.api.config.TableRuleConfiguration;
@@ -26,6 +28,7 @@ public class ShardingDataSourceConfig {
 
     @Bean
     public DataSource getShardingDataSource() throws SQLException {
+    	
         ShardingConfiguration shardingConfiguration = new ShardingConfiguration();
         shardingConfiguration.setDataSourceMap(createDataSourceMap());
         shardingConfiguration.setMasterSlaveRuleConfigurations(new ArrayList<>());
@@ -58,7 +61,6 @@ public class ShardingDataSourceConfig {
     	TableRuleConfiguration result = new TableRuleConfiguration();
     	result.setLogicTable("dispatch_plan");
     	result.setActualDataNodes("guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1,guiyu_dispatch.dispatch_plan_2");
-//    	result.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("user_id",new ShardingStrategy()));
     	result.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("id",new PreciseSharding(),new RangeSharding()));
     	return Arrays.asList(result);
     }

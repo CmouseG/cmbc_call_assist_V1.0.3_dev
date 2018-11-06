@@ -1,7 +1,7 @@
 package com.guiji.callcenter.fsmanager.controller;
 
 import com.guiji.callcenter.fsmanager.service.FsService;
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.IFsResourceApi;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;

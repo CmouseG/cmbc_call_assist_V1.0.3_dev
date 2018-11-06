@@ -1,6 +1,7 @@
 package com.guiji.fsline.util;
 
-import com.guiji.common.result.Result;
+
+import com.guiji.component.result.Result;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -1,7 +1,7 @@
 package com.guiji.fsagent.service.impl;
 
 import com.guiji.fsagent.entity.FreeSWITCH;
-import com.guiji.fsagent.entity.FsInfo;
+import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsagent.entity.GlobalVar;
 import com.guiji.fsagent.manager.FSService;
 import com.guiji.fsagent.manager.FsEslClient;
@@ -40,11 +40,11 @@ public class FsStateServiceImpl {
         return healthy;
     }
 
-    public FsInfo fsinfo() {
+    public FsInfoVO fsinfo() {
        String agentId = ServerUtil.getInstanceId(registration);
         FreeSWITCH fs = fsService.getFreeSwitch();
         GlobalVar globalVar = new GlobalVar();
-        FsInfo fsinfo = new FsInfo();
+        FsInfoVO fsinfo = new FsInfoVO();
         fsinfo.setFsAgentId(agentId);
         fsinfo.setFsIp(globalVar.getDomain());
         fsinfo.setFsInPort(globalVar.getInternal_sip_port());

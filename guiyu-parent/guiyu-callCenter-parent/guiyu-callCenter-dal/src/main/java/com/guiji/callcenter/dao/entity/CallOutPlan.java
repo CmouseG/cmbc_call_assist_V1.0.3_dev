@@ -56,6 +56,8 @@ public class CallOutPlan implements Serializable {
 
     private Boolean hasTts;
 
+    private String aiId;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -266,6 +268,14 @@ public class CallOutPlan implements Serializable {
         this.hasTts = hasTts;
     }
 
+    public String getAiId() {
+        return aiId;
+    }
+
+    public void setAiId(String aiId) {
+        this.aiId = aiId == null ? null : aiId.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -298,6 +308,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", originateCmd=").append(originateCmd);
         sb.append(", remarks=").append(remarks);
         sb.append(", hasTts=").append(hasTts);
+        sb.append(", aiId=").append(aiId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

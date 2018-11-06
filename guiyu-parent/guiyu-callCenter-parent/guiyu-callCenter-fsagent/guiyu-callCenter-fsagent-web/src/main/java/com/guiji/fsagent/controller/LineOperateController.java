@@ -1,7 +1,8 @@
 package com.guiji.fsagent.controller;
 
-import com.guiji.common.result.Result;
-import com.guiji.fsagent.api.LineOperateApi;
+import com.guiji.component.result.Result;
+import com.guiji.fsagent.api.ILineOperateApi;
+//import com.guiji.fsagent.api.LineOperateApi;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.entity.FreeSWITCH;
@@ -9,8 +10,8 @@ import com.guiji.fsagent.feign.ILineOperApiFeign;
 import com.guiji.fsagent.manager.FSService;
 import com.guiji.fsagent.util.Base64Util;
 import com.guiji.fsagent.util.FileUtil;
-import com.guiji.fsmanager.entity.LineXmlnfo;
 
+import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class LineOperateController implements LineOperateApi {
+public class LineOperateController implements ILineOperateApi {
     @Autowired
     DiscoveryClient discoveryClient;
     @Autowired
@@ -31,12 +32,12 @@ public class LineOperateController implements LineOperateApi {
     public Result.ReturnData updatenotify(String type, String lineId) {
           if(!type.equals("line")){
               return Result.error("");
-          }
-         Result.ReturnData<List<LineXmlnfo>> result = lineOperApiFeign.linexmlinfos(lineId);
-         List<LineXmlnfo>  lineList = result.getBody();
+        }
+         Result.ReturnData<List<LineXmlnfoVO>> result = lineOperApiFeign.linexmlinfos(lineId);
+         List<LineXmlnfoVO>  lineList = result.getBody();
          //获取fs对象
          FreeSWITCH fs = fsService.getFreeSwitch();
-         for(LineXmlnfo line:lineList){
+         for(LineXmlnfoVO line:lineList){
              if(line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)){
                  Base64Util.base64ToFile(line.getFileData(),fs.getDialplan()+"01_"+lineId+".xml");;
              }else if(line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)){

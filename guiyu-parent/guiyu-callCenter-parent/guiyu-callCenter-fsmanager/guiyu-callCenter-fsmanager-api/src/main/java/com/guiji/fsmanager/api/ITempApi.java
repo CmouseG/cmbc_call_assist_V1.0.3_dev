@@ -1,6 +1,6 @@
 package com.guiji.fsmanager.api;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;

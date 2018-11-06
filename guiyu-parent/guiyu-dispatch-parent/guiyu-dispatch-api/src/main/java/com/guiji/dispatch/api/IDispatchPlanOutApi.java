@@ -6,12 +6,12 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.guiji.common.result.Result;
 import com.guiji.dispatch.model.DispatchPlan;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import com.guiji.component.result.Result;
 /**
  * 调度中心任务调度接口
  *
@@ -27,7 +27,6 @@ public interface IDispatchPlanOutApi {
      *
      * @param schedule 请求参数
      * @return 响应报文
-     * @throws Exception 异常
      */
     @ApiOperation(value = "返回可以拨打的任务给呼叫中心")
     @ApiImplicitParams({
@@ -36,7 +35,7 @@ public interface IDispatchPlanOutApi {
             @ApiImplicitParam(name = "lineId", value = "线路id", dataType = "int", paramType = "query")
     })
     @GetMapping(value="out/queryAvailableSchedules")
-    List<DispatchPlan> queryAvailableSchedules(@RequestParam("userId") Integer userId,@RequestParam("requestCount") int requestCount,@RequestParam("lineId") int lineId);
+   public Result.ReturnData<List<DispatchPlan>> queryAvailableSchedules(@RequestParam("userId") Integer userId,@RequestParam("requestCount") int requestCount,@RequestParam("lineId") int lineId);
 
 
     /**
@@ -44,7 +43,6 @@ public interface IDispatchPlanOutApi {
      *
      * @param planUuid 任务id
      * @return 接受号码呼叫完成通知
-     * @throws Exception 异常
      */
     @ApiOperation(value = "接受号码呼叫完成通知")
     @ApiImplicitParams({

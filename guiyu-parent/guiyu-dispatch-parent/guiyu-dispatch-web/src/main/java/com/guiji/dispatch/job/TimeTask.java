@@ -1,0 +1,41 @@
+package com.guiji.dispatch.job;
+
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.guiji.ccmanager.api.ICallManagerOutApi;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.service.IDispatchPlanService;
+
+
+@Component
+public class TimeTask {
+	
+	 private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
+	 
+	@Autowired
+	private IDispatchPlanService dispatchPlanService;
+	@Autowired
+	private ICallManagerOutApi callManagerOutApi;
+	
+	
+	@Scheduled(cron = "0 0/1 * * * ?")
+	public void selectPhonesByDate(){
+		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
+		for(DispatchPlan bean : list){
+			//判断机器人是否准备就绪
+			
+			//启动客户呼叫计划
+			logger.info("startcallplan..");
+			 ReturnData<Boolean> startcallplan = callManagerOutApi.startcallplan(String.valueOf(bean.getUserId()), bean.getRobot(), String.valueOf(bean.getLine()));
+			logger.info("启动客户呼叫计划结果"+startcallplan.getBody());
+		}
+	}
+}

@@ -22,12 +22,11 @@ public class LoadProperties {
     static {
         try {
 //            File file = ResourceUtils.getFile("classpath:jdbc_dev.properties");
-//        	InputStream resourceAsStream = LoadProperties.class.getClassLoader().getResourceAsStream("classpath:jdbc_dev.properties");
+        	InputStream resourceAsStream = LoadProperties.class.getClassLoader().getResourceAsStream("classpath:jdbc_dev.properties");
+//            InputStream in = new FileInputStream(resourceAsStream);
+//            File file = ResourceUtils.getFile("classpath:jdbc_dev.properties");
 //            InputStream in = new FileInputStream(file);
-        	
-            File file = ResourceUtils.getFile("classpath:jdbc_dev.properties");
-            InputStream in = new FileInputStream(file);
-            prop.load(in);
+            prop.load(resourceAsStream);
         } catch (Exception e) {
             e.printStackTrace();
         }

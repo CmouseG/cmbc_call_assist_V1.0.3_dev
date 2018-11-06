@@ -146,4 +146,6 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	List<LineConcurrent> outLineinfos(String userId);
+	
+	List<DispatchPlan> selectPhoneByDate();
 }

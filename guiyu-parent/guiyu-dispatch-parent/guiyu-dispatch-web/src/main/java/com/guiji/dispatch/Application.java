@@ -7,8 +7,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.guiji.common.result.EnableAutoResultPack;
-
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**

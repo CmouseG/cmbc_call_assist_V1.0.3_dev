@@ -164,8 +164,13 @@ public class DispatchPlanController {
 			@RequestParam(required = true, name = " pagesize") int pagesize) {
 		return  dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, pagenum, pagesize);
 	}
-	
+	/**
+	 * 获取客户线路列表
+	 * @param userId
+	 * @return
+	 */
 	@PostMapping("outLineinfos")
+	@Log(info = "获取客户线路列表")
 	public List<LineConcurrent> outLineinfos(@RequestParam(required = true, name = "userId") String userId) {
 		return dispatchPlanService.outLineinfos(userId);
 	}

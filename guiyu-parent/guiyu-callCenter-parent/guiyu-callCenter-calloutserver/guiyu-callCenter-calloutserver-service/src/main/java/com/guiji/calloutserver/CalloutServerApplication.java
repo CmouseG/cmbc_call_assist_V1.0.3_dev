@@ -1,6 +1,6 @@
 package com.guiji.calloutserver;
 
-import com.guiji.common.result.EnableAutoResultPack;
+import com.guiji.component.result.EnableAutoResultPack;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

@@ -17,3 +17,10 @@ eureka:
 fs:
    homeDir: C:/Program Files/FreeSWITCH/
 
+job:
+  clearRecord: 0 0 0 * * ?
+
+path:
+    recordPath: D:/
+
+

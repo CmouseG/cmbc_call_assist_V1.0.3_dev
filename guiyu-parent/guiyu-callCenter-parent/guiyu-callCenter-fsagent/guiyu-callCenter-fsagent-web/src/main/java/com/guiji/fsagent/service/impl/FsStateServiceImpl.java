@@ -1,7 +1,6 @@
 package com.guiji.fsagent.service.impl;
 
 import com.guiji.fsagent.entity.FreeSWITCH;
-import com.guiji.fsagent.entity.FsInfo;
 import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsagent.entity.GlobalVar;
 import com.guiji.fsagent.manager.FSService;

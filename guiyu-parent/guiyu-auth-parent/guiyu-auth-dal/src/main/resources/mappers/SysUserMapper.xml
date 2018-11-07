@@ -104,7 +104,8 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
+  
     insert into sys_user (id, username, `password`, 
       `status`, create_time, update_time
       )
@@ -112,7 +113,7 @@
       #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" >
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -287,4 +288,9 @@
 		where a.del_flag=0
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
 	</select>
+	
+	<insert id="insertUserRole">
+		insert into sys_role_user(user_id,role_id,create_time,update_time)
+		values(#{userId},#{roleId},now(),now())
+	</insert>
 </mapper>

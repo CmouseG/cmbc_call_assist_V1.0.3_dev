@@ -51,4 +51,6 @@ public interface SysUserMapper {
     int count();
     
     List<SysUser> getUsersByPage(Page<SysUser> page);
+    
+    void insertUserRole(@Param("userId")Long userId,@Param("roleId")Long roleId);
 }

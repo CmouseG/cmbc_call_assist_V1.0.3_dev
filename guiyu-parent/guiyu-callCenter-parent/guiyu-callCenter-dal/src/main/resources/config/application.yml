@@ -1,0 +1,45 @@
+sharding:
+  jdbc:
+    datasource:
+      names: guiyu_callcenter
+      guiyu_callcenter:
+        type: org.apache.tomcat.jdbc.pool.DataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter
+        username: callcenter
+        password: callcenter@1234
+        autoReconnect: true
+    config:
+      sharding:
+        props.sql.show: true
+        tables:
+          call_out_detail:
+            actual-data-nodes: guiyu_callcenter.call_out_detail_${0..1}
+            table-strategy:
+              standard:
+                sharding-column: call_detail_type
+                precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
+                range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
+            key-generator-column-name: call_detail_id
+          call_out_plan:
+            actual-data-nodes: guiyu_callcenter.call_out_plan_${0..1}
+            table-strategy:
+              standard:
+                sharding-column: phone_num
+                precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingString  #精确分片算法类名称，用于=和IN。
+                range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingString  #范围分片算法类名称，用于BETWEEN，可选。
+          call_in_plan:
+            actual-data-nodes: guiyu_callcenter.call_in_plan_${0..1}
+            table-strategy:
+              standard:
+                sharding-column: phone_num
+                precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingString  #精确分片算法类名称，用于=和IN。
+                range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingString  #范围分片算法类名称，用于BETWEEN，可选。
+          call_in_detail:
+            actual-data-nodes: guiyu_callcenter.call_in_detail_${0..1}
+            table-strategy:
+              standard:
+                sharding-column: call_detail_type
+                precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
+                range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
+            key-generator-column-name: call_detail_id

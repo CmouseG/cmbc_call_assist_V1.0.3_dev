@@ -39,7 +39,6 @@ public class DispatchOutApiController implements IDispatchPlanOutApi{
      *
      * @param schedule 请求参数
      * @return 响应报文
-     * @throws Exception 异常
      */
 	@Override
     @GetMapping(value="out/queryAvailableSchedules")

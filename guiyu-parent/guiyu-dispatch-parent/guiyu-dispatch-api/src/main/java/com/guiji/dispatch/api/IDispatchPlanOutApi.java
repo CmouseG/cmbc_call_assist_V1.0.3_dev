@@ -27,7 +27,6 @@ public interface IDispatchPlanOutApi {
      *
      * @param schedule 请求参数
      * @return 响应报文
-     * @throws Exception 异常
      */
     @ApiOperation(value = "返回可以拨打的任务给呼叫中心")
     @ApiImplicitParams({
@@ -44,7 +43,6 @@ public interface IDispatchPlanOutApi {
      *
      * @param planUuid 任务id
      * @return 接受号码呼叫完成通知
-     * @throws Exception 异常
      */
     @ApiOperation(value = "接受号码呼叫完成通知")
     @ApiImplicitParams({

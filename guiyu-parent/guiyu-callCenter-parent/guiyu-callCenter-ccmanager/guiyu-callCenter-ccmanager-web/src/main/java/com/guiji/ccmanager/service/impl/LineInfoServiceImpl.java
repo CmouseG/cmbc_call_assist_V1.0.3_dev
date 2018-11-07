@@ -14,6 +14,7 @@ import com.guiji.fsmanager.api.ILineOperApi;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +44,33 @@ public class LineInfoServiceImpl implements LineInfoService {
     @Autowired
     private DiscoveryClient discoveryClient;
 
-    public List<LineInfo> getLineInfoByCustom(String customerId) {
+    public List<LineInfo> getLineInfoByCustom(String customerId, int pageSize, int pageNo) {
 
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
-        criteria.andCustomerIdEqualTo(customerId);
+        if(StringUtils.isNotBlank(customerId)){
+            criteria.andCustomerIdEqualTo(customerId);
+        }
+        int limitStart = (pageNo-1)*pageSize;
+        example.setLimitStart(limitStart);
+        example.setLimitEnd(pageSize);
+
         return lineInfoMapper.selectByExample(example);
+    }
+
+    @Override
+    public int getLineInfoByCustomCount(String customerId, int pageSize, int pageNo) {
+        LineInfoExample example = new LineInfoExample();
+        LineInfoExample.Criteria criteria = example.createCriteria();
+        if(StringUtils.isNotBlank(customerId)){
+            criteria.andCustomerIdEqualTo(customerId);
+        }
+
+        int limitStart = (pageNo-1)*pageSize;
+        example.setLimitStart(limitStart);
+        example.setLimitEnd(pageSize);
+
+        return lineInfoMapper.countByExample(example);
     }
 
     @Override

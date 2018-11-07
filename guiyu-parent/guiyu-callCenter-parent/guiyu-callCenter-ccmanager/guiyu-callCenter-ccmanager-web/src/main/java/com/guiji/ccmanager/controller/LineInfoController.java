@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -12,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.Configuration;
 import java.util.List;
 
 /**
@@ -29,16 +29,28 @@ public class LineInfoController {
 
     @ApiOperation(value = "查看客户所有线路接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="lineinfos")
-    public Result.ReturnData<List<LineInfo>> getLineInfoByCustom(String customerId){
+    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String pageSize, String pageNo){
 
-        if(StringUtils.isBlank(customerId)){
+        if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId);
-        return Result.ok(list);
+        int pageSizeInt = Integer.parseInt(pageSize);
+        int pageNoInt = Integer.parseInt(pageNo);
+        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId,pageSizeInt,pageNoInt);
+        int count = lineInfoService.getLineInfoByCustomCount(customerId,pageSizeInt,pageNoInt);
+
+        Page<LineInfo> page = new Page<LineInfo>();
+        page.setPageNo(pageNoInt);
+        page.setPageSize(pageSizeInt);
+        page.setTotal(count);
+        page.setRecords(list);
+
+        return Result.ok(page);
     }
 
     @ApiOperation(value = "增加线路接口")
@@ -57,8 +69,8 @@ public class LineInfoController {
     }
 
     @ApiOperation(value = "修改线路接口")
-    @PutMapping(value="lineinfos/{id}")
-    public Result.ReturnData<Boolean> updateLineInfo(@PathVariable("id") String id,@RequestBody LineInfoVO lineInfoVO){
+    @PutMapping(value="lineinfos")
+    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
         if(lineInfoVO.getLineId()==0){
             return Result.error(Constant.ERROR_PARAM);

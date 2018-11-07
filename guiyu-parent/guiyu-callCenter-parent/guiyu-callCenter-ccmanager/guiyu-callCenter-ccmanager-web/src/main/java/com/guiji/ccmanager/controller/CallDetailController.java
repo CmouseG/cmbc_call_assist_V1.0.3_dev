@@ -34,8 +34,8 @@ public class CallDetailController {
             @ApiImplicitParam(name = "startDate", value = "开始时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="callrecord")
     public Result.ReturnData<Page<CallOutPlan>> callrecord(String startDate, String endDate, String customerId, String pageSize, String pageNo ){
@@ -70,7 +70,7 @@ public class CallDetailController {
 
     @ApiOperation(value = "查看通话记录详情")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallDetail")
     public Result.ReturnData<CallOutPlanVO> getCallDetail(String callId){

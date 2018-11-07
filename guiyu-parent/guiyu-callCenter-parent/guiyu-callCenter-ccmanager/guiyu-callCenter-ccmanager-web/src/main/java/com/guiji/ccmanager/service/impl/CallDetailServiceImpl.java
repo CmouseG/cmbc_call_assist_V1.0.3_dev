@@ -8,6 +8,7 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.utils.BeanUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(endDate!=null){
             criteria.andCallStartTimeLessThan(endDate);
         }
-        if(customerId!=null){
+        if(StringUtils.isNotBlank(customerId)){
             criteria.andCustomerIdEqualTo(customerId);
         }
 
@@ -65,7 +66,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(endDate!=null){
             criteria.andCallStartTimeLessThan(endDate);
         }
-        if(customerId!=null){
+        if(StringUtils.isNotBlank(customerId)){
             criteria.andCustomerIdEqualTo(customerId);
         }
         return callOutPlanMapper.countByExample(example);

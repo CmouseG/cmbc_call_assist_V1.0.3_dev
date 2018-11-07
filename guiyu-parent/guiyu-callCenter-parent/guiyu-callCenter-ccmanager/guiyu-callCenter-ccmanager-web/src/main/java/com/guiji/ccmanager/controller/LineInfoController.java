@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.Configuration;
 import java.util.List;
 
 /**
@@ -44,12 +45,15 @@ public class LineInfoController {
     @PostMapping(value="lineinfos")
     public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
-        if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null){
+        if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
             return Result.error(Constant.ERROR_PARAM);
         }
+        String codec = lineInfoVO.getCodec();
+        if(!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU) ){
+            return Result.error(Constant.ERROR_CODEC);
+        }
 
-        boolean b = lineInfoService.addLineInfo(lineInfoVO);
-        return Result.ok(b);
+        return lineInfoService.addLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "修改线路接口")
@@ -59,6 +63,12 @@ public class LineInfoController {
         if(lineInfoVO.getLineId()==0){
             return Result.error(Constant.ERROR_PARAM);
         }
+        if( lineInfoVO.getCodec()!=null) {
+            String codec = lineInfoVO.getCodec();
+            if (!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU)) {
+                return Result.error(Constant.ERROR_CODEC);
+            }
+        }
 
         return lineInfoService.updateLineInfo(lineInfoVO);
     }
@@ -66,8 +76,7 @@ public class LineInfoController {
     @ApiOperation(value = "删除线路接口")
     @DeleteMapping(value="lineinfos/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id){
-        boolean b = lineInfoService.delLineInfo(id);
-        return Result.ok(b);
+        return lineInfoService.delLineInfo(id);
     }
 
 }

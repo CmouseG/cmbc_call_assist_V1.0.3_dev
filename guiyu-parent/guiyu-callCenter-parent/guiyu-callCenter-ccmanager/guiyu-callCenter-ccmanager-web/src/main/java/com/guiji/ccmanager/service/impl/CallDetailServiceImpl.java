@@ -33,7 +33,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     private CallOutDetailRecordMapper callOutDetailRecordMapper;
 
     @Override
-    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId){
+    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo ){
 
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
@@ -46,8 +46,29 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(customerId!=null){
             criteria.andCustomerIdEqualTo(customerId);
         }
+
+        int limitStart = (pageNo-1)*pageSize;
+        example.setLimitStart(limitStart);
+        example.setLimitEnd(pageSize);
+
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
         return list;
+    }
+
+    @Override
+    public int callrecordCount(Date startDate, Date endDate, String customerId) {
+        CallOutPlanExample example = new CallOutPlanExample();
+        CallOutPlanExample.Criteria criteria = example.createCriteria();
+        if(startDate!=null){
+            criteria.andCallStartTimeGreaterThan(startDate);
+        }
+        if(endDate!=null){
+            criteria.andCallStartTimeLessThan(endDate);
+        }
+        if(customerId!=null){
+            criteria.andCustomerIdEqualTo(customerId);
+        }
+        return callOutPlanMapper.countByExample(example);
     }
 
     @Override

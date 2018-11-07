@@ -53,7 +53,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public boolean addLineInfo(LineInfoVO lineInfoVO) {
+    public Result.ReturnData<Boolean> addLineInfo(LineInfoVO lineInfoVO) {
 
         //本地存储数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -68,7 +68,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.addLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return false;
+            return result;
         }
         //读取所有的calloutserver，将线路并发数平分到各个calloutserver，存储到linecount表中
         List<String> listServer = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
@@ -87,7 +87,7 @@ public class LineInfoServiceImpl implements LineInfoService {
             }
             lineCountMapper.insert(lineCount);
         }
-        return true;
+        return Result.ok(true);
     }
 
     @Override
@@ -144,21 +144,21 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public boolean delLineInfo(String id) {
+    public Result.ReturnData<Boolean> delLineInfo(String id) {
         //本地删除数据库lineinfo记录，同时调用fsmanager的删除线路接口
         lineInfoMapper.deleteByPrimaryKey(Integer.valueOf(id));
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(id);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.deleteLineinfos,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return false;
+            return result;
         }
         //删除linecount中对应的线路并发数信息
         LineCountExample example = new LineCountExample();
         LineCountExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(Integer.valueOf(id));
         lineCountMapper.deleteByExample(example);
-        return true;
+        return Result.ok(true);
     }
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
@@ -75,5 +76,12 @@ public class UserService {
 	
 	public List<String> getPermByRoleId(Long roleId){
 		return mapper.getPermByRoleId(roleId);
+	}
+	
+	public void getUserByPage(Page<SysUser> page){
+		int count=mapper.count();
+		List<SysUser> userList=mapper.getUsersByPage(page);
+		page.setTotal(count);
+		page.setRecords(userList);
 	}
 }

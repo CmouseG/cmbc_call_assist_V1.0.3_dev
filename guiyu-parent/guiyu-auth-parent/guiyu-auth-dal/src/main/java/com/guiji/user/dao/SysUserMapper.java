@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExample;
@@ -46,4 +47,8 @@ public interface SysUserMapper {
     List<SysRole> getRoleByUserId(Long id);
     
     List<String> getPermByRoleId(Long roleId);
+    
+    int count();
+    
+    List<SysUser> getUsersByPage(Page<SysUser> page);
 }

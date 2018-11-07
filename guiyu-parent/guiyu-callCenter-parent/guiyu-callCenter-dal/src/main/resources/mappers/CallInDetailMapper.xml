@@ -114,7 +114,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" useGeneratedKeys="true"  keyProperty="call_detail_id">
     insert into call_in_detail (call_detail_id, call_id, accurate_intent, 
       agent_answer_text, agent_answer_time, ai_duration, 
       asr_duration, bot_answer_text, bot_answer_time, 
@@ -126,7 +126,7 @@
       #{callDetailType,jdbcType=INTEGER}, #{customerSayText,jdbcType=VARCHAR}, #{customerSayTime,jdbcType=TIMESTAMP}, 
       #{reason,jdbcType=VARCHAR}, #{totalDuration,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" useGeneratedKeys="true"  keyProperty="call_detail_id">
     insert into call_in_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="callDetailId != null" >

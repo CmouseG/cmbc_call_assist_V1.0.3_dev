@@ -68,18 +68,19 @@ public class MenuService {
 		Map<Long,MenuTree> map=new HashMap<>();
 		List<MenuTree> list=new ArrayList<>();
 		allMenu.stream().forEach((item)->{
-			
+			Long pid=item.getPid();
 			MenuTree node=new MenuTree();
 			node.setParent(item);
-			
-			Long pid=item.getPid();
-			MenuTree parent=map.get(pid);
-			if(parent==null&& 0==pid){
+			if(0==pid){
 				list.add(node);
+				map.put(item.getId(), node);
 			}else{
-				parent.getChild().add(node);
+				MenuTree parent=map.get(pid);
+				if(parent!=null){
+					parent.getChild().add(node);
+					map.put(item.getId(), node);
+				}
 			}
-			map.put(item.getId(), node);
 		});
 		return list;
 	}

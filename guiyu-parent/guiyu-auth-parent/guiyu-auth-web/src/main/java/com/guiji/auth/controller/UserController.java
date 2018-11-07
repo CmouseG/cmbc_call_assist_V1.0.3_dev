@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.service.UserService;
 import com.guiji.auth.util.AuthUtil;
+import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysUser;
 
 /**
@@ -21,13 +22,13 @@ public class UserController{
 	
 	@RequestMapping("regist")
 	public void insert(SysUser user){
-		user.setPassword(AuthUtil.encrypt(user.getUsername()));
+		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		service.insert(user);
 	}
 	
 	@RequestMapping("changePassword")
 	public void changePassword(SysUser user){
-		user.setPassword(AuthUtil.encrypt(user.getUsername()));
+		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		service.changePassword(user);
 	}
 	
@@ -49,6 +50,12 @@ public class UserController{
 	@RequestMapping("getUserId")
 	public Long getUserId(){
 		return (Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
+	}
+	
+	@RequestMapping("getUserByPage")
+	public Page<SysUser> getUserByPage(Page<SysUser> page){
+		service.getUserByPage(page);
+		return page;
 	}
 	
 }

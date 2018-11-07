@@ -28,7 +28,6 @@ public class DispatchPlanController {
 	 * @param schedule
 	 *            任务
 	 * @return 响应报文
-	 * @throws Exception
 	 *             异常
 	 */
 	@PostMapping("addSchedule")
@@ -43,7 +42,7 @@ public class DispatchPlanController {
 	 * @param userId
 	 *            用户id
 	 * @return 响应报文
-	 * @throws Exception
+	 *  
 	 *             异常
 	 */
 	@GetMapping("querySchedules")
@@ -60,7 +59,7 @@ public class DispatchPlanController {
 	 * @param planUuid
 	 *            任务id
 	 * @return 响应报文
-	 * @throws Exception
+	 *  
 	 *             异常
 	 */
 
@@ -77,7 +76,7 @@ public class DispatchPlanController {
 	 * @param planUuid
 	 *            任务id
 	 * @return 响应报文
-	 * @throws Exception
+	 *  
 	 *             异常
 	 */
 	@Log(info = "取消任务")
@@ -105,7 +104,7 @@ public class DispatchPlanController {
 	 * @param planUuid
 	 *            任务id
 	 * @return 响应报文
-	 * @throws Exception
+	 *  
 	 *             异常
 	 */
 	@PostMapping("resumeSchedule")
@@ -164,8 +163,13 @@ public class DispatchPlanController {
 			@RequestParam(required = true, name = " pagesize") int pagesize) {
 		return  dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, pagenum, pagesize);
 	}
-	
+	/**
+	 * 获取客户线路列表
+	 * @param userId
+	 * @return
+	 */
 	@PostMapping("outLineinfos")
+	@Log(info = "获取客户线路列表")
 	public List<LineConcurrent> outLineinfos(@RequestParam(required = true, name = "userId") String userId) {
 		return dispatchPlanService.outLineinfos(userId);
 	}

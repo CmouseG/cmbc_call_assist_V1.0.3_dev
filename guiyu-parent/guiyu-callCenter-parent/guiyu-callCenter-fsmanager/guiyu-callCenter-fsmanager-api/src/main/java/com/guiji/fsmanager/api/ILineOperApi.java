@@ -1,6 +1,6 @@
 package com.guiji.fsmanager.api;
 
-import com.guiji.common.result.Result;
+import com.guiji.component.result.Result;
 import com.guiji.fsmanager.entity.LineInfoVO;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import io.swagger.annotations.ApiImplicitParam;

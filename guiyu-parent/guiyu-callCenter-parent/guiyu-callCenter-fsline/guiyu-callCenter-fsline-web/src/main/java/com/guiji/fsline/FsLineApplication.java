@@ -1,6 +1,7 @@
 package com.guiji.fsline;
 
-import com.guiji.common.result.EnableAutoResultPack;
+
+import com.guiji.component.result.EnableAutoResultPack;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

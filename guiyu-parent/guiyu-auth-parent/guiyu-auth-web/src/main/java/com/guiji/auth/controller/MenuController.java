@@ -21,6 +21,7 @@ public class MenuController {
 	@RequestMapping("insert")
 	public void insert(SysMenu menu){
 		service.insert(menu);
+		
 	}
 
 	@RequestMapping("delete")
@@ -43,4 +44,9 @@ public class MenuController {
 		Long userId=(Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
 		return service.getMenus(userId);
 	}
+	
+	@RequestMapping("getAllMenus")
+	public List<MenuTree> getAllMenus(){
+		return service.getAllMenus();
+	} 
 }

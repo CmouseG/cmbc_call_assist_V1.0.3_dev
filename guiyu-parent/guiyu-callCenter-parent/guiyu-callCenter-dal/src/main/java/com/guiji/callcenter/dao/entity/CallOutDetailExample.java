@@ -135,52 +135,62 @@ public class CallOutDetailExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdEqualTo(Integer value) {
+        public Criteria andCallDetailIdEqualTo(String value) {
             addCriterion("call_detail_id =", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdNotEqualTo(Integer value) {
+        public Criteria andCallDetailIdNotEqualTo(String value) {
             addCriterion("call_detail_id <>", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdGreaterThan(Integer value) {
+        public Criteria andCallDetailIdGreaterThan(String value) {
             addCriterion("call_detail_id >", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andCallDetailIdGreaterThanOrEqualTo(String value) {
             addCriterion("call_detail_id >=", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdLessThan(Integer value) {
+        public Criteria andCallDetailIdLessThan(String value) {
             addCriterion("call_detail_id <", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdLessThanOrEqualTo(Integer value) {
+        public Criteria andCallDetailIdLessThanOrEqualTo(String value) {
             addCriterion("call_detail_id <=", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdIn(List<Integer> values) {
+        public Criteria andCallDetailIdLike(String value) {
+            addCriterion("call_detail_id like", value, "callDetailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDetailIdNotLike(String value) {
+            addCriterion("call_detail_id not like", value, "callDetailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDetailIdIn(List<String> values) {
             addCriterion("call_detail_id in", values, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdNotIn(List<Integer> values) {
+        public Criteria andCallDetailIdNotIn(List<String> values) {
             addCriterion("call_detail_id not in", values, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdBetween(Integer value1, Integer value2) {
+        public Criteria andCallDetailIdBetween(String value1, String value2) {
             addCriterion("call_detail_id between", value1, value2, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andCallDetailIdNotBetween(String value1, String value2) {
             addCriterion("call_detail_id not between", value1, value2, "callDetailId");
             return (Criteria) this;
         }

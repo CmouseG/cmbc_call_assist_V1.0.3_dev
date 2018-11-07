@@ -1,6 +1,5 @@
 package com.guiji.callcenter.fsmanager.service;
 
-import com.guiji.common.result.Result;
 import com.guiji.fsmanager.entity.LineInfoVO;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
 

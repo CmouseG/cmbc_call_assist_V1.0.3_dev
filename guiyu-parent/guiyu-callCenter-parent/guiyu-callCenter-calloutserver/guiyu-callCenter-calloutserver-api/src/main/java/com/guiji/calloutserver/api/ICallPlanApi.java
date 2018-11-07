@@ -1,7 +1,8 @@
 package com.guiji.calloutserver.api;
 
 
-import com.guiji.common.result.Result;
+
+import com.guiji.component.result.Result;
 import feign.Param;
 import feign.RequestLine;
 import io.swagger.annotations.ApiImplicitParam;

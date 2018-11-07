@@ -15,7 +15,6 @@ public interface IDispatchPlanService {
      *
      * @param schedule 任务
      * @return 响应报文
-     * @throws Exception 异常
      */
   boolean addSchedule( DispatchPlan dispatchPlan);
 
@@ -24,7 +23,6 @@ public interface IDispatchPlanService {
      *
      * @param userId 用户id
      * @return 响应报文
-     * @throws Exception 异常
      */
   Page<DispatchPlan> querySchedules(final Integer userId,int pagenum, int pagesize) ;
 
@@ -33,7 +31,6 @@ public interface IDispatchPlanService {
      *
      * @param planUuid 任务id
      * @return 响应报文
-     * @throws Exception 异常
      */
     boolean pauseSchedule(final String planUuid) ;
 
@@ -42,7 +39,6 @@ public interface IDispatchPlanService {
      *
      * @param planUuid 任务id
      * @return 响应报文
-     * @throws Exception 异常
      */
     boolean resumeSchedule(final String planUuid) ;
     
@@ -51,7 +47,6 @@ public interface IDispatchPlanService {
      *
      * @param planUuid 任务id
      * @return 响应报文
-     * @throws Exception 异常
      */
     boolean cancelSchedule(final String planUuid) ;
 
@@ -62,7 +57,6 @@ public interface IDispatchPlanService {
      *
      * @param schedule 请求参数
      * @return 响应报文
-     * @throws Exception 异常
      */
     List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId) ;
 
@@ -71,7 +65,6 @@ public interface IDispatchPlanService {
      *
      * @param planUuid 任务id
      * @return 响应报文
-     * @throws Exception 异常
      */
     List<DispatchPlan> queryExecuteResult(String planUuid) ;
 
@@ -89,7 +82,6 @@ public interface IDispatchPlanService {
      *
      * @param planUuid 任务id
      * @return 响应报文
-     * @throws Exception 异常
      */
     boolean successSchedule(String planUuid) ;
 
@@ -98,7 +90,6 @@ public interface IDispatchPlanService {
      * @param fileName
      * @param file
      * @return
-     * @throws Exception
      */
     public boolean batchImport(String fileName, MultipartFile file) ;
 
@@ -146,4 +137,10 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	List<LineConcurrent> outLineinfos(String userId);
+	
+	/**
+	 * 根据当前当前时间查询号码
+	 * @return
+	 */
+	List<DispatchPlan> selectPhoneByDate();
 }

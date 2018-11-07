@@ -11,5 +11,12 @@
 
     <artifactId>guiyu-auth-dal</artifactId>
 
+	<dependencies>
+		<dependency>
+			<groupId>guiji.ai</groupId>
+			<artifactId>guiyu-model</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 
 </project>

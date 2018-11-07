@@ -379,11 +379,7 @@
 	
 	<select id="getAllMenus" resultType="com.guiji.user.dao.entity.SysMenu">
 		select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
-		from sys_user a
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_menu_role c on b.role_id=c.role_id
-		LEFT JOIN sys_menu d on d.id=c.menu_id
-		where d.del_flag=0
+		from sys_menu d where d.del_flag=0 and pid is not null
 		ORDER by pid
 	</select>
 </mapper>

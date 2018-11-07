@@ -21,9 +21,9 @@ public class UserController{
 	private UserService service;
 	
 	@RequestMapping("regist")
-	public void insert(SysUser user){
+	public void insert(SysUser user,Long roleId){
 		user.setPassword(AuthUtil.encrypt(user.getPassword()));
-		service.insert(user);
+		service.insert(user,roleId);
 	}
 	
 	@RequestMapping("changePassword")

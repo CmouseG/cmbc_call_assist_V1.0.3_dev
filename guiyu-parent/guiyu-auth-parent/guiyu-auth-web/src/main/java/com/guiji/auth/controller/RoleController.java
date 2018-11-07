@@ -17,8 +17,8 @@ public class RoleController {
 	private RoleService service;
 	
 	@RequestMapping("insert")
-	public void insert(SysRole role){
-		service.insert(role);
+	public void insert(SysRole role,String[] menuIds){
+		service.insert(role,menuIds);
 	}
 	
 	@RequestMapping("delete")
@@ -27,8 +27,8 @@ public class RoleController {
 	}
 	
 	@RequestMapping("update")
-	public void update(SysRole role){
-		service.update(role);
+	public void update(SysRole role,String[] menuIds){
+		service.update(role,menuIds);
 	}
 	
 	@RequestMapping("getRoleId")
@@ -41,8 +41,8 @@ public class RoleController {
 		return service.getRoles();
 	}
 	
-	@RequestMapping("addMenus")
-	public void addMenus(String roleId,String[] menuIds){
-		service.addMenus(roleId,menuIds);
-	}
+//	@RequestMapping("addMenus")
+//	public void addMenus(String roleId,String[] menuIds){
+//		service.addMenus(roleId,menuIds);
+//	}
 }

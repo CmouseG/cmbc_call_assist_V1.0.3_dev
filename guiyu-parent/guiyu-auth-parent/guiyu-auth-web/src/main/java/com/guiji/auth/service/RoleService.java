@@ -14,16 +14,18 @@ public class RoleService {
 	@Autowired
 	private SysRoleMapper mapper;
 	
-	public void insert(SysRole role){
+	public void insert(SysRole role,String[] menuIds){
 		mapper.insert(role);
+		mapper.addMenus(role.getId(),menuIds);
 	}
 	
 	public void delete(Long id){
 		mapper.deleteByPrimaryKey(id);
 	}
 	
-	public void update(SysRole role){
+	public void update(SysRole role,String[] menuIds){
 		mapper.updateByPrimaryKeySelective(role);
+		mapper.addMenus(role.getId(),menuIds);
 	}
 	
 	public SysRole getRoleId(Long id){
@@ -34,7 +36,7 @@ public class RoleService {
 		return mapper.getRoles();
 	}
 	
-	public void addMenus(String roleId,String[] menuIds){
-		mapper.addMenus(roleId,menuIds);
-	}
+//	public void addMenus(String roleId,String[] menuIds){
+//		mapper.addMenus(roleId,menuIds);
+//	}
 }

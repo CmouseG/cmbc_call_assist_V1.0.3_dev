@@ -21,8 +21,9 @@ public class UserService {
 	 * 新增用户
 	 * @param user
 	 */
-	public void insert(SysUser user){
+	public void insert(SysUser user,Long roleId){
 		mapper.insert(user);
+		mapper.insertUserRole(user.getId(),roleId);
 	}
 	
 	/**

@@ -12,7 +12,9 @@ import java.util.List;
  * @Description:
  */
 public interface CallDetailService {
-    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId);
+    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo );
 
     public CallOutPlanVO getCallDetail(String callId);
+
+    public int callrecordCount(Date start, Date end, String customerId);
 }

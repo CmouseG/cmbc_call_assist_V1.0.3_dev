@@ -1,6 +1,8 @@
 package com.guiji.callcenter.fsmanager.util;
 
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -9,13 +11,15 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 public class XmlUtil {
+    private final Logger logger = LoggerFactory.getLogger(XmlUtil.class);
+
     /**
      * 生成
      * @param obj
      * @param <T>
      * @return
      */
-    public static <T> String buildxml(T obj) {
+    public  <T> String buildxml(T obj) {
         try {
             StringWriter write = new StringWriter();
             JAXBContext context = JAXBContext.newInstance(new Class[] { obj.getClass() });
@@ -24,27 +28,26 @@ public class XmlUtil {
             jaxbMarshaller.marshal(obj, write);
             return write.getBuffer().toString();
         } catch (JAXBException e) {
-            e.printStackTrace();
+            logger.info("操作线路，生成xml文件失败",e);
         }
         return "";
     }
 
     /**
      * String转base64
+     *
      * @param str
      * @return
      */
-    public static String getBase64(String str) {
-        byte[] b = null;
-        String s = null;
+    public  String getBase64(String str) {
+        Base64 base64 = new Base64();
+        byte[] textByte = new byte[0];
         try {
-            b = str.getBytes("utf-8");
+            textByte = str.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.info("将线路String转base64异常",e);
         }
-        if (b != null) {
-            s = new BASE64Encoder().encode(b);
-        }
-        return s;
+        //编码
+        return base64.encodeToString(textByte);
     }
 }

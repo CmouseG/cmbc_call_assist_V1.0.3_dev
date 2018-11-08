@@ -43,7 +43,7 @@ public class FsStateServiceImpl {
     public FsInfoVO fsinfo() {
        String agentId = ServerUtil.getInstanceId(registration);
         FreeSWITCH fs = fsService.getFreeSwitch();
-        GlobalVar globalVar = new GlobalVar();
+        GlobalVar globalVar = fs.getGlobalVar();
         FsInfoVO fsinfo = new FsInfoVO();
         fsinfo.setFsAgentId(agentId);
         fsinfo.setFsIp(globalVar.getDomain());

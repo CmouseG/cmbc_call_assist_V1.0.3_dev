@@ -6,10 +6,16 @@ import com.guiji.callcenter.dao.entity.LineConfigExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
 import com.guiji.callcenter.fsmanager.entity.DialplanVO;
 import com.guiji.callcenter.fsmanager.entity.GatewayVO;
+import com.guiji.callcenter.fsmanager.manager.EurekaManager;
 import com.guiji.callcenter.fsmanager.service.LineService;
 import com.guiji.callcenter.fsmanager.util.XmlUtil;
+import com.guiji.component.result.Result;
+import com.guiji.fsagent.api.ILineOperate;
 import com.guiji.fsmanager.entity.LineInfoVO;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
+import com.guiji.utils.FeignBuildUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,10 @@ import java.util.*;
 
 @Service
 public class LineServiceImpl implements LineService {
+    private final Logger log = LoggerFactory.getLogger(LineServiceImpl.class);
+
+    @Autowired
+    EurekaManager eurekaManager;
     @Autowired
     LineConfigMapper lineConfigMapper;
     /**
@@ -27,36 +37,39 @@ public class LineServiceImpl implements LineService {
      * @throws Exception
      */
     @Override
-    public Boolean addLineinfos(LineInfoVO  request) throws Exception {
+    public Boolean addLineinfos(LineInfoVO  request)  {
+        String lineId = request.getLineId();
         //查询数据库，看有无重名
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
-        criteria.andLineIdEqualTo(request.getLineId());
+        criteria.andLineIdEqualTo(lineId);
         List<LineConfig>  list =lineConfigMapper.selectByExample(example);
         if(list.size()>0){
             return false;
         }
-        String gatewayxml = buildGateway( request);
+        String gatewayxml = null;
+        gatewayxml = buildGateway( request);
         LineConfig recordgw = new LineConfig();
-        recordgw.setLineId(request.getLineId());
+        recordgw.setLineId(lineId);
         recordgw.setFileType(Constant.CONFIG_TYPE_GATEWAY);
-        recordgw.setFileName("gw_"+request.getLineId()+".xml");
+        recordgw.setFileName("gw_"+lineId+".xml");
         recordgw.setFileData(gatewayxml);
         lineConfigMapper.insert(recordgw);
 
         String dialplanxml = buildDialplan(request);
         LineConfig recorddl = new LineConfig();
-        recorddl.setLineId(request.getLineId());
+        recorddl.setLineId(lineId);
         recorddl.setFileType(Constant.CONFIG_TYPE_DIALPLAN);
-        recorddl.setFileName("01_"+request.getLineId()+".xml");
-        recorddl.setFileData(gatewayxml);
+        recorddl.setFileName("01_"+lineId+".xml");
+        recorddl.setFileData(dialplanxml);
         lineConfigMapper.insert(recorddl);
-
+        //调用通知fsagent更新方法
+        updatenotify(lineId);
         return true;
     }
 
     @Override
-    public void editLineinfos(String lineId, LineInfoVO request)throws Exception{
+    public void editLineinfos(String lineId, LineInfoVO request){
         Map<String ,String> map = new HashMap<String,String>();
         map.put(Constant.CONFIG_TYPE_DIALPLAN,"01_"+lineId+".xml");
         map.put(Constant.CONFIG_TYPE_GATEWAY,"01_"+lineId+".xml");
@@ -69,15 +82,22 @@ public class LineServiceImpl implements LineService {
             record.setFileName(fileName);
             if(key.equals(Constant.CONFIG_TYPE_DIALPLAN)){
                 record.setFileData(buildDialplan(request));
+                LineConfigExample example = new LineConfigExample();
+                LineConfigExample.Criteria criteria = example.createCriteria();
+                criteria.andLineIdEqualTo(request.getLineId());
+                criteria.andFileTypeEqualTo(Constant.CONFIG_TYPE_DIALPLAN);
+                lineConfigMapper.updateByExampleSelective(record,example);
             }else{
                 record.setFileData( buildGateway(request));
+                LineConfigExample example = new LineConfigExample();
+                LineConfigExample.Criteria criteria = example.createCriteria();
+                criteria.andLineIdEqualTo(request.getLineId());
+                criteria.andFileTypeEqualTo(Constant.CONFIG_TYPE_GATEWAY);
+                lineConfigMapper.updateByExampleSelective(record,example);
             }
-            LineConfigExample example = new LineConfigExample();
-            LineConfigExample.Criteria criteria = example.createCriteria();
-            criteria.andLineIdEqualTo(request.getLineId());
-            criteria.andFileTypeEqualTo(Constant.CONFIG_TYPE_DIALPLAN);
-            lineConfigMapper.updateByExampleSelective(record,example);
         }
+        //调用通知fsagent更新方法
+        updatenotify(lineId);
     }
 
     /**
@@ -95,17 +115,19 @@ public class LineServiceImpl implements LineService {
 
     @Override
     public List<LineXmlnfoVO> linexmlinfos(String lineId) {
+        XmlUtil util = new XmlUtil();
         List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
         //查询数据库
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(lineId);
         List<LineConfig> list =lineConfigMapper.selectByExample(example);
+
         for (LineConfig config:list) {
             LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
             lineXmlnfo.setConfigType(config.getFileType());
             lineXmlnfo.setFileName(config.getFileName());
-            lineXmlnfo.setFileData(XmlUtil.getBase64(config.getFileData()));
+            lineXmlnfo.setFileData(util.getBase64(config.getFileData()));
             listLine.add(lineXmlnfo);
         }
         return listLine;
@@ -113,6 +135,7 @@ public class LineServiceImpl implements LineService {
 
     @Override
     public List<LineXmlnfoVO> linexmlinfosAll() {
+        XmlUtil util = new XmlUtil();
         List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
@@ -121,7 +144,7 @@ public class LineServiceImpl implements LineService {
             LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
             lineXmlnfo.setConfigType(config.getFileType());
             lineXmlnfo.setFileName(config.getFileName());
-            lineXmlnfo.setFileData(XmlUtil.getBase64(config.getFileData()));
+            lineXmlnfo.setFileData(util.getBase64(config.getFileData()));
             listLine.add(lineXmlnfo);
         }
         return listLine;
@@ -133,7 +156,7 @@ public class LineServiceImpl implements LineService {
      * 生成网关
      * @param request
      */
-    public String buildGateway(LineInfoVO  request)throws Exception{
+    public String buildGateway(LineInfoVO  request){
         LinkedHashMap<String, String> gatewayMap = new LinkedHashMap<String, String>();
         GatewayVO include = new GatewayVO();
         GatewayVO.Gateway gateway = new GatewayVO.Gateway();
@@ -161,7 +184,10 @@ public class LineServiceImpl implements LineService {
         }
         gateway.setParam(ParamSet);
         include.setGateway(gateway);
-        return XmlUtil.buildxml(include);
+
+        XmlUtil util  = new XmlUtil();
+
+        return util.buildxml(include);
     }
 
     /**
@@ -169,7 +195,7 @@ public class LineServiceImpl implements LineService {
      * @param request
      * @throws Exception
      */
-    public String buildDialplan(LineInfoVO  request) throws Exception{
+    public String buildDialplan(LineInfoVO  request){
         DialplanVO include = new DialplanVO();
         DialplanVO.Extension extension = new DialplanVO.Extension();
         extension.setName(request.getLineId() + "_Extension");
@@ -214,7 +240,38 @@ public class LineServiceImpl implements LineService {
         condition.setAction(ActionSet);
         extension.setCondition(condition);
         include.setExtension(extension);
-        return XmlUtil.buildxml(include);
+
+        XmlUtil util  = new XmlUtil();
+        return util.buildxml(include);
     }
+
+    /**
+     * 通知fsagent更新配置文件
+     * @param lineId
+     */
+    public void updatenotify(String lineId){
+        //通知所有的fsagent服务更新线路
+        List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
+        for(String server:serverList){
+            ILineOperate lineOperateApi = FeignBuildUtil.feignBuilderTarget(ILineOperate.class,Constant.PROTOCOL +server);
+            //调用fsagent通知更新接口
+            Result.ReturnData<Boolean> result = lineOperateApi.updatenotify("line",lineId);
+        }
+    }
+    /**
+     * 通知fsagent删除配置文件
+     * @param lineId
+     */
+    public void deletenotify(String lineId){
+        //通知所有的fsagent服务更新线路
+        List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
+        for(String server:serverList){
+            ILineOperate lineOperateApi = FeignBuildUtil.feignBuilderTarget(ILineOperate.class,Constant.PROTOCOL +server);
+            //调用fsagent删除线路接口
+            Result.ReturnData<Boolean> result = lineOperateApi.deleteLineinfos(lineId);
+        }
+    }
+
+
 
 }

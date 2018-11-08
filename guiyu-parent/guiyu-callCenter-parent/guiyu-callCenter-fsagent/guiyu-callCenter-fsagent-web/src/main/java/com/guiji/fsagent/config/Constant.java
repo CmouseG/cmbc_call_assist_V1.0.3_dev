@@ -7,7 +7,7 @@ public class Constant {
 
     public static final String PROTOCOL = "http://";
 
-    public static final String SERVER_NAME_FSMANAGER = "guiyu-callcenter-fsagent";
+    public static final String SERVER_NAME_FSMANAGER = "guiyu-callcenter-fsmanager";
 
     public static final String ERROR_PARAM = "0303001";
 }

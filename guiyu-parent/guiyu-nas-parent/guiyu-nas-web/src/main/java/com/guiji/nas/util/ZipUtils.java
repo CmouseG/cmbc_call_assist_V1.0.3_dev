@@ -157,17 +157,25 @@ public class ZipUtils {
 
         zos.putNextEntry(entry);
 
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
-                file));
-
-        int count;
-        byte data[] = new byte[BUFFER];
-        while ((count = bis.read(data, 0, BUFFER)) != -1) {
-            zos.write(data, 0, count);
+        BufferedInputStream bis = null;
+        try {
+            bis = new BufferedInputStream(new FileInputStream(
+                    file));
+            int count;
+            byte data[] = new byte[BUFFER];
+            while ((count = bis.read(data, 0, BUFFER)) != -1) {
+                zos.write(data, 0, count);
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (bis != null) {
+                bis.close();
+            }
+            if (zos != null) {
+                zos.closeEntry();
+            }
         }
-        bis.close();
-
-        zos.closeEntry();
     }
 
     public static void doCompress(String srcFile, String zipFile) throws IOException {
@@ -187,7 +195,9 @@ public class ZipUtils {
         } catch (Exception e) {
             throw e;
         } finally {
-            out.close();//记得关闭资源
+            if (out != null) {
+                out.close();//记得关闭资源
+            }
         }
     }
 
@@ -228,12 +238,22 @@ public class ZipUtils {
 
         int len = 0 ;
         byte[] buffer = new byte[1024];
-        FileInputStream fis = new FileInputStream(inFile);
-        while ((len = fis.read(buffer)) > 0) {
-            out.write(buffer, 0, len);
-            out.flush();
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(inFile);
+            while ((len = fis.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+                out.flush();
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (out != null) {
+                out.closeEntry();
+            }
+            if (fis != null) {
+                fis.close();
+            }
         }
-        out.closeEntry();
-        fis.close();
     }
 }

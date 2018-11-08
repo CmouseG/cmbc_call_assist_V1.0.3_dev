@@ -37,8 +37,8 @@ public class CallDetailController {
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value="callrecord")
-    public Result.ReturnData<Page<CallOutPlan>> callrecord(String startDate, String endDate, String customerId, String pageSize, String pageNo ){
+    @GetMapping(value="getCallRecord")
+    public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate, String customerId, String pageSize, String pageNo ){
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);

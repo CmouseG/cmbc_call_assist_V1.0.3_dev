@@ -10,7 +10,7 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.component.result.Result;
-import com.guiji.fsmanager.api.ILineOperApi;
+import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
@@ -38,7 +38,7 @@ public class LineInfoServiceImpl implements LineInfoService {
     @Autowired
     private LineInfoMapper lineInfoMapper;
     @Autowired
-    private ILineOperApi lineOperApiFeign;
+    private ILineOper lineOperApiFeign;
     @Autowired
     private LineCountMapper lineCountMapper;
     @Autowired
@@ -132,7 +132,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         com.guiji.fsmanager.entity.LineInfoVO lineInfoApi = new com.guiji.fsmanager.entity.LineInfoVO();
         BeanUtil.copyProperties(lineInfoVO,lineInfoApi);
         Result.ReturnData result = lineOperApiFeign.editLineinfos(String.valueOf(lineInfoApi.getLineId()),lineInfoApi);
-        if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.editLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return result;

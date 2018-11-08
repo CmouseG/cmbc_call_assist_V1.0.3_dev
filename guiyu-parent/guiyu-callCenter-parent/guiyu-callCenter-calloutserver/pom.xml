@@ -13,6 +13,5 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-callCenter-calloutserver-api</module>
-        <module>guiyu-callCenter-calloutserver-web</module>
     </modules>
 </project>

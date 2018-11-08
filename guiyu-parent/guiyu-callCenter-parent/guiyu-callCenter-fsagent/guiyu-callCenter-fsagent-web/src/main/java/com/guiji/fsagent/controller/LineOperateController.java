@@ -37,12 +37,18 @@ public class LineOperateController implements ILineOperate {
          List<LineXmlnfoVO>  lineList = result.getBody();
          //获取fs对象
          FreeSWITCH fs = fsService.getFreeSwitch();
-         for(LineXmlnfoVO line:lineList){
-             if(line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)){
-                 Base64Util.base64ToFile(line.getFileData(),fs.getDialplan()+"01_"+lineId+".xml");;
-             }else if(line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)){
-                 Base64Util.base64ToFile(line.getFileData(),fs.getGateway()+"gw_"+lineId+".xml");;
+         try {
+             for (LineXmlnfoVO line : lineList) {
+                 if (line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)) {
+                     Base64Util.base64ToFile(line.getFileData(), fs.getDialplan() + "01_" + lineId + ".xml");
+                     ;
+                 } else if (line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)) {
+                     Base64Util.base64ToFile(line.getFileData(), fs.getGateway() + "gw_" + lineId + ".xml");
+                     ;
+                 }
              }
+         }catch (Exception ex){
+             //TODO: 增加异常处理
          }
         //执行esl命令重载网关
         fs.execute("sofia profile external killgw gw_"+ lineId);

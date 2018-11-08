@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 
 public class Base64Util {
-    private final Logger logger = LoggerFactory.getLogger(Base64Util.class);
+    private static  final Logger logger = LoggerFactory.getLogger(Base64Util.class);
 
     /**
      * 将base64串转换为文件
@@ -16,7 +16,7 @@ public class Base64Util {
      * @param fileName
      * @throws IOException
      */
-    public void base64ToFile(String encodedText, String fileName) throws IOException {
+    public static void base64ToFile(String encodedText, String fileName) throws IOException {
         Base64 base64 = new Base64();
         File file = null;
         BufferedOutputStream bos = null;

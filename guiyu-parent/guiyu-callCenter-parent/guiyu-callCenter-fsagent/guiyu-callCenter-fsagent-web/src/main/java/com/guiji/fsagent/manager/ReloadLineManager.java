@@ -30,16 +30,20 @@ public class ReloadLineManager {
          List<LineXmlnfoVO>  lineList = result.getBody();
          //获取fs对象
          FreeSWITCH fs = fsService.getFreeSwitch();
-         for(LineXmlnfoVO line:lineList){
-             if(line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)){
-                 Base64Util.base64ToFile(line.getFileData(),fs.getDialplan()+line.getFileName());
-             }else if(line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)){
-                 Base64Util.base64ToFile(line.getFileData(),fs.getGateway()+line.getFileName());
-                 //执行esl命令卸载网关
-                 fs.execute("sofia profile external killgw "+line.getFileName());
+         try {
+             for (LineXmlnfoVO line : lineList) {
+                 if (line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)) {
+                     Base64Util.base64ToFile(line.getFileData(), fs.getDialplan() + line.getFileName());
+                 } else if (line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)) {
+                     Base64Util.base64ToFile(line.getFileData(), fs.getGateway() + line.getFileName());
+                     //执行esl命令卸载网关
+                     fs.execute("sofia profile external killgw " + line.getFileName());
+                 }
+                 //执行esl命令加载网关
+                 fs.execute("sofia profile external rescan reloadxml");
              }
-             //执行esl命令加载网关
-             fs.execute("sofia profile external rescan reloadxml");
+         }catch (Exception ex){
+             //TODO: 增加异常处理
          }
     }
 }

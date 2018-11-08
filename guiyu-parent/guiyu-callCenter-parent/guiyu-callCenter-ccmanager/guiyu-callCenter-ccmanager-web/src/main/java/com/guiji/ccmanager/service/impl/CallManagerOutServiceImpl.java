@@ -5,7 +5,7 @@ import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.calloutserver.api.ICallPlanApi;
+import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.component.result.Result;
@@ -34,7 +34,7 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
     @Autowired
     private ITemp tempApiFeign;
     @Autowired
-    private ICallPlanApi callPlanApi;
+    private ICallPlan callPlanApi;
 
 
     @Override

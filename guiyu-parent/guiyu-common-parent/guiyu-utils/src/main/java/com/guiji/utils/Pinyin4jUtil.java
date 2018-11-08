@@ -89,8 +89,11 @@ public class Pinyin4jUtil {
         }  
         if(py.length()<=1){  
             initials = py;  
-        }  
-        return initials.trim();    
+        }
+        if (initials != null) {
+            return initials.trim();
+        }
+        return null;
     }   
       
     /**  
@@ -107,8 +110,11 @@ public class Pinyin4jUtil {
         }  
         if(py.length()<=1){  
             initials = py;  
-        }  
-        return initials.trim();    
+        }
+        if (initials != null) {
+            return initials.trim();
+        }
+        return null;
     }   
     
     /**  

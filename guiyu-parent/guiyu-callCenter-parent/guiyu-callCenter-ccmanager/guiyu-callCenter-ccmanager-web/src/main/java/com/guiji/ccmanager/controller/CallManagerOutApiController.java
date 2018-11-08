@@ -1,7 +1,7 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.ccmanager.api.ICallManagerOutApi;
+import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.CallManagerOutService;
@@ -23,7 +23,7 @@ import java.util.List;
  * @Description:
  */
 @RestController
-public class CallManagerOutApiController implements ICallManagerOutApi {
+public class CallManagerOutApiController implements ICallManagerOut {
 
     private final Logger log = LoggerFactory.getLogger(CallManagerOutApiController.class);
 
@@ -34,8 +34,8 @@ public class CallManagerOutApiController implements ICallManagerOutApi {
     private CallManagerOutService callManagerOutService;
 
     @Override
-    @GetMapping(value="out/lineinfos")
-    public Result.ReturnData<List<LineConcurrent>> outLineinfos(String customerId){
+    @GetMapping(value="out/getLineInfos")
+    public Result.ReturnData<List<LineConcurrent>> getLineInfos(String customerId){
 
         if(StringUtils.isBlank(customerId)){
             return Result.error(Constant.ERROR_PARAM);
@@ -52,8 +52,8 @@ public class CallManagerOutApiController implements ICallManagerOutApi {
     }
 
     @Override
-    @GetMapping(value="out/startcallplan")
-    public Result.ReturnData<Boolean> startcallplan(String customerId, String tempId, String lineId) {
+    @GetMapping(value="out/startCallPlan")
+    public Result.ReturnData<Boolean> startCallPlan(String customerId, String tempId, String lineId) {
 
         if(StringUtils.isBlank(customerId) || StringUtils.isBlank(tempId) || StringUtils.isBlank(lineId) ){
             return Result.error(Constant.ERROR_PARAM);

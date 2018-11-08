@@ -280,7 +280,7 @@
 	</select>
 	
 	<select id="getUsersByPage" resultType="map">
-		select a.username as userName,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.create_time as createTime,d.last_login_time as lastTime
+		select a.id,a.username as userName,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.create_time as createTime,d.last_login_time as lastTime
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
 		LEFT JOIN sys_role c on c.id=b.role_id
@@ -293,4 +293,11 @@
 		insert into sys_role_user(user_id,role_id,create_time,update_time)
 		values(#{userId},#{roleId},now(),now())
 	</insert>
+	
+	<select id="existUserName" resultType="boolean">
+		select if(count(1)==0,true,false) from sys_user where username=#{username} 
+		<if test="id !=0 ">
+			and id!=#{id}
+		</if>
+	</select>
 </mapper>

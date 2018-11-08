@@ -2,6 +2,7 @@ package com.guiji.user.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class SysMenu implements Serializable {
     private Long id;
@@ -33,6 +34,8 @@ public class SysMenu implements Serializable {
     private String delFlag;
 
     private static final long serialVersionUID = 1L;
+    
+    List<SysMenu> child;
 
     public Long getId() {
         return id;
@@ -145,8 +148,16 @@ public class SysMenu implements Serializable {
     public void setDelFlag(String delFlag) {
         this.delFlag = delFlag == null ? null : delFlag.trim();
     }
+    
+    public List<SysMenu> getChild() {
+		return child;
+	}
 
-    @Override
+	public void setChild(List<SysMenu> child) {
+		this.child = child;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

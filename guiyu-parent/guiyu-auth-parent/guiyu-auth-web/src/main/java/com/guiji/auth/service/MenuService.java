@@ -9,8 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.auth.util.PermissionResolve;
-import com.guiji.auth.vo.MenuTree;
 import com.guiji.user.dao.SysMenuMapper;
 import com.guiji.user.dao.entity.SysMenu;
 
@@ -19,25 +17,19 @@ public class MenuService {
 
 	@Autowired
 	private SysMenuMapper mapper;
-	
-	@Autowired
-	private PermissionResolve resolve;
 
 	public void insert(SysMenu menu){
 		menu.setCreateTime(new Date());
 		menu.setUpdateTime(new Date());
 		mapper.insertSelective(menu);
-		resolve.clean();
 	}
 
 	public void delete(Long id){
 		mapper.deleteByPrimaryKey(id);
-		resolve.clean();
 	}
 
 	public void update(SysMenu menu){
 		mapper.updateByPrimaryKeySelective(menu);
-		resolve.clean();
 	}
 
 	public SysMenu getMenuById(Long id){
@@ -54,7 +46,7 @@ public class MenuService {
 		return map;
 	}
 	
-	public List<MenuTree> getMenus(Long userId){
+	public List<SysMenu> getMenus(Long userId){
 		List<SysMenu> allMenu=mapper.getMenuByUserId(userId);
 		return parseTree(allMenu);
 	}
@@ -69,21 +61,19 @@ public class MenuService {
 		return result;
 	}
 	
-	private List<MenuTree> parseTree(List<SysMenu> allMenu){
-		Map<Long,MenuTree> map=new HashMap<>();
-		List<MenuTree> list=new ArrayList<>();
+	private List<SysMenu> parseTree(List<SysMenu> allMenu){
+		Map<Long,SysMenu> map=new HashMap<>();
+		List<SysMenu> list=new ArrayList<>();
 		allMenu.stream().forEach((item)->{
 			Long pid=item.getPid();
-			MenuTree node=new MenuTree();
-			node.setParent(item);
 			if(0==pid){
-				list.add(node);
-				map.put(item.getId(), node);
+				list.add(item);
+				map.put(item.getId(), item);
 			}else{
-				MenuTree parent=map.get(pid);
+				SysMenu parent=map.get(pid);
 				if(parent!=null){
-					parent.getChild().add(node);
-					map.put(item.getId(), node);
+					parent.getChild().add(item);
+					map.put(item.getId(), item);
 				}
 			}
 		});

@@ -31,7 +31,7 @@ public class RoleController {
 		service.update(role,menuIds);
 	}
 	
-	@RequestMapping("getRoleId")
+	@RequestMapping("getRoleById")
 	public SysRole getRoleId(Long id){
 		return service.getRoleId(id);
 	}
@@ -41,8 +41,4 @@ public class RoleController {
 		return service.getRoles();
 	}
 	
-//	@RequestMapping("addMenus")
-//	public void addMenus(String roleId,String[] menuIds){
-//		service.addMenus(roleId,menuIds);
-//	}
 }

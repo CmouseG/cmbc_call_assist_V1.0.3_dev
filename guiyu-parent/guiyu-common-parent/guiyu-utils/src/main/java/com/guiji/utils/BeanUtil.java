@@ -181,7 +181,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 		if(map == null || cls ==null){
 			return null;
 		}
-		if(cls.getName().equals("java.util.Map")){
+		if(null != cls.getName() && cls.getName().equals("java.util.Map")){
 			return (T)map;
 		}
 		T obj = null;
@@ -234,8 +234,13 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 								}
 							}else{
 								try{
-									value = new java.math.BigDecimal(value.toString());
+									if (null != value) {
+										value = new java.math.BigDecimal(value.toString());
+									}
 								}catch(NumberFormatException e){
+									if(null == value) {
+										value = "";
+									}
 									illegalValue(entry.getKey(),value,java.math.BigDecimal.class,null,e);
 								}
 							}
@@ -245,6 +250,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 									try{
 										value = new java.util.Date(simpleDateFormat.parse((String)value).getTime());
 									}catch(ParseException e){
+										if(null == value) {
+											value = "";
+										}
 										illegalValue(entry.getKey(),value,java.util.Date.class,null,e);
 									}
 								}else{
@@ -259,13 +267,18 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 									try{
 										value = new java.sql.Date(simpleDateFormat.parse((String)value).getTime());
 									}catch(ParseException e){
+										if(null == value) {
+											value = "";
+										}
 										illegalValue(entry.getKey(),value,java.sql.Date.class,null,e);
 									}
 								}else{
 									value = null;
 								}
 							}else if(value instanceof java.util.Date){
-								value = new java.util.Date(((java.util.Date)value).getTime());
+								if (null != value) {
+									value = new java.util.Date(((java.util.Date)value).getTime());
+								}
 							}else{
 								illegalValue(entry.getKey(),value,java.sql.Date.class,null,null);
 							}
@@ -281,14 +294,22 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 											value = new java.sql.Timestamp(simpleTimeFormat.parse((String)value).getTime());
 										}
 									}catch(ParseException e){
+										if(null == value) {
+											value = "";
+										}
 										illegalValue(entry.getKey(),value,java.sql.Date.class,null,e);
 									}
 								}else{
 									value = null;
 								}
 							}else if(value instanceof java.util.Date){
-								value = new java.sql.Timestamp(((java.util.Date)value).getTime());
+								if (null != value) {
+									value = new java.sql.Timestamp(((java.util.Date)value).getTime());
+								}
 							}else{
+								if(null == value) {
+									value = "";
+								}
 								illegalValue(entry.getKey(),value,java.sql.Timestamp.class,null,null);
 							}
 						}else if(fieldType.equals(String.class)){
@@ -302,17 +323,22 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 							//Long
 							try{
 								if(value instanceof String){
-									value = value.toString();
-									if(StrUtils.isNotEmpty(String.valueOf(value))){
-										value = Long.valueOf((String)value);
-									}else{
-										value = null;
+									if (null != value) {
+										value = value.toString();
+										if(StrUtils.isNotEmpty(String.valueOf(value))){
+											value = Long.valueOf((String)value);
+										}else{
+											value = null;
+										}
 									}
 								}else{
 									//容错处理，尝试其他类型
 									value = Long.valueOf(value.toString());
 								}
 							}catch(NumberFormatException e){
+								if(null == value) {
+									value = "";
+								}
 								illegalValue(entry.getKey(),value,Long.class,null,e);
 							}
 						}else if(fieldType.equals(Integer.class)){
@@ -328,6 +354,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 								try{
 									value = Integer.valueOf(String.valueOf(value));
 								}catch(NumberFormatException e){
+									if(null == value) {
+										value = "";
+									}
 									illegalValue(entry.getKey(),value,Integer.class,null,e);
 								}
 							}

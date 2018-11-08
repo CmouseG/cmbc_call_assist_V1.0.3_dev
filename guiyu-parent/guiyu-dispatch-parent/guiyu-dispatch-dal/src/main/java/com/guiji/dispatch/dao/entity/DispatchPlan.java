@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DispatchPlan implements Serializable {
+	//批次号
+	private String batchName;
+	//是否显示
+	private Integer statusShow;
+	
     private Integer id;
 
     private String planUuid;

@@ -48,7 +48,7 @@ public class ShiroConfig {
         //开放登陆接口
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/loginOut", "anon");
-        filterChainDefinitionMap.put("/user/getUserId", "zuulAuthc");
+        filterChainDefinitionMap.put("/getUserId", "zuulAuthc");
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
         filterChainDefinitionMap.put("/**", "zuulAuthc,zuulPerms");
 

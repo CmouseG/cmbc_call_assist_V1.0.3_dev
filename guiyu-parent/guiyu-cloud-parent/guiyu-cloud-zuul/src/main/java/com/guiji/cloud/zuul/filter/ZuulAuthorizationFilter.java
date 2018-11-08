@@ -2,14 +2,13 @@ package com.guiji.cloud.zuul.filter;
 
 import com.google.gson.Gson;
 import com.guiji.auth.util.PermissionResolve;
+import com.guiji.cloud.zuul.white.WhiteIPUtil;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +17,6 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 	
 	private static String errorMsg;
 
-	private static String whiteIPs = "127.0.0.1";
-	
 	private PermissionResolve permissionResolve2;
 	
 	public ZuulAuthorizationFilter(PermissionResolve resolve){
@@ -31,6 +28,7 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 			throws Exception {
 		boolean flag=true;
 		// IP白名单
+		String whiteIPs = WhiteIPUtil.getIps();
 		String remoteIP = request.getRemoteAddr();
 		if(StringUtils.isNotEmpty(whiteIPs)  && whiteIPs.contains(remoteIP)) {
 			return flag;
@@ -60,10 +58,4 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 		}
 		return errorMsg;
 	}
-
-	@Autowired(required = true)
-	public  void setWhiteIPs(@Qualifier("getWhiteIPs") String whiteIPs) {
-		this.whiteIPs = whiteIPs;
-	}
-
 }

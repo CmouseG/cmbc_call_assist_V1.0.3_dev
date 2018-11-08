@@ -46,6 +46,7 @@ mybatis:
   config-location: classpath:config/mybatis-config.xml
 properties:
   error: properties/error.properties
+  whiteIP: properties/whiteIP.properties
 eureka:
   instance:
     prefer-ip-address: true

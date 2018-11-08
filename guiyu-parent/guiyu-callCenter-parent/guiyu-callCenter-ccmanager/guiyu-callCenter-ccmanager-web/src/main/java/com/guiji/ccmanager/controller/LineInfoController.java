@@ -33,7 +33,7 @@ public class LineInfoController {
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value="lineinfos")
+    @GetMapping(value="getLineInfos")
     public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String pageSize, String pageNo){
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
@@ -54,7 +54,7 @@ public class LineInfoController {
     }
 
     @ApiOperation(value = "增加线路接口")
-    @PostMapping(value="lineinfos")
+    @PostMapping(value="addLineInfo")
     public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
         if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
@@ -69,7 +69,7 @@ public class LineInfoController {
     }
 
     @ApiOperation(value = "修改线路接口")
-    @PutMapping(value="lineinfos")
+    @PostMapping(value="updateLineInfo")
     public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
         if(lineInfoVO.getLineId()==0){
@@ -86,7 +86,10 @@ public class LineInfoController {
     }
 
     @ApiOperation(value = "删除线路接口")
-    @DeleteMapping(value="lineinfos/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "线路id", dataType = "String", paramType = "query", required = true)
+    })
+    @PostMapping(value="deleteLineInfo/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id){
         return lineInfoService.delLineInfo(id);
     }

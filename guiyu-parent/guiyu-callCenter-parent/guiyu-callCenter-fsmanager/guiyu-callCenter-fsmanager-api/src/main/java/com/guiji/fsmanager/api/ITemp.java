@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Description:
  */
 @FeignClient("guiyu-callcenter-fsmanager")
-public interface ITempApi {
+public interface ITemp {
 
     @ApiOperation(value = "下载模板录音")
     @ApiImplicitParams({

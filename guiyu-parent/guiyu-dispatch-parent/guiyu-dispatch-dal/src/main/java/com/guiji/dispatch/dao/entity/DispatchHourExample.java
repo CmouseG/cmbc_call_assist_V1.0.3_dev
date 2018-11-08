@@ -195,52 +195,62 @@ public class DispatchHourExample {
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdEqualTo(Integer value) {
+        public Criteria andDispatchIdEqualTo(String value) {
             addCriterion("dispatch_id =", value, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdNotEqualTo(Integer value) {
+        public Criteria andDispatchIdNotEqualTo(String value) {
             addCriterion("dispatch_id <>", value, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdGreaterThan(Integer value) {
+        public Criteria andDispatchIdGreaterThan(String value) {
             addCriterion("dispatch_id >", value, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andDispatchIdGreaterThanOrEqualTo(String value) {
             addCriterion("dispatch_id >=", value, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdLessThan(Integer value) {
+        public Criteria andDispatchIdLessThan(String value) {
             addCriterion("dispatch_id <", value, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdLessThanOrEqualTo(Integer value) {
+        public Criteria andDispatchIdLessThanOrEqualTo(String value) {
             addCriterion("dispatch_id <=", value, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdIn(List<Integer> values) {
+        public Criteria andDispatchIdLike(String value) {
+            addCriterion("dispatch_id like", value, "dispatchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDispatchIdNotLike(String value) {
+            addCriterion("dispatch_id not like", value, "dispatchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDispatchIdIn(List<String> values) {
             addCriterion("dispatch_id in", values, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdNotIn(List<Integer> values) {
+        public Criteria andDispatchIdNotIn(List<String> values) {
             addCriterion("dispatch_id not in", values, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdBetween(Integer value1, Integer value2) {
+        public Criteria andDispatchIdBetween(String value1, String value2) {
             addCriterion("dispatch_id between", value1, value2, "dispatchId");
             return (Criteria) this;
         }
 
-        public Criteria andDispatchIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andDispatchIdNotBetween(String value1, String value2) {
             addCriterion("dispatch_id not between", value1, value2, "dispatchId");
             return (Criteria) this;
         }

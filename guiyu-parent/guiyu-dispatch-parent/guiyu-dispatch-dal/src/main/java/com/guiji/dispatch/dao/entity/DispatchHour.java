@@ -6,7 +6,7 @@ import java.util.Date;
 public class DispatchHour implements Serializable {
     private Long id;
 
-    private Integer dispatchId;
+    private String dispatchId;
 
     private Date gmtCreate;
 
@@ -24,12 +24,12 @@ public class DispatchHour implements Serializable {
         this.id = id;
     }
 
-    public Integer getDispatchId() {
+    public String getDispatchId() {
         return dispatchId;
     }
 
-    public void setDispatchId(Integer dispatchId) {
-        this.dispatchId = dispatchId;
+    public void setDispatchId(String dispatchId) {
+        this.dispatchId = dispatchId == null ? null : dispatchId.trim();
     }
 
     public Date getGmtCreate() {

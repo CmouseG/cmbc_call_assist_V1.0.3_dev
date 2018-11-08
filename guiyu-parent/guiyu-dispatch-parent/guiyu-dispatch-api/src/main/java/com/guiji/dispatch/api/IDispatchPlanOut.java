@@ -20,7 +20,7 @@ import com.guiji.component.result.Result;
  * @author: xujin
  */
 @FeignClient("guiyu-dispatch")
-public interface IDispatchPlanOutApi {
+public interface IDispatchPlanOut {
 
     /**
      * 返回可以拨打的任务给呼叫中心

@@ -106,7 +106,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanBatch" >
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanBatch" useGeneratedKeys="true"   keyProperty="id" >
     insert into dispatch_plan_batch (id, user_id, `name`, 
       status_show, status_notify, times, 
       gmt_create, gmt_modified)

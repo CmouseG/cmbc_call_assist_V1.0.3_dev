@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "path")
 public class PathConfig {
     private String recordPath;
+    private String tempPath;
+    private String tempRecordPath;
 
     public String getRecordPath() {
         return recordPath;
@@ -14,5 +16,21 @@ public class PathConfig {
 
     public void setRecordPath(String recordPath) {
         this.recordPath = recordPath;
+    }
+
+    public String getTempPath() {
+        return tempPath;
+    }
+
+    public void setTempPath(String tempPath) {
+        this.tempPath = tempPath;
+    }
+
+    public String getTempRecordPath() {
+        return tempRecordPath;
+    }
+
+    public void setTempRecordPath(String tempRecordPath) {
+        this.tempRecordPath = tempRecordPath;
     }
 }

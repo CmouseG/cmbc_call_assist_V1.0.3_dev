@@ -1,6 +1,5 @@
 package com.guiji.auth.controller;
 
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,11 +41,6 @@ public class UserController{
 	@RequestMapping("delete")
 	public void delete(Long id){
 		service.delete(id);
-	}
-	
-	@RequestMapping("getUserId")
-	public Long getUserId(){
-		return (Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
 	}
 
 	@RequestMapping("getUserByPage")

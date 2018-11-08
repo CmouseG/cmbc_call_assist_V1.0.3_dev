@@ -1,15 +1,14 @@
 package com.guiji.auth.controller;
 
+import java.awt.Menu;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.service.MenuService;
-import com.guiji.auth.vo.MenuTree;
 import com.guiji.user.dao.entity.SysMenu;
 
 @RestController
@@ -41,8 +40,7 @@ public class MenuController {
 	}
 	
 	@RequestMapping("getMenus")
-	public List<MenuTree> getMenus(){
-		Long userId=(Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
+	public List<SysMenu> getMenus(Long userId){
 		return service.getMenus(userId);
 	}
 	

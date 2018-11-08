@@ -121,7 +121,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" useGeneratedKeys="true"   keyProperty="id" >
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" useGeneratedKeys="true"   keyProperty="plan_uuid" >
     insert into dispatch_plan (id, plan_uuid, user_id, 
       batch_id, phone, attach, 
       params, status_plan, status_sync, 

@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,46 +29,69 @@ public class LineInfoController {
 
     @ApiOperation(value = "查看客户所有线路接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value="lineinfos")
-    public Result.ReturnData<List<LineInfo>> getLineInfoByCustom(String customerId){
+    @GetMapping(value="getLineInfos")
+    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String pageSize, String pageNo){
 
-        if(StringUtils.isBlank(customerId)){
+        if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId);
-        return Result.ok(list);
+        int pageSizeInt = Integer.parseInt(pageSize);
+        int pageNoInt = Integer.parseInt(pageNo);
+        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId,pageSizeInt,pageNoInt);
+        int count = lineInfoService.getLineInfoByCustomCount(customerId,pageSizeInt,pageNoInt);
+
+        Page<LineInfo> page = new Page<LineInfo>();
+        page.setPageNo(pageNoInt);
+        page.setPageSize(pageSizeInt);
+        page.setTotal(count);
+        page.setRecords(list);
+
+        return Result.ok(page);
     }
 
     @ApiOperation(value = "增加线路接口")
-    @PostMapping(value="lineinfos")
+    @PostMapping(value="addLineInfo")
     public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
-        if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null){
+        if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
             return Result.error(Constant.ERROR_PARAM);
         }
+        String codec = lineInfoVO.getCodec();
+        if(!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU) ){
+            return Result.error(Constant.ERROR_CODEC);
+        }
 
-        boolean b = lineInfoService.addLineInfo(lineInfoVO);
-        return Result.ok(b);
+        return lineInfoService.addLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "修改线路接口")
-    @PutMapping(value="lineinfos/{id}")
-    public Result.ReturnData<Boolean> updateLineInfo(@PathVariable("id") String id,@RequestBody LineInfoVO lineInfoVO){
+    @PostMapping(value="updateLineInfo")
+    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
         if(lineInfoVO.getLineId()==0){
             return Result.error(Constant.ERROR_PARAM);
+        }
+        if( lineInfoVO.getCodec()!=null) {
+            String codec = lineInfoVO.getCodec();
+            if (!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU)) {
+                return Result.error(Constant.ERROR_CODEC);
+            }
         }
 
         return lineInfoService.updateLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "删除线路接口")
-    @DeleteMapping(value="lineinfos/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "线路id", dataType = "String", paramType = "query", required = true)
+    })
+    @PostMapping(value="deleteLineInfo/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id){
-        boolean b = lineInfoService.delLineInfo(id);
-        return Result.ok(b);
+        return lineInfoService.delLineInfo(id);
     }
 
 }

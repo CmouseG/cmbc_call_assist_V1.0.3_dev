@@ -44,9 +44,14 @@ public class MenuService {
 		return mapper.selectByPrimaryKey(id);
 	}
 	
-	public List<MenuTree> getAllMenus(){
+	public Map<String,Object> getAllMenus(Long roleId){
+		Map<String,Object> map=new HashMap<String,Object>();
 		List<SysMenu> allMenu=mapper.getAllMenus();
-		return parseTree(allMenu);
+		map.put("menus", parseTree(allMenu));
+		
+		List<Long> selected=mapper.getSelectedMenuId(roleId);
+		map.put("selected", selected);
+		return map;
 	}
 	
 	public List<MenuTree> getMenus(Long userId){

@@ -104,7 +104,8 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
+  
     insert into sys_user (id, username, `password`, 
       `status`, create_time, update_time
       )
@@ -112,7 +113,7 @@
       #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" >
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -279,12 +280,24 @@
 	</select>
 	
 	<select id="getUsersByPage" resultType="map">
-		select a.username as userName,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.create_time as createTime,d.last_login_time as lastTime
+		select a.id,a.username as userName,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.create_time as createTime,d.last_login_time as lastTime
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
 		LEFT JOIN sys_role c on c.id=b.role_id
 		LEFT JOIN sys_user_login_record d on d.user_id=a.id
 		where a.del_flag=0
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<insert id="insertUserRole">
+		insert into sys_role_user(user_id,role_id,create_time,update_time)
+		values(#{userId},#{roleId},now(),now())
+	</insert>
+	
+	<select id="existUserName" resultType="boolean">
+		select if(count(1)==0,true,false) from sys_user where username=#{username} 
+		<if test="id !=0 ">
+			and id!=#{id}
+		</if>
 	</select>
 </mapper>

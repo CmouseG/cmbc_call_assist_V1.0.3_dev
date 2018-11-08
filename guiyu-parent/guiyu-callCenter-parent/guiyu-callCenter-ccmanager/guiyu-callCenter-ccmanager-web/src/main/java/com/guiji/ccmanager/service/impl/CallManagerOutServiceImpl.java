@@ -9,7 +9,7 @@ import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.component.result.Result;
-import com.guiji.fsmanager.api.ITempApi;
+import com.guiji.fsmanager.api.ITemp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
     @Autowired
     private CallOutPlanMapper callOutPlanMapper;
     @Autowired
-    private ITempApi tempApiFeign;
+    private ITemp tempApiFeign;
     @Autowired
     private ICallPlan callPlanApi;
 

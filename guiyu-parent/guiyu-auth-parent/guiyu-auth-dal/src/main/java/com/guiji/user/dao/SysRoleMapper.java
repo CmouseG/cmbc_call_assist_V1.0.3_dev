@@ -33,5 +33,5 @@ public interface SysRoleMapper {
     //
     public List<SysRole> getRoles();
 	
-	public void addMenus(@Param("roleId")String roleId,@Param("menuIds")String[] menuIds);
+	public void addMenus(@Param("roleId")Long roleId,@Param("menuIds")String[] menuIds);
 }

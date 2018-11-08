@@ -1,6 +1,7 @@
 package com.guiji.auth.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class MenuController {
 	}
 	
 	@RequestMapping("getAllMenus")
-	public List<MenuTree> getAllMenus(){
-		return service.getAllMenus();
+	public Map<String,Object> getAllMenus(Long roleId){
+		return service.getAllMenus(roleId);
 	} 
 }

@@ -1,6 +1,7 @@
 package com.guiji;
 
 
+import com.guiji.cloud.zuul.white.WhiteIPUtil;
 import com.guiji.component.result.EnableAutoResultPack;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -24,5 +25,11 @@ import org.springframework.context.annotation.Bean;
 public class ZuulApplication {
     public static void main(String[] args) {
         SpringApplication.run(ZuulApplication.class,args);
+    }
+
+    @Bean(name = "whiteIPUtil")
+    public WhiteIPUtil whiteIPUtil() {
+        WhiteIPUtil whiteIPUtil = new WhiteIPUtil();
+        return whiteIPUtil;
     }
 }

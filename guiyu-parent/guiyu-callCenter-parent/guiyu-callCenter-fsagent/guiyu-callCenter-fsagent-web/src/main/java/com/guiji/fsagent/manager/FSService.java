@@ -17,7 +17,7 @@ public class FSService {
     @Autowired
     FsConfig fsConfig;
 
-   // @PostConstruct
+    @PostConstruct
     public void init() {
         freeSwitch = new FreeSWITCH(fsConfig.getHomeDir());
     }

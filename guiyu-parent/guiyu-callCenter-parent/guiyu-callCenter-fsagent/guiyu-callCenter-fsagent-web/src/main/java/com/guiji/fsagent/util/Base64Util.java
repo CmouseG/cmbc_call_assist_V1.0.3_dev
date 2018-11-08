@@ -1,54 +1,42 @@
 package com.guiji.fsagent.util;
 
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.Base64;
 
 public class Base64Util {
+    private final Logger logger = LoggerFactory.getLogger(Base64Util.class);
 
-    public static void base64ToFile(String base64, String fileName) {
+    /**
+     * 将base64串转换为文件
+     *
+     * @param encodedText
+     * @param fileName
+     * @throws IOException
+     */
+    public void base64ToFile(String encodedText, String fileName) throws IOException {
+        Base64 base64 = new Base64();
         File file = null;
         BufferedOutputStream bos = null;
         FileOutputStream fos = null;
         try {
-            byte[] bytes = Base64.getDecoder().decode(base64);
+            byte[] bytes = base64.decode(encodedText);
             file = new File(fileName);
-            fos = new java.io.FileOutputStream(file);
+            fos = new FileOutputStream(file);
             bos = new BufferedOutputStream(fos);
             bos.write(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("base64串转换为文件失败", e);
         } finally {
             if (bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                bos.close();
             }
             if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                fos.close();
             }
         }
-    }
-
-    /**
-     * 将文件转换为base64
-     * @param fileName
-     * @return
-     * @throws Exception
-     */
-    public  static  String fileToBase64(String fileName) throws Exception{
-        FileInputStream inputFile  = new FileInputStream(fileName);
-        byte[] buffer = new byte[(int)fileName.length()];
-        inputFile.read(buffer);
-        inputFile.close();
-        return  new BASE64Encoder().encode(buffer);
     }
 }
 

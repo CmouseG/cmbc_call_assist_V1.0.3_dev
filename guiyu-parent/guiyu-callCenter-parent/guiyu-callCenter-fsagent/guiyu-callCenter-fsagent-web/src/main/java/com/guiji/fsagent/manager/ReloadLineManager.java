@@ -4,8 +4,8 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.entity.FreeSWITCH;
-import com.guiji.fsagent.feign.ILineOperApiFeign;
 import com.guiji.fsagent.util.Base64Util;
+import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,10 +13,13 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+/**
+ * 启动时执行，下载所有的line文件
+ */
 @Component
 public class ReloadLineManager {
     @Autowired
-    ILineOperApiFeign lineOperApiFeign;
+    ILineOper lineOperApiFeign;
     @Autowired
     FsConfig fsConfig;
     @Autowired

@@ -5,11 +5,10 @@ import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.fsline.util.RequestUtil;
 import com.guiji.fsline.util.RequestUtil.RequestApi;
-import com.guiji.fsmanager.api.IFsResourceApi;
+import com.guiji.fsmanager.api.IFsResource;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import com.guiji.utils.ServerUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class LineInfoController implements IFsLine {
     Registration registration;
 
     @Autowired
-    IFsResourceApi fsResourceApi;
+    IFsResource fsResourceApi;
 
     FsBindVO fsBind;
 

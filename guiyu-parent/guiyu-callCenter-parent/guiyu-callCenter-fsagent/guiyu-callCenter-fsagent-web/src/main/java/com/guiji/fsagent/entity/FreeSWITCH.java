@@ -42,8 +42,8 @@ public class FreeSWITCH {
         this.dbDir = baseDir + "/db";
         this.fscli = baseDir + "/fscli";
         this.scripts = baseDir + "/conf/scripts";
-        this.dialplan =baseDir + "/conf/dialplan/default";
-        this.gateway = baseDir+"/conf/sip_profiles/external";
+        this.dialplan =baseDir + "/conf/dialplan/default/";
+        this.gateway = baseDir+"/conf/sip_profiles/external/";
         initFsManager();
         initGlobalVar();
     }
@@ -172,7 +172,7 @@ public class FreeSWITCH {
         globalVar.setDomain(fsEslClient.execute("global_getvar domain"));
         globalVar.setExternal_sip_port(fsEslClient.execute("global_getvar external_sip_port"));
         globalVar.setGc_docker_ip(fsEslClient.execute("global_getvar gc_docker_ip"));
-        globalVar.setInternal_sip_port(fsEslClient.execute("global_getvar internal_sip_port1"));
+        globalVar.setInternal_sip_port(fsEslClient.execute("global_getvar internal_sip_port"));
 
         logger.debug("freeswitch[{}]全局变量为[{}]", fsName, globalVar.toString());
     }

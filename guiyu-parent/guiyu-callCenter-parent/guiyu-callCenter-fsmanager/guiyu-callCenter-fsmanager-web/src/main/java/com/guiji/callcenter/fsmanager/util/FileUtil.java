@@ -1,11 +1,13 @@
 package com.guiji.callcenter.fsmanager.util;
 
-import sun.misc.BASE64Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 
 public class FileUtil {
+    private final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
     /**
      * 删除文件
      * @param fileName
@@ -25,20 +27,5 @@ public class FileUtil {
         File file = new File(fileName);
         return file.exists();
     }
-
-    /**
-     * 将文件转换为base64
-     * @param fileName
-     * @return
-     * @throws Exception
-     */
-    public  static  String fileToBase64(String fileName) throws Exception{
-         FileInputStream inputFile  = new FileInputStream(fileName);
-         byte[] buffer = new byte[(int)fileName.length()];
-         inputFile.read(buffer);
-         inputFile.close();
-         return  new BASE64Encoder().encode(buffer);
-    }
-
 
 }

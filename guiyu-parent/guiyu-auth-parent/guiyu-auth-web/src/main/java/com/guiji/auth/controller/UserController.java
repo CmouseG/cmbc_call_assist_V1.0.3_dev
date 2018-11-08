@@ -48,7 +48,7 @@ public class UserController{
 	public Long getUserId(){
 		return (Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
 	}
-	
+
 	@RequestMapping("getUserByPage")
 	public Page<SysUser> getUserByPage(Page<SysUser> page){
 		service.getUserByPage(page);

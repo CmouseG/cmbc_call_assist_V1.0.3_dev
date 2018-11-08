@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface LineInfoService {
 
-    public List<LineInfo> getLineInfoByCustom(String customerId);
+    public List<LineInfo> getLineInfoByCustom(String customerId, int pageSizeInt, int pageNoInt);
 
     public Result.ReturnData<Boolean> addLineInfo(LineInfoVO lineInfoVO);
 
@@ -22,4 +22,6 @@ public interface LineInfoService {
     public Result.ReturnData<Boolean> delLineInfo(String id);
 
     public List<LineInfo> outLineinfos(String customerId);
+
+    public int getLineInfoByCustomCount(String customerId, int pageSizeInt, int pageNoInt);
 }

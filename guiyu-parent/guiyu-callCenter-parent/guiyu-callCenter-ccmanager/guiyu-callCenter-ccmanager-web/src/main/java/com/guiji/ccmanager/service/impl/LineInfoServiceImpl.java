@@ -10,7 +10,7 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.component.result.Result;
-import com.guiji.fsmanager.api.ILineOperApi;
+import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
@@ -38,7 +38,7 @@ public class LineInfoServiceImpl implements LineInfoService {
     @Autowired
     private LineInfoMapper lineInfoMapper;
     @Autowired
-    private ILineOperApi lineOperApiFeign;
+    private ILineOper lineOperApiFeign;
     @Autowired
     private LineCountMapper lineCountMapper;
     @Autowired

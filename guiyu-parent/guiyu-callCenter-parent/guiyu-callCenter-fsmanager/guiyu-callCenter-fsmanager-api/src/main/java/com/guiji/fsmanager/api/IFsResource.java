@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Description:
  */
 @FeignClient("guiyu-callcenter-fsmanager")
-public interface IFsResourceApi {
+public interface IFsResource {
 
     @ApiOperation(value = "申请freeswitch资源接口")
     @ApiImplicitParams({

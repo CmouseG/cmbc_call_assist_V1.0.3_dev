@@ -28,8 +28,8 @@ public class FsLineController {
     private DiscoveryClient discoveryClient;
 
     @ApiOperation(value = "获取所有的fsline对应的freeswitch对外端口列表")
-    @GetMapping(value="fsoutlines")
-    public List getLinePorts(){
+    @GetMapping(value="getFsOutLines")
+    public List getFsOutLines(){
 
        // 从Eureka获取所有的fsline服务列表
         List<String> serverList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_FSLINE);

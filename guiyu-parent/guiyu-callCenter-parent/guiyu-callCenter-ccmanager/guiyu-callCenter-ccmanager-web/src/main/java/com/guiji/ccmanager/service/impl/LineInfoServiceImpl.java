@@ -132,7 +132,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         com.guiji.fsmanager.entity.LineInfoVO lineInfoApi = new com.guiji.fsmanager.entity.LineInfoVO();
         BeanUtil.copyProperties(lineInfoVO,lineInfoApi);
         Result.ReturnData result = lineOperApiFeign.editLineinfos(String.valueOf(lineInfoApi.getLineId()),lineInfoApi);
-        if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.editLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return result;

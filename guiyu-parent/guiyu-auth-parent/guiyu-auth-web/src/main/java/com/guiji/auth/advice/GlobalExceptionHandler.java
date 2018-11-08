@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 
@@ -30,6 +31,8 @@ public class GlobalExceptionHandler {
         	result=Result.error("00010003");
         }else if(e instanceof UnauthorizedException){
         	result=Result.error("00010004");
+        }else if(e instanceof CheckConditionException){
+        	result=Result.error(((CheckConditionException)e).getCode());
         }
         return result;
     }

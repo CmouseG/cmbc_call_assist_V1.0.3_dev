@@ -46,12 +46,7 @@ public class UserController{
 	public void addRole(String userId,String[] roleIds){
 		service.addRole(userId,roleIds);
 	}
-	
-	@RequestMapping("getUserId")
-	public Long getUserId(){
-		return (Long) SecurityUtils.getSubject().getSession().getAttribute("userId");
-	}
-	
+
 	@RequestMapping("getUserByPage")
 	public Page<SysUser> getUserByPage(Page<SysUser> page){
 		service.getUserByPage(page);

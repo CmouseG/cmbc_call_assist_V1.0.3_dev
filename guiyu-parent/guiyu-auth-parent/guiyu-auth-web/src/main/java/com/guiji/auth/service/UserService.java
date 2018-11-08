@@ -30,8 +30,9 @@ public class UserService {
 	 * 修改密码
 	 * @param user
 	 */
-	public void changePassword(SysUser user){
+	public void update(SysUser user,String[] roleIds){
 		mapper.updateByPrimaryKeySelective(user);
+		mapper.addRole(user.getId(),roleIds);
 	}
 	
 	/**
@@ -40,23 +41,6 @@ public class UserService {
 	 */
 	public void delete(Long id){
 		mapper.deleteByPrimaryKey(id);
-	}
-	
-	/**
-	 * 修改状态
-	 * @param user
-	 */
-	public void changeStatus(SysUser user){
-		mapper.updateByPrimaryKeySelective(user);
-	}
-	
-	/**
-	 * 添加角色
-	 * @param userId
-	 * @param roleIds
-	 */
-	public void addRole(String userId,String[] roleIds){
-		mapper.addRole(userId,roleIds);
 	}
 	
 	public Long getUserId(String username,String password){
@@ -85,4 +69,9 @@ public class UserService {
 		page.setTotal(count);
 		page.setRecords(userList);
 	}
+	
+	public boolean existUserName(SysUser user){
+		return mapper.existUserName(user);
+	}
+	
 }

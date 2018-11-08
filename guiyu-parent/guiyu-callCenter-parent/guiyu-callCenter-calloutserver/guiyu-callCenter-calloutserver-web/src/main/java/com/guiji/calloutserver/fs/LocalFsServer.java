@@ -1,0 +1,208 @@
+package com.guiji.calloutserver.fs;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.guiji.callcenter.dao.entity.FsBind;
+import com.guiji.calloutserver.manager.FsManager;
+import org.apache.commons.lang3.StringUtils;
+import org.freeswitch.esl.client.IEslEventListener;
+import org.freeswitch.esl.client.inbound.Client;
+import org.freeswitch.esl.client.transport.event.EslEvent;
+import org.freeswitch.esl.client.transport.message.EslMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * 用于管理与FreeSWITCH的ESL连接
+ */
+@Component
+public class LocalFsServer implements IEslEventListener {
+    private final Logger logger = LoggerFactory.getLogger(LocalFsServer.class);
+
+    @Autowired
+    FsEventHandler fsEventHandler;
+
+    @Autowired
+    FsWatchDog fsWatchDog;
+
+    @Autowired
+    FsManager fsManager;
+
+    private FsBind fsBindInfo;
+
+    private Client eslClient;
+
+    @PostConstruct
+    public void init(){
+        //申请fs资源
+        fsBindInfo = fsManager.applyfs();
+
+        eslClient = getFsClient();
+        fsWatchDog.monitor(this);
+    }
+
+    /**
+     * 判断ESL是否可用
+     * @return
+     */
+    public boolean isConnect(){
+        return eslClient!=null && eslClient.canSend();
+    }
+
+    /**
+     * 重新连接FreeSWITCH
+     */
+    public void reConnect(){
+        if(isConnect()){
+            logger.debug("已经处于连接状态，无需重连");
+        }else{
+            logger.debug("开始重连FreeSWITCH...");
+            getFsClient();
+            logger.debug("重连后状态为[{}]", isConnect());
+        }
+    }
+
+    private synchronized Client getFsClient(){
+        if(isConnect()){
+            return eslClient;
+        }else{
+            try {
+                //将老的资源释放干净
+                if(eslClient != null){
+                    logger.debug("为方便FreeSWITCH重连，清理旧资源");
+                    eslClient.destroy();
+                }
+
+                eslClient = new Client();
+                logger.debug("开始连接FreeSWITCH，[{}]", fsBindInfo);
+                eslClient.connect(fsBindInfo.getFsAgentAddr(), Integer.parseInt(fsBindInfo.getFsEslPort()), fsBindInfo.getFsEslPwd(), 2);
+
+                if(isConnect()){
+                    logger.debug("成功连接FreeSWITCH, 开始执行订阅时间等操作");
+                    initClient(eslClient);
+                }else{
+                    //TODO: 报警，连接fs失败
+                    logger.debug("连接FreeSWITCH失败");
+                }
+            }catch (Exception ex){
+                //TODO: 报警，freeswitch连接异常
+                logger.warn("获取FreeSWITCH ESL连接出现异常" + ex.getMessage());
+            }
+        }
+
+        return eslClient;
+    }
+
+    /**
+     * 初始化，主要用于订阅事件
+     * @param eslClient
+     */
+    private void initClient(Client eslClient) {
+        logger.debug("开始初始化eslClient");
+        eslClient.setEventSubscriptions( "plain", "all" );
+        eslClient.addEventFilter("Event-Name","CHANNEL_ANSWER");
+        eslClient.addEventFilter("Event-Name","CHANNEL_HANGUP_COMPLETE");
+        eslClient.addEventFilter("Event-Subclass","EV_ALIASR");
+        eslClient.addEventFilter("Event-Subclass","callcenter::info");
+
+        eslClient.addEventListener(this);
+        logger.debug("初始化eslClient完毕");
+    }
+
+    /**
+     * 将通道中播放的旧音频替换为新的
+     * @param uuid
+     * @param oldWav    正在播放的音频文件, 可以为空
+     * @param newWav    准备播放的新音频文件
+     */
+    public void displace(String uuid, String oldWav, String newWav){
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(uuid), "null uuid");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(newWav), "null newWav");
+
+        if(!Strings.isNullOrEmpty(oldWav)){
+            String cmd = String.format("uuid_displace %s stop %s 0 mux", uuid, oldWav);
+            executeAsync(cmd);
+        }
+
+        String cmd = String.format("uuid_displace %s start %s 0 mux", uuid, newWav);
+        execute(cmd);
+    }
+
+    /**
+     * 向verto客户端发送消息
+     * @param msg
+     */
+    public void vchat(String recvNum, Object msg){
+        String cmd = String.format("lua vchat.lua %s %s", recvNum, msg.toString());
+        executeAsync(cmd);
+    }
+
+    /**
+     * 向通道播放录音文件，如果通道中已有录音在播放，则停止，播放最新的文件
+     * @param uuid
+     * @param wavFile
+     */
+    public void playToChannel(String uuid, String wavFile){
+        String hangupCmd = String.format("lua playfile.lua %s %s", uuid, wavFile);
+        executeAsync(hangupCmd);
+    }
+
+    /**
+     * 预约挂断, 让通道在多长时间时间后挂断
+     * @param uuid
+     * @param timeOut
+     */
+    public void scheduleHangup(String uuid, Double timeOut){
+        String hangupCmd = String.format("sched_api +%s  uuid_kill %s", timeOut, uuid);
+        executeAsync(hangupCmd);
+    }
+
+    public String execute(String command){
+        EslMessage eslMessage = getFsClient().sendSyncApiCommand(command, "");
+        String response = StringUtils.join(eslMessage.getBodyLines(), "\n");
+        logger.debug("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
+        return response;
+    }
+
+    /**
+     * 将呼叫转到指定CallCenter中的座席组
+     * @param uuid
+     * @param agentGroupId
+     */
+    public void transferToAgentGroup(String uuid, String customerNum, String agentGroupId){
+        String command = String.format("uuid_transfer %s ag_%s_%s",
+                uuid,
+                customerNum,
+                agentGroupId);
+        String response = getFsClient().sendAsyncApiCommand(command, "");
+        logger.debug("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
+    }
+
+    public void transfer(String uuid, String destNum){
+        String command = String.format("uuid_transfer %s %s", uuid,destNum);
+        String response = getFsClient().sendAsyncApiCommand(command, "");
+        logger.debug("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
+    }
+
+    public void executeAsync(String command){
+        String response = getFsClient().sendAsyncApiCommand(command, "");
+        logger.debug("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
+    }
+
+    @Override
+    public void eventReceived(EslEvent eslEvent) {
+        try{
+            fsEventHandler.handleEvent(eslEvent);
+        }catch (Exception ex){
+            logger.warn("处理eslEvent异常", ex);
+        }
+    }
+
+    @Override
+    public void backgroundJobResultReceived(EslEvent event) {
+    }
+}

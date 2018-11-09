@@ -37,6 +37,8 @@ public class CallManagerOutApiController implements ICallManagerOut {
     @GetMapping(value="out/getLineInfos")
     public Result.ReturnData<List<LineConcurrent>> getLineInfos(String customerId){
 
+        log.debug("get request getLineInfos，customerId[{}]", customerId);
+
         if(StringUtils.isBlank(customerId)){
             return Result.error(Constant.ERROR_PARAM);
         }
@@ -48,6 +50,8 @@ public class CallManagerOutApiController implements ICallManagerOut {
             target.setConcurrent(lineInfo.getMaxConcurrentCalls());
             resList.add(target);
         }
+
+        log.debug("response success getLineInfos，customerId[{}]", customerId);
         return Result.ok(resList);
     }
 
@@ -55,12 +59,15 @@ public class CallManagerOutApiController implements ICallManagerOut {
     @GetMapping(value="out/startCallPlan")
     public Result.ReturnData<Boolean> startCallPlan(String customerId, String tempId, String lineId) {
 
+        log.debug("get request startCallPlan，customerId[{}]，tempId[{}]，lineId[{}]", customerId, tempId, lineId);
+
         if(StringUtils.isBlank(customerId) || StringUtils.isBlank(tempId) || StringUtils.isBlank(lineId) ){
             return Result.error(Constant.ERROR_PARAM);
         }
 
         Result.ReturnData<Object>  result = callManagerOutService.startcallplan(customerId,tempId,lineId);
         if(result.getCode().equals(Constant.SUCCESS_COMMON)){
+            log.debug("response success startCallPlan，customerId[{}]，tempId[{}]，lineId[{}]", customerId, tempId, lineId);
             return Result.ok(true);
         }else{
             log.warn("callManagerOutService.startcallplan return code:"+result.getCode());

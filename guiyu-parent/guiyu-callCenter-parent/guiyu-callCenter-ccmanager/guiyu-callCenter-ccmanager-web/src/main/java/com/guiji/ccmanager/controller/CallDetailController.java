@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,8 @@ import java.util.List;
 @RestController
 public class CallDetailController {
 
+    private final Logger log = LoggerFactory.getLogger(CallManagerOutApiController.class);
+
     @Autowired
     private CallDetailService callDetailService;
 
@@ -39,6 +43,8 @@ public class CallDetailController {
     })
     @GetMapping(value="getCallRecord")
     public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate, String customerId, String pageSize, String pageNo ){
+
+        log.debug("get request getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}]", startDate, endDate, customerId, pageSize, pageNo);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
@@ -64,6 +70,8 @@ public class CallDetailController {
         page.setTotal(count);
         page.setRecords(list);
 
+        log.debug("response success getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}]", startDate, endDate, customerId, pageSize, pageNo);
+
         return Result.ok(page);
     }
 
@@ -75,10 +83,14 @@ public class CallDetailController {
     @GetMapping(value="getCallDetail")
     public Result.ReturnData<CallOutPlanVO> getCallDetail(String callId){
 
+        log.debug("get request getCallDetail，callId[{}]", callId);
+
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
         CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(callId);
+
+        log.debug("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
     }
 

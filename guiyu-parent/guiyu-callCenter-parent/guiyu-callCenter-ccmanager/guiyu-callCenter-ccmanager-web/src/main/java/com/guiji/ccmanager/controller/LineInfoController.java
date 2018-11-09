@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,10 @@ import java.util.List;
 @RestController
 public class LineInfoController {
 
+    private final Logger log = LoggerFactory.getLogger(LineInfoController.class);
+
     @Autowired
     private LineInfoService lineInfoService;
-
 
     @ApiOperation(value = "查看客户所有线路接口")
     @ApiImplicitParams({
@@ -35,6 +38,8 @@ public class LineInfoController {
     })
     @GetMapping(value="getLineInfos")
     public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String pageSize, String pageNo){
+
+        log.debug("get request getLineInfoByCustom，customerId[{}]，pageSize[{}]，pageNo[{}]",customerId, pageSize, pageNo);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
@@ -50,12 +55,15 @@ public class LineInfoController {
         page.setTotal(count);
         page.setRecords(list);
 
+        log.debug("response success getLineInfoByCustom，customerId[{}]，pageSize[{}]，pageNo[{}]",customerId, pageSize, pageNo);
         return Result.ok(page);
     }
 
     @ApiOperation(value = "增加线路接口")
     @PostMapping(value="addLineInfo")
     public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO){
+
+        log.debug("get request addLineInfo，lineInfoVO[{}]",lineInfoVO);
 
         if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
             return Result.error(Constant.ERROR_PARAM);
@@ -64,13 +72,15 @@ public class LineInfoController {
         if(!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU) ){
             return Result.error(Constant.ERROR_CODEC);
         }
-
+        log.debug("response success addLineInfo，lineInfoVO[{}]",lineInfoVO);
         return lineInfoService.addLineInfo(lineInfoVO);
     }
 
     @ApiOperation(value = "修改线路接口")
     @PostMapping(value="updateLineInfo")
     public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO){
+
+        log.debug("get request updateLineInfo，lineInfoVO[{}]",lineInfoVO);
 
         if(lineInfoVO.getLineId()==0){
             return Result.error(Constant.ERROR_PARAM);
@@ -81,7 +91,7 @@ public class LineInfoController {
                 return Result.error(Constant.ERROR_CODEC);
             }
         }
-
+        log.debug("response success updateLineInfo，lineInfoVO[{}]",lineInfoVO);
         return lineInfoService.updateLineInfo(lineInfoVO);
     }
 
@@ -91,6 +101,7 @@ public class LineInfoController {
     })
     @PostMapping(value="deleteLineInfo/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id){
+        log.debug("get request deleteLineInfo，id[{}]",id);
         return lineInfoService.delLineInfo(id);
     }
 

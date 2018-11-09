@@ -3,11 +3,17 @@ package com.guiji.auth.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.auth.service.MenuService;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysMenu;
 
 @RestController
@@ -39,7 +45,7 @@ public class MenuController {
 	}
 	
 	@RequestMapping("getMenus")
-	public List<SysMenu> getMenus(Long userId){
+	public List<SysMenu> getMenus(@RequestHeader Long userId){
 		return service.getMenus(userId);
 	}
 	
@@ -47,4 +53,5 @@ public class MenuController {
 	public Map<String,Object> getAllMenus(Long roleId){
 		return service.getAllMenus(roleId);
 	} 
+	
 }

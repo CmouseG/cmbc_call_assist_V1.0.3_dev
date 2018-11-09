@@ -39,4 +39,6 @@ public interface SysMenuMapper {
     List<SysMenu> getAllMenus();
     
     List<Long> getSelectedMenuId(Long roleId);
+    
+    String getPermissionsByUrl(String url);
 }

@@ -8,15 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.user.dao.SysMenuMapper;
+import com.guiji.user.dao.SysUserMapper;
 
 @Service
-public class MenuService {
+public class ZuulService {
 
 	@Autowired
-	private SysMenuMapper mapper;
-
+	private SysUserMapper userMapper;
+	
+	@Autowired
+	private SysMenuMapper menuMapper;
+	
+	public Long getUserId(String username,String password){
+		return userMapper.getUserId( username, password);
+	}
+	
 	public Map<String,String> getAllPermissions(){
-		List<Map<String,String>> permList=mapper.getAllPermissions();
+		List<Map<String,String>> permList=menuMapper.getAllPermissions();
 		Map<String,String> result=new HashMap<>();
 		permList.forEach((item)->{
 			result.put(item.get("url"), item.get("permission"));
@@ -25,5 +33,8 @@ public class MenuService {
 		return result;
 	}
 	
-
+	public String getPermissionsByUrl(String url){
+		return menuMapper.getPermissionsByUrl(url);
+	}
+	
 }

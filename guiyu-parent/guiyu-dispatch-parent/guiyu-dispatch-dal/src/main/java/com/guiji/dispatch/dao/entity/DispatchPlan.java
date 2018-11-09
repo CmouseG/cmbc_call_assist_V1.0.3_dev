@@ -53,7 +53,25 @@ public class DispatchPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getId() {
+    
+    
+    public String getBatchName() {
+		return batchName;
+	}
+
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
+	}
+
+	public Integer getStatusShow() {
+		return statusShow;
+	}
+
+	public void setStatusShow(Integer statusShow) {
+		this.statusShow = statusShow;
+	}
+
+	public Integer getId() {
         return id;
     }
 

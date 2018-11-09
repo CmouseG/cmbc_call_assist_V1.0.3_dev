@@ -4,13 +4,15 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.FsInfoVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 public interface IFsState {
     @ApiOperation(value = "检查服务健康状态")
-    @GetMapping(value="ishealthy")
+    @RequestMapping(value = "/ishealthy", method = RequestMethod.GET)
     public Result.ReturnData<Boolean> ishealthy();
 
     @ApiOperation(value = "获取freeswitch基本信息")
-    @GetMapping(value="fsinfo")
+    @RequestMapping(value = "/fsinfo", method = RequestMethod.GET)
     public Result.ReturnData<FsInfoVO> fsinfo();
 }

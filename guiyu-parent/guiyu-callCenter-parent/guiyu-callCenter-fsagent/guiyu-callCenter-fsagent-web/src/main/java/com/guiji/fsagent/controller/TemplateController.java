@@ -10,7 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,7 +22,7 @@ public class TemplateController implements ITemplate {
     @Autowired
     TemplateService templateService;
     @Override
-    public Result.ReturnData<Boolean> istempexist(String tempId) {
+    public Result.ReturnData<Boolean> istempexist(@PathVariable(value="tempId") String tempId) {
         logger.debug("收到模板是否存在请求tempId[{}]",tempId);
         if(StringUtils.isBlank(tempId)){
             logger.info("模板是否存在请求失败，参数错误，为null或空");
@@ -30,7 +32,7 @@ public class TemplateController implements ITemplate {
     }
 
     @Override
-    public Result.ReturnData<Boolean> downloadbotwav(String tempId) {
+    public Result.ReturnData<Boolean> downloadbotwav(@PathVariable (value="tempId") String tempId) {
         logger.debug("收到下载模板录音请求tempId[{}]",tempId);
         if(StringUtils.isBlank(tempId)){
             logger.info("下载模板录音请求失败，参数错误，为null或空");
@@ -41,7 +43,7 @@ public class TemplateController implements ITemplate {
     }
 
     @Override
-    public Result.ReturnData<Boolean> downloadttswav(String tempId, String callId) {
+    public Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam ("callId") String callId) {
         logger.debug("收到下载tts话术录音请求tempId[{}],callId[{}]",tempId,callId);
         if(StringUtils.isBlank(tempId)||StringUtils.isBlank(callId)){
             logger.info("下载tts话术录音请求失败，参数错误，为null或空");

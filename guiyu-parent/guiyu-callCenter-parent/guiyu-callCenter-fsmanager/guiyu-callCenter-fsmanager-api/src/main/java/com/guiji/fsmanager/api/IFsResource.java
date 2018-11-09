@@ -22,7 +22,6 @@ public interface IFsResource {
             @ApiImplicitParam(name = "serviceId", value = "服务Id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "serviceType", value = "服务类型", dataType = "String", paramType = "query"),
     })
-    //@GetMapping(value="applyfs")
     @RequestMapping(value = "/applyfs", method = RequestMethod.GET)
     public Result.ReturnData<FsBindVO> applyfs(@RequestParam("serviceId") String serviceId, @RequestParam("serviceType")ServiceTypeEnum serviceType);
 
@@ -30,7 +29,6 @@ public interface IFsResource {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "serviceId", value = "服务Id", dataType = "String", paramType = "query")
     })
-   // @GetMapping(value="releasefs")
     @RequestMapping(value = "/releasefs", method = RequestMethod.GET)
     public Result.ReturnData<Boolean>  releasefs(@RequestParam("serviceId") String serviceId);
 

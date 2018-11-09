@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,7 +22,7 @@ public class FsController implements IFsResource {
     FsService fsService;
 
     @Override
-    public Result.ReturnData<FsBindVO> applyfs(@PathVariable(value = "serviceId") String serviceId, @PathVariable(value = "serviceType")ServiceTypeEnum serviceType) {
+    public Result.ReturnData<FsBindVO> applyfs(@RequestParam("serviceId") String serviceId, @RequestParam("serviceType")ServiceTypeEnum serviceType) {
         logger.debug("收到申请freeswitch资源接口请求，serviceId[{}], serviceType[{}]", serviceId,serviceType);
 
         if(StringUtils.isBlank(serviceId)){
@@ -37,7 +38,7 @@ public class FsController implements IFsResource {
     }
 
     @Override
-    public Result.ReturnData<Boolean> releasefs(@PathVariable(value = "serviceId") String serviceId) {
+    public Result.ReturnData<Boolean> releasefs(@RequestParam("serviceId") String serviceId) {
         logger.debug("收到释放freeswitch资源接口请求，serviceId[{}]", serviceId);
 
         if(StringUtils.isBlank(serviceId)){

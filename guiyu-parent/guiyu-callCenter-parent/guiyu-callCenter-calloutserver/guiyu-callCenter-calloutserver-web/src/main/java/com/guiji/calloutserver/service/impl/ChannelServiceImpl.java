@@ -25,7 +25,7 @@ public class ChannelServiceImpl implements ChannelService {
     public void init(){
         caches = CacheBuilder.newBuilder()
                 .maximumSize(100)
-                .refreshAfterWrite(10, TimeUnit.MINUTES)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
                 .build();
     }
 

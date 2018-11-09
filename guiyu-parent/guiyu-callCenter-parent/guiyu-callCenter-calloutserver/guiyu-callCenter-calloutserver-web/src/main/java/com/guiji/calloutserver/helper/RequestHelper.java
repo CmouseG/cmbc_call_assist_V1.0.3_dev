@@ -46,7 +46,7 @@ public class RequestHelper {
             Result.ReturnData result = requestApi.execute();
             if(result!=null){
                 //请求成功立刻返回
-                if(isSuccess(result)){
+                if(result.success){
                     return result;
                 }else{
                     requestApi.onErrorResult(result);
@@ -83,27 +83,5 @@ public class RequestHelper {
         Result.ReturnData execute();
 
         void onErrorResult(Result.ReturnData result);
-    }
-
-    public static void main(String[] args) {
-        try {
-            loopRequest(new RequestApi() {
-                @Override
-                public Result.ReturnData execute() {
-                    Result.ReturnData result = new Result.ReturnData();
-                    result.setCode("101010001");
-                    result.setMsg("error from test");
-                    return result;
-                }
-
-                @Override
-                public void onErrorResult(Result.ReturnData result) {
-                    System.out.println("返回结果为空, code:"+ result.getCode() + ",msg:" + result.getMsg());
-
-                }
-            }, -1, 2, 1,10);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

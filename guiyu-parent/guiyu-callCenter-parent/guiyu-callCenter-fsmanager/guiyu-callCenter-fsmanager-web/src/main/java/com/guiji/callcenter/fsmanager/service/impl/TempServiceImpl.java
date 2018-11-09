@@ -6,6 +6,8 @@ import com.guiji.callcenter.fsmanager.service.TempService;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.utils.FeignBuildUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +15,14 @@ import java.util.List;
 
 @Service
 public class TempServiceImpl implements TempService{
+    private final Logger logger = LoggerFactory.getLogger(TempServiceImpl.class);
+
     @Autowired
     EurekaManager eurekaManager;
 
     @Override
     public Boolean istempexist(String tempId) {
+        logger.info("调用所有的fsagent服务的模板是否存在接口");
         List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
         for(String server:serverList){
             ITemplate iTemplateApi = FeignBuildUtil.feignBuilderTarget(ITemplate.class,Constant.PROTOCOL +server);

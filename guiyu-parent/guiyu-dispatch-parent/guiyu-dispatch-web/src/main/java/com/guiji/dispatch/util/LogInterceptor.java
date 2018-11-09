@@ -1,5 +1,7 @@
 package com.guiji.dispatch.util;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.dispatch.dao.entity.DispatchLog;
 import com.guiji.dispatch.service.OperatorLogService;
 
@@ -26,6 +29,20 @@ public class LogInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+//    	String param= null; 
+//		try {
+//			BufferedReader streamReader = new BufferedReader( new InputStreamReader(request.getInputStream(), "UTF-8"));
+//			StringBuilder responseStrBuilder = new StringBuilder();
+//			String inputStr;
+//			while ((inputStr = streamReader.readLine()) != null)
+//				responseStrBuilder.append(inputStr);
+//			
+//			JSONObject jsonObject = JSONObject.parseObject(responseStrBuilder.toString());
+//			param= jsonObject.toJSONString();
+//			System.out.println(param);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
         return true;
     }
 
@@ -37,6 +54,7 @@ public class LogInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
     	DispatchLog log = null;
+	
         HandlerMethod hardlerMethod = (HandlerMethod) handler;
         Method method = hardlerMethod.getMethod();
         try {

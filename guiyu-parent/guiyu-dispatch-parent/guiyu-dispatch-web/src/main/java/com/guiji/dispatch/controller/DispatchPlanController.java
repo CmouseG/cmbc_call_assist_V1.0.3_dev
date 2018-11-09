@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Log;
@@ -24,16 +25,20 @@ public class DispatchPlanController {
 	private IDispatchPlanService dispatchPlanService;
 
 	/**
-	 * 单个导入
+	 * 单个导入任务
 	 * @param schedule
 	 *            任务
 	 * @return 响应报文
 	 *             异常
 	 */
 	@PostMapping("addSchedule")
-	@Log(info = "单个导入")
 	public boolean addSchedule(@RequestBody DispatchPlan dispatchPlan) {
-		return dispatchPlanService.addSchedule(dispatchPlan);
+		boolean result = false;
+		try {
+			result = dispatchPlanService.addSchedule(dispatchPlan);
+		} catch (Exception e) {
+		}
+		return result;
 	}
 
 	/**
@@ -46,7 +51,6 @@ public class DispatchPlanController {
 	 *             异常
 	 */
 	@GetMapping("querySchedules")
-	@Log(info = "查询任务列表")
 	Page<DispatchPlan> querySchedules(@RequestParam(required = true, name = "userId") Integer userId,
 			@RequestParam(required = true, name = "pageSize") Integer pageSize,
 			@RequestParam(required = true, name = "pagenum") int pagenum) {
@@ -94,8 +98,19 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@Log(info = "文件上传")
-	public boolean batchImport(String fileName, MultipartFile file) {
-		return false;
+	@PostMapping("/batchImport")
+	public Result.ReturnData batchImport(@RequestParam("file") MultipartFile file) {
+		 String fileName = file.getOriginalFilename();
+		 boolean result = false;
+	        try {
+	        	result = dispatchPlanService.batchImport(fileName, file);
+	        } catch (Exception e) {
+//	            e.printStackTrace();
+	            return Result.error("0203001");
+	        }
+	        
+	       return Result.ok();
+	        
 	}
 
 	/**
@@ -105,12 +120,17 @@ public class DispatchPlanController {
 	 *            任务id
 	 * @return 响应报文
 	 *  
-	 *             异常
 	 */
 	@PostMapping("resumeSchedule")
 	@Log(info = "恢复任务")
 	public boolean resumeSchedule(@RequestParam(required = true, name = "planuuid") String planuuid) {
 		return dispatchPlanService.resumeSchedule(planuuid);
+	}	
+	
+	@PostMapping("deleteSchedule")
+	@Log(info = "删除任务")
+	public boolean deleteSchedule(@RequestParam(required = true, name = "planuuid") String planuuid) {
+		return dispatchPlanService.deleteSchedule(planuuid);
 	}
 
 	/**
@@ -154,7 +174,6 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("queryDispatchPlanByParams")
-	@Log(info = "根据参数查询任务计划")
 	public Page<DispatchPlan> queryDispatchPlanByParams(@RequestParam(required = false, name = "phone") String phone,
 			@RequestParam(required = false, name = "planStatus") String planStatus,
 			@RequestParam(required = false, name = "startTime") String startTime,
@@ -169,7 +188,7 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("outLineinfos")
-	@Log(info = "获取客户线路列表")
+	@Log(info = "获取客户线路列表")	
 	public List<LineConcurrent> outLineinfos(@RequestParam(required = true, name = "userId") String userId) {
 		return dispatchPlanService.outLineinfos(userId);
 	}

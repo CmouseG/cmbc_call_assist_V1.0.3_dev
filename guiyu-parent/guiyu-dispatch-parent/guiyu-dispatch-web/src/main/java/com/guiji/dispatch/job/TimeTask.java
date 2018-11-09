@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.guiji.ccmanager.api.ICallManagerOutApi;
+import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
@@ -23,10 +23,10 @@ public class TimeTask {
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 	@Autowired
-	private ICallManagerOutApi callManagerOutApi;
+	private ICallManagerOut callManagerOutApi;
 	
 	
-	@Scheduled(cron = "0 0/1 * * * ?")
+//	@Scheduled(cron = "0 0/1 * * * ?")
 	public void selectPhonesByDate(){
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
 		for(DispatchPlan bean : list){
@@ -34,7 +34,7 @@ public class TimeTask {
 			
 			//启动客户呼叫计划
 			logger.info("startcallplan..");
-			 ReturnData<Boolean> startcallplan = callManagerOutApi.startcallplan(String.valueOf(bean.getUserId()), bean.getRobot(), String.valueOf(bean.getLine()));
+			 ReturnData<Boolean> startcallplan = callManagerOutApi.startCallPlan(String.valueOf(bean.getUserId()), bean.getRobot(), String.valueOf(bean.getLine()));
 			logger.info("启动客户呼叫计划结果"+startcallplan.getBody());
 		}
 	}

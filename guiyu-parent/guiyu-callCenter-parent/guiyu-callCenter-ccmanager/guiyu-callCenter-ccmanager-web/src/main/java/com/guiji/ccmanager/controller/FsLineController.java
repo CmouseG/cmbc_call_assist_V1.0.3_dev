@@ -8,6 +8,8 @@ import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.utils.FeignBuildUtil;
 import com.guiji.utils.ServerUtil;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +26,16 @@ import java.util.List;
 @RestController
 public class FsLineController {
 
+    private final Logger log = LoggerFactory.getLogger(FsLineController.class);
+
     @Autowired
     private DiscoveryClient discoveryClient;
 
     @ApiOperation(value = "获取所有的fsline对应的freeswitch对外端口列表")
     @GetMapping(value="getFsOutLines")
     public List getFsOutLines(){
+
+        log.debug("get request getFsOutLines");
 
        // 从Eureka获取所有的fsline服务列表
         List<String> serverList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_FSLINE);
@@ -42,6 +48,7 @@ public class FsLineController {
             LinePort linePort = new LinePort(fsLineInfo.getFsLineId(),fsLineInfo.getFsIp()+":"+fsLineInfo.getFsOutPort());
             list.add(linePort);
         }
+        log.debug("response success getFsOutLines");
         return list;
     }
 

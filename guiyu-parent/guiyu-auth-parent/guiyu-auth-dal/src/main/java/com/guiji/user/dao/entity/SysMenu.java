@@ -1,6 +1,7 @@
 package com.guiji.user.dao.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class SysMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    List<SysMenu> child;
+    List<SysMenu> child=new ArrayList<SysMenu>();
 
     public Long getId() {
         return id;

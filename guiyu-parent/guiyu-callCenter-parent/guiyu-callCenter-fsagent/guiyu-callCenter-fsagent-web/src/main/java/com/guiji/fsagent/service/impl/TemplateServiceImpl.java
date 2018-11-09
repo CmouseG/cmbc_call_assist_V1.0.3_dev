@@ -23,8 +23,6 @@ public class TemplateServiceImpl implements TemplateService {
         if(FileUtil.isExist(tempRecordPath)){
             return true;
         };
-
-
-        return null;
+        return true;
     }
 }

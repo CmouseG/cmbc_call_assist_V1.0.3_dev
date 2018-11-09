@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -20,13 +22,13 @@ public interface ITemp {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
     })
-    @GetMapping(value="downloadtempwav")
+    @RequestMapping(value = "/downloadtempwav", method = RequestMethod.GET)
     public Result.ReturnData downloadtempwav(@RequestParam("tempId") String tempId);
 
     @ApiOperation(value = "模板是否存在")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
     })
-    @GetMapping(value="istempexist")
+    @RequestMapping(value = "/istempexist", method = RequestMethod.GET)
     public Result.ReturnData<Boolean> istempexist(@RequestParam("tempId") String tempId);
 }

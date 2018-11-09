@@ -10,6 +10,8 @@ import com.guiji.fsmanager.entity.LineInfoVO;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import com.guiji.utils.FeignBuildUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,8 @@ import java.util.List;
 
 @RestController
 public class LineController implements ILineOper {
+    private final Logger logger = LoggerFactory.getLogger(LineController.class);
+
     @Autowired
     LineService lineService;
     @Autowired
@@ -26,19 +30,24 @@ public class LineController implements ILineOper {
 
     @Override
     public Result.ReturnData addLineinfos(@RequestBody LineInfoVO lineInfo) {
-        if(StringUtils.isBlank(lineInfo.getLineId())||StringUtils.isBlank(lineInfo.getSipIp())||StringUtils.isBlank(lineInfo.getSipPort())){
-            return Result.error("3001001");
+        logger.debug("收到增加线路接口请求，LineInfoVO[{}]", lineInfo);
+        if (StringUtils.isBlank(lineInfo.getLineId()) || StringUtils.isBlank(lineInfo.getSipIp()) || StringUtils.isBlank(lineInfo.getSipPort())) {
+            logger.info("增加线路接口请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
         }
-           if(!lineService.addLineinfos(lineInfo)){
-               return  Result.error("0301003");
-           }
+        if (!lineService.addLineinfos(lineInfo)) {
+            logger.info("增加线路接口请求失败，线路重名");
+            return Result.error(Constant.ERROR_CODE_LINE_REPEAT);
+        }
         return Result.ok();
     }
 
     @Override
     public Result.ReturnData editLineinfos(@PathVariable("lineId") String lineId, @RequestBody LineInfoVO lineInfo) {
+        logger.debug("收到修改线路接口请求，lineId[{}]，LineInfoVO[{}]",lineId,lineInfo);
         if(StringUtils.isBlank(lineId)||StringUtils.isBlank(lineInfo.getSipIp())||StringUtils.isBlank(lineInfo.getSipPort())){
-            return Result.error("3001001");
+            logger.info("增加修改线路接口请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
         }
         lineService.editLineinfos(lineId,lineInfo);
         return Result.ok();
@@ -46,22 +55,32 @@ public class LineController implements ILineOper {
 
     @Override
     public Result.ReturnData deleteLineinfos(@PathVariable("lineId") String lineId) {
+        logger.debug("收到删除线路接口请求，lineId[{}]",lineId);
+        if(StringUtils.isBlank(lineId)){
+            logger.info("删除线路接口请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
+        }
         lineService.deleteLineinfos(lineId);
         return Result.ok();
     }
 
     @Override
     public Result.ReturnData linexmlinfos(@PathVariable(value = "lineId") String lineId) {
+        logger.debug("收到获取线路配置文件接口请求，lineId[{}]",lineId);
         if(StringUtils.isBlank(lineId)){
-            return Result.error("3001001");
+            logger.info("获取线路配置文件接口请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
         }
         List<LineXmlnfoVO> list =  lineService.linexmlinfos(lineId);
+        logger.debug("获取线路配置文件接口请求返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
 
     @Override
     public Result.ReturnData linexmlinfosAll() {
+        logger.debug("收到获取所有线路配置文件接口请求");
         List<LineXmlnfoVO> list =  lineService.linexmlinfosAll();
+        logger.debug("收到获取所有线路配置文件接口返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
 }

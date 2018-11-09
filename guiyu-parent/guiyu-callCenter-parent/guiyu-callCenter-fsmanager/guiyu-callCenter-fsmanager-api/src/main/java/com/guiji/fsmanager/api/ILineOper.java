@@ -57,7 +57,6 @@ public interface ILineOper {
     public Result.ReturnData<List<LineXmlnfoVO>> linexmlinfos(@PathVariable(value = "lineId") String lineId);
 
     @ApiOperation(value = "获取所有配置文件接口")
-    //@GetMapping(value="/linexmlinfos")
     @RequestMapping(value = "/linexmlinfos", method = RequestMethod.GET)
     public Result.ReturnData<List<LineXmlnfoVO>>  linexmlinfosAll();
 

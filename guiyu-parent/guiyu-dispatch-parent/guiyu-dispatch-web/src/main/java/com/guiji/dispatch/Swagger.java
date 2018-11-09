@@ -30,7 +30,7 @@ public class Swagger {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("调度中心RESTful API")
-                .contact("gaojianfeng")
+                .contact("xujin")
                 .version("1.0")
                 .build();
     }

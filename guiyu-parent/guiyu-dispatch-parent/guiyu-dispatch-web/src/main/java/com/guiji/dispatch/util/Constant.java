@@ -12,5 +12,10 @@ public class Constant {
 	public static final Integer status_sync_0 =0;
 	public static final Integer status_sync_1 =1;
 	
+	public static final Integer ISCALL_0=0;
+	public static final Integer ISCALL_1=1;
 	
+	public static final Integer  STATUSNOTIFY_0=0;
+	public static final Integer  STATUSNOTIFY_1=1;
+	public static final Integer  STATUSNOTIFY_2=2;
 }

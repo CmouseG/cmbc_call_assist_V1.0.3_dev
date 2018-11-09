@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.dispatch.api.IDispatchPlanOutApi;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
 
 @RestController
-public class DispatchOutApiController implements IDispatchPlanOutApi{
+public class DispatchOutApiController implements IDispatchPlanOut{
 	
     @Autowired
     private IDispatchPlanService dispatchPlanService;

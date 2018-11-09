@@ -7,6 +7,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.guiji.component.result.EnableAutoResultPack;
+
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -18,6 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients(basePackages = "com.guiji")
 @EnableDiscoveryClient
 @EnableSwagger2
+@EnableAutoResultPack
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

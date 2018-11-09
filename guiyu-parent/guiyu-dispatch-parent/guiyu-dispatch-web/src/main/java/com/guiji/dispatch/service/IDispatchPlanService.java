@@ -1,10 +1,12 @@
 package com.guiji.dispatch.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 
@@ -15,8 +17,9 @@ public interface IDispatchPlanService {
      *
      * @param schedule 任务
      * @return 响应报文
+     * @throws Exception 
      */
-  boolean addSchedule( DispatchPlan dispatchPlan);
+  boolean addSchedule( DispatchPlan dispatchPlan) throws Exception;
 
     /**
      * 查询任务列表
@@ -41,6 +44,15 @@ public interface IDispatchPlanService {
      * @return 响应报文
      */
     boolean resumeSchedule(final String planUuid) ;
+    
+    
+    /**
+     * 删除任务
+     *
+     * @param planUuid 任务id
+     * @return 响应报文
+     */
+    boolean deleteSchedule(final String planUuid) ;
     
     /**
      * 取消
@@ -90,8 +102,10 @@ public interface IDispatchPlanService {
      * @param fileName
      * @param file
      * @return
+     * @throws IOException 
+     * @throws Exception 
      */
-    public boolean batchImport(String fileName, MultipartFile file) ;
+    public boolean batchImport(String fileName, MultipartFile file) throws IOException, Exception ;
 
 	/**
 	 * 写入批次

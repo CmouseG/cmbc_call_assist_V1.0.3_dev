@@ -96,17 +96,6 @@ zuul:
     guiyu-datadic:
       path: /dict/**
       service-id: guiyu-datadic
-security:
-  basic:
-    enabled: false
-  oauth2:
-    client:
-      ##网关的地址
-      access-token-uri: ${gateway.host}auth/oauth/token
-      user-authorization-uri: ${gateway.host}auth/oauth/authorize
-    resource:
-      user-info-uri:  ${gateway.host}auth/user
-      prefer-token-info: false
 hystrix:
   command:
     default:

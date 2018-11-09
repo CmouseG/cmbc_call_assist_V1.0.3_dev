@@ -1,7 +1,7 @@
 package com.guiji.cloud.zuul.filter;
 
 import com.google.gson.Gson;
-import com.guiji.auth.util.PermissionResolve;
+import com.guiji.cloud.zuul.config.PermissionResolve;
 import com.guiji.cloud.zuul.white.WhiteIPUtil;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
@@ -17,10 +17,10 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 	
 	private static String errorMsg;
 
-	private PermissionResolve permissionResolve2;
+	private PermissionResolve permissionResolve;
 	
 	public ZuulAuthorizationFilter(PermissionResolve resolve){
-		permissionResolve2 =resolve;
+		permissionResolve =resolve;
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 		Subject subject = getSubject(request, response);
 		HttpServletRequest httpRequest=(HttpServletRequest) request;
 		String url=httpRequest.getRequestURI();
-		String permission= permissionResolve2.parse(url);
+		String permission= permissionResolve.parse(url);
 		if(StringUtils.isEmpty(permission)||!subject.isPermitted(permission)){
 			flag=false;
 			response.setContentType("application/json;charset=UTF-8");

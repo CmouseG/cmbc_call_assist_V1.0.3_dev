@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 @EnableDiscoveryClient
 @MapperScan("com.guiji.user.dao")
 @EnableAutoResultPack
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class ZuulApplication {
     public static void main(String[] args) {
         SpringApplication.run(ZuulApplication.class,args);

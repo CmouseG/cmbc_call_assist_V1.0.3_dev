@@ -1,7 +1,7 @@
 package com.guiji.cloud.zuul.controller;
 
-import com.guiji.auth.service.UserService;
-import com.guiji.auth.util.AuthUtil;
+import com.guiji.cloud.zuul.config.AuthUtil;
+import com.guiji.cloud.zuul.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;

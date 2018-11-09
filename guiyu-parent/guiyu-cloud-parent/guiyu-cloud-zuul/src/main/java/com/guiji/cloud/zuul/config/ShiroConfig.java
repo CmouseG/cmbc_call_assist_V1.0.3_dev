@@ -1,6 +1,5 @@
 package com.guiji.cloud.zuul.config;
 
-import com.guiji.auth.util.PermissionResolve;
 import com.guiji.cloud.zuul.filter.ZuulAuthenticationFilter;
 import com.guiji.cloud.zuul.filter.ZuulAuthorizationFilter;
 import org.apache.shiro.mgt.SecurityManager;

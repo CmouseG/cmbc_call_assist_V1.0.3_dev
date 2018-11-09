@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.guiji.component.result.Result.ReturnData;
 
-@FeignClient("auth")
+@FeignClient("guiyu-cloud-zuul")
 public interface IAuth {
 	
-	@PostMapping(value = "/user/getUserId")
+	@PostMapping(value = "/getUserId")
 	public ReturnData<Long> getUserId();
 	
 }

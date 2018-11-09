@@ -48,7 +48,7 @@ public class ZuulAuthenticationFilter extends AccessControlFilter{
 	
 	private String getErrorMsg() throws ClassNotFoundException{
 		if(errorMsg==null){
-			 ReturnData<Object> obj=Result.error("00010003");
+			 ReturnData<Object> obj=Result.error("00010001");
         	 Gson gson=new Gson();
         	 errorMsg=gson.toJson(obj);
 		}

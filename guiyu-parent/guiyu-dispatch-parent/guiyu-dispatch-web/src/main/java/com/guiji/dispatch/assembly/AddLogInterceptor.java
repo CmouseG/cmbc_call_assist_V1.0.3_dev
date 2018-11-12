@@ -11,7 +11,7 @@ import com.guiji.dispatch.util.LogInterceptor;
 public class AddLogInterceptor extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new LogInterceptor()).addPathPatterns("/*");
         super.addInterceptors(registry);
     }
 }

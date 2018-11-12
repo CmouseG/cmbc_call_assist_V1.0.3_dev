@@ -3,10 +3,13 @@ package com.guiji.dispatch.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
+import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 
@@ -19,7 +22,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 
      */
-  boolean addSchedule( DispatchPlan dispatchPlan) throws Exception;
+  boolean addSchedule( DispatchPlan dispatchPlan,Long userId) throws Exception;
 
     /**
      * 查询任务列表
@@ -105,7 +108,7 @@ public interface IDispatchPlanService {
      * @throws IOException 
      * @throws Exception 
      */
-    public boolean batchImport(String fileName, MultipartFile file) throws IOException, Exception ;
+    public boolean batchImport(String fileName, Long userId,MultipartFile file,String dispatchPlan) throws IOException, Exception ;
 
 	/**
 	 * 写入批次
@@ -142,7 +145,7 @@ public interface IDispatchPlanService {
 	 * @param lineId
 	 * @return
 	 */
-	public List<DispatchPlan> queryDispatchOutParams(Integer userId, int requestCount, int lineId);
+//	public List<DispatchPlan> queryDispatchOutParams(Integer userId, int requestCount, int lineId);
 
 	
 	/**
@@ -157,4 +160,27 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	List<DispatchPlan> selectPhoneByDate();
+	
+	/**
+	 * 批量修改状态
+	 * @param dto
+	 * @return
+	 */
+	boolean  batchUpdatePlans(IdsDto[] dto);
+
+	/**
+	 * 一键操作状态* 
+	 * @param batchId
+	 * @param status
+	 * @return
+	 */
+	boolean operationAllPlanByBatchId(Integer batchId,String status);
+	
+	/**
+	 * 批量删除
+	 * @param dto
+	 * @return
+	 */
+	boolean  batchDeletePlans(IdsDto[] dto);
+
 }

@@ -1,17 +1,23 @@
 package com.guiji.ccmanager.controller;
 
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.ccmanager.service.LineInfoService;
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -75,4 +81,17 @@ public class CallManagerOutApiController implements ICallManagerOut {
         }
 
     }
+
+    @Override
+    @ApiOperation(value = "获取callId获取通话记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "call_out_plan的id", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value="getCallRecordById")
+    public Result.ReturnData<CallOutPlan> getCallRecordById(@RequestParam(value = "callId",required = true)String callId ){
+
+        CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(callId);
+        return Result.ok(callOutPlan);
+    }
+
 }

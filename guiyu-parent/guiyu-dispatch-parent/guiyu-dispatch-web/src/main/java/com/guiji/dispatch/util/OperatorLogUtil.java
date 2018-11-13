@@ -1,5 +1,6 @@
 package com.guiji.dispatch.util;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,19 +51,8 @@ public class OperatorLogUtil {
         log.setModule(sysLog.info());
         log.setParams(request.getQueryString());
         log.setUserId(123);
-
-
-        //获得操作人
-//        try {
-//            HttpSession session = request.getSession();
-//            User user = (User) session.getAttribute(Constant.USER_KEY);
-//            if (null != user) {
-//            	log.setUserInfo(user.getAccount()+"("+user.getShowName()+")");
-//            }
-//        } catch (Exception e) {
-//            logger.error("session对象不存在",e.getMessage());
-//        }
-
         return log;
     }
+
+
 }

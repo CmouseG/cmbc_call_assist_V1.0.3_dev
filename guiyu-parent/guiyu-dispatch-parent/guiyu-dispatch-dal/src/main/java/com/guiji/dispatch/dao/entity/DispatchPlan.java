@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DispatchPlan implements Serializable {
+	
 	//批次号
 	private String batchName;
 	//是否显示
@@ -51,27 +52,11 @@ public class DispatchPlan implements Serializable {
 
     private Byte isTts;
 
+    private Integer replayType;
+
     private static final long serialVersionUID = 1L;
 
-    
-    
-    public String getBatchName() {
-		return batchName;
-	}
-
-	public void setBatchName(String batchName) {
-		this.batchName = batchName;
-	}
-
-	public Integer getStatusShow() {
-		return statusShow;
-	}
-
-	public void setStatusShow(Integer statusShow) {
-		this.statusShow = statusShow;
-	}
-
-	public Integer getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -239,7 +224,33 @@ public class DispatchPlan implements Serializable {
         this.isTts = isTts;
     }
 
-    @Override
+    public Integer getReplayType() {
+        return replayType;
+    }
+
+    public void setReplayType(Integer replayType) {
+        this.replayType = replayType;
+    }
+    
+    
+
+    public String getBatchName() {
+		return batchName;
+	}
+
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
+	}
+
+	public Integer getStatusShow() {
+		return statusShow;
+	}
+
+	public void setStatusShow(Integer statusShow) {
+		this.statusShow = statusShow;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -266,6 +277,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
         sb.append(", isTts=").append(isTts);
+        sb.append(", replayType=").append(replayType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

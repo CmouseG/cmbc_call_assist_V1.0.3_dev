@@ -73,4 +73,9 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         //调用所有calloutserver的启动客户呼叫计划接口
         return callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
     }
+
+    @Override
+    public CallOutPlan getCallRecordById(String callId) {
+        return callOutPlanMapper.selectByPrimaryKey(callId);
+    }
 }

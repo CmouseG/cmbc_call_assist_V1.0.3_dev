@@ -37,7 +37,7 @@ public class LoadProperties {
 				prop.load(resourceAsStream);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error",e);
 		}
 	}
 

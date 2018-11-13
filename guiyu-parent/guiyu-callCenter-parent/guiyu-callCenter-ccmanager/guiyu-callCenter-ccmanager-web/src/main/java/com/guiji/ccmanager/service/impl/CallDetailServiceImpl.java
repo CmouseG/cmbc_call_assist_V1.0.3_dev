@@ -8,10 +8,20 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.utils.BeanUtil;
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,4 +119,23 @@ public class CallDetailServiceImpl implements CallDetailService {
 
         return null;
     }
+
+    @Override
+    public String getDialogue(String callId) {
+        CallOutDetailExample example = new CallOutDetailExample();
+        CallOutDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andCallIdEqualTo(callId);
+        example.setOrderByClause("bot_answer_time");
+        List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
+        String result="";
+        if(list!=null && list.size()>0){
+            for(CallOutDetail callOutDetail:list){
+                String botSay = callOutDetail.getBotAnswerText();
+                String customerSay = callOutDetail.getCustomerSayText();
+                result += "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+            }
+        }
+        return  result;
+    }
+
 }

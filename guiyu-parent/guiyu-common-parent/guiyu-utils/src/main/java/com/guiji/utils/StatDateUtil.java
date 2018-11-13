@@ -43,7 +43,7 @@ public class StatDateUtil {
 			//上周
 			//获取上周今天
 			Date date = new Date(System.currentTimeMillis() - DateUtil.DATEMM  * 7 * 1000L);     //7天前
-			String lastWeekToday =DateUtil.yyyyMMddHH_NOT_.format(date);
+			String lastWeekToday =DateUtil.getYyyyMMddHH_NOT_().format(date);
 			dateRange.setBeginDate(DateUtil.getMondayOfDate(lastWeekToday)); //上周一
 			dateRange.setEndDate(DateUtil.getSundayOfDate(lastWeekToday)); //上周日
 			return dateRange;

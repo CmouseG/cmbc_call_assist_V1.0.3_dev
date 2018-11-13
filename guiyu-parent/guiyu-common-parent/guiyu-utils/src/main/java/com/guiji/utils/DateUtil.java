@@ -25,7 +25,11 @@ public final class DateUtil {
     private static final String year = "yyyy";
     private static final String month = "MM";
     private static final String day = "dd";
-    private static final long DATEMM = 86400L;
+    public static final long DATEMM = 86400L;
+
+    public static SimpleDateFormat getYyyyMMddHH_NOT_() {
+        return new SimpleDateFormat("yyyyMMdd");
+    }
 
     /**
      * 转换日期字符串

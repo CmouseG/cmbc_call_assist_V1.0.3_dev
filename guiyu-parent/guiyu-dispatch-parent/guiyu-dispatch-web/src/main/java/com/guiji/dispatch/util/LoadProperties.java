@@ -51,16 +51,19 @@ public class LoadProperties {
 	 * @param keyname
 	 * @param keyvalue
 	 */
-	public static void updateProperties(String keyname, String keyvalue) {
-		try {
-			File file = ResourceUtils.getFile("classpath:authorization.properties");
-			OutputStream fos = new FileOutputStream(file);
-			prop.setProperty(keyname, keyvalue);
-			prop.store(fos, "andieguo modify" + new Date().toString());
-		} catch (IOException e) {
-			System.err.println("LoadProperties error");
-		}
-	}
+//	public static void updateProperties(String keyname, String keyvalue) {
+//		OutputStream fos = null;
+//		try {
+//			File file = ResourceUtils.getFile("classpath:authorization.properties");
+//			fos = new FileOutputStream(file);
+//			prop.setProperty(keyname, keyvalue);
+//			prop.store(fos, "andieguo modify" + new Date().toString());
+//		} catch (IOException e) {
+//			System.err.println("LoadProperties error");
+//		}finally{
+//			fos.close();
+//		}
+//	}
 
 	public static Map<String, String> json2map(String str_json) {
 		Map<String, String> res = null;
@@ -75,7 +78,7 @@ public class LoadProperties {
 
 	public static void main(String[] args) {
 		Map<String, String> json2map = json2map(LoadProperties.getProperty("1"));
-		LoadProperties.updateProperties("1", "");
+//		LoadProperties.updateProperties("1", "");
 		System.out.println(json2map);
 		// Gson gson = new Gson();
 		// Map<String, Object> map = new HashMap<String, Object>();

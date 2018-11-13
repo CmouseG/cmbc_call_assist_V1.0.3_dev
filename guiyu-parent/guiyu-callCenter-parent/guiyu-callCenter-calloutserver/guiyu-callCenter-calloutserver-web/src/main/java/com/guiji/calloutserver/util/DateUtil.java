@@ -119,31 +119,6 @@ public class DateUtil {
         return  strDate;
     }
 
-    public static boolean isValidDate(String str) {
-        boolean convertSuccess = true;
-        // 指定日期格式为四位年/两位月份/两位日期，注意yyyy/MM/dd区分大小写；
-        SimpleDateFormat formatDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            formatDateTime.parse(str);
-            convertSuccess = true;
-            return convertSuccess;
-        } catch (ParseException e) {
-            // 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
-            convertSuccess = false;
-        }
-
-        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            formatDate.parse(str);
-            convertSuccess = true;
-            return convertSuccess;
-        } catch (ParseException e) {
-            // 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
-            convertSuccess = false;
-        }
-        return  convertSuccess;
-    }
-
     /**
      * 将不规则的时间格式转成规则的时间格式
      * @param date
@@ -165,24 +140,6 @@ public class DateUtil {
 //        String ff = "yyyy-MM-dd HH:mm:ss";
 //        System.out.println("currdate: " + getCurrentDateByFormat(ff));
         System.out.println(timeStampToDate(1726272727L));
-    }
-
-    public static String getUserYears(String yearIng){
-        String effectiveDate=null;
-        try {
-            Preconditions.checkNotNull(yearIng,"null yearIng");
-            int add=Integer.parseInt(yearIng);
-            Date date=new Date();
-            SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
-            String yearOld=sdf.format(date);
-            String[] yearMonthData=yearOld.split("-");
-            int year=Integer.parseInt(yearMonthData[0]);
-            String yearNow=year+add+"";
-            effectiveDate=yearNow+"-"+yearMonthData[1]+"-"+yearMonthData[2];
-        } catch (NumberFormatException e) {
-            log.warn(e.getMessage());
-        }
-        return effectiveDate;
     }
 
     /**

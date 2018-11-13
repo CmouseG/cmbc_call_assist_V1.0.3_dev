@@ -31,15 +31,16 @@ public class FsWatchDog {
 
                         }
                         //尝试连接，需等待时间长一点，在进行判断
-                        Thread.sleep(2000 );
+                        Thread.sleep(2000L );
                     }
                 }catch (Exception ex){
                     log.warn("重连出现异常",ex.getMessage());
                 }
 
                 try {
-                    Thread.sleep( 1000);
+                    Thread.sleep( 1000L);
                 } catch (InterruptedException e) {
+                    log.warn("sleep出现异常", e);
                 }
             }
         });

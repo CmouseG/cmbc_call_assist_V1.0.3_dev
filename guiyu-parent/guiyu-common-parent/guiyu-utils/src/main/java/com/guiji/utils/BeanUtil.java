@@ -370,7 +370,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 								}
 							}else{
 								//尝试其他容错
-								value = Boolean.valueOf(value.toString());
+								if (null != value) {
+									value = Boolean.valueOf(value.toString());
+								}
 							}
 						}else if(fieldType.equals(List.class)){
 							//LIST处理

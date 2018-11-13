@@ -25,4 +25,9 @@ public class Constant {
 	public static final Integer  STATUS_NOTIFY_1=2;
 	public static final Integer  STATUS_NOTIFY_2=3;
 	
+	//重播类型 0一般任务 1 重播任务
+	public static final Integer  REPLAY_TYPE_0=0;
+	public static final Integer  REPLAY_TYPE_1=1;
+	
+	
 }

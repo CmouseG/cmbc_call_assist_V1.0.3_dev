@@ -57,29 +57,29 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private DispatchHourMapper dispatchHourMapper;
-	
+
 	@Autowired
 	private DateProvider dateProvider;
-//	
-//	@Autowired
-//	private IAuth authService;
+	//
+	// @Autowired
+	// private IAuth authService;
 
 	@Override
-	public boolean addSchedule(DispatchPlan dispatchPlan,Long userId) throws Exception {
+	public boolean addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
 		DispatchPlanBatch dispatchPlanBatch = new DispatchPlanBatch();
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
-		//通知状态;通知状态1等待2失败3成功
+		// 通知状态;通知状态1等待2失败3成功
 		dispatchPlanBatch.setStatusNotify(Constant.STATUSNOTIFY_0);
 		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setStatusShow(dispatchPlan.getStatusShow());
 		dispatchPlanBatch.setUserId(userId.intValue());
-		dispatchPlanBatchMapper.insert(dispatchPlanBatch);			
-		
-		
+		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+
 		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
 		dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		int result = dispatchPlanMapper.insert(dispatchPlan);
 
 		// 调用机器人中心判断参数是否合法，如果合法则status_plan =1 否则为0 然后入库
@@ -170,7 +170,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public boolean batchImport(String fileName,Long userId,MultipartFile file,String str) throws Exception {
+	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			// throw new MyException("上传文件格式不正确");
 		}
@@ -187,14 +187,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		Sheet sheet = wb.getSheetAt(0);
 
-
-		DispatchPlan dispatchPlan =	JSONObject.parseObject(str,DispatchPlan.class);
-		DispatchPlanBatch dispatchPlanBatch =	JSONObject.parseObject(str,DispatchPlanBatch.class);
+		DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
+		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
 		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-			dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			if (row == null) {
@@ -207,7 +206,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			} else {
 				throw new Exception("导入失败(第" + (r + 1) + "行,电话未填写)");
 			}
-
 
 			String params;
 			if (isNull(row.getCell(1))) {
@@ -235,8 +233,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 			dispatchPlanMapper.insert(dispatchPlan);
-			
-		
+
 			String[] hours = dispatchPlan.getCallHour().split(",");
 			// 写入时间dispatchHour
 			for (String hr : hours) {
@@ -251,6 +248,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return true;
 
 	}
+
 	public boolean isNull(Cell cell) {
 		if (cell == null) {
 			return false;
@@ -264,10 +262,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 查询
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
-		
-		
-		
+		List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
+		DispatchPlan dispatchPlan = list.get(0);
+		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
+
+		// 0不重播非0表示重播次数
+		if (dispatchPlan.getRecall() > 0) {
+			String recallParams = dispatchPlan.getRecallParams();
+		}
+
 		return false;
 	}
 
@@ -295,7 +298,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, int pagenum, int pagesize) {
+			String endTime, Integer batchId, Integer replayType, int pagenum, int pagesize) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -315,13 +318,41 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				e.printStackTrace();
 			}
 		}
+
+		if (batchId != null && batchId != 0) {
+			createCriteria.andBatchIdEqualTo(batchId);
+		}
+		
+		if(replayType !=null &&replayType !=-1){
+			createCriteria.andReplayTypeEqualTo(replayType);
+		}
+		
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		getBatchNames(selectByExample);
 		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		page.setRecords(selectByExample);
 		page.setTotal(count);
 		return page;
 	}
 
+	private void getBatchNames(List<DispatchPlan> selectByExample) {
+		DispatchPlanBatchExample ex = new DispatchPlanBatchExample();
+		List<Integer> ids = new ArrayList<>();
+		for (DispatchPlan dispatchPlan : selectByExample) {
+			ids.add(dispatchPlan.getBatchId());
+		}
+		ex.createCriteria().andIdIn(ids);
+
+		List<DispatchPlanBatch> Batch = dispatchPlanBatchMapper.selectByExample(ex);
+
+		for (DispatchPlanBatch batchBean : Batch) {
+			for (DispatchPlan plan : selectByExample) {
+				if (batchBean.getId().equals(plan.getBatchId())) {
+					plan.setBatchName(batchBean.getName());
+				}
+			}
+		}
+	}
 
 	@Override
 	public List<LineConcurrent> outLineinfos(String userId) {
@@ -382,7 +413,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean deleteSchedule(String planUuid) {	
+	public boolean deleteSchedule(String planUuid) {
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
 		int result = dispatchPlanMapper.deleteByExample(ex);
@@ -391,8 +422,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean batchUpdatePlans(IdsDto[] dto) {
-		int  result = 0;
-		for(IdsDto bean : dto){
+		int result = 0;
+		for (IdsDto bean : dto) {
 			DispatchPlan dis = new DispatchPlan();
 			dis.setPlanUuid(bean.getPlanUUID());
 			dis.setStatusPlan(Integer.valueOf(bean.getStatus()));
@@ -407,9 +438,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean operationAllPlanByBatchId(Integer batchId,String status) {
+	public boolean operationAllPlanByBatchId(Integer batchId, String status) {
 		DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
-		
+
 		DispatchPlan dispatchPlan = new DispatchPlan();
 		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 		dispatchPlan.setStatusPlan(Integer.valueOf(status));
@@ -419,16 +450,21 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean batchDeletePlans(IdsDto[] dto) {
-		int  result =0;
-		for(IdsDto bean : dto){
+		int result = 0;
+		for (IdsDto bean : dto) {
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanUUID());
 			result = dispatchPlanMapper.deleteByExample(ex);
-			
+
 			DispatchHourExample exHour = new DispatchHourExample();
 			exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanUUID());
-			result =dispatchHourMapper.deleteByExample(exHour);
+			result = dispatchHourMapper.deleteByExample(exHour);
 		}
 		return result > 0 ? true : false;
+	}
+
+	@Override
+	public List<DispatchPlanBatch> queryDispatchPlanBatch() {
+		return dispatchPlanBatchMapper.selectByExample(new DispatchPlanBatchExample());
 	}
 }

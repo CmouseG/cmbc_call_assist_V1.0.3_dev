@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.manager.impl;
 
+import com.google.common.base.Preconditions;
 import com.guiji.calloutserver.manager.FsLineManager;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.component.result.Result;
@@ -46,6 +47,7 @@ public class FsLineManagerImpl implements FsLineManager {
             //TODO: 报警，获取fsline异常
         }
 
+        Preconditions.checkNotNull(returnData, "获取fsline失败，返回结果为空");
         return (FsLineVO) returnData.getBody();
     }
 }

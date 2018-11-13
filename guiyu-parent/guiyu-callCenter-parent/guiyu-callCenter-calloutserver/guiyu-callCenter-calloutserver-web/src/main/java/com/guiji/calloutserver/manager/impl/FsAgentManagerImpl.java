@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.manager.impl;
 
+import com.google.common.base.Preconditions;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
@@ -61,6 +62,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
             //TODO: 报警，上传文件异常
         }
 
+        Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
         return (RecordVO) returnData.getBody();
     }
 }

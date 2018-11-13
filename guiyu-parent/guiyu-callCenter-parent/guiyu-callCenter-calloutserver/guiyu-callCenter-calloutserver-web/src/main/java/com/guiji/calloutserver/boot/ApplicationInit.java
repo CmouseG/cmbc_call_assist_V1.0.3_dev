@@ -73,10 +73,15 @@ public class ApplicationInit {
                     log.warn("calloutserver申请freeswitch资源失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
             }, -1, 1, 1,60);
+
         } catch (Exception e) {
             log.warn("在初始化calloutserver时出现异常", e);
         }
 
-        return (FsBindVO) returnData.getBody();
+        if(returnData!=null){
+            return (FsBindVO) returnData.getBody();
+        }else{
+            return null;
+        }
     }
 }

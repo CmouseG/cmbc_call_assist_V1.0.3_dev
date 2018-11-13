@@ -90,6 +90,7 @@ public class LocalFsServer implements IEslEventListener {
             }
         }
 
+        Preconditions.checkNotNull(eslClient, "连接FreeSWITCH出现异常, eslClient为空");
         return eslClient;
     }
 

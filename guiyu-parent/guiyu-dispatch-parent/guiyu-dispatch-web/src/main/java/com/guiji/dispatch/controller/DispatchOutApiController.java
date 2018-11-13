@@ -3,6 +3,8 @@ package com.guiji.dispatch.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +18,7 @@ import com.guiji.dispatch.service.IDispatchPlanService;
 
 @RestController
 public class DispatchOutApiController implements IDispatchPlanOut{
-	
+	static Logger logger = LoggerFactory.getLogger(DispatchOutApiController.class);
     @Autowired
     private IDispatchPlanService dispatchPlanService;
 
@@ -52,7 +54,7 @@ public class DispatchOutApiController implements IDispatchPlanOut{
 				list.add(bean);
 			} 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error",e);
 		}
 		return Result.ok(list);
 	}

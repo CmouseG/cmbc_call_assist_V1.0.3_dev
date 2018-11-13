@@ -1474,6 +1474,66 @@ public class DispatchPlanExample {
             addCriterion("is_tts not between", value1, value2, "isTts");
             return (Criteria) this;
         }
+
+        public Criteria andReplayTypeIsNull() {
+            addCriterion("replay_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeIsNotNull() {
+            addCriterion("replay_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeEqualTo(Integer value) {
+            addCriterion("replay_type =", value, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeNotEqualTo(Integer value) {
+            addCriterion("replay_type <>", value, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeGreaterThan(Integer value) {
+            addCriterion("replay_type >", value, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("replay_type >=", value, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeLessThan(Integer value) {
+            addCriterion("replay_type <", value, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("replay_type <=", value, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeIn(List<Integer> values) {
+            addCriterion("replay_type in", values, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeNotIn(List<Integer> values) {
+            addCriterion("replay_type not in", values, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeBetween(Integer value1, Integer value2) {
+            addCriterion("replay_type between", value1, value2, "replayType");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplayTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("replay_type not between", value1, value2, "replayType");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

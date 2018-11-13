@@ -181,7 +181,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 		if(map == null || cls ==null){
 			return null;
 		}
-		if(null != cls.getName() && cls.getName().equals("java.util.Map")){
+		if(null != cls.getName() && cls.isAssignableFrom(Map.class)){
 			return (T)map;
 		}
 		T obj = null;
@@ -259,6 +259,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 									value = null;
 								}
 							}else{
+								if(null == value) {
+									value = "";
+								}
 								illegalValue(entry.getKey(),value,java.sql.Date.class,null,null);
 							}
 						}else if(fieldType.equals(java.sql.Date.class)){
@@ -280,6 +283,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 									value = new java.util.Date(((java.util.Date)value).getTime());
 								}
 							}else{
+								if(null == value) {
+									value = "";
+								}
 								illegalValue(entry.getKey(),value,java.sql.Date.class,null,null);
 							}
 						}else if(fieldType.equals(java.sql.Timestamp.class)){
@@ -314,9 +320,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 							}
 						}else if(fieldType.equals(String.class)){
 							//String
-							if(StrUtils.isNotEmpty(String.valueOf(value))){
-								value = value;
-							}else{
+							if(StrUtils.isEmpty(String.valueOf(value))){
 								value = "";
 							}
 						}else if(fieldType.equals(Long.class)){
@@ -333,7 +337,9 @@ public class BeanUtil extends org.springframework.beans.BeanUtils{
 									}
 								}else{
 									//容错处理，尝试其他类型
-									value = Long.valueOf(value.toString());
+									if (value != null) {
+										value = Long.valueOf(value.toString());
+									}
 								}
 							}catch(NumberFormatException e){
 								if(null == value) {

@@ -1,6 +1,12 @@
 package com.guiji.fsagent.util;
 
+import org.apache.http.entity.ContentType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 
 public class FileUtil {
@@ -40,5 +46,16 @@ public class FileUtil {
             }
         }
     }
+
+    public MultipartFile  toMultipartFile(String fileName) throws IOException{
+        File file = new File(fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
+                ContentType.APPLICATION_OCTET_STREAM.toString(), fileInputStream);
+        return multipartFile;
+
+    }
+
+
 
 }

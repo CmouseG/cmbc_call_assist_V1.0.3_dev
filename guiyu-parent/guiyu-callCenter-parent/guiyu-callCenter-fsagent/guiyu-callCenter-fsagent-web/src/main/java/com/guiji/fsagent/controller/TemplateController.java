@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 public class TemplateController implements ITemplate {
     private final Logger logger = LoggerFactory.getLogger(TemplateController.class);
 
     @Autowired
     TemplateService templateService;
+
     @Override
     public Result.ReturnData<Boolean> istempexist(@PathVariable(value="tempId") String tempId) {
         logger.debug("收到模板是否存在请求tempId[{}]",tempId);
@@ -58,12 +60,9 @@ public class TemplateController implements ITemplate {
         logger.debug("收到上传录音请求RecordReqVO[{}]",recordReqVO);
         if (StringUtils.isBlank(recordReqVO.getFileName()) || StringUtils.isBlank(recordReqVO.getBusiId()) ||
                 StringUtils.isBlank(recordReqVO.getBusiType()) || StringUtils.isBlank(recordReqVO.getSysCode())) {
-            logger.info("传录音请求失败，参数错误，为null或空");
+            logger.info("上传录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        RecordVO record = new RecordVO();
-        record.setFileName(recordReqVO.getFileName());
-        record.setFileUrl("http://192.168.1.22/" + recordReqVO.getFileName());
-        return Result.ok(record);
+        return templateService.uploadrecord(recordReqVO);
     }
 }

@@ -15,6 +15,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.controller.DispatchPlanController;
 import com.guiji.dispatch.dao.DispatchHourMapper;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
@@ -45,6 +48,7 @@ import com.guiji.utils.IdGenUtil;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
+	static Logger logger = LoggerFactory.getLogger(DispatchPlanServiceImpl.class);
 
 	@Autowired
 	private DispatchPlanMapper dispatchPlanMapper;
@@ -91,7 +95,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			try {
 				dispatchHour.setGmtCreate(ToolDateTime.getCurrentTime());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("error",e);
 			}
 			dispatchHour.setDispatchId(dispatchPlan.getPlanUuid());
 			dispatchHour.setHour(Integer.valueOf(hour));
@@ -315,7 +319,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()),
 						new Timestamp(sdf.parse(endTime).getTime()));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("error",e);
 			}
 		}
 
@@ -430,7 +434,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			try {
 				dis.setGmtModified(dateProvider.getCurrentTime());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("error",e);
 			}
 			result = dispatchPlanMapper.updateByExampleSelective(dis, new DispatchPlanExample());
 		}

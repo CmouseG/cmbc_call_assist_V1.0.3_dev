@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.manager.impl;
 
+import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.entity.FsBind;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsManager;
@@ -47,6 +48,7 @@ public class FsManagerImpl implements FsManager {
             //TODO: 报警，申请fs资源出现异常
         }
 
+        Preconditions.checkNotNull(returnData, "申请fs失败，返回结果为空");
         return (FsBind) returnData.getBody();
     }
 

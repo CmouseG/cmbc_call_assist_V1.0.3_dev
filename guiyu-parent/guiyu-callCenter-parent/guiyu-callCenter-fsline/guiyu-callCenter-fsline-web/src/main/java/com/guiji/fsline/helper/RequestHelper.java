@@ -71,7 +71,7 @@ public class RequestHelper {
             if(totalSleepSeconds >= maxRetryInterval){
                 totalSleepSeconds = maxRetryInterval;
             }
-            Thread.sleep(totalSleepSeconds * 1000);
+            Thread.sleep(totalSleepSeconds * 1000L);
 
             if(unStopFlag){
                 isContinue = true;

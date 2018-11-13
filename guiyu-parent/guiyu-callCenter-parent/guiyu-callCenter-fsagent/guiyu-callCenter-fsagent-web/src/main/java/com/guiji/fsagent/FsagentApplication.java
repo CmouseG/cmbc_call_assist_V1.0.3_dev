@@ -11,7 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableSwagger2
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.guiji")
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class FsagentApplication {
     public static void main(String[] args){

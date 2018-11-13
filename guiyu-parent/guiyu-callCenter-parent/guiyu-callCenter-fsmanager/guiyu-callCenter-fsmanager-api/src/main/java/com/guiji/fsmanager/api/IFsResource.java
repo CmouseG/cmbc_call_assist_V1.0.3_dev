@@ -23,13 +23,13 @@ public interface IFsResource {
             @ApiImplicitParam(name = "serviceType", value = "服务类型", dataType = "String", paramType = "query"),
     })
     @RequestMapping(value = "/applyfs", method = RequestMethod.GET)
-    public Result.ReturnData<FsBindVO> applyfs(@RequestParam("serviceId") String serviceId, @RequestParam("serviceType")ServiceTypeEnum serviceType);
+     Result.ReturnData<FsBindVO> applyfs(@RequestParam("serviceId") String serviceId, @RequestParam("serviceType")ServiceTypeEnum serviceType);
 
     @ApiOperation(value = "释放freeswitch资源接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "serviceId", value = "服务Id", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/releasefs", method = RequestMethod.GET)
-    public Result.ReturnData<Boolean>  releasefs(@RequestParam("serviceId") String serviceId);
+     Result.ReturnData<Boolean>  releasefs(@RequestParam("serviceId") String serviceId);
 
 }

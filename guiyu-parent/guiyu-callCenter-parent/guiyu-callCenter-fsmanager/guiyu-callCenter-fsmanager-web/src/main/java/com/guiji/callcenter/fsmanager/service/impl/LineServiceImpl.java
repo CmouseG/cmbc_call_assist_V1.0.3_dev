@@ -159,7 +159,7 @@ public class LineServiceImpl implements LineService {
         LinkedHashMap<String, String> gatewayMap = new LinkedHashMap<String, String>();
         GatewayVO include = new GatewayVO();
         GatewayVO.Gateway gateway = new GatewayVO.Gateway();
-        gateway.setName(request.getLineId());
+        gateway.setName("gw_"+request.getLineId());
 
         gatewayMap.put("username", "user");
         gatewayMap.put("password", "pwd");

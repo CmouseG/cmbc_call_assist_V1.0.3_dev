@@ -19,28 +19,28 @@ import java.util.Map;
  */
 public final class DateUtil {
 	private DateUtil(){};
-	public static String ymdhms = "yyyy-MM-dd HH:mm:ss"; 
-	public static String ymdhms2 = "yyyyMMddHHmmss"; 
-	public static String ymd = "yyyy-MM-dd";    
-    public static SimpleDateFormat ymdSDF = new SimpleDateFormat(ymd);    
-    private static String year = "yyyy";    
-    private static String month = "MM";    
-    private static String day = "dd";    
-    public static SimpleDateFormat yyyyMMddHHmmss = new SimpleDateFormat(ymdhms);  
-    public static SimpleDateFormat yyyyMMddHHmmss2 = new SimpleDateFormat(ymdhms2);  
-    public static SimpleDateFormat yearSDF = new SimpleDateFormat(year);    
-    public static SimpleDateFormat monthSDF = new SimpleDateFormat(month);    
-    public static SimpleDateFormat daySDF = new SimpleDateFormat(day);    
+	public static final String ymdhms = "yyyy-MM-dd HH:mm:ss";
+	public static final String ymdhms2 = "yyyyMMddHHmmss";
+	public static final String ymd = "yyyy-MM-dd";
+    public static final SimpleDateFormat ymdSDF = new SimpleDateFormat(ymd);
+    private static final String year = "yyyy";
+    private static final String month = "MM";
+    private static final String day = "dd";
+    public static final SimpleDateFormat yyyyMMddHHmmss = new SimpleDateFormat(ymdhms);
+    public static final SimpleDateFormat yyyyMMddHHmmss2 = new SimpleDateFormat(ymdhms2);
+    public static final SimpleDateFormat yearSDF = new SimpleDateFormat(year);
+    public static final SimpleDateFormat monthSDF = new SimpleDateFormat(month);
+    public static final SimpleDateFormat daySDF = new SimpleDateFormat(day);
     
-    public static SimpleDateFormat yyyyMMddHHmm = new SimpleDateFormat(    
+    public static final SimpleDateFormat yyyyMMddHHmm = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm");    
     
-    public static SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");    
+    public static final SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
     
-    public static SimpleDateFormat yyyyMMddHH_NOT_ = new SimpleDateFormat(    
+    public static final SimpleDateFormat yyyyMMddHH_NOT_ = new SimpleDateFormat(
             "yyyyMMdd");    
     
-    public static long DATEMM = 86400L;    
+    public static final long DATEMM = 86400L;
     
     /**
      * 转换日期字符串

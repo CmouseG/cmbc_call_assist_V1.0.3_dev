@@ -26,32 +26,6 @@
     <result column="replay_type" property="replayType" jdbcType="INTEGER" />
   </resultMap>
   
-  
-    <resultMap id="BaseResultMap_1" type="com.guiji.dispatch.dao.entity.DispatchPlan" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="plan_uuid" property="planUuid" jdbcType="CHAR" />
-    <result column="user_id" property="userId" jdbcType="INTEGER" />
-    <result column="batch_id" property="batchId" jdbcType="INTEGER" />
-    <result column="phone" property="phone" jdbcType="VARCHAR" />
-    <result column="attach" property="attach" jdbcType="VARCHAR" />
-    <result column="params" property="params" jdbcType="VARCHAR" />
-    <result column="status_plan" property="statusPlan" jdbcType="INTEGER" />
-    <result column="status_sync" property="statusSync" jdbcType="INTEGER" />
-    <result column="recall" property="recall" jdbcType="INTEGER" />
-    <result column="recall_params" property="recallParams" jdbcType="VARCHAR" />
-    <result column="robot" property="robot" jdbcType="VARCHAR" />
-    <result column="line" property="line" jdbcType="INTEGER" />
-    <result column="result" property="result" jdbcType="VARCHAR" />
-    <result column="call_agent" property="callAgent" jdbcType="VARCHAR" />
-    <result column="clean" property="clean" jdbcType="INTEGER" />
-    <result column="call_data" property="callData" jdbcType="INTEGER" />
-    <result column="call_hour" property="callHour" jdbcType="VARCHAR" />
-    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
-    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
-    <result column="is_tts" property="isTts" jdbcType="TINYINT" />
-    <result column="replay_type" property="replayType" jdbcType="INTEGER" />
-      <result column="name" property="batchName" jdbcType="VARCHAR" />
-  </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -150,7 +124,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan"  useGeneratedKeys="true"  keyProperty="id">
     insert into dispatch_plan (id, plan_uuid, user_id, 
       batch_id, phone, attach, 
       params, status_plan, status_sync, 

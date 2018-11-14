@@ -42,6 +42,7 @@ public class DispatchPlanController {
 		try {
 			result = dispatchPlanService.addSchedule(dispatchPlan, userId);
 		} catch (Exception e) {
+			logger.error("error",e);
 		}
 		return result;
 	}

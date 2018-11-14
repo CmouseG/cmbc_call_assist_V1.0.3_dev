@@ -24,11 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.ReplayDto;
+import com.guiji.dispatch.bean.ReplayNumType;
 import com.guiji.dispatch.controller.DispatchPlanController;
 import com.guiji.dispatch.dao.DispatchHourMapper;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
@@ -45,6 +48,14 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateProvider;
 import com.guiji.dispatch.util.ToolDateTime;
 import com.guiji.utils.IdGenUtil;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
@@ -95,7 +106,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			try {
 				dispatchHour.setGmtCreate(ToolDateTime.getCurrentTime());
 			} catch (Exception e) {
-				logger.error("error",e);
+				logger.error("error", e);
 			}
 			dispatchHour.setDispatchId(dispatchPlan.getPlanUuid());
 			dispatchHour.setHour(Integer.valueOf(hour));
@@ -208,6 +219,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
 			} else {
+				
 				throw new Exception("导入失败(第" + (r + 1) + "行,电话未填写)");
 			}
 
@@ -272,11 +284,68 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		// 0不重播非0表示重播次数
 		if (dispatchPlan.getRecall() > 0) {
+			// 获取重播条件
 			String recallParams = dispatchPlan.getRecallParams();
+			ReplayDto replayDto = JSONObject.parseObject(recallParams, ReplayDto.class);
+			//重播类型针对F类
+			ReplayNumType replayNumType = JSONObject.parseObject(replayDto.getLabelType(), ReplayNumType.class);
+			
+			// 查询语音记录
+			ReturnData<CallOutPlan> callRecordById = callManagerFeign.getCallRecordById(planUuid);
+			CallOutPlan body = callRecordById.getBody();
+	
+			if(body!=null){
+				// 意图
+				if(replayDto.getLabel().equals(body.getAccurateIntent​())){
+					//判断重播条件是否一致
+					
+				}
+			}
 		}
 
 		return false;
 	}
+
+	
+	public static String getTimeByMinute(int minute) {
+
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.add(Calendar.MINUTE, minute);
+
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+
+	}
+	
+	 public static Map<String, Object> transBean2Map(Object obj) {
+
+	        if(obj == null){
+	            return null;
+	        }        
+	        Map<String, Object> map = new HashMap<String, Object>();
+	        try {
+	            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
+	            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+	            for (PropertyDescriptor property : propertyDescriptors) {
+	                String key = property.getName();
+
+	                // 过滤class属性
+	                if (!key.equals("class")) {
+	                    // 得到property对应的getter方法
+	                    Method getter = property.getReadMethod();
+	                    Object value = getter.invoke(obj);
+
+	                    map.put(key, value);
+	                }
+
+	            }
+	        } catch (Exception e) {
+	            System.out.println("transBean2Map Error " + e);
+	        }
+
+	        return map;
+
+	    }
 
 	@Override
 	public boolean dispatchPlanBatch(DispatchPlanBatch dispatchPlanBatch) {
@@ -310,6 +379,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 		Criteria createCriteria = example.createCriteria();
+		if (phone != null && phone != "") {
+			createCriteria.andPhoneEqualTo(phone);
+		}
+
 		if (planStatus != null && planStatus != "") {
 			createCriteria.andStatusPlanEqualTo(Integer.valueOf(planStatus));
 		}
@@ -319,18 +392,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()),
 						new Timestamp(sdf.parse(endTime).getTime()));
 			} catch (ParseException e) {
-				logger.error("error",e);
+				logger.error("error", e);
 			}
 		}
 
 		if (batchId != null && batchId != 0) {
 			createCriteria.andBatchIdEqualTo(batchId);
 		}
-		
-		if(replayType !=null &&replayType !=-1){
+
+		if (replayType != null && replayType != -1) {
 			createCriteria.andReplayTypeEqualTo(replayType);
 		}
-		
+
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		getBatchNames(selectByExample);
 		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
@@ -347,12 +420,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		ex.createCriteria().andIdIn(ids);
 
-		List<DispatchPlanBatch> Batch = dispatchPlanBatchMapper.selectByExample(ex);
+		if(ids.size()>0){
+			List<DispatchPlanBatch> Batch = dispatchPlanBatchMapper.selectByExample(ex);
 
-		for (DispatchPlanBatch batchBean : Batch) {
-			for (DispatchPlan plan : selectByExample) {
-				if (batchBean.getId().equals(plan.getBatchId())) {
-					plan.setBatchName(batchBean.getName());
+			for (DispatchPlanBatch batchBean : Batch) {
+				for (DispatchPlan plan : selectByExample) {
+					if (batchBean.getId().equals(plan.getBatchId())) {
+						plan.setBatchName(batchBean.getName());
+					}
 				}
 			}
 		}
@@ -373,14 +448,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		// 同步状态;0未同步1已同步
 		example.createCriteria().andUserIdEqualTo(userId).andLineEqualTo(lineId)
-				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0).andStatusPlanEqualTo(Constant.STATUS_SYNC_1);
+				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 		example.setOrderByClause("`gmt_create` DESC");
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		// //修改同步状态
-		// for(DispatchPlan dispatchPlan : selectByExample){
-		// dispatchPlan.setStatusSync(Constant.status_sync_1);
-		// dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
-		// }
+		for (DispatchPlan dispatchPlan : selectByExample) {
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+		}
 		return selectByExample;
 	}
 
@@ -430,11 +505,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		for (IdsDto bean : dto) {
 			DispatchPlan dis = new DispatchPlan();
 			dis.setPlanUuid(bean.getPlanUUID());
-			dis.setStatusPlan(Integer.valueOf(bean.getStatus()));
+			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
 				dis.setGmtModified(dateProvider.getCurrentTime());
 			} catch (Exception e) {
-				logger.error("error",e);
+				logger.error("error", e);
 			}
 			result = dispatchPlanMapper.updateByExampleSelective(dis, new DispatchPlanExample());
 		}

@@ -49,7 +49,7 @@ public class UserController{
 		return page;
 	}
 	
-	@RequestMapping("getUserByPage")
+	@RequestMapping("getUserById")
 	public SysUser getUserById(Long userId){
 		return service.getUserById(userId);
 	}

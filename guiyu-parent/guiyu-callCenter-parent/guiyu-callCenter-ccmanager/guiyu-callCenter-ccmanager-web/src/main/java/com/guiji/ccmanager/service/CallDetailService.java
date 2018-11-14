@@ -14,11 +14,13 @@ import java.util.List;
  * @Description:
  */
 public interface CallDetailService {
-    List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo );
+    List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo, String phoneNum,String durationMin, String durationMax,
+                                 String accurateIntent, String freason,String callId, String tempId );
 
     CallOutPlanVO getCallDetail(String callId);
 
-    int callrecordCount(Date start, Date end, String customerId);
+    int callrecordCount(Date start, Date end, String customerId, String phoneNum,String durationMin,String durationMax,
+                        String accurateIntent, String freason,String callId, String tempId);
 
     String getDialogue(String callId);
 

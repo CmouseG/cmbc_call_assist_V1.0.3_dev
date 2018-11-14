@@ -8,21 +8,12 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.utils.BeanUtil;
-import jxl.Workbook;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -43,9 +34,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Autowired
     private CallOutDetailRecordMapper callOutDetailRecordMapper;
 
-    @Override
-    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo ){
-
+    public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId, String phoneNum,String durationMin, String durationMax,
+                                         String accurateIntent, String freason,String callId, String tempId){
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         if(startDate!=null){
@@ -57,7 +47,50 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(StringUtils.isNotBlank(customerId)){
             criteria.andCustomerIdEqualTo(customerId);
         }
+        if(StringUtils.isNotBlank(phoneNum)){
+            criteria.andPhoneNumEqualTo(phoneNum);
+        }
+        if(StringUtils.isNotBlank(durationMin)){
+            criteria.andDurationGreaterThanOrEqualTo(Integer.valueOf(durationMin));
+        }
+        if(StringUtils.isNotBlank(durationMax)){
+            criteria.andDurationLessThanOrEqualTo(Integer.valueOf(durationMax));
+        }
+        if(StringUtils.isNotBlank(accurateIntent)){
+            if(accurateIntent.contains(",")){
+                String[] arr = accurateIntent.split(",");
+                criteria.andAccurateIntentIn(Arrays.asList(arr));
+            }else{
+                criteria.andAccurateIntentEqualTo(accurateIntent);
+            }
+        }
+        if(StringUtils.isNotBlank(freason)){
+            if(freason.contains(",")){
+                String[] arr = freason.split(",");
+                List<Integer> list = new ArrayList<Integer>();
+                for(String s:arr){
+                    list.add(Integer.parseInt(s));
+                }
+                criteria.andFreasonIn(list);
+            }else{
+                criteria.andFreasonEqualTo(Integer.parseInt(freason));
+            }
+        }
+        if(StringUtils.isNotBlank(callId)){
+            criteria.andCallIdEqualTo(callId);
+        }
+        if(StringUtils.isNotBlank(tempId)){
+            criteria.andTempIdEqualTo(tempId);
+        }
+        return example;
+    }
 
+    @Override
+    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo,String phoneNum,String durationMin, String durationMax,
+                                        String accurateIntent, String freason,String callId, String tempId ){
+
+
+        CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum,  durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
@@ -67,18 +100,11 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public int callrecordCount(Date startDate, Date endDate, String customerId) {
-        CallOutPlanExample example = new CallOutPlanExample();
-        CallOutPlanExample.Criteria criteria = example.createCriteria();
-        if(startDate!=null){
-            criteria.andCallStartTimeGreaterThan(startDate);
-        }
-        if(endDate!=null){
-            criteria.andCallStartTimeLessThan(endDate);
-        }
-        if(StringUtils.isNotBlank(customerId)){
-            criteria.andCustomerIdEqualTo(customerId);
-        }
+    public int callrecordCount(Date startDate, Date endDate, String customerId, String phoneNum,String durationMin, String durationMax,
+                               String accurateIntent, String freason,String callId, String tempId) {
+
+        CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum, durationMin, durationMax, accurateIntent,  freason, callId,  tempId);
+
         return callOutPlanMapper.countByExample(example);
     }
 

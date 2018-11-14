@@ -11,7 +11,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import jxl.Workbook;
-import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.write.*;
@@ -22,11 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sun.nio.ch.IOUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -48,13 +45,23 @@ public class CallDetailController {
             @ApiImplicitParam(name = "startDate", value = "开始时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "phoneNum", value = "电话号码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "durationMin", value = "通话时长，最小值", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "durationMax", value = "通话时长，最大值", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "accurateIntent", value = "意向标签，以逗号分隔", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "freason", value = "F类说明，以逗号分隔。传数字，1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate, String customerId, String pageSize, String pageNo ){
+    public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate, String customerId,String pageSize, String pageNo,
+                                                              String phoneNum,String durationMin, String durationMax,String accurateIntent, String freason,String callId, String tempId ){
 
-        log.debug("get request getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}]", startDate, endDate, customerId, pageSize, pageNo);
+        log.debug("get request getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
+                        "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}]",
+                startDate, endDate, customerId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
@@ -71,8 +78,8 @@ public class CallDetailController {
 
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<CallOutPlan> list = callDetailService.callrecord(start,end,customerId,pageSizeInt,pageNoInt);
-        int count = callDetailService.callrecordCount(start,end,customerId);
+        List<CallOutPlan> list = callDetailService.callrecord(start,end,customerId,pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+        int count = callDetailService.callrecordCount(start,end,customerId, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
 
         Page<CallOutPlan> page = new Page<CallOutPlan>();
         page.setPageNo(pageNoInt);
@@ -80,7 +87,8 @@ public class CallDetailController {
         page.setTotal(count);
         page.setRecords(list);
 
-        log.debug("response success getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}]", startDate, endDate, customerId, pageSize, pageNo);
+        log.debug("response success getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}]",
+                startDate, endDate, customerId, pageSize, pageNo);
 
         return Result.ok(page);
     }

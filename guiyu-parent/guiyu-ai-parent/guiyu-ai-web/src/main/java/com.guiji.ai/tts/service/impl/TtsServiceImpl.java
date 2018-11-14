@@ -5,6 +5,7 @@ import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
 import org.springframework.stereotype.Service;
 
+import java.io.OutputStream;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +48,11 @@ public class TtsServiceImpl implements TtsService {
         String audioUrl = null;
         try {
             audioUrl = "合成语音URL" + text;
+
+            String url = TtsServiceFactory.getTtsProvide(module).transfer(audioUrl);
+
+
+            // 更新数据库
 //            System.out.println("task线程：" + Thread.currentThread().getName()
 //                    + "yw=" + busId + "module=" + text + "wenben=" + text + ",完成！+" + new Date());
         } catch (Exception e) {

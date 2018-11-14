@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.LineConfigMapper;
 import com.guiji.callcenter.dao.entity.LineConfig;
 import com.guiji.callcenter.dao.entity.LineConfigExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
+import com.guiji.callcenter.fsmanager.config.GatewayConfig;
 import com.guiji.callcenter.fsmanager.entity.DialplanVO;
 import com.guiji.callcenter.fsmanager.entity.GatewayVO;
 import com.guiji.callcenter.fsmanager.manager.EurekaManager;
@@ -29,6 +30,8 @@ public class LineServiceImpl implements LineService {
     EurekaManager eurekaManager;
     @Autowired
     LineConfigMapper lineConfigMapper;
+    @Autowired
+    GatewayConfig gatewayConfig;
     /**
      * 增加线路
      * @param request
@@ -71,7 +74,7 @@ public class LineServiceImpl implements LineService {
     public void editLineinfos(String lineId, LineInfoVO request){
         Map<String ,String> map = new HashMap<String,String>();
         map.put(Constant.CONFIG_TYPE_DIALPLAN,"01_"+lineId+".xml");
-        map.put(Constant.CONFIG_TYPE_GATEWAY,"01_"+lineId+".xml");
+        map.put(Constant.CONFIG_TYPE_GATEWAY,"gw_"+lineId+".xml");
         request.setLineId(lineId);
         for (String key : map.keySet()) {
             String fileName = map.get(key);
@@ -109,6 +112,7 @@ public class LineServiceImpl implements LineService {
         LineConfigExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(lineId);
         lineConfigMapper.deleteByExample(example);
+        deletenotify(lineId);
     }
 
 
@@ -159,10 +163,9 @@ public class LineServiceImpl implements LineService {
         LinkedHashMap<String, String> gatewayMap = new LinkedHashMap<String, String>();
         GatewayVO include = new GatewayVO();
         GatewayVO.Gateway gateway = new GatewayVO.Gateway();
-        gateway.setName(request.getLineId());
-
-        gatewayMap.put("username", "user");
-        gatewayMap.put("password", "pwd");
+        gateway.setName("gw_"+request.getLineId());
+        gatewayMap.put("username", gatewayConfig.getUsername());
+        gatewayMap.put("password", gatewayConfig.getPassword());
         String realm=request.getSipIp()+":"+request.getSipPort();
         gatewayMap.put("realm", realm);
         gatewayMap.put("from-domain", realm);

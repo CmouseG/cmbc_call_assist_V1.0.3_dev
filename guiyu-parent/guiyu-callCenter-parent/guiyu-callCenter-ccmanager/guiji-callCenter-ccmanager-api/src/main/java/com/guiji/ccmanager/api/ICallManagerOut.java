@@ -3,7 +3,6 @@ package com.guiji.ccmanager.api;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.component.result.Result;
-import feign.Param;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +25,7 @@ public interface ICallManagerOut {
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="out/getLineInfos")
-    public Result.ReturnData<List<LineConcurrent>> getLineInfos(@RequestParam("customerId") String customerId);
+    Result.ReturnData<List<LineConcurrent>> getLineInfos(@RequestParam("customerId") String customerId);
 
 
     @ApiOperation(value = "启动客户呼叫计划")
@@ -36,7 +35,7 @@ public interface ICallManagerOut {
             @ApiImplicitParam(name = "lineId", value = "线路id", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="out/startCallPlan")
-    public Result.ReturnData<Boolean> startCallPlan(@RequestParam("customerId") String customerId, @RequestParam("tempId") String tempId, @RequestParam("lineId") String lineId);
+    Result.ReturnData<Boolean> startCallPlan(@RequestParam("customerId") String customerId, @RequestParam("tempId") String tempId, @RequestParam("lineId") String lineId);
 
 
     @ApiOperation(value = "获取callId获取通话记录")

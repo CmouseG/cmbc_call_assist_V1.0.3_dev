@@ -10,13 +10,23 @@ import com.guiji.utils.DateUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
+import jxl.write.*;
+import jxl.write.biff.RowsExceededException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sun.nio.ch.IOUtil;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -92,6 +102,50 @@ public class CallDetailController {
 
         log.debug("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
+    }
+
+    @ApiOperation(value = "下载通话记录")
+    @GetMapping(value="downloadDialogue")
+    public void downloadDialogue(String callId,HttpServletResponse resp) throws UnsupportedEncodingException {
+        resp.setContentType("application/octet-stream;charset=GBK");
+        String fileName = "通话记录.xls";
+        resp.setHeader("Content-Disposition", "attachment;filename="+
+                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
+
+        //生成文件
+        String context = callDetailService.getDialogue(callId);
+
+        OutputStream out=null;
+        try {
+            out=resp.getOutputStream();
+            WritableWorkbook wb = Workbook.createWorkbook(out);
+
+            WritableSheet sheet =  wb.createSheet("sheet1",0);
+            WritableCellFormat format = new WritableCellFormat();
+            format.setBorder(Border.ALL,BorderLineStyle.THIN);
+            format.setWrap(true);
+
+            Label label = new Label(0, 0 , "通话记录",format);
+            sheet.addCell(label);
+            sheet.setColumnView(0, 100);
+            sheet.addCell(new Label(0,1, context,format));
+
+            wb.write();
+            wb.close();
+
+        } catch (IOException e) {
+            log.error("downloadDialogue IOException :"+e);
+        } catch (RowsExceededException e) {
+            log.error("downloadDialogue RowsExceededException :"+e);
+        } catch (WriteException e) {
+            log.error("downloadDialogue WriteException :"+e);
+        } finally{
+            try {
+                out.close();
+            } catch (IOException e) {
+                log.error("out.close error:"+e);
+            }
+        }
     }
 
 }

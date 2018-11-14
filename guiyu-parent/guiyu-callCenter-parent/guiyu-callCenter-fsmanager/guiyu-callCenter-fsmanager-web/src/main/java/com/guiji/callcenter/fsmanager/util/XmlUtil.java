@@ -25,6 +25,7 @@ public class XmlUtil {
             JAXBContext context = JAXBContext.newInstance(new Class[] { obj.getClass() });
             Marshaller jaxbMarshaller = context.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(obj, write);
             return write.getBuffer().toString();
         } catch (JAXBException e) {

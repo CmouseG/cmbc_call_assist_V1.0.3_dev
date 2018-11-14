@@ -27,4 +27,9 @@ eureka:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 
 filedir:
-     lineDir: D:/line
+  lineDir: D:/line
+
+gateway:
+  username: user
+  password: pwd
+

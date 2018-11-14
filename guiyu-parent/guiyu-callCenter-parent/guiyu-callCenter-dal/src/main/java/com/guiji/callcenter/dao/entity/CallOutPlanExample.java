@@ -1884,6 +1884,66 @@ public class CallOutPlanExample {
             addCriterion("ai_id not between", value1, value2, "aiId");
             return (Criteria) this;
         }
+
+        public Criteria andFreasonIsNull() {
+            addCriterion("freason is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonIsNotNull() {
+            addCriterion("freason is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonEqualTo(Integer value) {
+            addCriterion("freason =", value, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonNotEqualTo(Integer value) {
+            addCriterion("freason <>", value, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonGreaterThan(Integer value) {
+            addCriterion("freason >", value, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonGreaterThanOrEqualTo(Integer value) {
+            addCriterion("freason >=", value, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonLessThan(Integer value) {
+            addCriterion("freason <", value, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonLessThanOrEqualTo(Integer value) {
+            addCriterion("freason <=", value, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonIn(List<Integer> values) {
+            addCriterion("freason in", values, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonNotIn(List<Integer> values) {
+            addCriterion("freason not in", values, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonBetween(Integer value1, Integer value2) {
+            addCriterion("freason between", value1, value2, "freason");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreasonNotBetween(Integer value1, Integer value2) {
+            addCriterion("freason not between", value1, value2, "freason");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -104,7 +104,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                 CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
                 BeanUtil.copyProperties(callOutDetail,callOutDetailVO);
                 for(CallOutDetailRecord callOutDetailRecord:records){
-                    if(callOutDetailRecord.getCallDetailId() == callOutDetail.getCallDetailId() ){
+                    if(callOutDetailRecord.getCallDetailId().equals(callOutDetail.getCallDetailId()) ){
                         BeanUtil.copyProperties(callOutDetailRecord,callOutDetailVO);
                     }
                 }

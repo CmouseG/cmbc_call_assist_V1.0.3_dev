@@ -33,21 +33,22 @@ public class LineInfoController {
     @ApiOperation(value = "查看客户所有线路接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "lineName", value = "线路名称", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getLineInfos")
-    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String pageSize, String pageNo){
+    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String lineName, String pageSize, String pageNo){
 
-        log.debug("get request getLineInfoByCustom，customerId[{}]，pageSize[{}]，pageNo[{}]",customerId, pageSize, pageNo);
+        log.debug("get request getLineInfoByCustom，customerId[{}]，lineName[{}]，pageSize[{}]，pageNo[{}]",customerId,lineName, pageSize, pageNo);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
         }
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId,pageSizeInt,pageNoInt);
-        int count = lineInfoService.getLineInfoByCustomCount(customerId,pageSizeInt,pageNoInt);
+        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId,lineName,pageSizeInt,pageNoInt);
+        int count = lineInfoService.getLineInfoByCustomCount(customerId,lineName);
 
         Page<LineInfo> page = new Page<LineInfo>();
         page.setPageNo(pageNoInt);
@@ -55,7 +56,7 @@ public class LineInfoController {
         page.setTotal(count);
         page.setRecords(list);
 
-        log.debug("response success getLineInfoByCustom，customerId[{}]，pageSize[{}]，pageNo[{}]",customerId, pageSize, pageNo);
+        log.debug("response success getLineInfoByCustom，customerId[{}]，lineName[{}]，pageSize[{}]，pageNo[{}]",customerId,lineName, pageSize, pageNo);
         return Result.ok(page);
     }
 

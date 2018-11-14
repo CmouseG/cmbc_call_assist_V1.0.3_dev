@@ -23,12 +23,12 @@ public interface ITemp {
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/downloadtempwav", method = RequestMethod.GET)
-    public Result.ReturnData downloadtempwav(@RequestParam("tempId") String tempId);
+     Result.ReturnData downloadtempwav(@RequestParam("tempId") String tempId);
 
     @ApiOperation(value = "模板是否存在")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/istempexist", method = RequestMethod.GET)
-    public Result.ReturnData<Boolean> istempexist(@RequestParam("tempId") String tempId);
+     Result.ReturnData<Boolean> istempexist(@RequestParam("tempId") String tempId);
 }

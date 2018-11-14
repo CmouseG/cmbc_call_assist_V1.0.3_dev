@@ -33,6 +33,7 @@ public class ShardingDataSourceConfig {
         shardingConfiguration.setDataSourceMap(createDataSourceMap());
         shardingConfiguration.setMasterSlaveRuleConfigurations(new ArrayList<>());
         shardingConfiguration.setTableRuleConfigurations(tableRuleConfigurations());
+//        shardingConfiguration.setTableRuleConfigurations(new ArrayList<>());
         DataSource shardingDataSource = shardingConfiguration.createShardingDataSource();
         return shardingDataSource;
     }

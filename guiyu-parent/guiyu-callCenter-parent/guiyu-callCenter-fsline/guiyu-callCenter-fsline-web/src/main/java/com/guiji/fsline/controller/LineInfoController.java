@@ -3,8 +3,8 @@ package com.guiji.fsline.controller;
 import com.guiji.component.result.Result;
 import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsline.entity.FsLineVO;
-import com.guiji.fsline.util.RequestUtil;
-import com.guiji.fsline.util.RequestUtil.RequestApi;
+import com.guiji.fsline.helper.RequestHelper;
+import com.guiji.fsline.helper.RequestHelper.RequestApi;
 import com.guiji.fsmanager.api.IFsResource;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
@@ -35,7 +35,7 @@ public class LineInfoController implements IFsLine {
     public void initLine() {
         Result.ReturnData returnData = null;
         try {
-            returnData = RequestUtil.loopRequest(new RequestApi() {
+            returnData = RequestHelper.loopRequest(new RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
                     return fsResourceApi.applyfs(ServerUtil.getInstanceId(registration), ServiceTypeEnum.fsline);
@@ -51,7 +51,7 @@ public class LineInfoController implements IFsLine {
             log.warn("在初始化fsline时出现异常", e);
         }
 
-        if(returnData!=null && RequestUtil.isSuccess(returnData)){
+        if(returnData!=null && RequestHelper.isSuccess(returnData)){
             fsBind = (FsBindVO)returnData.getBody();
         }else{
             log.warn("系统启动失败，因未获取到系统信息");

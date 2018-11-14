@@ -58,6 +58,8 @@ public class CallOutPlan implements Serializable {
 
     private String aiId;
 
+    private Integer freason;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -276,6 +278,14 @@ public class CallOutPlan implements Serializable {
         this.aiId = aiId == null ? null : aiId.trim();
     }
 
+    public Integer getFreason() {
+        return freason;
+    }
+
+    public void setFreason(Integer freason) {
+        this.freason = freason;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -309,6 +319,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", remarks=").append(remarks);
         sb.append(", hasTts=").append(hasTts);
         sb.append(", aiId=").append(aiId);
+        sb.append(", freason=").append(freason);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

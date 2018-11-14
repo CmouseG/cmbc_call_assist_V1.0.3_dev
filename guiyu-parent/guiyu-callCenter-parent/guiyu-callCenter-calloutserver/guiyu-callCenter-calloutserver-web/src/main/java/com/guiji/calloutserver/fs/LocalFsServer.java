@@ -2,8 +2,8 @@ package com.guiji.calloutserver.fs;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.guiji.callcenter.dao.entity.FsBind;
 import com.guiji.calloutserver.manager.FsManager;
+import com.guiji.fsmanager.entity.FsBindVO;
 import org.apache.commons.lang3.StringUtils;
 import org.freeswitch.esl.client.IEslEventListener;
 import org.freeswitch.esl.client.inbound.Client;
@@ -13,8 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 用于管理与FreeSWITCH的ESL连接
@@ -32,14 +30,12 @@ public class LocalFsServer implements IEslEventListener {
     @Autowired
     FsManager fsManager;
 
-    private FsBind fsBindInfo;
+    private FsBindVO fsBindInfo;
 
     private Client eslClient;
 
-    @PostConstruct
-    public void init(){
-        //申请fs资源
-        fsBindInfo = fsManager.applyfs();
+    public void init(FsBindVO fsInfo){
+        this.fsBindInfo = fsInfo;
 
         eslClient = getFsClient();
         fsWatchDog.monitor(this);
@@ -94,6 +90,7 @@ public class LocalFsServer implements IEslEventListener {
             }
         }
 
+        Preconditions.checkNotNull(eslClient, "连接FreeSWITCH出现异常, eslClient为空");
         return eslClient;
     }
 

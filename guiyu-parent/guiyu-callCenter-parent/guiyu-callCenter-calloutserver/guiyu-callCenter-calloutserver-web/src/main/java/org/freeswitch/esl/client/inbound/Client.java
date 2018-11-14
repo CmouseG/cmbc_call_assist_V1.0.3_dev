@@ -143,11 +143,11 @@ public class Client
         {
             try
             {
-                Thread.sleep( 250 );
+                Thread.sleep( 250L );
             } 
             catch ( InterruptedException e )
             {
-                // ignore
+                log.warn("sleep出现异常", e);
             }
         }
         

@@ -149,11 +149,7 @@ public class ToolDateTime {
 	
 	public static Date getCurrentTime() throws Exception {
 		SimpleDateFormat dateFormatter = null;
-		try {
-			dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return dateFormatter.parse(dateFormatter.format(new Date()));  
 	}
 

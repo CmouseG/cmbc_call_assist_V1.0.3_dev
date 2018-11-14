@@ -15,13 +15,13 @@ public interface ILineOperate {
             @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/updatenotify", method = RequestMethod.GET)
-    public Result.ReturnData<Boolean> updatenotify(@RequestParam("type")String type, @RequestParam("lineId") String lineId);
+     Result.ReturnData<Boolean> updatenotify(@RequestParam("type")String type, @RequestParam("lineId") String lineId);
 
     @ApiOperation(value = "删除线路接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/lineinfos/{lineId}", method = RequestMethod.DELETE)
-    public Result.ReturnData<Boolean>  deleteLineinfos(@RequestParam ("lineId")String lineId);
+     Result.ReturnData<Boolean>  deleteLineinfos(@RequestParam ("lineId")String lineId);
 
 }

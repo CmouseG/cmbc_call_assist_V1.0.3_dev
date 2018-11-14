@@ -11,9 +11,6 @@ import com.guiji.component.result.EnableAutoResultPack;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/**
- * Created by ty on 2018/10/18.
- */
 @MapperScan("com.guiji.dispatch.dao")
 @SpringBootApplication
 @EnableScheduling

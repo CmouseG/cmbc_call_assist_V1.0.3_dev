@@ -1,4 +1,4 @@
-package com.guiji.fsline.util;
+package com.guiji.fsline.helper;
 
 
 import com.guiji.component.result.Result;
@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  * @Date: 2018-10-31 17:28:00
  * @Description:  用于循环的请求接口数据，直至请求到数据为止
  */
-public class RequestUtil {
+public class RequestHelper {
     public static boolean isSuccess(Result.ReturnData result){
         if(result == null){
             return false;
@@ -50,7 +50,7 @@ public class RequestUtil {
             Result.ReturnData result = requestApi.execute();
             if(result!=null){
                 //请求成功立刻返回
-                if(isSuccess(result)){
+                if(result.success){
                     return result;
                 }else{
                     requestApi.onErrorResult(result);
@@ -71,7 +71,7 @@ public class RequestUtil {
             if(totalSleepSeconds >= maxRetryInterval){
                 totalSleepSeconds = maxRetryInterval;
             }
-            Thread.sleep(totalSleepSeconds * 1000);
+            Thread.sleep(totalSleepSeconds * 1000L);
 
             if(unStopFlag){
                 isContinue = true;

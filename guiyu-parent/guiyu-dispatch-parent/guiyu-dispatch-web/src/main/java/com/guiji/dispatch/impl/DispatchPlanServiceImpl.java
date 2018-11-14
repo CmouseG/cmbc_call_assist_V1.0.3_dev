@@ -1,7 +1,5 @@
 package com.guiji.dispatch.impl;
 
-import java.awt.DisplayMode;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -17,16 +15,24 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
+import com.guiji.auth.api.IAuth;
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.ReplayDto;
+import com.guiji.dispatch.bean.ReplayNumType;
+import com.guiji.dispatch.controller.DispatchPlanController;
 import com.guiji.dispatch.dao.DispatchHourMapper;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
@@ -34,6 +40,7 @@ import com.guiji.dispatch.dao.entity.DispatchHour;
 import com.guiji.dispatch.dao.entity.DispatchHourExample;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
+import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.service.IDispatchPlanService;
@@ -41,9 +48,18 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateProvider;
 import com.guiji.dispatch.util.ToolDateTime;
 import com.guiji.utils.IdGenUtil;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
+	static Logger logger = LoggerFactory.getLogger(DispatchPlanServiceImpl.class);
 
 	@Autowired
 	private DispatchPlanMapper dispatchPlanMapper;
@@ -56,24 +72,29 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private DispatchHourMapper dispatchHourMapper;
-	
+
 	@Autowired
 	private DateProvider dateProvider;
+	//
+	// @Autowired
+	// private IAuth authService;
 
 	@Override
-	public boolean addSchedule(DispatchPlan dispatchPlan) throws Exception {
+	public boolean addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
 		DispatchPlanBatch dispatchPlanBatch = new DispatchPlanBatch();
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
-		//通知状态;通知状态1等待2失败3成功
+		// 通知状态;通知状态1等待2失败3成功
 		dispatchPlanBatch.setStatusNotify(Constant.STATUSNOTIFY_0);
 		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setStatusShow(dispatchPlan.getStatusShow());
-		dispatchPlanBatch.setUserId(111);//临时写死
-		dispatchPlanBatchMapper.insert(dispatchPlanBatch);			
-		
-		
+		dispatchPlanBatch.setUserId(userId.intValue());
+		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+
 		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+		dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
+		dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		int result = dispatchPlanMapper.insert(dispatchPlan);
 
 		// 调用机器人中心判断参数是否合法，如果合法则status_plan =1 否则为0 然后入库
@@ -85,7 +106,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			try {
 				dispatchHour.setGmtCreate(ToolDateTime.getCurrentTime());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("error", e);
 			}
 			dispatchHour.setDispatchId(dispatchPlan.getPlanUuid());
 			dispatchHour.setHour(Integer.valueOf(hour));
@@ -164,8 +185,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	public boolean batchImport(String fileName, MultipartFile file) throws Exception {
-		boolean notNull = false;
+	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			// throw new MyException("上传文件格式不正确");
 		}
@@ -181,155 +201,55 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			wb = new XSSFWorkbook(is);
 		}
 		Sheet sheet = wb.getSheetAt(0);
-		if (sheet != null) {
-			notNull = true;
-		}
-		DispatchPlan dispatchPlan;
+
+		DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
+		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
+		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
+		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
+		dispatchPlanBatch.setUserId(userId.intValue());
+		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			if (row == null) {
 				continue;
 			}
-			dispatchPlan = new DispatchPlan();
 			String phone;
 			if (isNull(row.getCell(0))) {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
 			} else {
+				
 				throw new Exception("导入失败(第" + (r + 1) + "行,电话未填写)");
 			}
 
-			String batchName;
+			String params;
 			if (isNull(row.getCell(1))) {
-				// 批次号
 				row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
-				batchName = row.getCell(1).getStringCellValue();
+				params = row.getCell(1).getStringCellValue();
 			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,批次号)");
-			}
-			Integer statusShow = null;
-			if (isNull(row.getCell(2))) {
-				// 是否显示
-				if (row.getCell(2).getCellType() != 0) {
-					throw new Exception("导入失败(第" + (r + 1) + "行,是否显示不正确或未填写)");
-				} else {
-					statusShow = (int) row.getCell(2).getNumericCellValue();
-				}
+				throw new Exception("导入失败(第" + (r + 1) + "行,params)");
 			}
 
 			String attach;
-			if (isNull(row.getCell(3))) {
-				// 批次号
-				row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
-				attach = row.getCell(3).getStringCellValue();
+			if (isNull(row.getCell(2))) {
+				row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+				attach = row.getCell(2).getStringCellValue();
 			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,附加参数;可以作为第三方系统的唯一标识)");
+				throw new Exception("导入失败(第" + (r + 1) + "行,attach");
 			}
-
-			String params;
-			if (isNull(row.getCell(4))) {
-				// 批次号
-				row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
-				params = row.getCell(4).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,params");
-			}
-			
-			String recall;
-			if (isNull(row.getCell(5))) {
-				// 批次号
-				row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
-				recall = row.getCell(5).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,params");
-			}
-			
-			
-			String recallParams;
-			if (isNull(row.getCell(6))) {
-				row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
-				recallParams = row.getCell(6).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,recallParams ");
-			}
-			
-			String robot;
-			if (isNull(row.getCell(7))) {
-				// 批次号
-				row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
-				robot = row.getCell(7).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,呼叫机器人");
-			}
-			
-			String line;
-			if (isNull(row.getCell(8))) {
-				// 批次号
-				row.getCell(8).setCellType(Cell.CELL_TYPE_STRING);
-				line = row.getCell(8).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,callAgent");
-			}
-			
-			String callAgent;
-			if (isNull(row.getCell(9))) {
-				//callAgent
-				row.getCell(9).setCellType(Cell.CELL_TYPE_STRING);
-				callAgent = row.getCell(9).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,callAgent");
-			}
-			
-			String clean;
-			if (isNull(row.getCell(10))) {
-				// clean
-				row.getCell(10).setCellType(Cell.CELL_TYPE_STRING);
-				clean = row.getCell(10).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,clean");
-			}
-			String callData;
-			if (isNull(row.getCell(11))) {
-				// callData
-				row.getCell(11).setCellType(Cell.CELL_TYPE_STRING);
-				callData = row.getCell(11).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,callData");
-			}
-			
-			String callHour;
-			if (isNull(row.getCell(12))) {
-				// 批次号
-				row.getCell(12).setCellType(Cell.CELL_TYPE_STRING);
-				callHour = row.getCell(12).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,callHour");
-			}
-			
-			DispatchPlanBatch dispatchPlanBatch = new DispatchPlanBatch();
-			dispatchPlanBatch.setName(batchName);
-			dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
-			dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
-			dispatchPlanBatch.setStatusShow(statusShow);
-			dispatchPlanBatch.setUserId(111);//临时写死
-			dispatchPlanBatchMapper.insert(dispatchPlanBatch);			
-			
 			dispatchPlan.setPhone(phone);
 			dispatchPlan.setAttach(attach);
+			dispatchPlan.setUserId(userId.intValue());
 			dispatchPlan.setParams(params);
-			dispatchPlan.setRecallParams(recallParams);
-			dispatchPlan.setRobot(robot);
-			dispatchPlan.setLine(Integer.valueOf(line));
-			dispatchPlan.setCallAgent(callAgent);
-			dispatchPlan.setClean(Integer.valueOf(clean));
-			dispatchPlan.setCallData(Integer.valueOf(callData));
 			dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 			dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
 			dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
 			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
+			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 			dispatchPlanMapper.insert(dispatchPlan);
-			
-		
+
 			String[] hours = dispatchPlan.getCallHour().split(",");
 			// 写入时间dispatchHour
 			for (String hr : hours) {
@@ -344,6 +264,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return true;
 
 	}
+
 	public boolean isNull(Cell cell) {
 		if (cell == null) {
 			return false;
@@ -357,9 +278,74 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 查询
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
+		List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
+		DispatchPlan dispatchPlan = list.get(0);
+		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
+
+		// 0不重播非0表示重播次数
+		if (dispatchPlan.getRecall() > 0) {
+			// 获取重播条件
+			String recallParams = dispatchPlan.getRecallParams();
+			ReplayDto replayDto = JSONObject.parseObject(recallParams, ReplayDto.class);
+			//重播类型针对F类
+			ReplayNumType replayNumType = JSONObject.parseObject(replayDto.getLabelType(), ReplayNumType.class);
+			
+			// 查询语音记录
+			ReturnData<CallOutPlan> callRecordById = callManagerFeign.getCallRecordById(planUuid);
+			CallOutPlan body = callRecordById.getBody();
+	
+			if(body!=null){
+				// 意图
+				if(replayDto.getLabel().equals(body.getAccurateIntent​())){
+					//判断重播条件是否一致
+					
+				}
+			}
+		}
+
 		return false;
 	}
+
+	
+	public static String getTimeByMinute(int minute) {
+
+		Calendar calendar = Calendar.getInstance();
+
+		calendar.add(Calendar.MINUTE, minute);
+
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+
+	}
+	
+	 public static Map<String, Object> transBean2Map(Object obj) {
+
+	        if(obj == null){
+	            return null;
+	        }        
+	        Map<String, Object> map = new HashMap<String, Object>();
+	        try {
+	            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
+	            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+	            for (PropertyDescriptor property : propertyDescriptors) {
+	                String key = property.getName();
+
+	                // 过滤class属性
+	                if (!key.equals("class")) {
+	                    // 得到property对应的getter方法
+	                    Method getter = property.getReadMethod();
+	                    Object value = getter.invoke(obj);
+
+	                    map.put(key, value);
+	                }
+
+	            }
+	        } catch (Exception e) {
+	            System.out.println("transBean2Map Error " + e);
+	        }
+
+	        return map;
+
+	    }
 
 	@Override
 	public boolean dispatchPlanBatch(DispatchPlanBatch dispatchPlanBatch) {
@@ -385,7 +371,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, int pagenum, int pagesize) {
+			String endTime, Integer batchId, Integer replayType, int pagenum, int pagesize) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -393,6 +379,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 		Criteria createCriteria = example.createCriteria();
+		if (phone != null && phone != "") {
+			createCriteria.andPhoneEqualTo(phone);
+		}
+
 		if (planStatus != null && planStatus != "") {
 			createCriteria.andStatusPlanEqualTo(Integer.valueOf(planStatus));
 		}
@@ -402,21 +392,45 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()),
 						new Timestamp(sdf.parse(endTime).getTime()));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("error", e);
 			}
 		}
+
+		if (batchId != null && batchId != 0) {
+			createCriteria.andBatchIdEqualTo(batchId);
+		}
+
+		if (replayType != null && replayType != -1) {
+			createCriteria.andReplayTypeEqualTo(replayType);
+		}
+
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		getBatchNames(selectByExample);
 		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		page.setRecords(selectByExample);
 		page.setTotal(count);
 		return page;
 	}
 
-	@Override
-	public List<DispatchPlan> queryDispatchOutParams(Integer userId, int requestCount, int lineId) {
-		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andUserIdEqualTo(userId).andLineEqualTo(lineId);
-		return null;
+	private void getBatchNames(List<DispatchPlan> selectByExample) {
+		DispatchPlanBatchExample ex = new DispatchPlanBatchExample();
+		List<Integer> ids = new ArrayList<>();
+		for (DispatchPlan dispatchPlan : selectByExample) {
+			ids.add(dispatchPlan.getBatchId());
+		}
+		ex.createCriteria().andIdIn(ids);
+
+		if(ids.size()>0){
+			List<DispatchPlanBatch> Batch = dispatchPlanBatchMapper.selectByExample(ex);
+
+			for (DispatchPlanBatch batchBean : Batch) {
+				for (DispatchPlan plan : selectByExample) {
+					if (batchBean.getId().equals(plan.getBatchId())) {
+						plan.setBatchName(batchBean.getName());
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -434,14 +448,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		// 同步状态;0未同步1已同步
 		example.createCriteria().andUserIdEqualTo(userId).andLineEqualTo(lineId)
-				.andStatusSyncEqualTo(Constant.status_sync_0).andStatusPlanEqualTo(Constant.status_sync_1);
+				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 		example.setOrderByClause("`gmt_create` DESC");
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		// //修改同步状态
-		// for(DispatchPlan dispatchPlan : selectByExample){
-		// dispatchPlan.setStatusSync(Constant.status_sync_1);
-		// dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
-		// }
+		for (DispatchPlan dispatchPlan : selectByExample) {
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+		}
 		return selectByExample;
 	}
 
@@ -478,11 +492,58 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean deleteSchedule(String planUuid) {	
+	public boolean deleteSchedule(String planUuid) {
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
 		int result = dispatchPlanMapper.deleteByExample(ex);
 		return result > 0 ? true : false;
 	}
 
+	@Override
+	public boolean batchUpdatePlans(IdsDto[] dto) {
+		int result = 0;
+		for (IdsDto bean : dto) {
+			DispatchPlan dis = new DispatchPlan();
+			dis.setPlanUuid(bean.getPlanUUID());
+			dis.setStatusPlan(bean.getStatus().intValue());
+			try {
+				dis.setGmtModified(dateProvider.getCurrentTime());
+			} catch (Exception e) {
+				logger.error("error", e);
+			}
+			result = dispatchPlanMapper.updateByExampleSelective(dis, new DispatchPlanExample());
+		}
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public boolean operationAllPlanByBatchId(Integer batchId, String status) {
+		DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
+
+		DispatchPlan dispatchPlan = new DispatchPlan();
+		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
+		dispatchPlan.setStatusPlan(Integer.valueOf(status));
+		int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public boolean batchDeletePlans(IdsDto[] dto) {
+		int result = 0;
+		for (IdsDto bean : dto) {
+			DispatchPlanExample ex = new DispatchPlanExample();
+			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanUUID());
+			result = dispatchPlanMapper.deleteByExample(ex);
+
+			DispatchHourExample exHour = new DispatchHourExample();
+			exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanUUID());
+			result = dispatchHourMapper.deleteByExample(exHour);
+		}
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public List<DispatchPlanBatch> queryDispatchPlanBatch() {
+		return dispatchPlanBatchMapper.selectByExample(new DispatchPlanBatchExample());
+	}
 }

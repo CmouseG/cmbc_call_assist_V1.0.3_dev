@@ -1,0 +1,295 @@
+- config:
+    name: 大B接口测试
+    request:
+        base_url: http://192.168.1.209:15025
+        method: POST
+        headers:
+            Content-Type: application/json
+
+
+#  影像服务API接口
+- test:
+    variables:
+        - expect: {"success": true}
+    name: 影像服务API删除 POST /delete
+    request:
+        url: /delete
+        data: {"id":"223234322"}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+#指定id查询
+- test:
+    variables:
+        - expect: {"busiId":"","busiType":"","crtTime":"","crtUser":"","fileName":"","filesSize":0,"fileType":"JPG,JPEG,DOC","id":"","skThumbImageUrl":"","skUrl":"","sysCode":"","success":true}
+    name: 查询接口 POST / query
+    request:
+        url: /query
+        data: {"id":"","sysCode":"","busiId":"","busiType":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+#不指定id查询
+- test:
+    variables:
+        - expect: {"busiId":"","busiType":"","crtTime":"","crtUser":"","fileName":"","filesSize":0,"fileType":"JPG,JPEG,DOC","id":"","skThumbImageUrl":"","skUrl":"","sysCode":"","success":true}
+    name: 查询接口 POST / query
+    request:
+        url: /query
+        data: {"id":"","sysCode":"","busiId":"","busiType":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"busiId":"","busiType":"","crtTime":"","crtUser":"","fileName":"","filesSize":0,"fileType":"JPG,JPEG,DOC","id":"","skThumbImageUrl":"","skUrl":"","sysCode":"","success":true}
+    name: 文件上传 POST /upload
+    request:
+        url: /upload
+        data: {"sysCode":"","busId":"","busiType":"","thumbImageFlag":"","file":"/data/tts/test.wav"}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+#数据字典接口
+- test:
+    variables:
+        - expect: {"createTime":"","defFlag":"","description":"","dictKey":"","dictType":"","dictValue":"","id":"","remarks":"","updateTime":"","success":true}
+    name: 查询字典 POST /getDictByType
+    request:
+        url: /getDictByType
+        data: {"dictType":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"createTime":"","defFlag":"","description":"","dictKey":"","dictType":"","dictValue":"","id":"","remarks":"","updateTime":"","success":true}
+    name: 跟据KEY查询字典 POST /getDictValue
+    request:
+        url: /getDictByType
+        data: {"dictType":"","dictKey":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 删除字典信息 POST /delete
+    request:
+        url: /delete
+        data: {"id":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"createTime":"","defFlag":"","description":"","dictKey":"","dictType":"","dictValue":"","id":"","remarks":"","updateTime":"","success":true}
+    name: 跟据ID查询字典信息 POST /get
+    request:
+        url: /get
+        data: {"id":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"createTime":"","defFlag":"","description":"","dictKey":"","dictType":"","dictValue":"","id":"","pid":"","remarks":"","updateTime":""}
+    name: 跟据查询条件查询字典信息 POST /queryDictList
+    request:
+        url: /queryDictList
+        data: {"id":"","dictKey":"","dictValue":"","dictType":"","description":"","pid":"","remarks":"","defFlag":"","createTime":"","updateTime":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"createTime":"","defFlag":"","description":"","dictKey":"","dictType":"","dictValue":"","id":"","pid":"","remarks":"","updateTime":""}
+    name: 跟据查询条件分页查询字典信息 POST /queryDictPage
+    request:
+        url: /queryDictPage
+        data: {"pageNo":"","pageSize":"","id":"","dictKey":"","dictValue":"","dictType":"","description":"","pid":"","remarks":"","defFlag":"","createTime":"","updateTime":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"createTime":"","defFlag":"","description":"","dictKey":"","dictType":"","dictValue":"","id":"","pid":"","remarks":"","updateTime":""}
+    name: 跟据是否有id新增或者更新字典信息 POST /saveOrUpdateDict
+    request:
+        url: /saveOrUpdateDict
+        data: {"id":"","dictKey":"","dictValue":"","dictType":"","description":"","pid":"","remarks":"","defFlag":"","createTime":"","updateTime":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+#api documentation接口
+- test:
+    variables:
+        - expect: {"fsAgentAdd":"","fsAgentId":"","fsEslPort":"","fsEslPwd":"","fsInPort":"","fsOutPort":"","serviceId":"","success":true}
+    name: 申请freeswitch资源接口 GET /applyfs
+    request:
+        url: /applyfs
+        data: {"serviceId":"","serviceType":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 释放freeswitch资源接口 GET /releasefs
+    request:
+        url: /releasefs
+        data: {"serviceId":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 增加线路接口 POST /lineinfos
+    request:
+        url: /lineinfos
+        data: {"calledPrefix":"","callerNum":"","codec":"","lineId":"","lineinfo":{"calleePrefix":"","callerNum":"","codec":"","lineId":"","sipIp":"","sipPort":""},"sipIp":"","sipPort":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 修改线路接口 POST /lineinfos/{lineId}
+    request:
+        url: /lineinfos/{lineId}
+        data: {"calledPrefix":"","callerNum":"","codec":"","lineId":"","sipIp":"","sipPort":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 删除线路接口 POST /lineinfos/{lineId}
+    request:
+        url: /lineinfos/{lineId}
+        data: {"lineId":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 获取所有配置文件接口 GET /linexmlinfos
+    request:
+        url: /linexmlinfos
+        data: {}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 获取线路配置文件接口 GET /linexmlinfos/{lineId}
+    request:
+        url: /linexmlinfos/{lineId}
+        data: {"lineId":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 下载模板录音 GET /downloadtempwav
+    request:
+        url: /downloadtempwav
+        data: {"tempId":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 判断模板是否存在 GET /istempexist
+    request:
+        url: /istempexist
+        data: {"tempId":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+- test:
+    variables:
+        - expect: {"success":true}
+    name: 获取fsline基本信息 GET /fsinfo
+    request:
+        url: /fsinfo
+        data: {}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+
+- test:
+    variables:
+        - expect: {"code":""}
+    name: 启动客户呼叫计划 GET /startcallplan
+    request:
+        url: /startcallplan
+        data: {"customerId":"","lineId":"","tempId":""}
+    validate:
+        - eq: [status_code, 200]
+    teardown_hooks:
+        - ${assert_res($response, $expect)}
+
+
+
+#- test:
+#    parameters:
+#      - sleep-reqbody-expect:
+#        - [0,{"sentence":"有","state":""},{"accurate_intent": "C","reason": "介绍下我们公司，可以吗?<--->可以|||您需要我们产品吗？<--->未走到该流程|||了解我们公司吗<--->未走到该流程|||您对我们有什么建议？<--->未走到该流程|||有效对话轮数:1###","answer":"我们是互联网+的形式，产品有硅语智能机器人，您看您这边有需要吗？"}]
+#        - [0,{"sentence":"可以","state":""},{"accurate_intent": "C","reason": "介绍下我们公司，可以吗?<--->可以|||您需要我们产品吗？<--->需要==可以|||您对我们有什么建议？<--->未走到该流程|||了解我们公司吗<--->未走到该流程|||有效对话轮数:2###","answer":"您是否了解了我们公司呢？"}]
+#        - [0,{"sentence":"是的","state":""},{"accurate_intent": "B","reason": "介绍下我们公司，可以吗?<--->可以|||您需要我们产品吗？<--->需要==可以|||了解我们公司吗<--->了解|||您对我们有什么建议？<--->未走到该流程|||有效对话轮数:3###","answer":"您对我们公司有什么建议？"}]
+#        - [0,{"sentence":"差不多了解了","state":""},{"accurate_intent": "B","reason": "介绍下我们公司，可以吗?<--->可以|||您需要我们产品吗？<--->需要==可以|||了解我们公司吗<--->了解|||您对我们有什么建议？<--->差不多了解了|||有效对话轮数:4###","answer":"好的，感谢您的接听,那其它问题后续就由专业会计跟您详聊，祝您生意兴隆，再见！ "}]
+#    setup_hooks:
+#        - ${to_sleep($sleep)}
+#    name:  POST / $reqbody
+#    request:
+#        url: /
+#        data: $reqbody
+#    validate:
+#        - eq: [status_code, 200]
+#    teardown_hooks:
+#        - ${assert_res($response, $expect)}

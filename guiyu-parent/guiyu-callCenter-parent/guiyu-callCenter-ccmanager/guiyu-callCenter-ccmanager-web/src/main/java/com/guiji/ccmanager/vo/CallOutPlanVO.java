@@ -48,6 +48,7 @@ public class CallOutPlanVO implements Serializable {
     private String hangupCode;
     private String originateCmd;
     private String remarks;
+    private Integer freason;
 
     private List<CallOutDetailVO> detailList;
 

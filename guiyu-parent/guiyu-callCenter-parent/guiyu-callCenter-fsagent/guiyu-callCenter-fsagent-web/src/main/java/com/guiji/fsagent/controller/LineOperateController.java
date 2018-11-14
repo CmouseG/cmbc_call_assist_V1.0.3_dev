@@ -6,21 +6,22 @@ import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.entity.FreeSWITCH;
 import com.guiji.fsagent.manager.FSService;
-import com.guiji.fsagent.util.Base64Util;
+import com.guiji.fsagent.service.LineOperateService;
 import com.guiji.fsagent.util.FileUtil;
 
 import com.guiji.fsmanager.api.ILineOper;
-import com.guiji.fsmanager.entity.LineXmlnfoVO;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class LineOperateController implements ILineOperate {
+    private final Logger logger = LoggerFactory.getLogger(LineOperateController.class);
+
     @Autowired
-    DiscoveryClient discoveryClient;
+    LineOperateService lineOperateService;
     @Autowired
     ILineOper lineOperApiFeign;
     @Autowired
@@ -30,34 +31,26 @@ public class LineOperateController implements ILineOperate {
     @Override
     @RequestMapping(value = "/updatenotify", method = RequestMethod.GET)
     public Result.ReturnData<Boolean> updatenotify(@RequestParam("type") String type, @RequestParam("lineId") String lineId) {
-          if(!type.equals("line")){
-              return Result.error("");
+        logger.debug("收到更新配置信息通知请求，type[{}], lineId[{}]", type,lineId);
+
+        if(StringUtils.isBlank(type)||StringUtils.isBlank(lineId)){
+            logger.info("更新配置信息通知请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
         }
-         Result.ReturnData<List<LineXmlnfoVO>> result = lineOperApiFeign.linexmlinfos(lineId);
-         List<LineXmlnfoVO>  lineList = result.getBody();
-         //获取fs对象
-         FreeSWITCH fs = fsService.getFreeSwitch();
-         try {
-             for (LineXmlnfoVO line : lineList) {
-                 if (line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)) {
-                     Base64Util.base64ToFile(line.getFileData(), fs.getDialplan() + "01_" + lineId + ".xml");
-                     ;
-                 } else if (line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)) {
-                     Base64Util.base64ToFile(line.getFileData(), fs.getGateway() + "gw_" + lineId + ".xml");
-                     ;
-                 }
-             }
-         }catch (Exception ex){
-             //TODO: 增加异常处理
-         }
-        //执行esl命令重载网关
-        fs.execute("sofia profile external killgw gw_"+ lineId);
-        fs.execute("sofia profile external rescan reloadxml");
-        return Result.ok(true);
+        if(!type.equals("line")){
+            logger.info("更新配置信息通知请求失败，请求参数type不是line，直接返回错误");
+              return Result.error(Constant.ERROR_CODE_NOT_LINE);
+        }
+        return lineOperateService.updatenotify(lineId);
     }
 
     @Override
-    public Result.ReturnData<Boolean> deleteLineinfos(@PathVariable (value="lineId") String lineId) {
+    public Result.ReturnData<Boolean> deleteLineinfos(@RequestParam ("lineId") String lineId) {
+        logger.debug("收到删除线路配置的请求，lineId[{}]",lineId);
+        if(StringUtils.isBlank(lineId)){
+            logger.info("除线路配置的请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
+        }
         //获取fs对象
         FreeSWITCH fs = fsService.getFreeSwitch();
         FileUtil.delete(fs.getDialplan()+"01_"+lineId+".xml");

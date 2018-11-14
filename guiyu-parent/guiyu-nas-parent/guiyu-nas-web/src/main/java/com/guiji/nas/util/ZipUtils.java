@@ -1,5 +1,7 @@
 package com.guiji.nas.util;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
@@ -169,12 +171,8 @@ public class ZipUtils {
         } catch (Exception e) {
             throw e;
         } finally {
-            if (bis != null) {
-                bis.close();
-            }
-            if (zos != null) {
-                zos.closeEntry();
-            }
+            IOUtils.closeQuietly(bis);
+            IOUtils.closeQuietly(zos);
         }
     }
 
@@ -195,9 +193,7 @@ public class ZipUtils {
         } catch (Exception e) {
             throw e;
         } finally {
-            if (out != null) {
-                out.close();//记得关闭资源
-            }
+            IOUtils.closeQuietly(out);
         }
     }
 
@@ -248,12 +244,8 @@ public class ZipUtils {
         } catch (Exception e) {
             throw e;
         } finally {
-            if (out != null) {
-                out.closeEntry();
-            }
-            if (fis != null) {
-                fis.close();
-            }
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(fis);
         }
     }
 }

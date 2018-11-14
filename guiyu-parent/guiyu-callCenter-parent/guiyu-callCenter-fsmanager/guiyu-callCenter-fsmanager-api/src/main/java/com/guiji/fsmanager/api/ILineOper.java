@@ -28,7 +28,7 @@ public interface ILineOper {
             @ApiImplicitParam(name = "calleePrefix", value = "前缀", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/lineinfos", method = RequestMethod.POST)
-    public Result.ReturnData  addLineinfos(@RequestBody LineInfoVO lineInfo);
+     Result.ReturnData  addLineinfos(@RequestBody LineInfoVO lineInfo);
 
     @ApiOperation(value = "修改线路接口")
     @ApiImplicitParams({
@@ -40,7 +40,7 @@ public interface ILineOper {
             @ApiImplicitParam(name = "calleePrefix", value = "前缀", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/lineinfos/{lineId}", method = RequestMethod.PUT)
-    public Result.ReturnData  editLineinfos(@PathVariable("lineId") String lineId,@RequestBody LineInfoVO lineInfo);
+     Result.ReturnData  editLineinfos(@PathVariable("lineId") String lineId,@RequestBody LineInfoVO lineInfo);
 
     @ApiOperation(value = "删除线路接口")
     @ApiImplicitParams({
@@ -54,11 +54,10 @@ public interface ILineOper {
             @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query")
     })
     @RequestMapping(value = "/linexmlinfos/{lineId}", method = RequestMethod.GET)
-    public Result.ReturnData<List<LineXmlnfoVO>> linexmlinfos(@PathVariable(value = "lineId") String lineId);
+     Result.ReturnData<List<LineXmlnfoVO>> linexmlinfos(@PathVariable(value = "lineId") String lineId);
 
     @ApiOperation(value = "获取所有配置文件接口")
-    //@GetMapping(value="/linexmlinfos")
     @RequestMapping(value = "/linexmlinfos", method = RequestMethod.GET)
-    public Result.ReturnData<List<LineXmlnfoVO>>  linexmlinfosAll();
+     Result.ReturnData<List<LineXmlnfoVO>>  linexmlinfosAll();
 
 }

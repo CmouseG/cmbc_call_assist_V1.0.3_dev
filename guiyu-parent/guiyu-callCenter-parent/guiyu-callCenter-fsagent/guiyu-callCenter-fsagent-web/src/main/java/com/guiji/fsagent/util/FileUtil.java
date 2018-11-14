@@ -1,6 +1,12 @@
 package com.guiji.fsagent.util;
 
+import org.apache.http.entity.ContentType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 
 public class FileUtil {
@@ -29,18 +35,29 @@ public class FileUtil {
      * @param Folder
      * @param data
      */
-    public static void deleteFilesByDay(String Folder,int data){
+    public static boolean deleteFilesByDay(String Folder,int data){
         Date date = new Date(System.currentTimeMillis() - data*24*60*60*1000);
         File folder = new File(Folder);
         File[] files = folder.listFiles();
         for (int i=0;i<files.length;i++){
             File file = files[i];
             if (new Date(file.lastModified()).before(date)){
-                file.delete();
+                if(!file.delete()){
+                    return false;
+                }
             }
         }
+        return true;
     }
 
+    public MultipartFile  toMultipartFile(String fileName) throws IOException{
+        File file = new File(fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
+                ContentType.APPLICATION_OCTET_STREAM.toString(), fileInputStream);
+        return multipartFile;
+
+    }
 
 
 

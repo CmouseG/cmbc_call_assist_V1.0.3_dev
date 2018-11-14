@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.service;
 
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.component.result.Result;
 
 /**
@@ -10,4 +11,6 @@ import com.guiji.component.result.Result;
 public interface CallManagerOutService {
 
     public Result.ReturnData<Object> startcallplan(String customerId, String tempId, String lineId);
+
+    public CallOutPlan getCallRecordById(String callId);
 }

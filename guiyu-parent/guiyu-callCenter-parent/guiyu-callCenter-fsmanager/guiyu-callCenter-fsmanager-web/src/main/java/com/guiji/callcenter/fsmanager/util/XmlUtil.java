@@ -14,21 +14,22 @@ public class XmlUtil {
     private final Logger logger = LoggerFactory.getLogger(XmlUtil.class);
 
     /**
-     * 生成
+     * 生成xml
      * @param obj
      * @param <T>
      * @return
      */
-    public  <T> String buildxml(T obj) {
+    public <T> String buildxml(T obj) {
         try {
             StringWriter write = new StringWriter();
             JAXBContext context = JAXBContext.newInstance(new Class[] { obj.getClass() });
             Marshaller jaxbMarshaller = context.createMarshaller();
             jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             jaxbMarshaller.marshal(obj, write);
             return write.getBuffer().toString();
         } catch (JAXBException e) {
-            logger.info("操作线路，生成xml文件失败",e);
+            logger.info("操作线路，生成xml失败",e);
         }
         return "";
     }

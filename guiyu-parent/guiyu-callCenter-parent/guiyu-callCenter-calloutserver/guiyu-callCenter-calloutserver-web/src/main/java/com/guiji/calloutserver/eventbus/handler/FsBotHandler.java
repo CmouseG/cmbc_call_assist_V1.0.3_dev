@@ -129,7 +129,6 @@ public class FsBotHandler {
      */
     private void handleAfterAgentAsr(CallOutPlan callPlan, AsrCustomerEvent event){
         log.debug("收到转人工后的客户AliAsr事件[{}], 准备进行处理", event);
-        //TODO: 完成转人工之后的客户asr处理
     }
 
     /**

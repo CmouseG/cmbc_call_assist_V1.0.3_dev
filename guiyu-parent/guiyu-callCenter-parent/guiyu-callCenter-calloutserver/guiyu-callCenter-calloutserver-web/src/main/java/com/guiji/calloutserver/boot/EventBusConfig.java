@@ -1,4 +1,4 @@
-package com.guiji.calloutserver.config;
+package com.guiji.calloutserver.boot;
 
 import com.google.common.eventbus.AsyncEventBus;
 import org.springframework.context.annotation.Bean;

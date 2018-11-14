@@ -15,7 +15,7 @@ public interface ITemplate {
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/istempexist/{tempId}")
-    public Result.ReturnData<Boolean> istempexist(@PathVariable (value="tempId")String tempId);
+     Result.ReturnData<Boolean> istempexist(@PathVariable (value="tempId")String tempId);
 
 
     @ApiOperation(value = "模板是否存在接口")
@@ -23,7 +23,7 @@ public interface ITemplate {
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/downloadbotwav/{tempId}")
-    public Result.ReturnData<Boolean> downloadbotwav(@PathVariable(value="tempId") String tempId);
+     Result.ReturnData<Boolean> downloadbotwav(@PathVariable(value="tempId") String tempId);
 
 
     @ApiOperation(value = "下载tts话术录音")
@@ -32,15 +32,13 @@ public interface ITemplate {
             @ApiImplicitParam(name = "callId", value = "会话Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/downloadttswav")
-    public Result.ReturnData<Boolean> downloadttswav(String tempId, String callId);
+     Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam ("callId") String callId);
 
 
-//    @ApiOperation(value = "上传录音")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "fileName", value = "模板Id", dataType = "String", paramType = "query")
-//    })
-//    @GetMapping(value="/uploadrecord/{fileName}")
-
+    @ApiOperation(value = "上传录音")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fileName", value = "模板Id", dataType = "String", paramType = "query")
+    })
     @RequestMapping(value = "/uploadrecord", method = RequestMethod.POST)
-    public Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO);
+     Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO);
 }

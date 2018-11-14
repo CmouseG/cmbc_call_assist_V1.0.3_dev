@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Auther: 黎阳
@@ -22,14 +22,14 @@ public interface IFsResource {
             @ApiImplicitParam(name = "serviceId", value = "服务Id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "serviceType", value = "服务类型", dataType = "String", paramType = "query"),
     })
-    @GetMapping(value="applyfs")
-    public Result.ReturnData<FsBindVO> applyfs(String serviceId, ServiceTypeEnum serviceType);
+    @RequestMapping(value = "/applyfs", method = RequestMethod.GET)
+     Result.ReturnData<FsBindVO> applyfs(@RequestParam("serviceId") String serviceId, @RequestParam("serviceType")ServiceTypeEnum serviceType);
 
     @ApiOperation(value = "释放freeswitch资源接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "serviceId", value = "服务Id", dataType = "String", paramType = "query")
     })
-    @GetMapping(value="releasefs")
-    public Result.ReturnData<Boolean>  releasefs(String serviceId);
+    @RequestMapping(value = "/releasefs", method = RequestMethod.GET)
+     Result.ReturnData<Boolean>  releasefs(@RequestParam("serviceId") String serviceId);
 
 }

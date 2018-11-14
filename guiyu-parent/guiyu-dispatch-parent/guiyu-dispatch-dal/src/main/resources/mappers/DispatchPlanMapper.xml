@@ -23,7 +23,9 @@
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
     <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
     <result column="is_tts" property="isTts" jdbcType="TINYINT" />
+    <result column="replay_type" property="replayType" jdbcType="INTEGER" />
   </resultMap>
+  
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -85,8 +87,9 @@
   <sql id="Base_Column_List" >
     id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync, 
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour, 
-    gmt_create, gmt_modified, is_tts
+    gmt_create, gmt_modified, is_tts, replay_type
   </sql>
+  
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
     <if test="distinct" >
@@ -94,7 +97,7 @@
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from dispatch_plan
+    from dispatch_plan A 
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -121,23 +124,23 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" useGeneratedKeys="true"   keyProperty="plan_uuid" >
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan"  useGeneratedKeys="true"  keyProperty="id">
     insert into dispatch_plan (id, plan_uuid, user_id, 
       batch_id, phone, attach, 
       params, status_plan, status_sync, 
       recall, recall_params, robot, 
       line, `result`, call_agent, 
       clean, call_data, call_hour, 
-      gmt_create, gmt_modified, is_tts
-      )
+      gmt_create, gmt_modified, is_tts, 
+      replay_type)
     values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER}, 
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
       #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER}, 
       #{recall,jdbcType=INTEGER}, #{recallParams,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, 
       #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
       #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=TINYINT}
-      )
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=TINYINT}, 
+      #{replayType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     insert into dispatch_plan
@@ -205,6 +208,9 @@
       <if test="isTts != null" >
         is_tts,
       </if>
+      <if test="replayType != null" >
+        replay_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -269,6 +275,9 @@
       </if>
       <if test="isTts != null" >
         #{isTts,jdbcType=TINYINT},
+      </if>
+      <if test="replayType != null" >
+        #{replayType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -344,6 +353,9 @@
       <if test="record.isTts != null" >
         is_tts = #{record.isTts,jdbcType=TINYINT},
       </if>
+      <if test="record.replayType != null" >
+        replay_type = #{record.replayType,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -371,7 +383,8 @@
       call_hour = #{record.callHour,jdbcType=VARCHAR},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
-      is_tts = #{record.isTts,jdbcType=TINYINT}
+      is_tts = #{record.isTts,jdbcType=TINYINT},
+      replay_type = #{record.replayType,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -439,6 +452,9 @@
       <if test="isTts != null" >
         is_tts = #{isTts,jdbcType=TINYINT},
       </if>
+      <if test="replayType != null" >
+        replay_type = #{replayType,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -463,7 +479,8 @@
       call_hour = #{callHour,jdbcType=VARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
-      is_tts = #{isTts,jdbcType=TINYINT}
+      is_tts = #{isTts,jdbcType=TINYINT},
+      replay_type = #{replayType,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

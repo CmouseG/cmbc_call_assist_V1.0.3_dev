@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,7 @@ public interface INas {
 			@ApiImplicitParam(name="file",value="待上传文件",required=true)
 	})
 	@PostMapping(value = "upload")
-	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file);
+	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file, @RequestHeader Long userId);
 	
 	
 	/**

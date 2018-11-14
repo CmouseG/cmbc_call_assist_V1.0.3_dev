@@ -44,13 +44,22 @@ public class LineInfoServiceImpl implements LineInfoService {
     @Autowired
     private DiscoveryClient discoveryClient;
 
-    public List<LineInfo> getLineInfoByCustom(String customerId, int pageSize, int pageNo) {
-
+    public LineInfoExample getExample(String customerId, String lineName){
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
         if(StringUtils.isNotBlank(customerId)){
             criteria.andCustomerIdEqualTo(customerId);
         }
+        if(StringUtils.isNotBlank(lineName)){
+            criteria.andLineNameEqualTo(lineName);
+        }
+        return example;
+    }
+
+    public List<LineInfo> getLineInfoByCustom(String customerId, String lineName,int pageSize, int pageNo) {
+
+        LineInfoExample example = getExample( customerId,  lineName);
+
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
@@ -59,17 +68,8 @@ public class LineInfoServiceImpl implements LineInfoService {
     }
 
     @Override
-    public int getLineInfoByCustomCount(String customerId, int pageSize, int pageNo) {
-        LineInfoExample example = new LineInfoExample();
-        LineInfoExample.Criteria criteria = example.createCriteria();
-        if(StringUtils.isNotBlank(customerId)){
-            criteria.andCustomerIdEqualTo(customerId);
-        }
-
-        int limitStart = (pageNo-1)*pageSize;
-        example.setLimitStart(limitStart);
-        example.setLimitEnd(pageSize);
-
+    public int getLineInfoByCustomCount(String customerId, String lineName) {
+        LineInfoExample example = getExample( customerId,  lineName);
         return lineInfoMapper.countByExample(example);
     }
 

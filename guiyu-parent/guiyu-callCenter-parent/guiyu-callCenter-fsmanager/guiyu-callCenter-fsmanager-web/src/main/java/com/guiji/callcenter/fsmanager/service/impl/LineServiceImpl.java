@@ -109,6 +109,7 @@ public class LineServiceImpl implements LineService {
         LineConfigExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(lineId);
         lineConfigMapper.deleteByExample(example);
+        deletenotify(lineId);
     }
 
 

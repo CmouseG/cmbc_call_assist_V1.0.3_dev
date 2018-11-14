@@ -35,16 +35,19 @@ public class FileUtil {
      * @param Folder
      * @param data
      */
-    public static void deleteFilesByDay(String Folder,int data){
+    public static boolean deleteFilesByDay(String Folder,int data){
         Date date = new Date(System.currentTimeMillis() - data*24*60*60*1000);
         File folder = new File(Folder);
         File[] files = folder.listFiles();
         for (int i=0;i<files.length;i++){
             File file = files[i];
             if (new Date(file.lastModified()).before(date)){
-                file.delete();
+                if(!file.delete()){
+                    return false;
+                }
             }
         }
+        return true;
     }
 
     public MultipartFile  toMultipartFile(String fileName) throws IOException{

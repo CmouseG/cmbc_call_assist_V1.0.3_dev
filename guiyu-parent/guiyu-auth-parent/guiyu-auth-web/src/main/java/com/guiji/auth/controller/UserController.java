@@ -49,4 +49,9 @@ public class UserController{
 		return page;
 	}
 	
+	@RequestMapping("getUserByPage")
+	public SysUser getUserById(Long userId){
+		return service.getUserById(userId);
+	}
+	
 }

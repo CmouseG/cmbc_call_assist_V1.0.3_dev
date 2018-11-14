@@ -1,9 +1,6 @@
 package com.guiji.auth.advice;
 
 
-import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,13 +22,7 @@ public class GlobalExceptionHandler {
     public ReturnData<?> handleException(Exception e){
 		logger.error("",e);
 		ReturnData<?> result=null;
-        if(e instanceof  AccountException){
-        	result=Result.error("00010002");
-        }else if(e instanceof AuthenticationException){
-        	result=Result.error("00010003");
-        }else if(e instanceof UnauthorizedException){
-        	result=Result.error("00010004");
-        }else if(e instanceof CheckConditionException){
+		if(e instanceof CheckConditionException){
         	result=Result.error(((CheckConditionException)e).getCode());
         }
         return result;

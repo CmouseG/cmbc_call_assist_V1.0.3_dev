@@ -15,9 +15,9 @@ spring:
       location: /  # 上传的临时目录
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: root
-    password: guiyu@1234
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: base
+    password: base@1234
     driver-class-name: com.mysql.jdbc.Driver
     minIdle: 1
     maxActive: 2
@@ -30,8 +30,8 @@ spring:
     testOnReturn: false
   redis:
     database: 0
-    host: 47.96.151.197
-    #password: 123456
+    host: 192.168.1.78
+    password: 123456
     port: 6379
     pool:
       max-active: 8
@@ -96,6 +96,25 @@ zuul:
     guiyu-datadic:
       path: /dict/**
       service-id: guiyu-datadic
+    guiyu-ai-web:
+      path: /ai/**
+      service-id: guiyu-ai-web
+    guiyu-callCenter-calloutserver:
+      path: /callout/**
+      service-id: guiyu-callCenter-calloutserver
+    guiyu-callCenter-ccmanager:
+      path: /ccmanager/**
+      service-id: guiyu-callCenter-ccmanager
+    guiyu-callCenter-fsagent:
+      path: /fsagent/**
+      service-id: guiyu-callCenter-fsagent
+    guiyu-callCenter-fsline:
+      path: /fsline/**
+      service-id: guiyu-callCenter-fsline
+    guiyu-callCenter-fsmanager:
+      path: /fsmanager/**
+      service-id: guiyu-callCenter-fsmanager
+
 hystrix:
   command:
     default:

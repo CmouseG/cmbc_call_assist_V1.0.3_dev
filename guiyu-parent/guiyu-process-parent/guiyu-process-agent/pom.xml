@@ -30,11 +30,6 @@
             <artifactId>jboss-marshalling-serial</artifactId>
             <version>RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>org.fusesource</groupId>
-            <artifactId>sigar</artifactId>
-            <version>1.6.4</version>
-        </dependency>
     </dependencies>
 
     <!-- 构建springboot组件 -->

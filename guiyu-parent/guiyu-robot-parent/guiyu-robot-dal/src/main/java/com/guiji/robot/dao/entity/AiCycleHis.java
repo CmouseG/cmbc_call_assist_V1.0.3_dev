@@ -6,17 +6,21 @@ import java.util.Date;
 public class AiCycleHis implements Serializable {
     private String id;
 
+    private String assignId;
+
     private Long userId;
 
     private String aiNo;
 
     private String templateId;
 
-    private String aiCyc;
+    private String assignDate;
 
-    private String recordDate;
+    private String assignTime;
 
-    private String recordTime;
+    private String taskbackDate;
+
+    private String taskbackTime;
 
     private Date crtTime;
 
@@ -30,6 +34,14 @@ public class AiCycleHis implements Serializable {
 
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
+    }
+
+    public String getAssignId() {
+        return assignId;
+    }
+
+    public void setAssignId(String assignId) {
+        this.assignId = assignId == null ? null : assignId.trim();
     }
 
     public Long getUserId() {
@@ -56,28 +68,36 @@ public class AiCycleHis implements Serializable {
         this.templateId = templateId == null ? null : templateId.trim();
     }
 
-    public String getAiCyc() {
-        return aiCyc;
+    public String getAssignDate() {
+        return assignDate;
     }
 
-    public void setAiCyc(String aiCyc) {
-        this.aiCyc = aiCyc == null ? null : aiCyc.trim();
+    public void setAssignDate(String assignDate) {
+        this.assignDate = assignDate == null ? null : assignDate.trim();
     }
 
-    public String getRecordDate() {
-        return recordDate;
+    public String getAssignTime() {
+        return assignTime;
     }
 
-    public void setRecordDate(String recordDate) {
-        this.recordDate = recordDate == null ? null : recordDate.trim();
+    public void setAssignTime(String assignTime) {
+        this.assignTime = assignTime == null ? null : assignTime.trim();
     }
 
-    public String getRecordTime() {
-        return recordTime;
+    public String getTaskbackDate() {
+        return taskbackDate;
     }
 
-    public void setRecordTime(String recordTime) {
-        this.recordTime = recordTime == null ? null : recordTime.trim();
+    public void setTaskbackDate(String taskbackDate) {
+        this.taskbackDate = taskbackDate == null ? null : taskbackDate.trim();
+    }
+
+    public String getTaskbackTime() {
+        return taskbackTime;
+    }
+
+    public void setTaskbackTime(String taskbackTime) {
+        this.taskbackTime = taskbackTime == null ? null : taskbackTime.trim();
     }
 
     public Date getCrtTime() {
@@ -103,12 +123,14 @@ public class AiCycleHis implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", assignId=").append(assignId);
         sb.append(", userId=").append(userId);
         sb.append(", aiNo=").append(aiNo);
         sb.append(", templateId=").append(templateId);
-        sb.append(", aiCyc=").append(aiCyc);
-        sb.append(", recordDate=").append(recordDate);
-        sb.append(", recordTime=").append(recordTime);
+        sb.append(", assignDate=").append(assignDate);
+        sb.append(", assignTime=").append(assignTime);
+        sb.append(", taskbackDate=").append(taskbackDate);
+        sb.append(", taskbackTime=").append(taskbackTime);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", callNum=").append(callNum);
         sb.append(", serialVersionUID=").append(serialVersionUID);

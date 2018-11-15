@@ -3,12 +3,14 @@
 <mapper namespace="com.guiji.robot.dao.AiCycleHisMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.AiCycleHis" >
     <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="assign_id" property="assignId" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
-    <result column="ai_cyc" property="aiCyc" jdbcType="VARCHAR" />
-    <result column="record_date" property="recordDate" jdbcType="VARCHAR" />
-    <result column="record_time" property="recordTime" jdbcType="VARCHAR" />
+    <result column="assign_date" property="assignDate" jdbcType="VARCHAR" />
+    <result column="assign_time" property="assignTime" jdbcType="VARCHAR" />
+    <result column="taskback_date" property="taskbackDate" jdbcType="VARCHAR" />
+    <result column="taskback_time" property="taskbackTime" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.guiji.robot.dao.entity.AiCycleHis" extends="BaseResultMap" >
@@ -73,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, ai_no, template_id, ai_cyc, record_date, record_time, crt_time
+    id, assign_id, user_id, ai_no, template_id, assign_date, assign_time, taskback_date, 
+    taskback_time, crt_time
   </sql>
   <sql id="Blob_Column_List" >
     call_num
@@ -135,14 +138,14 @@
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
       SELECT genTabId('ai_cycle_his')
     </selectKey>
-    insert into ai_cycle_his (id, user_id, ai_no, 
-      template_id, ai_cyc, record_date, 
-      record_time, crt_time, call_num
-      )
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{aiNo,jdbcType=VARCHAR}, 
-      #{templateId,jdbcType=VARCHAR}, #{aiCyc,jdbcType=VARCHAR}, #{recordDate,jdbcType=VARCHAR}, 
-      #{recordTime,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{callNum,jdbcType=LONGVARCHAR}
-      )
+    insert into ai_cycle_his (id, assign_id, user_id, 
+      ai_no, template_id, assign_date, 
+      assign_time, taskback_date, taskback_time, 
+      crt_time, call_num)
+    values (#{id,jdbcType=VARCHAR}, #{assignId,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{aiNo,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, 
+      #{assignTime,jdbcType=VARCHAR}, #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{callNum,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -151,6 +154,9 @@
     insert into ai_cycle_his
     <trim prefix="(" suffix=")" suffixOverrides="," >
       id,
+      <if test="assignId != null" >
+        assign_id,
+      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -160,14 +166,17 @@
       <if test="templateId != null" >
         template_id,
       </if>
-      <if test="aiCyc != null" >
-        ai_cyc,
+      <if test="assignDate != null" >
+        assign_date,
       </if>
-      <if test="recordDate != null" >
-        record_date,
+      <if test="assignTime != null" >
+        assign_time,
       </if>
-      <if test="recordTime != null" >
-        record_time,
+      <if test="taskbackDate != null" >
+        taskback_date,
+      </if>
+      <if test="taskbackTime != null" >
+        taskback_time,
       </if>
       <if test="crtTime != null" >
         crt_time,
@@ -178,6 +187,9 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
+      <if test="assignId != null" >
+        #{assignId,jdbcType=VARCHAR},
+      </if>
       <if test="userId != null" >
         #{userId,jdbcType=BIGINT},
       </if>
@@ -187,14 +199,17 @@
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
       </if>
-      <if test="aiCyc != null" >
-        #{aiCyc,jdbcType=VARCHAR},
+      <if test="assignDate != null" >
+        #{assignDate,jdbcType=VARCHAR},
       </if>
-      <if test="recordDate != null" >
-        #{recordDate,jdbcType=VARCHAR},
+      <if test="assignTime != null" >
+        #{assignTime,jdbcType=VARCHAR},
       </if>
-      <if test="recordTime != null" >
-        #{recordTime,jdbcType=VARCHAR},
+      <if test="taskbackDate != null" >
+        #{taskbackDate,jdbcType=VARCHAR},
+      </if>
+      <if test="taskbackTime != null" >
+        #{taskbackTime,jdbcType=VARCHAR},
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
@@ -216,6 +231,9 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
+      <if test="record.assignId != null" >
+        assign_id = #{record.assignId,jdbcType=VARCHAR},
+      </if>
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=BIGINT},
       </if>
@@ -225,14 +243,17 @@
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
-      <if test="record.aiCyc != null" >
-        ai_cyc = #{record.aiCyc,jdbcType=VARCHAR},
+      <if test="record.assignDate != null" >
+        assign_date = #{record.assignDate,jdbcType=VARCHAR},
       </if>
-      <if test="record.recordDate != null" >
-        record_date = #{record.recordDate,jdbcType=VARCHAR},
+      <if test="record.assignTime != null" >
+        assign_time = #{record.assignTime,jdbcType=VARCHAR},
       </if>
-      <if test="record.recordTime != null" >
-        record_time = #{record.recordTime,jdbcType=VARCHAR},
+      <if test="record.taskbackDate != null" >
+        taskback_date = #{record.taskbackDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskbackTime != null" >
+        taskback_time = #{record.taskbackTime,jdbcType=VARCHAR},
       </if>
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
@@ -248,12 +269,14 @@
   <update id="updateByExampleWithBLOBs" parameterType="map" >
     update ai_cycle_his
     set id = #{record.id,jdbcType=VARCHAR},
+      assign_id = #{record.assignId,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=BIGINT},
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
-      ai_cyc = #{record.aiCyc,jdbcType=VARCHAR},
-      record_date = #{record.recordDate,jdbcType=VARCHAR},
-      record_time = #{record.recordTime,jdbcType=VARCHAR},
+      assign_date = #{record.assignDate,jdbcType=VARCHAR},
+      assign_time = #{record.assignTime,jdbcType=VARCHAR},
+      taskback_date = #{record.taskbackDate,jdbcType=VARCHAR},
+      taskback_time = #{record.taskbackTime,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       call_num = #{record.callNum,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
@@ -263,12 +286,14 @@
   <update id="updateByExample" parameterType="map" >
     update ai_cycle_his
     set id = #{record.id,jdbcType=VARCHAR},
+      assign_id = #{record.assignId,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=BIGINT},
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
-      ai_cyc = #{record.aiCyc,jdbcType=VARCHAR},
-      record_date = #{record.recordDate,jdbcType=VARCHAR},
-      record_time = #{record.recordTime,jdbcType=VARCHAR},
+      assign_date = #{record.assignDate,jdbcType=VARCHAR},
+      assign_time = #{record.assignTime,jdbcType=VARCHAR},
+      taskback_date = #{record.taskbackDate,jdbcType=VARCHAR},
+      taskback_time = #{record.taskbackTime,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -277,6 +302,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
     <set >
+      <if test="assignId != null" >
+        assign_id = #{assignId,jdbcType=VARCHAR},
+      </if>
       <if test="userId != null" >
         user_id = #{userId,jdbcType=BIGINT},
       </if>
@@ -286,14 +314,17 @@
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
       </if>
-      <if test="aiCyc != null" >
-        ai_cyc = #{aiCyc,jdbcType=VARCHAR},
+      <if test="assignDate != null" >
+        assign_date = #{assignDate,jdbcType=VARCHAR},
       </if>
-      <if test="recordDate != null" >
-        record_date = #{recordDate,jdbcType=VARCHAR},
+      <if test="assignTime != null" >
+        assign_time = #{assignTime,jdbcType=VARCHAR},
       </if>
-      <if test="recordTime != null" >
-        record_time = #{recordTime,jdbcType=VARCHAR},
+      <if test="taskbackDate != null" >
+        taskback_date = #{taskbackDate,jdbcType=VARCHAR},
+      </if>
+      <if test="taskbackTime != null" >
+        taskback_time = #{taskbackTime,jdbcType=VARCHAR},
       </if>
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
@@ -306,24 +337,28 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
-    set user_id = #{userId,jdbcType=BIGINT},
+    set assign_id = #{assignId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
       ai_no = #{aiNo,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
-      ai_cyc = #{aiCyc,jdbcType=VARCHAR},
-      record_date = #{recordDate,jdbcType=VARCHAR},
-      record_time = #{recordTime,jdbcType=VARCHAR},
+      assign_date = #{assignDate,jdbcType=VARCHAR},
+      assign_time = #{assignTime,jdbcType=VARCHAR},
+      taskback_date = #{taskbackDate,jdbcType=VARCHAR},
+      taskback_time = #{taskbackTime,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       call_num = #{callNum,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
-    set user_id = #{userId,jdbcType=BIGINT},
+    set assign_id = #{assignId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
       ai_no = #{aiNo,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
-      ai_cyc = #{aiCyc,jdbcType=VARCHAR},
-      record_date = #{recordDate,jdbcType=VARCHAR},
-      record_time = #{recordTime,jdbcType=VARCHAR},
+      assign_date = #{assignDate,jdbcType=VARCHAR},
+      assign_time = #{assignTime,jdbcType=VARCHAR},
+      taskback_date = #{taskbackDate,jdbcType=VARCHAR},
+      taskback_time = #{taskbackTime,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>

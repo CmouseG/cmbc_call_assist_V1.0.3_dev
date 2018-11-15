@@ -29,5 +29,9 @@ public class Constant {
 	public static final Integer  REPLAY_TYPE_0=0;
 	public static final Integer  REPLAY_TYPE_1=1;
 	
+	//0 未删除 1 删除
+	public static final Integer  IS_DEL_0=0;
+	public static final Integer  IS_DEL_1=1;
+	
 	
 }

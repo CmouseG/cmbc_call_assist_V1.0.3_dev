@@ -46,7 +46,6 @@ public class DispatchPlanController {
 		}
 		return result;
 	}
-
 	
 	/**
 	 * 查询任务
@@ -132,7 +131,6 @@ public class DispatchPlanController {
 		}
 
 		return Result.ok();
-
 	}
 
 	// /**

@@ -1,10 +1,9 @@
-package com.guiji.dispatch.dao.entity;
+	package com.guiji.dispatch.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 
 public class DispatchPlan implements Serializable {
-	
 	//批次号
 	private String batchName;
 	//是否显示
@@ -54,9 +53,30 @@ public class DispatchPlan implements Serializable {
 
     private Integer replayType;
 
+    private Integer isDel;
+
     private static final long serialVersionUID = 1L;
 
-    public Integer getId() {
+    
+    
+    
+    public String getBatchName() {
+		return batchName;
+	}
+
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
+	}
+
+	public Integer getStatusShow() {
+		return statusShow;
+	}
+
+	public void setStatusShow(Integer statusShow) {
+		this.statusShow = statusShow;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -231,26 +251,16 @@ public class DispatchPlan implements Serializable {
     public void setReplayType(Integer replayType) {
         this.replayType = replayType;
     }
-    
-    
 
-    public String getBatchName() {
-		return batchName;
-	}
+    public Integer getIsDel() {
+        return isDel;
+    }
 
-	public void setBatchName(String batchName) {
-		this.batchName = batchName;
-	}
+    public void setIsDel(Integer isDel) {
+        this.isDel = isDel;
+    }
 
-	public Integer getStatusShow() {
-		return statusShow;
-	}
-
-	public void setStatusShow(Integer statusShow) {
-		this.statusShow = statusShow;
-	}
-
-	@Override
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -278,6 +288,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", gmtModified=").append(gmtModified);
         sb.append(", isTts=").append(isTts);
         sb.append(", replayType=").append(replayType);
+        sb.append(", isDel=").append(isDel);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

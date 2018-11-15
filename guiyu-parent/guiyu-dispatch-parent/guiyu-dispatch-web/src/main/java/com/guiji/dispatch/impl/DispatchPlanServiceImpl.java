@@ -24,15 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
-import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.ccmanager.api.ICallManagerOut;
+import com.guiji.ccmanager.entity.CallOutPlan;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.ReplayDto;
-import com.guiji.dispatch.bean.ReplayNumType;
-import com.guiji.dispatch.controller.DispatchPlanController;
 import com.guiji.dispatch.dao.DispatchHourMapper;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
@@ -55,7 +53,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
@@ -95,6 +92,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
 		dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
+		dispatchPlan.setIsDel(Constant.IS_DEL_0);
 		int result = dispatchPlanMapper.insert(dispatchPlan);
 
 		// 调用机器人中心判断参数是否合法，如果合法则status_plan =1 否则为0 然后入库
@@ -129,6 +127,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (userId != 0) {
 			ex.createCriteria().andUserIdEqualTo(userId);
 		}
+		ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
 		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		page.setRecords(selectByExample);
@@ -219,24 +218,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
 			} else {
-				
 				throw new Exception("导入失败(第" + (r + 1) + "行,电话未填写)");
 			}
 
-			String params;
+			String params = "";
 			if (isNull(row.getCell(1))) {
 				row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
 				params = row.getCell(1).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,params)");
 			}
 
-			String attach;
+			String attach = "";
 			if (isNull(row.getCell(2))) {
 				row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
 				attach = row.getCell(2).getStringCellValue();
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,attach");
 			}
 			dispatchPlan.setPhone(phone);
 			dispatchPlan.setAttach(attach);
@@ -248,6 +242,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
+			dispatchPlan.setIsDel(Constant.IS_DEL_0);
 			dispatchPlanMapper.insert(dispatchPlan);
 
 			String[] hours = dispatchPlan.getCallHour().split(",");
@@ -287,18 +282,20 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// 获取重播条件
 			String recallParams = dispatchPlan.getRecallParams();
 			ReplayDto replayDto = JSONObject.parseObject(recallParams, ReplayDto.class);
-			//重播类型针对F类
-			ReplayNumType replayNumType = JSONObject.parseObject(replayDto.getLabelType(), ReplayNumType.class);
-			
 			// 查询语音记录
 			ReturnData<CallOutPlan> callRecordById = callManagerFeign.getCallRecordById(planUuid);
-			CallOutPlan body = callRecordById.getBody();
 	
-			if(body!=null){
+			if(callRecordById.getBody()!=null){
 				// 意图
-				if(replayDto.getLabel().equals(body.getAccurateIntent​())){
-					//判断重播条件是否一致
-					
+				if(replayDto.getLabel().contains(callRecordById.getBody().getAccurateIntent())){
+					if(callRecordById.getBody().getAccurateIntent().equals("F")){
+						 //F类判断挂断类型
+						if(replayDto.getLabelType().contains(callRecordById.getBody().getReason())){
+							//创建 
+						}
+					}else{
+						//创建 
+					}
 				}
 			}
 		}
@@ -306,7 +303,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return false;
 	}
 
-	
 	public static String getTimeByMinute(int minute) {
 
 		Calendar calendar = Calendar.getInstance();
@@ -316,36 +312,36 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
 
 	}
-	
-	 public static Map<String, Object> transBean2Map(Object obj) {
 
-	        if(obj == null){
-	            return null;
-	        }        
-	        Map<String, Object> map = new HashMap<String, Object>();
-	        try {
-	            BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
-	            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-	            for (PropertyDescriptor property : propertyDescriptors) {
-	                String key = property.getName();
+	public static Map<String, Object> transBean2Map(Object obj) {
 
-	                // 过滤class属性
-	                if (!key.equals("class")) {
-	                    // 得到property对应的getter方法
-	                    Method getter = property.getReadMethod();
-	                    Object value = getter.invoke(obj);
+		if (obj == null) {
+			return null;
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass());
+			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+			for (PropertyDescriptor property : propertyDescriptors) {
+				String key = property.getName();
 
-	                    map.put(key, value);
-	                }
+				// 过滤class属性
+				if (!key.equals("class")) {
+					// 得到property对应的getter方法
+					Method getter = property.getReadMethod();
+					Object value = getter.invoke(obj);
 
-	            }
-	        } catch (Exception e) {
-	            System.out.println("transBean2Map Error " + e);
-	        }
+					map.put(key, value);
+				}
 
-	        return map;
+			}
+		} catch (Exception e) {
+			System.out.println("transBean2Map Error " + e);
+		}
 
-	    }
+		return map;
+
+	}
 
 	@Override
 	public boolean dispatchPlanBatch(DispatchPlanBatch dispatchPlanBatch) {
@@ -361,7 +357,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		DispatchPlanExample example = new DispatchPlanExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
-		example.createCriteria().andBatchIdEqualTo(batchId);
+		example.createCriteria().andBatchIdEqualTo(batchId).andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		page.setRecords(selectByExample);
@@ -404,6 +400,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andReplayTypeEqualTo(replayType);
 		}
 
+		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		getBatchNames(selectByExample);
 		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
@@ -420,7 +417,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		ex.createCriteria().andIdIn(ids);
 
-		if(ids.size()>0){
+		if (ids.size() > 0) {
 			List<DispatchPlanBatch> Batch = dispatchPlanBatchMapper.selectByExample(ex);
 
 			for (DispatchPlanBatch batchBean : Batch) {
@@ -448,7 +445,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		// 同步状态;0未同步1已同步
 		example.createCriteria().andUserIdEqualTo(userId).andLineEqualTo(lineId)
-				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0);
 		example.setOrderByClause("`gmt_create` DESC");
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		// //修改同步状态
@@ -469,7 +466,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		// 根据日期查询号码
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr));
+		ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr)).andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByExample(ex);
 		List<DispatchHour> hourList = new ArrayList<>();
 		for (DispatchPlan plan : phones) {
@@ -493,9 +490,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean deleteSchedule(String planUuid) {
+		DispatchPlan dis = new DispatchPlan();
+		dis.setIsDel(Constant.IS_DEL_1);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
-		int result = dispatchPlanMapper.deleteByExample(ex);
+		int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		return result > 0 ? true : false;
 	}
 
@@ -531,10 +530,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public boolean batchDeletePlans(IdsDto[] dto) {
 		int result = 0;
 		for (IdsDto bean : dto) {
+			DispatchPlan dispatchPlan = new DispatchPlan();
+			dispatchPlan.setIsDel(Constant.IS_DEL_1);
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanUUID());
-			result = dispatchPlanMapper.deleteByExample(ex);
-
+			result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
+			
+			
 			DispatchHourExample exHour = new DispatchHourExample();
 			exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanUUID());
 			result = dispatchHourMapper.deleteByExample(exHour);

@@ -18,6 +18,8 @@
         <module>guiyu-notice-parent</module>
         <module>guiyu-timerTask-parent</module>
         <module>guiyu-common-parent</module>
+        <module>guiyu-process-parent</module>
+        <module>guiyu-botstence-parent</module>
     </modules>
     <packaging>pom</packaging>
 

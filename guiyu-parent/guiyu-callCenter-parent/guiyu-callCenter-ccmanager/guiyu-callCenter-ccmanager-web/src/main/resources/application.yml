@@ -2,7 +2,7 @@ server:
   port: 18023
 spring:
   application:
-    name: guiyu-callCenter-ccmanager2
+    name: guiyu-callCenter-ccmanager
   datasource:
   #内网
     #url: jdbc:mysql://172.16.167.215:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8

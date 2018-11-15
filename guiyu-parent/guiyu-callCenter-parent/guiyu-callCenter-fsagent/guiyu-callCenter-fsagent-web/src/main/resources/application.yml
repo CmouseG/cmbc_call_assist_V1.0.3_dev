@@ -15,7 +15,7 @@ eureka:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 
 fs:
-   homeDir: C:/Program Files/FreeSWITCH
+   homeDir: /home/freeswitch/fs1
 
 job:
   clearRecord: 0 0 0 * * ?
@@ -24,5 +24,8 @@ path:
     recordPath: D:/
     tempPath:
     tempRecordPath: /home/aiwav
+
+properties:
+    error: properties/error.properties
 
 

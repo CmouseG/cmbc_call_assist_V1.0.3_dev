@@ -23,16 +23,6 @@
             <artifactId>guiyu-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>guiji.ai</groupId>
-            <artifactId>guiyu-utils</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>guiji.ai</groupId>
-            <artifactId>guiyu-component</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
          <!--Lombok-->
 		<dependency> 
 			<groupId>org.projectlombok</groupId>

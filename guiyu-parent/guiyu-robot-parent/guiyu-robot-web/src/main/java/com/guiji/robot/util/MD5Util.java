@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 /** 
 * @ClassName: MD5Util 
-* @Description: TODO(这里用一句话描述这个类的作用) 
+* @Description: MD5工具类
 * @date 2018年11月15日 下午4:26:19 
 * @version V1.0  
 */
@@ -72,7 +72,7 @@ public class MD5Util {
 	   long begin = System.currentTimeMillis();
 
 	   //2EA3E66AC37DF7610F5BD322EC4FFE48 670M 11s kuri双核1.66G 2G内存
-	   File big = new File("C:\\Users\\weiyunbo\\Desktop\\kf\\22\\kefu-workorder-web-0.0.1-SNAPSHO.jar");
+	   File big = new File("C:\\Users\\weiyunbo\\Desktop\\kf\\cloud-auth-web-0.0.1-SNAPSHOT.jar");
 
 	   String md5=getFileMD5String(big);
 

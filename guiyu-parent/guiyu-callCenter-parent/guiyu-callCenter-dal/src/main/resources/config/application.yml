@@ -1,3 +1,4 @@
+spring.datasource.test-while-idle: true
 sharding:
   jdbc:
     datasource:
@@ -5,10 +6,10 @@ sharding:
       guiyu_callcenter:
         type: org.apache.tomcat.jdbc.pool.DataSource
         driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter
+        url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
         username: callcenter
         password: callcenter@1234
-        autoReconnect: true
+
     config:
       sharding:
         props.sql.show: true

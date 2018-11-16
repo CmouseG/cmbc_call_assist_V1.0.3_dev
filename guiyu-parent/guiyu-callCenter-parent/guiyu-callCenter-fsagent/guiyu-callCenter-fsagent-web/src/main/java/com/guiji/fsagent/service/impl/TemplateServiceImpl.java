@@ -9,7 +9,7 @@ import com.guiji.fsagent.util.FileUtil;
 import com.guiji.nas.api.INas;
 import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.nas.vo.SysFileRspVO;
-import com.guiji.robot.api.IRobot;
+import com.guiji.robot.api.IRobotRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class TemplateServiceImpl implements TemplateService {
 //    @Autowired
 //    INas iNasFeign;
 //    @Autowired
-//    IRobot iRobotFeign;
+//    IRobotRemote iRobotFeign;
     @Override
     public Boolean istempexist(String tempId) {
        String tempPath =  pathConfig.getTempPath()+tempId;
@@ -48,7 +48,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public Result.ReturnData<Boolean> downloadttswav(String tempId, String callId) {
         //下载tts录音
-        //iRobotFeign.getTTSVoiceResource();
+       // iRobotFeign.();
         return null;
     }
 

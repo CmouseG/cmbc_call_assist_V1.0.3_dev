@@ -204,7 +204,7 @@ public class LineServiceImpl implements LineService {
 
         DialplanVO.Condition condition = new DialplanVO.Condition();
         condition.setField("caller_id_name");
-        condition.setExpression("^" + request.getLineId() + "\\d{0,2}$");
+        condition.setExpression("^" + request.getLineId() + "$");
 
         LinkedHashSet<DialplanVO.Action> ActionSet = new LinkedHashSet<DialplanVO.Action>();
         DialplanVO.Action action = new DialplanVO.Action();
@@ -214,7 +214,7 @@ public class LineServiceImpl implements LineService {
 
         if(request.getCodec()!=null&&request.getCodec().trim().isEmpty()){
             DialplanVO.Action action1 = new DialplanVO.Action();
-            action1.setData("nolocal:absolute_codec_string=G729");
+            action1.setData("nolocal:absolute_codec_string="+request.getCodec());
             action1.setApplication("export");
             ActionSet.add(action1);
         }

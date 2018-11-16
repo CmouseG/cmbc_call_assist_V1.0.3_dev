@@ -1,5 +1,6 @@
 package com.guiji.fsagent;
 
+import com.guiji.component.result.EnableAutoResultPack;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableFeignClients(basePackages = "com.guiji")
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@EnableAutoResultPack
 public class FsagentApplication {
     public static void main(String[] args){
         SpringApplication.run(FsagentApplication.class,args);

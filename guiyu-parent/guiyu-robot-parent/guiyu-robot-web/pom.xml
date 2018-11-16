@@ -8,8 +8,51 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>guiyu-robot-web</artifactId>
 
+	<dependencies>
+	  	<!-- 内部依赖 -->
+	  	<dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-robot-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+	  	<dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-robot-dal</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+		<!-- 通用组件 -->
+		 <dependency>
+            <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+        <!-- 数据源 -->
+        <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.1.10</version>
+		</dependency>
+	</dependencies>
+	
+	<!-- 构建springboot组件 -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

@@ -26,10 +26,10 @@ eureka:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 
-filedir:
-  lineDir: D:/line
-
 gateway:
   username: user
   password: pwd
+
+properties:
+  error: properties/error.properties
 

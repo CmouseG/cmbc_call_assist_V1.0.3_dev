@@ -6,6 +6,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.guiji.component.result.Result;
+import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
@@ -64,6 +65,14 @@ public interface IRobotRemote {
     })
     @PostMapping(value = "/remote/aiCallStart")
 	Result.ReturnData<AiCallNext> aiCallStart(AiCallStartReq aiCallStartReq);
+	
+	
+	@ApiOperation(value = "sellbot关键字匹配，预校验下是否命中了关键字，命中后调用方再调aiCallNext，减轻主流程压力")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "aiCallLngKeyMatchReq", value = "关键字命中匹配", required = true)
+    })
+    @PostMapping(value = "/remote/aiLngKeyMatch")
+	Result.ReturnData<AiCallNext> aiLngKeyMatch(AiCallLngKeyMatchReq aiCallLngKeyMatchReq);
 	
 	
 	@ApiOperation(value = "用户语音AI响应")

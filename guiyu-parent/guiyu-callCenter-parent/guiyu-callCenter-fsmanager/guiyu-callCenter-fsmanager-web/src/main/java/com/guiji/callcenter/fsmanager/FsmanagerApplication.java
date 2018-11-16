@@ -1,5 +1,6 @@
 package com.guiji.callcenter.fsmanager;
 
+import com.guiji.component.result.EnableAutoResultPack;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableFeignClients
 @MapperScan("com.guiji.*.dao")
+@EnableAutoResultPack
 public class FsmanagerApplication {
     public static void main(String[] args){
         SpringApplication.run(FsmanagerApplication.class,args);

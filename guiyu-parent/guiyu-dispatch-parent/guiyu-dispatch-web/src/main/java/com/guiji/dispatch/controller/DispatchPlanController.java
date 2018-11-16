@@ -35,9 +35,7 @@ public class DispatchPlanController {
 	 * @return 响应报文 异常
 	 */
 	@PostMapping("addSchedule")
-	@Log(info = "单个导入任务")
 	public boolean addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
-		// Long userId = 1l;
 		boolean result = false;
 		try {
 			result = dispatchPlanService.addSchedule(dispatchPlan, userId);
@@ -52,6 +50,7 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("queryDispatchPlanBatch")
+	@Log(info="查询批量信息")
 	public List<DispatchPlanBatch> queryDispatchPlanBatch() {
 		return dispatchPlanService.queryDispatchPlanBatch();
 
@@ -117,20 +116,20 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@Log(info = "文件上传")
-	@PostMapping("/batchImport")
+	@PostMapping("batchImport")
 	public Result.ReturnData batchImport(@RequestParam("file") MultipartFile file, @RequestHeader Long userId,
 			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan) {
+		logger.info("batchImport start");
 		String fileName = file.getOriginalFilename();
 
 		boolean result = false;
 		try {
 			result = dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan);
 		} catch (Exception e) {
-			// e.printStackTrace();
 			return Result.error("0203001");
 		}
 
-		return Result.ok();
+		return Result.ok(result);
 	}
 
 	// /**
@@ -198,12 +197,13 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("queryDispatchPlanByParams")
+	@Log(info="查询任务计划")
 	public Page<DispatchPlan> queryDispatchPlanByParams(@RequestParam(required = false, name = "phone") String phone,
 			@RequestParam(required = false, name = "planStatus") String planStatus,
 			@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime,
 			@RequestParam(required = false, name = "batchId") Integer batchId,
-			@RequestParam(required = false, name = "replayType") Integer replayType,
+			@RequestParam(required = false, name = "replayType") String replayType,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
@@ -228,6 +228,7 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("operationAllPlanByBatchId")
+	@Log(info="一键修改状态")
 	public boolean operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
 			@RequestParam(required = true, name = "status") String status) {
 		return dispatchPlanService.operationAllPlanByBatchId(batchId, status);

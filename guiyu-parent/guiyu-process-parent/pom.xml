@@ -14,6 +14,7 @@
     <modules>
         <module>guiyu-process-agent</module>
         <module>guiyu-process-server</module>
+        <module>guiyu-process-core</module>
     </modules>
 
 

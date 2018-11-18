@@ -17,13 +17,13 @@ import com.guiji.user.dao.entity.SysUser;
  * Created by ty on 2018/10/22.
  */
 @RestController
-@RequestMapping("user")
+//@RequestMapping("user")
 public class UserController implements IAuth{
 	
 	@Autowired
 	private UserService service;
 	
-	@RequestMapping("regist")
+	@RequestMapping("/user/regist")
 	public void insert(SysUser user,Long roleId) throws Exception{
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
@@ -32,7 +32,7 @@ public class UserController implements IAuth{
 		service.insert(user,roleId);
 	}
 	
-	@RequestMapping("update")
+	@RequestMapping("/user/update")
 	public void update(SysUser user,String[] roleId) throws CheckConditionException{
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
@@ -41,19 +41,18 @@ public class UserController implements IAuth{
 		service.update(user,roleId);
 	}
 	
-	@RequestMapping("delete")
+	@RequestMapping("/user/delete")
 	public void delete(Long id){
 		service.delete(id);
 	}
 
-	@RequestMapping("getUserByPage")
+	@RequestMapping("/user/getUserByPage")
 	public Page<SysUser> getUserByPage(Page<SysUser> page){
 		service.getUserByPage(page);
 		return page;
 	}
 	
-	
-	@RequestMapping("getUserById")
+	@RequestMapping("/user/getUserById")
 	public ReturnData<SysUser> getUserById(Long userId){
 		SysUser sysUser=service.getUserById(userId);
 		return Result.ok(sysUser);

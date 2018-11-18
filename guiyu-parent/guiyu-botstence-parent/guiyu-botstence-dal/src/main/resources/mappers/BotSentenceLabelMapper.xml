@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceLabelMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceLabel" >
+    <id column="label_id" property="labelId" jdbcType="VARCHAR" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="label_name" property="labelName" jdbcType="VARCHAR" />
+    <result column="conversation_count" property="conversationCount" jdbcType="INTEGER" />
+    <result column="keywords" property="keywords" jdbcType="VARCHAR" />
+    <result column="display_keywords" property="displayKeywords" jdbcType="VARCHAR" />
+    <result column="display_keywords_before" property="displayKeywordsBefore" jdbcType="VARCHAR" />
+    <result column="special_count" property="specialCount" jdbcType="INTEGER" />
+    <result column="used_time_s" property="usedTimeS" jdbcType="INTEGER" />
+    <result column="deny_count" property="denyCount" jdbcType="INTEGER" />
+    <result column="busy_count" property="busyCount" jdbcType="INTEGER" />
+    <result column="score_up" property="scoreUp" jdbcType="DOUBLE" />
+    <result column="score_low" property="scoreLow" jdbcType="DOUBLE" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="show_name" property="showName" jdbcType="VARCHAR" />
+    <result column="help_detail" property="helpDetail" jdbcType="VARCHAR" />
+    <result column="annotation" property="annotation" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    label_id, process_id, label_name, conversation_count, keywords, display_keywords, 
+    display_keywords_before, special_count, used_time_s, deny_count, busy_count, score_up, 
+    score_low, crt_time, crt_user, lst_update_time, lst_update_user, show_name, help_detail, 
+    annotation
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabelExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_label
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_label
+    where label_id = #{labelId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_label
+    where label_id = #{labelId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabelExample" >
+    delete from bot_sentence_label
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabel" >
+    <selectKey resultType="java.lang.String" keyProperty="labelId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_label')
+    </selectKey>
+    insert into bot_sentence_label (label_id, process_id, label_name, 
+      conversation_count, keywords, display_keywords, 
+      display_keywords_before, special_count, used_time_s, 
+      deny_count, busy_count, score_up, 
+      score_low, crt_time, crt_user, 
+      lst_update_time, lst_update_user, show_name, 
+      help_detail, annotation)
+    values (#{labelId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, #{labelName,jdbcType=VARCHAR}, 
+      #{conversationCount,jdbcType=INTEGER}, #{keywords,jdbcType=VARCHAR}, #{displayKeywords,jdbcType=VARCHAR}, 
+      #{displayKeywordsBefore,jdbcType=VARCHAR}, #{specialCount,jdbcType=INTEGER}, #{usedTimeS,jdbcType=INTEGER}, 
+      #{denyCount,jdbcType=INTEGER}, #{busyCount,jdbcType=INTEGER}, #{scoreUp,jdbcType=DOUBLE}, 
+      #{scoreLow,jdbcType=DOUBLE}, #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, 
+      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, #{showName,jdbcType=VARCHAR}, 
+      #{helpDetail,jdbcType=VARCHAR}, #{annotation,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabel" >
+    <selectKey resultType="java.lang.String" keyProperty="labelId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_label')
+    </selectKey>
+    insert into bot_sentence_label
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      label_id,
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="labelName != null" >
+        label_name,
+      </if>
+      <if test="conversationCount != null" >
+        conversation_count,
+      </if>
+      <if test="keywords != null" >
+        keywords,
+      </if>
+      <if test="displayKeywords != null" >
+        display_keywords,
+      </if>
+      <if test="displayKeywordsBefore != null" >
+        display_keywords_before,
+      </if>
+      <if test="specialCount != null" >
+        special_count,
+      </if>
+      <if test="usedTimeS != null" >
+        used_time_s,
+      </if>
+      <if test="denyCount != null" >
+        deny_count,
+      </if>
+      <if test="busyCount != null" >
+        busy_count,
+      </if>
+      <if test="scoreUp != null" >
+        score_up,
+      </if>
+      <if test="scoreLow != null" >
+        score_low,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="showName != null" >
+        show_name,
+      </if>
+      <if test="helpDetail != null" >
+        help_detail,
+      </if>
+      <if test="annotation != null" >
+        annotation,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{labelId,jdbcType=VARCHAR},
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="labelName != null" >
+        #{labelName,jdbcType=VARCHAR},
+      </if>
+      <if test="conversationCount != null" >
+        #{conversationCount,jdbcType=INTEGER},
+      </if>
+      <if test="keywords != null" >
+        #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="displayKeywords != null" >
+        #{displayKeywords,jdbcType=VARCHAR},
+      </if>
+      <if test="displayKeywordsBefore != null" >
+        #{displayKeywordsBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="specialCount != null" >
+        #{specialCount,jdbcType=INTEGER},
+      </if>
+      <if test="usedTimeS != null" >
+        #{usedTimeS,jdbcType=INTEGER},
+      </if>
+      <if test="denyCount != null" >
+        #{denyCount,jdbcType=INTEGER},
+      </if>
+      <if test="busyCount != null" >
+        #{busyCount,jdbcType=INTEGER},
+      </if>
+      <if test="scoreUp != null" >
+        #{scoreUp,jdbcType=DOUBLE},
+      </if>
+      <if test="scoreLow != null" >
+        #{scoreLow,jdbcType=DOUBLE},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="showName != null" >
+        #{showName,jdbcType=VARCHAR},
+      </if>
+      <if test="helpDetail != null" >
+        #{helpDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="annotation != null" >
+        #{annotation,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabelExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_label
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_label
+    <set >
+      <if test="record.labelId != null" >
+        label_id = #{record.labelId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.labelName != null" >
+        label_name = #{record.labelName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.conversationCount != null" >
+        conversation_count = #{record.conversationCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.keywords != null" >
+        keywords = #{record.keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayKeywords != null" >
+        display_keywords = #{record.displayKeywords,jdbcType=VARCHAR},
+      </if>
+      <if test="record.displayKeywordsBefore != null" >
+        display_keywords_before = #{record.displayKeywordsBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="record.specialCount != null" >
+        special_count = #{record.specialCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.usedTimeS != null" >
+        used_time_s = #{record.usedTimeS,jdbcType=INTEGER},
+      </if>
+      <if test="record.denyCount != null" >
+        deny_count = #{record.denyCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.busyCount != null" >
+        busy_count = #{record.busyCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.scoreUp != null" >
+        score_up = #{record.scoreUp,jdbcType=DOUBLE},
+      </if>
+      <if test="record.scoreLow != null" >
+        score_low = #{record.scoreLow,jdbcType=DOUBLE},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showName != null" >
+        show_name = #{record.showName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.helpDetail != null" >
+        help_detail = #{record.helpDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.annotation != null" >
+        annotation = #{record.annotation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_label
+    set label_id = #{record.labelId,jdbcType=VARCHAR},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      label_name = #{record.labelName,jdbcType=VARCHAR},
+      conversation_count = #{record.conversationCount,jdbcType=INTEGER},
+      keywords = #{record.keywords,jdbcType=VARCHAR},
+      display_keywords = #{record.displayKeywords,jdbcType=VARCHAR},
+      display_keywords_before = #{record.displayKeywordsBefore,jdbcType=VARCHAR},
+      special_count = #{record.specialCount,jdbcType=INTEGER},
+      used_time_s = #{record.usedTimeS,jdbcType=INTEGER},
+      deny_count = #{record.denyCount,jdbcType=INTEGER},
+      busy_count = #{record.busyCount,jdbcType=INTEGER},
+      score_up = #{record.scoreUp,jdbcType=DOUBLE},
+      score_low = #{record.scoreLow,jdbcType=DOUBLE},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      show_name = #{record.showName,jdbcType=VARCHAR},
+      help_detail = #{record.helpDetail,jdbcType=VARCHAR},
+      annotation = #{record.annotation,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabel" >
+    update bot_sentence_label
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="labelName != null" >
+        label_name = #{labelName,jdbcType=VARCHAR},
+      </if>
+      <if test="conversationCount != null" >
+        conversation_count = #{conversationCount,jdbcType=INTEGER},
+      </if>
+      <if test="keywords != null" >
+        keywords = #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="displayKeywords != null" >
+        display_keywords = #{displayKeywords,jdbcType=VARCHAR},
+      </if>
+      <if test="displayKeywordsBefore != null" >
+        display_keywords_before = #{displayKeywordsBefore,jdbcType=VARCHAR},
+      </if>
+      <if test="specialCount != null" >
+        special_count = #{specialCount,jdbcType=INTEGER},
+      </if>
+      <if test="usedTimeS != null" >
+        used_time_s = #{usedTimeS,jdbcType=INTEGER},
+      </if>
+      <if test="denyCount != null" >
+        deny_count = #{denyCount,jdbcType=INTEGER},
+      </if>
+      <if test="busyCount != null" >
+        busy_count = #{busyCount,jdbcType=INTEGER},
+      </if>
+      <if test="scoreUp != null" >
+        score_up = #{scoreUp,jdbcType=DOUBLE},
+      </if>
+      <if test="scoreLow != null" >
+        score_low = #{scoreLow,jdbcType=DOUBLE},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="showName != null" >
+        show_name = #{showName,jdbcType=VARCHAR},
+      </if>
+      <if test="helpDetail != null" >
+        help_detail = #{helpDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="annotation != null" >
+        annotation = #{annotation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where label_id = #{labelId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceLabel" >
+    update bot_sentence_label
+    set process_id = #{processId,jdbcType=VARCHAR},
+      label_name = #{labelName,jdbcType=VARCHAR},
+      conversation_count = #{conversationCount,jdbcType=INTEGER},
+      keywords = #{keywords,jdbcType=VARCHAR},
+      display_keywords = #{displayKeywords,jdbcType=VARCHAR},
+      display_keywords_before = #{displayKeywordsBefore,jdbcType=VARCHAR},
+      special_count = #{specialCount,jdbcType=INTEGER},
+      used_time_s = #{usedTimeS,jdbcType=INTEGER},
+      deny_count = #{denyCount,jdbcType=INTEGER},
+      busy_count = #{busyCount,jdbcType=INTEGER},
+      score_up = #{scoreUp,jdbcType=DOUBLE},
+      score_low = #{scoreLow,jdbcType=DOUBLE},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      show_name = #{showName,jdbcType=VARCHAR},
+      help_detail = #{helpDetail,jdbcType=VARCHAR},
+      annotation = #{annotation,jdbcType=VARCHAR}
+    where label_id = #{labelId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.UserService;
 import com.guiji.auth.util.AuthUtil;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysUser;
 
 /**
@@ -15,7 +18,7 @@ import com.guiji.user.dao.entity.SysUser;
  */
 @RestController
 @RequestMapping("user")
-public class UserController{
+public class UserController implements IAuth{
 	
 	@Autowired
 	private UserService service;
@@ -49,9 +52,11 @@ public class UserController{
 		return page;
 	}
 	
+	
 	@RequestMapping("getUserById")
-	public SysUser getUserById(Long userId){
-		return service.getUserById(userId);
+	public ReturnData<SysUser> getUserById(Long userId){
+		SysUser sysUser=service.getUserById(userId);
+		return Result.ok(sysUser);
 	}
 	
 }

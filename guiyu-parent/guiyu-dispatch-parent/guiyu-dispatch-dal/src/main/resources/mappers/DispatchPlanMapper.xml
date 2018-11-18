@@ -23,6 +23,7 @@
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
     <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
     <result column="is_tts" property="isTts" jdbcType="TINYINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="replay_type" property="replayType" jdbcType="INTEGER" />
     <result column="is_del" property="isDel" jdbcType="INTEGER" />
   </resultMap>
@@ -87,7 +88,7 @@
   <sql id="Base_Column_List" >
     id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync, 
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour, 
-    gmt_create, gmt_modified, is_tts, replay_type, is_del
+    gmt_create, gmt_modified, is_tts, username, replay_type, is_del
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
@@ -131,7 +132,8 @@
       line, `result`, call_agent, 
       clean, call_data, call_hour, 
       gmt_create, gmt_modified, is_tts, 
-      replay_type, is_del)
+      username, replay_type, is_del
+      )
     values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER}, 
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
       #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER}, 
@@ -139,7 +141,8 @@
       #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
       #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=TINYINT}, 
-      #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER})
+      #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     insert into dispatch_plan
@@ -206,6 +209,9 @@
       </if>
       <if test="isTts != null" >
         is_tts,
+      </if>
+      <if test="username != null" >
+        username,
       </if>
       <if test="replayType != null" >
         replay_type,
@@ -277,6 +283,9 @@
       </if>
       <if test="isTts != null" >
         #{isTts,jdbcType=TINYINT},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
       </if>
       <if test="replayType != null" >
         #{replayType,jdbcType=INTEGER},
@@ -358,6 +367,9 @@
       <if test="record.isTts != null" >
         is_tts = #{record.isTts,jdbcType=TINYINT},
       </if>
+      <if test="record.username != null" >
+        username = #{record.username,jdbcType=VARCHAR},
+      </if>
       <if test="record.replayType != null" >
         replay_type = #{record.replayType,jdbcType=INTEGER},
       </if>
@@ -392,6 +404,7 @@
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
       is_tts = #{record.isTts,jdbcType=TINYINT},
+      username = #{record.username,jdbcType=VARCHAR},
       replay_type = #{record.replayType,jdbcType=INTEGER},
       is_del = #{record.isDel,jdbcType=INTEGER}
     <if test="_parameter != null" >
@@ -461,6 +474,9 @@
       <if test="isTts != null" >
         is_tts = #{isTts,jdbcType=TINYINT},
       </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
       <if test="replayType != null" >
         replay_type = #{replayType,jdbcType=INTEGER},
       </if>
@@ -492,6 +508,7 @@
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       is_tts = #{isTts,jdbcType=TINYINT},
+      username = #{username,jdbcType=VARCHAR},
       replay_type = #{replayType,jdbcType=INTEGER},
       is_del = #{isDel,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}

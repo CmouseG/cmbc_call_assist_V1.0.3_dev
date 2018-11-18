@@ -1,4 +1,4 @@
-	package com.guiji.dispatch.dao.entity;
+package com.guiji.dispatch.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -50,6 +50,8 @@ public class DispatchPlan implements Serializable {
     private Date gmtModified;
 
     private Byte isTts;
+
+    private String username;
 
     private Integer replayType;
 
@@ -244,6 +246,14 @@ public class DispatchPlan implements Serializable {
         this.isTts = isTts;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username == null ? null : username.trim();
+    }
+
     public Integer getReplayType() {
         return replayType;
     }
@@ -287,6 +297,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
         sb.append(", isTts=").append(isTts);
+        sb.append(", username=").append(username);
         sb.append(", replayType=").append(replayType);
         sb.append(", isDel=").append(isDel);
         sb.append(", serialVersionUID=").append(serialVersionUID);

@@ -45,6 +45,7 @@ import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateProvider;
 import com.guiji.dispatch.util.ToolDateTime;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGenUtil;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -52,7 +53,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
@@ -73,11 +73,17 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private DateProvider dateProvider;
 	//
-	// @Autowired
-	// private IAuth authService;
+	@Autowired
+	private IAuth authService;
 
 	@Override
 	public boolean addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
+
+		// 查询用户名称
+		ReturnData<SysUser> SysUser = authService.getUserById(userId);
+		if (SysUser != null) {
+			dispatchPlan.setUsername(SysUser.getBody().getUsername());
+		}
 		DispatchPlanBatch dispatchPlanBatch = new DispatchPlanBatch();
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
 		// 通知状态;通知状态1等待2失败3成功
@@ -89,10 +95,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 
 		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+		dispatchPlan.setUserId(userId.intValue());
+		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
+		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 		dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
 		dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		dispatchPlan.setIsDel(Constant.IS_DEL_0);
+		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 		int result = dispatchPlanMapper.insert(dispatchPlan);
 
 		// 调用机器人中心判断参数是否合法，如果合法则status_plan =1 否则为0 然后入库
@@ -129,7 +139,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
-		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
+		int count = dispatchPlanMapper.countByExample(ex);
 		page.setRecords(selectByExample);
 		page.setTotal(count);
 		return page;
@@ -186,7 +196,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
-			// throw new MyException("上传文件格式不正确");
+			throw new Exception("上传文件格式不正确");
 		}
 		boolean isExcel2003 = true;
 		if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
@@ -208,6 +218,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+
+		// 查询用户名称
+		ReturnData<SysUser> SysUser = authService.getUserById(userId);
+		if (SysUser != null) {
+			dispatchPlan.setUsername(SysUser.getBody().getUsername());
+		}
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			if (row == null) {
@@ -284,17 +300,17 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ReplayDto replayDto = JSONObject.parseObject(recallParams, ReplayDto.class);
 			// 查询语音记录
 			ReturnData<CallOutPlan> callRecordById = callManagerFeign.getCallRecordById(planUuid);
-	
-			if(callRecordById.getBody()!=null){
+
+			if (callRecordById.getBody() != null) {
 				// 意图
-				if(replayDto.getLabel().contains(callRecordById.getBody().getAccurateIntent())){
-					if(callRecordById.getBody().getAccurateIntent().equals("F")){
-						 //F类判断挂断类型
-						if(replayDto.getLabelType().contains(callRecordById.getBody().getReason())){
-							//创建 
+				if (replayDto.getLabel().contains(callRecordById.getBody().getAccurateIntent())) {
+					if (callRecordById.getBody().getAccurateIntent().equals("F")) {
+						// F类判断挂断类型
+						if (replayDto.getLabelType().contains(callRecordById.getBody().getReason())) {
+							// 创建
 						}
-					}else{
-						//创建 
+					} else {
+						// 创建
 					}
 				}
 			}
@@ -336,7 +352,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			}
 		} catch (Exception e) {
-			System.out.println("transBean2Map Error " + e);
+			logger.error("transBean2Map Error " + e);
 		}
 
 		return map;
@@ -359,7 +375,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		example.setLimitEnd(pagesize);
 		example.createCriteria().andBatchIdEqualTo(batchId).andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
+		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
 		page.setTotal(count);
 		return page;
@@ -367,20 +383,30 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, Integer batchId, Integer replayType, int pagenum, int pagesize) {
+			String endTime, Integer batchId, String replayType, int pagenum, int pagesize) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
 		DispatchPlanExample example = new DispatchPlanExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
+
 		Criteria createCriteria = example.createCriteria();
 		if (phone != null && phone != "") {
 			createCriteria.andPhoneEqualTo(phone);
 		}
 
 		if (planStatus != null && planStatus != "") {
-			createCriteria.andStatusPlanEqualTo(Integer.valueOf(planStatus));
+			List<Integer> ids = new ArrayList<>();
+			if (planStatus.contains(",")) {
+				String[] split = planStatus.split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+					createCriteria.andStatusPlanIn(ids);
+				}
+			} else {
+				createCriteria.andStatusPlanEqualTo(Integer.valueOf(planStatus));
+			}
 		}
 		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -396,14 +422,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andBatchIdEqualTo(batchId);
 		}
 
-		if (replayType != null && replayType != -1) {
-			createCriteria.andReplayTypeEqualTo(replayType);
+		if (replayType != null && replayType != "") {
+			List<Integer> ids = new ArrayList<>();
+			if (replayType.contains(",")) {
+				String[] split = replayType.split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+					createCriteria.andReplayTypeIn(ids);
+				}
+			} else {
+				createCriteria.andReplayTypeEqualTo(Integer.valueOf(replayType));
+			}
 		}
 
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		getBatchNames(selectByExample);
-		int count = dispatchPlanMapper.countByExample(new DispatchPlanExample());
+		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
 		page.setTotal(count);
 		return page;
@@ -438,22 +473,51 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
-		DispatchPlanExample example = new DispatchPlanExample();
+		DispatchPlanExample ex = new DispatchPlanExample();
+		
 		if (requestCount != 0) {
-			example.setLimitStart((requestCount - 1) * 1);
-			example.setLimitEnd(requestCount);
+			ex.setLimitStart(0);
+			ex.setLimitEnd(requestCount);
+		}
+
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+
+		// 根据日期查询号码
+		ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr)).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andUserIdEqualTo(userId).andLineEqualTo(lineId).andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
+		ex.setOrderByClause("`gmt_create` DESC");
+		List<DispatchPlan> phones = dispatchPlanMapper.selectByExample(ex);
+		
+		
+		List<DispatchHour> hourList = new ArrayList<>();
+		// 遍历当前符合日期号码
+		for (DispatchPlan plan : phones) {
+			DispatchHourExample hourEx = new DispatchHourExample();
+			// 查询拨打时间
+			hourEx.createCriteria().andHourEqualTo(hour).andDispatchIdEqualTo(plan.getPlanUuid());
+			List<DispatchHour> list = dispatchHourMapper.selectByExample(hourEx);
+			hourList.addAll(list);
+		}
+		List<String> ids = new ArrayList<>();
+		for (DispatchHour bean : hourList) {
+			ids.add(String.valueOf(bean.getDispatchId()));
 		}
 		// 同步状态;0未同步1已同步
-		example.createCriteria().andUserIdEqualTo(userId).andLineEqualTo(lineId)
-				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0);
-		example.setOrderByClause("`gmt_create` DESC");
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		// //修改同步状态
-		for (DispatchPlan dispatchPlan : selectByExample) {
-			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
-			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+//		for (DispatchPlan dispatchPlan : phones) {
+//			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+//			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+//		}
+		List<DispatchPlan> result = new ArrayList<>();
+		if (ids.size() > 0) {
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andPlanUuidIn(ids);
+			result = dispatchPlanMapper.selectByExample(ex1);
 		}
-		return selectByExample;
+		return result;
 	}
 
 	@Override
@@ -466,11 +530,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		// 根据日期查询号码
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr)).andIsDelEqualTo(Constant.IS_DEL_0);
+		ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr)).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByExample(ex);
 		List<DispatchHour> hourList = new ArrayList<>();
+		// 遍历当前符合日期号码
 		for (DispatchPlan plan : phones) {
 			DispatchHourExample hourEx = new DispatchHourExample();
+			// 查询拨打时间
 			hourEx.createCriteria().andHourEqualTo(hour).andDispatchIdEqualTo(plan.getPlanUuid());
 			hourList = dispatchHourMapper.selectByExample(hourEx);
 		}
@@ -535,8 +602,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanUUID());
 			result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
-			
-			
+
 			DispatchHourExample exHour = new DispatchHourExample();
 			exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanUUID());
 			result = dispatchHourMapper.deleteByExample(exHour);

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.robot.dao.UserAiCfgHisInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.UserAiCfgHisInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="ai_num" property="aiNum" jdbcType="INTEGER" />
+    <result column="assign_level" property="assignLevel" jdbcType="CHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="open_date" property="openDate" jdbcType="VARCHAR" />
+    <result column="invalid_date" property="invalidDate" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="invalid_policy" property="invalidPolicy" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, busi_id, user_id, ai_num, assign_level, template_id, open_date, invalid_date, 
+    `status`, invalid_policy, crt_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from user_ai_cfg_his_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_ai_cfg_his_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from user_ai_cfg_his_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfoExample" >
+    delete from user_ai_cfg_his_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfo" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('user_ai_cfg_his_info')
+    </selectKey>
+    insert into user_ai_cfg_his_info (id, busi_id, user_id, 
+      ai_num, assign_level, template_id, 
+      open_date, invalid_date, `status`, 
+      invalid_policy, crt_time)
+    values (#{id,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{aiNum,jdbcType=INTEGER}, #{assignLevel,jdbcType=CHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{openDate,jdbcType=VARCHAR}, #{invalidDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{invalidPolicy,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfo" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('user_ai_cfg_his_info')
+    </selectKey>
+    insert into user_ai_cfg_his_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="busiId != null" >
+        busi_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="aiNum != null" >
+        ai_num,
+      </if>
+      <if test="assignLevel != null" >
+        assign_level,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="openDate != null" >
+        open_date,
+      </if>
+      <if test="invalidDate != null" >
+        invalid_date,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="invalidPolicy != null" >
+        invalid_policy,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=VARCHAR},
+      <if test="busiId != null" >
+        #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="aiNum != null" >
+        #{aiNum,jdbcType=INTEGER},
+      </if>
+      <if test="assignLevel != null" >
+        #{assignLevel,jdbcType=CHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="openDate != null" >
+        #{openDate,jdbcType=VARCHAR},
+      </if>
+      <if test="invalidDate != null" >
+        #{invalidDate,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="invalidPolicy != null" >
+        #{invalidPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfoExample" resultType="java.lang.Integer" >
+    select count(*) from user_ai_cfg_his_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_ai_cfg_his_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.busiId != null" >
+        busi_id = #{record.busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.aiNum != null" >
+        ai_num = #{record.aiNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.assignLevel != null" >
+        assign_level = #{record.assignLevel,jdbcType=CHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openDate != null" >
+        open_date = #{record.openDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.invalidDate != null" >
+        invalid_date = #{record.invalidDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        `status` = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.invalidPolicy != null" >
+        invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_ai_cfg_his_info
+    set id = #{record.id,jdbcType=VARCHAR},
+      busi_id = #{record.busiId,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      ai_num = #{record.aiNum,jdbcType=INTEGER},
+      assign_level = #{record.assignLevel,jdbcType=CHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      open_date = #{record.openDate,jdbcType=VARCHAR},
+      invalid_date = #{record.invalidDate,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=VARCHAR},
+      invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfo" >
+    update user_ai_cfg_his_info
+    <set >
+      <if test="busiId != null" >
+        busi_id = #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="aiNum != null" >
+        ai_num = #{aiNum,jdbcType=INTEGER},
+      </if>
+      <if test="assignLevel != null" >
+        assign_level = #{assignLevel,jdbcType=CHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="openDate != null" >
+        open_date = #{openDate,jdbcType=VARCHAR},
+      </if>
+      <if test="invalidDate != null" >
+        invalid_date = #{invalidDate,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="invalidPolicy != null" >
+        invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfo" >
+    update user_ai_cfg_his_info
+    set busi_id = #{busiId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      ai_num = #{aiNum,jdbcType=INTEGER},
+      assign_level = #{assignLevel,jdbcType=CHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      open_date = #{openDate,jdbcType=VARCHAR},
+      invalid_date = #{invalidDate,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=VARCHAR},
+      invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

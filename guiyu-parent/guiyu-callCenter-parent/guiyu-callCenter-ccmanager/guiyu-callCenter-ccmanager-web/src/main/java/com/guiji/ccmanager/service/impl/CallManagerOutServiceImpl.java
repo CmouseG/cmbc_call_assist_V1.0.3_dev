@@ -9,10 +9,14 @@ import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.component.result.Result;
+import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsmanager.api.ITemp;
+import com.guiji.utils.FeignBuildUtil;
+import com.guiji.utils.ServerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +39,8 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
     private ITemp tempApiFeign;
     @Autowired
     private ICallPlan callPlanApi;
-
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     @Override
     public Result.ReturnData<Object> startcallplan(String customerId, String tempId, String lineId) {
@@ -71,7 +76,13 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
             return result;
         }
         //调用所有calloutserver的启动客户呼叫计划接口
-        return callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+        List<String> serverEurekaList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
+        for(String server:serverEurekaList) {
+            ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + server);
+            callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+        }
+
+        return Result.ok();
     }
 
     @Override

@@ -79,9 +79,9 @@ public class LogInterceptor implements HandlerInterceptor {
 			if (method.isAnnotationPresent(Log.class)) {
 				log = OperatorLogUtil.getLog(request, method);
 				OperatorLogService operatorLogService = getService(OperatorLogService.class, request);
-				String userId = request.getHeader("userId");
-				logger.info("afterCompletion userId"+userId);
-				log.setUserId(Integer.valueOf(userId));
+//				String userId = request.getHeader("userId");
+//				logger.info("afterCompletion userId"+userId);
+//				log.setUserId(Integer.valueOf(userId));
 				operatorLogService.saveOperatorLog(log);
 			}
 		} catch (Exception e) {

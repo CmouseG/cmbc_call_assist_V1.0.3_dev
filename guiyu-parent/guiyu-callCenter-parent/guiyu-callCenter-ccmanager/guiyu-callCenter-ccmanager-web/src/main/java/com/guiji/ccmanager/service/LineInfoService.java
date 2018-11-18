@@ -17,7 +17,9 @@ public interface LineInfoService {
 
     public Result.ReturnData<Boolean> addLineInfo(LineInfoVO lineInfoVO);
 
-    public Result.ReturnData<Boolean> updateLineInfo(LineInfoVO lineInfoVO);
+    public Result.ReturnData<Boolean>
+
+    updateLineInfo(LineInfoVO lineInfoVO);
 
     public Result.ReturnData<Boolean> delLineInfo(String id);
 

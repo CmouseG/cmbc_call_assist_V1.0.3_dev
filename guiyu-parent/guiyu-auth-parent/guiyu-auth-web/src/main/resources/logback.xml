@@ -7,9 +7,9 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/apps/logs/guiyu-auth/log.log</file>
+        <file>/home/apps/logs/guiyu-auth/log.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/apps/logs/guiyu-auth/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>/home/apps/logs/guiyu-auth/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -22,9 +22,9 @@
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <File>/apps/logs/guiyu-auth/error.log</File>
+        <File>/home/apps/logs/guiyu-auth/error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/apps/logs/guiyu-auth/error-%d{yyyyMMdd}.log.%i
+            <fileNamePattern>/home/apps/logs/guiyu-auth/error-%d{yyyyMMdd}.log.%i
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
@@ -38,9 +38,9 @@
     </appender>
 
     <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/apps/logs/guiyu-auth/sql.log</file>
+        <file>/home/apps/logs/guiyu-auth/sql.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/apps/logs/guiyu-auth/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>/home/apps/logs/guiyu-auth/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

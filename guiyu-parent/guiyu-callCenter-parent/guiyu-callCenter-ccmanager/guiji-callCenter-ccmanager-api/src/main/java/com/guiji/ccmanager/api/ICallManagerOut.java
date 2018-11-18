@@ -1,6 +1,6 @@
 package com.guiji.ccmanager.api;
 
-import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.ccmanager.entity.CallOutPlan;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;

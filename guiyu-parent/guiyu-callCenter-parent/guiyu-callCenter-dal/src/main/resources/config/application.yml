@@ -1,10 +1,19 @@
-spring.datasource.test-while-idle: true
+spring:
+  datasource:
+    test-while-idle: true  #验证连接的有效性
+    #获取连接时候验证，会影响性能
+#    test-on-borrow: true
+    validation-query: SELECT 1 FROM DUAL
+    #空闲连接回收的时间间隔，与test-while-idle一起使用，设置5分钟
+    time-between-eviction-runs-millis: 300000
+    #连接池空闲连接的有效时间 ，设置30分钟
+    min-evictable-idle-time-millis: 1800000
 sharding:
   jdbc:
     datasource:
       names: guiyu_callcenter
       guiyu_callcenter:
-        type: org.apache.tomcat.jdbc.pool.DataSource
+        type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.jdbc.Driver
         url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
         username: callcenter

@@ -508,10 +508,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ids.add(String.valueOf(bean.getDispatchId()));
 		}
 		// 同步状态;0未同步1已同步
-//		for (DispatchPlan dispatchPlan : phones) {
-//			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
-//			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
-//		}
+		for (DispatchPlan dispatchPlan : phones) {
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+		}
 		List<DispatchPlan> result = new ArrayList<>();
 		if (ids.size() > 0) {
 			DispatchPlanExample ex1 = new DispatchPlanExample();

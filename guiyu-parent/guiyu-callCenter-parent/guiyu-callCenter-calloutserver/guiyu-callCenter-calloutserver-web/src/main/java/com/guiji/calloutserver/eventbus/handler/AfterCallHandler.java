@@ -10,6 +10,7 @@ import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutRecordService;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.fsagent.entity.RecordVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,17 @@ public class AfterCallHandler {
     @Autowired
     FsAgentManager fsAgentManager;
 
+    @Autowired
+    IDispatchPlanOut  dispatchPlanOut;
+
     @Subscribe
     public void handleAfterCall(AfterCallEvent afterCallEvent) {
         try {
             CallOutPlan callPlan = afterCallEvent.getCallPlan();
             Preconditions.checkArgument(callPlan != null, "null callPlan");
+
+            //调度中心
+            dispatchPlanOut.successSchedule(callPlan.getCallId());
 
             //上传呼叫时长不为空的文件
             if (callPlan.getDuration() > 0) {

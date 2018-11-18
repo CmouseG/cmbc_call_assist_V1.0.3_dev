@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.eventbus.handler;
 
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
@@ -12,9 +13,13 @@ import com.guiji.calloutserver.eventbus.event.StartCallPlanEvent;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.service.*;
+import com.guiji.component.result.Result;
+import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.dispatch.model.DispatchPlan;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -52,6 +57,12 @@ public class CallPlanDispatchHandler {
     @Autowired
     DispatchManager dispatchService;
 
+    @Autowired
+    IDispatchPlanOut dispatchPlanOut;
+
+    @Autowired
+    AsyncEventBus asyncEventBus;
+
     /**
      * 启动呼叫计划
      */
@@ -63,25 +74,12 @@ public class CallPlanDispatchHandler {
         try {
             //调用调度中心的获取客户呼叫计划(请求数=并发数)，获取初始呼叫计划
             Integer requestNum = event.getLineCount().getMaxConcurrentCalls();
-            List<CallOutPlan> totalCallPlans = dispatchService.pullCallPlan(event.getCustomerId(), requestNum, lineCount.getLineId());
-            if (totalCallPlans == null || totalCallPlans.size() == 0) {
-                log.warn("请求的呼叫计划为空，customerId[{}], tempId[{}], lineId[{}]", event.getCustomerId(), event.getTempId(), lineCount.getLineId());
-                //TODO: 报警
-                return;
+
+            //TODO 这个是一个一个去请求调度中心好呢，还是一次请求多个好呢
+            for (int i=1;i<=requestNum;i++) {
+                getAvailableSchedules(Integer.valueOf(event.getCustomerId()), lineCount.getLineId());
             }
 
-            if (totalCallPlans.size() < requestNum) {
-                log.warn("返回的呼叫数量[{}]小于请求数量[{}]", totalCallPlans.size(), requestNum);
-            }
-
-            //检查各项资源是否齐备
-            for (CallOutPlan callplan : totalCallPlans) {
-                callplan.setCallState(ECallState.call_prepare.ordinal());
-                callplan.setCreateTime(new Date());
-                callOutPlanService.save(callplan);
-
-                callResourceChecker.checkCallResources(callplan);
-            }
         }catch (Exception ex){
             log.warn("处理启动计划出现异常", ex);
             //TODO: 报警
@@ -127,16 +125,39 @@ public class CallPlanDispatchHandler {
 
         //挂断后再请求一个呼叫数据，不让线路空闲
         try {
-            List<CallOutPlan> totalCallPlans = dispatchService.pullCallPlan(calloutPlan.getCustomerId(), 1, calloutPlan.getLineId());
-            CallOutPlan callPlan = totalCallPlans.get(0);
+            getAvailableSchedules(Integer.valueOf(calloutPlan.getCustomerId()), calloutPlan.getLineId() );
 
-            callPlan.setCallState(ECallState.call_prepare.ordinal());
-            callPlan.setCreateTime(new Date());
-            callOutPlanService.save(callPlan);
-            callResourceChecker.checkCallResources(callPlan);
         } catch (Exception e) {
             log.warn("在挂断后拉取新计划出现异常", e);
             //TODO: 报警
         }
     }
+
+    /**
+     * 请求调度中心，拉取呼叫号码， 然后准备呼叫
+     * @param customerId
+     * @param lineId
+     */
+    public void getAvailableSchedules(int customerId, int lineId ) {
+
+        Result.ReturnData<List<DispatchPlan>> result = dispatchPlanOut.queryAvailableSchedules(customerId,1,lineId);
+
+        List<DispatchPlan> list =  result.getBody();
+        if(list!=null && list.size()>0){
+            DispatchPlan dispatchPlan = result.getBody().get(0);
+            CallOutPlan callPlan = new CallOutPlan();
+            callPlan.setCallId(dispatchPlan.getPlanUuid());
+            callPlan.setPhoneNum(dispatchPlan.getPhone());
+            callPlan.setCustomerId(String.valueOf(dispatchPlan.getUserId()));
+            callPlan.setLineId(dispatchPlan.getLine());
+            //TODO CallOutPlan字段是否全
+
+            callPlan.setCallState(ECallState.call_prepare.ordinal());
+            callPlan.setCreateTime(new Date());
+            callOutPlanService.save(callPlan);
+            callResourceChecker.checkCallResources(callPlan);
+        }
+
+    }
+
 }

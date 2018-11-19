@@ -4,10 +4,30 @@ spring:
   application:
     name: guiyu-robot-web
   datasource:  
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_robot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: root
-    password: guiyu@1234
-    driver-class-name: com.mysql.jdbc.Driver  
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_robot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: robot
+    password: robot@1234
+    driver-class-name: com.mysql.jdbc.Driver 
+    minIdle: 1  
+    maxActive: 2  
+    initialSize: 1  
+    timeBetweenEvictionRunsMillis: 3000  
+    minEvictableIdleTimeMillis: 300000  
+    validationQuery: SELECT 'ZTM' FROM DUAL  
+    testWhileIdle: true  
+    testOnBorrow: false  
+    testOnReturn: false
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password: 123456
+    port: 6379  
+    pool:
+      max-active: 8
+      max-wait: -1
+      min-idle: 0
+      max-idle: 8
     
 mybatis:   
   mapperLocations: classpath*:mappers/*.xml  

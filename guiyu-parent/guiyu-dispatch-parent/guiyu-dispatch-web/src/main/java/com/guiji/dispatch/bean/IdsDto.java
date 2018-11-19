@@ -1,13 +1,16 @@
 package com.guiji.dispatch.bean;
 
 public class IdsDto {
-	private String planUUID;
+	private String planuuid;
 	private Integer status;
-	public String getPlanUUID() {
-		return planUUID;
+	
+	
+	
+	public String getPlanuuid() {
+		return planuuid;
 	}
-	public void setPlanUUID(String planUUID) {
-		this.planUUID = planUUID;
+	public void setPlanuuid(String planuuid) {
+		this.planuuid = planuuid;
 	}
 	public Integer getStatus() {
 		return status;

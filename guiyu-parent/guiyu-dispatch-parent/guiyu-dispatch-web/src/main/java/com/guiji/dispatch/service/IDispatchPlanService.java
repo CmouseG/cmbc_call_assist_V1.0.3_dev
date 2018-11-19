@@ -73,7 +73,7 @@ public interface IDispatchPlanService {
      * @param schedule 请求参数
      * @return 响应报文
      */
-    List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId) ;
+    List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId,DispatchPlan dispatchPlan) ;
 
     /**
      * 查询任务提交处理结果

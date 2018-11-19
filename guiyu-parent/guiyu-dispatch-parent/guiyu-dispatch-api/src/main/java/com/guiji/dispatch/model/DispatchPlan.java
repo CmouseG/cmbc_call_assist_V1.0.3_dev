@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DispatchPlan implements Serializable {
+	
+	private boolean isSuccess;
+	
     private Integer id;
 
     private String planUuid;
@@ -48,7 +51,15 @@ public class DispatchPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Integer getId() {
+    public boolean isSuccess() {
+		return isSuccess;
+	}
+
+	public void setSuccess(boolean isSuccess) {
+		this.isSuccess = isSuccess;
+	}
+
+	public Integer getId() {
         return id;
     }
 

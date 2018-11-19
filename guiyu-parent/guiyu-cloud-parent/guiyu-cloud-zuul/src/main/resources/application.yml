@@ -99,6 +99,9 @@ zuul:
     guiyu-ai-web:
       path: /ai/**
       service-id: guiyu-ai-web
+    guiyu-robot-web:
+      path: /robot/**
+      service-id: guiyu-robot-web
     guiyu-callCenter-calloutserver:
       path: /callout/**
       service-id: guiyu-callCenter-calloutserver

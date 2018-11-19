@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.crm.dao.TabCustomerMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.crm.dao.entity.TabCustomer" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="adddate" property="adddate" jdbcType="DATE" />
+    <result column="termdate" property="termdate" jdbcType="DATE" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="port_num" property="portNum" jdbcType="INTEGER" />
+    <result column="serial_number" property="serialNumber" jdbcType="VARCHAR" />
+    <result column="machine_code" property="machineCode" jdbcType="VARCHAR" />
+    <result column="phone_port" property="phonePort" jdbcType="VARCHAR" />
+    <result column="islimit" property="islimit" jdbcType="BIT" />
+    <result column="limit_num" property="limitNum" jdbcType="TINYINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.crm.dao.entity.TabCustomer" extends="BaseResultMap" >
+    <result column="operate" property="operate" jdbcType="LONGVARCHAR" />
+    <result column="temp" property="temp" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, company, `name`, phone, adddate, termdate, code, port_num, serial_number, machine_code, 
+    phone_port, islimit, limit_num
+  </sql>
+  <sql id="Blob_Column_List" >
+    operate, `temp`
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tab_customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tab_customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tab_customer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tab_customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomerExample" >
+    delete from tab_customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomer" >
+    insert into tab_customer (id, company, `name`, 
+      phone, adddate, termdate, 
+      code, port_num, serial_number, 
+      machine_code, phone_port, islimit, 
+      limit_num, operate, `temp`
+      )
+    values (#{id,jdbcType=INTEGER}, #{company,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{adddate,jdbcType=DATE}, #{termdate,jdbcType=DATE}, 
+      #{code,jdbcType=VARCHAR}, #{portNum,jdbcType=INTEGER}, #{serialNumber,jdbcType=VARCHAR}, 
+      #{machineCode,jdbcType=VARCHAR}, #{phonePort,jdbcType=VARCHAR}, #{islimit,jdbcType=BIT}, 
+      #{limitNum,jdbcType=TINYINT}, #{operate,jdbcType=LONGVARCHAR}, #{temp,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomer" >
+    insert into tab_customer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="company != null" >
+        company,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="adddate != null" >
+        adddate,
+      </if>
+      <if test="termdate != null" >
+        termdate,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="portNum != null" >
+        port_num,
+      </if>
+      <if test="serialNumber != null" >
+        serial_number,
+      </if>
+      <if test="machineCode != null" >
+        machine_code,
+      </if>
+      <if test="phonePort != null" >
+        phone_port,
+      </if>
+      <if test="islimit != null" >
+        islimit,
+      </if>
+      <if test="limitNum != null" >
+        limit_num,
+      </if>
+      <if test="operate != null" >
+        operate,
+      </if>
+      <if test="temp != null" >
+        `temp`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="adddate != null" >
+        #{adddate,jdbcType=DATE},
+      </if>
+      <if test="termdate != null" >
+        #{termdate,jdbcType=DATE},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="portNum != null" >
+        #{portNum,jdbcType=INTEGER},
+      </if>
+      <if test="serialNumber != null" >
+        #{serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="machineCode != null" >
+        #{machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="phonePort != null" >
+        #{phonePort,jdbcType=VARCHAR},
+      </if>
+      <if test="islimit != null" >
+        #{islimit,jdbcType=BIT},
+      </if>
+      <if test="limitNum != null" >
+        #{limitNum,jdbcType=TINYINT},
+      </if>
+      <if test="operate != null" >
+        #{operate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temp != null" >
+        #{temp,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomerExample" resultType="java.lang.Integer" >
+    select count(*) from tab_customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tab_customer
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.company != null" >
+        company = #{record.company,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.adddate != null" >
+        adddate = #{record.adddate,jdbcType=DATE},
+      </if>
+      <if test="record.termdate != null" >
+        termdate = #{record.termdate,jdbcType=DATE},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.portNum != null" >
+        port_num = #{record.portNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.serialNumber != null" >
+        serial_number = #{record.serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.machineCode != null" >
+        machine_code = #{record.machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phonePort != null" >
+        phone_port = #{record.phonePort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.islimit != null" >
+        islimit = #{record.islimit,jdbcType=BIT},
+      </if>
+      <if test="record.limitNum != null" >
+        limit_num = #{record.limitNum,jdbcType=TINYINT},
+      </if>
+      <if test="record.operate != null" >
+        operate = #{record.operate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.temp != null" >
+        `temp` = #{record.temp,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update tab_customer
+    set id = #{record.id,jdbcType=INTEGER},
+      company = #{record.company,jdbcType=VARCHAR},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      adddate = #{record.adddate,jdbcType=DATE},
+      termdate = #{record.termdate,jdbcType=DATE},
+      code = #{record.code,jdbcType=VARCHAR},
+      port_num = #{record.portNum,jdbcType=INTEGER},
+      serial_number = #{record.serialNumber,jdbcType=VARCHAR},
+      machine_code = #{record.machineCode,jdbcType=VARCHAR},
+      phone_port = #{record.phonePort,jdbcType=VARCHAR},
+      islimit = #{record.islimit,jdbcType=BIT},
+      limit_num = #{record.limitNum,jdbcType=TINYINT},
+      operate = #{record.operate,jdbcType=LONGVARCHAR},
+      `temp` = #{record.temp,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tab_customer
+    set id = #{record.id,jdbcType=INTEGER},
+      company = #{record.company,jdbcType=VARCHAR},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      adddate = #{record.adddate,jdbcType=DATE},
+      termdate = #{record.termdate,jdbcType=DATE},
+      code = #{record.code,jdbcType=VARCHAR},
+      port_num = #{record.portNum,jdbcType=INTEGER},
+      serial_number = #{record.serialNumber,jdbcType=VARCHAR},
+      machine_code = #{record.machineCode,jdbcType=VARCHAR},
+      phone_port = #{record.phonePort,jdbcType=VARCHAR},
+      islimit = #{record.islimit,jdbcType=BIT},
+      limit_num = #{record.limitNum,jdbcType=TINYINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomer" >
+    update tab_customer
+    <set >
+      <if test="company != null" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="adddate != null" >
+        adddate = #{adddate,jdbcType=DATE},
+      </if>
+      <if test="termdate != null" >
+        termdate = #{termdate,jdbcType=DATE},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="portNum != null" >
+        port_num = #{portNum,jdbcType=INTEGER},
+      </if>
+      <if test="serialNumber != null" >
+        serial_number = #{serialNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="machineCode != null" >
+        machine_code = #{machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="phonePort != null" >
+        phone_port = #{phonePort,jdbcType=VARCHAR},
+      </if>
+      <if test="islimit != null" >
+        islimit = #{islimit,jdbcType=BIT},
+      </if>
+      <if test="limitNum != null" >
+        limit_num = #{limitNum,jdbcType=TINYINT},
+      </if>
+      <if test="operate != null" >
+        operate = #{operate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temp != null" >
+        `temp` = #{temp,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomer" >
+    update tab_customer
+    set company = #{company,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      adddate = #{adddate,jdbcType=DATE},
+      termdate = #{termdate,jdbcType=DATE},
+      code = #{code,jdbcType=VARCHAR},
+      port_num = #{portNum,jdbcType=INTEGER},
+      serial_number = #{serialNumber,jdbcType=VARCHAR},
+      machine_code = #{machineCode,jdbcType=VARCHAR},
+      phone_port = #{phonePort,jdbcType=VARCHAR},
+      islimit = #{islimit,jdbcType=BIT},
+      limit_num = #{limitNum,jdbcType=TINYINT},
+      operate = #{operate,jdbcType=LONGVARCHAR},
+      `temp` = #{temp,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.crm.dao.entity.TabCustomer" >
+    update tab_customer
+    set company = #{company,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      adddate = #{adddate,jdbcType=DATE},
+      termdate = #{termdate,jdbcType=DATE},
+      code = #{code,jdbcType=VARCHAR},
+      port_num = #{portNum,jdbcType=INTEGER},
+      serial_number = #{serialNumber,jdbcType=VARCHAR},
+      machine_code = #{machineCode,jdbcType=VARCHAR},
+      phone_port = #{phonePort,jdbcType=VARCHAR},
+      islimit = #{islimit,jdbcType=BIT},
+      limit_num = #{limitNum,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

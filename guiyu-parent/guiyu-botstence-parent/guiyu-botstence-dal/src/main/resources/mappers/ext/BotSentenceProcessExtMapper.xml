@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.ext.BotSentenceProcessExtMapper" >
+  
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into bot_sentence_process (process_id, template_id, template_name, 
+      template_type, version, industry, 
+      account_no, old_process_id, crt_time, 
+      crt_user, lst_update_time, lst_update_user, 
+      `state`, approve_time, approve_user, 
+      approve_notes)
+    VALUES
+    <foreach collection="list" item="item" index="index" separator="," >
+        (
+        (SELECT genTabId('bot_sentence_process') AS processId),
+        #{item.templateId},
+        #{item.templateName},
+        #{item.templateType},
+        #{item.version},
+        #{item.industry},
+        #{item.accountNo},
+        #{item.oldProcessId},
+        #{item.crtTime},
+        #{item.crtUser},
+        #{item.lstUpdateTime},
+        #{item.lstUpdateUser},
+        #{item.state},
+        #{item.approveTime},
+        #{item.approveUser},
+        #{item.approveNotes}
+        )
+    </foreach>
+</insert>
+
+
+
+
+<insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+    <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_process')
+    </selectKey>
+    insert into bot_sentence_process (process_id, template_id, template_name, 
+      template_type, version, industry, 
+      account_no, old_process_id, crt_time, 
+      crt_user, lst_update_time, lst_update_user, 
+      `state`, approve_time, approve_user, 
+      approve_notes)
+    values (#{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
+      #{templateType,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
+      #{accountNo,jdbcType=VARCHAR}, #{oldProcessId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
+      #{state,jdbcType=VARCHAR}, #{approveTime,jdbcType=TIMESTAMP}, #{approveUser,jdbcType=VARCHAR}, 
+      #{approveNotes,jdbcType=VARCHAR})
+  </insert>
+
+  
+</mapper>

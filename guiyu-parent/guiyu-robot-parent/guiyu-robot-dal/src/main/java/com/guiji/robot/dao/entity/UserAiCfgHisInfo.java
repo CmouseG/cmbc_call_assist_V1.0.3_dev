@@ -8,7 +8,7 @@ public class UserAiCfgHisInfo implements Serializable {
 
     private String busiId;
 
-    private Long userId;
+    private String userId;
 
     private Integer aiNum;
 
@@ -44,12 +44,12 @@ public class UserAiCfgHisInfo implements Serializable {
         this.busiId = busiId == null ? null : busiId.trim();
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId(String userId) {
+        this.userId = userId == null ? null : userId.trim();
     }
 
     public Integer getAiNum() {

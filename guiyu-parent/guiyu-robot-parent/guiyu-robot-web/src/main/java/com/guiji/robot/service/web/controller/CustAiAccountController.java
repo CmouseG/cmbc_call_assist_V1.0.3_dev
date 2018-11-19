@@ -29,7 +29,7 @@ public class CustAiAccountController {
 	
 	
 	@RequestMapping(value = "/queryCustAccount", method = RequestMethod.POST)
-	public Result.ReturnData<List<UserAiCfgInfo>> queryCustAccount(@RequestParam(value="userId",required=true)Long userId){
+	public Result.ReturnData<List<UserAiCfgInfo>> queryCustAccount(@RequestParam(value="userId",required=true)String userId){
 		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
 		return Result.ok(list);
 	}

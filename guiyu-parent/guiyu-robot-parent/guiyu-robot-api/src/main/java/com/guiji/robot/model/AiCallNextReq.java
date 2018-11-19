@@ -16,7 +16,7 @@ public class AiCallNextReq {
 	@ApiModelProperty(value="会话ID，该电话整个会话过程中唯一编号",required=true)
 	private String seqid;
 	@ApiModelProperty(value="用户编号")
-	private Long userId;
+	private String userId;
 	@ApiModelProperty(value="机器人编号，开始拨打电话时分配的机器人",required=true)
 	private String aiNo;
 	@ApiModelProperty(value="话术模板编号",required=true)

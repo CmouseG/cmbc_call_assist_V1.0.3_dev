@@ -3,7 +3,7 @@
 <mapper namespace="com.guiji.robot.dao.UserAiCfgInfoMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.UserAiCfgInfo" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="ai_num" property="aiNum" jdbcType="INTEGER" />
     <result column="assign_level" property="assignLevel" jdbcType="CHAR" />
     <result column="template_ids" property="templateIds" jdbcType="VARCHAR" />
@@ -117,7 +117,7 @@
       assign_level, template_ids, open_date, 
       invalid_date, `status`, invalid_policy, 
       crt_time)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{aiNum,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNum,jdbcType=INTEGER}, 
       #{assignLevel,jdbcType=CHAR}, #{templateIds,jdbcType=VARCHAR}, #{openDate,jdbcType=VARCHAR}, 
       #{invalidDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{invalidPolicy,jdbcType=VARCHAR}, 
       #{crtTime,jdbcType=TIMESTAMP})
@@ -160,7 +160,7 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
       <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
+        #{userId,jdbcType=VARCHAR},
       </if>
       <if test="aiNum != null" >
         #{aiNum,jdbcType=INTEGER},
@@ -201,7 +201,7 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.userId != null" >
-        user_id = #{record.userId,jdbcType=BIGINT},
+        user_id = #{record.userId,jdbcType=VARCHAR},
       </if>
       <if test="record.aiNum != null" >
         ai_num = #{record.aiNum,jdbcType=INTEGER},
@@ -235,7 +235,7 @@
   <update id="updateByExample" parameterType="map" >
     update user_ai_cfg_info
     set id = #{record.id,jdbcType=VARCHAR},
-      user_id = #{record.userId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=VARCHAR},
       ai_num = #{record.aiNum,jdbcType=INTEGER},
       assign_level = #{record.assignLevel,jdbcType=CHAR},
       template_ids = #{record.templateIds,jdbcType=VARCHAR},
@@ -252,7 +252,7 @@
     update user_ai_cfg_info
     <set >
       <if test="userId != null" >
-        user_id = #{userId,jdbcType=BIGINT},
+        user_id = #{userId,jdbcType=VARCHAR},
       </if>
       <if test="aiNum != null" >
         ai_num = #{aiNum,jdbcType=INTEGER},
@@ -283,7 +283,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfo" >
     update user_ai_cfg_info
-    set user_id = #{userId,jdbcType=BIGINT},
+    set user_id = #{userId,jdbcType=VARCHAR},
       ai_num = #{aiNum,jdbcType=INTEGER},
       assign_level = #{assignLevel,jdbcType=CHAR},
       template_ids = #{templateIds,jdbcType=VARCHAR},

@@ -51,7 +51,7 @@ public class SellbotServiceImpl implements ISellbotService{
 				String json = JsonUtils.bean2Json(sellbotRestoreReq);
 				String sellbotRsp = HttpClientUtil.doPostJson(url, json);
 				String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-				System.out.println(result);
+				return result;
 			}
 		}
 		return null;
@@ -67,8 +67,7 @@ public class SellbotServiceImpl implements ISellbotService{
 		String url = HTTP_URL;
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotSayhelloReq));
 		String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-		System.out.println(result);
-		return null;
+		return result;
 	}
 	
 	
@@ -81,7 +80,6 @@ public class SellbotServiceImpl implements ISellbotService{
 		String url = HTTP_URL+"is_match";
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotMatchReq));
 		String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-		System.out.println(result);
-		return null;
+		return result;
 	}
 }

@@ -84,7 +84,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		AiCallNext aiNext = new AiCallNext();
 		aiNext.setAiNo(SystemUtil.getBusiSerialNo(null, 32));
 		aiNext.setSellbotJson(sellbotRsp);
-		return null;
+		return aiNext;
 	}
 	
 	

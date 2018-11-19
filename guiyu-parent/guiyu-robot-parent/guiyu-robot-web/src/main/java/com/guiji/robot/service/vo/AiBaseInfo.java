@@ -10,8 +10,6 @@ import lombok.Data;
 */
 @Data
 public class AiBaseInfo {
-	//机器人分配编号
-	private String assignId;
 	//机器人编号
 	private String aiNo;
 }

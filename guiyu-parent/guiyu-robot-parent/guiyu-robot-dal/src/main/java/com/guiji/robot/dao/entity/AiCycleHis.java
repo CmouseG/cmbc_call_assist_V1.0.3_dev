@@ -6,8 +6,6 @@ import java.util.Date;
 public class AiCycleHis implements Serializable {
     private String id;
 
-    private String assignId;
-
     private String userId;
 
     private String aiNo;
@@ -34,14 +32,6 @@ public class AiCycleHis implements Serializable {
 
     public void setId(String id) {
         this.id = id == null ? null : id.trim();
-    }
-
-    public String getAssignId() {
-        return assignId;
-    }
-
-    public void setAssignId(String assignId) {
-        this.assignId = assignId == null ? null : assignId.trim();
     }
 
     public String getUserId() {
@@ -123,7 +113,6 @@ public class AiCycleHis implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", assignId=").append(assignId);
         sb.append(", userId=").append(userId);
         sb.append(", aiNo=").append(aiNo);
         sb.append(", templateId=").append(templateId);

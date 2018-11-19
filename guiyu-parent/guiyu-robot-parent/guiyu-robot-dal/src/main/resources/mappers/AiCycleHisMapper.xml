@@ -3,7 +3,6 @@
 <mapper namespace="com.guiji.robot.dao.AiCycleHisMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.AiCycleHis" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="assign_id" property="assignId" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
@@ -75,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, assign_id, user_id, ai_no, template_id, assign_date, assign_time, taskback_date, 
-    taskback_time, crt_time
+    id, user_id, ai_no, template_id, assign_date, assign_time, taskback_date, taskback_time, 
+    crt_time
   </sql>
   <sql id="Blob_Column_List" >
     call_num
@@ -138,14 +137,14 @@
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
       SELECT genTabId('ai_cycle_his')
     </selectKey>
-    insert into ai_cycle_his (id, assign_id, user_id, 
-      ai_no, template_id, assign_date, 
-      assign_time, taskback_date, taskback_time, 
-      crt_time, call_num)
-    values (#{id,jdbcType=VARCHAR}, #{assignId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
-      #{aiNo,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, 
-      #{assignTime,jdbcType=VARCHAR}, #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, 
-      #{crtTime,jdbcType=TIMESTAMP}, #{callNum,jdbcType=LONGVARCHAR})
+    insert into ai_cycle_his (id, user_id, ai_no, 
+      template_id, assign_date, assign_time, 
+      taskback_date, taskback_time, crt_time, 
+      call_num)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNo,jdbcType=VARCHAR}, 
+      #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, #{assignTime,jdbcType=VARCHAR}, 
+      #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{callNum,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -154,9 +153,6 @@
     insert into ai_cycle_his
     <trim prefix="(" suffix=")" suffixOverrides="," >
       id,
-      <if test="assignId != null" >
-        assign_id,
-      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -187,9 +183,6 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
-      <if test="assignId != null" >
-        #{assignId,jdbcType=VARCHAR},
-      </if>
       <if test="userId != null" >
         #{userId,jdbcType=VARCHAR},
       </if>
@@ -231,9 +224,6 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
-      <if test="record.assignId != null" >
-        assign_id = #{record.assignId,jdbcType=VARCHAR},
-      </if>
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=VARCHAR},
       </if>
@@ -269,7 +259,6 @@
   <update id="updateByExampleWithBLOBs" parameterType="map" >
     update ai_cycle_his
     set id = #{record.id,jdbcType=VARCHAR},
-      assign_id = #{record.assignId,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
@@ -286,7 +275,6 @@
   <update id="updateByExample" parameterType="map" >
     update ai_cycle_his
     set id = #{record.id,jdbcType=VARCHAR},
-      assign_id = #{record.assignId,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
@@ -302,9 +290,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
     <set >
-      <if test="assignId != null" >
-        assign_id = #{assignId,jdbcType=VARCHAR},
-      </if>
       <if test="userId != null" >
         user_id = #{userId,jdbcType=VARCHAR},
       </if>
@@ -337,8 +322,7 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
-    set assign_id = #{assignId,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=VARCHAR},
+    set user_id = #{userId,jdbcType=VARCHAR},
       ai_no = #{aiNo,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       assign_date = #{assignDate,jdbcType=VARCHAR},
@@ -351,8 +335,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
-    set assign_id = #{assignId,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=VARCHAR},
+    set user_id = #{userId,jdbcType=VARCHAR},
       ai_no = #{aiNo,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       assign_date = #{assignDate,jdbcType=VARCHAR},

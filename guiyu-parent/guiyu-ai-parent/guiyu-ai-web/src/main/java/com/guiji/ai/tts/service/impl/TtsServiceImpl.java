@@ -22,7 +22,7 @@ import com.guiji.utils.RedisUtil;
 @Service
 public class TtsServiceImpl implements TtsService {
 	private static Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
-	static RedisUtil redisUtil = new RedisUtil();
+	RedisUtil redisUtil = new RedisUtil();
 	
     @Override
     public TtsRspVO translate(TtsReqVO ttsReqVO) {
@@ -48,7 +48,7 @@ public class TtsServiceImpl implements TtsService {
         return ttsRspVO;
     }
 
-    public static String calc(String busId, String model, String text) {
+    public String calc(String busId, String model, String text) {
         String audioUrl = null;
         try {
         	//判断时候已经合成

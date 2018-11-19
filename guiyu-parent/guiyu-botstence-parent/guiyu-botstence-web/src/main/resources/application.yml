@@ -12,9 +12,9 @@ spring:
       file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
       location: /  # 上传的临时目录     
   datasource:
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_botstence?useUnicode=true&characterEncoding=utf-8
-    username: root
-    password: root
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_botstence?useUnicode=true&characterEncoding=utf-8
+    username: botstence
+    password: botstence@1234
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     database: 0

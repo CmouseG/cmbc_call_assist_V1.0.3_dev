@@ -15,13 +15,13 @@ import java.util.Collection;
  *
  */
 
-public class RangeShardingInt implements RangeShardingAlgorithm<Integer> {
+public class RangeShardingInt implements RangeShardingAlgorithm<Long> {
 
-    @Override
-    public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Integer> rangeShardingValue) {
+   @Override
+    public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Long> rangeShardingValue) {
         Collection<String> collect = new ArrayList<>();
-        Range<Integer> valueRange = rangeShardingValue.getValueRange();
-        for (int i = valueRange.lowerEndpoint(); i <= valueRange.upperEndpoint(); i++) {
+        Range<Long> valueRange = rangeShardingValue.getValueRange();
+        for (long i = valueRange.lowerEndpoint(); i <= valueRange.upperEndpoint(); i++) {
             for (String each : collection) {
                 if (each.endsWith(i % collection.size() + "")) {
                     collect.add(each);

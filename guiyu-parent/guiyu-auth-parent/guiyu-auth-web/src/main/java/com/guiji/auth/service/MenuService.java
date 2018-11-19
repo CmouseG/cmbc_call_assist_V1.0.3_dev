@@ -9,8 +9,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysMenuMapper;
 import com.guiji.user.dao.entity.SysMenu;
+import com.guiji.user.dao.entity.SysMenuExample;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysRoleExample;
 
 @Service
 public class MenuService {
@@ -29,6 +33,7 @@ public class MenuService {
 	}
 
 	public void update(SysMenu menu){
+		menu.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(menu);
 	}
 
@@ -79,5 +84,20 @@ public class MenuService {
 		});
 		return list;
 	}
+	
+	public void getRoleByPage(Page<SysMenu> page){
+		SysMenuExample example=new SysMenuExample();
+		example.setLimitStart((page.getPageNo()-1)*page.getPageSize());
+		example.setLimitEnd(page.getPageNo()*page.getPageSize());
+		int count=mapper.countByExample(example);
+		List<SysMenu> list=mapper.selectByExample(example);
+		page.setTotal(count);
+		page.setRecords(list);
+	}
 
+	public List<SysMenu> getMenuByName(String name){
+		SysMenuExample example = new SysMenuExample();
+		example.createCriteria().andNameEqualTo(name);
+		return mapper.selectByExample(example);
+	} 
 }

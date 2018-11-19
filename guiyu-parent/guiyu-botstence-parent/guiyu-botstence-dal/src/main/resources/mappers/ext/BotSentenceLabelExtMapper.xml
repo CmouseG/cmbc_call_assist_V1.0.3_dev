@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.ext.BotSentenceLabelExtMapper" >
+  
+  <insert id="batchInsert" parameterType="java.util.List">
+   	INSERT
+	INTO
+    bot_sentence_label
+    (
+        label_id,
+        process_id,
+        label_name,
+        conversation_count,
+        keywords,
+        display_keywords,
+        display_keywords_before,
+        special_count,
+        used_time_s,
+        deny_count,
+        busy_count,
+        score_up,
+        score_low,
+        crt_time,
+        crt_user,
+        show_name,
+        help_detail,
+        annotation
+    )
+    VALUES
+     <foreach collection="list" item="item" index="index" separator="," >
+        (
+        (SELECT genTabId('bot_sentence_label') AS labelId),
+        #{item.processId},
+        #{item.labelName},
+        #{item.conversationCount},
+        #{item.keywords, jdbcType=LONGVARCHAR},
+        #{item.displayKeywords},
+        #{item.displayKeywordsBefore},
+        #{item.specialCount},
+        #{item.usedTimeS},
+        #{item.denyCount},
+        #{item.busyCount},
+        #{item.scoreUp},
+        #{item.scoreLow},
+        #{item.crtTime},
+        #{item.crtUser},
+        #{item.showName},
+        #{item.helpDetail},
+        #{item.annotation}
+        )
+    </foreach>
+    
+  </insert>
+</mapper>

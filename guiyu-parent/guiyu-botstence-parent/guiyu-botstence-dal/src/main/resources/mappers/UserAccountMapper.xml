@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.UserAccountMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.UserAccount" >
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="user_no" property="userNo" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="machine_code" property="machineCode" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="host" property="host" jdbcType="VARCHAR" />
+    <result column="full_host" property="fullHost" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    user_id, user_no, account_no, machine_code, crt_time, crt_user, lst_update_time, 
+    lst_update_user, `host`, full_host
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.UserAccountExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from user_account
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_account
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from user_account
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.UserAccountExample" >
+    delete from user_account
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.UserAccount" >
+    <selectKey resultType="java.lang.String" keyProperty="userId" order="BEFORE" >
+      SELECT genTabId('user_account')
+    </selectKey>
+    insert into user_account (user_id, user_no, account_no, 
+      machine_code, crt_time, crt_user, 
+      lst_update_time, lst_update_user, `host`, 
+      full_host)
+    values (#{userId,jdbcType=VARCHAR}, #{userNo,jdbcType=VARCHAR}, #{accountNo,jdbcType=VARCHAR}, 
+      #{machineCode,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, 
+      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, #{host,jdbcType=VARCHAR}, 
+      #{fullHost,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.UserAccount" >
+    <selectKey resultType="java.lang.String" keyProperty="userId" order="BEFORE" >
+      SELECT genTabId('user_account')
+    </selectKey>
+    insert into user_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      user_id,
+      <if test="userNo != null" >
+        user_no,
+      </if>
+      <if test="accountNo != null" >
+        account_no,
+      </if>
+      <if test="machineCode != null" >
+        machine_code,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="host != null" >
+        `host`,
+      </if>
+      <if test="fullHost != null" >
+        full_host,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{userId,jdbcType=VARCHAR},
+      <if test="userNo != null" >
+        #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="machineCode != null" >
+        #{machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="fullHost != null" >
+        #{fullHost,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.UserAccountExample" resultType="java.lang.Integer" >
+    select count(*) from user_account
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_account
+    <set >
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userNo != null" >
+        user_no = #{record.userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountNo != null" >
+        account_no = #{record.accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.machineCode != null" >
+        machine_code = #{record.machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.host != null" >
+        `host` = #{record.host,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fullHost != null" >
+        full_host = #{record.fullHost,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_account
+    set user_id = #{record.userId,jdbcType=VARCHAR},
+      user_no = #{record.userNo,jdbcType=VARCHAR},
+      account_no = #{record.accountNo,jdbcType=VARCHAR},
+      machine_code = #{record.machineCode,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      `host` = #{record.host,jdbcType=VARCHAR},
+      full_host = #{record.fullHost,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.UserAccount" >
+    update user_account
+    <set >
+      <if test="userNo != null" >
+        user_no = #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        account_no = #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="machineCode != null" >
+        machine_code = #{machineCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        `host` = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="fullHost != null" >
+        full_host = #{fullHost,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.UserAccount" >
+    update user_account
+    set user_no = #{userNo,jdbcType=VARCHAR},
+      account_no = #{accountNo,jdbcType=VARCHAR},
+      machine_code = #{machineCode,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      `host` = #{host,jdbcType=VARCHAR},
+      full_host = #{fullHost,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceBranchMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+    <id column="branch_id" property="branchId" jdbcType="VARCHAR" />
+    <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="BIGINT" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="response" property="response" jdbcType="VARCHAR" />
+    <result column="NEXT" property="next" jdbcType="VARCHAR" />
+    <result column="intents" property="intents" jdbcType="VARCHAR" />
+    <result column="END" property="end" jdbcType="VARCHAR" />
+    <result column="domain" property="domain" jdbcType="VARCHAR" />
+    <result column="is_special_limit_free" property="isSpecialLimitFree" jdbcType="VARCHAR" />
+    <result column="user_ask" property="userAsk" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
+    <result column="is_show" property="isShow" jdbcType="VARCHAR" />
+    <result column="respname" property="respname" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.dao.entity.BotSentenceBranch" extends="BaseResultMap" >
+    <result column="key_words" property="keyWords" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    branch_id, branch_name, seq, process_id, template_id, response, `NEXT`, intents, 
+    `END`, `domain`, is_special_limit_free, user_ask, crt_time, crt_user, lst_update_time, 
+    lst_update_user, line_name, is_show, respname, `type`
+  </sql>
+  <sql id="Blob_Column_List" >
+    key_words
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bot_sentence_branch
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_branch
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bot_sentence_branch
+    where branch_id = #{branchId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_branch
+    where branch_id = #{branchId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
+    delete from bot_sentence_branch
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+    <selectKey resultType="java.lang.String" keyProperty="branchId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_branch')
+    </selectKey>
+    insert into bot_sentence_branch (branch_id, branch_name, seq, 
+      process_id, template_id, response, 
+      `NEXT`, intents, `END`, 
+      `domain`, is_special_limit_free, user_ask, 
+      crt_time, crt_user, lst_update_time, 
+      lst_update_user, line_name, is_show, 
+      respname, `type`, key_words
+      )
+    values (#{branchId,jdbcType=VARCHAR}, #{branchName,jdbcType=VARCHAR}, #{seq,jdbcType=BIGINT}, 
+      #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{response,jdbcType=VARCHAR}, 
+      #{next,jdbcType=VARCHAR}, #{intents,jdbcType=VARCHAR}, #{end,jdbcType=VARCHAR}, 
+      #{domain,jdbcType=VARCHAR}, #{isSpecialLimitFree,jdbcType=VARCHAR}, #{userAsk,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
+      #{lstUpdateUser,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR}, #{isShow,jdbcType=VARCHAR}, 
+      #{respname,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{keyWords,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+    <selectKey resultType="java.lang.String" keyProperty="branchId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_branch')
+    </selectKey>
+    insert into bot_sentence_branch
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      branch_id,
+      <if test="branchName != null" >
+        branch_name,
+      </if>
+      <if test="seq != null" >
+        seq,
+      </if>
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="response != null" >
+        response,
+      </if>
+      <if test="next != null" >
+        `NEXT`,
+      </if>
+      <if test="intents != null" >
+        intents,
+      </if>
+      <if test="end != null" >
+        `END`,
+      </if>
+      <if test="domain != null" >
+        `domain`,
+      </if>
+      <if test="isSpecialLimitFree != null" >
+        is_special_limit_free,
+      </if>
+      <if test="userAsk != null" >
+        user_ask,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="lineName != null" >
+        line_name,
+      </if>
+      <if test="isShow != null" >
+        is_show,
+      </if>
+      <if test="respname != null" >
+        respname,
+      </if>
+      <if test="type != null" >
+        `type`,
+      </if>
+      <if test="keyWords != null" >
+        key_words,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{branchId,jdbcType=VARCHAR},
+      <if test="branchName != null" >
+        #{branchName,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        #{seq,jdbcType=BIGINT},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="response != null" >
+        #{response,jdbcType=VARCHAR},
+      </if>
+      <if test="next != null" >
+        #{next,jdbcType=VARCHAR},
+      </if>
+      <if test="intents != null" >
+        #{intents,jdbcType=VARCHAR},
+      </if>
+      <if test="end != null" >
+        #{end,jdbcType=VARCHAR},
+      </if>
+      <if test="domain != null" >
+        #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="isSpecialLimitFree != null" >
+        #{isSpecialLimitFree,jdbcType=VARCHAR},
+      </if>
+      <if test="userAsk != null" >
+        #{userAsk,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lineName != null" >
+        #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        #{isShow,jdbcType=VARCHAR},
+      </if>
+      <if test="respname != null" >
+        #{respname,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWords != null" >
+        #{keyWords,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_branch
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_branch
+    <set >
+      <if test="record.branchId != null" >
+        branch_id = #{record.branchId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.branchName != null" >
+        branch_name = #{record.branchName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seq != null" >
+        seq = #{record.seq,jdbcType=BIGINT},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.response != null" >
+        response = #{record.response,jdbcType=VARCHAR},
+      </if>
+      <if test="record.next != null" >
+        `NEXT` = #{record.next,jdbcType=VARCHAR},
+      </if>
+      <if test="record.intents != null" >
+        intents = #{record.intents,jdbcType=VARCHAR},
+      </if>
+      <if test="record.end != null" >
+        `END` = #{record.end,jdbcType=VARCHAR},
+      </if>
+      <if test="record.domain != null" >
+        `domain` = #{record.domain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isSpecialLimitFree != null" >
+        is_special_limit_free = #{record.isSpecialLimitFree,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userAsk != null" >
+        user_ask = #{record.userAsk,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lineName != null" >
+        line_name = #{record.lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isShow != null" >
+        is_show = #{record.isShow,jdbcType=VARCHAR},
+      </if>
+      <if test="record.respname != null" >
+        respname = #{record.respname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        `type` = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keyWords != null" >
+        key_words = #{record.keyWords,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update bot_sentence_branch
+    set branch_id = #{record.branchId,jdbcType=VARCHAR},
+      branch_name = #{record.branchName,jdbcType=VARCHAR},
+      seq = #{record.seq,jdbcType=BIGINT},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      response = #{record.response,jdbcType=VARCHAR},
+      `NEXT` = #{record.next,jdbcType=VARCHAR},
+      intents = #{record.intents,jdbcType=VARCHAR},
+      `END` = #{record.end,jdbcType=VARCHAR},
+      `domain` = #{record.domain,jdbcType=VARCHAR},
+      is_special_limit_free = #{record.isSpecialLimitFree,jdbcType=VARCHAR},
+      user_ask = #{record.userAsk,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      line_name = #{record.lineName,jdbcType=VARCHAR},
+      is_show = #{record.isShow,jdbcType=VARCHAR},
+      respname = #{record.respname,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=VARCHAR},
+      key_words = #{record.keyWords,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_branch
+    set branch_id = #{record.branchId,jdbcType=VARCHAR},
+      branch_name = #{record.branchName,jdbcType=VARCHAR},
+      seq = #{record.seq,jdbcType=BIGINT},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      response = #{record.response,jdbcType=VARCHAR},
+      `NEXT` = #{record.next,jdbcType=VARCHAR},
+      intents = #{record.intents,jdbcType=VARCHAR},
+      `END` = #{record.end,jdbcType=VARCHAR},
+      `domain` = #{record.domain,jdbcType=VARCHAR},
+      is_special_limit_free = #{record.isSpecialLimitFree,jdbcType=VARCHAR},
+      user_ask = #{record.userAsk,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      line_name = #{record.lineName,jdbcType=VARCHAR},
+      is_show = #{record.isShow,jdbcType=VARCHAR},
+      respname = #{record.respname,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+    update bot_sentence_branch
+    <set >
+      <if test="branchName != null" >
+        branch_name = #{branchName,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        seq = #{seq,jdbcType=BIGINT},
+      </if>
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="response != null" >
+        response = #{response,jdbcType=VARCHAR},
+      </if>
+      <if test="next != null" >
+        `NEXT` = #{next,jdbcType=VARCHAR},
+      </if>
+      <if test="intents != null" >
+        intents = #{intents,jdbcType=VARCHAR},
+      </if>
+      <if test="end != null" >
+        `END` = #{end,jdbcType=VARCHAR},
+      </if>
+      <if test="domain != null" >
+        `domain` = #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="isSpecialLimitFree != null" >
+        is_special_limit_free = #{isSpecialLimitFree,jdbcType=VARCHAR},
+      </if>
+      <if test="userAsk != null" >
+        user_ask = #{userAsk,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lineName != null" >
+        line_name = #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="isShow != null" >
+        is_show = #{isShow,jdbcType=VARCHAR},
+      </if>
+      <if test="respname != null" >
+        respname = #{respname,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWords != null" >
+        key_words = #{keyWords,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where branch_id = #{branchId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+    update bot_sentence_branch
+    set branch_name = #{branchName,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=BIGINT},
+      process_id = #{processId,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      response = #{response,jdbcType=VARCHAR},
+      `NEXT` = #{next,jdbcType=VARCHAR},
+      intents = #{intents,jdbcType=VARCHAR},
+      `END` = #{end,jdbcType=VARCHAR},
+      `domain` = #{domain,jdbcType=VARCHAR},
+      is_special_limit_free = #{isSpecialLimitFree,jdbcType=VARCHAR},
+      user_ask = #{userAsk,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      line_name = #{lineName,jdbcType=VARCHAR},
+      is_show = #{isShow,jdbcType=VARCHAR},
+      respname = #{respname,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      key_words = #{keyWords,jdbcType=LONGVARCHAR}
+    where branch_id = #{branchId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+    update bot_sentence_branch
+    set branch_name = #{branchName,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=BIGINT},
+      process_id = #{processId,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      response = #{response,jdbcType=VARCHAR},
+      `NEXT` = #{next,jdbcType=VARCHAR},
+      intents = #{intents,jdbcType=VARCHAR},
+      `END` = #{end,jdbcType=VARCHAR},
+      `domain` = #{domain,jdbcType=VARCHAR},
+      is_special_limit_free = #{isSpecialLimitFree,jdbcType=VARCHAR},
+      user_ask = #{userAsk,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      line_name = #{lineName,jdbcType=VARCHAR},
+      is_show = #{isShow,jdbcType=VARCHAR},
+      respname = #{respname,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR}
+    where branch_id = #{branchId,jdbcType=VARCHAR}
+  </update>
+</mapper>

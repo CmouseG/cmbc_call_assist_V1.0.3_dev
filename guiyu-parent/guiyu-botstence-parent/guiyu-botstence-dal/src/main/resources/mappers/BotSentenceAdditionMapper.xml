@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceAdditionMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+    <id column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_json" property="templateJson" jdbcType="VARCHAR" />
+    <result column="weights_txt" property="weightsTxt" jdbcType="VARCHAR" />
+    <result column="options_json" property="optionsJson" jdbcType="VARCHAR" />
+    <result column="stopwords_txt" property="stopwordsTxt" jdbcType="VARCHAR" />
+    <!-- <result column="userdict_txt" property="userdictTxt" jdbcType="VARCHAR" /> -->
+    <result property="userdictTxt" column="userdict_txt" typeHandler="ai.guiji.botsentence.util.MyBlobTypeHandler" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.dao.entity.BotSentenceAddition" extends="BaseResultMap" >
+    <!-- <result column="sim_txt" property="simTxt" jdbcType="LONGVARCHAR" /> -->
+    <result property="simTxt" column="sim_txt" typeHandler="ai.guiji.botsentence.util.MyBlobTypeHandler" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    process_id, template_json, weights_txt, options_json, stopwords_txt, userdict_txt
+  </sql>
+  <sql id="Blob_Column_List" >
+    sim_txt
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bot_sentence_addition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_addition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from bot_sentence_addition
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_addition
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
+    delete from bot_sentence_addition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+    insert into bot_sentence_addition (process_id, template_json, weights_txt, 
+      options_json, stopwords_txt, userdict_txt, 
+      sim_txt)
+    values (#{processId,jdbcType=VARCHAR}, #{templateJson,jdbcType=VARCHAR}, #{weightsTxt,jdbcType=VARCHAR}, 
+      #{optionsJson,jdbcType=VARCHAR}, #{stopwordsTxt,jdbcType=VARCHAR}, #{userdictTxt,jdbcType=VARCHAR}, 
+      #{simTxt,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+    insert into bot_sentence_addition
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateJson != null" >
+        template_json,
+      </if>
+      <if test="weightsTxt != null" >
+        weights_txt,
+      </if>
+      <if test="optionsJson != null" >
+        options_json,
+      </if>
+      <if test="stopwordsTxt != null" >
+        stopwords_txt,
+      </if>
+      <if test="userdictTxt != null" >
+        userdict_txt,
+      </if>
+      <if test="simTxt != null" >
+        sim_txt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateJson != null" >
+        #{templateJson,jdbcType=VARCHAR},
+      </if>
+      <if test="weightsTxt != null" >
+        #{weightsTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="optionsJson != null" >
+        #{optionsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="stopwordsTxt != null" >
+        #{stopwordsTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="userdictTxt != null" >
+        #{userdictTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="simTxt != null" >
+        #{simTxt,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_addition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_addition
+    <set >
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateJson != null" >
+        template_json = #{record.templateJson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weightsTxt != null" >
+        weights_txt = #{record.weightsTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.optionsJson != null" >
+        options_json = #{record.optionsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stopwordsTxt != null" >
+        stopwords_txt = #{record.stopwordsTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userdictTxt != null" >
+        userdict_txt = #{record.userdictTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.simTxt != null" >
+        sim_txt = #{record.simTxt,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update bot_sentence_addition
+    set process_id = #{record.processId,jdbcType=VARCHAR},
+      template_json = #{record.templateJson,jdbcType=VARCHAR},
+      weights_txt = #{record.weightsTxt,jdbcType=VARCHAR},
+      options_json = #{record.optionsJson,jdbcType=VARCHAR},
+      stopwords_txt = #{record.stopwordsTxt,jdbcType=VARCHAR},
+      userdict_txt = #{record.userdictTxt,jdbcType=VARCHAR},
+      sim_txt = #{record.simTxt,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_addition
+    set process_id = #{record.processId,jdbcType=VARCHAR},
+      template_json = #{record.templateJson,jdbcType=VARCHAR},
+      weights_txt = #{record.weightsTxt,jdbcType=VARCHAR},
+      options_json = #{record.optionsJson,jdbcType=VARCHAR},
+      stopwords_txt = #{record.stopwordsTxt,jdbcType=VARCHAR},
+      userdict_txt = #{record.userdictTxt,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+    update bot_sentence_addition
+    <set >
+      <if test="templateJson != null" >
+        template_json = #{templateJson,jdbcType=VARCHAR},
+      </if>
+      <if test="weightsTxt != null" >
+        weights_txt = #{weightsTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="optionsJson != null" >
+        options_json = #{optionsJson,jdbcType=VARCHAR},
+      </if>
+      <if test="stopwordsTxt != null" >
+        stopwords_txt = #{stopwordsTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="userdictTxt != null" >
+        userdict_txt = #{userdictTxt,jdbcType=VARCHAR},
+      </if>
+      <if test="simTxt != null" >
+        sim_txt = #{simTxt,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+    update bot_sentence_addition
+    set template_json = #{templateJson,jdbcType=VARCHAR},
+      weights_txt = #{weightsTxt,jdbcType=VARCHAR},
+      options_json = #{optionsJson,jdbcType=VARCHAR},
+      stopwords_txt = #{stopwordsTxt,jdbcType=VARCHAR},
+      userdict_txt = #{userdictTxt,jdbcType=VARCHAR},
+      sim_txt = #{simTxt,jdbcType=LONGVARCHAR}
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+    update bot_sentence_addition
+    set template_json = #{templateJson,jdbcType=VARCHAR},
+      weights_txt = #{weightsTxt,jdbcType=VARCHAR},
+      options_json = #{optionsJson,jdbcType=VARCHAR},
+      stopwords_txt = #{stopwordsTxt,jdbcType=VARCHAR},
+      userdict_txt = #{userdictTxt,jdbcType=VARCHAR}
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+</mapper>

@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.crm.dao.TabTempMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.crm.dao.entity.TabTemp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="key_str" property="keyStr" jdbcType="VARCHAR" />
+    <result column="des" property="des" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="publish" property="publish" jdbcType="BIT" />
+    <result column="trade_id" property="tradeId" jdbcType="VARCHAR" />
+    <result column="is_tts" property="isTts" jdbcType="TINYINT" />
+    <result column="file" property="file" jdbcType="VARCHAR" />
+    <result column="OPTIONS" property="options" jdbcType="VARCHAR" />
+    <result column="verify" property="verify" jdbcType="INTEGER" />
+    <result column="buildbycustomer" property="buildbycustomer" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="edittime" property="edittime" jdbcType="TIMESTAMP" />
+    <result column="operate" property="operate" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.crm.dao.entity.TabTemp" extends="BaseResultMap" >
+    <result column="user_label_rules" property="userLabelRules" jdbcType="LONGVARCHAR" />
+    <result column="sim_dict" property="simDict" jdbcType="LONGVARBINARY" />
+    <result column="selectjson" property="selectjson" jdbcType="LONGVARBINARY" />
+    <result column="simdict" property="simdict" jdbcType="LONGVARBINARY" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, `name`, key_str, des, addtime, publish, trade_id, is_tts, `file`, `OPTIONS`, 
+    verify, buildbycustomer, version, edittime, operate
+  </sql>
+  <sql id="Blob_Column_List" >
+    user_label_rules, sim_dict, selectjson, simdict
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTempExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tab_temp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTempExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tab_temp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tab_temp
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tab_temp
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTempExample" >
+    delete from tab_temp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTemp" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('tab_temp')
+    </selectKey>
+    insert into tab_temp (id, `name`, key_str, 
+      des, addtime, publish, 
+      trade_id, is_tts, `file`, 
+      `OPTIONS`, verify, buildbycustomer, 
+      version, edittime, operate, 
+      user_label_rules, sim_dict, selectjson, 
+      simdict)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{keyStr,jdbcType=VARCHAR}, 
+      #{des,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP}, #{publish,jdbcType=BIT}, 
+      #{tradeId,jdbcType=VARCHAR}, #{isTts,jdbcType=TINYINT}, #{file,jdbcType=VARCHAR}, 
+      #{options,jdbcType=VARCHAR}, #{verify,jdbcType=INTEGER}, #{buildbycustomer,jdbcType=INTEGER}, 
+      #{version,jdbcType=INTEGER}, #{edittime,jdbcType=TIMESTAMP}, #{operate,jdbcType=VARCHAR}, 
+      #{userLabelRules,jdbcType=LONGVARCHAR}, #{simDict,jdbcType=LONGVARBINARY}, #{selectjson,jdbcType=LONGVARBINARY}, 
+      #{simdict,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTemp" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('tab_temp')
+    </selectKey>
+    insert into tab_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="keyStr != null" >
+        key_str,
+      </if>
+      <if test="des != null" >
+        des,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="publish != null" >
+        publish,
+      </if>
+      <if test="tradeId != null" >
+        trade_id,
+      </if>
+      <if test="isTts != null" >
+        is_tts,
+      </if>
+      <if test="file != null" >
+        `file`,
+      </if>
+      <if test="options != null" >
+        `OPTIONS`,
+      </if>
+      <if test="verify != null" >
+        verify,
+      </if>
+      <if test="buildbycustomer != null" >
+        buildbycustomer,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="edittime != null" >
+        edittime,
+      </if>
+      <if test="operate != null" >
+        operate,
+      </if>
+      <if test="userLabelRules != null" >
+        user_label_rules,
+      </if>
+      <if test="simDict != null" >
+        sim_dict,
+      </if>
+      <if test="selectjson != null" >
+        selectjson,
+      </if>
+      <if test="simdict != null" >
+        simdict,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=INTEGER},
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="keyStr != null" >
+        #{keyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="des != null" >
+        #{des,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="publish != null" >
+        #{publish,jdbcType=BIT},
+      </if>
+      <if test="tradeId != null" >
+        #{tradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="isTts != null" >
+        #{isTts,jdbcType=TINYINT},
+      </if>
+      <if test="file != null" >
+        #{file,jdbcType=VARCHAR},
+      </if>
+      <if test="options != null" >
+        #{options,jdbcType=VARCHAR},
+      </if>
+      <if test="verify != null" >
+        #{verify,jdbcType=INTEGER},
+      </if>
+      <if test="buildbycustomer != null" >
+        #{buildbycustomer,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="edittime != null" >
+        #{edittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operate != null" >
+        #{operate,jdbcType=VARCHAR},
+      </if>
+      <if test="userLabelRules != null" >
+        #{userLabelRules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simDict != null" >
+        #{simDict,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="selectjson != null" >
+        #{selectjson,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="simdict != null" >
+        #{simdict,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTempExample" resultType="java.lang.Integer" >
+    select count(*) from tab_temp
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tab_temp
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null" >
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keyStr != null" >
+        key_str = #{record.keyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.des != null" >
+        des = #{record.des,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addtime != null" >
+        addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.publish != null" >
+        publish = #{record.publish,jdbcType=BIT},
+      </if>
+      <if test="record.tradeId != null" >
+        trade_id = #{record.tradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isTts != null" >
+        is_tts = #{record.isTts,jdbcType=TINYINT},
+      </if>
+      <if test="record.file != null" >
+        `file` = #{record.file,jdbcType=VARCHAR},
+      </if>
+      <if test="record.options != null" >
+        `OPTIONS` = #{record.options,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verify != null" >
+        verify = #{record.verify,jdbcType=INTEGER},
+      </if>
+      <if test="record.buildbycustomer != null" >
+        buildbycustomer = #{record.buildbycustomer,jdbcType=INTEGER},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=INTEGER},
+      </if>
+      <if test="record.edittime != null" >
+        edittime = #{record.edittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.operate != null" >
+        operate = #{record.operate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userLabelRules != null" >
+        user_label_rules = #{record.userLabelRules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.simDict != null" >
+        sim_dict = #{record.simDict,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="record.selectjson != null" >
+        selectjson = #{record.selectjson,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="record.simdict != null" >
+        simdict = #{record.simdict,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update tab_temp
+    set id = #{record.id,jdbcType=INTEGER},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      key_str = #{record.keyStr,jdbcType=VARCHAR},
+      des = #{record.des,jdbcType=VARCHAR},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      publish = #{record.publish,jdbcType=BIT},
+      trade_id = #{record.tradeId,jdbcType=VARCHAR},
+      is_tts = #{record.isTts,jdbcType=TINYINT},
+      `file` = #{record.file,jdbcType=VARCHAR},
+      `OPTIONS` = #{record.options,jdbcType=VARCHAR},
+      verify = #{record.verify,jdbcType=INTEGER},
+      buildbycustomer = #{record.buildbycustomer,jdbcType=INTEGER},
+      version = #{record.version,jdbcType=INTEGER},
+      edittime = #{record.edittime,jdbcType=TIMESTAMP},
+      operate = #{record.operate,jdbcType=VARCHAR},
+      user_label_rules = #{record.userLabelRules,jdbcType=LONGVARCHAR},
+      sim_dict = #{record.simDict,jdbcType=LONGVARBINARY},
+      selectjson = #{record.selectjson,jdbcType=LONGVARBINARY},
+      simdict = #{record.simdict,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tab_temp
+    set id = #{record.id,jdbcType=INTEGER},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      key_str = #{record.keyStr,jdbcType=VARCHAR},
+      des = #{record.des,jdbcType=VARCHAR},
+      addtime = #{record.addtime,jdbcType=TIMESTAMP},
+      publish = #{record.publish,jdbcType=BIT},
+      trade_id = #{record.tradeId,jdbcType=VARCHAR},
+      is_tts = #{record.isTts,jdbcType=TINYINT},
+      `file` = #{record.file,jdbcType=VARCHAR},
+      `OPTIONS` = #{record.options,jdbcType=VARCHAR},
+      verify = #{record.verify,jdbcType=INTEGER},
+      buildbycustomer = #{record.buildbycustomer,jdbcType=INTEGER},
+      version = #{record.version,jdbcType=INTEGER},
+      edittime = #{record.edittime,jdbcType=TIMESTAMP},
+      operate = #{record.operate,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTemp" >
+    update tab_temp
+    <set >
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="keyStr != null" >
+        key_str = #{keyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="des != null" >
+        des = #{des,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="publish != null" >
+        publish = #{publish,jdbcType=BIT},
+      </if>
+      <if test="tradeId != null" >
+        trade_id = #{tradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="isTts != null" >
+        is_tts = #{isTts,jdbcType=TINYINT},
+      </if>
+      <if test="file != null" >
+        `file` = #{file,jdbcType=VARCHAR},
+      </if>
+      <if test="options != null" >
+        `OPTIONS` = #{options,jdbcType=VARCHAR},
+      </if>
+      <if test="verify != null" >
+        verify = #{verify,jdbcType=INTEGER},
+      </if>
+      <if test="buildbycustomer != null" >
+        buildbycustomer = #{buildbycustomer,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="edittime != null" >
+        edittime = #{edittime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operate != null" >
+        operate = #{operate,jdbcType=VARCHAR},
+      </if>
+      <if test="userLabelRules != null" >
+        user_label_rules = #{userLabelRules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simDict != null" >
+        sim_dict = #{simDict,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="selectjson != null" >
+        selectjson = #{selectjson,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="simdict != null" >
+        simdict = #{simdict,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTemp" >
+    update tab_temp
+    set `name` = #{name,jdbcType=VARCHAR},
+      key_str = #{keyStr,jdbcType=VARCHAR},
+      des = #{des,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      publish = #{publish,jdbcType=BIT},
+      trade_id = #{tradeId,jdbcType=VARCHAR},
+      is_tts = #{isTts,jdbcType=TINYINT},
+      `file` = #{file,jdbcType=VARCHAR},
+      `OPTIONS` = #{options,jdbcType=VARCHAR},
+      verify = #{verify,jdbcType=INTEGER},
+      buildbycustomer = #{buildbycustomer,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      edittime = #{edittime,jdbcType=TIMESTAMP},
+      operate = #{operate,jdbcType=VARCHAR},
+      user_label_rules = #{userLabelRules,jdbcType=LONGVARCHAR},
+      sim_dict = #{simDict,jdbcType=LONGVARBINARY},
+      selectjson = #{selectjson,jdbcType=LONGVARBINARY},
+      simdict = #{simdict,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.crm.dao.entity.TabTemp" >
+    update tab_temp
+    set `name` = #{name,jdbcType=VARCHAR},
+      key_str = #{keyStr,jdbcType=VARCHAR},
+      des = #{des,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      publish = #{publish,jdbcType=BIT},
+      trade_id = #{tradeId,jdbcType=VARCHAR},
+      is_tts = #{isTts,jdbcType=TINYINT},
+      `file` = #{file,jdbcType=VARCHAR},
+      `OPTIONS` = #{options,jdbcType=VARCHAR},
+      verify = #{verify,jdbcType=INTEGER},
+      buildbycustomer = #{buildbycustomer,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      edittime = #{edittime,jdbcType=TIMESTAMP},
+      operate = #{operate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

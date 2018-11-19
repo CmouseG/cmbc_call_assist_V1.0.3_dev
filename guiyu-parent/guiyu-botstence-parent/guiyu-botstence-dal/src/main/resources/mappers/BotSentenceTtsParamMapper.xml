@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceTtsParamMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+    <id column="param_id" property="paramId" jdbcType="VARCHAR" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="param_key" property="paramKey" jdbcType="VARCHAR" />
+    <result column="param_type" property="paramType" jdbcType="VARCHAR" />
+    <result column="volice_id" property="voliceId" jdbcType="BIGINT" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    param_id, process_id, template_id, param_key, param_type, volice_id, crt_time, crt_user, 
+    lst_update_time, lst_update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_tts_param
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_tts_param
+    where param_id = #{paramId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_tts_param
+    where param_id = #{paramId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" >
+    delete from bot_sentence_tts_param
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+    <selectKey resultType="java.lang.String" keyProperty="paramId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_tts_param')
+    </selectKey>
+    insert into bot_sentence_tts_param (param_id, process_id, template_id, 
+      param_key, param_type, volice_id, 
+      crt_time, crt_user, lst_update_time, 
+      lst_update_user)
+    values (#{paramId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{paramKey,jdbcType=VARCHAR}, #{paramType,jdbcType=VARCHAR}, #{voliceId,jdbcType=BIGINT}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
+      #{lstUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+    <selectKey resultType="java.lang.String" keyProperty="paramId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_tts_param')
+    </selectKey>
+    insert into bot_sentence_tts_param
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      param_id,
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="paramKey != null" >
+        param_key,
+      </if>
+      <if test="paramType != null" >
+        param_type,
+      </if>
+      <if test="voliceId != null" >
+        volice_id,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{paramId,jdbcType=VARCHAR},
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="paramKey != null" >
+        #{paramKey,jdbcType=VARCHAR},
+      </if>
+      <if test="paramType != null" >
+        #{paramType,jdbcType=VARCHAR},
+      </if>
+      <if test="voliceId != null" >
+        #{voliceId,jdbcType=BIGINT},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_tts_param
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_tts_param
+    <set >
+      <if test="record.paramId != null" >
+        param_id = #{record.paramId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paramKey != null" >
+        param_key = #{record.paramKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paramType != null" >
+        param_type = #{record.paramType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.voliceId != null" >
+        volice_id = #{record.voliceId,jdbcType=BIGINT},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_tts_param
+    set param_id = #{record.paramId,jdbcType=VARCHAR},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      param_key = #{record.paramKey,jdbcType=VARCHAR},
+      param_type = #{record.paramType,jdbcType=VARCHAR},
+      volice_id = #{record.voliceId,jdbcType=BIGINT},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+    update bot_sentence_tts_param
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="paramKey != null" >
+        param_key = #{paramKey,jdbcType=VARCHAR},
+      </if>
+      <if test="paramType != null" >
+        param_type = #{paramType,jdbcType=VARCHAR},
+      </if>
+      <if test="voliceId != null" >
+        volice_id = #{voliceId,jdbcType=BIGINT},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where param_id = #{paramId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+    update bot_sentence_tts_param
+    set process_id = #{processId,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      param_key = #{paramKey,jdbcType=VARCHAR},
+      param_type = #{paramType,jdbcType=VARCHAR},
+      volice_id = #{voliceId,jdbcType=BIGINT},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR}
+    where param_id = #{paramId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper" >
+
+ 	<select id="queryBusinessAnswerTaskExtById" resultType="ai.guiji.botsentence.dao.entity.BusinessAnswerTaskExt">
+ 		select branch_id as branchId, user_ask as userAsk,CAST(substring(branch_name,9) AS SIGNED) as no, 
+		response as voliceId,intents as intentId
+		from bot_sentence_branch where process_id=#{processId} and branch_name like 'special_%' and 
+		intents is not null and response is not null and response != '[]' and domain='一般问题'
+		order by no
+ 	</select>
+ 	
+ 	<select id="queryBusinessAnswerTaskExtCount" resultType="int">
+ 		select count(1) from bot_sentence_branch where process_id=#{processId} and domain='一般问题'
+ 	</select>
+ 	
+ 	<select id="queryKeywordsByIntentId" resultType="string">
+		select keywords from bot_sentence_intent where id=#{intentId}
+ 	</select>
+ 	
+ 	<select id="queryVoliceUrlByIntentId" resultType="map">
+		select volice_url,content from volice_info where volice_id=#{voliceId}
+ 	</select>
+ 	
+ 	<select id="getLastbranchNo" resultType="int">
+ 		select IFNULL(max(CAST(substring(branch_name,9) AS SIGNED)),0)+1 from bot_sentence_branch 
+		where process_id=#{processId} and branch_name like 'special_%'
+ 	</select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.ext.BotSentenceDomainExtMapper" >
+  
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into bot_sentence_domain (domain_id, domain_name, template_id, 
+      process_id, 
+      com_domain, category, ignore_but_domains, 
+      is_interrupt, is_main_flow, crt_time, 
+      crt_user, lst_update_time, lst_update_user, type, parent, position_x, position_y
+      )
+    VALUES
+    <foreach collection="list" item="item" index="index" separator="," >
+        (
+        (SELECT genTabId('bot_sentence_domain') AS domainId),
+        #{item.domainName},
+        #{item.templateId},
+        #{item.processId},
+        #{item.comDomain},
+        #{item.category},
+        #{item.ignoreButDomains},
+        #{item.isInterrupt},
+        #{item.isMainFlow},
+        #{item.crtTime},
+        #{item.crtUser},
+        #{item.lstUpdateTime},
+        #{item.lstUpdateUser},
+        #{item.type},
+        #{item.parent},
+        #{item.positionX},
+        #{item.positionY}
+        )
+    </foreach>
+    
+</insert>
+
+	<update id="batchUpdateComDomain" parameterType="string" >
+	    update bot_sentence_domain
+	   	set com_domain = null, is_main_flow = null
+	    where process_id= #{processId}
+  </update>
+  
+</mapper>

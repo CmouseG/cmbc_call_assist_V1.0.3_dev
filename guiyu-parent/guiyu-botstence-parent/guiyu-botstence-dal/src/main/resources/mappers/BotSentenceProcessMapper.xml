@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceProcessMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+    <id column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="template_name" property="templateName" jdbcType="VARCHAR" />
+    <result column="template_type" property="templateType" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="VARCHAR" />
+    <result column="industry" property="industry" jdbcType="VARCHAR" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="old_process_id" property="oldProcessId" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="approve_time" property="approveTime" jdbcType="TIMESTAMP" />
+    <result column="approve_user" property="approveUser" jdbcType="VARCHAR" />
+    <result column="approve_notes" property="approveNotes" jdbcType="VARCHAR" />
+    <result column="sound_type" property="soundType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    process_id, template_id, template_name, template_type, version, industry, account_no, 
+    old_process_id, crt_time, crt_user, lst_update_time, lst_update_user, `state`, approve_time, 
+    approve_user, approve_notes, sound_type
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_process
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_process
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_process
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
+    delete from bot_sentence_process
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+    <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_process')
+    </selectKey>
+    insert into bot_sentence_process (process_id, template_id, template_name, 
+      template_type, version, industry, 
+      account_no, old_process_id, crt_time, 
+      crt_user, lst_update_time, lst_update_user, 
+      `state`, approve_time, approve_user, 
+      approve_notes, sound_type)
+    values (#{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
+      #{templateType,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
+      #{accountNo,jdbcType=VARCHAR}, #{oldProcessId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
+      #{state,jdbcType=VARCHAR}, #{approveTime,jdbcType=TIMESTAMP}, #{approveUser,jdbcType=VARCHAR}, 
+      #{approveNotes,jdbcType=VARCHAR}, #{soundType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+    <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_process')
+    </selectKey>
+    insert into bot_sentence_process
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      process_id,
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="templateName != null" >
+        template_name,
+      </if>
+      <if test="templateType != null" >
+        template_type,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="industry != null" >
+        industry,
+      </if>
+      <if test="accountNo != null" >
+        account_no,
+      </if>
+      <if test="oldProcessId != null" >
+        old_process_id,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="state != null" >
+        `state`,
+      </if>
+      <if test="approveTime != null" >
+        approve_time,
+      </if>
+      <if test="approveUser != null" >
+        approve_user,
+      </if>
+      <if test="approveNotes != null" >
+        approve_notes,
+      </if>
+      <if test="soundType != null" >
+        sound_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{processId,jdbcType=VARCHAR},
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateName != null" >
+        #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null" >
+        #{templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="industry != null" >
+        #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="oldProcessId != null" >
+        #{oldProcessId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveUser != null" >
+        #{approveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="approveNotes != null" >
+        #{approveNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="soundType != null" >
+        #{soundType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_process
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_process
+    <set >
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateName != null" >
+        template_name = #{record.templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateType != null" >
+        template_type = #{record.templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=VARCHAR},
+      </if>
+      <if test="record.industry != null" >
+        industry = #{record.industry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountNo != null" >
+        account_no = #{record.accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.oldProcessId != null" >
+        old_process_id = #{record.oldProcessId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null" >
+        `state` = #{record.state,jdbcType=VARCHAR},
+      </if>
+      <if test="record.approveTime != null" >
+        approve_time = #{record.approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.approveUser != null" >
+        approve_user = #{record.approveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.approveNotes != null" >
+        approve_notes = #{record.approveNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.soundType != null" >
+        sound_type = #{record.soundType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_process
+    set process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      template_name = #{record.templateName,jdbcType=VARCHAR},
+      template_type = #{record.templateType,jdbcType=VARCHAR},
+      version = #{record.version,jdbcType=VARCHAR},
+      industry = #{record.industry,jdbcType=VARCHAR},
+      account_no = #{record.accountNo,jdbcType=VARCHAR},
+      old_process_id = #{record.oldProcessId,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      `state` = #{record.state,jdbcType=VARCHAR},
+      approve_time = #{record.approveTime,jdbcType=TIMESTAMP},
+      approve_user = #{record.approveUser,jdbcType=VARCHAR},
+      approve_notes = #{record.approveNotes,jdbcType=VARCHAR},
+      sound_type = #{record.soundType,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+    update bot_sentence_process
+    <set >
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateName != null" >
+        template_name = #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null" >
+        template_type = #{templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="industry != null" >
+        industry = #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="accountNo != null" >
+        account_no = #{accountNo,jdbcType=VARCHAR},
+      </if>
+      <if test="oldProcessId != null" >
+        old_process_id = #{oldProcessId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        `state` = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveUser != null" >
+        approve_user = #{approveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="approveNotes != null" >
+        approve_notes = #{approveNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="soundType != null" >
+        sound_type = #{soundType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+    update bot_sentence_process
+    set template_id = #{templateId,jdbcType=VARCHAR},
+      template_name = #{templateName,jdbcType=VARCHAR},
+      template_type = #{templateType,jdbcType=VARCHAR},
+      version = #{version,jdbcType=VARCHAR},
+      industry = #{industry,jdbcType=VARCHAR},
+      account_no = #{accountNo,jdbcType=VARCHAR},
+      old_process_id = #{oldProcessId,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      `state` = #{state,jdbcType=VARCHAR},
+      approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      approve_user = #{approveUser,jdbcType=VARCHAR},
+      approve_notes = #{approveNotes,jdbcType=VARCHAR},
+      sound_type = #{soundType,jdbcType=VARCHAR}
+    where process_id = #{processId,jdbcType=VARCHAR}
+  </update>
+</mapper>

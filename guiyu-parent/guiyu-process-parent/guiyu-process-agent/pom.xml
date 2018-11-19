@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.0.35.Final</version>
@@ -26,6 +30,17 @@
             <groupId>guiji.ai</groupId>
             <artifactId>guiyu-utils</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!--定时任务-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
     </dependencies>
 

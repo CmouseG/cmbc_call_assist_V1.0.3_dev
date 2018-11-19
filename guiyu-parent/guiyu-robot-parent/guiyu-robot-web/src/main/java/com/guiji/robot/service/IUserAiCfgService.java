@@ -25,7 +25,7 @@ public interface IUserAiCfgService {
 	 * 根据用户编号查询用户-机器人配置信息列表
 	 * @return
 	 */
-	List<UserAiCfgInfo> queryUserAiCfgListByUserId(Long userId);
+	List<UserAiCfgInfo> queryUserAiCfgListByUserId(String userId);
 	
 	
 	/**
@@ -34,5 +34,5 @@ public interface IUserAiCfgService {
 	 * @param templateId
 	 * @return
 	 */
-	List<UserAiCfgInfo> queryUserAiCfgListByUserIdAndTemplate(Long userId,String templateId);
+	List<UserAiCfgInfo> queryUserAiCfgListByUserIdAndTemplate(String userId,String templateId);
 }

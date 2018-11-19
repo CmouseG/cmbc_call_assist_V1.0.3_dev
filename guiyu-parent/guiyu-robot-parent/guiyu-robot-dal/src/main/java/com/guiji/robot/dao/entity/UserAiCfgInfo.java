@@ -6,7 +6,7 @@ import java.util.Date;
 public class UserAiCfgInfo implements Serializable {
     private String id;
 
-    private Long userId;
+    private String userId;
 
     private Integer aiNum;
 
@@ -34,12 +34,12 @@ public class UserAiCfgInfo implements Serializable {
         this.id = id == null ? null : id.trim();
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId(String userId) {
+        this.userId = userId == null ? null : userId.trim();
     }
 
     public Integer getAiNum() {

@@ -38,7 +38,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * @return
 	 */
 	@Override
-	public List<UserAiCfgInfo> queryUserAiCfgListByUserId(Long userId){
+	public List<UserAiCfgInfo> queryUserAiCfgListByUserId(String userId){
 		if(userId != null) {
 			UserAiCfgInfoExample example = new UserAiCfgInfoExample();
 			example.createCriteria().andUserIdEqualTo(userId);
@@ -55,7 +55,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * @return
 	 */
 	@Override
-	public List<UserAiCfgInfo> queryUserAiCfgListByUserIdAndTemplate(Long userId,String templateId){
+	public List<UserAiCfgInfo> queryUserAiCfgListByUserIdAndTemplate(String userId,String templateId){
 		return null;
 	}
 }

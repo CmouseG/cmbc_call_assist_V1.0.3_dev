@@ -2,6 +2,8 @@ package com.guiji.robot.service.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckAiReady;
@@ -15,6 +17,7 @@ import com.guiji.robot.service.vo.AiInuseCache;
 * @date 2018年11月16日 下午2:19:33 
 * @version V1.0  
 */
+@Service
 public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 
 	

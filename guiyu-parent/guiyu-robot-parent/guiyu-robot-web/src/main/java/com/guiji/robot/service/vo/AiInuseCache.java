@@ -14,7 +14,7 @@ public class AiInuseCache {
 	//分配ID
 	private String assignId;
 	//用户号
-	private Long userId;
+	private String userId;
 	//机器人编号
 	private String aiNo;
 	//机器人IP

@@ -1,9 +1,13 @@
 package com.guiji.ai.dao;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.guiji.ai.dao.entity.TtsModel;
 import com.guiji.ai.dao.entity.TtsModelExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface TtsModelMapper {
     int countByExample(TtsModelExample example);
@@ -27,4 +31,7 @@ public interface TtsModelMapper {
     int updateByPrimaryKeySelective(TtsModel record);
 
     int updateByPrimaryKey(TtsModel record);
+    
+    //查询当前时间之前10分钟的GPU分配情况
+    List<Map<String, Object>> selectTenMinutesBefore(Date now);
 }

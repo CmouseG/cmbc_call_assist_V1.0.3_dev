@@ -1,12 +1,12 @@
 package com.guiji.process.server.service.impl;
 
+import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.process.core.vo.DeviceStatusEnum;
+import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IProceseScheduleService;
 import com.guiji.process.server.util.DeviceProcessUtil;
-import com.guiji.process.vo.CmdTypeEnum;
-import com.guiji.process.vo.DeviceStatusEnum;
-import com.guiji.process.vo.DeviceTypeEnum;
-import com.guiji.process.vo.DeviceVO;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.lang.StringUtils;
@@ -28,52 +28,52 @@ public class ProceseScheduleService implements IProceseScheduleService {
     private DeviceManageService deviceManageService;
 
     @Override
-    public List<DeviceVO> getTTS(String model, int requestCount) {
+    public List<ProcessInstanceVO> getTTS(String model, int requestCount) {
 
         return getDevices(DeviceTypeEnum.TTS.name()+ "_" + model, requestCount);
     }
 
     @Override
-    public List<DeviceVO> getSellbot(int requestCount) {
+    public List<ProcessInstanceVO> getSellbot(int requestCount) {
         return getDevices(DeviceTypeEnum.SELLBOT.name(), requestCount);
     }
 
     @Override
-    public boolean release(List<DeviceVO> deviceVOS) {
+    public boolean release(List<ProcessInstanceVO> processInstances) {
 
-        for (DeviceVO deviceVO:deviceVOS) {
+        for (ProcessInstanceVO processInstance:processInstances) {
 
-            deviceVO.setWhoUsed("");
-            deviceManageService.updateStatus(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort(), DeviceStatusEnum.UP, "");
+            processInstance.setWhoUsed("");
+            deviceManageService.updateStatus(processInstance.getType(), processInstance.getIp(), processInstance.getPort(), DeviceStatusEnum.UP, "");
 
-            updateActiveCacheList(DeviceTypeEnum.SELLBOT.name(), deviceVO);
+            updateActiveCacheList(DeviceTypeEnum.SELLBOT.name(), processInstance);
         }
 
         return true;
     }
 
     @Override
-    public boolean releaseTts(String model, List<DeviceVO> deviceVOS) {
-        for (DeviceVO deviceVO:deviceVOS) {
+    public boolean releaseTts(String model, List<ProcessInstanceVO> processInstances) {
+        for (ProcessInstanceVO processInstance:processInstances) {
 
-            deviceVO.setWhoUsed("");
-            deviceManageService.updateStatus(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort(), DeviceStatusEnum.UP, "");
+            processInstance.setWhoUsed("");
+            deviceManageService.updateStatus(processInstance.getType(), processInstance.getIp(), processInstance.getPort(), DeviceStatusEnum.UP, "");
 
-            updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + model, deviceVO);
+            updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + model, processInstance);
         }
 
         return true;
     }
 
     @Override
-    public void restoreTtsModel(String srcModel, String toModel, DeviceVO deviceVO) {
+    public void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO processInstance) {
 
         if(StringUtils.equals(srcModel, toModel))
         {
             return;
         }
 
-        String deviceKey = DeviceProcessUtil.getDeviceKey(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort());
+        String deviceKey = DeviceProcessUtil.getDeviceKey(processInstance.getType(), processInstance.getIp(), processInstance.getPort());
         String activeSrcMapKey = DeviceProcessConstant.ACTICE_DEVIECE_KEY + "_" + DeviceTypeEnum.TTS.name()+ "_" + srcModel;
         String activeToMapKey = DeviceProcessConstant.ACTICE_DEVIECE_KEY + "_" + DeviceTypeEnum.TTS.name()+ "_" + toModel;
 
@@ -83,22 +83,22 @@ public class ProceseScheduleService implements IProceseScheduleService {
             deviceVOMap.remove(deviceKey);
             redisUtil.hmset(activeSrcMapKey, deviceVOMap);
 
-            deviceVO.setWhoUsed("");
-            deviceManageService.updateStatus(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort(), DeviceStatusEnum.DOWN, "");
+            processInstance.setWhoUsed("");
+            deviceManageService.updateStatus(processInstance.getType(), processInstance.getIp(), processInstance.getPort(), DeviceStatusEnum.DOWN, "");
         }
 
         // 通知更换模型 TODO 同步 并设定TTS的状态
-        deviceManageService.cmd(deviceVO, CmdTypeEnum.RESTORE_MODEL);
+        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL);
 
-        deviceVO.setWhoUsed(IdGenUtil.uuid());
-        updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, deviceVO);
+        processInstance.setWhoUsed(IdGenUtil.uuid());
+        updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);
     }
 
 
 
-    private List<DeviceVO> getDevices(String key, int requestCount)
+    private List<ProcessInstanceVO> getDevices(String key, int requestCount)
     {
-        List<DeviceVO> result = new ArrayList<DeviceVO>();
+        List<ProcessInstanceVO> result = new ArrayList<ProcessInstanceVO>();
 
         Map<String, Object> deviceVOMap = (Map<String, Object>) redisUtil.get(DeviceProcessConstant.ALL_DEVIECE_KEY + "_" + DeviceTypeEnum.TTS);
         if(deviceVOMap == null)
@@ -106,7 +106,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
             return result;
         }
 
-        DeviceVO deviceVO = null;
+        ProcessInstanceVO deviceVO = null;
         String whoUsed = IdGenUtil.uuid();
 
         int count = 0;
@@ -118,7 +118,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
             }
 
             try {
-                deviceVO = (DeviceVO) ent.getValue();
+                deviceVO = (ProcessInstanceVO) ent.getValue();
                 if(deviceVO.getStatus() == DeviceStatusEnum.UP && StringUtils.isEmpty(deviceVO.getWhoUsed()))
                 {
                     deviceVO.setStatus(DeviceStatusEnum.BUSYING);
@@ -128,7 +128,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
                     updateActiveCacheList(key, deviceVO);
 
-                    result.add((DeviceVO) deviceVO.clone());
+                    result.add((ProcessInstanceVO) deviceVO.clone());
                     count++;
                 }
             }
@@ -142,7 +142,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
         return  result;
     }
 
-    private void updateActiveCacheList(String key, DeviceVO deviceVO)
+    private void updateActiveCacheList(String key, ProcessInstanceVO deviceVO)
     {
         Map<String, Object> deviceVOMap = (Map<String, Object>) redisUtil.get(DeviceProcessConstant.ACTICE_DEVIECE_KEY + "_" + key);
         if(deviceVOMap == null)
@@ -162,7 +162,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
             return;
         }
 
-        if(((DeviceVO)deviceVOMap.get(deviceKey)).getStatus()== deviceVO.getStatus())
+        if(((ProcessInstanceVO)deviceVOMap.get(deviceKey)).getStatus()== deviceVO.getStatus())
         {
             return;
         }
@@ -178,6 +178,4 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
         redisUtil.hmset(DeviceProcessConstant.ACTICE_DEVIECE_KEY + "_" + key, deviceVOMap);
     }
-
-
 }

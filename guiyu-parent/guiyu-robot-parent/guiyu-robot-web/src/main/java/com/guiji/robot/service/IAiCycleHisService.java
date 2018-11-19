@@ -16,4 +16,12 @@ public interface IAiCycleHisService {
 	 * @return
 	 */
 	AiCycleHis saveOrUpdate(AiCycleHis aiCycleHis);
+	
+
+	/**
+	 * 根据临时分配id，查询该机器人分配记录
+	 * @param assignId
+	 * @return
+	 */
+	AiCycleHis queryAiCycleHisByAssignId(String assignId);
 }

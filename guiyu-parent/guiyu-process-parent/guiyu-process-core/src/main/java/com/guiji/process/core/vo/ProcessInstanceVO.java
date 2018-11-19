@@ -1,8 +1,9 @@
-package com.guiji.process.vo;
+package com.guiji.process.core.vo;
 
 import java.io.Serializable;
+import java.util.Map;
 
-public class DeviceVO implements Serializable {
+public class ProcessInstanceVO implements Serializable {
 
     private String ip;
 
@@ -15,6 +16,8 @@ public class DeviceVO implements Serializable {
     private String whoUsed;
 
     private String deviceKey;
+
+    private Map<String, Object> paramter;
 
     public String getIp() {
         return ip;
@@ -64,15 +67,25 @@ public class DeviceVO implements Serializable {
         this.deviceKey = deviceKey;
     }
 
+
+    public Map<String, Object> getParamter() {
+        return paramter;
+    }
+
+    public void setParamter(Map<String, Object> paramter) {
+        this.paramter = paramter;
+    }
+
     @Override
     public String toString() {
-        return "DeviceVO{" +
+        return "ProcessInstanceVO{" +
                 "ip='" + ip + '\'' +
                 ", port=" + port +
                 ", type=" + type +
                 ", status=" + status +
                 ", whoUsed='" + whoUsed + '\'' +
                 ", deviceKey='" + deviceKey + '\'' +
+                ", paramter=" + paramter +
                 '}';
     }
 

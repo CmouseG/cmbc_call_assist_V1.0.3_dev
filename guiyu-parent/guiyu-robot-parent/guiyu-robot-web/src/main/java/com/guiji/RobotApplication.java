@@ -1,4 +1,4 @@
-package com.guiji.robot;
+package com.guiji;
 
 import com.guiji.component.result.EnableAutoResultPack;
 
@@ -14,8 +14,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.guiji")
 @EnableAutoResultPack
+@EnableFeignClients
 @EnableSwagger2
 @MapperScan("com.guiji.*.dao")
 public class RobotApplication {

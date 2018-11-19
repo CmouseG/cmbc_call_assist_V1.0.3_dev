@@ -1,7 +1,8 @@
 package com.guiji.process.server.service.impl;
 
-import com.guiji.process.vo.DeviceMsgVO;
-import com.guiji.process.vo.DeviceVO;
+
+import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +19,18 @@ public class DeviceCmdHandler {
     @Autowired
     private DeviceManageService deviceManageService;
 
-    public void excute(DeviceMsgVO deviceMsgVO)
+    public void excute(CmdMessageVO cmdMessageVO)
     {
-        if(deviceMsgVO == null)
+        if(cmdMessageVO == null)
         {
             return;
         }
 
-        switch (deviceMsgVO.getCmdType()) {
+        switch (cmdMessageVO.getCmdType()) {
 
             case REGISTER:
 
-                doRegister(deviceMsgVO);
+                doRegister(cmdMessageVO);
                 break;
 
             case RESTART:
@@ -47,54 +48,49 @@ public class DeviceCmdHandler {
 
             case HEALTH:
 
-                doHealthStatus(deviceMsgVO);
+                doHealthStatus(cmdMessageVO);
                 break;
 
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
 
 
-    private void doHealthStatus(DeviceMsgVO deviceMsgVO)
+    private void doHealthStatus(CmdMessageVO cmdMessageVO)
     {
-        DeviceVO oldDeviceVO = deviceManageService.getDevice(deviceMsgVO.getType(), deviceMsgVO.getIp(), deviceMsgVO.getPort());
-        if(oldDeviceVO == null)
+        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+        ProcessInstanceVO oldProcessInstanceVO = deviceManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
+        if(oldProcessInstanceVO == null)
         {
             // 未注册过，不做
             return;
         }
 
-        DeviceVO deviceVO = new DeviceVO();
-        deviceVO.setIp(deviceMsgVO.getIp());
-        deviceVO.setPort(deviceMsgVO.getPort());
-        deviceVO.setType(deviceMsgVO.getType());
-        deviceVO.setStatus(deviceMsgVO.getStatus());
-
-        deviceManageService.updateStatus(deviceMsgVO.getType(), deviceMsgVO.getIp(), deviceMsgVO.getPort(), deviceVO.getStatus());
+        deviceManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
     }
 
 
-    private void doRegister(DeviceMsgVO deviceMsgVO)
+    private void doRegister(CmdMessageVO cmdMessageVO)
     {
-        DeviceVO oldDeviceVO = deviceManageService.getDevice(deviceMsgVO.getType(), deviceMsgVO.getIp(), deviceMsgVO.getPort());
-        if(oldDeviceVO != null)
+        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+
+        List<ProcessInstanceVO> lst = new ArrayList<ProcessInstanceVO>();
+
+        if(processInstanceVO == null)
         {
             return;
         }
 
-        DeviceVO deviceVO = new DeviceVO();
-        deviceVO.setIp(deviceMsgVO.getIp());
-        deviceVO.setPort(deviceMsgVO.getPort());
-        deviceVO.setType(deviceMsgVO.getType());
+        ProcessInstanceVO oldProcessInstanceVO = deviceManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
+        if(oldProcessInstanceVO != null)
+        {
+            return;
+        }
 
-        // 首次上线，直接更新缓存中的状态
-        List<DeviceVO> lst = new ArrayList<DeviceVO>();
-        lst.add(deviceVO);
-
+        lst.add(processInstanceVO);
         deviceManageService.register(lst);
-
     }
 
 }

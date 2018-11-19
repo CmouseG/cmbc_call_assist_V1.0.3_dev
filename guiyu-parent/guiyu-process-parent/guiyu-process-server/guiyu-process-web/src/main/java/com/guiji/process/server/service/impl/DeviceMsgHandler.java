@@ -1,11 +1,13 @@
 package com.guiji.process.server.service.impl;
 
-import com.guiji.process.vo.DeviceMsgVO;
+import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,31 +43,38 @@ public class DeviceMsgHandler {
         return INSTANCE;
     }
 
-    public void add(DeviceMsgVO deviceMsgVO){
+    public void add(CmdMessageVO cmdMessageVO){
         try {
-            productor.produce(deviceMsgVO);
+            productor.produce(cmdMessageVO);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
 
+    public void add(List<CmdMessageVO> cmdMessageVOs){
+
+        for (CmdMessageVO cmdMessageVO:cmdMessageVOs) {
+            add(cmdMessageVO);
+        }
+    }
+
 
     public class Productor {
 
-        private BlockingQueue<DeviceMsgVO> queue = null;
+        private BlockingQueue<CmdMessageVO> queue = null;
 
         protected Productor()
         {
-            queue = new LinkedBlockingQueue<DeviceMsgVO>();
+            queue = new LinkedBlockingQueue<CmdMessageVO>();
         }
 
-        public void produce(DeviceMsgVO deviceMsgVO) throws InterruptedException {
+        public void produce(CmdMessageVO deviceMsgVO) throws InterruptedException {
             queue.put(deviceMsgVO);
         }
 
-        public DeviceMsgVO get() throws InterruptedException {
-           return queue.take();
+        public CmdMessageVO get() throws InterruptedException {
+            return queue.take();
         }
     }
 
@@ -85,21 +94,21 @@ public class DeviceMsgHandler {
 
         @Override
         public void run() {
-            DeviceMsgVO deviceMsgVO = null;
+            CmdMessageVO cmdMessageVO = null;
             while (true)
             {
                 try {
-                    deviceMsgVO = this.productor.get();
+                    cmdMessageVO = this.productor.get();
 
-                    if(deviceMsgVO == null)
+                    if(cmdMessageVO == null)
                     {
                         continue;
                     }
 
-                    handler.excute(deviceMsgVO);
+                    handler.excute(cmdMessageVO);
 
                 } catch (Exception e) {
-                    logger.error("Consummer:" + deviceMsgVO,e);
+                    logger.error("Consummer:" + cmdMessageVO,e);
                 }
             }
         }

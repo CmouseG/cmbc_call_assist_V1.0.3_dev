@@ -1,7 +1,7 @@
 package com.guiji.process.api;
 
 import com.guiji.component.result.Result;
-import com.guiji.process.vo.DeviceVO;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +33,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "requestCount", value = "请求数量", dataType = "int", paramType = "query"),
     })
     @GetMapping(value="/getTTS")
-    Result.ReturnData<List<DeviceVO>> getTTS(@RequestParam("vo") String model, @RequestParam("requestCount") int requestCount);
+    Result.ReturnData<List<ProcessInstanceVO>> getTTS(@RequestParam("vo") String model, @RequestParam("requestCount") int requestCount);
 
 
     /**
@@ -46,7 +46,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "requestCount", value = "请求数量", dataType = "int", paramType = "query"),
     })
     @GetMapping(value="/getSellbot")
-    Result.ReturnData<List<DeviceVO>> getSellbot(@RequestParam("requestCount") int requestCount);
+    Result.ReturnData<List<ProcessInstanceVO>> getSellbot(@RequestParam("requestCount") int requestCount);
 
 
     /**
@@ -59,7 +59,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "List", paramType = "query"),
     })
     @GetMapping(value="/release")
-    Result.ReturnData<List<DeviceVO>> release(@RequestParam("deviceVOS") List<DeviceVO> deviceVOS);
+    Result.ReturnData<List<ProcessInstanceVO>> release(@RequestParam("deviceVOS") List<ProcessInstanceVO> deviceVOS);
 
 }
 

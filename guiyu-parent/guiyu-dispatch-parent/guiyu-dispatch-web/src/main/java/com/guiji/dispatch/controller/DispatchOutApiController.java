@@ -32,6 +32,7 @@ public class DispatchOutApiController implements IDispatchPlanOut{
 	@Override
     @GetMapping(value="out/successSchedule")
 	public boolean successSchedule(String planUuid)   {
+		logger.info("完成接口开始执行.....");
 		return dispatchPlanService.successSchedule(planUuid);
 	}
 
@@ -45,7 +46,9 @@ public class DispatchOutApiController implements IDispatchPlanOut{
 	@Override
     @GetMapping(value="out/queryAvailableSchedules")
 	public  ReturnData<List<DispatchPlan>> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
-		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService.queryAvailableSchedules(userId, requestCount, lineId);
+		logger.info("返回可以拨打的任务给呼叫中心开始查询.......");
+		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
+		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService.queryAvailableSchedules(userId, requestCount, lineId,dis);
 		List<DispatchPlan> list = new ArrayList<>();
 		try {
 			for (com.guiji.dispatch.dao.entity.DispatchPlan plan : queryAvailableSchedules) {
@@ -56,6 +59,12 @@ public class DispatchOutApiController implements IDispatchPlanOut{
 		} catch (Exception e) {
 			logger.error("error",e);
 		}
+		
+		System.out.println(dis.isSuccess());
+		if(list.size()>0){
+			list.get(list.size()-1).setSuccess(dis.isSuccess());
+		}
+		logger.info("返回可以拨打的任务给呼叫中心结果数量:"+list.size());
 		return Result.ok(list);
 	}
 

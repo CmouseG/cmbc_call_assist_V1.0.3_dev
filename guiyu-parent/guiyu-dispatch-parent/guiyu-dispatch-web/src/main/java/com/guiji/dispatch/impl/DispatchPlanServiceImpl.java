@@ -78,9 +78,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
-
+		logger.info("userId:"+userId);
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
+		logger.info("SysUser:"+SysUser.getBody().getUsername());
 		if (SysUser != null) {
 			dispatchPlan.setUsername(SysUser.getBody().getUsername());
 		}
@@ -195,6 +196,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
+		logger.info("userId:"+userId);
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
@@ -472,9 +474,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
+	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId,DispatchPlan  isSuccess) {
 		DispatchPlanExample ex = new DispatchPlanExample();
-		
 		if (requestCount != 0) {
 			ex.setLimitStart(0);
 			ex.setLimitEnd(requestCount);
@@ -507,16 +508,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ids.add(String.valueOf(bean.getDispatchId()));
 		}
 		// 同步状态;0未同步1已同步
-//		for (DispatchPlan dispatchPlan : phones) {
-//			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
-//			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
-//		}
+		for (DispatchPlan dispatchPlan : phones) {
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+		}
 		List<DispatchPlan> result = new ArrayList<>();
 		if (ids.size() > 0) {
 			DispatchPlanExample ex1 = new DispatchPlanExample();
 			ex1.createCriteria().andPlanUuidIn(ids);
 			result = dispatchPlanMapper.selectByExample(ex1);
 		}
+		
+		//判断当前任务是否查询完毕
+		int count = dispatchPlanMapper.countByExample(ex);
+		if(count<=requestCount){
+			isSuccess.setSuccess(false);
+		}
+		
 		return result;
 	}
 
@@ -570,14 +578,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		int result = 0;
 		for (IdsDto bean : dto) {
 			DispatchPlan dis = new DispatchPlan();
-			dis.setPlanUuid(bean.getPlanUUID());
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
 				dis.setGmtModified(dateProvider.getCurrentTime());
 			} catch (Exception e) {
 				logger.error("error", e);
 			}
-			result = dispatchPlanMapper.updateByExampleSelective(dis, new DispatchPlanExample());
+			DispatchPlanExample ex = new DispatchPlanExample();
+			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
+			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		}
 		return result > 0 ? true : false;
 	}
@@ -600,11 +609,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan dispatchPlan = new DispatchPlan();
 			dispatchPlan.setIsDel(Constant.IS_DEL_1);
 			DispatchPlanExample ex = new DispatchPlanExample();
-			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanUUID());
+			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
 			result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
 
 			DispatchHourExample exHour = new DispatchHourExample();
-			exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanUUID());
+			exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanuuid());
 			result = dispatchHourMapper.deleteByExample(exHour);
 		}
 		return result > 0 ? true : false;

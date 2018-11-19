@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.ext.VoliceInfoExtMapper" >
+
+ 	<select id="queryVoliceInfoList" resultType="ai.guiji.botsentence.dao.entity.VoliceInfoExt">
+ 		select volice_id as voliceId,content,volice_url as voliceUrl from volice_info
+ 		where process_id=#{processId}
+ 	</select>
+ 	
+ 	
+ 	<select id="queryVoliceInfoListByIds" resultType="ai.guiji.botsentence.dao.entity.VoliceInfoExt">
+ 		select volice_id as voliceId,content,volice_url as voliceUrl from volice_info
+		where volice_id in
+		<foreach collection="voliceIds" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+ 	</select>
+ 	
+ 	<update id="updateVoliceUrlById">
+ 		UPDATE volice_info set volice_url=#{url} where volice_id=#{voliceId} 
+ 	</update>
+ 	
+ 	<update id="updateVoliceUrlAndNameById">
+ 		UPDATE volice_info set volice_url=#{url}, name=#{name} where volice_id=#{voliceId} 
+ 	</update>
+ 	
+ 	<select id="queryAllVoliceId" resultType="string">
+ 		select volice_id from volice_info where process_id=#{processId}
+ 	</select>
+ 	
+ 	<select id="getCodeByProcessId" resultType="string">
+ 		select machine_code from user_account 
+		where account_no=(select account_no from bot_sentence_process where process_id=#{processId})
+ 	</select>
+ 	
+ 	<select id="getVersionByProcessId" resultType="string">
+ 		select version from bot_sentence_process where process_id=#{processId}
+ 	</select>
+ 	
+ 	<insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="voliceId">
+   	insert into volice_info (volice_url, process_id, 
+      template_id, domain_name, `type`, 
+      num, content, crt_time, 
+      crt_user, lst_update_time, lst_update_user, 
+      `name`)
+    values 
+     <foreach collection="list" item="item" index="index" separator="," >
+        (
+        #{item.voliceUrl},
+        #{item.processId},
+        #{item.templateId},
+        #{item.domainName},
+        #{item.type},
+        #{item.num},
+        #{item.content},
+        #{item.crtTime},
+        #{item.crtUser},
+        #{item.lstUpdateTime},
+        #{item.lstUpdateUser},
+        #{item.name}
+        )
+    </foreach>
+
+ </insert>
+ 
+ 
+ 	<update id="updateVoliceFlag">
+ 		UPDATE volice_info set flag=null where process_id=#{processId} 
+ 	</update>
+ 	
+ 	
+ 	<select id="getContentByVoliceId" resultType="String">
+ 		select content as content from volice_info
+ 		where volice_id=#{voliceId}
+ 	</select>
+ 	
+</mapper>

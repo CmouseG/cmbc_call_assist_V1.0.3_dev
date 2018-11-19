@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.guiji.component.result.Result;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
@@ -37,7 +39,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "checkParams", value = "拨打参数完整性校验", required = true)
     })
     @PostMapping(value = "/remote/checkParams")
-	Result.ReturnData<CheckResult> checkParams(CheckParams checkParams);
+	Result.ReturnData<CheckResult> checkParams(@RequestBody CheckParams checkParams);
 	
 	
 	
@@ -46,7 +48,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "checkAiReady", value = "检查请求信息", required = true)
     })
     @PostMapping(value = "/remote/checkAiResourceReady")
-	Result.ReturnData<CheckResult> checkAiResourceReady(CheckAiReady checkAiReady); 
+	Result.ReturnData<CheckResult> checkAiResourceReady(@RequestBody CheckAiReady checkAiReady); 
 	
 	
 	
@@ -56,7 +58,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "ttsVoice", value = "tts语音合成请求信息", required = true)
     })
     @PostMapping(value = "/remote/ttsCompose")
-	Result.ReturnData<List<TtsVoice>> ttsCompose(TtsVoice ttsVoice);
+	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoice ttsVoice);
 	
 	
 	@ApiOperation(value = "拨打AI电话")
@@ -64,7 +66,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "aiCallStartReq", value = "发起电话拨打请求", required = true)
     })
     @PostMapping(value = "/remote/aiCallStart")
-	Result.ReturnData<AiCallNext> aiCallStart(AiCallStartReq aiCallStartReq);
+	Result.ReturnData<AiCallNext> aiCallStart(@RequestBody AiCallStartReq aiCallStartReq);
 	
 	
 	@ApiOperation(value = "sellbot关键字匹配，预校验下是否命中了关键字，命中后调用方再调aiCallNext，减轻主流程压力")
@@ -72,7 +74,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "aiCallLngKeyMatchReq", value = "关键字命中匹配", required = true)
     })
     @PostMapping(value = "/remote/aiLngKeyMatch")
-	Result.ReturnData<AiCallNext> aiLngKeyMatch(AiCallLngKeyMatchReq aiCallLngKeyMatchReq);
+	Result.ReturnData<AiCallNext> aiLngKeyMatch(@RequestBody AiCallLngKeyMatchReq aiCallLngKeyMatchReq);
 	
 	
 	@ApiOperation(value = "用户语音AI响应")
@@ -80,7 +82,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "aiCallNextReq", value = "用户语音AI响应", required = true)
     })
     @PostMapping(value = "/remote/aiCallNext")
-	Result.ReturnData<AiCallNext> aiCallNext(AiCallNextReq aiCallNextReq);
+	Result.ReturnData<AiCallNext> aiCallNext(@RequestBody AiCallNextReq aiCallNextReq);
 	
 	
 	
@@ -89,6 +91,6 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "aiHangupReq", value = "挂断请求信息", required = true)
     })
     @PostMapping(value = "/remote/aiHangup")
-	Result.ReturnData aiHangup(AiHangupReq aiHangupReq);
+	Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq);
 	
 }

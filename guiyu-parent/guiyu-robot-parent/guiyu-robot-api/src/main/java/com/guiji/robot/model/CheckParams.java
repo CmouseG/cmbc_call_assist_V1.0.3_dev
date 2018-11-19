@@ -15,8 +15,6 @@ import lombok.Data;
 @Data
 @ApiModel(value="CheckParams对象",description="参数校验请求")
 public class CheckParams {
-	@ApiModelProperty(value="会话ID，该电话整个会话过程中唯一编号",required=true)
-	private String seqid;
 	@ApiModelProperty(value="话术模板编号",required=true)
 	private String templateId;
 	@ApiModelProperty(value="话术模板参数map",required=true)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.ext.BotSentenceBranchExtMapper" >
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into bot_sentence_branch (branch_id, branch_name, seq, 
+      process_id, template_id, response, 
+      `next`, intents, `end`, 
+      `domain`, is_special_limit_free, user_ask, 
+      crt_time, crt_user, lst_update_time, 
+      lst_update_user, key_words, line_name, is_show, respname, type)
+    VALUES
+    <foreach collection="list" item="item" index="index" separator="," >
+        (
+        (SELECT genTabId('bot_sentence_branch') AS branchId),
+        #{item.branchName},
+        #{item.seq},
+        #{item.processId},
+        #{item.templateId},
+        #{item.response},
+        #{item.next},
+        #{item.intents},
+        #{item.end},
+        #{item.domain},
+        #{item.isSpecialLimitFree},
+        #{item.userAsk},
+        #{item.crtTime},
+        #{item.crtUser},
+        #{item.lstUpdateTime},
+        #{item.lstUpdateUser},
+        #{item.keyWords},
+        #{item.lineName},
+        #{item.isShow},
+        #{item.respname},
+        #{item.type}
+        )
+    </foreach>
+    
+</insert>
+
+<select id="querySpecialBranchoList" resultType="string">
+ 		select branch_name as branchName from bot_sentence_branch
+ 		where process_id=#{processId} and branch_name like 'special/_%' escape '/';
+ 	</select>
+</mapper>

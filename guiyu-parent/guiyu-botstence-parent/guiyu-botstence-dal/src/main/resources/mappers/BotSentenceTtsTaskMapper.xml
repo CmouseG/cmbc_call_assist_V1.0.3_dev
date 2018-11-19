@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceTtsTaskMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
+    <result column="busi_type" property="busiType" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="volice_url" property="voliceUrl" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="sound_type" property="soundType" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="VARCHAR" />
+    <result column="is_param" property="isParam" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, process_id, busi_id, busi_type, content, volice_url, `status`, crt_time, crt_user, 
+    lst_update_time, lst_update_user, sound_type, seq, is_param
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_tts_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_tts_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from bot_sentence_tts_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample" >
+    delete from bot_sentence_tts_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+    insert into bot_sentence_tts_task (id, process_id, busi_id, 
+      busi_type, content, volice_url, 
+      `status`, crt_time, crt_user, 
+      lst_update_time, lst_update_user, sound_type, 
+      seq, is_param)
+    values (#{id,jdbcType=BIGINT}, #{processId,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
+      #{busiType,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{voliceUrl,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, 
+      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, #{soundType,jdbcType=VARCHAR}, 
+      #{seq,jdbcType=VARCHAR}, #{isParam,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+    insert into bot_sentence_tts_task
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="busiId != null" >
+        busi_id,
+      </if>
+      <if test="busiType != null" >
+        busi_type,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="voliceUrl != null" >
+        volice_url,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="soundType != null" >
+        sound_type,
+      </if>
+      <if test="seq != null" >
+        seq,
+      </if>
+      <if test="isParam != null" >
+        is_param,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiId != null" >
+        #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiType != null" >
+        #{busiType,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="voliceUrl != null" >
+        #{voliceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="soundType != null" >
+        #{soundType,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        #{seq,jdbcType=VARCHAR},
+      </if>
+      <if test="isParam != null" >
+        #{isParam,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_tts_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_tts_task
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.busiId != null" >
+        busi_id = #{record.busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.busiType != null" >
+        busi_type = #{record.busiType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
+      <if test="record.voliceUrl != null" >
+        volice_url = #{record.voliceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        `status` = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.soundType != null" >
+        sound_type = #{record.soundType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seq != null" >
+        seq = #{record.seq,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isParam != null" >
+        is_param = #{record.isParam,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_tts_task
+    set id = #{record.id,jdbcType=BIGINT},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      busi_id = #{record.busiId,jdbcType=VARCHAR},
+      busi_type = #{record.busiType,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=VARCHAR},
+      volice_url = #{record.voliceUrl,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      sound_type = #{record.soundType,jdbcType=VARCHAR},
+      seq = #{record.seq,jdbcType=VARCHAR},
+      is_param = #{record.isParam,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+    update bot_sentence_tts_task
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiId != null" >
+        busi_id = #{busiId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiType != null" >
+        busi_type = #{busiType,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="voliceUrl != null" >
+        volice_url = #{voliceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="soundType != null" >
+        sound_type = #{soundType,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        seq = #{seq,jdbcType=VARCHAR},
+      </if>
+      <if test="isParam != null" >
+        is_param = #{isParam,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+    update bot_sentence_tts_task
+    set process_id = #{processId,jdbcType=VARCHAR},
+      busi_id = #{busiId,jdbcType=VARCHAR},
+      busi_type = #{busiType,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      volice_url = #{voliceUrl,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      sound_type = #{soundType,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=VARCHAR},
+      is_param = #{isParam,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

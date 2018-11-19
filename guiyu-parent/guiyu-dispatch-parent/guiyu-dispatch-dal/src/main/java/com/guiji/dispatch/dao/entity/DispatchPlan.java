@@ -9,6 +9,8 @@ public class DispatchPlan implements Serializable {
 	//是否显示
 	private Integer statusShow;
 	
+	private boolean  isSuccess = true;
+	
     private Integer id;
 
     private String planUuid;
@@ -62,7 +64,15 @@ public class DispatchPlan implements Serializable {
     
     
     
-    public String getBatchName() {
+    public boolean isSuccess() {
+		return isSuccess;
+	}
+
+	public void setSuccess(boolean isSuccess) {
+		this.isSuccess = isSuccess;
+	}
+
+	public String getBatchName() {
 		return batchName;
 	}
 

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ai.guiji.botsentence.dao.BotSentenceNodeRelateionMapper" >
+  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+    <id column="node_relateion_id" property="nodeRelateionId" jdbcType="VARCHAR" />
+    <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+    <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
+    <result column="child_node_id" property="childNodeId" jdbcType="VARCHAR" />
+    <result column="child_node_name" property="childNodeName" jdbcType="VARCHAR" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    node_relateion_id, node_id, node_name, child_node_id, child_node_name, process_id, 
+    crt_time, crt_user, lst_update_time, lst_update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_node_relateion
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_node_relateion
+    where node_relateion_id = #{nodeRelateionId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_node_relateion
+    where node_relateion_id = #{nodeRelateionId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" >
+    delete from bot_sentence_node_relateion
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+    <selectKey resultType="java.lang.String" keyProperty="nodeRelateionId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_node_relateion')
+    </selectKey>
+    insert into bot_sentence_node_relateion (node_relateion_id, node_id, node_name, 
+      child_node_id, child_node_name, process_id, 
+      crt_time, crt_user, lst_update_time, 
+      lst_update_user)
+    values (#{nodeRelateionId,jdbcType=VARCHAR}, #{nodeId,jdbcType=VARCHAR}, #{nodeName,jdbcType=VARCHAR}, 
+      #{childNodeId,jdbcType=VARCHAR}, #{childNodeName,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
+      #{lstUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+    <selectKey resultType="java.lang.String" keyProperty="nodeRelateionId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_node_relateion')
+    </selectKey>
+    insert into bot_sentence_node_relateion
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      node_relateion_id,
+      <if test="nodeId != null" >
+        node_id,
+      </if>
+      <if test="nodeName != null" >
+        node_name,
+      </if>
+      <if test="childNodeId != null" >
+        child_node_id,
+      </if>
+      <if test="childNodeName != null" >
+        child_node_name,
+      </if>
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{nodeRelateionId,jdbcType=VARCHAR},
+      <if test="nodeId != null" >
+        #{nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeName != null" >
+        #{nodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="childNodeId != null" >
+        #{childNodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="childNodeName != null" >
+        #{childNodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_node_relateion
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_node_relateion
+    <set >
+      <if test="record.nodeRelateionId != null" >
+        node_relateion_id = #{record.nodeRelateionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nodeId != null" >
+        node_id = #{record.nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nodeName != null" >
+        node_name = #{record.nodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.childNodeId != null" >
+        child_node_id = #{record.childNodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.childNodeName != null" >
+        child_node_name = #{record.childNodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_node_relateion
+    set node_relateion_id = #{record.nodeRelateionId,jdbcType=VARCHAR},
+      node_id = #{record.nodeId,jdbcType=VARCHAR},
+      node_name = #{record.nodeName,jdbcType=VARCHAR},
+      child_node_id = #{record.childNodeId,jdbcType=VARCHAR},
+      child_node_name = #{record.childNodeName,jdbcType=VARCHAR},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+    update bot_sentence_node_relateion
+    <set >
+      <if test="nodeId != null" >
+        node_id = #{nodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="nodeName != null" >
+        node_name = #{nodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="childNodeId != null" >
+        child_node_id = #{childNodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="childNodeName != null" >
+        child_node_name = #{childNodeName,jdbcType=VARCHAR},
+      </if>
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where node_relateion_id = #{nodeRelateionId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+    update bot_sentence_node_relateion
+    set node_id = #{nodeId,jdbcType=VARCHAR},
+      node_name = #{nodeName,jdbcType=VARCHAR},
+      child_node_id = #{childNodeId,jdbcType=VARCHAR},
+      child_node_name = #{childNodeName,jdbcType=VARCHAR},
+      process_id = #{processId,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR}
+    where node_relateion_id = #{nodeRelateionId,jdbcType=VARCHAR}
+  </update>
+</mapper>

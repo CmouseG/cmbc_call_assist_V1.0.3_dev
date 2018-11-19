@@ -22,6 +22,26 @@ import java.util.Map;
  */
 public class JsonUtils {
 
+	//对象转JSON
+	public static String bean2Json(Object obj) {
+		return JSON.toJSONString(obj);
+	}
+	
+	//JSON报文转对象
+	public static <T> T json2Bean(String json,Class<T> clazz) {
+		return JSON.parseObject(json, clazz);
+	}
+	
+	// 转换为数组
+    public static <T> Object[] json2Array(String json, Class<T> clazz) {
+        return JSON.parseArray(json, clazz).toArray();
+    }
+	
+    // 转换为List
+    public static <T> List<T> json2List(String json, Class<T> clazz) {
+        return JSON.parseArray(json, clazz);
+    }
+	
 	/**
 	 * listToTree
 	 * <p>方法说明<p>

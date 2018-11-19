@@ -1,9 +1,9 @@
 package com.guiji.process.server.service;
 
-import com.guiji.process.vo.CmdTypeEnum;
-import com.guiji.process.vo.DeviceStatusEnum;
-import com.guiji.process.vo.DeviceTypeEnum;
-import com.guiji.process.vo.DeviceVO;
+import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.process.core.vo.DeviceStatusEnum;
+import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 
 import java.util.List;
 
@@ -11,19 +11,19 @@ public interface IDeviceManageService {
 
     /**
      * 注册
-     * @param deviceVOS 设备
+     * @param processInstanceVOS 设备
      * @return
      */
-    void register(List<DeviceVO> deviceVOS);
+    void register(List<ProcessInstanceVO> processInstanceVOS);
 
 
     /**
      * 对设备处理
-     * @param deviceVO 设备
+     * @param processInstanceVO 设备
      * @param cmdType 对设备处理
      * @return
      */
-    boolean cmd(DeviceVO deviceVO, CmdTypeEnum cmdType);
+    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType);
 
     /**
      * 获取设备的状态
@@ -40,7 +40,7 @@ public interface IDeviceManageService {
      * @param port port
      * @return
      */
-    DeviceVO getDevice(DeviceTypeEnum type, String ip, int port);
+    ProcessInstanceVO getDevice(DeviceTypeEnum type, String ip, int port);
 
 
     /**

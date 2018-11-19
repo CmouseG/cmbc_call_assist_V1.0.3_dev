@@ -1,5 +1,6 @@
 package com.guiji.robot.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,13 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckAiReady;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.AiResourceApply;
+import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
+import com.guiji.utils.SystemUtil;
 
 import lombok.Synchronized;
 
@@ -37,7 +42,22 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 */
 	@Override
 	@Synchronized
-	public List<AiInuseCache> aiAssign(CheckAiReady checkAiReady){
+	public List<AiInuseCache> aiAssign(AiResourceApply checkAiReady){
+		if(checkAiReady != null) {
+			//TODO 调用进程管理服务申请机器人资源
+			List<AiInuseCache> list = new ArrayList<AiInuseCache>();
+			AiInuseCache aiInuse = new AiInuseCache();
+			aiInuse.setAiNo(SystemUtil.getBusiSerialNo("AI")); //机器人临时编号
+			aiInuse.setAiStatus(RobotConstants.AI_STATUS_F); //新申请机器人默认空闲状态
+			aiInuse.setUserId(checkAiReady.getUserId());
+			aiInuse.setTemplateId(checkAiReady.getTemplateId());
+			aiInuse.setInitDate(DateUtil.getCurrentymd()); //分配日期
+			aiInuse.setInitTime(DateUtil.getCurrentTime()); //分配时间
+//			aiInuse.setIp(ip);
+//			aiInuse.setPort(port);
+			list.add(aiInuse);
+			return list;
+		}
 		return null;
 	}
 	

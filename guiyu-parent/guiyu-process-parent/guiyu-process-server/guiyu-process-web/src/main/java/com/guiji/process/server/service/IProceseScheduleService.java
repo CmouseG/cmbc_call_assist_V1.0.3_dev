@@ -1,6 +1,6 @@
 package com.guiji.process.server.service;
 
-import com.guiji.process.vo.DeviceVO;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface IProceseScheduleService {
      * @param requestCount 请求数量
      * @return
      */
-    List<DeviceVO> getTTS(String model, int requestCount);
+    List<ProcessInstanceVO> getTTS(String model, int requestCount);
 
 
     /**
@@ -20,7 +20,7 @@ public interface IProceseScheduleService {
      * @param requestCount 请求数量
      * @return
      */
-    List<DeviceVO> getSellbot(int requestCount);
+    List<ProcessInstanceVO> getSellbot(int requestCount);
 
 
     /**
@@ -28,7 +28,7 @@ public interface IProceseScheduleService {
      * @param deviceVOS 释放资源列表
      * @return
      */
-    boolean release(List<DeviceVO> deviceVOS);
+    boolean release(List<ProcessInstanceVO> deviceVOS);
 
 
     /**
@@ -36,7 +36,7 @@ public interface IProceseScheduleService {
      * @param deviceVOS 释放资源列表
      * @return
      */
-    boolean releaseTts(String model, List<DeviceVO> deviceVOS);
+    boolean releaseTts(String model, List<ProcessInstanceVO> deviceVOS);
 
     /**
      * 重新创建模型
@@ -45,5 +45,5 @@ public interface IProceseScheduleService {
      * @param deviceVO
      * @return
      */
-    void restoreTtsModel(String srcModel, String toModel, DeviceVO deviceVO);
+    void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO deviceVO);
 }

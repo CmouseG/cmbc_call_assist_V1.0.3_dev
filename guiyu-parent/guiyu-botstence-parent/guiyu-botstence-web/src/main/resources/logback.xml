@@ -24,7 +24,7 @@
         </filter>
         <File>/home/apps/logs/guiyu_botstence/error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/apps/logs/guiyu_botstence/error-%d{yyyyMMdd}.log.%i
+            <fileNamePattern>/home/apps/logs/guiyu_botstence/error-%d{yyyyMMdd}.log.%i
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>

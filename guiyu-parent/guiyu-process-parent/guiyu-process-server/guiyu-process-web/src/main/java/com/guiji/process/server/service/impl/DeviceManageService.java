@@ -1,12 +1,13 @@
 package com.guiji.process.server.service.impl;
 
+import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.process.core.vo.DeviceStatusEnum;
+import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IDeviceManageService;
 import com.guiji.process.server.util.DeviceProcessUtil;
-import com.guiji.process.vo.CmdTypeEnum;
-import com.guiji.process.vo.DeviceStatusEnum;
-import com.guiji.process.vo.DeviceTypeEnum;
-import com.guiji.process.vo.DeviceVO;
+
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +25,17 @@ public class DeviceManageService implements IDeviceManageService {
 
     /**
      * 注册
-     * @param deviceVOS 设备
+     * @param processInstanceVOS 设备
      */
     @Override
-    public void register(List<DeviceVO> deviceVOS) {
+    public void register(List<ProcessInstanceVO> processInstanceVOS) {
 
-        DeviceVO nowDeviceVO = null;
-        for (DeviceVO deviceVO:deviceVOS) {
+        ProcessInstanceVO nowProcessInstanceVO = null;
+        for (ProcessInstanceVO processInstanceVO : processInstanceVOS) {
 
-            nowDeviceVO = getDevice(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort());
+            nowProcessInstanceVO = getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
 
-            if(nowDeviceVO == null)
+            if(nowProcessInstanceVO != null)
             {
                 continue;
             }
@@ -42,23 +43,23 @@ public class DeviceManageService implements IDeviceManageService {
             // 存入数据库 TODO
 
 
-            updateStatus(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort(), deviceVO.getStatus(), "");
+            updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus(), "");
         }
     }
 
     @Override
-    public boolean cmd(DeviceVO deviceVO, CmdTypeEnum cmdType) {
-        if(deviceVO == null || cmdType == null)
+    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType) {
+        if(processInstanceVO == null || cmdType == null)
         {
             return false;
         }
 
-        if(deviceVO.getType() == DeviceTypeEnum.AGENT)
+        if(processInstanceVO.getType() == DeviceTypeEnum.AGENT)
         {
             return false;
         }
 
-        if (deviceVO.getType() == DeviceTypeEnum.TTS && cmdType == CmdTypeEnum.RESTORE_MODEL)
+        if (processInstanceVO.getType() == DeviceTypeEnum.TTS && cmdType == CmdTypeEnum.RESTORE_MODEL)
         {
             // 调用TTS 的重新restore
 
@@ -74,20 +75,20 @@ public class DeviceManageService implements IDeviceManageService {
     @Override
     public DeviceStatusEnum getDeviceStatus(DeviceTypeEnum type, String ip, int port) {
 
-        DeviceVO deviceVO = getDevice(type, ip, port);
+        ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
 
-        if (deviceVO == null)
+        if (processInstanceVO == null)
         {
             return DeviceStatusEnum.UNKNOWN;
         }
 
-        return deviceVO.getStatus();
+        return processInstanceVO.getStatus();
     }
 
     @Override
-    public DeviceVO getDevice(DeviceTypeEnum type, String ip, int port) {
+    public ProcessInstanceVO getDevice(DeviceTypeEnum type, String ip, int port) {
 
-        Map<String, DeviceVO> deviceVOMap = (Map<String, DeviceVO>) redisUtil.get(DeviceProcessConstant.ALL_DEVIECE_KEY);
+        Map<String, ProcessInstanceVO> deviceVOMap = (Map<String, ProcessInstanceVO>) redisUtil.get(DeviceProcessConstant.ALL_DEVIECE_KEY);
 
         if(deviceVOMap == null)
         {
@@ -100,48 +101,48 @@ public class DeviceManageService implements IDeviceManageService {
     @Override
     public void updateStatus(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed) {
 
-        DeviceVO deviceVO = getDevice(type, ip, port);
+        ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
 
-        if (deviceVO == null)
+        if (processInstanceVO == null)
         {
-            deviceVO = new DeviceVO();
-            deviceVO.setIp(ip);
-            deviceVO.setPort(port);
-            deviceVO.setType(type);
+            processInstanceVO = new ProcessInstanceVO();
+            processInstanceVO.setIp(ip);
+            processInstanceVO.setPort(port);
+            processInstanceVO.setType(type);
         }
 
-        if(deviceVO.getStatus() == status && StringUtils.equals(deviceVO.getWhoUsed(), whoUsed))
+        if(processInstanceVO.getStatus() == status && StringUtils.equals(processInstanceVO.getWhoUsed(), whoUsed))
         {
             return;
         }
 
-        deviceVO.setStatus(status);
-        deviceVO.setWhoUsed(whoUsed);
+        processInstanceVO.setStatus(status);
+        processInstanceVO.setWhoUsed(whoUsed);
 
-        updateAllDeviceCachList(deviceVO);
+        updateAllDeviceCachList(processInstanceVO);
     }
 
     @Override
     public void updateStatus(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status) {
-        DeviceVO deviceVO = getDevice(type, ip, port);
+        ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
 
-        if (deviceVO == null)
-        {
-           return;
-        }
-
-        if(deviceVO.getStatus() == status)
+        if (processInstanceVO == null)
         {
             return;
         }
 
-        deviceVO.setStatus(status);
+        if(processInstanceVO.getStatus() == status)
+        {
+            return;
+        }
 
-        updateAllDeviceCachList(deviceVO);
+        processInstanceVO.setStatus(status);
+
+        updateAllDeviceCachList(processInstanceVO);
     }
 
 
-    private void updateAllDeviceCachList(DeviceVO deviceVO)
+    private void updateAllDeviceCachList(ProcessInstanceVO processInstanceVO)
     {
         Map<String, Object> deviceVOMap = (Map<String, Object>) redisUtil.get(DeviceProcessConstant.ALL_DEVIECE_KEY);
         if(deviceVOMap == null)
@@ -149,7 +150,7 @@ public class DeviceManageService implements IDeviceManageService {
             deviceVOMap = new HashMap<String, Object>();
         }
 
-        deviceVOMap.put(DeviceProcessUtil.getDeviceKey(deviceVO.getType(), deviceVO.getIp(), deviceVO.getPort()), deviceVO);
+        deviceVOMap.put(DeviceProcessUtil.getDeviceKey(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort()), processInstanceVO);
 
         redisUtil.hmset(DeviceProcessConstant.ALL_DEVIECE_KEY, deviceVOMap);
     }

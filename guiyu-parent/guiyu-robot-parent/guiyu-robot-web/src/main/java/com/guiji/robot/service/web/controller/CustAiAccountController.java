@@ -27,7 +27,11 @@ public class CustAiAccountController {
 	@Autowired
 	IUserAiCfgService iUserAiCfgService;
 	
-	
+	/**
+	 * 查询用户正在使用的机器人开户账号
+	 * @param userId
+	 * @return
+	 */
 	@RequestMapping(value = "/queryCustAccount", method = RequestMethod.POST)
 	public Result.ReturnData<List<UserAiCfgInfo>> queryCustAccount(@RequestParam(value="userId",required=true)String userId){
 		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);

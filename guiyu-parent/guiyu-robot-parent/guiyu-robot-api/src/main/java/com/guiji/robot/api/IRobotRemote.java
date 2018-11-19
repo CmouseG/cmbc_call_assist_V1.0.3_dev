@@ -39,16 +39,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "checkParams", value = "拨打参数完整性校验", required = true)
     })
     @PostMapping(value = "/remote/checkParams")
-	Result.ReturnData<CheckResult> checkParams(@RequestBody CheckParams checkParams);
-	
-	
-	
-	@ApiOperation(value = "拨打电话前AI资源准备校验")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "checkAiReady", value = "检查请求信息", required = true)
-    })
-    @PostMapping(value = "/remote/checkAiResourceReady")
-	Result.ReturnData<CheckResult> checkAiResourceReady(@RequestBody CheckAiReady checkAiReady); 
+	Result.ReturnData<List<CheckResult>> checkParams(@RequestBody CheckParams checkParams);
 	
 	
 	

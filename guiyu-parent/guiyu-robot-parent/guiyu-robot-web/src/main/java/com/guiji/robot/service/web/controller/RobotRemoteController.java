@@ -2,6 +2,8 @@ package com.guiji.robot.service.web.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,7 @@ import com.guiji.robot.service.IAiAbilityCenterService;
 */
 @RestController
 public class RobotRemoteController implements IRobotRemote{
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	IAiAbilityCenterService iAiAbilityCenterService;
@@ -38,21 +41,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param checkParams
 	 * @return
 	 */
-	public Result.ReturnData<CheckResult> checkParams(CheckParams checkParams){
-		CheckResult checkResult = iAiAbilityCenterService.checkParams(checkParams);
-		return Result.ok(checkResult);
-	}
-	
-	
-	
-	/**
-	 * 拨打电话前AI资源准备校验
-	 * @param checkAiReady
-	 * @return
-	 */
-	public Result.ReturnData<CheckResult> checkAiResourceReady(CheckAiReady checkAiReady){
-		CheckResult checkResult = iAiAbilityCenterService.checkAiResourceReady(checkAiReady);
-		return Result.ok(checkResult);
+	public Result.ReturnData<List<CheckResult>> checkParams(CheckParams checkParams){
+		List<CheckResult> checkResultList = iAiAbilityCenterService.checkParams(checkParams);
+		return Result.ok(checkResultList);
 	}
 	
 	

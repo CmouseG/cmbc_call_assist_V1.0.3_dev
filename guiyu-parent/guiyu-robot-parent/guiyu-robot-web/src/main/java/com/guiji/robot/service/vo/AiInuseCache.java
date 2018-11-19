@@ -11,8 +11,6 @@ import lombok.Data;
 @Data
 public class AiInuseCache {
 
-	//分配ID
-	private String assignId;
 	//用户号
 	private String userId;
 	//机器人编号

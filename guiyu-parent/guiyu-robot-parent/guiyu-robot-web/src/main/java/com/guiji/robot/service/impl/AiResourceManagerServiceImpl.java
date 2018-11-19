@@ -2,6 +2,9 @@ package com.guiji.robot.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.model.AiCallStartReq;
@@ -10,6 +13,9 @@ import com.guiji.robot.model.CheckAiReady;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.utils.RedisUtil;
+
+import lombok.Synchronized;
 
 /** 
 * @ClassName: AiResourceManagerServiceImpl 
@@ -19,7 +25,9 @@ import com.guiji.robot.service.vo.AiInuseCache;
 */
 @Service
 public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
-
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	@Autowired
+	RedisUtil redisUtil;
 	
 	/**
 	 * 机器人资源分配
@@ -28,6 +36,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 * @return
 	 */
 	@Override
+	@Synchronized
 	public List<AiInuseCache> aiAssign(CheckAiReady checkAiReady){
 		return null;
 	}

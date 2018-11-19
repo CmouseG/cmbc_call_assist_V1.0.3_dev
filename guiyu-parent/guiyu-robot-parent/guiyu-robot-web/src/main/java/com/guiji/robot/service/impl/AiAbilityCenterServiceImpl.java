@@ -1,7 +1,10 @@
 package com.guiji.robot.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,7 @@ import com.guiji.utils.SystemUtil;
 */
 @Service
 public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	ISellbotService iSellbotService;
 	
@@ -38,23 +42,12 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	@Override
-	public CheckResult checkParams(CheckParams checkParams) {
+	public List<CheckResult> checkParams(CheckParams checkParams) {
+		List<CheckResult> list = new ArrayList<CheckResult>();
 		CheckResult result = new CheckResult();
 		result.setCheckMsg(true);
-		return result;
-	}
-	
-	
-	/**
-	 * 拨打电话前AI资源准备校验，确认是否可以发起拨打电话
-	 * @param checkAiReady
-	 * @return
-	 */
-	@Override
-	public CheckResult checkAiResourceReady(CheckAiReady checkAiReady) {
-		CheckResult result = new CheckResult();
-		result.setCheckMsg(true);
-		return result;
+		list.add(result);
+		return list;
 	}
 	
 	
@@ -130,4 +123,5 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	public void aiHangup(AiHangupReq aiHangupReq) {
 		
 	}
+	
 }

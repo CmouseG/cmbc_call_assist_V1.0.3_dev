@@ -29,6 +29,15 @@ public interface IUserAiCfgService {
 	
 	
 	/**
+	 * 根据用户编号查询用户符合话术模板的配置列表
+	 * @param userId
+	 * @param templateId
+	 * @return
+	 */
+	public List<UserAiCfgInfo> queryUserAiCfgListByUserId(String userId,String templateId);
+	
+	
+	/**
 	 * 查询用户下可以使用某个话术的机器人列表
 	 * @param userId
 	 * @param templateId

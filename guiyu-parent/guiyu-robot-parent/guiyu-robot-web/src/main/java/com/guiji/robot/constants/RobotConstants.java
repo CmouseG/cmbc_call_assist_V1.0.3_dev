@@ -7,5 +7,14 @@ package com.guiji.robot.constants;
 * @version V1.0  
 */
 public class RobotConstants {
-
+	
+	/**
+	 * 分配的机器人缓存
+	 */
+	public static final String CACHE_ASSIGN_AI_ = "CACHE_ASSIGN_AI";
+	
+	/**
+	 * 用户机器人配置变更: 0-减少；1-增加
+	 */
+	public static final String USER_AI_CHG_ = "USER_AI_CHG_";
 }

@@ -1,7 +1,10 @@
 package com.guiji.robot.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +12,8 @@ import com.guiji.robot.dao.UserAiCfgInfoMapper;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfoExample;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.util.ListUtil;
+import com.guiji.utils.StrUtils;
 
 /** 
 * @ClassName: UserAiCfgServiceImpl 
@@ -18,6 +23,7 @@ import com.guiji.robot.service.IUserAiCfgService;
 */
 @Service
 public class UserAiCfgServiceImpl implements IUserAiCfgService{
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private UserAiCfgInfoMapper userAiCfgInfoMapper;
 	
@@ -43,6 +49,30 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			UserAiCfgInfoExample example = new UserAiCfgInfoExample();
 			example.createCriteria().andUserIdEqualTo(userId);
 			return userAiCfgInfoMapper.selectByExample(example);
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 根据用户编号查询用户符合话术模板的配置列表
+	 * @return
+	 */
+	@Override
+	public List<UserAiCfgInfo> queryUserAiCfgListByUserId(String userId,String templateId){
+		if(StrUtils.isNotEmpty(userId) && StrUtils.isNotEmpty(templateId)) {
+			//查询用户所有模板
+			List<UserAiCfgInfo> list = this.queryUserAiCfgListByUserId(userId);
+			List<UserAiCfgInfo> rtnList = new ArrayList<UserAiCfgInfo>();
+			if(ListUtil.isNotEmpty(list)) {
+				for(UserAiCfgInfo cfg : list) {
+					if(StrUtils.isNotEmpty(cfg.getTemplateIds()) && cfg.getTemplateIds().contains(templateId)) {
+						//如果该配置可以使用该话术模板，返回
+						rtnList.add(cfg);
+					}
+				}
+			}
+			return rtnList;
 		}
 		return null;
 	}

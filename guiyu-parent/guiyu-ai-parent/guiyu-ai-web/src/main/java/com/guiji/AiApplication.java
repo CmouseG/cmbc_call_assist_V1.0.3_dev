@@ -1,4 +1,4 @@
-package com.guiji.ai;
+package com.guiji;
 
 import com.guiji.component.result.EnableAutoResultPack;
 import org.mybatis.spring.annotation.MapperScan;

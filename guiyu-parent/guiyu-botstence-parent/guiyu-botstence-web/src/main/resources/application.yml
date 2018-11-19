@@ -1,6 +1,5 @@
 server:
   port: 18071
-  context-path: /guiyu_botstence-server
 spring:
   application:
     name: guiyu-botstence-web

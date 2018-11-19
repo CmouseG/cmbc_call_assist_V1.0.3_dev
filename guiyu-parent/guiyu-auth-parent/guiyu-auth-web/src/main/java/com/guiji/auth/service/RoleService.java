@@ -1,12 +1,17 @@
 package com.guiji.auth.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysRoleMapper;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysRoleExample;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.dao.entity.SysUserExample;
 
 @Service
 public class RoleService {
@@ -15,6 +20,8 @@ public class RoleService {
 	private SysRoleMapper mapper;
 	
 	public void insert(SysRole role,String[] menuIds){
+		role.setCreateTime(new Date());
+		role.setUpdateTime(new Date());
 		mapper.insert(role);
 		mapper.addMenus(role.getId(),menuIds);
 	}
@@ -24,6 +31,7 @@ public class RoleService {
 	}
 	
 	public void update(SysRole role,String[] menuIds){
+		role.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(role);
 		mapper.addMenus(role.getId(),menuIds);
 	}
@@ -36,7 +44,19 @@ public class RoleService {
 		return mapper.getRoles();
 	}
 	
-//	public void addMenus(String roleId,String[] menuIds){
-//		mapper.addMenus(roleId,menuIds);
-//	}
+	public void getRoleByPage(Page<SysRole> page){
+		SysRoleExample example=new SysRoleExample();
+		example.setLimitStart((page.getPageNo()-1)*page.getPageSize());
+		example.setLimitEnd(page.getPageNo()*page.getPageSize());
+		int count=mapper.countByExample(example);
+		List<SysRole> list=mapper.selectByExample(example);
+		page.setTotal(count);
+		page.setRecords(list);
+	}
+	
+	public List<SysRole> getRoleByName(String name){
+		SysRoleExample example = new SysRoleExample();
+		example.createCriteria().andNameEqualTo(name);
+		return mapper.selectByExample(example);
+	} 
 }

@@ -115,7 +115,7 @@ VALUES
     NULL,
     NULL,
     '0',
-    DATE_ADD(NOW(), INTERVAL -5 HOUR),
+   DATE_FORMAT( DATE_ADD(NOW(), INTERVAL -5 HOUR),'%Y%m%d'),
     '11,12,13,14',
     '2018-11-18 11:14:09',
     '2018-11-18 11:14:09',
@@ -126,6 +126,7 @@ VALUES
   ) ;
   DELETE FROM `dispatch_hour`  WHERE dispatch_id  = '1e3d9806da3345b581781ee68e39kz06';
   INSERT  INTO `dispatch_hour`(`dispatch_id`,`gmt_create`,`is_call`,`hour`) VALUES ('1e3d9806da3345b581781ee68e39kz06',DATE_ADD(NOW(), INTERVAL -5 HOUR),0,HOUR(DATE_ADD(NOW(), INTERVAL -5 HOUR)));
+
 
 
 ```

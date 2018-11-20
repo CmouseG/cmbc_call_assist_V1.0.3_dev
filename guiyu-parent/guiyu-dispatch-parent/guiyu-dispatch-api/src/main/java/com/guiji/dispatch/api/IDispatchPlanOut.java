@@ -19,7 +19,7 @@ import com.guiji.component.result.Result;
  * @Description: 调度中心任务调度接口
  * @author: xujin
  */
-@FeignClient("guiyu-dispatch")
+@FeignClient("GUIYU-DISPATCH-WEB")
 public interface IDispatchPlanOut {
 
     /**
@@ -35,7 +35,7 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "lineId", value = "线路id", dataType = "int", paramType = "query")
     })
     @GetMapping(value="out/queryAvailableSchedules")
-   public Result.ReturnData<List<DispatchPlan>> queryAvailableSchedules(@RequestParam("userId") Integer userId,@RequestParam("requestCount") int requestCount,@RequestParam("lineId") int lineId);
+   public Result.ReturnData<List<DispatchPlan>>  queryAvailableSchedules(@RequestParam("userId") Integer userId,@RequestParam("requestCount") int requestCount,@RequestParam("lineId") int lineId);
 
 
     /**

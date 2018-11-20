@@ -39,7 +39,7 @@ public class AIManagerImpl implements AIManager {
             AiCallStartReq aiCallStartReq = new  AiCallStartReq();
             aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
             aiCallStartReq.setTemplateId(aiRequest.getTempId());
-            aiCallStartReq.setTemplateId("fpjkqzjhwsm");//test
+//            aiCallStartReq.setTemplateId("fpjkqzjhwsm");//test
             aiCallStartReq.setSeqid(aiRequest.getUuid());
             aiCallStartReq.setUserId(aiRequest.getUserId());
             Result.ReturnData<AiCallNext> result =  robotRemote.aiCallStart(aiCallStartReq);
@@ -102,7 +102,7 @@ public class AIManagerImpl implements AIManager {
             aiCallNextReq.setSentence(aiRequest.getSentence());
             aiCallNextReq.setSeqid(aiRequest.getUuid());
             aiCallNextReq.setTemplateId(callPlan.getTempId());
-            aiCallNextReq.setTemplateId("fpjkqzjhwsm");//test
+//            aiCallNextReq.setTemplateId("fpjkqzjhwsm");//test
             aiCallNextReq.setUserId(callPlan.getCustomerId());
             Result.ReturnData<AiCallNext> result =  robotRemote.aiCallNext(aiCallNextReq);
             AiCallNext aiCallNext= result.getBody();
@@ -134,12 +134,18 @@ public class AIManagerImpl implements AIManager {
     /**
      * 判断是否需要打断
      * @return
+     * getSellbotJson：[{"state": "结束", "answer": "不好意思，可能信号太差了，我这边没有声音，下次再联系吧，拜拜！", "wav_filename": "xtw_rec/146.wav",
+     * "sentence": "", "end": 1, "log_file": "/home/log_sellbot/logic/20181121_15000/1e3d9806da3345b581781ee68e29hz06.log", "intent": "C", "accurate_intent": "C",
+     * "reason": "没有进行有效对话", "user_attentions": "[('开场白', 1)]", "UserInfo": "", "used_time_ms": 1.14, "match_nothing": 0,
+     * "dtmfflag": "false", "dtmflen": "1", "dtmftimeout": "10", "dtmfend": "", "dtmfresult": "-1"}]
      */
 
     private SellbotIsMatchResponse sendIsMatchRequest(String channelId, String sentence) throws Exception {
         try {
 
             AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
+            aiCallLngKeyMatchReq.setSentence(sentence);
+            aiCallLngKeyMatchReq.setSeqid(channelId);
             Result.ReturnData<AiCallNext> result = robotRemote.aiLngKeyMatch(aiCallLngKeyMatchReq);
 
             String resp =result.getBody().getSellbotJson();

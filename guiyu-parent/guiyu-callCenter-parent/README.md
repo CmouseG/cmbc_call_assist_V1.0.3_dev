@@ -48,7 +48,7 @@ freeswitch esl1：18029
 
 
 ### 测试打电话 ###
-先在两个数据库中执行如下sql，如何请求http://192.168.1.78:18023/out/startCallPlan?customerId=16&tempId=xtw_en&lineId=114即可
+先在两个数据库中执行如下sql，然后请求http://192.168.1.78:18023/out/startCallPlan?customerId=16&tempId=xtw_en&lineId=114
 ```sql
 
 /*47.97.179.12:3306/guiyu_callcenter

@@ -136,7 +136,7 @@ public interface IDispatchPlanService {
 	 * @param pagesize
 	 * @return
 	 */
-	public Page<DispatchPlan> queryDispatchPlanByParams(String phone,String planStaus,String startTime,String endTime,Integer batchId, String replayType,int pagenum,int pagesize );
+	public Page<DispatchPlan> queryDispatchPlanByParams(String phone,String planStaus,String startTime,String endTime,Integer batchId, String replayType,int pagenum,int pagesize);
 	
 	/**
 	 * 获取客户呼叫计划 
@@ -174,7 +174,7 @@ public interface IDispatchPlanService {
 	 * @param status
 	 * @return
 	 */
-	boolean operationAllPlanByBatchId(Integer batchId,String status);
+	boolean operationAllPlanByBatchId(Integer batchId,String status,Long userId);
 	
 	/**
 	 * 批量删除

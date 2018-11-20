@@ -3,8 +3,6 @@ package com.guiji.process.agent.handler;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.core.message.MessageProto;
 import io.netty.channel.Channel;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;

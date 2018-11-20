@@ -1,10 +1,17 @@
 package com.guiji.process.agent.util;
 
-import com.ctc.wstx.util.StringUtil;
+import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.model.CommandResult;
-import com.guiji.process.agent.util.CommandUtils;
+import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.process.core.vo.DeviceStatusEnum;
+import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
+
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 /**
  * Created by ty on 2018/11/19.
@@ -78,5 +85,23 @@ public class ProcessUtil {
                 }
             }
         }
+    }
+
+    public static void sendHealth(int port) throws UnknownHostException {
+        CmdMessageVO cmdMessageVO = new CmdMessageVO();
+        cmdMessageVO.setCmdType(CmdTypeEnum.HEALTH);
+        ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
+        processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
+        processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
+        processInstanceVO.setPort(port);
+        boolean isUp = ProcessUtil.checkRun(port);
+        if (isUp) {
+            processInstanceVO.setStatus(DeviceStatusEnum.UP);
+        } else {
+            processInstanceVO.setStatus(DeviceStatusEnum.DOWN);
+        }
+        cmdMessageVO.setProcessInstanceVO(processInstanceVO);
+        String msg = JsonUtils.bean2Json(cmdMessageVO);
+        ImClientProtocolBO.getIntance().send(msg,1);
     }
 }

@@ -1,6 +1,8 @@
 package com.guiji.robot.service.impl;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.service.ISellbotService;
@@ -19,6 +21,8 @@ import com.guiji.utils.SystemUtil;
 */
 @Service
 public class SellbotServiceImpl implements ISellbotService{
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	private static final String HTTP_URL = "http://192.168.1.50:15000"; 
 	
 	

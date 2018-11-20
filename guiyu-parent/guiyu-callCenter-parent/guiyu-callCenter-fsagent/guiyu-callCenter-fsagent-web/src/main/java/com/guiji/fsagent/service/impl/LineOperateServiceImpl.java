@@ -4,7 +4,7 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.entity.FreeSWITCH;
-import com.guiji.fsagent.manager.FSService;
+import com.guiji.fsagent.manager.ApplicationInit;
 import com.guiji.fsagent.service.LineOperateService;
 import com.guiji.fsagent.util.Base64Util;
 import com.guiji.fsmanager.api.ILineOper;
@@ -26,13 +26,13 @@ public class LineOperateServiceImpl implements LineOperateService {
     @Autowired
     FsConfig fsConfig;
     @Autowired
-    FSService fsService;
+    ApplicationInit pplicationInit;
     @Override
     public Result.ReturnData<Boolean> updatenotify(String lineId) {
         Result.ReturnData<List<LineXmlnfoVO>> result = lineOperApiFeign.linexmlinfos(lineId);
         List<LineXmlnfoVO>  lineList = result.getBody();
         //获取fs对象
-        FreeSWITCH fs = fsService.getFreeSwitch();
+        FreeSWITCH fs = pplicationInit.getFreeSwitch();
         Base64Util util = new Base64Util();
         try {
             for(LineXmlnfoVO line:lineList){

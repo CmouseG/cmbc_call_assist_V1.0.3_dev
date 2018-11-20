@@ -17,7 +17,7 @@ public class TempController implements ITemp {
     TempService tempService;
     @Override
     public Result.ReturnData downloadtempwav(String tempId) {
-        logger.debug("收到模板是否存在接口请求，tempId[{}]", tempId);
+        logger.info("收到模板是否存在接口请求，tempId[{}]", tempId);
         if(StringUtils.isBlank(tempId)){
             logger.info("模板是否存在接口请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
@@ -27,7 +27,7 @@ public class TempController implements ITemp {
 
     @Override
     public Result.ReturnData<Boolean> istempexist(String tempId) {
-        logger.debug("收到下载模板录音请求，tempId[{}]", tempId);
+        logger.info("收到下载模板录音请求，tempId[{}]", tempId);
         if(StringUtils.isBlank(tempId)){
             logger.info("下载模板录音失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);

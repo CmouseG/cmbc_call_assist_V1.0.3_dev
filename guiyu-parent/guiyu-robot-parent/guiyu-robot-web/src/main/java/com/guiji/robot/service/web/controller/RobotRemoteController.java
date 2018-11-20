@@ -2,6 +2,8 @@ package com.guiji.robot.service.web.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,7 @@ import com.guiji.robot.service.IAiAbilityCenterService;
 */
 @RestController
 public class RobotRemoteController implements IRobotRemote{
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	IAiAbilityCenterService iAiAbilityCenterService;
@@ -38,21 +41,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param checkParams
 	 * @return
 	 */
-	public Result.ReturnData<CheckResult> checkParams(CheckParams checkParams){
-		CheckResult checkResult = iAiAbilityCenterService.checkParams(checkParams);
-		return Result.ok(checkResult);
-	}
-	
-	
-	
-	/**
-	 * 拨打电话前AI资源准备校验
-	 * @param checkAiReady
-	 * @return
-	 */
-	public Result.ReturnData<CheckResult> checkAiResourceReady(CheckAiReady checkAiReady){
-		CheckResult checkResult = iAiAbilityCenterService.checkAiResourceReady(checkAiReady);
-		return Result.ok(checkResult);
+	public Result.ReturnData<List<CheckResult>> checkParams(@RequestBody CheckParams checkParams){
+		List<CheckResult> checkResultList = iAiAbilityCenterService.checkParams(checkParams);
+		return Result.ok(checkResultList);
 	}
 	
 	
@@ -63,7 +54,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param ttsVoice
 	 * @return
 	 */
-	public Result.ReturnData<List<TtsVoice>> ttsCompose(TtsVoice ttsVoice){
+	public Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoice ttsVoice){
 		List<TtsVoice> list = iAiAbilityCenterService.ttsCompose(ttsVoice);
 		return Result.ok(list);
 	}
@@ -74,7 +65,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiCallStartReq
 	 * @return
 	 */
-	public Result.ReturnData<AiCallNext> aiCallStart(AiCallStartReq aiCallStartReq){
+	public Result.ReturnData<AiCallNext> aiCallStart(@RequestBody AiCallStartReq aiCallStartReq){
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallStart(aiCallStartReq);
 		return Result.ok(aiCallNext);
 	}
@@ -86,7 +77,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiCallLngKeyMatchReq
 	 * @return
 	 */
-	public Result.ReturnData<AiCallNext> aiLngKeyMatch(AiCallLngKeyMatchReq aiCallLngKeyMatchReq){
+	public Result.ReturnData<AiCallNext> aiLngKeyMatch(@RequestBody AiCallLngKeyMatchReq aiCallLngKeyMatchReq){
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiLngKeyMatch(aiCallLngKeyMatchReq);
 		return Result.ok(aiCallNext);
 	}
@@ -97,7 +88,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiCallNextReq
 	 * @return
 	 */
-	public Result.ReturnData<AiCallNext> aiCallNext(AiCallNextReq aiCallNextReq){
+	public Result.ReturnData<AiCallNext> aiCallNext(@RequestBody AiCallNextReq aiCallNextReq){
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallNext(aiCallNextReq);
 		return Result.ok(aiCallNext);
 	}
@@ -108,7 +99,7 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiHangupReq
 	 * @return
 	 */
-	public Result.ReturnData aiHangup(AiHangupReq aiHangupReq){
+	public Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq){
 		iAiAbilityCenterService.aiHangup(aiHangupReq);
 		return Result.ok();
 	}

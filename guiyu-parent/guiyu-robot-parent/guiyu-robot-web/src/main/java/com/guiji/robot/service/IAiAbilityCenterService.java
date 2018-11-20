@@ -26,15 +26,7 @@ public interface IAiAbilityCenterService {
 	 * @param checkParams
 	 * @return
 	 */
-	CheckResult checkParams(CheckParams checkParams);
-	
-	
-	/**
-	 * 拨打电话前AI资源准备校验，确认是否可以发起拨打电话
-	 * @param checkAiReady
-	 * @return
-	 */
-	CheckResult checkAiResourceReady(CheckAiReady checkAiReady);
+	List<CheckResult> checkParams(CheckParams checkParams);
 	
 	
 	/**

@@ -374,6 +374,196 @@ public class SysRoleExample {
             addCriterion("update_time not between", value1, value2, "updateTime");
             return (Criteria) this;
         }
+
+        public Criteria andDelFlagIsNull() {
+            addCriterion("del_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagIsNotNull() {
+            addCriterion("del_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagEqualTo(String value) {
+            addCriterion("del_flag =", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotEqualTo(String value) {
+            addCriterion("del_flag <>", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagGreaterThan(String value) {
+            addCriterion("del_flag >", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("del_flag >=", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagLessThan(String value) {
+            addCriterion("del_flag <", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagLessThanOrEqualTo(String value) {
+            addCriterion("del_flag <=", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagLike(String value) {
+            addCriterion("del_flag like", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotLike(String value) {
+            addCriterion("del_flag not like", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagIn(List<String> values) {
+            addCriterion("del_flag in", values, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotIn(List<String> values) {
+            addCriterion("del_flag not in", values, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagBetween(String value1, String value2) {
+            addCriterion("del_flag between", value1, value2, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotBetween(String value1, String value2) {
+            addCriterion("del_flag not between", value1, value2, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleIsNull() {
+            addCriterion("init_role is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleIsNotNull() {
+            addCriterion("init_role is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleEqualTo(Integer value) {
+            addCriterion("init_role =", value, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleNotEqualTo(Integer value) {
+            addCriterion("init_role <>", value, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleGreaterThan(Integer value) {
+            addCriterion("init_role >", value, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleGreaterThanOrEqualTo(Integer value) {
+            addCriterion("init_role >=", value, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleLessThan(Integer value) {
+            addCriterion("init_role <", value, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleLessThanOrEqualTo(Integer value) {
+            addCriterion("init_role <=", value, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleIn(List<Integer> values) {
+            addCriterion("init_role in", values, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleNotIn(List<Integer> values) {
+            addCriterion("init_role not in", values, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleBetween(Integer value1, Integer value2) {
+            addCriterion("init_role between", value1, value2, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andInitRoleNotBetween(Integer value1, Integer value2) {
+            addCriterion("init_role not between", value1, value2, "initRole");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminIsNull() {
+            addCriterion("super_admin is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminIsNotNull() {
+            addCriterion("super_admin is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminEqualTo(Integer value) {
+            addCriterion("super_admin =", value, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminNotEqualTo(Integer value) {
+            addCriterion("super_admin <>", value, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminGreaterThan(Integer value) {
+            addCriterion("super_admin >", value, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminGreaterThanOrEqualTo(Integer value) {
+            addCriterion("super_admin >=", value, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminLessThan(Integer value) {
+            addCriterion("super_admin <", value, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminLessThanOrEqualTo(Integer value) {
+            addCriterion("super_admin <=", value, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminIn(List<Integer> values) {
+            addCriterion("super_admin in", values, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminNotIn(List<Integer> values) {
+            addCriterion("super_admin not in", values, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminBetween(Integer value1, Integer value2) {
+            addCriterion("super_admin between", value1, value2, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andSuperAdminNotBetween(Integer value1, Integer value2) {
+            addCriterion("super_admin not between", value1, value2, "superAdmin");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

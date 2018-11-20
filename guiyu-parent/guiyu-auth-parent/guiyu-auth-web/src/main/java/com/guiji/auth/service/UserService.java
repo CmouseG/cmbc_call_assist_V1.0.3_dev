@@ -2,14 +2,13 @@ package com.guiji.auth.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysUserMapper;
-import com.guiji.user.dao.entity.SysMenu;
-import com.guiji.user.dao.entity.SysMenuExample;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExample;
@@ -58,7 +57,7 @@ public class UserService {
 		return mapper.selectByPrimaryKey(id);
 	}
 	
-	public SysUser getUserByName(String userName){
+	public List<Map<String,String>> getUserByName(String userName){
 		return mapper.getUserByName(userName);
 	}
 	
@@ -70,35 +69,15 @@ public class UserService {
 		return mapper.getPermByRoleId(roleId);
 	}
 	
-//	public void getUserByPage(Page<SysUser> page){
-//		int count=mapper.count();
-//		List<SysUser> userList=mapper.getUsersByPage(page);
-//		page.setTotal(count);
-//		page.setRecords(userList);
-//	}
-	
-	
+	public void getUserByPage(Page<Map<String,String>> page){
+		int count=mapper.count();
+		List<Map<String,String>> userList=mapper.getUsersByPage(page);
+		page.setTotal(count);
+		page.setRecords(userList);
+	}
 	
 	public boolean existUserName(SysUser user){
 		return mapper.existUserName(user);
 	}
-	
-	public void getUserByPage(Page<SysUser> page){
-		SysUserExample example=new SysUserExample();
-		int count=mapper.countByExample(example);
-		
-		example.setLimitStart((page.getPageNo()-1)*page.getPageSize());
-		example.setLimitEnd(page.getPageNo()*page.getPageSize());
-		List<SysUser> list=mapper.selectByExample(example);
-		page.setTotal(count);
-		page.setRecords(list);
-	}
-	
-	public List<SysUser> getUserByUsername(String username){
-		SysUserExample example = new SysUserExample();
-		example.createCriteria().andUsernameEqualTo(username);
-		return mapper.selectByExample(example);
-	} 
-	
 	
 }

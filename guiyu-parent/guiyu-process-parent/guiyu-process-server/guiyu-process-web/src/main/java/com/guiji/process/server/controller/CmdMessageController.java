@@ -24,7 +24,7 @@ public class CmdMessageController {
 	@Autowired
 	private DeviceMsgHandler deviceMsgHandler;
 	/**
-	 * start
+	 * cmd
 	 * @param processInstances	进程
 	 * @param cmdTypeEnum	命令
 	 * @return

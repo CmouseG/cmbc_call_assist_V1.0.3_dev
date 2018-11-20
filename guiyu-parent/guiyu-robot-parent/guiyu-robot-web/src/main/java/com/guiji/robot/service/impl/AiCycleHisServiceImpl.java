@@ -1,5 +1,8 @@
 package com.guiji.robot.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.dao.entity.AiCycleHis;
@@ -13,6 +16,7 @@ import com.guiji.robot.service.IAiCycleHisService;
 */
 @Service
 public class AiCycleHisServiceImpl implements IAiCycleHisService {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * 记录机器人生命周期状态变更历史

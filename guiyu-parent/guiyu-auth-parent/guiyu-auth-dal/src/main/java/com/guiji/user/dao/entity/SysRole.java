@@ -12,6 +12,12 @@ public class SysRole implements Serializable {
 
     private Date updateTime;
 
+    private String delFlag;
+
+    private Integer initRole;
+
+    private Integer superAdmin;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -46,6 +52,30 @@ public class SysRole implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag == null ? null : delFlag.trim();
+    }
+
+    public Integer getInitRole() {
+        return initRole;
+    }
+
+    public void setInitRole(Integer initRole) {
+        this.initRole = initRole;
+    }
+
+    public Integer getSuperAdmin() {
+        return superAdmin;
+    }
+
+    public void setSuperAdmin(Integer superAdmin) {
+        this.superAdmin = superAdmin;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -56,6 +86,9 @@ public class SysRole implements Serializable {
         sb.append(", name=").append(name);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", delFlag=").append(delFlag);
+        sb.append(", initRole=").append(initRole);
+        sb.append(", superAdmin=").append(superAdmin);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

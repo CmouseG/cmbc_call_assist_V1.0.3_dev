@@ -22,7 +22,7 @@ public class FsController implements IFsResource {
 
     @Override
     public Result.ReturnData<FsBindVO> applyfs(@RequestParam("serviceId") String serviceId, @RequestParam("serviceType")ServiceTypeEnum serviceType) {
-        logger.debug("收到申请freeswitch资源接口请求，serviceId[{}], serviceType[{}]", serviceId,serviceType);
+        logger.info("收到申请freeswitch资源接口请求，serviceId[{}], serviceType[{}]", serviceId,serviceType);
 
         if(StringUtils.isBlank(serviceId)){
             logger.info("申请freeswitch资源失败，参数错误，为null或空");
@@ -38,7 +38,7 @@ public class FsController implements IFsResource {
 
     @Override
     public Result.ReturnData<Boolean> releasefs(@RequestParam("serviceId") String serviceId) {
-        logger.debug("收到释放freeswitch资源接口请求，serviceId[{}]", serviceId);
+        logger.info("收到释放freeswitch资源接口请求，serviceId[{}]", serviceId);
 
         if(StringUtils.isBlank(serviceId)){
             logger.info("释放freeswitch资源请求失败，参数错误，为null或空");

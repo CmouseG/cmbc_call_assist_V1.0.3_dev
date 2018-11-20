@@ -1,6 +1,7 @@
 package com.guiji.process.agent.core;
 
 import com.guiji.ImClientApp;
+import com.guiji.process.agent.handler.ImClientProtocolBO;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;
@@ -24,7 +25,7 @@ public class ConnectionListener implements ChannelFutureListener {
 				@Override
 				public void run() {
 					System.err.println("服务端链接不上，开始重连操作...");
-					imConnection.connect(ImClientApp.HOST, ImClientApp.PORT);
+					imConnection.connect(ImClientProtocolBO.HOST, ImClientProtocolBO.PORT);
 				}
 			}, 1L, TimeUnit.SECONDS);
 		} else {

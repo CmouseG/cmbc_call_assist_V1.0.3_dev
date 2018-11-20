@@ -1,8 +1,10 @@
 package com.guiji.auth.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +16,7 @@ import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysUser;
+import com.netflix.ribbon.proxy.annotation.Http.Header;
 
 /**
  * Created by ty on 2018/10/22.
@@ -49,7 +52,7 @@ public class UserController implements IAuth{
 	}
 
 	@RequestMapping("/user/getUserByPage")
-	public Page<SysUser> getUserByPage(Page<SysUser> page){
+	public Page<Map<String,String>> getUserByPage(Page<Map<String,String>> page){
 		service.getUserByPage(page);
 		return page;
 	}
@@ -61,7 +64,7 @@ public class UserController implements IAuth{
 	}
 	
 	@RequestMapping("/user/getUserByName")
-	public List<SysUser> getUserByName(String username){
-		return service.getUserByUsername(username);
+	public List<Map<String,String>> getUserByName(String username){
+		return service.getUserByName(username);
 	}
 }

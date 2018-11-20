@@ -46,7 +46,7 @@ public class FsEslClient {
         }else{
             try {
                 eslClient = new Client();
-                logger.debug("开始连接FreeSWITCH,[{}][{}]", eslIp, eslPort);
+                logger.info("开始连接FreeSWITCH,[{}][{}]", eslIp, eslPort);
                 eslClient.connect(eslIp, Integer.parseInt(eslPort), eslPwd, 10);
             }catch (Exception ex){
                 logger.warn("获取FreeSWITCH ESL连接出现异常", ex);
@@ -65,23 +65,12 @@ public class FsEslClient {
     public String execute(String command){
         EslMessage eslMessage = getFsClient().sendSyncApiCommand(command, "");
         String response = Joiner.on(" ").skipNulls().join(eslMessage.getBodyLines());
-        logger.debug("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
+        logger.info("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
         return response;
     }
     public String executeAsync(String command){
         String response = getFsClient().sendAsyncApiCommand(command, "");
-       // String response = Joiner.on(" ").skipNulls().join(eslMessage.getBodyLines());
-        logger.debug("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
+        logger.info("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
         return response;
     }
-
-
-//    /**
-//     * 回卷cdr文件
-//     */
-//    public void rotateCdr(){
-//        String cmd = "cdr_csv rotate";
-//        String result = execute(cmd);
-//        logger.debug("[{}]回卷日志结果为[{}]", fsName, result);
-//    }
 }

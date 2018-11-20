@@ -67,7 +67,6 @@ DELETE FROM  call_out_record WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
   username: callcenter
     password: callcenter@1234
 */
-UPDATE  `dispatch_hour`  SET `hour` =  IF( HOUR(NOW()) +19 >23,HOUR(NOW()) -5,HOUR(NOW()) +19) WHERE dispatch_id  = '1e3d9806da3345b581781ee68e39kz06';
 DELETE FROM dispatch_plan_0 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
 DELETE FROM dispatch_plan_1 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
 DELETE FROM dispatch_plan_2 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
@@ -116,7 +115,7 @@ VALUES
     NULL,
     NULL,
     '0',
-    '20181120',
+    DATE_ADD(NOW(), INTERVAL -5 HOUR),
     '11,12,13,14',
     '2018-11-18 11:14:09',
     '2018-11-18 11:14:09',
@@ -125,6 +124,10 @@ VALUES
     '0',
     'admin'
   ) ;
+  DELETE FROM `dispatch_hour`  WHERE dispatch_id  = '1e3d9806da3345b581781ee68e39kz06';
+  INSERT  INTO `dispatch_hour`(`dispatch_id`,`gmt_create`,`is_call`,`hour`) VALUES ('1e3d9806da3345b581781ee68e39kz06',DATE_ADD(NOW(), INTERVAL -5 HOUR),0,HOUR(DATE_ADD(NOW(), INTERVAL -5 HOUR)));
+
+
 ```
 
 

@@ -44,7 +44,6 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateProvider;
-import com.guiji.dispatch.util.SnowflakeIdWorker;
 import com.guiji.dispatch.util.ToolDateTime;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGenUtil;
@@ -354,6 +353,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize,Long userId,boolean isSuperAdmin ) {
+		logger.info("queryDispatchPlanByParams isSuperAdmin:"+isSuperAdmin );
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));

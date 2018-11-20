@@ -1,11 +1,9 @@
 package com.guiji.user.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysRoleExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface SysRoleMapper {
     int countByExample(SysRoleExample example);
@@ -29,9 +27,8 @@ public interface SysRoleMapper {
     int updateByPrimaryKeySelective(SysRole record);
 
     int updateByPrimaryKey(SysRole record);
-    
-    //
+
     public List<SysRole> getRoles();
-	
-	public void addMenus(@Param("roleId")Long roleId,@Param("menuIds")String[] menuIds);
+
+    public void addMenus(@Param("roleId")Long roleId,@Param("menuIds")String[] menuIds);
 }

@@ -4,6 +4,8 @@ package com.guiji.process.agent.service.impl;
 import com.guiji.process.agent.model.CfgNodeOperVO;
 import com.guiji.process.agent.model.CfgNodeVO;
 import com.guiji.process.agent.service.ProcessCfgService;
+import com.guiji.process.agent.util.CommandUtils;
+import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
@@ -19,8 +21,7 @@ public class ProcessCmdHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void excute(CmdMessageVO cmdMessageVO)
-    {
+    public void excute(CmdMessageVO cmdMessageVO) throws InterruptedException {
         if(cmdMessageVO == null)
         {
             return;
@@ -36,16 +37,22 @@ public class ProcessCmdHandler {
                 break;
 
             case RESTART:
-
+                doCmd(CfgNodeOperVO.getCmd());
                 break;
 
             case UNKNOWN:
                 break;
 
             case START:
+                doCmd(CfgNodeOperVO.getCmd());
                 break;
-
             case STOP:
+                doCmd(CfgNodeOperVO.getCmd());
+                Thread.sleep(1000);//等待1s查看是否关闭成功
+                //TODO 检查是否停掉，如果进程还或者则kill -9
+                if (ProcessUtil.checkRun(cmdMessageVO.getProcessInstanceVO().getPort())) {
+                    ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
+                }
                 break;
 
             case HEALTH:
@@ -80,10 +87,8 @@ public class ProcessCmdHandler {
 
 
 
-    private void doCmd(int port,  String cmd)
-    {
-
-
+    private void doCmd(String cmd) {
         // 获取 命令
+        CommandUtils.exec(cmd);
     }
 }

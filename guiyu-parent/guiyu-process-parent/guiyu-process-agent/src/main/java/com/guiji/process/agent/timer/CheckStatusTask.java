@@ -1,7 +1,7 @@
 package com.guiji.process.agent.timer;
 
 import com.guiji.process.agent.handler.ImClientProtocolBO;
-import com.guiji.process.agent.service.ProcessServiceImpl;
+import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.DeviceStatusEnum;
@@ -26,11 +26,9 @@ import java.util.Map;
 public class CheckStatusTask {
 
 	private static Logger logger = LoggerFactory.getLogger(CheckStatusTask.class);
-	@Autowired
-	ProcessServiceImpl processService;
-	
-	//定时任务，启动时运行（每1执行一次）
-	@Scheduled(fixedRate = 1000*5)
+
+	//定时任务，启动时运行（每1分钟执行一次）
+	@Scheduled(fixedRate = 1000*60)
     public void checkStatusTask() throws InterruptedException, UnsupportedEncodingException, UnknownHostException {
 		CmdMessageVO cmdMessageVO = new CmdMessageVO();
 		cmdMessageVO.setCmdType(CmdTypeEnum.HEALTH);
@@ -38,7 +36,7 @@ public class CheckStatusTask {
 		processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
 		processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
 		processInstanceVO.setPort(18001);
-		boolean isUp = processService.checkRun("18001");
+		boolean isUp = ProcessUtil.checkRun(18001);
 		if (isUp) {
 			processInstanceVO.setStatus(DeviceStatusEnum.UP);
 		} else {

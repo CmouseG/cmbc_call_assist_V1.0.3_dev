@@ -5,7 +5,7 @@ import com.guiji.fsagent.api.ILineOperate;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.entity.FreeSWITCH;
-import com.guiji.fsagent.manager.FSService;
+import com.guiji.fsagent.manager.ApplicationInit;
 import com.guiji.fsagent.service.LineOperateService;
 import com.guiji.fsagent.util.FileUtil;
 
@@ -27,11 +27,11 @@ public class LineOperateController implements ILineOperate {
     @Autowired
     FsConfig fsConfig;
     @Autowired
-    FSService fsService;
+    ApplicationInit pplicationInit;
     @Override
     @RequestMapping(value = "/updatenotify", method = RequestMethod.GET)
     public Result.ReturnData<Boolean> updatenotify(@RequestParam("type") String type, @RequestParam("lineId") String lineId) {
-        logger.debug("收到更新配置信息通知请求，type[{}], lineId[{}]", type,lineId);
+        logger.info("收到更新配置信息通知请求，type[{}], lineId[{}]", type,lineId);
 
         if(StringUtils.isBlank(type)||StringUtils.isBlank(lineId)){
             logger.info("更新配置信息通知请求失败，参数错误，为null或空");
@@ -52,7 +52,7 @@ public class LineOperateController implements ILineOperate {
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
         //获取fs对象
-        FreeSWITCH fs = fsService.getFreeSwitch();
+        FreeSWITCH fs = pplicationInit.getFreeSwitch();
         FileUtil.delete(fs.getDialplan()+"01_"+lineId+".xml");
         FileUtil.delete(fs.getGateway()+"gw_"+lineId+".xml");
         fs.execute("sofia profile external killgw gw_"+ lineId);

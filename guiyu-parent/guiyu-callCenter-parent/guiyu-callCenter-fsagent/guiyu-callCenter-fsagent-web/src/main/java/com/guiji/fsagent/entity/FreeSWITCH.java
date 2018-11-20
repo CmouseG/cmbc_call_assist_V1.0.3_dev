@@ -15,7 +15,7 @@ import java.util.List;
 
 public class FreeSWITCH {
     private final Logger logger = LoggerFactory.getLogger(FreeSWITCH.class);
-
+    private String localIp;
     private String fsName;
     private String baseDir;
     private String cdrDir;
@@ -34,7 +34,8 @@ public class FreeSWITCH {
 
     private String fsEslPwd;
 
-    public FreeSWITCH( String baseDir){
+    public FreeSWITCH( String baseDir,String localIp){
+        this.localIp = localIp;
         this.baseDir = baseDir;
         this.confDir = baseDir + "/conf";
         this.cdrDir = baseDir + "/log";
@@ -172,9 +173,10 @@ public class FreeSWITCH {
         globalVar.setDomain(fsEslClient.execute("global_getvar domain"));
         globalVar.setExternal_sip_port(fsEslClient.execute("global_getvar external_sip_port"));
         globalVar.setGc_docker_ip(fsEslClient.execute("global_getvar gc_docker_ip"));
+        globalVar.setInternal_sip_port1(fsEslClient.execute("global_getvar internal_sip_port1"));
         globalVar.setInternal_sip_port(fsEslClient.execute("global_getvar internal_sip_port"));
 
-        logger.debug("freeswitch[{}]全局变量为[{}]", fsName, globalVar.toString());
+        logger.info("freeswitch[{}]全局变量为[{}]", fsName, globalVar.toString());
     }
 
     /**
@@ -204,7 +206,7 @@ public class FreeSWITCH {
         }
         fsEslPort=eslPort;
         fsEslPwd = elsPwd;
-        fsEslClient = new FsEslClient("127.0.0.1", eslPort, elsPwd);
+        fsEslClient = new FsEslClient(localIp, eslPort, elsPwd);
     }
 
 //    public void rotateCdr(){

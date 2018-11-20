@@ -18,15 +18,15 @@ public class FsStateController implements IFsState {
 
     @Override
     public Result.ReturnData<Boolean> ishealthy() {
-        logger.debug("收到检查服务健康状态请求");
+        logger.info("收到检查服务健康状态请求");
         return Result.ok(fsStateManager.ishealthy());
     }
 
     @Override
     public Result.ReturnData<FsInfoVO> fsinfo() {
-        logger.debug("获取freeswitch基本信息");
+        logger.info("获取freeswitch基本信息");
         FsInfoVO vo = fsStateManager.fsinfo();
-        logger.debug("获取freeswitch基本信息接口返回FsInfoVO[{}]",vo);
+        logger.info("获取freeswitch基本信息接口返回FsInfoVO[{}]",vo);
        return  Result.ok(vo);
     }
 }

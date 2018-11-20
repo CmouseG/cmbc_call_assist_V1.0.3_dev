@@ -28,7 +28,7 @@ public class LineController implements ILineOper {
 
     @Override
     public Result.ReturnData addLineinfos(@RequestBody LineInfoVO lineInfo) {
-        logger.debug("收到增加线路接口请求，LineInfoVO[{}]", lineInfo);
+        logger.info("收到增加线路接口请求，LineInfoVO[{}]", lineInfo);
         if (StringUtils.isBlank(lineInfo.getLineId()) || StringUtils.isBlank(lineInfo.getSipIp()) || StringUtils.isBlank(lineInfo.getSipPort())) {
             logger.info("增加线路接口请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
@@ -42,7 +42,7 @@ public class LineController implements ILineOper {
 
     @Override
     public Result.ReturnData editLineinfos(@PathVariable("lineId") String lineId, @RequestBody LineInfoVO lineInfo) {
-        logger.debug("收到修改线路接口请求，lineId[{}]，LineInfoVO[{}]",lineId,lineInfo);
+        logger.info("收到修改线路接口请求，lineId[{}]，LineInfoVO[{}]",lineId,lineInfo);
         if(StringUtils.isBlank(lineId)||StringUtils.isBlank(lineInfo.getSipIp())||StringUtils.isBlank(lineInfo.getSipPort())){
             logger.info("增加修改线路接口请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
@@ -53,7 +53,7 @@ public class LineController implements ILineOper {
 
     @Override
     public Result.ReturnData deleteLineinfos(@PathVariable("lineId") String lineId) {
-        logger.debug("收到删除线路接口请求，lineId[{}]",lineId);
+        logger.info("收到删除线路接口请求，lineId[{}]",lineId);
         if(StringUtils.isBlank(lineId)){
             logger.info("删除线路接口请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
@@ -64,21 +64,21 @@ public class LineController implements ILineOper {
 
     @Override
     public Result.ReturnData linexmlinfos(@PathVariable(value = "lineId") String lineId) {
-        logger.debug("收到获取线路配置文件接口请求，lineId[{}]",lineId);
+        logger.info("收到获取线路配置文件接口请求，lineId[{}]",lineId);
         if(StringUtils.isBlank(lineId)){
             logger.info("获取线路配置文件接口请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
         List<LineXmlnfoVO> list =  lineService.linexmlinfos(lineId);
-        logger.debug("获取线路配置文件接口请求返回：，LineXmlnfoVO[{}]",list);
+        logger.info("获取线路配置文件接口请求返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
 
     @Override
     public Result.ReturnData linexmlinfosAll() {
-        logger.debug("收到获取所有线路配置文件接口请求");
+        logger.info("收到获取所有线路配置文件接口请求");
         List<LineXmlnfoVO> list =  lineService.linexmlinfosAll();
-        logger.debug("收到获取所有线路配置文件接口返回：，LineXmlnfoVO[{}]",list);
+        logger.info("收到获取所有线路配置文件接口返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
 }

@@ -45,3 +45,99 @@ freeswitch esl1：18029
 
 ### 请求动态url的接口 ###
 使用FeignBuildUtil的方法feignBuilderTarget(Class<T> apiType, String url)
+
+
+### 测试打电话 ###
+
+
+/*47.97.179.12:3306/guiyu_callcenter
+  username: callcenter
+    password: callcenter@1234
+*/
+DELETE FROM  call_out_plan_0 WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM  call_out_plan_1 WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM  call_out_detail_0 WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM  call_out_detail_1 WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM  call_out_detail_record WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM  call_out_record WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
+
+
+/*192.168.1.81:3306/guiyu_callcenter
+  username: callcenter
+    password: callcenter@1234
+*/
+UPDATE  `dispatch_hour`  SET `hour` =  HOUR(NOW()) +19  WHERE dispatch_id  = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM dispatch_plan_0 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM dispatch_plan_1 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
+DELETE FROM dispatch_plan_2 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
+
+INSERT INTO `dispatch_plan_1` (
+  `id`,
+  `plan_uuid`,
+  `user_id`,
+  `batch_id`,
+  `phone`,
+  `attach`,
+  `params`,
+  `status_plan`,
+  `status_sync`,
+  `recall`,
+  `recall_params`,
+  `robot`,
+  `line`,
+  `result`,
+  `call_agent`,
+  `clean`,
+  `call_data`,
+  `call_hour`,
+  `gmt_create`,
+  `gmt_modified`,
+  `is_tts`,
+  `replay_type`,
+  `is_del`,
+  `username`
+) 
+VALUES
+  (
+    '106',
+    '1e3d9806da3345b581781ee68e39kz06',
+    '16',
+    '110',
+    '018600397859',
+    '111',
+    NULL,
+    '1',
+    '0',
+    '0',
+    NULL,
+    'xtw_en',
+    '114',
+    NULL,
+    NULL,
+    '0',
+    '20181120',
+    '11,12,13,14',
+    '2018-11-18 11:14:09',
+    '2018-11-18 11:14:09',
+    '1',
+    '0',
+    '0',
+    'admin'
+  ) ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

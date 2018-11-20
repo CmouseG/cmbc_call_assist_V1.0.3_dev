@@ -3,6 +3,7 @@ package com.guiji.calloutserver.eventbus.handler;
 import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
  * @Project：guiyu-parent
  * @Description: 用于检查呼叫相关的资源是否齐备，如模板、tts、sellbot等
  */
+@Slf4j
 @Component
 public class CallResourceChecker {
     @Autowired
@@ -45,6 +47,7 @@ public class CallResourceChecker {
 */
 
         asyncEventBus.post(new CallResourceReadyEvent(callOutPlan));
+        log.info("---------------------CallResourceReadyEvent post "+callOutPlan.getPhoneNum());
     }
 
     /**

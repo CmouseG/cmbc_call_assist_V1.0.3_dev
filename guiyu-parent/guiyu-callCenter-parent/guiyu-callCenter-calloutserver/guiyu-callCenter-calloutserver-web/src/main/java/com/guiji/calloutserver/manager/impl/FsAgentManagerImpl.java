@@ -30,19 +30,19 @@ public class FsAgentManagerImpl implements FsAgentManager {
 
     @Override
     public void init(FsBindVO fsBindVO) {
-        log.debug("开始初始化FsAgentManager，地址为[{}]", fsBindVO.getFsAgentAddr());
+        log.info("开始初始化FsAgentManager，地址为[{}]", fsBindVO.getFsAgentAddr());
         iTemplate = FeignBuildUtil.feignBuilderTarget(ITemplate.class,"http://" + fsBindVO.getFsAgentAddr());
     }
 
     @Override
     public RecordVO uploadRecord(String callId, String fileName, String busiType){
-        log.debug("开始上传文件，callId[{}], fileName[{}], busiType[{}]", callId, fileName, busiType);
+        log.info("开始上传文件，callId[{}], fileName[{}], busiType[{}]", callId, fileName, busiType);
         RecordReqVO request = new RecordReqVO();
         request.setBusiId(callId);
         request.setFileName(fileName);
         request.setSysCode(eurekaManager.getAppName());
         request.setBusiType(busiType);
-
+        System.out.println(eurekaManager.getAppName());
         Result.ReturnData returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {

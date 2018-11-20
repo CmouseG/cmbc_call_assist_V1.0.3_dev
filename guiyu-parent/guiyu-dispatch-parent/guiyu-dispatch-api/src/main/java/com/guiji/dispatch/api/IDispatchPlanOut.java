@@ -49,7 +49,7 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "planUuid", value = "planUuid", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/successSchedule")
-    boolean successSchedule(@RequestParam("planUuid") String planUuid);
+    Result.ReturnData<Boolean> successSchedule(@RequestParam("planUuid") String planUuid);
 
 }
 

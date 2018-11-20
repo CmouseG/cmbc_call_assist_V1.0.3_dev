@@ -1,6 +1,7 @@
 package com.guiji.calloutserver.manager;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.component.result.Result;
 
 import java.util.List;
 
@@ -18,5 +19,5 @@ public interface DispatchManager {
      * @param lineId         线路id
      * @return
      */
-    List<CallOutPlan> pullCallPlan(String customerId, Integer requestCount, Integer lineId);
+    List<CallOutPlan> pullCallPlan(int customerId, Integer requestCount, Integer lineId);
 }

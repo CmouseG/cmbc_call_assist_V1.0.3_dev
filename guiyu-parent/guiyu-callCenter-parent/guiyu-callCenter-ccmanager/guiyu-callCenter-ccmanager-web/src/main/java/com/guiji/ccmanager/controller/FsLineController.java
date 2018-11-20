@@ -35,7 +35,7 @@ public class FsLineController {
     @GetMapping(value="getFsOutLines")
     public List getFsOutLines(){
 
-        log.debug("get request getFsOutLines");
+        log.info("get request getFsOutLines");
 
        // 从Eureka获取所有的fsline服务列表
         List<String> serverList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_FSLINE);
@@ -48,7 +48,7 @@ public class FsLineController {
             LinePort linePort = new LinePort(fsLineInfo.getFsLineId(),fsLineInfo.getFsIp()+":"+fsLineInfo.getFsOutPort());
             list.add(linePort);
         }
-        log.debug("response success getFsOutLines");
+        log.info("response success getFsOutLines");
         return list;
     }
 

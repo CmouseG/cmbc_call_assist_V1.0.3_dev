@@ -11,4 +11,6 @@ import com.guiji.callcenter.dao.entity.CallOutRecord;
 public interface CallOutRecordService {
     CallOutRecord findByCallId(String callId);
     void save(CallOutRecord callOutRecord);
+
+    void update(CallOutRecord callOutRecord);
 }

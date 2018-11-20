@@ -21,7 +21,7 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
 
     @Override
     public void save(CallOutDetail callOutDetail) {
-        callOutDetailMapper.insert(callOutDetail);
+        callOutDetailMapper.insertSelective(callOutDetail);
     }
 
     @Override

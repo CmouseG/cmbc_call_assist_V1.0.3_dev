@@ -26,4 +26,9 @@ public class CallOutRecordServiceImpl implements CallOutRecordService {
     public void save(CallOutRecord callOutRecord) {
         callOutRecordMapper.insert(callOutRecord);
     }
+
+    @Override
+    public void update(CallOutRecord callOutRecord) {
+        callOutRecordMapper.updateByPrimaryKeySelective(callOutRecord);
+    }
 }

@@ -23,7 +23,7 @@ public class FsWatchDog {
                     if (!fsManager.isConnect()) {
                         try {
                             //TODO:报警，freeswitch失败失败,需要重连
-                            log.debug("重连FreeSWITCH....");
+                            log.info("重连FreeSWITCH....");
                             fsManager.reConnect();
                         }catch (Exception ex){
                             //TODO:报警，重连fs出现异常

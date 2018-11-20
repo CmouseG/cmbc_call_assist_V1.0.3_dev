@@ -20,10 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.Boolean;
 import java.util.Date;
 import java.util.List;
 
@@ -56,12 +58,12 @@ public class CallDetailController {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate, String customerId,String pageSize, String pageNo,
-                                                              String phoneNum,String durationMin, String durationMax,String accurateIntent, String freason,String callId, String tempId ){
+    public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate,String pageSize, String pageNo,String phoneNum,String durationMin,
+                                                              String durationMax,String accurateIntent, String freason,String callId, String tempId , @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
 
-        log.debug("get request getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
+        log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
                         "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}]",
-                startDate, endDate, customerId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+                startDate, endDate, userId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
@@ -78,8 +80,9 @@ public class CallDetailController {
 
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<CallOutPlan> list = callDetailService.callrecord(start,end,customerId,pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
-        int count = callDetailService.callrecordCount(start,end,customerId, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+
+        List<CallOutPlan> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
 
         Page<CallOutPlan> page = new Page<CallOutPlan>();
         page.setPageNo(pageNoInt);
@@ -87,8 +90,8 @@ public class CallDetailController {
         page.setTotal(count);
         page.setRecords(list);
 
-        log.debug("response success getCallRecord，startDate[{}], endDate[{}],customerId[{}],pageSize[{}],pageNo[{}]",
-                startDate, endDate, customerId, pageSize, pageNo);
+        log.info("response success getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}]",
+                startDate, endDate, userId, pageSize, pageNo);
 
         return Result.ok(page);
     }
@@ -101,14 +104,14 @@ public class CallDetailController {
     @GetMapping(value="getCallDetail")
     public Result.ReturnData<CallOutPlanVO> getCallDetail(String callId){
 
-        log.debug("get request getCallDetail，callId[{}]", callId);
+        log.info("get request getCallDetail，callId[{}]", callId);
 
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
         CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(callId);
 
-        log.debug("reponse success getCallDetail，callId[{}]", callId);
+        log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
     }
 

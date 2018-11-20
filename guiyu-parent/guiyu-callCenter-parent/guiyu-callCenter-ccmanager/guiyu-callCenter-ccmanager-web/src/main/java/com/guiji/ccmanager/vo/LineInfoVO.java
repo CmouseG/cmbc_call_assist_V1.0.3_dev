@@ -20,7 +20,7 @@ public class LineInfoVO implements Serializable {
     private String sipPort;
     @ApiModelProperty(value = "编码")
     private String codec;
-    @ApiModelProperty(value = "呼叫好吗")
+    @ApiModelProperty(value = "呼叫号码")
     private String callerNum;
     @ApiModelProperty(value = "区号")
     private String calleePrefix;

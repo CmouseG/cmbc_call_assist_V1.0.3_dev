@@ -10,6 +10,7 @@ import com.guiji.calloutserver.service.LineCountService;
 import com.guiji.component.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,9 +30,10 @@ public class CallPlanController implements ICallPlan {
 
     @Override
     public Result.ReturnData startCallPlan(String customerId, String tempId, Integer lineId) {
-        log.debug("收到启动呼叫计划请求，customerId[{}], tempId[{}],lineId[{}]", customerId, tempId, lineId);
+        log.info("收到启动呼叫计划请求，customerId[{}], tempId[{}],lineId[{}]", customerId, tempId, lineId);
 
-        List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId(eurekaManager.getInstanceId(), lineId);
+        List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId("192.168.1.78:18024", lineId);
+//        List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId(eurekaManager.getInstanceId(), lineId);
         if(lineCountList==null){
             //线路不存在
             //TODO: 报警，线路不存在
@@ -52,12 +54,11 @@ public class CallPlanController implements ICallPlan {
         }
 
         //判断线路空闲并发数是否够用
-        if(currentLine.getUsedConcurrentCalls()>0){
+        if(currentLine.getUsedConcurrentCalls()!=null && currentLine.getUsedConcurrentCalls()>0){
             //TODO: 报警
             log.warn("启动计划失败，线路正在使用中[{}]", lineId);
             return Result.error(CCException.LINE_BUSY);
         }
-
         asyncEventBus.post(new StartCallPlanEvent(customerId, tempId, currentLine));
         return Result.ok();
     }

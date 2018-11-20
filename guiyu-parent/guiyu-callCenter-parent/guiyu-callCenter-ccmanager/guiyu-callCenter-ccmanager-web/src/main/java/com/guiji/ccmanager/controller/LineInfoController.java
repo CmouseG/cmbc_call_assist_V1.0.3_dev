@@ -3,6 +3,7 @@ package com.guiji.ccmanager.controller;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
+import com.guiji.ccmanager.vo.LineInfo4Select;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
@@ -38,42 +39,43 @@ public class LineInfoController {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getLineInfos")
-    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String customerId, String lineName, String pageSize, String pageNo){
+    public Result.ReturnData<Page<LineInfo4Select>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin ){
 
-        log.debug("get request getLineInfoByCustom，customerId[{}]，lineName[{}]，pageSize[{}]，pageNo[{}]",customerId,lineName, pageSize, pageNo);
+        log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]",lineName, pageSize, pageNo);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
         }
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(customerId,lineName,pageSizeInt,pageNoInt);
-        int count = lineInfoService.getLineInfoByCustomCount(customerId,lineName);
+        List<LineInfo4Select> list =  lineInfoService.getLineInfoByCustom(isSuperAdmin ? null : String.valueOf(userId),lineName,pageSizeInt,pageNoInt);
+        int count = lineInfoService.getLineInfoByCustomCount(isSuperAdmin ? null : String.valueOf(userId),lineName);
 
-        Page<LineInfo> page = new Page<LineInfo>();
+        Page<LineInfo4Select> page = new Page<LineInfo4Select>();
         page.setPageNo(pageNoInt);
         page.setPageSize(pageSizeInt);
         page.setTotal(count);
         page.setRecords(list);
 
-        log.debug("response success getLineInfoByCustom，customerId[{}]，lineName[{}]，pageSize[{}]，pageNo[{}]",customerId,lineName, pageSize, pageNo);
+        log.info("response success getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]",lineName, pageSize, pageNo);
         return Result.ok(page);
     }
 
     @ApiOperation(value = "增加线路接口")
     @PostMapping(value="addLineInfo")
-    public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO){
+    public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO,@RequestHeader Long userId ){
 
-        log.debug("get request addLineInfo，lineInfoVO[{}]",lineInfoVO);
+        log.info("get request addLineInfo，lineInfoVO[{}]",lineInfoVO);
 
-        if(lineInfoVO.getCustomerId()==null || lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
+        lineInfoVO.setCustomerId(String.valueOf(userId));
+        if(lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
             return Result.error(Constant.ERROR_PARAM);
         }
         String codec = lineInfoVO.getCodec();
         if(!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU) ){
             return Result.error(Constant.ERROR_CODEC);
         }
-        log.debug("response success addLineInfo，lineInfoVO[{}]",lineInfoVO);
+        lineInfoVO.setCustomerId(String.valueOf(userId));
         return lineInfoService.addLineInfo(lineInfoVO);
     }
 
@@ -81,7 +83,7 @@ public class LineInfoController {
     @PostMapping(value="updateLineInfo")
     public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO){
 
-        log.debug("get request updateLineInfo，lineInfoVO[{}]",lineInfoVO);
+        log.info("get request updateLineInfo，lineInfoVO[{}]",lineInfoVO);
 
         if(lineInfoVO.getLineId()==0){
             return Result.error(Constant.ERROR_PARAM);
@@ -92,7 +94,7 @@ public class LineInfoController {
                 return Result.error(Constant.ERROR_CODEC);
             }
         }
-        log.debug("response success updateLineInfo，lineInfoVO[{}]",lineInfoVO);
+        log.info("response success updateLineInfo，lineInfoVO[{}]",lineInfoVO);
         return lineInfoService.updateLineInfo(lineInfoVO);
     }
 
@@ -102,7 +104,7 @@ public class LineInfoController {
     })
     @PostMapping(value="deleteLineInfo/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id){
-        log.debug("get request deleteLineInfo，id[{}]",id);
+        log.info("get request deleteLineInfo，id[{}]",id);
         return lineInfoService.delLineInfo(id);
     }
 

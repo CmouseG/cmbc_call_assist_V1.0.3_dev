@@ -54,11 +54,11 @@ public class LocalFsServer implements IEslEventListener {
      */
     public void reConnect(){
         if(isConnect()){
-            logger.debug("已经处于连接状态，无需重连");
+            logger.info("已经处于连接状态，无需重连");
         }else{
-            logger.debug("开始重连FreeSWITCH...");
+            logger.info("开始重连FreeSWITCH...");
             getFsClient();
-            logger.debug("重连后状态为[{}]", isConnect());
+            logger.info("重连后状态为[{}]", isConnect());
         }
     }
 
@@ -69,20 +69,25 @@ public class LocalFsServer implements IEslEventListener {
             try {
                 //将老的资源释放干净
                 if(eslClient != null){
-                    logger.debug("为方便FreeSWITCH重连，清理旧资源");
+                    logger.info("为方便FreeSWITCH重连，清理旧资源");
                     eslClient.destroy();
                 }
 
                 eslClient = new Client();
-                logger.debug("开始连接FreeSWITCH，[{}]", fsBindInfo);
-                eslClient.connect(fsBindInfo.getFsAgentAddr(), Integer.parseInt(fsBindInfo.getFsEslPort()), fsBindInfo.getFsEslPwd(), 2);
+                logger.info("开始连接FreeSWITCH，[{}]", fsBindInfo);
+
+                String fsAgentAddr = fsBindInfo.getFsAgentAddr();
+                if(fsAgentAddr.contains(":")){
+                    fsAgentAddr = fsAgentAddr.split(":")[0];
+                }
+                eslClient.connect(fsAgentAddr, Integer.parseInt(fsBindInfo.getFsEslPort()), fsBindInfo.getFsEslPwd(), 2);
 
                 if(isConnect()){
-                    logger.debug("成功连接FreeSWITCH, 开始执行订阅时间等操作");
+                    logger.info("---------------成功连接FreeSWITCH, 开始执行订阅时间等操作-------------");
                     initClient(eslClient);
                 }else{
                     //TODO: 报警，连接fs失败
-                    logger.debug("连接FreeSWITCH失败");
+                    logger.info("连接FreeSWITCH失败");
                 }
             }catch (Exception ex){
                 //TODO: 报警，freeswitch连接异常
@@ -99,7 +104,7 @@ public class LocalFsServer implements IEslEventListener {
      * @param eslClient
      */
     private void initClient(Client eslClient) {
-        logger.debug("开始初始化eslClient");
+        logger.info("开始初始化eslClient");
         eslClient.setEventSubscriptions( "plain", "all" );
         eslClient.addEventFilter("Event-Name","CHANNEL_ANSWER");
         eslClient.addEventFilter("Event-Name","CHANNEL_HANGUP_COMPLETE");
@@ -107,7 +112,7 @@ public class LocalFsServer implements IEslEventListener {
         eslClient.addEventFilter("Event-Subclass","callcenter::info");
 
         eslClient.addEventListener(this);
-        logger.debug("初始化eslClient完毕");
+        logger.info("初始化eslClient完毕");
     }
 
     /**
@@ -161,7 +166,7 @@ public class LocalFsServer implements IEslEventListener {
     public String execute(String command){
         EslMessage eslMessage = getFsClient().sendSyncApiCommand(command, "");
         String response = StringUtils.join(eslMessage.getBodyLines(), "\n");
-        logger.debug("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
+        logger.info("FreeSWITCH命令[{}]返回结果为[{}]", command, response);
         return response;
     }
 
@@ -176,18 +181,18 @@ public class LocalFsServer implements IEslEventListener {
                 customerNum,
                 agentGroupId);
         String response = getFsClient().sendAsyncApiCommand(command, "");
-        logger.debug("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
+        logger.info("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
     }
 
     public void transfer(String uuid, String destNum){
         String command = String.format("uuid_transfer %s %s", uuid,destNum);
         String response = getFsClient().sendAsyncApiCommand(command, "");
-        logger.debug("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
+        logger.info("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
     }
 
     public void executeAsync(String command){
         String response = getFsClient().sendAsyncApiCommand(command, "");
-        logger.debug("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
+        logger.info("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
     }
 
     @Override

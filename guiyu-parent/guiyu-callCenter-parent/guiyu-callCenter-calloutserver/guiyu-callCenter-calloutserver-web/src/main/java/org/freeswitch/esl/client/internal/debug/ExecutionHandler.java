@@ -1,4 +1,4 @@
-package org.freeswitch.esl.client.internal.debug;
+package org.freeswitch.esl.client.internal.info;
 
 /*
  * Copyright 2009 Red Hat, Inc.

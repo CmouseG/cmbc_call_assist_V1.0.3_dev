@@ -37,6 +37,11 @@ public class CallServiceImpl implements CallService {
         //获取线路服务器
         FsLineVO fsLine = fsLineManager.getFsLine();
 
+        String ip = fsLine.getFsIp();
+        if(ip.contains(":")){
+            ip = ip.split(":")[0];
+        }
+
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                             "sofia/external/%s@%s:%s 'start_asr:%s %s" +
@@ -45,13 +50,13 @@ public class CallServiceImpl implements CallService {
                     callplan.getCallId(),
                     callplan.getLineId(),
                     callplan.getPhoneNum(),
-                    fsLine.getFsIp(),
+                    ip,
                     fsLine.getFsInPort(),
                     aliAsrConfig.getAccessId(),
                     aliAsrConfig.getAccessSecret(),
                     callRecord.getRecordFile());
 
-        log.debug("开始执行呼叫命令[{}]", cmd);
+        log.info("开始执行呼叫命令[{}]", cmd);
         fsManager.executeAsync(cmd);
     }
 }

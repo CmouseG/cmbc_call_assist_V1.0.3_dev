@@ -2,6 +2,7 @@ package com.guiji.calloutserver.eventbus.handler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Slf4j
@@ -33,23 +35,34 @@ public class AfterCallHandler {
     @Autowired
     IDispatchPlanOut  dispatchPlanOut;
 
+    @Autowired
+    AsyncEventBus asyncEventBus;
+    //注册这个监听器
+    @PostConstruct
+    public void register() {
+        asyncEventBus.register(this);
+    }
+
     @Subscribe
     public void handleAfterCall(AfterCallEvent afterCallEvent) {
         try {
-            CallOutPlan callPlan = afterCallEvent.getCallPlan();
-            Preconditions.checkArgument(callPlan != null, "null callPlan");
+            if(!afterCallEvent.getIsFist()) {
+                CallOutPlan callPlan = afterCallEvent.getCallPlan();
+                Preconditions.checkArgument(callPlan != null, "null callPlan");
 
-            //调度中心
-            dispatchPlanOut.successSchedule(callPlan.getCallId());
+                //上传呼叫时长不为空的文件
+                if (callPlan.getDuration() > 0) {
+                    //调用fsagent上传主录音文件
+                    CallOutRecord callRecord = callOutRecordService.findByCallId(callPlan.getCallId());
+                    uploadMainRecord(callRecord);
 
-            //上传呼叫时长不为空的文件
-            if (callPlan.getDuration() > 0) {
-                //调用fsagent上传主录音文件
-                CallOutRecord callRecord = callOutRecordService.findByCallId(callPlan.getCallId());
-                uploadMainRecord(callRecord);
+                    List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(callPlan.getCallId());
+                    uploadDetailsRecord(callOutDetailRecords);
+                }
 
-                List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(callPlan.getCallId());
-                uploadDetailsRecord(callOutDetailRecords);
+                //调度中心
+                log.info("===================================successSchedule:" + callPlan.getCallId());
+                dispatchPlanOut.successSchedule(callPlan.getCallId());
             }
         } catch (Exception ex) {
             //TODO: 报警，上传录音文件失败
@@ -62,10 +75,10 @@ public class AfterCallHandler {
      *
      * @param callOutRecord
      */
-    private void uploadMainRecord(CallOutRecord callOutRecord) {
+    public void uploadMainRecord(CallOutRecord callOutRecord) {
         RecordVO recordVO = fsAgentManager.uploadRecord(callOutRecord.getCallId(), callOutRecord.getRecordFile(), "mainrecord");
         callOutRecord.setRecordUrl(recordVO.getFileUrl());
-        callOutRecordService.save(callOutRecord);
+        callOutRecordService.update(callOutRecord);
     }
 
     /**
@@ -73,7 +86,7 @@ public class AfterCallHandler {
      *
      * @param callOutDetailRecords
      */
-    private void uploadDetailsRecord(List<CallOutDetailRecord> callOutDetailRecords) {
+    public void uploadDetailsRecord(List<CallOutDetailRecord> callOutDetailRecords) {
         String busiType = "detailrecord";
         boolean isEdit = false;
         for (CallOutDetailRecord detailRecord : callOutDetailRecords) {

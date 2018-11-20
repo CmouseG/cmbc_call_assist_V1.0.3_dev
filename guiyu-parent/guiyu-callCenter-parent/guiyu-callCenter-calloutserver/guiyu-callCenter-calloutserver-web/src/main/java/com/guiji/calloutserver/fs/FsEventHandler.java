@@ -40,31 +40,31 @@ public class FsEventHandler {
             eventName = subEventName;
         }
 
-        log.debug("收到事件[{}]", eslEvent);
+        log.info("收到事件[{}]", eslEvent);
 
         try {
             EslEventType eventType;
             try {
                 eventType = EslEventType.getByValue(eventName);
             } catch (Exception ex) {
-                log.debug("该事件目前不用处理，跳过" + eventName);
+                log.info("该事件目前不用处理，跳过" + eventName);
                 throw new Exception("invalid event " + eventName);
             }
 
             if (eventType == EslEventType.EV_ALIASR) {
-                log.debug("开始处理EV_ALIASR事件[{}]", eslEvent);
+                log.info("开始处理EV_ALIASR事件[{}]", eslEvent);
                 postAliAsrEvent(eventHeaders);
             } else if (eventType == EslEventType.CHANNEL_ANSWER) {
-                log.debug("开始处理CHANNEL_ANSWER事件[{}]", eslEvent);
+                log.info("开始处理CHANNEL_ANSWER事件[{}]", eslEvent);
                 postChannelAnswerEvent(eventHeaders);
             } else if (eventType == EslEventType.CHANNEL_HANGUP_COMPLETE) {
-                log.debug("开始处理CHANNEL_HANGUP事件[{}]", eslEvent);
+                log.info("开始处理CHANNEL_HANGUP事件[{}]", eslEvent);
                 postHangupEvent(eventHeaders);
             } else if (eventType == EslEventType.CALLCENTER_INFO) {
-                log.debug("开始处理CALLCENTER_INFO事件[{}]", eslEvent);
+                log.info("开始处理CALLCENTER_INFO事件[{}]", eslEvent);
                 postCallCenterEvent(eslEvent);
             }
-            log.debug("事件处理结束");
+            log.info("事件处理结束");
         } catch (Exception ex) {
             log.warn("处理事件出现异常", ex);
         }
@@ -97,17 +97,18 @@ public class FsEventHandler {
 
 
     private void postHangupEvent(Map<String, String> eventHeaders) {
+
         Date startStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_start_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
         Date endStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_end_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
         Date answerStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_answer_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
-        Date progressStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_progress_media_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
+//        Date progressStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_progress_media_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
 
         ChannelHangupEvent event = ChannelHangupEvent.builder()
                 .uuid(eventHeaders.get("Unique-ID"))
                 .billSec(Integer.parseInt(eventHeaders.get("variable_billsec")))
                 .duration(Integer.parseInt(eventHeaders.get("variable_duration")))
                 .startStamp(startStamp)
-                .progressStamp(progressStamp)
+//                .progressStamp(progressStamp)
                 .answerStamp(answerStamp)
                 .hangupStamp(endStamp)
                 .hangupDisposition(eventHeaders.get("variable_sip_hangup_disposition"))
@@ -164,6 +165,6 @@ public class FsEventHandler {
             log.warn("收到的Asr事件不属于当前系统(没有根据agentChannelUuid查到计划)，跳过处理，eventHeaders:[{}]", eventHeaders);
         }
 
-        log.debug("开始处理ALI_ASR事件[{}]", event);
+        log.info("开始处理ALI_ASR事件[{}]", event);
     }
 }

@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.LineCountMapper;
 import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.entity.LineCount;
@@ -8,9 +9,11 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
+import com.guiji.ccmanager.vo.LineInfo4Select;
 import com.guiji.ccmanager.vo.LineInfoVO;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
@@ -23,7 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -43,6 +49,8 @@ public class LineInfoServiceImpl implements LineInfoService {
     private LineCountMapper lineCountMapper;
     @Autowired
     private DiscoveryClient discoveryClient;
+    @Autowired
+    private IAuth auth;
 
     public LineInfoExample getExample(String customerId, String lineName){
         LineInfoExample example = new LineInfoExample();
@@ -56,7 +64,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         return example;
     }
 
-    public List<LineInfo> getLineInfoByCustom(String customerId, String lineName,int pageSize, int pageNo) {
+    public List<LineInfo4Select> getLineInfoByCustom(String customerId, String lineName, int pageSize, int pageNo) {
 
         LineInfoExample example = getExample( customerId,  lineName);
 
@@ -64,7 +72,39 @@ public class LineInfoServiceImpl implements LineInfoService {
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
 
-        return lineInfoMapper.selectByExample(example);
+        List<LineInfo> list = lineInfoMapper.selectByExample(example);
+        List<LineInfo4Select> listResult = new ArrayList<LineInfo4Select>();
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        if(list!=null && list.size()>0){
+            for(LineInfo lineInfo:list){
+                LineInfo4Select lineInfo4Select = new LineInfo4Select();
+                BeanUtil.copyProperties(lineInfo,lineInfo4Select);
+
+                String userId = lineInfo.getCustomerId();
+                if(map.get(userId)==null){
+                    try {
+                        Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                        if(result!=null && result.getBody()!=null) {
+                            String userName = result.getBody().getUsername();
+                            if (userName != null) {
+                                map.put(userId, userName);
+                                lineInfo4Select.setUserName(userName);
+                            }
+                        }
+                    }catch (Exception e){
+                        log.error(" auth.getUserById error :"+ e);
+                    }
+
+                }else{
+                    lineInfo4Select.setUserName(map.get(userId));
+                }
+                listResult.add(lineInfo4Select);
+            }
+        }
+
+        return listResult;
     }
 
     @Override
@@ -108,6 +148,7 @@ public class LineInfoServiceImpl implements LineInfoService {
             }else{
                 lineCount.setMaxConcurrentCalls(maxcon);
             }
+            lineCount.setUsedConcurrentCalls(0);
             lineCountMapper.insert(lineCount);
         }
         return Result.ok(true);

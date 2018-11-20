@@ -28,7 +28,7 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     @Override
     public void save(List<CallOutPlan> totalCallPlans) {
         for(CallOutPlan callOutPlan: totalCallPlans){
-            callOutPlanMapper.insert(callOutPlan);
+            callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
         }
     }
 
@@ -36,5 +36,10 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     public CallOutPlan findByCallId(String callId) {
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
         return callOutPlan;
+    }
+
+    @Override
+    public void update(CallOutPlan callplan) {
+        callOutPlanMapper.updateByPrimaryKeySelective(callplan);
     }
 }

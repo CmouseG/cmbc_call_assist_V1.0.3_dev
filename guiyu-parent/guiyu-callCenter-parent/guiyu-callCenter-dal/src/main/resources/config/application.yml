@@ -30,7 +30,7 @@ sharding:
                 sharding-column: call_detail_type
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
-            key-generator-column-name: call_detail_id
+#            key-generator-column-name: call_detail_id
           call_out_plan:
             actual-data-nodes: guiyu_callcenter.call_out_plan_${0..1}
             table-strategy:
@@ -52,4 +52,4 @@ sharding:
                 sharding-column: call_detail_type
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
-            key-generator-column-name: call_detail_id
+#            key-generator-column-name: call_detail_id

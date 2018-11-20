@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
+//@Builder
 public class AIResponse {
     private boolean result;
     private String msg;
@@ -36,4 +36,5 @@ public class AIResponse {
 
     //是否匹配到ai的关键词
     private boolean isMatched;
+
 }

@@ -48,6 +48,7 @@ public class ChannelHelper {
     }
 
 
+
     /**
      * 向FreeSWITCH通道播放机器人说话
      * @param uuid  通道uuid
@@ -57,7 +58,7 @@ public class ChannelHelper {
      * @param isEnd     通话是否结束
      */
     private void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isEnd) {
-        log.debug("需要设置通道媒体文件[{}]的属性，时间为[{}], isLock[{}], isEnd[{}]", mediaFile, mediaFileDuration, isLock, isEnd);
+        log.info("需要设置通道媒体文件[{}]的属性，时间为[{}], isLock[{}], isEnd[{}]", mediaFile, mediaFileDuration, isLock, isEnd);
         setChannel(uuid, mediaFileDuration, isLock, isEnd);
 
         if(isEnd){
@@ -69,7 +70,7 @@ public class ChannelHelper {
         Channel channel = channelService.findByUuid(uuid);
         //如果还在播放另一个文件，则停止
         if(mediaFile.equals(channel.getMediaFileName())){
-            log.debug("文件[{}]已经在播放，暂时不用播放新的文件", mediaFile);
+            log.info("文件[{}]已经在播放，暂时不用播放新的文件", mediaFile);
             return;
         }
 
@@ -96,7 +97,7 @@ public class ChannelHelper {
      * @param agentGroup
      */
     public void playAndTransferToAgentGroup(CallOutPlan callPlan, String mediaFile, Double mediaFileDuration, String agentGroup){
-        log.debug("需要锁定通道媒体文件[{}]的播放，锁定时间为[{}]", mediaFile, mediaFileDuration);
+        log.info("需要锁定通道媒体文件[{}]的播放，锁定时间为[{}]", mediaFile, mediaFileDuration);
 
         String uuid = callPlan.getCallId();
 
@@ -147,7 +148,7 @@ public class ChannelHelper {
 
         if(futureConcurrentHashMap.containsKey(uuid)){
             try{
-                log.debug("取消之前的定时任务，uuid[{}]", uuid);
+                log.info("取消之前的定时任务，uuid[{}]", uuid);
                 futureConcurrentHashMap.get(uuid).cancel(true);
 
                 afterMediaChecker.removeMediaCheck(uuid);
@@ -156,15 +157,15 @@ public class ChannelHelper {
             }
         }
 
-        log.debug("使用定时服务setChannel,timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
+        log.info("使用定时服务setChannel,timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
         ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
                     if (!isEnd) {
-                        log.debug("在[{}]秒之后，将通道[{}]媒体文件清理掉，isLock设置为[{}]", lockTimeLen, uuid, afterTimeout);
+                        log.info("在[{}]秒之后，将通道[{}]媒体文件清理掉，isLock设置为[{}]", lockTimeLen, uuid, afterTimeout);
                         channelService.updateMediaLock(uuid, afterTimeout, null);
                         //simpleEventSender.sendEvent(new AfterMediaEvent(uuid));
                         afterMediaChecker.addAfterMediaCheck(uuid);
                     } else {
-                        log.debug("播放结束，开始删除callMedia[{}]", uuid);
+                        log.info("播放结束，开始删除callMedia[{}]", uuid);
                         channelService.delete(uuid);
                     }
                 },
@@ -182,13 +183,13 @@ public class ChannelHelper {
     private void setChannel(String uuid, Double lockTimeLen, boolean isEnd, AfterLockHandle handler){
         channelService.updateMediaLock(uuid, true);
 
-        log.debug("使用定时服务约定执行时间，timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
+        log.info("使用定时服务约定执行时间，timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
         ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
                     if (!isEnd) {
-                        log.debug("通道[{}]锁定时间[{}]已完成，解除锁定", uuid, lockTimeLen);
+                        log.info("通道[{}]锁定时间[{}]已完成，解除锁定", uuid, lockTimeLen);
                         channelService.updateMediaLock(uuid, false);
                     } else {
-                        log.debug("播放结束，开始删除callMedia");
+                        log.info("播放结束，开始删除callMedia");
                         channelService.delete(uuid);
                     }
 
@@ -201,7 +202,7 @@ public class ChannelHelper {
 
     @Subscribe
     public void handleHangup(ChannelHangupEvent event){
-        log.debug("通道挂断，开始清理Channel");
+        log.info("通道挂断，开始清理Channel");
         channelService.delete(event.getUuid());
     }
 

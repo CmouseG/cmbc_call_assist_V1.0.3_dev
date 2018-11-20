@@ -20,4 +20,7 @@ public class AIInitRequest {
      * 客户号码
      */
     private String phoneNum;
+
+
+    private String userId;
 }

@@ -45,6 +45,7 @@ public class ApplicationInit {
     public void init() {
         try {
             FsBindVO fsBindVO = applyFsResource();
+            log.info("ApplicationInit init fsBindVO [{}]", fsBindVO );
 
             localFsServer.init(fsBindVO);
             fsAgentManager.init(fsBindVO);

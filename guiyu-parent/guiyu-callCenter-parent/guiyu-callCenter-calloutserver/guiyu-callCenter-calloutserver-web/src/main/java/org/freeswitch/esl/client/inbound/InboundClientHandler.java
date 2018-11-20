@@ -55,15 +55,15 @@ public class InboundClientHandler extends AbstractEslClientHandler
     
     protected void handleEslEvent( ChannelHandlerContext ctx, EslEvent event )
     {
-        log.debug( "Received event: [{}]", event );
+        log.info( "Received event: [{}]", event );
         listener.eventReceived( event );
     }
 
     protected void handleAuthRequest( ChannelHandlerContext ctx )
     {
-        log.debug( "Auth requested, sending [auth {}]", "*****" );
+        log.info( "Auth requested, sending [auth {}]", "*****" );
         EslMessage response = sendSyncSingleLineCommand( ctx.getChannel(), "auth " + password );
-        log.debug( "Auth response [{}]", response );
+        log.info( "Auth response [{}]", response );
         if ( response.getContentType().equals( Value.COMMAND_REPLY ) )
         {
             CommandResponse commandResponse = new CommandResponse( "auth " + password, response );
@@ -79,7 +79,7 @@ public class InboundClientHandler extends AbstractEslClientHandler
     @Override
     protected void handleDisconnectionNotice()
     {
-        log.debug( "Received disconnection notice" );
+        log.info( "Received disconnection notice" );
         listener.disconnected();
     }
     

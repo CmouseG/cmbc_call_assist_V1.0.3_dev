@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.*;
 
 /**
@@ -24,13 +25,21 @@ public class AfterMediaChecker {
     @Autowired
     AsyncEventBus simpleEventSender;
 
+    @Autowired
+    AsyncEventBus asyncEventBus;
+    //注册这个监听器
+    @PostConstruct
+    public void register() {
+        asyncEventBus.register(this);
+    }
+
     ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
     ConcurrentHashMap<String, ScheduledFuture> futureConcurrentHashMap;
 
     @Subscribe
     public void handleToAgent(ToAgentEvent toAgentEvent){
         String uuid = toAgentEvent.getCallPlan().getCallId();
-        log.debug("收到ToAgentEvent，开始从MediaChecker中移除计时器, uuid[{}]", uuid);
+        log.info("收到ToAgentEvent，开始从MediaChecker中移除计时器, uuid[{}]", uuid);
         removeMediaCheck(uuid);
     }
 
@@ -67,7 +76,7 @@ public class AfterMediaChecker {
                 aliAsrEvent.setAsrDuration(2000L);
                 aliAsrEvent.setFileName("");
                 aliAsrEvent.setGenerated(true);
-                log.debug("媒体在播放完成[{}]秒后，都没有新的媒体播放，所以构建AliAsr事件，产生新的录音", fsBotConfig.getMaxMediaTimeout());
+                log.info("媒体在播放完成[{}]秒后，都没有新的媒体播放，所以构建AliAsr事件，产生新的录音", fsBotConfig.getMaxMediaTimeout());
                 simpleEventSender.post(aliAsrEvent);
             }, fsBotConfig.getMaxMediaTimeout(), TimeUnit.SECONDS);
 

@@ -136,7 +136,7 @@ public class EslMessage
      */
     void addHeader(Name name, String value )
     {
-        log.debug( "adding header [{}] [{}]", name, value );
+        log.info( "adding header [{}] [{}]", name, value );
         headers.put( name, value );
     }
     

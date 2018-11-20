@@ -19,6 +19,7 @@ public class AIRequest {
 
     private String state;
 
+
     /**
      * 是否在调用识别请求前，调用isMatch判断是否关键词匹配
      * 默认调用
@@ -35,7 +36,7 @@ public class AIRequest {
 
         //如果是系统自己产生的事件，则绕过is_match检测，否则仍旧无法激活对话
         if(event.isGenerated()){
-            log.debug("收到系统自己产生的AliAsr事件，准备进一步激活会话");
+            log.info("收到系统自己产生的AliAsr事件，准备进一步激活会话");
             this.isCallMatch = false;
         }
     }

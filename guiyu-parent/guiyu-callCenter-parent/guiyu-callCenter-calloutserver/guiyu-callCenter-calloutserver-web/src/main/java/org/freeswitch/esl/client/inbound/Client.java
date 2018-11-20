@@ -440,12 +440,12 @@ public class Client
             authenticatorResponded.set( true );
             authenticated = response.isOk();
             authenticationResponse = response;
-            log.debug( "Auth response success={}, message=[{}]", authenticated, response.getReplyText() );
+            log.info( "Auth response success={}, message=[{}]", authenticated, response.getReplyText() );
         }
         
         public void eventReceived( final EslEvent event )
         {
-            log.debug( "Event received [{}]", event );
+            log.info( "Event received [{}]", event );
             /*
              *  Notify listeners in a different thread in order to:
              *    - not to block the IO threads with potentially long-running listeners

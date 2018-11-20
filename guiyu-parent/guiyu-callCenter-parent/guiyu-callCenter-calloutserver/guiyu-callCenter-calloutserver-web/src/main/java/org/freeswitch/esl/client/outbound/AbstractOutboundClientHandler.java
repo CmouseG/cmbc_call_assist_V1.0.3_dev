@@ -43,7 +43,7 @@ public abstract class AbstractOutboundClientHandler extends AbstractEslClientHan
     public void channelConnected( ChannelHandlerContext ctx, ChannelStateEvent e ) throws Exception
     {
         // Have received a connection from FreeSWITCH server, send connect response
-        log.debug( "Received new connection from server, sending connect message" );
+        log.info( "Received new connection from server, sending connect message" );
         
         EslMessage response = sendSyncSingleLineCommand( ctx.getChannel(), "connect" );
         // The message decoder for outbound, treats most of this incoming message as an 'event' in 
@@ -65,6 +65,6 @@ public abstract class AbstractOutboundClientHandler extends AbstractEslClientHan
     @Override
     protected void handleDisconnectionNotice()
     {
-        log.debug( "Received disconnection notice" );
+        log.info( "Received disconnection notice" );
     }    
 }

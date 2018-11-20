@@ -10,4 +10,6 @@ public interface CallOutPlanService {
     void save(List<CallOutPlan> callOutPlans);
 
     CallOutPlan findByCallId(String callId);
+
+    void update(CallOutPlan callplan);
 }

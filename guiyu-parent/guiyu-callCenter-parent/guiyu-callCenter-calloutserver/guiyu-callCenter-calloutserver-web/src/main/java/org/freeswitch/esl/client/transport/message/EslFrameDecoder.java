@@ -102,7 +102,7 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State>
             {
                 // this will read or fail
                 String headerLine = readToLineFeedOrFail( buffer, maxHeaderSize );
-                log.debug( "read header line [{}]", headerLine );
+                log.info( "read header line [{}]", headerLine );
                 if ( ! headerLine.isEmpty() )
                 {
                     // split the header line
@@ -133,7 +133,7 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State>
             if ( currentMessage.hasContentLength() )
             {
                 checkpoint( State.READ_BODY );
-                log.debug( "have content-length, decoding body .." );
+                log.info( "have content-length, decoding body .." );
                 //  force the next section
 
                 return null;
@@ -155,12 +155,12 @@ public class EslFrameDecoder extends ReplayingDecoder<EslFrameDecoder.State>
              */
             int contentLength = currentMessage.getContentLength();
             ChannelBuffer bodyBytes = buffer.readBytes( contentLength );
-            log.debug( "read [{}] body bytes", bodyBytes.writerIndex() );
+            log.info( "read [{}] body bytes", bodyBytes.writerIndex() );
             // most bodies are line based, so split on LF
             while( bodyBytes.readable() )
             {
                 String bodyLine = readLine( bodyBytes, contentLength );
-                log.debug( "read body line [{}]", bodyLine );
+                log.info( "read body line [{}]", bodyLine );
                 currentMessage.addBodyLine( bodyLine );
             }
             

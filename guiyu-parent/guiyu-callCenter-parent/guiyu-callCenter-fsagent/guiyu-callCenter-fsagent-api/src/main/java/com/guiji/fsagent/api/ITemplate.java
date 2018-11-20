@@ -6,8 +6,10 @@ import com.guiji.fsagent.entity.RecordVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+@FeignClient("guiyu-callcenter-fsagent")
 public interface ITemplate {
 
     @ApiOperation(value = "模板是否存在接口")
@@ -39,6 +41,6 @@ public interface ITemplate {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "fileName", value = "模板Id", dataType = "String", paramType = "query")
     })
-    @RequestMapping(value = "/uploadrecord", method = RequestMethod.POST)
+    @PostMapping(value = "/uploadrecord",consumes = "application/json")
      Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO);
 }

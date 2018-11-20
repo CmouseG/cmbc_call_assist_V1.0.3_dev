@@ -11,4 +11,9 @@ public class AfterCallEvent {
      * 当前已结束的呼叫计划
      */
     CallOutPlan callPlan;
+
+    /**
+     *是否是第一批生成的事件
+     */
+    Boolean isFist;
 }

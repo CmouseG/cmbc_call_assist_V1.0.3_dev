@@ -180,22 +180,22 @@ public abstract class AbstractEslClientHandler extends SimpleChannelUpstreamHand
         
         if ( contentType.equals( Value.API_RESPONSE ) )
         {
-            log.debug( "Api response received [{}]", message );
+            log.info( "Api response received [{}]", message );
             syncCallbacks.poll().handle( message );
         }
         else if ( contentType.equals( Value.COMMAND_REPLY ) )
         {
-            log.debug( "Command reply received [{}]", message );
+            log.info( "Command reply received [{}]", message );
             syncCallbacks.poll().handle( message );
         }
         else if ( contentType.equals( Value.AUTH_REQUEST ) )
         {
-            log.debug( "Auth request received [{}]", message );
+            log.info( "Auth request received [{}]", message );
             handleAuthRequest( ctx );
         }
         else if ( contentType.equals( Value.TEXT_DISCONNECT_NOTICE ) )
         {
-            log.debug( "Disconnect notice received [{}]", message );
+            log.info( "Disconnect notice received [{}]", message );
             handleDisconnectionNotice();
         }
         else

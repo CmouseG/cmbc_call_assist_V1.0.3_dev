@@ -22,6 +22,8 @@ public class RoleService {
 	public void insert(SysRole role,String[] menuIds){
 		role.setCreateTime(new Date());
 		role.setUpdateTime(new Date());
+		role.setInitRole(1);//接口增加的角色都是非初始化数据，只有初始化才是
+		role.setSuperAdmin(1);//接口增加的角色都是非超级管理员，只有初始化才是
 		mapper.insert(role);
 		mapper.addMenus(role.getId(),menuIds);
 	}

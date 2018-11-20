@@ -2,14 +2,17 @@ package com.guiji.process.server.handler;
 
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.server.core.ConnectionPool;
+import com.guiji.utils.StrUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+
 public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 	
 	@Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
 		MessageProto.Message message = (MessageProto.Message) msg;
 		if (ConnectionPool.getChannel(message.getId()) == null) {
 			ConnectionPool.putChannel(message.getId(), ctx);
@@ -30,7 +33,15 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 			builder.setContent("服务端响应:" + "hello");
 			ctx.writeAndFlush(builder);
 		}
-		
+
+		if (message.getType() == 2) {
+			System.out.println("服务端收到消息:" +  message.getContent());
+			//发送心跳包
+			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
+			builder.setType(1);
+			builder.setContent("服务端响应:" + "hello");
+			ctx.writeAndFlush(builder);
+		}
     }
 
     @Override

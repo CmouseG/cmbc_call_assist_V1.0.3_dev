@@ -22,7 +22,7 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 		MessageProto.Message message = (MessageProto.Message) msg;
 		if (message.getType() == 1) {
 			// 收到服务端回复信息
-			System.out.println("client:" + message.getContent());
+			System.out.println("client1:" + message.getContent());
 		} else if (message.getType() == 2) {
 			// 收到服务端发送指令并执行
 			int timeout = Integer.parseInt("5000");
@@ -33,7 +33,6 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 				if (result.getError()!=null) {
 					//发送心跳包
 					MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-					builder.setType(1);
 					builder.setContent("客户端执行命令失败:" + result.getError());
 					ctx.writeAndFlush(builder);
 					System.out.println("客户端执行命令失败:" + result.getError());
@@ -41,7 +40,6 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 				if (result.getOutput()!=null) {
 					//发送心跳包
 					MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-					builder.setType(1);
 					builder.setContent("客户端执行命令成功:" + result.getOutput());
 					ctx.writeAndFlush(builder);
 					System.out.println("客户端执行命令成功:" + result.getOutput());
@@ -71,7 +69,7 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 		eventLoop.schedule(new Runnable() {
 			@Override
 			public void run() {
-				imConnection.connect(ImClientApp.HOST, ImClientApp.PORT);
+				imConnection.connect(ImClientProtocolBO.HOST, ImClientProtocolBO.PORT);
 			}
 		}, 1L, TimeUnit.SECONDS);
 		super.channelInactive(ctx);

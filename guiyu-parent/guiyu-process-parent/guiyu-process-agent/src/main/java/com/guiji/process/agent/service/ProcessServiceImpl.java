@@ -26,7 +26,7 @@ public class ProcessServiceImpl {
             if (result != null && StringUtils.isNotEmpty(result.getOutput())) {
                 String[] resultArray = result.getOutput().split(" ");
                 if (resultArray != null && resultArray.length > 0) {
-                    pid = result.getOutput().split(" ")[resultArray.length-1];
+                    pid = resultArray[resultArray.length-1];
                 }
             }
         } else {
@@ -35,7 +35,7 @@ public class ProcessServiceImpl {
             if (result != null && StringUtils.isNotEmpty(result.getOutput())) {
                 String[] resultArray = result.getOutput().split(" ");
                 if (resultArray != null && resultArray.length > 0) {
-                    pid = result.getOutput().split(" ")[resultArray.length-1].split("/")[0];
+                    pid = resultArray[resultArray.length-1].split("/")[0];
                 }
             }
         }

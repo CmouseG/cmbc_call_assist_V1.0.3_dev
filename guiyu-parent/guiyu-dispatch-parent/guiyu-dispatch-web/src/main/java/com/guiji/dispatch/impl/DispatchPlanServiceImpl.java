@@ -353,14 +353,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, Integer batchId, String replayType, int pagenum, int pagesize) {
+			String endTime, Integer batchId, String replayType, int pagenum, int pagesize,Long userId,boolean isSuperAdmin ) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
 		DispatchPlanExample example = new DispatchPlanExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
-
+		example.setOrderByClause("`gmt_create` DESC");
 		Criteria createCriteria = example.createCriteria();
 		if (phone != null && phone != "") {
 			createCriteria.andPhoneEqualTo(phone);
@@ -405,6 +405,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 
+		if(!isSuperAdmin){
+			createCriteria.andUserIdEqualTo(userId.intValue());
+		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		getBatchNames(selectByExample);

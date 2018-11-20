@@ -209,9 +209,8 @@ public class DispatchPlanController {
 			@RequestHeader Long userId,
 			@RequestHeader Boolean isSuperAdmin
 			) {
-		logger.info("isSuperAdmin result :" + isSuperAdmin);
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize);
+				pagenum, pagesize,userId,isSuperAdmin);
 	}
 
 	/**

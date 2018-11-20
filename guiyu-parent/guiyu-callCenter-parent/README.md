@@ -48,7 +48,7 @@ freeswitch esl1：18029
 
 
 ### 测试打电话 ###
-
+```sql
 
 /*47.97.179.12:3306/guiyu_callcenter
   username: callcenter
@@ -124,7 +124,7 @@ VALUES
     '0',
     'admin'
   ) ;
-
+```
 
 
 

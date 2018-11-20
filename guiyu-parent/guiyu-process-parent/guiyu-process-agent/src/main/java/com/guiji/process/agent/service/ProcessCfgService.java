@@ -3,7 +3,6 @@ package com.guiji.process.agent.service;
 import com.guiji.process.agent.model.CfgNodeVO;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProcessCfgService
-{
+public class ProcessCfgService {
+    private static ProcessCfgService instance = new ProcessCfgService();
+    public static final Map<Integer, CfgNodeVO> cfgMap = new HashMap<Integer, CfgNodeVO>();
 
-    public static final Map<String, CfgNodeVO> cfgMap = new HashMap<String, CfgNodeVO>();
+    public static ProcessCfgService getIntance()
+    {
+        return instance;
+    }
 
     public void onChanged(File file)
     {
@@ -59,8 +62,9 @@ public class ProcessCfgService
         cfgMap.clear();
 
         for (CfgNodeVO cfgNodeVO:cfgNodeVOS ) {
-            cfgMap.put("" + cfgNodeVO.getPort(), cfgNodeVO);
+            cfgMap.put(cfgNodeVO.getPort(), cfgNodeVO);
         }
+
     }
 
 }

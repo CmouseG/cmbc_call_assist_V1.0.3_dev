@@ -24,7 +24,7 @@ public class FileMonitor {
                 HiddenFileFilter.VISIBLE);
         IOFileFilter files       = FileFilterUtils.and(
                 FileFilterUtils.fileFileFilter(),
-                FileFilterUtils.suffixFileFilter(".txt"));
+                FileFilterUtils.suffixFileFilter(".json"));
         IOFileFilter filter = FileFilterUtils.or(directories, files);
         // 使用过滤器
         FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir), filter);

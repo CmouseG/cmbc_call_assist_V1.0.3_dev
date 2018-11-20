@@ -67,7 +67,7 @@ DELETE FROM  call_out_record WHERE call_id = '1e3d9806da3345b581781ee68e39kz06';
   username: callcenter
     password: callcenter@1234
 */
-UPDATE  `dispatch_hour`  SET `hour` =  HOUR(NOW()) +19  WHERE dispatch_id  = '1e3d9806da3345b581781ee68e39kz06';
+UPDATE  `dispatch_hour`  SET `hour` =  IF( HOUR(NOW()) +19 >23,HOUR(NOW()) -5,HOUR(NOW()) +19) WHERE dispatch_id  = '1e3d9806da3345b581781ee68e39kz06';
 DELETE FROM dispatch_plan_0 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
 DELETE FROM dispatch_plan_1 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';
 DELETE FROM dispatch_plan_2 WHERE plan_uuid = '1e3d9806da3345b581781ee68e39kz06';

@@ -1,6 +1,7 @@
 package com.guiji.user.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
@@ -42,7 +43,7 @@ public interface SysUserMapper {
     
     Long getUserId(@Param("username")String username,@Param("password")String password);
     
-    SysUser getUserByName(String userName);
+    List<Map<String,String>> getUserByName(String userName);
     
     List<SysRole> getRoleByUserId(Long id);
     
@@ -50,7 +51,7 @@ public interface SysUserMapper {
     
     int count();
     
-    List<SysUser> getUsersByPage(Page<SysUser> page);
+    List<Map<String,String>> getUsersByPage(Page<Map<String,String>> page);
     
     void insertUserRole(@Param("userId")Long userId,@Param("roleId")Long roleId);
     

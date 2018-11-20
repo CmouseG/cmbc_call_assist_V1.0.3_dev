@@ -257,9 +257,9 @@
 	</select>
 	
 	
-	<select id="getUserByName" resultType="com.guiji.user.dao.entity.SysUser">
+	<!-- <select id="getUserByName" resultType="com.guiji.user.dao.entity.SysUser">
 		select id,username,`password`,`status` from sys_user where username=#{username}
-	</select>
+	</select> -->
 	
 	<select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
 		select * from sys_role a
@@ -280,14 +280,25 @@
 	</select>
 	
 	<select id="getUsersByPage" resultType="map">
-		select a.id,a.username as userName,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,
-		a.create_time as createTime,d.last_login_time as lastTime
+		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
 		LEFT JOIN sys_role c on c.id=b.role_id
 		LEFT JOIN sys_user_login_record d on d.user_id=a.id
 		where a.del_flag=0
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getUserByName" resultType="map">
+		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime
+		from sys_user a
+		LEFT JOIN sys_role_user b on a.id=b.user_id
+		LEFT JOIN sys_role c on c.id=b.role_id
+		LEFT JOIN sys_user_login_record d on d.user_id=a.id
+		where a.del_flag=0 and a.username=#{username}
+		
 	</select>
 	
 	<insert id="insertUserRole">

@@ -21,7 +21,7 @@ public class RangeShardingString implements RangeShardingAlgorithm<String> {
     public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<String> rangeShardingValue) {
         Collection<String> collect = new ArrayList<>();
         Range<String> valueRange = rangeShardingValue.getValueRange();
-        for (int i = Integer.valueOf(valueRange.lowerEndpoint()); i <= Integer.valueOf(valueRange.upperEndpoint()); i++) {
+        for (long i = Long.valueOf(valueRange.lowerEndpoint()); i <= Long.valueOf(valueRange.upperEndpoint()); i++) {
             for (String each : collection) {
                 if (each.endsWith(i % collection.size() + "")) {
                     collect.add(each);

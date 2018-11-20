@@ -1,4 +1,4 @@
-package com.guiji.process.vo;
+package com.guiji.process.core.vo;
 
 public enum DeviceStatusEnum {
 

@@ -7,6 +7,7 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckAiReady;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.AiResourceApply;
 
 /** 
 * @ClassName: IAiResourceManagerService 
@@ -18,11 +19,10 @@ public interface IAiResourceManagerService {
 	
 	/**
 	 * 机器人资源分配
-	 * 增加同步锁-简单点可以先加代码锁，后续改为分布锁，以防止再申请资源时资源冲突
 	 * @param checkAiReady
 	 * @return
 	 */
-	List<AiInuseCache> aiAssign(CheckAiReady checkAiReady);
+	List<AiInuseCache> aiAssign(AiResourceApply aiResourceApply);
 	
 	
 	/**

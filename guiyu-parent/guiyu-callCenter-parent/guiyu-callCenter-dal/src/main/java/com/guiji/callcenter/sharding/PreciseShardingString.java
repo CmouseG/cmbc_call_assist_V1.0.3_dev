@@ -17,7 +17,7 @@ public class PreciseShardingString implements PreciseShardingAlgorithm<String> {
 	@Override
 	public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
 		for (String name : collection) {
-			if (name.endsWith(Integer.valueOf(preciseShardingValue.getValue()) % collection.size() + "")) {
+			if (name.endsWith(Long.valueOf(preciseShardingValue.getValue()) % collection.size() + "")) {
 				return name;
 			}
 		}

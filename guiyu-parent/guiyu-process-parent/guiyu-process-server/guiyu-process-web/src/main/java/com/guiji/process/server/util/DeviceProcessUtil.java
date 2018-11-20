@@ -1,7 +1,7 @@
 package com.guiji.process.server.util;
 
+import com.guiji.process.core.vo.DeviceTypeEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
-import com.guiji.process.vo.DeviceTypeEnum;
 
 public class DeviceProcessUtil {
 

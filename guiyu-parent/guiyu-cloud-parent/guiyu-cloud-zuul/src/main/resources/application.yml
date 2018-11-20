@@ -119,7 +119,7 @@ zuul:
       service-id: guiyu-callCenter-fsmanager
     guiyu-botstence-web:
       path: /botstence/**
-      service-id: /guiyu_botstence-web
+      service-id: guiyu-botstence-web
 hystrix:
   command:
     default:

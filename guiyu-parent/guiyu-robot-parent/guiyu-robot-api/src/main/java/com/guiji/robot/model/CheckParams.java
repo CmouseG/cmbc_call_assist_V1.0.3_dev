@@ -1,6 +1,6 @@
 package com.guiji.robot.model;
 
-import java.util.Map;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,8 +15,6 @@ import lombok.Data;
 @Data
 @ApiModel(value="CheckParams对象",description="参数校验请求")
 public class CheckParams {
-	@ApiModelProperty(value="话术模板编号",required=true)
-	private String templateId;
-	@ApiModelProperty(value="话术模板参数map",required=true)
-	private Map<String,String> paramMap;
+	@ApiModelProperty(value="要检查的话术模板",required=true)
+	private List<HsParam> checkers;
 }

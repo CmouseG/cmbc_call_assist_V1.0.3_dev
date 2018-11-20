@@ -1,8 +1,8 @@
-package com.guiji.process.vo;
+package com.guiji.process.core.vo;
 
-public enum CmdTypeEnum {
+public enum DeviceTypeEnum {
 
-    START(0), STOP(1), HEALTH(1), RESTART(2), REGISTER(3), RESTORE_MODEL(4), UNKNOWN(-1);
+    TTS(0), SELLBOT(1), AGENT(99),UNKNOWN(-1);
 
     /** 标识DeviceTypeEnmu的整型值 */
     private int iValue;
@@ -12,7 +12,7 @@ public enum CmdTypeEnum {
      * 构造方法
      * @param value 整型值
      */
-    private CmdTypeEnum(int value)
+    private DeviceTypeEnum(int value)
     {
         this.iValue = value;
     }
@@ -33,9 +33,9 @@ public enum CmdTypeEnum {
      * @param value 整型值
      * @return ErrorCodeEnum实例
      */
-    public static CmdTypeEnum valueOf(int value)
+    public static DeviceTypeEnum valueOf(int value)
     {
-        for (CmdTypeEnum type : CmdTypeEnum.values())
+        for (DeviceTypeEnum type : DeviceTypeEnum.values())
         {
             if (value == type.getValue())
             {

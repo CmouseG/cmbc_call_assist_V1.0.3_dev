@@ -17,8 +17,10 @@ public class UserIdZuulFilter extends ZuulFilter{
 	@Override
 	public Object run() {
 		String userId=SecurityUtils.getSubject().getSession().getAttribute("userId").toString();
+		String isSuperAdmin=SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin").toString();
 		RequestContext ctx = RequestContext.getCurrentContext();
 		ctx.addZuulRequestHeader("userId", userId);
+		ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
 		return null;
 	}
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.user.dao.entity.SysRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,10 @@ public class ZuulService {
 	
 	public Long getUserId(String username,String password){
 		return userMapper.getUserId( username, password);
+	}
+
+	public List<SysRole> getRoleByUserId(Long userId) {
+		return userMapper.getRoleByUserId(userId);
 	}
 	
 	public Map<String,String> getAllPermissions(){

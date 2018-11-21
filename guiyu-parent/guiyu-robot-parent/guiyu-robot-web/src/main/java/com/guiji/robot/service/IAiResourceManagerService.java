@@ -2,10 +2,6 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
-import com.guiji.robot.model.AiCallStartReq;
-import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckAiReady;
-import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.AiResourceApply;
 
@@ -27,30 +23,37 @@ public interface IAiResourceManagerService {
 	
 	/**
 	 * 机器人资源释放还回进程资源池
-	 * @param aiBaseInfo
+	 * @param AaiInuseCache
 	 */
-	void aiRelease(AiBaseInfo aiBaseInfo);
+	void aiRelease(AiInuseCache aiInuse);
 	
 	
 	/**
 	 * 机器人资源释放还回进程资源池
 	 * @param aiList
 	 */
-	void aiBatchRelease(List<AiBaseInfo> aiList);
+	void aiBatchRelease(List<AiInuseCache> aiList);
 	
 
 	/**
 	 * 设置机器人忙-正在打电话
-	 * @param aiCallStartReq
+	 * @param aiInuseCache
 	 */
-	void aiBusy(AiCallStartReq aiCallStartReq);
+	void aiBusy(AiInuseCache aiInuseCache);
 	
 	
 	/**
 	 * 设置机器人空闲
-	 * @param aiHangupReq
+	 * @param aiInuseCache
 	 */
-	void aiFree(AiHangupReq aiHangupReq);
+	void aiFree(AiInuseCache aiInuseCache);
+	
+	
+	/**
+	 * 设置机器人暂停不可用
+	 * @param aiInuseCache
+	 */
+	void aiPause(AiInuseCache aiInuseCache);
 	
 
 	/**
@@ -58,7 +61,7 @@ public interface IAiResourceManagerService {
 	 * @param userId
 	 * @return
 	 */
-	List<AiInuseCache> queryUserInUseAiList(Long userId);
+	List<AiInuseCache> queryUserInUseAiList(String userId);
 	
 	
 	/**
@@ -66,6 +69,15 @@ public interface IAiResourceManagerService {
 	 * @param userId
 	 * @return
 	 */
-	List<AiInuseCache> queryUserBusyUseAiList(Long userId);
+	List<AiInuseCache> queryUserBusyUseAiList(String userId);
+	
+	
+	/**
+	 * 查询用户某个机器人
+	 * @param userId 用户id
+	 * @param aiNo 机器人编号
+	 * @return
+	 */
+	public AiInuseCache queryUserAi(String userId,String aiNo);
 	
 }

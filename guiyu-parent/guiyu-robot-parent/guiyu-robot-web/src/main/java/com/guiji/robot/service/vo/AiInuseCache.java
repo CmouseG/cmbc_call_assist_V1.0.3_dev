@@ -10,7 +10,6 @@ import lombok.Data;
 */
 @Data
 public class AiInuseCache {
-
 	//用户号
 	private String userId;
 	//机器人编号
@@ -20,15 +19,17 @@ public class AiInuseCache {
 	//机器人端口
 	private String port;
 	//话术模板
-	private String templateId;
+	private String templateIds;
 	//初始化日期yyyy-MM-dd
 	private String initDate;
 	//初始化时间
 	private String initTime;
-	
+	//机器人状态 F-空闲 ; B-忙 ; P-暂停不可用
 	private String aiStatus;
-	
+	//正在拨打的电话
 	private String callingPhone;
-	
+	//正在拨打电话时间
+	private String callingTime;
+	//该机器人拨打数量
 	private long callNum;
 }

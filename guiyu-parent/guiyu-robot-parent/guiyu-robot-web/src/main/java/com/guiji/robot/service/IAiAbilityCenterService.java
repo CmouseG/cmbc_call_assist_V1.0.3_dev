@@ -11,6 +11,7 @@ import com.guiji.robot.model.CheckAiReady;
 import com.guiji.robot.model.CheckParams;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.TtsVoice;
+import com.guiji.robot.model.TtsVoiceReq;
 
 /** 
 * @ClassName: IAiAbilityCenterService 
@@ -34,7 +35,7 @@ public interface IAiAbilityCenterService {
 	 * @param ttsVoice
 	 * @return
 	 */
-	List<TtsVoice> ttsCompose(TtsVoice ttsVoice);
+	List<TtsVoice> ttsCompose(TtsVoiceReq ttsVoiceReq);
 	
 	
 	/**

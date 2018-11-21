@@ -2,7 +2,7 @@ server:
   port: 18024
 spring:
   application:
-    name: guiyu-callCenter-calloutserver2
+    name: guiyu-callCenter-calloutserver
   datasource:
   #内网
     #url: jdbc:mysql://172.16.167.215:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8

@@ -21,7 +21,7 @@ sharding:
 
     config:
       sharding:
-        props.sql.show: true
+        props.sql.show: false
         tables:
           call_out_detail:
             actual-data-nodes: guiyu_callcenter.call_out_detail_${0..1}

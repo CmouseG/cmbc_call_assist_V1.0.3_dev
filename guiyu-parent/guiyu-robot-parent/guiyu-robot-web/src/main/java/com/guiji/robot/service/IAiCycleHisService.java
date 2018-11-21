@@ -1,5 +1,7 @@
 package com.guiji.robot.service;
 
+import java.util.List;
+
 import com.guiji.robot.dao.entity.AiCycleHis;
 
 /** 
@@ -19,9 +21,18 @@ public interface IAiCycleHisService {
 	
 
 	/**
-	 * 根据临时分配id，查询该机器人分配记录
-	 * @param assignId
+	 * 根据id，查询该机器人分配记录
+	 * @param id
 	 * @return
 	 */
-	AiCycleHis queryAiCycleHisByAssignId(String assignId);
+	AiCycleHis queryById(String id);
+	
+	
+	/**
+	 * 根据用户编号、机器人编号查询历史
+	 * @param userId
+	 * @param aiNo
+	 * @return
+	 */
+	public List<AiCycleHis> queryByUserIdAndAiNo(String userId,String aiNo);
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.guiji.component.result.Result;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
@@ -13,10 +12,10 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckAiReady;
 import com.guiji.robot.model.CheckParams;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.TtsVoice;
+import com.guiji.robot.model.TtsVoiceReq;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -30,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 * @version V1.0  
 */
 @Api(tags="机器人能力中心")
-@FeignClient("GUIYU-ROBOT-WEB")
+@FeignClient("robot")
 public interface IRobotRemote {
 	
 	/************************1、资源服务************************/
@@ -49,7 +48,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "ttsVoice", value = "tts语音合成请求信息", required = true)
     })
     @PostMapping(value = "/remote/ttsCompose")
-	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoice ttsVoice);
+	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
 	
 	
 	@ApiOperation(value = "拨打AI电话")

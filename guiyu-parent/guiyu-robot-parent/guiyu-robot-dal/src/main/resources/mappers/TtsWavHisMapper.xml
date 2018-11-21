@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.robot.dao.AiCycleHisMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.AiCycleHis" >
+<mapper namespace="com.guiji.robot.dao.TtsWavHisMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.TtsWavHis" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="user_id" property="userId" jdbcType="VARCHAR" />
-    <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
-    <result column="assign_date" property="assignDate" jdbcType="VARCHAR" />
-    <result column="assign_time" property="assignTime" jdbcType="VARCHAR" />
-    <result column="taskback_date" property="taskbackDate" jdbcType="VARCHAR" />
-    <result column="taskback_time" property="taskbackTime" jdbcType="VARCHAR" />
-    <result column="call_num" property="callNum" jdbcType="BIGINT" />
+    <result column="tts_key" property="ttsKey" jdbcType="VARCHAR" />
+    <result column="tts_param_keys" property="ttsParamKeys" jdbcType="VARCHAR" />
+    <result column="tts_param_values" property="ttsParamValues" jdbcType="VARCHAR" />
+    <result column="tts_url" property="ttsUrl" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -72,17 +69,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, ai_no, template_id, assign_date, assign_time, taskback_date, taskback_time, 
-    call_num, crt_time
+    id, template_id, tts_key, tts_param_keys, tts_param_values, tts_url, crt_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.AiCycleHisExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from ai_cycle_his
+    from tts_wav_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -96,62 +92,51 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from ai_cycle_his
+    from tts_wav_his
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from ai_cycle_his
+    delete from tts_wav_his
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.AiCycleHisExample" >
-    delete from ai_cycle_his
+  <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" >
+    delete from tts_wav_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
+  <insert id="insert" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('ai_cycle_his')
+      SELECT genTabId('tts_wav_his')
     </selectKey>
-    insert into ai_cycle_his (id, user_id, ai_no, 
-      template_id, assign_date, assign_time, 
-      taskback_date, taskback_time, call_num, 
+    insert into tts_wav_his (id, template_id, tts_key, 
+      tts_param_keys, tts_param_values, tts_url, 
       crt_time)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNo,jdbcType=VARCHAR}, 
-      #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, #{assignTime,jdbcType=VARCHAR}, 
-      #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, #{callNum,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{ttsKey,jdbcType=VARCHAR}, 
+      #{ttsParamKeys,jdbcType=VARCHAR}, #{ttsParamValues,jdbcType=VARCHAR}, #{ttsUrl,jdbcType=VARCHAR}, 
       #{crtTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
+  <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('ai_cycle_his')
+      SELECT genTabId('tts_wav_his')
     </selectKey>
-    insert into ai_cycle_his
+    insert into tts_wav_his
     <trim prefix="(" suffix=")" suffixOverrides="," >
       id,
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="aiNo != null" >
-        ai_no,
-      </if>
       <if test="templateId != null" >
         template_id,
       </if>
-      <if test="assignDate != null" >
-        assign_date,
+      <if test="ttsKey != null" >
+        tts_key,
       </if>
-      <if test="assignTime != null" >
-        assign_time,
+      <if test="ttsParamKeys != null" >
+        tts_param_keys,
       </if>
-      <if test="taskbackDate != null" >
-        taskback_date,
+      <if test="ttsParamValues != null" >
+        tts_param_values,
       </if>
-      <if test="taskbackTime != null" >
-        taskback_time,
-      </if>
-      <if test="callNum != null" >
-        call_num,
+      <if test="ttsUrl != null" >
+        tts_url,
       </if>
       <if test="crtTime != null" >
         crt_time,
@@ -159,70 +144,52 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
-      <if test="userId != null" >
-        #{userId,jdbcType=VARCHAR},
-      </if>
-      <if test="aiNo != null" >
-        #{aiNo,jdbcType=VARCHAR},
-      </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
       </if>
-      <if test="assignDate != null" >
-        #{assignDate,jdbcType=VARCHAR},
+      <if test="ttsKey != null" >
+        #{ttsKey,jdbcType=VARCHAR},
       </if>
-      <if test="assignTime != null" >
-        #{assignTime,jdbcType=VARCHAR},
+      <if test="ttsParamKeys != null" >
+        #{ttsParamKeys,jdbcType=VARCHAR},
       </if>
-      <if test="taskbackDate != null" >
-        #{taskbackDate,jdbcType=VARCHAR},
+      <if test="ttsParamValues != null" >
+        #{ttsParamValues,jdbcType=VARCHAR},
       </if>
-      <if test="taskbackTime != null" >
-        #{taskbackTime,jdbcType=VARCHAR},
-      </if>
-      <if test="callNum != null" >
-        #{callNum,jdbcType=BIGINT},
+      <if test="ttsUrl != null" >
+        #{ttsUrl,jdbcType=VARCHAR},
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.robot.dao.entity.AiCycleHisExample" resultType="java.lang.Integer" >
-    select count(*) from ai_cycle_his
+  <select id="countByExample" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" resultType="java.lang.Integer" >
+    select count(*) from tts_wav_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update ai_cycle_his
+    update tts_wav_his
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
       </if>
-      <if test="record.userId != null" >
-        user_id = #{record.userId,jdbcType=VARCHAR},
-      </if>
-      <if test="record.aiNo != null" >
-        ai_no = #{record.aiNo,jdbcType=VARCHAR},
-      </if>
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
-      <if test="record.assignDate != null" >
-        assign_date = #{record.assignDate,jdbcType=VARCHAR},
+      <if test="record.ttsKey != null" >
+        tts_key = #{record.ttsKey,jdbcType=VARCHAR},
       </if>
-      <if test="record.assignTime != null" >
-        assign_time = #{record.assignTime,jdbcType=VARCHAR},
+      <if test="record.ttsParamKeys != null" >
+        tts_param_keys = #{record.ttsParamKeys,jdbcType=VARCHAR},
       </if>
-      <if test="record.taskbackDate != null" >
-        taskback_date = #{record.taskbackDate,jdbcType=VARCHAR},
+      <if test="record.ttsParamValues != null" >
+        tts_param_values = #{record.ttsParamValues,jdbcType=VARCHAR},
       </if>
-      <if test="record.taskbackTime != null" >
-        taskback_time = #{record.taskbackTime,jdbcType=VARCHAR},
-      </if>
-      <if test="record.callNum != null" >
-        call_num = #{record.callNum,jdbcType=BIGINT},
+      <if test="record.ttsUrl != null" >
+        tts_url = #{record.ttsUrl,jdbcType=VARCHAR},
       </if>
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
@@ -233,47 +200,35 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update ai_cycle_his
+    update tts_wav_his
     set id = #{record.id,jdbcType=VARCHAR},
-      user_id = #{record.userId,jdbcType=VARCHAR},
-      ai_no = #{record.aiNo,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
-      assign_date = #{record.assignDate,jdbcType=VARCHAR},
-      assign_time = #{record.assignTime,jdbcType=VARCHAR},
-      taskback_date = #{record.taskbackDate,jdbcType=VARCHAR},
-      taskback_time = #{record.taskbackTime,jdbcType=VARCHAR},
-      call_num = #{record.callNum,jdbcType=BIGINT},
+      tts_key = #{record.ttsKey,jdbcType=VARCHAR},
+      tts_param_keys = #{record.ttsParamKeys,jdbcType=VARCHAR},
+      tts_param_values = #{record.ttsParamValues,jdbcType=VARCHAR},
+      tts_url = #{record.ttsUrl,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
-    update ai_cycle_his
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
+    update tts_wav_his
     <set >
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=VARCHAR},
-      </if>
-      <if test="aiNo != null" >
-        ai_no = #{aiNo,jdbcType=VARCHAR},
-      </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
       </if>
-      <if test="assignDate != null" >
-        assign_date = #{assignDate,jdbcType=VARCHAR},
+      <if test="ttsKey != null" >
+        tts_key = #{ttsKey,jdbcType=VARCHAR},
       </if>
-      <if test="assignTime != null" >
-        assign_time = #{assignTime,jdbcType=VARCHAR},
+      <if test="ttsParamKeys != null" >
+        tts_param_keys = #{ttsParamKeys,jdbcType=VARCHAR},
       </if>
-      <if test="taskbackDate != null" >
-        taskback_date = #{taskbackDate,jdbcType=VARCHAR},
+      <if test="ttsParamValues != null" >
+        tts_param_values = #{ttsParamValues,jdbcType=VARCHAR},
       </if>
-      <if test="taskbackTime != null" >
-        taskback_time = #{taskbackTime,jdbcType=VARCHAR},
-      </if>
-      <if test="callNum != null" >
-        call_num = #{callNum,jdbcType=BIGINT},
+      <if test="ttsUrl != null" >
+        tts_url = #{ttsUrl,jdbcType=VARCHAR},
       </if>
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
@@ -281,16 +236,13 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
-    update ai_cycle_his
-    set user_id = #{userId,jdbcType=VARCHAR},
-      ai_no = #{aiNo,jdbcType=VARCHAR},
-      template_id = #{templateId,jdbcType=VARCHAR},
-      assign_date = #{assignDate,jdbcType=VARCHAR},
-      assign_time = #{assignTime,jdbcType=VARCHAR},
-      taskback_date = #{taskbackDate,jdbcType=VARCHAR},
-      taskback_time = #{taskbackTime,jdbcType=VARCHAR},
-      call_num = #{callNum,jdbcType=BIGINT},
+  <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
+    update tts_wav_his
+    set template_id = #{templateId,jdbcType=VARCHAR},
+      tts_key = #{ttsKey,jdbcType=VARCHAR},
+      tts_param_keys = #{ttsParamKeys,jdbcType=VARCHAR},
+      tts_param_values = #{ttsParamValues,jdbcType=VARCHAR},
+      tts_url = #{ttsUrl,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>

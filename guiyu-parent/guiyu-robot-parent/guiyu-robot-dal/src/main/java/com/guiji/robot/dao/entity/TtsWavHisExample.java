@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AiCycleHisExample {
+public class TtsWavHisExample {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -15,7 +15,7 @@ public class AiCycleHisExample {
 
     protected Integer limitEnd;
 
-    public AiCycleHisExample() {
+    public TtsWavHisExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -195,146 +195,6 @@ public class AiCycleHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andUserIdIsNull() {
-            addCriterion("user_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdIsNotNull() {
-            addCriterion("user_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdEqualTo(String value) {
-            addCriterion("user_id =", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdNotEqualTo(String value) {
-            addCriterion("user_id <>", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdGreaterThan(String value) {
-            addCriterion("user_id >", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdGreaterThanOrEqualTo(String value) {
-            addCriterion("user_id >=", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdLessThan(String value) {
-            addCriterion("user_id <", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdLessThanOrEqualTo(String value) {
-            addCriterion("user_id <=", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdLike(String value) {
-            addCriterion("user_id like", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdNotLike(String value) {
-            addCriterion("user_id not like", value, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdIn(List<String> values) {
-            addCriterion("user_id in", values, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdNotIn(List<String> values) {
-            addCriterion("user_id not in", values, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdBetween(String value1, String value2) {
-            addCriterion("user_id between", value1, value2, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andUserIdNotBetween(String value1, String value2) {
-            addCriterion("user_id not between", value1, value2, "userId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoIsNull() {
-            addCriterion("ai_no is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoIsNotNull() {
-            addCriterion("ai_no is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoEqualTo(String value) {
-            addCriterion("ai_no =", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoNotEqualTo(String value) {
-            addCriterion("ai_no <>", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoGreaterThan(String value) {
-            addCriterion("ai_no >", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoGreaterThanOrEqualTo(String value) {
-            addCriterion("ai_no >=", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoLessThan(String value) {
-            addCriterion("ai_no <", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoLessThanOrEqualTo(String value) {
-            addCriterion("ai_no <=", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoLike(String value) {
-            addCriterion("ai_no like", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoNotLike(String value) {
-            addCriterion("ai_no not like", value, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoIn(List<String> values) {
-            addCriterion("ai_no in", values, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoNotIn(List<String> values) {
-            addCriterion("ai_no not in", values, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoBetween(String value1, String value2) {
-            addCriterion("ai_no between", value1, value2, "aiNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andAiNoNotBetween(String value1, String value2) {
-            addCriterion("ai_no not between", value1, value2, "aiNo");
-            return (Criteria) this;
-        }
-
         public Criteria andTemplateIdIsNull() {
             addCriterion("template_id is null");
             return (Criteria) this;
@@ -405,343 +265,283 @@ public class AiCycleHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateIsNull() {
-            addCriterion("assign_date is null");
+        public Criteria andTtsKeyIsNull() {
+            addCriterion("tts_key is null");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateIsNotNull() {
-            addCriterion("assign_date is not null");
+        public Criteria andTtsKeyIsNotNull() {
+            addCriterion("tts_key is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateEqualTo(String value) {
-            addCriterion("assign_date =", value, "assignDate");
+        public Criteria andTtsKeyEqualTo(String value) {
+            addCriterion("tts_key =", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateNotEqualTo(String value) {
-            addCriterion("assign_date <>", value, "assignDate");
+        public Criteria andTtsKeyNotEqualTo(String value) {
+            addCriterion("tts_key <>", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateGreaterThan(String value) {
-            addCriterion("assign_date >", value, "assignDate");
+        public Criteria andTtsKeyGreaterThan(String value) {
+            addCriterion("tts_key >", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateGreaterThanOrEqualTo(String value) {
-            addCriterion("assign_date >=", value, "assignDate");
+        public Criteria andTtsKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("tts_key >=", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateLessThan(String value) {
-            addCriterion("assign_date <", value, "assignDate");
+        public Criteria andTtsKeyLessThan(String value) {
+            addCriterion("tts_key <", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateLessThanOrEqualTo(String value) {
-            addCriterion("assign_date <=", value, "assignDate");
+        public Criteria andTtsKeyLessThanOrEqualTo(String value) {
+            addCriterion("tts_key <=", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateLike(String value) {
-            addCriterion("assign_date like", value, "assignDate");
+        public Criteria andTtsKeyLike(String value) {
+            addCriterion("tts_key like", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateNotLike(String value) {
-            addCriterion("assign_date not like", value, "assignDate");
+        public Criteria andTtsKeyNotLike(String value) {
+            addCriterion("tts_key not like", value, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateIn(List<String> values) {
-            addCriterion("assign_date in", values, "assignDate");
+        public Criteria andTtsKeyIn(List<String> values) {
+            addCriterion("tts_key in", values, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateNotIn(List<String> values) {
-            addCriterion("assign_date not in", values, "assignDate");
+        public Criteria andTtsKeyNotIn(List<String> values) {
+            addCriterion("tts_key not in", values, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateBetween(String value1, String value2) {
-            addCriterion("assign_date between", value1, value2, "assignDate");
+        public Criteria andTtsKeyBetween(String value1, String value2) {
+            addCriterion("tts_key between", value1, value2, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignDateNotBetween(String value1, String value2) {
-            addCriterion("assign_date not between", value1, value2, "assignDate");
+        public Criteria andTtsKeyNotBetween(String value1, String value2) {
+            addCriterion("tts_key not between", value1, value2, "ttsKey");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeIsNull() {
-            addCriterion("assign_time is null");
+        public Criteria andTtsParamKeysIsNull() {
+            addCriterion("tts_param_keys is null");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeIsNotNull() {
-            addCriterion("assign_time is not null");
+        public Criteria andTtsParamKeysIsNotNull() {
+            addCriterion("tts_param_keys is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeEqualTo(String value) {
-            addCriterion("assign_time =", value, "assignTime");
+        public Criteria andTtsParamKeysEqualTo(String value) {
+            addCriterion("tts_param_keys =", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeNotEqualTo(String value) {
-            addCriterion("assign_time <>", value, "assignTime");
+        public Criteria andTtsParamKeysNotEqualTo(String value) {
+            addCriterion("tts_param_keys <>", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeGreaterThan(String value) {
-            addCriterion("assign_time >", value, "assignTime");
+        public Criteria andTtsParamKeysGreaterThan(String value) {
+            addCriterion("tts_param_keys >", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeGreaterThanOrEqualTo(String value) {
-            addCriterion("assign_time >=", value, "assignTime");
+        public Criteria andTtsParamKeysGreaterThanOrEqualTo(String value) {
+            addCriterion("tts_param_keys >=", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeLessThan(String value) {
-            addCriterion("assign_time <", value, "assignTime");
+        public Criteria andTtsParamKeysLessThan(String value) {
+            addCriterion("tts_param_keys <", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeLessThanOrEqualTo(String value) {
-            addCriterion("assign_time <=", value, "assignTime");
+        public Criteria andTtsParamKeysLessThanOrEqualTo(String value) {
+            addCriterion("tts_param_keys <=", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeLike(String value) {
-            addCriterion("assign_time like", value, "assignTime");
+        public Criteria andTtsParamKeysLike(String value) {
+            addCriterion("tts_param_keys like", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeNotLike(String value) {
-            addCriterion("assign_time not like", value, "assignTime");
+        public Criteria andTtsParamKeysNotLike(String value) {
+            addCriterion("tts_param_keys not like", value, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeIn(List<String> values) {
-            addCriterion("assign_time in", values, "assignTime");
+        public Criteria andTtsParamKeysIn(List<String> values) {
+            addCriterion("tts_param_keys in", values, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeNotIn(List<String> values) {
-            addCriterion("assign_time not in", values, "assignTime");
+        public Criteria andTtsParamKeysNotIn(List<String> values) {
+            addCriterion("tts_param_keys not in", values, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeBetween(String value1, String value2) {
-            addCriterion("assign_time between", value1, value2, "assignTime");
+        public Criteria andTtsParamKeysBetween(String value1, String value2) {
+            addCriterion("tts_param_keys between", value1, value2, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andAssignTimeNotBetween(String value1, String value2) {
-            addCriterion("assign_time not between", value1, value2, "assignTime");
+        public Criteria andTtsParamKeysNotBetween(String value1, String value2) {
+            addCriterion("tts_param_keys not between", value1, value2, "ttsParamKeys");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateIsNull() {
-            addCriterion("taskback_date is null");
+        public Criteria andTtsParamValuesIsNull() {
+            addCriterion("tts_param_values is null");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateIsNotNull() {
-            addCriterion("taskback_date is not null");
+        public Criteria andTtsParamValuesIsNotNull() {
+            addCriterion("tts_param_values is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateEqualTo(String value) {
-            addCriterion("taskback_date =", value, "taskbackDate");
+        public Criteria andTtsParamValuesEqualTo(String value) {
+            addCriterion("tts_param_values =", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateNotEqualTo(String value) {
-            addCriterion("taskback_date <>", value, "taskbackDate");
+        public Criteria andTtsParamValuesNotEqualTo(String value) {
+            addCriterion("tts_param_values <>", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateGreaterThan(String value) {
-            addCriterion("taskback_date >", value, "taskbackDate");
+        public Criteria andTtsParamValuesGreaterThan(String value) {
+            addCriterion("tts_param_values >", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateGreaterThanOrEqualTo(String value) {
-            addCriterion("taskback_date >=", value, "taskbackDate");
+        public Criteria andTtsParamValuesGreaterThanOrEqualTo(String value) {
+            addCriterion("tts_param_values >=", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateLessThan(String value) {
-            addCriterion("taskback_date <", value, "taskbackDate");
+        public Criteria andTtsParamValuesLessThan(String value) {
+            addCriterion("tts_param_values <", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateLessThanOrEqualTo(String value) {
-            addCriterion("taskback_date <=", value, "taskbackDate");
+        public Criteria andTtsParamValuesLessThanOrEqualTo(String value) {
+            addCriterion("tts_param_values <=", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateLike(String value) {
-            addCriterion("taskback_date like", value, "taskbackDate");
+        public Criteria andTtsParamValuesLike(String value) {
+            addCriterion("tts_param_values like", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateNotLike(String value) {
-            addCriterion("taskback_date not like", value, "taskbackDate");
+        public Criteria andTtsParamValuesNotLike(String value) {
+            addCriterion("tts_param_values not like", value, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateIn(List<String> values) {
-            addCriterion("taskback_date in", values, "taskbackDate");
+        public Criteria andTtsParamValuesIn(List<String> values) {
+            addCriterion("tts_param_values in", values, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateNotIn(List<String> values) {
-            addCriterion("taskback_date not in", values, "taskbackDate");
+        public Criteria andTtsParamValuesNotIn(List<String> values) {
+            addCriterion("tts_param_values not in", values, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateBetween(String value1, String value2) {
-            addCriterion("taskback_date between", value1, value2, "taskbackDate");
+        public Criteria andTtsParamValuesBetween(String value1, String value2) {
+            addCriterion("tts_param_values between", value1, value2, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackDateNotBetween(String value1, String value2) {
-            addCriterion("taskback_date not between", value1, value2, "taskbackDate");
+        public Criteria andTtsParamValuesNotBetween(String value1, String value2) {
+            addCriterion("tts_param_values not between", value1, value2, "ttsParamValues");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeIsNull() {
-            addCriterion("taskback_time is null");
+        public Criteria andTtsUrlIsNull() {
+            addCriterion("tts_url is null");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeIsNotNull() {
-            addCriterion("taskback_time is not null");
+        public Criteria andTtsUrlIsNotNull() {
+            addCriterion("tts_url is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeEqualTo(String value) {
-            addCriterion("taskback_time =", value, "taskbackTime");
+        public Criteria andTtsUrlEqualTo(String value) {
+            addCriterion("tts_url =", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeNotEqualTo(String value) {
-            addCriterion("taskback_time <>", value, "taskbackTime");
+        public Criteria andTtsUrlNotEqualTo(String value) {
+            addCriterion("tts_url <>", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeGreaterThan(String value) {
-            addCriterion("taskback_time >", value, "taskbackTime");
+        public Criteria andTtsUrlGreaterThan(String value) {
+            addCriterion("tts_url >", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeGreaterThanOrEqualTo(String value) {
-            addCriterion("taskback_time >=", value, "taskbackTime");
+        public Criteria andTtsUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("tts_url >=", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeLessThan(String value) {
-            addCriterion("taskback_time <", value, "taskbackTime");
+        public Criteria andTtsUrlLessThan(String value) {
+            addCriterion("tts_url <", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeLessThanOrEqualTo(String value) {
-            addCriterion("taskback_time <=", value, "taskbackTime");
+        public Criteria andTtsUrlLessThanOrEqualTo(String value) {
+            addCriterion("tts_url <=", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeLike(String value) {
-            addCriterion("taskback_time like", value, "taskbackTime");
+        public Criteria andTtsUrlLike(String value) {
+            addCriterion("tts_url like", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeNotLike(String value) {
-            addCriterion("taskback_time not like", value, "taskbackTime");
+        public Criteria andTtsUrlNotLike(String value) {
+            addCriterion("tts_url not like", value, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeIn(List<String> values) {
-            addCriterion("taskback_time in", values, "taskbackTime");
+        public Criteria andTtsUrlIn(List<String> values) {
+            addCriterion("tts_url in", values, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeNotIn(List<String> values) {
-            addCriterion("taskback_time not in", values, "taskbackTime");
+        public Criteria andTtsUrlNotIn(List<String> values) {
+            addCriterion("tts_url not in", values, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeBetween(String value1, String value2) {
-            addCriterion("taskback_time between", value1, value2, "taskbackTime");
+        public Criteria andTtsUrlBetween(String value1, String value2) {
+            addCriterion("tts_url between", value1, value2, "ttsUrl");
             return (Criteria) this;
         }
 
-        public Criteria andTaskbackTimeNotBetween(String value1, String value2) {
-            addCriterion("taskback_time not between", value1, value2, "taskbackTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumIsNull() {
-            addCriterion("call_num is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumIsNotNull() {
-            addCriterion("call_num is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumEqualTo(Long value) {
-            addCriterion("call_num =", value, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumNotEqualTo(Long value) {
-            addCriterion("call_num <>", value, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumGreaterThan(Long value) {
-            addCriterion("call_num >", value, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumGreaterThanOrEqualTo(Long value) {
-            addCriterion("call_num >=", value, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumLessThan(Long value) {
-            addCriterion("call_num <", value, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumLessThanOrEqualTo(Long value) {
-            addCriterion("call_num <=", value, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumIn(List<Long> values) {
-            addCriterion("call_num in", values, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumNotIn(List<Long> values) {
-            addCriterion("call_num not in", values, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumBetween(Long value1, Long value2) {
-            addCriterion("call_num between", value1, value2, "callNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallNumNotBetween(Long value1, Long value2) {
-            addCriterion("call_num not between", value1, value2, "callNum");
+        public Criteria andTtsUrlNotBetween(String value1, String value2) {
+            addCriterion("tts_url not between", value1, value2, "ttsUrl");
             return (Criteria) this;
         }
 

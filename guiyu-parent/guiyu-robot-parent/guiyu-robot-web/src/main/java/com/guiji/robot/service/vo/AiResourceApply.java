@@ -12,8 +12,6 @@ import lombok.Data;
 public class AiResourceApply {
 	//用户ID
 	private String userId;
-	//话术模板
-	private String templateId;
 	//机器人申请数量
 	private int aiNum;
 }

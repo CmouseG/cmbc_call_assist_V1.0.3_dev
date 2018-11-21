@@ -313,7 +313,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 			}
 			int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
-			logger.info("回调完成通知修改结果"+result);
+			logger.info("回调完成通知修改结果" + result);
 		}
 
 		return false;
@@ -352,8 +352,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, Integer batchId, String replayType, int pagenum, int pagesize,Long userId,boolean isSuperAdmin ) {
-		logger.info("queryDispatchPlanByParams isSuperAdmin:"+isSuperAdmin );
+			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
+			boolean isSuperAdmin) {
+		logger.info("queryDispatchPlanByParams isSuperAdmin:" + isSuperAdmin);
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -405,7 +406,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 
-		if(!isSuperAdmin){
+		if (!isSuperAdmin) {
 			createCriteria.andUserIdEqualTo(userId.intValue());
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
@@ -601,7 +602,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlanBatch> queryDispatchPlanBatch() {
-		return dispatchPlanBatchMapper.selectByExample(new DispatchPlanBatchExample());
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin) {
+		DispatchPlanBatchExample example = new DispatchPlanBatchExample();
+		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
+		if (!isSuperAdmin) {
+			createCriteria.andUserIdEqualTo(userId.intValue());
+		}
+		return dispatchPlanBatchMapper.selectByExample(example);
 	}
 }

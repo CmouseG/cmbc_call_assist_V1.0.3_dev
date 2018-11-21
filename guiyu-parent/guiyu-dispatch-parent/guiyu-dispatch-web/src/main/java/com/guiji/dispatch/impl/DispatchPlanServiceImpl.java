@@ -190,7 +190,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
-		logger.info("userId:" + userId);
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
@@ -255,6 +254,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 			dispatchPlan.setIsDel(Constant.IS_DEL_0);
+			dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 			dispatchPlanMapper.insert(dispatchPlan);
 
 			String[] hours = dispatchPlan.getCallHour().split(",");
@@ -581,7 +581,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			example.createCriteria().andUserIdEqualTo(userId.intValue());
 			dispatchPlanMapper.updateByExampleSelective(dis, example);
 		}
-
 		return result > 0 ? true : false;
 	}
 

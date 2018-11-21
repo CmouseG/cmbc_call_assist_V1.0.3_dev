@@ -15,7 +15,7 @@ import io.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 
 public class ShardingConfiguration {
 
-	private Boolean sqlShow=true;
+	private Boolean sqlShow;
 	private List<TableRuleConfiguration> tableRuleConfigurations;
 	private List<MasterSlaveRuleConfiguration> masterSlaveRuleConfigurations;
 	private Map<String, DataSource> dataSourceMap;

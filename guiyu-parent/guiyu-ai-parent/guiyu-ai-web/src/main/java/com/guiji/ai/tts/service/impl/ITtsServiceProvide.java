@@ -10,7 +10,7 @@ public abstract class ITtsServiceProvide {
 	public String transfer(String busiId, String model, String text) {
 
 		// 请求ip:port 返回音频文件
-		File file = transferByChild(text);
+		File file = transferByChild(model, text);
 		// 上传文件服务器
 		String audioUrl = uploadToServer(busiId, file);
 		// 存储数据库和日志
@@ -20,9 +20,9 @@ public abstract class ITtsServiceProvide {
 
 	}
 
+	abstract File transferByChild(String model, String text);
+	
 	abstract String uploadToServer(String busiId, File file);
-
-	abstract File transferByChild(String text);
 
 	abstract void savaToDB(String busiId, String model, String text, String audioUrl);
 }

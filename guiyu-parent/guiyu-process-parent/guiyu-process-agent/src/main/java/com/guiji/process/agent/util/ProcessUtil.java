@@ -102,6 +102,6 @@ public class ProcessUtil {
         }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
-        ImClientProtocolBO.getIntance().send(msg,1);
+        ImClientProtocolBO.getIntance().send(msg,3);
     }
 }

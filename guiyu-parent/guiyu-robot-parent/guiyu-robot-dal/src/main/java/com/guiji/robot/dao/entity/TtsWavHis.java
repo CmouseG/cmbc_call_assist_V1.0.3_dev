@@ -6,17 +6,15 @@ import java.util.Date;
 public class TtsWavHis implements Serializable {
     private String id;
 
+    private String seqId;
+
     private String templateId;
 
-    private String ttsKey;
-
-    private String ttsParamKeys;
-
-    private String ttsParamValues;
-
-    private String ttsUrl;
+    private String status;
 
     private Date crtTime;
+
+    private String ttsJsonData;
 
     private static final long serialVersionUID = 1L;
 
@@ -28,6 +26,14 @@ public class TtsWavHis implements Serializable {
         this.id = id == null ? null : id.trim();
     }
 
+    public String getSeqId() {
+        return seqId;
+    }
+
+    public void setSeqId(String seqId) {
+        this.seqId = seqId == null ? null : seqId.trim();
+    }
+
     public String getTemplateId() {
         return templateId;
     }
@@ -36,36 +42,12 @@ public class TtsWavHis implements Serializable {
         this.templateId = templateId == null ? null : templateId.trim();
     }
 
-    public String getTtsKey() {
-        return ttsKey;
+    public String getStatus() {
+        return status;
     }
 
-    public void setTtsKey(String ttsKey) {
-        this.ttsKey = ttsKey == null ? null : ttsKey.trim();
-    }
-
-    public String getTtsParamKeys() {
-        return ttsParamKeys;
-    }
-
-    public void setTtsParamKeys(String ttsParamKeys) {
-        this.ttsParamKeys = ttsParamKeys == null ? null : ttsParamKeys.trim();
-    }
-
-    public String getTtsParamValues() {
-        return ttsParamValues;
-    }
-
-    public void setTtsParamValues(String ttsParamValues) {
-        this.ttsParamValues = ttsParamValues == null ? null : ttsParamValues.trim();
-    }
-
-    public String getTtsUrl() {
-        return ttsUrl;
-    }
-
-    public void setTtsUrl(String ttsUrl) {
-        this.ttsUrl = ttsUrl == null ? null : ttsUrl.trim();
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
     }
 
     public Date getCrtTime() {
@@ -76,6 +58,14 @@ public class TtsWavHis implements Serializable {
         this.crtTime = crtTime;
     }
 
+    public String getTtsJsonData() {
+        return ttsJsonData;
+    }
+
+    public void setTtsJsonData(String ttsJsonData) {
+        this.ttsJsonData = ttsJsonData == null ? null : ttsJsonData.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -83,12 +73,11 @@ public class TtsWavHis implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", seqId=").append(seqId);
         sb.append(", templateId=").append(templateId);
-        sb.append(", ttsKey=").append(ttsKey);
-        sb.append(", ttsParamKeys=").append(ttsParamKeys);
-        sb.append(", ttsParamValues=").append(ttsParamValues);
-        sb.append(", ttsUrl=").append(ttsUrl);
+        sb.append(", status=").append(status);
         sb.append(", crtTime=").append(crtTime);
+        sb.append(", ttsJsonData=").append(ttsJsonData);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

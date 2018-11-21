@@ -12,8 +12,8 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckParams;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 
@@ -38,7 +38,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "checkParams", value = "拨打参数完整性校验", required = true)
     })
     @PostMapping(value = "/remote/checkParams")
-	Result.ReturnData<List<CheckResult>> checkParams(@RequestBody CheckParams checkParams);
+	Result.ReturnData<List<CheckResult>> checkParams(@RequestBody List<HsParam> checkers);
 	
 	
 	

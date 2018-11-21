@@ -8,12 +8,16 @@ import com.guiji.utils.JsonUtils;
 import com.guiji.utils.StrUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.swagger.annotations.Scope;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 
+@Component
 public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
-	
+
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
 		MessageProto.Message message = (MessageProto.Message) msg;
@@ -35,7 +39,18 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应
 			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-			builder.setType(1);
+			builder.setContent("服务端响应:" + "hello");
+			ctx.writeAndFlush(builder);
+		}
+
+		// ping
+		if (message.getType() == 3) {
+			System.out.println("服务端收到状态监控:" +  message.getContent());
+			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
+			DeviceMsgHandler.getInstance().add(cmdMessageVO);
+			System.out.println("转换后的bean"+cmdMessageVO.toString());
+			//发送响应
+			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
 			builder.setContent("服务端响应:" + "hello");
 			ctx.writeAndFlush(builder);
 		}

@@ -195,6 +195,76 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andSeqIdIsNull() {
+            addCriterion("seq_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdIsNotNull() {
+            addCriterion("seq_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdEqualTo(String value) {
+            addCriterion("seq_id =", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdNotEqualTo(String value) {
+            addCriterion("seq_id <>", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdGreaterThan(String value) {
+            addCriterion("seq_id >", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdGreaterThanOrEqualTo(String value) {
+            addCriterion("seq_id >=", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdLessThan(String value) {
+            addCriterion("seq_id <", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdLessThanOrEqualTo(String value) {
+            addCriterion("seq_id <=", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdLike(String value) {
+            addCriterion("seq_id like", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdNotLike(String value) {
+            addCriterion("seq_id not like", value, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdIn(List<String> values) {
+            addCriterion("seq_id in", values, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdNotIn(List<String> values) {
+            addCriterion("seq_id not in", values, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdBetween(String value1, String value2) {
+            addCriterion("seq_id between", value1, value2, "seqId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIdNotBetween(String value1, String value2) {
+            addCriterion("seq_id not between", value1, value2, "seqId");
+            return (Criteria) this;
+        }
+
         public Criteria andTemplateIdIsNull() {
             addCriterion("template_id is null");
             return (Criteria) this;
@@ -265,283 +335,73 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyIsNull() {
-            addCriterion("tts_key is null");
+        public Criteria andStatusIsNull() {
+            addCriterion("`status` is null");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyIsNotNull() {
-            addCriterion("tts_key is not null");
+        public Criteria andStatusIsNotNull() {
+            addCriterion("`status` is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyEqualTo(String value) {
-            addCriterion("tts_key =", value, "ttsKey");
+        public Criteria andStatusEqualTo(String value) {
+            addCriterion("`status` =", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyNotEqualTo(String value) {
-            addCriterion("tts_key <>", value, "ttsKey");
+        public Criteria andStatusNotEqualTo(String value) {
+            addCriterion("`status` <>", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyGreaterThan(String value) {
-            addCriterion("tts_key >", value, "ttsKey");
+        public Criteria andStatusGreaterThan(String value) {
+            addCriterion("`status` >", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyGreaterThanOrEqualTo(String value) {
-            addCriterion("tts_key >=", value, "ttsKey");
+        public Criteria andStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("`status` >=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyLessThan(String value) {
-            addCriterion("tts_key <", value, "ttsKey");
+        public Criteria andStatusLessThan(String value) {
+            addCriterion("`status` <", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyLessThanOrEqualTo(String value) {
-            addCriterion("tts_key <=", value, "ttsKey");
+        public Criteria andStatusLessThanOrEqualTo(String value) {
+            addCriterion("`status` <=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyLike(String value) {
-            addCriterion("tts_key like", value, "ttsKey");
+        public Criteria andStatusLike(String value) {
+            addCriterion("`status` like", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyNotLike(String value) {
-            addCriterion("tts_key not like", value, "ttsKey");
+        public Criteria andStatusNotLike(String value) {
+            addCriterion("`status` not like", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyIn(List<String> values) {
-            addCriterion("tts_key in", values, "ttsKey");
+        public Criteria andStatusIn(List<String> values) {
+            addCriterion("`status` in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyNotIn(List<String> values) {
-            addCriterion("tts_key not in", values, "ttsKey");
+        public Criteria andStatusNotIn(List<String> values) {
+            addCriterion("`status` not in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyBetween(String value1, String value2) {
-            addCriterion("tts_key between", value1, value2, "ttsKey");
+        public Criteria andStatusBetween(String value1, String value2) {
+            addCriterion("`status` between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andTtsKeyNotBetween(String value1, String value2) {
-            addCriterion("tts_key not between", value1, value2, "ttsKey");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysIsNull() {
-            addCriterion("tts_param_keys is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysIsNotNull() {
-            addCriterion("tts_param_keys is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysEqualTo(String value) {
-            addCriterion("tts_param_keys =", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysNotEqualTo(String value) {
-            addCriterion("tts_param_keys <>", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysGreaterThan(String value) {
-            addCriterion("tts_param_keys >", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysGreaterThanOrEqualTo(String value) {
-            addCriterion("tts_param_keys >=", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysLessThan(String value) {
-            addCriterion("tts_param_keys <", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysLessThanOrEqualTo(String value) {
-            addCriterion("tts_param_keys <=", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysLike(String value) {
-            addCriterion("tts_param_keys like", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysNotLike(String value) {
-            addCriterion("tts_param_keys not like", value, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysIn(List<String> values) {
-            addCriterion("tts_param_keys in", values, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysNotIn(List<String> values) {
-            addCriterion("tts_param_keys not in", values, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysBetween(String value1, String value2) {
-            addCriterion("tts_param_keys between", value1, value2, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamKeysNotBetween(String value1, String value2) {
-            addCriterion("tts_param_keys not between", value1, value2, "ttsParamKeys");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesIsNull() {
-            addCriterion("tts_param_values is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesIsNotNull() {
-            addCriterion("tts_param_values is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesEqualTo(String value) {
-            addCriterion("tts_param_values =", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesNotEqualTo(String value) {
-            addCriterion("tts_param_values <>", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesGreaterThan(String value) {
-            addCriterion("tts_param_values >", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesGreaterThanOrEqualTo(String value) {
-            addCriterion("tts_param_values >=", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesLessThan(String value) {
-            addCriterion("tts_param_values <", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesLessThanOrEqualTo(String value) {
-            addCriterion("tts_param_values <=", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesLike(String value) {
-            addCriterion("tts_param_values like", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesNotLike(String value) {
-            addCriterion("tts_param_values not like", value, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesIn(List<String> values) {
-            addCriterion("tts_param_values in", values, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesNotIn(List<String> values) {
-            addCriterion("tts_param_values not in", values, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesBetween(String value1, String value2) {
-            addCriterion("tts_param_values between", value1, value2, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsParamValuesNotBetween(String value1, String value2) {
-            addCriterion("tts_param_values not between", value1, value2, "ttsParamValues");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlIsNull() {
-            addCriterion("tts_url is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlIsNotNull() {
-            addCriterion("tts_url is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlEqualTo(String value) {
-            addCriterion("tts_url =", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlNotEqualTo(String value) {
-            addCriterion("tts_url <>", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlGreaterThan(String value) {
-            addCriterion("tts_url >", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlGreaterThanOrEqualTo(String value) {
-            addCriterion("tts_url >=", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlLessThan(String value) {
-            addCriterion("tts_url <", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlLessThanOrEqualTo(String value) {
-            addCriterion("tts_url <=", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlLike(String value) {
-            addCriterion("tts_url like", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlNotLike(String value) {
-            addCriterion("tts_url not like", value, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlIn(List<String> values) {
-            addCriterion("tts_url in", values, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlNotIn(List<String> values) {
-            addCriterion("tts_url not in", values, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlBetween(String value1, String value2) {
-            addCriterion("tts_url between", value1, value2, "ttsUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsUrlNotBetween(String value1, String value2) {
-            addCriterion("tts_url not between", value1, value2, "ttsUrl");
+        public Criteria andStatusNotBetween(String value1, String value2) {
+            addCriterion("`status` not between", value1, value2, "status");
             return (Criteria) this;
         }
 

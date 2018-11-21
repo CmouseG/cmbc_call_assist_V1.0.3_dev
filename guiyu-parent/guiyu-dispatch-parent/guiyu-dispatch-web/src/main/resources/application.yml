@@ -3,6 +3,20 @@ server:
 spring:
   application:
     name: guiyu-dispatch-web
+  # REDIS (RedisProperties)
+  redis:
+    database: 0
+    host: 192.168.1.78
+    password: 123456
+    port: 6379  
+    pool:
+      max-active: 8
+      max-wait: -1
+      min-idle: 0
+      max-idle: 8
+  cache:
+    type: redis
+    cache-names: shiro.session,shiro.time 
 #注册中心配置      
 eureka:
   instance:
@@ -18,4 +32,7 @@ jdbc:
   
 properties:
   error: error.properties
+ 
+
+ 
         

@@ -61,7 +61,7 @@ public class DistributedLockHandler {
 					ValueOperations<String, String> ops = template.opsForValue();
 					ops.set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
 					return true;
-				} else {// 存在锁
+				} else { // 存在锁
 					logger.debug("lock is exist!！！");
 				}
 				if (System.currentTimeMillis() - startTime > timeout) {// 尝试超过了设定值之后直接跳出循环

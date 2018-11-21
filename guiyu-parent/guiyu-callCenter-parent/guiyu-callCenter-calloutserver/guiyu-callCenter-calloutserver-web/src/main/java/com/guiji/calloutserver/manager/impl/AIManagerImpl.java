@@ -89,7 +89,7 @@ public class AIManagerImpl implements AIManager {
                     aiResponse = new AIResponse();
                     aiResponse.setResult(true);
                     aiResponse.setMatched(false);
-                    aiResponse.setResponseTxt(sellbotIsMatchResponse.getAnswer());
+                    aiResponse.setResponseTxt(sellbotIsMatchResponse.getSentence());
                     return aiResponse;
                 }
             }

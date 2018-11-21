@@ -22,8 +22,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class DeviceMsgHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final  DeviceMsgHandler instance = new DeviceMsgHandler();
+
     private DeviceMsgHandler() {
 
+    }
+
+    public static DeviceMsgHandler getInstance()
+    {
+        return instance;
     }
 
     public void add(CmdMessageVO cmdMessageVO){
@@ -41,5 +49,4 @@ public class DeviceMsgHandler {
             add(cmdMessageVO);
         }
     }
-
 }

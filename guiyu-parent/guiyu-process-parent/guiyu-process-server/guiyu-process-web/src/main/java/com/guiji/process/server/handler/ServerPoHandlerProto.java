@@ -16,11 +16,8 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 
 @Component
-@org.springframework.context.annotation.Scope("prototype")
 public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
-	@Autowired
-	private DeviceMsgHandler deviceMsgHandler;
-	
+
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
 		MessageProto.Message message = (MessageProto.Message) msg;
@@ -38,7 +35,7 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 		if (message.getType() == 1) {
 			System.out.println("服务端收到消息:" +  message.getContent());
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
-			deviceMsgHandler.add(cmdMessageVO);
+			DeviceMsgHandler.getInstance().add(cmdMessageVO);
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应
 			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
@@ -50,7 +47,7 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 		if (message.getType() == 3) {
 			System.out.println("服务端收到状态监控:" +  message.getContent());
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
-			deviceMsgHandler.add(cmdMessageVO);
+			DeviceMsgHandler.getInstance().add(cmdMessageVO);
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应
 			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);

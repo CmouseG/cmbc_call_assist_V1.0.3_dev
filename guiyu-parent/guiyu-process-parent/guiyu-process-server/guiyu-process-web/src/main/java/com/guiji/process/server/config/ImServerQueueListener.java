@@ -4,6 +4,7 @@ import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.server.core.ImServer;
 import com.guiji.process.server.model.CmdMessageQueue;
 import com.guiji.process.server.service.impl.DeviceCmdHandler;
+import com.guiji.process.server.service.impl.DeviceMsgReadHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,22 +20,9 @@ public class ImServerQueueListener implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        CmdMessageVO cmdMessageVO = null;
-        while(true)
-        {
-            try {
-                cmdMessageVO = CmdMessageQueue.getInstance().get();
+        new Thread(() -> {
+            new DeviceMsgReadHandler().run(handler);
+        }).start();
 
-                if(cmdMessageVO == null)
-                {
-                    continue;
-                }
-
-                handler.excute(cmdMessageVO);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

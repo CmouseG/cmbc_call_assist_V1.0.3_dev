@@ -23,9 +23,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ImServer {
-	@Autowired
-	private ServerPoHandlerProto serverPoHandlerProto;
-	
+
 	public void run(int port) {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -58,7 +56,7 @@ public class ImServer {
                                 new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
                     	ch.pipeline().addLast("encoder",  
                                 new ProtobufEncoder());
-                    	ch.pipeline().addLast(serverPoHandlerProto);
+                    	ch.pipeline().addLast(new ServerPoHandlerProto());
                     	//ch.pipeline().addLast(new ServerPoHandler());
                     	//字符串传输数据
     					/*ch.pipeline().addLast("decoder", new StringDecoder());

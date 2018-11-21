@@ -15,9 +15,10 @@ public class ImServerListener implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
-        System.out.println("22222222222222222222222222222222222222222222222222222222222222222222222222222222");
         int port = 2222;
-        imServer.run(port);
+        new Thread(() -> {
+            imServer.run(port);
+        }).start();
+
     }
 }

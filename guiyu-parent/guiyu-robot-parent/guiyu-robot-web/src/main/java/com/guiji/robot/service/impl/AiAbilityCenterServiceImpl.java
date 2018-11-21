@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.guiji.robot.constants.RobotConstants;
+import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
@@ -16,16 +18,18 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckParams;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.ISellbotService;
+import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.AiResourceApply;
+import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.SellbotMatchReq;
 import com.guiji.robot.service.vo.SellbotRestoreReq;
 import com.guiji.robot.service.vo.SellbotSayhelloReq;
@@ -49,18 +53,45 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	AiCacheService aiCacheService;
 	@Autowired
 	IAiResourceManagerService iAiResourceManagerService;
+	@Autowired
+	ITtsWavService iTtsWavService;
 	
 	/**
-	 * 导入任务时话术参数检查以及准备
+	 * 导入任务时话术参数检查以及准备TTS合成
 	 * @param checkParams
 	 * @return
 	 */
 	@Override
-	public List<CheckResult> checkParams(CheckParams checkParams) {
+	public List<CheckResult> checkParams(List<HsParam> checkers) {
 		List<CheckResult> list = new ArrayList<CheckResult>();
-		CheckResult result = new CheckResult();
-		result.setCheckMsg(true);
-		list.add(result);
+		if(ListUtil.isNotEmpty(checkers)) {
+			//列表不为空
+			for(HsParam hsChecker : checkers) {
+				CheckResult result = new CheckResult();
+				result.setSeqid(hsChecker.getSeqid());
+				result.setPass(true); //默认校验通过
+				//逐个检查
+				HsReplace hsReplace = aiCacheService.queyHsReplace(hsChecker.getTemplateId());
+				//当前话术模板需要的参数
+				String[] needParams = hsReplace.getReplace_variables_flag();
+				if(needParams != null && needParams.length>0) {
+					//需要检查
+					for(String param : needParams) {
+						if(StrUtils.isEmpty(hsChecker.getParamMap().get(param))) {
+							result.setPass(false); //默认不通过，参数不存在
+							break;
+						}
+					}
+				}
+				if(hsReplace.isTemplate_tts_flag()) {
+					logger.info("异步发起tts合成申请，请求参数:{}",hsChecker);
+					iTtsWavService.asynTtsCompose(hsChecker);
+				}
+				list.add(result);
+			}
+		}else {
+			return list;
+		}
 		return list;
 	}
 	
@@ -71,8 +102,31 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	@Override
-	public List<TtsVoice> ttsCompose(TtsVoiceReq ttsVoiceReq){
-		return null;
+	public List<TtsVoice> fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
+		if(ttsVoiceReq == null
+				|| StrUtils.isEmpty(ttsVoiceReq.getSeqid())) {
+			//必输校验不通过
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		//根据会话ID查找语音的TTS合成结果
+		TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(ttsVoiceReq.getSeqid());
+		if(ttsWavHis == null) {
+			logger.error("会话ID:{}TTS查不到数据");
+			throw new RobotException(AiErrorEnum.AI00060017.getErrorCode(),AiErrorEnum.AI00060017.getErrorMsg());
+		}else {
+			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
+				logger.error("会话ID:{}TTS数据合成中...");
+				throw new RobotException(AiErrorEnum.AI00060018.getErrorCode(),AiErrorEnum.AI00060018.getErrorMsg());
+			}else if(RobotConstants.TTS_STATUS_S.equals(ttsWavHis.getStatus())) {
+				logger.error("会话ID:{}TTS数据合成失败!");
+				throw new RobotException(AiErrorEnum.AI00060019.getErrorCode(),AiErrorEnum.AI00060019.getErrorMsg());
+			}else {
+				//查询出合成后的数据JSON
+				String ttsJsonData = ttsWavHis.getTtsJsonData();
+				List<TtsVoice> list = JSON.parseArray(ttsJsonData, TtsVoice.class);
+				return list;
+			}
+		}
 	}
 	
 	

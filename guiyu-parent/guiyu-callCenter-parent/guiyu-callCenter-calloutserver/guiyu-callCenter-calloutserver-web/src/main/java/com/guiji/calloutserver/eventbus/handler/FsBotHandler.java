@@ -86,6 +86,7 @@ public class FsBotHandler {
             callPlan.setAiId(aiResponse.getAiId());
             callPlan.setCallState(ECallState.answer.ordinal());
             callPlan.setAnswerTime(new Date());
+            callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
             callOutPlanService.update(callPlan);
 
             //插入通话记录详情
@@ -183,6 +184,7 @@ public class FsBotHandler {
                 log.info("sellbot识别未匹配，识别内容为[{}]，跳过后续的放音处理。", aiRequest);
                 CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
                 callDetail.setCallDetailType(ECallDetailType.UNMATCH.ordinal());
+                callDetail.setBotAnswerTime(new Date());//此字段用来排序，不为空
                 callOutDetailService.save(callDetail);
                 return;
             }
@@ -277,12 +279,19 @@ public class FsBotHandler {
     public void handleHangup(ChannelHangupEvent event){
         log.info("收到Hangup事件[{}], 准备进行处理", event);
         try {
+
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
             if(callPlan == null){
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;
             }
 
+            //将calloutdetail里面的意向标签更新到calloutplan里面
+            CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
+            if(callOutDetail!=null){
+                callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
+                callPlan.setReason(callOutDetail.getReason());
+            }
             callPlan.setHangupTime(event.getHangupStamp());
             callPlan.setAnswerTime(event.getAnswerStamp());
             callPlan.setDuration(event.getDuration());

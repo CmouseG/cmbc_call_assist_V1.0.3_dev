@@ -8,15 +8,21 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
+import com.guiji.robot.exception.AiErrorEnum;
+import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.UserResourceCache;
-import com.guiji.robot.service.web.controller.User;
 import com.guiji.robot.util.ListUtil;
+import com.guiji.robot.util.ReadTxtUtil;
+import com.guiji.robot.util.SystemUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
 
@@ -33,6 +39,8 @@ public class AiCacheService {
 	RedisUtil redisUtil;
 	@Autowired
 	IUserAiCfgService iUserAiCfgService;
+	@Value("${file.hushuDir}")
+    private String hushuDir;	//话术模板存放目录
 
 	/**
 	 * 根据用户id查询用户的资源缓存信息
@@ -127,5 +135,51 @@ public class AiCacheService {
 	 */
 	public void changeAiInUse(AiInuseCache aiInuse) {
 		redisUtil.hset(RobotConstants.ROBOT_ASSIGN_AI+aiInuse.getUserId(), aiInuse.getAiNo(), aiInuse);
+	}
+	
+	
+	/**
+	 * 查询话术模板数据
+	 */
+	public HsReplace queyHsReplace(String templateId){
+		if(StrUtils.isNotEmpty(templateId)) {
+			Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_TEMPLATE_RESOURCE, templateId);
+			if(cacheObj == null) {
+				//重新查询
+				//获取话术模板json文件
+				String replaceFilePath = this.getHsJsonPath(templateId);
+				//读取本地话术模板文件
+				String json = ReadTxtUtil.readTxtFile(replaceFilePath);
+				//读取json文件获取数据
+				HsReplace hsReplace = JsonUtils.json2Bean(json, HsReplace.class);
+				if(hsReplace != null) {
+					//提交到redis
+					Map<String,Object> map = new HashMap<String,Object>();
+					map.put(templateId, hsReplace);
+					redisUtil.hmset(RobotConstants.ROBOT_TEMPLATE_RESOURCE, map);
+					return hsReplace;
+				}else {
+					logger.error("读取本地话术模板replace.json文件失败，文件路径：{}",replaceFilePath);
+					throw new RobotException(AiErrorEnum.AI00060016.getErrorCode(),AiErrorEnum.AI00060016.getErrorMsg());
+				}
+			}else {
+				//如果查到了，直接返回
+				return (HsReplace) cacheObj;
+			}
+		}else {
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * 获取话术模板replace.json文件路径
+	 * @param hushuDirPath
+	 * @param ttsVoiceReq
+	 * @return
+	 */
+	private String getHsJsonPath(String templateId) {
+		String hushuDirPath = SystemUtil.getRootPath()+hushuDir; //话术模板存放目录
+		return hushuDirPath + "/" + templateId + "/" + templateId + "/" +"replace.json";
 	}
 }

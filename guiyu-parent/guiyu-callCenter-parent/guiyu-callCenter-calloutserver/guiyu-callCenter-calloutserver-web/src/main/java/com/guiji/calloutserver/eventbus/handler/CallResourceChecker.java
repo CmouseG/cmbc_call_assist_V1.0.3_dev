@@ -76,5 +76,6 @@ public class CallResourceChecker {
     private void checkTemp(CallOutPlan callOutPlan) {
         //TODO:模板资源检查
         fsAgentManager.istempexist(callOutPlan.getTempId());
+        fsAgentManager.getwavlength(callOutPlan.getTempId());
     }
 }

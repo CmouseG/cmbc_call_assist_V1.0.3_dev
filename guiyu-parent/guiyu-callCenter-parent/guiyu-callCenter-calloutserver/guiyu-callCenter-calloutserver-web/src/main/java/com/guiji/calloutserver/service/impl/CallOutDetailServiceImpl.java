@@ -2,10 +2,13 @@ package com.guiji.calloutserver.service.impl;
 
 import com.guiji.callcenter.dao.CallOutDetailMapper;
 import com.guiji.callcenter.dao.entity.CallOutDetail;
+import com.guiji.callcenter.dao.entity.CallOutDetailExample;
 import com.guiji.calloutserver.service.CallOutDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Auther: 魏驰
@@ -27,5 +30,22 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     @Override
     public void save(CallOutDetail calloutdetail, String recordFile) {
 
+    }
+
+    @Override
+    public CallOutDetail getLastDetail(String callId) {
+
+        CallOutDetailExample example = new CallOutDetailExample();
+        CallOutDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andCallIdEqualTo(callId);
+        criteria.andAccurateIntentIsNotNull();
+        example.setOrderByClause("customer_say_time desc");
+        example.setLimitStart(0);
+        example.setLimitEnd(1);
+        List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
+        if(list!=null && list.size()>0){
+            return list.get(0);
+        }
+        return null;
     }
 }

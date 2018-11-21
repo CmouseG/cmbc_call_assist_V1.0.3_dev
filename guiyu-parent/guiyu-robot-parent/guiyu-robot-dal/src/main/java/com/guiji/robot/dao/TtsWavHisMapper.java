@@ -16,15 +16,21 @@ public interface TtsWavHisMapper {
 
     int insertSelective(TtsWavHis record);
 
+    List<TtsWavHis> selectByExampleWithBLOBs(TtsWavHisExample example);
+
     List<TtsWavHis> selectByExample(TtsWavHisExample example);
 
     TtsWavHis selectByPrimaryKey(String id);
 
     int updateByExampleSelective(@Param("record") TtsWavHis record, @Param("example") TtsWavHisExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") TtsWavHis record, @Param("example") TtsWavHisExample example);
+
     int updateByExample(@Param("record") TtsWavHis record, @Param("example") TtsWavHisExample example);
 
     int updateByPrimaryKeySelective(TtsWavHis record);
+
+    int updateByPrimaryKeyWithBLOBs(TtsWavHis record);
 
     int updateByPrimaryKey(TtsWavHis record);
 }

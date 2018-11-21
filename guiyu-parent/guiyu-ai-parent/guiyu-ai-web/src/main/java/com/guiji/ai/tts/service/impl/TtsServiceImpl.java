@@ -11,9 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.service.TtsService;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.utils.RedisUtil;
 
 /**
@@ -55,7 +57,11 @@ public class TtsServiceImpl implements TtsService {
         	audioUrl = (String) redisUtil.get(model+"_"+text);
         	if(audioUrl == null){
         		//合成
-        		audioUrl= TtsServiceFactory.getTtsProvide(model).transfer(busId, model, text);
+        		ITtsServiceProvide provide = TtsServiceFactory.getTtsProvide(model);
+        		if(provide == null){
+        			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GETGPU); //没有获取到可用GPU
+        		}
+        		audioUrl= provide.transfer(busId, model, text);
         		if(audioUrl != null)
         		redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
         		logger.info("存入Redis");

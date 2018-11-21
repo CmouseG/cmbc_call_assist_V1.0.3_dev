@@ -11,4 +11,6 @@ import com.guiji.callcenter.dao.entity.CallOutDetail;
 public interface CallOutDetailService {
     void save(CallOutDetail callOutDetail);
     void save(CallOutDetail calloutdetail, String recordFile);
+
+    CallOutDetail getLastDetail(String callId);
 }

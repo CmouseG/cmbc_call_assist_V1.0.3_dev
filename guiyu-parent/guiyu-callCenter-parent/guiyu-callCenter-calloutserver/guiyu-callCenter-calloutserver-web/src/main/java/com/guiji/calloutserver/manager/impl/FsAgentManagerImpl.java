@@ -1,6 +1,9 @@
 package com.guiji.calloutserver.manager.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.guiji.calloutserver.entity.Channel;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
@@ -8,11 +11,19 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.utils.FeignBuildUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Auther: 魏驰
@@ -23,6 +34,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class FsAgentManagerImpl implements FsAgentManager {
+
+    private Cache<String, Map<String,Double>> wavCaches;
+
+    @PostConstruct
+    public void init(){
+        wavCaches = CacheBuilder.newBuilder().build();
+    }
+
     private ITemplate iTemplate;
 
     @Autowired
@@ -70,5 +89,29 @@ public class FsAgentManagerImpl implements FsAgentManager {
     public Boolean istempexist(String tempId) {
         Result.ReturnData<Boolean>  result = iTemplate.istempexist(tempId);
         return result.getBody();
+    }
+
+    @Override
+    public void getwavlength(String tempId){
+
+        if(wavCaches.getIfPresent(tempId)==null){
+            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
+            if(result.success){
+                List<WavLengthVO> list = result.getBody();
+                if(list!=null && list.size()>0){
+                    Map<String,Double> map =new HashMap<String,Double>();
+                    for(WavLengthVO wavLengthVO:list){
+                        map.put(wavLengthVO.getFileName(),wavLengthVO.getLength());
+                    }
+                    wavCaches.put(tempId,map);
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public Cache<String, Map<String, Double>> getWavCaches() {
+        return wavCaches;
     }
 }

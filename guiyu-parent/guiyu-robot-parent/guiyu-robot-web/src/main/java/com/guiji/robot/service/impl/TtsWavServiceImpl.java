@@ -7,27 +7,30 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.guiji.ai.api.ITts;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.component.result.Result.ReturnData;
+//import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.TtsWavHisMapper;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.dao.entity.TtsWavHisExample;
-import com.guiji.robot.dao.entity.UserAiCfgHisInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
+import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.ITtsWavService;
@@ -35,11 +38,9 @@ import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.TtsTempData;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.NasUtil;
-import com.guiji.robot.util.ReadTxtUtil;
 import com.guiji.robot.util.SystemUtil;
 import com.guiji.robot.util.WavMergeUtil;
 import com.guiji.utils.BeanUtil;
-import com.guiji.utils.JsonUtils;
 import com.guiji.utils.NetFileDownUtil;
 import com.guiji.utils.StrUtils;
 
@@ -58,6 +59,12 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	ITts iTts;
 	@Autowired
 	NasUtil nasUtil;
+	@Autowired
+	AiAsynDealService aiAsynDealService;
+	@Autowired
+	AiCacheService aiCacheService;
+	@Autowired
+	AiNewTransService aiNewTransService;
 	@Value("${file.tmpPath:apps/tmp/}")
     private String tempFilePath;	//文件临时目录
 	@Value("${file.hushuDir}")
@@ -70,6 +77,8 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @param ttsWavHis
 	 * @return
 	 */
+	@Transactional
+	@Override
 	public TtsWavHis saveOrUpdate(TtsWavHis ttsWavHis) {
 		if(ttsWavHis != null) {
 			if(StrUtils.isEmpty(ttsWavHis.getId())) {
@@ -87,24 +96,67 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	
 	/**
 	 * 根据条件查询TTS已合成的语音数据
-	 * @param templateId
-	 * @param ttsKey
-	 * @param ttsParamKeys
-	 * @param ttsParamValues
+	 * @param seqId
 	 * @return
 	 */
-	public TtsWavHis queryTtsWav(String templateId,String ttsKey,String ttsParamKeys,String ttsParamValues) {
-		if(StrUtils.isNotEmpty(templateId) && StrUtils.isNotEmpty(ttsKey) 
-				&& StrUtils.isNotEmpty(ttsParamKeys) && StrUtils.isNotEmpty(ttsParamValues)) {
+	@Override
+	public TtsWavHis queryTtsWavBySeqId(String seqId) {
+		if(StrUtils.isNotEmpty(seqId)) {
 			TtsWavHisExample example = new TtsWavHisExample();
-			example.createCriteria().andTemplateIdEqualTo(templateId).andTtsKeyEqualTo(ttsKey)
-				.andTtsParamKeysEqualTo(ttsParamKeys).andTtsParamValuesEqualTo(ttsParamValues);
+			example.createCriteria().andSeqIdEqualTo(seqId);
+			example.setOrderByClause(" crt_time desc");
 			List<TtsWavHis> list = ttsWavHisMapper.selectByExample(example);
 			if(ListUtil.isNotEmpty(list)) {
+				//如果只有一条数据，直接返回，如果有多条，那么检查是否有完成的状态，有完成的状态，返回完成的数据，表示调用了多次tts合成
+				if(list.size()>1) {
+					for(TtsWavHis ttsWav : list) {
+						if(RobotConstants.TTS_STATUS_S.equals(ttsWav.getStatus())){
+							return ttsWav;
+						}
+					}
+				}
 				return list.get(0);
 			}
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 异步TTS合成操作
+	 * @param ttsVoiceReq
+	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Async
+	public void asynTtsCompose(HsParam hsChecker) {
+		TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
+		BeanUtil.copyProperties(hsChecker, ttsVoiceReq);
+		//1、保存TTS合成记录，初始-合成中状态
+		TtsWavHis ttsWavHis = new TtsWavHis();
+		ttsWavHis.setSeqId(hsChecker.getSeqid());
+		ttsWavHis.setTemplateId(hsChecker.getTemplateId());
+		ttsWavHis.setStatus(RobotConstants.TTS_STATUS_P); //合成中
+		ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
+		try {
+			//2、tts合成
+			List<TtsVoice> list = this.ttsCompose(ttsVoiceReq);
+			//3、合成后更新为合成状态
+			if(ListUtil.isNotEmpty(list)) {
+				//转json保存
+				String jsonStr = JSON.toJSONString(list);
+				ttsWavHis.setTtsJsonData(jsonStr);
+				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_S); //完成
+			}else {
+				logger.error("TTS合成失败，无合成数据！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid());
+				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
+			}
+			aiNewTransService.recordTtsWav(ttsWavHis);
+		} catch (Exception e) {
+			logger.error("TTS合成失败！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid(),e);
+			//4、合成后更新为合成状态
+			ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
+			aiNewTransService.recordTtsWav(ttsWavHis);
+		}
 	}
 	
 	
@@ -115,14 +167,15 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * 3、校验参数是否有缺失
 	 * 4、合成完整语句，并调用TTS工具服务，生成语音文件
 	 * 5、合并TTS语音并生成wav文件
-	 * 6、上传文件服务器，生成url
-	 * 7、记录历史表，后续缓存使用
 	 * @param  ttsVoiceReq
 	 * @return 合成后的语音列表
 	 */
-	public void ttsCompose(TtsVoiceReq ttsVoiceReq){
+	@Transactional
+	@Override
+	public List<TtsVoice> ttsCompose(TtsVoiceReq ttsVoiceReq){
 		//1、必输校验
 		if(ttsVoiceReq == null 
+				|| StrUtils.isEmpty(ttsVoiceReq.getSeqid())
 				|| StrUtils.isEmpty(ttsVoiceReq.getTemplateId())
 				|| ttsVoiceReq.getParamMap()==null
 				|| ttsVoiceReq.getParamMap().isEmpty()) {
@@ -131,11 +184,8 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		//2、根据话术模板读取本地json文件
 		String tmpFilePath = SystemUtil.getRootPath()+tempFilePath; //临时文件存放目录
 		String hushuDirPath = SystemUtil.getRootPath()+hushuDir; //话术模板存放目录
-		//获取话术模板json文件
-		String replaceFilePath = this.getHsJsonPath(hushuDirPath, ttsVoiceReq);
-		String json = ReadTxtUtil.readTxtFile(replaceFilePath);
-		//读取json文件获取数据
-		HsReplace hsReplace = JsonUtils.json2Bean(json, HsReplace.class);
+		//获取话术模板配置文件
+		HsReplace hsReplace = aiCacheService.queyHsReplace(ttsVoiceReq.getTemplateId());
 		//3、校验参数是否有缺失
 		if(!this.checkTtsParams(hsReplace, ttsVoiceReq)) {
 			logger.error("TTS参数校验失败，抛出异常！");
@@ -143,8 +193,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		}
 		//4、合成完整语句(参数替换)，并调用tts工具下载tts阶段语音
 		Map<String,TtsTempData> ttsTempDataMap = this.fillParamAndTranslate(tmpFilePath, hsReplace, ttsVoiceReq);
-		//5、合成语音，生成.wav文件
-		
+		//5、合成语音，生成.wav文件，并上传文件服务器
+		List<TtsVoice> ttsVoiceList = this.wavMerge(hushuDirPath, tmpFilePath, ttsTempDataMap, hsReplace, ttsVoiceReq);
+		return ttsVoiceList;
 	}
 	
 	
@@ -239,45 +290,77 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	/**
 	 * 将几段语音合成一段.wav语音，并上传文件服务器
 	 * @param hushuDirPath 话术模板目录
-	 * @param tmpFilePath
-	 * @param ttsTempDataMap
-	 * @param hsReplace
+	 * @param tmpFilePath 临时文件目录
+	 * @param ttsTempDataMap //TTS工具合成的临时文件
+	 * @param hsReplace replace.json
 	 */
 	private List<TtsVoice> wavMerge(String hushuDirPath,String tmpFilePath,Map<String,TtsTempData> ttsTempDataMap,HsReplace hsReplace,TtsVoiceReq ttsVoiceReq){
 		List<TtsVoice> ttsList = new ArrayList<TtsVoice>();
 		//获取哪些语音需要合成
 		Map<String,String[]> ttsMergeWavMap = hsReplace.getRec_tts_wav();
-		for (Map.Entry<String,String[]> ttsMergeWavEntry : ttsMergeWavMap.entrySet()) {
-			String ttsKey = ttsMergeWavEntry.getKey(); //合成后语音文件的key
-			String[] splitWavFileKey = ttsMergeWavEntry.getValue();	//需要合成的几个语音文件key
-			List<String> wavArr = new ArrayList<String>();
-			for(String wavTempKey : splitWavFileKey) {
-				if(ttsTempDataMap.get(wavTempKey)!=null) {
-					//不为空，说明是调用TTS工具合成的语音
-					wavArr.add(ttsTempDataMap.get(wavTempKey).getAudioFilePath()); //要合成的碎片wav文件路径
-				}else {
-					//为空，表示是模板自带的语音文件片段
-					String filePath = this.getHsWavPath(hushuDirPath, ttsVoiceReq) + wavTempKey + ".wav";
-					wavArr.add(filePath);
+		List<String> ttsFilePathList = new ArrayList<String>();	//合成后的完整wav文件本地路径，后续用来删除本地路径
+		try {
+			for (Map.Entry<String,String[]> ttsMergeWavEntry : ttsMergeWavMap.entrySet()) {
+				String ttsKey = ttsMergeWavEntry.getKey(); //合成后语音文件的key
+				String[] splitWavFileKey = ttsMergeWavEntry.getValue();	//需要合成的几个语音文件key
+				List<String> wavArr = new ArrayList<String>();
+				for(String wavTempKey : splitWavFileKey) {
+					if(ttsTempDataMap.get(wavTempKey)!=null) {
+						//不为空，说明是调用TTS工具合成的语音
+						wavArr.add(ttsTempDataMap.get(wavTempKey).getAudioFilePath()); //要合成的碎片wav文件路径
+					}else {
+						//为空，表示是模板自带的语音文件片段
+						String filePath = this.getHsWavPath(hushuDirPath, ttsVoiceReq) + wavTempKey + ".wav";
+						wavArr.add(filePath);
+					}
+				}
+				//合成后的wav文件本地路径
+				String ttsFilePath = tmpFilePath + com.guiji.utils.SystemUtil.getBusiSerialNo(ttsVoiceReq.getTemplateId())+".wav";
+				try {
+					//合成语音
+					WavMergeUtil.mergeWav(wavArr,ttsFilePath);
+					ttsFilePathList.add(ttsFilePath);
+				} catch (Exception e) {
+					logger.error("WAV文件拼装异常!",e);
+					throw new RobotException(AiErrorEnum.AI00060013.getErrorCode(),AiErrorEnum.AI00060013.getErrorMsg());
+				}
+				//上传文件服务器
+//				SysFileReqVO sysFileReqVO = new SysFileReqVO();
+//				sysFileReqVO.setBusiType("TEMP");	//临时文件 
+//				sysFileReqVO.setSysCode("ROBOT");	//机器人能力中心
+//				String nasFileUrl = nasUtil.uploadToNas(sysFileReqVO, new File(ttsFilePath));
+//				if(StrUtils.isNotEmpty(nasFileUrl)) {
+//					TtsVoice tts = new TtsVoice();
+//					tts.setTtsKey(ttsKey);
+//					tts.setTtsUrl(nasFileUrl);
+//					ttsList.add(tts);
+//				}else {
+//					logger.error("上传NAS服务器失败，返回文件url为空!");
+//					throw new RobotException(AiErrorEnum.AI00060014.getErrorCode(),AiErrorEnum.AI00060014.getErrorMsg());
+//				}
+			}
+		} catch (RobotException e) {
+			throw e;
+		}catch (Exception e1) {
+			logger.error("合成WAV并上传NAS服务器发生未知异常",e1);
+			throw new RobotException(AiErrorEnum.AI00060015.getErrorCode(),AiErrorEnum.AI00060015.getErrorMsg());
+		}finally {
+			//删除临时文件
+			for (Map.Entry<String,TtsTempData> ttsTempDataEntry : ttsTempDataMap.entrySet()) {
+				TtsTempData tempData = ttsTempDataEntry.getValue();
+				String splitFilePath = tempData.getAudioFilePath(); //临时文件本地路径
+				File tempFile = new File(splitFilePath);
+				if(tempFile!=null && tempFile.exists()) tempFile.delete();
+			}
+			//删除合成后的wav文件
+			if(ListUtil.isNotEmpty(ttsFilePathList)) {
+				for(String tempTtsFilePath : ttsFilePathList) {
+					File tempFile = new File(tempTtsFilePath);
+					if(tempFile!=null && tempFile.exists()) tempFile.delete();
 				}
 			}
-			//合成后的wav文件本地路径
-			String ttsFilePath = tmpFilePath + com.guiji.utils.SystemUtil.getBusiSerialNo(ttsVoiceReq.getTemplateId())+".wav";
-			try {
-				//合成语音
-				WavMergeUtil.mergeWav(wavArr,ttsFilePath);
-			} catch (Exception e) {
-				logger.error("WAV文件拼装异常!",e);
-				throw new RobotException(AiErrorEnum.AI00060013.getErrorCode(),AiErrorEnum.AI00060013.getErrorMsg());
-			}
-			//上传文件服务器
-//			nasUtil.uploadSftp(skFileInfoReq, new File());
-//			TtsVoice tts = new TtsVoice();
-//			tts.setTtsKey(ttsKey);
-//			tts.setTtsUrl(ttsUrl);
-//			ttsList.add()
 		}
-		return null;
+		return ttsList;
 	}
 	
 	

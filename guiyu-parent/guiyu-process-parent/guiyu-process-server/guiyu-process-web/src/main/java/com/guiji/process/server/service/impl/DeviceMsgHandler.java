@@ -2,9 +2,11 @@ package com.guiji.process.server.service.impl;
 
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.server.model.CmdMessageQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,32 +22,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class DeviceMsgHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private static final DeviceMsgHandler INSTANCE = new DeviceMsgHandler();
-
-    private Productor productor = null;
-
-    private Consummer consummer = null;
-
-
     private DeviceMsgHandler() {
 
-        ExecutorService executorService = Executors.newCachedThreadPool();
-
-        productor = new Productor();
-        consummer = new Consummer(productor);
-
-        executorService.execute(consummer);
-    }
-
-    public static DeviceMsgHandler getInstance()
-    {
-        return INSTANCE;
     }
 
     public void add(CmdMessageVO cmdMessageVO){
         try {
-            productor.produce(cmdMessageVO);
+            CmdMessageQueue.getInstance().produce(cmdMessageVO);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -59,58 +42,4 @@ public class DeviceMsgHandler {
         }
     }
 
-
-    public class Productor {
-
-        private BlockingQueue<CmdMessageVO> queue = null;
-
-        protected Productor()
-        {
-            queue = new LinkedBlockingQueue<CmdMessageVO>();
-        }
-
-        public void produce(CmdMessageVO deviceMsgVO) throws InterruptedException {
-            queue.put(deviceMsgVO);
-        }
-
-        public CmdMessageVO get() throws InterruptedException {
-            return queue.take();
-        }
-    }
-
-
-    public class Consummer implements Runnable {
-
-        private Productor productor = null;
-
-        @Autowired
-        private DeviceCmdHandler handler;
-
-        public Consummer(Productor productor)
-        {
-            this.productor = productor;
-        }
-
-
-        @Override
-        public void run() {
-            CmdMessageVO cmdMessageVO = null;
-            while (true)
-            {
-                try {
-                    cmdMessageVO = this.productor.get();
-
-                    if(cmdMessageVO == null)
-                    {
-                        continue;
-                    }
-
-                    handler.excute(cmdMessageVO);
-
-                } catch (Exception e) {
-                    logger.error("Consummer:" + cmdMessageVO,e);
-                }
-            }
-        }
-    }
 }

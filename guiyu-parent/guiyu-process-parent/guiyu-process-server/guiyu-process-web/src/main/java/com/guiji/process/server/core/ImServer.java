@@ -12,13 +12,19 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * IM服务启动
  * @author yinjihuan
  *
  */
+@Component
 public class ImServer {
+	@Autowired
+	private ServerPoHandlerProto serverPoHandlerProto;
 	
 	public void run(int port) {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -52,7 +58,7 @@ public class ImServer {
                                 new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
                     	ch.pipeline().addLast("encoder",  
                                 new ProtobufEncoder());
-                    	ch.pipeline().addLast(new ServerPoHandlerProto());
+                    	ch.pipeline().addLast(serverPoHandlerProto);
                     	//ch.pipeline().addLast(new ServerPoHandler());
                     	//字符串传输数据
     					/*ch.pipeline().addLast("decoder", new StringDecoder());

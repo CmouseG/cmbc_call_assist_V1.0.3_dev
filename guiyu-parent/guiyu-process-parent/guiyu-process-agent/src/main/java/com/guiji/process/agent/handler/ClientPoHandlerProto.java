@@ -45,6 +45,9 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 					System.out.println("客户端执行命令成功:" + result.getOutput());
 				}
 			}
+		} else if (message.getType() == 3) {
+			// 收到服务端回复信息
+			System.out.println("收到服务端反馈:" + message.getContent());
 		}
 
 	}

@@ -51,8 +51,8 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("queryDispatchPlanBatch")
 	@Log(info="查询批量信息")
-	public List<DispatchPlanBatch> queryDispatchPlanBatch() {
-		return dispatchPlanService.queryDispatchPlanBatch();
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,@RequestHeader Boolean isSuperAdmin) {
+		return dispatchPlanService.queryDispatchPlanBatch(userId,isSuperAdmin);
 
 	}
 

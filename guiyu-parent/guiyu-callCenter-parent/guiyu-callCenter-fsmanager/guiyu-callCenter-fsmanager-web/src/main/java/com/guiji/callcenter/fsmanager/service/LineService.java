@@ -6,14 +6,14 @@ import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import java.util.List;
 
 public interface LineService {
-    public Boolean addLineinfos(LineInfoVO lineInfo);
+     Boolean addLineinfos(LineInfoVO lineInfo);
 
-    public void deleteLineinfos(String lineId);
+     void deleteLineinfos(String lineId);
 
-    public void editLineinfos(String lineId,LineInfoVO lineInfo);
+     void editLineinfos(String lineId,LineInfoVO lineInfo);
 
-    public List<LineXmlnfoVO> linexmlinfos(String lineId) ;
+     List<LineXmlnfoVO> linexmlinfos(String lineId) ;
 
-    public List<LineXmlnfoVO> linexmlinfosAll() ;
+     List<LineXmlnfoVO> linexmlinfosAll() ;
 
 }

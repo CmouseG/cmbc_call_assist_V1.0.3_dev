@@ -1,6 +1,5 @@
 package com.guiji.fsagent.manager;
 
-
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
@@ -8,7 +7,6 @@ import com.guiji.fsagent.entity.FreeSWITCH;
 import com.guiji.fsagent.util.Base64Util;
 import com.guiji.fsmanager.api.IFsResource;
 import com.guiji.fsmanager.api.ILineOper;
-import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -21,6 +19,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 初始化fsagent服务，连接esl，加载所有的line文件
+ */
 @Slf4j
 @Component
 public class ApplicationInit {

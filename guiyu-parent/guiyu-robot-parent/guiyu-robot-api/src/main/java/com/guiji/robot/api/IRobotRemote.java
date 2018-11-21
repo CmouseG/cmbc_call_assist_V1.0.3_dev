@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 * @version V1.0  
 */
 @Api(tags="机器人能力中心")
-@FeignClient("GUIYU-ROBOT-WEB")
+@FeignClient("guiyu-robot-web")
 public interface IRobotRemote {
 	
 	/************************1、资源服务************************/

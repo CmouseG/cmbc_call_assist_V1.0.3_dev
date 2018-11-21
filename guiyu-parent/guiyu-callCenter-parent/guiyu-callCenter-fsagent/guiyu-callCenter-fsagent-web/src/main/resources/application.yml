@@ -24,6 +24,7 @@ job:
 path:
     recordPath: D:/
     tempPath: /home/aiwav/temp/
+    #tempPath: D:/aiwav/temp/
     tempRecordPath: /home/aiwav
 
 properties:

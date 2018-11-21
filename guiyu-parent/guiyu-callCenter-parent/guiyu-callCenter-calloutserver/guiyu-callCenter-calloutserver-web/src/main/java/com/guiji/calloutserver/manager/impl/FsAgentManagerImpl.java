@@ -65,4 +65,10 @@ public class FsAgentManagerImpl implements FsAgentManager {
         Preconditions.checkNotNull(returnData, "上传录音失败，返回结果为空");
         return (RecordVO) returnData.getBody();
     }
+
+    @Override
+    public Boolean istempexist(String tempId) {
+        Result.ReturnData<Boolean>  result = iTemplate.istempexist(tempId);
+        return result.getBody();
+    }
 }

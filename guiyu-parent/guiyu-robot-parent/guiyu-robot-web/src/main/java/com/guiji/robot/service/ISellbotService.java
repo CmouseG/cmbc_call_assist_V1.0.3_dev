@@ -1,5 +1,6 @@
 package com.guiji.robot.service;
 
+import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.SellbotMatchReq;
 import com.guiji.robot.service.vo.SellbotRestoreReq;
 import com.guiji.robot.service.vo.SellbotSayhelloReq;
@@ -18,7 +19,7 @@ public interface ISellbotService {
 	 * @param sellbotRestoreReq
 	 * @return
 	 */
-	String restore(SellbotRestoreReq sellbotRestoreReq);
+	String restore(AiBaseInfo ai,SellbotRestoreReq sellbotRestoreReq);
 	
 	
 	/**
@@ -26,7 +27,7 @@ public interface ISellbotService {
 	 * @param sellbotSayhelloReq
 	 * @return
 	 */
-	String sayhello(SellbotSayhelloReq sellbotSayhelloReq);
+	String sayhello(AiBaseInfo ai,SellbotSayhelloReq sellbotSayhelloReq);
 	
 	
 	/**
@@ -34,5 +35,5 @@ public interface ISellbotService {
 	 * @param sellbotMatchReq
 	 * @return
 	 */
-	String match(SellbotMatchReq sellbotMatchReq);
+	String match(AiBaseInfo ai,SellbotMatchReq sellbotMatchReq);
 }

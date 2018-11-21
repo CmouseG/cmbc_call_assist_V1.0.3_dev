@@ -21,10 +21,12 @@ public class RobotConstants {
 	public static final String AI_STATUS_B = "B"; //B-忙
 	public static final String AI_STATUS_P = "P"; //P-暂停分配
 	
+	public static final String RSP_CODE_SUCCESS = "0";	//外部请求返回的成功状态码
+	
 	/**
 	 * 分配的机器人缓存
 	 */
-	public static final String ROBOT_ASSIGN_AI = "ROBOT_ASSIGN_AI";
+	public static final String ROBOT_ASSIGN_AI = "USER_AI_";
 	
 	/**
 	 * 用户机器人资源

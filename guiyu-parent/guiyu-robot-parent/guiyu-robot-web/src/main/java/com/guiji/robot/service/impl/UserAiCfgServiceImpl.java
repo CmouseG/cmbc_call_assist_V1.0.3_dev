@@ -1,6 +1,7 @@
 package com.guiji.robot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,11 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.robot.constants.RobotConstants;
+import com.guiji.robot.dao.UserAiCfgHisInfoMapper;
 import com.guiji.robot.dao.UserAiCfgInfoMapper;
+import com.guiji.robot.dao.entity.UserAiCfgHisInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfoExample;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.util.ListUtil;
+import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -26,6 +31,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private UserAiCfgInfoMapper userAiCfgInfoMapper;
+	@Autowired
+	private UserAiCfgHisInfoMapper userAiCfgHisInfoMapper;
 	
 	/**
 	 * 保存或者更新一条用户-机器人配置信息
@@ -35,7 +42,23 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 */
 	@Override
 	public UserAiCfgInfo saveOrUpdate(UserAiCfgInfo userAiCfgInfo) {
-		return null;
+		if(userAiCfgInfo != null) {
+			if(StrUtils.isEmpty(userAiCfgInfo.getId())) {
+				//如果主键为空，那么新增一条信息
+				userAiCfgInfo.setStatus(RobotConstants.USER_CFG_STATUS_S); //正常状态
+				userAiCfgInfo.setCrtTime(new Date());
+				userAiCfgInfoMapper.insert(userAiCfgInfo);
+			}else {
+				//主键不为空，更新信息
+				userAiCfgInfoMapper.updateByPrimaryKey(userAiCfgInfo);
+			}
+			//记录一条用户账户变更历史
+			UserAiCfgHisInfo record = new UserAiCfgHisInfo();
+			record.setCrtTime(new Date());
+			BeanUtil.copyProperties(userAiCfgInfo, record);
+			userAiCfgHisInfoMapper.insert(record);
+		}
+		return userAiCfgInfo;
 	}
 	
 	

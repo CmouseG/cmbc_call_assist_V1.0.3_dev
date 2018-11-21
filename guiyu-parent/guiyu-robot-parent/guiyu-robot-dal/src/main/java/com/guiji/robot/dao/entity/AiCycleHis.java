@@ -20,9 +20,9 @@ public class AiCycleHis implements Serializable {
 
     private String taskbackTime;
 
-    private Date crtTime;
+    private Long callNum;
 
-    private String callNum;
+    private Date crtTime;
 
     private static final long serialVersionUID = 1L;
 
@@ -90,20 +90,20 @@ public class AiCycleHis implements Serializable {
         this.taskbackTime = taskbackTime == null ? null : taskbackTime.trim();
     }
 
+    public Long getCallNum() {
+        return callNum;
+    }
+
+    public void setCallNum(Long callNum) {
+        this.callNum = callNum;
+    }
+
     public Date getCrtTime() {
         return crtTime;
     }
 
     public void setCrtTime(Date crtTime) {
         this.crtTime = crtTime;
-    }
-
-    public String getCallNum() {
-        return callNum;
-    }
-
-    public void setCallNum(String callNum) {
-        this.callNum = callNum == null ? null : callNum.trim();
     }
 
     @Override
@@ -120,8 +120,8 @@ public class AiCycleHis implements Serializable {
         sb.append(", assignTime=").append(assignTime);
         sb.append(", taskbackDate=").append(taskbackDate);
         sb.append(", taskbackTime=").append(taskbackTime);
-        sb.append(", crtTime=").append(crtTime);
         sb.append(", callNum=").append(callNum);
+        sb.append(", crtTime=").append(crtTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

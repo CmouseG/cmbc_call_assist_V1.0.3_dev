@@ -1,7 +1,9 @@
 package com.guiji.calloutserver.manager;
 
+import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsmanager.entity.FsBindVO;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Auther: 魏驰
@@ -24,5 +26,12 @@ public interface FsAgentManager {
       * @return
       */
      RecordVO uploadRecord(String fileId, String fileName, String busiType);
+
+    /**
+     * 模板是否存在
+     * @param tempId
+     * @return
+     */
+     Boolean istempexist(String tempId);
 
 }

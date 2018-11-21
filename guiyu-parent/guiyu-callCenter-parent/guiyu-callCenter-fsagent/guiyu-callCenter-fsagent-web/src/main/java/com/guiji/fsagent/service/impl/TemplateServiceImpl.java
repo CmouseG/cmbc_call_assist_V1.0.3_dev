@@ -9,7 +9,6 @@ import com.guiji.fsagent.util.FileUtil;
 import com.guiji.nas.api.INas;
 import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.nas.vo.SysFileRspVO;
-import com.guiji.robot.api.IRobotRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

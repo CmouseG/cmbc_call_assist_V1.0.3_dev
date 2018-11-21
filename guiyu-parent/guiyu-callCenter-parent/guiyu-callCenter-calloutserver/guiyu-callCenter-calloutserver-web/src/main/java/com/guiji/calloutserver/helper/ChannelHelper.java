@@ -82,6 +82,7 @@ public class ChannelHelper {
     public void playAiReponse(AIResponse aiResponse, boolean isLock){
         //TODO: 等待完善
 
+        playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isLock);
     }
 
     public void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock) {

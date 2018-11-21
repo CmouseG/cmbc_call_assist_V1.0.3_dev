@@ -3,6 +3,7 @@ package com.guiji.calloutserver.eventbus.handler;
 import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
+import com.guiji.calloutserver.manager.FsAgentManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 public class CallResourceChecker {
     @Autowired
     AsyncEventBus asyncEventBus;
+    @Autowired
+    FsAgentManager fsAgentManager;
 
     /**
      * 检查呼叫依赖的各项资源是否齐备，只有完全齐备，才允许进行后面的呼叫
@@ -72,5 +75,6 @@ public class CallResourceChecker {
      */
     private void checkTemp(CallOutPlan callOutPlan) {
         //TODO:模板资源检查
+        fsAgentManager.istempexist(callOutPlan.getTempId());
     }
 }

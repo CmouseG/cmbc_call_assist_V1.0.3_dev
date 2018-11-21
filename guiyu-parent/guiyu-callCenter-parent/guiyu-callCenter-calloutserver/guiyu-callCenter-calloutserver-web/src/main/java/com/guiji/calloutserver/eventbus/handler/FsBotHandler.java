@@ -191,6 +191,7 @@ public class FsBotHandler {
             log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
             if(aiResponse.getAiResponseType() == EAIResponseType.NORMAL) {       //机器人正常放音
                 log.info("sellbot结果为正常放音");
+                callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
                 playNormal(event, callPlan, aiResponse, callDetail);
             }else if(aiResponse.getAiResponseType() == EAIResponseType.TO_AGENT){      //转人工
                 log.info("sellbot的结果为转人工");
@@ -201,6 +202,7 @@ public class FsBotHandler {
                 callDetail.setCallDetailType(ECallDetailType.END.ordinal());
                 channelHelper.playFileToChannelAndHangup(event.getUuid(), aiResponse.getWavFile(), aiResponse.getWavDuration());
             }else{
+                callDetail.setCallDetailType(ECallDetailType.ASR_EMPTY.ordinal());
                 log.warn("未知的sellbot返回类型[{}], 跳过处理", aiResponse.getAiResponseType());
             }
 

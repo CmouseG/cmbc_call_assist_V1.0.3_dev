@@ -1,9 +1,12 @@
 package com.guiji.calloutserver.manager;
 
+import com.google.common.cache.Cache;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Map;
 
 /**
  * @Auther: 魏驰
@@ -34,4 +37,11 @@ public interface FsAgentManager {
      */
      Boolean istempexist(String tempId);
 
+    void getwavlength(String tempId);
+
+    /**
+     * 获取缓存的录音文件时长
+     * @return
+     */
+    Cache<String, Map<String, Double>> getWavCaches();
 }

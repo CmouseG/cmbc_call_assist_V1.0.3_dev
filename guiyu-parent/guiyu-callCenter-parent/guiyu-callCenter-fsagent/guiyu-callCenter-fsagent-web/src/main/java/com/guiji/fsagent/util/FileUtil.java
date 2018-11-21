@@ -1,15 +1,22 @@
 package com.guiji.fsagent.util;
 
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
 public class FileUtil {
+    private static  final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
     /**
      * 删除文件
      * @param fileName
@@ -59,6 +66,24 @@ public class FileUtil {
 
     }
 
-
+    /**
+     * 获取wav文件的播放时长, 单位为秒
+     * @param fileName
+     * @return
+     */
+    public static Double getWavDuration(String fileName){
+        File file = new File(fileName);
+        AudioInputStream audioInputStream = null;
+        try {
+            audioInputStream = AudioSystem.getAudioInputStream(file);
+            AudioFormat format = audioInputStream.getFormat();
+            long frames = audioInputStream.getFrameLength();
+            Double durationInSeconds = (frames+0.0) / format.getFrameRate();
+            return durationInSeconds;
+        } catch (Exception e) {
+            logger.warn("获取wav时长出现异常", e);
+        }
+        return null;
+    }
 
 }

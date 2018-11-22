@@ -3,18 +3,12 @@ package com.guiji.robot.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.guiji.robot.exception.RobotException;
-import com.guiji.robot.service.vo.HsReplace;
-import com.guiji.utils.JsonUtils;
 import com.guiji.utils.StrUtils;
 
 /**
@@ -25,13 +19,6 @@ import com.guiji.utils.StrUtils;
  */
 public class ReadTxtUtil {
 	private static final Logger logger = LoggerFactory.getLogger(ReadTxtUtil.class);
-
-	public static void main(String[] args) {
-		String json = ReadTxtUtil.readTxtFile("C:\\Users\\weiyunbo\\Desktop\\robot\\360m12c\\replace.json");
-		System.out.println(json);
-		HsReplace hsReplace = JsonUtils.json2Bean(json, HsReplace.class);
-		System.out.println(hsReplace);
-	}
 
 	
 	/**

@@ -29,11 +29,37 @@ public interface IProcessSchedule {
      */
     @ApiOperation(value = "返回TTS")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "vo", value = "模型名称", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "requestCount", value = "请求数量", dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "model", value = "模型名称", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "requestCount", value = "请求数量", dataType = "int", paramType = "query")
     })
     @GetMapping(value="/getTTS")
-    Result.ReturnData<List<ProcessInstanceVO>> getTTS(@RequestParam("vo") String model, @RequestParam("requestCount") int requestCount);
+    Result.ReturnData<List<ProcessInstanceVO>> getTTS(@RequestParam("model") String model, @RequestParam("requestCount") int requestCount);
+
+    /**
+     * 获取所有模型
+     * @return
+     */
+    @ApiOperation(value = "返回getAllTTS")
+    @GetMapping(value="/getAllTTS")
+    Result.ReturnData<List<ProcessInstanceVO>> getTTS();
+
+    /**
+     * 模型切换
+     * @param fromModel
+     * @param toModel
+     * @param ip
+     * @param port
+     * @return
+     */
+    @ApiOperation(value = "changeTTS")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fromModel", value = "原模型", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "toModel", value = "新模型", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "ip", value = "ip", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "port", value = "端口", dataType = "int", paramType = "query")
+    })
+    @GetMapping(value="/changeTTS")
+    Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel,@RequestParam("ip") String ip,@RequestParam("port") int port);
 
 
     /**

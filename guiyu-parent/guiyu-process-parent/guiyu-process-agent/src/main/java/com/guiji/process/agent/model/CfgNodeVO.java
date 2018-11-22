@@ -62,6 +62,24 @@ public class CfgNodeVO {
         this.processKey = processKey;
     }
 
+
+    public CfgNodeOperVO getCfgNodeOper(CmdTypeEnum cmdTypeEnum)
+    {
+        if(this.CfgNodeOpers== null)
+        {
+            return null;
+        }
+
+        for (CfgNodeOperVO cfgNodeOperVO: CfgNodeOpers) {
+            if(cfgNodeOperVO.getCmdTypeEnum()== cmdTypeEnum)
+            {
+                return cfgNodeOperVO;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String toString() {
         return "CfgNodeVO{" +

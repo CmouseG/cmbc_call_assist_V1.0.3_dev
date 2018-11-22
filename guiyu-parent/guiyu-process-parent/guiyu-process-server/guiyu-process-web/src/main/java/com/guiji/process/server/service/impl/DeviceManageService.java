@@ -1,14 +1,19 @@
 package com.guiji.process.server.service.impl;
 
+import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.DeviceStatusEnum;
 import com.guiji.process.core.vo.DeviceTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IDeviceManageService;
 import com.guiji.process.server.util.DeviceProcessUtil;
 
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
+import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +49,7 @@ public class DeviceManageService implements IDeviceManageService {
             // 存入数据库 TODO
 
 
-            updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus(), "");
+            updateStatus(processInstanceVO);
         }
     }
 
@@ -92,7 +97,14 @@ public class DeviceManageService implements IDeviceManageService {
         }
 
         // 调用底层通信，发送命令
-
+        ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
+        CmdMessageVO cmdMessageVO = new CmdMessageVO();
+        cmdMessageVO.setCmdType(cmdType);
+        cmdMessageVO.setProcessInstanceVO(processInstanceVO);
+        String msg = JsonUtils.bean2Json(cmdMessageVO);
+        MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(2);
+        builder.setContent(msg);
+        ctx.writeAndFlush(builder);
         return true;
 
     }
@@ -124,25 +136,14 @@ public class DeviceManageService implements IDeviceManageService {
     }
 
     @Override
-    public void updateStatus(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed) {
+    public void updateStatus(ProcessInstanceVO processInstanceVO) {
 
-        ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
+        ProcessInstanceVO oldProcessInstanceVO = getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
 
-        if (processInstanceVO == null)
-        {
-            processInstanceVO = new ProcessInstanceVO();
-            processInstanceVO.setIp(ip);
-            processInstanceVO.setPort(port);
-            processInstanceVO.setType(type);
-        }
-
-        if(processInstanceVO.getStatus() == status && StringUtils.equals(processInstanceVO.getWhoUsed(), whoUsed))
+        if(oldProcessInstanceVO != null && oldProcessInstanceVO.getStatus() == processInstanceVO.getStatus() && StringUtils.equals(oldProcessInstanceVO.getWhoUsed(), processInstanceVO.getWhoUsed()))
         {
             return;
         }
-
-        processInstanceVO.setStatus(status);
-        processInstanceVO.setWhoUsed(whoUsed);
 
         updateAllDeviceCachList(processInstanceVO);
     }
@@ -150,13 +151,13 @@ public class DeviceManageService implements IDeviceManageService {
     @Override
     public void updateUnRegister(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed) {
 
-        ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
-
-        if (processInstanceVO != null) {
-            updateUnRegisterDeviceCachList(processInstanceVO);
-        }
-
-
+        ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
+        processInstanceVO.setIp(ip);
+        processInstanceVO.setPort(port);
+        processInstanceVO.setType(type);
+        processInstanceVO.setStatus(status);
+        processInstanceVO.setWhoUsed(whoUsed);
+        updateUnRegisterDeviceCachList(processInstanceVO);
     }
 
     @Override
@@ -192,8 +193,6 @@ public class DeviceManageService implements IDeviceManageService {
         Map<String, Object> deviceVOMapTmp = new ConcurrentHashMap<String, Object>();
         for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
             deviceVOMapTmp.put((String) ent.getKey(), ent.getValue());
-            System.out.println("*****************************************************************************");
-            System.out.println(ent.getKey());
         }
 
         redisUtil.hmset(DeviceProcessConstant.ALL_DEVIECE_KEY, deviceVOMapTmp);
@@ -207,15 +206,12 @@ public class DeviceManageService implements IDeviceManageService {
             deviceVOMap = new ConcurrentHashMap<Object, Object>();
         }
 
-        deviceVOMap.remove(DeviceProcessUtil.getDeviceKey(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort()));
+        deviceVOMap.put(DeviceProcessUtil.getDeviceKey(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort()), processInstanceVO);
 
         Map<String, Object> deviceVOMapTmp = new ConcurrentHashMap<String, Object>();
         for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
             deviceVOMapTmp.put((String) ent.getKey(), ent.getValue());
-            System.out.println("*****************************************************************************");
-            System.out.println(ent.getKey());
         }
-        redisUtil.del(DeviceProcessConstant.ALL_DEVIECE_KEY);
         redisUtil.hmset(DeviceProcessConstant.ALL_DEVIECE_KEY, deviceVOMapTmp);
     }
 

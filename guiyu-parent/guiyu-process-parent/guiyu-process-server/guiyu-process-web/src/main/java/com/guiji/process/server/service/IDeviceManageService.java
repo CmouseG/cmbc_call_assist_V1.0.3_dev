@@ -52,12 +52,10 @@ public interface IDeviceManageService {
 
     /**
      * 更新设备状态
-     * @param ip ip
-     * @param port port
-     * @param status port
+     * @param processInstanceVO processInstanceVO
      * @return
      */
-    void updateStatus(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed);
+    void updateStatus(ProcessInstanceVO processInstanceVO);
 
     /**
      * 更新设备状态

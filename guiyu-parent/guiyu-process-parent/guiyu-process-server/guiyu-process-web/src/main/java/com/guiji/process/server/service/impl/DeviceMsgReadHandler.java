@@ -19,10 +19,8 @@ public class DeviceMsgReadHandler {
         CmdMessageVO cmdMessageVO = null;
         while(true)
         {
-            System.out.println("33333333333333333333333333333333333333333333333333333333");
             try {
                 cmdMessageVO = CmdMessageQueue.getInstance().get();
-                System.out.println("99999999999999999999999999");
                 if(cmdMessageVO == null)
                 {
                     continue;

@@ -15,7 +15,7 @@ public class ProcessInstanceVO implements Serializable {
 
     private String whoUsed;
 
-    private String deviceKey;
+    private String processKey;
 
     private Map<String, Object> paramter;
 
@@ -59,12 +59,12 @@ public class ProcessInstanceVO implements Serializable {
         this.status = status;
     }
 
-    public String getDeviceKey() {
-        return deviceKey;
+    public String getProcessKey() {
+        return processKey;
     }
 
-    public void setDeviceKey(String deviceKey) {
-        this.deviceKey = deviceKey;
+    public void setProcessKey(String processKey) {
+        this.processKey = processKey;
     }
 
 
@@ -84,7 +84,7 @@ public class ProcessInstanceVO implements Serializable {
                 ", type=" + type +
                 ", status=" + status +
                 ", whoUsed='" + whoUsed + '\'' +
-                ", deviceKey='" + deviceKey + '\'' +
+                ", processKey='" + processKey + '\'' +
                 ", paramter=" + paramter +
                 '}';
     }

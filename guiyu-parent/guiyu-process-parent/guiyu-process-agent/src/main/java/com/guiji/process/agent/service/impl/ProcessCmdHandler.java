@@ -8,6 +8,7 @@ import com.guiji.process.agent.util.CommandUtils;
 import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.UnknownHostException;
@@ -38,13 +39,14 @@ public class ProcessCmdHandler {
             case STOP:
                 doCmd(CfgNodeOperVO.getCmd());
                 Thread.sleep(1000);//等待1s查看是否关闭成功
-                //TODO 检查是否停掉，如果进程还或者则kill -9
+                //TODO 检查是否停掉，如果进程还在则kill -9
                 if (ProcessUtil.checkRun(cmdMessageVO.getProcessInstanceVO().getPort())) {
                     ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
                 }
                 break;
             case HEALTH:
-                ProcessUtil.sendHealth(cmdMessageVO.getProcessInstanceVO().getPort());
+                ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),CfgNodeOperVO);
                 break;
             default:
                 break;

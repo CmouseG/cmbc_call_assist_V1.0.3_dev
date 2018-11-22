@@ -1,11 +1,14 @@
 package com.guiji.process.agent.handler;
 
 import com.guiji.process.agent.core.ImConnection;
+import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.message.MessageProto;
 import io.netty.channel.Channel;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ty on 2018/11/19.
@@ -14,6 +17,8 @@ public class ImClientProtocolBO {
     public static final String HOST = "127.0.0.1";
     public static int PORT = 2222;
     public static Channel channelGlobal = null;
+    public static List<OperateVO> operateVOList = new ArrayList<OperateVO>();
+    public static long operateIntervalTime = 30000;//命令操作间隔30s
 
     private static ImClientProtocolBO instance = new ImClientProtocolBO();
 

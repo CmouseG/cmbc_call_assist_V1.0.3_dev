@@ -13,8 +13,6 @@ import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysMenuMapper;
 import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.dao.entity.SysMenuExample;
-import com.guiji.user.dao.entity.SysRole;
-import com.guiji.user.dao.entity.SysRoleExample;
 
 @Service
 public class MenuService {

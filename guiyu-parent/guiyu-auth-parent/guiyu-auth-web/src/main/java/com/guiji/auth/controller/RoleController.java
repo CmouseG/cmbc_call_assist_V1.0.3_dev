@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.auth.service.RoleService;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysRole;
-import com.guiji.user.dao.entity.SysUser;
 
 @RestController
 @RequestMapping("role")

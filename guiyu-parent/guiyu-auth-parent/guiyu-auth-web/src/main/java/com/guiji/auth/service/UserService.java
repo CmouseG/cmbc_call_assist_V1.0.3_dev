@@ -6,12 +6,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import com.guiji.auth.exception.CheckConditionException;
+import com.guiji.auth.util.AuthUtil;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
-import com.guiji.user.dao.entity.SysUserExample;
 
 
 @Service
@@ -80,4 +82,17 @@ public class UserService {
 		return mapper.existUserName(user);
 	}
 	
+	
+	public void changePassword(String newPass,String oldPass,@RequestHeader Long userId) throws CheckConditionException{
+		newPass=AuthUtil.encrypt(newPass);
+		oldPass=AuthUtil.encrypt(oldPass);
+		SysUser sysUser =mapper.selectByPrimaryKey(userId);
+		if(sysUser!=null&&sysUser.getPassword().equals(oldPass)){
+			sysUser.setPassword(newPass);
+			sysUser.setUpdateTime(new Date());
+			mapper.updateByPrimaryKeySelective(sysUser);
+		}else{
+			throw new CheckConditionException("00010006");
+		}
+	}
 }

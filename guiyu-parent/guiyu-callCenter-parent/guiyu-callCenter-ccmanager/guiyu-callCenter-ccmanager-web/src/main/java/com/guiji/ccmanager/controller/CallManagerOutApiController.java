@@ -42,6 +42,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
     private CallManagerOutService callManagerOutService;
 
     @Override
+    @GetMapping(value="out/getLineInfos")
     public Result.ReturnData<List<LineConcurrent>> getLineInfos(String customerId){
 
         log.info("get request getLineInfos，customerId[{}]", customerId);
@@ -71,6 +72,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
 
 
     @Override
+    @GetMapping(value="out/getLineNameAndCount")
     public Result.ReturnData<List<LineConcurrent>> getLineNameAndCount(@RequestParam(value="customerId", required = true) String customerId,
                                                                        @RequestParam(value="isSuperAdmin", required = true) Boolean isSuperAdmin){
 
@@ -84,6 +86,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
     }
 
     @Override
+    @GetMapping(value="out/startCallPlan")
     public Result.ReturnData<Boolean> startCallPlan(String customerId, String tempId, String lineId) {
 
         log.info("get request startCallPlan，customerId[{}]，tempId[{}]，lineId[{}]", customerId, tempId, lineId);
@@ -104,6 +107,11 @@ public class CallManagerOutApiController implements ICallManagerOut {
     }
 
     @Override
+    @ApiOperation(value = "获取callId获取通话记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "call_out_plan的id", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value="getCallRecordById")
     public Result.ReturnData<CallOutPlan> getCallRecordById(String callId ){
 
         com.guiji.callcenter.dao.entity.CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(callId);

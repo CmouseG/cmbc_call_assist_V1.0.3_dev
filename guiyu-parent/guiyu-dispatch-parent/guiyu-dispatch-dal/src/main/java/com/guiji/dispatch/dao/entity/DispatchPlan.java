@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class DispatchPlan implements Serializable {
+	
 	//批次号
 	private String batchName;
 	//是否显示
@@ -11,6 +12,9 @@ public class DispatchPlan implements Serializable {
 	
 	private boolean  isSuccess = true;
 	
+	private Integer limitStart;
+	
+	private Integer limitEnd;
     private Integer id;
 
     private String planUuid;
@@ -51,7 +55,7 @@ public class DispatchPlan implements Serializable {
 
     private Date gmtModified;
 
-    private Byte isTts;
+    private Integer isTts;
 
     private String username;
 
@@ -59,20 +63,27 @@ public class DispatchPlan implements Serializable {
 
     private Integer isDel;
 
-    private static final long serialVersionUID = 1L;
-
     
-    
-    
-    public boolean isSuccess() {
-		return isSuccess;
+    public Integer getLimitStart() {
+		return limitStart;
 	}
 
-	public void setSuccess(boolean isSuccess) {
-		this.isSuccess = isSuccess;
+	public void setLimitStart(Integer limitStart) {
+		this.limitStart = limitStart;
 	}
 
-	public String getBatchName() {
+	public Integer getLimitEnd() {
+		return limitEnd;
+	}
+
+	public void setLimitEnd(Integer limitEnd) {
+		this.limitEnd = limitEnd;
+	}
+
+	private static final long serialVersionUID = 1L;
+
+    
+    public String getBatchName() {
 		return batchName;
 	}
 
@@ -86,6 +97,14 @@ public class DispatchPlan implements Serializable {
 
 	public void setStatusShow(Integer statusShow) {
 		this.statusShow = statusShow;
+	}
+
+	public boolean isSuccess() {
+		return isSuccess;
+	}
+
+	public void setSuccess(boolean isSuccess) {
+		this.isSuccess = isSuccess;
 	}
 
 	public Integer getId() {
@@ -248,11 +267,11 @@ public class DispatchPlan implements Serializable {
         this.gmtModified = gmtModified;
     }
 
-    public Byte getIsTts() {
+    public Integer getIsTts() {
         return isTts;
     }
 
-    public void setIsTts(Byte isTts) {
+    public void setIsTts(Integer isTts) {
         this.isTts = isTts;
     }
 

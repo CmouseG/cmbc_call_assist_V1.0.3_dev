@@ -22,7 +22,7 @@
     <result column="call_hour" property="callHour" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
     <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
-    <result column="is_tts" property="isTts" jdbcType="TINYINT" />
+    <result column="is_tts" property="isTts" jdbcType="INTEGER" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="replay_type" property="replayType" jdbcType="INTEGER" />
     <result column="is_del" property="isDel" jdbcType="INTEGER" />
@@ -140,7 +140,7 @@
       #{recall,jdbcType=INTEGER}, #{recallParams,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, 
       #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
       #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
-      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=TINYINT}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=INTEGER}, 
       #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER}
       )
   </insert>
@@ -282,7 +282,7 @@
         #{gmtModified,jdbcType=TIMESTAMP},
       </if>
       <if test="isTts != null" >
-        #{isTts,jdbcType=TINYINT},
+        #{isTts,jdbcType=INTEGER},
       </if>
       <if test="username != null" >
         #{username,jdbcType=VARCHAR},
@@ -365,7 +365,7 @@
         gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
       </if>
       <if test="record.isTts != null" >
-        is_tts = #{record.isTts,jdbcType=TINYINT},
+        is_tts = #{record.isTts,jdbcType=INTEGER},
       </if>
       <if test="record.username != null" >
         username = #{record.username,jdbcType=VARCHAR},
@@ -403,7 +403,7 @@
       call_hour = #{record.callHour,jdbcType=VARCHAR},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
-      is_tts = #{record.isTts,jdbcType=TINYINT},
+      is_tts = #{record.isTts,jdbcType=INTEGER},
       username = #{record.username,jdbcType=VARCHAR},
       replay_type = #{record.replayType,jdbcType=INTEGER},
       is_del = #{record.isDel,jdbcType=INTEGER}
@@ -411,6 +411,40 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  
+  <select id="selectByCallHour" resultMap="BaseResultMap"
+		parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+		select
+		<include refid="Base_Column_List" />
+		from dispatch_plan
+		<if test="callHour != null">
+			where find_in_set(#{callHour},call_hour)
+		</if>
+		<if test="userId != null">
+			and  user_id = #{userId}
+		</if>
+		<if test="callData != null">
+			and  call_data = #{callData}
+		</if>
+				<if test="isDel != null">
+			and  is_del = #{isDel}
+		</if>
+				<if test="statusPlan != null">
+			and  status_plan = #{statusPlan}
+		</if>
+				<if test="statusSync != null">
+			and  status_sync = #{statusSync}
+		</if>
+						<if test="line != null">
+			and  line = #{line}
+		</if>
+		
+			order by `gmt_create` DESC
+		<if test="limitStart != null and limitStart>=0">
+			limit #{limitStart} , #{limitEnd}
+		</if>
+		
+	</select>
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     update dispatch_plan
     <set >
@@ -472,7 +506,7 @@
         gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       </if>
       <if test="isTts != null" >
-        is_tts = #{isTts,jdbcType=TINYINT},
+        is_tts = #{isTts,jdbcType=INTEGER},
       </if>
       <if test="username != null" >
         username = #{username,jdbcType=VARCHAR},
@@ -507,7 +541,7 @@
       call_hour = #{callHour,jdbcType=VARCHAR},
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
-      is_tts = #{isTts,jdbcType=TINYINT},
+      is_tts = #{isTts,jdbcType=INTEGER},
       username = #{username,jdbcType=VARCHAR},
       replay_type = #{replayType,jdbcType=INTEGER},
       is_del = #{isDel,jdbcType=INTEGER}

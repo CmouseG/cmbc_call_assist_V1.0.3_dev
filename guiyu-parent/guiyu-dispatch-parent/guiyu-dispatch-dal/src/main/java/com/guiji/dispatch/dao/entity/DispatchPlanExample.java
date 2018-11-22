@@ -1425,52 +1425,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsEqualTo(Byte value) {
+        public Criteria andIsTtsEqualTo(Integer value) {
             addCriterion("is_tts =", value, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsNotEqualTo(Byte value) {
+        public Criteria andIsTtsNotEqualTo(Integer value) {
             addCriterion("is_tts <>", value, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsGreaterThan(Byte value) {
+        public Criteria andIsTtsGreaterThan(Integer value) {
             addCriterion("is_tts >", value, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsGreaterThanOrEqualTo(Byte value) {
+        public Criteria andIsTtsGreaterThanOrEqualTo(Integer value) {
             addCriterion("is_tts >=", value, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsLessThan(Byte value) {
+        public Criteria andIsTtsLessThan(Integer value) {
             addCriterion("is_tts <", value, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsLessThanOrEqualTo(Byte value) {
+        public Criteria andIsTtsLessThanOrEqualTo(Integer value) {
             addCriterion("is_tts <=", value, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsIn(List<Byte> values) {
+        public Criteria andIsTtsIn(List<Integer> values) {
             addCriterion("is_tts in", values, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsNotIn(List<Byte> values) {
+        public Criteria andIsTtsNotIn(List<Integer> values) {
             addCriterion("is_tts not in", values, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsBetween(Byte value1, Byte value2) {
+        public Criteria andIsTtsBetween(Integer value1, Integer value2) {
             addCriterion("is_tts between", value1, value2, "isTts");
             return (Criteria) this;
         }
 
-        public Criteria andIsTtsNotBetween(Byte value1, Byte value2) {
+        public Criteria andIsTtsNotBetween(Integer value1, Integer value2) {
             addCriterion("is_tts not between", value1, value2, "isTts");
             return (Criteria) this;
         }

@@ -1,8 +1,11 @@
 package com.guiji.calloutserver.entity;
 
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
 
 /**
  * @Auther: 魏驰
@@ -33,4 +36,17 @@ public class Channel {
      * 锁定通道媒体, 在锁定期间，不允许播放其他媒体
      */
     private Boolean isMediaLock;
+
+    /**
+     * 打断时间
+     */
+    private LocalTime disturbTime;
+
+    /**
+     * 当前通道是否正在播放媒体
+     * @return
+     */
+    public boolean isInPlay(){
+        return !Strings.isNullOrEmpty(mediaFileName);
+    }
 }

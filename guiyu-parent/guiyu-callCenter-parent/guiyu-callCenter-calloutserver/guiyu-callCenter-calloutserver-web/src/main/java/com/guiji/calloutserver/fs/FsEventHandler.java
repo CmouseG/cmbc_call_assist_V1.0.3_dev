@@ -135,22 +135,10 @@ public class FsEventHandler {
         InnerAsrResponse innerAsrResponse = CommonUtil.jsonToJavaBean(eventHeaders.get("ASR-Response"), InnerAsrResponse.class);
         //event.setInnerAsrResponse(innerAsrResponse);
         if (innerAsrResponse != null) {
-            event.setAsrText(innerAsrResponse.getResult().getText());
-
-            if (innerAsrResponse.getResult() != null && innerAsrResponse.getResult().getBegin_time() > 0) {
-                event.setAsrStartTime(DateUtil.timeStampToDate(innerAsrResponse.getResult().getBegin_time()));
-            }
-
-            if (innerAsrResponse.getResult() != null && innerAsrResponse.getResult().getEnd_time() > 0) {
-                event.setAsrEndTime(DateUtil.timeStampToDate(innerAsrResponse.getResult().getEnd_time()));
-            }
-
-            if (innerAsrResponse != null && innerAsrResponse.getResult() != null
-                    && innerAsrResponse.getResult().getEnd_time() > 0
-                    && innerAsrResponse.getResult().getBegin_time() >= 0) {
-                Long len = innerAsrResponse.getResult().getEnd_time() - innerAsrResponse.getResult().getBegin_time();
-                event.setAsrDuration(len);
-            }
+            event.setAsrText(innerAsrResponse.getAsrText());
+            event.setAsrStartTime(innerAsrResponse.getBeginTime());
+            event.setAsrEndTime(innerAsrResponse.getEndTime());
+            event.setAsrDuration(innerAsrResponse.getDuration());
         }
 
         String uuid = eventHeaders.get("UUID");

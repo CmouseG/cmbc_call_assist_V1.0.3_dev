@@ -2,6 +2,8 @@ package com.guiji.calloutserver.service;
 
 import com.guiji.calloutserver.entity.Channel;
 
+import java.time.LocalTime;
+
 /**
  * @Auther: 魏驰
  * @Date: 2018/11/7 11:30
@@ -15,7 +17,7 @@ public interface ChannelService {
 
     void updateMediaLock(String channelId, boolean isLock);
 
-    void updateMediaLock(String uuid, boolean afterTimeout, String wavFile);
+    void updateMediaLock(String uuid, Boolean isLock, String wavFile, LocalTime disturbTime);
 
     boolean isMediaLock(String uuid);
 

@@ -1,6 +1,7 @@
 package com.guiji.cloud.zuul.filter;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.springframework.stereotype.Component;
 
 import com.netflix.zuul.ZuulFilter;
@@ -16,11 +17,14 @@ public class UserIdZuulFilter extends ZuulFilter{
 
 	@Override
 	public Object run() {
-		String userId=SecurityUtils.getSubject().getSession().getAttribute("userId").toString();
-		String isSuperAdmin=SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin").toString();
-		RequestContext ctx = RequestContext.getCurrentContext();
-		ctx.addZuulRequestHeader("userId", userId);
-		ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
+		Object obj=SecurityUtils.getSubject().getSession().getAttribute("userId");
+		if(obj!=null){
+			String userId=obj.toString();
+			String isSuperAdmin=SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin").toString();
+			RequestContext ctx = RequestContext.getCurrentContext();
+			ctx.addZuulRequestHeader("userId", userId);
+			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
+		}
 		return null;
 	}
 

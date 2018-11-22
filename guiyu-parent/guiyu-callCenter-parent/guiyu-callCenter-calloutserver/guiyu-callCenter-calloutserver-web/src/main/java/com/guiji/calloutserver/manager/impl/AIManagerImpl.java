@@ -68,7 +68,7 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setAiId(aiCallNext.getAiNo());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-            aiResponse.setWavDuration(fsAgentManager.getWavCaches().getIfPresent(tempId).get(sellbotResponse.getWav_filename().replace("_rec","_en").replace(tempId+"/","")));
+            aiResponse.setWavDuration(fsAgentManager.getWavDruation(tempId, sellbotResponse.getWav_filename()));
             return aiResponse;
         }catch (Exception ex){
             log.warn("sellbot的aiCallStart出现异常", ex);
@@ -134,7 +134,7 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
             aiResponse.setAiResponseType(sellbotResponse.getEnd());
-            aiResponse.setWavDuration(fsAgentManager.getWavCaches().getIfPresent(tempId).get(sellbotResponse.getWav_filename().replace("_rec","_en").replace(tempId+"/","")));
+            aiResponse.setWavDuration(fsAgentManager.getWavDruation(tempId, sellbotResponse.getWav_filename()));
             return aiResponse;
         }catch (Exception ex){
             log.warn("sellbot的aiCallNext出现异常", ex);

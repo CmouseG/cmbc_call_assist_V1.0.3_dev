@@ -29,6 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.Date;
 
 @Service
@@ -174,20 +177,33 @@ public class FsBotHandler {
                 return;
             }
 
+            //如果是系统产生的事件，则跳过isMatch处理，因为需要该事件来触发下一步的说话内容
+            if(!event.isGenerated()){
+                //只有在播放状态，才去调用isMatch接口，如果不是播放状态，则直接调用hello
+                if(channelHelper.isInPlay(event.getUuid())){
+                    //判断是否匹配到关键词
+                    if(!aiManager.isMatch(event.getUuid(), event.getAsrText())){
+                        log.debug("sellbot识别未匹配，识别内容为[{}]，跳过后续的放音处理。", event.getAsrText());
+                        CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
+                        callDetail.setCallDetailType(ECallDetailType.UNMATCH.ordinal());
+                        callDetail.setBotAnswerTime(new Date());//此字段用来排序，不为空
+                        callOutDetailService.save(callDetail);
+                        return;
+                    }
+                }
+            }
+
+            if(!channelHelper.isAllowDisturb(event.getUuid())){
+                log.debug("通道媒体[{}]不符合打断条件，禁止打断", event.getUuid());
+                return;
+            }
+
             //发起ai请求
             long aiStartTime = new Date().getTime();
             AIRequest aiRequest = new AIRequest(event);
+            aiRequest.setCallMatch(false);
             AIResponse aiResponse = aiManager.sendAiRequest(aiRequest);
             long aiEndTime = new Date().getTime();
-
-            if (!aiResponse.isMatched()) {
-                log.info("sellbot识别未匹配，识别内容为[{}]，跳过后续的放音处理。", aiRequest);
-                CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
-                callDetail.setCallDetailType(ECallDetailType.UNMATCH.ordinal());
-                callDetail.setBotAnswerTime(new Date());//此字段用来排序，不为空
-                callOutDetailService.save(callDetail);
-                return;
-            }
 
             CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
             log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
@@ -265,7 +281,17 @@ public class FsBotHandler {
     private CallOutDetail buildCallOutDetail(CallOutPlan callPlan, AsrCustomerEvent event) {
         CallOutDetail callDetail = new CallOutDetail();
         callDetail.setCallId(callPlan.getCallId());
-        callDetail.setCustomerSayTime(new Date());
+
+        Long duration = event.getAsrDuration();
+        if(event.getAsrDuration()== null || event.getAsrDuration()<=0){
+            duration = 1000L;
+        }
+
+        //估算用户说话时间 = 当前时间 - asr识别时长
+        LocalDateTime currentTime = LocalDateTime.now();
+        currentTime = currentTime.minus(duration, ChronoField.MILLI_OF_DAY.getBaseUnit());
+        callDetail.setCustomerSayTime(java.sql.Timestamp.valueOf(currentTime));
+
         callDetail.setCustomerSayText(event.getAsrText());
         callDetail.setAsrDuration(Math.toIntExact(event.getAsrDuration()));
 

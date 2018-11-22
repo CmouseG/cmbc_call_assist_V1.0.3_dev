@@ -1,6 +1,11 @@
 package com.guiji.ai.tts.constants;
 
-public class TtsConstants {
+public class AiConstants {
+	
+	public static final String AI_TRANSFER_ERROR = "0500001"; // 语音合成失败
+	public static final String AI_GET_TTS_ERROR = "0500002"; // 没有获取到TTS
+	public static final String AI_GET_GPU_ERROR = "0500003"; // 没有获取到可用GPU
+	public static final String AI_CHANGE_TTS_ERROR = "0500003"; // 模型切换失败
 	
 	public static final String GUIYUTTS = "GUIYU_TTS_";
 	public static final String AVALIABLE = "_0"; // 可用

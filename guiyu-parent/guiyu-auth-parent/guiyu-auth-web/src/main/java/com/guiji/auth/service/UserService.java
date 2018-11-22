@@ -95,4 +95,8 @@ public class UserService {
 			throw new CheckConditionException("00010006");
 		}
 	}
+	
+	public void updateUserData(SysUser user){
+		mapper.updateByPrimaryKeySelective(user);
+	}
 }

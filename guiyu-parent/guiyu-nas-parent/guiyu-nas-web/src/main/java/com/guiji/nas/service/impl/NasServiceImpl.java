@@ -52,7 +52,7 @@ public class NasServiceImpl implements NasService {
 	 * @return SysFileRspVO
 	 * @throws IOException 
 	 */
-	public SysFileRspVO uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file, Long userId) throws IOException {
+	public SysFileRspVO uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file) throws IOException {
 		if(file != null) {
 			//1、先上传FS，然后再本地进行保存
 			//2、保存文件信息到本地表
@@ -78,9 +78,9 @@ public class NasServiceImpl implements NasService {
 			skFile.setSkUrl(url); //文件URL
 			skFile.setSkThumbImageUrl(thumbUrl); //缩略图url
 			//String loginId = "1";	//当前登录ID WebContextUtil.getLoginId() TODO
-			skFile.setCrtUser(String.valueOf(userId)); //创建人
+			skFile.setCrtUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null); //创建人
 			skFile.setCrtTime(new Date());	//创建时间
-			skFile.setLstUpdateUser(String.valueOf(userId));	//最后更新人
+			skFile.setLstUpdateUser(String.valueOf(sysFileReqVO.getUserId()));	//最后更新人
 			skFile.setLstUpdateTime(new Date()); //最后创建时间
 			skFile.setId(IdGenUtil.uuid());
 			sysFileMapper.insert(skFile);

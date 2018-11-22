@@ -3,6 +3,7 @@ package com.guiji.ccmanager.controller;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallDetailService;
+import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
@@ -58,8 +59,8 @@ public class CallDetailController {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan>> getCallRecord(String startDate, String endDate,String pageSize, String pageNo,String phoneNum,String durationMin,
-                                                              String durationMax,String accurateIntent, String freason,String callId, String tempId , @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
+    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
+                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId , @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
 
         log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
                         "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}]",
@@ -81,10 +82,10 @@ public class CallDetailController {
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
 
-        List<CallOutPlan> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
         int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
 
-        Page<CallOutPlan> page = new Page<CallOutPlan>();
+        Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);
         page.setPageSize(pageSizeInt);
         page.setTotal(count);
@@ -157,6 +158,20 @@ public class CallDetailController {
                 log.error("out.close error:"+e);
             }
         }
+    }
+
+
+    @ApiOperation(value = "获取整段通话录音url")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value="getRecordFileUrl")
+    public Result.ReturnData<String> getRecordFileUrl(String callId){
+        if(StringUtils.isBlank(callId)){
+            return Result.error(Constant.ERROR_PARAM);
+        }
+       String url = callDetailService.getRecordFileUrl(callId);
+        return Result.ok(url);
     }
 
 }

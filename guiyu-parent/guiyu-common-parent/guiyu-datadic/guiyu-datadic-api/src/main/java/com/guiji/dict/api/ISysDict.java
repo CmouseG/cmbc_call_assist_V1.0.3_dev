@@ -18,7 +18,7 @@ import java.util.List;
  * Created by ty on 2018/10/29.
  */
 @Api(tags="数据字典接口(Feign接口)")
-@FeignClient("datadic")
+@FeignClient("guiyu-datadic")
 public interface ISysDict {
     @ApiOperation(value="查询字典", notes="根据字典类型")
     @ApiImplicitParams({

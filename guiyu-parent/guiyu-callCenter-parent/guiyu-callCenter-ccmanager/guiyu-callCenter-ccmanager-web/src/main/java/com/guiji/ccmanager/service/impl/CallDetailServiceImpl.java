@@ -1,27 +1,32 @@
 package com.guiji.ccmanager.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.CallOutDetailMapper;
 import com.guiji.callcenter.dao.CallOutDetailRecordMapper;
 import com.guiji.callcenter.dao.CallOutPlanMapper;
+import com.guiji.callcenter.dao.CallOutRecordMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
+import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
+import com.guiji.ccmanager.vo.LineInfo4Select;
+import com.guiji.component.result.Result;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Auther: 黎阳
  * @Date: 2018/10/29 0029 17:32
  * @Description:
  */
+@Slf4j
 @Service
 public class CallDetailServiceImpl implements CallDetailService {
 
@@ -33,6 +38,12 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Autowired
     private CallOutDetailRecordMapper callOutDetailRecordMapper;
+
+    @Autowired
+    CallOutRecordMapper callOutRecordMapper;
+
+    @Autowired
+    IAuth auth;
 
     public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId, String phoneNum,String durationMin, String durationMax,
                                          String accurateIntent, String freason,String callId, String tempId){
@@ -86,8 +97,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo,String phoneNum,String durationMin, String durationMax,
-                                        String accurateIntent, String freason,String callId, String tempId ){
+    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
+                                                   String accurateIntent, String freason, String callId, String tempId ){
 
 
         CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum,  durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
@@ -96,7 +107,39 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.setLimitEnd(pageSize);
 
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
-        return list;
+
+        List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        if(list!=null && list.size()>0){
+            for(CallOutPlan callOutPlan:list){
+                CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
+                BeanUtil.copyProperties(callOutPlan,callOutPlan4ListSelect);
+
+                String userId = callOutPlan.getCustomerId();
+                if(map.get(userId)==null){
+                    try {
+                        Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                        if(result!=null && result.getBody()!=null) {
+                            String userName = result.getBody().getUsername();
+                            if (userName != null) {
+                                map.put(userId, userName);
+                                callOutPlan4ListSelect.setUserName(userName);
+                            }
+                        }
+                    }catch (Exception e){
+                        log.error(" auth.getUserById error :"+ e);
+                    }
+
+                }else{
+                    callOutPlan4ListSelect.setUserName(map.get(userId));
+                }
+                listResult.add(callOutPlan4ListSelect);
+            }
+        }
+
+        return listResult;
     }
 
     @Override
@@ -165,4 +208,12 @@ public class CallDetailServiceImpl implements CallDetailService {
         return  result;
     }
 
+    @Override
+    public String getRecordFileUrl(String callId) {
+        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(callId);
+        if(callOutRecord!=null){
+            return callOutRecord.getRecordFile();
+        }
+        return null;
+    }
 }

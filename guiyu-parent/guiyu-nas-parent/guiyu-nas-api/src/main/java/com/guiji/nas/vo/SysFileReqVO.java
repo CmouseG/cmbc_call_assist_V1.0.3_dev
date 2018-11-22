@@ -21,6 +21,9 @@ public class SysFileReqVO implements Serializable {
     private String busiType;
     @ApiModelProperty(value="是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图")
     private String thumbImageFlag;
+    @ApiModelProperty(value="用户ID")
+    private Long userId;
+    
     /**
      * @return the sysCode
      */
@@ -71,12 +74,24 @@ public class SysFileReqVO implements Serializable {
     public void setBusiType(String busiType) {
         this.busiType = busiType;
     }
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "SysFileReqVO [sysCode=" + sysCode + ", busiId=" + busiId + ", busiType=" + busiType
-                + ", thumbImageFlag=" + thumbImageFlag + "]";
-    }
+    /**
+	 * @return the userId
+	 */
+	public Long getUserId() {
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SysFileReqVO [sysCode=" + sysCode + ", busiId=" + busiId + ", busiType=" + busiType
+				+ ", thumbImageFlag=" + thumbImageFlag + ", userId=" + userId + "]";
+	}
 }

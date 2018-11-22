@@ -47,10 +47,10 @@ public class NasController implements INas {
 	 */
 	@Override
 	@PostMapping(value = "upload")
-	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, @RequestParam(value = "file", required = true) MultipartFile file, @RequestHeader Long userId) {
+	public ReturnData<SysFileRspVO> uploadFile(SysFileReqVO sysFileReqVO, @RequestParam(value = "file", required = true) MultipartFile file) {
 		logger.info("文件开始上传!", file.getName());
 		try {
-			SysFileRspVO sysFileRspVO = nasService.uploadFile(sysFileReqVO, file,userId);
+			SysFileRspVO sysFileRspVO = nasService.uploadFile(sysFileReqVO, file);
 			if (StrUtils.isNotEmpty(sysFileRspVO.getSkUrl())) {
 				//返回的URL加上访问主机地址
 				sysFileRspVO.setSkUrl(hostUrl + sysFileRspVO.getSkUrl());
@@ -82,7 +82,7 @@ public class NasController implements INas {
      */
 	@Override
 	@PostMapping(value = "query")
-	public ReturnData<List<SysFileRspVO>> querySkFileInfo(SysFileQueryReqVO sysFileQueryReqVO) {
+	public ReturnData<List<SysFileRspVO>> querySkFileInfo(@RequestBody SysFileQueryReqVO sysFileQueryReqVO) {
 		logger.info("开始查询!");
 		List<SysFile> fileList = null;
 		try{

@@ -6,7 +6,7 @@ import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import java.util.List;
 
 public interface LineService {
-     Boolean addLineinfos(LineInfoVO lineInfo);
+     boolean addLineinfos(LineInfoVO lineInfo);
 
      void deleteLineinfos(String lineId);
 

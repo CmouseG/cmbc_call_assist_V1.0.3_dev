@@ -1,6 +1,7 @@
 package com.guiji.process.agent.core;
 
 import com.guiji.process.agent.handler.ClientPoHandlerProto;
+import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.core.message.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -67,6 +68,8 @@ public class ImConnection {
 			ChannelFuture f = b.connect(host, port);
 			f.addListener(new ConnectionListener());
 			channel = f.channel();
+
+			ImClientProtocolBO.channelGlobal = channel;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -13,8 +13,10 @@ import lombok.Data;
 @Data
 @ApiModel(value="CheckResult对象",description="参数校验请求")
 public class CheckResult {
+	@ApiModelProperty(value="会话ID，该电话整个会话过程中唯一编号",required=true)
+	private String seqid;
 	@ApiModelProperty(value="是否校验通过,true:通过，false：校验失败",required=true)
 	private boolean isPass;
 	@ApiModelProperty(value="校验结果描述，一般校验失败会返回描述")
-	private boolean checkMsg;
+	private String checkMsg;
 }

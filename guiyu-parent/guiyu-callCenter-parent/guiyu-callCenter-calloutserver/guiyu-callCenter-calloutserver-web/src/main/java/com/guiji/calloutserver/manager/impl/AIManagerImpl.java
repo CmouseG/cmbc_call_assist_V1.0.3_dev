@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.entity.*;
 import com.guiji.calloutserver.manager.AIManager;
+import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.util.CommonUtil;
 import com.guiji.component.result.Result;
@@ -30,6 +31,9 @@ public class AIManagerImpl implements AIManager {
     @Autowired
     IRobotRemote robotRemote;
 
+    @Autowired
+    FsAgentManager fsAgentManager;
+
     /**
      *  申请新的ai资源
      */
@@ -38,7 +42,8 @@ public class AIManagerImpl implements AIManager {
         try {
             AiCallStartReq aiCallStartReq = new  AiCallStartReq();
             aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
-            aiCallStartReq.setTemplateId(aiRequest.getTempId());
+            String tempId = aiRequest.getTempId();
+            aiCallStartReq.setTemplateId(tempId);
 //            aiCallStartReq.setTemplateId("fpjkqzjhwsm");//test
             aiCallStartReq.setSeqid(aiRequest.getUuid());
             aiCallStartReq.setUserId(aiRequest.getUserId());
@@ -63,6 +68,7 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setAiId(aiCallNext.getAiNo());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
+            aiResponse.setWavDuration(fsAgentManager.getWavCaches().getIfPresent(tempId).get(sellbotResponse.getWav_filename().replace("_rec","_en").replace(tempId+"/","")));
             return aiResponse;
         }catch (Exception ex){
             log.warn("sellbot的aiCallStart出现异常", ex);
@@ -89,7 +95,7 @@ public class AIManagerImpl implements AIManager {
                     aiResponse = new AIResponse();
                     aiResponse.setResult(true);
                     aiResponse.setMatched(false);
-                    aiResponse.setResponseTxt(sellbotIsMatchResponse.getAnswer());
+                    aiResponse.setResponseTxt(sellbotIsMatchResponse.getSentence());
                     return aiResponse;
                 }
             }
@@ -101,14 +107,20 @@ public class AIManagerImpl implements AIManager {
             aiCallNextReq.setAiNo(callPlan.getAiId());
             aiCallNextReq.setSentence(aiRequest.getSentence());
             aiCallNextReq.setSeqid(aiRequest.getUuid());
+            String tempId = callPlan.getTempId();
             aiCallNextReq.setTemplateId(callPlan.getTempId());
-//            aiCallNextReq.setTemplateId("fpjkqzjhwsm");//test
             aiCallNextReq.setUserId(callPlan.getCustomerId());
             Result.ReturnData<AiCallNext> result =  robotRemote.aiCallNext(aiCallNextReq);
             AiCallNext aiCallNext= result.getBody();
             String resp = aiCallNext.getSellbotJson();
 
             log.info("robotRemote.aiCallNext getSellbotJson[{}]", resp);
+//[{"state": "结束_未匹配", "answer": "好的，要么您先忙，我们后面再联系，再见！", "wav_filename": "xtw_rec/48.wav", "sentence": "", "end": 1,
+//                    "log_file": "/home/log_sellbot/logic/20181122_15000/z4266vafb9a34f62b992d3a1ec00cxxx.log", "intent": "B", "accurate_intent": "B",
+//                    "reason": "有效对话轮数:3", "user_attentions": "[('未匹配响应', 2), ('结束_未匹配', 2), ('开场白', 1), ('拒绝', 1)]", "UserInfo": "",
+//                    "used_time_ms": 3.1519999999999997, "match_nothing": 1, "dtmfflag": "false", "dtmflen": "1", "dtmftimeout": "10", "dtmfend": "", "dtmfresult": "-1"}]
+
+
             SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
             Preconditions.checkState(sellbotResponse!=null && sellbotResponse.isValid(), "invalid applyAi response");
 
@@ -121,7 +133,8 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setReason(sellbotResponse.getReason());
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-
+            aiResponse.setAiResponseType(sellbotResponse.getEnd());
+            aiResponse.setWavDuration(fsAgentManager.getWavCaches().getIfPresent(tempId).get(sellbotResponse.getWav_filename().replace("_rec","_en").replace(tempId+"/","")));
             return aiResponse;
         }catch (Exception ex){
             log.warn("sellbot的aiCallNext出现异常", ex);
@@ -134,10 +147,6 @@ public class AIManagerImpl implements AIManager {
     /**
      * 判断是否需要打断
      * @return
-     * getSellbotJson：[{"state": "结束", "answer": "不好意思，可能信号太差了，我这边没有声音，下次再联系吧，拜拜！", "wav_filename": "xtw_rec/146.wav",
-     * "sentence": "", "end": 1, "log_file": "/home/log_sellbot/logic/20181121_15000/1e3d9806da3345b581781ee68e29hz06.log", "intent": "C", "accurate_intent": "C",
-     * "reason": "没有进行有效对话", "user_attentions": "[('开场白', 1)]", "UserInfo": "", "used_time_ms": 1.14, "match_nothing": 0,
-     * "dtmfflag": "false", "dtmflen": "1", "dtmftimeout": "10", "dtmfend": "", "dtmfresult": "-1"}]
      */
 
     private SellbotIsMatchResponse sendIsMatchRequest(String channelId, String sentence) throws Exception {
@@ -149,7 +158,7 @@ public class AIManagerImpl implements AIManager {
             Result.ReturnData<AiCallNext> result = robotRemote.aiLngKeyMatch(aiCallLngKeyMatchReq);
 
             String resp =result.getBody().getSellbotJson();
-            log.info(" robotRemote sendIsMatchRequest getSellbotJson：[{}]", resp);
+            log.info(" robotRemote sendIsMatchRequest getSellbotJson：[{}]", resp); // {"match_keywords":["",""],"matched":0,"sentence":"嗯可以"}
             SellbotIsMatchResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotIsMatchResponse.class);
             log.info("获取到的sellbot结果为[{}]", sellbotResponse);
             return sellbotResponse;

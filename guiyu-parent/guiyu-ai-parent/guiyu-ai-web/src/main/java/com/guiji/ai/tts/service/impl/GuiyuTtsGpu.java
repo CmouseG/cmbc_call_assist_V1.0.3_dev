@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -22,63 +23,60 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.ai.dao.entity.TtsResult;
+import com.guiji.ai.tts.constants.TtsConstants;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.nas.api.INas;
 import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.nas.vo.SysFileRspVO;
+import com.guiji.utils.RedisUtil;
 
 /**
  * Created by ty on 2018/11/14.
  */
 public class GuiyuTtsGpu extends ITtsServiceProvide {
 
-private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
-	
+	private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
+
+	RedisUtil redisUtil = new RedisUtil();
+
 	@Autowired
 	INas Inas;
-	
 	private String ip;
 	private String port;
 
-    public GuiyuTtsGpu(String ip, String port) {
-    	this.ip = ip;
-    	this.port = port;
-	}
-
 	@Override
-    File transferByChild(String text) {
+	File transferByChild(String model, String text) {
 		CloseableHttpResponse response = null;
 		CloseableHttpClient httpClient = null;
 		FileOutputStream out = null;
 		File file = null;
 		try {
-			file = new File("*********"); //文件保存路径
-			if(!file.exists()){
+			file = new File("/home/apps/ai/tts/wav/"); // 文件保存路径
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			out = new FileOutputStream(file);
-			httpClient = HttpClients.createDefault(); 
-			HttpPost httpPost = new HttpPost("http://"+ip+":"+port);
-			//配置超时时间
-			RequestConfig config = RequestConfig.custom()
-					.setConnectTimeout(5000)
-					.setSocketTimeout(3000)
-					.build();
+			httpClient = HttpClients.createDefault();
+			HttpPost httpPost = new HttpPost("http://" + ip + ":" + port);
+			// 配置超时时间
+			RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(3000).build();
 			httpPost.setConfig(config);
-			
-			//添加请求参数
-			JSONObject param= new JSONObject();
-		    param.put("text", text); 
-		    StringEntity entity = new StringEntity(param.toString(), "UTF-8");
-		    entity.setContentType("application/json");
-		    httpPost.setEntity(entity);
-		    
-		    logger.info("请求GPU...");
-		    response = httpClient.execute(httpPost); //发送http请求
+
+			// 添加请求参数
+			JSONObject param = new JSONObject();
+			param.put("text", text);
+			StringEntity entity = new StringEntity(param.toString(), "UTF-8");
+			entity.setContentType("application/json");
+			httpPost.setEntity(entity);
+
+			logger.info("请求GPU...");
+			response = httpClient.execute(httpPost); // 发送http请求
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				HttpEntity responseEntity = response.getEntity();
-				responseEntity.writeTo(out); //写到输出流中
+				responseEntity.writeTo(out); // 写到输出流中
 			}
+			// 释放GPU
+			releaseGpu(model, ip, port);
 		} catch (Exception e) {
 			logger.error("请求失败！" + e);
 			return null;
@@ -88,40 +86,57 @@ private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
 			IOUtils.closeQuietly(response);
 		}
 		return file;
-    }
+	}
+
+	// 释放GPU
+	private void releaseGpu(String model, String ip, String port) {
+		//从不可用list中移除
+		List<GuiyuTtsGpu> unavaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(TtsConstants.GUIYUTTS + model + TtsConstants.UNAVALIABLE);
+		int i = 0;
+		for(GuiyuTtsGpu gpu : unavaliableGpuList){
+			if(ip.equals(gpu.getIp()) && port.equals(gpu.getPort())){
+				i = unavaliableGpuList.indexOf(gpu);
+			}
+		}
+		unavaliableGpuList.remove(i);
+		redisUtil.lSet(TtsConstants.GUIYUTTS + model + TtsConstants.UNAVALIABLE, unavaliableGpuList);
+		//添加到可用list中
+		List<GuiyuTtsGpu> avaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(TtsConstants.GUIYUTTS + model + TtsConstants.AVALIABLE);
+		GuiyuTtsGpu gpu = new GuiyuTtsGpu(ip, port);
+		avaliableGpuList.add(gpu);
+		redisUtil.lSet(TtsConstants.GUIYUTTS + model + TtsConstants.AVALIABLE, avaliableGpuList);
+	}
 
 	/**
 	 * 上传文件服务器
 	 */
 	@Override
 	String uploadToServer(String busiId, File file) {
-		
+
 		String audioUrl = null;
 		ReturnData<SysFileRspVO> returnData = null;
-		SysFileRspVO sysFileRspVO = null;
 		FileInputStream fileInputStream = null;
 		try {
 			SysFileReqVO sysFileReqVO = null;
 			sysFileReqVO = new SysFileReqVO();
 			sysFileReqVO.setBusiId(busiId);
-			sysFileReqVO.setBusiType("上传的影像文件业务类型"); //TODO 上传的影像文件业务类型
-			sysFileReqVO.setSysCode("文件上传系统码"); //TODO 文件上传系统码
-			sysFileReqVO.setThumbImageFlag("0"); //是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
-			
+			sysFileReqVO.setBusiType(TtsConstants.BUSITYPE); //上传的影像文件业务类型
+			sysFileReqVO.setSysCode(TtsConstants.SYSCODE); //文件上传系统码
+			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
+
 			fileInputStream = new FileInputStream(file);
-			MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(), 
+			MockMultipartFile mockMultipartFile = new MockMultipartFile(file.getName(), file.getName(),
 					ContentType.APPLICATION_SVG_XML.toString(), fileInputStream);
-			
+
 			Long userId = 1L;
-			logger.info("上传文件服务器");
+			logger.info(file.getName() + "上传文件服务器");
 			returnData = Inas.uploadFile(sysFileReqVO, mockMultipartFile, userId);
-			if(returnData != null){
-				sysFileRspVO = returnData.getBody();
-				if(sysFileRspVO != null)
-				audioUrl = sysFileRspVO.getSkUrl();
+			if (returnData != null && returnData.getBody() != null) {
+				audioUrl = returnData.getBody().getSkUrl();
 			}
+			file.delete(); //删除本地文件
 		} catch (Exception e) {
-			logger.error("上传失败！" + e);
+			logger.error(file.getName() + "上传失败！", e);
 			return null;
 		} finally {
 			IOUtils.closeQuietly(fileInputStream);
@@ -137,11 +152,35 @@ private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
 		TtsResult ttsResult = new TtsResult();
 		ttsResult.setAudioUrl(audioUrl);
 		ttsResult.setBusId(busiId);
-		ttsResult.setContent(text);
+		ttsResult.setContent(text); //待转换文本内容
 		ttsResult.setCreateTime(new Date());
-		ttsResult.setDelFlag("0");
+		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除
 		ttsResult.setModel(model);
-		logger.info("添加数据到队列");
 		TtsTransferAfterImpl.getInstance().add(ttsResult);
+	}
+
+	public GuiyuTtsGpu(String ip, String port) {
+		this.ip = ip;
+		this.port = port;
+	}
+
+	public GuiyuTtsGpu() {
+		super();
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 }

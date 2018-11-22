@@ -28,7 +28,15 @@ eureka:
 properties:
   error: error.properties
 
-fsbot.homeDir: /Users/toolwiz.com/freeswitch/fsbot
+fsbot:
+  homeDir: /Users/toolwiz.com/freeswitch/fsbot
+  recordingsDir: ${fsbot.homeDir}/recordings/
+  machineCode: SHANGHAI-000001
+  allowDisturbed: true
+  maxMediaTimeout: 8
+  workStartTime: 08:30
+  workEndTime: 21:00
+  callMaxCountPerDay: 3
 aliasr:
   accessId: LTAInHHRM9fM0PHK
   accessSecret: tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA  aleg

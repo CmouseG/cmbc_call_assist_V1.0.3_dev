@@ -188,5 +188,5 @@ public interface IDispatchPlanService {
 	 * 查询批次
 	 * @return
 	 */
-	List<DispatchPlanBatch> queryDispatchPlanBatch();
+	List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin);
 }

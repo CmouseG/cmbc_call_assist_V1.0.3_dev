@@ -1,5 +1,7 @@
 server:
   port: 18000
+  tomcat:
+    uri-encoding: UTF-8
 spring:
   application:
     name: guiyu-cloud-zuul
@@ -7,6 +9,10 @@ spring:
       base-url: http://guiyu-cloud-monitor:18003
       enabled: true
   http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
     multipart:
       enabled: true   # 启用http上传处理
       max-file-size: 100MB # 设置单个文件的最大长度

@@ -1,21 +1,26 @@
 package com.guiji.fsagent.service.impl;
 
 import com.guiji.component.result.Result;
+import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.PathConfig;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsagent.service.TemplateService;
 import com.guiji.fsagent.util.FileUtil;
-import com.guiji.nas.api.INas;
+//import com.guiji.nas.api.INas;
 import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.nas.vo.SysFileRspVO;
-import com.guiji.robot.api.IRobotRemote;
+//import com.guiji.robot.api.IRobotRemote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TemplateServiceImpl implements TemplateService {
@@ -25,30 +30,32 @@ public class TemplateServiceImpl implements TemplateService {
     PathConfig pathConfig;
 //    @Autowired
 //    INas iNasFeign;
-//    @Autowired
+
+    //    @Autowired
 //    IRobotRemote iRobotFeign;
     @Override
     public Boolean istempexist(String tempId) {
-       String tempPath =  pathConfig.getTempPath()+tempId;
+        String tempPath = pathConfig.getTempPath() + tempId;
         return FileUtil.isExist(tempPath);
     }
 
     @Override
     public Boolean downloadbotwav(String tempId) {
-      String tempRecordPath = pathConfig.getTempRecordPath()+tempId;
+        String tempRecordPath = pathConfig.getTempRecordPath() + tempId;
         //判断模板录音是否已存在，存在则返回
-        if(FileUtil.isExist(tempRecordPath)){
+        if (FileUtil.isExist(tempRecordPath)) {
             return true;
-        };
+        }
+        ;
         //下载模板录音
-       // iRobotFeign.getVoiceResource();
+        // iRobotFeign.getVoiceResource();
         return true;
     }
 
     @Override
     public Result.ReturnData<Boolean> downloadttswav(String tempId, String callId) {
         //下载tts录音
-       // iRobotFeign.();
+        // iRobotFeign.();
         return null;
     }
 
@@ -64,17 +71,38 @@ public class TemplateServiceImpl implements TemplateService {
         FileUtil util = new FileUtil();
 //        Result.ReturnData<SysFileRspVO> result = null;
 //        try {
-//            result = iNasFeign.uploadFile(sysFileReqVO,util.toMultipartFile(pathConfig.getTempRecordPath()+record.getFileName()),1L);
+//            result = iNasFeign.uploadFile(sysFileReqVO, util.toMultipartFile(pathConfig.getTempRecordPath() + record.getFileName()), 1L);
 //        } catch (IOException e) {
-//            logger.info("上传录音失败，file转MultipartFile出错",e);
+//            logger.info("上传录音失败，file转MultipartFile出错", e);
 //            return Result.error("");
 //        }
 //
 //        SysFileRspVO sysFileRspVO = result.getBody();
-//        if( sysFileRspVO==null){
+//        if (sysFileRspVO == null) {
 //        }
 //        record.setFileUrl(sysFileRspVO.getSkUrl());
         record.setFileUrl("http://198.12.23.12:8080");
-       return  Result.ok(record);
+        return Result.ok(record);
     }
+
+    @Override
+    public Result.ReturnData<List<WavLengthVO>> getwavlength(String tempId) {
+        String tempPath = pathConfig.getTempPath() + tempId;
+        List<WavLengthVO> list = new ArrayList<WavLengthVO>();
+        File tempFile = new File(tempPath);
+        if(!tempFile.exists()){
+            return Result.error(Constant.ERROR_CODE_NO_TEMP);
+        }
+        File[] fs = tempFile.listFiles();
+        for (File f : fs) {
+            WavLengthVO wavLengthVO =new WavLengthVO();
+            String filename = f.getName();
+            wavLengthVO.setFileName(filename);
+            wavLengthVO.setLength(FileUtil.getWavDuration(tempPath+"/"+filename));
+            list.add(wavLengthVO);
+        }
+        return Result.ok(list);
+    }
+
 }
+

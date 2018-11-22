@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 /**
  * Created by ty on 2018/11/19.
@@ -102,6 +103,50 @@ public class ProcessUtil {
         }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
-        ImClientProtocolBO.getIntance().send(msg,1);
+
+        // TODO
+        Random r = new Random();
+        int rr = r.nextInt(1000);
+        if(rr % 2 == 0)
+        {
+            processInstanceVO.setStatus(DeviceStatusEnum.UP);
+        }
+        else
+        {
+            processInstanceVO.setStatus(DeviceStatusEnum.DOWN);
+        }
+        ImClientProtocolBO.getIntance().send(msg,3);
+    }
+
+
+    public static void sendRegister(int port) throws UnknownHostException {
+        CmdMessageVO cmdMessageVO = new CmdMessageVO();
+        cmdMessageVO.setCmdType(CmdTypeEnum.REGISTER);
+        ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
+        processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
+        processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
+        processInstanceVO.setPort(port);
+        boolean isUp = ProcessUtil.checkRun(port);
+        if (isUp) {
+            processInstanceVO.setStatus(DeviceStatusEnum.UP);
+        } else {
+            processInstanceVO.setStatus(DeviceStatusEnum.DOWN);
+        }
+        cmdMessageVO.setProcessInstanceVO(processInstanceVO);
+        String msg = JsonUtils.bean2Json(cmdMessageVO);
+        ImClientProtocolBO.getIntance().send(msg,3);
+    }
+
+    public static void sendUnRegister(int port) throws UnknownHostException {
+        CmdMessageVO cmdMessageVO = new CmdMessageVO();
+        cmdMessageVO.setCmdType(CmdTypeEnum.UNREGISTER);
+        ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
+        processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
+        processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
+        processInstanceVO.setPort(port);
+        processInstanceVO.setStatus(DeviceStatusEnum.UNREGISTER);
+        cmdMessageVO.setProcessInstanceVO(processInstanceVO);
+        String msg = JsonUtils.bean2Json(cmdMessageVO);
+        ImClientProtocolBO.getIntance().send(msg,3);
     }
 }

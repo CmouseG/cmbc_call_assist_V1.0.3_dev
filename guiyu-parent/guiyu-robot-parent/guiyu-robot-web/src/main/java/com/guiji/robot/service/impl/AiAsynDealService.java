@@ -2,6 +2,8 @@ package com.guiji.robot.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import com.guiji.robot.service.IAiCycleHisService;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.DateUtil;
 
 /** 
 * @ClassName: AiAsynDealService 
@@ -22,6 +25,7 @@ import com.guiji.utils.BeanUtil;
 */
 @Service
 public class AiAsynDealService {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	IAiCycleHisService iAiCycleHisService;
 	
@@ -46,9 +50,35 @@ public class AiAsynDealService {
 			for(AiInuseCache ai : list) {
 				AiCycleHis aiCycleHis = new AiCycleHis();
 				BeanUtil.copyProperties(ai, aiCycleHis);
-				
+				aiCycleHis.setAssignDate(ai.getInitDate());
+				aiCycleHis.setAssignTime(ai.getInitTime());
 				iAiCycleHisService.saveOrUpdate(aiCycleHis);
 			}
 		}
 	}
+	
+	
+	/**
+	 * 释放机器人日志
+	 * @param list
+	 */
+	@Transactional
+	@Async
+	public void releaseAiCycleHis(List<AiInuseCache> list) {
+		if(ListUtil.isNotEmpty(list)) {
+			for(AiInuseCache ai : list) {
+				//先查找分配历史
+				List<AiCycleHis> assignList = iAiCycleHisService.queryByUserIdAndAiNo(ai.getUserId(), ai.getAiNo());
+				if(ListUtil.isNotEmpty(assignList)) {
+					AiCycleHis his = assignList.get(0);
+					his.setCallNum(Long.valueOf(ai.getCallNum()));	//总拨打电话数
+					his.setTaskbackDate(DateUtil.getCurrentymd());	//回收日期
+					his.setTaskbackTime(DateUtil.getCurrentTime());	//回收时间
+					iAiCycleHisService.saveOrUpdate(his);
+				}
+			}
+		}
+	}
+	
+	
 }

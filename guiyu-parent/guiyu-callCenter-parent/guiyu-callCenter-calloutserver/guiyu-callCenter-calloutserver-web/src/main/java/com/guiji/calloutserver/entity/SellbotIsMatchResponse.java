@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class SellbotIsMatchResponse {
     private int matched;
-    private String answer;
+    private String sentence;
 
     public boolean isMatched(){
         return matched == 1;

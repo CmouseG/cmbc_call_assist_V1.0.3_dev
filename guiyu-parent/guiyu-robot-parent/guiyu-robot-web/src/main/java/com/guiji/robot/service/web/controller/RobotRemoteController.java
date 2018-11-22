@@ -15,10 +15,10 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckAiReady;
-import com.guiji.robot.model.CheckParams;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
+import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
 
 /** 
@@ -41,8 +41,8 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param checkParams
 	 * @return
 	 */
-	public Result.ReturnData<List<CheckResult>> checkParams(@RequestBody CheckParams checkParams){
-		List<CheckResult> checkResultList = iAiAbilityCenterService.checkParams(checkParams);
+	public Result.ReturnData<List<CheckResult>> checkParams(@RequestBody List<HsParam> checkers){
+		List<CheckResult> checkResultList = iAiAbilityCenterService.checkParams(checkers);
 		return Result.ok(checkResultList);
 	}
 	
@@ -54,8 +54,8 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param ttsVoice
 	 * @return
 	 */
-	public Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoice ttsVoice){
-		List<TtsVoice> list = iAiAbilityCenterService.ttsCompose(ttsVoice);
+	public Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoiceReq){
+		List<TtsVoice> list = iAiAbilityCenterService.fetchTtsUrls(ttsVoiceReq);
 		return Result.ok(list);
 	}
 	

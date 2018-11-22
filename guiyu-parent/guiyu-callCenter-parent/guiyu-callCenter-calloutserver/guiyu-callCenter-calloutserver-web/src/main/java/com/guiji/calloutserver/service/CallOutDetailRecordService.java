@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface CallOutDetailRecordService {
     void save(CallOutDetailRecord callOutDetailRecord);
+    void update(CallOutDetailRecord callOutDetailRecord);
     void add(String callId, String callDetailId, String customerWavFile, String botWavFile);
     List<CallOutDetailRecord> findByCallId(String callId);
 }

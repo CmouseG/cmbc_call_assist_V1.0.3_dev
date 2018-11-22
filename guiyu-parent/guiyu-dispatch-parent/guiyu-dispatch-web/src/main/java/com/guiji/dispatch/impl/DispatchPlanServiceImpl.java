@@ -190,7 +190,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
-		logger.info("userId:" + userId);
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
@@ -255,6 +254,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 			dispatchPlan.setIsDel(Constant.IS_DEL_0);
+			dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 			dispatchPlanMapper.insert(dispatchPlan);
 
 			String[] hours = dispatchPlan.getCallHour().split(",");
@@ -313,7 +313,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 			}
 			int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
-			logger.info("回调完成通知修改结果"+result);
+			logger.info("回调完成通知修改结果" + result);
 		}
 
 		return false;
@@ -352,8 +352,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, Integer batchId, String replayType, int pagenum, int pagesize,Long userId,boolean isSuperAdmin ) {
-		logger.info("queryDispatchPlanByParams isSuperAdmin:"+isSuperAdmin );
+			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
+			boolean isSuperAdmin) {
+		logger.info("queryDispatchPlanByParams isSuperAdmin:" + isSuperAdmin);
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -405,7 +406,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 
-		if(!isSuperAdmin){
+		if (!isSuperAdmin) {
 			createCriteria.andUserIdEqualTo(userId.intValue());
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
@@ -580,7 +581,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			example.createCriteria().andUserIdEqualTo(userId.intValue());
 			dispatchPlanMapper.updateByExampleSelective(dis, example);
 		}
-
 		return result > 0 ? true : false;
 	}
 
@@ -601,7 +601,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlanBatch> queryDispatchPlanBatch() {
-		return dispatchPlanBatchMapper.selectByExample(new DispatchPlanBatchExample());
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin) {
+		DispatchPlanBatchExample example = new DispatchPlanBatchExample();
+		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
+		if (!isSuperAdmin) {
+			createCriteria.andUserIdEqualTo(userId.intValue());
+		}
+		return dispatchPlanBatchMapper.selectByExample(example);
 	}
 }

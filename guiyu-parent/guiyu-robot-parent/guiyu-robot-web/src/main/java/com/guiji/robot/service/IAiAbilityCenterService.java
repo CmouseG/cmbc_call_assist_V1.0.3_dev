@@ -7,10 +7,10 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
-import com.guiji.robot.model.CheckAiReady;
-import com.guiji.robot.model.CheckParams;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
+import com.guiji.robot.model.TtsVoiceReq;
 
 /** 
 * @ClassName: IAiAbilityCenterService 
@@ -26,7 +26,7 @@ public interface IAiAbilityCenterService {
 	 * @param checkParams
 	 * @return
 	 */
-	List<CheckResult> checkParams(CheckParams checkParams);
+	List<CheckResult> checkParams(List<HsParam> checkers);
 	
 	
 	/**
@@ -34,7 +34,7 @@ public interface IAiAbilityCenterService {
 	 * @param ttsVoice
 	 * @return
 	 */
-	List<TtsVoice> ttsCompose(TtsVoice ttsVoice);
+	List<TtsVoice> fetchTtsUrls(TtsVoiceReq ttsVoiceReq);
 	
 	
 	/**

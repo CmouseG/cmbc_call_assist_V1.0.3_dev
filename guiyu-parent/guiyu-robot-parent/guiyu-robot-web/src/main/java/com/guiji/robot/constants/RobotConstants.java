@@ -14,20 +14,32 @@ public class RobotConstants {
 	
 	//用户机器人账户状态
 	public static final String USER_CFG_STATUS_S = "S"; //S-正常
-	public static final String USER_CFG_STATUS_V = "V"; //V-正常
+	public static final String USER_CFG_STATUS_V = "V"; //V-失效
 	
 	//机器人状态
 	public static final String AI_STATUS_F = "F"; //F-空闲
 	public static final String AI_STATUS_B = "B"; //B-忙
 	public static final String AI_STATUS_P = "P"; //P-暂停分配
 	
+	//TTS历史数据状态
+	public static final String TTS_STATUS_P = "P"; //P-合成中
+	public static final String TTS_STATUS_S = "S"; //S-完成
+	public static final String TTS_STATUS_F = "F"; //F-失败
+	
+	public static final String RSP_CODE_SUCCESS = "0";	//外部请求返回的成功状态码
+	
 	/**
 	 * 分配的机器人缓存
 	 */
-	public static final String ROBOT_ASSIGN_AI = "ROBOT_ASSIGN_AI";
+	public static final String ROBOT_ASSIGN_AI = "USER_AI_";
 	
 	/**
 	 * 用户机器人资源
 	 */
 	public static final String ROBOT_USER_RESOURCE = "ROBOT_USER_RESOURCE";
+	
+	/**
+	 * 话术模板资源
+	 */
+	public static final String ROBOT_TEMPLATE_RESOURCE = "ROBOT_TEMPLATE_RESOURCE";
 }

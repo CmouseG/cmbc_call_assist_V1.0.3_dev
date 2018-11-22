@@ -1,4 +1,4 @@
-package com.guiji.dispatch;
+package com.guiji;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

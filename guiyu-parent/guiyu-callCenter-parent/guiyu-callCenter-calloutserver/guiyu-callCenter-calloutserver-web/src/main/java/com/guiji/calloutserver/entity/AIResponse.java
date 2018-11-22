@@ -4,7 +4,7 @@ import com.guiji.calloutserver.enm.EAIResponseType;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
+//@Data
 //@Builder
 public class AIResponse {
     private boolean result;
@@ -37,4 +37,108 @@ public class AIResponse {
     //是否匹配到ai的关键词
     private boolean isMatched;
 
+
+    public void setAiResponseType(Integer end) {
+        EAIResponseType type = EAIResponseType.UNKNOWN;
+        if(end!=null){
+            switch (end){
+                case 0:
+                    type = EAIResponseType.NORMAL;
+                    break;
+                case 1:
+                    type = EAIResponseType.END;
+                    break;
+                case 2:
+                    type = EAIResponseType.TO_AGENT;
+                    break;
+            }
+        }
+        this.aiResponseType = type;
+    }
+
+    public boolean isResult() {
+        return result;
+    }
+
+    public void setResult(boolean result) {
+        this.result = result;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getCallId() {
+        return callId;
+    }
+
+    public void setCallId(String callId) {
+        this.callId = callId;
+    }
+
+    public String getAiId() {
+        return aiId;
+    }
+
+    public void setAiId(String aiId) {
+        this.aiId = aiId;
+    }
+
+    public String getWavFile() {
+        return wavFile;
+    }
+
+    public void setWavFile(String wavFile) {
+        this.wavFile = wavFile;
+    }
+
+    public Double getWavDuration() {
+        return wavDuration;
+    }
+
+    public void setWavDuration(Double wavDuration) {
+        this.wavDuration = wavDuration;
+    }
+
+    public String getResponseTxt() {
+        return responseTxt;
+    }
+
+    public void setResponseTxt(String responseTxt) {
+        this.responseTxt = responseTxt;
+    }
+
+    public String getAccurateIntent() {
+        return accurateIntent;
+    }
+
+    public void setAccurateIntent(String accurateIntent) {
+        this.accurateIntent = accurateIntent;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public EAIResponseType getAiResponseType() {
+        return aiResponseType;
+    }
+
+
+
+    public boolean isMatched() {
+        return isMatched;
+    }
+
+    public void setMatched(boolean matched) {
+        isMatched = matched;
+    }
 }

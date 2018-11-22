@@ -16,21 +16,15 @@ public interface AiCycleHisMapper {
 
     int insertSelective(AiCycleHis record);
 
-    List<AiCycleHis> selectByExampleWithBLOBs(AiCycleHisExample example);
-
     List<AiCycleHis> selectByExample(AiCycleHisExample example);
 
     AiCycleHis selectByPrimaryKey(String id);
 
     int updateByExampleSelective(@Param("record") AiCycleHis record, @Param("example") AiCycleHisExample example);
 
-    int updateByExampleWithBLOBs(@Param("record") AiCycleHis record, @Param("example") AiCycleHisExample example);
-
     int updateByExample(@Param("record") AiCycleHis record, @Param("example") AiCycleHisExample example);
 
     int updateByPrimaryKeySelective(AiCycleHis record);
-
-    int updateByPrimaryKeyWithBLOBs(AiCycleHis record);
 
     int updateByPrimaryKey(AiCycleHis record);
 }

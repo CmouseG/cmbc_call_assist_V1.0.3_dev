@@ -1,9 +1,15 @@
 server:
   port: 18012
+  tomcat:
+    uri-encoding: UTF-8
 spring:
   application:
     name: guiyu-nas-web
   http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
     multipart:
       enabled: true   # 启用http上传处理
       max-file-size: 100MB # 设置单个文件的最大长度
@@ -11,9 +17,9 @@ spring:
       file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
       location: /  # 上传的临时目录
   datasource:
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_base
-    username: root
-    password: guiyu@1234
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_base
+    username: base
+    password: base@1234
     driver-class-name: com.mysql.jdbc.Driver
 
   #数据库连接配置
@@ -37,9 +43,9 @@ fdfs:
     width: 150
     height: 150
   trackerList:            #TrackerList参数,支持多个
-    - 47.96.151.197:22122  #内网172.16.167.213
+    - 192.168.1.78:22122  #内网172.16.167.213
   pool:
     jmx-enabled: false
-  webServerUrl: http://116.62.211.11:8080/
+  webServerUrl: http://192.168.1.78:8080/
 properties:
   error: properties/error.properties

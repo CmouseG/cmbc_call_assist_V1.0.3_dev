@@ -685,6 +685,66 @@ public class AiCycleHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andCallNumIsNull() {
+            addCriterion("call_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumIsNotNull() {
+            addCriterion("call_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumEqualTo(Long value) {
+            addCriterion("call_num =", value, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumNotEqualTo(Long value) {
+            addCriterion("call_num <>", value, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumGreaterThan(Long value) {
+            addCriterion("call_num >", value, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumGreaterThanOrEqualTo(Long value) {
+            addCriterion("call_num >=", value, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumLessThan(Long value) {
+            addCriterion("call_num <", value, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumLessThanOrEqualTo(Long value) {
+            addCriterion("call_num <=", value, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumIn(List<Long> values) {
+            addCriterion("call_num in", values, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumNotIn(List<Long> values) {
+            addCriterion("call_num not in", values, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumBetween(Long value1, Long value2) {
+            addCriterion("call_num between", value1, value2, "callNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallNumNotBetween(Long value1, Long value2) {
+            addCriterion("call_num not between", value1, value2, "callNum");
+            return (Criteria) this;
+        }
+
         public Criteria andCrtTimeIsNull() {
             addCriterion("crt_time is null");
             return (Criteria) this;

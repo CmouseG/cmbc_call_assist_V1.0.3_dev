@@ -107,7 +107,7 @@ public class AfterCallHandler {
             }
 
             if (isEdit) {
-                callOutDetailRecordService.save(detailRecord);
+                callOutDetailRecordService.update(detailRecord);
             }
         }
     }

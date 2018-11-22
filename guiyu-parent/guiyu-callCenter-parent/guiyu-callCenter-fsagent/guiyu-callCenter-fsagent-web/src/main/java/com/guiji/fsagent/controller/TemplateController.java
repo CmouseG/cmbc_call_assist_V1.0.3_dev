@@ -5,6 +5,7 @@ import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsagent.service.TemplateService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -64,5 +67,15 @@ public class TemplateController implements ITemplate {
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
         return templateService.uploadrecord(recordReqVO);
+    }
+
+    @Override
+    public Result.ReturnData<List<WavLengthVO>> getwavlength(@PathVariable (value="tempId") String tempId) {
+        logger.info("收到获取模板录音文件时长请求tempId[{}]",tempId);
+        if(StringUtils.isBlank(tempId)){
+            logger.info("获取模板录音文件时长失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
+        }
+        return templateService.getwavlength(tempId);
     }
 }

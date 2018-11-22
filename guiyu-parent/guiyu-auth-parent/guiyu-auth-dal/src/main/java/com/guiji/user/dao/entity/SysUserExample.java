@@ -2,6 +2,7 @@ package com.guiji.user.dao.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class SysUserExample {
@@ -123,6 +124,32 @@ public class SysUserExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value.getTime()), property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
+            if (values == null || values.size() == 0) {
+                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
+            }
+            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
+            Iterator<Date> iter = values.iterator();
+            while (iter.hasNext()) {
+                dateList.add(new java.sql.Date(iter.next().getTime()));
+            }
+            addCriterion(condition, dateList, property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
         }
 
         public Criteria andIdIsNull() {
@@ -385,6 +412,216 @@ public class SysUserExample {
             return (Criteria) this;
         }
 
+        public Criteria andPushTypeIsNull() {
+            addCriterion("push_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeIsNotNull() {
+            addCriterion("push_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeEqualTo(String value) {
+            addCriterion("push_type =", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeNotEqualTo(String value) {
+            addCriterion("push_type <>", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeGreaterThan(String value) {
+            addCriterion("push_type >", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("push_type >=", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeLessThan(String value) {
+            addCriterion("push_type <", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeLessThanOrEqualTo(String value) {
+            addCriterion("push_type <=", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeLike(String value) {
+            addCriterion("push_type like", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeNotLike(String value) {
+            addCriterion("push_type not like", value, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeIn(List<String> values) {
+            addCriterion("push_type in", values, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeNotIn(List<String> values) {
+            addCriterion("push_type not in", values, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeBetween(String value1, String value2) {
+            addCriterion("push_type between", value1, value2, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPushTypeNotBetween(String value1, String value2) {
+            addCriterion("push_type not between", value1, value2, "pushType");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlIsNull() {
+            addCriterion("call_record_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlIsNotNull() {
+            addCriterion("call_record_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlEqualTo(String value) {
+            addCriterion("call_record_url =", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlNotEqualTo(String value) {
+            addCriterion("call_record_url <>", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlGreaterThan(String value) {
+            addCriterion("call_record_url >", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("call_record_url >=", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlLessThan(String value) {
+            addCriterion("call_record_url <", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlLessThanOrEqualTo(String value) {
+            addCriterion("call_record_url <=", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlLike(String value) {
+            addCriterion("call_record_url like", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlNotLike(String value) {
+            addCriterion("call_record_url not like", value, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlIn(List<String> values) {
+            addCriterion("call_record_url in", values, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlNotIn(List<String> values) {
+            addCriterion("call_record_url not in", values, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlBetween(String value1, String value2) {
+            addCriterion("call_record_url between", value1, value2, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallRecordUrlNotBetween(String value1, String value2) {
+            addCriterion("call_record_url not between", value1, value2, "callRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlIsNull() {
+            addCriterion("batch_record_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlIsNotNull() {
+            addCriterion("batch_record_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlEqualTo(String value) {
+            addCriterion("batch_record_url =", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlNotEqualTo(String value) {
+            addCriterion("batch_record_url <>", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlGreaterThan(String value) {
+            addCriterion("batch_record_url >", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("batch_record_url >=", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlLessThan(String value) {
+            addCriterion("batch_record_url <", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlLessThanOrEqualTo(String value) {
+            addCriterion("batch_record_url <=", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlLike(String value) {
+            addCriterion("batch_record_url like", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlNotLike(String value) {
+            addCriterion("batch_record_url not like", value, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlIn(List<String> values) {
+            addCriterion("batch_record_url in", values, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlNotIn(List<String> values) {
+            addCriterion("batch_record_url not in", values, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlBetween(String value1, String value2) {
+            addCriterion("batch_record_url between", value1, value2, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchRecordUrlNotBetween(String value1, String value2) {
+            addCriterion("batch_record_url not between", value1, value2, "batchRecordUrl");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -502,6 +739,136 @@ public class SysUserExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagIsNull() {
+            addCriterion("del_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagIsNotNull() {
+            addCriterion("del_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagEqualTo(String value) {
+            addCriterion("del_flag =", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotEqualTo(String value) {
+            addCriterion("del_flag <>", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagGreaterThan(String value) {
+            addCriterion("del_flag >", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("del_flag >=", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagLessThan(String value) {
+            addCriterion("del_flag <", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagLessThanOrEqualTo(String value) {
+            addCriterion("del_flag <=", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagLike(String value) {
+            addCriterion("del_flag like", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotLike(String value) {
+            addCriterion("del_flag not like", value, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagIn(List<String> values) {
+            addCriterion("del_flag in", values, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotIn(List<String> values) {
+            addCriterion("del_flag not in", values, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagBetween(String value1, String value2) {
+            addCriterion("del_flag between", value1, value2, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andDelFlagNotBetween(String value1, String value2) {
+            addCriterion("del_flag not between", value1, value2, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeIsNull() {
+            addCriterion("vaild_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeIsNotNull() {
+            addCriterion("vaild_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeEqualTo(Date value) {
+            addCriterionForJDBCDate("vaild_time =", value, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeNotEqualTo(Date value) {
+            addCriterionForJDBCDate("vaild_time <>", value, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeGreaterThan(Date value) {
+            addCriterionForJDBCDate("vaild_time >", value, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeGreaterThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("vaild_time >=", value, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeLessThan(Date value) {
+            addCriterionForJDBCDate("vaild_time <", value, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeLessThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("vaild_time <=", value, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeIn(List<Date> values) {
+            addCriterionForJDBCDate("vaild_time in", values, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeNotIn(List<Date> values) {
+            addCriterionForJDBCDate("vaild_time not in", values, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("vaild_time between", value1, value2, "vaildTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVaildTimeNotBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("vaild_time not between", value1, value2, "vaildTime");
             return (Criteria) this;
         }
     }

@@ -12,9 +12,19 @@ public class SysUser implements Serializable {
 
     private Integer status;
 
+    private String pushType;
+
+    private String callRecordUrl;
+
+    private String batchRecordUrl;
+
     private Date createTime;
 
     private Date updateTime;
+
+    private String delFlag;
+
+    private Date vaildTime;
 
     private static final long serialVersionUID = 1L;
 
@@ -50,6 +60,30 @@ public class SysUser implements Serializable {
         this.status = status;
     }
 
+    public String getPushType() {
+        return pushType;
+    }
+
+    public void setPushType(String pushType) {
+        this.pushType = pushType == null ? null : pushType.trim();
+    }
+
+    public String getCallRecordUrl() {
+        return callRecordUrl;
+    }
+
+    public void setCallRecordUrl(String callRecordUrl) {
+        this.callRecordUrl = callRecordUrl == null ? null : callRecordUrl.trim();
+    }
+
+    public String getBatchRecordUrl() {
+        return batchRecordUrl;
+    }
+
+    public void setBatchRecordUrl(String batchRecordUrl) {
+        this.batchRecordUrl = batchRecordUrl == null ? null : batchRecordUrl.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -66,6 +100,22 @@ public class SysUser implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag == null ? null : delFlag.trim();
+    }
+
+    public Date getVaildTime() {
+        return vaildTime;
+    }
+
+    public void setVaildTime(Date vaildTime) {
+        this.vaildTime = vaildTime;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -76,8 +126,13 @@ public class SysUser implements Serializable {
         sb.append(", username=").append(username);
         sb.append(", password=").append(password);
         sb.append(", status=").append(status);
+        sb.append(", pushType=").append(pushType);
+        sb.append(", callRecordUrl=").append(callRecordUrl);
+        sb.append(", batchRecordUrl=").append(batchRecordUrl);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", delFlag=").append(delFlag);
+        sb.append(", vaildTime=").append(vaildTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

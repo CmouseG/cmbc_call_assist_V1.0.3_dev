@@ -49,14 +49,14 @@ public class NasUtil {
 	 * @return
 	 * @throws RobotException
 	 */
-	public SysFileRspVO uploadNas(SysFileReqVO sysFileReqVO ,File filename) throws GuiyuException{
+	public SysFileRspVO uploadNas(SysFileReqVO sysFileReqVO ,File file) throws GuiyuException{
     	String jsonResult = null;
     	String url = gatewayUrl + "zuul/nas/upload";
     	logger.info("开始文件上传,url="+url);
         RestTemplate rest = new RestTemplate();
         //重新更新rest，更新编码
         reInitMessageConverter(rest);
-        FileSystemResource resource = new FileSystemResource(filename);
+        FileSystemResource resource = new FileSystemResource(file);
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<String, Object>();
         param.add("file", resource);
         if(sysFileReqVO != null) {

@@ -26,7 +26,7 @@ public interface FsAgentManager {
       * @param busiType  业务类型
       * @return
       */
-     RecordVO uploadRecord(String fileId, String fileName, String busiType);
+    RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId);
 
     /**
      * 模板是否存在

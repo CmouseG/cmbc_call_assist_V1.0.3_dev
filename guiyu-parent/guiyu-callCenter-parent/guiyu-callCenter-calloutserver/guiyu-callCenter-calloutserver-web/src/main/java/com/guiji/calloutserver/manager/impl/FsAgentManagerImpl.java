@@ -51,14 +51,14 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public RecordVO uploadRecord(String callId, String fileName, String busiType){
+    public RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId){
         log.info("开始上传文件，callId[{}], fileName[{}], busiType[{}]", callId, fileName, busiType);
         RecordReqVO request = new RecordReqVO();
         request.setBusiId(callId);
         request.setFileName(fileName);
         request.setSysCode(eurekaManager.getAppName());
         request.setBusiType(busiType);
-        System.out.println(eurekaManager.getAppName());
+        request.setUserId(userId);
         Result.ReturnData returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {

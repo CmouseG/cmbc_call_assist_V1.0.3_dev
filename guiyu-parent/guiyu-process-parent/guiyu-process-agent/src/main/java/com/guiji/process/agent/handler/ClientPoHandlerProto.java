@@ -25,14 +25,14 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 		MessageProto.Message message = (MessageProto.Message) msg;
 		if (message.getType() == 1) {
 			// 收到服务端回复信息
-			System.out.println("client1:" + message.getContent());
+			System.out.println(message.getContent());
 		} else if (message.getType() == 2) {
 			// 收到服务端发送指令并执行
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 		} else if (message.getType() == 3) {
 			// 收到服务端回复信息
-			System.out.println("收到服务端反馈:" + message.getContent());
+			System.out.println("服务端反馈:" + message.getContent());
 		}
 
 	}

@@ -77,42 +77,6 @@ public class ListUtil {
 	}
 	
 	
-	private static String fetchGroupKey(Person detail){
-        return detail.getName().toString() 
-        + detail.getAge();
-    }
 
-	public static void main(String[] args) {
-		List<Person> list = new ArrayList<>();
-		Person p = new Person();
-		p.name = "张三";
-		p.setAge("12");
-
-		Person p1 = new Person();
-		p1.name = "张三";
-		p1.setAge("12");
-
-		Person p2 = new Person();
-		p2.name = "张三1";
-		p2.setAge("12");
-
-		Person p3 = new Person();
-		p3.name = "张三1";
-		p3.setAge("12");
-		
-		
-		list.add(p);
-		list.add(p1);
-		list.add(p2);
-		list.add(p3);
-		
-		Map<String, List<Person>> detailmap = list.stream()
-				.collect(Collectors.groupingBy(d -> fetchGroupKey(d) ));
-		
-		
-		for (Entry<String, List<Person>> entry : detailmap.entrySet()) {
-			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-		}
-	}
 
 }

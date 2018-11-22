@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
  * TTS对外服务
  * Created by ty on 2018/11/13.
  */
-@FeignClient("tts")
+@FeignClient("guiyu-ai-web")
 public interface ITts {
 
     /**

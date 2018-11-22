@@ -34,9 +34,6 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 		// ping
 		if (message.getType() == 1) {
 			System.out.println("服务端收到消息:" +  message.getContent());
-			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
-			DeviceMsgHandler.getInstance().add(cmdMessageVO);
-			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应
 			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
 			builder.setContent("服务端响应:" + "hello");

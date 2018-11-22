@@ -2,6 +2,7 @@ package com.guiji.process.agent.core.filemonitor.impl;
 
 import java.io.*;
 
+import com.guiji.process.agent.service.ProcessCfgService;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
@@ -29,6 +30,8 @@ public final class FileListener extends FileAlterationListenerAdaptor {
             BufferedReader br = new BufferedReader(buf);
             String line = null;
             System.out.println(br.readLine());
+
+            ProcessCfgService.getIntance().onChanged(file);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

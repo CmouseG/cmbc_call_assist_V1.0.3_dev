@@ -32,6 +32,10 @@ public class DeviceCmdHandler {
 
                 doRegister(cmdMessageVO);
                 break;
+            case UNREGISTER:
+
+                doUnRegister(cmdMessageVO);
+                break;
 
             case RESTART:
 
@@ -91,6 +95,27 @@ public class DeviceCmdHandler {
 
         lst.add(processInstanceVO);
         deviceManageService.register(lst);
+    }
+
+    private void doUnRegister(CmdMessageVO cmdMessageVO)
+    {
+        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+
+        List<ProcessInstanceVO> lst = new ArrayList<ProcessInstanceVO>();
+
+        if(processInstanceVO == null)
+        {
+            return;
+        }
+
+        ProcessInstanceVO oldProcessInstanceVO = deviceManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
+        if(oldProcessInstanceVO == null)
+        {
+            return;
+        }
+
+        lst.add(processInstanceVO);
+        deviceManageService.unRegister(lst);
     }
 
 }

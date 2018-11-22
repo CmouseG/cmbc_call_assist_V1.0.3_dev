@@ -4,9 +4,9 @@ spring:
   application:
     name: guiyu-datadic
   datasource:
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_base
-    username: root
-    password: guiyu@1234
+    url: jdbc:mysql://192.168.1.78:3306/guiyu_base
+    username: base
+    password: base@1234
     driver-class-name: com.mysql.jdbc.Driver
 
 

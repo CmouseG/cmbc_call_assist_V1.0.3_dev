@@ -56,4 +56,5 @@ public interface SysUserMapper {
     void insertUserRole(@Param("userId")Long userId,@Param("roleId")Long roleId);
     
     public boolean existUserName(SysUser user);
+    
 }

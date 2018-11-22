@@ -16,7 +16,6 @@ import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysUser;
-import com.netflix.ribbon.proxy.annotation.Http.Header;
 
 /**
  * Created by ty on 2018/10/22.
@@ -66,5 +65,10 @@ public class UserController implements IAuth{
 	@RequestMapping("/user/getUserByName")
 	public List<Map<String,String>> getUserByName(String username){
 		return service.getUserByName(username);
+	}
+	
+	@RequestMapping("changePassword")
+	public void changePassword(String newPass,String oldPass,@RequestHeader Long userId) throws CheckConditionException{
+		service.changePassword(newPass,oldPass,userId);
 	}
 }

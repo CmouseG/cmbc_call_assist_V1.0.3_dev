@@ -16,6 +16,13 @@ public interface IDeviceManageService {
      */
     void register(List<ProcessInstanceVO> processInstanceVOS);
 
+    /**
+     * 注销
+     * @param processInstanceVOS 设备
+     * @return
+     */
+    void unRegister(List<ProcessInstanceVO> processInstanceVOS);
+
 
     /**
      * 对设备处理
@@ -51,6 +58,16 @@ public interface IDeviceManageService {
      * @return
      */
     void updateStatus(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed);
+
+    /**
+     * 更新设备状态
+     * @param ip ip
+     * @param port port
+     * @param status port
+     * @return
+     */
+    void updateUnRegister(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed);
+
 
 
     /**

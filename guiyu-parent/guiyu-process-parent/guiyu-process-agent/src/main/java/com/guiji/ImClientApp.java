@@ -2,6 +2,7 @@ package com.guiji;
 
 import java.net.UnknownHostException;
 
+import com.guiji.process.agent.core.filemonitor.impl.FileMonitor;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.service.ProcessCfgService;
 
@@ -18,7 +19,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ImClientApp {
 	public static void main(String[] args) throws UnknownHostException {
 		ImClientProtocolBO.getIntance().start();
-		ProcessCfgService.getIntance().init("D:\\cfg.json");
+		new FileMonitor().monitor("d:\\conf");
+		ProcessCfgService.getIntance().init("D:\\conf\\cfg.json");
 		SpringApplication.run(ImClientApp.class, args);
 	}
 

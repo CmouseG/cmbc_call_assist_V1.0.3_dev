@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * 影像系统对外服务
  */
-@FeignClient("nas")
+@FeignClient("guiyu-nas-web")
 public interface INas {
 	/**
 	 * 文件上传文件服务器

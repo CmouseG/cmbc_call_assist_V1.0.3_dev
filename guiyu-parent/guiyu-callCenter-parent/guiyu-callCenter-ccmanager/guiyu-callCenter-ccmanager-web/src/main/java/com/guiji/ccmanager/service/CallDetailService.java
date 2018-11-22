@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import jxl.write.WriteException;
 
@@ -14,8 +15,8 @@ import java.util.List;
  * @Description:
  */
 public interface CallDetailService {
-    List<CallOutPlan> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo, String phoneNum,String durationMin, String durationMax,
-                                 String accurateIntent, String freason,String callId, String tempId );
+    List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
+                                            String accurateIntent, String freason, String callId, String tempId );
 
     CallOutPlanVO getCallDetail(String callId);
 
@@ -24,4 +25,5 @@ public interface CallDetailService {
 
     String getDialogue(String callId);
 
+    String getRecordFileUrl(String callId);
 }

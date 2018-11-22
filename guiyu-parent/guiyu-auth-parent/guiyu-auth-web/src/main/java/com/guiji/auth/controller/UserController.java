@@ -67,7 +67,7 @@ public class UserController implements IAuth{
 		return service.getUserByName(username);
 	}
 	
-	@RequestMapping("changePassword")
+	@RequestMapping("/user/changePassword")
 	public void changePassword(String newPass,String oldPass,@RequestHeader Long userId) throws CheckConditionException{
 		service.changePassword(newPass,oldPass,userId);
 	}

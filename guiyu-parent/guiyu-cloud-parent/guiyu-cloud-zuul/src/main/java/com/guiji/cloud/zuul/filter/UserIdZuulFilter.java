@@ -1,8 +1,12 @@
 package com.guiji.cloud.zuul.filter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.springframework.stereotype.Component;
 
+import com.guiji.cloud.zuul.util.IpUtil;
+import com.guiji.cloud.zuul.white.WhiteIPUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
@@ -16,11 +20,27 @@ public class UserIdZuulFilter extends ZuulFilter{
 
 	@Override
 	public Object run() {
-		String userId=SecurityUtils.getSubject().getSession().getAttribute("userId").toString();
-		String isSuperAdmin=SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin").toString();
+		boolean isWiteIpFlag = false;
 		RequestContext ctx = RequestContext.getCurrentContext();
-		ctx.addZuulRequestHeader("userId", userId);
-		ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
+		// IP白名单
+		String whiteIPs = WhiteIPUtil.getIps();
+		String remoteIP = IpUtil.getIpAddress(ctx.getRequest());
+		if(StringUtils.isNotEmpty(whiteIPs) && whiteIPs.contains(remoteIP)) {
+			isWiteIpFlag = true;
+		}
+		Object userIdObj = SecurityUtils.getSubject().getSession().getAttribute("userId");
+		Object isSuperAdminObj = SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin");
+		try {
+			String userId=userIdObj.toString();
+			String isSuperAdmin = isSuperAdminObj.toString();
+			ctx.addZuulRequestHeader("userId", userId);
+			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
+		} catch (NullPointerException e) {
+			//处理下一些特殊不需要user的场景
+			if(!isWiteIpFlag) {
+				throw e;
+			}
+		}
 		return null;
 	}
 

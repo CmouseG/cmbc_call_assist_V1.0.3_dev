@@ -1,4 +1,4 @@
-package com.guiji.nas.vo;
+package com.guiji.common.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

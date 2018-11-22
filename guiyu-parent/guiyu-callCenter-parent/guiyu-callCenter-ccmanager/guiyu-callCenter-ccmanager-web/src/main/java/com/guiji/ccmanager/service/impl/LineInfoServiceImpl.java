@@ -233,7 +233,9 @@ public class LineInfoServiceImpl implements LineInfoService {
        // 从lineinfos表中读取相应的信息返回即可
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
-        criteria.andCustomerIdEqualTo(customerId);
+        if(StringUtils.isNotBlank(customerId)){
+            criteria.andCustomerIdEqualTo(customerId);
+        }
         List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
 
         return lineInfos;

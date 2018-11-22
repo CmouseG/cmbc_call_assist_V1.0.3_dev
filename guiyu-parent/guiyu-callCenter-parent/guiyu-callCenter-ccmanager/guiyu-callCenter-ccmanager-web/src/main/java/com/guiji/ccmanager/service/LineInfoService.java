@@ -14,17 +14,17 @@ import java.util.List;
  */
 public interface LineInfoService {
 
-    public List<LineInfo4Select> getLineInfoByCustom(String customerId, String lineName, int pageSizeInt, int pageNoInt);
+    List<LineInfo4Select> getLineInfoByCustom(String customerId, String lineName, int pageSizeInt, int pageNoInt);
 
-    public Result.ReturnData<Boolean> addLineInfo(LineInfoVO lineInfoVO);
+    Result.ReturnData<Boolean> addLineInfo(LineInfoVO lineInfoVO);
 
-    public Result.ReturnData<Boolean>
+    Result.ReturnData<Boolean>
 
     updateLineInfo(LineInfoVO lineInfoVO);
 
-    public Result.ReturnData<Boolean> delLineInfo(String id);
+    Result.ReturnData<Boolean> delLineInfo(String id);
 
-    public List<LineInfo> outLineinfos(String customerId);
+    int getLineInfoByCustomCount(String customerId, String lineName);
 
-    public int getLineInfoByCustomCount(String customerId, String lineName);
+    List<LineInfo> outLineinfos(String customerId);
 }

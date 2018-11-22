@@ -9,6 +9,7 @@ public class LineConcurrent {
 
     private String lineId;
     private int concurrent;
+    private String lineName;
 
     public String getLineId() {
         return lineId;
@@ -22,15 +23,16 @@ public class LineConcurrent {
         return concurrent;
     }
 
+    public String getLineName() {
+        return lineName;
+    }
+
+    public void setLineName(String lineName) {
+        this.lineName = lineName;
+    }
+
     public void setConcurrent(int concurrent) {
         this.concurrent = concurrent;
     }
 
-    @Override
-    public String toString() {
-        return "LineConcurrent{" +
-                "lineId='" + lineId + '\'' +
-                ", concurrent=" + concurrent +
-                '}';
-    }
 }

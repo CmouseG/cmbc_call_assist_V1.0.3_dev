@@ -20,13 +20,22 @@ import java.util.List;
 @FeignClient("guiyu-callcenter-ccmanager")
 public interface ICallManagerOut {
 
-    @ApiOperation(value = "获取客户线路列表")
+    @ApiOperation(value = "获取客户线路列表，供调度中心使用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="out/getLineInfos")
     Result.ReturnData<List<LineConcurrent>> getLineInfos(@RequestParam("customerId") String customerId);
 
+
+    @ApiOperation(value = "获取客户线路列表，供汇总使用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "isSuperAdmin", value = "是否是管理员", dataType = "Boolean", paramType = "query", required = true)
+    })
+    @GetMapping(value="out/getLineNameAndCount")
+    public Result.ReturnData<List<LineConcurrent>> getLineNameAndCount(@RequestParam(value="customerId", required = true) String customerId,
+                                                                       @RequestParam(value="isSuperAdmin", required = true) Boolean isSuperAdmin);
 
     @ApiOperation(value = "启动客户呼叫计划")
     @ApiImplicitParams({

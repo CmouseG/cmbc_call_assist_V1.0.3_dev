@@ -42,7 +42,6 @@ public class CallManagerOutApiController implements ICallManagerOut {
     private CallManagerOutService callManagerOutService;
 
     @Override
-    @GetMapping(value="out/getLineInfos")
     public Result.ReturnData<List<LineConcurrent>> getLineInfos(String customerId){
 
         log.info("get request getLineInfos，customerId[{}]", customerId);
@@ -51,20 +50,40 @@ public class CallManagerOutApiController implements ICallManagerOut {
             return Result.error(Constant.ERROR_PARAM);
         }
         List<LineInfo> lineInfos = lineInfoService.outLineinfos(customerId);
-        List<LineConcurrent> resList = new ArrayList<LineConcurrent>();
-        for(LineInfo lineInfo:lineInfos){
-            LineConcurrent target = new LineConcurrent();
-            target.setLineId(String.valueOf(lineInfo.getLineId()));
-            target.setConcurrent(lineInfo.getMaxConcurrentCalls());
-            resList.add(target);
-        }
-
+        List<LineConcurrent> resList = getLineConcurrent(lineInfos);
         log.info("response success getLineInfos，customerId[{}]", customerId);
         return Result.ok(resList);
     }
 
+    private List<LineConcurrent> getLineConcurrent(List<LineInfo> lineInfos){
+        List<LineConcurrent> resList = new ArrayList<LineConcurrent>();
+        if(lineInfos!=null && lineInfos.size()>0){
+            for(LineInfo lineInfo:lineInfos){
+                LineConcurrent target = new LineConcurrent();
+                target.setLineId(String.valueOf(lineInfo.getLineId()));
+                target.setConcurrent(lineInfo.getMaxConcurrentCalls());
+                target.setLineName(lineInfo.getLineName());
+                resList.add(target);
+            }
+        }
+        return resList;
+    }
+
+
     @Override
-    @GetMapping(value="out/startCallPlan")
+    public Result.ReturnData<List<LineConcurrent>> getLineNameAndCount(@RequestParam(value="customerId", required = true) String customerId,
+                                                                       @RequestParam(value="isSuperAdmin", required = true) Boolean isSuperAdmin){
+
+        log.info("get request getLineInfos，customerId[{}]，isSuperAdmin[{}]", customerId, isSuperAdmin);
+
+        List<LineInfo> lineInfos = lineInfoService.outLineinfos(isSuperAdmin ? null:customerId);
+        List<LineConcurrent> resList = getLineConcurrent(lineInfos);
+
+        log.info("response success getLineInfos，customerId[{}]，isSuperAdmin[{}]", customerId, isSuperAdmin);
+        return Result.ok(resList);
+    }
+
+    @Override
     public Result.ReturnData<Boolean> startCallPlan(String customerId, String tempId, String lineId) {
 
         log.info("get request startCallPlan，customerId[{}]，tempId[{}]，lineId[{}]", customerId, tempId, lineId);
@@ -85,17 +104,15 @@ public class CallManagerOutApiController implements ICallManagerOut {
     }
 
     @Override
-    @ApiOperation(value = "获取callId获取通话记录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "callId", value = "call_out_plan的id", dataType = "String", paramType = "query", required = true)
-    })
-    @GetMapping(value="getCallRecordById")
-    public Result.ReturnData<CallOutPlan> getCallRecordById(@RequestParam(value = "callId",required = true)String callId ){
+    public Result.ReturnData<CallOutPlan> getCallRecordById(String callId ){
 
         com.guiji.callcenter.dao.entity.CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(callId);
-        CallOutPlan CallOutPlanApi = new CallOutPlan();
-        BeanUtil.copyProperties(callOutPlan,CallOutPlanApi);
-        return Result.ok(CallOutPlanApi);
+        if(callOutPlan!=null){
+            CallOutPlan CallOutPlanApi = new CallOutPlan();
+            BeanUtil.copyProperties(callOutPlan,CallOutPlanApi);
+            return Result.ok(CallOutPlanApi);
+        }
+        return Result.ok();
     }
 
 }

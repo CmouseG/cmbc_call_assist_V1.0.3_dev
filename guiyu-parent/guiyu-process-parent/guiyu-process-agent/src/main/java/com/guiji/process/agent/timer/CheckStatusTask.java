@@ -3,6 +3,7 @@ package com.guiji.process.agent.timer;
 import com.guiji.process.agent.model.CfgNodeVO;
 import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.agent.util.ProcessUtil;
+import com.guiji.process.core.vo.CmdTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +24,7 @@ public class CheckStatusTask {
 		Map<Integer, CfgNodeVO> cfgMap = ProcessCfgService.getIntance().cfgMap;
 		if (cfgMap != null) {
 			for (Integer key : cfgMap.keySet()) {
-				ProcessUtil.sendHealth(key);
+				ProcessUtil.sendHealth(key,cfgMap.get(key).getDeviceTypeEnum(),cfgMap.get(key).getCfgNodeOper(CmdTypeEnum.START));
 			}
 		}
     }

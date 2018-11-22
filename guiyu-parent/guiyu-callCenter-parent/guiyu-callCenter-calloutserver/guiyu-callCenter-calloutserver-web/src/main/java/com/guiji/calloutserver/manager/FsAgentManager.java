@@ -1,10 +1,8 @@
 package com.guiji.calloutserver.manager;
 
 import com.google.common.cache.Cache;
-import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsmanager.entity.FsBindVO;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Map;
 
@@ -28,7 +26,7 @@ public interface FsAgentManager {
       * @param busiType  业务类型
       * @return
       */
-     RecordVO uploadRecord(String fileId, String fileName, String busiType);
+    RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId);
 
     /**
      * 模板是否存在
@@ -37,11 +35,16 @@ public interface FsAgentManager {
      */
      Boolean istempexist(String tempId);
 
-    void getwavlength(String tempId);
+    /**
+     * 初始化模板录音时长缓存
+     * @param tempId
+     * @return
+     */
+    Map<String, Double> getwavlength(String tempId);
 
     /**
      * 获取缓存的录音文件时长
      * @return
      */
-    Cache<String, Map<String, Double>> getWavCaches();
+    Double getWavDruation(String tempId, String filename);
 }

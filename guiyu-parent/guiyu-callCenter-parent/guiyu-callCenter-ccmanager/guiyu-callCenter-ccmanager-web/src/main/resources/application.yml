@@ -24,8 +24,8 @@ eureka:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
       service-url:
-        defaultZone: http://47.96.151.197:18001/eureka/
-        #defaultZone: http://127.0.0.1:18001/eureka/
+#        defaultZone: http://47.96.151.197:18001/eureka/
+        defaultZone: http://192.168.1.78:18001/eureka/
 properties:
   error: error.properties
 ribbon:

@@ -27,34 +27,26 @@ public class DeviceCmdHandler {
         }
 
         switch (cmdMessageVO.getCmdType()) {
-
+            case AGENTREGISTER:
+                doAgentRegister(cmdMessageVO);
+                break;
             case REGISTER:
-
                 doRegister(cmdMessageVO);
                 break;
             case UNREGISTER:
-
                 doUnRegister(cmdMessageVO);
                 break;
-
             case RESTART:
-
                 break;
-
             case UNKNOWN:
                 break;
-
             case START:
                 break;
-
             case STOP:
                 break;
-
             case HEALTH:
-
                 doHealthStatus(cmdMessageVO);
                 break;
-
             default:
                 break;
         }
@@ -73,6 +65,11 @@ public class DeviceCmdHandler {
         }
 
         deviceManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
+    }
+
+    private void doAgentRegister(CmdMessageVO cmdMessageVO)
+    {
+        //TODO 新的agent注册入库
     }
 
 

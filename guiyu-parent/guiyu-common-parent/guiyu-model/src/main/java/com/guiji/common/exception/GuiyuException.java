@@ -20,6 +20,13 @@ public class GuiyuException extends RuntimeException{
 		super(msg);
 		this.errorMessage = msg;
 	}
+	
+	public GuiyuException(String errorCode,String msg){
+		super(msg);
+        this.errorCode = errorCode;
+        this.errorMessage = msg;
+	}
+	
 	public GuiyuException(Throwable throwable){
 		super(throwable);
 	}

@@ -7,10 +7,12 @@ import com.guiji.callcenter.dao.entity.LineCount;
 import com.guiji.callcenter.dao.entity.LineCountExample;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
+import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4Select;
 import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.user.dao.entity.SysUser;
@@ -115,7 +117,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public Result.ReturnData<Boolean> addLineInfo(LineInfoVO lineInfoVO) {
+    public void addLineInfo(LineInfoVO lineInfoVO) {
 
         //本地存储数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -130,8 +132,8 @@ public class LineInfoServiceImpl implements LineInfoService {
         Result.ReturnData result = lineOperApiFeign.addLineinfos(lineInfoApi);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.addLineinfos failed,code:"+result.getCode());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return result;
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚事务
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_ADDLINE);
         }
         //读取所有的calloutserver，将线路并发数平分到各个calloutserver，存储到linecount表中
         List<String> listServer = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
@@ -151,17 +153,17 @@ public class LineInfoServiceImpl implements LineInfoService {
             lineCount.setUsedConcurrentCalls(0);
             lineCountMapper.insert(lineCount);
         }
-        return Result.ok(true);
+
     }
 
     @Override
     @Transactional
-    public Result.ReturnData<Boolean> updateLineInfo(LineInfoVO lineInfoVO){
+    public void updateLineInfo(LineInfoVO lineInfoVO){
 
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(lineInfoVO.getLineId());
 
         if(lineInfoDB==null){
-            return Result.error(Constant.ERROR_LINE_NOTEXIST);
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_LINE_NOTEXIST);
         }
 
         //本地更新数据库lineinfo
@@ -178,7 +180,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.editLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return result;
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_EDITLINE);
         }
 
         //若并发数有更新，则从linecount表读取线路并发数分配信息，并根据重新计算的并发数进行修改保存。
@@ -204,26 +206,24 @@ public class LineInfoServiceImpl implements LineInfoService {
                 lineCountMapper.updateByExampleSelective(lineCount,example);
             }
         }
-        return  Result.ok(true);
     }
 
     @Override
     @Transactional
-    public Result.ReturnData<Boolean> delLineInfo(String id) {
+    public void delLineInfo(String id) {
         //本地删除数据库lineinfo记录，同时调用fsmanager的删除线路接口
         lineInfoMapper.deleteByPrimaryKey(Integer.valueOf(id));
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(id);
         if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.deleteLineinfos,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return result;
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);
         }
         //删除linecount中对应的线路并发数信息
         LineCountExample example = new LineCountExample();
         LineCountExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(Integer.valueOf(id));
         lineCountMapper.deleteByExample(example);
-        return Result.ok(true);
     }
 
 
@@ -233,7 +233,9 @@ public class LineInfoServiceImpl implements LineInfoService {
        // 从lineinfos表中读取相应的信息返回即可
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
-        criteria.andCustomerIdEqualTo(customerId);
+        if(StringUtils.isNotBlank(customerId)){
+            criteria.andCustomerIdEqualTo(customerId);
+        }
         List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
 
         return lineInfos;

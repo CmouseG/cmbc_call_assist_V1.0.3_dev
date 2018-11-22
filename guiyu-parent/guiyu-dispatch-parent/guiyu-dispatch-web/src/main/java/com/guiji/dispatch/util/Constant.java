@@ -33,5 +33,8 @@ public class Constant {
 	public static final Integer  IS_DEL_0=0;
 	public static final Integer  IS_DEL_1=1;
 	
+	public static final Integer  IS_TTS_0=0;
+	public static final Integer  IS_TTS_1=1;
+	
 	
 }

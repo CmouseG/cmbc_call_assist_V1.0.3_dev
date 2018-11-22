@@ -3,7 +3,6 @@ package com.guiji.calloutserver.manager.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.guiji.calloutserver.entity.Channel;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
@@ -17,13 +16,11 @@ import com.guiji.utils.FeignBuildUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Auther: 魏驰
@@ -54,14 +51,14 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public RecordVO uploadRecord(String callId, String fileName, String busiType){
+    public RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId){
         log.info("开始上传文件，callId[{}], fileName[{}], busiType[{}]", callId, fileName, busiType);
         RecordReqVO request = new RecordReqVO();
         request.setBusiId(callId);
         request.setFileName(fileName);
         request.setSysCode(eurekaManager.getAppName());
         request.setBusiType(busiType);
-        System.out.println(eurekaManager.getAppName());
+        request.setUserId(userId);
         Result.ReturnData returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
@@ -92,7 +89,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public void getwavlength(String tempId){
+    public Map<String, Double> getwavlength(String tempId){
 
         if(wavCaches.getIfPresent(tempId)==null){
             Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
@@ -104,14 +101,22 @@ public class FsAgentManagerImpl implements FsAgentManager {
                         map.put(wavLengthVO.getFileName(),wavLengthVO.getLength());
                     }
                     wavCaches.put(tempId,map);
+                    return map;
                 }
             }
 
         }
+        return null;
     }
 
     @Override
-    public Cache<String, Map<String, Double>> getWavCaches() {
-        return wavCaches;
+    public Double getWavDruation(String tempId, String filename){
+
+        Map<String, Double> map = wavCaches.getIfPresent(tempId);
+        if(map==null){
+            map = getwavlength(tempId);
+        }
+
+       return map.get(filename.replace("_rec","_en").replace(tempId+"/",""));
     }
 }

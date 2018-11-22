@@ -13,6 +13,14 @@ public interface AIManager {
     AIResponse applyAi(AIInitRequest aiRequest) throws Exception;
 
     /**
+     * 检查是否可以打断
+     * @param callUuid
+     * @param sentence
+     * @return
+     */
+    boolean isMatch(String callUuid, String sentence);
+
+    /**
      * 发起ai请求
      * @param aiRequest
      * @return

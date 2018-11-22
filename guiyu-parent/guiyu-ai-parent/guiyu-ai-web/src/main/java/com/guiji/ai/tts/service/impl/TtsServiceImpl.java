@@ -59,7 +59,7 @@ public class TtsServiceImpl implements TtsService {
         		//合成
         		ITtsServiceProvide provide = TtsServiceFactory.getTtsProvide(model);
         		if(provide == null){
-        			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GETGPU); //没有获取到可用GPU
+        			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
         		}
         		audioUrl= provide.transfer(busId, model, text);
         		if(audioUrl != null)

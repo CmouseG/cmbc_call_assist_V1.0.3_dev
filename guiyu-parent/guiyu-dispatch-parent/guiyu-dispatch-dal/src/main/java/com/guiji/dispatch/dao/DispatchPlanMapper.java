@@ -27,4 +27,8 @@ public interface DispatchPlanMapper {
     int updateByPrimaryKeySelective(DispatchPlan record);
 
     int updateByPrimaryKey(DispatchPlan record);
+    
+    List<DispatchPlan> selectByCallHour(DispatchPlan record);
+	
+	
 }

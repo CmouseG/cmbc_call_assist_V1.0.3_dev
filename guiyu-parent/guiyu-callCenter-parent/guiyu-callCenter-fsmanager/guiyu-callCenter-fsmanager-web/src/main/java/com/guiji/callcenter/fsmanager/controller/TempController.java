@@ -22,7 +22,8 @@ public class TempController implements ITemp {
             logger.info("模板是否存在接口请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        return Result.ok(tempService.downloadtempwav(tempId));
+        return Result.ok();
+        //return Result.ok(tempService.downloadtempwav(tempId));
     }
 
     @Override

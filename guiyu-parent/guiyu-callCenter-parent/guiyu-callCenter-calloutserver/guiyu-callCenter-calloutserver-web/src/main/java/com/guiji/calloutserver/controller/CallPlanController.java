@@ -34,7 +34,7 @@ public class CallPlanController implements ICallPlan {
 
 //        List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId("192.168.1.78:18024", lineId);
         List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId(eurekaManager.getInstanceId(), lineId);
-        if(lineCountList==null){
+        if(lineCountList==null || lineCountList.size()==0){
             //线路不存在
             //TODO: 报警，线路不存在
             log.warn("启动呼叫计划失败，线路不存在[{}]", lineId);

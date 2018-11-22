@@ -23,12 +23,12 @@ public interface ITemplate {
      Result.ReturnData<Boolean> istempexist(@PathVariable (value="tempId")String tempId);
 
 
-    @ApiOperation(value = "下载模板录音接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
-    })
-    @GetMapping(value="/downloadbotwav/{tempId}")
-     Result.ReturnData<Boolean> downloadbotwav(@PathVariable(value="tempId") String tempId);
+//    @ApiOperation(value = "下载模板录音接口")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
+//    })
+//    @GetMapping(value="/downloadbotwav/{tempId}")
+//     Result.ReturnData<Boolean> downloadbotwav(@PathVariable(value="tempId") String tempId);
 
 
     @ApiOperation(value = "下载tts话术录音")
@@ -42,7 +42,11 @@ public interface ITemplate {
 
     @ApiOperation(value = "上传录音")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "fileName", value = "模板Id", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "sysCode", value = "文件上传系统码", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "busiId", value = "上传的影像文件关联的业务ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "busiType", value = "上传的影像文件业务类型", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "fileName", value = "文件名", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "userId", value = "用户Id", dataType = "Long", paramType = "query")
     })
     @PostMapping(value = "/uploadrecord",consumes = "application/json")
      Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO);

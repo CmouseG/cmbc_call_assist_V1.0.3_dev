@@ -76,7 +76,8 @@ public class LineInfoController {
             return Result.error(Constant.ERROR_CODEC);
         }
         lineInfoVO.setCustomerId(String.valueOf(userId));
-        return lineInfoService.addLineInfo(lineInfoVO);
+        lineInfoService.addLineInfo(lineInfoVO);
+        return Result.ok(true);
     }
 
     @ApiOperation(value = "修改线路接口")
@@ -95,7 +96,8 @@ public class LineInfoController {
             }
         }
         log.info("response success updateLineInfo，lineInfoVO[{}]",lineInfoVO);
-        return lineInfoService.updateLineInfo(lineInfoVO);
+        lineInfoService.updateLineInfo(lineInfoVO);
+        return Result.ok(true);
     }
 
     @ApiOperation(value = "删除线路接口")
@@ -105,7 +107,8 @@ public class LineInfoController {
     @PostMapping(value="deleteLineInfo/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id){
         log.info("get request deleteLineInfo，id[{}]",id);
-        return lineInfoService.delLineInfo(id);
+        lineInfoService.delLineInfo(id);
+        return Result.ok(true);
     }
 
 }

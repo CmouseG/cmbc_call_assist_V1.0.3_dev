@@ -68,7 +68,7 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setAiId(aiCallNext.getAiNo());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-            aiResponse.setWavDuration(fsAgentManager.getWavCaches().getIfPresent(tempId).get(sellbotResponse.getWav_filename().replace("_rec","_en").replace(tempId+"/","")));
+            aiResponse.setWavDuration(fsAgentManager.getWavDruation(tempId, sellbotResponse.getWav_filename()));
             return aiResponse;
         }catch (Exception ex){
             log.warn("sellbot的aiCallStart出现异常", ex);
@@ -134,7 +134,7 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
             aiResponse.setAiResponseType(sellbotResponse.getEnd());
-            aiResponse.setWavDuration(fsAgentManager.getWavCaches().getIfPresent(tempId).get(sellbotResponse.getWav_filename().replace("_rec","_en").replace(tempId+"/","")));
+            aiResponse.setWavDuration(fsAgentManager.getWavDruation(tempId, sellbotResponse.getWav_filename()));
             return aiResponse;
         }catch (Exception ex){
             log.warn("sellbot的aiCallNext出现异常", ex);
@@ -143,18 +143,36 @@ public class AIManagerImpl implements AIManager {
 
     }
 
+    /**
+     * 判断通话内容是否匹配到关键字
+     * @param callUuid
+     * @param sentence
+     * @return
+     */
+    public boolean isMatch(String callUuid, String sentence){
+        boolean isMatched = false;
+
+        try {
+            SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(callUuid, sentence);
+            isMatched = sellbotIsMatchResponse.isMatched();
+        } catch (Exception e) {
+            log.warn("isMatch出现异常", e);
+        }
+
+        return isMatched;
+    }
+
 
     /**
      * 判断是否需要打断
      * @return
      */
 
-    private SellbotIsMatchResponse sendIsMatchRequest(String channelId, String sentence) throws Exception {
+    private SellbotIsMatchResponse sendIsMatchRequest(String callUuid, String sentence) throws Exception {
         try {
-
             AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
             aiCallLngKeyMatchReq.setSentence(sentence);
-            aiCallLngKeyMatchReq.setSeqid(channelId);
+            aiCallLngKeyMatchReq.setSeqid(callUuid);
             Result.ReturnData<AiCallNext> result = robotRemote.aiLngKeyMatch(aiCallLngKeyMatchReq);
 
             String resp =result.getBody().getSellbotJson();

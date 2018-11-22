@@ -35,15 +35,15 @@ public class TempServiceImpl implements TempService{
         return true;
     }
 
-    @Override
-    public Boolean downloadtempwav(String tempId) {
-        List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
-        for(String server:serverList){
-            ITemplate iTemplateApi = FeignBuildUtil.feignBuilderTarget(ITemplate.class,Constant.PROTOCOL +server);
-            //调用fsagent下载模板录音接口
-            Result.ReturnData<Boolean> result = iTemplateApi.downloadbotwav(tempId);
-            //疑问：是否需要将失败的fsagent serviceId返回出来
-        }
-        return true;
-    }
+//    @Override
+//    public Boolean downloadtempwav(String tempId) {
+//        List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
+//        for(String server:serverList){
+//            ITemplate iTemplateApi = FeignBuildUtil.feignBuilderTarget(ITemplate.class,Constant.PROTOCOL +server);
+//            //调用fsagent下载模板录音接口
+//            Result.ReturnData<Boolean> result = iTemplateApi.downloadbotwav(tempId);
+//            //疑问：是否需要将失败的fsagent serviceId返回出来
+//        }
+//        return true;
+//    }
 }

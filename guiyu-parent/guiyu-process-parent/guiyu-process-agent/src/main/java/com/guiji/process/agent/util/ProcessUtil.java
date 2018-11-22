@@ -1,7 +1,10 @@
 package com.guiji.process.agent.util;
 
 import com.guiji.process.agent.handler.ImClientProtocolBO;
+import com.guiji.process.agent.model.CfgNodeOperVO;
+import com.guiji.process.agent.model.CfgNodeVO;
 import com.guiji.process.agent.model.CommandResult;
+import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.DeviceStatusEnum;
@@ -12,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -88,12 +93,12 @@ public class ProcessUtil {
         }
     }
 
-    public static void sendHealth(int port) throws UnknownHostException {
+    public static void sendHealth(int port,DeviceTypeEnum deviceTypeEnum,CfgNodeOperVO cfgNodeOperVO) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.HEALTH);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
+        processInstanceVO.setType(deviceTypeEnum);
         processInstanceVO.setPort(port);
         boolean isUp = ProcessUtil.checkRun(port);
         if (isUp) {
@@ -103,19 +108,17 @@ public class ProcessUtil {
         }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
-
-        // TODO
-        Random r = new Random();
-        int rr = r.nextInt(1000);
-        if(rr % 2 == 0)
-        {
-            processInstanceVO.setStatus(DeviceStatusEnum.UP);
-        }
-        else
-        {
-            processInstanceVO.setStatus(DeviceStatusEnum.DOWN);
-        }
         ImClientProtocolBO.getIntance().send(msg,3);
+
+        //停止状态的进程自动重启
+        if (DeviceStatusEnum.DOWN == processInstanceVO.getStatus()) {
+            if (neetExecute(port,CmdTypeEnum.START)) {
+                // 发起重启命令
+                CommandUtils.exec(cfgNodeOperVO.getCmd());
+                // 执行完命令保存结果到内存记录
+                afterCMD(port,CmdTypeEnum.START);
+            }
+        }
     }
 
 
@@ -148,5 +151,43 @@ public class ProcessUtil {
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);
+    }
+
+    public static boolean neetExecute(int port,CmdTypeEnum cmdTypeEnum) {
+        boolean needExecute = true;
+        List<OperateVO> operateVOList = ImClientProtocolBO.operateVOList;
+        for(OperateVO operateVO : operateVOList) {
+            if (operateVO.getPort() == port && cmdTypeEnum == operateVO.getCmdTypeEnum()) {
+                //同一进程相同操作，间隔30s才能再次操作
+                long currentTimeMillis = System.currentTimeMillis();
+                long lastTimeMills = operateVO.getTime().getTime();
+                if ((currentTimeMillis - lastTimeMills) < ImClientProtocolBO.operateIntervalTime) {
+                    needExecute = false;
+                    break;
+                }
+            }
+        }
+        return needExecute;
+    }
+
+    public static void afterCMD(int port,CmdTypeEnum cmdTypeEnum) {
+        // 操作记录记载内存
+        boolean needAddFlg = true;
+        List<OperateVO> operateVOList = ImClientProtocolBO.operateVOList;
+        for (OperateVO operateVO:operateVOList) {
+            if (operateVO.getPort() == port && operateVO.getCmdTypeEnum() == cmdTypeEnum) {
+                operateVO.setTime(new Date());
+                needAddFlg = false;
+                break;
+            }
+        }
+        if (needAddFlg) {
+            //如果第一次操作需要添加到内存记录
+            OperateVO vo = new OperateVO();
+            vo.setPort(port);
+            vo.setCmdTypeEnum(cmdTypeEnum);
+            vo.setTime(new Date());
+            ImClientProtocolBO.operateVOList.add(vo);
+        }
     }
 }

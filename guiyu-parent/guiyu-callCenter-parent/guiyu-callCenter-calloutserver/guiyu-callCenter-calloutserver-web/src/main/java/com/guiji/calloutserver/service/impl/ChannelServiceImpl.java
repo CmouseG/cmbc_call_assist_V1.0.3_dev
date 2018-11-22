@@ -6,8 +6,11 @@ import com.guiji.calloutserver.entity.Channel;
 import com.guiji.calloutserver.service.ChannelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,19 +43,6 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public void updateMediaLock(String uuid, boolean isLock, String wavFile){
-        Channel channel = findByUuid(uuid);
-        if(channel == null){
-            channel = new Channel();
-            channel.setChannelId(uuid);
-        }
-
-        channel.setIsMediaLock(isLock);
-        channel.setMediaFileName(wavFile);
-        save(channel);
-    }
-
-    @Override
     public void updateMediaLock(String uuid, boolean isLock){
         Channel channel = findByUuid(uuid);
         if(channel == null){
@@ -62,6 +52,20 @@ public class ChannelServiceImpl implements ChannelService {
 
         channel.setIsMediaLock(isLock);
         save(channel);
+    }
+
+    @Transactional
+    public void updateMediaLock(String uuid, Boolean isLock, String wavFile, LocalTime disturbTime){
+        Channel callMedia = findByUuid(uuid);
+        if(callMedia == null){
+            callMedia = new Channel();
+            callMedia.setChannelId(uuid);
+        }
+
+        callMedia.setIsMediaLock(isLock);
+        callMedia.setMediaFileName(wavFile);
+        callMedia.setDisturbTime(disturbTime);
+        save(callMedia);
     }
 
     @Override

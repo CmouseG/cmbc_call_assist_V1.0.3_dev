@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
-import com.guiji.ai.tts.constants.AiErrorConstant;
+import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.TtsService;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
@@ -30,12 +30,14 @@ public class TtsController implements ITts {
     	logger.info("开始语音合成!");
     	try {
     		TtsRspVO ttsRspVO = ttsService.translate(ttsReqVO);
-    		//TODO 是否需要校验返回值
-    		logger.info("语音合成完毕!");
-    		return Result.ok(ttsRspVO);
+    		if(ttsRspVO != null){
+    			logger.info("语音合成完毕!");
+        		return Result.ok(ttsRspVO);
+    		}
+    		return null;
 		} catch (Exception e) {
 			logger.error("语音合成失败!",e);
-			return Result.error(AiErrorConstant.AI_TRANSFER_ERROR);
+			return Result.error(AiConstants.AI_TRANSFER_ERROR);
 		}
     }
 }

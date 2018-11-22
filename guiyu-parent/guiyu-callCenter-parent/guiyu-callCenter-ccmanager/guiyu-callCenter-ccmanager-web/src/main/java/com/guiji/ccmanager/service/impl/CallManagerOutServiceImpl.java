@@ -6,8 +6,10 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.calloutserver.api.ICallPlan;
+import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallManagerOutService;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsmanager.api.ITemp;
@@ -43,13 +45,14 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
     private DiscoveryClient discoveryClient;
 
     @Override
-    public Result.ReturnData<Object> startcallplan(String customerId, String tempId, String lineId) {
+    public void startcallplan(String customerId, String tempId, String lineId) {
 
         //根据线路id到lineinfo表中查询线路是否存在，不存在则返回线路不存在错误，并报警
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(Integer.parseInt(lineId));
         if(lineInfoDB==null){
+            // todo 报警
             log.warn("line not exist,lineId:"+lineId);
-            return Result.error(Constant.ERROR_LINE_NOTEXIST);
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_LINE_NOTEXIST);
         }
         //到calloutplan中查询该线路是否存在待呼叫或进行中的计划，存在则返回线路繁忙错误，并报警
         CallOutPlanExample example = new CallOutPlanExample();
@@ -58,22 +61,18 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         criteria.andCallStateBetween(Constant.CALLSTATE_INIT,Constant.CALLSTATE_AGENT_ANSWER);
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);
         if(existList!=null && existList.size()>0){
+            // todo 报警
             log.warn("line is running,lineId:"+lineId);
-            return Result.error(Constant.ERROR_LINE_RUNNING);
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_LINE_RUNNING);
         }
 
         //调用fsmanager的模板是否存在接口，模板不存在处理如下
-        Result.ReturnData<Boolean> resultTemp = tempApiFeign.istempexist(tempId);
+        Result.ReturnData<Boolean> resultTemp = tempApiFeign.istempexist(tempId.replace("_en","_rec"));
         if(resultTemp.getCode().equals(Constant.SUCCESS_COMMON) && resultTemp.getBody() == false){
             //返回模板不存在错误，并报警
+            // todo 报警
             log.warn("temp is not exist,tempId:"+tempId);
-            return Result.error(Constant.ERROR_TEMP_NOTEXIST);
-        }
-        //调用fsmanager的下载模板接口
-        Result.ReturnData result = tempApiFeign.downloadtempwav(tempId);
-        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){
-            log.warn("tempApiFeign.downloadtempwav failed,code:"+result.getCode());
-            return result;
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_TEMP_NOTEXIST);
         }
         //调用所有calloutserver的启动客户呼叫计划接口
         List<String> serverEurekaList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
@@ -82,7 +81,6 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
             callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
         }
 
-        return Result.ok();
     }
 
     @Override

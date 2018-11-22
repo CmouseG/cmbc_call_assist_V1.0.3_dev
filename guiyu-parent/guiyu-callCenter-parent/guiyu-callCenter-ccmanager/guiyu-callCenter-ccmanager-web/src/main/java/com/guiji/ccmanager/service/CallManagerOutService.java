@@ -10,7 +10,7 @@ import com.guiji.component.result.Result;
  */
 public interface CallManagerOutService {
 
-    public Result.ReturnData<Object> startcallplan(String customerId, String tempId, String lineId);
+    public void startcallplan(String customerId, String tempId, String lineId);
 
     public CallOutPlan getCallRecordById(String callId);
 }

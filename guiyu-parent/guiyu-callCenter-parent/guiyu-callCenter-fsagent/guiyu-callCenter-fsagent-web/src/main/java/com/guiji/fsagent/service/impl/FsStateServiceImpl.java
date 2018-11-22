@@ -4,6 +4,7 @@ import com.guiji.fsagent.entity.FreeSWITCH;
 import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsagent.entity.GlobalVar;
 import com.guiji.fsagent.manager.ApplicationInit;
+import com.guiji.fsagent.service.FsStateService;
 import com.guiji.utils.ServerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,14 @@ import java.io.IOException;
 import java.net.Socket;
 
 @Service
-public class FsStateServiceImpl {
+public class FsStateServiceImpl implements FsStateService {
     private final Logger logger = LoggerFactory.getLogger(FsStateServiceImpl.class);
 
     @Autowired
     ApplicationInit pplicationInit;
     @Autowired
     Registration registration;
-
+    @Override
     public Boolean ishealthy()  {
         //1、查FreeSWITCH的esl端口是否处于开启状态
         FreeSWITCH fs = pplicationInit.getFreeSwitch();
@@ -46,7 +47,7 @@ public class FsStateServiceImpl {
         }
         return true;
     }
-
+    @Override
     public FsInfoVO fsinfo() {
        String agentId = ServerUtil.getInstanceId(registration);
         FreeSWITCH fs = pplicationInit.getFreeSwitch();

@@ -1,17 +1,12 @@
 package com.guiji.fsagent.util;
 
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Date;
 
 public class FileUtil {
@@ -55,15 +50,6 @@ public class FileUtil {
             }
         }
         return true;
-    }
-
-    public MultipartFile  toMultipartFile(String fileName) throws IOException{
-        File file = new File(fileName);
-        FileInputStream fileInputStream = new FileInputStream(file);
-        MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
-                ContentType.APPLICATION_OCTET_STREAM.toString(), fileInputStream);
-        return multipartFile;
-
     }
 
     /**

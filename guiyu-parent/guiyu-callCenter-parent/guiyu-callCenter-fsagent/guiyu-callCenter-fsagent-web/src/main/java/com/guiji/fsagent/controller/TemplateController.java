@@ -11,10 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,37 +33,44 @@ public class TemplateController implements ITemplate {
         return Result.ok(templateService.istempexist(tempId));
     }
 
-    @Override
-    public Result.ReturnData<Boolean> downloadbotwav(@PathVariable (value="tempId") String tempId) {
-        logger.info("收到下载模板录音请求tempId[{}]",tempId);
-        if(StringUtils.isBlank(tempId)){
-            logger.info("下载模板录音请求失败，参数错误，为null或空");
-            return Result.error(Constant.ERROR_CODE_PARAM);
-        }
-        //TODO...
-        return Result.ok(true);
-    }
+//    @Override
+//    public Result.ReturnData<Boolean> downloadbotwav(@PathVariable (value="tempId") String tempId) {
+//        logger.info("收到下载模板录音请求tempId[{}]",tempId);
+//        if(StringUtils.isBlank(tempId)){
+//            logger.info("下载模板录音请求失败，参数错误，为null或空");
+//            return Result.error(Constant.ERROR_CODE_PARAM);
+//        }
+//        //TODO...
+//        return Result.ok(true);
+//    }
 
     @Override
-    public Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam ("callId") String callId) {
-        logger.info("收到下载tts话术录音请求tempId[{}],callId[{}]",tempId,callId);
-        if(StringUtils.isBlank(tempId)||StringUtils.isBlank(callId)){
+    public Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("callId") String callId) {
+        logger.info("收到下载tts话术录音请求tempId[{}],callId[{}]", tempId, callId);
+        if (StringUtils.isBlank(tempId) || StringUtils.isBlank(callId)) {
             logger.info("下载tts话术录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        //TODO...
-        return Result.ok(true);
+        boolean result = templateService.downloadttswav(tempId, callId);
+        if (result) {
+            return Result.error(Constant.ERROR_CODE_DOWNLOADTTS_ERROR);
+        }
+        return Result.ok(result);
     }
 
     @Override
     public Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO) {
-        logger.info("收到上传录音请求RecordReqVO[{}]",recordReqVO);
+        logger.info("收到上传录音请求RecordReqVO[{}]", recordReqVO);
         if (StringUtils.isBlank(recordReqVO.getFileName()) || StringUtils.isBlank(recordReqVO.getBusiId()) ||
                 StringUtils.isBlank(recordReqVO.getBusiType()) || StringUtils.isBlank(recordReqVO.getSysCode())) {
             logger.info("上传录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        return templateService.uploadrecord(recordReqVO);
+        RecordVO result = templateService.uploadrecord(recordReqVO);
+        if (result == null) {
+            return Result.error(Constant.ERROR_CODE_UPLOAD_ERROR);
+        }
+        return Result.ok(result);
     }
 
     @Override

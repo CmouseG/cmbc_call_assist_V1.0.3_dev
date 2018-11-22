@@ -71,12 +71,13 @@ public class ApplicationInit {
         Base64Util util = new Base64Util();
         try {
             for (LineXmlnfoVO line : lineList) {
+                String fileName = line.getFileName();
                 if (line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)) {
-                    util.base64ToFile(line.getFileData(), freeSwitch.getDialplan() + line.getFileName());
+                    util.base64ToFile(line.getFileData(), freeSwitch.getDialplan() + fileName);
                 } else if (line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)) {
-                    util.base64ToFile(line.getFileData(), freeSwitch.getGateway() + line.getFileName());
+                    util.base64ToFile(line.getFileData(), freeSwitch.getGateway() + fileName);
                     //执行esl命令卸载网关
-                    freeSwitch.execute("sofia profile external killgw " + line.getFileName());
+                    freeSwitch.execute("sofia profile external killgw " + fileName.substring(0,fileName.lastIndexOf(".")));
                 }
             }
             //执行esl命令加载网关

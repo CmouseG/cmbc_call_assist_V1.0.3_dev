@@ -9,6 +9,7 @@ public class PathConfig {
     private String recordPath;
     private String tempPath;
     private String tempRecordPath;
+    private String ttsPath;
 
     public String getRecordPath() {
         return recordPath;
@@ -32,5 +33,13 @@ public class PathConfig {
 
     public void setTempRecordPath(String tempRecordPath) {
         this.tempRecordPath = tempRecordPath;
+    }
+
+    public String getTtsPath() {
+        return ttsPath;
+    }
+
+    public void setTtsPath(String ttsPath) {
+        this.ttsPath = ttsPath;
     }
 }

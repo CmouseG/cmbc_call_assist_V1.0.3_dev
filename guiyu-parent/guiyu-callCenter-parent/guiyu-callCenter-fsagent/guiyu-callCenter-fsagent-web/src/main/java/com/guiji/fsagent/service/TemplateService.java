@@ -12,11 +12,11 @@ import java.util.List;
 public interface TemplateService {
      Boolean istempexist(String tempId);
 
-     Boolean downloadbotwav(String tempId);
+    // Boolean downloadbotwav(String tempId);
 
-     Result.ReturnData<Boolean> downloadttswav(String tempId,String callId);
+     Boolean downloadttswav(String tempId,String callId);
 
-     Result.ReturnData<RecordVO> uploadrecord(RecordReqVO recordReqVO);
+     RecordVO uploadrecord(RecordReqVO recordReqVO);
 
      Result.ReturnData<List<WavLengthVO>> getwavlength(String tempId);
 }

@@ -5,7 +5,7 @@ public class RecordReqVO {
     private String busiId;
     private String busiType;
     private String fileName;
-
+    private Long userId;
     public String getSysCode() {
         return sysCode;
     }
@@ -36,5 +36,13 @@ public class RecordReqVO {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

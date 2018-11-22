@@ -1,5 +1,6 @@
 package com.guiji.process.server.handler;
 
+import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.server.core.ConnectionPool;
@@ -40,7 +41,7 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 		if (message.getType() == 3) {
 			System.out.println("服务端收到状态监控:" +  message.getContent());
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
-			DeviceMsgHandler.getInstance().add(cmdMessageVO);
+			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应
 			MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);

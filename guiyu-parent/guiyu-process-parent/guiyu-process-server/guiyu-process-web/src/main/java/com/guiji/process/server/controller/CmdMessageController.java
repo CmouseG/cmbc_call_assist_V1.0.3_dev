@@ -1,5 +1,6 @@
 package com.guiji.process.server.controller;
 
+import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
@@ -20,8 +21,6 @@ import java.util.List;
 @RequestMapping("/cmd")
 public class CmdMessageController {
 
-	@Autowired
-	private DeviceMsgHandler deviceMsgHandler;
 	/**
 	 * cmd
 	 * @param processInstances	进程
@@ -43,7 +42,7 @@ public class CmdMessageController {
 
 		if(!cmdMessageVOs.isEmpty())
 		{
-			deviceMsgHandler.add(cmdMessageVOs);
+			ProcessMsgHandler.getInstance().add(cmdMessageVOs);
 		}
 
 		return "success";

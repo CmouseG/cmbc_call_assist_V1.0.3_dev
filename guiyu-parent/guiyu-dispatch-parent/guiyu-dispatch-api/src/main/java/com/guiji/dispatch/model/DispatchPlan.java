@@ -47,7 +47,7 @@ public class DispatchPlan implements Serializable {
 
     private Date gmtModified;
 
-    private Byte isTts;
+    private boolean isTts;
 
     private static final long serialVersionUID = 1L;
 
@@ -219,15 +219,16 @@ public class DispatchPlan implements Serializable {
         this.gmtModified = gmtModified;
     }
 
-    public Byte getIsTts() {
-        return isTts;
-    }
 
-    public void setIsTts(Byte isTts) {
-        this.isTts = isTts;
-    }
+    public boolean isTts() {
+		return isTts;
+	}
 
-    @Override
+	public void setTts(boolean isTts) {
+		this.isTts = isTts;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

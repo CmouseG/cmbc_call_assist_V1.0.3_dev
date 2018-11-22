@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.result.Result.ReturnData;
@@ -18,8 +18,8 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.utils.RedisUtil;
 
-//@Component
- @RestController
+@Component
+// @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -34,8 +34,8 @@ public class TimeTask {
 	@Autowired
 	private RedisUtil redisUtil;
 
-//	@Scheduled(cron = "0 0/1 * * * ?")
-	 @PostMapping("selectPhonesByDate")
+	@Scheduled(cron = "0 0/1 * * * ?")
+//	 @PostMapping("selectPhonesByDate")
 	public void selectPhonesByDate() {
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
 		logger.info("startcallplan..");

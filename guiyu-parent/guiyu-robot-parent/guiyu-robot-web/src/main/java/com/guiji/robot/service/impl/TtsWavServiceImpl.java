@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.regex.Matcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,9 @@ import com.alibaba.fastjson.JSON;
 import com.guiji.ai.api.ITts;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
+import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
-//import com.guiji.nas.vo.SysFileReqVO;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.TtsWavHisMapper;
 import com.guiji.robot.dao.entity.TtsWavHis;
@@ -37,10 +38,10 @@ import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.TtsTempData;
 import com.guiji.robot.util.ListUtil;
-import com.guiji.robot.util.NasUtil;
 import com.guiji.robot.util.SystemUtil;
 import com.guiji.robot.util.WavMergeUtil;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.NasUtil;
 import com.guiji.utils.NetFileDownUtil;
 import com.guiji.utils.StrUtils;
 
@@ -57,8 +58,6 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	TtsWavHisMapper ttsWavHisMapper;
 	@Autowired
 	ITts iTts;
-	@Autowired
-	NasUtil nasUtil;
 	@Autowired
 	AiAsynDealService aiAsynDealService;
 	@Autowired
@@ -238,8 +237,8 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			data.setTtsPosContent(ttsPosEntry.getValue());
 			String content = ttsPosEntry.getValue();	//替换参数前文本
 			for(String param : hsReplace.getReplace_variables_flag()) {
-				//将参数逐个替换
-				content = content.replaceAll(param, ttsVoiceReq.getParamMap().get(param));
+				//将参数逐个替换，替换参数含 $特殊符号，使用Matcher.quoteReplacement消除字符的特殊含义
+				content = content.replaceAll(Matcher.quoteReplacement(param), ttsVoiceReq.getParamMap().get(param));
 			}
 			if(content.contains("$")){
 				logger.error("模板{}的参数{}参数替换失败！",ttsVoiceReq.getTemplateId());
@@ -325,19 +324,19 @@ public class TtsWavServiceImpl implements ITtsWavService{
 					throw new RobotException(AiErrorEnum.AI00060013.getErrorCode(),AiErrorEnum.AI00060013.getErrorMsg());
 				}
 				//上传文件服务器
-//				SysFileReqVO sysFileReqVO = new SysFileReqVO();
-//				sysFileReqVO.setBusiType("TEMP");	//临时文件 
-//				sysFileReqVO.setSysCode("ROBOT");	//机器人能力中心
-//				String nasFileUrl = nasUtil.uploadToNas(sysFileReqVO, new File(ttsFilePath));
-//				if(StrUtils.isNotEmpty(nasFileUrl)) {
-//					TtsVoice tts = new TtsVoice();
-//					tts.setTtsKey(ttsKey);
-//					tts.setTtsUrl(nasFileUrl);
-//					ttsList.add(tts);
-//				}else {
-//					logger.error("上传NAS服务器失败，返回文件url为空!");
-//					throw new RobotException(AiErrorEnum.AI00060014.getErrorCode(),AiErrorEnum.AI00060014.getErrorMsg());
-//				}
+				SysFileReqVO sysFileReqVO = new SysFileReqVO();
+				sysFileReqVO.setBusiType("TEMP");	//临时文件 
+				sysFileReqVO.setSysCode("ROBOT");	//机器人能力中心
+				SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(ttsFilePath));
+				if(sysFileRspVO != null) {
+					TtsVoice tts = new TtsVoice();
+					tts.setTtsKey(ttsKey);
+					tts.setTtsUrl(sysFileRspVO.getSkUrl());
+					ttsList.add(tts);
+				}else {
+					logger.error("上传NAS服务器失败，返回文件url为空!");
+					throw new RobotException(AiErrorEnum.AI00060014.getErrorCode(),AiErrorEnum.AI00060014.getErrorMsg());
+				}
 			}
 		} catch (RobotException e) {
 			throw e;

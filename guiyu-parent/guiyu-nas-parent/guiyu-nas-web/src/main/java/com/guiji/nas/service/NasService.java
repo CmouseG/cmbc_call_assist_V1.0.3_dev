@@ -28,7 +28,7 @@ public interface NasService {
 	 * @return SysFileRspVO
 	 * @throws IOException 
 	 */
-	public SysFileRspVO uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file,Long userId) throws IOException;
+	public SysFileRspVO uploadFile(SysFileReqVO sysFileReqVO, MultipartFile file) throws IOException;
 	
 	/**
 	 * 删除文件

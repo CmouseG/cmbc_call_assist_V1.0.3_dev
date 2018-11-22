@@ -34,15 +34,11 @@ public class SellbotServiceImpl implements ISellbotService{
 	 */
 	public String restore(AiBaseInfo ai,SellbotRestoreReq sellbotRestoreReq) {
 		if(sellbotRestoreReq != null) {
-			if("fpjkqzjhwsm".equals(sellbotRestoreReq.getCfg())) {
-				//目前测试时只支持这个话术模板
-				String url = HTTP_URL+"/restore";
-//				String url = "http://"+ai.getIp()+":"+ai.getPort()+"/restore";
-				String json = JsonUtils.bean2Json(sellbotRestoreReq);
-				String sellbotRsp = HttpClientUtil.doPostJson(url, json);
-				String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-				return result;
-			}
+			String url = "http://"+ai.getIp()+":"+ai.getPort()+"/restore";
+			String json = JsonUtils.bean2Json(sellbotRestoreReq);
+			String sellbotRsp = HttpClientUtil.doPostJson(url, json);
+			String result = StringEscapeUtils.unescapeJava(sellbotRsp);
+			return result;
 		}
 		return null;
 	}
@@ -67,7 +63,7 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @return
 	 */
 	public String match(AiBaseInfo ai,SellbotMatchReq sellbotMatchReq) {
-		String url = HTTP_URL+"is_match";
+		String url = HTTP_URL+"/is_match";
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotMatchReq));
 		String result = StringEscapeUtils.unescapeJava(sellbotRsp);
 		return result;

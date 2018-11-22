@@ -3,9 +3,12 @@ package com.guiji.process.agent.handler;
 import com.guiji.ImClientApp;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.agent.model.CommandResult;
+import com.guiji.process.agent.service.impl.ProcessMsgHandler;
 import com.guiji.process.agent.util.CommandUtils;
+import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoop;
@@ -25,26 +28,8 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 			System.out.println("client1:" + message.getContent());
 		} else if (message.getType() == 2) {
 			// 收到服务端发送指令并执行
-			int timeout = Integer.parseInt("5000");
-			CommandUtils.DEFAULT_TIMEOUT = timeout;
-			CommandResult result = CommandUtils.exec(message.getContent());
-			if (result != null)
-			{
-				if (result.getError()!=null) {
-					//发送心跳包
-					MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-					builder.setContent("客户端执行命令失败:" + result.getError());
-					ctx.writeAndFlush(builder);
-					System.out.println("客户端执行命令失败:" + result.getError());
-				}
-				if (result.getOutput()!=null) {
-					//发送心跳包
-					MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-					builder.setContent("客户端执行命令成功:" + result.getOutput());
-					ctx.writeAndFlush(builder);
-					System.out.println("客户端执行命令成功:" + result.getOutput());
-				}
-			}
+			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
+			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 		} else if (message.getType() == 3) {
 			// 收到服务端回复信息
 			System.out.println("收到服务端反馈:" + message.getContent());

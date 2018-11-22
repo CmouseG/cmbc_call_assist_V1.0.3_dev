@@ -24,20 +24,20 @@ public class ProcessCmdHandler {
         }
 
 
-        CfgNodeOperVO CfgNodeOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
+        CfgNodeOperVO cfgNodeOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
         switch (cmdMessageVO.getCmdType()) {
             case REGISTER:
                 break;
             case RESTART:
-                doCmd(CfgNodeOperVO.getCmd());
+                doCmd(cmdMessageVO,cfgNodeOperVO);
                 break;
             case UNKNOWN:
                 break;
             case START:
-                doCmd(CfgNodeOperVO.getCmd());
+                doCmd(cmdMessageVO,cfgNodeOperVO);
                 break;
             case STOP:
-                doCmd(CfgNodeOperVO.getCmd());
+                doCmd(cmdMessageVO,cfgNodeOperVO);
                 Thread.sleep(1000);//等待1s查看是否关闭成功
                 //TODO 检查是否停掉，如果进程还在则kill -9
                 if (ProcessUtil.checkRun(cmdMessageVO.getProcessInstanceVO().getPort())) {
@@ -46,7 +46,7 @@ public class ProcessCmdHandler {
                 break;
             case HEALTH:
                 ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),CfgNodeOperVO);
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
                 break;
             default:
                 break;
@@ -75,8 +75,12 @@ public class ProcessCmdHandler {
 
 
 
-    private void doCmd(String cmd) {
-        // 获取 命令
-        CommandUtils.exec(cmd);
+    private void doCmd(CmdMessageVO cmdMessageVO,CfgNodeOperVO cfgNodeOperVO) {
+        if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum())) {
+            // 发起重启命令
+            CommandUtils.exec(cfgNodeOperVO.getCmd());
+            // 执行完命令保存结果到内存记录
+            ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum());
+        }
     }
 }

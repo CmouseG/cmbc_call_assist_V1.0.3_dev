@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class DeviceManageService implements IDeviceManageService {
+public class ProcessManageService implements IDeviceManageService {
 
     @Autowired
     private RedisUtil redisUtil;

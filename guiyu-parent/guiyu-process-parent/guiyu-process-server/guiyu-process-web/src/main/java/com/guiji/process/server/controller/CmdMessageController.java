@@ -3,7 +3,6 @@ package com.guiji.process.server.controller;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
-import com.guiji.process.server.service.impl.DeviceMsgHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,6 +1,7 @@
 package com.guiji.process.server.service.impl;
 
 
+import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
@@ -12,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DeviceCmdHandler {
+public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private DeviceManageService deviceManageService;
+    private ProcessManageService deviceManageService;
 
     public void excute(CmdMessageVO cmdMessageVO)
     {

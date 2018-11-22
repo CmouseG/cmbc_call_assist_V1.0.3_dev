@@ -5,6 +5,7 @@ import com.guiji.process.agent.model.CfgNodeOperVO;
 import com.guiji.process.agent.model.CfgNodeVO;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.model.OperateVO;
+import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.DeviceStatusEnum;
@@ -112,12 +113,7 @@ public class ProcessUtil {
 
         //停止状态的进程自动重启
         if (DeviceStatusEnum.DOWN == processInstanceVO.getStatus()) {
-            if (neetExecute(port,CmdTypeEnum.START)) {
-                // 发起重启命令
-                CommandUtils.exec(cfgNodeOperVO.getCmd());
-                // 执行完命令保存结果到内存记录
-                afterCMD(port,CmdTypeEnum.START);
-            }
+            ProcessMsgHandler.getInstance().add(cmdMessageVO);
         }
     }
 

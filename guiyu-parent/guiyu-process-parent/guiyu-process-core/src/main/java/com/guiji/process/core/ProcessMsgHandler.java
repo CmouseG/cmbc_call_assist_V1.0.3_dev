@@ -1,35 +1,27 @@
-package com.guiji.process.server.service.impl;
+package com.guiji.process.core;
 
 import com.guiji.process.core.message.CmdMessageVO;
-import com.guiji.process.core.vo.ProcessInstanceVO;
-import com.guiji.process.server.model.CmdMessageQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by zhujy on 2018/11/17.
  */
 @Service
-public class DeviceMsgHandler {
+public class ProcessMsgHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final  DeviceMsgHandler instance = new DeviceMsgHandler();
+    private static final  ProcessMsgHandler instance = new ProcessMsgHandler();
 
-    private DeviceMsgHandler() {
+    private ProcessMsgHandler() {
 
     }
 
-    public static DeviceMsgHandler getInstance()
+    public static ProcessMsgHandler getInstance()
     {
         return instance;
     }

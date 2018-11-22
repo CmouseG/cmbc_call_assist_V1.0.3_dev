@@ -1,4 +1,4 @@
-package com.guiji.process.server.config;
+package com.guiji.process.agent.core;
 
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.ProcessMsgReadHandler;
@@ -8,7 +8,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ImServerQueueListener implements ApplicationRunner {
+public class ImAgentQueueListener implements ApplicationRunner {
 
 
     @Autowired

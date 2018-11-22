@@ -3,14 +3,10 @@ package com.guiji.process.server.handler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.server.core.ConnectionPool;
-import com.guiji.process.server.service.impl.DeviceMsgHandler;
 import com.guiji.utils.JsonUtils;
-import com.guiji.utils.StrUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.swagger.annotations.Scope;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;

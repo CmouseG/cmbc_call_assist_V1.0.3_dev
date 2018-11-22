@@ -1,20 +1,15 @@
-package com.guiji.process.server.service.impl;
+package com.guiji.process.core;
 
 import com.guiji.process.core.message.CmdMessageVO;
-import com.guiji.process.server.model.CmdMessageQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by zhujy on 2018/11/17.
  */
 @Service
-public class DeviceMsgReadHandler {
+public class ProcessMsgReadHandler {
 
-    public void run(DeviceCmdHandler handler)
+    public void run(IProcessCmdHandler handler)
     {
         CmdMessageVO cmdMessageVO = null;
         while(true)

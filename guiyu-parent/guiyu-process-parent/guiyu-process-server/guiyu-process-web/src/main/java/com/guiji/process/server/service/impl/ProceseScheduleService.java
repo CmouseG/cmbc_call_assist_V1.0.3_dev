@@ -2,7 +2,6 @@ package com.guiji.process.server.service.impl;
 
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.DeviceStatusEnum;
-import com.guiji.process.core.vo.DeviceTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IProceseScheduleService;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +23,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
     private RedisUtil redisUtil;
 
     @Autowired
-    private DeviceManageService deviceManageService;
+    private ProcessManageService deviceManageService;
 
     @Override
     public List<ProcessInstanceVO> getTTS(String model, int requestCount) {

@@ -28,3 +28,6 @@ eureka:
         #defaultZone: http://127.0.0.1:18001/eureka/
 properties:
   error: error.properties
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000

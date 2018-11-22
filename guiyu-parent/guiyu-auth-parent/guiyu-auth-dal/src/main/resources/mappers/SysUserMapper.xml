@@ -6,8 +6,13 @@
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="push_type" property="pushType" jdbcType="VARCHAR" />
+    <result column="call_record_url" property="callRecordUrl" jdbcType="VARCHAR" />
+    <result column="batch_record_url" property="batchRecordUrl" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="vaild_time" property="vaildTime" jdbcType="DATE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, username, `password`, `status`, create_time, update_time
+    id, username, `password`, `status`, push_type, call_record_url, batch_record_url, 
+    create_time, update_time, del_flag, vaild_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysUserExample" >
     select
@@ -107,11 +113,13 @@
   <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
   
     insert into sys_user (id, username, `password`, 
-      `status`, create_time, update_time
-      )
+      `status`, push_type, call_record_url, 
+      batch_record_url, create_time, update_time, 
+      del_flag, vaild_time)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+      #{status,jdbcType=INTEGER}, #{pushType,jdbcType=VARCHAR}, #{callRecordUrl,jdbcType=VARCHAR}, 
+      #{batchRecordUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR}, #{vaildTime,jdbcType=DATE})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
@@ -128,11 +136,26 @@
       <if test="status != null" >
         `status`,
       </if>
+      <if test="pushType != null" >
+        push_type,
+      </if>
+      <if test="callRecordUrl != null" >
+        call_record_url,
+      </if>
+      <if test="batchRecordUrl != null" >
+        batch_record_url,
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
       <if test="updateTime != null" >
         update_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="vaildTime != null" >
+        vaild_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -148,11 +171,26 @@
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
+      <if test="pushType != null" >
+        #{pushType,jdbcType=VARCHAR},
+      </if>
+      <if test="callRecordUrl != null" >
+        #{callRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="batchRecordUrl != null" >
+        #{batchRecordUrl,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="vaildTime != null" >
+        #{vaildTime,jdbcType=DATE},
       </if>
     </trim>
   </insert>
@@ -177,11 +215,26 @@
       <if test="record.status != null" >
         `status` = #{record.status,jdbcType=INTEGER},
       </if>
+      <if test="record.pushType != null" >
+        push_type = #{record.pushType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callRecordUrl != null" >
+        call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.batchRecordUrl != null" >
+        batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.delFlag != null" >
+        del_flag = #{record.delFlag,jdbcType=CHAR},
+      </if>
+      <if test="record.vaildTime != null" >
+        vaild_time = #{record.vaildTime,jdbcType=DATE},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -194,8 +247,13 @@
       username = #{record.username,jdbcType=VARCHAR},
       `password` = #{record.password,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=INTEGER},
+      push_type = #{record.pushType,jdbcType=VARCHAR},
+      call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
+      batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{record.delFlag,jdbcType=CHAR},
+      vaild_time = #{record.vaildTime,jdbcType=DATE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -212,11 +270,26 @@
       <if test="status != null" >
         `status` = #{status,jdbcType=INTEGER},
       </if>
+      <if test="pushType != null" >
+        push_type = #{pushType,jdbcType=VARCHAR},
+      </if>
+      <if test="callRecordUrl != null" >
+        call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="batchRecordUrl != null" >
+        batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=CHAR},
+      </if>
+      <if test="vaildTime != null" >
+        vaild_time = #{vaildTime,jdbcType=DATE},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -226,8 +299,13 @@
     set username = #{username,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=INTEGER},
+      push_type = #{pushType,jdbcType=VARCHAR},
+      call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
+      batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR},
+      vaild_time = #{vaildTime,jdbcType=DATE}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

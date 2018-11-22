@@ -71,4 +71,10 @@ public class UserController implements IAuth{
 	public void changePassword(String newPass,String oldPass,@RequestHeader Long userId) throws CheckConditionException{
 		service.changePassword(newPass,oldPass,userId);
 	}
+	
+	@RequestMapping("/user/updateUserData")
+	public void updateUserData(SysUser user,@RequestHeader Long userId) {
+		user.setId(userId);
+		service.updateUserData(user);
+	}
 }

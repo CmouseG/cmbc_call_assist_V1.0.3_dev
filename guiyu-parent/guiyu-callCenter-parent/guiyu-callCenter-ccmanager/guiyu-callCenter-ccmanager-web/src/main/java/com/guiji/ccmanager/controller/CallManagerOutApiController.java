@@ -95,15 +95,8 @@ public class CallManagerOutApiController implements ICallManagerOut {
             return Result.error(Constant.ERROR_PARAM);
         }
 
-        Result.ReturnData<Object>  result = callManagerOutService.startcallplan(customerId,tempId,lineId);
-        if(result.getCode().equals(Constant.SUCCESS_COMMON)){
-            log.info("response success startCallPlan，customerId[{}]，tempId[{}]，lineId[{}]", customerId, tempId, lineId);
-            return Result.ok(true);
-        }else{
-            log.warn("callManagerOutService.startcallplan return code:"+result.getCode());
-            return Result.error(result.getCode());
-        }
-
+        callManagerOutService.startcallplan(customerId,tempId,lineId);
+        return Result.ok(true);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsagent.entity.GlobalVar;
 import com.guiji.fsagent.manager.ApplicationInit;
 import com.guiji.fsagent.service.FsStateService;
+import com.guiji.fsagent.util.PortStateUtil;
 import com.guiji.utils.ServerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,45 +13,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.Socket;
-
 @Service
 public class FsStateServiceImpl implements FsStateService {
     private final Logger logger = LoggerFactory.getLogger(FsStateServiceImpl.class);
 
     @Autowired
-    ApplicationInit pplicationInit;
+    ApplicationInit aplicationInit;
     @Autowired
     Registration registration;
+
     @Override
-    public Boolean ishealthy()  {
+    public boolean ishealthy() {
         //1、查FreeSWITCH的esl端口是否处于开启状态
-        FreeSWITCH fs = pplicationInit.getFreeSwitch();
-        Socket socket =null;
-        try {
-            socket = new Socket("localhost" , Integer.parseInt(fs.getFsEslPort()));
-            if(!socket.isConnected()) {
-                return false;
-            }
-        } catch (Exception e) {
-            logger.info("检查本机某个端口出错",e);
-            return false;
-        }finally {
-            if(socket!=null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    logger.info("关闭socket异常",e);
-                }
-            }
+        FreeSWITCH fs = aplicationInit.getFreeSwitch();
+        boolean result = PortStateUtil.PortIsIn(fs.getFsEslPort());
+        if (!result) {
+            logger.info("freeswitch的esl端口没有开启，freeswitch异常");
+            // TODO-- 报警
         }
-        return true;
+        return result;
     }
+
     @Override
     public FsInfoVO fsinfo() {
-       String agentId = ServerUtil.getInstanceId(registration);
-        FreeSWITCH fs = pplicationInit.getFreeSwitch();
+        String agentId = ServerUtil.getInstanceId(registration);
+        FreeSWITCH fs = aplicationInit.getFreeSwitch();
         GlobalVar globalVar = fs.getGlobalVar();
         FsInfoVO fsinfo = new FsInfoVO();
         fsinfo.setFsAgentId(agentId);

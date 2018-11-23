@@ -84,7 +84,6 @@ public class FsServiceImpl implements FsService {
             Result.ReturnData<Boolean> result = iFsStateApi.ishealthy();
             if(result.body){
                 Result.ReturnData<FsInfoVO> resultInfo=iFsStateApi.fsinfo();
-
                 //得到返回的fsagent对象
                 FsInfoVO fsInfoVO = resultInfo.getBody();
                 if(fsInfoVO!=null){//如果得到的FsInfoVO不为空继续执行，为空则直接继续遍历fsagent 的list
@@ -134,10 +133,11 @@ public class FsServiceImpl implements FsService {
     }
 
     @Override
-    public void releasefs(String serviceId) {
+    public boolean releasefs(String serviceId) {
         FsBindExample example = new FsBindExample();
         FsBindExample.Criteria criteria = example.createCriteria();
         criteria.andServiceIdEqualTo(serviceId);
         fsBindMapper.deleteByExample(example);
+        return true;
     }
 }

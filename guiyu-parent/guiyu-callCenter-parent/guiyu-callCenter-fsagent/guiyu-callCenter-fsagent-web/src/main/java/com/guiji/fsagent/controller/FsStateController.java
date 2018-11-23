@@ -2,7 +2,6 @@ package com.guiji.fsagent.controller;
 
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.IFsState;
-import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsagent.service.FsStateService;
 import org.slf4j.Logger;
@@ -20,12 +19,7 @@ public class FsStateController implements IFsState {
     @Override
     public Result.ReturnData<Boolean> ishealthy() {
         logger.info("收到检查服务健康状态请求");
-        boolean result = fsStateService.ishealthy();
-        if(!result){
-            logger.info("freeswitch状态不正常");
-            return Result.error(Constant.ERROR_CODE_FSSTATE_ERROR);
-        }
-        return Result.ok();
+        return Result.ok(fsStateService.ishealthy());
     }
 
     @Override

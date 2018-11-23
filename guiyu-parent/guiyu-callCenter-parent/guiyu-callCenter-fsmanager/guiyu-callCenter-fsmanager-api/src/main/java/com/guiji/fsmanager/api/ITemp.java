@@ -17,14 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient("guiyu-callcenter-fsmanager")
 public interface ITemp {
-
-    @ApiOperation(value = "下载模板录音")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
-    })
-    @RequestMapping(value = "/downloadtempwav", method = RequestMethod.GET)
-     Result.ReturnData downloadtempwav(@RequestParam("tempId") String tempId);
-
     @ApiOperation(value = "模板是否存在")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")

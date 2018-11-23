@@ -77,8 +77,17 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         //调用所有calloutserver的启动客户呼叫计划接口
         List<String> serverEurekaList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
         for(String server:serverEurekaList) {
-            ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + server);
-            callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+//            ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + server);
+//            callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+
+            if(customerId.equals("28")){
+                ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + "192.168.6.28:18024");
+                callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+            }else{
+                ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + "192.168.1.78:18024");
+                callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+            }
+
         }
 
     }

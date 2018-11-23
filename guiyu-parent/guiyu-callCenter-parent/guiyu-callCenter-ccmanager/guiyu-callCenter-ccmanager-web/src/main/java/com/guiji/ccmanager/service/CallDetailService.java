@@ -26,4 +26,6 @@ public interface CallDetailService {
     String getRecordFileUrl(String callId);
 
     List<CallOutRecord> getRecords(String callIds);
+
+    void delRecord(String callId);
 }

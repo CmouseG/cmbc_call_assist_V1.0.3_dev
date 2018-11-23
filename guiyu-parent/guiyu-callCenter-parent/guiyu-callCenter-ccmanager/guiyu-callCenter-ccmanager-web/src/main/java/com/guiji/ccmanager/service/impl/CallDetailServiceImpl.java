@@ -92,6 +92,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(StringUtils.isNotBlank(tempId)){
             criteria.andTempIdEqualTo(tempId);
         }
+        criteria.andIsdelEqualTo(0);
         return example;
     }
 
@@ -104,6 +105,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
+        example.setOrderByClause("call_start_time desc");
 
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
 
@@ -115,7 +117,6 @@ public class CallDetailServiceImpl implements CallDetailService {
             for(CallOutPlan callOutPlan:list){
                 CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
                 BeanUtil.copyProperties(callOutPlan,callOutPlan4ListSelect);
-                log.info(callOutPlan.getCallId()+"-------------------------"+callOutPlan.getCreateTime());
                 String userId = callOutPlan.getCustomerId();
                 if(map.get(userId)==null){
                     try {
@@ -224,5 +225,13 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
         return  callOutRecordMapper.selectByExample(example);
 
+    }
+
+    @Override
+    public void delRecord(String callId) {
+        CallOutPlan callOutPlan = new CallOutPlan();
+        callOutPlan.setIsdel(1);
+        callOutPlan.setCallId(callId);
+        callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
 }

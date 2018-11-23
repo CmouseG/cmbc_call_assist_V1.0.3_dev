@@ -7,6 +7,8 @@ public class ErrorMatch implements Serializable {
 
     private String keyWord;
 
+    private String errorName;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getErrorType() {
@@ -25,6 +27,14 @@ public class ErrorMatch implements Serializable {
         this.keyWord = keyWord == null ? null : keyWord.trim();
     }
 
+    public String getErrorName() {
+        return errorName;
+    }
+
+    public void setErrorName(String errorName) {
+        this.errorName = errorName == null ? null : errorName.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -33,6 +43,7 @@ public class ErrorMatch implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", errorType=").append(errorType);
         sb.append(", keyWord=").append(keyWord);
+        sb.append(", errorName=").append(errorName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.ErrorMatch" >
     <result column="error_type" property="errorType" jdbcType="INTEGER" />
     <result column="key_word" property="keyWord" jdbcType="VARCHAR" />
+    <result column="error_name" property="errorName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -64,7 +65,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    error_type, key_word
+    error_type, key_word, error_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ErrorMatchExample" >
     select
@@ -91,8 +92,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
-    insert into error_match (error_type, key_word)
-    values (#{errorType,jdbcType=INTEGER}, #{keyWord,jdbcType=VARCHAR})
+    insert into error_match (error_type, key_word, error_name
+      )
+    values (#{errorType,jdbcType=INTEGER}, #{keyWord,jdbcType=VARCHAR}, #{errorName,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
     insert into error_match
@@ -103,6 +106,9 @@
       <if test="keyWord != null" >
         key_word,
       </if>
+      <if test="errorName != null" >
+        error_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="errorType != null" >
@@ -110,6 +116,9 @@
       </if>
       <if test="keyWord != null" >
         #{keyWord,jdbcType=VARCHAR},
+      </if>
+      <if test="errorName != null" >
+        #{errorName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -128,6 +137,9 @@
       <if test="record.keyWord != null" >
         key_word = #{record.keyWord,jdbcType=VARCHAR},
       </if>
+      <if test="record.errorName != null" >
+        error_name = #{record.errorName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -136,7 +148,8 @@
   <update id="updateByExample" parameterType="map" >
     update error_match
     set error_type = #{record.errorType,jdbcType=INTEGER},
-      key_word = #{record.keyWord,jdbcType=VARCHAR}
+      key_word = #{record.keyWord,jdbcType=VARCHAR},
+      error_name = #{record.errorName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

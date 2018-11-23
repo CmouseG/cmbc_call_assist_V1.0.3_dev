@@ -35,7 +35,7 @@ public class CheckGpuStatus
 	public void run(ApplicationArguments arg0) throws Exception {
 		logger.info("调用进程管理接口查看GPU分配情况");
 		List<ProcessInstanceVO> returnList = null;
-		ReturnData<List<ProcessInstanceVO>> returnData = iProcessSchedule.getTTS();
+		ReturnData<List<ProcessInstanceVO>> returnData = iProcessSchedule.getAllTTS();
 		if(returnData != null && returnData.getBody() != null){
 			returnList = returnData.getBody();
 		}else{

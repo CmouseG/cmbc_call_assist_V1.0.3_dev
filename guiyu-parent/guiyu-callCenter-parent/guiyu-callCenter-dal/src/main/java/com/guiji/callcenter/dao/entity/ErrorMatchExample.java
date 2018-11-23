@@ -253,6 +253,76 @@ public class ErrorMatchExample {
             addCriterion("key_word not between", value1, value2, "keyWord");
             return (Criteria) this;
         }
+
+        public Criteria andErrorNameIsNull() {
+            addCriterion("error_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameIsNotNull() {
+            addCriterion("error_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameEqualTo(String value) {
+            addCriterion("error_name =", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameNotEqualTo(String value) {
+            addCriterion("error_name <>", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameGreaterThan(String value) {
+            addCriterion("error_name >", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameGreaterThanOrEqualTo(String value) {
+            addCriterion("error_name >=", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameLessThan(String value) {
+            addCriterion("error_name <", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameLessThanOrEqualTo(String value) {
+            addCriterion("error_name <=", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameLike(String value) {
+            addCriterion("error_name like", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameNotLike(String value) {
+            addCriterion("error_name not like", value, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameIn(List<String> values) {
+            addCriterion("error_name in", values, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameNotIn(List<String> values) {
+            addCriterion("error_name not in", values, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameBetween(String value1, String value2) {
+            addCriterion("error_name between", value1, value2, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorNameNotBetween(String value1, String value2) {
+            addCriterion("error_name not between", value1, value2, "errorName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

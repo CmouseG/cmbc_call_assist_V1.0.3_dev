@@ -25,16 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.Boolean;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -171,15 +169,13 @@ public class CallDetailController {
 
 
     @ApiOperation(value = "下载通话记录压缩包,callIds以逗号分隔")
-    @PostMapping(value="downloadRecordZip")
-    public void downloadRecordZip(String callIds,HttpServletResponse resp) throws UnsupportedEncodingException {
-        resp.setContentType("application/octet-stream;charset=GBK");
-        String fileName = "record.zip";
-        resp.setHeader("Content-Disposition", "attachment;filename="+
-                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
-
+    @GetMapping(value="downloadRecordZip")
+    public String downloadRecordZip(String callIds, HttpServletResponse resp) throws UnsupportedEncodingException {
         log.info("---------------start downloadRecordZip----------");
-
+        if(StringUtils.isBlank(callIds)){
+            return "Missing Parameters";
+        }
+        boolean hasRecordUrl = false;
         String batchId = IdGenUtil.uuid();
         String savePath = downloadPath+File.separator+batchId;
         //生成文件
@@ -187,24 +183,31 @@ public class CallDetailController {
         for(CallOutRecord callOutRecord:records){
             String recordUrl = callOutRecord.getRecordUrl();
             if(recordUrl!=null){
+                hasRecordUrl =true;
                 HttpDownload.downLoadFromUrl(recordUrl,callOutRecord.getCallId()+".wav",savePath);
             }
         }
+        if(!hasRecordUrl){
+            return "无录音文件";
+        }
+
+        resp.setContentType("application/octet-stream;charset=GBK");
+        String fileName = "record.zip";
+        resp.setHeader("Content-Disposition", "attachment;filename="+
+                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
+
+
         OutputStream out=null;
         try {
             out=resp.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //压缩
-        ZipUtil.zip(new File(savePath),"wav", out);
-        try {
+            //压缩
+            ZipUtil.zip(new File(savePath),"wav", out);
             FileUtils.deleteDirectory(new File(savePath));
         } catch (IOException e) {
-            log.error("downloadRecordZip delete fileDir error: "+e);
+            log.error("downloadRecordZip IOException error: "+e);
         }
         log.info("---------------end downloadRecordZip----------");
+        return null;
     }
 
     @ApiOperation(value = "获取整段通话录音url")
@@ -218,6 +221,19 @@ public class CallDetailController {
         }
        String url = callDetailService.getRecordFileUrl(callId);
         return Result.ok(url);
+    }
+
+    @ApiOperation(value = "删除通话记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value="delRecord")
+    public Result.ReturnData<Boolean> delRecord(@RequestParam String callId){
+        if(StringUtils.isBlank(callId)){
+            return Result.error(Constant.ERROR_PARAM);
+        }
+        callDetailService.delRecord(callId);
+        return Result.ok(true);
     }
 
 }

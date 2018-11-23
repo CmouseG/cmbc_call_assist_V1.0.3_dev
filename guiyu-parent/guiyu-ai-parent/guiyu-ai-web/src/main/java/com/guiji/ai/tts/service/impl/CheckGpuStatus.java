@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 
-import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
@@ -22,8 +22,9 @@ public class CheckGpuStatus
 //implements ApplicationRunner
 {
 	private static Logger logger = LoggerFactory.getLogger(CheckGpuStatus.class);
-	RedisUtil redisUtil = new RedisUtil();
 	
+	@Autowired
+    private RedisUtil redisUtil;	
 	@Autowired
 	IProcessSchedule iProcessSchedule;
 
@@ -44,11 +45,11 @@ public class CheckGpuStatus
 		Collections.sort(returnList, new Comparator<ProcessInstanceVO>() {
 			@Override
 			public int compare(ProcessInstanceVO o1, ProcessInstanceVO o2) {
-				return o1.getDeviceKey().compareTo(o2.getDeviceKey());
+				return o1.getProcessKey().compareTo(o2.getProcessKey());
 			}
 		});
 
-		String modelName = returnList.get(0).getDeviceKey();
+		String modelName = returnList.get(0).getProcessKey();
 		List<GuiyuTtsGpu> gpuList = new ArrayList<>();
 
 		for (int i = 0; i < returnList.size(); i++) {
@@ -56,9 +57,9 @@ public class CheckGpuStatus
 			gpu.setIp(returnList.get(i).getIp());
 			gpu.setPort(String.valueOf(returnList.get(i).getPort()));
 
-			if (!returnList.get(i).getDeviceKey().equals(modelName)) {
+			if (!returnList.get(i).getProcessKey().equals(modelName)) {
 				redisUtil.lSet(AiConstants.GUIYUTTS + modelName + AiConstants.AVALIABLE, gpuList);
-				modelName = returnList.get(i).getDeviceKey();
+				modelName = returnList.get(i).getProcessKey();
 				gpuList = new ArrayList<>();
 			}
 			gpuList.add(gpu);

@@ -14,7 +14,7 @@ public abstract class ITtsServiceProvide {
 		// 上传文件服务器
 		String audioUrl = uploadToServer(busiId, file);
 		// 存储数据库和日志
-		savaToDB(busiId, model, text, audioUrl);
+//		savaToDB(busiId, model, text, audioUrl);
 
 		return audioUrl;
 

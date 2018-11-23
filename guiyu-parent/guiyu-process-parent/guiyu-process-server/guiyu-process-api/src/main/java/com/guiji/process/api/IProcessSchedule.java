@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -41,7 +43,7 @@ public interface IProcessSchedule {
      */
     @ApiOperation(value = "返回getAllTTS")
     @GetMapping(value="/getAllTTS")
-    Result.ReturnData<List<ProcessInstanceVO>> getTTS();
+    Result.ReturnData<List<ProcessInstanceVO>> getAllTTS();
 
     /**
      * 模型切换
@@ -84,8 +86,8 @@ public interface IProcessSchedule {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "List", paramType = "query"),
     })
-    @GetMapping(value="/release")
-    Result.ReturnData<List<ProcessInstanceVO>> release(@RequestParam("deviceVOS") List<ProcessInstanceVO> deviceVOS);
+    @PostMapping(value="/release")
+    Result.ReturnData<Boolean> release(@RequestBody List<ProcessInstanceVO> deviceVOS);
 
 }
 

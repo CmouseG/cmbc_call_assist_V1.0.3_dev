@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
@@ -24,7 +25,11 @@ import com.guiji.utils.RedisUtil;
 @Service
 public class TtsServiceImpl implements TtsService {
 	private static Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
-	RedisUtil redisUtil = new RedisUtil();
+	
+	@Autowired
+    private RedisUtil redisUtil;
+	@Autowired
+	TtsServiceFactory ttsServiceFactory;
 	
     @Override
     public TtsRspVO translate(TtsReqVO ttsReqVO) {
@@ -57,14 +62,14 @@ public class TtsServiceImpl implements TtsService {
         	audioUrl = (String) redisUtil.get(model+"_"+text);
         	if(audioUrl == null){
         		//合成
-        		ITtsServiceProvide provide = TtsServiceFactory.getTtsProvide(model);
+        		ITtsServiceProvide provide = ttsServiceFactory.getTtsProvide(model);
         		if(provide == null){
         			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
         		}
         		audioUrl= provide.transfer(busId, model, text);
-        		if(audioUrl != null)
-        		redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
-        		logger.info("存入Redis");
+//        		if(audioUrl != null)
+//        		redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
+//        		logger.info("存入Redis");
         	}
         } catch (Exception e) {
             e.printStackTrace();

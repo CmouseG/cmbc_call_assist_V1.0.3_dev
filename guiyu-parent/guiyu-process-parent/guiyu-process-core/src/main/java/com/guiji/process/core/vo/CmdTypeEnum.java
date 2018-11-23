@@ -2,7 +2,7 @@ package com.guiji.process.core.vo;
 
 public enum CmdTypeEnum {
 
-    START(0), STOP(1), HEALTH(1), RESTART(2), REGISTER(3), RESTORE_MODEL(4), UNKNOWN(-1), UNREGISTER(5);
+    START(0), STOP(1), HEALTH(1), RESTART(2), REGISTER(3), RESTORE_MODEL(4), UNKNOWN(-1), UNREGISTER(5),AGENTREGISTER(6);
 
     /** 标识DeviceTypeEnmu的整型值 */
     private int iValue;

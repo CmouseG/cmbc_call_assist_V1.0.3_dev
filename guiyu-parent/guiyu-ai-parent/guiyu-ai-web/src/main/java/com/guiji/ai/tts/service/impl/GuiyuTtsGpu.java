@@ -16,25 +16,27 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.common.model.SysFileReqVO;
-import com.guiji.common.model.SysFileRspVO;
-import com.guiji.utils.NasUtil;
 import com.guiji.utils.RedisUtil;
 
 /**
  * Created by ty on 2018/11/14.
  */
+@Component
 public class GuiyuTtsGpu extends ITtsServiceProvide {
-
 	private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
-	RedisUtil redisUtil = new RedisUtil();
-
+	
 	private String ip;
 	private String port;
+	
+	@Autowired
+    private RedisUtil redisUtil;
 
 	@Override
 	File transferByChild(String model, String text) {
@@ -43,13 +45,13 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		FileOutputStream out = null;
 		File file = null;
 		try {
-			file = new File("/home/apps/ai/tts/wav/"); // 文件保存路径
+			file = new File("E:\\file\\redio.wav"); // 文件保存路径
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 			out = new FileOutputStream(file);
 			httpClient = HttpClients.createDefault();
-			HttpPost httpPost = new HttpPost("http://" + ip + ":" + port);
+			HttpPost httpPost = new HttpPost("http://" + ip + ":" + port + "/synthesize");
 			// 配置超时时间
 			RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(3000).build();
 			httpPost.setConfig(config);
@@ -68,7 +70,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 				responseEntity.writeTo(out); // 写到输出流中
 			}
 			// 释放GPU
-			releaseGpu(model, ip, port);
+//			releaseGpu(model, ip, port);
 		} catch (Exception e) {
 			logger.error("请求失败！" + e);
 			return null;
@@ -112,10 +114,11 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			sysFileReqVO.setSysCode(AiConstants.SYSCODE); //文件上传系统码
 			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
 			//调用本地工具-上传文件到NAS服务器
-			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
-			if(sysFileRsp != null) {
-				audioUrl = sysFileRsp.getSkUrl();
-			}
+//			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
+//			if(sysFileRsp != null) {
+//				audioUrl = sysFileRsp.getSkUrl();
+//			}
+			audioUrl = "www.baidu.com";
 			file.delete(); //删除本地文件
 		} catch (Exception e) {
 			logger.error(file.getName() + "上传失败！", e);
@@ -162,5 +165,10 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	public void setPort(String port) {
 		this.port = port;
+	}
+	
+	@Autowired
+	public void setRedisUtil(RedisUtil redisUtil) {
+		this.redisUtil = redisUtil;
 	}
 }

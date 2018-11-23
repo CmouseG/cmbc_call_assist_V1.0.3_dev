@@ -58,6 +58,8 @@ public class CallInPlan implements Serializable {
 
     private String aiId;
 
+    private Integer isdel;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -276,6 +278,14 @@ public class CallInPlan implements Serializable {
         this.aiId = aiId == null ? null : aiId.trim();
     }
 
+    public Integer getIsdel() {
+        return isdel;
+    }
+
+    public void setIsdel(Integer isdel) {
+        this.isdel = isdel;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -309,6 +319,7 @@ public class CallInPlan implements Serializable {
         sb.append(", remarks=").append(remarks);
         sb.append(", hasTts=").append(hasTts);
         sb.append(", aiId=").append(aiId);
+        sb.append(", isdel=").append(isdel);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

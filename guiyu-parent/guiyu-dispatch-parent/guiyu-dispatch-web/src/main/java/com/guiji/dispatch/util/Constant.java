@@ -36,5 +36,8 @@ public class Constant {
 	public static final Integer  IS_TTS_0=0;
 	public static final Integer  IS_TTS_1=1;
 	
+	//0清除 1 不清除第二天继续打
+	public static final Integer  IS_CLEAN_0=0;
+	public static final Integer  IS_CLEAN_1=1;
 	
 }

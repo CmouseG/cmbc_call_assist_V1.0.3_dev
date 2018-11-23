@@ -1,4 +1,4 @@
-package com.guiji.process.agent.service.impl;
+package com.guiji.process.agent;
 
 
 import com.guiji.process.agent.model.CfgNodeOperVO;
@@ -6,18 +6,25 @@ import com.guiji.process.agent.model.CfgNodeVO;
 import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.agent.util.CommandUtils;
 import com.guiji.process.agent.util.ProcessUtil;
+import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.UnknownHostException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class ProcessCmdHandler {
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void excute(CmdMessageVO cmdMessageVO) throws InterruptedException, UnknownHostException {
+    public void excute(CmdMessageVO cmdMessageVO) throws  Exception {
         if(cmdMessageVO == null)
         {
             return;
@@ -83,4 +90,5 @@ public class ProcessCmdHandler {
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum());
         }
     }
+
 }

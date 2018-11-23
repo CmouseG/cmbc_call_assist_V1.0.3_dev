@@ -24,7 +24,7 @@ import java.util.*;
 
 @Service
 public class LineServiceImpl implements LineService {
-    private final Logger log = LoggerFactory.getLogger(LineServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(LineServiceImpl.class);
 
     @Autowired
     EurekaManager eurekaManager;
@@ -39,7 +39,7 @@ public class LineServiceImpl implements LineService {
      * @throws Exception
      */
     @Override
-    public Boolean addLineinfos(LineInfoVO  request)  {
+    public boolean addLineinfos(LineInfoVO  request)  {
         String lineId = request.getLineId();
         //查询数据库，看有无重名
         LineConfigExample example = new LineConfigExample();
@@ -49,8 +49,7 @@ public class LineServiceImpl implements LineService {
         if(list.size()>0){
             return false;
         }
-        String gatewayxml = null;
-        gatewayxml = buildGateway( request);
+        String gatewayxml = buildGateway( request);
         LineConfig recordgw = new LineConfig();
         recordgw.setLineId(lineId);
         recordgw.setFileType(Constant.CONFIG_TYPE_GATEWAY);
@@ -258,6 +257,10 @@ public class LineServiceImpl implements LineService {
             ILineOperate lineOperateApi = FeignBuildUtil.feignBuilderTarget(ILineOperate.class,Constant.PROTOCOL +server);
             //调用fsagent通知更新接口
             Result.ReturnData<Boolean> result = lineOperateApi.updatenotify("line",lineId);
+            if(!result.getCode().equals("0")){
+                logger.info("通知[{}]这个fsagent更新接口失败",server);
+                //TODO --告警
+            }
         }
     }
     /**
@@ -271,9 +274,11 @@ public class LineServiceImpl implements LineService {
             ILineOperate lineOperateApi = FeignBuildUtil.feignBuilderTarget(ILineOperate.class,Constant.PROTOCOL +server);
             //调用fsagent删除线路接口
             Result.ReturnData<Boolean> result = lineOperateApi.deleteLineinfos(lineId);
+            if(!result.getCode().equals("0")){
+                logger.info("通知[{}]这个fsagent删除接口失败",server);
+                //TODO --告警
+            }
         }
     }
-
-
 
 }

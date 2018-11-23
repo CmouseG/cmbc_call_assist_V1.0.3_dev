@@ -1,13 +1,9 @@
 package com.guiji.process.agent.handler;
 
-import com.guiji.ImClientApp;
 import com.guiji.process.agent.core.ImConnection;
-import com.guiji.process.agent.model.CommandResult;
-import com.guiji.process.agent.service.impl.ProcessMsgHandler;
-import com.guiji.process.agent.util.CommandUtils;
+import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
-import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

@@ -1,15 +1,15 @@
 package com.guiji.fsagent.service.impl;
 
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
-import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
+import com.guiji.fsagent.config.FsagentExceptionEnum;
 import com.guiji.fsagent.config.PathConfig;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsagent.service.TemplateService;
 import com.guiji.fsagent.util.FileUtil;
-import com.guiji.nas.api.INas;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.robot.api.IRobotRemote;
@@ -38,34 +38,23 @@ public class TemplateServiceImpl implements TemplateService {
     @Autowired
     IRobotRemote iRobotFeign;
     @Override
-    public Boolean istempexist(String tempId) {
+    public boolean istempexist(String tempId) {
         String tempPath = pathConfig.getTempPath() + tempId;
         return FileUtil.isExist(tempPath);
     }
 
-//    @Override
-//    public Boolean downloadbotwav(String tempId) {
-//        String tempRecordPath = pathConfig.getTempRecordPath() + tempId;
-//        //判断模板录音是否已存在，存在则返回
-//        if (FileUtil.isExist(tempRecordPath)) {
-//            return true;
-//        }
-//        ;
-//        //下载模板录音
-//        // iRobotFeign.getVoiceResource();
-//        //FileUtil.unzip();
-//
-//        return true;
-//    }
-
     @Override
-    public Boolean downloadttswav(String tempId, String callId) {
+    public boolean downloadttswav(String tempId, String callId) {
         //下载tts录音
         TtsVoiceReq  ttsVoiceReq = new TtsVoiceReq();
         ttsVoiceReq.setTemplateId(tempId);
         ttsVoiceReq.setSeqid(callId);
-        List<TtsVoice> list = (List<TtsVoice>) iRobotFeign.ttsCompose(ttsVoiceReq);
-
+        Result.ReturnData<List<TtsVoice>> result = iRobotFeign.ttsCompose(ttsVoiceReq);
+        if(!result.getCode().equals("0")){
+            logger.warn("下载tts录音，获取录音URL失败:"+result.getCode());
+            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_TTS_DOWNLOAD);
+        }
+        List<TtsVoice> list = result.getBody();
         File ttsDir = new File(pathConfig.getTtsPath()+callId);  // 创建tts文件夹
         if (ttsDir.isDirectory() && !ttsDir.exists()) {//文件不存在则创建
             ttsDir.mkdir();
@@ -92,22 +81,24 @@ public class TemplateServiceImpl implements TemplateService {
         sysFileReqVO.setSysCode(recordReqVO.getSysCode());
         sysFileReqVO.setUserId(recordReqVO.getUserId());
         sysFileReqVO.setThumbImageFlag("0");
-        SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(fsConfig.getHomeDir()+"/recordings/" + record.getFileName()));
+        String uploadFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();
+        SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadFile));
         if(sysFileRspVO==null){
-           return null;
+            logger.info("上传录音失败,失败的文件为:[{}]",uploadFile);
+            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_UPLOAD_ERROR);
        }
         record.setFileUrl(sysFileRspVO.getSkUrl());
         return record;
     }
 
     @Override
-    public Result.ReturnData<List<WavLengthVO>> getwavlength(String tempId) {
+    public List<WavLengthVO> getwavlength(String tempId) {
         String tempPath = pathConfig.getTempPath() + tempId;
         List<WavLengthVO> list = new ArrayList<WavLengthVO>();
         File tempFile = new File(tempPath);
         if(!tempFile.exists()){
             logger.info("模板录音文件夹不存在[{}]",tempId);
-            return Result.error(Constant.ERROR_CODE_NO_TEMP);
+            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_TEMP_NOTEXIST);
         }
         File[] fs = tempFile.listFiles();
         for (File f : fs) {
@@ -117,7 +108,7 @@ public class TemplateServiceImpl implements TemplateService {
             wavLengthVO.setLength(FileUtil.getWavDuration(tempPath+"/"+filename));
             list.add(wavLengthVO);
         }
-        return Result.ok(list);
+        return list;
     }
 
 }

@@ -1,13 +1,16 @@
 package com.guiji.ccmanager.controller;
 
-import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallDetailService;
+import com.guiji.ccmanager.utils.HttpDownload;
+import com.guiji.ccmanager.utils.ZipUtil;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.IdGenUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -17,18 +20,19 @@ import jxl.format.BorderLineStyle;
 import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.Boolean;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -39,6 +43,9 @@ import java.util.List;
 public class CallDetailController {
 
     private final Logger log = LoggerFactory.getLogger(CallManagerOutApiController.class);
+
+    @Value("${download.path}")
+    private String downloadPath;
 
     @Autowired
     private CallDetailService callDetailService;
@@ -161,6 +168,48 @@ public class CallDetailController {
     }
 
 
+    @ApiOperation(value = "下载通话记录压缩包,callIds以逗号分隔")
+    @GetMapping(value="downloadRecordZip")
+    public String downloadRecordZip(String callIds, HttpServletResponse resp) throws UnsupportedEncodingException {
+        log.info("---------------start downloadRecordZip----------");
+        if(StringUtils.isBlank(callIds)){
+            return "Missing Parameters";
+        }
+        boolean hasRecordUrl = false;
+        String batchId = IdGenUtil.uuid();
+        String savePath = downloadPath+File.separator+batchId;
+        //生成文件
+        List<CallOutRecord> records = callDetailService.getRecords(callIds);
+        for(CallOutRecord callOutRecord:records){
+            String recordUrl = callOutRecord.getRecordUrl();
+            if(recordUrl!=null){
+                hasRecordUrl =true;
+                HttpDownload.downLoadFromUrl(recordUrl,callOutRecord.getCallId()+".wav",savePath);
+            }
+        }
+        if(!hasRecordUrl){
+            return "无录音文件";
+        }
+
+        resp.setContentType("application/octet-stream;charset=GBK");
+        String fileName = "record.zip";
+        resp.setHeader("Content-Disposition", "attachment;filename="+
+                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
+
+
+        OutputStream out=null;
+        try {
+            out=resp.getOutputStream();
+            //压缩
+            ZipUtil.zip(new File(savePath),"wav", out);
+            FileUtils.deleteDirectory(new File(savePath));
+        } catch (IOException e) {
+            log.error("downloadRecordZip IOException error: "+e);
+        }
+        log.info("---------------end downloadRecordZip----------");
+        return null;
+    }
+
     @ApiOperation(value = "获取整段通话录音url")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
@@ -172,6 +221,19 @@ public class CallDetailController {
         }
        String url = callDetailService.getRecordFileUrl(callId);
         return Result.ok(url);
+    }
+
+    @ApiOperation(value = "删除通话记录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value="delRecord")
+    public Result.ReturnData<Boolean> delRecord(@RequestParam String callId){
+        if(StringUtils.isBlank(callId)){
+            return Result.error(Constant.ERROR_PARAM);
+        }
+        callDetailService.delRecord(callId);
+        return Result.ok(true);
     }
 
 }

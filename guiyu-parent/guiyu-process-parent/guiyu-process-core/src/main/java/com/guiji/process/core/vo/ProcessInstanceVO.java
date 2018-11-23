@@ -3,15 +3,15 @@ package com.guiji.process.core.vo;
 import java.io.Serializable;
 import java.util.Map;
 
-public class ProcessInstanceVO implements Serializable {
+public class ProcessInstanceVO implements Serializable, Cloneable  {
 
     private String ip;
 
     private  Integer port;
 
-    private DeviceTypeEnum type;
+    private ProcessTypeEnum type;
 
-    private DeviceStatusEnum status;
+    private ProcessStatusEnum status;
 
     private String whoUsed;
 
@@ -35,15 +35,15 @@ public class ProcessInstanceVO implements Serializable {
         this.port = port;
     }
 
-    public DeviceTypeEnum getType() {
+    public ProcessTypeEnum getType() {
         return type;
     }
 
-    public void setType(DeviceTypeEnum type) {
+    public void setType(ProcessTypeEnum type) {
         this.type = type;
     }
 
-    public DeviceStatusEnum getStatus() {
+    public ProcessStatusEnum getStatus() {
         return status;
     }
 
@@ -55,7 +55,7 @@ public class ProcessInstanceVO implements Serializable {
         this.whoUsed = whoUsed;
     }
 
-    public void setStatus(DeviceStatusEnum status) {
+    public void setStatus(ProcessStatusEnum status) {
         this.status = status;
     }
 

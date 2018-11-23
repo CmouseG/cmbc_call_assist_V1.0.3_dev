@@ -33,17 +33,6 @@ public class TemplateController implements ITemplate {
         return Result.ok(templateService.istempexist(tempId));
     }
 
-//    @Override
-//    public Result.ReturnData<Boolean> downloadbotwav(@PathVariable (value="tempId") String tempId) {
-//        logger.info("收到下载模板录音请求tempId[{}]",tempId);
-//        if(StringUtils.isBlank(tempId)){
-//            logger.info("下载模板录音请求失败，参数错误，为null或空");
-//            return Result.error(Constant.ERROR_CODE_PARAM);
-//        }
-//        //TODO...
-//        return Result.ok(true);
-//    }
-
     @Override
     public Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("callId") String callId) {
         logger.info("收到下载tts话术录音请求tempId[{}],callId[{}]", tempId, callId);
@@ -51,11 +40,7 @@ public class TemplateController implements ITemplate {
             logger.info("下载tts话术录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        boolean result = templateService.downloadttswav(tempId, callId);
-        if (result) {
-            return Result.error(Constant.ERROR_CODE_DOWNLOADTTS_ERROR);
-        }
-        return Result.ok(result);
+        return Result.ok(templateService.downloadttswav(tempId, callId));
     }
 
     @Override
@@ -67,9 +52,6 @@ public class TemplateController implements ITemplate {
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
         RecordVO result = templateService.uploadrecord(recordReqVO);
-        if (result == null) {
-            return Result.error(Constant.ERROR_CODE_UPLOAD_ERROR);
-        }
         return Result.ok(result);
     }
 
@@ -80,6 +62,10 @@ public class TemplateController implements ITemplate {
             logger.info("获取模板录音文件时长失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        return templateService.getwavlength(tempId);
+        List<WavLengthVO> list = templateService.getwavlength(tempId);
+        if(list==null){
+           return Result.error(Constant.ERROR_CODE_NO_TEMP);
+        }
+        return Result.ok(list);
     }
 }

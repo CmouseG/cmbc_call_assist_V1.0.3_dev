@@ -189,4 +189,10 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin);
+	
+	/**
+	 * 根据当前时间刷新日期
+	 * @return
+	 */
+	boolean updateReplayDate();
 }

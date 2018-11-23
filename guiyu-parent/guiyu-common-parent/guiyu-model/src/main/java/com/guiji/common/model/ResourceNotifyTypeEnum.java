@@ -1,10 +1,13 @@
-package com.guiji.process.core.vo;
+package com.guiji.common.model;
 
-public enum DeviceStatusEnum {
+/**
+ *
+ */
+public enum  ResourceNotifyTypeEnum {
 
-    UP(0), DOWN(1), BUSYING(2), MISSING(3), UNKNOWN(-1),UNREGISTER(4);
+    BOTSTENCE_UPDATE(1), UNKNOWN(-1);
 
-    /** 标识DeviceTypeEnmu的整型值 */
+    /** 标识ResourceNotifyTypeEnum的整型值 */
     private int iValue;
 
 
@@ -12,15 +15,15 @@ public enum DeviceStatusEnum {
      * 构造方法
      * @param value 整型值
      */
-    private DeviceStatusEnum(int value)
+    private ResourceNotifyTypeEnum(int value)
     {
         this.iValue = value;
     }
 
 
     /**
-     * 返回DeviceTypeEnmu的整型值
-     * @return DeviceTypeEnmu的整型值
+     * ResourceNotifyTypeEnum
+     * @return ResourceNotifyTypeEnum的整型值
      */
     public int getValue()
     {
@@ -33,9 +36,9 @@ public enum DeviceStatusEnum {
      * @param value 整型值
      * @return ErrorCodeEnum实例
      */
-    public static DeviceStatusEnum valueOf(int value)
+    public static ResourceNotifyTypeEnum valueOf(int value)
     {
-        for (DeviceStatusEnum type : DeviceStatusEnum.values())
+        for (ResourceNotifyTypeEnum type : ResourceNotifyTypeEnum.values())
         {
             if (value == type.getValue())
             {

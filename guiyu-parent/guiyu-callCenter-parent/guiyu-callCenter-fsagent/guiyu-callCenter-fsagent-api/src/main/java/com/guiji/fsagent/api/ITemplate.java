@@ -22,15 +22,6 @@ public interface ITemplate {
     @GetMapping(value="/istempexist/{tempId}")
      Result.ReturnData<Boolean> istempexist(@PathVariable (value="tempId")String tempId);
 
-
-//    @ApiOperation(value = "下载模板录音接口")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query")
-//    })
-//    @GetMapping(value="/downloadbotwav/{tempId}")
-//     Result.ReturnData<Boolean> downloadbotwav(@PathVariable(value="tempId") String tempId);
-
-
     @ApiOperation(value = "下载tts话术录音")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tempId", value = "模板Id", dataType = "String", paramType = "query"),

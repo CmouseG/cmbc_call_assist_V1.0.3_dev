@@ -1,7 +1,7 @@
 package com.guiji.process.agent.model;
 
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessTypeEnum;
 
 import java.util.List;
 
@@ -11,23 +11,23 @@ public class CfgNodeVO {
 
     private int port;
 
-    private DeviceTypeEnum deviceTypeEnum;
+    private ProcessTypeEnum processTypeEnum;
 
     private List<CfgNodeOperVO> CfgNodeOpers;
 
     private String processKey;
 
 
-    public DeviceTypeEnum getDeviceTypeEnum() {
-        return deviceTypeEnum;
+    public ProcessTypeEnum getProcessTypeEnum() {
+        return processTypeEnum;
     }
 
-    public void setDeviceTypeEnum(Integer deviceTypeEnum) {
-        this.deviceTypeEnum = DeviceTypeEnum.valueOf(deviceTypeEnum);
+    public void setProcessTypeEnum(Integer processTypeEnum) {
+        this.processTypeEnum = ProcessTypeEnum.valueOf(processTypeEnum);
     }
 
-    public void setDeviceTypeEnum(String deviceTypeEnum) {
-        this.deviceTypeEnum = DeviceTypeEnum.valueOf(deviceTypeEnum);
+    public void setProcessTypeEnum(String processTypeEnum) {
+        this.processTypeEnum = ProcessTypeEnum.valueOf(processTypeEnum);
     }
 
     public String getName() {
@@ -85,7 +85,7 @@ public class CfgNodeVO {
         return "CfgNodeVO{" +
                 "name='" + name + '\'' +
                 ", port=" + port +
-                ", deviceTypeEnum=" + deviceTypeEnum +
+                ", processTypeEnum=" + processTypeEnum +
                 ", CfgNodeOpers=" + CfgNodeOpers +
                 ", processKey='" + processKey + '\'' +
                 '}';

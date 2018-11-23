@@ -1884,6 +1884,66 @@ public class CallInPlanExample {
             addCriterion("ai_id not between", value1, value2, "aiId");
             return (Criteria) this;
         }
+
+        public Criteria andIsdelIsNull() {
+            addCriterion("isdel is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelIsNotNull() {
+            addCriterion("isdel is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelEqualTo(Integer value) {
+            addCriterion("isdel =", value, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelNotEqualTo(Integer value) {
+            addCriterion("isdel <>", value, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelGreaterThan(Integer value) {
+            addCriterion("isdel >", value, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelGreaterThanOrEqualTo(Integer value) {
+            addCriterion("isdel >=", value, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelLessThan(Integer value) {
+            addCriterion("isdel <", value, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelLessThanOrEqualTo(Integer value) {
+            addCriterion("isdel <=", value, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelIn(List<Integer> values) {
+            addCriterion("isdel in", values, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelNotIn(List<Integer> values) {
+            addCriterion("isdel not in", values, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelBetween(Integer value1, Integer value2) {
+            addCriterion("isdel between", value1, value2, "isdel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsdelNotBetween(Integer value1, Integer value2) {
+            addCriterion("isdel not between", value1, value2, "isdel");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

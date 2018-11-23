@@ -10,7 +10,6 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
-import com.guiji.ccmanager.vo.LineInfo4Select;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
@@ -93,6 +92,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(StringUtils.isNotBlank(tempId)){
             criteria.andTempIdEqualTo(tempId);
         }
+        criteria.andIsdelEqualTo(0);
         return example;
     }
 
@@ -105,6 +105,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
+        example.setOrderByClause("call_start_time desc");
 
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
 
@@ -116,7 +117,6 @@ public class CallDetailServiceImpl implements CallDetailService {
             for(CallOutPlan callOutPlan:list){
                 CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
                 BeanUtil.copyProperties(callOutPlan,callOutPlan4ListSelect);
-
                 String userId = callOutPlan.getCustomerId();
                 if(map.get(userId)==null){
                     try {
@@ -215,5 +215,23 @@ public class CallDetailServiceImpl implements CallDetailService {
             return callOutRecord.getRecordFile();
         }
         return null;
+    }
+
+    @Override
+    public List<CallOutRecord> getRecords(String callIds) {
+
+        String[] callidArr = callIds.split(",");
+        CallOutRecordExample example = new CallOutRecordExample();
+        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+        return  callOutRecordMapper.selectByExample(example);
+
+    }
+
+    @Override
+    public void delRecord(String callId) {
+        CallOutPlan callOutPlan = new CallOutPlan();
+        callOutPlan.setIsdel(1);
+        callOutPlan.setCallId(callId);
+        callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
 }

@@ -28,14 +28,13 @@ public class TimeTask {
 	private IDispatchPlanService dispatchPlanService;
 	@Autowired
 	private ICallManagerOut callManagerOutApi;
-//	 @Autowired
-//	 private IRobotRemote robotRemote;
+	// @Autowired
+	// private IRobotRemote robotRemote;
 
 	@Autowired
 	private RedisUtil redisUtil;
 
 	@Scheduled(cron = "0 0/1 * * * ?")
-//	 @PostMapping("selectPhonesByDate")
 	public void selectPhonesByDate() {
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
 		logger.info("startcallplan..");
@@ -48,6 +47,13 @@ public class TimeTask {
 		}
 	}
 
+	// 每天凌晨1点执行一次
+	@Scheduled(cron = "0 0 1 * * ?")
+	public void replayPhone() {
+		boolean result = dispatchPlanService.updateReplayDate();
+		logger.info("当前凌晨一点执行日期刷新操作了！" + result);
+	}
+
 	/**
 	 * 判断redis是否在当前key
 	 * 
@@ -55,20 +61,21 @@ public class TimeTask {
 	 */
 	private void checkRedisAndDate(String key) {
 		Object object = redisUtil.get(key);
-		logger.info("checkRedisAndDate key result:"+object);
+		logger.info("checkRedisAndDate key result:" + object);
 		if (object != null && object != "") {
 			logger.info("当前推送已经推送过：在失效时间内，不重复推送:" + key);
 		} else {
 			String[] split = key.split("-");
 			ReturnData<Boolean> startcallplan = callManagerOutApi.startCallPlan(split[0], split[1], split[2]);
 			logger.info("启动客户呼叫计划结果" + startcallplan.success);
-			logger.info("启动客户呼叫计划结果详情 "+ startcallplan.msg);
+			logger.info("启动客户呼叫计划结果详情 " + startcallplan.msg);
 			if (startcallplan.success) {
 				// 5分钟失效时间
 				redisUtil.set(key, new Date(), 300);
 			}
 		}
 	}
+
 	/**
 	 * 分组排序字段
 	 * 

@@ -1,6 +1,6 @@
 package com.guiji.process.core.vo;
 
-public enum DeviceTypeEnum {
+public enum ProcessTypeEnum {
 
     TTS(0), SELLBOT(1), AGENT(99),UNKNOWN(-1);
 
@@ -12,7 +12,7 @@ public enum DeviceTypeEnum {
      * 构造方法
      * @param value 整型值
      */
-    private DeviceTypeEnum(int value)
+    private ProcessTypeEnum(int value)
     {
         this.iValue = value;
     }
@@ -33,9 +33,9 @@ public enum DeviceTypeEnum {
      * @param value 整型值
      * @return ErrorCodeEnum实例
      */
-    public static DeviceTypeEnum valueOf(int value)
+    public static ProcessTypeEnum valueOf(int value)
     {
-        for (DeviceTypeEnum type : DeviceTypeEnum.values())
+        for (ProcessTypeEnum type : ProcessTypeEnum.values())
         {
             if (value == type.getValue())
             {

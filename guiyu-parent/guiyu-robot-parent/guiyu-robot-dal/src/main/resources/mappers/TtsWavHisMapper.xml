@@ -271,7 +271,8 @@
     set seq_id = #{seqId,jdbcType=CHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
-      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      tts_json_data = #{ttsJsonData,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

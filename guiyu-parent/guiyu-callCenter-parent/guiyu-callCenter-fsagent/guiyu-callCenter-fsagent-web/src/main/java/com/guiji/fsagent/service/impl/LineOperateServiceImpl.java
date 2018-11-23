@@ -1,8 +1,10 @@
 package com.guiji.fsagent.service.impl;
 
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
+import com.guiji.fsagent.config.FsagentExceptionEnum;
 import com.guiji.fsagent.entity.FreeSWITCH;
 import com.guiji.fsagent.manager.ApplicationInit;
 import com.guiji.fsagent.service.LineOperateService;
@@ -28,27 +30,25 @@ public class LineOperateServiceImpl implements LineOperateService {
     @Autowired
     ApplicationInit pplicationInit;
     @Override
-    public Result.ReturnData<Boolean> updatenotify(String lineId) {
+    public boolean updatenotify(String lineId) {
         Result.ReturnData<List<LineXmlnfoVO>> result = lineOperApiFeign.linexmlinfos(lineId);
+        if(!result.getCode().equals("0")){
+            logger.warn("请求fsmanager获取线路接口返回出错:"+result.getCode());
+            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_FSMANAGER_LINEXMLINFOS);
+        }
         List<LineXmlnfoVO>  lineList = result.getBody();
         //获取fs对象
         FreeSWITCH fs = pplicationInit.getFreeSwitch();
-        Base64Util util = new Base64Util();
-        try {
             for(LineXmlnfoVO line:lineList){
                 if(line.getConfigType().equals(Constant.CONFIG_TYPE_DIALPLAN)){
-                    util.base64ToFile(line.getFileData(),fs.getDialplan()+"01_"+lineId+".xml");
+                    Base64Util.base64ToFile(line.getFileData(),fs.getDialplan()+"01_"+lineId+".xml");
                 }else if(line.getConfigType().equals(Constant.CONFIG_TYPE_GATEWAY)){
-                    util.base64ToFile(line.getFileData(),fs.getGateway()+"gw_"+lineId+".xml");;
+                    Base64Util.base64ToFile(line.getFileData(),fs.getGateway()+"gw_"+lineId+".xml");;
                 }
             }
-        } catch (IOException e) {
-            logger.info("下载新得xml后转base64过程中失败",e);
-            return Result.error(Constant.ERROR_CODE_BASE64_ERROR);
-        }
         //执行esl命令重载网关
         fs.execute("sofia profile external killgw gw_"+ lineId);
         fs.execute("sofia profile external rescan reloadxml");
-        return Result.ok();
+        return true;
     }
 }

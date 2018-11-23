@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: guiyu-callcenter-fsagent-test
+    name: guiyu-callcenter-fsagent
 
 #注册中心配置
 eureka:

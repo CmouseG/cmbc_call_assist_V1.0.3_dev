@@ -1,7 +1,9 @@
 package com.guiji.process.server.service.impl;
 
 
+import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DeviceCmdHandler {
+public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private DeviceManageService deviceManageService;
+    private ProcessManageService processManageService;
 
     public void excute(CmdMessageVO cmdMessageVO)
     {
@@ -37,12 +39,16 @@ public class DeviceCmdHandler {
                 doUnRegister(cmdMessageVO);
                 break;
             case RESTART:
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.RESTART );
                 break;
             case UNKNOWN:
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.UNKNOWN );
                 break;
             case START:
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.START );
                 break;
             case STOP:
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.STOP );
                 break;
             case HEALTH:
                 doHealthStatus(cmdMessageVO);
@@ -57,14 +63,14 @@ public class DeviceCmdHandler {
     private void doHealthStatus(CmdMessageVO cmdMessageVO)
     {
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-        ProcessInstanceVO oldProcessInstanceVO = deviceManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
+        ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
         if(oldProcessInstanceVO == null)
         {
             // 未注册过，不做
             return;
         }
 
-        deviceManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
+        processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
     }
 
     private void doAgentRegister(CmdMessageVO cmdMessageVO)
@@ -84,14 +90,14 @@ public class DeviceCmdHandler {
             return;
         }
 
-        ProcessInstanceVO oldProcessInstanceVO = deviceManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
+        ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
         if(oldProcessInstanceVO != null)
         {
             return;
         }
 
         lst.add(processInstanceVO);
-        deviceManageService.register(lst);
+        processManageService.register(lst);
     }
 
     private void doUnRegister(CmdMessageVO cmdMessageVO)
@@ -105,14 +111,14 @@ public class DeviceCmdHandler {
             return;
         }
 
-        ProcessInstanceVO oldProcessInstanceVO = deviceManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
+        ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
         if(oldProcessInstanceVO == null)
         {
             return;
         }
 
         lst.add(processInstanceVO);
-        deviceManageService.unRegister(lst);
+        processManageService.unRegister(lst);
     }
 
 }

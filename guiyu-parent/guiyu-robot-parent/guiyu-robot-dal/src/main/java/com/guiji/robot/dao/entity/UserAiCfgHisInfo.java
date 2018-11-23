@@ -24,6 +24,8 @@ public class UserAiCfgHisInfo implements Serializable {
 
     private String invalidPolicy;
 
+    private String handleType;
+
     private Date crtTime;
 
     private static final long serialVersionUID = 1L;
@@ -108,6 +110,14 @@ public class UserAiCfgHisInfo implements Serializable {
         this.invalidPolicy = invalidPolicy == null ? null : invalidPolicy.trim();
     }
 
+    public String getHandleType() {
+        return handleType;
+    }
+
+    public void setHandleType(String handleType) {
+        this.handleType = handleType == null ? null : handleType.trim();
+    }
+
     public Date getCrtTime() {
         return crtTime;
     }
@@ -132,6 +142,7 @@ public class UserAiCfgHisInfo implements Serializable {
         sb.append(", invalidDate=").append(invalidDate);
         sb.append(", status=").append(status);
         sb.append(", invalidPolicy=").append(invalidPolicy);
+        sb.append(", handleType=").append(handleType);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

@@ -41,7 +41,7 @@ public class LineOperateController implements ILineOperate {
             logger.info("更新配置信息通知请求失败，请求参数type不是line，直接返回错误");
               return Result.error(Constant.ERROR_CODE_NOT_LINE);
         }
-        return lineOperateService.updatenotify(lineId);
+        return Result.ok(lineOperateService.updatenotify(lineId));
     }
 
     @Override
@@ -56,6 +56,6 @@ public class LineOperateController implements ILineOperate {
         FileUtil.delete(fs.getDialplan()+"01_"+lineId+".xml");
         FileUtil.delete(fs.getGateway()+"gw_"+lineId+".xml");
         fs.execute("sofia profile external killgw gw_"+ lineId);
-        return Result.ok(true);
+        return Result.ok();
     }
 }

@@ -1,5 +1,6 @@
 package com.guiji.robot.service.impl;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -71,7 +72,22 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				throw new RobotException(AiErrorEnum.AI00060005.getErrorCode(),AiErrorEnum.AI00060005.getErrorMsg());
 			}
 			//调用进程管理服务申请sellbot机器人资源
-			ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(addAiNum);
+//			ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(addAiNum);
+			///////// TEST/////
+			ReturnData<List<ProcessInstanceVO>> processInstanceListData = new ReturnData<List<ProcessInstanceVO>>();
+			processInstanceListData.setCode("0");
+			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
+			for(int i=0;i<32;i++) {
+				ProcessInstanceVO test = new ProcessInstanceVO();
+				test.setIp("192.168.1.50");
+				DecimalFormat df=new DecimalFormat("00");
+				String hh = df.format(i);
+				int p = Integer.valueOf("150"+hh);
+				test.setPort(p);
+				processList.add(test);
+				processInstanceListData.setBody(processList);
+			}
+		    /////// TEST/////
 			if(processInstanceListData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(processInstanceListData.getCode())){
 				logger.error("调用进程管理申请{}个机器人资源异常...",addAiNum);
 				throw new RobotException(processInstanceListData.getCode(),processInstanceListData.getMsg());
@@ -94,6 +110,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 					aiInuse.setAiNo(this.genAiNo(instanceList.get(idx).getIp(), String.valueOf(instanceList.get(idx).getPort()))); //机器人临时编号
 					aiInuse.setAiStatus(RobotConstants.AI_STATUS_F); //新申请机器人默认空闲状态
 					aiInuse.setUserId(checkAiReady.getUserId()); //用户ID
+					aiInuse.setTemplateIds(addEntry.getKey()); //该机器人可用模板
 					aiInuse.setInitDate(DateUtil.getCurrentymd()); //分配日期
 					aiInuse.setInitTime(DateUtil.getCurrentTime()); //分配时间
 					aiInuse.setIp(instanceList.get(idx).getIp());	//机器IP
@@ -126,19 +143,22 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		//现在用户机器人配置
 		Map<String,Integer> userAiCfgMap = new HashMap<String,Integer>();
 		List<UserAiCfgInfo> userAiCfgList = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
+		//设置每个模板总计多少路机器人
 		for(UserAiCfgInfo cfg:userAiCfgList) {
 			if(RobotConstants.USER_CFG_STATUS_S.equals(cfg.getStatus())) {
-				userAiCfgMap.put(cfg.getTemplateIds(), userAiCfgMap.get(cfg.getTemplateIds())==null?1:userAiCfgMap.get(cfg.getTemplateIds())+1);
+				userAiCfgMap.put(cfg.getTemplateIds(), userAiCfgMap.get(cfg.getTemplateIds())==null?cfg.getAiNum():userAiCfgMap.get(cfg.getTemplateIds())+cfg.getAiNum());
 			}
 		}
+		//设置每个模板现在已分配的多少路机器人
 		if(ListUtil.isNotEmpty(userAiInuseList)) {
 			for(AiInuseCache aiCache:userAiInuseList) {
 				cacheMap.put(aiCache.getTemplateIds(), cacheMap.get(aiCache.getTemplateIds())==null?1:cacheMap.get(aiCache.getTemplateIds())+1);
 			}
 		}
+		//设置本次每个模板需要增加多少个机器人（总计-已分配）
 		if(userAiCfgMap!=null && !userAiCfgMap.isEmpty()) {
 			for (Map.Entry<String,Integer> cfgEntry : userAiCfgMap.entrySet()) { 
-				int addNum = cfgEntry.getValue()==null?0:cfgEntry.getValue() - cacheMap.get(cfgEntry.getKey()==null?0:cacheMap.get(cfgEntry.getKey()));
+				int addNum = cfgEntry.getValue()==null?0:cfgEntry.getValue() - (cacheMap.get(cfgEntry.getKey())==null?0:cacheMap.get(cfgEntry.getKey()));
 				if(addNum>0) {
 					addTempAiMap.put(cfgEntry.getKey(), addNum);
 				}
@@ -163,6 +183,8 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			processList.add(vo);
 			//调用进程管理释放资源
 			iProcessSchedule.release(processList);
+			//从用户缓存中也清理掉该用户的找个机器人
+			aiCacheService.delUserAi(aiInuse.getUserId(), aiInuse.getAiNo());
 			//异步记录日志
 			aiAsynDealService.releaseAiCycleHis(new ArrayList<AiInuseCache>(){{add(aiInuse);}});
 		}
@@ -187,6 +209,8 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			}
 			//调用进程管理释放资源
 			iProcessSchedule.release(processList);
+    		//清理该用户分配机器人缓存数据
+    		aiCacheService.delUserAis(aiList.get(0).getUserId());
 			//异步记录日志
 			aiAsynDealService.releaseAiCycleHis(aiList);
 		}
@@ -259,7 +283,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				Iterator<AiInuseCache> it = list.iterator();
 				while(it.hasNext()){
 					AiInuseCache ai = it.next();
-					if(RobotConstants.AI_STATUS_B.equals(ai.getAiStatus())) {
+					if(!RobotConstants.AI_STATUS_B.equals(ai.getAiStatus())) {
 						it.remove();
 					}
 				}

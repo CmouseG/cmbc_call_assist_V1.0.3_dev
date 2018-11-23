@@ -2,6 +2,7 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
+import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 
 /** 
@@ -13,13 +14,19 @@ import com.guiji.robot.dao.entity.UserAiCfgInfo;
 public interface IUserAiCfgService {
 	
 	/**
-	 * 保存或者更新一条用户-机器人配置信息
-	 * 同时记录历史
-	 * @param userAiCfgInfo
+	 * 保存或者更新一条用户基本信息
+	 * @param userAiCfgBaseInfo
 	 * @return
 	 */
-	UserAiCfgInfo saveOrUpdate(UserAiCfgInfo userAiCfgInfo);
+	public UserAiCfgBaseInfo saveOrUpdate(UserAiCfgBaseInfo userAiCfgBaseInfo);
 	
+	
+	/**
+	 * 查询用户机器人配置基本信息
+	 * @param userId
+	 * @return
+	 */
+	public UserAiCfgBaseInfo queryUserAiCfgBaseInfoByUserId(String userId);
 	
 	/**
 	 * 根据用户编号查询用户-机器人配置信息列表
@@ -44,4 +51,18 @@ public interface IUserAiCfgService {
 	 * @return
 	 */
 	List<UserAiCfgInfo> queryUserAiCfgListByUserIdAndTemplate(String userId,String templateId);
+	
+	
+	/**
+	 * 用户资源变更服务
+	 * @param userAiCfgInfo
+	 * @return
+	 */
+	UserAiCfgInfo userAiCfgChange(UserAiCfgInfo userAiCfgInfo);
+	
+	/**
+	 * 删除用户一条资源配置信息
+	 * @param id
+	 */
+	void delUserCfg(String userId,String id);
 }

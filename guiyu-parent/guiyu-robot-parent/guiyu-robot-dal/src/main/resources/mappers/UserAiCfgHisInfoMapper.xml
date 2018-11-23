@@ -12,6 +12,7 @@
     <result column="invalid_date" property="invalidDate" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="invalid_policy" property="invalidPolicy" jdbcType="VARCHAR" />
+    <result column="handle_type" property="handleType" jdbcType="CHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -74,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, busi_id, user_id, ai_num, assign_level, template_id, open_date, invalid_date, 
-    `status`, invalid_policy, crt_time
+    `status`, invalid_policy, handle_type, crt_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfoExample" >
     select
@@ -117,11 +118,13 @@
     insert into user_ai_cfg_his_info (id, busi_id, user_id, 
       ai_num, assign_level, template_id, 
       open_date, invalid_date, `status`, 
-      invalid_policy, crt_time)
+      invalid_policy, handle_type, crt_time
+      )
     values (#{id,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
       #{aiNum,jdbcType=INTEGER}, #{assignLevel,jdbcType=CHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{openDate,jdbcType=VARCHAR}, #{invalidDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
-      #{invalidPolicy,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP})
+      #{invalidPolicy,jdbcType=VARCHAR}, #{handleType,jdbcType=CHAR}, #{crtTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.UserAiCfgHisInfo" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -157,6 +160,9 @@
       <if test="invalidPolicy != null" >
         invalid_policy,
       </if>
+      <if test="handleType != null" >
+        handle_type,
+      </if>
       <if test="crtTime != null" >
         crt_time,
       </if>
@@ -189,6 +195,9 @@
       </if>
       <if test="invalidPolicy != null" >
         #{invalidPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="handleType != null" >
+        #{handleType,jdbcType=CHAR},
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
@@ -234,6 +243,9 @@
       <if test="record.invalidPolicy != null" >
         invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
       </if>
+      <if test="record.handleType != null" >
+        handle_type = #{record.handleType,jdbcType=CHAR},
+      </if>
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
@@ -254,6 +266,7 @@
       invalid_date = #{record.invalidDate,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=VARCHAR},
       invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
+      handle_type = #{record.handleType,jdbcType=CHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -289,6 +302,9 @@
       <if test="invalidPolicy != null" >
         invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
       </if>
+      <if test="handleType != null" >
+        handle_type = #{handleType,jdbcType=CHAR},
+      </if>
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
@@ -306,6 +322,7 @@
       invalid_date = #{invalidDate,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=VARCHAR},
       invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
+      handle_type = #{handleType,jdbcType=CHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>

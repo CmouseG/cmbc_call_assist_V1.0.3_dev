@@ -7,6 +7,7 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
+import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
@@ -23,10 +24,10 @@ public interface IAiAbilityCenterService {
 	
 	/**
 	 * 导入任务时话术参数检查以及准备
-	 * @param checkParams
+	 * @param checkParamsReq
 	 * @return
 	 */
-	List<CheckResult> checkParams(List<HsParam> checkers);
+	List<CheckResult> checkParams(CheckParamsReq checkParamsReq);
 	
 	
 	/**

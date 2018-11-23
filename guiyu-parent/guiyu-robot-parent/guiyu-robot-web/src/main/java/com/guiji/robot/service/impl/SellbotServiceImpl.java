@@ -5,6 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.guiji.robot.exception.AiErrorEnum;
+import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.ISellbotService;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.SellbotMatchReq;
@@ -12,7 +16,7 @@ import com.guiji.robot.service.vo.SellbotRestoreReq;
 import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.robot.util.HttpClientUtil;
 import com.guiji.utils.JsonUtils;
-import com.guiji.utils.SystemUtil;
+import com.guiji.utils.StrUtils;
 
 /** 
 * @ClassName: SellbotServiceImpl 
@@ -37,8 +41,19 @@ public class SellbotServiceImpl implements ISellbotService{
 			String url = "http://"+ai.getIp()+":"+ai.getPort()+"/restore";
 			String json = JsonUtils.bean2Json(sellbotRestoreReq);
 			String sellbotRsp = HttpClientUtil.doPostJson(url, json);
-			String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-			return result;
+			if(StrUtils.isNotEmpty(sellbotRsp)) {
+				String result = StringEscapeUtils.unescapeJava(sellbotRsp);
+				JSONObject jsonObject = JSON.parseObject(result);
+				String state = jsonObject.getString("state");
+				if(StrUtils.isEmpty(state)) {
+					logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
+					throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
+				}
+				return result;
+			}else {
+				logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
+				throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
+			}
 		}
 		return null;
 	}
@@ -52,8 +67,19 @@ public class SellbotServiceImpl implements ISellbotService{
 	public String sayhello(AiBaseInfo ai,SellbotSayhelloReq sellbotSayhelloReq) {
 		String url = HTTP_URL;
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotSayhelloReq));
-		String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-		return result;
+		if(StrUtils.isNotEmpty(sellbotRsp)) {
+			String result = StringEscapeUtils.unescapeJava(sellbotRsp);
+			JSONObject jsonObject = JSON.parseObject(result);
+			String state = jsonObject.getString("state");
+			if(StrUtils.isEmpty(state)) {
+				logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
+				throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
+			}
+			return result;
+		}else {
+			logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
+			throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
+		}
 	}
 	
 	

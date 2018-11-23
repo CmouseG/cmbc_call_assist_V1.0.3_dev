@@ -3,8 +3,8 @@ package com.guiji.robot.exception;
 import com.guiji.common.exception.GuiyuException;
 
 /** 
-* @ClassName: AiException 
-* @Description: AI模块异常信息
+* @ClassName: RobotException 
+* @Description: Robot模块异常信息
 * @version V1.0  
 */
 public class RobotException extends GuiyuException{
@@ -20,7 +20,7 @@ public class RobotException extends GuiyuException{
 	}
 	
 	public RobotException(String errorCode,String msg){
-		super(msg);
+		super(errorCode,msg);
 	}
 	
 	public RobotException(Throwable throwable){

@@ -815,6 +815,76 @@ public class UserAiCfgHisInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andHandleTypeIsNull() {
+            addCriterion("handle_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeIsNotNull() {
+            addCriterion("handle_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeEqualTo(String value) {
+            addCriterion("handle_type =", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeNotEqualTo(String value) {
+            addCriterion("handle_type <>", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeGreaterThan(String value) {
+            addCriterion("handle_type >", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("handle_type >=", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeLessThan(String value) {
+            addCriterion("handle_type <", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeLessThanOrEqualTo(String value) {
+            addCriterion("handle_type <=", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeLike(String value) {
+            addCriterion("handle_type like", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeNotLike(String value) {
+            addCriterion("handle_type not like", value, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeIn(List<String> values) {
+            addCriterion("handle_type in", values, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeNotIn(List<String> values) {
+            addCriterion("handle_type not in", values, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeBetween(String value1, String value2) {
+            addCriterion("handle_type between", value1, value2, "handleType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleTypeNotBetween(String value1, String value2) {
+            addCriterion("handle_type not between", value1, value2, "handleType");
+            return (Criteria) this;
+        }
+
         public Criteria andCrtTimeIsNull() {
             addCriterion("crt_time is null");
             return (Criteria) this;

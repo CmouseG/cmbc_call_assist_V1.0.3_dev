@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutDetail;
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.calloutserver.enm.EAIResponseType;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
@@ -23,6 +24,7 @@ import com.guiji.calloutserver.config.FsBotConfig;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutDetailService;
 import com.guiji.calloutserver.service.CallOutPlanService;
+import com.guiji.calloutserver.service.ErrorMatchService;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,9 @@ public class FsBotHandler {
 
     @Autowired
     CallOutDetailRecordService callOutDetailRecordService;
+
+    @Autowired
+    ErrorMatchService errorMatchService;
 
     @Autowired
     AsyncEventBus asyncEventBus;
@@ -161,7 +166,9 @@ public class FsBotHandler {
                     callPlan.getCallState() == ECallState.call_prepare.ordinal() ||
                     callPlan.getCallState() == ECallState.make_call.ordinal()) {
                 log.warn("通道[{}]还未接听，暂时跳过AliAsr", event.getChannel());
-                //TODO: 做F类识别
+
+                //进行F类识别
+                doWithErrorResponse(callPlan, event);
                 return;
             }
 
@@ -238,6 +245,18 @@ public class FsBotHandler {
         }catch (Exception ex){
             log.warn("handleNormalAsr: 在处理AliAsr时出错异常", ex);
         }
+    }
+
+    /**
+     * 进行F类识别
+     * @param callPlan
+     * @param event
+     */
+    private void doWithErrorResponse(CallOutPlan callPlan, AsrCustomerEvent event) {
+        ErrorMatch errorMatch = errorMatchService.findError(event.getAsrText());
+        callPlan.setAccurateIntent("F");
+        callPlan.setReason(errorMatch.getErrorName());
+        callOutPlanService.save(callPlan);
     }
 
     /**

@@ -2,6 +2,8 @@ package com.guiji.robot.api;
 
 import java.util.List;
 
+import com.guiji.common.model.ResourceNotifyReq;
+import com.guiji.common.model.ResourceNotifyTypeEnum;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,5 +84,13 @@ public interface IRobotRemote {
     })
     @PostMapping(value = "/remote/aiHangup")
 	Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq);
+
+
+    @ApiOperation(value = "接受资源处理结果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "resourceNotifyReq", value = "接受资源处理结果", required = true)
+    })
+    @PostMapping(value = "/remote/acceptResourceNotify")
+    Result.ReturnData acceptResourceNotify(@RequestBody ResourceNotifyReq resourceNotifyReq);
 	
 }

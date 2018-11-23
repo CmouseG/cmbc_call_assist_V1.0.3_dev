@@ -2,6 +2,7 @@ package com.guiji.process.api;
 
 import com.guiji.component.result.Result;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.core.vo.ProcessReleaseVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -79,7 +80,7 @@ public interface IProcessSchedule {
 
     /**
      * 释放资源
-     * @param deviceVOS 释放资源列表
+     * @param processReleaseVO 释放资源列表
      * @return
      */
     @ApiOperation(value = "释放资源")
@@ -87,7 +88,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "List", paramType = "query"),
     })
     @PostMapping(value="/release")
-    Result.ReturnData<Boolean> release(@RequestBody List<ProcessInstanceVO> deviceVOS);
+    Result.ReturnData<Boolean> release(@RequestBody ProcessReleaseVO processReleaseVO);
 
 }
 

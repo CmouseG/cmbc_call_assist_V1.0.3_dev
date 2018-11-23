@@ -2,6 +2,7 @@ package com.guiji.process.server.controller;
 
 import com.guiji.component.result.Result;
 import com.guiji.process.api.IProcessSchedule;
+import com.guiji.process.core.vo.ProcessReleaseVO;
 import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.service.IProceseScheduleService;
@@ -55,8 +56,8 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
-    public Result.ReturnData<Boolean> release(@RequestBody List<ProcessInstanceVO> deviceVOS) {
-        boolean result = processScheduleService.release(deviceVOS);
+    public Result.ReturnData<Boolean> release(@RequestBody ProcessReleaseVO processReleaseVO) {
+        boolean result = processScheduleService.release(processReleaseVO);
         return Result.ok(result);
     }
 

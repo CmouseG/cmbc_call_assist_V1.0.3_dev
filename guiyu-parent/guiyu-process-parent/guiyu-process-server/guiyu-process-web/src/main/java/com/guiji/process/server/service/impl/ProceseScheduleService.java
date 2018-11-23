@@ -1,10 +1,7 @@
 package com.guiji.process.server.service.impl;
 
 import com.guiji.common.exception.GuiyuException;
-import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessStatusEnum;
-import com.guiji.process.core.vo.ProcessTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.core.vo.*;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IProceseScheduleService;
@@ -49,9 +46,9 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
-    public boolean release(List<ProcessInstanceVO> processInstances) {
+    public boolean release(ProcessReleaseVO processReleaseVO) {
 
-        for (ProcessInstanceVO processInstance:processInstances) {
+        for (ProcessInstanceVO processInstance:processReleaseVO.getProcessInstanceVOS()) {
 
             processInstance.setWhoUsed("");
             processInstance.setStatus(ProcessStatusEnum.UP);

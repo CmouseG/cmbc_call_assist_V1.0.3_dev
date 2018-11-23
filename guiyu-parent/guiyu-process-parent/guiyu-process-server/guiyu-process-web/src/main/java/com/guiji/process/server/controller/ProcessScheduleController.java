@@ -2,12 +2,14 @@ package com.guiji.process.server.controller;
 
 import com.guiji.component.result.Result;
 import com.guiji.process.api.IProcessSchedule;
+import com.guiji.process.core.vo.ProcessReleaseVO;
 import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.service.IProceseScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,8 +56,9 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
-    public Result.ReturnData<Boolean> release(@RequestParam("deviceVOS") List<ProcessInstanceVO> deviceVOS) {
-        boolean result = processScheduleService.release(deviceVOS);
+    public Result.ReturnData<Boolean> release(@RequestBody ProcessReleaseVO processReleaseVO) {
+        boolean result = processScheduleService.release(processReleaseVO);
         return Result.ok(result);
     }
+
 }

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -212,6 +213,11 @@ public class BotsentenceServerController {
 		logger.info("更新/添加账号【"+userId+"】成功...");
 		
 		return ServerResult.createBySuccess("更新/增加账户成功", userAccount.getUserId());
+	}
+	
+	@RequestMapping(value="getIndustryListBySelf")
+	public ServerResult<List<BotSentenceTemplateIndustryVO>> getIndustryListBySelf(@RequestHeader("userId") String accountNo, @JsonParam String host){
+		return getIndustryList(accountNo,host);
 	}
 	
 	/**

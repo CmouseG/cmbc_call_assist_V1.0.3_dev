@@ -20,9 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
+import com.guiji.utils.NasUtil;
 import com.guiji.utils.RedisUtil;
 
 /**
@@ -37,6 +40,8 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 	
 	@Autowired
     private RedisUtil redisUtil;
+	@Autowired
+	TtsResultMapper ttsResultMapper;
 
 	@Override
 	File transferByChild(String model, String text) {
@@ -70,7 +75,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 				responseEntity.writeTo(out); // 写到输出流中
 			}
 			// 释放GPU
-//			releaseGpu(model, ip, port);
+			releaseGpu(model, ip, port);
 		} catch (Exception e) {
 			logger.error("请求失败！" + e);
 			return null;
@@ -85,17 +90,17 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 	// 释放GPU
 	private void releaseGpu(String model, String ip, String port) {
 		//从不可用list中移除
-		List<GuiyuTtsGpu> unavaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE);
+		List<Object> unavaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, 0 , -1);
 		int i = 0;
-		for(GuiyuTtsGpu gpu : unavaliableGpuList){
-			if(ip.equals(gpu.getIp()) && port.equals(gpu.getPort())){
+		for(Object gpu : unavaliableGpuList){
+			if(ip.equals(((GuiyuTtsGpu) gpu).getIp()) && port.equals(((GuiyuTtsGpu) gpu).getPort())){
 				i = unavaliableGpuList.indexOf(gpu);
 			}
 		}
 		unavaliableGpuList.remove(i);
 		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, unavaliableGpuList);
 		//添加到可用list中
-		List<GuiyuTtsGpu> avaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE);
+		List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0 , -1);
 		GuiyuTtsGpu gpu = new GuiyuTtsGpu(ip, port);
 		avaliableGpuList.add(gpu);
 		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
@@ -114,11 +119,10 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			sysFileReqVO.setSysCode(AiConstants.SYSCODE); //文件上传系统码
 			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
 			//调用本地工具-上传文件到NAS服务器
-//			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
-//			if(sysFileRsp != null) {
-//				audioUrl = sysFileRsp.getSkUrl();
-//			}
-			audioUrl = "www.baidu.com";
+			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
+			if(sysFileRsp != null) {
+				audioUrl = sysFileRsp.getSkUrl();
+			}
 			file.delete(); //删除本地文件
 		} catch (Exception e) {
 			logger.error(file.getName() + "上传失败！", e);
@@ -139,7 +143,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		ttsResult.setCreateTime(new Date());
 		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除
 		ttsResult.setModel(model);
-		TtsTransferAfterImpl.getInstance().add(ttsResult);
+		TtsTransferAfterImpl.getInstance().add(ttsResult, ttsResultMapper);
 	}
 
 	public GuiyuTtsGpu(String ip, String port) {

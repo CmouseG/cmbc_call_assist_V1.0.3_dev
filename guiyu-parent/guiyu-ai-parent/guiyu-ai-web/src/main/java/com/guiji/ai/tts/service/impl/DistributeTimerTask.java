@@ -11,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.guiji.ai.dao.TtsModelMapper;
 import com.guiji.ai.tts.constants.AiConstants;
@@ -24,8 +25,8 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
-public class TimerTask {
-	private static Logger logger = LoggerFactory.getLogger(TimerTask.class);
+public class DistributeTimerTask {
+	private static Logger logger = LoggerFactory.getLogger(DistributeTimerTask.class);
 
 	@Autowired
 	IProcessSchedule iProcessSchedule;
@@ -37,7 +38,7 @@ public class TimerTask {
     private RedisUtil redisUtil;
 
 	// 定时任务，启动时运行（每3分钟执行一次）
-//	@Scheduled(fixedRate = 1000*60*3)
+	@Scheduled(fixedRate = 1000*60*3)
 	public void task() throws InterruptedException {
 		Lock lock = new Lock("LOCK_NAME", "LOCK_VALUE");
 		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
@@ -72,7 +73,7 @@ public class TimerTask {
 		for (int i = 0; i < mapList.size(); i++) { //mapList（<model,reqCount>）
 			int availableGpuCount = 0; // 模型对应可用GPU数量
 			String model = (String) mapList.get(i).get(AiConstants.MODEL);
-			List<GuiyuTtsGpu> avaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE); // 获取对应模型可用list
+			List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0, -1); // 获取对应模型可用list
 			if(avaliableGpuList != null){
 				availableGpuCount = avaliableGpuList.size(); // 单个模型对应可用GPU数量
 			}
@@ -83,7 +84,7 @@ public class TimerTask {
 		}
 
 		//计算出changeCount
-		Map resMap = calChangeCount(requestSum, availableGpuSum, gpuCountList);
+		Map<String, List<GpuCountVO>> resMap = calChangeCount(requestSum, availableGpuSum, gpuCountList);
 		
 		subGpuCountVOList = (List<GpuCountVO>) resMap.get(AiConstants.SUB);
 		addGpuCountVOList = (List<GpuCountVO>) resMap.get(AiConstants.ADD);
@@ -134,11 +135,11 @@ public class TimerTask {
 		for (int i = 0; i < subGpuCountVOList.size(); i++) {
 			String model = subGpuCountVOList.get(i).getModel();
 			int changeCount = subGpuCountVOList.get(i).getChangeCount();
-			List<GuiyuTtsGpu> gpuList = new ArrayList<>();
+			List<Object> gpuList = new ArrayList<>();
 			gpuList = subGpuCountVOList.get(i).getGpuList(); //获取对应模型所有可用GPU
 			for (int j = 0; j < (Math.abs(changeCount)); j++) {
-				String ip = gpuList.get(j).getIp();
-				String port = gpuList.get(j).getPort();
+				String ip = ((GuiyuTtsGpu) gpuList.get(j)).getIp();
+				String port = ((GuiyuTtsGpu) gpuList.get(j)).getPort();
 				TtsGpuVO ttsGpuVO = new TtsGpuVO(ip, port, model);
 				gpuSumList.add(ttsGpuVO);
 				// 从可用列表中移除指定GPU
@@ -150,17 +151,17 @@ public class TimerTask {
 
 	//将指定gpu添加到指定model的可用列表中
 	private void addToRedisAvaliableList(String model, String ip, String port) throws Exception{
-		List<GuiyuTtsGpu> avaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE); // 获取对应模型可用list
+		List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0 , -1); // 获取对应模型可用list
 		avaliableGpuList.add(new GuiyuTtsGpu(ip, port));
 		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
 	}
 
 	//从可用列表中移除指定GPU
 	private void removeFromRedisAvaliableList(String model, String ip, String port) throws Exception{
-		List<GuiyuTtsGpu> avaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE); // 获取对应模型可用list
+		List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0 , -1); // 获取对应模型可用list
 		int i = 0;
-		for(GuiyuTtsGpu gpu : avaliableGpuList){
-			if(ip.equals(gpu.getIp()) && port.equals(gpu.getPort())){
+		for(Object gpu : avaliableGpuList){
+			if(ip.equals(((GuiyuTtsGpu) gpu).getIp()) && port.equals(((GuiyuTtsGpu) gpu).getPort())){
 				i = avaliableGpuList.indexOf(gpu);
 			}
 		}
@@ -169,8 +170,8 @@ public class TimerTask {
 	}
 
 	//计算出changeCount 并根据正负值分组
-	private Map calChangeCount(int requestSum, int availableGpuSum, List<GpuCountVO> gpuChangeList) throws Exception{
-		Map returnMap = new HashMap<>();
+	private Map<String, List<GpuCountVO>> calChangeCount(int requestSum, int availableGpuSum, List<GpuCountVO> gpuChangeList) throws Exception{
+		Map<String, List<GpuCountVO>> returnMap = new HashMap<>();
 		List<GpuCountVO> subGpuCountVOList = new ArrayList<>();
 		List<GpuCountVO> addGpuCountVOList = new ArrayList<>();
 		for (int i = 0; i < gpuChangeList.size(); i++) {

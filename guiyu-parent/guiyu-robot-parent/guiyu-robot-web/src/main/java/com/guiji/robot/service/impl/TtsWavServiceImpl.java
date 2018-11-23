@@ -104,7 +104,8 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			TtsWavHisExample example = new TtsWavHisExample();
 			example.createCriteria().andSeqIdEqualTo(seqId);
 			example.setOrderByClause(" crt_time desc");
-			List<TtsWavHis> list = ttsWavHisMapper.selectByExample(example);
+			//selectByExampleWithBLOBs ，因为有大字段，所以要使用withBlobs
+			List<TtsWavHis> list = ttsWavHisMapper.selectByExampleWithBLOBs(example);
 			if(ListUtil.isNotEmpty(list)) {
 				//如果只有一条数据，直接返回，如果有多条，那么检查是否有完成的状态，有完成的状态，返回完成的数据，表示调用了多次tts合成
 				if(list.size()>1) {
@@ -145,6 +146,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				String jsonStr = JSON.toJSONString(list);
 				ttsWavHis.setTtsJsonData(jsonStr);
 				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_S); //完成
+				logger.info("会话:{}TTS合成完毕...",hsChecker.getSeqid());
 			}else {
 				logger.error("TTS合成失败，无合成数据！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid());
 				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
@@ -254,7 +256,18 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		ttsReqVO.setModel(ttsVoiceReq.getTemplateId());
 		ttsReqVO.setContents(contents);
 		//调用TTS工具
-		ReturnData<TtsRspVO> ttsRspData = iTts.translate(ttsReqVO);
+//		ReturnData<TtsRspVO> ttsRspData = iTts.translate(ttsReqVO);
+		///test
+		ReturnData<TtsRspVO> ttsRspData = new ReturnData<TtsRspVO>();
+		ttsRspData.setCode(RobotConstants.RSP_CODE_SUCCESS);
+		TtsRspVO body = new TtsRspVO();
+		Map<String, String> audios = new HashMap<String,String>();
+		for(String ss : contents) {
+			audios.put(ss, "http://116.62.211.11:8080/group1/M00/00/00/rBCn11v2J5GACF2DAACZOo-B9bQ280.wav");
+			body.setAudios(audios);
+		}
+		ttsRspData.setBody(body);
+		///test end
 		if(ttsRspData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode())){
 			logger.error("调用TTS工具服务生成语音失败，请求参数{}",ttsReqVO);
 			logger.error("调用TTS工具生成语音失败，返回数据：{}"+ttsRspData);

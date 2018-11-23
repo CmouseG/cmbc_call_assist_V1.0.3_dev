@@ -8,6 +8,7 @@ import com.guiji.process.server.service.IProceseScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -54,8 +55,9 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
-    public Result.ReturnData<Boolean> release(@RequestParam("deviceVOS") List<ProcessInstanceVO> deviceVOS) {
+    public Result.ReturnData<Boolean> release(@RequestBody List<ProcessInstanceVO> deviceVOS) {
         boolean result = processScheduleService.release(deviceVOS);
         return Result.ok(result);
     }
+
 }

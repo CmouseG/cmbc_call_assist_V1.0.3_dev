@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -85,7 +86,7 @@ public interface IProcessSchedule {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "List", paramType = "query"),
     })
-    @GetMapping(value="/release")
+    @PostMapping(value="/release")
     Result.ReturnData<Boolean> release(@RequestBody List<ProcessInstanceVO> deviceVOS);
 
 }

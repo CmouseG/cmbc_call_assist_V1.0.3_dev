@@ -10,7 +10,6 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
-import com.guiji.ccmanager.vo.LineInfo4Select;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
@@ -116,7 +115,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             for(CallOutPlan callOutPlan:list){
                 CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
                 BeanUtil.copyProperties(callOutPlan,callOutPlan4ListSelect);
-
+                log.info(callOutPlan.getCallId()+"-------------------------"+callOutPlan.getCreateTime());
                 String userId = callOutPlan.getCustomerId();
                 if(map.get(userId)==null){
                     try {
@@ -215,5 +214,15 @@ public class CallDetailServiceImpl implements CallDetailService {
             return callOutRecord.getRecordFile();
         }
         return null;
+    }
+
+    @Override
+    public List<CallOutRecord> getRecords(String callIds) {
+
+        String[] callidArr = callIds.split(",");
+        CallOutRecordExample example = new CallOutRecordExample();
+        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+        return  callOutRecordMapper.selectByExample(example);
+
     }
 }

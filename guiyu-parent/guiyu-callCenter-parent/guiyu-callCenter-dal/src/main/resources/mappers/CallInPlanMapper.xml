@@ -29,6 +29,7 @@
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
     <result column="has_tts" property="hasTts" jdbcType="BIT" />
     <result column="ai_id" property="aiId" jdbcType="VARCHAR" />
+    <result column="isdel" property="isdel" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -92,7 +93,7 @@
     call_id, phone_num, customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time, 
     agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time, 
     hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction, 
-    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id
+    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, isdel
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallInPlanExample" >
     select
@@ -137,7 +138,8 @@
       duration, bill_sec, call_direction, 
       call_state, hangup_direction, accurate_intent, 
       reason, hangup_code, originate_cmd, 
-      remarks, has_tts, ai_id)
+      remarks, has_tts, ai_id, 
+      isdel)
     values (#{callId,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, 
       #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{serverid,jdbcType=VARCHAR}, 
       #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{agentChannelUuid,jdbcType=VARCHAR}, 
@@ -146,7 +148,8 @@
       #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER}, #{callDirection,jdbcType=INTEGER}, 
       #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, #{originateCmd,jdbcType=VARCHAR}, 
-      #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR})
+      #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR}, 
+      #{isdel,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInPlan" >
     insert into call_in_plan
@@ -232,6 +235,9 @@
       <if test="aiId != null" >
         ai_id,
       </if>
+      <if test="isdel != null" >
+        isdel,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callId != null" >
@@ -314,6 +320,9 @@
       </if>
       <if test="aiId != null" >
         #{aiId,jdbcType=VARCHAR},
+      </if>
+      <if test="isdel != null" >
+        #{isdel,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -407,6 +416,9 @@
       <if test="record.aiId != null" >
         ai_id = #{record.aiId,jdbcType=VARCHAR},
       </if>
+      <if test="record.isdel != null" >
+        isdel = #{record.isdel,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -440,7 +452,8 @@
       originate_cmd = #{record.originateCmd,jdbcType=VARCHAR},
       remarks = #{record.remarks,jdbcType=VARCHAR},
       has_tts = #{record.hasTts,jdbcType=BIT},
-      ai_id = #{record.aiId,jdbcType=VARCHAR}
+      ai_id = #{record.aiId,jdbcType=VARCHAR},
+      isdel = #{record.isdel,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -526,6 +539,9 @@
       <if test="aiId != null" >
         ai_id = #{aiId,jdbcType=VARCHAR},
       </if>
+      <if test="isdel != null" >
+        isdel = #{isdel,jdbcType=INTEGER},
+      </if>
     </set>
     where call_id = #{callId,jdbcType=VARCHAR}
   </update>
@@ -556,7 +572,8 @@
       originate_cmd = #{originateCmd,jdbcType=VARCHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       has_tts = #{hasTts,jdbcType=BIT},
-      ai_id = #{aiId,jdbcType=VARCHAR}
+      ai_id = #{aiId,jdbcType=VARCHAR},
+      isdel = #{isdel,jdbcType=INTEGER}
     where call_id = #{callId,jdbcType=VARCHAR}
   </update>
 </mapper>

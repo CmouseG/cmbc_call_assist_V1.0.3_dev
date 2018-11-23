@@ -11,11 +11,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.guiji.ai.dao.TtsModelMapper;
-import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.vo.GpuCountVO;
 import com.guiji.ai.tts.vo.TtsGpuVO;
 import com.guiji.common.exception.GuiyuException;
@@ -25,10 +24,8 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
-@Component
 public class TimerTask {
 	private static Logger logger = LoggerFactory.getLogger(TimerTask.class);
-	RedisUtil redisUtil = new RedisUtil();
 
 	@Autowired
 	IProcessSchedule iProcessSchedule;
@@ -36,6 +33,8 @@ public class TimerTask {
 	DistributedLockHandler distributedLockHandler;
 	@Autowired
 	TtsModelMapper ttsModelMapper;
+	@Autowired
+    private RedisUtil redisUtil;
 
 	// 定时任务，启动时运行（每3分钟执行一次）
 //	@Scheduled(fixedRate = 1000*60*3)

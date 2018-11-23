@@ -49,6 +49,20 @@ public class RedisUtil {
         return redisTemplate.getExpire(key,TimeUnit.SECONDS);
     }
 
+    
+    /**
+     * 慎用
+     * 查询所有以keyPrefix开头的key
+     * 如果为空，查询所有的key
+     * @param keyPrefix
+     * @return
+     */
+    public Set<String> getAllKeyMatch(String keyPrefix){
+    	String keys = keyPrefix == null ? "*":keyPrefix+"*";
+    	return redisTemplate.keys(keys);
+    }
+    
+    
     /**
      * 判断key是否存在
      * @param key 键

@@ -1,11 +1,9 @@
 package com.guiji.ccmanager.service;
 
-import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
-import jxl.write.WriteException;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -26,4 +24,6 @@ public interface CallDetailService {
     String getDialogue(String callId);
 
     String getRecordFileUrl(String callId);
+
+    List<CallOutRecord> getRecords(String callIds);
 }

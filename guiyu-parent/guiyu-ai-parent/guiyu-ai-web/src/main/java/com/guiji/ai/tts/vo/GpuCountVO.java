@@ -3,8 +3,6 @@ package com.guiji.ai.tts.vo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.guiji.ai.tts.service.impl.GuiyuTtsGpu;
-
 public class GpuCountVO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -12,9 +10,9 @@ public class GpuCountVO implements Serializable{
 	private int requestCount;
 	private int availableGpuCount;
 	private int changeCount;
-	private List<GuiyuTtsGpu> gpuList;
+	private List<Object> gpuList;
 	
-	public GpuCountVO(String model, int requestCount, int gpuCount, int changeCount, List<GuiyuTtsGpu> gpuList) {
+	public GpuCountVO(String model, int requestCount, int gpuCount, int changeCount, List<Object> gpuList) {
 		super();
 		this.model = model;
 		this.requestCount = requestCount;
@@ -47,10 +45,10 @@ public class GpuCountVO implements Serializable{
 	public void setChangeCount(int changeCount) {
 		this.changeCount = changeCount;
 	}
-	public List<GuiyuTtsGpu> getGpuList() {
+	public List<Object> getGpuList() {
 		return gpuList;
 	}
-	public void setGpuList(List<GuiyuTtsGpu> gpuList) {
+	public void setGpuList(List<Object> gpuList) {
 		this.gpuList = gpuList;
 	}
 	

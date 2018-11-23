@@ -7,9 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.ai.dao.TtsResultMapper;
@@ -22,14 +20,10 @@ import com.guiji.ai.dao.entity.TtsResult;
 public class TtsTransferAfterImpl {
 	private static Logger logger = LoggerFactory.getLogger(TtsTransferAfterImpl.class);
 
-	@Autowired
-	TtsResultMapper ttsResultMapper;
-
 	private static final TtsTransferAfterImpl INSTANCE = new TtsTransferAfterImpl();
-
 	private Productor productor = null;
-
 	private Consummer consummer = null;
+	TtsResultMapper ttsResultMapper;
 
 	private TtsTransferAfterImpl() {
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
@@ -42,8 +36,9 @@ public class TtsTransferAfterImpl {
 		return INSTANCE;
 	}
 
-	public void add(TtsResult ttsResult) {
+	public void add(TtsResult ttsResult, TtsResultMapper ttsResultMapper) {
 		try {
+			this.ttsResultMapper = ttsResultMapper;
 			productor.produce(ttsResult);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

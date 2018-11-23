@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
@@ -18,9 +19,7 @@ import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.utils.RedisUtil;
 
-public class CheckGpuStatus 
-//implements ApplicationRunner
-{
+public class CheckGpuStatus implements ApplicationRunner {
 	private static Logger logger = LoggerFactory.getLogger(CheckGpuStatus.class);
 	
 	@Autowired
@@ -31,7 +30,7 @@ public class CheckGpuStatus
 	/**
 	 * 初始化
 	 */
-//	@Override
+	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
 		logger.info("调用进程管理接口查看GPU分配情况");
 		List<ProcessInstanceVO> returnList = null;
@@ -50,7 +49,7 @@ public class CheckGpuStatus
 		});
 
 		String modelName = returnList.get(0).getProcessKey();
-		List<GuiyuTtsGpu> gpuList = new ArrayList<>();
+		List<Object> gpuList = new ArrayList<>();
 
 		for (int i = 0; i < returnList.size(); i++) {
 			GuiyuTtsGpu gpu = new GuiyuTtsGpu();

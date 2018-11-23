@@ -67,9 +67,9 @@ public class TtsServiceImpl implements TtsService {
         			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
         		}
         		audioUrl= provide.transfer(busId, model, text);
-//        		if(audioUrl != null)
-//        		redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
-//        		logger.info("存入Redis");
+        		if(audioUrl != null)
+        		redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
+        		logger.info("存入Redis");
         	}
         } catch (Exception e) {
             e.printStackTrace();

@@ -24,7 +24,7 @@ public class CheckStatusTask {
 		Map<Integer, CfgNodeVO> cfgMap = ProcessCfgService.getIntance().cfgMap;
 		if (cfgMap != null) {
 			for (Integer key : cfgMap.keySet()) {
-				ProcessUtil.sendHealth(key,cfgMap.get(key).getDeviceTypeEnum(),cfgMap.get(key).getCfgNodeOper(CmdTypeEnum.START));
+				ProcessUtil.sendHealth(key,cfgMap.get(key).getProcessTypeEnum(),cfgMap.get(key).getCfgNodeOper(CmdTypeEnum.START));
 			}
 		}
     }

@@ -1,7 +1,5 @@
 package com.guiji.process.agent.model;
 
-import com.guiji.process.core.vo.DeviceTypeEnum;
-
 import java.util.List;
 
 public class CfgFileVO {

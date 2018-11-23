@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class AiCacheService {
 	 * @param userId
 	 * @return
 	 */
-	public UserResourceCache queryUserResource(String userId) {
+	public UserResourceCache getUserResource(String userId) {
 		Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_USER_RESOURCE, userId);
 		if(cacheObj == null) {
 			//重新查询
@@ -65,15 +66,28 @@ public class AiCacheService {
 			}
 			userResourceCache.setUserId(userId);
 			userResourceCache.setAiNum(aiNum);
-			Map<String,Object> map = new HashMap<String,Object>();
-			map.put(userId, userResourceCache);
-			//提交到redis
-			redisUtil.hmset(RobotConstants.ROBOT_USER_RESOURCE, map);
+			userResourceCache.setChgStatus(RobotConstants.USER_CHG_STATUS_A); //初始化增加
+			//放入redis
+			this.putUserResource(userResourceCache);
 			return userResourceCache;
 		}else {
 			return (UserResourceCache)cacheObj;
 		}
 	}
+	
+	
+	
+	/**
+	 * 新增/更新一个用户的缓存资源
+	 * @param userResourceCache
+	 */
+	public void putUserResource(UserResourceCache userResourceCache){
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put(userResourceCache.getUserId(), userResourceCache);
+		//提交到redis
+		redisUtil.hmset(RobotConstants.ROBOT_USER_RESOURCE, map);
+	}
+	
 	
 	
 	/**
@@ -109,6 +123,43 @@ public class AiCacheService {
 			return list;
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 删除某个用户分配机器人缓存数据
+	 * @param userId
+	 */
+	public void delUserAis(String userId) {
+		redisUtil.del(RobotConstants.ROBOT_ASSIGN_AI+userId);
+	}
+	
+	
+	/**
+	 * 删除某个用户某个机器人的缓存数据
+	 * @param userId
+	 */
+	public void delUserAi(String userId,String aiNo) {
+		redisUtil.hdel(RobotConstants.ROBOT_ASSIGN_AI+userId,aiNo);
+	}
+	
+	
+	/**
+	 * 查询缓存中所有已分配的机器人
+	 * @return
+	 */
+	public Map<String,List<AiInuseCache>> queryAllAiInUse(){
+		Map<String,List<AiInuseCache>> allAiMap = new HashMap<String,List<AiInuseCache>>();
+		//查询所有在缓存中的用户数据
+		Set<String> userSet = redisUtil.getAllKeyMatch(RobotConstants.ROBOT_ASSIGN_AI);
+		if(userSet != null && !userSet.isEmpty()) {
+			for(String key:userSet) {
+				String userId = key.substring(key.indexOf(RobotConstants.ROBOT_ASSIGN_AI)+14);	//将key中的userid截取出来
+				List<AiInuseCache> list = this.queryUserAiInUseList(userId);
+				allAiMap.put(userId, list);
+			}
+		}
+		return allAiMap;
 	}
 	
 	

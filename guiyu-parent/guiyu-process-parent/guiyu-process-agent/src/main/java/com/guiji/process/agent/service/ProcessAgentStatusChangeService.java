@@ -1,13 +1,13 @@
 package com.guiji.process.agent.service;
 
-import com.guiji.process.core.vo.DeviceStatusEnum;
+import com.guiji.process.core.vo.ProcessStatusEnum;
 
 public class ProcessAgentStatusChangeService {
 
 
-    public void checkStatus(int prot, DeviceStatusEnum statusEnum)
+    public void checkStatus(int prot, ProcessStatusEnum statusEnum)
     {
-        if(statusEnum == DeviceStatusEnum.DOWN)
+        if(statusEnum == ProcessStatusEnum.DOWN)
         {
             // 启动它
         }

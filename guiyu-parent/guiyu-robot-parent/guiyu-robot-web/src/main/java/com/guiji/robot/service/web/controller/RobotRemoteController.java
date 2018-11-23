@@ -15,6 +15,7 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
+import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsVoice;
@@ -41,8 +42,8 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param checkParams
 	 * @return
 	 */
-	public Result.ReturnData<List<CheckResult>> checkParams(@RequestBody List<HsParam> checkers){
-		List<CheckResult> checkResultList = iAiAbilityCenterService.checkParams(checkers);
+	public Result.ReturnData<List<CheckResult>> checkParams(@RequestBody CheckParamsReq checkParamsReq){
+		List<CheckResult> checkResultList = iAiAbilityCenterService.checkParams(checkParamsReq);
 		return Result.ok(checkResultList);
 	}
 	

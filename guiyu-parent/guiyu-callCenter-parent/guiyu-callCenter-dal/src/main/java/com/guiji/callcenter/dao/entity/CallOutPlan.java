@@ -60,6 +60,8 @@ public class CallOutPlan implements Serializable {
 
     private Integer freason;
 
+    private Integer isdel;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -286,6 +288,14 @@ public class CallOutPlan implements Serializable {
         this.freason = freason;
     }
 
+    public Integer getIsdel() {
+        return isdel;
+    }
+
+    public void setIsdel(Integer isdel) {
+        this.isdel = isdel;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -320,6 +330,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", hasTts=").append(hasTts);
         sb.append(", aiId=").append(aiId);
         sb.append(", freason=").append(freason);
+        sb.append(", isdel=").append(isdel);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

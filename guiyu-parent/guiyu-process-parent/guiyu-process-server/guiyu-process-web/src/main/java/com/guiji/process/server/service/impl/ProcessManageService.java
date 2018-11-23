@@ -3,8 +3,8 @@ package com.guiji.process.server.service.impl;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.DeviceStatusEnum;
-import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessStatusEnum;
+import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.model.DeviceProcessConstant;
@@ -18,7 +18,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,12 +83,12 @@ public class ProcessManageService implements IDeviceManageService {
             return false;
         }
 
-        if(processInstanceVO.getType() == DeviceTypeEnum.AGENT)
+        if(processInstanceVO.getType() == ProcessTypeEnum.AGENT)
         {
             return false;
         }
 
-        if (processInstanceVO.getType() == DeviceTypeEnum.TTS && cmdType == CmdTypeEnum.RESTORE_MODEL)
+        if (processInstanceVO.getType() == ProcessTypeEnum.TTS && cmdType == CmdTypeEnum.RESTORE_MODEL)
         {
             // 调用TTS 的重新restore
 
@@ -110,20 +109,20 @@ public class ProcessManageService implements IDeviceManageService {
     }
 
     @Override
-    public DeviceStatusEnum getDeviceStatus(DeviceTypeEnum type, String ip, int port) {
+    public ProcessStatusEnum getDeviceStatus(ProcessTypeEnum type, String ip, int port) {
 
         ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
 
         if (processInstanceVO == null)
         {
-            return DeviceStatusEnum.UNKNOWN;
+            return ProcessStatusEnum.UNKNOWN;
         }
 
         return processInstanceVO.getStatus();
     }
 
     @Override
-    public ProcessInstanceVO getDevice(DeviceTypeEnum type, String ip, int port) {
+    public ProcessInstanceVO getDevice(ProcessTypeEnum type, String ip, int port) {
 
         Map<Object, Object> deviceVOMap =  redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
 
@@ -149,7 +148,7 @@ public class ProcessManageService implements IDeviceManageService {
     }
 
     @Override
-    public void updateUnRegister(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status, String whoUsed) {
+    public void updateUnRegister(ProcessTypeEnum type, String ip, int port, ProcessStatusEnum status, String whoUsed) {
 
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(ip);
@@ -161,7 +160,7 @@ public class ProcessManageService implements IDeviceManageService {
     }
 
     @Override
-    public void updateStatus(DeviceTypeEnum type, String ip, int port, DeviceStatusEnum status) {
+    public void updateStatus(ProcessTypeEnum type, String ip, int port, ProcessStatusEnum status) {
         ProcessInstanceVO processInstanceVO = getDevice(type, ip, port);
 
         if (processInstanceVO == null)

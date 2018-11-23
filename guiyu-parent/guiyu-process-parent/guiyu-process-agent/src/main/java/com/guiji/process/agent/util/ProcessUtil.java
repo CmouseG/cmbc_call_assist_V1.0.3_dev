@@ -8,9 +8,9 @@ import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.DeviceStatusEnum;
-import com.guiji.process.core.vo.DeviceTypeEnum;
+import com.guiji.process.core.vo.ProcessStatusEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +18,6 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by ty on 2018/11/19.
@@ -94,57 +93,59 @@ public class ProcessUtil {
         }
     }
 
-    public static void sendHealth(int port,DeviceTypeEnum deviceTypeEnum,CfgNodeOperVO cfgNodeOperVO) throws UnknownHostException {
+    public static void sendHealth(int port, ProcessTypeEnum processTypeEnum, CfgNodeOperVO cfgNodeOperVO) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.HEALTH);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(deviceTypeEnum);
+        processInstanceVO.setType(processTypeEnum);
         processInstanceVO.setPort(port);
         boolean isUp = ProcessUtil.checkRun(port);
         if (isUp) {
-            processInstanceVO.setStatus(DeviceStatusEnum.UP);
+            processInstanceVO.setStatus(ProcessStatusEnum.UP);
         } else {
-            processInstanceVO.setStatus(DeviceStatusEnum.DOWN);
+            processInstanceVO.setStatus(ProcessStatusEnum.DOWN);
         }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);
 
         //停止状态的进程自动重启
-        if (DeviceStatusEnum.DOWN == processInstanceVO.getStatus()) {
+        if (ProcessStatusEnum.DOWN == processInstanceVO.getStatus()) {
             cmdMessageVO.setCmdType(CmdTypeEnum.START);
             ProcessMsgHandler.getInstance().add(cmdMessageVO);
         }
     }
 
 
-    public static void sendRegister(int port) throws UnknownHostException {
+    public static void sendRegister(int port,CfgNodeVO cfgNodeVO) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.REGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
+        processInstanceVO.setType(cfgNodeVO.getProcessTypeEnum());
         processInstanceVO.setPort(port);
+        processInstanceVO.setProcessKey(cfgNodeVO.getProcessKey());
         boolean isUp = ProcessUtil.checkRun(port);
         if (isUp) {
-            processInstanceVO.setStatus(DeviceStatusEnum.UP);
+            processInstanceVO.setStatus(ProcessStatusEnum.UP);
         } else {
-            processInstanceVO.setStatus(DeviceStatusEnum.DOWN);
+            processInstanceVO.setStatus(ProcessStatusEnum.DOWN);
         }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);
     }
 
-    public static void sendUnRegister(int port) throws UnknownHostException {
+    public static void sendUnRegister(int port,CfgNodeVO cfgNodeVO) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.UNREGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(DeviceTypeEnum.SELLBOT);
+        processInstanceVO.setType(cfgNodeVO.getProcessTypeEnum());
         processInstanceVO.setPort(port);
-        processInstanceVO.setStatus(DeviceStatusEnum.UNREGISTER);
+        processInstanceVO.setProcessKey(cfgNodeVO.getProcessKey());
+        processInstanceVO.setStatus(ProcessStatusEnum.UNREGISTER);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);

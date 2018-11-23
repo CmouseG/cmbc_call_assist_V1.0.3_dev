@@ -113,6 +113,7 @@ public class ProcessUtil {
 
         //停止状态的进程自动重启
         if (DeviceStatusEnum.DOWN == processInstanceVO.getStatus()) {
+            cmdMessageVO.setCmdType(CmdTypeEnum.START);
             ProcessMsgHandler.getInstance().add(cmdMessageVO);
         }
     }

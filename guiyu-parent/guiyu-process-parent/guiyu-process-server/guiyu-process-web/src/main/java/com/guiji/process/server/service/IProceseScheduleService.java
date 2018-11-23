@@ -14,6 +14,12 @@ public interface IProceseScheduleService {
      */
     List<ProcessInstanceVO> getTTS(String model, int requestCount);
 
+    /**
+     * 获取所有可用的TTS
+     * @return
+     */
+    List<ProcessInstanceVO> getTTS();
+
 
     /**
      * 获取可用的Sellbot

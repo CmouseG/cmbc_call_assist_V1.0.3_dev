@@ -1,6 +1,6 @@
 package com.guiji.process.core.vo;
 
-public enum DeviceStatusEnum {
+public enum ProcessStatusEnum {
 
     UP(0), DOWN(1), BUSYING(2), MISSING(3), UNKNOWN(-1),UNREGISTER(4);
 
@@ -12,7 +12,7 @@ public enum DeviceStatusEnum {
      * 构造方法
      * @param value 整型值
      */
-    private DeviceStatusEnum(int value)
+    private ProcessStatusEnum(int value)
     {
         this.iValue = value;
     }
@@ -33,9 +33,9 @@ public enum DeviceStatusEnum {
      * @param value 整型值
      * @return ErrorCodeEnum实例
      */
-    public static DeviceStatusEnum valueOf(int value)
+    public static ProcessStatusEnum valueOf(int value)
     {
-        for (DeviceStatusEnum type : DeviceStatusEnum.values())
+        for (ProcessStatusEnum type : ProcessStatusEnum.values())
         {
             if (value == type.getValue())
             {

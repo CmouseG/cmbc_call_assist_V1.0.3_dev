@@ -2,13 +2,11 @@ package com.guiji.process.agent.handler;
 
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.agent.model.OperateVO;
-import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.DeviceStatusEnum;
-import com.guiji.process.core.vo.DeviceTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.Channel;
 
@@ -39,7 +37,7 @@ public class ImClientProtocolBO {
     }
 
 
-    public void start(DeviceTypeEnum deviceTypeEnum) throws UnknownHostException {
+    public void start(ProcessTypeEnum processTypeEnum) throws UnknownHostException {
         Channel channel = new ImConnection().connect(HOST, PORT);
         channelGlobal = channel;
         String id = Inet4Address.getLocalHost().getHostAddress();
@@ -49,12 +47,14 @@ public class ImClientProtocolBO {
         cmdMessageVO.setCmdType(CmdTypeEnum.AGENTREGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(deviceTypeEnum);
+        processInstanceVO.setType(processTypeEnum);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         builder.setContent(msg);
 
         channel.writeAndFlush(builder);
+        send("start",2);
+
         // 实体类传输数据，protobuf序列化
         channel.pipeline().addLast(new ClientPoHandlerProto());
 		/*Message message = new Message();

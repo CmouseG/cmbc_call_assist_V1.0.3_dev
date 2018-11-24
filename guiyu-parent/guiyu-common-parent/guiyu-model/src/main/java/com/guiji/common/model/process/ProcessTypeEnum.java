@@ -2,7 +2,7 @@ package com.guiji.common.model.process;
 
 public enum ProcessTypeEnum {
 
-    TTS(0), SELLBOT(1), AGENT(99),UNKNOWN(-1);
+    TTS(0), SELLBOT(1), FREESWITCH(2),AGENT(99),UNKNOWN(-1);
 
     /** 标识DeviceTypeEnmu的整型值 */
     private int iValue;

@@ -36,14 +36,18 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         switch (cmdMessageVO.getCmdType()) {
             case REGISTER:
                 break;
+
             case RESTART:
                 doCmd(cmdMessageVO,cfgNodeOperVO);
                 break;
+
             case UNKNOWN:
                 break;
+
             case START:
                 doCmd(cmdMessageVO,cfgNodeOperVO);
                 break;
+
             case STOP:
                 doCmd(cmdMessageVO,cfgNodeOperVO);
                 Thread.sleep(1000);//等待1s查看是否关闭成功
@@ -52,7 +56,18 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                     ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
                 }
                 break;
+
             case HEALTH:
+                ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
+                break;
+
+            case PULBLISH_SELLBOT_BOTSTENCE:
+                ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
+                break;
+
+            case PULBLISH_FREESWITCH_BOTSTENCE:
                 ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
                 ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
                 break;

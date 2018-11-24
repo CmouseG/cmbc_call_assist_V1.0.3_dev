@@ -63,7 +63,6 @@ public class TtsServiceImpl implements TtsService {
         	if(audioUrl != null){
                 return audioUrl;
         	}
-
             //合成
             ITtsServiceProvide provide = ttsServiceFactory.getTtsProvide(model);
             if(provide == null){

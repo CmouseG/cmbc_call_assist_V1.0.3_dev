@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.ProcessReleaseVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
-import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
@@ -170,7 +171,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	
 	/**
 	 * 机器人资源释放还回进程资源池
-	 * @param aiBaseInfo
+	 * @param aiInuse
 	 */
 	@Override
 	public void aiRelease(AiInuseCache aiInuse) {
@@ -182,7 +183,9 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			vo.setPort(Integer.valueOf(aiInuse.getPort()));
 			processList.add(vo);
 			//调用进程管理释放资源
-			iProcessSchedule.release(processList);
+			ProcessReleaseVO processReleaseVO = new ProcessReleaseVO();
+			processReleaseVO.setProcessInstanceVOS(processList);
+			iProcessSchedule.release(processReleaseVO);
 			//从用户缓存中也清理掉该用户的找个机器人
 			aiCacheService.delUserAi(aiInuse.getUserId(), aiInuse.getAiNo());
 			//异步记录日志
@@ -208,7 +211,10 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				processList.add(vo);
 			}
 			//调用进程管理释放资源
-			iProcessSchedule.release(processList);
+			ProcessReleaseVO processReleaseVO = new ProcessReleaseVO();
+			processReleaseVO.setProcessInstanceVOS(processList);
+			iProcessSchedule.release(processReleaseVO);
+			iProcessSchedule.release(processReleaseVO);
     		//清理该用户分配机器人缓存数据
     		aiCacheService.delUserAis(aiList.get(0).getUserId());
 			//异步记录日志

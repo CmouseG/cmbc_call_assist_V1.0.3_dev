@@ -30,7 +30,7 @@ public interface IDeviceManageService {
      * @param cmdType 对设备处理
      * @return
      */
-    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType);
+    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters);
 
     /**
      * 获取设备的状态

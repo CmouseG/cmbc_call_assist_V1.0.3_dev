@@ -100,7 +100,10 @@ public class ProceseScheduleService implements IProceseScheduleService {
         }
 
         // 通知更换模型 TODO 同步 并设定TTS的状态
-        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL);
+        List<String> parameters = new ArrayList<String>();
+        parameters.add(srcModel);
+        parameters.add(toModel);
+        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters);
 
         //processInstance.setWhoUsed(IdGenUtil.uuid());
         //updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);

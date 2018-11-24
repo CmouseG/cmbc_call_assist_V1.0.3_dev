@@ -16,6 +16,8 @@ public class ProcessInstanceVO implements Serializable, Cloneable  {
 
     private ProcessStatusEnum status;
 
+    private String name;
+
     private String whoUsed;
 
     private String processKey;
@@ -79,6 +81,14 @@ public class ProcessInstanceVO implements Serializable, Cloneable  {
         this.paramter = paramter;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "ProcessInstanceVO{" +
@@ -86,6 +96,7 @@ public class ProcessInstanceVO implements Serializable, Cloneable  {
                 ", port=" + port +
                 ", type=" + type +
                 ", status=" + status +
+                ", name='" + name + '\'' +
                 ", whoUsed='" + whoUsed + '\'' +
                 ", processKey='" + processKey + '\'' +
                 ", paramter=" + paramter +

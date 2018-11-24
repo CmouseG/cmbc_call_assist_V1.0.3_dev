@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
@@ -19,6 +20,7 @@ import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.utils.RedisUtil;
 
+@Component
 public class CheckGpuStatus implements ApplicationRunner {
 	private static Logger logger = LoggerFactory.getLogger(CheckGpuStatus.class);
 	
@@ -33,14 +35,16 @@ public class CheckGpuStatus implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
 		logger.info("调用进程管理接口查看GPU分配情况");
-		List<ProcessInstanceVO> returnList = null;
+		List<ProcessInstanceVO> returnList = new ArrayList<>();
+		
 		ReturnData<List<ProcessInstanceVO>> returnData = iProcessSchedule.getAllTTS();
 		if(returnData != null && returnData.getBody() != null){
 			returnList = returnData.getBody();
 		}else{
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_TTS);
 		}
-		logger.info("返回的列表", returnList);
+		logger.info("返回的列表：" + returnList);
+		
 		Collections.sort(returnList, new Comparator<ProcessInstanceVO>() {
 			@Override
 			public int compare(ProcessInstanceVO o1, ProcessInstanceVO o2) {

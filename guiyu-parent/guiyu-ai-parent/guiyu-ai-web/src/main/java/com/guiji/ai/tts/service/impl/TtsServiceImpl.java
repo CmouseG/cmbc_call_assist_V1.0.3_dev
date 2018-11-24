@@ -67,12 +67,15 @@ public class TtsServiceImpl implements TtsService {
         			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
         		}
         		audioUrl= provide.transfer(busId, model, text);
-        		if(audioUrl != null)
-        		redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
-        		logger.info("存入Redis");
+        		if(audioUrl != null){
+        			redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
+            		logger.info(audioUrl + "存入Redis");
+        		}else{
+        			logger.error("文本转语音失败！");
+        		}
         	}
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("语音文件合成失败!" + e);
         }
         return audioUrl;
     }

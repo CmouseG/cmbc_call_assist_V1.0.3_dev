@@ -59,7 +59,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             case HEALTH:
                 ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO,processInstanceVO.getName());
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:

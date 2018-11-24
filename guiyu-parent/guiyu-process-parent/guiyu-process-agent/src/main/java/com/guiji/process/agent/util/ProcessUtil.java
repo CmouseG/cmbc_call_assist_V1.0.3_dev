@@ -1,5 +1,7 @@
 package com.guiji.process.agent.util;
 
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.model.CfgNodeOperVO;
 import com.guiji.process.agent.model.CfgNodeVO;
@@ -91,13 +93,14 @@ public class ProcessUtil {
         }
     }
 
-    public static void sendHealth(int port, ProcessTypeEnum processTypeEnum, CfgNodeOperVO cfgNodeOperVO) throws UnknownHostException {
+    public static void sendHealth(int port, ProcessTypeEnum processTypeEnum, CfgNodeOperVO cfgNodeOperVO,String name) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.HEALTH);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
         processInstanceVO.setType(processTypeEnum);
         processInstanceVO.setPort(port);
+        processInstanceVO.setName(name);
         boolean isUp = ProcessUtil.checkRun(port);
         if (isUp) {
             processInstanceVO.setStatus(ProcessStatusEnum.UP);

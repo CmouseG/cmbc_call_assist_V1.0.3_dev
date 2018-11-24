@@ -1,8 +1,8 @@
 package com.guiji.process.server.service;
 
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessStatusEnum;
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public interface IDeviceManageService {
      * @param cmdType 对设备处理
      * @return
      */
-    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType);
+    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters);
 
     /**
      * 获取设备的状态

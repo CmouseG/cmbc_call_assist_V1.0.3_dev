@@ -1,7 +1,5 @@
 package com.guiji.process.agent.service;
 
-import com.guiji.process.core.vo.ProcessStatusEnum;
-
 public class ProcessAgentStatusChangeService {
 
 

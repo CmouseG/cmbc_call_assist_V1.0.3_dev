@@ -1,6 +1,8 @@
 package com.guiji.process.server.service.impl;
 
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.*;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
@@ -100,12 +102,19 @@ public class ProceseScheduleService implements IProceseScheduleService {
         }
 
         // 通知更换模型 TODO 同步 并设定TTS的状态
-        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL);
+        List<String> parameters = new ArrayList<String>();
+        parameters.add(srcModel);
+        parameters.add(toModel);
+        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters);
 
         //processInstance.setWhoUsed(IdGenUtil.uuid());
         //updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);
     }
 
+    @Override
+    public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
+        
+    }
 
 
     private List<ProcessInstanceVO> getDevices(ProcessTypeEnum processTypeEnum, String key, int requestCount)

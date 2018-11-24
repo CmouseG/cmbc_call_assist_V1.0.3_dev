@@ -1,5 +1,8 @@
 package com.guiji.process.core.vo;
 
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
+
 import java.io.Serializable;
 import java.util.Map;
 

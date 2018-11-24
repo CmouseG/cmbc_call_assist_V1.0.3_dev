@@ -5,12 +5,15 @@ import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.server.dao.entity.SysProcess;
+import com.guiji.process.server.service.ISysProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,6 +23,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     @Autowired
     private ProcessManageService processManageService;
+
+    @Autowired
+    private ISysProcessService sysProcessService;
 
     public void excute(CmdMessageVO cmdMessageVO)
     {
@@ -72,9 +78,21 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
     }
 
-    private void doAgentRegister(CmdMessageVO cmdMessageVO)
-    {
+    private void doAgentRegister(CmdMessageVO cmdMessageVO) {
+        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         //TODO 新的agent注册入库
+        // 存入数据库
+        SysProcess sysProcess = new SysProcess();
+        sysProcess.setIp(processInstanceVO.getIp());
+        sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+        sysProcess.setName(processInstanceVO.getName());
+        sysProcess.setProcessKey(processInstanceVO.getProcessKey());
+        sysProcess.setStatus(processInstanceVO.getStatus().getValue());
+        sysProcess.setType(processInstanceVO.getType().getValue());
+        sysProcess.setCreateTime(new Date());
+        sysProcess.setUpdateTime(new Date());
+        sysProcessService.insert(sysProcess);
+
     }
 
 

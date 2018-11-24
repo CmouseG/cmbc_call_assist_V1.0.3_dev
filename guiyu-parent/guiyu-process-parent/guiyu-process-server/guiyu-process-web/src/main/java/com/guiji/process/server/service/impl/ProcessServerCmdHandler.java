@@ -36,7 +36,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
         switch (cmdMessageVO.getCmdType()) {
             case AGENTREGISTER:
-                doAgentRegister(cmdMessageVO);
+                doRegister(cmdMessageVO);
                 break;
             case REGISTER:
                 doRegister(cmdMessageVO);

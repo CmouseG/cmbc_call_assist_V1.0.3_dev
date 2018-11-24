@@ -14,6 +14,7 @@ import com.guiji.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.List;
 /**
  * Created by ty on 2018/11/24.
  */
+@Service
 public class SysProcessServiceImpl implements ISysProcessService {
     private final Logger logger = LoggerFactory.getLogger(SysProcessServiceImpl.class);
     @Autowired
@@ -32,7 +34,11 @@ public class SysProcessServiceImpl implements ISysProcessService {
             return false;
         }
 
-        SysProcessExample sysProcessExample = this.getExampleByCondition(sysProcess);
+        SysProcess sysProcessTmp = new SysProcess();
+        sysProcessTmp.setIp(sysProcess.getIp());
+        sysProcessTmp.setPort(sysProcess.getPort());
+        sysProcessTmp.setType(sysProcess.getType());
+        SysProcessExample sysProcessExample = this.getExampleByCondition(sysProcessTmp);
         List<SysProcess> sysProcessList =  sysProcessMapper.selectByExample(sysProcessExample);
         if (sysProcessList != null && sysProcessList.size() > 0) {
             return false;
@@ -113,7 +119,6 @@ public class SysProcessServiceImpl implements ISysProcessService {
             String name = sysProcess.getName();	//资源名称
             int type = sysProcess.getType();	//资源类型
             String processKey = sysProcess.getProcessKey();//扩展字段，资源类型为TTS存模型名称
-            int status = sysProcess.getStatus();//状态
             SysProcessExample example = new SysProcessExample();
             SysProcessExample.Criteria criteria = example.createCriteria();
             if(id != null) {

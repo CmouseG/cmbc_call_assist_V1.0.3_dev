@@ -127,6 +127,7 @@ public class ProcessUtil {
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
         processInstanceVO.setType(cfgProcessVO.getProcessTypeEnum());
         processInstanceVO.setPort(port);
+        processInstanceVO.setName(cfgProcessVO.getName());
         processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
         boolean isUp = ProcessUtil.checkRun(port);
         if (isUp) {

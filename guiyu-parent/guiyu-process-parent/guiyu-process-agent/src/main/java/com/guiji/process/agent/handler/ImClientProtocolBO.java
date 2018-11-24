@@ -3,6 +3,7 @@ package com.guiji.process.agent.handler;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.agent.model.OperateVO;
+import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
@@ -37,7 +38,7 @@ public class ImClientProtocolBO {
     }
 
 
-    public void start(ProcessTypeEnum processTypeEnum) throws UnknownHostException {
+    public void start(ProcessTypeEnum processTypeEnum, Integer agentPort) throws UnknownHostException {
         Channel channel = new ImConnection().connect(HOST, PORT);
         channelGlobal = channel;
         String id = Inet4Address.getLocalHost().getHostAddress();
@@ -48,6 +49,7 @@ public class ImClientProtocolBO {
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
         processInstanceVO.setType(processTypeEnum);
+        processInstanceVO.setPort(agentPort);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         builder.setContent(msg);

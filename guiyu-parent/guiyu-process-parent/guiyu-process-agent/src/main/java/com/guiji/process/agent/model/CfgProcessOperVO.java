@@ -12,11 +12,11 @@ public class CfgProcessOperVO {
         return cmdTypeEnum;
     }
 
-    public void setCmdTypeEnum(Integer cmdTypeEnum) {
+    public void setCmdTypeEnum(String cmdTypeEnum) {
         this.cmdTypeEnum = CmdTypeEnum.valueOf(cmdTypeEnum);
     }
 
-    public void setCmdTypeEnum(String cmdTypeEnum) {
+    public void setCmdTypeEnum(Integer cmdTypeEnum) {
         this.cmdTypeEnum = CmdTypeEnum.valueOf(cmdTypeEnum);
     }
 

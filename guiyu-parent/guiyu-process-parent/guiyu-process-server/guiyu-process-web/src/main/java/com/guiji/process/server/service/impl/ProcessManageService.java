@@ -187,7 +187,9 @@ public class ProcessManageService implements IDeviceManageService {
         SysProcess sysProcess = new SysProcess();
         sysProcess.setIp(ip);
         sysProcess.setPort(String.valueOf(port));
-        sysProcess.setStatus(status.getValue());
+        if (status != null) {
+            sysProcess.setStatus(status.getValue());
+        }
         sysProcess.setUpdateTime(new Date());
         processService.update(sysProcess);
         // 更新redis缓存

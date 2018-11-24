@@ -87,6 +87,10 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             return null;
         }
 
+        if(cmdTypeEnum == CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE || cmdTypeEnum == CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE)
+        {
+
+        }
         for (CfgProcessOperVO cfgProcessOperVO : cfgProcessVO.getCfgNodeOpers()  ) {
 
             if(cfgProcessOperVO.getCmdTypeEnum() == cmdTypeEnum)

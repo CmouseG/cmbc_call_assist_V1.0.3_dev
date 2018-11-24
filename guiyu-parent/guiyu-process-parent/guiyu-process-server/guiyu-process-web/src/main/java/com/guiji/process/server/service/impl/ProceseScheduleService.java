@@ -143,9 +143,10 @@ public class ProceseScheduleService implements IProceseScheduleService {
         for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
 
             processInstanceVO =(ProcessInstanceVO) ent.getValue();
-            if(processInstanceVO.getType() == processTypeEnum && !agents.contains(processInstanceVO.getIp()))
+            if(processInstanceVO.getType() == ProcessTypeEnum.AGENT && !agents.contains(processInstanceVO.getIp()))
             {
                 agents.add(processInstanceVO.getIp());
+                processInstanceVO.setType(ProcessTypeEnum.AGENT);
                 deviceManageService.cmd(processInstanceVO, cmdType, parameters);
             }
         }

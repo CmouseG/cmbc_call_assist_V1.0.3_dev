@@ -1,5 +1,8 @@
 package com.guiji.process.agent.service;
 
+import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.process.agent.model.CfgAgentNodeVO;
+import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
 import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.utils.JsonUtils;
@@ -8,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +20,8 @@ public class ProcessCfgService {
     private static ProcessCfgService instance = new ProcessCfgService();
     public static final Map<Integer, CfgProcessVO> cfgMap = new ConcurrentHashMap<Integer, CfgProcessVO>();
 
+    public static Integer agentPort = 0;
+
     public static ProcessCfgService getIntance()
     {
         return instance;
@@ -23,44 +29,45 @@ public class ProcessCfgService {
 
     public void onChanged(File file)
     {
-        List<CfgProcessVO> cfgProcessVOS = null;
+        CfgAgentNodeVO cfgAgentNodeVO = null;
         try {
-            cfgProcessVOS =   readFileToVO(file);
+            cfgAgentNodeVO =   readFileToVO(file);
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
-        initMap(cfgProcessVOS);
+        initMap(cfgAgentNodeVO);
     }
 
 
-    private List<CfgProcessVO> readFileToVO(File file) throws IOException {
+    private CfgAgentNodeVO readFileToVO(File file) throws IOException {
         String json = FileUtils.readFileToString(file);
 
-        return  JsonUtils.json2List(json, CfgProcessVO.class);
+        return  JsonUtils.json2Bean(json, CfgAgentNodeVO.class);
     }
 
 
-    public void init(String file)
+    public void init(String file, int agentPort)
     {
-        List<CfgProcessVO> cfgProcessVOS = null;
+        ProcessCfgService.agentPort= agentPort;
+        CfgAgentNodeVO cfgAgentNodeVO = null;
         try {
-            cfgProcessVOS =   readFileToVO(new File(file));
+            cfgAgentNodeVO =   readFileToVO(new File(file));
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
 
-        initMap(cfgProcessVOS);
+        initMap(cfgAgentNodeVO);
 
 
 
 
     }
 
-    private void initMap(List<CfgProcessVO> cfgProcessVOS)
+    private void initMap(CfgAgentNodeVO cfgAgentNodeVO)
     {
-        if(cfgProcessVOS == null)
+        if(cfgAgentNodeVO == null)
         {
             return;
         }
@@ -69,7 +76,7 @@ public class ProcessCfgService {
         if (cfgMap != null) {
             for (Integer key : cfgMap.keySet()) {
                 boolean flg = false;
-                for (CfgProcessVO cfgProcessVO : cfgProcessVOS) {
+                for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
                     if (cfgProcessVO.getPort() == key) {
                         flg = true;
                         break;
@@ -83,13 +90,20 @@ public class ProcessCfgService {
             }
         }
 
-
         cfgMap.clear();
 
-        for (CfgProcessVO cfgProcessVO : cfgProcessVOS) {
+        for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
             cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
             System.out.println(cfgProcessVO);
         }
+
+        CfgProcessVO cfgProcessVO = new CfgProcessVO();
+        cfgProcessVO.setPort(ProcessCfgService.agentPort);
+        cfgProcessVO.setName("agent");
+        cfgProcessVO.setProcessTypeEnum(ProcessTypeEnum.AGENT.getValue());
+        cfgProcessVO.setCfgNodeOpers(cfgAgentNodeVO.getNodeOpers());
+        cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
+
         // 发送注册信息
         Map<Integer, CfgProcessVO> cfgMap = ProcessCfgService.getIntance().cfgMap;
         if (cfgMap != null) {
@@ -112,6 +126,8 @@ public class ProcessCfgService {
                 }
             }
         }
+
+
     }
 
 

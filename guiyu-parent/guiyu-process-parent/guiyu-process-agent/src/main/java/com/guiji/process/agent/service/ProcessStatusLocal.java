@@ -15,7 +15,7 @@ public class ProcessStatusLocal {
 
     private static final ProcessStatusLocal instance = new ProcessStatusLocal();
 
-    private Map<Integer, ProcessStatusEnum> lacalStatus = null;
+    private static Map<Integer, ProcessStatusEnum> lacalStatus = null;
 
     private ProcessStatusLocal()
     {
@@ -24,6 +24,10 @@ public class ProcessStatusLocal {
 
     public static ProcessStatusLocal getInstance()
     {
+        if(lacalStatus == null)
+        {
+            lacalStatus = new ConcurrentHashMap<Integer, ProcessStatusEnum>();
+        }
         return ProcessStatusLocal.instance;
     }
 

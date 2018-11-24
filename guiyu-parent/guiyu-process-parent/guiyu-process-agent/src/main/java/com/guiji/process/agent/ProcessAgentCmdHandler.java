@@ -54,7 +54,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
             case HEALTH:
                 ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO,processInstanceVO.getName());
                 break;
             default:
                 break;

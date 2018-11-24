@@ -1,5 +1,6 @@
 package com.guiji.process.agent.handler;
 
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.message.CmdMessageVO;

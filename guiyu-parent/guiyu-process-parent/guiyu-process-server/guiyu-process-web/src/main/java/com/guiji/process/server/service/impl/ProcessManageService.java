@@ -7,8 +7,10 @@ import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.core.ConnectionPool;
+import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IDeviceManageService;
+import com.guiji.process.server.service.ISysProcessService;
 import com.guiji.process.server.util.DeviceProcessUtil;
 
 import com.guiji.utils.JsonUtils;
@@ -18,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +30,8 @@ public class ProcessManageService implements IDeviceManageService {
 
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private ISysProcessService processService;
 
     /**
      * 注册
@@ -45,9 +50,18 @@ public class ProcessManageService implements IDeviceManageService {
                 continue;
             }
 
-            // 存入数据库 TODO
-
-
+            // 存入数据库
+            SysProcess sysProcess = new SysProcess();
+            sysProcess.setIp(processInstanceVO.getIp());
+            sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+            sysProcess.setName(processInstanceVO.getName());
+            sysProcess.setProcessKey(processInstanceVO.getProcessKey());
+            sysProcess.setStatus(processInstanceVO.getStatus().getValue());
+            sysProcess.setType(processInstanceVO.getType().getValue());
+            sysProcess.setCreateTime(new Date());
+            sysProcess.setUpdateTime(new Date());
+            processService.insert(sysProcess);
+            // 更新redis缓存
             updateStatus(processInstanceVO);
         }
     }
@@ -69,9 +83,14 @@ public class ProcessManageService implements IDeviceManageService {
                 continue;
             }
 
-            // 存入数据库 TODO
-
-
+            // 存入数据库
+            SysProcess sysProcess = new SysProcess();
+            sysProcess.setIp(processInstanceVO.getIp());
+            sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+            sysProcess.setStatus(processInstanceVO.getStatus().getValue());
+            sysProcess.setUpdateTime(new Date());
+            processService.update(sysProcess);
+            // 更新redis缓存
             updateUnRegister(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus(), "");
         }
     }
@@ -169,6 +188,14 @@ public class ProcessManageService implements IDeviceManageService {
 
         processInstanceVO.setStatus(status);
 
+        // 存入数据库
+        SysProcess sysProcess = new SysProcess();
+        sysProcess.setIp(ip);
+        sysProcess.setPort(String.valueOf(port));
+        sysProcess.setStatus(status.getValue());
+        sysProcess.setUpdateTime(new Date());
+        processService.update(sysProcess);
+        // 更新redis缓存
         updateAllDeviceCachList(processInstanceVO);
     }
 

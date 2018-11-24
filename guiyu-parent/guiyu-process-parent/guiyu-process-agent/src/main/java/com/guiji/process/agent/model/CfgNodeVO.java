@@ -1,5 +1,6 @@
 package com.guiji.process.agent.model;
 
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.CmdTypeEnum;
 
 import java.util.List;

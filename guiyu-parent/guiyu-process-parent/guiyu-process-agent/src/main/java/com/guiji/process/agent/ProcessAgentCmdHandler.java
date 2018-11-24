@@ -31,8 +31,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             return;
         }
 
-
+        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         CfgNodeOperVO cfgNodeOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
+
         switch (cmdMessageVO.getCmdType()) {
             case REGISTER:
                 break;
@@ -52,24 +53,22 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 doCmd(cmdMessageVO,cfgNodeOperVO);
                 Thread.sleep(1000);//等待1s查看是否关闭成功
                 //TODO 检查是否停掉，如果进程还在则kill -9
-                if (ProcessUtil.checkRun(cmdMessageVO.getProcessInstanceVO().getPort())) {
+                if (ProcessUtil.checkRun(processInstanceVO.getPort())) {
                     ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
                 }
                 break;
 
             case HEALTH:
-                ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+
                 ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO,processInstanceVO.getName());
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
-                ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
+
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:
-                ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO);
+
                 break;
             default:
                 break;

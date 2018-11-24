@@ -1,9 +1,8 @@
 package com.guiji.process.server.service;
 
 import com.guiji.common.model.process.ProcessTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
-import com.guiji.process.core.vo.ProcessReleaseVO;
-import com.guiji.process.model.UpgrateResouceReq;
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.ProcessReleaseVO;
 
 import java.util.List;
 

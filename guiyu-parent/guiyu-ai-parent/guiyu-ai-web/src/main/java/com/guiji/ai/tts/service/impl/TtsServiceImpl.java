@@ -55,25 +55,26 @@ public class TtsServiceImpl implements TtsService {
         return ttsRspVO;
     }
 
-    public String calc(String busId, String model, String text) {
+    private String calc(String busId, String model, String text) {
         String audioUrl = null;
         try {
-        	//判断时候已经合成
+        	//判断是否已经合成
         	audioUrl = (String) redisUtil.get(model+"_"+text);
-        	if(audioUrl == null){
-        		//合成
-        		ITtsServiceProvide provide = ttsServiceFactory.getTtsProvide(model);
-        		if(provide == null){
-        			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
-        		}
-        		audioUrl= provide.transfer(busId, model, text);
-        		if(audioUrl != null){
-        			redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
-            		logger.info(audioUrl + "存入Redis");
-        		}else{
-        			logger.error("文本转语音失败！");
-        		}
+        	if(audioUrl != null){
+                return audioUrl;
         	}
+
+            //合成
+            ITtsServiceProvide provide = ttsServiceFactory.getTtsProvide(model);
+            if(provide == null){
+                throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
+            }
+            audioUrl= provide.transfer(busId, model, text);
+            if(audioUrl != null){
+                redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
+            }else{
+                logger.error("文本转语音失败！");
+            }
         } catch (Exception e) {
             logger.error("语音文件合成失败!" + e);
         }

@@ -4,7 +4,7 @@ package com.guiji.process.server.service.impl;
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.service.ISysProcessService;
 import org.slf4j.Logger;

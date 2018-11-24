@@ -6,7 +6,7 @@ import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.Channel;
 

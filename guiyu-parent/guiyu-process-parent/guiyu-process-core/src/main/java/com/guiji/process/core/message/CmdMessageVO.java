@@ -1,10 +1,9 @@
 package com.guiji.process.core.message;
 
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CmdMessageVO  implements Serializable {

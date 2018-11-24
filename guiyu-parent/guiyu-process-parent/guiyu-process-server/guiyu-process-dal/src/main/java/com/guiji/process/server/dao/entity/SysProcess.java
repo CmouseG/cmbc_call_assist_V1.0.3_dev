@@ -12,11 +12,11 @@ public class SysProcess implements Serializable {
 
     private String name;
 
-    private String type;
+    private Integer type;
 
     private String processKey;
 
-    private String status;
+    private Integer status;
 
     private Date createTime;
 
@@ -56,12 +56,12 @@ public class SysProcess implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type == null ? null : type.trim();
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public String getProcessKey() {
@@ -72,12 +72,12 @@ public class SysProcess implements Serializable {
         this.processKey = processKey == null ? null : processKey.trim();
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Date getCreateTime() {

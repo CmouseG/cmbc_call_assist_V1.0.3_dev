@@ -48,22 +48,6 @@ public class DistributeTimerTask {
 				logger.info("查询前10分钟内各模型对应GPU请求情况...");
 				List<Map<String, Object>> resultList = ttsModelMapper.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
 				
-				/*
-				 * 测试代码，待删除
-				 */
-				Map aMap = new HashMap<>();
-				Map bMap = new HashMap<>();
-				Map cMap = new HashMap<>();
-				aMap.put("model", "A");
-				aMap.put("count", 3);
-				bMap.put("model", "B");
-				bMap.put("count", 1);
-				cMap.put("model", "C");
-				cMap.put("count", 6);
-				resultList.add(aMap);
-				resultList.add(bMap);
-				resultList.add(cMap);
-				
 				if(resultList != null && !resultList.isEmpty()){
 					logger.info("请求结果：" + resultList);
 					//重新分配策略
@@ -135,8 +119,7 @@ public class DistributeTimerTask {
 					String port = gpuSumList.get(k).getPort();
 					k++;
 					//调进程管理接口-模型切换
-//					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
-					ReturnData<Boolean> returnData = new ReturnData<Boolean>(true); //测试代码
+					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
 						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new GuiyuTtsGpu(ip, port));

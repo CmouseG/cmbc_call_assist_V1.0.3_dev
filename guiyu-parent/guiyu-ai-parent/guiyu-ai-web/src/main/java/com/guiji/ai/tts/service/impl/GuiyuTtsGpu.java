@@ -5,17 +5,27 @@ import java.io.FileOutputStream;
 import java.util.Date;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
@@ -33,9 +43,17 @@ import com.guiji.utils.RedisUtil;
 @Component
 public class GuiyuTtsGpu extends ITtsServiceProvide {
 	private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
+	private static final int ConnectTimeout = 5000;
+	private static final int SocketTimeout = 5000;
+	private static final int MaxTotal = 200;
+	private static final int MaxPerRoute = 40;
+	private static final int MaxRoute = 100;
 	
 	private String ip;
 	private String port;
+	
+	@Value("${filePath}")
+	private String filePath;
 	
 	@Autowired
     private RedisUtil redisUtil;
@@ -49,15 +67,33 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		FileOutputStream out = null;
 		File file = null;
 		try {
-			file = new File("E:\\file\\redio.wav"); // 文件保存路径
+			file = new File(filePath); //文件保存路径
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 			out = new FileOutputStream(file);
-			httpClient = HttpClients.createDefault();
+			
+			ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+			LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory.getSocketFactory();
+			Registry<ConnectionSocketFactory> registry = RegistryBuilder
+					.<ConnectionSocketFactory> create()
+					.register("http", plainsf)
+					.register("https", sslsf)
+					.build();
+			// 连接池管理对象（负责管理HttpClient连接池）
+			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+			// 最大连接数
+			cm.setMaxTotal(MaxTotal);
+			// 每个路由基础的连接
+			cm.setDefaultMaxPerRoute(MaxPerRoute);
+			HttpHost httpHost = new HttpHost(ip, Integer.parseInt(port));
+			// 目标主机的最大连接数
+			cm.setMaxPerRoute(new HttpRoute(httpHost), MaxRoute);
+			
+			httpClient = HttpClients.custom().setConnectionManager(cm).build();
 			HttpPost httpPost = new HttpPost("http://" + ip + ":" + port + "/synthesize");
 			// 配置超时时间
-			RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(3000).build();
+			RequestConfig config = RequestConfig.custom().setConnectTimeout(ConnectTimeout).setSocketTimeout(SocketTimeout).build();
 			httpPost.setConfig(config);
 
 			// 添加请求参数

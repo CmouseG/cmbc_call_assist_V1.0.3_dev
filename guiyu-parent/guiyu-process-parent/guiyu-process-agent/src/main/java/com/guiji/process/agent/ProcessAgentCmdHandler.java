@@ -3,6 +3,7 @@ package com.guiji.process.agent;
 
 import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
+import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.agent.util.CommandUtils;
 import com.guiji.process.agent.util.ProcessUtil;
@@ -56,7 +57,8 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             case HEALTH:
 
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(), cfgProcessOperVO,processInstanceVO.getName());
+               // ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(), cfgProcessOperVO,processInstanceVO.getName());
+                doHealth(cmdMessageVO, cfgProcessOperVO);
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
@@ -93,7 +95,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
 
 
-    private void doCmd(CmdMessageVO cmdMessageVO, CfgProcessOperVO cfgProcessOperVO) {
+    private CommandResult doCmd(CmdMessageVO cmdMessageVO, CfgProcessOperVO cfgProcessOperVO) {
+
+        CommandResult cmdResult = null;
         if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum())) {
 
             String cmd = cfgProcessOperVO.getCmd();
@@ -102,11 +106,24 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 cmd = MessageFormat.format(cfgProcessOperVO.getCmd(), cmdMessageVO.getParameters().toArray());
             }
 
-            // 发起重启命令
-            CommandUtils.exec(cmd);
+            // 发起命令
+            cmdResult = CommandUtils.exec(cmd);
             // 执行完命令保存结果到内存记录
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum());
         }
+
+        return cmdResult;
+    }
+
+
+
+    private void doHealth(CmdMessageVO cmdMessageVO, CfgProcessOperVO cfgProcessOperVO)
+    {
+        CommandResult cmdResult = doCmd(cmdMessageVO,cfgProcessOperVO);
+
+        // 对结果分析
+
+
     }
 
 }

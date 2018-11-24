@@ -170,6 +170,12 @@ public class ProcessUtil {
     }
 
     public static void afterCMD(int port,CmdTypeEnum cmdTypeEnum) {
+
+        if(cmdTypeEnum == CmdTypeEnum.HEALTH)
+        {
+            return;
+        }
+
         // 操作记录记载内存
         boolean needAddFlg = true;
         List<OperateVO> operateVOList = ImClientProtocolBO.operateVOList;

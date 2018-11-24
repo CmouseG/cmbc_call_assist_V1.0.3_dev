@@ -67,7 +67,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		FileOutputStream out = null;
 		File file = null;
 		try {
-			file = new File(filePath); //文件保存路径
+			file = new File(filePath + System.currentTimeMillis() + ".wav"); //文件保存路径
 			if (!file.exists()) {
 				file.createNewFile();
 			}

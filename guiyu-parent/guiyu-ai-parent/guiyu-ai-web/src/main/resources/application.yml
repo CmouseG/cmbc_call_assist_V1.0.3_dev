@@ -35,4 +35,4 @@ properties:
   error: properties/error.properties
   threadpool: properties/threadPool.properties
 
-filePath: /home/apps/ai/tts/wav/vedio_2018.wav
+filePath: /home/apps/ai/tts/wav/

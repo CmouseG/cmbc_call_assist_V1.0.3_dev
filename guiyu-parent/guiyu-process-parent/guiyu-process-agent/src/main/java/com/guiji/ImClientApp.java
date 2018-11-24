@@ -6,7 +6,6 @@ import com.guiji.process.agent.core.filemonitor.impl.FileMonitor;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.service.ProcessCfgService;
 
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;

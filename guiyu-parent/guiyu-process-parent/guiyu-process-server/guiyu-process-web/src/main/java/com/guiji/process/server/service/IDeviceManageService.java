@@ -1,8 +1,8 @@
 package com.guiji.process.server.service;
 
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessStatusEnum;
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 
 import java.util.List;

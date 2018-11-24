@@ -1,6 +1,8 @@
 package com.guiji.process.server.service.impl;
 
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.*;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
@@ -109,6 +111,10 @@ public class ProceseScheduleService implements IProceseScheduleService {
         //updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);
     }
 
+    @Override
+    public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
+        
+    }
 
 
     private List<ProcessInstanceVO> getDevices(ProcessTypeEnum processTypeEnum, String key, int requestCount)

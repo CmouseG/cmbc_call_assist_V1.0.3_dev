@@ -1,10 +1,11 @@
 package com.guiji.process.server.controller;
 
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.component.result.Result;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.core.vo.ProcessReleaseVO;
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.process.server.service.IProceseScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,11 @@ public class ProcessScheduleController implements IProcessSchedule {
     public Result.ReturnData<Boolean> release(@RequestBody ProcessReleaseVO processReleaseVO) {
         boolean result = processScheduleService.release(processReleaseVO);
         return Result.ok(result);
+    }
+
+    @Override
+    public Result.ReturnData<Boolean> publishResource(UpgrateResouceReq req) {
+        return null;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.guiji.process.core.vo;
+package com.guiji.common.model.process;
 
 public enum ProcessStatusEnum {
 

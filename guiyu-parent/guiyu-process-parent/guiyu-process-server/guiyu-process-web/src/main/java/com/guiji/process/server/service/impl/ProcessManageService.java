@@ -1,10 +1,10 @@
 package com.guiji.process.server.service.impl;
 
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessStatusEnum;
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.model.DeviceProcessConstant;

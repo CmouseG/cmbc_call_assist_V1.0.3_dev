@@ -3,6 +3,7 @@ package com.guiji.process.api;
 import com.guiji.component.result.Result;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.process.core.vo.ProcessReleaseVO;
+import com.guiji.process.model.UpgrateResouceReq;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -85,10 +86,23 @@ public interface IProcessSchedule {
      */
     @ApiOperation(value = "释放资源")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "List", paramType = "query"),
+            @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "ProcessReleaseVO", paramType = "query"),
     })
     @PostMapping(value="/release")
     Result.ReturnData<Boolean> release(@RequestBody ProcessReleaseVO processReleaseVO);
+
+
+    /**
+     * 发布资源
+     * @param req 发布资源
+     * @return
+     */
+    @ApiOperation(value = "发布资源")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "req", value = "发布资源", dataType = "UpgrateResouceReq", paramType = "query"),
+    })
+    @PostMapping(value="/publishResource")
+    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req);
 
 }
 

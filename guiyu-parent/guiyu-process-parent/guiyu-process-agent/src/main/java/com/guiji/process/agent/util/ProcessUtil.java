@@ -8,9 +8,7 @@ import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessStatusEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 

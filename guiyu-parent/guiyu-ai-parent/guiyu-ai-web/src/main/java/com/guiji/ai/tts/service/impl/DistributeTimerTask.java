@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.guiji.ai.dao.TtsModelMapper;
 import com.guiji.ai.tts.constants.AiConstants;
@@ -25,6 +26,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
+@Component
 public class DistributeTimerTask {
 	private static Logger logger = LoggerFactory.getLogger(DistributeTimerTask.class);
 
@@ -38,14 +40,31 @@ public class DistributeTimerTask {
     private RedisUtil redisUtil;
 
 	// 定时任务，启动时运行（每3分钟执行一次）
-	@Scheduled(fixedRate = 1000*60*3)
+	@Scheduled(fixedRate = 1000*60)
 	public void task() throws InterruptedException {
 		Lock lock = new Lock("LOCK_NAME", "LOCK_VALUE");
-		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
+		if (distributedLockHandler.tryLock(lock, 30*1000, 1000, 3*60*1000)) { // 尝试30s,每1s尝试一次，持锁时间为3分钟
 			try {
 				logger.info("查询前10分钟内各模型对应GPU请求情况...");
-				List<Map<String, Object>> resultList = ttsModelMapper.selectTenMinutesBefore(new Date()); // resultList中是<A,3>，<B，5>的格式
-				if(resultList != null){
+				List<Map<String, Object>> resultList = ttsModelMapper.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
+				
+				/*
+				 * 测试代码，待删除
+				 */
+				Map aMap = new HashMap<>();
+				Map bMap = new HashMap<>();
+				Map cMap = new HashMap<>();
+				aMap.put("model", "A");
+				aMap.put("count", 3);
+				bMap.put("model", "B");
+				bMap.put("count", 1);
+				cMap.put("model", "C");
+				cMap.put("count", 6);
+				resultList.add(aMap);
+				resultList.add(bMap);
+				resultList.add(cMap);
+				
+				if(resultList != null && !resultList.isEmpty()){
 					logger.info("请求结果：" + resultList);
 					//重新分配策略
 					distributionStrategy(resultList);
@@ -65,9 +84,9 @@ public class DistributeTimerTask {
 		int requestSum = 0; // 所有模型请求总次数
 		int availableGpuSum = 0; // 所有模型可用GPU总数
 		List<GpuCountVO> gpuCountList = new ArrayList<>();
-		List<GpuCountVO> subGpuCountVOList = new ArrayList<>(); //待回收对象列表
-		List<GpuCountVO> addGpuCountVOList = new ArrayList<>(); //待分配对象列表
-		List<TtsGpuVO> gpuSumList = new ArrayList<>(); //回收的GUP暂存列表
+		List<GpuCountVO> subGpuCountVOList = new ArrayList<>(); // 待回收对象列表
+		List<GpuCountVO> addGpuCountVOList = new ArrayList<>(); // 待分配对象列表
+		List<TtsGpuVO> gpuSumList = new ArrayList<>(); // 回收的GUP暂存列表
 
 		//获取所有计算公式需要的值
 		for (int i = 0; i < mapList.size(); i++) { //mapList（<model,reqCount>）
@@ -105,20 +124,22 @@ public class DistributeTimerTask {
 
 	//GPU转移（分配）
 	private void distributeGpu(List<GpuCountVO> addGpuCountVOList, List<TtsGpuVO> gpuSumList) throws Exception{
+		int k = 0;
 		for(int i = 0; i < addGpuCountVOList.size(); i++){
 			String model = addGpuCountVOList.get(i).getModel();
 			int changeCount = addGpuCountVOList.get(i).getChangeCount();
-			int k = 0;
-			for(int j = 0; j < changeCount; j++){
+			for (int j = 0; j < changeCount; j++) {
 				if(!gpuSumList.isEmpty()){
-					String fromModel = gpuSumList.get(k++).getModel();
-					String ip = gpuSumList.get(k++).getIp();
-					String port = gpuSumList.get(k++).getPort();
+					String fromModel = gpuSumList.get(k).getModel();
+					String ip = gpuSumList.get(k).getIp();
+					String port = gpuSumList.get(k).getPort();
+					k++;
 					//调进程管理接口-模型切换
-					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
+//					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
+					ReturnData<Boolean> returnData = new ReturnData<Boolean>(true); //测试代码
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
-						addToRedisAvaliableList(model, ip, port);
+						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new GuiyuTtsGpu(ip, port));
 					}else{
 						throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS);
 					}
@@ -143,30 +164,10 @@ public class DistributeTimerTask {
 				TtsGpuVO ttsGpuVO = new TtsGpuVO(ip, port, model);
 				gpuSumList.add(ttsGpuVO);
 				// 从可用列表中移除指定GPU
-				removeFromRedisAvaliableList(model, ip, port);
+				redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 1, gpuList.get(j));
 			}
 		}
 		return gpuSumList;
-	}
-
-	//将指定gpu添加到指定model的可用列表中
-	private void addToRedisAvaliableList(String model, String ip, String port) throws Exception{
-		List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0 , -1); // 获取对应模型可用list
-		avaliableGpuList.add(new GuiyuTtsGpu(ip, port));
-		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
-	}
-
-	//从可用列表中移除指定GPU
-	private void removeFromRedisAvaliableList(String model, String ip, String port) throws Exception{
-		List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0 , -1); // 获取对应模型可用list
-		int i = 0;
-		for(Object gpu : avaliableGpuList){
-			if(ip.equals(((GuiyuTtsGpu) gpu).getIp()) && port.equals(((GuiyuTtsGpu) gpu).getPort())){
-				i = avaliableGpuList.indexOf(gpu);
-			}
-		}
-		avaliableGpuList.remove(i);
-		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
 	}
 
 	//计算出changeCount 并根据正负值分组

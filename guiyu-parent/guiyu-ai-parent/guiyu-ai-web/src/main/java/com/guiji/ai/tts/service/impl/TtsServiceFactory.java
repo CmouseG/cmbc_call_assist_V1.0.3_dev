@@ -25,7 +25,6 @@ public class TtsServiceFactory {
 
 	public ITtsServiceProvide getTtsProvide(String model) {
 		List<Object> avaliableGpuList = new ArrayList<>(); // 可用list
-		List<Object> unavaliableGpuList = new ArrayList<>(); // 不可用list
 		
 		try {
 			long startTime = System.currentTimeMillis();
@@ -39,11 +38,10 @@ public class TtsServiceFactory {
 			if (!avaliableGpuList.isEmpty()) { // 取到可用GPU
 				guiyuTtsGpu = (GuiyuTtsGpu) avaliableGpuList.get(0);
 				logger.info("获取到可用的GPU，IP=" + guiyuTtsGpu.getIp() + "，PORT=" + guiyuTtsGpu.getPort());
-				avaliableGpuList.remove(0); // 从可用list中移除此GPU
-				redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
-				unavaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, 0 ,-1);
-				unavaliableGpuList.add(guiyuTtsGpu); // 添加到不可用list中
-				redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, unavaliableGpuList);
+				// 从可用list中移除此GPU
+				redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 1, guiyuTtsGpu);
+				// 添加到不可用list中
+				redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, guiyuTtsGpu);
 				return guiyuTtsGpu;
 			}else{ // 没有取到可用GPU
 				logger.error("没有取到可用GPU！");

@@ -3,7 +3,6 @@ package com.guiji.ai.tts.service.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -89,21 +88,11 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	// 释放GPU
 	private void releaseGpu(String model, String ip, String port) {
-		//从不可用list中移除
-		List<Object> unavaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, 0 , -1);
-		int i = 0;
-		for(Object gpu : unavaliableGpuList){
-			if(ip.equals(((GuiyuTtsGpu) gpu).getIp()) && port.equals(((GuiyuTtsGpu) gpu).getPort())){
-				i = unavaliableGpuList.indexOf(gpu);
-			}
-		}
-		unavaliableGpuList.remove(i);
-		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, unavaliableGpuList);
-		//添加到可用list中
-		List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0 , -1);
 		GuiyuTtsGpu gpu = new GuiyuTtsGpu(ip, port);
-		avaliableGpuList.add(gpu);
-		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
+		//从不可用list中移除
+		redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, 1, gpu);
+		//添加到可用list中
+		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, gpu);
 	}
 
 	/**
@@ -169,10 +158,5 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	public void setPort(String port) {
 		this.port = port;
-	}
-	
-	@Autowired
-	public void setRedisUtil(RedisUtil redisUtil) {
-		this.redisUtil = redisUtil;
 	}
 }

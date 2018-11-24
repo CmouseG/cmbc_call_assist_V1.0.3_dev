@@ -1,11 +1,11 @@
 package com.guiji.process.server.service.impl;
 
 import com.guiji.common.model.Page;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
-import com.guiji.process.core.vo.ProcessTypeEnum;
 import com.guiji.process.server.dao.SysProcessMapper;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.dao.entity.SysProcessExample;

@@ -1,5 +1,6 @@
 package com.guiji.process.server.controller;
 
+import com.guiji.common.model.Page;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
@@ -24,9 +25,8 @@ public class ProcessController {
     ISysProcessService sysProcessService;
 
     @PostMapping("/list")
-    public Object list(int pageNo, int pageSize, SysProcess sysProcess) {
-        sysProcessService.queryProcessPage(pageNo,pageSize,sysProcess);
-        return "success";
+    public Page<SysProcess> list(int pageNo, int pageSize, SysProcess sysProcess) {
+        return sysProcessService.queryProcessPage(pageNo,pageSize,sysProcess);
     }
 
 

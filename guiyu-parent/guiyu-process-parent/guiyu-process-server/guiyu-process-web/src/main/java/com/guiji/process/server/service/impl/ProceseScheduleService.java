@@ -113,7 +113,41 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
     @Override
     public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
-        
+        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
+        if(deviceVOMap ==  null)
+        {
+            return;
+        }
+
+        CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
+        if(processTypeEnum == ProcessTypeEnum.SELLBOT)
+        {
+            cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
+        }
+        else if(processTypeEnum == ProcessTypeEnum.FREESWITCH)
+        {
+            cmdType = CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE;
+        }
+        else
+        {
+            return;
+        }
+
+        ProcessInstanceVO processInstanceVO = null;
+        List<String> parameters = new ArrayList<String>();
+        parameters.add(file);
+
+        List<String> agents = new ArrayList<String>();
+        for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
+
+            processInstanceVO =(ProcessInstanceVO) ent.getValue();
+            if(processInstanceVO.getType() == processTypeEnum && !agents.contains(processInstanceVO.getIp()))
+            {
+                agents.add(processInstanceVO.getIp());
+                processInstanceVO.setType(ProcessTypeEnum.AGENT);
+                deviceManageService.cmd(processInstanceVO, cmdType, parameters);
+            }
+        }
     }
 
 

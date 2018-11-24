@@ -83,11 +83,6 @@ public class ProcessManageService implements IDeviceManageService {
             return false;
         }
 
-        if(processInstanceVO.getType() == ProcessTypeEnum.AGENT)
-        {
-            return false;
-        }
-
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();

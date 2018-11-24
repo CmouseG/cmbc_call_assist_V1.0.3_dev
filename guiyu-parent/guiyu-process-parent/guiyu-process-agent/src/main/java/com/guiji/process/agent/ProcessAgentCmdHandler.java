@@ -15,14 +15,12 @@ import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.utils.JsonUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.net.Inet4Address;
 import java.text.MessageFormat;
 
 @Service

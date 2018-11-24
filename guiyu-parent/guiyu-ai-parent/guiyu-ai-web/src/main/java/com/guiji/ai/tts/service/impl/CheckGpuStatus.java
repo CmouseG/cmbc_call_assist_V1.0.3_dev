@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.guiji.common.model.process.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
-import com.guiji.process.core.vo.ProcessInstanceVO;
 import com.guiji.utils.RedisUtil;
 
 @Component

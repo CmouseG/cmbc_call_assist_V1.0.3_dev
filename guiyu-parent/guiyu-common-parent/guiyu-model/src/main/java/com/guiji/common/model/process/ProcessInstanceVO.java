@@ -1,4 +1,4 @@
-package com.guiji.process.core.vo;
+package com.guiji.common.model.process;
 
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;

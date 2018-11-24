@@ -1,4 +1,6 @@
-package com.guiji.process.core.vo;
+package com.guiji.process.model;
+
+import com.guiji.common.model.process.ProcessInstanceVO;
 
 import java.io.Serializable;
 import java.util.List;

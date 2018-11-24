@@ -29,12 +29,8 @@ public class TtsController implements ITts {
     public Result.ReturnData<TtsRspVO> translate(TtsReqVO ttsReqVO) {
     	logger.info("开始语音合成!");
     	try {
-    		TtsRspVO ttsRspVO = ttsService.translate(ttsReqVO);
-    		if(ttsRspVO != null){
-    			logger.info("语音合成完毕!");
-        		return Result.ok(ttsRspVO);
-    		}
-    		return null;
+			return Result.ok(ttsService.translate(ttsReqVO));
+
 		} catch (Exception e) {
 			logger.error("语音合成失败!",e);
 			return Result.error(AiConstants.AI_TRANSFER_ERROR);

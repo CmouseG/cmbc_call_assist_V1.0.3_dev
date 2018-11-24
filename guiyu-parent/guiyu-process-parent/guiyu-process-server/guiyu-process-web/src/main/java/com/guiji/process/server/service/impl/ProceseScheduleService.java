@@ -1,9 +1,11 @@
 package com.guiji.process.server.service.impl;
 
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.*;
+import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IProceseScheduleService;
@@ -86,7 +88,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
         if(deviceVOMap !=  null && deviceVOMap.containsKey(deviceKey))
         {
-            ProcessInstanceVO processInstanceVO = (com.guiji.process.core.vo.ProcessInstanceVO) deviceVOMap.get(deviceKey);
+            ProcessInstanceVO processInstanceVO = (ProcessInstanceVO) deviceVOMap.get(deviceKey);
             processInstanceVO.setProcessKey(toModel);
 
             Map<String, Object> deviceVOMapTmp = new ConcurrentHashMap<String, Object>();

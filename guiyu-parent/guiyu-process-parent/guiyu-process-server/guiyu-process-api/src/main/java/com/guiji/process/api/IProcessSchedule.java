@@ -1,8 +1,8 @@
 package com.guiji.process.api;
 
 import com.guiji.component.result.Result;
-import com.guiji.process.core.vo.ProcessInstanceVO;
-import com.guiji.process.core.vo.ProcessReleaseVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

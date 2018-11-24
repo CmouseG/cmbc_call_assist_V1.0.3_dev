@@ -6,7 +6,7 @@ import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;

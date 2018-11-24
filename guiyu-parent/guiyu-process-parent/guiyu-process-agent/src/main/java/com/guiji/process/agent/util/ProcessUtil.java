@@ -11,7 +11,7 @@ import com.guiji.process.agent.service.ProcessStatusLocal;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 

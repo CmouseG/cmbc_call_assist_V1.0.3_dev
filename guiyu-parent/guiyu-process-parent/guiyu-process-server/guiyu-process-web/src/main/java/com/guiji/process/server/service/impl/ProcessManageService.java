@@ -5,7 +5,7 @@ import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.model.DeviceProcessConstant;

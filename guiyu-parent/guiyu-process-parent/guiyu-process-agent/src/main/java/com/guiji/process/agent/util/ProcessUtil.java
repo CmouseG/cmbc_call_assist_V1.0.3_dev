@@ -197,4 +197,8 @@ public class ProcessUtil {
             ImClientProtocolBO.operateVOList.add(vo);
         }
     }
+
+    public static String getLocalIp() throws UnknownHostException {
+        return Inet4Address.getLocalHost().getHostAddress();
+    }
 }

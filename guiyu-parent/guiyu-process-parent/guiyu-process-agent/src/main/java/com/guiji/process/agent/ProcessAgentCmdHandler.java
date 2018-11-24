@@ -2,21 +2,27 @@ package com.guiji.process.agent;
 
 
 import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.agent.service.ProcessStatusLocal;
+import com.guiji.process.agent.service.health.HealthCheckResultAnylyse;
 import com.guiji.process.agent.util.CommandUtils;
 import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.IProcessCmdHandler;
+import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.net.Inet4Address;
 import java.text.MessageFormat;
 
 @Service
@@ -25,6 +31,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public void excute(CmdMessageVO cmdMessageVO) throws  Exception {
+
         if(cmdMessageVO == null)
         {
             return;
@@ -51,15 +58,13 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             case STOP:
                 doCmd(cmdMessageVO, cfgProcessOperVO);
                 Thread.sleep(1000);//等待1s查看是否关闭成功
-                //TODO 检查是否停掉，如果进程还在则kill -9
+                //  检查是否停掉，如果进程还在则kill -9
                 if (ProcessUtil.checkRun(processInstanceVO.getPort())) {
                     ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
                 }
                 break;
 
             case HEALTH:
-
-               // ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(), cfgProcessOperVO,processInstanceVO.getName());
                 doHealth(cmdMessageVO, cfgProcessOperVO);
                 break;
 
@@ -124,14 +129,30 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         CommandResult cmdResult = doCmd(cmdMessageVO,cfgProcessOperVO);
 
         // 对结果分析
+        ProcessStatusEnum nowStatus = HealthCheckResultAnylyse.check(cmdResult, cmdMessageVO.getProcessInstanceVO().getType());
 
-
-        //
-        ProcessStatusEnum nowStatus = null;
         boolean hanChanged = ProcessStatusLocal.getInstance().hasChanged(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);
         if(hanChanged)
         {
-            // TODO 发送给服务端
+            // 发送给服务端
+            CmdMessageVO newCmdMsg = new CmdMessageVO();
+            newCmdMsg.setCmdType(CmdTypeEnum.HEALTH);
+            ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
+            processInstanceVO.setIp(cmdMessageVO.getProcessInstanceVO().getIp());
+            processInstanceVO.setType(cmdMessageVO.getProcessInstanceVO().getType());
+            processInstanceVO.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
+            processInstanceVO.setName(cmdMessageVO.getProcessInstanceVO().getName());
+            processInstanceVO.setStatus(nowStatus);
+            newCmdMsg.setProcessInstanceVO(processInstanceVO);
+            String msg = JsonUtils.bean2Json(newCmdMsg);
+
+            ImClientProtocolBO.getIntance().send(msg,3);
+
+            //停止状态的进程自动重启
+            if (ProcessStatusEnum.DOWN == processInstanceVO.getStatus()) {
+                cmdMessageVO.setCmdType(CmdTypeEnum.START);
+                ProcessMsgHandler.getInstance().add(cmdMessageVO);
+            }
 
             // 更新本地状态
             ProcessStatusLocal.getInstance().put(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);

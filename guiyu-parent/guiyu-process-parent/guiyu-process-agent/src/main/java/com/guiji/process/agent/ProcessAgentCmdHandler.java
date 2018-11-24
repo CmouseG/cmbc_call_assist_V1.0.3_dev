@@ -1,10 +1,12 @@
 package com.guiji.process.agent;
 
 
+import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.ProcessCfgService;
+import com.guiji.process.agent.service.ProcessStatusLocal;
 import com.guiji.process.agent.util.CommandUtils;
 import com.guiji.process.agent.util.ProcessUtil;
 import com.guiji.process.core.IProcessCmdHandler;
@@ -124,6 +126,16 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         // 对结果分析
 
 
+        //
+        ProcessStatusEnum nowStatus = null;
+        boolean hanChanged = ProcessStatusLocal.getInstance().hasChanged(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);
+        if(hanChanged)
+        {
+            // TODO 发送给服务端
+
+            // 更新本地状态
+            ProcessStatusLocal.getInstance().put(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);
+        }
     }
 
 }

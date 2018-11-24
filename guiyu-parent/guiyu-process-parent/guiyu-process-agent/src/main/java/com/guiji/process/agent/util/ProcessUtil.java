@@ -7,6 +7,7 @@ import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.model.OperateVO;
+import com.guiji.process.agent.service.ProcessStatusLocal;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
@@ -136,6 +137,7 @@ public class ProcessUtil {
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);
+        ProcessStatusLocal.getInstance().put(port, processInstanceVO.getStatus());
     }
 
     public static void sendUnRegister(int port, CfgProcessVO cfgProcessVO) throws UnknownHostException {

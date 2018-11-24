@@ -144,7 +144,6 @@ public class ProceseScheduleService implements IProceseScheduleService {
             if(processInstanceVO.getType() == processTypeEnum && !agents.contains(processInstanceVO.getIp()))
             {
                 agents.add(processInstanceVO.getIp());
-                processInstanceVO.setType(ProcessTypeEnum.AGENT);
                 deviceManageService.cmd(processInstanceVO, cmdType, parameters);
             }
         }

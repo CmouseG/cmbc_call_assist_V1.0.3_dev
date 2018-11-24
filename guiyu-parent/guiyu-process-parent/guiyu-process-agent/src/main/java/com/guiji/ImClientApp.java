@@ -2,6 +2,7 @@ package com.guiji;
 
 import java.net.UnknownHostException;
 
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.core.filemonitor.impl.FileMonitor;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.service.ProcessCfgService;

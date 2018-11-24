@@ -1,8 +1,8 @@
 package com.guiji.process.agent;
 
 
-import com.guiji.process.agent.model.CfgNodeOperVO;
-import com.guiji.process.agent.model.CfgNodeVO;
+import com.guiji.process.agent.model.CfgProcessOperVO;
+import com.guiji.process.agent.model.CfgProcessVO;
 import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.agent.util.CommandUtils;
 import com.guiji.process.agent.util.ProcessUtil;
@@ -12,13 +12,9 @@ import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.core.vo.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class ProcessAgentCmdHandler implements IProcessCmdHandler {
@@ -32,25 +28,25 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         }
 
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-        CfgNodeOperVO cfgNodeOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
+        CfgProcessOperVO cfgProcessOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
 
         switch (cmdMessageVO.getCmdType()) {
             case REGISTER:
                 break;
 
             case RESTART:
-                doCmd(cmdMessageVO,cfgNodeOperVO);
+                doCmd(cmdMessageVO, cfgProcessOperVO);
                 break;
 
             case UNKNOWN:
                 break;
 
             case START:
-                doCmd(cmdMessageVO,cfgNodeOperVO);
+                doCmd(cmdMessageVO, cfgProcessOperVO);
                 break;
 
             case STOP:
-                doCmd(cmdMessageVO,cfgNodeOperVO);
+                doCmd(cmdMessageVO, cfgProcessOperVO);
                 Thread.sleep(1000);//等待1s查看是否关闭成功
                 //TODO 检查是否停掉，如果进程还在则kill -9
                 if (ProcessUtil.checkRun(processInstanceVO.getPort())) {
@@ -60,15 +56,15 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             case HEALTH:
 
-                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(),cfgNodeOperVO,processInstanceVO.getName());
+                ProcessUtil.sendHealth(processInstanceVO.getPort(),processInstanceVO.getType(), cfgProcessOperVO,processInstanceVO.getName());
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
-
+                doCmd(cmdMessageVO, cfgProcessOperVO);
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:
-
+                doCmd(cmdMessageVO, cfgProcessOperVO);
                 break;
             default:
                 break;
@@ -76,19 +72,19 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
     }
 
 
-    private CfgNodeOperVO getNodeOper(CmdTypeEnum cmdTypeEnum, int port)
+    private CfgProcessOperVO getNodeOper(CmdTypeEnum cmdTypeEnum, int port)
     {
-        CfgNodeVO cfgNodeVO = ProcessCfgService.cfgMap.get(port);
-        if(cfgNodeVO == null)
+        CfgProcessVO cfgProcessVO = ProcessCfgService.cfgMap.get(port);
+        if(cfgProcessVO == null)
         {
             return null;
         }
 
-        for (CfgNodeOperVO cfgNodeOperVO: cfgNodeVO.getCfgNodeOpers()  ) {
+        for (CfgProcessOperVO cfgProcessOperVO : cfgProcessVO.getCfgNodeOpers()  ) {
 
-            if(cfgNodeOperVO.getCmdTypeEnum() == cmdTypeEnum)
+            if(cfgProcessOperVO.getCmdTypeEnum() == cmdTypeEnum)
             {
-                return cfgNodeOperVO;
+                return cfgProcessOperVO;
             }
 
         }
@@ -97,19 +93,19 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
 
 
-    private void doCmd(CmdMessageVO cmdMessageVO,CfgNodeOperVO cfgNodeOperVO) {
-        if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum())) {
+    private void doCmd(CmdMessageVO cmdMessageVO, CfgProcessOperVO cfgProcessOperVO) {
+        if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum())) {
 
-            String cmd = cfgNodeOperVO.getCmd();
+            String cmd = cfgProcessOperVO.getCmd();
             if(cmdMessageVO.getParameters() != null && !cmdMessageVO.getParameters().isEmpty())
             {
-                cmd = MessageFormat.format(cfgNodeOperVO.getCmd(), cmdMessageVO.getParameters().toArray());
+                cmd = MessageFormat.format(cfgProcessOperVO.getCmd(), cmdMessageVO.getParameters().toArray());
             }
 
             // 发起重启命令
             CommandUtils.exec(cmd);
             // 执行完命令保存结果到内存记录
-            ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum());
+            ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum());
         }
     }
 

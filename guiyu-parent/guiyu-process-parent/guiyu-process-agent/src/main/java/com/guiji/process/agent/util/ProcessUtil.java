@@ -3,8 +3,8 @@ package com.guiji.process.agent.util;
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
-import com.guiji.process.agent.model.CfgNodeOperVO;
-import com.guiji.process.agent.model.CfgNodeVO;
+import com.guiji.process.agent.model.CfgProcessOperVO;
+import com.guiji.process.agent.model.CfgProcessVO;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.core.ProcessMsgHandler;
@@ -93,7 +93,7 @@ public class ProcessUtil {
         }
     }
 
-    public static void sendHealth(int port, ProcessTypeEnum processTypeEnum, CfgNodeOperVO cfgNodeOperVO,String name) throws UnknownHostException {
+    public static void sendHealth(int port, ProcessTypeEnum processTypeEnum, CfgProcessOperVO cfgProcessOperVO, String name) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.HEALTH);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
@@ -119,14 +119,14 @@ public class ProcessUtil {
     }
 
 
-    public static void sendRegister(int port,CfgNodeVO cfgNodeVO) throws UnknownHostException {
+    public static void sendRegister(int port, CfgProcessVO cfgProcessVO) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.REGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(cfgNodeVO.getProcessTypeEnum());
+        processInstanceVO.setType(cfgProcessVO.getProcessTypeEnum());
         processInstanceVO.setPort(port);
-        processInstanceVO.setProcessKey(cfgNodeVO.getProcessKey());
+        processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
         boolean isUp = ProcessUtil.checkRun(port);
         if (isUp) {
             processInstanceVO.setStatus(ProcessStatusEnum.UP);
@@ -138,14 +138,14 @@ public class ProcessUtil {
         ImClientProtocolBO.getIntance().send(msg,3);
     }
 
-    public static void sendUnRegister(int port,CfgNodeVO cfgNodeVO) throws UnknownHostException {
+    public static void sendUnRegister(int port, CfgProcessVO cfgProcessVO) throws UnknownHostException {
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.UNREGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
-        processInstanceVO.setType(cfgNodeVO.getProcessTypeEnum());
+        processInstanceVO.setType(cfgProcessVO.getProcessTypeEnum());
         processInstanceVO.setPort(port);
-        processInstanceVO.setProcessKey(cfgNodeVO.getProcessKey());
+        processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
         processInstanceVO.setStatus(ProcessStatusEnum.UNREGISTER);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);

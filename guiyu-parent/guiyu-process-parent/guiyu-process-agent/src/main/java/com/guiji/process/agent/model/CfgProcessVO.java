@@ -5,7 +5,7 @@ import com.guiji.process.core.vo.CmdTypeEnum;
 
 import java.util.List;
 
-public class CfgNodeVO {
+public class CfgProcessVO {
 
     private String name;
 
@@ -13,7 +13,7 @@ public class CfgNodeVO {
 
     private ProcessTypeEnum processTypeEnum;
 
-    private List<CfgNodeOperVO> CfgNodeOpers;
+    private List<CfgProcessOperVO> CfgNodeOpers;
 
     private String processKey;
 
@@ -46,11 +46,11 @@ public class CfgNodeVO {
         this.port = port;
     }
 
-    public List<CfgNodeOperVO> getCfgNodeOpers() {
+    public List<CfgProcessOperVO> getCfgNodeOpers() {
         return CfgNodeOpers;
     }
 
-    public void setCfgNodeOpers(List<CfgNodeOperVO> cfgNodeOpers) {
+    public void setCfgNodeOpers(List<CfgProcessOperVO> cfgNodeOpers) {
         CfgNodeOpers = cfgNodeOpers;
     }
 
@@ -63,17 +63,17 @@ public class CfgNodeVO {
     }
 
 
-    public CfgNodeOperVO getCfgNodeOper(CmdTypeEnum cmdTypeEnum)
+    public CfgProcessOperVO getCfgNodeOper(CmdTypeEnum cmdTypeEnum)
     {
         if(this.CfgNodeOpers== null)
         {
             return null;
         }
 
-        for (CfgNodeOperVO cfgNodeOperVO: CfgNodeOpers) {
-            if(cfgNodeOperVO.getCmdTypeEnum()== cmdTypeEnum)
+        for (CfgProcessOperVO cfgProcessOperVO : CfgNodeOpers) {
+            if(cfgProcessOperVO.getCmdTypeEnum()== cmdTypeEnum)
             {
-                return cfgNodeOperVO;
+                return cfgProcessOperVO;
             }
         }
 
@@ -82,7 +82,7 @@ public class CfgNodeVO {
 
     @Override
     public String toString() {
-        return "CfgNodeVO{" +
+        return "CfgProcessVO{" +
                 "name='" + name + '\'' +
                 ", port=" + port +
                 ", processTypeEnum=" + processTypeEnum +

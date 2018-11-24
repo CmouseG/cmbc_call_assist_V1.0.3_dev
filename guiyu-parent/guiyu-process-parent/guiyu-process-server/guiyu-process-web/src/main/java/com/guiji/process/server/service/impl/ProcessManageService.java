@@ -77,7 +77,7 @@ public class ProcessManageService implements IDeviceManageService {
     }
 
     @Override
-    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType) {
+    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters) {
         if(processInstanceVO == null || cmdType == null)
         {
             return false;
@@ -88,18 +88,12 @@ public class ProcessManageService implements IDeviceManageService {
             return false;
         }
 
-        if (processInstanceVO.getType() == ProcessTypeEnum.TTS && cmdType == CmdTypeEnum.RESTORE_MODEL)
-        {
-            // 调用TTS 的重新restore
-
-            return true;
-        }
-
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(cmdType);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
+        cmdMessageVO.setParameters(parameters);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(2);
         builder.setContent(msg);

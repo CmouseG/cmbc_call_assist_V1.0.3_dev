@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,8 +85,15 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
     private void doCmd(CmdMessageVO cmdMessageVO,CfgNodeOperVO cfgNodeOperVO) {
         if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum())) {
+
+            String cmd = cfgNodeOperVO.getCmd();
+            if(cmdMessageVO.getParameters() != null && !cmdMessageVO.getParameters().isEmpty())
+            {
+                cmd = MessageFormat.format(cfgNodeOperVO.getCmd(), cmdMessageVO.getParameters().toArray());
+            }
+
             // 发起重启命令
-            CommandUtils.exec(cfgNodeOperVO.getCmd());
+            CommandUtils.exec(cmd);
             // 执行完命令保存结果到内存记录
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(),cfgNodeOperVO.getCmdTypeEnum());
         }

@@ -189,16 +189,7 @@ public class ChannelHelper {
         callMedia.setIsMediaLock(isLock);
         channelService.save(callMedia);
 
-        if(futureConcurrentHashMap.containsKey(uuid)){
-            try{
-                log.debug("取消之前的定时任务，uuid[{}]", uuid);
-                futureConcurrentHashMap.get(uuid).cancel(true);
-
-                afterMediaChecker.removeMediaCheck(uuid);
-            }catch (Exception ex){
-                log.warn("取消定时任务时出现异常", ex);
-            }
-        }
+        stopTimer(uuid);
 
         log.debug("使用定时服务setChannel,timeLen[{}],isEnd[{}]", mediaFileDuration, isEnd);
         ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
@@ -214,6 +205,23 @@ public class ChannelHelper {
                 mediaFileDuration.longValue(), TimeUnit.SECONDS);
 
         futureConcurrentHashMap.put(uuid, schedule);
+    }
+
+    /**
+     * 停止计时器
+     * @param uuid
+     */
+    private void stopTimer(String uuid) {
+        if(futureConcurrentHashMap.containsKey(uuid)){
+            try{
+                log.debug("取消之前的定时任务，uuid[{}]", uuid);
+                futureConcurrentHashMap.get(uuid).cancel(true);
+
+                afterMediaChecker.removeMediaCheck(uuid);
+            }catch (Exception ex){
+                log.warn("取消定时任务时出现异常", ex);
+            }
+        }
     }
 
 
@@ -246,6 +254,10 @@ public class ChannelHelper {
     public void handleHangup(ChannelHangupEvent event){
         log.info("通道挂断，开始清理Channel");
         channelService.delete(event.getUuid());
+
+        //停止该通道相关的各种计时器
+        log.info("停止通道[{}]的各种计时器", event.getUuid());
+        stopTimer(event.getUuid());
     }
 
     interface AfterLockHandle{

@@ -1,8 +1,8 @@
-package com.guiji.process.core.vo;
+package com.guiji.common.model.process;
 
-public enum ProcessTypeEnum {
+public enum ProcessStatusEnum {
 
-    TTS(0), SELLBOT(1), AGENT(99),UNKNOWN(-1);
+    UP(0), DOWN(1), BUSYING(2), MISSING(3), UNKNOWN(-1),UNREGISTER(4);
 
     /** 标识DeviceTypeEnmu的整型值 */
     private int iValue;
@@ -12,7 +12,7 @@ public enum ProcessTypeEnum {
      * 构造方法
      * @param value 整型值
      */
-    private ProcessTypeEnum(int value)
+    private ProcessStatusEnum(int value)
     {
         this.iValue = value;
     }
@@ -33,9 +33,9 @@ public enum ProcessTypeEnum {
      * @param value 整型值
      * @return ErrorCodeEnum实例
      */
-    public static ProcessTypeEnum valueOf(int value)
+    public static ProcessStatusEnum valueOf(int value)
     {
-        for (ProcessTypeEnum type : ProcessTypeEnum.values())
+        for (ProcessStatusEnum type : ProcessStatusEnum.values())
         {
             if (value == type.getValue())
             {

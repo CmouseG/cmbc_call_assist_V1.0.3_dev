@@ -1,6 +1,8 @@
 package com.guiji.process.server.service;
 
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.ProcessReleaseVO;
 
 import java.util.List;
 
@@ -31,10 +33,10 @@ public interface IProceseScheduleService {
 
     /**
      * 释放资源
-     * @param deviceVOS 释放资源列表
+     * @param processReleaseVO 释放资源列表
      * @return
      */
-    boolean release(List<ProcessInstanceVO> deviceVOS);
+    boolean release(ProcessReleaseVO processReleaseVO);
 
 
     /**
@@ -52,4 +54,13 @@ public interface IProceseScheduleService {
      * @return
      */
     void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO deviceVO);
+
+
+    /**
+     * 发布资源
+     * @param processTypeEnum
+     * @param file
+     * @return
+     */
+    void publishResource(ProcessTypeEnum processTypeEnum, String file);
 }

@@ -3,26 +3,38 @@ package com.guiji.ai.tts.service.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
+import com.guiji.utils.NasUtil;
 import com.guiji.utils.RedisUtil;
 
 /**
@@ -31,12 +43,22 @@ import com.guiji.utils.RedisUtil;
 @Component
 public class GuiyuTtsGpu extends ITtsServiceProvide {
 	private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
+	private static final int ConnectTimeout = 5000;
+	private static final int SocketTimeout = 5000;
+	private static final int MaxTotal = 200;
+	private static final int MaxPerRoute = 40;
+	private static final int MaxRoute = 100;
 	
 	private String ip;
 	private String port;
 	
+	@Value("${filePath}")
+	private String filePath;
+	
 	@Autowired
     private RedisUtil redisUtil;
+	@Autowired
+	TtsResultMapper ttsResultMapper;
 
 	@Override
 	File transferByChild(String model, String text) {
@@ -45,15 +67,33 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		FileOutputStream out = null;
 		File file = null;
 		try {
-			file = new File("E:\\file\\redio.wav"); // 文件保存路径
+			file = new File(filePath + System.currentTimeMillis() + ".wav"); //文件保存路径
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 			out = new FileOutputStream(file);
-			httpClient = HttpClients.createDefault();
+			
+			ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+			LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory.getSocketFactory();
+			Registry<ConnectionSocketFactory> registry = RegistryBuilder
+					.<ConnectionSocketFactory> create()
+					.register("http", plainsf)
+					.register("https", sslsf)
+					.build();
+			// 连接池管理对象（负责管理HttpClient连接池）
+			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+			// 最大连接数
+			cm.setMaxTotal(MaxTotal);
+			// 每个路由基础的连接
+			cm.setDefaultMaxPerRoute(MaxPerRoute);
+			HttpHost httpHost = new HttpHost(ip, Integer.parseInt(port));
+			// 目标主机的最大连接数
+			cm.setMaxPerRoute(new HttpRoute(httpHost), MaxRoute);
+			
+			httpClient = HttpClients.custom().setConnectionManager(cm).build();
 			HttpPost httpPost = new HttpPost("http://" + ip + ":" + port + "/synthesize");
 			// 配置超时时间
-			RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(3000).build();
+			RequestConfig config = RequestConfig.custom().setConnectTimeout(ConnectTimeout).setSocketTimeout(SocketTimeout).build();
 			httpPost.setConfig(config);
 
 			// 添加请求参数
@@ -70,7 +110,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 				responseEntity.writeTo(out); // 写到输出流中
 			}
 			// 释放GPU
-//			releaseGpu(model, ip, port);
+			releaseGpu(model, ip, port);
 		} catch (Exception e) {
 			logger.error("请求失败！" + e);
 			return null;
@@ -84,21 +124,11 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	// 释放GPU
 	private void releaseGpu(String model, String ip, String port) {
-		//从不可用list中移除
-		List<GuiyuTtsGpu> unavaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE);
-		int i = 0;
-		for(GuiyuTtsGpu gpu : unavaliableGpuList){
-			if(ip.equals(gpu.getIp()) && port.equals(gpu.getPort())){
-				i = unavaliableGpuList.indexOf(gpu);
-			}
-		}
-		unavaliableGpuList.remove(i);
-		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, unavaliableGpuList);
-		//添加到可用list中
-		List<GuiyuTtsGpu> avaliableGpuList = (List<GuiyuTtsGpu>) redisUtil.get(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE);
 		GuiyuTtsGpu gpu = new GuiyuTtsGpu(ip, port);
-		avaliableGpuList.add(gpu);
-		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, avaliableGpuList);
+		//从不可用list中移除
+		redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, 1, gpu);
+		//添加到可用list中
+		redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, gpu);
 	}
 
 	/**
@@ -114,11 +144,10 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			sysFileReqVO.setSysCode(AiConstants.SYSCODE); //文件上传系统码
 			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
 			//调用本地工具-上传文件到NAS服务器
-//			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
-//			if(sysFileRsp != null) {
-//				audioUrl = sysFileRsp.getSkUrl();
-//			}
-			audioUrl = "www.baidu.com";
+			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
+			if(sysFileRsp != null) {
+				audioUrl = sysFileRsp.getSkUrl();
+			}
 			file.delete(); //删除本地文件
 		} catch (Exception e) {
 			logger.error(file.getName() + "上传失败！", e);
@@ -139,7 +168,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		ttsResult.setCreateTime(new Date());
 		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除
 		ttsResult.setModel(model);
-		TtsTransferAfterImpl.getInstance().add(ttsResult);
+		TtsTransferAfterImpl.getInstance().add(ttsResult, ttsResultMapper);
 	}
 
 	public GuiyuTtsGpu(String ip, String port) {
@@ -165,10 +194,5 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	public void setPort(String port) {
 		this.port = port;
-	}
-	
-	@Autowired
-	public void setRedisUtil(RedisUtil redisUtil) {
-		this.redisUtil = redisUtil;
 	}
 }

@@ -1,12 +1,10 @@
 package com.guiji.process.agent.model;
 
-import java.util.List;
-
 public class CfgFileVO {
 
     private String fileName;
 
-    private CfgNodeVO cfgNodeVO;
+    private CfgProcessVO cfgProcessVO;
 
     public String getFileName() {
         return fileName;
@@ -16,19 +14,19 @@ public class CfgFileVO {
         this.fileName = fileName;
     }
 
-    public CfgNodeVO getCfgNodeVO() {
-        return cfgNodeVO;
+    public CfgProcessVO getCfgProcessVO() {
+        return cfgProcessVO;
     }
 
-    public void setCfgNodeVO(CfgNodeVO cfgNodeVO) {
-        this.cfgNodeVO = cfgNodeVO;
+    public void setCfgProcessVO(CfgProcessVO cfgProcessVO) {
+        this.cfgProcessVO = cfgProcessVO;
     }
 
     @Override
     public String toString() {
         return "CfgFileVO{" +
                 "fileName='" + fileName + '\'' +
-                ", cfgNodeVO=" + cfgNodeVO +
+                ", cfgProcessVO=" + cfgProcessVO +
                 '}';
     }
 }

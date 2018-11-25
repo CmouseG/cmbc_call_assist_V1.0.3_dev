@@ -1,6 +1,6 @@
 package com.guiji.process.server.util;
 
-import com.guiji.process.core.vo.ProcessTypeEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 
 public class DeviceProcessUtil {

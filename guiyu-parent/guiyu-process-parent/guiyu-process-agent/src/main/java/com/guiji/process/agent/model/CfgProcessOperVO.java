@@ -2,7 +2,7 @@ package com.guiji.process.agent.model;
 
 import com.guiji.process.core.vo.CmdTypeEnum;
 
-public class CfgNodeOperVO {
+public class CfgProcessOperVO {
 
     private CmdTypeEnum cmdTypeEnum;
 
@@ -12,11 +12,11 @@ public class CfgNodeOperVO {
         return cmdTypeEnum;
     }
 
-    public void setCmdTypeEnum(Integer cmdTypeEnum) {
+    public void setCmdTypeEnum(String cmdTypeEnum) {
         this.cmdTypeEnum = CmdTypeEnum.valueOf(cmdTypeEnum);
     }
 
-    public void setCmdTypeEnum(String cmdTypeEnum) {
+    public void setCmdTypeEnum(Integer cmdTypeEnum) {
         this.cmdTypeEnum = CmdTypeEnum.valueOf(cmdTypeEnum);
     }
 
@@ -30,7 +30,7 @@ public class CfgNodeOperVO {
 
     @Override
     public String toString() {
-        return "CfgNodeOperVO{" +
+        return "CfgProcessOperVO{" +
                 "cmdTypeEnum=" + cmdTypeEnum +
                 ", cmd='" + cmd + '\'' +
                 '}';

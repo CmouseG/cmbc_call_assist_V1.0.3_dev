@@ -6,6 +6,7 @@ import com.guiji.ccmanager.vo.CallOutPlanVO;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -22,6 +23,8 @@ public interface CallDetailService {
                         String accurateIntent, String freason,String callId, String tempId);
 
     String getDialogue(String callId);
+
+    Map<String, String> getDialogues(String callIds);
 
     String getRecordFileUrl(String callId);
 

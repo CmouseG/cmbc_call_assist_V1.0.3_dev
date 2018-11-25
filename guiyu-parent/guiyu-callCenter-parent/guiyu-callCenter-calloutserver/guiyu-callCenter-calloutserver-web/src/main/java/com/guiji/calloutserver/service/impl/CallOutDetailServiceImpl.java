@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * @Auther: 魏驰
@@ -24,6 +25,8 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
 
     @Override
     public void save(CallOutDetail callOutDetail) {
+        //设置分表字段的值
+        callOutDetail.setShardingValue(new Random().nextInt(100));
         callOutDetailMapper.insertSelective(callOutDetail);
     }
 

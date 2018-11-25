@@ -16,6 +16,7 @@
     <result column="customer_say_time" property="customerSayTime" jdbcType="TIMESTAMP" />
     <result column="reason" property="reason" jdbcType="VARCHAR" />
     <result column="total_duration" property="totalDuration" jdbcType="INTEGER" />
+    <result column="sharding_value" property="shardingValue" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -78,7 +79,7 @@
   <sql id="Base_Column_List" >
     call_detail_id, call_id, accurate_intent, agent_answer_text, agent_answer_time, ai_duration, 
     asr_duration, bot_answer_text, bot_answer_time, call_detail_type, customer_say_text, 
-    customer_say_time, reason, total_duration
+    customer_say_time, reason, total_duration, sharding_value
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallInDetailExample" >
     select
@@ -114,19 +115,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" useGeneratedKeys="true"  keyProperty="call_detail_id">
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
     insert into call_in_detail (call_detail_id, call_id, accurate_intent, 
       agent_answer_text, agent_answer_time, ai_duration, 
       asr_duration, bot_answer_text, bot_answer_time, 
       call_detail_type, customer_say_text, customer_say_time, 
-      reason, total_duration)
+      reason, total_duration, sharding_value
+      )
     values (#{callDetailId,jdbcType=VARCHAR}, #{callId,jdbcType=VARCHAR}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{agentAnswerText,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{aiDuration,jdbcType=INTEGER}, 
       #{asrDuration,jdbcType=INTEGER}, #{botAnswerText,jdbcType=VARCHAR}, #{botAnswerTime,jdbcType=TIMESTAMP}, 
       #{callDetailType,jdbcType=INTEGER}, #{customerSayText,jdbcType=VARCHAR}, #{customerSayTime,jdbcType=TIMESTAMP}, 
-      #{reason,jdbcType=VARCHAR}, #{totalDuration,jdbcType=INTEGER})
+      #{reason,jdbcType=VARCHAR}, #{totalDuration,jdbcType=INTEGER}, #{shardingValue,jdbcType=INTEGER}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" useGeneratedKeys="true"  keyProperty="call_detail_id">
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
     insert into call_in_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="callDetailId != null" >
@@ -171,6 +174,9 @@
       <if test="totalDuration != null" >
         total_duration,
       </if>
+      <if test="shardingValue != null" >
+        sharding_value,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callDetailId != null" >
@@ -214,6 +220,9 @@
       </if>
       <if test="totalDuration != null" >
         #{totalDuration,jdbcType=INTEGER},
+      </if>
+      <if test="shardingValue != null" >
+        #{shardingValue,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -268,6 +277,9 @@
       <if test="record.totalDuration != null" >
         total_duration = #{record.totalDuration,jdbcType=INTEGER},
       </if>
+      <if test="record.shardingValue != null" >
+        sharding_value = #{record.shardingValue,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -288,7 +300,8 @@
       customer_say_text = #{record.customerSayText,jdbcType=VARCHAR},
       customer_say_time = #{record.customerSayTime,jdbcType=TIMESTAMP},
       reason = #{record.reason,jdbcType=VARCHAR},
-      total_duration = #{record.totalDuration,jdbcType=INTEGER}
+      total_duration = #{record.totalDuration,jdbcType=INTEGER},
+      sharding_value = #{record.shardingValue,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -335,6 +348,9 @@
       <if test="totalDuration != null" >
         total_duration = #{totalDuration,jdbcType=INTEGER},
       </if>
+      <if test="shardingValue != null" >
+        sharding_value = #{shardingValue,jdbcType=INTEGER},
+      </if>
     </set>
     where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
   </update>
@@ -352,7 +368,8 @@
       customer_say_text = #{customerSayText,jdbcType=VARCHAR},
       customer_say_time = #{customerSayTime,jdbcType=TIMESTAMP},
       reason = #{reason,jdbcType=VARCHAR},
-      total_duration = #{totalDuration,jdbcType=INTEGER}
+      total_duration = #{totalDuration,jdbcType=INTEGER},
+      sharding_value = #{shardingValue,jdbcType=INTEGER}
     where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
   </update>
 </mapper>

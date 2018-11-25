@@ -1,10 +1,11 @@
 package com.guiji.process.server.service.impl;
 
 import com.guiji.common.exception.GuiyuException;
-import com.guiji.process.core.vo.CmdTypeEnum;
-import com.guiji.process.core.vo.ProcessStatusEnum;
-import com.guiji.process.core.vo.ProcessTypeEnum;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.process.core.vo.*;
+import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IProceseScheduleService;
@@ -49,9 +50,9 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
-    public boolean release(List<ProcessInstanceVO> processInstances) {
+    public boolean release(ProcessReleaseVO processReleaseVO) {
 
-        for (ProcessInstanceVO processInstance:processInstances) {
+        for (ProcessInstanceVO processInstance:processReleaseVO.getProcessInstanceVOS()) {
 
             processInstance.setWhoUsed("");
             processInstance.setStatus(ProcessStatusEnum.UP);
@@ -87,7 +88,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
         if(deviceVOMap !=  null && deviceVOMap.containsKey(deviceKey))
         {
-            ProcessInstanceVO processInstanceVO = (com.guiji.process.core.vo.ProcessInstanceVO) deviceVOMap.get(deviceKey);
+            ProcessInstanceVO processInstanceVO = (ProcessInstanceVO) deviceVOMap.get(deviceKey);
             processInstanceVO.setProcessKey(toModel);
 
             Map<String, Object> deviceVOMapTmp = new ConcurrentHashMap<String, Object>();
@@ -103,12 +104,53 @@ public class ProceseScheduleService implements IProceseScheduleService {
         }
 
         // 通知更换模型 TODO 同步 并设定TTS的状态
-        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL);
+        List<String> parameters = new ArrayList<String>();
+        parameters.add(srcModel);
+        parameters.add(toModel);
+        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters);
 
         //processInstance.setWhoUsed(IdGenUtil.uuid());
         //updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);
     }
 
+    @Override
+    public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
+        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
+        if(deviceVOMap ==  null)
+        {
+            return;
+        }
+
+        CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
+        if(processTypeEnum == ProcessTypeEnum.SELLBOT)
+        {
+            cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
+        }
+        else if(processTypeEnum == ProcessTypeEnum.FREESWITCH)
+        {
+            cmdType = CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE;
+        }
+        else
+        {
+            return;
+        }
+
+        ProcessInstanceVO processInstanceVO = null;
+        List<String> parameters = new ArrayList<String>();
+        parameters.add(file);
+
+        List<String> agents = new ArrayList<String>();
+        for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
+
+            processInstanceVO =(ProcessInstanceVO) ent.getValue();
+            if(processInstanceVO.getType() == ProcessTypeEnum.AGENT && !agents.contains(processInstanceVO.getIp()))
+            {
+                agents.add(processInstanceVO.getIp());
+                processInstanceVO.setType(ProcessTypeEnum.AGENT);
+                deviceManageService.cmd(processInstanceVO, cmdType, parameters);
+            }
+        }
+    }
 
 
     private List<ProcessInstanceVO> getDevices(ProcessTypeEnum processTypeEnum, String key, int requestCount)

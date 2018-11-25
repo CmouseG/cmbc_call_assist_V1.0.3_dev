@@ -1,12 +1,15 @@
 package com.guiji.process.api;
 
 import com.guiji.component.result.Result;
-import com.guiji.process.core.vo.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.ProcessReleaseVO;
+import com.guiji.process.model.UpgrateResouceReq;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -78,15 +81,28 @@ public interface IProcessSchedule {
 
     /**
      * 释放资源
-     * @param deviceVOS 释放资源列表
+     * @param processReleaseVO 释放资源列表
      * @return
      */
     @ApiOperation(value = "释放资源")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "List", paramType = "query"),
+            @ApiImplicitParam(name = "deviceVOS", value = "释放资源列表", dataType = "ProcessReleaseVO", paramType = "query"),
     })
-    @GetMapping(value="/release")
-    Result.ReturnData<Boolean> release(@RequestBody List<ProcessInstanceVO> deviceVOS);
+    @PostMapping(value="/release")
+    Result.ReturnData<Boolean> release(@RequestBody ProcessReleaseVO processReleaseVO);
+
+
+    /**
+     * 发布资源
+     * @param req 发布资源
+     * @return
+     */
+    @ApiOperation(value = "发布资源")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "req", value = "发布资源", dataType = "UpgrateResouceReq", paramType = "query"),
+    })
+    @PostMapping(value="/publishResource")
+    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req);
 
 }
 

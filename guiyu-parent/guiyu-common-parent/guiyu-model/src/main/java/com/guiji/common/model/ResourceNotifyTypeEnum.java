@@ -32,7 +32,7 @@ public enum  ResourceNotifyTypeEnum {
 
 
     /**
-     * 根据整型值构建DeviceTypeEnmu实例
+     * 根据整型值构建ResourceNotifyTypeEnum实例
      * @param value 整型值
      * @return ErrorCodeEnum实例
      */

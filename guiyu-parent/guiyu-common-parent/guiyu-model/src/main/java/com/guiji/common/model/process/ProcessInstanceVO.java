@@ -1,4 +1,7 @@
-package com.guiji.process.core.vo;
+package com.guiji.common.model.process;
+
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -12,6 +15,8 @@ public class ProcessInstanceVO implements Serializable, Cloneable  {
     private ProcessTypeEnum type;
 
     private ProcessStatusEnum status;
+
+    private String name;
 
     private String whoUsed;
 
@@ -76,6 +81,14 @@ public class ProcessInstanceVO implements Serializable, Cloneable  {
         this.paramter = paramter;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "ProcessInstanceVO{" +
@@ -83,6 +96,7 @@ public class ProcessInstanceVO implements Serializable, Cloneable  {
                 ", port=" + port +
                 ", type=" + type +
                 ", status=" + status +
+                ", name='" + name + '\'' +
                 ", whoUsed='" + whoUsed + '\'' +
                 ", processKey='" + processKey + '\'' +
                 ", paramter=" + paramter +

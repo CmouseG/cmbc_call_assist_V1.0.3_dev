@@ -3,6 +3,7 @@ package com.guiji.process.server.dao;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.dao.entity.SysProcessExample;
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface SysProcessMapper {

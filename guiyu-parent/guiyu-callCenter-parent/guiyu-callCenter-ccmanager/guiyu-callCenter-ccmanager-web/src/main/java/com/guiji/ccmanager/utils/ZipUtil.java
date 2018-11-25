@@ -9,7 +9,7 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public class ZipUtil {
 
-	public static File zip(File source, String fileName, OutputStream outresp){
+	public static File zip(File source, OutputStream outresp){
 		ZipOutputStream out=null;
 		BufferedOutputStream bos=null;
 		File zip=null;

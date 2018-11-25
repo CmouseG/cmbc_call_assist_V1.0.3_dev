@@ -53,7 +53,7 @@ public class TestController {
         callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
         callOutPlan.setCustomerId("16");
 
-        callOutPlanService.save(callOutPlan);
+        callOutPlanService.add(callOutPlan);
 
         CallResourceReadyEvent event = new CallResourceReadyEvent(callOutPlan);
         asyncEventBus.post(event);

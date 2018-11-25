@@ -256,7 +256,7 @@ public class FsBotHandler {
         ErrorMatch errorMatch = errorMatchService.findError(event.getAsrText());
         callPlan.setAccurateIntent("F");
         callPlan.setReason(errorMatch.getErrorName());
-        callOutPlanService.save(callPlan);
+        callOutPlanService.update(callPlan);
     }
 
     /**
@@ -287,7 +287,7 @@ public class FsBotHandler {
 //        callPlan.setAgentGroupId(template.getAgentGroupId());
 //        callPlan.setAgentStartTime(DateUtil.getCurrentDateTime());
 //        callPlan.setCallState(CallState.to_agent);
-//        callPlanRepository.save(callPlan);
+//        callPlanRepository.add(callPlan);
 //
 //        //播放完提示音后，将当前呼叫转到座席组
 //        channelHelper.playAndTransferToAgentGroup(callPlan, sellbotResponse.getChannelMedia(), template.getAgentGroupId());

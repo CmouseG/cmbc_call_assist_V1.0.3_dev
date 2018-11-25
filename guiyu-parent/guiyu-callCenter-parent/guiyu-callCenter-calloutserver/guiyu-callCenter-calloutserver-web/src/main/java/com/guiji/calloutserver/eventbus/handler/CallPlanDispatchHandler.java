@@ -140,7 +140,7 @@ public class CallPlanDispatchHandler {
                 callPlan.setCallState(ECallState.call_prepare.ordinal());
                 callPlan.setCreateTime(new Date());
                 log.info("----------- getAvailableSchedules callPlan [{}] ", callPlan);
-                callOutPlanService.save(callPlan);
+                callOutPlanService.add(callPlan);
                 callResourceChecker.checkCallResources(callPlan);
             }
 

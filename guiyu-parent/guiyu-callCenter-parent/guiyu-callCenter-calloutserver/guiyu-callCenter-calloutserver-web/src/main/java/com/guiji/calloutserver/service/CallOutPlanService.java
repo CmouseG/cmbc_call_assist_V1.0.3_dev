@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface CallOutPlanService {
     void add(CallOutPlan callPlan);
-    void add(List<CallOutPlan> callOutPlans);
 
     CallOutPlan findByCallId(String callId);
 

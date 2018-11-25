@@ -6,8 +6,6 @@ import com.guiji.calloutserver.service.CallOutPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @Auther: 魏驰
  * @Date: 2018/11/1 15:31
@@ -21,13 +19,6 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
 
     public void add(CallOutPlan callPlan){
         callOutPlanMapper.insert(callPlan);
-    }
-
-    @Override
-    public void add(List<CallOutPlan> totalCallPlans) {
-        for(CallOutPlan callOutPlan: totalCallPlans){
-            callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
-        }
     }
 
     @Override

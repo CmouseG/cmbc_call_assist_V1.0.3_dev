@@ -250,14 +250,16 @@ public class ChannelHelper {
                 lockTimeLen.longValue(), TimeUnit.SECONDS);
     }
 
-    @Subscribe
-    public void handleHangup(ChannelHangupEvent event){
+    /**
+     * 释放资源，停止后续处理
+     */
+    public void hangup(String uuid){
         log.info("通道挂断，开始清理Channel");
-        channelService.delete(event.getUuid());
+        channelService.delete(uuid);
 
         //停止该通道相关的各种计时器
-        log.info("停止通道[{}]的各种计时器", event.getUuid());
-        stopTimer(event.getUuid());
+        log.info("停止通道[{}]的各种计时器", uuid);
+        stopTimer(uuid);
     }
 
     interface AfterLockHandle{

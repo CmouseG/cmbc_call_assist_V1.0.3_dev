@@ -364,6 +364,9 @@ public class FsBotHandler {
 
             //释放ai资源
             aiManager.releaseAi(event.getUuid());
+
+            //释放实时通道相关资源
+            channelHelper.hangup(event.getUuid());
         }catch (Exception ex){
             log.warn("在处理AliAsr时出错异常", ex);
         }

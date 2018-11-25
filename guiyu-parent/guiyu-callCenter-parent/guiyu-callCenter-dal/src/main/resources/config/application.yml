@@ -27,7 +27,7 @@ sharding:
             actual-data-nodes: guiyu_callcenter.call_out_detail_${0..1}
             table-strategy:
               standard:
-                sharding-column: call_detail_type
+                sharding-column: sharding_value
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
 #            key-generator-column-name: call_detail_id
@@ -49,7 +49,7 @@ sharding:
             actual-data-nodes: guiyu_callcenter.call_in_detail_${0..1}
             table-strategy:
               standard:
-                sharding-column: call_detail_type
+                sharding-column: sharding_value
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
 #            key-generator-column-name: call_detail_id

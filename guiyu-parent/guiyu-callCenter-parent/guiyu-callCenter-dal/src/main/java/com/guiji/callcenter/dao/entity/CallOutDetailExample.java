@@ -1034,6 +1034,66 @@ public class CallOutDetailExample {
             addCriterion("total_duration not between", value1, value2, "totalDuration");
             return (Criteria) this;
         }
+
+        public Criteria andShardingValueIsNull() {
+            addCriterion("sharding_value is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueIsNotNull() {
+            addCriterion("sharding_value is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueEqualTo(Integer value) {
+            addCriterion("sharding_value =", value, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueNotEqualTo(Integer value) {
+            addCriterion("sharding_value <>", value, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueGreaterThan(Integer value) {
+            addCriterion("sharding_value >", value, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueGreaterThanOrEqualTo(Integer value) {
+            addCriterion("sharding_value >=", value, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueLessThan(Integer value) {
+            addCriterion("sharding_value <", value, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueLessThanOrEqualTo(Integer value) {
+            addCriterion("sharding_value <=", value, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueIn(List<Integer> values) {
+            addCriterion("sharding_value in", values, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueNotIn(List<Integer> values) {
+            addCriterion("sharding_value not in", values, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueBetween(Integer value1, Integer value2) {
+            addCriterion("sharding_value between", value1, value2, "shardingValue");
+            return (Criteria) this;
+        }
+
+        public Criteria andShardingValueNotBetween(Integer value1, Integer value2) {
+            addCriterion("sharding_value not between", value1, value2, "shardingValue");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

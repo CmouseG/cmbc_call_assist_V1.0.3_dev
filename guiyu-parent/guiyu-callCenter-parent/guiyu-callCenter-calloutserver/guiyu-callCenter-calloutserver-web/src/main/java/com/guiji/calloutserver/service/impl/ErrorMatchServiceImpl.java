@@ -66,10 +66,6 @@ public class ErrorMatchServiceImpl implements ErrorMatchService {
         if(errorMatch == null){
             //TODO: 报警，需要将未知的F类原因进行报警，以便后期加入数据库
             log.warn("未知的F类原因[{}]", responseMsg);
-            errorMatch = new ErrorMatch();
-            errorMatch.setErrorName("未知");
-            errorMatch.setErrorType(-1);
-            errorMatch.setKeyWord(responseMsg);
         }
 
         log.debug("F类识别结果为[{}]", errorMatch);

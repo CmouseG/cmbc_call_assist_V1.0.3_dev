@@ -165,8 +165,7 @@ public class FsBotHandler {
             if (callPlan.getCallState() == ECallState.init.ordinal() ||
                     callPlan.getCallState() == ECallState.call_prepare.ordinal() ||
                     callPlan.getCallState() == ECallState.make_call.ordinal()) {
-                log.warn("通道[{}]还未接听，暂时跳过AliAsr", event.getChannel());
-
+                log.warn("通道[{}]还未接听，需要对收到的asr进行F类识别", event.getUuid());
                 //进行F类识别
                 doWithErrorResponse(callPlan, event);
                 return;
@@ -253,10 +252,18 @@ public class FsBotHandler {
      * @param event
      */
     private void doWithErrorResponse(CallOutPlan callPlan, AsrCustomerEvent event) {
+        if(Strings.isNullOrEmpty(event.getAsrText())){
+            log.warn("F类识别失败，因asr识别结果为空");
+            return;
+        }
+
         ErrorMatch errorMatch = errorMatchService.findError(event.getAsrText());
-        callPlan.setAccurateIntent("F");
-        callPlan.setReason(errorMatch.getErrorName());
-        callOutPlanService.update(callPlan);
+        if(errorMatch!=null){
+            log.debug("F类识别结果为[{}]", errorMatch);
+            callPlan.setAccurateIntent("F");
+            callPlan.setReason(errorMatch.getErrorName());
+            callOutPlanService.update(callPlan);
+        }
     }
 
     /**

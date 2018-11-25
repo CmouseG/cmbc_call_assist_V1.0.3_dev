@@ -100,7 +100,12 @@ public class FsEventHandler {
 
         Date startStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_start_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
         Date endStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_end_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
-        Date answerStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_answer_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
+
+        Date answerStamp = null;
+        String answerTime = eventHeaders.get("variable_answer_stamp");
+        if(!Strings.isNullOrEmpty(answerTime)){
+            answerStamp = DateUtil.getDateByDateAndFormat(answerTime, DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
+        }
 //        Date progressStamp = DateUtil.getDateByDateAndFormat(eventHeaders.get("variable_progress_media_stamp"), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
 
         ChannelHangupEvent event = ChannelHangupEvent.builder()

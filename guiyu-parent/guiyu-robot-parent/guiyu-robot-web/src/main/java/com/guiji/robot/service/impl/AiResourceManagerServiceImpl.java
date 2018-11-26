@@ -69,6 +69,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				addAiNum = addAiNum + addEntry.getValue();
 			}
 			if(addAiNum!=checkAiReady.getAiNum()) {
+				logger.error("addAiNum={},checkAiReady.getAiNum()={}",addAiNum,checkAiReady.getAiNum());
 				//检查出来的机器人新增数量和本次要申请的数量不匹配
 				throw new RobotException(AiErrorEnum.AI00060005.getErrorCode(),AiErrorEnum.AI00060005.getErrorMsg());
 			}
@@ -78,7 +79,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			ReturnData<List<ProcessInstanceVO>> processInstanceListData = new ReturnData<List<ProcessInstanceVO>>();
 			processInstanceListData.setCode("0");
 			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
-			for(int i=0;i<32;i++) {
+			for(int i=0;i<addAiNum;i++) {
 				ProcessInstanceVO test = new ProcessInstanceVO();
 				test.setIp("192.168.1.50");
 				DecimalFormat df=new DecimalFormat("00");
@@ -97,6 +98,8 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			if(instanceList == null || instanceList.isEmpty()) {
 				logger.error("调用进程管理申请{}个机器人异常，无空余可用机器人...");
 				throw new RobotException(AiErrorEnum.AI00060008.getErrorCode(),AiErrorEnum.AI00060008.getErrorMsg());
+			}else {
+				logger.info("为用户{}申请到{}个机器人",checkAiReady.getUserId(),instanceList.size());
 			}
 			List<AiInuseCache> list = new ArrayList<AiInuseCache>();
 			int idx = 0;

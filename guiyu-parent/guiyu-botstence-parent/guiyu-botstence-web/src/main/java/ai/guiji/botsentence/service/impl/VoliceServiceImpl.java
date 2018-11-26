@@ -2,12 +2,10 @@ package ai.guiji.botsentence.service.impl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,17 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.jar.Attributes.Name;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tomcat.util.bcel.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +35,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.io.Files;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
+import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
+import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.process.api.IProcessSchedule;
+import com.guiji.process.model.UpgrateResouceReq;
+import com.guiji.utils.NasUtil;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceBranchMapper;
@@ -54,7 +54,6 @@ import ai.guiji.botsentence.dao.entity.BotSentenceBranchExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceDomain;
 import ai.guiji.botsentence.dao.entity.BotSentenceDomainExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
-import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceTtsTask;
 import ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import ai.guiji.botsentence.dao.entity.BusinessAnswerTaskExt;
@@ -64,19 +63,15 @@ import ai.guiji.botsentence.dao.entity.VoliceInfoExt;
 import ai.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
 import ai.guiji.botsentence.service.IVoliceService;
 import ai.guiji.botsentence.util.BotSentenceUtil;
-import ai.guiji.botsentence.vo.AutoDeployExecuteVo;
 import ai.guiji.botsentence.vo.CommonDialogVO;
 import ai.guiji.botsentence.vo.RefuseVoliceVO;
 import ai.guiji.botsentence.vo.TtsBackup;
 import ai.guiji.component.client.util.DateUtil;
 import ai.guiji.component.client.util.FileUtil;
-import ai.guiji.component.client.util.FtpUploadUtil;
 import ai.guiji.component.client.util.IOUtil;
 import ai.guiji.component.client.util.JsonBase64Crypter;
 import ai.guiji.component.client.util.QiuniuUploadUtil;
-import ai.guiji.component.client.util.ZipUtil;
 import ai.guiji.component.exception.CommonException;
-import ai.guiji.component.model.ServerResult;
 
 @Service
 public class VoliceServiceImpl implements IVoliceService {
@@ -91,12 +86,6 @@ public class VoliceServiceImpl implements IVoliceService {
 
 	@Autowired
 	private QiuniuUploadUtil qiuniuUploadUtil;
-
-	@Autowired
-	private AutoDeployExecuteService autoDeployExecuteService;
-
-	@Autowired
-	private FtpUploadUtil ftpUploadUtil;
 
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
@@ -127,6 +116,13 @@ public class VoliceServiceImpl implements IVoliceService {
 
 	@Value("${local.upload.dir}")
 	private String localUploadDir;
+	
+	private NasUtil nasUtile=new NasUtil();
+	
+	private static String NAS_UPLAOD_SYSTEM_CODE="09";
+	
+	@Autowired
+	private IProcessSchedule iProcessSchedule;
 
 	@Override
 	@Transactional
@@ -146,11 +142,6 @@ public class VoliceServiceImpl implements IVoliceService {
 		if (StringUtils.isBlank(voliceInfo.getTemplateId())) {
 			throw new CommonException("话术模板编号为空");
 		}
-
-		/*
-		 * if (StringUtils.isBlank(voliceInfo.getDomainName())) { throw new
-		 * CommonException("话术domain为空"); }
-		 */
 
 		String oldContent = null;
 		String newContent = voliceInfo.getContent();
@@ -508,34 +499,6 @@ public class VoliceServiceImpl implements IVoliceService {
 
 			zipFile.close();
 			FileUtils.deleteDirectory(descFile);
-
-			// delAllFile(descFile.getPath());
-
-			/*
-			 * Enumeration<?> entries = zipFile.entries(); while(entries.hasMoreElements()){
-			 * ZipEntry entry = (ZipEntry)entries.nextElement(); InputStream
-			 * entryInStream=zipFile.getInputStream(entry); String name=entry.getName();
-			 * 
-			 * String[] arrays= name.split("\\."); String voliceId=arrays[0];
-			 * 
-			 * String suffix = name.substring(name.lastIndexOf(".") + 1);
-			 * 
-			 * if(!"wav".equals(suffix)) { formatFileList.add(name); continue; }
-			 * 
-			 * long size = entry.getSize(); if(size > 1 * 1024 * 1024) {
-			 * sizeFileList.add(name); continue; //throw new
-			 * CommonException("序号"+voliceId+"文件大小超过1M,请您压缩后重新上传"); }
-			 * 
-			 * if(voliceIds.contains(voliceId)){ String
-			 * url=qiuniuUploadUtil.upload(entryInStream, null); VoliceInfo volice =
-			 * voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));
-			 * 
-			 * if(!"【新增】".equals(volice.getFlag())) {
-			 * voliceInfoExtMapper.updateVoliceUrlAndNameById(voliceId, url, "【修改】"); }else
-			 * { //插入数据库 voliceInfoExtMapper.updateVoliceUrlById(voliceId,url); }
-			 * successNum++; successFileList.add(name); //successUpdate.add(voliceId); }else
-			 * { notmatchFileList.add(name); } }
-			 */
 			// 更新流程状态
 			botSentenceProcessService.updateProcessState(processId,userId);
 
@@ -613,147 +576,112 @@ public class VoliceServiceImpl implements IVoliceService {
 
 	@Override
 	public boolean uploadVoliceJsonZip(File dir, String fileName, String processId, String templateId) {
+		//查詢任務中心,是否可以发布
+		if(true){
+			// 获取未加密的replace.json文件
+			List<File> listFile = new ArrayList<File>();
+			FileUtil.getAllFilePaths(dir, listFile);
 
-		// 获取未加密的replace.json文件
-		List<File> listFile = new ArrayList<File>();
-		FileUtil.getAllFilePaths(dir, listFile);
-
-		File replaceFile = new File("replace.json");
-		for (File temp : listFile) {
-			if (temp.getName().equals("replace.json")) {
-				// replaceFile = temp;
-				try {
-					FileUtil.copyFile(temp.getPath(), replaceFile.getPath());
-				} catch (IOException e) {
-					logger.error("复制replace.json文件异常", e);
-					return false;
-				}
-				break;
-			}
-		}
-
-		// 加密
-		fileCrypter(dir);
-		// 打成zip包
-		/*
-		 * File zipFile=ZipUtil.zip(dir,fileName); try {
-		 * FileUtil.copyFile(zipFile.getPath(), "D:\\apps\\template_encode\\aaa"); }
-		 * catch (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
-
-		/*
-		 * try { File zipFile = File.createTempFile(fileName, ".zip"); this.zip(dir,
-		 * zipFile.getPath());
-		 * 
-		 * File standardZip=creatStandardZipStructure(zipFile,fileName,templateId);
-		 * if(standardZip!=null){ //本地保存zip文件 File localZipfile = new
-		 * File(localUploadDir+fileName+".zip"); Files.copy(standardZip, localZipfile);
-		 * }
-		 * 
-		 * } catch (Exception e) { e.printStackTrace(); }
-		 */
-
-		File standardZip = null;
-		String zipFileName = fileName;
-		// 打包成规定的格式
-		try {
-			File zipFile;
-			zipFileName = zipFileName.replaceAll("_en", "");
-			fileName = templateId.replaceAll("_en", "");
-			zipFile = File.createTempFile(fileName, ".zip");
-			this.zip(dir, zipFile.getPath());
-			standardZip = creatStandardZipStructure(zipFile, zipFileName, templateId);
-		} catch (Exception e) {
-			logger.error("压缩打包json文件异常>..", e);
-			return false;
-		}
-
-		if (standardZip != null) {
-			// 本地保存zip文件
-			File localZipfile = new File(localUploadDir + zipFileName + ".zip");
-			try {
-				Files.copy(standardZip, localZipfile);
-
-				// 调用python工具
-				String os = System.getProperties().getProperty("os.name").toLowerCase();
-				if (os.startsWith("win")) {
-					logger.info("windows暂不支持");
-				} else {
-					String command = " python /usr/local/botsentence/check_client_pkg/check_client/polaris_console.py";
+			File replaceFile = new File("replace.json");
+			for (File temp : listFile) {
+				if (temp.getName().equals("replace.json")) {
+					// replaceFile = temp;
 					try {
-						Process process = Runtime.getRuntime().exec(command);
-
-						LineNumberReader br = new LineNumberReader(new InputStreamReader(process.getInputStream()));
-						StringBuffer sb = new StringBuffer();
-						String line;
-						while ((line = br.readLine()) != null) {
-							sb.append(line).append("\n");
-						}
-						logger.info("执行python命令结果....");
-						logger.info(sb.toString());
-
-						if (sb.toString().contains("add")) {
-							logger.info("执行python脚本成功...");
-						} else {
-							logger.info("执行python脚本失败...");
-							return false;
-						}
-
+						FileUtil.copyFile(temp.getPath(), replaceFile.getPath());
 					} catch (IOException e) {
-						logger.error("执行python工具异常...", e);
+						logger.error("复制replace.json文件异常", e);
 						return false;
 					}
+					break;
 				}
-
-				// 删除本地临时文件
-				// localZipfile.delete();
-
-			} catch (IOException e) {
-				logger.error("复制压缩zip包数据异常...", e);
-				return false;
-			} catch (Exception e) {
-				logger.error("调用agent异常...", e);
-				return false;
 			}
 
-			logger.info("待上传文件standardZip大小: " + standardZip.length());
-			logger.info("待上传文件localZipfile大小: " + localZipfile.length());
-			// 上传
-			String uploadurl = ftpUploadUtil.upload(ftpPath, zipFileName + ".zip", localZipfile);
+			// 加密
+			fileCrypter(dir);
+			// 打成zip包
 
-			// 上传replace.json到TTS服务器
+			File standardZip = null;
+			String zipFileName = fileName;
+			// 打包成规定的格式
 			try {
-				if (null != replaceFile) {
-					logger.info("准备上传replace.json到TTS服务器");
-					botSentenceTtsService.uploadTtsReplaceJson(replaceFile, templateId);
-					logger.info("上传replace.json到TTS服务器成功...");
-				} else {
-					logger.info("当前模板不存在replace.json");
-				}
+				File zipFile;
+				zipFileName = zipFileName.replaceAll("_en", "");
+				fileName = templateId.replaceAll("_en", "");
+				zipFile = File.createTempFile(fileName, ".zip");
+				this.zip(dir, zipFile.getPath());
+				standardZip = creatStandardZipStructure(zipFile, zipFileName, templateId);
 			} catch (Exception e) {
-				logger.error("上传TTS服务器异常...", e);
+				logger.error("压缩打包json文件异常>..", e);
 				return false;
 			}
 
-			replaceFile.delete();// 删除临时文件
+			if (standardZip != null) {
+				// 本地保存zip文件
+				File localZipfile = new File(localUploadDir + zipFileName + ".zip");
+				try {
+					Files.copy(standardZip, localZipfile);
 
-			String code = voliceInfoExtMapper.getCodeByProcessId(processId);
-			String version = voliceInfoExtMapper.getVersionByProcessId(processId);
-			// 调用接口
-			AutoDeployExecuteVo param = new AutoDeployExecuteVo();
-			param.setCode(code);
-			param.setVersion(version);
-			param.setPath(uploadurl);
-			param.setCommand(fileName);
-			logger.info("发送task任务...");
-			boolean flag = autoDeployExecuteService.generateRequestJson(param);
-			if (flag) {
-				logger.info("发送task任务成功...");
-				return flag;
-			} else {
-				logger.info("发送task任务失败...");
+					// 调用python工具
+					String os = System.getProperties().getProperty("os.name").toLowerCase();
+					if (os.startsWith("win")) {
+						logger.info("windows暂不支持");
+					} else {
+						String command = " python /usr/local/botsentence/check_client_pkg/check_client/polaris_console.py";
+						try {
+							Process process = Runtime.getRuntime().exec(command);
+
+							LineNumberReader br = new LineNumberReader(new InputStreamReader(process.getInputStream()));
+							StringBuffer sb = new StringBuffer();
+							String line;
+							while ((line = br.readLine()) != null) {
+								sb.append(line).append("\n");
+							}
+							logger.info("执行python命令结果....");
+							logger.info(sb.toString());
+
+							if (sb.toString().contains("add")) {
+								logger.info("执行python脚本成功...");
+							} else {
+								logger.info("执行python脚本失败...");
+								return false;
+							}
+
+						} catch (IOException e) {
+							logger.error("执行python工具异常...", e);
+							return false;
+						}
+					}
+
+					// 删除本地临时文件
+					// localZipfile.delete();
+
+				} catch (IOException e) {
+					logger.error("复制压缩zip包数据异常...", e);
+					return false;
+				} catch (Exception e) {
+					logger.error("调用agent异常...", e);
+					return false;
+				}
+
+				logger.info("待上传文件standardZip大小: " + standardZip.length());
+				logger.info("待上传文件localZipfile大小: " + localZipfile.length());
+				
+				
+				// 上传
+				SysFileReqVO sysFileReqVO=new SysFileReqVO();
+				sysFileReqVO.setBusiId(processId);
+				sysFileReqVO.setSysCode(NAS_UPLAOD_SYSTEM_CODE);
+				SysFileRspVO sysFileRspVO=nasUtile.uploadNas(sysFileReqVO, localZipfile);
+				String uplaodFileName=sysFileRspVO.getFileName();
+				//部署
+				UpgrateResouceReq resouceReq=new UpgrateResouceReq();
+				resouceReq.setFile(uplaodFileName);
+				
+				resouceReq.setProcessTypeEnum(ProcessTypeEnum.TTS);
+				ReturnData<Boolean> result=iProcessSchedule.publishResource(resouceReq);
+				return result.getBody();
 			}
+			
 		}
 		return false;
 	}
@@ -772,12 +700,10 @@ public class VoliceServiceImpl implements IVoliceService {
 		} else {
 			String fileName = file.getName();
 			String path = file.getPath();
-			// if(path.indexOf("new_domain_cfg") > 0) {
 			if (fileName.endsWith("json")) {
 				System.out.println(fileName);
 				JsonBase64Crypter.encodeFile(file);
 			}
-			// }
 		}
 	}
 

@@ -127,8 +127,8 @@ zuul:
       path: /botstence/**
       service-id: guiyu-botstence-web
     guiyu-process-web:
-          path: /process/**
-          service-id: guiyu-process-web
+      path: /process/**
+      service-id: guiyu-process-web
 hystrix:
   command:
     default:

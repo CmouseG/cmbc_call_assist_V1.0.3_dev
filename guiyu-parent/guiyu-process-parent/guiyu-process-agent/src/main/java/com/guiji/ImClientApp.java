@@ -21,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ImClientApp {
 
 	@Value("${server.port}")
-	private static Integer agentPort = 8081;
+	public static Integer agentPort = 8081;
 
 	public static void main(String[] args) throws UnknownHostException {
 		ImClientProtocolBO.getIntance().start(ProcessTypeEnum.AGENT, agentPort);

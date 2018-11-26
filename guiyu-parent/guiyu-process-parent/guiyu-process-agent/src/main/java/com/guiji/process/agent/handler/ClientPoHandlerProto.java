@@ -1,5 +1,6 @@
 package com.guiji.process.agent.handler;
 
+import com.guiji.ImClientApp;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
@@ -11,6 +12,7 @@ import io.netty.channel.EventLoop;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
+import java.net.Inet4Address;
 import java.util.concurrent.TimeUnit;
 
 public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
@@ -70,8 +72,9 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
                 System.out.println("20秒向服务器发送一个心跳");
                 //发送心跳包
 				MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-				String ip= ctx.channel().localAddress().toString();
-				builder.setContent(ip);
+				String ip= Inet4Address.getLocalHost().getHostAddress();
+				int port = ImClientApp.agentPort;
+				builder.setContent(ip+":" + port);
                 ctx.writeAndFlush(builder);
             } else if (event.state().equals(IdleState.ALL_IDLE)) {
             	System.out.println("ALL");

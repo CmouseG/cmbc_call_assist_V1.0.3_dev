@@ -54,12 +54,11 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
-	 * 保存或者更新一条用户基本信息
+	 * 保存或者更新一条用户基本信息（不开放出去，必须调用变更服务）
 	 * @param userAiCfgBaseInfo
 	 * @return
 	 */
-	@Override
-	public UserAiCfgBaseInfo saveOrUpdate(UserAiCfgBaseInfo userAiCfgBaseInfo) {
+	private UserAiCfgBaseInfo saveOrUpdate(UserAiCfgBaseInfo userAiCfgBaseInfo) {
 		if(userAiCfgBaseInfo != null) {
 			if(StrUtils.isEmpty(userAiCfgBaseInfo.getId())) {
 				//如果主键为空，那么新增一条信息
@@ -69,6 +68,32 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				//主键不为空，更新信息
 				userAiCfgBaseInfoMapper.updateByPrimaryKey(userAiCfgBaseInfo);
 			}
+		}
+		return userAiCfgBaseInfo;
+	}
+	
+	
+	/**
+	 * 机器人数量总控配置
+	 * @param userAiCfgBaseInfo
+	 * @return
+	 */
+	public UserAiCfgBaseInfo putupUserCfgBase(UserAiCfgBaseInfo userAiCfgBaseInfo) {
+		if(userAiCfgBaseInfo != null) {
+			String id = userAiCfgBaseInfo.getId();
+			if(StrUtils.isNotEmpty(id)) {
+				//更新
+				throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+			}else {
+				//新增
+				//1、初始化一条用户机器人线路拆分
+				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
+				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
+				this.userAiCfgChange(userAiCfgInfo);
+			}
+			//2、新增或者更新基本信息
+			this.saveOrUpdate(userAiCfgBaseInfo);
 		}
 		return userAiCfgBaseInfo;
 	}

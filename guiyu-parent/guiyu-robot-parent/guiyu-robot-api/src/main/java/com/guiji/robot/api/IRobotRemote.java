@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.guiji.component.result.Result;
+import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
@@ -49,6 +50,14 @@ public interface IRobotRemote {
     })
     @PostMapping(value = "/remote/ttsCompose")
 	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
+	
+	
+	@ApiOperation(value = "AI资源申请")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "aiCallApplyReq", value = "机器人资源申请", required = true)
+    })
+    @PostMapping(value = "/remote/aiCallApply")
+	Result.ReturnData<AiCallNext> aiCallApply(@RequestBody AiCallApplyReq aiCallApplyReq);
 	
 	
 	@ApiOperation(value = "拨打AI电话")

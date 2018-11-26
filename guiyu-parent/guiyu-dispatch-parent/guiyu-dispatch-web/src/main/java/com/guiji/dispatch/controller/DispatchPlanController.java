@@ -35,7 +35,7 @@ public class DispatchPlanController {
 	 * @return 响应报文 异常
 	 */
 	@PostMapping("addSchedule")
-	public boolean addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
+	public boolean  addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
 		boolean result = false;
 		try {
 			result = dispatchPlanService.addSchedule(dispatchPlan, userId);
@@ -246,6 +246,28 @@ public class DispatchPlanController {
 	@PostMapping("deleteAllPlanByBatchId")
 	public boolean deleteAllPlanByBatchId(@RequestBody IdsDto[] dto) {
 		return dispatchPlanService.batchDeletePlans(dto);
+	}
+	
+	
+	/**
+	 * 批量加入
+	 * 
+	 * @param batchId
+	 * @return
+	 */
+	@PostMapping("batchInsertDisplanPlan")
+	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan [] dispatchPlans,@RequestHeader Long userId) {
+		boolean result = false;
+		for(DispatchPlan dis : dispatchPlans){
+			try {
+				result = dispatchPlanService.addSchedule(dis, userId);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		return result;
+		
+		
 	}
 
 	/**

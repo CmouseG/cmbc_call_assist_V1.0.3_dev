@@ -42,9 +42,9 @@ public class AIManagerImpl implements AIManager {
         try {
             AiCallStartReq aiCallStartReq = new  AiCallStartReq();
             aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
+            aiCallStartReq.setAiNo(aiRequest.getAiId());
             String tempId = aiRequest.getTempId();
             aiCallStartReq.setTemplateId(tempId);
-//            aiCallStartReq.setTemplateId("fpjkqzjhwsm");//test
             aiCallStartReq.setSeqid(aiRequest.getUuid());
             aiCallStartReq.setUserId(aiRequest.getUserId());
             Result.ReturnData<AiCallNext> result =  robotRemote.aiCallStart(aiCallStartReq);

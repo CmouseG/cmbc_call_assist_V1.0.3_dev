@@ -2,6 +2,9 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
@@ -36,6 +39,23 @@ public interface IAiAbilityCenterService {
 	 * @return
 	 */
 	List<TtsVoice> fetchTtsUrls(TtsVoiceReq ttsVoiceReq);
+	
+	
+	/**
+	 * 机器人资源申请（准备拨打电话）
+	 * 1、资源准备
+	 * 	  1.1、检查用户资源变更锁，如果减少，那么返回准备失败结果，如果是资源增加了，那么确认下增加了多少，并重新获取并分配下资源。
+	 *    1.2、检查用户是否满负荷在跑，如果没有满负荷，那么拉起机器人满负荷运行。
+	 *    1.3、检查是否需要tts,且tts是否合成了（待定，应该呼叫中心检查语音资源，机器人能力中心检查机器人资源）
+	 *    1.4、新申请的资源记录生命周期中
+	 * 
+	 * 2、机器人分配
+	 *    从缓存拉取用户所有机器人，将状态是空闲的机器人分配给这个电话
+	 *    
+	 * @param aiCallStartReq
+	 * @return
+	 */
+	public AiCallNext aiCallApply(AiCallApplyReq aiCallApplyReq);
 	
 	
 	/**

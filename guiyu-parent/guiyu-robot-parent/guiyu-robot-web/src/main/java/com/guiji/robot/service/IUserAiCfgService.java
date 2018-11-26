@@ -14,11 +14,11 @@ import com.guiji.robot.dao.entity.UserAiCfgInfo;
 public interface IUserAiCfgService {
 	
 	/**
-	 * 保存或者更新一条用户基本信息
+	 * 机器人数量总控配置
 	 * @param userAiCfgBaseInfo
 	 * @return
 	 */
-	public UserAiCfgBaseInfo saveOrUpdate(UserAiCfgBaseInfo userAiCfgBaseInfo);
+	public UserAiCfgBaseInfo putupUserCfgBase(UserAiCfgBaseInfo userAiCfgBaseInfo);
 	
 	
 	/**

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
@@ -57,6 +58,16 @@ public class RobotRemoteController implements IRobotRemote{
 	public Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoiceReq){
 		List<TtsVoice> list = iAiAbilityCenterService.fetchTtsUrls(ttsVoiceReq);
 		return Result.ok(list);
+	}
+	
+	/**
+	 * 机器人资源申请（准备拨打电话）
+	 * @param aiCallStartReq
+	 * @return
+	 */
+	public Result.ReturnData<AiCallNext> aiCallApply(@RequestBody AiCallApplyReq aiCallApplyReq){
+		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallApply(aiCallApplyReq);
+		return Result.ok(aiCallNext);
 	}
 	
 	

@@ -50,7 +50,7 @@ public class CustAiAccountController {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		userAiCfgBaseInfo = iUserAiCfgService.saveOrUpdate(userAiCfgBaseInfo);
+		userAiCfgBaseInfo = iUserAiCfgService.putupUserCfgBase(userAiCfgBaseInfo);
 		return Result.ok(userAiCfgBaseInfo);
 	}
 	

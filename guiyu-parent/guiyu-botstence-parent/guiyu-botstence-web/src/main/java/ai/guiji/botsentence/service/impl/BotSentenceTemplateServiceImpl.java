@@ -17,6 +17,7 @@ import ai.guiji.botsentence.dao.entity.UserAccountIndustryRelationExample;
 import ai.guiji.botsentence.service.IBotSentenceTemplateService;
 import ai.guiji.botsentence.vo.BotSentenceIndustryChildren;
 import ai.guiji.botsentence.vo.BotSentenceIndustryVO;
+import ai.guiji.component.model.ServerResult;
 
 @Service
 public class BotSentenceTemplateServiceImpl implements IBotSentenceTemplateService {
@@ -162,6 +163,13 @@ public class BotSentenceTemplateServiceImpl implements IBotSentenceTemplateServi
 		
 		return results;
 	
+	}
+
+	@Override
+	public List<BotSentenceTemplate> getTemplateBySelf(String accountNo) {
+		BotSentenceTemplateExample example=new BotSentenceTemplateExample();
+		example.createCriteria().andAccountNoEqualTo(accountNo);
+		return botSentenceTemplateMapper.selectByExample(example);
 	}
 
 }

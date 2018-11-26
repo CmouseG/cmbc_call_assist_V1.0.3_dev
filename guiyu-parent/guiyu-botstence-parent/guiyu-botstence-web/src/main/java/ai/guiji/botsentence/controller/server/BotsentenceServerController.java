@@ -215,24 +215,19 @@ public class BotsentenceServerController {
 		return ServerResult.createBySuccess("更新/增加账户成功", userAccount.getUserId());
 	}
 	
-	@RequestMapping(value="getIndustryListBySelf")
-	public ServerResult<List<BotSentenceTemplateIndustryVO>> getIndustryListBySelf(@RequestHeader("userId") String accountNo, @JsonParam String host){
-		return getIndustryList(accountNo,host);
-	}
-	
 	/**
 	 * 获取行业列表
 	 * @param accountNo
 	 */
 	@RequestMapping(value="getIndustryList")
-	public ServerResult<List<BotSentenceTemplateIndustryVO>> getIndustryList(@JsonParam String accountNo, @JsonParam String host) {
+	public ServerResult<List<BotSentenceTemplateIndustryVO>> getIndustryList(@JsonParam String accountNo) {
 		
 		List<BotSentenceTemplateIndustryVO> results = new ArrayList<>();
 		
-		if(StringUtils.isNotBlank(accountNo) && StringUtils.isNotBlank(host)) {
+		if(StringUtils.isNotBlank(accountNo)) {
 			
 			UserAccountIndustryRelationExample example = new UserAccountIndustryRelationExample();
-			example.createCriteria().andAccountNoEqualTo(host+"-"+accountNo);
+			example.createCriteria().andAccountNoEqualTo(accountNo);
 			List<UserAccountIndustryRelation> relationList = relationMapper.selectByExample(example);
 			if(null != relationList && relationList.size() > 0) {
 				for(UserAccountIndustryRelation rela : relationList) {

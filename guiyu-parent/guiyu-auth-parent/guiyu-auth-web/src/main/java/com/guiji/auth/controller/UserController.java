@@ -21,19 +21,19 @@ import com.guiji.user.dao.entity.SysUser;
  * Created by ty on 2018/10/22.
  */
 @RestController
-//@RequestMapping("user")
 public class UserController implements IAuth{
 	
 	@Autowired
 	private UserService service;
 	
 	@RequestMapping("/user/regist")
-	public void insert(SysUser user,Long roleId) throws Exception{
+	public SysUser insert(SysUser user,Long roleId) throws Exception{
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
 		}
 		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		service.insert(user,roleId);
+		return user;
 	}
 	
 	@RequestMapping("/user/update")

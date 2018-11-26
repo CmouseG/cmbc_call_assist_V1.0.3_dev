@@ -14,8 +14,8 @@ import lombok.Data;
 public class HsReplace {
 	
 	private boolean template_tts_flag;  //这几个都表示是否需要tts合成
-	private boolean tts_new;	//这几个都表示是否需要tts合成
-	private boolean tts_partial;	//这几个都表示是否需要tts合成
+//	private boolean tts_new;	//这几个都表示是否需要tts合成
+//	private boolean tts_partial;	//这几个都表示是否需要tts合成
 	
 	private String use_speaker_flag;	//模型编号（录音师）
 	private String[] num_sentence_merge_lst; //几段需要tts合成的录音wav文件id

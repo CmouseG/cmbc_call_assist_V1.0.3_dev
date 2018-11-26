@@ -1,5 +1,6 @@
 package com.guiji.robot.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -199,6 +200,17 @@ public class AiCacheService {
 				//重新查询
 				//获取话术模板json文件
 				String replaceFilePath = this.getHsJsonPath(templateId);
+				if(!new File(replaceFilePath).exists()) {
+					logger.info("话术模板{},replace.json文件{}不存在，不需要tts合成",templateId,replaceFilePath);
+					//如果replace.json不存在，那么本话术模板不需要合成TTS
+					HsReplace hsReplace = new HsReplace();
+					hsReplace.setTemplate_tts_flag(false);
+					//提交到redis
+					Map<String,Object> map = new HashMap<String,Object>();
+					map.put(templateId, hsReplace);
+					redisUtil.hmset(RobotConstants.ROBOT_TEMPLATE_RESOURCE, map);
+					return hsReplace;
+				}
 				//读取本地话术模板文件
 				String json = ReadTxtUtil.readTxtFile(replaceFilePath);
 				//读取json文件获取数据
@@ -230,7 +242,12 @@ public class AiCacheService {
 	 * @return
 	 */
 	private String getHsJsonPath(String templateId) {
-		String hushuDirPath = SystemUtil.getRootPath()+hushuDir; //话术模板存放目录
-		return hushuDirPath + "/" + templateId + "/" + templateId + "/" +"replace.json";
+		String hushuDirPath = SystemUtil.getRootPath()+hushuDir + "/" + templateId + "/" + templateId + "/"; //话术模板存放目录
+		if(!new File(hushuDirPath).exists()) {
+			//话术模板检查
+			logger.error("话术模板{}在路径{}不存在。。。",templateId,hushuDirPath);
+			throw new RobotException(AiErrorEnum.AI00060026.getErrorCode(),AiErrorEnum.AI00060026.getErrorMsg());
+		}
+		return hushuDirPath + "replace.json";
 	}
 }

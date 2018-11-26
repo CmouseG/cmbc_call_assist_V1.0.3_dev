@@ -62,6 +62,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	@Override
 	File transferByChild(String model, String text) {
+		PoolingHttpClientConnectionManager cm = null;
 		CloseableHttpResponse response = null;
 		CloseableHttpClient httpClient = null;
 		FileOutputStream out = null;
@@ -81,7 +82,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 					.register("https", sslsf)
 					.build();
 			// 连接池管理对象（负责管理HttpClient连接池）
-			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+			cm = new PoolingHttpClientConnectionManager(registry);
 			// 最大连接数
 			cm.setMaxTotal(MaxTotal);
 			// 每个路由基础的连接
@@ -116,8 +117,9 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			return null;
 		} finally {
 			IOUtils.closeQuietly(out);
-			IOUtils.closeQuietly(httpClient);
 			IOUtils.closeQuietly(response);
+			IOUtils.closeQuietly(httpClient);
+			IOUtils.closeQuietly(cm);
 		}
 		return file;
 	}
@@ -144,6 +146,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			sysFileReqVO.setSysCode(AiConstants.SYSCODE); //文件上传系统码
 			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
 			//调用本地工具-上传文件到NAS服务器
+			logger.info(file.getName() + "上传文件到NAS服务器...");
 			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
 			if(sysFileRsp != null) {
 				audioUrl = sysFileRsp.getSkUrl();

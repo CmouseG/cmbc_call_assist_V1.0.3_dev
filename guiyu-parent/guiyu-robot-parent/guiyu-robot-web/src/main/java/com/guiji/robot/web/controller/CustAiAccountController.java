@@ -104,7 +104,7 @@ public class CustAiAccountController {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		UserAiCfgInfo cfgInfo = iUserAiCfgService.userAiCfgChange(userAiCfgInfo);
+		UserAiCfgInfo cfgInfo = iUserAiCfgService.userAiCfgChange(null,userAiCfgInfo);
 		return Result.ok(cfgInfo);
 	}
 	

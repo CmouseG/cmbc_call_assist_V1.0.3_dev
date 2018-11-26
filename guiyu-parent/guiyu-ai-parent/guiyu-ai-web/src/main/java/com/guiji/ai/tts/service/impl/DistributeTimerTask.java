@@ -108,16 +108,14 @@ public class DistributeTimerTask {
 
 	//GPU转移（分配）
 	private void distributeGpu(List<GpuCountVO> addGpuCountVOList, List<TtsGpuVO> gpuSumList) throws Exception{
-		int k = 0;
 		for(int i = 0; i < addGpuCountVOList.size(); i++){
 			String model = addGpuCountVOList.get(i).getModel();
 			int changeCount = addGpuCountVOList.get(i).getChangeCount();
 			for (int j = 0; j < changeCount; j++) {
 				if(!gpuSumList.isEmpty()){
-					String fromModel = gpuSumList.get(k).getModel();
-					String ip = gpuSumList.get(k).getIp();
-					String port = gpuSumList.get(k).getPort();
-					k++;
+					String fromModel = gpuSumList.get(0).getModel();
+					String ip = gpuSumList.get(0).getIp();
+					String port = gpuSumList.get(0).getPort();
 					//调进程管理接口-模型切换
 					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
 					if(returnData != null && returnData.getBody()){
@@ -126,6 +124,7 @@ public class DistributeTimerTask {
 					}else{
 						throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS);
 					}
+					gpuSumList.remove(0);
 				}else{
 					logger.warn("没有可分配的GPU了！");
 				}

@@ -178,6 +178,15 @@ public class BotSentenceApprovalController {
 	}
 	
 	/**
+	 * 发布话术
+	 * @return
+	 */
+	@RequestMapping(value="publishSentence")
+	public void publishSentence(@JsonParam String processId,@RequestHeader Long userId){
+		botSentenceApprovalService.publishSentence(processId,userId);
+	}
+	
+	/**
 	 * 查询话术流程所有的分支流程
 	 * @param processId
 	 * @return

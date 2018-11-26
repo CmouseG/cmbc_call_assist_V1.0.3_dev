@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import ai.guiji.botsentence.controller.server.vo.BotSentenceTemplateIndustryVO;
 import ai.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import ai.guiji.botsentence.service.IBotSentenceTemplateService;
 import ai.guiji.botsentence.vo.BotSentenceIndustryVO;
@@ -82,6 +84,12 @@ public class BotSentenceTemplateController {
 		page.setTotal(totalNum);
 		
 		return ServerResult.createBySuccess(page);
+	}
+	
+	@RequestMapping(value="getTemplateBySelf")
+	public ServerResult<List<BotSentenceTemplate>> getTemplateBySelf(@RequestHeader("userId") String accountNo){
+		List<BotSentenceTemplate> result=botSentenceTemplateService.getTemplateBySelf(accountNo);
+		return ServerResult.createBySuccess(result);
 	}
 	
 }

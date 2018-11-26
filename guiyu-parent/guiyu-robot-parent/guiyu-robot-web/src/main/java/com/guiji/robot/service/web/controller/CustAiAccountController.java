@@ -44,6 +44,7 @@ public class CustAiAccountController {
 		logger.info("新增/修改用户机器人配置基本信息");
 		if(userAiCfgBaseInfo == null
 				|| StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())
+				|| StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())
 				|| userAiCfgBaseInfo.getAiTotalNum() == null
 				|| userAiCfgBaseInfo.getAiTotalNum() < 0
 				) {

@@ -22,7 +22,7 @@ public class CheckStatusTask {
 	private static Logger logger = LoggerFactory.getLogger(CheckStatusTask.class);
 
 	//定时任务，启动时运行（每1分钟执行一次）
-	@Scheduled(fixedRate = 1000*120)
+	@Scheduled(fixedRate = 1000*30)
     public void checkStatusTask() throws InterruptedException, UnsupportedEncodingException, UnknownHostException {
 		Map<Integer, CfgProcessVO> cfgMap = ProcessCfgService.getIntance().cfgMap;
 		String ip = ProcessUtil.getLocalIp();

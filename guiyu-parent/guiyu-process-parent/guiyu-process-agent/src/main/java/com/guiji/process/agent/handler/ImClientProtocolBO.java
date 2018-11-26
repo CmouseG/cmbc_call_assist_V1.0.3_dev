@@ -1,5 +1,6 @@
 package com.guiji.process.agent.handler;
 
+import com.guiji.ImClientApp;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.agent.model.OperateVO;
@@ -20,8 +21,8 @@ import java.util.List;
  * Created by ty on 2018/11/19.
  */
 public class ImClientProtocolBO {
-    public static final String HOST = "127.0.0.1";
-    public static int PORT = 18081;
+    /*public static final String HOST = "127.0.0.1";
+    public static int PORT = 18082;*/
     public static Channel channelGlobal = null;
     public static List<OperateVO> operateVOList = new ArrayList<OperateVO>();
     public static long operateIntervalTime = 30000;//命令操作间隔30s
@@ -39,7 +40,7 @@ public class ImClientProtocolBO {
 
 
     public void start(ProcessTypeEnum processTypeEnum, Integer agentPort) throws UnknownHostException {
-        Channel channel = new ImConnection().connect(HOST, PORT);
+        Channel channel = new ImConnection().connect(ImClientApp.imClientApp.configInit.getServerIp(), ImClientApp.imClientApp.configInit.getServerPort());
         channelGlobal = channel;
         String id = Inet4Address.getLocalHost().getHostAddress();
         // protobuf

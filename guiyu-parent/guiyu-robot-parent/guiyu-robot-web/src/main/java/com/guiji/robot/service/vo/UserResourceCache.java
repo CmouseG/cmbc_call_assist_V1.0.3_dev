@@ -14,6 +14,6 @@ public class UserResourceCache {
 	private String userId;
 	//机器人总数量
 	private int aiNum;
-	//机器人资源变更状态：0-减少；1-增加
+	//机器人资源变更状态：S-减少；A-增加
 	private String chgStatus;
 }

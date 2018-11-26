@@ -74,4 +74,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		return Result.ok(list);
 	}
 
+	@Override
+	public ReturnData<Boolean> receiveRobotId(String RobotId) {
+		return null;
+	}
+
 }

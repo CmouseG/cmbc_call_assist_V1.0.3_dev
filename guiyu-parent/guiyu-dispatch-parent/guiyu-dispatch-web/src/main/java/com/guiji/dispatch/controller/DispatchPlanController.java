@@ -56,58 +56,6 @@ public class DispatchPlanController {
 
 	}
 
-	// /**
-	// * 查询任务列表
-	// *
-	// * @param userId
-	// * 用户id
-	// * @return 响应报文
-	// *
-	// * 异常
-	// */
-	// @GetMapping("querySchedules")
-	// Page<DispatchPlan> querySchedules(@RequestParam(required = true, name =
-	// "userId") Integer userId,
-	// @RequestParam(required = true, name = "pageSize") Integer pageSize,
-	// @RequestParam(required = true, name = "pagenum") int pagenum) {
-	// return dispatchPlanService.querySchedules(userId, pagenum, pageSize);
-	// }
-
-	// /**
-	// * 暂停任务
-	// *
-	// * @param planUuid
-	// * 任务id
-	// * @return 响应报文
-	// *
-	// * 异常
-	// */
-	//
-	// @PostMapping("pauseSchedule")
-	// @Log(info = "暂停任务")
-	// public boolean pauseSchedule(@RequestParam(required = true, name =
-	// "planuuid") String planuuid) {
-	// return dispatchPlanService.pauseSchedule(planuuid);
-	//
-	// }
-	//
-	// /**
-	// * 取消
-	// *
-	// * @param planUuid
-	// * 任务id
-	// * @return 响应报文
-	// *
-	// * 异常
-	// */
-	// @Log(info = "取消任务")
-	// @PostMapping("cancelSchedule")
-	// public boolean cancelSchedule(@RequestParam(required = true, name =
-	// "planuuid") String planuuid) {
-	// return dispatchPlanService.cancelSchedule(planuuid);
-	//
-	// }
-
 	/**
 	 * 文件上传
 	 * 
@@ -131,59 +79,6 @@ public class DispatchPlanController {
 
 		return Result.ok(result);
 	}
-
-	// /**
-	// * 恢复任务
-	// *
-	// * @param planUuid
-	// * 任务id
-	// * @return 响应报文
-	// *
-	// */
-	// @PostMapping("resumeSchedule")
-	// @Log(info = "恢复任务")
-	// public boolean resumeSchedule(@RequestParam(required = true, name =
-	// "planuuid") String planuuid) {
-	// return dispatchPlanService.resumeSchedule(planuuid);
-	// }
-
-	// @PostMapping("deleteSchedule")
-	// @Log(info = "删除任务")
-	// public boolean deleteSchedule(@RequestParam(required = true, name =
-	// "planuuid") String planuuid) {
-	// return dispatchPlanService.deleteSchedule(planuuid);
-	// }
-
-	// /**
-	// * 根据批次查询号码
-	// *
-	// * @param batchId
-	// * @return
-	// */
-	// @PostMapping("queryDispatchPlanByBatchId")
-	// @Log(info = "根据批次查询号码")
-	// public Page<DispatchPlan> queryDispatchPlanByBatchId(
-	// @RequestParam(required = true, name = "batchId") Integer batchId,
-	// @RequestParam(required = true, name = "pagenum") int pagenum,
-	// @RequestParam(required = true, name = "pagesize") int pagesize) {
-	// return dispatchPlanService.queryDispatchPlanByBatchId(batchId, pagenum,
-	// pagesize);
-	// }
-
-	// /**
-	// * 根据用户状态操作号码
-	// *
-	// * @param userId
-	// * @param status
-	// * @return
-	// */
-	// @PostMapping("OperationAllDispatchByUserId")
-	// @Log(info = "根据用户状态操作号码")
-	// public boolean OperationAllDispatchByUserId(@RequestParam(required =
-	// true, name = "userId") Integer userId,
-	// @RequestParam(required = true, name = "status") Integer status) {
-	// return dispatchPlanService.OperationAllDispatchByUserId(userId, status);
-	// }
 
 	/**
 	 * 根据参数查询任务计划

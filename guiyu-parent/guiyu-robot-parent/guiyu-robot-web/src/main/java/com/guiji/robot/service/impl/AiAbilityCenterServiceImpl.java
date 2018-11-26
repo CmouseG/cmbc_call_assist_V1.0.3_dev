@@ -84,6 +84,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 					for(String param : needParams) {
 						if(StrUtils.isEmpty(hsChecker.getParamMap().get(param))) {
 							logger.error("会话:{}参数校验不通过,缺失参数：{}",hsChecker.getSeqid(),param);
+							result.setCheckMsg("参数校验不通过,缺失参数："+param);
 							result.setPass(false); //默认不通过，参数不存在
 							break;
 						}

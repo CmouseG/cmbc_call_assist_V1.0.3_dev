@@ -147,11 +147,10 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				ttsWavHis.setTtsJsonData(jsonStr);
 				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_S); //完成
 				logger.info("会话:{}TTS合成完毕...",hsChecker.getSeqid());
+				aiNewTransService.recordTtsWav(ttsWavHis);
 			}else {
-				logger.error("TTS合成失败，无合成数据！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid());
-				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
+				logger.error("TTS，无合成数据！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid());
 			}
-			aiNewTransService.recordTtsWav(ttsWavHis);
 		} catch (Exception e) {
 			logger.error("TTS合成失败！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid(),e);
 			//4、合成后更新为合成状态
@@ -187,6 +186,10 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		String hushuDirPath = SystemUtil.getRootPath()+hushuDir; //话术模板存放目录
 		//获取话术模板配置文件
 		HsReplace hsReplace = aiCacheService.queyHsReplace(ttsVoiceReq.getTemplateId());
+		if(!hsReplace.isTemplate_tts_flag()) {
+			//如果不需要TTS合成,直接返回null
+			return null;
+		}
 		//3、校验参数是否有缺失
 		if(!this.checkTtsParams(hsReplace, ttsVoiceReq)) {
 			logger.error("TTS参数校验失败，抛出异常！");
@@ -196,7 +199,12 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		Map<String,TtsTempData> ttsTempDataMap = this.fillParamAndTranslate(tmpFilePath, hsReplace, ttsVoiceReq);
 		//5、合成语音，生成.wav文件，并上传文件服务器
 		List<TtsVoice> ttsVoiceList = this.wavMerge(hushuDirPath, tmpFilePath, ttsTempDataMap, hsReplace, ttsVoiceReq);
-		return ttsVoiceList;
+		if(ListUtil.isNotEmpty(ttsVoiceList)) {
+			return ttsVoiceList;
+		}else {
+			logger.error("TTS合成失败，无合成文件，参数：{}",ttsVoiceReq);
+			throw new RobotException(AiErrorEnum.AI00060019.getErrorCode(),AiErrorEnum.AI00060019.getErrorMsg());
+		}
 	}
 	
 	

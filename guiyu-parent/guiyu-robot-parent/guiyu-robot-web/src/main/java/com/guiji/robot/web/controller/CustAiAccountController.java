@@ -1,4 +1,4 @@
-package com.guiji.robot.service.web.controller;
+package com.guiji.robot.web.controller;
 
 import java.util.List;
 

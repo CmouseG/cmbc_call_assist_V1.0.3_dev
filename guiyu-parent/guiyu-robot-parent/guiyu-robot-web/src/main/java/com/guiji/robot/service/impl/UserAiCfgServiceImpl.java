@@ -40,7 +40,6 @@ import com.guiji.utils.StrUtils;
 @Service
 public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private static final String LOCK_NAME = "LOCK_ROBOT_USER_AI_CFG_";	//资源锁名称
 	@Autowired
 	private UserAiCfgBaseInfoMapper userAiCfgBaseInfoMapper;
 	@Autowired
@@ -224,7 +223,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	@Override
 	@Transactional
 	public UserAiCfgInfo userAiCfgChange(UserAiCfgBaseInfo userBaseInfo,UserAiCfgInfo userAiCfgInfo) {
-		Lock lock = new Lock(LOCK_NAME+userAiCfgInfo.getUserId(), LOCK_NAME+userAiCfgInfo.getUserId());
+		Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId(), RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId());
 		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
 			try {
 				String id = userAiCfgInfo.getId();
@@ -311,7 +310,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	@Transactional
 	public void delUserCfg(String userId,String id) {
 		if(StrUtils.isNotEmpty(id) && StrUtils.isNotEmpty(userId)) {
-			Lock lock = new Lock(LOCK_NAME+userId, LOCK_NAME+userId);
+			Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userId, RobotConstants.LOCK_NAME_CFG+userId);
 			if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
 				try {
 					//根据id查询用户存量缓存数据

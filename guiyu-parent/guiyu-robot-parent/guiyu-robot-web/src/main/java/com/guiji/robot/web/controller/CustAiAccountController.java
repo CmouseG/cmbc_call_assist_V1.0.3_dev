@@ -41,7 +41,6 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/saveUserAiCfgBaseInfo", method = RequestMethod.POST)
 	public Result.ReturnData<UserAiCfgBaseInfo> saveUserAiCfgBaseInfo(@RequestBody UserAiCfgBaseInfo userAiCfgBaseInfo){
-		logger.info("新增/修改用户机器人配置基本信息");
 		if(userAiCfgBaseInfo == null
 				|| StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())
 				|| StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())
@@ -96,7 +95,6 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/saveUserAiCfg", method = RequestMethod.POST)
 	public Result.ReturnData<UserAiCfgInfo> saveUserAiCfg(@RequestBody UserAiCfgInfo userAiCfgInfo){
-		logger.info("新增/修改用户机器人配置线路拆分信息");
 		if(userAiCfgInfo == null
 				|| StrUtils.isEmpty(userAiCfgInfo.getUserId())
 				|| StrUtils.isEmpty(userAiCfgInfo.getTemplateIds())
@@ -119,7 +117,6 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/delUserCfg", method = RequestMethod.POST)
 	public Result.ReturnData delUserCfg(@RequestParam(value="userId",required=true)String userId,@RequestParam(value="id",required=true)String id){
-		logger.info("新增/修改用户机器人配置信息");
 		if(StrUtils.isEmpty(userId) && StrUtils.isEmpty(id)) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());

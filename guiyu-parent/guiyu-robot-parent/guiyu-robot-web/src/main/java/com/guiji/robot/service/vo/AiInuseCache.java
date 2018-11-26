@@ -28,6 +28,8 @@ public class AiInuseCache {
 	private String aiStatus;
 	//正在拨打的电话
 	private String callingPhone;
+	//正在拨打电话的会话ID
+	private String seqId;
 	//正在拨打电话时间
 	private String callingTime;
 	//该机器人拨打数量

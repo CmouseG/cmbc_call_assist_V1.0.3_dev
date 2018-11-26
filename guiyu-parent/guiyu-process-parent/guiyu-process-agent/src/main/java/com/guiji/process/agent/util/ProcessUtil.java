@@ -102,12 +102,7 @@ public class ProcessUtil {
         processInstanceVO.setType(processTypeEnum);
         processInstanceVO.setPort(port);
         processInstanceVO.setName(name);
-        boolean isUp = ProcessUtil.checkRun(port);
-        if (isUp) {
-            processInstanceVO.setStatus(ProcessStatusEnum.UP);
-        } else {
-            processInstanceVO.setStatus(ProcessStatusEnum.DOWN);
-        }
+        processInstanceVO.setStatus(ProcessStatusEnum.REGISTER);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);
@@ -129,7 +124,12 @@ public class ProcessUtil {
         processInstanceVO.setPort(port);
         processInstanceVO.setName(cfgProcessVO.getName());
         processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
-        processInstanceVO.setStatus(ProcessStatusEnum.REGISTER);
+        boolean isUp = ProcessUtil.checkRun(port);
+        if (isUp) {
+            processInstanceVO.setStatus(ProcessStatusEnum.UP);
+        } else {
+            processInstanceVO.setStatus(ProcessStatusEnum.DOWN);
+        }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);

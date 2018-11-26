@@ -23,4 +23,7 @@ public class AIInitRequest {
 
 
     private String userId;
+
+
+    private String aiId;
 }

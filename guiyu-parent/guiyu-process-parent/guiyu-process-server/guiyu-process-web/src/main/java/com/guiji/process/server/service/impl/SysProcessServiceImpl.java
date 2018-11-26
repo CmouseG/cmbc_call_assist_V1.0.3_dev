@@ -51,8 +51,11 @@ public class SysProcessServiceImpl implements ISysProcessService {
     @Override
     public boolean update(SysProcess sysProcess) {
         if (sysProcess != null) {
-            sysProcess.setUpdateTime(new Date());
-            int result = sysProcessMapper.updateByExampleSelective(sysProcess,new SysProcessExample());
+            SysProcess sysProcessTmp = new SysProcess();
+            sysProcessTmp.setIp(sysProcess.getIp());
+            sysProcessTmp.setPort(sysProcess.getPort());
+            SysProcessExample example = this.getExampleByCondition(sysProcessTmp);
+            int result = sysProcessMapper.updateByExampleSelective(sysProcess,example);
             return result >0 ? true:false;
         } else {
             return false;
@@ -117,7 +120,8 @@ public class SysProcessServiceImpl implements ISysProcessService {
             String ip = sysProcess.getIp();//ip
             String port = sysProcess.getPort();	//端口
             String name = sysProcess.getName();	//资源名称
-            int type = sysProcess.getType();	//资源类型
+            Integer type = sysProcess.getType();	//资源类型
+            Integer status = sysProcess.getStatus();
             String processKey = sysProcess.getProcessKey();//扩展字段，资源类型为TTS存模型名称
             SysProcessExample example = new SysProcessExample();
             SysProcessExample.Criteria criteria = example.createCriteria();
@@ -133,8 +137,11 @@ public class SysProcessServiceImpl implements ISysProcessService {
             if(StrUtils.isNotEmpty(name)) {
                 criteria.andNameEqualTo(name);
             }
-            if(StrUtils.isNotEmpty(type)) {
+            if(type != null) {
                 criteria.andTypeEqualTo(type);
+            }
+            if(status != null) {
+                criteria.andStatusEqualTo(status);
             }
             if(StrUtils.isNotEmpty(processKey)) {
                 criteria.andProcessKeyLike(processKey);

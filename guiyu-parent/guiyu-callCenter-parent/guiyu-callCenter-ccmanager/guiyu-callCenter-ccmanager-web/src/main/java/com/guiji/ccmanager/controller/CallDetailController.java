@@ -144,10 +144,12 @@ public class CallDetailController {
         } catch (WriteException e) {
             log.error("downloadDialogue WriteException :"+e);
         } finally{
-            try {
-                out.close();
-            } catch (IOException e) {
-                log.error("out.close error:"+e);
+            if(out!=null){
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("out.close error:"+e);
+                }
             }
         }
     }
@@ -217,11 +219,13 @@ public class CallDetailController {
        }  catch (WriteException e) {
            log.error("downloadDialogueZip WriteException :"+e);
        }finally {
-           try {
-               fout.close();
-           } catch (IOException e) {
-               log.error("downloadDialogueZip fout.close error:"+e);
-           }
+            if(fout!=null){
+                try {
+                    fout.close();
+                } catch (IOException e) {
+                    log.error("downloadDialogueZip fout.close error:"+e);
+                }
+            }
        }
 
         String fileName = "通话记录.zip";

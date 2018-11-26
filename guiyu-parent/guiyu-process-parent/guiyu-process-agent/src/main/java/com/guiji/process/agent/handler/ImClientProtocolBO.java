@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class ImClientProtocolBO {
     public static final String HOST = "127.0.0.1";
-    public static int PORT = 2222;
+    public static int PORT = 18081;
     public static Channel channelGlobal = null;
     public static List<OperateVO> operateVOList = new ArrayList<OperateVO>();
     public static long operateIntervalTime = 30000;//命令操作间隔30s

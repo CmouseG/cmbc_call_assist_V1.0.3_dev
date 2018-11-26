@@ -19,7 +19,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 public class NettyHttpServer {
 	
 	public static void main(String[] args) {
-		int port = 2222;
+		int port = 18081;
 		new NettyHttpServer().run(port);
 	}
 

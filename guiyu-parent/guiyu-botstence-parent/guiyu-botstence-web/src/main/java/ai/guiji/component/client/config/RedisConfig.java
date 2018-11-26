@@ -137,7 +137,7 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         // 开启事务
-//        redisTemplate.setEnableTransactionSupport(true);  //先注释掉(先关闭redis事务，提交后立刻生效) 
+        redisTemplate.setEnableTransactionSupport(true);
         redisTemplate.setConnectionFactory(factory);
     }
     /**

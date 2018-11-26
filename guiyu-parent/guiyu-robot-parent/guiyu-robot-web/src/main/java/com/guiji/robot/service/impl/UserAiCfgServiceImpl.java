@@ -89,6 +89,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				//1、初始化一条用户机器人线路拆分
 				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
 				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
 				this.userAiCfgChange(userAiCfgInfo);
 			}
 			//2、新增或者更新基本信息

@@ -241,6 +241,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		/**4、机器人设置为忙**/
 		nowAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
 		nowAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
+		nowAi.setSeqId(aiCallApplyReq.getSeqid());
 		nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
 		iAiResourceManagerService.aiBusy(nowAi);
 		/**5、返回**/
@@ -252,8 +253,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	
 	/**
 	 * 拨打AI电话
-	 * 1、机器人基本信息检查
-	 * 2、调用sellbot拨打电话   
+	 * 1、请求基本信息校验
+	 * 2、机器人基本信息检查
+	 * 3、调用sellbot拨打电话  
 	 *    
 	 * @param aiCallStartReq
 	 * @return
@@ -284,11 +286,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			logger.error("机器人{}已经分配给{}，{}不可拨打，详细信息：{}!",nowAi.getAiNo(),nowAi.getCallingPhone(),aiCallStartReq.getPhoneNo(),nowAi);
 			throw new RobotException(AiErrorEnum.AI00060025.getErrorCode(),AiErrorEnum.AI00060025.getErrorMsg());
 		}
-		/**4、机器人设置为忙**/
-		nowAi.setCallingPhone(aiCallStartReq.getPhoneNo()); //正在拨打的电话
-		nowAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
-		nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
-		iAiResourceManagerService.aiBusy(nowAi);
 		try {
 			/**5、调用sellbot打电话 **/
 			SellbotRestoreReq sellbotRestoreReq = new SellbotRestoreReq();
@@ -301,11 +298,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			aiNext.setSellbotJson(sellbotRsp);
 			return aiNext;
 		} catch (Exception e) {
-			//发生异常的话，调用redis将状态重置为空闲
-			nowAi.setCallingPhone(null); //正在拨打的电话
-			nowAi.setCallingTime(null); //开始拨打时间
-			nowAi.setCallNum(nowAi.getCallNum()-1); //拨打数量
-			iAiResourceManagerService.aiFree(nowAi);
 			logger.error("{}的机器人{}在拨打电话{}时调用SELLBOT接口发生异常!",aiCallStartReq.getUserId(),nowAi.getAiNo(),aiCallStartReq.getPhoneNo(),e);
 			throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
 		}

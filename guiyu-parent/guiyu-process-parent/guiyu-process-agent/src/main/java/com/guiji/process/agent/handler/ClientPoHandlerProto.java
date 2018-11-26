@@ -55,7 +55,7 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 		eventLoop.schedule(new Runnable() {
 			@Override
 			public void run() {
-				imConnection.connect(ImClientProtocolBO.HOST, ImClientProtocolBO.PORT);
+				imConnection.connect(ImClientApp.imClientApp.configInit.getServerIp(), ImClientApp.imClientApp.configInit.getServerPort());
 			}
 		}, 1L, TimeUnit.SECONDS);
 		super.channelInactive(ctx);
@@ -73,7 +73,7 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
                 //发送心跳包
 				MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
 				String ip= Inet4Address.getLocalHost().getHostAddress();
-				int port = ImClientApp.agentPort;
+				int port = ImClientApp.imClientApp.configInit.getAgentPort();
 				builder.setContent(ip+":" + port);
                 ctx.writeAndFlush(builder);
             } else if (event.state().equals(IdleState.ALL_IDLE)) {

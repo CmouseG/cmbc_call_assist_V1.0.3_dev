@@ -25,7 +25,7 @@ public class ConnectionListener implements ChannelFutureListener {
 				@Override
 				public void run() {
 					System.err.println("服务端链接不上，开始重连操作...");
-					imConnection.connect(ImClientProtocolBO.HOST, ImClientProtocolBO.PORT);
+					imConnection.connect(ImClientApp.imClientApp.configInit.getServerIp(), ImClientApp.imClientApp.configInit.getServerPort());
 				}
 			}, 1L, TimeUnit.SECONDS);
 		} else {

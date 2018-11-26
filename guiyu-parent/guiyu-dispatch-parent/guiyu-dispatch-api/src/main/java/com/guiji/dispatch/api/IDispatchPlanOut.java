@@ -50,6 +50,21 @@ public interface IDispatchPlanOut {
     })
     @GetMapping(value="out/successSchedule")
     Result.ReturnData<Boolean> successSchedule(@RequestParam("planUuid") String planUuid);
+    
+    
+    /**
+     * 接受当前升级中的机器人id
+     *
+     * @param planUuid RobotId
+     * @return 接受号码呼叫完成通知
+     */
+    @ApiOperation(value = "接受当前升级中的机器人id")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "RobotId", value = "RobotId", dataType = "String", paramType = "query"),
+    })
+    @GetMapping(value="out/receiveRobotId")
+    Result.ReturnData<Boolean> receiveRobotId(@RequestParam("RobotId") String RobotId);
+    
 
 }
 

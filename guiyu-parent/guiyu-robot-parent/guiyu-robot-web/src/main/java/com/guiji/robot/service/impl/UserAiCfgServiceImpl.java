@@ -90,7 +90,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
 				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
 				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
-				this.userAiCfgChange(userAiCfgInfo);
+				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
 			}
 			//2、新增或者更新基本信息
 			this.saveOrUpdate(userAiCfgBaseInfo);
@@ -217,12 +217,13 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * 用户资源变更服务
 	 * 用户新增线路、减少线路、变更绑定的模板 都需要更新下用户资源缓存数据
 	 * 因用户资源变更影响较大，所以此处增加缓存锁，防止并发的情况
+	 * @param userBaseInfo 为空，实时查询，如果不为空直接使用（场景：新增用户机器人总量时初始化使用，此时库中还没有数据）
 	 * @param userAiCfgInfo
 	 * @return
 	 */
 	@Override
 	@Transactional
-	public UserAiCfgInfo userAiCfgChange(UserAiCfgInfo userAiCfgInfo) {
+	public UserAiCfgInfo userAiCfgChange(UserAiCfgBaseInfo userBaseInfo,UserAiCfgInfo userAiCfgInfo) {
 		Lock lock = new Lock(LOCK_NAME+userAiCfgInfo.getUserId(), LOCK_NAME+userAiCfgInfo.getUserId());
 		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
 			try {
@@ -249,7 +250,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 						//本次变更机器人数量增加量
 						int addAiNum = userResourceCache.getAiNum()+(userAiCfgInfo.getAiNum()-existUserAiCfgInfo.getAiNum());
 						//新增配置项
-						if(this.isOverAiNumCheck(userAiCfgInfo.getUserId(), addAiNum)) {
+						if(this.isOverAiNumCheck(userBaseInfo,userAiCfgInfo.getUserId(), addAiNum)) {
 							//校验是否有超过用户总机器人数量
 							throw new RobotException(AiErrorEnum.AI00060021.getErrorCode(),AiErrorEnum.AI00060021.getErrorMsg());
 						}
@@ -265,7 +266,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					}
 				}else {
 					//新增配置项
-					if(this.isOverAiNumCheck(userAiCfgInfo.getUserId(), userAiCfgInfo.getAiNum())) {
+					if(this.isOverAiNumCheck(userBaseInfo,userAiCfgInfo.getUserId(), userAiCfgInfo.getAiNum())) {
 						//校验是否有超过用户总机器人数量
 						throw new RobotException(AiErrorEnum.AI00060021.getErrorCode(),AiErrorEnum.AI00060021.getErrorMsg());
 					}
@@ -372,10 +373,12 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * @param addAiNum
 	 * @return
 	 */
-	private boolean isOverAiNumCheck(String userId,int addAiNum) {
+	private boolean isOverAiNumCheck(UserAiCfgBaseInfo userBaseInfo,String userId,int addAiNum) {
 		if(StrUtils.isNotEmpty(userId) && addAiNum >0) {
 			//查询用户总控机器人数量
-			UserAiCfgBaseInfo userBaseInfo = this.queryUserAiCfgBaseInfoByUserId(userId);
+			if(userBaseInfo == null) {
+				userBaseInfo = this.queryUserAiCfgBaseInfoByUserId(userId);
+			}
 			int totalNum = userBaseInfo.getAiTotalNum();
 			//查询用户现有机器人数量配置
 			List<UserAiCfgInfo> existCfgList = this.queryUserAiCfgListByUserId(userId);

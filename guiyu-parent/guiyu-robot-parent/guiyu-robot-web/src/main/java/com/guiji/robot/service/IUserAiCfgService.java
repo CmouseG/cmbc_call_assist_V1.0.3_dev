@@ -58,7 +58,7 @@ public interface IUserAiCfgService {
 	 * @param userAiCfgInfo
 	 * @return
 	 */
-	UserAiCfgInfo userAiCfgChange(UserAiCfgInfo userAiCfgInfo);
+	UserAiCfgInfo userAiCfgChange(UserAiCfgBaseInfo userBaseInfo,UserAiCfgInfo userAiCfgInfo);
 	
 	/**
 	 * 删除用户一条资源配置信息

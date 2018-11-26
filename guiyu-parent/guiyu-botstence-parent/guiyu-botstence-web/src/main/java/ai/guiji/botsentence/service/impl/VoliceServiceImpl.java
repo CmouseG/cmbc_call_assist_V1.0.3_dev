@@ -39,6 +39,7 @@ import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.utils.NasUtil;
@@ -123,6 +124,9 @@ public class VoliceServiceImpl implements IVoliceService {
 	
 	@Autowired
 	private IProcessSchedule iProcessSchedule;
+	
+	@Autowired
+	private IDispatchPlanOut iDispatchPlanOut;
 
 	@Override
 	@Transactional
@@ -577,7 +581,8 @@ public class VoliceServiceImpl implements IVoliceService {
 	@Override
 	public boolean uploadVoliceJsonZip(File dir, String fileName, String processId, String templateId) {
 		//查詢任務中心,是否可以发布
-		if(true){
+		ReturnData<Boolean> checkResult=iDispatchPlanOut.receiveRobotId(templateId);
+		if(checkResult.getBody()){
 			// 获取未加密的replace.json文件
 			List<File> listFile = new ArrayList<File>();
 			FileUtil.getAllFilePaths(dir, listFile);
@@ -585,7 +590,6 @@ public class VoliceServiceImpl implements IVoliceService {
 			File replaceFile = new File("replace.json");
 			for (File temp : listFile) {
 				if (temp.getName().equals("replace.json")) {
-					// replaceFile = temp;
 					try {
 						FileUtil.copyFile(temp.getPath(), replaceFile.getPath());
 					} catch (IOException e) {

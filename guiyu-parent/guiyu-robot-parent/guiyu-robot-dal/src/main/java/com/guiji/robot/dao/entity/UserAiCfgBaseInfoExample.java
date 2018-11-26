@@ -384,6 +384,76 @@ public class UserAiCfgBaseInfoExample {
             addCriterion("crt_time not between", value1, value2, "crtTime");
             return (Criteria) this;
         }
+
+        public Criteria andTemplateIdsIsNull() {
+            addCriterion("template_ids is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsIsNotNull() {
+            addCriterion("template_ids is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsEqualTo(String value) {
+            addCriterion("template_ids =", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsNotEqualTo(String value) {
+            addCriterion("template_ids <>", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsGreaterThan(String value) {
+            addCriterion("template_ids >", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsGreaterThanOrEqualTo(String value) {
+            addCriterion("template_ids >=", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsLessThan(String value) {
+            addCriterion("template_ids <", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsLessThanOrEqualTo(String value) {
+            addCriterion("template_ids <=", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsLike(String value) {
+            addCriterion("template_ids like", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsNotLike(String value) {
+            addCriterion("template_ids not like", value, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsIn(List<String> values) {
+            addCriterion("template_ids in", values, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsNotIn(List<String> values) {
+            addCriterion("template_ids not in", values, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsBetween(String value1, String value2) {
+            addCriterion("template_ids between", value1, value2, "templateIds");
+            return (Criteria) this;
+        }
+
+        public Criteria andTemplateIdsNotBetween(String value1, String value2) {
+            addCriterion("template_ids not between", value1, value2, "templateIds");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -26,6 +26,9 @@
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="replay_type" property="replayType" jdbcType="INTEGER" />
     <result column="is_del" property="isDel" jdbcType="INTEGER" />
+    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
+    <result column="robot_name" property="robotName" jdbcType="VARCHAR" />
+    <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -88,7 +91,8 @@
   <sql id="Base_Column_List" >
     id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync, 
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour, 
-    gmt_create, gmt_modified, is_tts, username, replay_type, is_del
+    gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name, 
+    batch_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
@@ -132,7 +136,8 @@
       line, `result`, call_agent, 
       clean, call_data, call_hour, 
       gmt_create, gmt_modified, is_tts, 
-      username, replay_type, is_del
+      username, replay_type, is_del, 
+      line_name, robot_name, batch_name
       )
     values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER}, 
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
@@ -141,7 +146,8 @@
       #{line,jdbcType=INTEGER}, #{result,jdbcType=VARCHAR}, #{callAgent,jdbcType=VARCHAR}, 
       #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=INTEGER}, 
-      #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER}
+      #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER}, 
+      #{lineName,jdbcType=VARCHAR}, #{robotName,jdbcType=VARCHAR}, #{batchName,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
@@ -219,6 +225,15 @@
       <if test="isDel != null" >
         is_del,
       </if>
+      <if test="lineName != null" >
+        line_name,
+      </if>
+      <if test="robotName != null" >
+        robot_name,
+      </if>
+      <if test="batchName != null" >
+        batch_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -292,6 +307,15 @@
       </if>
       <if test="isDel != null" >
         #{isDel,jdbcType=INTEGER},
+      </if>
+      <if test="lineName != null" >
+        #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="robotName != null" >
+        #{robotName,jdbcType=VARCHAR},
+      </if>
+      <if test="batchName != null" >
+        #{batchName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -376,6 +400,15 @@
       <if test="record.isDel != null" >
         is_del = #{record.isDel,jdbcType=INTEGER},
       </if>
+      <if test="record.lineName != null" >
+        line_name = #{record.lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.robotName != null" >
+        robot_name = #{record.robotName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.batchName != null" >
+        batch_name = #{record.batchName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -406,45 +439,14 @@
       is_tts = #{record.isTts,jdbcType=INTEGER},
       username = #{record.username,jdbcType=VARCHAR},
       replay_type = #{record.replayType,jdbcType=INTEGER},
-      is_del = #{record.isDel,jdbcType=INTEGER}
+      is_del = #{record.isDel,jdbcType=INTEGER},
+      line_name = #{record.lineName,jdbcType=VARCHAR},
+      robot_name = #{record.robotName,jdbcType=VARCHAR},
+      batch_name = #{record.batchName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  
-  <select id="selectByCallHour" resultMap="BaseResultMap"
-		parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
-		select
-		<include refid="Base_Column_List" />
-		from dispatch_plan
-		<if test="callHour != null">
-			where find_in_set(#{callHour},call_hour)
-		</if>
-		<if test="userId != null">
-			and  user_id = #{userId}
-		</if>
-		<if test="callData != null">
-			and  call_data = #{callData}
-		</if>
-				<if test="isDel != null">
-			and  is_del = #{isDel}
-		</if>
-				<if test="statusPlan != null">
-			and  status_plan = #{statusPlan}
-		</if>
-				<if test="statusSync != null">
-			and  status_sync = #{statusSync}
-		</if>
-						<if test="line != null">
-			and  line = #{line}
-		</if>
-		
-			order by `gmt_create` DESC
-		<if test="limitStart != null and limitStart>=0">
-			limit #{limitStart} , #{limitEnd}
-		</if>
-		
-	</select>
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     update dispatch_plan
     <set >
@@ -517,6 +519,15 @@
       <if test="isDel != null" >
         is_del = #{isDel,jdbcType=INTEGER},
       </if>
+      <if test="lineName != null" >
+        line_name = #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="robotName != null" >
+        robot_name = #{robotName,jdbcType=VARCHAR},
+      </if>
+      <if test="batchName != null" >
+        batch_name = #{batchName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -544,7 +555,44 @@
       is_tts = #{isTts,jdbcType=INTEGER},
       username = #{username,jdbcType=VARCHAR},
       replay_type = #{replayType,jdbcType=INTEGER},
-      is_del = #{isDel,jdbcType=INTEGER}
+      is_del = #{isDel,jdbcType=INTEGER},
+      line_name = #{lineName,jdbcType=VARCHAR},
+      robot_name = #{robotName,jdbcType=VARCHAR},
+      batch_name = #{batchName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByCallHour" resultMap="BaseResultMap"
+		parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+		select
+		<include refid="Base_Column_List" />
+		from dispatch_plan
+		<if test="callHour != null">
+			where find_in_set(#{callHour},call_hour)
+		</if>
+		<if test="userId != null">
+			and  user_id = #{userId}
+		</if>
+		<if test="callData != null">
+			and  call_data = #{callData}
+		</if>
+				<if test="isDel != null">
+			and  is_del = #{isDel}
+		</if>
+				<if test="statusPlan != null">
+			and  status_plan = #{statusPlan}
+		</if>
+				<if test="statusSync != null">
+			and  status_sync = #{statusSync}
+		</if>
+						<if test="line != null">
+			and  line = #{line}
+		</if>
+		
+			order by `gmt_create` DESC
+		<if test="limitStart != null and limitStart>=0">
+			limit #{limitStart} , #{limitEnd}
+		</if>
+		
+	</select>
 </mapper>

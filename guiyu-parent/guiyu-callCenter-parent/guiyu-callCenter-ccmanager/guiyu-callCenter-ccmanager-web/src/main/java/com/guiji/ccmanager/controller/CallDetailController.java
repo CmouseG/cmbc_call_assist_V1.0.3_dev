@@ -126,10 +126,8 @@ public class CallDetailController {
     @ApiOperation(value = "下载通话记录")
     @GetMapping(value="downloadDialogue")
     public void downloadDialogue(String callId,HttpServletResponse resp) throws UnsupportedEncodingException {
-        resp.setContentType("application/octet-stream;charset=GBK");
         String fileName = "通话记录.xls";
-        resp.setHeader("Content-Disposition", "attachment;filename="+
-                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
+        setHeader(resp, fileName);
 
         //生成文件
         String context = callDetailService.getDialogue(callId);
@@ -137,20 +135,7 @@ public class CallDetailController {
         OutputStream out=null;
         try {
             out=resp.getOutputStream();
-            WritableWorkbook wb = Workbook.createWorkbook(out);
-
-            WritableSheet sheet =  wb.createSheet("sheet1",0);
-            WritableCellFormat format = new WritableCellFormat();
-            format.setBorder(Border.ALL,BorderLineStyle.THIN);
-            format.setWrap(true);
-
-            Label label = new Label(0, 0 , "通话记录",format);
-            sheet.addCell(label);
-            sheet.setColumnView(0, 100);
-            sheet.addCell(new Label(0,1, context,format));
-
-            wb.write();
-            wb.close();
+            generateExcel(context, out);
 
         } catch (IOException e) {
             log.error("downloadDialogue IOException :"+e);
@@ -159,12 +144,105 @@ public class CallDetailController {
         } catch (WriteException e) {
             log.error("downloadDialogue WriteException :"+e);
         } finally{
-            try {
-                out.close();
-            } catch (IOException e) {
-                log.error("out.close error:"+e);
+            if(out!=null){
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("out.close error:"+e);
+                }
             }
         }
+    }
+
+    public void generateExcel(String context, OutputStream out) throws IOException, WriteException {
+        WritableWorkbook wb = Workbook.createWorkbook(out);
+
+        WritableSheet sheet =  wb.createSheet("sheet1",0);
+        WritableCellFormat format = new WritableCellFormat();
+        format.setBorder(Border.ALL,BorderLineStyle.THIN);
+        format.setWrap(true);
+
+        Label label = new Label(0, 0 , "通话记录",format);
+        sheet.addCell(label);
+        sheet.setColumnView(0, 100);
+        sheet.addCell(new Label(0,1, context,format));
+
+        wb.write();
+        wb.close();
+    }
+
+    public void setHeader(HttpServletResponse resp, String fileName) throws UnsupportedEncodingException {
+        resp.setContentType("application/octet-stream;charset=GBK");
+        resp.setHeader("Content-Disposition", "attachment;filename="+
+                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
+    }
+
+    @ApiOperation(value = "下载通话记录Excel压缩包,callIds以逗号分隔")
+    @GetMapping(value="downloadDialogueZip")
+    public String downloadDialogueZip(String callIds,HttpServletResponse resp) throws UnsupportedEncodingException {
+
+        log.info("---------------start downloadDialogueZip----------");
+        if(StringUtils.isBlank(callIds)){
+            return "Missing Parameters";
+        }
+
+        //生成文件
+        Map<String,String> map = callDetailService.getDialogues(callIds);
+
+        if(map==null || map.size()==0){
+            return "无通话记录";
+        }
+
+        String batchId = IdGenUtil.uuid();
+        String savePath = downloadPath+File.separator+batchId;
+        File parentFile = new File(savePath);
+        if(!parentFile.exists()){
+            parentFile.mkdirs();
+        }
+
+        FileOutputStream fout = null;
+        try {
+            for(Map.Entry<String,String> en : map.entrySet()){
+                String callId = en.getKey();
+                String context = en.getValue();
+
+                File file = new File(savePath+File.separator+callId+".xls");
+                if(!file.exists()){
+                    file.createNewFile();
+                }
+                fout=new FileOutputStream(file,true);
+
+                generateExcel(context, fout);
+            }
+       } catch (IOException e) {
+           log.error("downloadDialogueZip IOException :"+e);
+       }  catch (WriteException e) {
+           log.error("downloadDialogueZip WriteException :"+e);
+       }finally {
+            if(fout!=null){
+                try {
+                    fout.close();
+                } catch (IOException e) {
+                    log.error("downloadDialogueZip fout.close error:"+e);
+                }
+            }
+       }
+
+        String fileName = "通话记录.zip";
+        setHeader(resp, fileName);
+
+        OutputStream out=null;
+        try {
+            out=resp.getOutputStream();
+            //压缩
+            ZipUtil.zip(parentFile, out);
+            FileUtils.deleteDirectory(parentFile);
+        } catch (IOException e) {
+            log.error("downloadDialogueZip IOException error: "+e);
+        }
+        log.info("---------------end downloadDialogueZip----------");
+        return null;
+
     }
 
 
@@ -191,17 +269,14 @@ public class CallDetailController {
             return "无录音文件";
         }
 
-        resp.setContentType("application/octet-stream;charset=GBK");
         String fileName = "record.zip";
-        resp.setHeader("Content-Disposition", "attachment;filename="+
-                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
-
+        setHeader(resp, fileName);
 
         OutputStream out=null;
         try {
             out=resp.getOutputStream();
             //压缩
-            ZipUtil.zip(new File(savePath),"wav", out);
+            ZipUtil.zip(new File(savePath),out);
             FileUtils.deleteDirectory(new File(savePath));
         } catch (IOException e) {
             log.error("downloadRecordZip IOException error: "+e);
@@ -223,16 +298,16 @@ public class CallDetailController {
         return Result.ok(url);
     }
 
-    @ApiOperation(value = "删除通话记录")
+    @ApiOperation(value = "删除通话记录,callIds以逗号分隔")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+            @ApiImplicitParam(name = "callIds", value = "callIds", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="delRecord")
-    public Result.ReturnData<Boolean> delRecord(@RequestParam String callId){
-        if(StringUtils.isBlank(callId)){
+    public Result.ReturnData<Boolean> delRecord(@RequestParam String callIds){
+        if(StringUtils.isBlank(callIds)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        callDetailService.delRecord(callId);
+        callDetailService.delRecord(callIds);
         return Result.ok(true);
     }
 

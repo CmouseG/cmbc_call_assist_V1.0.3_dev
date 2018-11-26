@@ -130,7 +130,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         BeanUtil.copyProperties(lineInfo,lineInfoApi);
         lineInfoApi.setLineId(String.valueOf(lineInfo.getLineId()));
         Result.ReturnData result = lineOperApiFeign.addLineinfos(lineInfoApi);
-        if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.addLineinfos failed,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚事务
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_ADDLINE);
@@ -214,7 +214,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         //本地删除数据库lineinfo记录，同时调用fsmanager的删除线路接口
         lineInfoMapper.deleteByPrimaryKey(Integer.valueOf(id));
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(id);
-        if(result== null || !result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.deleteLineinfos,code:"+result.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);

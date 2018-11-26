@@ -14,5 +14,5 @@ import java.util.List;
 public interface LineInfoService {
     LineInfo getByLineId(Integer lineId);
 
-//    void save(List<CallOutPlan> totalCallPlans);
+//    void add(List<CallOutPlan> totalCallPlans);
 }

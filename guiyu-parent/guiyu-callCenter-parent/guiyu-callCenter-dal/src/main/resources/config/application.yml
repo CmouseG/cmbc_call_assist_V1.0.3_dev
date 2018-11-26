@@ -10,15 +10,6 @@ spring:
     min-evictable-idle-time-millis: 1800000
 sharding:
   jdbc:
-    datasource:
-      names: guiyu_callcenter
-      guiyu_callcenter:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC
-        username: callcenter
-        password: callcenter@1234
-
     config:
       sharding:
         props.sql.show: false
@@ -27,7 +18,7 @@ sharding:
             actual-data-nodes: guiyu_callcenter.call_out_detail_${0..1}
             table-strategy:
               standard:
-                sharding-column: call_detail_type
+                sharding-column: sharding_value
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
 #            key-generator-column-name: call_detail_id
@@ -49,7 +40,7 @@ sharding:
             actual-data-nodes: guiyu_callcenter.call_in_detail_${0..1}
             table-strategy:
               standard:
-                sharding-column: call_detail_type
+                sharding-column: sharding_value
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
 #            key-generator-column-name: call_detail_id

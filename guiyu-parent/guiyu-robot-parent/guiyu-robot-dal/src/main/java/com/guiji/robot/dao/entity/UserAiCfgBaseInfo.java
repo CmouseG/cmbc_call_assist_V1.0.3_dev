@@ -12,6 +12,8 @@ public class UserAiCfgBaseInfo implements Serializable {
 
     private Date crtTime;
 
+    private String templateIds;
+
     private static final long serialVersionUID = 1L;
 
     public String getId() {
@@ -46,6 +48,14 @@ public class UserAiCfgBaseInfo implements Serializable {
         this.crtTime = crtTime;
     }
 
+    public String getTemplateIds() {
+        return templateIds;
+    }
+
+    public void setTemplateIds(String templateIds) {
+        this.templateIds = templateIds == null ? null : templateIds.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -56,6 +66,7 @@ public class UserAiCfgBaseInfo implements Serializable {
         sb.append(", userId=").append(userId);
         sb.append(", aiTotalNum=").append(aiTotalNum);
         sb.append(", crtTime=").append(crtTime);
+        sb.append(", templateIds=").append(templateIds);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

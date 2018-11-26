@@ -6,6 +6,7 @@
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="ai_total_num" property="aiTotalNum" jdbcType="INTEGER" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="template_ids" property="templateIds" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, ai_total_num, crt_time
+    id, user_id, ai_total_num, crt_time, template_ids
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.UserAiCfgBaseInfoExample" >
     select
@@ -107,9 +108,9 @@
       SELECT genTabId('user_ai_cfg_base_info')
     </selectKey>
     insert into user_ai_cfg_base_info (id, user_id, ai_total_num, 
-      crt_time)
+      crt_time, template_ids)
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiTotalNum,jdbcType=INTEGER}, 
-      #{crtTime,jdbcType=TIMESTAMP})
+      #{crtTime,jdbcType=TIMESTAMP}, #{templateIds,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.UserAiCfgBaseInfo" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -127,6 +128,9 @@
       <if test="crtTime != null" >
         crt_time,
       </if>
+      <if test="templateIds != null" >
+        template_ids,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
@@ -138,6 +142,9 @@
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="templateIds != null" >
+        #{templateIds,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -162,6 +169,9 @@
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.templateIds != null" >
+        template_ids = #{record.templateIds,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -172,7 +182,8 @@
     set id = #{record.id,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
       ai_total_num = #{record.aiTotalNum,jdbcType=INTEGER},
-      crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      template_ids = #{record.templateIds,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -189,6 +200,9 @@
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="templateIds != null" >
+        template_ids = #{templateIds,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -196,7 +210,8 @@
     update user_ai_cfg_base_info
     set user_id = #{userId,jdbcType=VARCHAR},
       ai_total_num = #{aiTotalNum,jdbcType=INTEGER},
-      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      template_ids = #{templateIds,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

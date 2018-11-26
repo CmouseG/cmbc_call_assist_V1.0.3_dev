@@ -209,10 +209,41 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
+    public Map<String, String> getDialogues(String callIds) {
+        CallOutDetailExample example = new CallOutDetailExample();
+        String[] callidArr = callIds.split(",");
+        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+        example.setOrderByClause("call_id,bot_answer_time");
+
+        List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
+
+        Map<String,String> map = new HashMap<String,String>();
+        if(list!=null && list.size()>0){
+            for(CallOutDetail callOutDetail:list){
+                String callId = callOutDetail.getCallId();
+
+                String botSay = callOutDetail.getBotAnswerText();
+                String customerSay = callOutDetail.getCustomerSayText();
+
+                if(map.get(callId)== null){
+                    String result = "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                    map.put(callId,result);
+                }else{
+                    String result=map.get(callId);
+                    result += "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                    map.put(callId,result);
+                }
+            }
+        }
+        return  map;
+    }
+
+
+    @Override
     public String getRecordFileUrl(String callId) {
         CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(callId);
         if(callOutRecord!=null){
-            return callOutRecord.getRecordFile();
+            return callOutRecord.getRecordUrl();
         }
         return null;
     }
@@ -228,10 +259,12 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public void delRecord(String callId) {
+    public void delRecord(String callIds) {
+        String[] callidArr = callIds.split(",");
         CallOutPlan callOutPlan = new CallOutPlan();
         callOutPlan.setIsdel(1);
-        callOutPlan.setCallId(callId);
-        callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+        callOutPlanMapper.updateByExampleSelective(callOutPlan,example);
     }
 }

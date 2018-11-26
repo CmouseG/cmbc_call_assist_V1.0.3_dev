@@ -32,6 +32,8 @@ public class CallOutDetail implements Serializable {
 
     private Integer totalDuration;
 
+    private Integer shardingValue;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallDetailId() {
@@ -146,6 +148,14 @@ public class CallOutDetail implements Serializable {
         this.totalDuration = totalDuration;
     }
 
+    public Integer getShardingValue() {
+        return shardingValue;
+    }
+
+    public void setShardingValue(Integer shardingValue) {
+        this.shardingValue = shardingValue;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -166,6 +176,7 @@ public class CallOutDetail implements Serializable {
         sb.append(", customerSayTime=").append(customerSayTime);
         sb.append(", reason=").append(reason);
         sb.append(", totalDuration=").append(totalDuration);
+        sb.append(", shardingValue=").append(shardingValue);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

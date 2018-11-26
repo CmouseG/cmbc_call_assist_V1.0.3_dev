@@ -2,7 +2,7 @@ package com.guiji.common.model.process;
 
 public enum ProcessStatusEnum {
 
-    UP(0), DOWN(1), BUSYING(2), MISSING(3), UNKNOWN(-1),UNREGISTER(4);
+    UP(0), DOWN(1), BUSYING(2), MISSING(3), UNKNOWN(-1),REGISTER(4),UNREGISTER(5);
 
     /** 标识DeviceTypeEnmu的整型值 */
     private int iValue;

@@ -7,7 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,10 +32,10 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.DispatchHourMapper;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchHour;
 import com.guiji.dispatch.dao.entity.DispatchHourExample;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
@@ -191,6 +194,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
+
+		boolean result = false;
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
@@ -220,6 +225,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (SysUser != null) {
 			dispatchPlan.setUsername(SysUser.getBody().getUsername());
 		}
+		// 重复校验
+		List phones = new ArrayList<>();
+
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			if (row == null) {
@@ -229,6 +237,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			if (isNull(row.getCell(0))) {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
+				if (!isNumeric(phone)) {
+					throw new Exception("号码格式有问题，请检查文件");
+				}
+				phones.add(phone);
 			} else {
 				throw new Exception("导入失败(第" + (r + 1) + "行,电话未填写)");
 			}
@@ -244,6 +256,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
 				attach = row.getCell(2).getStringCellValue();
 			}
+
+			HashSet<Integer> hashSet = new HashSet<>(phones);
+			if (phones.size() != hashSet.size()) {
+				throw new Exception("当前号码存在重复的数据,请检查文件");
+			}
+
 			dispatchPlan.setPhone(phone);
 			dispatchPlan.setAttach(attach);
 			dispatchPlan.setUserId(userId.intValue());
@@ -259,19 +277,27 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setIsTts(Constant.IS_TTS_0);
 			dispatchPlanMapper.insert(dispatchPlan);
 
-			String[] hours = dispatchPlan.getCallHour().split(",");
-			// 写入时间dispatchHour
-			for (String hr : hours) {
-				DispatchHour hour = new DispatchHour();
-				hour.setDispatchId(dispatchPlan.getPlanUuid());
-				hour.setGmtCreate(dateProvider.getCurrentTime());
-				hour.setIsCall(Constant.ISCALL_0);
-				hour.setHour(Integer.valueOf(hr));
-				dispatchHourMapper.insert(hour);
-			}
+			// String[] hours = dispatchPlan.getCallHour().split(",");
+			// // 写入时间dispatchHour
+			// for (String hr : hours) {
+			// DispatchHour hour = new DispatchHour();
+			// hour.setDispatchId(dispatchPlan.getPlanUuid());
+			// hour.setGmtCreate(dateProvider.getCurrentTime());
+			// hour.setIsCall(Constant.ISCALL_0);
+			// hour.setHour(Integer.valueOf(hr));
+			// dispatchHourMapper.insert(hour);
+			// }
+		}
+		return result;
+	}
+
+	public boolean isNumeric(String str) {
+		Pattern pattern = Pattern.compile("[0-9]*");
+		Matcher isNum = pattern.matcher(str);
+		if (!isNum.matches()) {
+			return false;
 		}
 		return true;
-
 	}
 
 	public boolean isNull(Cell cell) {
@@ -463,7 +489,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setCallHour("12");
 		// dis.setStatusPlan(statusPlan);
 		List<DispatchPlan> selectByCallHour = dispatchPlanMapper.selectByCallHour(dis);
-		System.out.println(selectByCallHour);
 		// ReturnData<List<LineConcurrent>> outLineinfos =
 		// callManagerFeign.getLineInfos(userId);
 		// return outLineinfos.getBody();
@@ -492,35 +517,31 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setLine(lineId);
 		dis.setCallHour(String.valueOf(hour));
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
+
+		List<String> list = new ArrayList<>();
+		Object object2 = redisUtil.get("robotId");
+		System.out.println(object2);
+		if (redisUtil.get("robotId") != null) {
+			logger.info("当前模板升级中，接口 queryAvailableSchedules 对应模板查不到数据，" + redisUtil.get("robotId"));
+			String object = (String) redisUtil.get("robotId");
+			String[] split = object.split(",");
+			for (String str : split) {
+				list.add(str);
+			}
+		}
+		dis.setRobotIds(list);
+
 		if (requestCount != 0) {
 			dis.setLimitStart(0);
 			dis.setLimitEnd(requestCount);
 		}
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		// List<DispatchHour> hourList = new ArrayList<>();
-		// // 遍历当前符合日期号码
-		// for (DispatchPlan plan : phones) {
-		// DispatchHourExample hourEx = new DispatchHourExample();
-		// // 查询拨打时间
-		// hourEx.createCriteria().andHourEqualTo(hour).andDispatchIdEqualTo(plan.getPlanUuid());
-		// List<DispatchHour> list = dispatchHourMapper.selectByExample(hourEx);
-		// hourList.addAll(list);
-		// }
-		// List<String> ids = new ArrayList<>();
-		// for (DispatchHour bean : hourList) {
-		// ids.add(String.valueOf(bean.getDispatchId()));
-		// }
+
 		// // 同步状态;0未同步1已同步
 		for (DispatchPlan dispatchPlan : phones) {
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
 			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
 		}
-		// if (ids.size() > 0) {
-		// DispatchPlanExample ex1 = new DispatchPlanExample();
-		// ex1.createCriteria().andPlanUuidIn(ids);
-		// result = dispatchPlanMapper.selectByExample(ex1);
-		// }
-
 		// 判断当前任务是否查询完毕
 		int count = dispatchPlanMapper.countByExample(ex);
 		if (count <= requestCount) {
@@ -662,5 +683,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		return result > 0 ? true : false;
+	}
+
+	@Override
+	public boolean checkBatchId(String name) {
+		DispatchPlanBatchExample ex = new DispatchPlanBatchExample();
+		ex.createCriteria().andNameEqualTo(name);
+		int count = dispatchPlanBatchMapper.countByExample(ex);
+		return count > 0 ? true : false;
 	}
 }

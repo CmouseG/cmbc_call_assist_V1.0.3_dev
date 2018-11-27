@@ -3,13 +3,12 @@ package com.guiji.dispatch.service;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 
@@ -195,4 +194,10 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	boolean updateReplayDate();
+	
+	/**
+	 * 检查批次是否存在
+	 * @return
+	 */
+	boolean checkBatchId(String name);
 }

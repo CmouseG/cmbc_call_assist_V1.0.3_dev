@@ -304,6 +304,29 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	
 	
 	/**
+	 * 查询用户在休息的AI列表（空闲/暂停不可以用）
+	 * @param userId
+	 * @return
+	 */
+	public List<AiInuseCache> queryUserSleepUseAiList(String userId){
+		if(StrUtils.isNotEmpty(userId)) {
+			List<AiInuseCache> list = aiCacheService.queryUserAiInUseList(userId);
+			if(ListUtil.isNotEmpty(list)) {
+				Iterator<AiInuseCache> it = list.iterator();
+				while(it.hasNext()){
+					AiInuseCache ai = it.next();
+					if(RobotConstants.AI_STATUS_B.equals(ai.getAiStatus())) {
+						it.remove();
+					}
+				}
+			}
+			return list;
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * 查询用户某个机器人
 	 * @param userId 用户id
 	 * @param aiNo 机器人编号

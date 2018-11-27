@@ -1,0 +1,1 @@
+scp /Users/toolwiz.com/Documents/code/git/si-talk/guiyu-parent/guiyu-callCenter-parent/guiyu-callCenter-calloutserver/guiyu-callCenter-calloutserver-web/target/guiyu-callCenter-calloutserver-web-1.0-SNAPSHOT.jar bs1:/home/apps/callcenter/calloutserver

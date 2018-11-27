@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.common.model.Page;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.robot.constants.RobotConstants;
@@ -22,10 +23,12 @@ import com.guiji.robot.dao.entity.UserAiCfgBaseInfoExample;
 import com.guiji.robot.dao.entity.UserAiCfgHisInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfoExample;
+import com.guiji.robot.dao.entity.UserAiCfgInfoExample.Criteria;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
@@ -82,7 +85,23 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			String id = userAiCfgBaseInfo.getId();
 			if(StrUtils.isNotEmpty(id)) {
 				//更新
-				throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+				//先查询存量的用户机器总数
+				UserAiCfgBaseInfo existUserAiCfgBaseInfo = userAiCfgBaseInfoMapper.selectByPrimaryKey(id);
+				String userId = existUserAiCfgBaseInfo.getUserId();
+				if(userAiCfgBaseInfo.getAiTotalNum()<existUserAiCfgBaseInfo.getAiTotalNum()) {
+					//如果数量减少了，那么需要让用户删除拆分信息重新配置
+					List<UserAiCfgInfo> cfgInfoList = this.queryUserAiCfgListByUserId(userId);
+					if(ListUtil.isNotEmpty(cfgInfoList)) {
+						throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+					}
+				}
+				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
+				if(StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())) {
+					userAiCfgBaseInfo.setTemplateIds(existUserAiCfgBaseInfo.getTemplateIds());
+				}
+				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
+					userAiCfgBaseInfo.setUserId(userId);
+				}
 			}else {
 				//新增
 				//1、初始化一条用户机器人线路拆分
@@ -114,6 +133,38 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 分页查询 用户机器人配置基本信息
+	 * @param pageNo
+	 * @param pageSize
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(int pageNo, int pageSize,String userId) {
+		Page<UserAiCfgBaseInfo> page = new Page<UserAiCfgBaseInfo>();
+		int totalRecord = 0;
+		int limitStart = (pageNo-1)*pageSize;	//起始条数
+		int limitEnd = pageSize;	//查询条数
+		UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+		if(StrUtils.isNotEmpty(userId)) {
+			example.createCriteria().andUserIdEqualTo(userId);
+		}
+		//查询总数
+		totalRecord = userAiCfgBaseInfoMapper.countByExample(example);
+		if(totalRecord > 0) {
+			example.setLimitStart(limitStart);
+			example.setLimitEnd(limitEnd);
+			List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
+			page.setRecords(list);
+		}
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setTotal(totalRecord);
+		return page;
 	}
 	
 	
@@ -210,6 +261,36 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		}
 		return null;
 	}
+	
+	
+	/**
+	 * 分页查询 用户机器人配置详情
+	 * @param pageNo
+	 * @param pageSize
+	 * @param condition
+	 * @return
+	 */
+	@Override
+	public Page<UserAiCfgInfo> queryCustAccountForPage(int pageNo, int pageSize,UserAiCfgQueryCondition condition) {
+		Page<UserAiCfgInfo> page = new Page<UserAiCfgInfo>();
+		int totalRecord = 0;
+		int limitStart = (pageNo-1)*pageSize;	//起始条数
+		int limitEnd = pageSize;	//查询条数
+		UserAiCfgInfoExample example = this.queryExample(condition);
+		//查询总数
+		totalRecord = userAiCfgInfoMapper.countByExample(example);
+		if(totalRecord > 0) {
+			example.setLimitStart(limitStart);
+			example.setLimitEnd(limitEnd);
+			List<UserAiCfgInfo> list = userAiCfgInfoMapper.selectByExample(example);
+			page.setRecords(list);
+		}
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setTotal(totalRecord);
+		return page;
+	}
+	
 	
 	
 	/**
@@ -395,5 +476,27 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 查询用户机器人配置
+	 * @param condition
+	 * @return
+	 */
+	private UserAiCfgInfoExample queryExample(UserAiCfgQueryCondition condition) {
+		UserAiCfgInfoExample example = new UserAiCfgInfoExample();
+		if(condition != null) {
+			Criteria criteria = example.createCriteria();
+			if(StrUtils.isNotEmpty(condition.getUserId())) {
+				//用户id精确匹配
+				criteria.andUserIdEqualTo(condition.getUserId());
+			}
+			if(StrUtils.isNotEmpty(condition.getTemplateId())) {
+				//话术模板模糊匹配
+				criteria.andTemplateIdsLike("%"+condition.getTemplateId()+"%");
+			}
+		}
+		return example;
 	}
 }

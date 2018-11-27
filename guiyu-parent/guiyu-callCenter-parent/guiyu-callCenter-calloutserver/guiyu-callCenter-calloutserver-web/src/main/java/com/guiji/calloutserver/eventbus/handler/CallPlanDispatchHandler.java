@@ -75,7 +75,6 @@ public class CallPlanDispatchHandler {
             //调用调度中心的获取客户呼叫计划(请求数=并发数)，获取初始呼叫计划
             Integer requestNum = event.getLineCount().getMaxConcurrentCalls();
 
-            //TODO 这个是一个一个去请求调度中心好呢，还是一次请求多个好呢
             for (int i=1;i<=requestNum;i++) {
                 log.info("------ getAvailableSchedules:"+lineCount.getLineId()+"  ," + i);
 //                getAvailableSchedules(Integer.valueOf(event.getCustomerId()), lineCount.getLineId(), event.getTempId());

@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.eventbus.handler;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
@@ -87,6 +88,7 @@ public class FsBotHandler {
 
             Long startTime = new Date().getTime();
             AIResponse aiResponse = aiManager.applyAi(request);
+            Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse,false);
 
@@ -120,6 +122,7 @@ public class FsBotHandler {
             callOutDetailRecord.setCallDetailId(callDetail.getCallDetailId());
             callOutDetailRecordService.save(callOutDetailRecord);
         }catch (Exception ex){
+            //TODO:报警
             log.warn("在处理ChannelAnswer时出错异常", ex);
         }
     }

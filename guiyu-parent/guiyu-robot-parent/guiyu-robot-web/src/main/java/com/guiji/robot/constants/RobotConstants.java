@@ -30,6 +30,7 @@ public class RobotConstants {
 	public static final String TTS_STATUS_P = "P"; //P-合成中
 	public static final String TTS_STATUS_S = "S"; //S-完成
 	public static final String TTS_STATUS_F = "F"; //F-失败
+	public static final String TTS_STATUS_N = "N"; //N-查无数据
 	
 	public static final String RSP_CODE_SUCCESS = "0";	//外部请求返回的成功状态码
 	

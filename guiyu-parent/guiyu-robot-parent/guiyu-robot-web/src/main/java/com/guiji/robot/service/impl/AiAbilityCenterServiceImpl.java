@@ -1,7 +1,9 @@
 package com.guiji.robot.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,25 +81,49 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				CheckResult result = new CheckResult();
 				result.setSeqid(hsChecker.getSeqid());
 				result.setPass(true); //默认校验通过
+				//校验下必输
+				if(StrUtils.isEmpty(hsChecker.getSeqid())
+						|| StrUtils.isEmpty(hsChecker.getTemplateId())
+						|| StrUtils.isEmpty(hsChecker.getParams())) {
+					result.setCheckMsg("必输项校验未通过");
+					result.setPass(false); //默认不通过，参数不存在
+					list.add(result);
+					continue;
+				}
 				//逐个检查
 				HsReplace hsReplace = aiCacheService.queyHsReplace(hsChecker.getTemplateId());
-				//当前话术模板需要的参数
-				String[] needParams = hsReplace.getReplace_variables_flag();
-				if(needParams != null && needParams.length>0) {
-					//需要检查
-					for(String param : needParams) {
-						if(StrUtils.isEmpty(hsChecker.getParamMap().get(param))) {
-							logger.error("会话:{}参数校验不通过,缺失参数：{}",hsChecker.getSeqid(),param);
-							result.setCheckMsg("参数校验不通过,缺失参数："+param);
+				if(hsReplace.isTemplate_tts_flag()) {
+					//当前话术模板需要的参数
+					String[] needParams = hsReplace.getReplace_variables_flag();
+					if(needParams != null && needParams.length>0) {
+						//参数个数校验以及参数赋值
+						String[] params = hsChecker.getParams().split("\\|");
+						if(params.length<needParams.length) {
+							logger.error("会话:{}参数校验不通过,缺失参数",hsChecker.getSeqid());
+							result.setCheckMsg("参数校验不通过,缺失参数");
 							result.setPass(false); //默认不通过，参数不存在
-							break;
+							list.add(result);
+							continue;
 						}
+						Map<String,String> paramMap = new HashMap<String,String>();
+						for(int i=0;i<needParams.length;i++) {
+							String key = needParams[i];	//模板中参数key
+							String value = params[i];	//传过来的参数value
+							paramMap.put(key, value);
+						}
+						hsChecker.setParamMap(paramMap);
 					}
-				}
-				if(isNeedResourceInit && result.isPass() && hsReplace.isTemplate_tts_flag()) {
-					//1、需要初始化资源  2、参数校验通过 3、需要TTS合成
-					logger.info("会话:{}校验通过,异步发起tts合成申请，请求参数:{}",hsChecker.getSeqid(),hsChecker);
-					iTtsWavService.asynTtsCompose(hsChecker);
+					if(isNeedResourceInit && result.isPass() && hsReplace.isTemplate_tts_flag()) {
+						//1、需要初始化资源  2、参数校验通过 3、需要TTS合成
+						logger.info("会话:{}校验通过,异步发起tts合成申请，请求参数:{}",hsChecker.getSeqid(),hsChecker);
+						iTtsWavService.asynTtsCompose(hsChecker);
+					}
+				}else {
+					logger.error("会话id：{},模板:{},不需要TTS合成，返回null",hsChecker.getSeqid(),hsChecker.getTemplateId());
+					result.setCheckMsg("不需要TTS合成");
+					result.setPass(false); //默认不通过，参数不存在
+					list.add(result);
+					continue;
 				}
 				list.add(result);
 			}

@@ -7,7 +7,12 @@ public enum GuiyuAIExceptionEnum implements ExceptionEnum{
 	EXCP_AI_TRANSFER("0500001","语音合成失败"),
 	EXCP_AI_GET_TTS("0500002","没有获取到TTS"),
 	EXCP_AI_GET_GPU("0500003","没有获取到可用GPU"),
-	EXCP_AI_CHANGE_TTS("0500004","模型切换失败");
+	EXCP_AI_CHANGE_TTS("0500004","模型切换失败"),
+	EXCP_AI_NO_TTS_ReqVO("0500005","请求对象TtsReqVO为空"),
+	EXCP_AI_NO_BUSID("0500006","busId不存在或为空字符串"),
+	EXCP_AI_NO_MODEL("0500007","model不存在或为空字符串"),
+	EXCP_AI_NO_CONTENTS("0500008","缺少文本内容");
+	
 	
 	//返回码
 	private String errorCode;

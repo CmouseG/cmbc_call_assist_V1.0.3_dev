@@ -30,5 +30,7 @@ public interface IBotSentenceApprovalService {
 	public List queryComProcess(String processId);
 	
 	public List queryComProcess2(String processId);
+	
+	public void publishSentence(String processId,Long userId);
 
 }

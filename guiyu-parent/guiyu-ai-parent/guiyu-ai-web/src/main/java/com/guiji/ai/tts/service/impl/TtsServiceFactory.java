@@ -36,12 +36,15 @@ public class TtsServiceFactory {
 			}while(System.currentTimeMillis() - startTime > 3000);
 			
 			if (!avaliableGpuList.isEmpty()) { // 取到可用GPU
-				guiyuTtsGpu = (GuiyuTtsGpu) avaliableGpuList.get(0);
-				logger.info("获取到可用的GPU，IP=" + guiyuTtsGpu.getIp() + "，PORT=" + guiyuTtsGpu.getPort());
+				GuiyuTtsGpu guiyuTtsGpuRef = (GuiyuTtsGpu) avaliableGpuList.get(0);
+				logger.info("获取到可用的GPU，IP=" + guiyuTtsGpuRef.getIp() + "，PORT=" + guiyuTtsGpuRef.getPort());
 				// 从可用list中移除此GPU
-				redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 1, guiyuTtsGpu);
+				redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 1, guiyuTtsGpuRef);
 				// 添加到不可用list中
-				redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, guiyuTtsGpu);
+				redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, guiyuTtsGpuRef);
+				
+				guiyuTtsGpu.setIp(guiyuTtsGpuRef.getIp());
+				guiyuTtsGpu.setPort(guiyuTtsGpuRef.getPort());
 				return guiyuTtsGpu;
 			}else{ // 没有取到可用GPU
 				logger.error("没有取到可用GPU！");

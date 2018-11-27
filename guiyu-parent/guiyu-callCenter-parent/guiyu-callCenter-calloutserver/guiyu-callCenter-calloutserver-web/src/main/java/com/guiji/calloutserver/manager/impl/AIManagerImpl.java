@@ -43,6 +43,7 @@ public class AIManagerImpl implements AIManager {
         try {
             AiCallStartReq aiCallStartReq = new  AiCallStartReq();
             aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
+            aiCallStartReq.setAiNo(aiRequest.getAiId());
             String tempId = aiRequest.getTempId();
             aiCallStartReq.setTemplateId(tempId);
             aiCallStartReq.setSeqid(aiRequest.getUuid());

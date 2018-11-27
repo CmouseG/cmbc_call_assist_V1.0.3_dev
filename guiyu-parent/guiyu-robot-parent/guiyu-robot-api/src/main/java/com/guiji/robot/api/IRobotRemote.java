@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.component.result.Result;
+import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
@@ -51,6 +53,14 @@ public interface IRobotRemote {
 	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
 	
 	
+	@ApiOperation(value = "AI资源申请")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "aiCallApplyReq", value = "机器人资源申请", required = true)
+    })
+    @PostMapping(value = "/remote/aiCallApply")
+	Result.ReturnData<AiCallNext> aiCallApply(@RequestBody AiCallApplyReq aiCallApplyReq);
+	
+	
 	@ApiOperation(value = "拨打AI电话")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "aiCallStartReq", value = "发起电话拨打请求", required = true)
@@ -75,12 +85,19 @@ public interface IRobotRemote {
 	Result.ReturnData<AiCallNext> aiCallNext(@RequestBody AiCallNextReq aiCallNextReq);
 	
 	
-	
 	@ApiOperation(value = "挂断电话释放资源")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "aiHangupReq", value = "挂断请求信息", required = true)
     })
     @PostMapping(value = "/remote/aiHangup")
 	Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq);
+	
+	
+	@ApiOperation(value = "查询用户机器人拆分详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户编号", required = true)
+    })
+    @PostMapping(value = "/remote/queryCustAccount")
+	Result.ReturnData queryCustAccount(@RequestParam(value="userId",required=true)String userId);
 	
 }

@@ -129,12 +129,12 @@ public class ProcessUtil {
         processInstanceVO.setPort(port);
         processInstanceVO.setName(cfgProcessVO.getName());
         processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
-        boolean isUp = ProcessUtil.checkRun(port);
-        if (isUp) {
-            processInstanceVO.setStatus(ProcessStatusEnum.UP);
-        } else {
-            processInstanceVO.setStatus(ProcessStatusEnum.DOWN);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        processInstanceVO.setStatus(ProcessStatusEnum.REGISTER);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         String msg = JsonUtils.bean2Json(cmdMessageVO);
         ImClientProtocolBO.getIntance().send(msg,3);

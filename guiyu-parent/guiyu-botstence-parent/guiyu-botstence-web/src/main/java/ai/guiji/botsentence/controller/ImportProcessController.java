@@ -59,7 +59,7 @@ public class ImportProcessController {
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 	
 	@RequestMapping(value="importProcess")
-	public ServerResult importProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestHeader Long userId) throws Exception{
+	public ServerResult importProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestParam Long userId) throws Exception{
 		String fileName = multipartFile.getOriginalFilename();
 		String suffix =  fileName.substring(fileName.lastIndexOf(".") + 1);
 		if(!"zip".equals(suffix)) {

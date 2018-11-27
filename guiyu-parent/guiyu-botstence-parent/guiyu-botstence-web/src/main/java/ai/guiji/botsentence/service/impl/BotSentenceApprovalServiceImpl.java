@@ -9,13 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceBranchMapper;
@@ -28,9 +26,9 @@ import ai.guiji.botsentence.dao.entity.BotSentenceDomain;
 import ai.guiji.botsentence.dao.entity.BotSentenceDomainExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
+import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample.Criteria;
 import ai.guiji.botsentence.dao.entity.VoliceInfo;
 import ai.guiji.botsentence.dao.ext.BotSentenceDomainExtMapper;
-import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample.Criteria;
 import ai.guiji.botsentence.service.IBotSentenceApprovalService;
 import ai.guiji.botsentence.vo.DomainVO;
 import ai.guiji.component.client.util.DateUtil;
@@ -86,10 +84,6 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			criteria.andAccountNoEqualTo(accountNo);
 			criteria2.andAccountNoEqualTo(accountNo);
 		}
-		
-		/*String userId = UserUtil.getUserId();
-		String host = userId.split("-")[0];
-		criteria.andCrtUserLike(host + "-%");*/
 		
 		//计算分页
 		int limitStart = (pageNo-1)*pageSize;
@@ -151,19 +145,11 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			domain.setLstUpdateUser(userId.toString());
 			botSentenceDomainMapper.updateByPrimaryKey(domain);
 		}
-		
-		//如果主流程的enter_branch的response为空，则设置end值为下一个节点
-		/*BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-		branchExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andResponseEqualTo("[]").andEndIsNull();
-		List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchExample);
-		if(null != branchList && branchList.size() > 0) {
-			for(BotSentenceBranch branch : branchList) {
-				branch.setEnd(branch.getNext());
-				botSentenceBranchMapper.updateByPrimaryKey(branch);
-			}
-		}*/
-		
-		
+	}
+	
+	
+	public void publishSentence(String processId,Long userId){
+		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();
 		String dirName = DateUtil.getCurrentTime2() + "-" + templateId;
 	    File file = null;
@@ -389,56 +375,6 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			g.visit(startIndex, endDomainList.get(i), processStrList);
 		}
 		
-		
-		/*
-		
-		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-		branchExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo("开场白");
-		List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchExample);
-		
-		List<List<String>> domainNameResults = new ArrayList<>();
-		
-		
-		
-		//获取所有没有下级节点的最后一个节点
-		List<String> endDomainList = new ArrayList<>();
-		
-		
-		
-		if(null != allList && allList.size() > 0) {
-			for(BotSentenceDomain domain : allList) {
-					BotSentenceBranchExample endBranchExample = new BotSentenceBranchExample();
-					endBranchExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo(domain.getDomainName()).andNextIsNotNull();
-					int num = botSentenceBranchMapper.countByExample(endBranchExample);
-					if(num == 0) {
-						endDomainList.add(domain.getDomainName());
-					}
-			}
-		}
-		System.out.println("所有的结束节点为: " + endDomainList.toString());*/
-		
-		/*List<String> nextDomainList = new ArrayList<>();
-		
-		while(null != nextDomainList && nextDomainList.size() > 0) {
-			System.out.println("next节点集合: " + nextDomainList.toString());
-			for(int i = 0 ; i < nextDomainList.size() ; i++) {
-				
-				if(endDomainList.contains(nextDomainList.get(i))) {
-					System.out.println(nextDomainList.get(i) + "    当前为结束节点...");
-				}
-				
-			}
-			
-			
-		}*/
-		
-		/*List<List<DomainVO>> results = new ArrayList<>();
-		
-		
-		List<String> list = new ArrayList<>();
-		getNext(processId, "开场白", domainNameResults, list);
-		*/
-		
 		List<List<DomainVO>> results = new ArrayList<>();
 		
 		if(null != processStrList && processStrList.size() > 0) {
@@ -482,36 +418,22 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		return results;
 	}
 	
-	
-	
-	private List<String> getNext(String processId, String domainName, List<List<String>> results, List<String> list){
-		list.add(domainName);
-		
-		
-		//获取next列表
-		BotSentenceBranchExample tempExample = new BotSentenceBranchExample();
-		tempExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo(domainName);
-		List<BotSentenceBranch> tempList = botSentenceBranchMapper.selectByExample(tempExample);
-		List<String> nextList = new ArrayList<>();
-		for(BotSentenceBranch temp : tempList) {
-			if(StringUtils.isNotBlank(temp.getNext())) {
-				nextList.add(temp.getNext());
-			}
-		}
-		/*
-		if(nextList.size() > 0) {
-			for(String tempName : nextList) {
-				getNext(processId, tempName,results, list);
-			}
-		}else {
-			results.add(list);
-			System.out.println(results.toString());
-			list = new ArrayList<>();
-		}*/
-		
-		
-		return nextList;
-	}
+//	private List<String> getNext(String processId, String domainName, List<List<String>> results, List<String> list){
+//		list.add(domainName);
+//		
+//		
+//		//获取next列表
+//		BotSentenceBranchExample tempExample = new BotSentenceBranchExample();
+//		tempExample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo(domainName);
+//		List<BotSentenceBranch> tempList = botSentenceBranchMapper.selectByExample(tempExample);
+//		List<String> nextList = new ArrayList<>();
+//		for(BotSentenceBranch temp : tempList) {
+//			if(StringUtils.isNotBlank(temp.getNext())) {
+//				nextList.add(temp.getNext());
+//			}
+//		}
+//		return nextList;
+//	}
 	
 	
 	private BotSentenceDomain getParentDomain(String processId, String domainName) {

@@ -33,6 +33,9 @@ public class RobotConstants {
 	
 	public static final String RSP_CODE_SUCCESS = "0";	//外部请求返回的成功状态码
 	
+	public static final String LOCK_NAME_CFG = "LOCK_ROBOT_USER_AI_CFG_";	//资源锁-用户机器人数量变更
+	public static final String LOCK_NAME_ASSIGN = "LOCK_ROBOT_USER_AI_ASSIGN_";	//资源锁-用户机器人分配
+	
 	/**
 	 * 分配的机器人缓存
 	 */

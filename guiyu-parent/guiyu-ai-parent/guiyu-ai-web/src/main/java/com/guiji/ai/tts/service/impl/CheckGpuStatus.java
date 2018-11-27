@@ -34,16 +34,16 @@ public class CheckGpuStatus implements ApplicationRunner {
 	 */
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
-		logger.info("调用进程管理接口查看GPU分配情况");
 		List<ProcessInstanceVO> returnList = new ArrayList<>();
 		
+		logger.info("getting all TTS...");
 		ReturnData<List<ProcessInstanceVO>> returnData = iProcessSchedule.getAllTTS();
 		if(returnData != null && returnData.getBody() != null){
 			returnList = returnData.getBody();
 		}else{
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_TTS);
 		}
-		logger.info("返回的列表：" + returnList);
+		logger.info("获取的TTS列表：" + returnList);
 		
 		Collections.sort(returnList, new Comparator<ProcessInstanceVO>() {
 			@Override

@@ -1,22 +1,25 @@
-package com.guiji.robot.service.web.controller;
+package com.guiji.robot.web.controller;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -41,16 +44,16 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/saveUserAiCfgBaseInfo", method = RequestMethod.POST)
 	public Result.ReturnData<UserAiCfgBaseInfo> saveUserAiCfgBaseInfo(@RequestBody UserAiCfgBaseInfo userAiCfgBaseInfo){
-		logger.info("新增/修改用户机器人配置基本信息");
 		if(userAiCfgBaseInfo == null
 				|| StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())
+				|| StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())
 				|| userAiCfgBaseInfo.getAiTotalNum() == null
 				|| userAiCfgBaseInfo.getAiTotalNum() < 0
 				) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		userAiCfgBaseInfo = iUserAiCfgService.saveOrUpdate(userAiCfgBaseInfo);
+		userAiCfgBaseInfo = iUserAiCfgService.putupUserCfgBase(userAiCfgBaseInfo);
 		return Result.ok(userAiCfgBaseInfo);
 	}
 	
@@ -87,6 +90,21 @@ public class CustAiAccountController {
 	}
 	
 	
+	/**
+	 * 查询用户正在使用的机器人开户账号明细
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/queryCustAccountForPage/{pageNo}/{pageSize}", method = RequestMethod.POST)
+	public Result.ReturnData<Page<UserAiCfgInfo>> queryCustAccountForPage(
+			 @PathVariable(value="pageNo",required=true)int pageNo,
+			 @PathVariable(value="pageSize",required=true)int pageSize,
+			 @RequestBody UserAiCfgQueryCondition condition){
+		Page<UserAiCfgInfo> page = iUserAiCfgService.queryCustAccountForPage(pageNo, pageSize, condition);
+		return Result.ok(page);
+	}
+	
+	
 	
 	/**
 	 * 新增或者修改用户机器人配置线路拆分信息明细
@@ -95,7 +113,6 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/saveUserAiCfg", method = RequestMethod.POST)
 	public Result.ReturnData<UserAiCfgInfo> saveUserAiCfg(@RequestBody UserAiCfgInfo userAiCfgInfo){
-		logger.info("新增/修改用户机器人配置线路拆分信息");
 		if(userAiCfgInfo == null
 				|| StrUtils.isEmpty(userAiCfgInfo.getUserId())
 				|| StrUtils.isEmpty(userAiCfgInfo.getTemplateIds())
@@ -105,7 +122,7 @@ public class CustAiAccountController {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		UserAiCfgInfo cfgInfo = iUserAiCfgService.userAiCfgChange(userAiCfgInfo);
+		UserAiCfgInfo cfgInfo = iUserAiCfgService.userAiCfgChange(null,userAiCfgInfo);
 		return Result.ok(cfgInfo);
 	}
 	
@@ -118,7 +135,6 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/delUserCfg", method = RequestMethod.POST)
 	public Result.ReturnData delUserCfg(@RequestParam(value="userId",required=true)String userId,@RequestParam(value="id",required=true)String id){
-		logger.info("新增/修改用户机器人配置信息");
 		if(StrUtils.isEmpty(userId) && StrUtils.isEmpty(id)) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());

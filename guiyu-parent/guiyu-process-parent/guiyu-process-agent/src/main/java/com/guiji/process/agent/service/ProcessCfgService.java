@@ -120,7 +120,7 @@ public class ProcessCfgService {
         if (cfgMapUnRegister != null) {
             for (Integer key : cfgMapUnRegister.keySet()) {
                 try {
-                    ProcessUtil.sendUnRegister(key,cfgMap.get(key));
+                    ProcessUtil.sendUnRegister(key,cfgMapUnRegister.get(key));
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }

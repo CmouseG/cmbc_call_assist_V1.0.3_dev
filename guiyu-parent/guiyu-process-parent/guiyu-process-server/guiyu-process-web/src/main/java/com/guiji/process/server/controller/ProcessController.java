@@ -3,9 +3,11 @@ package com.guiji.process.server.controller;
 import com.guiji.common.model.Page;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.server.dao.entity.SysProcess;
+import com.guiji.process.server.model.ProcessCmdVO;
 import com.guiji.process.server.service.ISysProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,14 +29,14 @@ public class ProcessController {
 
 
     @PostMapping("/start")
-    public Object start(List<SysProcess> sysProcessList) {
-        sysProcessService.executeCmd(sysProcessList,CmdTypeEnum.START);
+    public Object start(@RequestBody ProcessCmdVO processCmdVO) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.START);
         return "success";
     }
 
     @PostMapping("/stop")
-    public Object stop(List<SysProcess> sysProcessList) {
-        sysProcessService.executeCmd(sysProcessList,CmdTypeEnum.STOP);
+    public Object stop(@RequestBody ProcessCmdVO processCmdVO) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.STOP);
         return "success";
     }
 }

@@ -3,13 +3,16 @@ server:
 spring:
   application:
     name: guiyu-callCenter-ccmanager
-  datasource:
-  #内网
-    #url: jdbc:mysql://172.16.167.215:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8
-    username: callcenter
-    password: callcenter@1234
-    driver-class-name: com.mysql.jdbc.Driver
+sharding:
+  jdbc:
+    datasource:
+      names: guiyu_callcenter
+      guiyu_callcenter:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC
+        username: callcenter
+        password: callcenter@1234
 #数据库连接配置
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
@@ -26,12 +29,12 @@ eureka:
     lease-expiration-duration-in-seconds: 2
   client:
       service-url:
-#        defaultZone: http://47.96.151.197:18001/eureka/
-        defaultZone: http://192.168.1.78:18001/eureka/
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+#        defaultZone: http://192.168.1.78:18001/eureka/
 properties:
   error: error.properties
 ribbon:
   ReadTimeout: 30000
   ConnectTimeout: 30000
-download.path: D:\\downloads
-#download.path: /home/apps/dowlands
+#download.path: D:\\downloads
+download.path: /home/apps/callcenter/ccmanager/dowlands

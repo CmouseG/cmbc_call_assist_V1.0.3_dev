@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.common.model.Page;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.robot.constants.RobotConstants;
@@ -22,10 +23,12 @@ import com.guiji.robot.dao.entity.UserAiCfgBaseInfoExample;
 import com.guiji.robot.dao.entity.UserAiCfgHisInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfoExample;
+import com.guiji.robot.dao.entity.UserAiCfgInfoExample.Criteria;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
@@ -40,7 +43,6 @@ import com.guiji.utils.StrUtils;
 @Service
 public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private static final String LOCK_NAME = "LOCK_ROBOT_USER_AI_CFG_";	//资源锁名称
 	@Autowired
 	private UserAiCfgBaseInfoMapper userAiCfgBaseInfoMapper;
 	@Autowired
@@ -54,12 +56,11 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
-	 * 保存或者更新一条用户基本信息
+	 * 保存或者更新一条用户基本信息（不开放出去，必须调用变更服务）
 	 * @param userAiCfgBaseInfo
 	 * @return
 	 */
-	@Override
-	public UserAiCfgBaseInfo saveOrUpdate(UserAiCfgBaseInfo userAiCfgBaseInfo) {
+	private UserAiCfgBaseInfo saveOrUpdate(UserAiCfgBaseInfo userAiCfgBaseInfo) {
 		if(userAiCfgBaseInfo != null) {
 			if(StrUtils.isEmpty(userAiCfgBaseInfo.getId())) {
 				//如果主键为空，那么新增一条信息
@@ -69,6 +70,32 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				//主键不为空，更新信息
 				userAiCfgBaseInfoMapper.updateByPrimaryKey(userAiCfgBaseInfo);
 			}
+		}
+		return userAiCfgBaseInfo;
+	}
+	
+	
+	/**
+	 * 机器人数量总控配置
+	 * @param userAiCfgBaseInfo
+	 * @return
+	 */
+	public UserAiCfgBaseInfo putupUserCfgBase(UserAiCfgBaseInfo userAiCfgBaseInfo) {
+		if(userAiCfgBaseInfo != null) {
+			String id = userAiCfgBaseInfo.getId();
+			if(StrUtils.isNotEmpty(id)) {
+				//更新
+				throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+			}else {
+				//新增
+				//1、初始化一条用户机器人线路拆分
+				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
+				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
+				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
+			}
+			//2、新增或者更新基本信息
+			this.saveOrUpdate(userAiCfgBaseInfo);
 		}
 		return userAiCfgBaseInfo;
 	}
@@ -189,16 +216,47 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
+	 * 分页查询 用户机器人配置详情
+	 * @param pageNo
+	 * @param pageSize
+	 * @param condition
+	 * @return
+	 */
+	@Override
+	public Page<UserAiCfgInfo> queryCustAccountForPage(int pageNo, int pageSize,UserAiCfgQueryCondition condition) {
+		Page<UserAiCfgInfo> page = new Page<UserAiCfgInfo>();
+		int totalRecord = 0;
+		int limitStart = (pageNo-1)*pageSize;	//起始条数
+		int limitEnd = pageSize;	//查询条数
+		UserAiCfgInfoExample example = this.queryExample(condition);
+		//查询总数
+		totalRecord = userAiCfgInfoMapper.countByExample(example);
+		if(totalRecord > 0) {
+			example.setLimitStart(limitStart);
+			example.setLimitEnd(limitEnd);
+			List<UserAiCfgInfo> list = userAiCfgInfoMapper.selectByExample(example);
+			page.setRecords(list);
+		}
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setTotal(totalRecord);
+		return page;
+	}
+	
+	
+	
+	/**
 	 * 用户资源变更服务
 	 * 用户新增线路、减少线路、变更绑定的模板 都需要更新下用户资源缓存数据
 	 * 因用户资源变更影响较大，所以此处增加缓存锁，防止并发的情况
+	 * @param userBaseInfo 为空，实时查询，如果不为空直接使用（场景：新增用户机器人总量时初始化使用，此时库中还没有数据）
 	 * @param userAiCfgInfo
 	 * @return
 	 */
 	@Override
 	@Transactional
-	public UserAiCfgInfo userAiCfgChange(UserAiCfgInfo userAiCfgInfo) {
-		Lock lock = new Lock(LOCK_NAME+userAiCfgInfo.getUserId(), LOCK_NAME+userAiCfgInfo.getUserId());
+	public UserAiCfgInfo userAiCfgChange(UserAiCfgBaseInfo userBaseInfo,UserAiCfgInfo userAiCfgInfo) {
+		Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId(), RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId());
 		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
 			try {
 				String id = userAiCfgInfo.getId();
@@ -224,7 +282,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 						//本次变更机器人数量增加量
 						int addAiNum = userResourceCache.getAiNum()+(userAiCfgInfo.getAiNum()-existUserAiCfgInfo.getAiNum());
 						//新增配置项
-						if(this.isOverAiNumCheck(userAiCfgInfo.getUserId(), addAiNum)) {
+						if(this.isOverAiNumCheck(userBaseInfo,userAiCfgInfo.getUserId(), addAiNum)) {
 							//校验是否有超过用户总机器人数量
 							throw new RobotException(AiErrorEnum.AI00060021.getErrorCode(),AiErrorEnum.AI00060021.getErrorMsg());
 						}
@@ -240,7 +298,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					}
 				}else {
 					//新增配置项
-					if(this.isOverAiNumCheck(userAiCfgInfo.getUserId(), userAiCfgInfo.getAiNum())) {
+					if(this.isOverAiNumCheck(userBaseInfo,userAiCfgInfo.getUserId(), userAiCfgInfo.getAiNum())) {
 						//校验是否有超过用户总机器人数量
 						throw new RobotException(AiErrorEnum.AI00060021.getErrorCode(),AiErrorEnum.AI00060021.getErrorMsg());
 					}
@@ -285,7 +343,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	@Transactional
 	public void delUserCfg(String userId,String id) {
 		if(StrUtils.isNotEmpty(id) && StrUtils.isNotEmpty(userId)) {
-			Lock lock = new Lock(LOCK_NAME+userId, LOCK_NAME+userId);
+			Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userId, RobotConstants.LOCK_NAME_CFG+userId);
 			if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
 				try {
 					//根据id查询用户存量缓存数据
@@ -347,10 +405,12 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * @param addAiNum
 	 * @return
 	 */
-	private boolean isOverAiNumCheck(String userId,int addAiNum) {
+	private boolean isOverAiNumCheck(UserAiCfgBaseInfo userBaseInfo,String userId,int addAiNum) {
 		if(StrUtils.isNotEmpty(userId) && addAiNum >0) {
 			//查询用户总控机器人数量
-			UserAiCfgBaseInfo userBaseInfo = this.queryUserAiCfgBaseInfoByUserId(userId);
+			if(userBaseInfo == null) {
+				userBaseInfo = this.queryUserAiCfgBaseInfoByUserId(userId);
+			}
 			int totalNum = userBaseInfo.getAiTotalNum();
 			//查询用户现有机器人数量配置
 			List<UserAiCfgInfo> existCfgList = this.queryUserAiCfgListByUserId(userId);
@@ -368,5 +428,27 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 查询用户机器人配置
+	 * @param condition
+	 * @return
+	 */
+	private UserAiCfgInfoExample queryExample(UserAiCfgQueryCondition condition) {
+		UserAiCfgInfoExample example = new UserAiCfgInfoExample();
+		if(condition != null) {
+			Criteria criteria = example.createCriteria();
+			if(StrUtils.isNotEmpty(condition.getUserId())) {
+				//用户id精确匹配
+				criteria.andUserIdEqualTo(condition.getUserId());
+			}
+			if(StrUtils.isNotEmpty(condition.getTemplateId())) {
+				//话术模板模糊匹配
+				criteria.andTemplateIdsLike("%"+condition.getTemplateId()+"%");
+			}
+		}
+		return example;
 	}
 }

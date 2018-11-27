@@ -84,7 +84,7 @@ public class FsBotHandler {
                 return;
             }
 
-            AIInitRequest request = new AIInitRequest(callPlan.getCallId(), callPlan.getTempId(), callPlan.getPhoneNum(), callPlan.getCustomerId());
+            AIInitRequest request = new AIInitRequest(callPlan.getCallId(), callPlan.getTempId(), callPlan.getPhoneNum(), callPlan.getCustomerId(),callPlan.getAiId());
 
             Long startTime = new Date().getTime();
             AIResponse aiResponse = aiManager.applyAi(request);
@@ -93,7 +93,7 @@ public class FsBotHandler {
             channelHelper.playAiReponse(aiResponse,false);
 
             //更新callplan
-            callPlan.setAiId(aiResponse.getAiId());
+//            callPlan.setAiId(aiResponse.getAiId());
             callPlan.setCallState(ECallState.answer.ordinal());
             callPlan.setAnswerTime(new Date());
             callPlan.setAccurateIntent(aiResponse.getAccurateIntent());

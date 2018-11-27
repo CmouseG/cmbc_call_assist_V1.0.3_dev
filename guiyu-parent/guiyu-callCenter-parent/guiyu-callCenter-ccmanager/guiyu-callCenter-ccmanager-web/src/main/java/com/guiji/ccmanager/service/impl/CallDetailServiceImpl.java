@@ -202,7 +202,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             for(CallOutDetail callOutDetail:list){
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
-                result += "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                result += getContext(botSay, customerSay);
             }
         }
         return  result;
@@ -226,17 +226,28 @@ public class CallDetailServiceImpl implements CallDetailService {
                 String customerSay = callOutDetail.getCustomerSayText();
 
                 if(map.get(callId)== null){
-                    String result = "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                    String result = getContext(botSay, customerSay);
                     map.put(callId,result);
                 }else{
                     String result=map.get(callId);
-                    result += "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                    result += getContext(botSay, customerSay);
                     map.put(callId,result);
                 }
             }
         }
         return  map;
     }
+
+    private String getContext(String botSay,String customerSay){
+        if(StringUtils.isBlank(botSay)){
+           return  "客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+        }else if(StringUtils.isBlank(customerSay)){
+            return "机器人："+(botSay==null ? "":botSay)+"\r\n";
+        }else{
+            return  "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+        }
+    }
+
 
 
     @Override

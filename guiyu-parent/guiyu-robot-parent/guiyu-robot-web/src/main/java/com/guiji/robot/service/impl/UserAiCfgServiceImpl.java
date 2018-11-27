@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.common.model.Page;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.robot.constants.RobotConstants;
@@ -22,10 +23,12 @@ import com.guiji.robot.dao.entity.UserAiCfgBaseInfoExample;
 import com.guiji.robot.dao.entity.UserAiCfgHisInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfoExample;
+import com.guiji.robot.dao.entity.UserAiCfgInfoExample.Criteria;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
@@ -213,6 +216,36 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
+	 * 分页查询 用户机器人配置详情
+	 * @param pageNo
+	 * @param pageSize
+	 * @param condition
+	 * @return
+	 */
+	@Override
+	public Page<UserAiCfgInfo> queryCustAccountForPage(int pageNo, int pageSize,UserAiCfgQueryCondition condition) {
+		Page<UserAiCfgInfo> page = new Page<UserAiCfgInfo>();
+		int totalRecord = 0;
+		int limitStart = (pageNo-1)*pageSize;	//起始条数
+		int limitEnd = pageSize;	//查询条数
+		UserAiCfgInfoExample example = this.queryExample(condition);
+		//查询总数
+		totalRecord = userAiCfgInfoMapper.countByExample(example);
+		if(totalRecord > 0) {
+			example.setLimitStart(limitStart);
+			example.setLimitEnd(limitEnd);
+			List<UserAiCfgInfo> list = userAiCfgInfoMapper.selectByExample(example);
+			page.setRecords(list);
+		}
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setTotal(totalRecord);
+		return page;
+	}
+	
+	
+	
+	/**
 	 * 用户资源变更服务
 	 * 用户新增线路、减少线路、变更绑定的模板 都需要更新下用户资源缓存数据
 	 * 因用户资源变更影响较大，所以此处增加缓存锁，防止并发的情况
@@ -395,5 +428,27 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 查询用户机器人配置
+	 * @param condition
+	 * @return
+	 */
+	private UserAiCfgInfoExample queryExample(UserAiCfgQueryCondition condition) {
+		UserAiCfgInfoExample example = new UserAiCfgInfoExample();
+		if(condition != null) {
+			Criteria criteria = example.createCriteria();
+			if(StrUtils.isNotEmpty(condition.getUserId())) {
+				//用户id精确匹配
+				criteria.andUserIdEqualTo(condition.getUserId());
+			}
+			if(StrUtils.isNotEmpty(condition.getTemplateId())) {
+				//话术模板模糊匹配
+				criteria.andTemplateIdsLike("%"+condition.getTemplateId()+"%");
+			}
+		}
+		return example;
 	}
 }

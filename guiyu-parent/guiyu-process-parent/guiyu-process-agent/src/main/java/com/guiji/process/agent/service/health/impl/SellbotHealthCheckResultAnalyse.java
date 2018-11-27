@@ -10,8 +10,10 @@ public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalys
     @Override
     public ProcessStatusEnum check(CommandResult cmdResult) {
         if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
-            cmdResult.getOutput().contains("RUNNING");
-            return ProcessStatusEnum.UP;
+            if(cmdResult.getOutput().contains("success") || cmdResult.getOutput().contains("RUNNING"))
+            {
+                return ProcessStatusEnum.UP;
+            }
         }
 
         return ProcessStatusEnum.DOWN;

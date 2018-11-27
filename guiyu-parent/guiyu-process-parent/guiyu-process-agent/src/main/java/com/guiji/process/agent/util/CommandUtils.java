@@ -38,12 +38,14 @@ public class CommandUtils {
                 cmd[2] = command;
             } else if (osName.equals("Linux")) {  //linux
                 cmd = new String[3];
-                cmd[0] = "/bin/sh";
+                cmd[0] = "/bin/bash";
                 cmd[1] = "-c";
                 cmd[2] = command;
             } else {
-                cmd = new String[1];
-                cmd[0] = command;
+                cmd = new String[3];
+                cmd[0] = "/bin/bash";
+                cmd[1] = "-c";
+                cmd[2] = command;
             }
              process= Runtime.getRuntime().exec(cmd);
              commandResult = wait(process);

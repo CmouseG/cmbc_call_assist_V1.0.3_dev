@@ -4,6 +4,7 @@ import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.server.core.ConnectionPool;
+import com.guiji.process.server.util.DeviceProcessUtil;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -11,16 +12,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
 
 @Component
 public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
+
+		String remoteIp = DeviceProcessUtil.getRemoreIp(ctx);
+		ConnectionPool.putChannel(remoteIp, ctx);
+
 		MessageProto.Message message = (MessageProto.Message) msg;
-		if (ConnectionPool.getChannel(message.getId()) == null) {
-			ConnectionPool.putChannel(message.getId(), ctx);
-		}
+
 		if (message.getType() == 0) {
 			if(StringUtils.isNotEmpty(message.getId())) {
 				//客户端启动
@@ -36,11 +40,17 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 			builder.setContent("服务端响应:" + "hello");
 			ctx.writeAndFlush(builder);
 		}
+		if (message.getType() == 2) {
+			System.out.println("服务端收到消息:" +  message.getContent());
+		}
 
 		// ping
 		if (message.getType() == 3) {
-			System.out.println("服务端收到状态监控:" +  message.getContent());
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
+			if(cmdMessageVO.getProcessInstanceVO() != null)
+			{
+				cmdMessageVO.getProcessInstanceVO().setIp(DeviceProcessUtil.getRemoreIp(ctx));
+			}
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应

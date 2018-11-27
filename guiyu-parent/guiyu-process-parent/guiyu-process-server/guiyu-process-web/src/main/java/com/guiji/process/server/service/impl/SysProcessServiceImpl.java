@@ -41,7 +41,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
         SysProcessExample sysProcessExample = this.getExampleByCondition(sysProcessTmp);
         List<SysProcess> sysProcessList =  sysProcessMapper.selectByExample(sysProcessExample);
         if (sysProcessList != null && sysProcessList.size() > 0) {
-            return false;
+            return this.update(sysProcess);
         } else {
             int result = sysProcessMapper.insert(sysProcess);
             return result > 0 ? true : false;
@@ -103,7 +103,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
                 processInstanceVO.setType(ProcessTypeEnum.valueOf(sysProcess.getType()));
                 CmdMessageVO cmdMessageVO = new CmdMessageVO();
                 cmdMessageVO.setProcessInstanceVO(processInstanceVO);
-                cmdMessageVO.setCmdType(CmdTypeEnum.START);
+                cmdMessageVO.setCmdType(cmdTypeEnum);
                 cmdMessageVOs.add(cmdMessageVO);
             }
         }

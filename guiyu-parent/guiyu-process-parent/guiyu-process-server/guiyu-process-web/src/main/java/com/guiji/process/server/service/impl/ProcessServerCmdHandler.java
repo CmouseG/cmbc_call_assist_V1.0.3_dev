@@ -34,6 +34,8 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             return;
         }
 
+        logger.debug(cmdMessageVO.toString());
+
         switch (cmdMessageVO.getCmdType()) {
             case AGENTREGISTER:
                 doRegister(cmdMessageVO);
@@ -67,6 +69,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     private void doHealthStatus(CmdMessageVO cmdMessageVO)
     {
+
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
         if(oldProcessInstanceVO == null)
@@ -74,7 +77,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             // 未注册过，不做
             return;
         }
-
+        System.out.println("doHealthStatus::" + processInstanceVO);
         processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
     }
 
@@ -103,12 +106,6 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         List<ProcessInstanceVO> lst = new ArrayList<ProcessInstanceVO>();
 
         if(processInstanceVO == null)
-        {
-            return;
-        }
-
-        ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
-        if(oldProcessInstanceVO != null)
         {
             return;
         }

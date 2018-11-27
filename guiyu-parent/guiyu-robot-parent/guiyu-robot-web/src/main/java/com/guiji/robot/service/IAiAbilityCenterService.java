@@ -13,6 +13,7 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 
@@ -38,7 +39,15 @@ public interface IAiAbilityCenterService {
 	 * @param ttsVoice
 	 * @return
 	 */
-	List<TtsVoice> fetchTtsUrls(TtsVoiceReq ttsVoiceReq);
+	TtsComposeCheckRsp fetchTtsUrls(TtsVoiceReq ttsVoiceReq);
+	
+	
+	/**
+	 * 批量TTS合成下载
+	 * @param seqIdList
+	 * @return
+	 */
+	public List<TtsComposeCheckRsp> ttsComposeCheck(List<String> seqIdList);
 	
 	
 	/**

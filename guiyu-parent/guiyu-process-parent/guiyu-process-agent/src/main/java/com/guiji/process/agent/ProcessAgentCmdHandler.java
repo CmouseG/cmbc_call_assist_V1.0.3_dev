@@ -69,7 +69,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
                 // 更新配置文件
                 ProcessCfgService.getIntance().refreshProcessKey(cmdMessageVO.getProcessInstanceVO().getPort(), cmdMessageVO.getParameters().get(1));
-                Thread.sleep(10000);//等待1s查看是否关闭成功
+                Thread.sleep(30000);//等待1s查看是否关闭成功
                 break;
 
             case HEALTH:

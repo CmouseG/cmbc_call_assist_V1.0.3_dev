@@ -31,6 +31,16 @@ public interface IUserAiCfgService {
 	public UserAiCfgBaseInfo queryUserAiCfgBaseInfoByUserId(String userId);
 	
 	/**
+	 * 分页查询 用户机器人配置基本信息
+	 * @param pageNo
+	 * @param pageSize
+	 * @param userId
+	 * @return
+	 */
+	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(int pageNo, int pageSize,String userId);
+	
+	
+	/**
 	 * 根据用户编号查询用户-机器人配置信息列表
 	 * @return
 	 */

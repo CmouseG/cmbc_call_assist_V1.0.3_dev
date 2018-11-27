@@ -3,13 +3,10 @@ package ai.guiji.botsentence.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,20 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jcraft.jsch.Logger;
-
-import ai.guiji.botsentence.constant.Constant;
-import ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import ai.guiji.botsentence.dao.entity.VoliceInfo;
 import ai.guiji.botsentence.dao.entity.VoliceInfoExt;
 import ai.guiji.botsentence.service.IVoliceService;
-import ai.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
-import ai.guiji.botsentence.vo.FlowInfoVO;
 import ai.guiji.botsentence.vo.RefuseVoliceVO;
 import ai.guiji.component.client.config.JsonParam;
-import ai.guiji.component.client.util.DateUtil;
 import ai.guiji.component.client.util.ExcelUtil;
-import ai.guiji.component.client.util.QiuniuUploadUtil;
 import ai.guiji.component.exception.CommonException;
 import ai.guiji.component.model.ServerResult;
 
@@ -43,11 +32,11 @@ public class VoliceContoller {
     @Autowired
     private IVoliceService service;
 
-    @Autowired
-    private QiuniuUploadUtil qiuniuUploadUtil;
-
-    @Autowired
-    private BotSentenceProcessServiceImpl botSentenceProcessService;
+//    @Autowired
+//    private QiuniuUploadUtil qiuniuUploadUtil;
+//
+//    @Autowired
+//    private BotSentenceProcessServiceImpl botSentenceProcessService;
 
     @RequestMapping("queryVoliceInfoList")
     @ResponseBody
@@ -178,13 +167,5 @@ public class VoliceContoller {
         //FlowInfoVO flow = botSentenceProcessService.initFlowInfo(processId);
         return ServerResult.createBySuccess(list);
     }
-
-//	@RequestMapping("test")
-//	@ResponseBody
-//	public ServerResult<Object> test(){
-//		File dir=new File("C:/Users/Administrator/Desktop/gjdk3");
-//		service.uploadVoliceJsonZip(dir, "gjdk3","111");
-//		return ServerResult.createBySuccess();
-//	}
 
 }

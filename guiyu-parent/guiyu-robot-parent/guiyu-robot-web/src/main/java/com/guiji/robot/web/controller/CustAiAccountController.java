@@ -109,7 +109,7 @@ public class CustAiAccountController {
 		}
 		List<UserAiCfgBaseInfoVO> rtnList = new ArrayList<UserAiCfgBaseInfoVO>();
 		Page<UserAiCfgBaseInfo> page = iUserAiCfgService.queryUserAiCfgBaseInfoFroPageByUserId(pageNo,pageSize,qUserId);
-		List<UserAiCfgBaseInfo> list = new ArrayList<UserAiCfgBaseInfo>();
+		List<UserAiCfgBaseInfo> list = page.getRecords();
 		if(ListUtil.isNotEmpty(list)) {
 			Map<String,String> userMap = new HashMap<String,String>();
 			for(UserAiCfgBaseInfo base:list) {
@@ -130,7 +130,7 @@ public class CustAiAccountController {
 				rtnList.add(vo);
 			}
 		}
-		Page<UserAiCfgBaseInfoVO> rtnPage = new Page<UserAiCfgBaseInfoVO>(pageSize,page.getTotalRecord(),rtnList);
+		Page<UserAiCfgBaseInfoVO> rtnPage = new Page<UserAiCfgBaseInfoVO>(pageNo,page.getTotalRecord(),rtnList);
 		return Result.ok(rtnPage);
 	}
 	

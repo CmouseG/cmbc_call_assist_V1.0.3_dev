@@ -588,7 +588,11 @@
 						<if test="line != null">
 			and  line = #{line}
 		</if>
-		
+		<if test="robotIds !=null" >
+			<foreach collection="robotIds" item="robotId" index="index">
+    				and <![CDATA[ robot  != ]]> #{robotId}
+    		</foreach>
+		</if>
 			order by `gmt_create` DESC
 		<if test="limitStart != null and limitStart>=0">
 			limit #{limitStart} , #{limitEnd}

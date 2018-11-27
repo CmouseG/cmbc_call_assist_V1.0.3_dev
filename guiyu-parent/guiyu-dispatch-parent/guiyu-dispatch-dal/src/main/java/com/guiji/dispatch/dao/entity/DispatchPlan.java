@@ -2,6 +2,7 @@ package com.guiji.dispatch.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class DispatchPlan implements Serializable {
 	// 是否显示
@@ -67,10 +68,21 @@ public class DispatchPlan implements Serializable {
 
 	private String batchName;
 
+	private List<String> robotIds;
+	
 	private static final long serialVersionUID = 1L;
 
 	
 	
+	
+	public List<String> getRobotIds() {
+		return robotIds;
+	}
+
+	public void setRobotIds(List<String> robotIds) {
+		this.robotIds = robotIds;
+	}
+
 	public Integer getStatusShow() {
 		return statusShow;
 	}

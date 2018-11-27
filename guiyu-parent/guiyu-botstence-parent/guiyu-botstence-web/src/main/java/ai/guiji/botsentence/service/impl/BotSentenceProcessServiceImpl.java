@@ -2987,4 +2987,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public List<BotSentenceProcess> getTemplateBySelf(String accountNo) {
 		return botSentenceProcessExtMapper.getTemplateBySelf(accountNo);
 	}
+	
+	@Override
+	public List<BotSentenceProcess> getTemplateById(String templateId) {
+		return botSentenceProcessExtMapper.getTemplateById(templateId);
+	}
 }

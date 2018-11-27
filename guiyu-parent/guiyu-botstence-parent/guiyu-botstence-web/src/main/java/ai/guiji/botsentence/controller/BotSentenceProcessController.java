@@ -350,4 +350,10 @@ public class BotSentenceProcessController {
 		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateBySelf(accountNo);
 		return ServerResult.createBySuccess(result);
 	}
+	
+	@RequestMapping(value="getTemplateById")
+	public ServerResult<List<BotSentenceProcess>> getTemplateById(String templateId){
+		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
+		return ServerResult.createBySuccess(result);
+	}
 }

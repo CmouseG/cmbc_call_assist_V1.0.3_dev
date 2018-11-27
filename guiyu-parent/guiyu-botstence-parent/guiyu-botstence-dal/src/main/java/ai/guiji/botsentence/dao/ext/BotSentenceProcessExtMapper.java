@@ -9,4 +9,5 @@ public interface BotSentenceProcessExtMapper {
 
     public List<BotSentenceProcess> getTemplateBySelf(String accountNo);
 
+    public List<BotSentenceProcess> getTemplateById(String templateId);
 }

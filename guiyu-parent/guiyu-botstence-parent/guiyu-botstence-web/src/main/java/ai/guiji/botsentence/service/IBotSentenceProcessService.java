@@ -101,4 +101,6 @@ public interface IBotSentenceProcessService {
 	public BotSentenceIntent queryKeywordsListByBranchId(String branchId);
 	
 	public List<BotSentenceProcess> getTemplateBySelf(String accountNo);
+	
+	public List<BotSentenceProcess> getTemplateById(String templateId);
 }

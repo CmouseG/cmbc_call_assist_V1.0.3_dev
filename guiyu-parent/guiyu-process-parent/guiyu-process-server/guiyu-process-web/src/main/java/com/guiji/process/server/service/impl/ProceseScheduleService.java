@@ -105,7 +105,6 @@ public class ProceseScheduleService implements IProceseScheduleService {
         }
         processInstanceVO.setWhoUsed(IdGenUtil.uuid());
         processInstanceVO.setProcessKey(toModel);
-        processInstanceVO.setStatus(ProcessStatusEnum.BUSYING);
         deviceManageService.updateStatus(processInstanceVO);
 
 

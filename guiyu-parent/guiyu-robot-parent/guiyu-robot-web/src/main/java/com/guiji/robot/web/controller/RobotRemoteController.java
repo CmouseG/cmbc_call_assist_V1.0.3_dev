@@ -6,10 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.dao.entity.UserAiCfgInfo;
+import com.guiji.robot.exception.AiErrorEnum;
+import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
@@ -18,9 +22,12 @@ import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
+import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.utils.StrUtils;
 
 /** 
 * @ClassName: RobotRemoteController 
@@ -34,6 +41,8 @@ public class RobotRemoteController implements IRobotRemote{
 	
 	@Autowired
 	IAiAbilityCenterService iAiAbilityCenterService;
+	@Autowired
+	IUserAiCfgService iUserAiCfgService;
 	
 	/************************1、资源服务************************/
 	
@@ -55,8 +64,20 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param ttsVoice
 	 * @return
 	 */
+	public Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody List<String> seqIdList){
+		List<TtsComposeCheckRsp> rspList = iAiAbilityCenterService.ttsComposeCheck(seqIdList);
+		return Result.ok(rspList);
+	}
+	
+	
+	/**
+	 * TTS语音下载
+	 * @param ttsVoice
+	 * @return
+	 */
 	public Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoiceReq){
-		List<TtsVoice> list = iAiAbilityCenterService.fetchTtsUrls(ttsVoiceReq);
+		TtsComposeCheckRsp rsp = iAiAbilityCenterService.fetchTtsUrls(ttsVoiceReq);
+		List<TtsVoice> list = rsp.getTtsVoiceList();
 		return Result.ok(list);
 	}
 	
@@ -113,5 +134,20 @@ public class RobotRemoteController implements IRobotRemote{
 	public Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq){
 		iAiAbilityCenterService.aiHangup(aiHangupReq);
 		return Result.ok();
+	}
+	
+	
+	/**
+	 * 用户语音AI响应
+	 * @param aiCallNextReq
+	 * @return
+	 */
+	public Result.ReturnData<List<UserAiCfgInfo>> queryCustAccount(@RequestParam(value="userId",required=true)String userId){
+		if(StrUtils.isEmpty(userId)) {
+			//必输校验
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
+		return Result.ok(list);
 	}
 }

@@ -117,6 +117,7 @@ public class DistributeTimerTask {
 					String ip = gpuSumList.get(0).getIp();
 					String port = gpuSumList.get(0).getPort();
 					//调进程管理接口-模型切换
+					logger.info("change TTS ...");
 					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
@@ -126,10 +127,11 @@ public class DistributeTimerTask {
 					}
 					gpuSumList.remove(0);
 				}else{
-					logger.warn("没有可分配的GPU了！");
+					logger.warn("GPU分配完了，没有可分配的GPU了!");
 				}
 			}
 		}
+		logger.info("GPU重新分配完成!");
 	}
 
 	//GPU转移（回收）

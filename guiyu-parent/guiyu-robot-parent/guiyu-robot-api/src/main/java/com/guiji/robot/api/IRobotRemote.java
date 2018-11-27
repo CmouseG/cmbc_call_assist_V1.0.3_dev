@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.component.result.Result;
 import com.guiji.robot.model.AiCallApplyReq;
@@ -15,6 +16,7 @@ import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 
@@ -44,6 +46,14 @@ public interface IRobotRemote {
 	
 	
 	/************************2、能力服务************************/
+	@ApiOperation(value = "TTS语音合成结果检查")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "seqIdList", value = "会话id列表", required = true)
+    })
+    @PostMapping(value = "/remote/ttsComposeCheck")
+	Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody List<String> seqIdList);
+	
+	
 	@ApiOperation(value = "TTS语音下载")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ttsVoice", value = "tts语音合成请求信息", required = true)
@@ -84,12 +94,19 @@ public interface IRobotRemote {
 	Result.ReturnData<AiCallNext> aiCallNext(@RequestBody AiCallNextReq aiCallNextReq);
 	
 	
-	
 	@ApiOperation(value = "挂断电话释放资源")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "aiHangupReq", value = "挂断请求信息", required = true)
     })
     @PostMapping(value = "/remote/aiHangup")
 	Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq);
+	
+	
+	@ApiOperation(value = "查询用户机器人拆分详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户编号", required = true)
+    })
+    @PostMapping(value = "/remote/queryCustAccount")
+	Result.ReturnData queryCustAccount(@RequestParam(value="userId",required=true)String userId);
 	
 }

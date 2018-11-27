@@ -5,18 +5,21 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -84,6 +87,21 @@ public class CustAiAccountController {
 		}
 		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
 		return Result.ok(list);
+	}
+	
+	
+	/**
+	 * 查询用户正在使用的机器人开户账号明细
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/queryCustAccountForPage/{pageNo}/{pageSize}", method = RequestMethod.POST)
+	public Result.ReturnData<Page<UserAiCfgInfo>> queryCustAccountForPage(
+			 @PathVariable(value="pageNo",required=true)int pageNo,
+			 @PathVariable(value="pageSize",required=true)int pageSize,
+			 @RequestBody UserAiCfgQueryCondition condition){
+		Page<UserAiCfgInfo> page = iUserAiCfgService.queryCustAccountForPage(pageNo, pageSize, condition);
+		return Result.ok(page);
 	}
 	
 	

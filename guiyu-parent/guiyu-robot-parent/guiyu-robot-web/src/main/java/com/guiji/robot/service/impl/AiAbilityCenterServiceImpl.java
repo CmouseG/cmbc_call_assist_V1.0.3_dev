@@ -1,7 +1,9 @@
 package com.guiji.robot.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.guiji.component.lock.DistributedLockHandler;
+import com.guiji.component.lock.Lock;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.exception.AiErrorEnum;
@@ -23,6 +27,7 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
@@ -58,6 +63,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	IAiResourceManagerService iAiResourceManagerService;
 	@Autowired
 	ITtsWavService iTtsWavService;
+	@Autowired
+	DistributedLockHandler distributedLockHandler;
 	
 	/**
 	 * 导入任务时话术参数检查以及准备TTS合成
@@ -75,25 +82,49 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				CheckResult result = new CheckResult();
 				result.setSeqid(hsChecker.getSeqid());
 				result.setPass(true); //默认校验通过
+				//校验下必输
+				if(StrUtils.isEmpty(hsChecker.getSeqid())
+						|| StrUtils.isEmpty(hsChecker.getTemplateId())
+						|| StrUtils.isEmpty(hsChecker.getParams())) {
+					result.setCheckMsg("必输项校验未通过");
+					result.setPass(false); //默认不通过，参数不存在
+					list.add(result);
+					continue;
+				}
 				//逐个检查
 				HsReplace hsReplace = aiCacheService.queyHsReplace(hsChecker.getTemplateId());
-				//当前话术模板需要的参数
-				String[] needParams = hsReplace.getReplace_variables_flag();
-				if(needParams != null && needParams.length>0) {
-					//需要检查
-					for(String param : needParams) {
-						if(StrUtils.isEmpty(hsChecker.getParamMap().get(param))) {
-							logger.error("会话:{}参数校验不通过,缺失参数：{}",hsChecker.getSeqid(),param);
-							result.setCheckMsg("参数校验不通过,缺失参数："+param);
+				if(hsReplace.isTemplate_tts_flag()) {
+					//当前话术模板需要的参数
+					String[] needParams = hsReplace.getReplace_variables_flag();
+					if(needParams != null && needParams.length>0) {
+						//参数个数校验以及参数赋值
+						String[] params = hsChecker.getParams().split("\\|");
+						if(params.length<needParams.length) {
+							logger.error("会话:{}参数校验不通过,缺失参数",hsChecker.getSeqid());
+							result.setCheckMsg("参数校验不通过,缺失参数");
 							result.setPass(false); //默认不通过，参数不存在
-							break;
+							list.add(result);
+							continue;
 						}
+						Map<String,String> paramMap = new HashMap<String,String>();
+						for(int i=0;i<needParams.length;i++) {
+							String key = needParams[i];	//模板中参数key
+							String value = params[i];	//传过来的参数value
+							paramMap.put(key, value);
+						}
+						hsChecker.setParamMap(paramMap);
 					}
-				}
-				if(isNeedResourceInit && result.isPass() && hsReplace.isTemplate_tts_flag()) {
-					//1、需要初始化资源  2、参数校验通过 3、需要TTS合成
-					logger.info("会话:{}校验通过,异步发起tts合成申请，请求参数:{}",hsChecker.getSeqid(),hsChecker);
-					iTtsWavService.asynTtsCompose(hsChecker);
+					if(isNeedResourceInit && result.isPass() && hsReplace.isTemplate_tts_flag()) {
+						//1、需要初始化资源  2、参数校验通过 3、需要TTS合成
+						logger.info("会话:{}校验通过,异步发起tts合成申请，请求参数:{}",hsChecker.getSeqid(),hsChecker);
+						iTtsWavService.asynTtsCompose(hsChecker);
+					}
+				}else {
+					logger.error("会话id：{},模板:{},不需要TTS合成，返回null",hsChecker.getSeqid(),hsChecker.getTemplateId());
+					result.setCheckMsg("不需要TTS合成");
+					result.setPass(false); //默认不通过，参数不存在
+					list.add(result);
+					continue;
 				}
 				list.add(result);
 			}
@@ -110,36 +141,59 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	@Override
-	public List<TtsVoice> fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
+	public TtsComposeCheckRsp fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
 		if(ttsVoiceReq == null
 				|| StrUtils.isEmpty(ttsVoiceReq.getSeqid())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
+		TtsComposeCheckRsp rsp = new TtsComposeCheckRsp();
+		rsp.setSeqId(ttsVoiceReq.getSeqid());
 		//根据会话ID查找语音的TTS合成结果
 		TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(ttsVoiceReq.getSeqid());
 		if(ttsWavHis == null) {
-			logger.error("会话ID:{}TTS查不到数据");
-			throw new RobotException(AiErrorEnum.AI00060017.getErrorCode(),AiErrorEnum.AI00060017.getErrorMsg());
+			logger.error("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
+			rsp.setStatus(RobotConstants.TTS_STATUS_N);
 		}else {
+			rsp.setStatus(ttsWavHis.getStatus());
 			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
-				logger.error("会话ID:{}TTS数据合成中...");
-				throw new RobotException(AiErrorEnum.AI00060018.getErrorCode(),AiErrorEnum.AI00060018.getErrorMsg());
+				logger.error("会话ID:{}TTS数据合成中...",ttsVoiceReq.getSeqid());
 			}else if(RobotConstants.TTS_STATUS_F.equals(ttsWavHis.getStatus())) {
-				logger.error("会话ID:{}TTS数据合成失败!");
-				throw new RobotException(AiErrorEnum.AI00060019.getErrorCode(),AiErrorEnum.AI00060019.getErrorMsg());
+				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
 			}else {
 				//查询出合成后的数据JSON
 				String ttsJsonData = ttsWavHis.getTtsJsonData();
 				List<TtsVoice> list = JSON.parseArray(ttsJsonData, TtsVoice.class);
-				return list;
+				rsp.setTtsVoiceList(list);
 			}
 		}
+		return rsp;
+	}
+	
+	
+	/**
+	 * 批量TTS合成下载
+	 * @param seqIdList
+	 * @return
+	 */
+	public List<TtsComposeCheckRsp> ttsComposeCheck(List<String> seqIdList){
+		if(ListUtil.isNotEmpty(seqIdList)) {
+			List<TtsComposeCheckRsp> list = new ArrayList<TtsComposeCheckRsp>();
+			for(String seqId : seqIdList) {
+				TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
+				ttsVoiceReq.setSeqid(seqId);
+				TtsComposeCheckRsp rsp = this.fetchTtsUrls(ttsVoiceReq);
+				list.add(rsp);
+			}
+			return list;
+		}
+		return null;
 	}
 	
 	
 	/**
 	 * 机器人资源申请（准备拨打电话）
+	 * 每个用户资源分配高并发时会冲突，增加并发锁
 	 * 1、资源准备
 	 * 	  1.1、检查用户资源变更锁，如果减少，那么返回准备失败结果，如果是资源增加了，那么确认下增加了多少，并重新获取并分配下资源。
 	 *    1.2、检查用户是否满负荷在跑，如果没有满负荷，那么拉起机器人满负荷运行。
@@ -165,90 +219,106 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		String userId = aiCallApplyReq.getUserId();
-		/**2、资源校验以及准备**/
-		UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
-		if(userResourceCache == null) {
-			//用户无机器人资源
-			throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
-		}
-		//查询用户已分配的机器人
-		List<AiInuseCache> userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
-		if(StrUtils.isNotEmpty(userResourceCache.getChgStatus())){
-			if(RobotConstants.USER_CHG_STATUS_A.equals(userResourceCache.getChgStatus())) {
-				//用户资源增加
-				//本次需要申请的机器人数量
-				int addAiNum = 0;
-				if(ListUtil.isNotEmpty(userAiInuseList)) {
-					//目前用户总机器人数量-已分配的机器人数量
-					addAiNum = userResourceCache.getAiNum() - userAiInuseList.size();
-				}else {
-					addAiNum = userResourceCache.getAiNum();
+		Lock lock = new Lock(RobotConstants.LOCK_NAME_ASSIGN+aiCallApplyReq.getUserId(), RobotConstants.LOCK_NAME_ASSIGN+aiCallApplyReq.getUserId());
+		if (distributedLockHandler.tryLock(lock)) {
+			try {
+				String userId = aiCallApplyReq.getUserId();
+				/**2、资源校验以及准备**/
+				UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
+				if(userResourceCache == null) {
+					//用户无机器人资源
+					throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
 				}
-				if(addAiNum >0) {
-					//本次需要分配的机器人数量>0，调用进程管理重新分配机器人
-					AiResourceApply aiResourceApply = new AiResourceApply();
-					aiResourceApply.setUserId(userId);
-					aiResourceApply.setAiNum(addAiNum);
-					iAiResourceManagerService.aiAssign(aiResourceApply);
-				}
-				//新增完成后，将用户资源状态设置为正常
-				userResourceCache.setChgStatus(null);
-				aiCacheService.putUserResource(userResourceCache);
-			}else if(RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())){
-				//用户资源减少
-				throw new RobotException(AiErrorEnum.AI00060004.getErrorCode(),AiErrorEnum.AI00060004.getErrorMsg());
-			}
-		}else {
-			//用户资源没有变化
-			if(userAiInuseList == null || userAiInuseList.isEmpty()) {
-				//用户资源没有变化，但是如果用户现在还没有分配资源，那么重新分配机器人
-				//本次需要申请的机器人数量
-				int addAiNum = userResourceCache.getAiNum();
-				logger.info("用户{}现在还没有初始化可用资源，重新分配{}个机器人",userResourceCache.getUserId(),addAiNum);
-				if(addAiNum > 0) {
-					AiResourceApply aiResourceApply = new AiResourceApply();
-					aiResourceApply.setUserId(userId);
-					aiResourceApply.setAiNum(addAiNum);
-					iAiResourceManagerService.aiAssign(aiResourceApply);
-				}
-			}
-		}
-		/**3、机器人分配 **/
-		AiInuseCache nowAi = null;  //本次要分配的机器人
-		//重新查询机器人
-		userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
-		if(ListUtil.isNotEmpty(userAiInuseList)) {
-			for(AiInuseCache aiInuseCache : userAiInuseList){
-				//检查要是空闲的机器人
-				if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
-					//检查要模板匹配
-					if(aiInuseCache.getTemplateIds().contains(aiCallApplyReq.getTemplateId())) {
-						//机器人空闲，且可以拨打该模板，那么分配开始拨打
-						nowAi = aiInuseCache;
-						break;
+				//查询用户已分配的机器人
+				List<AiInuseCache> userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
+				if(StrUtils.isNotEmpty(userResourceCache.getChgStatus())){
+					if(RobotConstants.USER_CHG_STATUS_A.equals(userResourceCache.getChgStatus())) {
+						//用户资源增加
+						//本次需要申请的机器人数量
+						int addAiNum = 0;
+						if(ListUtil.isNotEmpty(userAiInuseList)) {
+							//目前用户总机器人数量-已分配的机器人数量
+							addAiNum = userResourceCache.getAiNum() - userAiInuseList.size();
+						}else {
+							addAiNum = userResourceCache.getAiNum();
+						}
+						if(addAiNum >0) {
+							//本次需要分配的机器人数量>0，调用进程管理重新分配机器人
+							AiResourceApply aiResourceApply = new AiResourceApply();
+							aiResourceApply.setUserId(userId);
+							aiResourceApply.setAiNum(addAiNum);
+							iAiResourceManagerService.aiAssign(aiResourceApply);
+						}
+						//新增完成后，将用户资源状态设置为正常
+						userResourceCache.setChgStatus(null);
+						aiCacheService.putUserResource(userResourceCache);
+					}else if(RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())){
+						//用户资源减少
+						throw new RobotException(AiErrorEnum.AI00060004.getErrorCode(),AiErrorEnum.AI00060004.getErrorMsg());
 					}
 				}else {
-					continue;
+					//用户资源没有变化
+					if(userAiInuseList == null || userAiInuseList.isEmpty()) {
+						//用户资源没有变化，但是如果用户现在还没有分配资源，那么重新分配机器人
+						//本次需要申请的机器人数量
+						int addAiNum = userResourceCache.getAiNum();
+						logger.info("用户{}现在还没有初始化可用资源，重新分配{}个机器人",userResourceCache.getUserId(),addAiNum);
+						if(addAiNum > 0) {
+							AiResourceApply aiResourceApply = new AiResourceApply();
+							aiResourceApply.setUserId(userId);
+							aiResourceApply.setAiNum(addAiNum);
+							iAiResourceManagerService.aiAssign(aiResourceApply);
+						}
+					}
 				}
+				/**3、机器人分配 **/
+				AiInuseCache nowAi = null;  //本次要分配的机器人
+				//重新查询机器人
+				userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
+				if(ListUtil.isNotEmpty(userAiInuseList)) {
+					for(AiInuseCache aiInuseCache : userAiInuseList){
+						//检查要是空闲的机器人
+						if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
+							//检查要模板匹配
+							if(aiInuseCache.getTemplateIds().contains(aiCallApplyReq.getTemplateId())) {
+								//机器人空闲，且可以拨打该模板，那么分配开始拨打
+								nowAi = aiInuseCache;
+								break;
+							}
+						}else {
+							continue;
+						}
+					}
+				}else {
+					throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
+				}
+				if(nowAi == null) {
+					//无空闲的机器人
+					throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
+				}
+				/**4、机器人设置为忙**/
+				nowAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
+				nowAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
+				nowAi.setSeqId(aiCallApplyReq.getSeqid());
+				nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
+				iAiResourceManagerService.aiBusy(nowAi);
+				/**5、返回**/
+				AiCallNext aiCallNext = new AiCallNext();
+				aiCallNext.setAiNo(nowAi.getAiNo());
+				return aiCallNext;
+			} catch (RobotException e) {
+				throw e; 
+			} catch (Exception e1) {
+				logger.error("机器人分配异常！",e1);
+				throw new RobotException(AiErrorEnum.AI00060028.getErrorCode(),AiErrorEnum.AI00060028.getErrorMsg());
+			}finally {
+				//释放锁
+				distributedLockHandler.releaseLock(lock);
 			}
 		}else {
-			throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
+			logger.warn("用户机器人配置变更未能获取锁！！！");
+			throw new RobotException(AiErrorEnum.AI00060027.getErrorCode(),AiErrorEnum.AI00060027.getErrorMsg());
 		}
-		if(nowAi == null) {
-			//无空闲的机器人
-			throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
-		}
-		/**4、机器人设置为忙**/
-		nowAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
-		nowAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
-		nowAi.setSeqId(aiCallApplyReq.getSeqid());
-		nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
-		iAiResourceManagerService.aiBusy(nowAi);
-		/**5、返回**/
-		AiCallNext aiCallNext = new AiCallNext();
-		aiCallNext.setAiNo(nowAi.getAiNo());
-		return aiCallNext;
 	}
 	
 	

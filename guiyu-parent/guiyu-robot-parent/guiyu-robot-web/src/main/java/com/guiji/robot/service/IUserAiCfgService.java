@@ -2,8 +2,10 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
+import com.guiji.common.model.Page;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
+import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 
 /** 
 * @ClassName: IUserAiCfgService 
@@ -34,6 +36,15 @@ public interface IUserAiCfgService {
 	 */
 	List<UserAiCfgInfo> queryUserAiCfgListByUserId(String userId);
 	
+	
+	/**
+	 * 分页查询 用户机器人配置详情
+	 * @param pageNo
+	 * @param pageSize
+	 * @param condition
+	 * @return
+	 */
+	public Page<UserAiCfgInfo> queryCustAccountForPage(int pageNo, int pageSize,UserAiCfgQueryCondition condition);
 	
 	/**
 	 * 根据用户编号查询用户符合话术模板的配置列表

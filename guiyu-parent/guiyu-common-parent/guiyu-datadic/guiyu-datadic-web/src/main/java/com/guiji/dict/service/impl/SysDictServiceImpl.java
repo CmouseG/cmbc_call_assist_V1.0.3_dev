@@ -39,7 +39,8 @@ public class SysDictServiceImpl implements SysDictService {
                 logger.info("新增字典成功"+sysDict);
             }else {
                 logger.info("更新字典");
-                sysDictMapper.updateByPrimaryKey(sysDict);
+                sysDict.setUpdateTime(new Date());
+                sysDictMapper.updateByPrimaryKeySelective(sysDict);
                 logger.info("更新字典成功"+sysDict);
             }
         }

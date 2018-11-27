@@ -107,7 +107,7 @@ public class BotSentenceProcessController {
 	 * @param
 	 */
 	@RequestMapping(value="createBotSentenceProcess")
-	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@RequestHeader Long userId) {
+	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
 		if(null != paramVO && StringUtils.isNotBlank(paramVO.getProcessId()) && 
 				StringUtils.isNotBlank(paramVO.getTemplateName())) {
 			paramVO.setFlag("00");

@@ -1,6 +1,7 @@
 package com.guiji.auth.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.util.AuthUtil;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.api.IRobotRemote;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
@@ -22,6 +25,8 @@ public class UserService {
 	@Autowired
 	private SysUserMapper mapper;
 	
+	@Autowired
+	private IRobotRemote iRobotRemote;
 	/**
 	 * 新增用户
 	 * @param user
@@ -98,5 +103,15 @@ public class UserService {
 	
 	public void updateUserData(SysUser user){
 		mapper.updateByPrimaryKeySelective(user);
+	}
+	
+	public Map<String,Object> getUserInfo(Long userId){
+		Map<String,Object> result=new HashMap<>();
+		SysUser user=mapper.selectByPrimaryKey(userId);
+		ReturnData custAccount=iRobotRemote.queryCustAccount(String.valueOf(userId));
+		
+		result.put("user", user);
+		result.put("robot", custAccount.getBody());
+		return result;
 	}
 }

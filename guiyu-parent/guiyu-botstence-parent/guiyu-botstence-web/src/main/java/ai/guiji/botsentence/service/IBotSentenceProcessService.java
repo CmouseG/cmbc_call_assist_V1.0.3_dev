@@ -5,6 +5,7 @@ import java.util.List;
 import ai.guiji.botsentence.dao.entity.BotSentenceDomain;
 import ai.guiji.botsentence.dao.entity.BotSentenceIntent;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
+import ai.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import ai.guiji.botsentence.dao.entity.VoliceInfoExt;
 import ai.guiji.botsentence.vo.BlankBranch;
 import ai.guiji.botsentence.vo.BlankDomain;
@@ -98,4 +99,6 @@ public interface IBotSentenceProcessService {
 	public BotSentenceProcess queryBotsentenceProcessInfo(String processId);
 	
 	public BotSentenceIntent queryKeywordsListByBranchId(String branchId);
+	
+	public List<BotSentenceProcess> getTemplateBySelf(String accountNo);
 }

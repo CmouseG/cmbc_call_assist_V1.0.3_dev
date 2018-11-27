@@ -7,5 +7,6 @@ public interface BotSentenceProcessExtMapper {
  
     int batchInsert(List<BotSentenceProcess> list);
 
+    public List<BotSentenceProcess> getTemplateBySelf(String accountNo);
 
 }

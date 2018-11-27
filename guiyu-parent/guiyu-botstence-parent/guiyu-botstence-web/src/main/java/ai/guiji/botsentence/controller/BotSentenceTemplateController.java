@@ -86,10 +86,4 @@ public class BotSentenceTemplateController {
 		return ServerResult.createBySuccess(page);
 	}
 	
-	@RequestMapping(value="getTemplateBySelf")
-	public ServerResult<List<BotSentenceTemplate>> getTemplateBySelf(@RequestHeader("userId") String accountNo){
-		List<BotSentenceTemplate> result=botSentenceTemplateService.getTemplateBySelf(accountNo);
-		return ServerResult.createBySuccess(result);
-	}
-	
 }

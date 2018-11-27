@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.entity.BotSentenceIntent;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
+import ai.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import ai.guiji.botsentence.service.IBotSentenceProcessService;
 import ai.guiji.botsentence.vo.BotSentenceProcessVO;
 import ai.guiji.botsentence.vo.CommonDialogVO;
@@ -342,5 +343,11 @@ public class BotSentenceProcessController {
 	public ServerResult<BotSentenceIntent> queryIntentByBranchId(@JsonParam String branchId){
 		BotSentenceIntent intent = botSentenceProcessService.queryKeywordsListByBranchId(branchId);
 		return ServerResult.createBySuccess(intent);
+	}
+	
+	@RequestMapping(value="getTemplateBySelf")
+	public ServerResult<List<BotSentenceProcess>> getTemplateBySelf(@RequestHeader("userId") String accountNo){
+		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateBySelf(accountNo);
+		return ServerResult.createBySuccess(result);
 	}
 }

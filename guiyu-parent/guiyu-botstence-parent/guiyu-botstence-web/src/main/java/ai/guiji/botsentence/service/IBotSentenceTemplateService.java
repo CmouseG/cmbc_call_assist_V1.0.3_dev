@@ -29,5 +29,4 @@ public interface IBotSentenceTemplateService {
 	
 	public boolean validateHasTempalte(Long userId);
 	
-	public List<BotSentenceTemplate> getTemplateBySelf(String accountNo);
 }

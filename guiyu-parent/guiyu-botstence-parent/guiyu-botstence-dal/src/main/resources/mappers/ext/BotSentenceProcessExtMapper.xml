@@ -53,5 +53,14 @@
       #{approveNotes,jdbcType=VARCHAR})
   </insert>
 
+  <select id="getTemplateBySelf" resultType="ai.guiji.botsentence.dao.entity.BotSentenceProcess">
+  	select a.process_id as processId,a.template_id as templateId,a.template_name as templateName,a.template_type as templateType,
+	a.version,a.industry,a.account_no as accountNo,a.old_process_id as oldProcessId,a.crt_time as crtTime,a.crt_user as crtUser,
+	a.lst_update_time as lstUpdateTime,a.lst_update_user as lstUpdateUser,a.state,a.approve_time as approveTime,
+	a.approve_user as approveUser,a.approve_notes as approveNotes,a.sound_type as soundType,IFNULL(b.needTTs,0) as needTTs
+	from bot_sentence_process a
+	LEFT JOIN (select process_id,count(need_tts)>0 as needTTs from volice_info where need_tts=1 GROUP BY process_id) b on b.process_id=a.process_id
+  	where a.account_no=#{accountNo}
+  </select>
   
 </mapper>

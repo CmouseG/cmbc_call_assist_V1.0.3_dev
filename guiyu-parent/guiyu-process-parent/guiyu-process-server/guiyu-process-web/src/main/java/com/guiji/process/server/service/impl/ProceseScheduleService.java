@@ -60,15 +60,13 @@ public class ProceseScheduleService implements IProceseScheduleService {
     public boolean release(ProcessReleaseVO processReleaseVO) {
 
         for (ProcessInstanceVO processInstance:processReleaseVO.getProcessInstanceVOS()) {
-
-            processInstance.setWhoUsed("");
-
             ProcessInstanceVO processInstanceVOOld= deviceManageService.getDevice(processInstance.getType(), processInstance.getIp(), processInstance.getPort());
             if (processInstanceVOOld != null) {
                 if(processInstanceVOOld.getStatus() == ProcessStatusEnum.BUSYING) {
-                    processInstance.setStatus(ProcessStatusEnum.UP);
+                    processInstanceVOOld.setWhoUsed("");
+                    processInstanceVOOld.setStatus(ProcessStatusEnum.UP);
                 }
-                deviceManageService.updateStatus(processInstance);
+                deviceManageService.updateStatus(processInstanceVOOld);
             }
         }
 

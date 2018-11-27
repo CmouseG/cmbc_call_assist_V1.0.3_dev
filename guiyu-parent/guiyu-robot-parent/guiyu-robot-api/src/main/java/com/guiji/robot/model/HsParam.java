@@ -19,6 +19,8 @@ public class HsParam {
 	private String seqid;
 	@ApiModelProperty(value="话术模板编号",required=true)
 	private String templateId;
-	@ApiModelProperty(value="话术模板参数map",required=true)
+	@ApiModelProperty(value="话术模板参数,多参数竖线|分隔",required=true)
+	private String params;
+	@ApiModelProperty(value="业务逻辑使用，接口不需要传",hidden=true)
 	private Map<String,String> paramMap;
 }

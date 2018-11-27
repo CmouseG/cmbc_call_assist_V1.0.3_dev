@@ -165,11 +165,4 @@ public class BotSentenceTemplateServiceImpl implements IBotSentenceTemplateServi
 	
 	}
 
-	@Override
-	public List<BotSentenceTemplate> getTemplateBySelf(String accountNo) {
-		BotSentenceTemplateExample example=new BotSentenceTemplateExample();
-		example.createCriteria().andAccountNoEqualTo(accountNo);
-		return botSentenceTemplateMapper.selectByExample(example);
-	}
-
 }

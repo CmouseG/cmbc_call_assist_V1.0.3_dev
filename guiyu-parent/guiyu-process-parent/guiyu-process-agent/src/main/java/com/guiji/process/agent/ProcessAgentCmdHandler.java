@@ -2,6 +2,7 @@ package com.guiji.process.agent;
 
 
 import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
@@ -62,8 +63,21 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 }
                 break;
 
+            case RESTORE_MODEL:
+
+                doCmd(cmdMessageVO, cfgProcessOperVO);
+
+                // 更新配置文件
+                ProcessCfgService.getIntance().refreshProcessKey(cmdMessageVO.getProcessInstanceVO().getPort(), cmdMessageVO.getParameters().get(1));
+                Thread.sleep(10000);//等待1s查看是否关闭成功
+                break;
+
             case HEALTH:
-                doHealth(cmdMessageVO, cfgProcessOperVO);
+                if(cmdMessageVO.getProcessInstanceVO().getType() != ProcessTypeEnum.AGENT)
+                {
+                    doHealth(cmdMessageVO, cfgProcessOperVO);
+                }
+
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
@@ -91,6 +105,12 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         {
 
         }
+
+        if(cfgProcessVO.getCfgNodeOpers() == null)
+        {
+            return null;
+        }
+
         for (CfgProcessOperVO cfgProcessOperVO : cfgProcessVO.getCfgNodeOpers()  ) {
 
             if(cfgProcessOperVO.getCmdTypeEnum() == cmdTypeEnum)
@@ -107,6 +127,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
     private CommandResult doCmd(CmdMessageVO cmdMessageVO, CfgProcessOperVO cfgProcessOperVO) {
 
         CommandResult cmdResult = null;
+        System.out.println("执行命令开始：：" + cmdMessageVO +", " + cfgProcessOperVO);
         if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum())) {
 
             String cmd = cfgProcessOperVO.getCmd();
@@ -117,6 +138,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             // 发起命令
             cmdResult = CommandUtils.exec(cmd);
+            System.out.println("执行命令结果：：" + cmdResult);
             // 执行完命令保存结果到内存记录
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum());
         }
@@ -149,16 +171,16 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             String msg = JsonUtils.bean2Json(newCmdMsg);
 
             ImClientProtocolBO.getIntance().send(msg,3);
-
-            //停止状态的进程自动重启
-            if (ProcessStatusEnum.DOWN == processInstanceVO.getStatus()) {
-                cmdMessageVO.setCmdType(CmdTypeEnum.START);
-                ProcessMsgHandler.getInstance().add(cmdMessageVO);
-            }
-
-            // 更新本地状态
-            ProcessStatusLocal.getInstance().put(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);
         }
+
+        //停止状态的进程自动重启
+        if (ProcessStatusEnum.DOWN == nowStatus) {
+            cmdMessageVO.setCmdType(CmdTypeEnum.START);
+            ProcessMsgHandler.getInstance().add(cmdMessageVO);
+        }
+
+        // 更新本地状态
+        ProcessStatusLocal.getInstance().put(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);
     }
 
 }

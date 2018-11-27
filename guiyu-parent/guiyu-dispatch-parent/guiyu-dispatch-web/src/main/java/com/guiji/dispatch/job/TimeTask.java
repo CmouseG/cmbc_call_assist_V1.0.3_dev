@@ -1,5 +1,6 @@
 package com.guiji.dispatch.job;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,9 @@ import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.CheckParamsReq;
+import com.guiji.robot.model.HsParam;
 import com.guiji.utils.RedisUtil;
 
 @Component
@@ -28,20 +32,40 @@ public class TimeTask {
 	private IDispatchPlanService dispatchPlanService;
 	@Autowired
 	private ICallManagerOut callManagerOutApi;
-// @Autowired
-	// private IRobotRemote robotRemote;
-
+	@Autowired
+	private IRobotRemote robotRemote;
 	@Autowired
 	private RedisUtil redisUtil;
 
 	@Scheduled(cron = "0 0/1 * * * ?")
 	public void selectPhonesByDate() {
-		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
 		logger.info("startcallplan..");
+		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
+//
+//		List<HsParam> sendData = new ArrayList<>();
+//		for (DispatchPlan dispatchPlan : list) {
+//			HsParam hsParam = new HsParam();
+//			hsParam.setParams(dispatchPlan.getParams());
+//			hsParam.setSeqid(dispatchPlan.getPlanUuid());
+//			hsParam.setTemplateId(dispatchPlan.getRobot());
+//			sendData.add(hsParam);
+//		}
+//		CheckParamsReq req = new CheckParamsReq();
+//		req.setCheckers(sendData);
+//		req.setNeedResourceInit(true);
+//		robotRemote.checkParams(req);
+
 		// 分组排序
 		Map<String, List<DispatchPlan>> collect = list.stream().collect(Collectors.groupingBy(d -> fetchGroupKey(d)));
 		for (Entry<String, List<DispatchPlan>> entry : collect.entrySet()) {
-			// 判断机器人是否准备就绪
+			if (redisUtil.get("robotId") != null) {
+				String str = (String) redisUtil.get("robotId");
+				if (str.contains(entry.getKey().split("-")[1])) {
+					logger.info("当前模板id正在升级中...." + entry.getKey().split("-")[1]);
+					continue;
+				}
+			}
+
 			logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 			checkRedisAndDate(entry.getKey());
 		}

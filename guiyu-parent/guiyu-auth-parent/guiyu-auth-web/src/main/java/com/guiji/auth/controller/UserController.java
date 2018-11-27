@@ -15,6 +15,7 @@ import com.guiji.auth.util.AuthUtil;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.api.IRobotRemote;
 import com.guiji.user.dao.entity.SysUser;
 
 /**
@@ -76,5 +77,10 @@ public class UserController implements IAuth{
 	public void updateUserData(SysUser user,@RequestHeader Long userId) {
 		user.setId(userId);
 		service.updateUserData(user);
+	}
+	
+	@RequestMapping("/user/getUserInfo")
+	public Map<String,Object> getUserInfo(@RequestHeader Long userId){
+		return service.getUserInfo(userId);
 	}
 }

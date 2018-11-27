@@ -31,7 +31,7 @@ public class FsController implements IFsResource {
         FsBindVO fs=  fsService.applyfs(serviceId,serviceType);
         if(fs==null){
             logger.info("申请freeswitch资源失败，没有空闲并可用的fs资源");
-           return Result.error("0301002");
+           return Result.error(Constant.ERROR_CODE_NONE_FREESWITCH);
         }
         return Result.ok(fs);
     }

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.entity.*;
+import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
@@ -44,10 +45,27 @@ public class AIManagerImpl implements AIManager {
             aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
             String tempId = aiRequest.getTempId();
             aiCallStartReq.setTemplateId(tempId);
-//            aiCallStartReq.setTemplateId("fpjkqzjhwsm");//test
             aiCallStartReq.setSeqid(aiRequest.getUuid());
             aiCallStartReq.setUserId(aiRequest.getUserId());
-            Result.ReturnData<AiCallNext> result =  robotRemote.aiCallStart(aiCallStartReq);
+
+            Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+                @Override
+                public Result.ReturnData execute() {
+                    return robotRemote.aiCallStart(aiCallStartReq);
+                }
+
+                @Override
+                public void onErrorResult(Result.ReturnData result) {
+
+                }
+            }, 3, 1, 1, 60, true);
+
+            if(returnData == null){
+                log.warn("请求ai资源失败");
+                return null;
+            }
+
+            Result.ReturnData<AiCallNext> result =  returnData;
 
             //申请资源失败，抛出异常
             Preconditions.checkState(result.success && result.getCode().equals(Constant.SUCCESS_COMMON), "failed robotRemote applyAi ");

@@ -93,7 +93,7 @@ public class CustAiAccountController {
 	public Result.ReturnData<Page<UserAiCfgBaseInfoVO>> queryUserAiCfgBaseInfoByUserId(
 			@RequestParam(value="pageNo",required=true)int pageNo,
 			@RequestParam(value="pageSize",required=true)int pageSize,
-			@RequestParam(value="userId",required=true)String qUserId,
+			@RequestParam(value="userId",required=false)String qUserId,
 			@RequestHeader Long userId, 
 			@RequestHeader Boolean isSuperAdmin){
 		if(StrUtils.isEmpty(qUserId) && userId==null) {

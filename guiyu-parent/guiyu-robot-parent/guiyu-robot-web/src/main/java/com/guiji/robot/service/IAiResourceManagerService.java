@@ -73,6 +73,14 @@ public interface IAiResourceManagerService {
 	
 	
 	/**
+	 * 查询用户在休息的AI列表（空闲/暂停不可以用）
+	 * @param userId
+	 * @return
+	 */
+	List<AiInuseCache> queryUserSleepUseAiList(String userId);
+	
+	
+	/**
 	 * 查询用户某个机器人
 	 * @param userId 用户id
 	 * @param aiNo 机器人编号

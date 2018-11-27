@@ -22,7 +22,7 @@ import java.util.List;
  * @Description: 进程管理接口
  * @author: zhujiayu
  */
-@FeignClient("guiyu-process")
+@FeignClient("guiyu-process-web")
 public interface IProcessSchedule {
 
     /**

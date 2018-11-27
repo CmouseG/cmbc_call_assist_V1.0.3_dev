@@ -85,7 +85,23 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			String id = userAiCfgBaseInfo.getId();
 			if(StrUtils.isNotEmpty(id)) {
 				//更新
-				throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+				//先查询存量的用户机器总数
+				UserAiCfgBaseInfo existUserAiCfgBaseInfo = userAiCfgBaseInfoMapper.selectByPrimaryKey(id);
+				String userId = existUserAiCfgBaseInfo.getUserId();
+				if(userAiCfgBaseInfo.getAiTotalNum()<existUserAiCfgBaseInfo.getAiTotalNum()) {
+					//如果数量减少了，那么需要让用户删除拆分信息重新配置
+					List<UserAiCfgInfo> cfgInfoList = this.queryUserAiCfgListByUserId(userId);
+					if(ListUtil.isNotEmpty(cfgInfoList)) {
+						throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+					}
+				}
+				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
+				if(StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())) {
+					userAiCfgBaseInfo.setTemplateIds(existUserAiCfgBaseInfo.getTemplateIds());
+				}
+				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
+					userAiCfgBaseInfo.setUserId(userId);
+				}
 			}else {
 				//新增
 				//1、初始化一条用户机器人线路拆分
@@ -117,6 +133,38 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 分页查询 用户机器人配置基本信息
+	 * @param pageNo
+	 * @param pageSize
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(int pageNo, int pageSize,String userId) {
+		Page<UserAiCfgBaseInfo> page = new Page<UserAiCfgBaseInfo>();
+		int totalRecord = 0;
+		int limitStart = (pageNo-1)*pageSize;	//起始条数
+		int limitEnd = pageSize;	//查询条数
+		UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+		if(StrUtils.isNotEmpty(userId)) {
+			example.createCriteria().andUserIdEqualTo(userId);
+		}
+		//查询总数
+		totalRecord = userAiCfgBaseInfoMapper.countByExample(example);
+		if(totalRecord > 0) {
+			example.setLimitStart(limitStart);
+			example.setLimitEnd(limitEnd);
+			List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
+			page.setRecords(list);
+		}
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setTotal(totalRecord);
+		return page;
 	}
 	
 	

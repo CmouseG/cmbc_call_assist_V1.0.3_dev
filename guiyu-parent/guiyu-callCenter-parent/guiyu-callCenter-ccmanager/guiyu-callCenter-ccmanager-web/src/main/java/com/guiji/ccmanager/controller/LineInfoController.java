@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
+import com.guiji.ccmanager.api.ILineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4Select;
@@ -24,7 +25,7 @@ import java.util.List;
  * @Description: 线路的增删改查
  */
 @RestController
-public class LineInfoController {
+public class LineInfoController implements ILineInfo {
 
     private final Logger log = LoggerFactory.getLogger(LineInfoController.class);
 

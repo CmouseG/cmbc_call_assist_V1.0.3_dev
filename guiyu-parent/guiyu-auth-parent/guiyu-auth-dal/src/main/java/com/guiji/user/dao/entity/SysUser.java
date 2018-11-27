@@ -22,7 +22,7 @@ public class SysUser implements Serializable {
 
     private Date updateTime;
 
-    private String delFlag;
+    private String delFlag="0";
 
     private Date vaildTime;
 

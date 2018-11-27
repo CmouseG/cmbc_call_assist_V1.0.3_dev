@@ -22,7 +22,7 @@ import ai.guiji.component.client.config.JsonParamArgResolverHandler;
 */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages={"com.guiji.*.api"})
 @MapperScan({"ai.guiji.*.dao","ai.guiji.botsentence.crm.dao"})
 public class BotSentenceApplication extends WebMvcConfigurerAdapter{
 

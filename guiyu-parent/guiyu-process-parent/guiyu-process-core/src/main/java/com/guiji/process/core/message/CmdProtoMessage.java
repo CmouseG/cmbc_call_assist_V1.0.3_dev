@@ -7,6 +7,7 @@ public final class CmdProtoMessage {
   private CmdProtoMessage() {}
   public static void registerAllExtensions(
           com.google.protobuf.ExtensionRegistryLite registry) {
+			  
   }
 
   public static void registerAllExtensions(

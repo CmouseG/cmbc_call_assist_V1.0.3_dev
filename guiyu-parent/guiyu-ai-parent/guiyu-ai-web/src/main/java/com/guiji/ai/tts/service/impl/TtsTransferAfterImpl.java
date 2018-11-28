@@ -80,8 +80,7 @@ public class TtsTransferAfterImpl {
 						logger.info("保存成功！");
 					}
 				} catch (Exception e) {
-					logger.error("数据保存失败！");
-					e.printStackTrace();
+					logger.error("数据保存失败！", e);
 				}
 			}
 		}

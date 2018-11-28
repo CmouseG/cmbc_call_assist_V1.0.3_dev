@@ -1,6 +1,7 @@
 package com.guiji.process.server.service.impl;
 
 
+import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
@@ -33,6 +34,8 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         {
             return;
         }
+
+        logger.debug(cmdMessageVO.toString());
 
         switch (cmdMessageVO.getCmdType()) {
             case AGENTREGISTER:
@@ -67,6 +70,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     private void doHealthStatus(CmdMessageVO cmdMessageVO)
     {
+
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
         if(oldProcessInstanceVO == null)
@@ -75,7 +79,14 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             return;
         }
 
-        processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
+        ProcessStatusEnum toStatus = processInstanceVO.getStatus();
+        if(oldProcessInstanceVO.getStatus() == ProcessStatusEnum.BUSYING)
+        {
+            toStatus = ProcessStatusEnum.BUSYING;
+        }
+
+        System.out.println("doHealthStatus::" + processInstanceVO);
+        processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), toStatus);
     }
 
     private void doAgentRegister(CmdMessageVO cmdMessageVO) {
@@ -103,12 +114,6 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         List<ProcessInstanceVO> lst = new ArrayList<ProcessInstanceVO>();
 
         if(processInstanceVO == null)
-        {
-            return;
-        }
-
-        ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
-        if(oldProcessInstanceVO != null)
         {
             return;
         }

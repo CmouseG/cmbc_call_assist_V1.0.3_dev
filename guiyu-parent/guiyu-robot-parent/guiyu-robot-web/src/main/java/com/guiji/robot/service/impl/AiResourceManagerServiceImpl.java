@@ -1,6 +1,5 @@
 package com.guiji.robot.service.impl;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,22 +73,22 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				throw new RobotException(AiErrorEnum.AI00060005.getErrorCode(),AiErrorEnum.AI00060005.getErrorMsg());
 			}
 			//调用进程管理服务申请sellbot机器人资源
-//			ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(addAiNum);
-			///////// TEST/////
-			ReturnData<List<ProcessInstanceVO>> processInstanceListData = new ReturnData<List<ProcessInstanceVO>>();
-			processInstanceListData.setCode("0");
-			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
-			for(int i=0;i<addAiNum;i++) {
-				ProcessInstanceVO test = new ProcessInstanceVO();
-				test.setIp("192.168.1.50");
-				DecimalFormat df=new DecimalFormat("00");
-				String hh = df.format(i);
-				int p = Integer.valueOf("150"+hh);
-				test.setPort(p);
-				processList.add(test);
-				processInstanceListData.setBody(processList);
-			}
-		    /////// TEST/////
+			ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(addAiNum);
+//			///////// TEST/////
+//			ReturnData<List<ProcessInstanceVO>> processInstanceListData = new ReturnData<List<ProcessInstanceVO>>();
+//			processInstanceListData.setCode("0");
+//			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
+//			for(int i=0;i<addAiNum;i++) {
+//				ProcessInstanceVO test = new ProcessInstanceVO();
+//				test.setIp("192.168.1.50");
+//				DecimalFormat df=new DecimalFormat("00");
+//				String hh = df.format(i);
+//				int p = Integer.valueOf("150"+hh);
+//				test.setPort(p);
+//				processList.add(test);
+//				processInstanceListData.setBody(processList);
+//			}
+//		    /////// TEST/////
 			if(processInstanceListData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(processInstanceListData.getCode())){
 				logger.error("调用进程管理申请{}个机器人资源异常...",addAiNum);
 				throw new RobotException(processInstanceListData.getCode(),processInstanceListData.getMsg());

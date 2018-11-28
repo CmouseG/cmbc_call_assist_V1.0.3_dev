@@ -45,8 +45,7 @@ public class AiResourceJobTimer {
 	/**
 	 * 每天晚上释放分配给用户的机器人
 	 */
-//    @Scheduled(cron="0 30 20 * * ?")
-	@Scheduled(cron="0 08 14 * * ?")
+    @Scheduled(cron="0 30 20 * * ?")
     public void aiResourRel(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_RELEASE_JOB", "LOCK_ROBOT_AI_RELEASE_JOB");
     	if (distributedLockHandler.tryLock(lock, 1, 10, 30*60*1000)) { // 尝试1ms,每10ms尝试一次，持锁时间为30分钟
@@ -75,10 +74,10 @@ public class AiResourceJobTimer {
 	
 	
 	/**
-	 * 每30分支检查下，如果某个机器人还是忙的状态，且持续时间超过10分钟，那么应该是资源处理出现了问题，比如呼叫中心调用后，需要调用释放接口，可能因为某些原因没有调用，导致机器人一直被占用
+	 * 早9点-晚8点间，每30分支检查下，如果某个机器人还是忙的状态，且持续时间超过10分钟，那么应该是资源处理出现了问题，比如呼叫中心调用后，需要调用释放接口，可能因为某些原因没有调用，导致机器人一直被占用
 	 * 此处增加处理释放这些机器人
 	 */
-	@Scheduled(cron="0 0/30 * * * ?")
+	@Scheduled(cron="0 0/30 9-20 * * ?")
     public void aiFree(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_FREE_JOB", "LOCK_ROBOT_AI_FREE_JOB");
     	if (distributedLockHandler.tryLock(lock, 1, 10, 30*60*1000)) { // 尝试1ms,每10ms尝试一次，持锁时间为30分钟

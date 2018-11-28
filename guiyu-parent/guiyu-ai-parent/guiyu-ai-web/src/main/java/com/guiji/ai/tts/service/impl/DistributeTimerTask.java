@@ -56,6 +56,7 @@ public class DistributeTimerTask {
 				}else logger.info("前10分钟内没有请求");
 			} catch (Exception e) {
 				logger.error("分配失败！");
+				e.printStackTrace();
 			}
 			distributedLockHandler.releaseLock(lock);
 		} else {

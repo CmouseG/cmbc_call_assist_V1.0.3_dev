@@ -34,7 +34,7 @@ eureka:
 properties:
   error: error.properties
 ribbon:
-  ReadTimeout: 30000
-  ConnectTimeout: 30000
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 #download.path: D:\\downloads
 download.path: /home/apps/callcenter/ccmanager/dowlands

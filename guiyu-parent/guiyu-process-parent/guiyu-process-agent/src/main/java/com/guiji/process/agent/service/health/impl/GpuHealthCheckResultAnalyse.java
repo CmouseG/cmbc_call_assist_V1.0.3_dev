@@ -9,9 +9,14 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
     @Override
     public ProcessStatusEnum check(CommandResult cmdResult) {
+
+
         if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
-            cmdResult.getOutput().contains("RUNNING");
-            return ProcessStatusEnum.UP;
+            System.out.println("GpuHealthCheckResultAnalyse:" +cmdResult.getOutput());
+            if(cmdResult.getOutput().contains("1"))
+            {
+                return ProcessStatusEnum.UP;
+            }
         }
 
         return ProcessStatusEnum.DOWN;

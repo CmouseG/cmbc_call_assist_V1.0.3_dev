@@ -122,7 +122,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				}else {
 					logger.error("会话id：{},模板:{},不需要TTS合成，返回null",hsChecker.getSeqid(),hsChecker.getTemplateId());
 					result.setCheckMsg("不需要TTS合成");
-					result.setPass(false); //默认不通过，参数不存在
+					result.setPass(true); //默认通过，调用方可以认为数据可以正常入库，做后续操作
 					list.add(result);
 					continue;
 				}
@@ -253,7 +253,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 						userResourceCache.setChgStatus(null);
 						aiCacheService.putUserResource(userResourceCache);
 					}else if(RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())){
-						//用户资源减少
+						//用户资源减少，先将现在空闲的机器人释放掉
+						this.releaseFreeAi(userId,userAiInuseList);
 						throw new RobotException(AiErrorEnum.AI00060004.getErrorCode(),AiErrorEnum.AI00060004.getErrorMsg());
 					}
 				}else {
@@ -473,6 +474,35 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//正常情况下，只需要把机器人设置为空闲即可。
 			iAiResourceManagerService.aiFree(nowAi);
 		}
+	}
+	
+	
+	/**
+	 * 将用户现在是空闲的机器人释放掉
+	 * @param userAiInuseList
+	 */
+	private void releaseFreeAi(String userId,List<AiInuseCache> userAiInuseList) {
+		if(ListUtil.isNotEmpty(userAiInuseList)) {
+			for(AiInuseCache ai : userAiInuseList) {
+				if(RobotConstants.AI_STATUS_F.equals(ai.getAiStatus())) {
+					//如果是用户资源减少，那么直接释放机器人
+					iAiResourceManagerService.aiRelease(ai);
+				}
+			}
+			//释放后再查下用户还有没有机器人了，如果没有了，就把用户机器人清空，并将用户资源状态重置为正常
+			List<AiInuseCache> newUserAiInuseList = aiCacheService.queryUserAiInUseList(userId);
+			if(newUserAiInuseList == null || newUserAiInuseList.isEmpty()) {
+				UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
+				if(userResourceCache != null) {
+					//用户资源变更状态，设置为正常(本次变更影响已处理完)
+					userResourceCache.setChgStatus(null);
+					aiCacheService.putUserResource(userResourceCache);
+				}
+				//将用户机器人清空
+				aiCacheService.delUserAis(userId);
+			}
+		}
+		logger.info("用户资源变更，释放用户{}空闲机器人",userId);
 	}
 	
 }

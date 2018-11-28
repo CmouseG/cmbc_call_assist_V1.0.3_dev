@@ -10,6 +10,10 @@ public class CmdMessageVO  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String reqKey;
+
+    private CmdMsgTypeEnum msgTypeEnum;
+
     private CmdTypeEnum cmdType;
 
     private List<String> parameters;
@@ -40,10 +44,28 @@ public class CmdMessageVO  implements Serializable {
         this.parameters = parameters;
     }
 
+    public String getReqKey() {
+        return reqKey;
+    }
+
+    public void setReqKey(String reqKey) {
+        this.reqKey = reqKey;
+    }
+
+    public CmdMsgTypeEnum getMsgTypeEnum() {
+        return msgTypeEnum;
+    }
+
+    public void setMsgTypeEnum(CmdMsgTypeEnum msgTypeEnum) {
+        this.msgTypeEnum = msgTypeEnum;
+    }
+
     @Override
     public String toString() {
         return "CmdMessageVO{" +
-                "cmdType=" + cmdType +
+                "reqKey='" + reqKey + '\'' +
+                ", msgTypeEnum=" + msgTypeEnum +
+                ", cmdType=" + cmdType +
                 ", parameters=" + parameters +
                 ", processInstanceVO=" + processInstanceVO +
                 '}';

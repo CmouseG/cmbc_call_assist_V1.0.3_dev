@@ -4,7 +4,9 @@ import com.guiji.ImClientApp;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.CmdMsgTypeEnum;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -24,14 +26,23 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 		if (message.getType() == 1) {
 			// 收到服务端回复信息
 			System.out.println(message.getContent());
-		} else if (message.getType() == 2) {
+		}
+		else if (message.getType() == 2) {
 			// 收到服务端发送指令并执行
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
+			System.out.println("收到服务给客户端的命令：" + cmdMessageVO);
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
-		} else if (message.getType() == 3) {
-			// 收到服务端回复信息
-			System.out.println("服务端反馈:" + message.getContent());
+
+			if(cmdMessageVO.getMsgTypeEnum() == CmdMsgTypeEnum.REQ)
+			{
+				CmdMessageVO responseVO = new CmdMessageVO();
+				cmdMessageVO.setReqKey(cmdMessageVO.getReqKey());
+				cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ_ACK);
+
+				ImClientProtocolBO.getIntance().send(JsonUtils.bean2Json(responseVO),3);
+			}
 		}
+
 
 	}
 

@@ -69,5 +69,13 @@ public class Result {
 		public void setBody(T body) {
 			this.body = body;
 		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return "ReturnData [code=" + code + ", msg=" + msg + ", success=" + success + ", body=" + body + "]";
+		}
 	}
 }

@@ -17,7 +17,6 @@ public class ProcessMsgReadHandler {
             try {
 
                 cmdMessageVO = CmdMessageQueue.getInstance().get();
-                System.out.println("ProcessMsgReadHandler::"+cmdMessageVO);
                 if(cmdMessageVO == null)
                 {
                     continue;

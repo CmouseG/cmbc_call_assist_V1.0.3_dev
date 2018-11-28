@@ -74,6 +74,8 @@ public class ImClientProtocolBO {
         //发送消息
         MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(type);
         builder.setContent(msg);
+        System.out.println("ImClientProtocolBO::"+msg);
+
         channelGlobal.writeAndFlush(builder);
     }
 

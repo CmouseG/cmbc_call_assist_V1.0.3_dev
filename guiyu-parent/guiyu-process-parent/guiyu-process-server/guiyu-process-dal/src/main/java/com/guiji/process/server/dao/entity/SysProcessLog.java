@@ -8,6 +8,10 @@ public class SysProcessLog implements Serializable {
 
     private Long processId;
 
+    private String ip;
+
+    private String port;
+
     private String cmdType;
 
     private String processKey;
@@ -19,6 +23,8 @@ public class SysProcessLog implements Serializable {
     private Date createTime;
 
     private Date updateTime;
+
+    private String resultContent;
 
     private static final long serialVersionUID = 1L;
 
@@ -36,6 +42,22 @@ public class SysProcessLog implements Serializable {
 
     public void setProcessId(Long processId) {
         this.processId = processId;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip == null ? null : ip.trim();
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port == null ? null : port.trim();
     }
 
     public String getCmdType() {
@@ -86,6 +108,14 @@ public class SysProcessLog implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getResultContent() {
+        return resultContent;
+    }
+
+    public void setResultContent(String resultContent) {
+        this.resultContent = resultContent == null ? null : resultContent.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -94,12 +124,15 @@ public class SysProcessLog implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", processId=").append(processId);
+        sb.append(", ip=").append(ip);
+        sb.append(", port=").append(port);
         sb.append(", cmdType=").append(cmdType);
         sb.append(", processKey=").append(processKey);
         sb.append(", parameters=").append(parameters);
         sb.append(", result=").append(result);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", resultContent=").append(resultContent);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

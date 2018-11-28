@@ -38,7 +38,7 @@ public class CheckGpuStatus implements ApplicationRunner {
 		
 		logger.info("getting all TTS...");
 		ReturnData<List<ProcessInstanceVO>> returnData = iProcessSchedule.getAllTTS();
-		if(returnData != null && returnData.getBody() != null){
+		if(returnData != null && returnData.getBody() != null && !returnData.getBody().isEmpty()){
 			returnList = returnData.getBody();
 		}else{
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_TTS);

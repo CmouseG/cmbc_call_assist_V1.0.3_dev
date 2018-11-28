@@ -36,8 +36,8 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 			if(cmdMessageVO.getMsgTypeEnum() == CmdMsgTypeEnum.REQ)
 			{
 				CmdMessageVO responseVO = new CmdMessageVO();
-				cmdMessageVO.setReqKey(cmdMessageVO.getReqKey());
-				cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ_ACK);
+				responseVO.setReqKey(cmdMessageVO.getReqKey());
+				responseVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ_ACK);
 
 				ImClientProtocolBO.getIntance().send(JsonUtils.bean2Json(responseVO),3);
 			}

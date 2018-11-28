@@ -18,4 +18,13 @@ public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalys
 
         return ProcessStatusEnum.DOWN;
     }
+
+    @Override
+    public void afertPublish(CommandResult cmdResult) {
+        if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
+            String output = cmdResult.getOutput();
+            String result = output.substring(output.length()-1, output.length());
+
+        }
+    }
 }

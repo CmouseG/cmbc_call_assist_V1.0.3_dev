@@ -21,4 +21,9 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
         return ProcessStatusEnum.DOWN;
     }
+
+    @Override
+    public void afertPublish(CommandResult cmdResult) {
+
+    }
 }

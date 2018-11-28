@@ -7,4 +7,6 @@ public interface IHealthCheckResultAnalyse {
 
     ProcessStatusEnum check(CommandResult cmdResult);
 
+    void afertPublish(CommandResult cmdResult);
+
 }

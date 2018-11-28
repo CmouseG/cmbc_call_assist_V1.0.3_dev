@@ -64,7 +64,7 @@ public class ImServer {
     					ch.pipeline().addLast(new ServerStringHandler());*/
                     }
                 })
-        		.option(ChannelOption.SO_BACKLOG, 128)
+        		.option(ChannelOption.SO_BACKLOG, 1024)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         
         try {

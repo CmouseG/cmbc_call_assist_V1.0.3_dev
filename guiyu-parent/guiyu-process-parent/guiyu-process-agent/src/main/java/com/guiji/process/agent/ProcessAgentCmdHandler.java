@@ -81,7 +81,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
-                doCmd(cmdMessageVO, cfgProcessOperVO);
+                CommandResult result = doCmd(cmdMessageVO, cfgProcessOperVO);
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:

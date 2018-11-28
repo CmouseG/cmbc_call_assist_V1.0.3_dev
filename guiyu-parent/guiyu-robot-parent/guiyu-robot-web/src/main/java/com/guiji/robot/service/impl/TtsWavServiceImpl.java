@@ -155,6 +155,15 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			logger.error("TTS合成失败！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid(),e);
 			//4、合成后更新为合成状态
 			ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
+			String errorMsg = e.getMessage();
+			if(StrUtils.isNotEmpty(errorMsg)) {
+				if(errorMsg.length()>1024) {
+					errorMsg = errorMsg.substring(0, 1024);
+				}
+				ttsWavHis.setErrorMsg(errorMsg);
+			}else {
+				ttsWavHis.setErrorMsg("TTS合成失败,发生异常...");
+			}
 			aiNewTransService.recordTtsWav(ttsWavHis);
 		}
 	}
@@ -261,47 +270,60 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		//数据准备后调用TTS工具批量生成语音
 		TtsReqVO ttsReqVO = new TtsReqVO();
 		ttsReqVO.setBusId(ttsVoiceReq.getSeqid());
-		ttsReqVO.setModel(ttsVoiceReq.getTemplateId());
+		ttsReqVO.setModel(hsReplace.getUse_speaker_flag());
 		ttsReqVO.setContents(contents);
 		//调用TTS工具
-//		ReturnData<TtsRspVO> ttsRspData = iTts.translate(ttsReqVO);
-		///test
-		ReturnData<TtsRspVO> ttsRspData = new ReturnData<TtsRspVO>();
-		ttsRspData.setCode(RobotConstants.RSP_CODE_SUCCESS);
-		TtsRspVO body = new TtsRspVO();
-		Map<String, String> audios = new HashMap<String,String>();
-		for(String ss : contents) {
-			audios.put(ss, "http://116.62.211.11:8080/group1/M00/00/00/rBCn11v2J5GACF2DAACZOo-B9bQ280.wav");
-			body.setAudios(audios);
-		}
-		ttsRspData.setBody(body);
-		///test end
+		ReturnData<TtsRspVO> ttsRspData = iTts.translate(ttsReqVO);
+//		///test
+//		ReturnData<TtsRspVO> ttsRspData = new ReturnData<TtsRspVO>();
+//		ttsRspData.setCode(RobotConstants.RSP_CODE_SUCCESS);
+//		TtsRspVO body = new TtsRspVO();
+//		Map<String, String> audios = new HashMap<String,String>();
+//		for(String ss : contents) {
+//			audios.put(ss, "http://116.62.211.11:8080/group1/M00/00/00/rBCn11v2J5GACF2DAACZOo-B9bQ280.wav");
+//			body.setAudios(audios);
+//		}
+//		ttsRspData.setBody(body);
+//		///test end
 		if(ttsRspData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode())){
-			logger.error("调用TTS工具服务生成语音失败，请求参数{}",ttsReqVO);
+			logger.error("调用TTS工具服务生成语音失败，请求参数:{},返回结果:{}",ttsReqVO,ttsRspData);
 			logger.error("调用TTS工具生成语音失败，返回数据：{}"+ttsRspData);
 			throw new RobotException(ttsRspData.getCode(),ttsRspData.getMsg());
 		}
 		TtsRspVO ttsRsp = ttsRspData.getBody();
 		Map<String,String> ttsAudioMap = ttsRsp.getAudios();
 		//遍历将生成的wav落地
-		for (Map.Entry<String,TtsTempData> ttsTempDataEntry : ttsTempDataMap.entrySet()) {
-			TtsTempData data = ttsTempDataEntry.getValue();
-			String content = data.getTtsContent();	//需要根据要转的文本和返回数据做匹配
-			String url = ttsAudioMap.get(content);
-			if(StrUtils.isEmpty(url)) {
-				logger.error("文本{}调用TTS工具转语音缺失！",content);
-				throw new RobotException(AiErrorEnum.AI00060011.getErrorCode(),AiErrorEnum.AI00060011.getErrorMsg());
+		try {
+			for (Map.Entry<String,TtsTempData> ttsTempDataEntry : ttsTempDataMap.entrySet()) {
+				TtsTempData data = ttsTempDataEntry.getValue();
+				String content = data.getTtsContent();	//需要根据要转的文本和返回数据做匹配
+				String url = ttsAudioMap.get(content);
+				if(StrUtils.isEmpty(url)) {
+					logger.error("文本{}调用TTS工具转语音缺失！",content);
+					throw new RobotException(AiErrorEnum.AI00060011.getErrorCode(),AiErrorEnum.AI00060011.getErrorMsg());
+				}
+				data.setAudioFilePath(url);
+				//开始调用本地服务，下载wav文件并落地
+				String wavFilePath = tmpFilePath + com.guiji.utils.SystemUtil.getBusiSerialNo(ttsTempDataEntry.getKey())+".wav";
+				try {
+					new NetFileDownUtil(url,new File(wavFilePath)).downfile();
+				} catch (Exception e) {
+					logger.error("调用TTS语音文件{}落地异常！",url);
+					throw new RobotException(AiErrorEnum.AI00060012.getErrorCode(),AiErrorEnum.AI00060012.getErrorMsg());
+				}
+				data.setAudioFilePath(wavFilePath);
 			}
-			data.setAudioFilePath(url);
-			//开始调用本地服务，下载wav文件并落地
-			String wavFilePath = tmpFilePath + com.guiji.utils.SystemUtil.getBusiSerialNo(ttsTempDataEntry.getKey())+".wav";
-			try {
-				new NetFileDownUtil(url,new File(wavFilePath)).downfile();
-			} catch (IOException e) {
-				logger.error("调用TTS语音文件{}落地异常！",url);
-				throw new RobotException(AiErrorEnum.AI00060012.getErrorCode(),AiErrorEnum.AI00060012.getErrorMsg());
-			}
-			data.setAudioFilePath(wavFilePath);
+		}catch (RobotException e) {
+			//发生异常后，删除临时文件，不要再finally里清理资源是因为如果不报错是不需要再这里删除的，后续还会有合并需要该文件，报错就再这里直接删除掉临时文件
+			//删除临时文件
+			this.delTempFile(ttsTempDataMap);
+			throw e;
+		}catch (Exception e1) {
+			logger.error("遍历生成wav文件落地异常",e1);
+			//发生异常后，删除临时文件，不要再finally里清理资源是因为如果不报错是不需要再这里删除的，后续还会有合并需要该文件，报错就再这里直接删除掉临时文件
+			//删除临时文件
+			this.delTempFile(ttsTempDataMap);
+			throw new RobotException(AiErrorEnum.AI00060012.getErrorCode(),AiErrorEnum.AI00060012.getErrorMsg());
 		}
 		return ttsTempDataMap;
 	}
@@ -366,12 +388,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			throw new RobotException(AiErrorEnum.AI00060015.getErrorCode(),AiErrorEnum.AI00060015.getErrorMsg());
 		}finally {
 			//删除临时文件
-			for (Map.Entry<String,TtsTempData> ttsTempDataEntry : ttsTempDataMap.entrySet()) {
-				TtsTempData tempData = ttsTempDataEntry.getValue();
-				String splitFilePath = tempData.getAudioFilePath(); //临时文件本地路径
-				File tempFile = new File(splitFilePath);
-				if(tempFile!=null && tempFile.exists()) tempFile.delete();
-			}
+			this.delTempFile(ttsTempDataMap);
 			//删除合成后的wav文件
 			if(ListUtil.isNotEmpty(ttsFilePathList)) {
 				for(String tempTtsFilePath : ttsFilePathList) {
@@ -381,6 +398,25 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			}
 		}
 		return ttsList;
+	}
+	
+	
+	/**
+	 * 删除临时文件
+	 * @param ttsTempDataMap
+	 */
+	private void delTempFile(Map<String,TtsTempData> ttsTempDataMap) {
+		if(ttsTempDataMap != null) {
+			//删除临时文件
+			for (Map.Entry<String,TtsTempData> ttsTempDataEntry : ttsTempDataMap.entrySet()) {
+				TtsTempData tempData = ttsTempDataEntry.getValue();
+				String splitFilePath = tempData.getAudioFilePath(); //临时文件本地路径
+				if(StrUtils.isNotEmpty(splitFilePath)) {
+					File tempFile = new File(splitFilePath);
+					if(tempFile!=null && tempFile.exists()) tempFile.delete();
+				}
+			}
+		}
 	}
 	
 	

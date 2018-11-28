@@ -13,6 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 */
 public class WavMergeUtil {
 	
+	
 	/**
 	 * 顺序合并多个wav语音并输出到新的wav文件
 	 * 原wav语音比特率尽量保持一致，如果不一致可能合并后的语音无法播放或效果很差
@@ -26,8 +27,11 @@ public class WavMergeUtil {
 		File fileOut = new File(outputWav);
 		//如果这个语音大于 2 个
 		if (orgWavList.size() >= 2){
-		   AudioInputStream audio1 = AudioSystem.getAudioInputStream(new File(orgWavList.get(0)));
-		   AudioInputStream audio2 = AudioSystem.getAudioInputStream(new File(orgWavList.get(1)));
+		   BufferedInputStream bi1 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(0))));
+		   BufferedInputStream bi2 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(1))));
+		   AudioInputStream audio1 = AudioSystem.getAudioInputStream(bi1);
+		   AudioInputStream audio2 = AudioSystem.getAudioInputStream(bi2);
+		   BufferedInputStream bi3 = null;
 		   AudioInputStream audioBuild = new AudioInputStream(
 		         new SequenceInputStream(audio1, audio2),
 		         audio1.getFormat(),
@@ -37,7 +41,8 @@ public class WavMergeUtil {
 		   AudioInputStream audio3 = null;
 		   //大于两个时继续合并
 		   for(int i = 2; i<orgWavList.size();i++){
-		      audio3 = AudioSystem.getAudioInputStream(new File(orgWavList.get(i)));
+			   bi3 = new BufferedInputStream(new FileInputStream(new File(orgWavList.get(i))));
+		      audio3 = AudioSystem.getAudioInputStream(bi3);
 		      audioBuild = new AudioInputStream(
 		            new SequenceInputStream(audioBuild, audio3),
 		            audioBuild.getFormat(), audioBuild.getFrameLength() +
@@ -58,6 +63,15 @@ public class WavMergeUtil {
 		   }
 		   if(audioBuild != null) {
 			   audioBuild.close();
+		   }
+		   if(bi1 != null) {
+			   bi1.close();
+		   }
+		   if(bi2 != null) {
+			   bi1.close();
+		   }
+		   if(bi3 != null) {
+			   bi1.close();
 		   }
 		} else {
 		   //否则只有一个,直接返回语音路径

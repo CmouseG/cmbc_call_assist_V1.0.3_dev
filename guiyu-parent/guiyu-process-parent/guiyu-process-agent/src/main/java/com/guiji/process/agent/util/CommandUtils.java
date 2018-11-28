@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandUtils {
     static Logger logger = LoggerFactory.getLogger(CommandUtils.class);
-    public static int DEFAULT_TIMEOUT=1000;
+    public static int DEFAULT_TIMEOUT=100000;
     public static final int DEFAULT_INTERVAL=100;
     public static long startTime ;
     public static CommandResult exec(String command){

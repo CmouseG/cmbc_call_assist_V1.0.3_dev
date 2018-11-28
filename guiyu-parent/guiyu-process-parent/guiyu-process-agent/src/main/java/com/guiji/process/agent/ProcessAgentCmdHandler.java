@@ -138,7 +138,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             // 发起命令
             cmdResult = CommandUtils.exec(cmd);
-            System.out.println("执行命令结果：：" + cmdResult);
+            System.out.println("执行命令结果：：" + cmdResult.getOutput().toString());
             // 执行完命令保存结果到内存记录
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum());
         }

@@ -122,7 +122,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				}else {
 					logger.error("会话id：{},模板:{},不需要TTS合成，返回null",hsChecker.getSeqid(),hsChecker.getTemplateId());
 					result.setCheckMsg("不需要TTS合成");
-					result.setPass(false); //默认不通过，参数不存在
+					result.setPass(true); //默认通过，调用方可以认为数据可以正常入库，做后续操作
 					list.add(result);
 					continue;
 				}

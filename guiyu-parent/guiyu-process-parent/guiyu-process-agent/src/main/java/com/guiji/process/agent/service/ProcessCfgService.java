@@ -95,13 +95,6 @@ public class ProcessCfgService {
             cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
         }
 
-        CfgProcessVO cfgProcessVO = new CfgProcessVO();
-        cfgProcessVO.setPort(ProcessCfgService.agentPort);
-        cfgProcessVO.setName("agent");
-        cfgProcessVO.setProcessTypeEnum(ProcessTypeEnum.AGENT.getValue());
-        cfgProcessVO.setCfgNodeOpers(cfgAgentNodeVO.getNodeOpers());
-        cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
-
         // 发送注册信息
         Map<Integer, CfgProcessVO> cfgMap = ProcessCfgService.getIntance().cfgMap;
         if (cfgMap != null) {

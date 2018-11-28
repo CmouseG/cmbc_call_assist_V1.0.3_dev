@@ -357,20 +357,6 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				processId =template.getProcessId();
 			}
 			
-			
-			
-			
-			
-			
-			//保存账号与行业关系表
-			/*UserAccountIndustryRelation relation = new UserAccountIndustryRelation();
-			relation.setAccountNo(userId);
-			//relation.setAccountName(requestParam.getAccountName());
-			relation.setIndustryId(template_id);
-			relation.setIndustryName(trade);
-			relation.setCrtTime(new Date(System.currentTimeMillis()));
-			relation.setCrtUser("crm");
-			relationMapper.insert(relation);*/
 		}
 		
 

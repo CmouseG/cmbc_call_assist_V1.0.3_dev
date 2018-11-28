@@ -12,7 +12,7 @@ public class SysRole implements Serializable {
 
     private Date updateTime;
 
-    private String delFlag;
+    private String delFlag="0";
 
     private Integer initRole;
 

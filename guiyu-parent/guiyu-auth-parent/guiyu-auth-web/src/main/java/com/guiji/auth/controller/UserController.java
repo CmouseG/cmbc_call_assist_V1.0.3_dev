@@ -15,7 +15,6 @@ import com.guiji.auth.util.AuthUtil;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.robot.api.IRobotRemote;
 import com.guiji.user.dao.entity.SysUser;
 
 /**

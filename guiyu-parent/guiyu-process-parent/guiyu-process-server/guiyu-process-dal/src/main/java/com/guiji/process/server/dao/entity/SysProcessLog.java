@@ -12,7 +12,7 @@ public class SysProcessLog implements Serializable {
 
     private String port;
 
-    private String cmdType;
+    private Integer cmdType;
 
     private String processKey;
 
@@ -60,12 +60,12 @@ public class SysProcessLog implements Serializable {
         this.port = port == null ? null : port.trim();
     }
 
-    public String getCmdType() {
+    public Integer getCmdType() {
         return cmdType;
     }
 
-    public void setCmdType(String cmdType) {
-        this.cmdType = cmdType == null ? null : cmdType.trim();
+    public void setCmdType(Integer cmdType) {
+        this.cmdType = cmdType;
     }
 
     public String getProcessKey() {

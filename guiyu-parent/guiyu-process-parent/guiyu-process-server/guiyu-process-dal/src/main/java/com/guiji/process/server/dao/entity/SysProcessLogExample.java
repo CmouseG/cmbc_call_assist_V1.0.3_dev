@@ -395,62 +395,52 @@ public class SysProcessLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeEqualTo(String value) {
+        public Criteria andCmdTypeEqualTo(Integer value) {
             addCriterion("cmd_type =", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeNotEqualTo(String value) {
+        public Criteria andCmdTypeNotEqualTo(Integer value) {
             addCriterion("cmd_type <>", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeGreaterThan(String value) {
+        public Criteria andCmdTypeGreaterThan(Integer value) {
             addCriterion("cmd_type >", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andCmdTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("cmd_type >=", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeLessThan(String value) {
+        public Criteria andCmdTypeLessThan(Integer value) {
             addCriterion("cmd_type <", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeLessThanOrEqualTo(String value) {
+        public Criteria andCmdTypeLessThanOrEqualTo(Integer value) {
             addCriterion("cmd_type <=", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeLike(String value) {
-            addCriterion("cmd_type like", value, "cmdType");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmdTypeNotLike(String value) {
-            addCriterion("cmd_type not like", value, "cmdType");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmdTypeIn(List<String> values) {
+        public Criteria andCmdTypeIn(List<Integer> values) {
             addCriterion("cmd_type in", values, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeNotIn(List<String> values) {
+        public Criteria andCmdTypeNotIn(List<Integer> values) {
             addCriterion("cmd_type not in", values, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeBetween(String value1, String value2) {
+        public Criteria andCmdTypeBetween(Integer value1, Integer value2) {
             addCriterion("cmd_type between", value1, value2, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeNotBetween(String value1, String value2) {
+        public Criteria andCmdTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("cmd_type not between", value1, value2, "cmdType");
             return (Criteria) this;
         }

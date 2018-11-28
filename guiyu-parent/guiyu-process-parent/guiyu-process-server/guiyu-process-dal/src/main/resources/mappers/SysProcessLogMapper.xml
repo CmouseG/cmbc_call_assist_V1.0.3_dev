@@ -6,7 +6,7 @@
     <result column="process_id" property="processId" jdbcType="BIGINT" />
     <result column="ip" property="ip" jdbcType="VARCHAR" />
     <result column="port" property="port" jdbcType="VARCHAR" />
-    <result column="cmd_type" property="cmdType" jdbcType="CHAR" />
+    <result column="cmd_type" property="cmdType" jdbcType="INTEGER" />
     <result column="process_key" property="processKey" jdbcType="VARCHAR" />
     <result column="parameters" property="parameters" jdbcType="VARCHAR" />
     <result column="result" property="result" jdbcType="VARCHAR" />
@@ -116,7 +116,7 @@
       `parameters`, `result`, create_time, 
       update_time, result_content)
     values (#{id,jdbcType=BIGINT}, #{processId,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, 
-      #{port,jdbcType=VARCHAR}, #{cmdType,jdbcType=CHAR}, #{processKey,jdbcType=VARCHAR}, 
+      #{port,jdbcType=VARCHAR}, #{cmdType,jdbcType=INTEGER}, #{processKey,jdbcType=VARCHAR}, 
       #{parameters,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{resultContent,jdbcType=VARCHAR})
   </insert>
@@ -171,7 +171,7 @@
         #{port,jdbcType=VARCHAR},
       </if>
       <if test="cmdType != null" >
-        #{cmdType,jdbcType=CHAR},
+        #{cmdType,jdbcType=INTEGER},
       </if>
       <if test="processKey != null" >
         #{processKey,jdbcType=VARCHAR},
@@ -215,7 +215,7 @@
         port = #{record.port,jdbcType=VARCHAR},
       </if>
       <if test="record.cmdType != null" >
-        cmd_type = #{record.cmdType,jdbcType=CHAR},
+        cmd_type = #{record.cmdType,jdbcType=INTEGER},
       </if>
       <if test="record.processKey != null" >
         process_key = #{record.processKey,jdbcType=VARCHAR},
@@ -246,7 +246,7 @@
       process_id = #{record.processId,jdbcType=BIGINT},
       ip = #{record.ip,jdbcType=VARCHAR},
       port = #{record.port,jdbcType=VARCHAR},
-      cmd_type = #{record.cmdType,jdbcType=CHAR},
+      cmd_type = #{record.cmdType,jdbcType=INTEGER},
       process_key = #{record.processKey,jdbcType=VARCHAR},
       `parameters` = #{record.parameters,jdbcType=VARCHAR},
       `result` = #{record.result,jdbcType=VARCHAR},
@@ -270,7 +270,7 @@
         port = #{port,jdbcType=VARCHAR},
       </if>
       <if test="cmdType != null" >
-        cmd_type = #{cmdType,jdbcType=CHAR},
+        cmd_type = #{cmdType,jdbcType=INTEGER},
       </if>
       <if test="processKey != null" >
         process_key = #{processKey,jdbcType=VARCHAR},
@@ -298,7 +298,7 @@
     set process_id = #{processId,jdbcType=BIGINT},
       ip = #{ip,jdbcType=VARCHAR},
       port = #{port,jdbcType=VARCHAR},
-      cmd_type = #{cmdType,jdbcType=CHAR},
+      cmd_type = #{cmdType,jdbcType=INTEGER},
       process_key = #{processKey,jdbcType=VARCHAR},
       `parameters` = #{parameters,jdbcType=VARCHAR},
       `result` = #{result,jdbcType=VARCHAR},

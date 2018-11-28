@@ -11,6 +11,8 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time_str" property="createTimeStr" jdbcType="VARCHAR" />
+    <result column="update_time_str" property="updateTimeStr" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time
+    id, ip, port, `name`, `type`, process_key, `status`, create_time,update_time,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessExample" >
     select

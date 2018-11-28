@@ -26,6 +26,10 @@ public class SysProcessLog implements Serializable {
 
     private String resultContent;
 
+    private String createTimeStr;
+
+    private String updateTimeStr;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -116,6 +120,22 @@ public class SysProcessLog implements Serializable {
         this.resultContent = resultContent == null ? null : resultContent.trim();
     }
 
+    public String getCreateTimeStr() {
+        return createTimeStr;
+    }
+
+    public void setCreateTimeStr(String createTimeStr) {
+        this.createTimeStr = createTimeStr;
+    }
+
+    public String getUpdateTimeStr() {
+        return updateTimeStr;
+    }
+
+    public void setUpdateTimeStr(String updateTimeStr) {
+        this.updateTimeStr = updateTimeStr;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -133,6 +153,8 @@ public class SysProcessLog implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", resultContent=").append(resultContent);
+        sb.append(", createTimeStr=").append(createTimeStr);
+        sb.append(", updateTimeStr=").append(updateTimeStr);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

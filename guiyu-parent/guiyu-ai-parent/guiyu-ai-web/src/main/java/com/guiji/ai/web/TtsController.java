@@ -42,7 +42,7 @@ public class TtsController implements ITts {
     		}
 			return Result.ok(ttsService.translate(ttsReqVO));
 		} catch (Exception e) {
-			logger.error("语音合成失败!" + e);
+			logger.error("语音合成失败!");
 			return Result.error(AiConstants.AI_TRANSFER_ERROR);
 		}
     }

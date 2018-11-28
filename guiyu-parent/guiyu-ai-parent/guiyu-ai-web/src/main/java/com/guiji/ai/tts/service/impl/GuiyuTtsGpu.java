@@ -68,10 +68,10 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		FileOutputStream out = null;
 		File file = null;
 		try {
+			File directory = new File(filePath);
+			if (!directory.exists()) directory.mkdirs();
 			file = new File(filePath + System.currentTimeMillis() + ".wav"); //文件保存路径
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			if (!file.exists()) file.createNewFile();
 			out = new FileOutputStream(file);
 			
 			ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
@@ -113,7 +113,8 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			// 释放GPU
 			releaseGpu(model, ip, port);
 		} catch (Exception e) {
-			logger.error("请求失败！" + e);
+			logger.error("请求GPU失败！" + e);
+			e.printStackTrace();
 			return null;
 		} finally {
 			IOUtils.closeQuietly(out);
@@ -153,7 +154,8 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			}
 			file.delete(); //删除本地文件
 		} catch (Exception e) {
-			logger.error(file.getName() + "上传失败！", e);
+			logger.error(file.getName() + "上传失败！");
+			e.printStackTrace();
 			return null;
 		}
 		return audioUrl;

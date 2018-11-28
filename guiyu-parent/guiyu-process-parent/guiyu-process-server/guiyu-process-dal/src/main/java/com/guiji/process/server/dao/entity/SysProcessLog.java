@@ -8,7 +8,11 @@ public class SysProcessLog implements Serializable {
 
     private Long processId;
 
-    private String cmdType;
+    private String ip;
+
+    private String port;
+
+    private Integer cmdType;
 
     private String processKey;
 
@@ -19,6 +23,12 @@ public class SysProcessLog implements Serializable {
     private Date createTime;
 
     private Date updateTime;
+
+    private String resultContent;
+
+    private String createTimeStr;
+
+    private String updateTimeStr;
 
     private static final long serialVersionUID = 1L;
 
@@ -38,12 +48,28 @@ public class SysProcessLog implements Serializable {
         this.processId = processId;
     }
 
-    public String getCmdType() {
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip == null ? null : ip.trim();
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port == null ? null : port.trim();
+    }
+
+    public Integer getCmdType() {
         return cmdType;
     }
 
-    public void setCmdType(String cmdType) {
-        this.cmdType = cmdType == null ? null : cmdType.trim();
+    public void setCmdType(Integer cmdType) {
+        this.cmdType = cmdType;
     }
 
     public String getProcessKey() {
@@ -86,6 +112,30 @@ public class SysProcessLog implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getResultContent() {
+        return resultContent;
+    }
+
+    public void setResultContent(String resultContent) {
+        this.resultContent = resultContent == null ? null : resultContent.trim();
+    }
+
+    public String getCreateTimeStr() {
+        return createTimeStr;
+    }
+
+    public void setCreateTimeStr(String createTimeStr) {
+        this.createTimeStr = createTimeStr;
+    }
+
+    public String getUpdateTimeStr() {
+        return updateTimeStr;
+    }
+
+    public void setUpdateTimeStr(String updateTimeStr) {
+        this.updateTimeStr = updateTimeStr;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -94,12 +144,17 @@ public class SysProcessLog implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", processId=").append(processId);
+        sb.append(", ip=").append(ip);
+        sb.append(", port=").append(port);
         sb.append(", cmdType=").append(cmdType);
         sb.append(", processKey=").append(processKey);
         sb.append(", parameters=").append(parameters);
         sb.append(", result=").append(result);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", resultContent=").append(resultContent);
+        sb.append(", createTimeStr=").append(createTimeStr);
+        sb.append(", updateTimeStr=").append(updateTimeStr);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

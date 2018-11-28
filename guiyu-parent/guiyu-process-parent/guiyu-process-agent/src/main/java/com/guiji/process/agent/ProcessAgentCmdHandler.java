@@ -168,9 +168,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             processInstanceVO.setName(cmdMessageVO.getProcessInstanceVO().getName());
             processInstanceVO.setStatus(nowStatus);
             newCmdMsg.setProcessInstanceVO(processInstanceVO);
-            String msg = JsonUtils.bean2Json(newCmdMsg);
-
-            ImClientProtocolBO.getIntance().send(msg,3);
+            ImClientProtocolBO.getIntance().send(newCmdMsg,3);
         }
 
         //停止状态的进程自动重启

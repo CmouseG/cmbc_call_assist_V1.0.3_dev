@@ -79,11 +79,11 @@ public class SysProcessServiceImpl implements ISysProcessService {
         //分页查询
         List<SysProcess> list = sysProcessMapper.selectByExample(example);
         if(list != null && !list.isEmpty()) {
-            List<SysProcess> rspSysDictList = new ArrayList<SysProcess>();
-            for(SysProcess dict : list) {
-                rspSysDictList.add(dict);
+            List<SysProcess> rspSysProcessList = new ArrayList<SysProcess>();
+            for(SysProcess process : list) {
+                rspSysProcessList.add(process);
             }
-            page.setRecords(rspSysDictList);
+            page.setRecords(rspSysProcessList);
         }
         page.setPageNo(pageNo);
         page.setPageSize(pageSize);

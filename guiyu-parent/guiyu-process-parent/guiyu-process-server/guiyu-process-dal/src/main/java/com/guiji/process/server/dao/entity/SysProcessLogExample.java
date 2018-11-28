@@ -245,6 +245,146 @@ public class SysProcessLogExample {
             return (Criteria) this;
         }
 
+        public Criteria andIpIsNull() {
+            addCriterion("ip is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpIsNotNull() {
+            addCriterion("ip is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpEqualTo(String value) {
+            addCriterion("ip =", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpNotEqualTo(String value) {
+            addCriterion("ip <>", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpGreaterThan(String value) {
+            addCriterion("ip >", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpGreaterThanOrEqualTo(String value) {
+            addCriterion("ip >=", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpLessThan(String value) {
+            addCriterion("ip <", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpLessThanOrEqualTo(String value) {
+            addCriterion("ip <=", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpLike(String value) {
+            addCriterion("ip like", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpNotLike(String value) {
+            addCriterion("ip not like", value, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpIn(List<String> values) {
+            addCriterion("ip in", values, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpNotIn(List<String> values) {
+            addCriterion("ip not in", values, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpBetween(String value1, String value2) {
+            addCriterion("ip between", value1, value2, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpNotBetween(String value1, String value2) {
+            addCriterion("ip not between", value1, value2, "ip");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortIsNull() {
+            addCriterion("port is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortIsNotNull() {
+            addCriterion("port is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortEqualTo(String value) {
+            addCriterion("port =", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotEqualTo(String value) {
+            addCriterion("port <>", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortGreaterThan(String value) {
+            addCriterion("port >", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortGreaterThanOrEqualTo(String value) {
+            addCriterion("port >=", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortLessThan(String value) {
+            addCriterion("port <", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortLessThanOrEqualTo(String value) {
+            addCriterion("port <=", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortLike(String value) {
+            addCriterion("port like", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotLike(String value) {
+            addCriterion("port not like", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortIn(List<String> values) {
+            addCriterion("port in", values, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotIn(List<String> values) {
+            addCriterion("port not in", values, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortBetween(String value1, String value2) {
+            addCriterion("port between", value1, value2, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotBetween(String value1, String value2) {
+            addCriterion("port not between", value1, value2, "port");
+            return (Criteria) this;
+        }
+
         public Criteria andCmdTypeIsNull() {
             addCriterion("cmd_type is null");
             return (Criteria) this;
@@ -255,62 +395,52 @@ public class SysProcessLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeEqualTo(String value) {
+        public Criteria andCmdTypeEqualTo(Integer value) {
             addCriterion("cmd_type =", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeNotEqualTo(String value) {
+        public Criteria andCmdTypeNotEqualTo(Integer value) {
             addCriterion("cmd_type <>", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeGreaterThan(String value) {
+        public Criteria andCmdTypeGreaterThan(Integer value) {
             addCriterion("cmd_type >", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andCmdTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("cmd_type >=", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeLessThan(String value) {
+        public Criteria andCmdTypeLessThan(Integer value) {
             addCriterion("cmd_type <", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeLessThanOrEqualTo(String value) {
+        public Criteria andCmdTypeLessThanOrEqualTo(Integer value) {
             addCriterion("cmd_type <=", value, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeLike(String value) {
-            addCriterion("cmd_type like", value, "cmdType");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmdTypeNotLike(String value) {
-            addCriterion("cmd_type not like", value, "cmdType");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmdTypeIn(List<String> values) {
+        public Criteria andCmdTypeIn(List<Integer> values) {
             addCriterion("cmd_type in", values, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeNotIn(List<String> values) {
+        public Criteria andCmdTypeNotIn(List<Integer> values) {
             addCriterion("cmd_type not in", values, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeBetween(String value1, String value2) {
+        public Criteria andCmdTypeBetween(Integer value1, Integer value2) {
             addCriterion("cmd_type between", value1, value2, "cmdType");
             return (Criteria) this;
         }
 
-        public Criteria andCmdTypeNotBetween(String value1, String value2) {
+        public Criteria andCmdTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("cmd_type not between", value1, value2, "cmdType");
             return (Criteria) this;
         }
@@ -642,6 +772,76 @@ public class SysProcessLogExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentIsNull() {
+            addCriterion("result_content is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentIsNotNull() {
+            addCriterion("result_content is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentEqualTo(String value) {
+            addCriterion("result_content =", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotEqualTo(String value) {
+            addCriterion("result_content <>", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentGreaterThan(String value) {
+            addCriterion("result_content >", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentGreaterThanOrEqualTo(String value) {
+            addCriterion("result_content >=", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentLessThan(String value) {
+            addCriterion("result_content <", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentLessThanOrEqualTo(String value) {
+            addCriterion("result_content <=", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentLike(String value) {
+            addCriterion("result_content like", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotLike(String value) {
+            addCriterion("result_content not like", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentIn(List<String> values) {
+            addCriterion("result_content in", values, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotIn(List<String> values) {
+            addCriterion("result_content not in", values, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentBetween(String value1, String value2) {
+            addCriterion("result_content between", value1, value2, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotBetween(String value1, String value2) {
+            addCriterion("result_content not between", value1, value2, "resultContent");
             return (Criteria) this;
         }
     }

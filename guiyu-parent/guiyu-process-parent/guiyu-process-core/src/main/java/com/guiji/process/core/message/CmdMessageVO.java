@@ -20,6 +20,10 @@ public class CmdMessageVO  implements Serializable {
 
     private ProcessInstanceVO processInstanceVO;
 
+    private String commandResult;
+
+    private String commandResultDesc;
+
     public CmdTypeEnum getCmdType() {
         return cmdType;
     }
@@ -60,6 +64,22 @@ public class CmdMessageVO  implements Serializable {
         this.msgTypeEnum = msgTypeEnum;
     }
 
+    public String getCommandResult() {
+        return commandResult;
+    }
+
+    public void setCommandResult(String commandResult) {
+        this.commandResult = commandResult;
+    }
+
+    public String getCommandResultDesc() {
+        return commandResultDesc;
+    }
+
+    public void setCommandResultDesc(String commandResultDesc) {
+        this.commandResultDesc = commandResultDesc;
+    }
+
     @Override
     public String toString() {
         return "CmdMessageVO{" +
@@ -68,6 +88,8 @@ public class CmdMessageVO  implements Serializable {
                 ", cmdType=" + cmdType +
                 ", parameters=" + parameters +
                 ", processInstanceVO=" + processInstanceVO +
+                ", commandResult='" + commandResult + '\'' +
+                ", commandResultDesc='" + commandResultDesc + '\'' +
                 '}';
     }
 }

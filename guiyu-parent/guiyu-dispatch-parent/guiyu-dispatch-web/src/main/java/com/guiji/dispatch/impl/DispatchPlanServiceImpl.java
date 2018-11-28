@@ -45,6 +45,10 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateProvider;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.CheckParamsReq;
+import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.HsParam;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
@@ -74,12 +78,33 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private RedisUtil redisUtil;
 
+	@Autowired
+	private IRobotRemote robotRemote;
+
 	@Override
-	public boolean addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
-		logger.info("userId:" + userId);
+	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
+		MessageDto dto = new MessageDto();
+		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+		// 检查参数
+		ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
+		if (checkParams.success) {
+			if (checkParams.getBody() != null) {
+				List<CheckResult> body = checkParams.getBody();
+				CheckResult checkResult = body.get(0);
+				if (!checkResult.isPass()) {
+					dto.setMsg(checkResult.getCheckMsg());
+					dto.setResult(false);
+					return dto;
+				}
+			}
+		} else {
+			dto.setMsg(checkParams.getMsg());
+			dto.setResult(false);
+			return dto;
+		}
+
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
-		logger.info("SysUser:" + SysUser.getBody().getUsername());
 		if (SysUser != null) {
 			dispatchPlan.setUsername(SysUser.getBody().getUsername());
 		}
@@ -103,26 +128,25 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setIsDel(Constant.IS_DEL_0);
 		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
+		dispatchPlan.setFlag(Constant.IS_FLAG_0);
+		
 		int result = dispatchPlanMapper.insert(dispatchPlan);
 
-		// 调用机器人中心判断参数是否合法，如果合法则status_plan =1 否则为0 然后入库
+		return dto;
+	}
 
-		// // 写入时间dispatchHour
-		// for (String hour : hours) {
-		// DispatchHour dispatchHour = new DispatchHour();
-		// try {
-		// dispatchHour.setGmtCreate(ToolDateTime.getCurrentTime());
-		// } catch (Exception e) {
-		// logger.error("error", e);
-		// }
-		// dispatchHour.setDispatchId(dispatchPlan.getPlanUuid());
-		// dispatchHour.setHour(Integer.valueOf(hour));
-		// // 未拨打
-		// dispatchHour.setIsCall(0);
-		// dispatchHourMapper.insert(dispatchHour);
-		// }
-
-		return result > 0 ? true : false;
+	public ReturnData<List<CheckResult>> checkParams(DispatchPlan dispatchPlan) {
+		CheckParamsReq req = new CheckParamsReq();
+		HsParam hsParam = new HsParam();
+		hsParam.setParams(dispatchPlan.getParams());
+		hsParam.setSeqid(dispatchPlan.getPlanUuid());
+		hsParam.setTemplateId(dispatchPlan.getRobot());
+		List<HsParam> list = new ArrayList<>();
+		list.add(hsParam);
+		req.setNeedResourceInit(false);
+		req.setCheckers(list);
+		ReturnData<List<CheckResult>> checkParams = robotRemote.checkParams(req);
+		return checkParams;
 	}
 
 	@Override
@@ -218,8 +242,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
-
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
 		if (SysUser != null) {
@@ -275,18 +297,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setIsDel(Constant.IS_DEL_0);
 			dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 			dispatchPlan.setIsTts(Constant.IS_TTS_0);
-			dispatchPlanMapper.insert(dispatchPlan);
+			dispatchPlan.setFlag(Constant.IS_FLAG_0);
+			// 检查校验参数
+			ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
+			if (checkParams.success) {
+				if (checkParams.getBody() != null) {
+					List<CheckResult> body = checkParams.getBody();
+					CheckResult checkResult = body.get(0);
+					if (!checkResult.isPass()) {
+						throw new Exception("机器人合成" + checkResult.getCheckMsg());
+					}
+				}
+			} else {
+				throw new Exception("请求校验参数失败,请检查机器人的参数");
+			}
 
-			// String[] hours = dispatchPlan.getCallHour().split(",");
-			// // 写入时间dispatchHour
-			// for (String hr : hours) {
-			// DispatchHour hour = new DispatchHour();
-			// hour.setDispatchId(dispatchPlan.getPlanUuid());
-			// hour.setGmtCreate(dateProvider.getCurrentTime());
-			// hour.setIsCall(Constant.ISCALL_0);
-			// hour.setHour(Integer.valueOf(hr));
-			// dispatchHourMapper.insert(hour);
-			// }
+			dispatchPlanMapper.insert(dispatchPlan);
+			dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		}
 		return result;
 	}
@@ -565,32 +592,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setIsDel(Constant.IS_DEL_0);
 		dis.setStatusPlan(Constant.STATUSPLAN_1);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
-
+		//flag
+		dis.setFlag(Constant.IS_FLAG_0);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		// // 根据日期查询号码
-		// DispatchPlanExample ex = new DispatchPlanExample();
-		// ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr)).andIsDelEqualTo(Constant.IS_DEL_0)
-		// .andStatusPlanEqualTo(Constant.STATUSPLAN_1).andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
-		// List<DispatchPlan> phones = dispatchPlanMapper.selectByExample(ex);
-		// List<DispatchHour> hourList = new ArrayList<>();
-		// // 遍历当前符合日期号码
-		// for (DispatchPlan plan : phones) {
-		// DispatchHourExample hourEx = new DispatchHourExample();
-		// // 查询拨打时间
-		// hourEx.createCriteria().andHourEqualTo(hour).andDispatchIdEqualTo(plan.getPlanUuid());
-		// hourList = dispatchHourMapper.selectByExample(hourEx);
-		// }
-		// List<String> ids = new ArrayList<>();
-		// for (DispatchHour bean : hourList) {
-		// ids.add(String.valueOf(bean.getDispatchId()));
-		// }
-		//
-		// List<DispatchPlan> selectByExample = new ArrayList<>();
-		// if (ids.size() > 0) {
-		// DispatchPlanExample ex1 = new DispatchPlanExample();
-		// ex1.createCriteria().andPlanUuidIn(ids);
-		// selectByExample = dispatchPlanMapper.selectByExample(ex1);
-		// }
 		return phones;
 	}
 
@@ -692,4 +696,41 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		int count = dispatchPlanBatchMapper.countByExample(ex);
 		return count > 0 ? true : false;
 	}
+
+	@Override
+	public boolean batchUpdateFlag(List<DispatchPlan> list,String flag) {
+		List<String> ids = new ArrayList<>();
+
+		for (DispatchPlan dispatchPlan : list) {
+			ids.add(dispatchPlan.getPlanUuid());
+		}
+		int result = -1;
+		for (String id : ids) {
+			DispatchPlan dis = new DispatchPlan();
+			dis.setPlanUuid(id);
+			dis.setFlag(flag);
+			result = dispatchPlanMapper.updateByExampleSelective(dis, new DispatchPlanExample());
+		}
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+
+		DispatchPlan dis = new DispatchPlan();
+		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setCallHour(String.valueOf(hour));
+		dis.setIsDel(Constant.IS_DEL_0);
+		dis.setStatusPlan(Constant.STATUSPLAN_1);
+		dis.setStatusSync(Constant.STATUS_SYNC_0);
+		dis.setFlag(flag);
+		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
+		return phones;
+	}
+
 }

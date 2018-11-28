@@ -29,6 +29,7 @@
     <result column="line_name" property="lineName" jdbcType="VARCHAR" />
     <result column="robot_name" property="robotName" jdbcType="VARCHAR" />
     <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
+    <result column="flag" property="flag" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -92,7 +93,7 @@
     id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync, 
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour, 
     gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name, 
-    batch_name
+    batch_name, flag
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
@@ -137,8 +138,8 @@
       clean, call_data, call_hour, 
       gmt_create, gmt_modified, is_tts, 
       username, replay_type, is_del, 
-      line_name, robot_name, batch_name
-      )
+      line_name, robot_name, batch_name, 
+      flag)
     values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER}, 
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
       #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER}, 
@@ -147,8 +148,8 @@
       #{clean,jdbcType=INTEGER}, #{callData,jdbcType=INTEGER}, #{callHour,jdbcType=VARCHAR}, 
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=INTEGER}, 
       #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER}, 
-      #{lineName,jdbcType=VARCHAR}, #{robotName,jdbcType=VARCHAR}, #{batchName,jdbcType=VARCHAR}
-      )
+      #{lineName,jdbcType=VARCHAR}, #{robotName,jdbcType=VARCHAR}, #{batchName,jdbcType=VARCHAR}, 
+      #{flag,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     insert into dispatch_plan
@@ -234,6 +235,9 @@
       <if test="batchName != null" >
         batch_name,
       </if>
+      <if test="flag != null" >
+        flag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -316,6 +320,9 @@
       </if>
       <if test="batchName != null" >
         #{batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -409,6 +416,9 @@
       <if test="record.batchName != null" >
         batch_name = #{record.batchName,jdbcType=VARCHAR},
       </if>
+      <if test="record.flag != null" >
+        flag = #{record.flag,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -442,7 +452,8 @@
       is_del = #{record.isDel,jdbcType=INTEGER},
       line_name = #{record.lineName,jdbcType=VARCHAR},
       robot_name = #{record.robotName,jdbcType=VARCHAR},
-      batch_name = #{record.batchName,jdbcType=VARCHAR}
+      batch_name = #{record.batchName,jdbcType=VARCHAR},
+      flag = #{record.flag,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -528,6 +539,9 @@
       <if test="batchName != null" >
         batch_name = #{batchName,jdbcType=VARCHAR},
       </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -558,7 +572,8 @@
       is_del = #{isDel,jdbcType=INTEGER},
       line_name = #{lineName,jdbcType=VARCHAR},
       robot_name = #{robotName,jdbcType=VARCHAR},
-      batch_name = #{batchName,jdbcType=VARCHAR}
+      batch_name = #{batchName,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
@@ -588,10 +603,9 @@
 						<if test="line != null">
 			and  line = #{line}
 		</if>
-		<if test="robotIds !=null" >
-			<foreach collection="robotIds" item="robotId" index="index">
-    				and <![CDATA[ robot  != ]]> #{robotId}
-    		</foreach>
+		
+				<if test="flag != null">
+			and  flag = #{flag}
 		</if>
 			order by `gmt_create` DESC
 		<if test="limitStart != null and limitStart>=0">

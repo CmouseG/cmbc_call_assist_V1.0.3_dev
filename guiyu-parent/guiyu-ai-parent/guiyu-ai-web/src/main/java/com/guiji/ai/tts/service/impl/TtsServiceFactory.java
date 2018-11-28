@@ -33,7 +33,7 @@ public class TtsServiceFactory {
 				if(avaliableGpuList != null && !avaliableGpuList.isEmpty()) 
 					break;
 				Thread.sleep(50); //间隔50ms
-			}while(System.currentTimeMillis() - startTime > 3000);
+			}while(System.currentTimeMillis() - startTime < 5000);
 			
 			if (!avaliableGpuList.isEmpty()) { // 取到可用GPU
 				GuiyuTtsGpu guiyuTtsGpuRef = (GuiyuTtsGpu) avaliableGpuList.get(0);

@@ -51,7 +51,8 @@ public class TtsServiceFactory {
 				return null;
 			}
 		} catch (Exception e) {
-			logger.error("获取GPU失败", e);
+			logger.error("获取GPU失败！");
+			e.printStackTrace();
 			return null;
 		}
 	}

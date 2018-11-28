@@ -4,13 +4,16 @@ import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.CmdMsgTypeEnum;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.process.core.vo.CmdMsgSenderMap;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.*;
 import com.guiji.process.server.util.DeviceProcessUtil;
+import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -90,6 +93,8 @@ public class ProcessManageService implements IProcessManageService {
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
+        cmdMessageVO.setReqKey(IdGenUtil.uuid());
+        cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ);
         cmdMessageVO.setCmdType(cmdType);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         cmdMessageVO.setParameters(parameters);
@@ -97,6 +102,8 @@ public class ProcessManageService implements IProcessManageService {
         MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(2);
         builder.setContent(msg);
         ctx.writeAndFlush(builder);
+
+        CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
 
         System.out.println("发送命令给客户端：" + cmdMessageVO);
         return true;

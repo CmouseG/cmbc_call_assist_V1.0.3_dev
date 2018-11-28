@@ -75,7 +75,8 @@ public class TtsServiceImpl implements TtsService {
                 logger.error("文本转语音失败！");
             }
         } catch (Exception e) {
-            logger.error("语音文件合成失败!" + e);
+            logger.error("语音文件合成失败!");
+            e.printStackTrace();
         }
         return audioUrl;
     }

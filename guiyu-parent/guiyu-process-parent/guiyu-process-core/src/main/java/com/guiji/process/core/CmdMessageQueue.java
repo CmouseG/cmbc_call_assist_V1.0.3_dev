@@ -26,7 +26,6 @@ public class CmdMessageQueue {
 
     public void produce(CmdMessageVO deviceMsgVO) throws InterruptedException {
 
-        System.out.println("收到消息：" + deviceMsgVO);
         queue.put(deviceMsgVO);
     }
 

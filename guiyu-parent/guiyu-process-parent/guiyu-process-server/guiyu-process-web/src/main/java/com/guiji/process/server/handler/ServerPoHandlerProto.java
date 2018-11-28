@@ -2,7 +2,9 @@ package com.guiji.process.server.handler;
 
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.CmdMsgTypeEnum;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.process.core.vo.CmdMsgSenderMap;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.util.DeviceProcessUtil;
 import com.guiji.utils.JsonUtils;
@@ -51,6 +53,13 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 			{
 				cmdMessageVO.getProcessInstanceVO().setIp(DeviceProcessUtil.getRemoreIp(ctx));
 			}
+
+			if(cmdMessageVO.getMsgTypeEnum() == CmdMsgTypeEnum.REQ_ACK)
+			{
+				CmdMsgSenderMap.getInstance().hasReceived(cmdMessageVO);
+				return;
+			}
+
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应

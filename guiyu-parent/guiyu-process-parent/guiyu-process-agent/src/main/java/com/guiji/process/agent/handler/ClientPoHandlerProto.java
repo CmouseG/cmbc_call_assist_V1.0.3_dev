@@ -4,7 +4,9 @@ import com.guiji.ImClientApp;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.CmdMsgTypeEnum;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -30,6 +32,15 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
 			System.out.println("收到服务给客户端的命令：" + cmdMessageVO);
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
+
+			if(cmdMessageVO.getMsgTypeEnum() == CmdMsgTypeEnum.REQ)
+			{
+				CmdMessageVO responseVO = new CmdMessageVO();
+				cmdMessageVO.setReqKey(cmdMessageVO.getReqKey());
+				cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ_ACK);
+
+				ImClientProtocolBO.getIntance().send(JsonUtils.bean2Json(responseVO),3);
+			}
 		}
 
 

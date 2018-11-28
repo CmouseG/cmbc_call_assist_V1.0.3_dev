@@ -23,7 +23,7 @@ public class TtsServiceFactory {
 	@Autowired
 	private GuiyuTtsGpu guiyuTtsGpu;
 
-	public ITtsServiceProvide getTtsProvide(String model) {
+	public synchronized ITtsServiceProvide getTtsProvide(String model) {
 		List<Object> avaliableGpuList = new ArrayList<>(); // 可用list
 		
 		try {

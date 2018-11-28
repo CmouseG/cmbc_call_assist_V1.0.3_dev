@@ -16,16 +16,29 @@ public class CmdMessageUtils {
 
 	public static CmdProtoMessage.ProtoMessage.Builder convert(CmdMessageVO cmdMessageVO) {
 
-		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder().setId("1");
+		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder();
 		if (cmdMessageVO != null && cmdMessageVO.getProcessInstanceVO() != null) {
 			builder.setReqKey(cmdMessageVO.getReqKey());
-			builder.setMsgType(cmdMessageVO.getMsgTypeEnum().getValue());
-			builder.setCmdType(cmdMessageVO.getCmdType().getValue());
+			if(cmdMessageVO.getMsgTypeEnum() != null)
+			{
+				builder.setMsgType(cmdMessageVO.getMsgTypeEnum().getValue());
+			}
+			if(cmdMessageVO.getCmdType() != null)
+			{
+				builder.setCmdType(cmdMessageVO.getCmdType().getValue());
+			}
 			builder.setParameters(StringUtils.join(cmdMessageVO.getParameters(),","));
-			builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
-			builder.setProcessType(cmdMessageVO.getProcessInstanceVO().getType().getValue());
-			builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey());
-			builder.setStatus(cmdMessageVO.getProcessInstanceVO().getStatus().getValue());
+
+			if (cmdMessageVO.getProcessInstanceVO() != null) {
+				builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
+				builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey());
+				if (cmdMessageVO.getProcessInstanceVO().getType() != null) {
+					builder.setProcessType(cmdMessageVO.getProcessInstanceVO().getType().getValue());
+				}
+				if (cmdMessageVO.getProcessInstanceVO().getStatus() != null) {
+					builder.setStatus(cmdMessageVO.getProcessInstanceVO().getStatus().getValue());
+				}
+			}
 			builder.setCmdResult(cmdMessageVO.getCommandResult());
 			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc());
 		}

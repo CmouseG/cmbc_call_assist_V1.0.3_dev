@@ -64,7 +64,7 @@ public class ImClientProtocolBO {
         channelGlobal.writeAndFlush(builder);
 
         send(cmdMessageVO,0);
-        send("start",2);
+        send(new CmdMessageVO(),2);
     }
 
 

@@ -66,7 +66,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	AiNewTransService aiNewTransService;
 	@Value("${file.tmpPath:apps/tmp/}")
     private String tempFilePath;	//文件临时目录
-	@Value("${file.hushuDir}")
+	@Value("${file.hushuDir:apps/template/}")
     private String hushuDir;	//话术模板存放目录
 	
 	
@@ -391,7 +391,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @return
 	 */
 	private String getHsJsonPath(String hushuDirPath,TtsVoiceReq ttsVoiceReq) {
-		return hushuDirPath + "/" + ttsVoiceReq.getTemplateId() + "/" + ttsVoiceReq.getTemplateId() + "/" +"replace.json";
+		return hushuDirPath + ttsVoiceReq.getTemplateId() + "/" + ttsVoiceReq.getTemplateId() + "/" +"replace.json";
 	}
 	
 	/**
@@ -401,6 +401,6 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @return
 	 */
 	private String getHsWavPath(String hushuDirPath,TtsVoiceReq ttsVoiceReq) {
-		return hushuDirPath + "/" + ttsVoiceReq.getTemplateId() + "/" + ttsVoiceReq.getTemplateId() + "_rec/";
+		return hushuDirPath + ttsVoiceReq.getTemplateId() + "/" + ttsVoiceReq.getTemplateId() + "_rec/";
 	}
 }

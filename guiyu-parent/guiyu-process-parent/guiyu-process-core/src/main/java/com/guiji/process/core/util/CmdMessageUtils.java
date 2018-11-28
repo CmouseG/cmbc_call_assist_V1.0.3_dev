@@ -27,7 +27,8 @@ public class CmdMessageUtils {
 			{
 				builder.setCmdType(cmdMessageVO.getCmdType().getValue());
 			}
-			builder.setParameters(StringUtils.join(cmdMessageVO.getParameters(),","));
+			String parameters = StringUtils.join(cmdMessageVO.getParameters(),",");
+			builder.setParameters(parameters==null?"":parameters);
 
 			if (cmdMessageVO.getProcessInstanceVO() != null) {
 				builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());

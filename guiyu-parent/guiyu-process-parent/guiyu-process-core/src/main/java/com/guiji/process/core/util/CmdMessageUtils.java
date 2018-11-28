@@ -18,7 +18,7 @@ public class CmdMessageUtils {
 
 		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder();
 		if (cmdMessageVO != null && cmdMessageVO.getProcessInstanceVO() != null) {
-			builder.setReqKey(cmdMessageVO.getReqKey());
+			builder.setReqKey(cmdMessageVO.getReqKey()== null?"":cmdMessageVO.getReqKey());
 			if(cmdMessageVO.getMsgTypeEnum() != null)
 			{
 				builder.setMsgType(cmdMessageVO.getMsgTypeEnum().getValue());
@@ -31,7 +31,7 @@ public class CmdMessageUtils {
 
 			if (cmdMessageVO.getProcessInstanceVO() != null) {
 				builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
-				builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey());
+				builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey()==null?"":cmdMessageVO.getProcessInstanceVO().getProcessKey());
 				if (cmdMessageVO.getProcessInstanceVO().getType() != null) {
 					builder.setProcessType(cmdMessageVO.getProcessInstanceVO().getType().getValue());
 				}
@@ -39,8 +39,8 @@ public class CmdMessageUtils {
 					builder.setStatus(cmdMessageVO.getProcessInstanceVO().getStatus().getValue());
 				}
 			}
-			builder.setCmdResult(cmdMessageVO.getCommandResult());
-			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc());
+			builder.setCmdResult(cmdMessageVO.getCommandResult()==null?"":cmdMessageVO.getCommandResult());
+			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc()==null?"":cmdMessageVO.getCommandResultDesc());
 		}
 
 

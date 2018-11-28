@@ -21,7 +21,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 
      */
-  boolean addSchedule( DispatchPlan dispatchPlan,Long userId) throws Exception;
+	MessageDto addSchedule( DispatchPlan dispatchPlan,Long userId) throws Exception;
 
     /**
      * 查询任务列表
@@ -160,6 +160,9 @@ public interface IDispatchPlanService {
 	 */
 	List<DispatchPlan> selectPhoneByDate();
 	
+	List<DispatchPlan> selectPhoneByDateAndFlag(String flag);
+	
+	
 	/**
 	 * 批量修改状态
 	 * @param dto
@@ -200,4 +203,11 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	boolean checkBatchId(String name);
+	
+	/**
+	 * 批量修改状态位置
+	 * @param list
+	 * @return
+	 */
+	boolean batchUpdateFlag(List<DispatchPlan> list,String flag);
 }

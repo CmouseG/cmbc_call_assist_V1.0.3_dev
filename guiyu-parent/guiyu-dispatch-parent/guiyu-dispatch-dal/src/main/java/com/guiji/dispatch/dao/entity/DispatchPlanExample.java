@@ -1874,6 +1874,76 @@ public class DispatchPlanExample {
             addCriterion("batch_name not between", value1, value2, "batchName");
             return (Criteria) this;
         }
+
+        public Criteria andFlagIsNull() {
+            addCriterion("flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNotNull() {
+            addCriterion("flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagEqualTo(String value) {
+            addCriterion("flag =", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotEqualTo(String value) {
+            addCriterion("flag <>", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThan(String value) {
+            addCriterion("flag >", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("flag >=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThan(String value) {
+            addCriterion("flag <", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThanOrEqualTo(String value) {
+            addCriterion("flag <=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLike(String value) {
+            addCriterion("flag like", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotLike(String value) {
+            addCriterion("flag not like", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIn(List<String> values) {
+            addCriterion("flag in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotIn(List<String> values) {
+            addCriterion("flag not in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagBetween(String value1, String value2) {
+            addCriterion("flag between", value1, value2, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotBetween(String value1, String value2) {
+            addCriterion("flag not between", value1, value2, "flag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

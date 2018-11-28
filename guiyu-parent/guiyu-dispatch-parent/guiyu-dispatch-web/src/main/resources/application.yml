@@ -2,7 +2,7 @@ server:
   port: 18083
 spring:
   application:
-    name: guiyu-dispatch-web
+    name: guiyu-dispatch-web111
   # REDIS (RedisProperties)
   redis:
     database: 0

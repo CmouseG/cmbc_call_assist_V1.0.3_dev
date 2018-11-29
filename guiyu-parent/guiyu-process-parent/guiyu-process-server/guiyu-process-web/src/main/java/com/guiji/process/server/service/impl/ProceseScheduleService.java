@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -118,11 +119,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
     @Override
     public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
-        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
-        if(deviceVOMap ==  null)
-        {
-            return;
-        }
+
 
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
         if(processTypeEnum == ProcessTypeEnum.SELLBOT)
@@ -138,7 +135,6 @@ public class ProceseScheduleService implements IProceseScheduleService {
             return;
         }
 
-        ProcessInstanceVO processInstanceVO = null;
         List<String> parameters = new ArrayList<String>();
         parameters.add(file);
 
@@ -151,7 +147,15 @@ public class ProceseScheduleService implements IProceseScheduleService {
         for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
 
             ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
-            deviceManageService.cmd(agent, cmdType, parameters);
+
+            Map<Object, Object> processes = (Map<Object, Object>) processInstanceManageService.query(agent.getIp());
+            for (Map.Entry<Object, Object> process: processes.entrySet()) {
+                ProcessInstanceVO processInstanceVO = (ProcessInstanceVO) process.getValue();
+                if(processTypeEnum == processInstanceVO.getType()) {
+                    deviceManageService.cmd(agent, cmdType, parameters);
+                    break;
+                }
+            }
         }
     }
 

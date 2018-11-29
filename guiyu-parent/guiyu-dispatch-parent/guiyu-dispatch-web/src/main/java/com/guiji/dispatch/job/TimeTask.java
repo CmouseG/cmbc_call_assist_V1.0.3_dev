@@ -15,13 +15,11 @@ import org.springframework.stereotype.Component;
 
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
-import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.utils.RedisUtil;
@@ -72,6 +70,7 @@ public class TimeTask {
 	 * 获取当前资源情况
 	 */
 	@Scheduled(cron = "0 0/5 * * * ?")
+//	@PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("获取当前初始化号码的请求资源结果");
 		List<DispatchPlan> selectPhoneByDateAndFlag = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_1);

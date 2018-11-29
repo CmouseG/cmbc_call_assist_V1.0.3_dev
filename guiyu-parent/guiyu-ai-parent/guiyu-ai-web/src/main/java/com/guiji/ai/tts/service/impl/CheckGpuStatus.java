@@ -41,7 +41,8 @@ public class CheckGpuStatus implements ApplicationRunner {
 		if(returnData != null && returnData.getBody() != null && !returnData.getBody().isEmpty()){
 			returnList = returnData.getBody();
 		}else{
-			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_TTS);
+			logger.info("没有获取到TTS!");
+			return;
 		}
 		logger.info("获取的TTS列表：" + returnList);
 		

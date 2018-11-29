@@ -94,12 +94,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				if (!checkResult.isPass()) {
 					dto.setMsg(checkResult.getCheckMsg());
 					dto.setResult(false);
+					logger.info("addSchedule校验参数失败");
 					return dto;
 				}
 			}
 		} else {
 			dto.setMsg(checkParams.getMsg());
 			dto.setResult(false);
+			logger.info("addSchedule校验参数失败");
 			return dto;
 		}
 

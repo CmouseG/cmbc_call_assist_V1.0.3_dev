@@ -73,7 +73,7 @@ public class ShardingDataSourceConfig {
     private List<TableRuleConfiguration> tableRuleConfigurations(){
     	TableRuleConfiguration result = new TableRuleConfiguration();
     	result.setLogicTable("dispatch_plan");
-    	result.setActualDataNodes("guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1");
+    	result.setActualDataNodes("guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1,guiyu_dispatch.dispatch_plan_2");
     	result.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("phone",new PreciseSharding(),new RangeSharding()));
     	return Arrays.asList(result);
     }

@@ -137,7 +137,7 @@
       )
     values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=CHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{status,jdbcType=CHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{ttsJsonData,jdbcType=LONGVARCHAR}
-      ,#{errorMsg,jdbcType=VARCHAR},
+      ,#{errorMsg,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
@@ -209,6 +209,9 @@
       <if test="record.status != null" >
         `status` = #{record.status,jdbcType=CHAR},
       </if>
+      <if test="record.errorMsg != null" >
+        error_msg = #{record.errorMsg,jdbcType=VARCHAR},
+      </if>
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
@@ -226,6 +229,7 @@
       seq_id = #{record.seqId,jdbcType=CHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=CHAR},
+      error_msg = #{record.errorMsg,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{record.ttsJsonData,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
@@ -238,6 +242,7 @@
       seq_id = #{record.seqId,jdbcType=CHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=CHAR},
+      error_msg = #{record.errorMsg,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -255,6 +260,9 @@
       <if test="status != null" >
         `status` = #{status,jdbcType=CHAR},
       </if>
+      <if test="errorMsg != null" >
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
@@ -269,6 +277,7 @@
     set seq_id = #{seqId,jdbcType=CHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{ttsJsonData,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
@@ -278,6 +287,7 @@
     set seq_id = #{seqId,jdbcType=CHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{ttsJsonData,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}

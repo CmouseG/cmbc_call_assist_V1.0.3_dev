@@ -69,7 +69,6 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 			logger.error("error", e);
 		}
 
-		System.out.println(dis.isSuccess());
 		if (list.size() > 0) {
 			list.get(list.size() - 1).setSuccess(dis.isSuccess());
 		}

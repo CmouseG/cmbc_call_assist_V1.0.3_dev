@@ -48,7 +48,6 @@ public class TimeTask {
 	public void selectPhoneInit() {
 		logger.info("捞取号码初始化资源..");
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
-
 		List<HsParam> sendData = new ArrayList<>();
 		for (DispatchPlan dispatchPlan : list) {
 			HsParam hsParam = new HsParam();
@@ -63,11 +62,10 @@ public class TimeTask {
 		robotRemote.checkParams(req);
 
 		// 批量修改状态flag
-		boolean batchUpdateFlag = false;
 		if (list.size() > 0) {
-			batchUpdateFlag = dispatchPlanService.batchUpdateFlag(list, Constant.IS_FLAG_1);
+			dispatchPlanService.batchUpdateFlag(list, Constant.IS_FLAG_1);
 		}
-		logger.info("有一批数据调用初始化资源结果....." + batchUpdateFlag);
+		logger.info("有一批数据调用初始化资源结果数量....." + list.size());
 	}
 
 	/**
@@ -100,12 +98,12 @@ public class TimeTask {
 		} else {
 			logger.info("获取当前初始化号码的请求资源结果失败了");
 		}
-		logger.info("当前以及准备好的资源号码有:" + successList.size());
+		logger.info("当前准备好的资源号码有:" + successList.size());
 		boolean batchUpdateFlag = false;
 		if (successList.size() > 0) {
 			batchUpdateFlag = dispatchPlanService.batchUpdateFlag(successList, Constant.IS_FLAG_2);
 		}
-		logger.info("修改当前以及准备好的资源号码的flag" + batchUpdateFlag);
+		logger.info("获取当前初始化号码的请求资源结果修改当结果" + batchUpdateFlag);
 	}
 
 	/**
@@ -113,8 +111,12 @@ public class TimeTask {
 	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
 	public void getSuccessPhones() {
+		logger.info(" 获取可以拨打的号码..");
+		
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2);
-		// 分组排序
+		logger.info(" 获取可以拨打的号码count .."+list.size());
+		// 分组
+		
 		Map<String, List<DispatchPlan>> collect = list.stream().collect(Collectors.groupingBy(d -> fetchGroupKey(d)));
 		for (Entry<String, List<DispatchPlan>> entry : collect.entrySet()) {
 			if (redisUtil.get("robotId") != null) {

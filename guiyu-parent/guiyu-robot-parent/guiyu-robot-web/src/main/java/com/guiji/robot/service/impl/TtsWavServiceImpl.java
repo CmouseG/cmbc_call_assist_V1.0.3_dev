@@ -436,6 +436,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @return
 	 */
 	private String getHsWavPath(String hushuDirPath,TtsVoiceReq ttsVoiceReq) {
-		return hushuDirPath + ttsVoiceReq.getTemplateId() + "/" + ttsVoiceReq.getTemplateId() + "_rec/";
+		//模板名称去掉en，然后再加上rec
+		String templateCode = ttsVoiceReq.getTemplateId();
+		String wavDirName = (templateCode.indexOf("_en")>0?templateCode.substring(0,templateCode.length()-2):templateCode) + "rec/";
+		return hushuDirPath + ttsVoiceReq.getTemplateId() + "/" + wavDirName;
 	}
 }

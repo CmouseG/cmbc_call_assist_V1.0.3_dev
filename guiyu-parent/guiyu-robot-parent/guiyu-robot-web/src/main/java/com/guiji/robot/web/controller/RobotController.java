@@ -38,7 +38,7 @@ public class RobotController {
 	 */
 	@RequestMapping(value = "/queryUserInUseAiList", method = RequestMethod.POST)
 	public Result.ReturnData<List<AiInuseCache>> queryUserInUseAiList(
-			@RequestParam(value="userId",required=true)String qUserId,
+			@RequestParam(value="userId",required=false)String qUserId,
 			@RequestHeader Long userId
 			){
 		if(StrUtils.isEmpty(qUserId) && userId==null) {
@@ -61,7 +61,7 @@ public class RobotController {
 	 */
 	@RequestMapping(value = "/queryUserBusyUseAiList", method = RequestMethod.POST)
 	public Result.ReturnData<List<AiInuseCache>> queryUserBusyUseAiList(
-			@RequestParam(value="userId",required=true)String qUserId,
+			@RequestParam(value="userId",required=false)String qUserId,
 			@RequestHeader Long userId
 			){
 		if(StrUtils.isEmpty(qUserId) && userId==null) {
@@ -84,7 +84,7 @@ public class RobotController {
 	 */
 	@RequestMapping(value = "/queryUserSleepUseAiList", method = RequestMethod.POST)
 	public Result.ReturnData<List<AiInuseCache>> queryUserSleepUseAiList(
-			@RequestParam(value="userId",required=true)String qUserId,
+			@RequestParam(value="userId",required=false)String qUserId,
 			@RequestHeader Long userId
 			){
 		if(StrUtils.isEmpty(qUserId) && userId==null) {

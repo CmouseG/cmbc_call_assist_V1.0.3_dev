@@ -105,7 +105,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysRole" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysRole" useGeneratedKeys="true" keyProperty="id">
     insert into sys_role (id, `name`, create_time, 
       update_time, del_flag, init_role, 
       super_admin)

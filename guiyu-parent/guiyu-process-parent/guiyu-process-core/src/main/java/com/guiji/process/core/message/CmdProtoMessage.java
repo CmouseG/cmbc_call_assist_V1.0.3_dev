@@ -7,7 +7,6 @@ public final class CmdProtoMessage {
   private CmdProtoMessage() {}
   public static void registerAllExtensions(
           com.google.protobuf.ExtensionRegistryLite registry) {
-			  
   }
 
   public static void registerAllExtensions(
@@ -22,7 +21,7 @@ public final class CmdProtoMessage {
     /**
      * <code>string reqKey = 1;</code>
      */
-    java.lang.String getReqKey();
+    String getReqKey();
     /**
      * <code>string reqKey = 1;</code>
      */
@@ -42,7 +41,7 @@ public final class CmdProtoMessage {
     /**
      * <code>string parameters = 4;</code>
      */
-    java.lang.String getParameters();
+    String getParameters();
     /**
      * <code>string parameters = 4;</code>
      */
@@ -62,7 +61,7 @@ public final class CmdProtoMessage {
     /**
      * <code>string processKey = 7;</code>
      */
-    java.lang.String getProcessKey();
+    String getProcessKey();
     /**
      * <code>string processKey = 7;</code>
      */
@@ -82,7 +81,7 @@ public final class CmdProtoMessage {
     /**
      * <code>string id = 10;</code>
      */
-    java.lang.String getId();
+    String getId();
     /**
      * <code>string id = 10;</code>
      */
@@ -92,7 +91,7 @@ public final class CmdProtoMessage {
     /**
      * <code>string content = 11;</code>
      */
-    java.lang.String getContent();
+    String getContent();
     /**
      * <code>string content = 11;</code>
      */
@@ -102,7 +101,7 @@ public final class CmdProtoMessage {
     /**
      * <code>string cmdResult = 12;</code>
      */
-    java.lang.String getCmdResult();
+    String getCmdResult();
     /**
      * <code>string cmdResult = 12;</code>
      */
@@ -112,12 +111,22 @@ public final class CmdProtoMessage {
     /**
      * <code>string cmdResultDesc = 13;</code>
      */
-    java.lang.String getCmdResultDesc();
+    String getCmdResultDesc();
     /**
      * <code>string cmdResultDesc = 13;</code>
      */
     com.google.protobuf.ByteString
     getCmdResultDescBytes();
+
+    /**
+     * <code>string name = 14;</code>
+     */
+    String getName();
+    /**
+     * <code>string name = 14;</code>
+     */
+    com.google.protobuf.ByteString
+    getNameBytes();
   }
   /**
    * Protobuf type {@code ProtoMessage}
@@ -133,21 +142,22 @@ public final class CmdProtoMessage {
     }
     private ProtoMessage() {
       reqKey_ = "";
-      msgType_ = 0;
-      cmdType_ = 0;
+      msgType_ = -1;
+      cmdType_ = -1;
       parameters_ = "";
-      port_ = 0;
-      processType_ = 0;
+      port_ = -1;
+      processType_ = -1;
       processKey_ = "";
-      status_ = 0;
+      status_ = -1;
       type_ = 0;
       id_ = "";
       content_ = "";
       cmdResult_ = "";
       cmdResultDesc_ = "";
+      name_ = "";
     }
 
-    @java.lang.Override
+    @Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
       return this.unknownFields;
@@ -158,7 +168,7 @@ public final class CmdProtoMessage {
             throws com.google.protobuf.InvalidProtocolBufferException {
       this();
       if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException();
       }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
@@ -172,7 +182,7 @@ public final class CmdProtoMessage {
               done = true;
               break;
             case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               reqKey_ = s;
               break;
@@ -188,7 +198,7 @@ public final class CmdProtoMessage {
               break;
             }
             case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               parameters_ = s;
               break;
@@ -204,7 +214,7 @@ public final class CmdProtoMessage {
               break;
             }
             case 58: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               processKey_ = s;
               break;
@@ -220,27 +230,33 @@ public final class CmdProtoMessage {
               break;
             }
             case 82: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               id_ = s;
               break;
             }
             case 90: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               content_ = s;
               break;
             }
             case 98: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               cmdResult_ = s;
               break;
             }
             case 106: {
-              java.lang.String s = input.readStringRequireUtf8();
+              String s = input.readStringRequireUtf8();
 
               cmdResultDesc_ = s;
+              break;
+            }
+            case 114: {
+              String s = input.readStringRequireUtf8();
+
+              name_ = s;
               break;
             }
             default: {
@@ -264,30 +280,30 @@ public final class CmdProtoMessage {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
-      return com.guiji.process.core.message.CmdProtoMessage.internal_static_ProtoMessage_descriptor;
+      return CmdProtoMessage.internal_static_ProtoMessage_descriptor;
     }
 
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    @Override
+    protected FieldAccessorTable
     internalGetFieldAccessorTable() {
-      return com.guiji.process.core.message.CmdProtoMessage.internal_static_ProtoMessage_fieldAccessorTable
+      return CmdProtoMessage.internal_static_ProtoMessage_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                      com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.class, com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.Builder.class);
+                      ProtoMessage.class, Builder.class);
     }
 
     public static final int REQKEY_FIELD_NUMBER = 1;
-    private volatile java.lang.Object reqKey_;
+    private volatile Object reqKey_;
     /**
      * <code>string reqKey = 1;</code>
      */
-    public java.lang.String getReqKey() {
-      java.lang.Object ref = reqKey_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getReqKey() {
+      Object ref = reqKey_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         reqKey_ = s;
         return s;
       }
@@ -297,11 +313,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getReqKeyBytes() {
-      java.lang.Object ref = reqKey_;
-      if (ref instanceof java.lang.String) {
+      Object ref = reqKey_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         reqKey_ = b;
         return b;
       } else {
@@ -328,18 +344,18 @@ public final class CmdProtoMessage {
     }
 
     public static final int PARAMETERS_FIELD_NUMBER = 4;
-    private volatile java.lang.Object parameters_;
+    private volatile Object parameters_;
     /**
      * <code>string parameters = 4;</code>
      */
-    public java.lang.String getParameters() {
-      java.lang.Object ref = parameters_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getParameters() {
+      Object ref = parameters_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         parameters_ = s;
         return s;
       }
@@ -349,11 +365,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getParametersBytes() {
-      java.lang.Object ref = parameters_;
-      if (ref instanceof java.lang.String) {
+      Object ref = parameters_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         parameters_ = b;
         return b;
       } else {
@@ -380,18 +396,18 @@ public final class CmdProtoMessage {
     }
 
     public static final int PROCESSKEY_FIELD_NUMBER = 7;
-    private volatile java.lang.Object processKey_;
+    private volatile Object processKey_;
     /**
      * <code>string processKey = 7;</code>
      */
-    public java.lang.String getProcessKey() {
-      java.lang.Object ref = processKey_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getProcessKey() {
+      Object ref = processKey_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         processKey_ = s;
         return s;
       }
@@ -401,11 +417,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getProcessKeyBytes() {
-      java.lang.Object ref = processKey_;
-      if (ref instanceof java.lang.String) {
+      Object ref = processKey_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         processKey_ = b;
         return b;
       } else {
@@ -432,18 +448,18 @@ public final class CmdProtoMessage {
     }
 
     public static final int ID_FIELD_NUMBER = 10;
-    private volatile java.lang.Object id_;
+    private volatile Object id_;
     /**
      * <code>string id = 10;</code>
      */
-    public java.lang.String getId() {
-      java.lang.Object ref = id_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getId() {
+      Object ref = id_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         id_ = s;
         return s;
       }
@@ -453,11 +469,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getIdBytes() {
-      java.lang.Object ref = id_;
-      if (ref instanceof java.lang.String) {
+      Object ref = id_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         id_ = b;
         return b;
       } else {
@@ -466,18 +482,18 @@ public final class CmdProtoMessage {
     }
 
     public static final int CONTENT_FIELD_NUMBER = 11;
-    private volatile java.lang.Object content_;
+    private volatile Object content_;
     /**
      * <code>string content = 11;</code>
      */
-    public java.lang.String getContent() {
-      java.lang.Object ref = content_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getContent() {
+      Object ref = content_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         content_ = s;
         return s;
       }
@@ -487,11 +503,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getContentBytes() {
-      java.lang.Object ref = content_;
-      if (ref instanceof java.lang.String) {
+      Object ref = content_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         content_ = b;
         return b;
       } else {
@@ -500,18 +516,18 @@ public final class CmdProtoMessage {
     }
 
     public static final int CMDRESULT_FIELD_NUMBER = 12;
-    private volatile java.lang.Object cmdResult_;
+    private volatile Object cmdResult_;
     /**
      * <code>string cmdResult = 12;</code>
      */
-    public java.lang.String getCmdResult() {
-      java.lang.Object ref = cmdResult_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getCmdResult() {
+      Object ref = cmdResult_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         cmdResult_ = s;
         return s;
       }
@@ -521,11 +537,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getCmdResultBytes() {
-      java.lang.Object ref = cmdResult_;
-      if (ref instanceof java.lang.String) {
+      Object ref = cmdResult_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         cmdResult_ = b;
         return b;
       } else {
@@ -534,18 +550,18 @@ public final class CmdProtoMessage {
     }
 
     public static final int CMDRESULTDESC_FIELD_NUMBER = 13;
-    private volatile java.lang.Object cmdResultDesc_;
+    private volatile Object cmdResultDesc_;
     /**
      * <code>string cmdResultDesc = 13;</code>
      */
-    public java.lang.String getCmdResultDesc() {
-      java.lang.Object ref = cmdResultDesc_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
+    public String getCmdResultDesc() {
+      Object ref = cmdResultDesc_;
+      if (ref instanceof String) {
+        return (String) ref;
       } else {
         com.google.protobuf.ByteString bs =
                 (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
+        String s = bs.toStringUtf8();
         cmdResultDesc_ = s;
         return s;
       }
@@ -555,11 +571,11 @@ public final class CmdProtoMessage {
      */
     public com.google.protobuf.ByteString
     getCmdResultDescBytes() {
-      java.lang.Object ref = cmdResultDesc_;
-      if (ref instanceof java.lang.String) {
+      Object ref = cmdResultDesc_;
+      if (ref instanceof String) {
         com.google.protobuf.ByteString b =
                 com.google.protobuf.ByteString.copyFromUtf8(
-                        (java.lang.String) ref);
+                        (String) ref);
         cmdResultDesc_ = b;
         return b;
       } else {
@@ -567,8 +583,42 @@ public final class CmdProtoMessage {
       }
     }
 
+    public static final int NAME_FIELD_NUMBER = 14;
+    private volatile Object name_;
+    /**
+     * <code>string name = 14;</code>
+     */
+    public String getName() {
+      Object ref = name_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 14;</code>
+     */
+    public com.google.protobuf.ByteString
+    getNameBytes() {
+      Object ref = name_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8(
+                        (String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
-    @java.lang.Override
+    @Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -578,16 +628,16 @@ public final class CmdProtoMessage {
       return true;
     }
 
-    @java.lang.Override
+    @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
             throws java.io.IOException {
       if (!getReqKeyBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, reqKey_);
       }
-      if (msgType_ != 0) {
+      if (msgType_ != -1) {
         output.writeInt32(2, msgType_);
       }
-      if (cmdType_ != 0) {
+      if (cmdType_ != -1) {
         output.writeInt32(3, cmdType_);
       }
       if (!getParametersBytes().isEmpty()) {
@@ -596,13 +646,13 @@ public final class CmdProtoMessage {
       if (port_ != 0) {
         output.writeInt32(5, port_);
       }
-      if (processType_ != 0) {
+      if (processType_ != -1) {
         output.writeInt32(6, processType_);
       }
       if (!getProcessKeyBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, processKey_);
       }
-      if (status_ != 0) {
+      if (status_ != -1) {
         output.writeInt32(8, status_);
       }
       if (type_ != 0) {
@@ -620,10 +670,13 @@ public final class CmdProtoMessage {
       if (!getCmdResultDescBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 13, cmdResultDesc_);
       }
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 14, name_);
+      }
       unknownFields.writeTo(output);
     }
 
-    @java.lang.Override
+    @Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -632,11 +685,11 @@ public final class CmdProtoMessage {
       if (!getReqKeyBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, reqKey_);
       }
-      if (msgType_ != 0) {
+      if (msgType_ != -1) {
         size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(2, msgType_);
       }
-      if (cmdType_ != 0) {
+      if (cmdType_ != -1) {
         size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(3, cmdType_);
       }
@@ -647,14 +700,14 @@ public final class CmdProtoMessage {
         size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(5, port_);
       }
-      if (processType_ != 0) {
+      if (processType_ != -1) {
         size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(6, processType_);
       }
       if (!getProcessKeyBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, processKey_);
       }
-      if (status_ != 0) {
+      if (status_ != -1) {
         size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(8, status_);
       }
@@ -674,20 +727,23 @@ public final class CmdProtoMessage {
       if (!getCmdResultDescBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, cmdResultDesc_);
       }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, name_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.guiji.process.core.message.CmdProtoMessage.ProtoMessage)) {
+      if (!(obj instanceof ProtoMessage)) {
         return super.equals(obj);
       }
-      com.guiji.process.core.message.CmdProtoMessage.ProtoMessage other = (com.guiji.process.core.message.CmdProtoMessage.ProtoMessage) obj;
+      ProtoMessage other = (ProtoMessage) obj;
 
       boolean result = true;
       result = result && getReqKey()
@@ -716,11 +772,13 @@ public final class CmdProtoMessage {
               .equals(other.getCmdResult());
       result = result && getCmdResultDesc()
               .equals(other.getCmdResultDesc());
+      result = result && getName()
+              .equals(other.getName());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
 
-    @java.lang.Override
+    @Override
     public int hashCode() {
       if (memoizedHashCode != 0) {
         return memoizedHashCode;
@@ -753,74 +811,76 @@ public final class CmdProtoMessage {
       hash = (53 * hash) + getCmdResult().hashCode();
       hash = (37 * hash) + CMDRESULTDESC_FIELD_NUMBER;
       hash = (53 * hash) + getCmdResultDesc().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(byte[] data)
+    public static ProtoMessage parseFrom(byte[] data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             byte[] data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(java.io.InputStream input)
+    public static ProtoMessage parseFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseDelimitedFrom(java.io.InputStream input)
+    public static ProtoMessage parseDelimitedFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseDelimitedFrom(
+    public static ProtoMessage parseDelimitedFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             com.google.protobuf.CodedInputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parseFrom(
+    public static ProtoMessage parseFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
@@ -828,23 +888,23 @@ public final class CmdProtoMessage {
               .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    @java.lang.Override
+    @Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.guiji.process.core.message.CmdProtoMessage.ProtoMessage prototype) {
+    public static Builder newBuilder(ProtoMessage prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-    @java.lang.Override
+    @Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
               ? new Builder() : new Builder().mergeFrom(this);
     }
 
-    @java.lang.Override
+    @Override
     protected Builder newBuilderForType(
-            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -854,18 +914,18 @@ public final class CmdProtoMessage {
     public static final class Builder extends
             com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
             // @@protoc_insertion_point(builder_implements:ProtoMessage)
-            com.guiji.process.core.message.CmdProtoMessage.ProtoMessageOrBuilder {
+            ProtoMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-        return com.guiji.process.core.message.CmdProtoMessage.internal_static_ProtoMessage_descriptor;
+        return CmdProtoMessage.internal_static_ProtoMessage_descriptor;
       }
 
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      @Override
+      protected FieldAccessorTable
       internalGetFieldAccessorTable() {
-        return com.guiji.process.core.message.CmdProtoMessage.internal_static_ProtoMessage_fieldAccessorTable
+        return CmdProtoMessage.internal_static_ProtoMessage_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
-                        com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.class, com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.Builder.class);
+                        ProtoMessage.class, Builder.class);
       }
 
       // Construct using com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.newBuilder()
@@ -874,7 +934,7 @@ public final class CmdProtoMessage {
       }
 
       private Builder(
-              com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+              BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -883,24 +943,24 @@ public final class CmdProtoMessage {
                 .alwaysUseFieldBuilders) {
         }
       }
-      @java.lang.Override
+      @Override
       public Builder clear() {
         super.clear();
         reqKey_ = "";
 
-        msgType_ = 0;
+        msgType_ = -1;
 
-        cmdType_ = 0;
+        cmdType_ = -1;
 
         parameters_ = "";
 
-        port_ = 0;
+        port_ = -1;
 
-        processType_ = 0;
+        processType_ = -1;
 
         processKey_ = "";
 
-        status_ = 0;
+        status_ = -1;
 
         type_ = 0;
 
@@ -912,32 +972,34 @@ public final class CmdProtoMessage {
 
         cmdResultDesc_ = "";
 
+        name_ = "";
+
         return this;
       }
 
-      @java.lang.Override
+      @Override
       public com.google.protobuf.Descriptors.Descriptor
       getDescriptorForType() {
-        return com.guiji.process.core.message.CmdProtoMessage.internal_static_ProtoMessage_descriptor;
+        return CmdProtoMessage.internal_static_ProtoMessage_descriptor;
       }
 
-      @java.lang.Override
-      public com.guiji.process.core.message.CmdProtoMessage.ProtoMessage getDefaultInstanceForType() {
-        return com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.getDefaultInstance();
+      @Override
+      public ProtoMessage getDefaultInstanceForType() {
+        return ProtoMessage.getDefaultInstance();
       }
 
-      @java.lang.Override
-      public com.guiji.process.core.message.CmdProtoMessage.ProtoMessage build() {
-        com.guiji.process.core.message.CmdProtoMessage.ProtoMessage result = buildPartial();
+      @Override
+      public ProtoMessage build() {
+        ProtoMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      @java.lang.Override
-      public com.guiji.process.core.message.CmdProtoMessage.ProtoMessage buildPartial() {
-        com.guiji.process.core.message.CmdProtoMessage.ProtoMessage result = new com.guiji.process.core.message.CmdProtoMessage.ProtoMessage(this);
+      @Override
+      public ProtoMessage buildPartial() {
+        ProtoMessage result = new ProtoMessage(this);
         result.reqKey_ = reqKey_;
         result.msgType_ = msgType_;
         result.cmdType_ = cmdType_;
@@ -951,62 +1013,63 @@ public final class CmdProtoMessage {
         result.content_ = content_;
         result.cmdResult_ = cmdResult_;
         result.cmdResultDesc_ = cmdResultDesc_;
+        result.name_ = name_;
         onBuilt();
         return result;
       }
 
-      @java.lang.Override
+      @Override
       public Builder clone() {
         return (Builder) super.clone();
       }
-      @java.lang.Override
+      @Override
       public Builder setField(
               com.google.protobuf.Descriptors.FieldDescriptor field,
-              java.lang.Object value) {
+              Object value) {
         return (Builder) super.setField(field, value);
       }
-      @java.lang.Override
+      @Override
       public Builder clearField(
               com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-      @java.lang.Override
+      @Override
       public Builder clearOneof(
               com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-      @java.lang.Override
+      @Override
       public Builder setRepeatedField(
               com.google.protobuf.Descriptors.FieldDescriptor field,
-              int index, java.lang.Object value) {
+              int index, Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-      @java.lang.Override
+      @Override
       public Builder addRepeatedField(
               com.google.protobuf.Descriptors.FieldDescriptor field,
-              java.lang.Object value) {
+              Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-      @java.lang.Override
+      @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.guiji.process.core.message.CmdProtoMessage.ProtoMessage) {
-          return mergeFrom((com.guiji.process.core.message.CmdProtoMessage.ProtoMessage)other);
+        if (other instanceof ProtoMessage) {
+          return mergeFrom((ProtoMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.guiji.process.core.message.CmdProtoMessage.ProtoMessage other) {
-        if (other == com.guiji.process.core.message.CmdProtoMessage.ProtoMessage.getDefaultInstance()) return this;
+      public Builder mergeFrom(ProtoMessage other) {
+        if (other == ProtoMessage.getDefaultInstance()) return this;
         if (!other.getReqKey().isEmpty()) {
           reqKey_ = other.reqKey_;
           onChanged();
         }
-        if (other.getMsgType() != 0) {
+        if (other.getMsgType() != -1) {
           setMsgType(other.getMsgType());
         }
-        if (other.getCmdType() != 0) {
+        if (other.getCmdType() != -1) {
           setCmdType(other.getCmdType());
         }
         if (!other.getParameters().isEmpty()) {
@@ -1016,14 +1079,14 @@ public final class CmdProtoMessage {
         if (other.getPort() != 0) {
           setPort(other.getPort());
         }
-        if (other.getProcessType() != 0) {
+        if (other.getProcessType() != -1) {
           setProcessType(other.getProcessType());
         }
         if (!other.getProcessKey().isEmpty()) {
           processKey_ = other.processKey_;
           onChanged();
         }
-        if (other.getStatus() != 0) {
+        if (other.getStatus() != -1) {
           setStatus(other.getStatus());
         }
         if (other.getType() != 0) {
@@ -1045,26 +1108,30 @@ public final class CmdProtoMessage {
           cmdResultDesc_ = other.cmdResultDesc_;
           onChanged();
         }
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
-      @java.lang.Override
+      @Override
       public final boolean isInitialized() {
         return true;
       }
 
-      @java.lang.Override
+      @Override
       public Builder mergeFrom(
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws java.io.IOException {
-        com.guiji.process.core.message.CmdProtoMessage.ProtoMessage parsedMessage = null;
+        ProtoMessage parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.guiji.process.core.message.CmdProtoMessage.ProtoMessage) e.getUnfinishedMessage();
+          parsedMessage = (ProtoMessage) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1074,20 +1141,20 @@ public final class CmdProtoMessage {
         return this;
       }
 
-      private java.lang.Object reqKey_ = "";
+      private Object reqKey_ = "";
       /**
        * <code>string reqKey = 1;</code>
        */
-      public java.lang.String getReqKey() {
-        java.lang.Object ref = reqKey_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getReqKey() {
+        Object ref = reqKey_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           reqKey_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1095,11 +1162,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getReqKeyBytes() {
-        java.lang.Object ref = reqKey_;
+        Object ref = reqKey_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           reqKey_ = b;
           return b;
         } else {
@@ -1110,7 +1177,7 @@ public final class CmdProtoMessage {
        * <code>string reqKey = 1;</code>
        */
       public Builder setReqKey(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1164,7 +1231,7 @@ public final class CmdProtoMessage {
        */
       public Builder clearMsgType() {
 
-        msgType_ = 0;
+        msgType_ = -1;
         onChanged();
         return this;
       }
@@ -1190,25 +1257,25 @@ public final class CmdProtoMessage {
        */
       public Builder clearCmdType() {
 
-        cmdType_ = 0;
+        cmdType_ = -1;
         onChanged();
         return this;
       }
 
-      private java.lang.Object parameters_ = "";
+      private Object parameters_ = "";
       /**
        * <code>string parameters = 4;</code>
        */
-      public java.lang.String getParameters() {
-        java.lang.Object ref = parameters_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getParameters() {
+        Object ref = parameters_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           parameters_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1216,11 +1283,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getParametersBytes() {
-        java.lang.Object ref = parameters_;
+        Object ref = parameters_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           parameters_ = b;
           return b;
         } else {
@@ -1231,7 +1298,7 @@ public final class CmdProtoMessage {
        * <code>string parameters = 4;</code>
        */
       public Builder setParameters(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1311,25 +1378,25 @@ public final class CmdProtoMessage {
        */
       public Builder clearProcessType() {
 
-        processType_ = 0;
+        processType_ = -1;
         onChanged();
         return this;
       }
 
-      private java.lang.Object processKey_ = "";
+      private Object processKey_ = "";
       /**
        * <code>string processKey = 7;</code>
        */
-      public java.lang.String getProcessKey() {
-        java.lang.Object ref = processKey_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getProcessKey() {
+        Object ref = processKey_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           processKey_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1337,11 +1404,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getProcessKeyBytes() {
-        java.lang.Object ref = processKey_;
+        Object ref = processKey_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           processKey_ = b;
           return b;
         } else {
@@ -1352,7 +1419,7 @@ public final class CmdProtoMessage {
        * <code>string processKey = 7;</code>
        */
       public Builder setProcessKey(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1406,7 +1473,7 @@ public final class CmdProtoMessage {
        */
       public Builder clearStatus() {
 
-        status_ = 0;
+        status_ = -1;
         onChanged();
         return this;
       }
@@ -1437,20 +1504,20 @@ public final class CmdProtoMessage {
         return this;
       }
 
-      private java.lang.Object id_ = "";
+      private Object id_ = "";
       /**
        * <code>string id = 10;</code>
        */
-      public java.lang.String getId() {
-        java.lang.Object ref = id_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getId() {
+        Object ref = id_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           id_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1458,11 +1525,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getIdBytes() {
-        java.lang.Object ref = id_;
+        Object ref = id_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           id_ = b;
           return b;
         } else {
@@ -1473,7 +1540,7 @@ public final class CmdProtoMessage {
        * <code>string id = 10;</code>
        */
       public Builder setId(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1506,20 +1573,20 @@ public final class CmdProtoMessage {
         return this;
       }
 
-      private java.lang.Object content_ = "";
+      private Object content_ = "";
       /**
        * <code>string content = 11;</code>
        */
-      public java.lang.String getContent() {
-        java.lang.Object ref = content_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getContent() {
+        Object ref = content_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           content_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1527,11 +1594,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getContentBytes() {
-        java.lang.Object ref = content_;
+        Object ref = content_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           content_ = b;
           return b;
         } else {
@@ -1542,7 +1609,7 @@ public final class CmdProtoMessage {
        * <code>string content = 11;</code>
        */
       public Builder setContent(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1575,20 +1642,20 @@ public final class CmdProtoMessage {
         return this;
       }
 
-      private java.lang.Object cmdResult_ = "";
+      private Object cmdResult_ = "";
       /**
        * <code>string cmdResult = 12;</code>
        */
-      public java.lang.String getCmdResult() {
-        java.lang.Object ref = cmdResult_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getCmdResult() {
+        Object ref = cmdResult_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           cmdResult_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1596,11 +1663,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getCmdResultBytes() {
-        java.lang.Object ref = cmdResult_;
+        Object ref = cmdResult_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           cmdResult_ = b;
           return b;
         } else {
@@ -1611,7 +1678,7 @@ public final class CmdProtoMessage {
        * <code>string cmdResult = 12;</code>
        */
       public Builder setCmdResult(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1644,20 +1711,20 @@ public final class CmdProtoMessage {
         return this;
       }
 
-      private java.lang.Object cmdResultDesc_ = "";
+      private Object cmdResultDesc_ = "";
       /**
        * <code>string cmdResultDesc = 13;</code>
        */
-      public java.lang.String getCmdResultDesc() {
-        java.lang.Object ref = cmdResultDesc_;
-        if (!(ref instanceof java.lang.String)) {
+      public String getCmdResultDesc() {
+        Object ref = cmdResultDesc_;
+        if (!(ref instanceof String)) {
           com.google.protobuf.ByteString bs =
                   (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
+          String s = bs.toStringUtf8();
           cmdResultDesc_ = s;
           return s;
         } else {
-          return (java.lang.String) ref;
+          return (String) ref;
         }
       }
       /**
@@ -1665,11 +1732,11 @@ public final class CmdProtoMessage {
        */
       public com.google.protobuf.ByteString
       getCmdResultDescBytes() {
-        java.lang.Object ref = cmdResultDesc_;
+        Object ref = cmdResultDesc_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b =
                   com.google.protobuf.ByteString.copyFromUtf8(
-                          (java.lang.String) ref);
+                          (String) ref);
           cmdResultDesc_ = b;
           return b;
         } else {
@@ -1680,7 +1747,7 @@ public final class CmdProtoMessage {
        * <code>string cmdResultDesc = 13;</code>
        */
       public Builder setCmdResultDesc(
-              java.lang.String value) {
+              String value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1712,13 +1779,82 @@ public final class CmdProtoMessage {
         onChanged();
         return this;
       }
-      @java.lang.Override
+
+      private Object name_ = "";
+      /**
+       * <code>string name = 14;</code>
+       */
+      public String getName() {
+        Object ref = name_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+                  (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <code>string name = 14;</code>
+       */
+      public com.google.protobuf.ByteString
+      getNameBytes() {
+        Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+                  com.google.protobuf.ByteString.copyFromUtf8(
+                          (String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 14;</code>
+       */
+      public Builder setName(
+              String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 14;</code>
+       */
+      public Builder clearName() {
+
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 14;</code>
+       */
+      public Builder setNameBytes(
+              com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      @Override
       public final Builder setUnknownFields(
               final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
       }
 
-      @java.lang.Override
+      @Override
       public final Builder mergeUnknownFields(
               final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
@@ -1729,18 +1865,18 @@ public final class CmdProtoMessage {
     }
 
     // @@protoc_insertion_point(class_scope:ProtoMessage)
-    private static final com.guiji.process.core.message.CmdProtoMessage.ProtoMessage DEFAULT_INSTANCE;
+    private static final ProtoMessage DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.guiji.process.core.message.CmdProtoMessage.ProtoMessage();
+      DEFAULT_INSTANCE = new ProtoMessage();
     }
 
-    public static com.guiji.process.core.message.CmdProtoMessage.ProtoMessage getDefaultInstance() {
+    public static ProtoMessage getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
     private static final com.google.protobuf.Parser<ProtoMessage>
             PARSER = new com.google.protobuf.AbstractParser<ProtoMessage>() {
-      @java.lang.Override
+      @Override
       public ProtoMessage parsePartialFrom(
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1753,13 +1889,13 @@ public final class CmdProtoMessage {
       return PARSER;
     }
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Parser<ProtoMessage> getParserForType() {
       return PARSER;
     }
 
-    @java.lang.Override
-    public com.guiji.process.core.message.CmdProtoMessage.ProtoMessage getDefaultInstanceForType() {
+    @Override
+    public ProtoMessage getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1778,15 +1914,16 @@ public final class CmdProtoMessage {
   private static  com.google.protobuf.Descriptors.FileDescriptor
           descriptor;
   static {
-    java.lang.String[] descriptorData = {
-            "\n\rMessage.proto\"\360\001\n\014ProtoMessage\022\016\n\006reqK" +
+    String[] descriptorData = {
+            "\n\rMessage.proto\"\376\001\n\014ProtoMessage\022\016\n\006reqK" +
                     "ey\030\001 \001(\t\022\017\n\007msgType\030\002 \001(\005\022\017\n\007cmdType\030\003 \001" +
                     "(\005\022\022\n\nparameters\030\004 \001(\t\022\014\n\004port\030\005 \001(\005\022\023\n\013" +
                     "processType\030\006 \001(\005\022\022\n\nprocessKey\030\007 \001(\t\022\016\n" +
                     "\006status\030\010 \001(\005\022\014\n\004type\030\t \001(\005\022\n\n\002id\030\n \001(\t\022" +
                     "\017\n\007content\030\013 \001(\t\022\021\n\tcmdResult\030\014 \001(\t\022\025\n\rc" +
-                    "mdResultDesc\030\r \001(\tB1\n\036com.guiji.process." +
-                    "core.messageB\017CmdProtoMessageb\006proto3"
+                    "mdResultDesc\030\r \001(\t\022\014\n\004name\030\016 \001(\tB1\n\036com." +
+                    "guiji.process.core.messageB\017CmdProtoMess" +
+                    "ageb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
             new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1805,7 +1942,7 @@ public final class CmdProtoMessage {
     internal_static_ProtoMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_ProtoMessage_descriptor,
-            new java.lang.String[] { "ReqKey", "MsgType", "CmdType", "Parameters", "Port", "ProcessType", "ProcessKey", "Status", "Type", "Id", "Content", "CmdResult", "CmdResultDesc", });
+            new String[] { "ReqKey", "MsgType", "CmdType", "Parameters", "Port", "ProcessType", "ProcessKey", "Status", "Type", "Id", "Content", "CmdResult", "CmdResultDesc", "Name", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

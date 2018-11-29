@@ -2,7 +2,9 @@ package com.guiji.process.server.handler;
 
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.process.core.util.CmdMessageUtils;
 import com.guiji.process.core.vo.CmdMsgSenderMap;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.utils.JsonUtils;
@@ -33,11 +35,16 @@ public class ProcessMsgSendHandler {
                 for (CmdMessageVO cmdMessageVO:cmdMessageVOs) {
                     // 调用底层通信，发送命令
                     ChannelHandlerContext ctx = ConnectionPool.getChannel(cmdMessageVO.getProcessInstanceVO().getIp());
-                    String msg = JsonUtils.bean2Json(cmdMessageVO);
-                    MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(2);
-                    builder.setContent(msg);
+
+                    CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(cmdMessageVO);
+                    builder.setType(2);
+
                     ctx.writeAndFlush(builder);
+
+                    CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
                 }
+
+                Thread.sleep(300);
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -50,8 +50,6 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 				ImClientProtocolBO.getIntance().send(responseVO,3);
 			}
 		}
-
-
 	}
 
 	@Override
@@ -90,13 +88,8 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
                 System.out.println("20秒向服务器发送一个心跳");
                 //发送心跳包
-				CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(new CmdMessageVO());
-				builder.setType(1);
-				String ip= Inet4Address.getLocalHost().getHostAddress();
-				int port = ImClientApp.imClientApp.configInit.getAgentPort();
-				builder.setContent(ip+":" + port);
+				ImClientProtocolBO.getIntance().send(new CmdMessageVO(),1);
 
-                ctx.writeAndFlush(builder);
             } else if (event.state().equals(IdleState.ALL_IDLE)) {
             	System.out.println("ALL");
             }

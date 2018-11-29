@@ -2,6 +2,7 @@ package com.guiji.process.agent.core;
 
 import com.guiji.process.agent.handler.ClientPoHandlerProto;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -50,7 +51,7 @@ public class ImConnection {
 					// 实体类传输数据，protobuf序列化
 					ch.pipeline().addLast("ping", new IdleStateHandler(60, 20, 60 * 10, TimeUnit.SECONDS));
                 	ch.pipeline().addLast("decoder",  
-                            new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
+                            new ProtobufDecoder(CmdProtoMessage.ProtoMessage.getDefaultInstance()));
                 	ch.pipeline().addLast("encoder",  
                             new ProtobufEncoder());
                 	ch.pipeline().addLast(new ClientPoHandlerProto());

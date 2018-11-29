@@ -2,6 +2,7 @@ package com.guiji.process.core.util;
 
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.CmdMsgTypeEnum;
 import com.guiji.process.core.message.CmdProtoMessage;
@@ -17,7 +18,7 @@ public class CmdMessageUtils {
 	public static CmdProtoMessage.ProtoMessage.Builder convert(CmdMessageVO cmdMessageVO) {
 
 		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder();
-		if (cmdMessageVO != null && cmdMessageVO.getProcessInstanceVO() != null) {
+		if (cmdMessageVO != null) {
 			builder.setReqKey(cmdMessageVO.getReqKey()== null?"":cmdMessageVO.getReqKey());
 			if(cmdMessageVO.getMsgTypeEnum() != null)
 			{
@@ -33,6 +34,7 @@ public class CmdMessageUtils {
 			if (cmdMessageVO.getProcessInstanceVO() != null) {
 				builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
 				builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey()==null?"":cmdMessageVO.getProcessInstanceVO().getProcessKey());
+				builder.setName(cmdMessageVO.getProcessInstanceVO().getName()==null?"":cmdMessageVO.getProcessInstanceVO().getName());
 				if (cmdMessageVO.getProcessInstanceVO().getType() != null) {
 					builder.setProcessType(cmdMessageVO.getProcessInstanceVO().getType().getValue());
 				}
@@ -42,6 +44,7 @@ public class CmdMessageUtils {
 			}
 			builder.setCmdResult(cmdMessageVO.getCommandResult()==null?"":cmdMessageVO.getCommandResult());
 			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc()==null?"":cmdMessageVO.getCommandResultDesc());
+
 		}
 
 
@@ -59,6 +62,10 @@ public class CmdMessageUtils {
 		processInstanceVO.setPort(message.getPort());
 		processInstanceVO.setProcessKey(message.getProcessKey());
 		processInstanceVO.setStatus(ProcessStatusEnum.valueOf(message.getStatus()));
+		processInstanceVO.setType(ProcessTypeEnum.valueOf(message.getProcessType()));
+
+		// TODO
+		processInstanceVO.setName(message.getName());
 		cmdMessageVO.setProcessInstanceVO(processInstanceVO);
 
 		return cmdMessageVO;

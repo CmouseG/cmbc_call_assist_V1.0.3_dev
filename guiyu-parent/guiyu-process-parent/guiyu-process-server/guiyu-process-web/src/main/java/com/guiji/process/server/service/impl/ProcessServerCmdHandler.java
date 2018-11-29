@@ -67,7 +67,13 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 doHealthStatus(cmdMessageVO);
                 break;
             case PULBLISH_SELLBOT_BOTSTENCE:
-                doPublishSellbotBotstenceAfter(cmdMessageVO);
+                doPublishAfter(cmdMessageVO);
+                break;
+            case PULBLISH_FREESWITCH_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
+                break;
+            case PUBLISH_ROBOT_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
                 break;
             default:
                 break;
@@ -151,7 +157,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         processManageService.unRegister(lst);
     }
 
-    private void doPublishSellbotBotstenceAfter(CmdMessageVO cmdMessageVO) {
+    private void doPublishAfter(CmdMessageVO cmdMessageVO) {
         if (cmdMessageVO != null) {
             ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
             if (processInstanceVO != null){

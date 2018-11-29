@@ -130,6 +130,10 @@ public class ProceseScheduleService implements IProceseScheduleService {
         {
             cmdType = CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE;
         }
+        else if(processTypeEnum == ProcessTypeEnum.ROBOT)
+        {
+            cmdType = CmdTypeEnum.PUBLISH_ROBOT_BOTSTENCE;
+        }
         else
         {
             return;
@@ -137,25 +141,14 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
         List<String> parameters = new ArrayList<String>();
         parameters.add(file);
-
         Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
         if(allAgent == null)
         {
             return;
         }
-
         for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
-
             ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
-
-            Map<Object, Object> processes = (Map<Object, Object>) processInstanceManageService.query(agent.getIp());
-            for (Map.Entry<Object, Object> process: processes.entrySet()) {
-                ProcessInstanceVO processInstanceVO = (ProcessInstanceVO) process.getValue();
-                if(processTypeEnum == processInstanceVO.getType()) {
-                    deviceManageService.cmd(agent, cmdType, parameters);
-                    break;
-                }
-            }
+            deviceManageService.cmd(agent, cmdType, parameters);
         }
     }
 

@@ -81,12 +81,17 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
-                CommandResult result = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(result,processInstanceVO,ProcessTypeEnum.SELLBOT);
+                CommandResult sellbotResult = doCmd(cmdMessageVO, cfgProcessOperVO);
+                HealthCheckResultAnylyse.afertPublish(sellbotResult,processInstanceVO,ProcessTypeEnum.SELLBOT);
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:
-                doCmd(cmdMessageVO, cfgProcessOperVO);
+                CommandResult freeswitchResult = doCmd(cmdMessageVO, cfgProcessOperVO);
+                HealthCheckResultAnylyse.afertPublish(freeswitchResult,processInstanceVO,ProcessTypeEnum.FREESWITCH);
+                break;
+            case PUBLISH_ROBOT_BOTSTENCE:
+                CommandResult robotResult = doCmd(cmdMessageVO, cfgProcessOperVO);
+                HealthCheckResultAnylyse.afertPublish(robotResult,processInstanceVO,ProcessTypeEnum.ROBOT);
                 break;
             default:
                 break;
@@ -102,10 +107,10 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             return null;
         }
 
-        if(cmdTypeEnum == CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE || cmdTypeEnum == CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE)
+        /*if(cmdTypeEnum == CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE || cmdTypeEnum == CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE || )
         {
 
-        }
+        }*/
 
         if(cfgProcessVO.getCfgNodeOpers() == null)
         {

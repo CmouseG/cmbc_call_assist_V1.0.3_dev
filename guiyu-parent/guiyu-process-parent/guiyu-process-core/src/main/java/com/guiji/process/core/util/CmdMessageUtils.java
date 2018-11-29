@@ -57,6 +57,8 @@ public class CmdMessageUtils {
 		cmdMessageVO.setParameters(Arrays.asList(message.getParameters().split(",")));
 		cmdMessageVO.setCmdType(CmdTypeEnum.valueOf(message.getCmdType()));
 		cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.valueOf(message.getMsgType()));
+		cmdMessageVO.setCommandResult(message.getCmdResult());
+		cmdMessageVO.setCommandResultDesc(message.getCmdResultDesc());
 
 		ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
 		processInstanceVO.setPort(message.getPort());

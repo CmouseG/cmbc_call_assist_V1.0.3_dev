@@ -319,7 +319,7 @@
 	</insert>
 	
 	<select id="getPassword" resultType="string">
-		select password from sys_user where username=#{userName} and status=1 and del_flg=0
+		select password from sys_user where username=#{userName} and status=1 and del_flag=0
 	</select>
 	
 	<select id="getPermissions" resultType="string">

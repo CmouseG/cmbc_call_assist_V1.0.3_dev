@@ -108,7 +108,7 @@ public class BotSentenceProcessController {
 	 * @param
 	 */
 	@RequestMapping(value="createBotSentenceProcess")
-	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@RequestHeader Long userId) {
+	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
 		if(null != paramVO && StringUtils.isNotBlank(paramVO.getProcessId()) && 
 				StringUtils.isNotBlank(paramVO.getTemplateName())) {
 			paramVO.setFlag("00");
@@ -116,11 +116,6 @@ public class BotSentenceProcessController {
 			return ServerResult.createBySuccess(new_processId);
 		}
 		return ServerResult.createByErrorMessage("创建模板失败!");
-	}
-	
-	@RequestMapping(value="createAdminBotSentenceProcess")
-	public ServerResult<String> createAdminBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
-		return createBotSentenceProcess(paramVO,userId);
 	}
 	
 	

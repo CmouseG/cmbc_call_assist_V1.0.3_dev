@@ -133,10 +133,11 @@
       SELECT genTabId('tts_wav_his')
     </selectKey>
     insert into tts_wav_his (id, seq_id, template_id, 
-      `status`, crt_time, tts_json_data
+      `status`, crt_time, tts_json_data,error_msg
       )
     values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=CHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{status,jdbcType=CHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{ttsJsonData,jdbcType=LONGVARCHAR}
+      ,#{errorMsg,jdbcType=VARCHAR},
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
@@ -155,6 +156,9 @@
       <if test="status != null" >
         `status`,
       </if>
+      <if test="status != null" >
+        `error_msg`,
+      </if>
       <if test="crtTime != null" >
         crt_time,
       </if>
@@ -172,6 +176,9 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=CHAR},
+      </if>
+      <if test="errorMsg != null" >
+        #{errorMsg,jdbcType=VARCHAR},
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},

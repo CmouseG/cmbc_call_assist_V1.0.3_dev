@@ -1,5 +1,6 @@
 package com.guiji.process.server.core;
 
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.server.handler.ServerPoHandlerProto;
 import io.netty.bootstrap.ServerBootstrap;
@@ -53,7 +54,7 @@ public class ImServer {
                     	
                     	// 实体类传输数据，protobuf序列化
                     	ch.pipeline().addLast("decoder",  
-                                new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
+                                new ProtobufDecoder(CmdProtoMessage.ProtoMessage.getDefaultInstance()));
                     	ch.pipeline().addLast("encoder",  
                                 new ProtobufEncoder());
                     	ch.pipeline().addLast(new ServerPoHandlerProto());
@@ -64,7 +65,7 @@ public class ImServer {
     					ch.pipeline().addLast(new ServerStringHandler());*/
                     }
                 })
-        		.option(ChannelOption.SO_BACKLOG, 128)
+        		.option(ChannelOption.SO_BACKLOG, 1024)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         
         try {

@@ -23,7 +23,7 @@ public class TtsServiceFactory {
 	@Autowired
 	private GuiyuTtsGpu guiyuTtsGpu;
 
-	public ITtsServiceProvide getTtsProvide(String model) {
+	public synchronized ITtsServiceProvide getTtsProvide(String model) {
 		List<Object> avaliableGpuList = new ArrayList<>(); // 可用list
 		
 		try {
@@ -51,8 +51,7 @@ public class TtsServiceFactory {
 				return null;
 			}
 		} catch (Exception e) {
-			logger.error("获取GPU失败！");
-			e.printStackTrace();
+			logger.error("获取GPU失败！", e);
 			return null;
 		}
 	}

@@ -81,7 +81,8 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case PULBLISH_SELLBOT_BOTSTENCE:
-                doCmd(cmdMessageVO, cfgProcessOperVO);
+                CommandResult result = doCmd(cmdMessageVO, cfgProcessOperVO);
+                HealthCheckResultAnylyse.afertPublish(result,processInstanceVO,ProcessTypeEnum.SELLBOT);
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:
@@ -138,7 +139,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             // 发起命令
             cmdResult = CommandUtils.exec(cmd);
-            System.out.println("执行命令结果：" + cmdResult.getOutput());
+            System.out.println("执行命令结果：：" + cmdResult.getOutput());
             // 执行完命令保存结果到内存记录
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum());
         }
@@ -168,9 +169,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             processInstanceVO.setName(cmdMessageVO.getProcessInstanceVO().getName());
             processInstanceVO.setStatus(nowStatus);
             newCmdMsg.setProcessInstanceVO(processInstanceVO);
-            String msg = JsonUtils.bean2Json(newCmdMsg);
-
-            ImClientProtocolBO.getIntance().send(msg,3);
+            ImClientProtocolBO.getIntance().send(newCmdMsg,3);
         }
 
         //停止状态的进程自动重启

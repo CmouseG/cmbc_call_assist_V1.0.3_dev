@@ -1137,27 +1137,25 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		updateProcessState(volice.getProcessId(),userId);
 		
-		String keysString=null;
 		//更新意图关键字
-		if(StringUtils.isNotBlank(keywords)){
-			String replaceKeyWords = keywords.replaceAll("，", ",");
-			replaceKeyWords = replaceKeyWords.replace("\n", "");
-			replaceKeyWords = replaceKeyWords.trim();
-			String[] keys=replaceKeyWords.split(",");
-			keysString=JSONObject.toJSONString(keys);
-			keysString  = keysString.substring(1, keysString.length()-1);
-		}
+		
+		String replaceKeyWords = keywords.replaceAll("，", ",");
+		replaceKeyWords = replaceKeyWords.replace("\n", "");
+		replaceKeyWords = replaceKeyWords.trim();
+		String[] keys=replaceKeyWords.split(",");
+		String keysString=JSONObject.toJSONString(keys);
+		keysString  = keysString.substring(1, keysString.length()-1);
 
 		if(StringUtils.isNotBlank(intentId)) {
 			//更新意图
 			BotSentenceIntent intent=botSentenceIntentMapper.selectByPrimaryKey(new Long(intentId));
 			
 			List<String> keywordList = BotSentenceUtil.getKeywords(intent.getKeywords());
-			if(null != keywordList && keywordList.size() > 0 && StringUtils.isNotBlank(keywordList.get(1))&& keysString!=null) {
+			if(null != keywordList && keywordList.size() > 0 && org.apache.commons.lang.StringUtils.isNotBlank(keywordList.get(1))) {
 				intent.setKeywords("[" + keysString + "," + keywordList.get(1).replace("\n", "") + "]");
-			}/*else {
+			}else {
 				intent.setKeywords("[" + keysString + "]");
-			}*/
+			}
 			intent.setLstUpdateTime(new Date(System.currentTimeMillis()));
 			intent.setLstUpdateUser(userId.toString());
 			botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
@@ -1172,12 +1170,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					intent.setCrtUser(userId.toString());
 					intent.setProcessId(branch.getProcessId());
 					intent.setDomainName(branch.getDomain());
-					if(keysString!=null){
-						intent.setKeywords("[" + keysString + "]");
-					}else{
-						intent.setKeywords("[]");
-					}
-					
+					intent.setKeywords("[" + keysString + "]");
 					intent.setTemplateId(branch.getTemplateId());
 					intent.setForSelect(0);
 					botSentenceIntentMapper.insert(intent);

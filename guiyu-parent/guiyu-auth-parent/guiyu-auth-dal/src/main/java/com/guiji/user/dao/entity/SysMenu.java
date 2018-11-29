@@ -32,7 +32,7 @@ public class SysMenu implements Serializable {
 
     private String remarks;
 
-    private String delFlag="0";
+    private String delFlag;
 
     private static final long serialVersionUID = 1L;
     

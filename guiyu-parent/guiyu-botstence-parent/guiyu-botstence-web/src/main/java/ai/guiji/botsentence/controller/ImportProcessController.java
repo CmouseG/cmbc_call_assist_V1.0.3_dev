@@ -58,13 +58,8 @@ public class ImportProcessController {
 	
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 	
-	@RequestMapping(value="importAdminProcess")
-	public ServerResult importAdminProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestParam Long userId) throws Exception{
-		return importProcess(multipartFile,templateType,userId);
-	}
-	
 	@RequestMapping(value="importProcess")
-	public ServerResult importProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestHeader Long userId) throws Exception{
+	public ServerResult importProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestParam Long userId) throws Exception{
 		String fileName = multipartFile.getOriginalFilename();
 		String suffix =  fileName.substring(fileName.lastIndexOf(".") + 1);
 		if(!"zip".equals(suffix)) {
@@ -74,7 +69,7 @@ public class ImportProcessController {
 		
 		File file=File.createTempFile(String.valueOf(System.currentTimeMillis()), "zip");
 		 writeFile(multipartFile.getInputStream(),file);
-		 ZipFile zipFile=new ZipFile(file, Charset.forName("GBK"));
+		 ZipFile zipFile=new ZipFile(file, Charset.forName("gbk"));
 
 		 if(StringUtils.isBlank(userId.toString())) {
 			 return ServerResult.createByErrorMessage("用户信息为空!"); 

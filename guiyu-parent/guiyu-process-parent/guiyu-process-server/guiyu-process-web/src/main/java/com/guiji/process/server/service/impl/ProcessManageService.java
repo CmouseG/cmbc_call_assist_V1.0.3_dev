@@ -5,7 +5,9 @@ import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.CmdMsgTypeEnum;
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.process.core.util.CmdMessageUtils;
 import com.guiji.process.core.vo.CmdMsgSenderMap;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.server.core.ConnectionPool;
@@ -98,9 +100,8 @@ public class ProcessManageService implements IProcessManageService {
         cmdMessageVO.setCmdType(cmdType);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         cmdMessageVO.setParameters(parameters);
-        String msg = JsonUtils.bean2Json(cmdMessageVO);
-        MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(2);
-        builder.setContent(msg);
+        CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(cmdMessageVO);
+        builder.setType(2);
         ctx.writeAndFlush(builder);
 
         CmdMsgSenderMap.getInstance().produce(cmdMessageVO);

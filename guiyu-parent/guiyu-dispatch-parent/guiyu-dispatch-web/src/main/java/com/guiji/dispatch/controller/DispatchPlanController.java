@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -37,14 +36,14 @@ public class DispatchPlanController {
 	 * @return 响应报文 异常
 	 */
 	@PostMapping("addSchedule")
-	public boolean addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
-		boolean result = false;
+	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
+		MessageDto dto = new MessageDto();
 		try {
-			result = dispatchPlanService.addSchedule(dispatchPlan, userId);
+			dto= dispatchPlanService.addSchedule(dispatchPlan, userId);
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
-		return result;
+		return dto;
 	}
 
 	/**
@@ -65,7 +64,7 @@ public class DispatchPlanController {
 	 * 
 	 * @param fileName
 	 * @param file
-	 * @return
+	 * @return	
 	 */
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
@@ -159,7 +158,7 @@ public class DispatchPlanController {
 		boolean result = false;
 		for (DispatchPlan dis : dispatchPlans) {
 			try {
-				result = dispatchPlanService.addSchedule(dis, userId);
+				dispatchPlanService.addSchedule(dis, userId);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}

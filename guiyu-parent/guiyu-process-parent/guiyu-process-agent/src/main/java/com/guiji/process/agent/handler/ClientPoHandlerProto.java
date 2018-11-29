@@ -1,11 +1,16 @@
 package com.guiji.process.agent.handler;
 
 import com.guiji.ImClientApp;
+import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.CmdMsgTypeEnum;
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.process.core.util.CmdMessageUtils;
+import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,6 +20,8 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 import java.net.Inet4Address;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
@@ -22,28 +29,27 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		MessageProto.Message message = (MessageProto.Message) msg;
+		CmdProtoMessage.ProtoMessage message = (CmdProtoMessage.ProtoMessage) msg;
 		if (message.getType() == 1) {
 			// 收到服务端回复信息
 			System.out.println(message.getContent());
 		}
 		else if (message.getType() == 2) {
 			// 收到服务端发送指令并执行
-			CmdMessageVO cmdMessageVO = JsonUtils.json2Bean(message.getContent(),CmdMessageVO.class);
+			CmdMessageVO cmdMessageVO = CmdMessageUtils.convert(message);
+
 			System.out.println("收到服务给客户端的命令：" + cmdMessageVO);
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 
 			if(cmdMessageVO.getMsgTypeEnum() == CmdMsgTypeEnum.REQ)
 			{
 				CmdMessageVO responseVO = new CmdMessageVO();
-				cmdMessageVO.setReqKey(cmdMessageVO.getReqKey());
-				cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ_ACK);
+				responseVO.setReqKey(cmdMessageVO.getReqKey());
+				responseVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ_ACK);
 
-				ImClientProtocolBO.getIntance().send(JsonUtils.bean2Json(responseVO),3);
+				ImClientProtocolBO.getIntance().send(responseVO,3);
 			}
 		}
-
-
 	}
 
 	@Override
@@ -82,11 +88,8 @@ public class ClientPoHandlerProto extends ChannelInboundHandlerAdapter {
             } else if (event.state().equals(IdleState.WRITER_IDLE)) {
                 System.out.println("20秒向服务器发送一个心跳");
                 //发送心跳包
-				MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(1);
-				String ip= Inet4Address.getLocalHost().getHostAddress();
-				int port = ImClientApp.imClientApp.configInit.getAgentPort();
-				builder.setContent(ip+":" + port);
-                ctx.writeAndFlush(builder);
+				ImClientProtocolBO.getIntance().send(new CmdMessageVO(),1);
+
             } else if (event.state().equals(IdleState.ALL_IDLE)) {
             	System.out.println("ALL");
             }

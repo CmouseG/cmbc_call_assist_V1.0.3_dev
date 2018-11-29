@@ -15,6 +15,8 @@ public class TtsWavHis implements Serializable {
     private Date crtTime;
 
     private String ttsJsonData;
+    
+    private String errorMsg;
 
     private static final long serialVersionUID = 1L;
 
@@ -65,8 +67,23 @@ public class TtsWavHis implements Serializable {
     public void setTtsJsonData(String ttsJsonData) {
         this.ttsJsonData = ttsJsonData == null ? null : ttsJsonData.trim();
     }
+    
 
-    @Override
+    /**
+	 * @return the errorMsg
+	 */
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	/**
+	 * @param errorMsg the errorMsg to set
+	 */
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -78,6 +95,7 @@ public class TtsWavHis implements Serializable {
         sb.append(", status=").append(status);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", ttsJsonData=").append(ttsJsonData);
+        sb.append(", errorMsg=").append(errorMsg);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

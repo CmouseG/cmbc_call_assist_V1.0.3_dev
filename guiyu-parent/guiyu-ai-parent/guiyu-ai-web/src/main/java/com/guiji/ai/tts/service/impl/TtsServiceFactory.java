@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.utils.RedisUtil;
 
 /**
@@ -48,7 +50,7 @@ public class TtsServiceFactory {
 				return guiyuTtsGpu;
 			}else{ // 没有取到可用GPU
 				logger.error("没有取到可用GPU！");
-				return null;
+				throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU);
 			}
 		} catch (Exception e) {
 			logger.error("获取GPU失败！", e);

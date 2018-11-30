@@ -65,7 +65,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	AiNewTransService aiNewTransService;
 	@Value("${file.tmpPath:apps/tmp/}")
     private String tempFilePath;	//文件临时目录
-	@Value("${file.hushuDir:apps/template/}")
+	@Value("${file.hushuDir:home/botstence_tmpl/}")
     private String hushuDir;	//话术模板存放目录
 	
 	
@@ -272,7 +272,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		ttsReqVO.setModel(hsReplace.getUse_speaker_flag());
 		ttsReqVO.setContents(contents);
 		//调用TTS工具
+		logger.info("开始调用TTS工具，请求参数:{}...",ttsReqVO);
 		ReturnData<TtsRspVO> ttsRspData = iTts.translate(ttsReqVO);
+		logger.info("完成TTS工具调用,返回参数:{}",ttsRspData);
 //		///test
 //		ReturnData<TtsRspVO> ttsRspData = new ReturnData<TtsRspVO>();
 //		ttsRspData.setCode(RobotConstants.RSP_CODE_SUCCESS);
@@ -285,7 +287,6 @@ public class TtsWavServiceImpl implements ITtsWavService{
 //		ttsRspData.setBody(body);
 //		///test end
 		if(ttsRspData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode())){
-			logger.error("调用TTS工具服务生成语音失败，请求参数:{},返回结果:{}",ttsReqVO,ttsRspData);
 			logger.error("调用TTS工具生成语音失败，返回数据：{}"+ttsRspData);
 			throw new RobotException(ttsRspData.getCode(),ttsRspData.getMsg());
 		}
@@ -436,6 +437,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @return
 	 */
 	private String getHsWavPath(String hushuDirPath,TtsVoiceReq ttsVoiceReq) {
-		return hushuDirPath + ttsVoiceReq.getTemplateId() + "/" + ttsVoiceReq.getTemplateId() + "_rec/";
+		//模板名称去掉en，然后再加上rec
+		String templateCode = ttsVoiceReq.getTemplateId();
+		String wavDirName = (templateCode.indexOf("_en")>0?templateCode.substring(0,templateCode.length()-2):templateCode) + "rec/";
+		return hushuDirPath + ttsVoiceReq.getTemplateId() + "/" + wavDirName;
 	}
 }

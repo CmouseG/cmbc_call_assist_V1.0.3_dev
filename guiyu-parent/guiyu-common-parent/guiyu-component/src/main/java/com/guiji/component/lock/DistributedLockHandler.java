@@ -7,20 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class DistributedLockHandler {
 	private static final Logger logger = LoggerFactory.getLogger(DistributedLockHandler.class);
-	private final static long LOCK_EXPIRE = 30 * 1000L;// 单个业务持有锁的时间30s，防止死锁
-	private final static long LOCK_TRY_INTERVAL = 30L;// 默认30ms尝试一次
-	private final static long LOCK_TRY_TIMEOUT = 20 * 1000L;// 默认尝试20s
-	
+	private final static long LOCK_EXPIRE = 30 * 1000L; // 单个业务持有锁的时间30s，防止死锁
+	private final static long LOCK_TRY_INTERVAL = 20L; // 默认20ms尝试一次
+	private final static long LOCK_TRY_TIMEOUT = 5 * 1000L; // 默认尝试5s
+
 	@Autowired
 	private StringRedisTemplate template;
-	
+
 	/**
 	 * 尝试获取全局锁
 	 * @param lock
@@ -29,15 +27,15 @@ public class DistributedLockHandler {
 	public boolean tryLock(Lock lock) {
 		return getLock(lock, LOCK_TRY_TIMEOUT, LOCK_TRY_INTERVAL, LOCK_EXPIRE);
 	}
-	
+
 	public boolean tryLock(Lock lock, long timeout) {
 		return getLock(lock, timeout, LOCK_TRY_INTERVAL, LOCK_EXPIRE);
 	}
-	
+
 	public boolean tryLock(Lock lock, long timeout, long tryInterval) {
 		return getLock(lock, timeout, tryInterval, LOCK_EXPIRE);
 	}
-	
+
 	public boolean tryLock(Lock lock, long timeout, long tryInterval, long lockExpireTime) {
 		return getLock(lock, timeout, tryInterval, lockExpireTime);
 	}
@@ -52,37 +50,37 @@ public class DistributedLockHandler {
 	 */
 	public boolean getLock(Lock lock, long timeout, long tryInterval, long lockExpireTime) {
 		try {
-			if (StringUtils.isEmpty(lock.getName()) || StringUtils.isEmpty(lock.getValue())) {
+			if (StringUtils.isEmpty(lock.getName()) || StringUtils.isEmpty(lock.getValue())) { //对lock进行校验
 				return false;
 			}
 			long startTime = System.currentTimeMillis();
-			do {
-				if (!template.hasKey(lock.getName())) {
-					ValueOperations<String, String> ops = template.opsForValue();
-					ops.set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
+			while (true) {
+				if (template.opsForValue().setIfAbsent(lock.getName(), lock.getValue())) {
+					template.opsForValue().set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
+					logger.info(Thread.currentThread().getName() + " : get lock");
 					return true;
-				} else { // 存在锁
-					logger.debug("lock is exist!！！");
+				} else {
+					logger.info(Thread.currentThread().getName() + " : ----> lock is exist!!!");
 				}
-				if (System.currentTimeMillis() - startTime > timeout) {// 尝试超过了设定值之后直接跳出循环
+				if (System.currentTimeMillis() - startTime > timeout) {
 					return false;
 				}
 				Thread.sleep(tryInterval);
-			} while (template.hasKey(lock.getName()));
-		} catch (InterruptedException e) {
+			}
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return false;
 		}
-		return false;
 	}
-	
+
 	/**
 	 * 释放锁
 	 */
 	public void releaseLock(Lock lock) {
 		if (!StringUtils.isEmpty(lock.getName())) {
+			logger.info(Thread.currentThread().getName() + " : delete lock");
 			template.delete(lock.getName());
 		}
 	}
-	
+
 }

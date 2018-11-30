@@ -15,6 +15,7 @@ import com.guiji.fsagent.api.ILineOperate;
 import com.guiji.fsmanager.entity.LineInfoVO;
 import com.guiji.fsmanager.entity.LineXmlnfoVO;
 import com.guiji.utils.FeignBuildUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +151,6 @@ public class LineServiceImpl implements LineService {
             listLine.add(lineXmlnfo);
         }
         return listLine;
-
     }
 
 
@@ -168,7 +168,7 @@ public class LineServiceImpl implements LineService {
         String realm=request.getSipIp()+":"+request.getSipPort();
         gatewayMap.put("realm", realm);
         gatewayMap.put("from-domain", realm);
-        if (request.getCallerNum() != null && !request.getCallerNum().isEmpty()) {
+        if(!StringUtils.isBlank(request.getCallerNum())){
             gatewayMap.put("caller-id-in-from", "true");
         }
         gatewayMap.put("expire-seconds","600" );
@@ -185,9 +185,7 @@ public class LineServiceImpl implements LineService {
         }
         gateway.setParam(ParamSet);
         include.setGateway(gateway);
-
         XmlUtil util  = new XmlUtil();
-
         return util.buildxml(include);
     }
 
@@ -200,25 +198,21 @@ public class LineServiceImpl implements LineService {
         DialplanVO include = new DialplanVO();
         DialplanVO.Extension extension = new DialplanVO.Extension();
         extension.setName(request.getLineId() + "_Extension");
-
         DialplanVO.Condition condition = new DialplanVO.Condition();
         condition.setField("caller_id_name");
         condition.setExpression("^" + request.getLineId() + "$");
-
         LinkedHashSet<DialplanVO.Action> ActionSet = new LinkedHashSet<DialplanVO.Action>();
         DialplanVO.Action action = new DialplanVO.Action();
         action.setData("ringback=${us-ring}");
         action.setApplication("set");
         ActionSet.add(action);
-
-        if(request.getCodec()!=null&&request.getCodec().trim().isEmpty()){
+        if(!StringUtils.isBlank(request.getCodec())){
             DialplanVO.Action action1 = new DialplanVO.Action();
             action1.setData("nolocal:absolute_codec_string="+request.getCodec());
             action1.setApplication("export");
             ActionSet.add(action1);
         }
-
-        if (request.getCallerNum() != null && !request.getCallerNum().trim().isEmpty()) {
+        if(!StringUtils.isBlank(request.getCallerNum())){
             DialplanVO.Action action1 =new DialplanVO.Action();
             action1.setData("callerselector.lua " + request.getCallerNum());
             action1.setApplication("lua");
@@ -230,14 +224,13 @@ public class LineServiceImpl implements LineService {
             ActionSet.add(action2);
         }
         DialplanVO.Action action2 = new DialplanVO.Action();
-        if (request.getCalleePrefix() != null && !request.getCalleePrefix().trim().isEmpty()) {
+        if(!StringUtils.isBlank(request.getCalleePrefix())){
             action2.setData("sofia/gateway/gw_" + request.getLineId() + "/" + request.getCalleePrefix().trim() + "${destination_number}");
-        } else {
+        }else{
             action2.setData("sofia/gateway/gw_" + request.getLineId() + "/${destination_number}");
         }
         action2.setApplication("bridge");
         ActionSet.add(action2);
-
         condition.setAction(ActionSet);
         extension.setCondition(condition);
         include.setExtension(extension);

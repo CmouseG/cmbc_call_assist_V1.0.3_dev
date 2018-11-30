@@ -35,11 +35,16 @@ public class ProcessMsgSendHandler {
                 for (CmdMessageVO cmdMessageVO:cmdMessageVOs) {
                     // 调用底层通信，发送命令
                     ChannelHandlerContext ctx = ConnectionPool.getChannel(cmdMessageVO.getProcessInstanceVO().getIp());
+
                     CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(cmdMessageVO);
-                    builder.setType(3);
+                    builder.setType(2);
 
                     ctx.writeAndFlush(builder);
+
+                    CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
                 }
+
+                Thread.sleep(300);
 
             } catch (Exception e) {
                 e.printStackTrace();

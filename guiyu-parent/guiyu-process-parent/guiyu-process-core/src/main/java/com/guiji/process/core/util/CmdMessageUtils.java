@@ -2,6 +2,7 @@ package com.guiji.process.core.util;
 
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.CmdMsgTypeEnum;
 import com.guiji.process.core.message.CmdProtoMessage;
@@ -16,18 +17,34 @@ public class CmdMessageUtils {
 
 	public static CmdProtoMessage.ProtoMessage.Builder convert(CmdMessageVO cmdMessageVO) {
 
-		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder().setId("1");
-		if (cmdMessageVO != null && cmdMessageVO.getProcessInstanceVO() != null) {
-			builder.setReqKey(cmdMessageVO.getReqKey());
-			builder.setMsgType(cmdMessageVO.getMsgTypeEnum().getValue());
-			builder.setCmdType(cmdMessageVO.getCmdType().getValue());
-			builder.setParameters(StringUtils.join(cmdMessageVO.getParameters(),","));
-			builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
-			builder.setProcessType(cmdMessageVO.getProcessInstanceVO().getType().getValue());
-			builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey());
-			builder.setStatus(cmdMessageVO.getProcessInstanceVO().getStatus().getValue());
-			builder.setCmdResult(cmdMessageVO.getCommandResult());
-			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc());
+		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder();
+		if (cmdMessageVO != null) {
+			builder.setReqKey(cmdMessageVO.getReqKey()== null?"":cmdMessageVO.getReqKey());
+			if(cmdMessageVO.getMsgTypeEnum() != null)
+			{
+				builder.setMsgType(cmdMessageVO.getMsgTypeEnum().getValue());
+			}
+			if(cmdMessageVO.getCmdType() != null)
+			{
+				builder.setCmdType(cmdMessageVO.getCmdType().getValue());
+			}
+			String parameters = StringUtils.join(cmdMessageVO.getParameters(),",");
+			builder.setParameters(parameters==null?"":parameters);
+
+			if (cmdMessageVO.getProcessInstanceVO() != null) {
+				builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
+				builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey()==null?"":cmdMessageVO.getProcessInstanceVO().getProcessKey());
+				builder.setName(cmdMessageVO.getProcessInstanceVO().getName()==null?"":cmdMessageVO.getProcessInstanceVO().getName());
+				if (cmdMessageVO.getProcessInstanceVO().getType() != null) {
+					builder.setProcessType(cmdMessageVO.getProcessInstanceVO().getType().getValue());
+				}
+				if (cmdMessageVO.getProcessInstanceVO().getStatus() != null) {
+					builder.setStatus(cmdMessageVO.getProcessInstanceVO().getStatus().getValue());
+				}
+			}
+			builder.setCmdResult(cmdMessageVO.getCommandResult()==null?"":cmdMessageVO.getCommandResult());
+			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc()==null?"":cmdMessageVO.getCommandResultDesc());
+
 		}
 
 
@@ -40,11 +57,17 @@ public class CmdMessageUtils {
 		cmdMessageVO.setParameters(Arrays.asList(message.getParameters().split(",")));
 		cmdMessageVO.setCmdType(CmdTypeEnum.valueOf(message.getCmdType()));
 		cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.valueOf(message.getMsgType()));
+		cmdMessageVO.setCommandResult(message.getCmdResult());
+		cmdMessageVO.setCommandResultDesc(message.getCmdResultDesc());
 
 		ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
 		processInstanceVO.setPort(message.getPort());
 		processInstanceVO.setProcessKey(message.getProcessKey());
 		processInstanceVO.setStatus(ProcessStatusEnum.valueOf(message.getStatus()));
+		processInstanceVO.setType(ProcessTypeEnum.valueOf(message.getProcessType()));
+
+		// TODO
+		processInstanceVO.setName(message.getName());
 		cmdMessageVO.setProcessInstanceVO(processInstanceVO);
 
 		return cmdMessageVO;

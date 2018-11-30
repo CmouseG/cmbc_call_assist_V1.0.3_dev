@@ -51,7 +51,6 @@ public class ImClientProtocolBO {
         channel.pipeline().addLast(new ClientPoHandlerProto());
 
         // protobuf
-        CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder().setId(id);
 
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.AGENTREGISTER);
@@ -61,9 +60,7 @@ public class ImClientProtocolBO {
         processInstanceVO.setPort(agentPort);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
 
-        channelGlobal.writeAndFlush(builder);
-
-        send(cmdMessageVO,0);
+        send(cmdMessageVO,3);
         send(new CmdMessageVO(),2);
     }
 
@@ -75,6 +72,8 @@ public class ImClientProtocolBO {
         builder.setType(type);
 
         channelGlobal.writeAndFlush(builder);
+
+        System.out.println("客户端发送消息：：" + cmdMessageVO);
     }
 
 

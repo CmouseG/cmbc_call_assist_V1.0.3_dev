@@ -1,7 +1,5 @@
 package com.guiji.process.server.handler;
 
-import com.guiji.common.model.process.ProcessInstanceVO;
-import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.process.core.ProcessMsgHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.message.CmdMsgTypeEnum;
@@ -9,7 +7,6 @@ import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
 import com.guiji.process.core.util.CmdMessageUtils;
 import com.guiji.process.core.vo.CmdMsgSenderMap;
-import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.util.DeviceProcessUtil;
 import com.guiji.utils.JsonUtils;
@@ -20,15 +17,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
-
+		System.out.println("服务端收到消息: *************************************" );
 		String remoteIp = DeviceProcessUtil.getRemoreIp(ctx);
 		ConnectionPool.putChannel(remoteIp, ctx);
 
@@ -37,7 +32,7 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 		if (message.getType() == 0) {
 			if(StringUtils.isNotEmpty(message.getId())) {
 				//客户端启动
-				System.out.println("客户端:" + "clientId-" + remoteIp);
+				System.out.println("客户端:" + "clientId-" + message.getId());
 			}
 		}
 
@@ -55,11 +50,10 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 
 		// ping
 		if (message.getType() == 3) {
-
 			CmdMessageVO cmdMessageVO = CmdMessageUtils.convert(message);
 			if(cmdMessageVO.getProcessInstanceVO() != null)
 			{
-				cmdMessageVO.getProcessInstanceVO().setIp(remoteIp);
+				cmdMessageVO.getProcessInstanceVO().setIp(DeviceProcessUtil.getRemoreIp(ctx));
 			}
 
 			if(cmdMessageVO.getMsgTypeEnum() == CmdMsgTypeEnum.REQ_ACK)
@@ -71,6 +65,7 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 			ProcessMsgHandler.getInstance().add(cmdMessageVO);
 			System.out.println("转换后的bean"+cmdMessageVO.toString());
 			//发送响应
+
 			CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder().setType(1);
 			builder.setContent("服务端响应:" + "hello");
 			ctx.writeAndFlush(builder);
@@ -82,7 +77,4 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
-
-
-
 }

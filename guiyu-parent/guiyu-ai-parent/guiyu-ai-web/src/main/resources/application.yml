@@ -1,17 +1,17 @@
 server:
-  port: 18051
+  port: 18851
 spring:
   application:
     name: guiyu-ai-web
   datasource:
-    url: jdbc:mysql://47.97.179.12:3306/guiyu_ai
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_ai?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: root
-    password: guiyu@1234
+    password: 123456
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     database: 0
-    host: 47.96.151.197
-    password: 
+    host: 192.168.1.78
+    password: 123456
     port: 6379
     pool:
       max-active: 8
@@ -35,4 +35,9 @@ properties:
   error: properties/error.properties
   threadpool: properties/threadPool.properties
 
+#网关地址
+gateway:
+  host: http://guiyu-cloud-zuul:18000/
+  
 filePath: /home/apps/ai/tts/wav/
+#filePath: E:\file\

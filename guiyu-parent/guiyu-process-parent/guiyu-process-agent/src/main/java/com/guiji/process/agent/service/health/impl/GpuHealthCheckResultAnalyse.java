@@ -1,5 +1,6 @@
 package com.guiji.process.agent.service.health.impl;
 
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.IHealthCheckResultAnalyse;
@@ -20,5 +21,10 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
         }
 
         return ProcessStatusEnum.DOWN;
+    }
+
+    @Override
+    public void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO) {
+
     }
 }

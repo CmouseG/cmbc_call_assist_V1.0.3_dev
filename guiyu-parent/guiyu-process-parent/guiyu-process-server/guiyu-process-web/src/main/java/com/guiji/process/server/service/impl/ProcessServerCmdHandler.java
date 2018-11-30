@@ -7,6 +7,8 @@ import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.dao.entity.SysProcess;
+import com.guiji.process.server.dao.entity.SysProcessLog;
+import com.guiji.process.server.service.ISysProcessLogService;
 import com.guiji.process.server.service.ISysProcessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     @Autowired
     private ISysProcessService sysProcessService;
+
+    @Autowired
+    private ISysProcessLogService sysProcessLogService;
 
     public void excute(CmdMessageVO cmdMessageVO)
     {
@@ -60,6 +65,15 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 break;
             case HEALTH:
                 doHealthStatus(cmdMessageVO);
+                break;
+            case PULBLISH_SELLBOT_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
+                break;
+            case PULBLISH_FREESWITCH_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
+                break;
+            case PUBLISH_ROBOT_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
                 break;
             default:
                 break;
@@ -141,6 +155,25 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
         lst.add(processInstanceVO);
         processManageService.unRegister(lst);
+    }
+
+    private void doPublishAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                SysProcessLog sysProcessLog = new SysProcessLog();
+                sysProcessLog.setIp(processInstanceVO.getIp());
+                sysProcessLog.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessLog.setProcessKey(processInstanceVO.getProcessKey());
+                sysProcessLog.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessLog.setParameters(processInstanceVO.getProcessKey());
+                sysProcessLog.setResult(cmdMessageVO.getCommandResult());
+                sysProcessLog.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessLog.setCreateTime(new Date());
+                sysProcessLog.setUpdateTime(new Date());
+                sysProcessLogService.insert(sysProcessLog);
+            }
+        }
     }
 
 }

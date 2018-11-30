@@ -100,10 +100,8 @@ public class ProcessManageService implements IProcessManageService {
         cmdMessageVO.setCmdType(cmdType);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
         cmdMessageVO.setParameters(parameters);
-
         CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(cmdMessageVO);
         builder.setType(2);
-
         ctx.writeAndFlush(builder);
 
         CmdMsgSenderMap.getInstance().produce(cmdMessageVO);

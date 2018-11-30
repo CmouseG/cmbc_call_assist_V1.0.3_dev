@@ -17,7 +17,6 @@ import java.util.List;
  * Created by ty on 2018/11/23.
  */
 @RestController
-@RequestMapping("/process")
 public class ProcessController {
     @Autowired
     ISysProcessService sysProcessService;

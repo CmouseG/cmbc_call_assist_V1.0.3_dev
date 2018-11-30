@@ -37,7 +37,7 @@ mybatis:
 #临时目录
 file:
   tmpPath: apps/tmp/
-  hushuDir: apps/template/
+  hushuDir: home/botstence_tmpl/
   
 properties:
   error: properties/error.properties

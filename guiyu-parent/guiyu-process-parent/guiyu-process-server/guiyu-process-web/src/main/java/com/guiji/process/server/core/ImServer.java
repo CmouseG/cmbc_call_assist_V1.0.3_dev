@@ -13,6 +13,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -51,10 +53,14 @@ public class ImServer {
                     	ch.pipeline().addLast(new ObjectEncoder());*/
                     	/*ch.pipeline().addLast("decoder", new KryoDecoder());
     					ch.pipeline().addLast("encoder", new KryoEncoder());*/
-                    	
+                    	// ----Protobuf处理器，这里的配置是关键----
+						ch.pipeline().addLast("frameDecoder", new ProtobufVarint32FrameDecoder());// 用于decode前解决半包和粘包问题（利用包头中的包含数组长度来识别半包粘包）
                     	// 实体类传输数据，protobuf序列化
                     	ch.pipeline().addLast("decoder",  
                                 new ProtobufDecoder(CmdProtoMessage.ProtoMessage.getDefaultInstance()));
+                    	// 用于在序列化的字节数组前加上一个简单的包头，只包含序列化的字节长度。
+						ch.pipeline().addLast("frameEncoder",
+								new ProtobufVarint32LengthFieldPrepender());
                     	ch.pipeline().addLast("encoder",  
                                 new ProtobufEncoder());
                     	ch.pipeline().addLast(new ServerPoHandlerProto());

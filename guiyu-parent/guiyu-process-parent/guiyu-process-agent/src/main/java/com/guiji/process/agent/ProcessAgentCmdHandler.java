@@ -38,6 +38,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         CfgProcessOperVO cfgProcessOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
+        if(cfgProcessOperVO == null ) {
+            return;
+        }
 
         switch (cmdMessageVO.getCmdType()) {
             case REGISTER:

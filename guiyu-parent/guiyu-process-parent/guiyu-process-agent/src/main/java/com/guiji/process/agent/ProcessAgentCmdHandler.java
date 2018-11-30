@@ -85,16 +85,16 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             case PULBLISH_SELLBOT_BOTSTENCE:
                 CommandResult sellbotResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(sellbotResult,processInstanceVO,ProcessTypeEnum.SELLBOT);
+                HealthCheckResultAnylyse.afertPublish(sellbotResult,processInstanceVO,ProcessTypeEnum.SELLBOT,cmdMessageVO.getParameters());
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:
                 CommandResult freeswitchResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(freeswitchResult,processInstanceVO,ProcessTypeEnum.FREESWITCH);
+                HealthCheckResultAnylyse.afertPublish(freeswitchResult,processInstanceVO,ProcessTypeEnum.FREESWITCH,cmdMessageVO.getParameters());
                 break;
             case PUBLISH_ROBOT_BOTSTENCE:
                 CommandResult robotResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(robotResult,processInstanceVO,ProcessTypeEnum.ROBOT);
+                HealthCheckResultAnylyse.afertPublish(robotResult,processInstanceVO,ProcessTypeEnum.ROBOT,cmdMessageVO.getParameters());
                 break;
             default:
                 break;

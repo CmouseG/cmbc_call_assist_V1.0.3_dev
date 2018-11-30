@@ -64,7 +64,7 @@ public class ProcessScheduleController implements IProcessSchedule {
 
     @Override
     public Result.ReturnData<Boolean> publishResource(UpgrateResouceReq req) {
-        processScheduleService.publishResource(req.getProcessTypeEnum(),req.getFile());
+        processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile());
         return Result.ok();
     }
 

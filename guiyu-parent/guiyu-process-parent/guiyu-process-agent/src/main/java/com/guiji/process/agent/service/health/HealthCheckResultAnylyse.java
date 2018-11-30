@@ -9,6 +9,8 @@ import com.guiji.process.agent.service.health.impl.GpuHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.RobotHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.SellbotHealthCheckResultAnalyse;
 
+import java.util.List;
+
 public class HealthCheckResultAnylyse {
 
 
@@ -35,7 +37,7 @@ public class HealthCheckResultAnylyse {
         return result;
     }
 
-    public static void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType) {
+    public static void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters) {
         IHealthCheckResultAnalyse analyse = null;
         switch (processType) {
             case SELLBOT:
@@ -54,7 +56,7 @@ public class HealthCheckResultAnylyse {
         }
 
         if (analyse != null) {
-            analyse.afertPublish(cmdResult,processInstanceVO);
+            analyse.afertPublish(cmdResult,processInstanceVO,parameters);
         }
     }
 }

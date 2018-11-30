@@ -11,6 +11,8 @@ import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
     private static final String CMD_RESULT_CODE99 = "99";
 
@@ -27,7 +29,7 @@ public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalys
     }
 
     @Override
-    public void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO) {
+    public void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,List<String> parameters) {
         String result = CMD_RESULT_CODE99;
         if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
             String output = cmdResult.getOutput();
@@ -38,6 +40,7 @@ public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalys
         CmdMessageVO newCmdMsg = new CmdMessageVO();
         newCmdMsg.setCmdType(CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE);
         newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
         ImClientProtocolBO.getIntance().send(newCmdMsg,3);

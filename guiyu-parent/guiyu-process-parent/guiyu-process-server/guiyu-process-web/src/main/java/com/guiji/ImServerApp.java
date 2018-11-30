@@ -3,6 +3,7 @@ package com.guiji;
 import com.guiji.component.result.EnableAutoResultPack;
 import com.guiji.process.server.core.ImServer;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -12,6 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * IM服务启动入口
  * @author yinjihuan
  */
+@EnableRabbit
 @SpringBootApplication
 @EnableDiscoveryClient
 @MapperScan("com.guiji.process.server.dao")

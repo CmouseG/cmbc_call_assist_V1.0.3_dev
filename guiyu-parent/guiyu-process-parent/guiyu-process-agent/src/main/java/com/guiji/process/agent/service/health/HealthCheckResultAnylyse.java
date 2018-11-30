@@ -6,6 +6,7 @@ import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.impl.FreeswitchHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.GpuHealthCheckResultAnalyse;
+import com.guiji.process.agent.service.health.impl.RobotHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.SellbotHealthCheckResultAnalyse;
 
 public class HealthCheckResultAnylyse {
@@ -46,6 +47,10 @@ public class HealthCheckResultAnylyse {
                 break;
             case FREESWITCH:
                 analyse = new FreeswitchHealthCheckResultAnalyse();
+                break;
+            case ROBOT:
+                analyse = new RobotHealthCheckResultAnalyse();
+                break;
         }
 
         if (analyse != null) {

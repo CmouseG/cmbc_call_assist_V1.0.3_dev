@@ -9,6 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>guiji-callCenter-ccmanager-api</artifactId>
+    <artifactId>guiyu-callCenter-ccmanager-api</artifactId>
 
 </project>

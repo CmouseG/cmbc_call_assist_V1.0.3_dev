@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Created by ty on 2018/11/14.
  */
-public abstract class ITtsServiceProvide {
+public abstract class TtsServiceProvide {
 
 	public String transfer(String busiId, String model, String text) {
 

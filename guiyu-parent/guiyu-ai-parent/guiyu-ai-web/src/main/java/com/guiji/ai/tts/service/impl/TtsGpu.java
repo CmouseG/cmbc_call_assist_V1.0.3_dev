@@ -32,6 +32,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.handler.SaveToDBHandler;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.utils.NasUtil;
@@ -41,8 +42,8 @@ import com.guiji.utils.RedisUtil;
  * Created by ty on 2018/11/14.
  */
 @Component
-public class GuiyuTtsGpu extends ITtsServiceProvide {
-	private static Logger logger = LoggerFactory.getLogger(GuiyuTtsGpu.class);
+public class TtsGpu extends TtsServiceProvide {
+	private static Logger logger = LoggerFactory.getLogger(TtsGpu.class);
 	private static final int ConnectTimeout = 5000;
 	private static final int SocketTimeout = 5000;
 	private static final int MaxTotal = 200;
@@ -114,6 +115,8 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 			releaseGpu(model, ip, port);
 		} catch (Exception e) {
 			logger.error("请求GPU失败！", e);
+			// 释放GPU
+			releaseGpu(model, ip, port);
 			return null;
 		} finally {
 			IOUtils.closeQuietly(out);
@@ -126,7 +129,7 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 
 	// 释放GPU
 	private void releaseGpu(String model, String ip, String port) {
-		GuiyuTtsGpu gpu = new GuiyuTtsGpu(ip, port);
+		TtsGpu gpu = new TtsGpu(ip, port);
 		//从不可用list中移除
 		redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.UNAVALIABLE, 1, gpu);
 		//添加到可用list中
@@ -171,15 +174,15 @@ public class GuiyuTtsGpu extends ITtsServiceProvide {
 		ttsResult.setCreateTime(new Date());
 		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除
 		ttsResult.setModel(model);
-		TtsTransferAfterImpl.getInstance().add(ttsResult, ttsResultMapper);
+		SaveToDBHandler.getInstance().add(ttsResult, ttsResultMapper);
 	}
 
-	public GuiyuTtsGpu(String ip, String port) {
+	public TtsGpu(String ip, String port) {
 		this.ip = ip;
 		this.port = port;
 	}
 
-	public GuiyuTtsGpu() {
+	public TtsGpu() {
 		super();
 	}
 

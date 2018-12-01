@@ -12,71 +12,75 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
-import com.guiji.ai.tts.service.TtsService;
+import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.utils.RedisUtil;
 
 /**
  * Created by ty on 2018/11/13.
  */
 @Service
-public class TtsServiceImpl implements TtsService {
+public class TtsServiceImpl implements ITtsService {
 	private static Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
 	
 	@Autowired
     private RedisUtil redisUtil;
 	@Autowired
-	TtsServiceFactory ttsServiceFactory;
+	TtsServiceProvideFactory serviceProvideFactory;
 	
     @Override
-    public TtsRspVO translate(TtsReqVO ttsReqVO) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        // 结果集
+    public void translate(TtsReqVO ttsReqVO) {
+    	ExecutorService executorService = Executors.newFixedThreadPool(10);
+    	// 结果集
         Map<String,String> radioMap = new HashMap<String,String>();
-        List<String> taskList = ttsReqVO.getContents();
-        // 全流式处理转换成CompletableFuture[]+组装成一个无返回值CompletableFuture，join等待执行完毕。返回结果whenComplete获取
-        CompletableFuture[] cfs = taskList.stream()
-                .map(text -> CompletableFuture.supplyAsync(() -> calc(ttsReqVO.getBusId(),ttsReqVO.getModel(),text), executorService)
-                        .whenComplete((s, e) -> {
-                            radioMap.put(text,s);
-                        })
-                ).toArray(CompletableFuture[]::new);
-
-        // 封装后无返回值，必须自己whenComplete()获取
-        CompletableFuture.allOf(cfs).join();
-
+        String status = "S";
+        String errMsg = null;
+        
+        try 
+        {
+        	 List<String> taskList = ttsReqVO.getContents();
+             // 全流式处理转换成CompletableFuture[]+组装成一个无返回值CompletableFuture，join等待执行完毕。返回结果whenComplete获取
+             CompletableFuture[] cfs = taskList.stream()
+                     .map(text -> CompletableFuture.supplyAsync(() -> calc(ttsReqVO.getBusId(),ttsReqVO.getModel(),text), executorService)
+                             .whenComplete((s, e) -> {
+                                 radioMap.put(text,s);
+                             })
+                     ).toArray(CompletableFuture[]::new);
+      
+             // 封装后无返回值，必须自己whenComplete()获取
+             CompletableFuture.allOf(cfs).join();
+		} catch (Exception e) {
+			status = "F";
+			errMsg = e.getMessage();
+		}
+       
+        
         TtsRspVO ttsRspVO = new TtsRspVO();
         ttsRspVO.setBusId(ttsReqVO.getBusId());
-        ttsRspVO.setModel(ttsReqVO.getModel());
+        ttsRspVO.setStatus(status);
+        ttsRspVO.setErrorMsg(errMsg);
         ttsRspVO.setAudios(radioMap);
-        return ttsRspVO;
+        // TODO 回调接口
     }
 
-    private String calc(String busId, String model, String text) {
-        String audioUrl = null;
-        try {
-        	//判断是否已经合成
-        	audioUrl = (String) redisUtil.get(model+"_"+text);
-        	if(audioUrl != null){
-                return audioUrl;
-        	}
-            //合成
-            ITtsServiceProvide provide = ttsServiceFactory.getTtsProvide(model);
-            if(provide == null){
-                throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
-            }
-            audioUrl= provide.transfer(busId, model, text);
-            if(audioUrl != null){
-                redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
-            }else{
-                logger.error("文本转语音失败！");
-            }
-        } catch (Exception e) {
-            logger.error("语音文件合成失败!", e);
-        }
-        return audioUrl;
-    }
+	private String calc(String busId, String model, String text) {
+		String audioUrl = null;
+		try {
+			// 判断是否已经合成
+			audioUrl = (String) redisUtil.get(model + "_" + text);
+			if (audioUrl != null) 
+			{
+				return audioUrl;
+			}
+			// 合成
+			audioUrl = serviceProvideFactory.getTtsServiceProvide(model).transfer(busId, model, text);
+
+			redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
+
+		} catch (Exception e) {
+			logger.error("转换错误!", e);
+		}
+		return audioUrl;
+	}
 }

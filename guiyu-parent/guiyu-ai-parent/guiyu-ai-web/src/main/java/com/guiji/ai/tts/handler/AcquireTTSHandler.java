@@ -1,4 +1,4 @@
-package com.guiji.ai.tts.service.impl;
+package com.guiji.ai.tts.handler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,14 +15,15 @@ import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
+import com.guiji.ai.tts.service.impl.TtsGpu;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
 @Component
-public class CheckGpuStatus implements ApplicationRunner {
-	private static Logger logger = LoggerFactory.getLogger(CheckGpuStatus.class);
+public class AcquireTTSHandler implements ApplicationRunner {
+	private static Logger logger = LoggerFactory.getLogger(AcquireTTSHandler.class);
 	
 	@Autowired
     private RedisUtil redisUtil;	
@@ -57,7 +58,7 @@ public class CheckGpuStatus implements ApplicationRunner {
 		List<Object> gpuList = new ArrayList<>();
 
 		for (int i = 0; i < returnList.size(); i++) {
-			GuiyuTtsGpu gpu = new GuiyuTtsGpu();
+			TtsGpu gpu = new TtsGpu();
 			gpu.setIp(returnList.get(i).getIp());
 			gpu.setPort(String.valueOf(returnList.get(i).getPort()));
 

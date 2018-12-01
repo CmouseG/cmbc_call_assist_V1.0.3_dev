@@ -1,15 +1,12 @@
 package com.guiji.ai.api;
 
-import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.ai.vo.TtsRspVO;
-import com.guiji.component.result.Result.ReturnData;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.multipart.MultipartFile;
+
+import com.guiji.ai.vo.TtsReqVO;
+import com.guiji.component.result.Result.ReturnData;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * TTS对外服务
@@ -25,5 +22,5 @@ public interface ITts {
      */
     @ApiOperation(value="语音合成")
     @PostMapping(value = "translate")
-    public ReturnData<TtsRspVO> translate(TtsReqVO ttsReqVO);
+    public ReturnData<String> translate(TtsReqVO ttsReqVO);
 }

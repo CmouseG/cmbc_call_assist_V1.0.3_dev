@@ -1,4 +1,4 @@
-package com.guiji.ai.tts.service.impl;
+package com.guiji.ai.tts.handler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.guiji.ai.dao.TtsModelMapper;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
+import com.guiji.ai.tts.service.impl.TtsGpu;
 import com.guiji.ai.tts.vo.GpuCountVO;
 import com.guiji.ai.tts.vo.TtsGpuVO;
 import com.guiji.common.exception.GuiyuException;
@@ -27,8 +28,8 @@ import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
 @Component
-public class DistributeTimerTask {
-	private static Logger logger = LoggerFactory.getLogger(DistributeTimerTask.class);
+public class RedistributeHandler {
+	private static Logger logger = LoggerFactory.getLogger(RedistributeHandler.class);
 
 	@Autowired
 	IProcessSchedule iProcessSchedule;
@@ -121,7 +122,7 @@ public class DistributeTimerTask {
 					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
-						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new GuiyuTtsGpu(ip, port));
+						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new TtsGpu(ip, port));
 					}else{
 						throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS);
 					}
@@ -143,8 +144,8 @@ public class DistributeTimerTask {
 			List<Object> gpuList = new ArrayList<>();
 			gpuList = subGpuCountVOList.get(i).getGpuList(); //获取对应模型所有可用GPU
 			for (int j = 0; j < (Math.abs(changeCount)); j++) {
-				String ip = ((GuiyuTtsGpu) gpuList.get(j)).getIp();
-				String port = ((GuiyuTtsGpu) gpuList.get(j)).getPort();
+				String ip = ((TtsGpu) gpuList.get(j)).getIp();
+				String port = ((TtsGpu) gpuList.get(j)).getPort();
 				TtsGpuVO ttsGpuVO = new TtsGpuVO(ip, port, model);
 				gpuSumList.add(ttsGpuVO);
 				// 从可用列表中移除指定GPU

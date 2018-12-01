@@ -1,4 +1,4 @@
-package com.guiji.ai.tts.service.impl;
+package com.guiji.ai.tts.handler;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -17,22 +17,22 @@ import com.guiji.ai.dao.entity.TtsResult;
  * Created by ty on 2018/11/13.
  */
 @Component
-public class TtsTransferAfterImpl {
-	private static Logger logger = LoggerFactory.getLogger(TtsTransferAfterImpl.class);
+public class SaveToDBHandler {
+	private static Logger logger = LoggerFactory.getLogger(SaveToDBHandler.class);
 
-	private static final TtsTransferAfterImpl INSTANCE = new TtsTransferAfterImpl();
+	private static final SaveToDBHandler INSTANCE = new SaveToDBHandler();
 	private Productor productor = null;
 	private Consummer consummer = null;
 	TtsResultMapper ttsResultMapper;
 
-	private TtsTransferAfterImpl() {
+	private SaveToDBHandler() {
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		productor = new Productor();
 		consummer = new Consummer(productor);
 		executorService.execute(consummer);
 	}
 
-	public static TtsTransferAfterImpl getInstance() {
+	public static SaveToDBHandler getInstance() {
 		return INSTANCE;
 	}
 

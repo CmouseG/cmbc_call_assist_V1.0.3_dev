@@ -17,42 +17,55 @@ public class TtsRspVO implements Serializable {
     @ApiModelProperty(value="业务ID")
     private String busId;
 
-    @ApiModelProperty(value="模型名称")
-    private String model;
+    @ApiModelProperty(value="合成状态:S-成功;F-失败",required=true)
+	private String status;
+    
+    @ApiModelProperty(value="失败原因")
+    private String errorMsg;
 
     @ApiModelProperty(value="文本和音频下载地址,key是文本value是音频")
     private Map<String,String> audios;
 
+	
     public String getBusId() {
-        return busId;
-    }
+		return busId;
+	}
 
-    public void setBusId(String busId) {
-        this.busId = busId;
-    }
+	public void setBusId(String busId) {
+		this.busId = busId;
+	}
 
-    public String getModel() {
-        return model;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public Map<String, String> getAudios() {
-        return audios;
-    }
+	public String getErrorMsg() {
+		return errorMsg;
+	}
 
-    public void setAudios(Map<String, String> audios) {
-        this.audios = audios;
-    }
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
 
-    @Override
-    public String toString() {
-        return "TtsRspVO{" +
-                "busId='" + busId + '\'' +
-                ", model='" + model + '\'' +
-                ", audios=" + audios +
-                '}';
-    }
+	public Map<String, String> getAudios() {
+		return audios;
+	}
+
+	public void setAudios(Map<String, String> audios) {
+		this.audios = audios;
+	}
+
+	@Override
+	public String toString() {
+		return "TtsRspVO{"
+				+ "busId=" + busId + ", "
+				+ "status=" + status + ", "
+				+ "errorMsg=" + errorMsg + ", "
+				+ "audios=" + audios
+				+ "}";
+	}
 }

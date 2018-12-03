@@ -1,4 +1,4 @@
-package com.guiji.guiyu.rabbitmq.model;
+package com.guiji.guiyu.message.model;
 
 import com.guiji.common.model.process.ProcessTypeEnum;
 

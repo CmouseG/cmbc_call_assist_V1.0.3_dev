@@ -1,6 +1,7 @@
 package com.guiji.ai.tts.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.ai.dao.TtsResultMapper;
+import com.guiji.ai.dao.TtsStatusMapper;
+import com.guiji.ai.dao.entity.TtsStatus;
+import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.robot.api.IRobotRemote;
@@ -31,6 +37,10 @@ public class TtsServiceImpl implements ITtsService
 	private RedisUtil redisUtil;
 	@Autowired
 	IRobotRemote iRobotRemote;
+	@Autowired
+	TtsStatusMapper ttsStatusMapper;
+	@Autowired
+	TtsResultMapper ttsResultMapper;
 	@Autowired
 	TtsServiceProvideFactory serviceProvideFactory;
 
@@ -97,5 +107,56 @@ public class TtsServiceImpl implements ITtsService
 			logger.error("转换错误!", e);
 		}
 		return audioUrl;
+	}
+
+	@Override
+	@Transactional
+	public String getTransferStatusByBusId(String busId) throws Exception
+	{
+		String status = ttsStatusMapper.getReqStatusByBusId(busId);
+		switch (status)
+		{
+		case "2":
+			return "done";
+		case "1":
+			return "doing";
+		default:
+			return "undo";
+		}
+	}
+
+	@Override
+	@Transactional
+	public List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status) throws Exception
+	{
+		List<Map<String, Object>> restltMapList = new ArrayList<>();
+		
+		restltMapList = ttsStatusMapper.getTtsStatus(startTime, endTime, model, status);
+		
+		return restltMapList;
+	}
+
+	@Override
+	@Transactional
+	public List<Map<String, String>> getTtsTransferResult(String busId)
+	{
+		List<Map<String, String>> restltMapList = new ArrayList<>();
+		
+		restltMapList = ttsResultMapper.getTtsTransferResult(busId);
+		
+		return restltMapList;
+	}
+
+	@Override
+	public void saveTtsStatus(TtsReqVO ttsReqVO)
+	{
+		TtsStatus ttsStatus = new TtsStatus();
+		ttsStatus.setBusId(ttsReqVO.getBusId());
+		ttsStatus.setModel(ttsReqVO.getModel());
+		ttsStatus.setStatus("0");
+		ttsStatus.setCreateTime(new Date());
+		ttsStatus.setText_count(ttsReqVO.getContents().size());
+		SaveTtsStatusHandler.getInstance().add(ttsStatus, ttsStatusMapper);
+		
 	}
 }

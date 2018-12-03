@@ -292,4 +292,11 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <!-- 获取合成结果 -->
+  <select id="getTtsTransferResult" resultType="java.util.HashMap">
+  	SELECT content, audio_url FROM tts_result 
+	WHERE t.bus_id = #{busId,jdbcType=VARCHAR}
+  </select>
+  
 </mapper>

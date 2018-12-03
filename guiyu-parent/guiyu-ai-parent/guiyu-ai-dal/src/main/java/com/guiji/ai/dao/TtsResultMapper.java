@@ -3,6 +3,8 @@ package com.guiji.ai.dao;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.dao.entity.TtsResultExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TtsResultMapper {
@@ -27,4 +29,6 @@ public interface TtsResultMapper {
     int updateByPrimaryKeySelective(TtsResult record);
 
     int updateByPrimaryKey(TtsResult record);
+
+	List<Map<String, String>> getTtsTransferResult(String busId);
 }

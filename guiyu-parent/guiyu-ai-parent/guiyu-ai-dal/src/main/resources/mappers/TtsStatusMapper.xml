@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.ai.dao.TtsStatuslMapper">
+	<resultMap id="BaseResultMap" type="com.guiji.ai.dao.entity.TtsStatus">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="bus_id" property="busId" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="CHAR" />
+	</resultMap>
+
+	<select id="queryReqStatusByBusId">
+		SELECT status FROM tts_status
+		WHERE t.bus_id = #{busId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryTtsStatus" resultType="java.util.HashMap">
+		SELECT bus_id, model, text_count, create_time FROM tts_status
+		<where>
+			<if test="status != null and status != '' ">
+				and status = #{status,jdbcType=VARCHAR}
+			</if>
+			<if test="model !=null and model != '' ">
+				AND model = #{model,jdbcType=VARCHAR}
+			</if>
+			<if test="startTime != null ">
+				AND <![CDATA[create_time >= #{startTime,jdbcType=TIMESTAMP}]]>
+			</if>
+			<if test="endTime != null ">
+				AND <![CDATA[create_time <= #{endTime,jdbcType=TIMESTAMP}]]> 
+			</if>
+		</where>
+	</select>
+
+	<insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsStatus">
+		insert into tts_status 
+		(
+			id, 
+			bus_id,
+			model, 
+			status, 
+			create_time, 
+			update_time, 
+			text_count
+		)
+		values 
+		(
+			#{id,jdbcType=INTEGER}, 
+			#{busId,jdbcType=VARCHAR},
+			#{model,jdbcType=VARCHAR}, 
+			#{status,jdbcType=CHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateTime,jdbcType=TIMESTAMP},
+			#{text_count ,jdbcType=INTEGER}
+		)
+	</insert>
+	
+</mapper>

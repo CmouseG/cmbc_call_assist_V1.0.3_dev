@@ -27,6 +27,10 @@ public class LineInfo implements Serializable {
 
     private String remark;
 
+    private String createtBy;
+
+    private String updateBy;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getLineId() {
@@ -125,6 +129,22 @@ public class LineInfo implements Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    public String getCreatetBy() {
+        return createtBy;
+    }
+
+    public void setCreatetBy(String createtBy) {
+        this.createtBy = createtBy == null ? null : createtBy.trim();
+    }
+
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy == null ? null : updateBy.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -143,6 +163,8 @@ public class LineInfo implements Serializable {
         sb.append(", createDate=").append(createDate);
         sb.append(", updateDate=").append(updateDate);
         sb.append(", remark=").append(remark);
+        sb.append(", createtBy=").append(createtBy);
+        sb.append(", updateBy=").append(updateBy);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

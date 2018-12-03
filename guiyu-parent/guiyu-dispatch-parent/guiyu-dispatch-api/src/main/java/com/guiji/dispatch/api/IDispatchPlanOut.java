@@ -59,11 +59,11 @@ public interface IDispatchPlanOut {
      * @param planUuid 任务id
      * @return 接受号码呼叫完成通知
      */
-    @ApiOperation(value = "完成升级模板")
+    @ApiOperation(value = "接受号码呼叫完成通知")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tempId", value = "tempId", dataType = "String", paramType = "query"),
     })
-    @GetMapping(value="out/successSchedule")
+    @GetMapping(value="out/successSchedule4TempId")
     Result.ReturnData<Boolean> successSchedule4TempId(@RequestParam("tempId") String tempId);
     
     /**

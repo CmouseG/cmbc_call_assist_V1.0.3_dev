@@ -90,6 +90,7 @@ public class TtsController implements ITts
 		} catch (Exception e)
 		{
 			logger.error("查询失败", e);
+			ttsRspVO.setErrorMsg(e.getMessage());
 		}
 
 		return Result.ok(ttsRspVO);

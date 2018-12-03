@@ -45,7 +45,7 @@ public class FsLineController {
             IFsLine fsLineApi = FeignBuildUtil.feignBuilderTarget(IFsLine.class,Constant.PROTOCOL +server);
             Result.ReturnData<FsLineVO> result = fsLineApi.getFsInfo();
             FsLineVO fsLineInfo = result.getBody();
-            LinePort linePort = new LinePort(fsLineInfo.getFsLineId(),fsLineInfo.getFsIp()+":"+fsLineInfo.getFsOutPort());
+            LinePort linePort = new LinePort(fsLineInfo.getFsIp(),fsLineInfo.getFsOutPort());
             list.add(linePort);
         }
         log.info("response success getFsOutLines");

@@ -68,6 +68,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				userAiCfgBaseInfoMapper.insert(userAiCfgBaseInfo);
 			}else {
 				//主键不为空，更新信息
+				userAiCfgBaseInfo.setUpdateTime(new Date());
 				userAiCfgBaseInfoMapper.updateByPrimaryKey(userAiCfgBaseInfo);
 			}
 		}
@@ -102,6 +103,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
 					userAiCfgBaseInfo.setUserId(userId);
 				}
+				userAiCfgBaseInfo.setCrtUser(existUserAiCfgBaseInfo.getCrtUser());
+				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {
 				//新增
 				//1、初始化一条用户机器人线路拆分
@@ -185,6 +188,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				record.setHandleType(RobotConstants.HANDLE_TYPE_A); //新增
 			}else {
 				//主键不为空，更新信息
+				userAiCfgInfo.setUpdateTime(new Date());
 				userAiCfgInfoMapper.updateByPrimaryKey(userAiCfgInfo);
 				record.setHandleType(RobotConstants.HANDLE_TYPE_U); //更新
 			}
@@ -320,8 +324,9 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					//更新1个配置项
 					//查询用户机器人数量
 					UserAiCfgInfo existUserAiCfgInfo = userAiCfgInfoMapper.selectByPrimaryKey(id);
-					userAiCfgInfo.setStatus(existUserAiCfgInfo.getStatus());
+					userAiCfgInfo.setCrtUser(existUserAiCfgInfo.getCrtUser());
 					userAiCfgInfo.setCrtTime(existUserAiCfgInfo.getCrtTime());
+					userAiCfgInfo.setStatus(existUserAiCfgInfo.getStatus());
 					//如果本次调整的机器人数量减少了，或者话术模板变更了，都认为机器人变更是资源减少的，此处设置下减少，机器人管理那边会清空机器人，重新根据配置拉起。
 					if(userAiCfgInfo.getAiNum()<existUserAiCfgInfo.getAiNum()) {
 						userResourceCache.setAiNum(userResourceCache.getAiNum()+(userAiCfgInfo.getAiNum()-existUserAiCfgInfo.getAiNum())); //变更后数量

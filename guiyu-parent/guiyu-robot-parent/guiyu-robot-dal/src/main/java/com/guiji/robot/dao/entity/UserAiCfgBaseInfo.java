@@ -10,9 +10,15 @@ public class UserAiCfgBaseInfo implements Serializable {
 
     private Integer aiTotalNum;
 
+    private String templateIds;
+
     private Date crtTime;
 
-    private String templateIds;
+    private String crtUser;
+
+    private Date updateTime;
+
+    private String updateUser;
 
     private static final long serialVersionUID = 1L;
 
@@ -40,6 +46,14 @@ public class UserAiCfgBaseInfo implements Serializable {
         this.aiTotalNum = aiTotalNum;
     }
 
+    public String getTemplateIds() {
+        return templateIds;
+    }
+
+    public void setTemplateIds(String templateIds) {
+        this.templateIds = templateIds == null ? null : templateIds.trim();
+    }
+
     public Date getCrtTime() {
         return crtTime;
     }
@@ -48,12 +62,28 @@ public class UserAiCfgBaseInfo implements Serializable {
         this.crtTime = crtTime;
     }
 
-    public String getTemplateIds() {
-        return templateIds;
+    public String getCrtUser() {
+        return crtUser;
     }
 
-    public void setTemplateIds(String templateIds) {
-        this.templateIds = templateIds == null ? null : templateIds.trim();
+    public void setCrtUser(String crtUser) {
+        this.crtUser = crtUser == null ? null : crtUser.trim();
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser == null ? null : updateUser.trim();
     }
 
     @Override
@@ -65,8 +95,11 @@ public class UserAiCfgBaseInfo implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", userId=").append(userId);
         sb.append(", aiTotalNum=").append(aiTotalNum);
-        sb.append(", crtTime=").append(crtTime);
         sb.append(", templateIds=").append(templateIds);
+        sb.append(", crtTime=").append(crtTime);
+        sb.append(", crtUser=").append(crtUser);
+        sb.append(", updateTime=").append(updateTime);
+        sb.append(", updateUser=").append(updateUser);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

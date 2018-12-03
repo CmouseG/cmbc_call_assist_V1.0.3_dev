@@ -1,5 +1,6 @@
 package com.guiji.robot.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,10 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
+import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IAiResourceManagerService;
+import com.guiji.robot.service.impl.AiCacheService;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.UserResourceCache;
+import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -29,6 +34,8 @@ public class RobotController {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	IAiResourceManagerService iAiResourceManagerService;
+	@Autowired
+	AiCacheService aiCacheService;
 	
 	
 	/**
@@ -96,6 +103,26 @@ public class RobotController {
 			qUserId = userId.toString();
 		}
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserSleepUseAiList(qUserId);
+		if(aiList == null || aiList.isEmpty()) {
+			//如果空闲的机器人人为空，且没有为用户分配机器人、且用户有配置机器人，那么前端要初始化几个机器人显示
+			UserResourceCache userResourceCache = aiCacheService.getUserResource(qUserId);
+			if(userResourceCache != null) {
+				//查询用户已分配的机器人
+				List<AiInuseCache> aiInuseList = aiCacheService.queryUserAiInUseList(qUserId);
+				if(userResourceCache.getAiNum()>0 && (aiInuseList == null||aiInuseList.isEmpty())) {
+					//如果用户配置机器人>0，但是没有分配，那么直接初始化下机器人，只供前段显示使用
+					aiList = new ArrayList<AiInuseCache>();
+					for(int i=0;i<userResourceCache.getAiNum();i++) {
+						AiInuseCache aiInuseCache = new AiInuseCache();
+						aiInuseCache.setAiNo("AI"+i); //机器人编号
+						aiInuseCache.setAiStatus(RobotConstants.AI_STATUS_F); //空闲
+						aiInuseCache.setCallNum(0);
+						aiInuseCache.setUserId(qUserId);
+						aiList.add(aiInuseCache);
+					}
+				}
+			}
+		}
 		return Result.ok(aiList);
 	}
 }

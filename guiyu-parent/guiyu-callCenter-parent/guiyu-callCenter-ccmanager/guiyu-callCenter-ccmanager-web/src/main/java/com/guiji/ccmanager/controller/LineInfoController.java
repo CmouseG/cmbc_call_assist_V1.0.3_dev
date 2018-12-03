@@ -1,7 +1,5 @@
 package com.guiji.ccmanager.controller;
 
-import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.ccmanager.api.ILineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4Select;
@@ -25,7 +23,7 @@ import java.util.List;
  * @Description: 线路的增删改查
  */
 @RestController
-public class LineInfoController implements ILineInfo {
+public class LineInfoController {
 
     private final Logger log = LoggerFactory.getLogger(LineInfoController.class);
 
@@ -83,7 +81,7 @@ public class LineInfoController implements ILineInfo {
 
     @ApiOperation(value = "修改线路接口")
     @PostMapping(value="updateLineInfo")
-    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO){
+    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO,@RequestHeader Long userId){
 
         log.info("get request updateLineInfo，lineInfoVO[{}]",lineInfoVO);
 
@@ -97,7 +95,7 @@ public class LineInfoController implements ILineInfo {
             }
         }
         log.info("response success updateLineInfo，lineInfoVO[{}]",lineInfoVO);
-        lineInfoService.updateLineInfo(lineInfoVO);
+        lineInfoService.updateLineInfo(lineInfoVO,userId);
         return Result.ok(true);
     }
 

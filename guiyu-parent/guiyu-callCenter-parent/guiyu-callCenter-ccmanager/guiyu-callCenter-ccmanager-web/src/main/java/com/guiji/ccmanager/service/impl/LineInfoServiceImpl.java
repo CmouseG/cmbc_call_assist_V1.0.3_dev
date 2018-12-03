@@ -123,6 +123,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineInfo lineInfo = new LineInfo();
         BeanUtil.copyProperties(lineInfoVO,lineInfo);
         lineInfo.setCreateDate(DateUtil.getCurrentTime());
+        lineInfo.setCreatetBy(lineInfoVO.getCustomerId());
         lineInfoMapper.insertSelective(lineInfo);
 
         //调用fsmanager的增加线路接口
@@ -158,7 +159,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public void updateLineInfo(LineInfoVO lineInfoVO){
+    public void updateLineInfo(LineInfoVO lineInfoVO, Long userId){
 
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(lineInfoVO.getLineId());
 
@@ -170,6 +171,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineInfo lineInfo = new LineInfo();
         BeanUtil.copyProperties(lineInfoVO,lineInfo);
         lineInfo.setUpdateDate(DateUtil.getCurrentTime());
+        lineInfo.setUpdateBy(String.valueOf(userId));
         lineInfoMapper.updateByPrimaryKeySelective(lineInfo);
 
         //调用fsmanager的更新线路接口

@@ -41,8 +41,6 @@ public class FsServiceImpl implements FsService {
         if (fsBinds.size() > 0) {//原来就有记录，先检查先前绑定的fsagent状态，状态ok直接返回
             FsBind fsBind = fsBinds.get(0);
             IFsState iFsStateApi = FeignBuildUtil.feignBuilderTarget(IFsState.class, Constant.PROTOCOL + fsBind.getFsAgentId());
-            // IFsState iFsStateApi = FeignBuildUtil.feignBuilderTarget(IFsState.class, Constant.PROTOCOL + "192.168.1.78:18006/ishealthy");
-            //Result.ReturnData<Boolean> result = iFsStateApi.ishealthy();
             Result.ReturnData<Boolean> result = null;
             try {
                 //调用fsagent健康状态接口

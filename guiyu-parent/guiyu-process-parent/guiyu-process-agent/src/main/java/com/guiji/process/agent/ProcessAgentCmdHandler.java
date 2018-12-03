@@ -47,6 +47,15 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case RESTART:
+                cfgProcessOperVO = getNodeOper(CmdTypeEnum.STOP, cmdMessageVO.getProcessInstanceVO().getPort());
+                doCmd(cmdMessageVO, cfgProcessOperVO);
+                Thread.sleep(1000);//等待1s查看是否关闭成功
+                //  检查是否停掉，如果进程还在则kill -9
+                if (ProcessUtil.checkRun(processInstanceVO.getPort())) {
+                    ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
+                }
+
+                cfgProcessOperVO = getNodeOper(CmdTypeEnum.START, cmdMessageVO.getProcessInstanceVO().getPort());
                 doCmd(cmdMessageVO, cfgProcessOperVO);
                 break;
 

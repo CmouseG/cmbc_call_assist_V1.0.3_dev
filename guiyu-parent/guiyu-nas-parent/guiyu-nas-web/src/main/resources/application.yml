@@ -43,9 +43,9 @@ fdfs:
     width: 150
     height: 150
   trackerList:            #TrackerList参数,支持多个
-    - 192.168.1.78:22122  #内网172.16.167.213
+    - 192.168.1.83:22122
   pool:
     jmx-enabled: false
-  webServerUrl: http://192.168.1.78:8080/
+  webServerUrl: http://192.168.1.83:8080/
 properties:
   error: properties/error.properties

@@ -1,5 +1,6 @@
 package com.guiji.ai.tts.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,62 +15,75 @@ import org.springframework.stereotype.Service;
 
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.ai.vo.TtsRspVO;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.TtsCallback;
 import com.guiji.utils.RedisUtil;
 
 /**
  * Created by ty on 2018/11/13.
  */
 @Service
-public class TtsServiceImpl implements ITtsService {
+public class TtsServiceImpl implements ITtsService
+{
 	private static Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
-	
+
 	@Autowired
-    private RedisUtil redisUtil;
+	private RedisUtil redisUtil;
+	@Autowired
+	IRobotRemote iRobotRemote;
 	@Autowired
 	TtsServiceProvideFactory serviceProvideFactory;
-	
-    @Override
-    public void translate(TtsReqVO ttsReqVO) {
-    	ExecutorService executorService = Executors.newFixedThreadPool(10);
-    	// 结果集
-        Map<String,String> radioMap = new HashMap<String,String>();
-        String status = "S";
-        String errMsg = null;
-        
-        try 
-        {
-        	 List<String> taskList = ttsReqVO.getContents();
-             // 全流式处理转换成CompletableFuture[]+组装成一个无返回值CompletableFuture，join等待执行完毕。返回结果whenComplete获取
-             CompletableFuture[] cfs = taskList.stream()
-                     .map(text -> CompletableFuture.supplyAsync(() -> calc(ttsReqVO.getBusId(),ttsReqVO.getModel(),text), executorService)
-                             .whenComplete((s, e) -> {
-                                 radioMap.put(text,s);
-                             })
-                     ).toArray(CompletableFuture[]::new);
-      
-             // 封装后无返回值，必须自己whenComplete()获取
-             CompletableFuture.allOf(cfs).join();
-		} catch (Exception e) {
+
+	@Override
+	public void translate(TtsReqVO ttsReqVO)
+	{
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		// 结果集
+		Map<String, String> radioMap = new HashMap<String, String>();
+		String status = "S";
+		String errMsg = null;
+
+		try
+		{
+			List<String> taskList = ttsReqVO.getContents();
+			// 全流式处理转换成CompletableFuture[]+组装成一个无返回值CompletableFuture，join等待执行完毕。返回结果whenComplete获取
+			CompletableFuture[] cfs = taskList.stream()
+					.map(text -> CompletableFuture
+							.supplyAsync(() -> calc(ttsReqVO.getBusId(), ttsReqVO.getModel(), text), executorService)
+							.whenComplete((s, e) ->
+							{
+								radioMap.put(text, s);
+							}))
+					.toArray(CompletableFuture[]::new);
+
+			// 封装后无返回值，必须自己whenComplete()获取
+			CompletableFuture.allOf(cfs).join();
+		} catch (Exception e)
+		{
 			status = "F";
 			errMsg = e.getMessage();
 		}
-       
-        
-        TtsRspVO ttsRspVO = new TtsRspVO();
-        ttsRspVO.setBusId(ttsReqVO.getBusId());
-        ttsRspVO.setStatus(status);
-        ttsRspVO.setErrorMsg(errMsg);
-        ttsRspVO.setAudios(radioMap);
-        // TODO 回调接口
-    }
 
-	private String calc(String busId, String model, String text) {
+		// 回调机器人接口，返回数据
+		TtsCallback ttsCallback = new TtsCallback();
+		ttsCallback.setBusiId(ttsReqVO.getBusId());
+		ttsCallback.setStatus(status);
+		ttsCallback.setErrorMsg(errMsg);
+		ttsCallback.setAudios(radioMap);
+
+		List<TtsCallback> resultList = new ArrayList<TtsCallback>();
+		resultList.add(ttsCallback);
+		iRobotRemote.ttsCallback(resultList);
+	}
+
+	private String calc(String busId, String model, String text)
+	{
 		String audioUrl = null;
-		try {
+		try
+		{
 			// 判断是否已经合成
 			audioUrl = (String) redisUtil.get(model + "_" + text);
-			if (audioUrl != null) 
+			if (audioUrl != null)
 			{
 				return audioUrl;
 			}
@@ -78,7 +92,8 @@ public class TtsServiceImpl implements ITtsService {
 
 			redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
 
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			logger.error("转换错误!", e);
 		}
 		return audioUrl;

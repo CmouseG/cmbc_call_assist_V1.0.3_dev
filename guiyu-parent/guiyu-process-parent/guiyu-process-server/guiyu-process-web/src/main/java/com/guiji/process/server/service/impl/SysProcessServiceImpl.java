@@ -146,6 +146,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
             if(StrUtils.isNotEmpty(processKey)) {
                 criteria.andProcessKeyLike(processKey);
             }
+            criteria.andTypeNotEqualTo(99);//过滤掉agent
             return example;
         }else {
             logger.info("查询进程列表");

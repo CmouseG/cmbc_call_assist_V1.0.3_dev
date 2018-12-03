@@ -12,6 +12,9 @@
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="invalid_policy" property="invalidPolicy" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -73,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, user_id, ai_num, assign_level, template_ids, open_date, invalid_date, `status`, 
-    invalid_policy, crt_time
+    invalid_policy, crt_time, crt_user, update_time, update_user
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfoExample" >
     select
@@ -116,11 +119,13 @@
     insert into user_ai_cfg_info (id, user_id, ai_num, 
       assign_level, template_ids, open_date, 
       invalid_date, `status`, invalid_policy, 
-      crt_time)
+      crt_time, crt_user, update_time, 
+      update_user)
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNum,jdbcType=INTEGER}, 
       #{assignLevel,jdbcType=CHAR}, #{templateIds,jdbcType=VARCHAR}, #{openDate,jdbcType=VARCHAR}, 
       #{invalidDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{invalidPolicy,jdbcType=VARCHAR}, 
-      #{crtTime,jdbcType=TIMESTAMP})
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfo" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -156,6 +161,15 @@
       <if test="crtTime != null" >
         crt_time,
       </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
@@ -185,6 +199,15 @@
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -227,6 +250,15 @@
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -243,7 +275,10 @@
       invalid_date = #{record.invalidDate,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=VARCHAR},
       invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
-      crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -278,6 +313,15 @@
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -291,7 +335,10 @@
       invalid_date = #{invalidDate,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=VARCHAR},
       invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
-      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

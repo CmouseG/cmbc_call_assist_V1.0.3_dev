@@ -28,6 +28,12 @@ public class UserAiCfgHisInfo implements Serializable {
 
     private Date crtTime;
 
+    private String crtUser;
+
+    private Date updateTime;
+
+    private String updateUser;
+
     private static final long serialVersionUID = 1L;
 
     public String getId() {
@@ -126,6 +132,30 @@ public class UserAiCfgHisInfo implements Serializable {
         this.crtTime = crtTime;
     }
 
+    public String getCrtUser() {
+        return crtUser;
+    }
+
+    public void setCrtUser(String crtUser) {
+        this.crtUser = crtUser == null ? null : crtUser.trim();
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser == null ? null : updateUser.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -144,6 +174,9 @@ public class UserAiCfgHisInfo implements Serializable {
         sb.append(", invalidPolicy=").append(invalidPolicy);
         sb.append(", handleType=").append(handleType);
         sb.append(", crtTime=").append(crtTime);
+        sb.append(", crtUser=").append(crtUser);
+        sb.append(", updateTime=").append(updateTime);
+        sb.append(", updateUser=").append(updateUser);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

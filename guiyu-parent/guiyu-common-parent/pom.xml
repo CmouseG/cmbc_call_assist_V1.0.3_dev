@@ -18,7 +18,7 @@
         <module>guiyu-model</module>
         <module>guiyu-mybatis-generator</module>
         <module>guiyu-component</module>
-        <module>guiyu-rabbitmq</module>
+        <module>guiyu-message-queue</module>
     </modules>
 
 

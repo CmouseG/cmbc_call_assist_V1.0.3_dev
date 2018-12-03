@@ -2,6 +2,9 @@ package com.guiji.process.server.service.impl;
 
 
 import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.guiyu.rabbitmq.component.FanoutSender;
+import com.guiji.guiyu.rabbitmq.model.PublishBotstenceResultMsgVO;
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
@@ -10,6 +13,7 @@ import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.dao.entity.SysProcessLog;
 import com.guiji.process.server.service.ISysProcessLogService;
 import com.guiji.process.server.service.ISysProcessService;
+import com.guiji.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     @Autowired
     private ISysProcessLogService sysProcessLogService;
+
+    @Autowired
+    private FanoutSender fanoutSender;
 
     public void excute(CmdMessageVO cmdMessageVO)
     {
@@ -161,12 +168,24 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         if (cmdMessageVO != null) {
             ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
             if (processInstanceVO != null){
+                //发布MQ通知消息
+                String tmplId =  cmdMessageVO.getParameters().get(1);
+                PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = new PublishBotstenceResultMsgVO();
+                publishBotstenceResultMsgVO.setProcessTypeEnum(processInstanceVO.getType());
+                publishBotstenceResultMsgVO.setTmplId(tmplId);
+                if (cmdMessageVO.getCommandResult() != null) {
+                    publishBotstenceResultMsgVO.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                }
+
+                fanoutSender.send("fanoutPublishBotstence", JsonUtils.bean2Json(publishBotstenceResultMsgVO));
+
+                //更新数据库
                 SysProcessLog sysProcessLog = new SysProcessLog();
                 sysProcessLog.setIp(processInstanceVO.getIp());
                 sysProcessLog.setPort(String.valueOf(processInstanceVO.getPort()));
                 sysProcessLog.setProcessKey(processInstanceVO.getProcessKey());
                 sysProcessLog.setCmdType(cmdMessageVO.getCmdType().getValue());
-                sysProcessLog.setParameters(processInstanceVO.getProcessKey());
+                sysProcessLog.setParameters(cmdMessageVO.getParameters().toString());
                 sysProcessLog.setResult(cmdMessageVO.getCommandResult());
                 sysProcessLog.setResultContent(cmdMessageVO.getCommandResultDesc());
                 sysProcessLog.setCreateTime(new Date());

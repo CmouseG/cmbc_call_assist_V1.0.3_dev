@@ -18,6 +18,12 @@ spring:
       max-wait: -1
       min-idle: 0
       max-idle: 8
+  rabbitmq:
+    host: 192.168.1.81
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
 
   #数据库连接配置
 mybatis:

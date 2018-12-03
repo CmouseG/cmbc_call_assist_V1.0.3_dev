@@ -42,13 +42,14 @@ public class AiResourceJobTimer {
 	@Autowired
 	IAiAbilityCenterService iAiAbilityCenterService;
 	
+	
 	/**
 	 * 每天晚上释放分配给用户的机器人
 	 */
     @Scheduled(cron="0 30 20 * * ?")
     public void aiResourRel(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_RELEASE_JOB", "LOCK_ROBOT_AI_RELEASE_JOB");
-    	if (distributedLockHandler.tryLock(lock, 1, 10, 30*60*1000)) { // 尝试1ms,每10ms尝试一次，持锁时间为30分钟
+    	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
     		long beginTime = System.currentTimeMillis();
             logger.info("定时任务，准备发起[释放全量已分配机器人]开始...");
             //查询所有用户已分配的机器人列表
@@ -80,7 +81,7 @@ public class AiResourceJobTimer {
 	@Scheduled(cron="0 0/30 9-20 * * ?")
     public void aiFree(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_FREE_JOB", "LOCK_ROBOT_AI_FREE_JOB");
-    	if (distributedLockHandler.tryLock(lock, 1, 10, 30*60*1000)) { // 尝试1ms,每10ms尝试一次，持锁时间为30分钟
+    	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
     		long beginTime = System.currentTimeMillis();
             logger.info("定时任务，检查一直被占用未释放的机器人...");
             //查询所有用户已分配的机器人列表
@@ -117,4 +118,5 @@ public class AiResourceJobTimer {
     		logger.warn("定时任务[检查一直被占用未释放的机器人]未能获取锁！！！");
     	}
     }
+	
 }

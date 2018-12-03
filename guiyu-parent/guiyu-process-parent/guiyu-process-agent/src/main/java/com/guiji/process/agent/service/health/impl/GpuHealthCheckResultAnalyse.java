@@ -6,6 +6,8 @@ import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.IHealthCheckResultAnalyse;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
     @Override
@@ -24,7 +26,7 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
     }
 
     @Override
-    public void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO) {
+    public void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,List<String> parameters) {
 
     }
 }

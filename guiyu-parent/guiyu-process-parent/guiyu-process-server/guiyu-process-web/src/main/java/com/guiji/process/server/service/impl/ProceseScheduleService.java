@@ -118,7 +118,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
-    public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
+    public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file) {
 
 
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
@@ -141,6 +141,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
         List<String> parameters = new ArrayList<String>();
         parameters.add(file);
+        parameters.add(tmplId);
         Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
         if(allAgent == null)
         {

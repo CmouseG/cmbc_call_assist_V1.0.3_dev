@@ -3,6 +3,7 @@ package com.guiji.process.agent.core.filemonitor.impl;
 import java.io.*;
 
 import com.guiji.process.agent.service.ProcessCfgService;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
@@ -29,14 +30,12 @@ public final class FileListener extends FileAlterationListenerAdaptor {
             buf = new BufferedReader(new InputStreamReader(new FileInputStream(file),"GBK"));
             BufferedReader br = new BufferedReader(buf);
             String line = null;
-            System.out.println(br.readLine());
-
             ProcessCfgService.getIntance().onChanged(file);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             // 这里释放系统 IO 资源
-            try {if (buf != null){buf.close();}}catch (Exception e){}
+            IOUtils.closeQuietly(buf);
         }
     }
 

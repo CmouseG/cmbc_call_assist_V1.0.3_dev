@@ -6,7 +6,7 @@
  * @date 2016年7月7日 下午16:16:26
  * @version V1.0
  */
-package com.guiji.dict;
+package com.guiji;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

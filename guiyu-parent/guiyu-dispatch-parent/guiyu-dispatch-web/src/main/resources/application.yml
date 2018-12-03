@@ -1,5 +1,5 @@
 server:
-  port: 18083
+  port: 18031
 spring:
   application:
     name: guiyu-dispatch-web

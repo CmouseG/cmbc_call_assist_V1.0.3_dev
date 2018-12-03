@@ -102,6 +102,8 @@ public class SysDictServiceImpl implements SysDictService {
 
     @Override
     public int delete(Long id) {
+        SysDict sysDict = sysDictMapper.selectByPrimaryKey(id);
+        redisUtil.del(RedisConstant.REDIS_DICT_PREFIX+sysDict.getDictType());
         return sysDictMapper.deleteByPrimaryKey(id);
     }
 

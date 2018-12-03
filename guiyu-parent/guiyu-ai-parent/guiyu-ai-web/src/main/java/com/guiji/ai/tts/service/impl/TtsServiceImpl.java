@@ -138,7 +138,7 @@ public class TtsServiceImpl implements ITtsService
 
 	@Override
 	@Transactional
-	public List<Map<String, String>> getTtsTransferResult(String busId)
+	public List<Map<String, String>> getTtsTransferResult(String busId) throws Exception
 	{
 		List<Map<String, String>> restltMapList = new ArrayList<>();
 		
@@ -148,7 +148,7 @@ public class TtsServiceImpl implements ITtsService
 	}
 
 	@Override
-	public void saveTtsStatus(TtsReqVO ttsReqVO)
+	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception
 	{
 		TtsStatus ttsStatus = new TtsStatus();
 		ttsStatus.setBusId(ttsReqVO.getBusId());

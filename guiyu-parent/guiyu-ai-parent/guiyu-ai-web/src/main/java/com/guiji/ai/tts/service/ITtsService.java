@@ -46,7 +46,8 @@ public interface ITtsService {
     /**
      * 保存到状态表
      * @param ttsReqVO
+     * @throws Exception 
      */
-	public void saveTtsStatus(TtsReqVO ttsReqVO);
+	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception;
 
 }

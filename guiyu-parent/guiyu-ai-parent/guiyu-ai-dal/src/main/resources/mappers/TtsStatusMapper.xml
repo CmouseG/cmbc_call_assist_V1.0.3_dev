@@ -7,12 +7,12 @@
 		<result column="status" property="status" jdbcType="CHAR" />
 	</resultMap>
 
-	<select id="queryReqStatusByBusId">
+	<select id="getReqStatusByBusId">
 		SELECT status FROM tts_status
 		WHERE t.bus_id = #{busId,jdbcType=VARCHAR}
 	</select>
 
-	<select id="queryTtsStatus" resultType="java.util.HashMap">
+	<select id="getTtsStatus" resultType="java.util.HashMap">
 		SELECT bus_id, model, text_count, create_time FROM tts_status
 		<where>
 			<if test="status != null and status != '' ">

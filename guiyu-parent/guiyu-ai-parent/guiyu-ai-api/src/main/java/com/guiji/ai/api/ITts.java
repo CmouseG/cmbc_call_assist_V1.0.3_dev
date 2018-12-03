@@ -35,7 +35,7 @@ public interface ITts {
      * @return
      */
     @ApiOperation(value="根据busiId查询TTS处理结果")
-    @PostMapping(value = "queryTtsResultByBusId")
+    @PostMapping(value = "getTtsResultByBusId")
     public ReturnData<TtsRspVO> getTtsResultByBusId(String busId);
     
     /**
@@ -44,6 +44,6 @@ public interface ITts {
      * @return
      */
     @ApiOperation(value="查询TTS处理状态")
-    @PostMapping(value = "queryTtsStatus")
+    @PostMapping(value = "getTtsStatus")
     public ReturnData<List<TtsStatusRspVO>> getTtsStatus(TtsStatusReqVO ttsStatusReqVO);  
 }

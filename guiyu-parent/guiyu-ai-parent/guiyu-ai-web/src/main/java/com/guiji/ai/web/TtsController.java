@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
@@ -63,7 +64,8 @@ public class TtsController implements ITts
 	 * 根据busiId查询TTS处理结果
 	 */
 	@Override
-	public ReturnData<TtsRspVO> getTtsResultByBusId(String busId) 
+	@PostMapping(value = "getTtsResultByBusId")
+	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestParam String busId) 
 	{
 		TtsRspVO ttsRspVO = null;
 		try
@@ -97,7 +99,8 @@ public class TtsController implements ITts
 	 * 查询TTS处理状态
 	 */
 	@Override
-	public ReturnData<List<TtsStatusRspVO>> getTtsStatus(TtsStatusReqVO ttsStatusReqVO)
+	@PostMapping(value = "getTtsStatus")
+	public ReturnData<List<TtsStatusRspVO>> getTtsStatus(@RequestBody TtsStatusReqVO ttsStatusReqVO)
 	{
 		List<TtsStatusRspVO> statusRspVOList = new ArrayList<>();
 

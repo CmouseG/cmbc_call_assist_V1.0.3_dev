@@ -89,7 +89,9 @@ public class ProcessCfgService {
             }
         }
 
-        cfgMap.clear();
+        if (cfgMap != null) {
+            cfgMap.clear();
+        }
 
         for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
             cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);

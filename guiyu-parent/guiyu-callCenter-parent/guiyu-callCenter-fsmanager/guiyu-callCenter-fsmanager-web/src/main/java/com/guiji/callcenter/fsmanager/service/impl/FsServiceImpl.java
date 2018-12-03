@@ -13,6 +13,8 @@ import com.guiji.fsagent.entity.FsInfoVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import com.guiji.utils.FeignBuildUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,23 +26,35 @@ import java.util.List;
 
 @Service
 public class FsServiceImpl implements FsService {
+    private final Logger logger = LoggerFactory.getLogger(FsServiceImpl.class);
+
     @Autowired
     FsBindMapper fsBindMapper;
     @Autowired
     EurekaManager eurekaManager;
+
     public FsBindVO applyfs(String serviceId, ServiceTypeEnum serviceType) {
         FsBindExample example = new FsBindExample();
         FsBindExample.Criteria criteria = example.createCriteria();
         criteria.andServiceIdEqualTo(serviceId);
         List<FsBind> fsBinds = fsBindMapper.selectByExample(example);
-        if(fsBinds.size()>0){//原来就有记录，先检查先前绑定的fsagent状态，状态ok直接返回
+        if (fsBinds.size() > 0) {//原来就有记录，先检查先前绑定的fsagent状态，状态ok直接返回
             FsBind fsBind = fsBinds.get(0);
             IFsState iFsStateApi = FeignBuildUtil.feignBuilderTarget(IFsState.class, Constant.PROTOCOL + fsBind.getFsAgentId());
-            //调用fsagent健康状态接口
-            Result.ReturnData<Boolean> result = iFsStateApi.ishealthy();
+            // IFsState iFsStateApi = FeignBuildUtil.feignBuilderTarget(IFsState.class, Constant.PROTOCOL + "192.168.1.78:18006/ishealthy");
+            //Result.ReturnData<Boolean> result = iFsStateApi.ishealthy();
+            Result.ReturnData<Boolean> result = null;
+            try {
+                //调用fsagent健康状态接口
+                result = iFsStateApi.ishealthy();
+            } catch (Exception e) {
+                logger.warn("fsagent服务:[{}]故障-->",fsBind.getFsAgentId(),e);
+                //todo --告警某个fagsent服务挂了
+                return applyfsSub(serviceType, 1, serviceId);
+            }
             if (result.body) {
                 //用于接口返回的对象
-                FsBindVO fsBindVO =new FsBindVO();
+                FsBindVO fsBindVO = new FsBindVO();
                 fsBindVO.setServiceId(fsBind.getFsAgentId());
                 fsBindVO.setFsAgentId(fsBind.getFsAgentId());
                 fsBindVO.setFsAgentAddr(fsBind.getFsAgentId());
@@ -51,11 +65,11 @@ public class FsServiceImpl implements FsService {
                 //复制对象的属性值
                 BeanUtils.copyProperties(fsBind, fsBindVO);
                 return fsBindVO;
-            }else {//如果原来绑定的fsagent不可用，则走重新申请资源的方法
-              return  applyfsSub(serviceType,1,serviceId);
+            } else {//如果原来绑定的fsagent不可用，则走重新申请资源的方法
+                return applyfsSub(serviceType, 1, serviceId);
             }
-        }else {//如果数据库中没有该绑定信息，直接走申请方法
-          return  applyfsSub(serviceType,0,serviceId);
+        } else {//如果数据库中没有该绑定信息，直接走申请方法
+            return applyfsSub(serviceType, 0, serviceId);
         }
     }
 

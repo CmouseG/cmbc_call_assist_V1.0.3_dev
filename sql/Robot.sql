@@ -9,7 +9,7 @@ create table user_ai_cfg_base_info
    update_time          datetime,
    update_user          varchar(50),
    primary key (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 alter table user_ai_cfg_base_info comment '用户机器人账户基本信息';
 create index user_ai_cfg_base_info_idx1 on user_ai_cfg_base_info
 (
@@ -31,7 +31,7 @@ create table user_ai_cfg_info
    update_time          datetime,
    update_user          varchar(50),
    primary key (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 alter table user_ai_cfg_info comment '用户机器配置信息';
 create index user_ai_cfg_info_idx1 on user_ai_cfg_info
@@ -62,7 +62,7 @@ create table user_ai_cfg_his_info
    update_time          datetime,
    update_user          varchar(50),
    primary key (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 alter table user_ai_cfg_his_info comment '用户机器配置变更历史信息';
 create index user_ai_cfg_his_info_idx1 on user_ai_cfg_his_info
@@ -87,7 +87,7 @@ create table tts_callback_his
    error_msg            varchar(1024) comment '失败日志',
    crt_time             datetime comment '创建时间',
    primary key (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 alter table tts_callback_his comment 'TTS合成回调数据';
 create index tts_callback_his_idx1 on tts_callback_his
@@ -112,7 +112,7 @@ create table tts_wav_his
    error_try_num        int comment '失败尝试次数',
    crt_time             datetime comment '创建时间',
    primary key (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 alter table tts_wav_his comment 'TTS语音合成数据';
 
@@ -148,7 +148,7 @@ create table ai_cycle_his
    call_num             bigint comment '拨打数量',
    crt_time             datetime,
    primary key (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 alter table ai_cycle_his comment '机器人生命周期记录';
 

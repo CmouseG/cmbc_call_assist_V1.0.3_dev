@@ -2,9 +2,10 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
+import com.guiji.robot.dao.entity.TtsCallbackHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.model.HsParam;
-import com.guiji.robot.model.TtsVoice;
+import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsVoiceReq;
 
 /** 
@@ -29,7 +30,22 @@ public interface ITtsWavService {
 	 * @param seqId
 	 * @return
 	 */
-	public TtsWavHis queryTtsWavBySeqId(String seqId);
+	TtsWavHis queryTtsWavBySeqId(String seqId);
+	
+	
+	/**
+	 * 根据业务id查询tts合成情况
+	 * @param busiId
+	 * @return
+	 */
+	TtsWavHis queryTtsWavByBusiId(String busiId);
+	
+	/**
+	 * 根据业务ID查询TTS回调历史
+	 * @param busiId
+	 * @return
+	 */
+	public TtsCallbackHis queryTtsCallbackHisByBusiId(String busiId);
 	
 	
 	/**
@@ -41,15 +57,21 @@ public interface ITtsWavService {
 	 * 5、合并TTS语音并生成wav文件
 	 * 6、记录历史表，后续缓存使用
 	 * @param  ttsVoiceReq
-	 * @return 合成后的语音列表
 	 */
-	public List<TtsVoice> ttsCompose(TtsVoiceReq ttsVoiceReq);
+	void ttsCompose(TtsWavHis ttsWavHis,TtsVoiceReq ttsVoiceReq);
 	
 	
 	/**
 	 * 异步TTS合成操作
 	 * @param ttsVoiceReq
 	 */
-	public void asynTtsCompose(HsParam hsChecker);
+	void asynTtsCompose(HsParam hsChecker);
+	
+	
+	/**
+	 * TTS合成后的回调服务
+	 * @param ttsCallbackList
+	 */
+	void asynTtsCallback(List<TtsCallback> ttsCallbackList);
 	
 }

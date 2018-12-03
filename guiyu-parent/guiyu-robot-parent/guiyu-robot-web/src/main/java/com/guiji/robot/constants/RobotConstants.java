@@ -32,6 +32,13 @@ public class RobotConstants {
 	public static final String TTS_STATUS_F = "F"; //F-失败
 	public static final String TTS_STATUS_N = "N"; //N-查无数据
 	
+	//TTS失败类型
+	public static final String TTS_ERROR_TYPE_P = "P"; //P-调用接口失败
+	public static final String TTS_ERROR_TYPE_T = "T"; //T-TTS接口回调状态失败
+	public static final String TTS_ERROR_TYPE_L = "L"; //P-TTS回调后本地处理失败
+	
+	public static final String TTS_RSP_SUCCESS = "success"; //TTS合成返回成功状态
+	
 	public static final String RSP_CODE_SUCCESS = "0";	//外部请求返回的成功状态码
 	
 	public static final String LOCK_NAME_CFG = "LOCK_ROBOT_USER_AI_CFG_";	//资源锁-用户机器人数量变更

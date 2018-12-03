@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.robot.dao.TtsWavHisMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.TtsWavHis" >
+<mapper namespace="com.guiji.robot.dao.TtsCallbackHisMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.TtsCallbackHis" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="seq_id" property="seqId" jdbcType="VARCHAR" />
     <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
-    <result column="tts_txt_json_data" property="ttsTxtJsonData" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="CHAR" />
     <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
-    <result column="error_type" property="errorType" jdbcType="CHAR" />
-    <result column="error_try_num" property="errorTryNum" jdbcType="INTEGER" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.guiji.robot.dao.entity.TtsWavHis" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.guiji.robot.dao.entity.TtsCallbackHis" extends="BaseResultMap" >
     <result column="tts_json_data" property="ttsJsonData" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -75,13 +71,12 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, seq_id, busi_id, template_id, tts_txt_json_data, `status`, error_msg, error_type, 
-    error_try_num, crt_time
+    id, busi_id, template_id, `status`, error_msg, crt_time
   </sql>
   <sql id="Blob_Column_List" >
     tts_json_data
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" >
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.robot.dao.entity.TtsCallbackHisExample" >
     select
     <if test="distinct" >
       distinct
@@ -90,7 +85,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from tts_wav_his
+    from tts_callback_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -98,14 +93,14 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.TtsCallbackHisExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from tts_wav_his
+    from tts_callback_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -121,62 +116,48 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from tts_wav_his
+    from tts_callback_his
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from tts_wav_his
+    delete from tts_callback_his
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" >
-    delete from tts_wav_his
+  <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.TtsCallbackHisExample" >
+    delete from tts_callback_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
+  <insert id="insert" parameterType="com.guiji.robot.dao.entity.TtsCallbackHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('tts_wav_his')
+      SELECT genTabId('tts_callback_his')
     </selectKey>
-    insert into tts_wav_his (id, seq_id, busi_id, 
-      template_id, tts_txt_json_data, `status`, 
-      error_msg, error_type, error_try_num, 
-      crt_time, tts_json_data)
-    values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
-      #{templateId,jdbcType=VARCHAR}, #{ttsTxtJsonData,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
-      #{errorMsg,jdbcType=VARCHAR}, #{errorType,jdbcType=CHAR}, #{errorTryNum,jdbcType=INTEGER}, 
-      #{crtTime,jdbcType=TIMESTAMP}, #{ttsJsonData,jdbcType=LONGVARCHAR})
+    insert into tts_callback_his (id, busi_id, template_id, 
+      `status`, error_msg, crt_time, 
+      tts_json_data)
+    values (#{id,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{status,jdbcType=CHAR}, #{errorMsg,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{ttsJsonData,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
+  <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsCallbackHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('tts_wav_his')
+      SELECT genTabId('tts_callback_his')
     </selectKey>
-    insert into tts_wav_his
+    insert into tts_callback_his
     <trim prefix="(" suffix=")" suffixOverrides="," >
       id,
-      <if test="seqId != null" >
-        seq_id,
-      </if>
       <if test="busiId != null" >
         busi_id,
       </if>
       <if test="templateId != null" >
         template_id,
       </if>
-      <if test="ttsTxtJsonData != null" >
-        tts_txt_json_data,
-      </if>
       <if test="status != null" >
         `status`,
       </if>
       <if test="errorMsg != null" >
         error_msg,
-      </if>
-      <if test="errorType != null" >
-        error_type,
-      </if>
-      <if test="errorTryNum != null" >
-        error_try_num,
       </if>
       <if test="crtTime != null" >
         crt_time,
@@ -187,29 +168,17 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{id,jdbcType=VARCHAR},
-      <if test="seqId != null" >
-        #{seqId,jdbcType=VARCHAR},
-      </if>
       <if test="busiId != null" >
         #{busiId,jdbcType=VARCHAR},
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
       </if>
-      <if test="ttsTxtJsonData != null" >
-        #{ttsTxtJsonData,jdbcType=VARCHAR},
-      </if>
       <if test="status != null" >
         #{status,jdbcType=CHAR},
       </if>
       <if test="errorMsg != null" >
         #{errorMsg,jdbcType=VARCHAR},
-      </if>
-      <if test="errorType != null" >
-        #{errorType,jdbcType=CHAR},
-      </if>
-      <if test="errorTryNum != null" >
-        #{errorTryNum,jdbcType=INTEGER},
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
@@ -219,20 +188,17 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" resultType="java.lang.Integer" >
-    select count(*) from tts_wav_his
+  <select id="countByExample" parameterType="com.guiji.robot.dao.entity.TtsCallbackHisExample" resultType="java.lang.Integer" >
+    select count(*) from tts_callback_his
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update tts_wav_his
+    update tts_callback_his
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=VARCHAR},
-      </if>
-      <if test="record.seqId != null" >
-        seq_id = #{record.seqId,jdbcType=VARCHAR},
       </if>
       <if test="record.busiId != null" >
         busi_id = #{record.busiId,jdbcType=VARCHAR},
@@ -240,20 +206,11 @@
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
-      <if test="record.ttsTxtJsonData != null" >
-        tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
-      </if>
       <if test="record.status != null" >
         `status` = #{record.status,jdbcType=CHAR},
       </if>
       <if test="record.errorMsg != null" >
         error_msg = #{record.errorMsg,jdbcType=VARCHAR},
-      </if>
-      <if test="record.errorType != null" >
-        error_type = #{record.errorType,jdbcType=CHAR},
-      </if>
-      <if test="record.errorTryNum != null" >
-        error_try_num = #{record.errorTryNum,jdbcType=INTEGER},
       </if>
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
@@ -267,16 +224,12 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map" >
-    update tts_wav_his
+    update tts_callback_his
     set id = #{record.id,jdbcType=VARCHAR},
-      seq_id = #{record.seqId,jdbcType=VARCHAR},
       busi_id = #{record.busiId,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
-      tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=CHAR},
       error_msg = #{record.errorMsg,jdbcType=VARCHAR},
-      error_type = #{record.errorType,jdbcType=CHAR},
-      error_try_num = #{record.errorTryNum,jdbcType=INTEGER},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{record.ttsJsonData,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
@@ -284,47 +237,31 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update tts_wav_his
+    update tts_callback_his
     set id = #{record.id,jdbcType=VARCHAR},
-      seq_id = #{record.seqId,jdbcType=VARCHAR},
       busi_id = #{record.busiId,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
-      tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=CHAR},
       error_msg = #{record.errorMsg,jdbcType=VARCHAR},
-      error_type = #{record.errorType,jdbcType=CHAR},
-      error_try_num = #{record.errorTryNum,jdbcType=INTEGER},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
-    update tts_wav_his
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.robot.dao.entity.TtsCallbackHis" >
+    update tts_callback_his
     <set >
-      <if test="seqId != null" >
-        seq_id = #{seqId,jdbcType=VARCHAR},
-      </if>
       <if test="busiId != null" >
         busi_id = #{busiId,jdbcType=VARCHAR},
       </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
       </if>
-      <if test="ttsTxtJsonData != null" >
-        tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
-      </if>
       <if test="status != null" >
         `status` = #{status,jdbcType=CHAR},
       </if>
       <if test="errorMsg != null" >
         error_msg = #{errorMsg,jdbcType=VARCHAR},
-      </if>
-      <if test="errorType != null" >
-        error_type = #{errorType,jdbcType=CHAR},
-      </if>
-      <if test="errorTryNum != null" >
-        error_try_num = #{errorTryNum,jdbcType=INTEGER},
       </if>
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
@@ -335,30 +272,22 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
-    update tts_wav_his
-    set seq_id = #{seqId,jdbcType=VARCHAR},
-      busi_id = #{busiId,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.robot.dao.entity.TtsCallbackHis" >
+    update tts_callback_his
+    set busi_id = #{busiId,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
-      tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
       error_msg = #{errorMsg,jdbcType=VARCHAR},
-      error_type = #{errorType,jdbcType=CHAR},
-      error_try_num = #{errorTryNum,jdbcType=INTEGER},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{ttsJsonData,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
-    update tts_wav_his
-    set seq_id = #{seqId,jdbcType=VARCHAR},
-      busi_id = #{busiId,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.TtsCallbackHis" >
+    update tts_callback_his
+    set busi_id = #{busiId,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
-      tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
       error_msg = #{errorMsg,jdbcType=VARCHAR},
-      error_type = #{errorType,jdbcType=CHAR},
-      error_try_num = #{errorTryNum,jdbcType=INTEGER},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>

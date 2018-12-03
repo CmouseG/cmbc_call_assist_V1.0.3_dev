@@ -1,10 +1,12 @@
 package com.guiji.dict.service.impl;
 
+import com.guiji.common.constant.RedisConstant;
 import com.guiji.common.model.Page;
 import com.guiji.dict.dao.SysDictMapper;
 import com.guiji.dict.dao.entity.SysDict;
 import com.guiji.dict.dao.entity.SysDictExample;
 import com.guiji.dict.service.SysDictService;
+import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,8 @@ public class SysDictServiceImpl implements SysDictService {
 
     @Autowired
     private SysDictMapper sysDictMapper;
+    @Autowired
+    private RedisUtil redisUtil;
     @Override
     @Transactional
     public SysDict saveOrUpdateDict(SysDict sysDict) {
@@ -36,6 +40,7 @@ public class SysDictServiceImpl implements SysDictService {
                 sysDict.setCreateTime(new Date());
                 sysDict.setUpdateTime(new Date());
                 sysDictMapper.insert(sysDict);
+
                 logger.info("新增字典成功"+sysDict);
             }else {
                 logger.info("更新字典");
@@ -43,6 +48,8 @@ public class SysDictServiceImpl implements SysDictService {
                 sysDictMapper.updateByPrimaryKeySelective(sysDict);
                 logger.info("更新字典成功"+sysDict);
             }
+            //清除redis缓存
+            redisUtil.del(RedisConstant.REDIS_DICT_PREFIX+sysDict.getDictType());
         }
         return sysDict;
     }
@@ -50,8 +57,19 @@ public class SysDictServiceImpl implements SysDictService {
     @Override
     public List<SysDict> queryDictList(SysDict sysDict) {
         logger.info("查询字典，查询条件="+sysDict);
-        SysDictExample example = this.getExampleByCondition(sysDict);
-        return sysDictMapper.selectByExample(example);
+        List<SysDict> sysDictList = null;
+        //先查缓存
+        String redisKey = RedisConstant.REDIS_DICT_PREFIX + sysDict.getDictType();
+        sysDictList = (List<SysDict>)redisUtil.get(redisKey);
+        if (sysDictList == null || sysDictList.size()<1) {
+            //缓存不存在则查询数据库
+            SysDictExample example = this.getExampleByCondition(sysDict);
+            sysDictList = sysDictMapper.selectByExample(example);
+            //查完数据库保存到缓存
+            redisUtil.set(redisKey,sysDictList);
+        }
+
+        return sysDictList;
     }
 
     @Override

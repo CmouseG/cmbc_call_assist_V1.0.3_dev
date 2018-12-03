@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TtsWavHisExample {
+public class TtsCallbackHisExample {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -15,7 +15,7 @@ public class TtsWavHisExample {
 
     protected Integer limitEnd;
 
-    public TtsWavHisExample() {
+    public TtsCallbackHisExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -195,76 +195,6 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andSeqIdIsNull() {
-            addCriterion("seq_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdIsNotNull() {
-            addCriterion("seq_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdEqualTo(String value) {
-            addCriterion("seq_id =", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdNotEqualTo(String value) {
-            addCriterion("seq_id <>", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdGreaterThan(String value) {
-            addCriterion("seq_id >", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdGreaterThanOrEqualTo(String value) {
-            addCriterion("seq_id >=", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdLessThan(String value) {
-            addCriterion("seq_id <", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdLessThanOrEqualTo(String value) {
-            addCriterion("seq_id <=", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdLike(String value) {
-            addCriterion("seq_id like", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdNotLike(String value) {
-            addCriterion("seq_id not like", value, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdIn(List<String> values) {
-            addCriterion("seq_id in", values, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdNotIn(List<String> values) {
-            addCriterion("seq_id not in", values, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdBetween(String value1, String value2) {
-            addCriterion("seq_id between", value1, value2, "seqId");
-            return (Criteria) this;
-        }
-
-        public Criteria andSeqIdNotBetween(String value1, String value2) {
-            addCriterion("seq_id not between", value1, value2, "seqId");
-            return (Criteria) this;
-        }
-
         public Criteria andBusiIdIsNull() {
             addCriterion("busi_id is null");
             return (Criteria) this;
@@ -405,76 +335,6 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andTtsTxtJsonDataIsNull() {
-            addCriterion("tts_txt_json_data is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataIsNotNull() {
-            addCriterion("tts_txt_json_data is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataEqualTo(String value) {
-            addCriterion("tts_txt_json_data =", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataNotEqualTo(String value) {
-            addCriterion("tts_txt_json_data <>", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataGreaterThan(String value) {
-            addCriterion("tts_txt_json_data >", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataGreaterThanOrEqualTo(String value) {
-            addCriterion("tts_txt_json_data >=", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataLessThan(String value) {
-            addCriterion("tts_txt_json_data <", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataLessThanOrEqualTo(String value) {
-            addCriterion("tts_txt_json_data <=", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataLike(String value) {
-            addCriterion("tts_txt_json_data like", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataNotLike(String value) {
-            addCriterion("tts_txt_json_data not like", value, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataIn(List<String> values) {
-            addCriterion("tts_txt_json_data in", values, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataNotIn(List<String> values) {
-            addCriterion("tts_txt_json_data not in", values, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataBetween(String value1, String value2) {
-            addCriterion("tts_txt_json_data between", value1, value2, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
-        public Criteria andTtsTxtJsonDataNotBetween(String value1, String value2) {
-            addCriterion("tts_txt_json_data not between", value1, value2, "ttsTxtJsonData");
-            return (Criteria) this;
-        }
-
         public Criteria andStatusIsNull() {
             addCriterion("`status` is null");
             return (Criteria) this;
@@ -612,136 +472,6 @@ public class TtsWavHisExample {
 
         public Criteria andErrorMsgNotBetween(String value1, String value2) {
             addCriterion("error_msg not between", value1, value2, "errorMsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeIsNull() {
-            addCriterion("error_type is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeIsNotNull() {
-            addCriterion("error_type is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeEqualTo(String value) {
-            addCriterion("error_type =", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeNotEqualTo(String value) {
-            addCriterion("error_type <>", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeGreaterThan(String value) {
-            addCriterion("error_type >", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeGreaterThanOrEqualTo(String value) {
-            addCriterion("error_type >=", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeLessThan(String value) {
-            addCriterion("error_type <", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeLessThanOrEqualTo(String value) {
-            addCriterion("error_type <=", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeLike(String value) {
-            addCriterion("error_type like", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeNotLike(String value) {
-            addCriterion("error_type not like", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeIn(List<String> values) {
-            addCriterion("error_type in", values, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeNotIn(List<String> values) {
-            addCriterion("error_type not in", values, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeBetween(String value1, String value2) {
-            addCriterion("error_type between", value1, value2, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeNotBetween(String value1, String value2) {
-            addCriterion("error_type not between", value1, value2, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumIsNull() {
-            addCriterion("error_try_num is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumIsNotNull() {
-            addCriterion("error_try_num is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumEqualTo(Integer value) {
-            addCriterion("error_try_num =", value, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumNotEqualTo(Integer value) {
-            addCriterion("error_try_num <>", value, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumGreaterThan(Integer value) {
-            addCriterion("error_try_num >", value, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumGreaterThanOrEqualTo(Integer value) {
-            addCriterion("error_try_num >=", value, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumLessThan(Integer value) {
-            addCriterion("error_try_num <", value, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumLessThanOrEqualTo(Integer value) {
-            addCriterion("error_try_num <=", value, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumIn(List<Integer> values) {
-            addCriterion("error_try_num in", values, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumNotIn(List<Integer> values) {
-            addCriterion("error_try_num not in", values, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumBetween(Integer value1, Integer value2) {
-            addCriterion("error_try_num between", value1, value2, "errorTryNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTryNumNotBetween(Integer value1, Integer value2) {
-            addCriterion("error_try_num not between", value1, value2, "errorTryNum");
             return (Criteria) this;
         }
 

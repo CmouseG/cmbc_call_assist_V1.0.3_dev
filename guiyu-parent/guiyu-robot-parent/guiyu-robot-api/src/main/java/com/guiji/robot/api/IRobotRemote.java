@@ -16,6 +16,7 @@ import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
@@ -61,6 +62,14 @@ public interface IRobotRemote {
     @PostMapping(value = "/remote/ttsCompose")
 	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
 	
+	
+	@ApiOperation(value = "TTS语音合成后的回call服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ttsCallbackList", value = "tts语音合成回调信息列表", required = true)
+    })
+    @PostMapping(value = "/remote/ttsCallback")
+	Result.ReturnData ttsCallback(@RequestBody List<TtsCallback> ttsCallbackList);
+
 	
 	@ApiOperation(value = "AI资源申请")
     @ApiImplicitParams({

@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.dao.entity.TtsCallbackHis;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
@@ -22,11 +24,16 @@ import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
+import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.service.impl.AiNewTransService;
+import com.guiji.robot.util.ListUtil;
+import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -43,6 +50,10 @@ public class RobotRemoteController implements IRobotRemote{
 	IAiAbilityCenterService iAiAbilityCenterService;
 	@Autowired
 	IUserAiCfgService iUserAiCfgService;
+	@Autowired
+	AiNewTransService aiNewTransService;
+	@Autowired
+	ITtsWavService iTtsWavService;
 	
 	/************************1、资源服务************************/
 	
@@ -149,5 +160,32 @@ public class RobotRemoteController implements IRobotRemote{
 		}
 		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
 		return Result.ok(list);
+	}
+	
+	/**
+	 * TTS合成后的回调服务
+	 * @param ttsCallbackList
+	 * @return
+	 */
+	public Result.ReturnData ttsCallback(@RequestBody List<TtsCallback> ttsCallbackList){
+		if(ListUtil.isNotEmpty(ttsCallbackList)) {
+			logger.info("接收TTS回调，共计:{}条数据",ttsCallbackList.size());
+			for(TtsCallback ttsCallback : ttsCallbackList) {
+				TtsCallbackHis ttsCallbackHis = new TtsCallbackHis();
+				//拷贝基本属性
+				BeanUtil.copyProperties(ttsCallback, ttsCallbackHis);
+				if(ttsCallback.getAudios()!=null) {
+					//将消息转未JSON报文
+					String jsonData = JSON.toJSONString(ttsCallback.getAudios());
+					ttsCallbackHis.setTtsJsonData(jsonData);
+				}
+				//新开事务保存
+				aiNewTransService.recordTtsCallback(ttsCallbackHis);
+			}
+			logger.info("接收TTS回调，数据落地完成..");
+			//异步处理TTS数据
+			iTtsWavService.asynTtsCallback(ttsCallbackList);
+		}
+		return Result.ok();
 	}
 }

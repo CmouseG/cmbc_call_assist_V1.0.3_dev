@@ -176,7 +176,7 @@ public interface IDispatchPlanService {
 	 * @param status
 	 * @return
 	 */
-	boolean operationAllPlanByBatchId(Integer batchId,String status,Long userId);
+	MessageDto operationAllPlanByBatchId(Integer batchId,String status,Long userId);
 	
 	/**
 	 * 批量删除

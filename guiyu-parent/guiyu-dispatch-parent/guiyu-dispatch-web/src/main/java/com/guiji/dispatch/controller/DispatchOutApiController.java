@@ -19,7 +19,9 @@ import com.guiji.utils.RedisUtil;
 
 @RestController
 public class DispatchOutApiController implements IDispatchPlanOut {
+	
 	static Logger logger = LoggerFactory.getLogger(DispatchOutApiController.class);
+	
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 	
@@ -90,6 +92,11 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 			result.body = set;
 		}
 		return result;
+	}
+
+	@Override
+	public ReturnData<Boolean> successSchedule4TempId(String tempId) {
+		return null;
 	}
 
 }

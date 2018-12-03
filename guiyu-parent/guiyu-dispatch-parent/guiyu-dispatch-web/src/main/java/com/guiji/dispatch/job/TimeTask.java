@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -24,8 +24,8 @@ import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.utils.RedisUtil;
 
-//@Component
- @RestController
+@Component
+// @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -42,7 +42,8 @@ public class TimeTask {
 	/**
 	 * 捞取号码初始化资源
 	 */
-//	@Scheduled(cron = "0 0/1 * * * ?")
+	@Scheduled(cron = "0 0/1 * * * ?")
+//	@PostMapping("selectPhoneInit")
 	public void selectPhoneInit() {
 		logger.info("捞取号码初始化资源..");
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
@@ -69,8 +70,8 @@ public class TimeTask {
 	/**
 	 * 获取当前资源情况
 	 */
-//	@Scheduled(cron = "0 0/5 * * * ?")
-	@PostMapping("getResourceResult")
+	@Scheduled(cron = "0 0/5 * * * ?")
+//	@PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("获取当前初始化号码的请求资源结果");
 		List<DispatchPlan> selectPhoneByDateAndFlag = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_1);
@@ -107,7 +108,8 @@ public class TimeTask {
 	/**
 	 * 获取可以拨打的号码
 	 */
-//	@Scheduled(cron = "0 0/1 * * * ?")
+	@Scheduled(cron = "0 0/1 * * * ?")
+//	@PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		logger.info(" 获取可以拨打的号码..");
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2);

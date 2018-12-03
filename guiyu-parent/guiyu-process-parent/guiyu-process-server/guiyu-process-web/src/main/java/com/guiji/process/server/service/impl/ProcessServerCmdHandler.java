@@ -3,8 +3,8 @@ package com.guiji.process.server.service.impl;
 
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
-import com.guiji.guiyu.rabbitmq.component.FanoutSender;
-import com.guiji.guiyu.rabbitmq.model.PublishBotstenceResultMsgVO;
+import com.guiji.guiyu.message.component.FanoutSender;
+import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;

@@ -76,7 +76,7 @@ public class TtsJobTimer {
 		Lock lock = new Lock("LOCK_ROBOT_TTS_RETRY_JOB", "LOCK_ROBOT_TTS_RETRY_JOB");
     	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
     		long beginTime = System.currentTimeMillis();
-            logger.info("定时任务，TTS查证...");
+            logger.info("定时任务，TTS重试...");
             //查询TTS数据状态为F，且异常类型为L（本地失败），且尝试次数<=3的数据
             TtsWavHisExample example = new TtsWavHisExample();
             example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_F)
@@ -126,7 +126,7 @@ public class TtsJobTimer {
             logger.info("定时任务，用时{}S,[TTS查证]完成...",(endTime-beginTime)/1000);
             distributedLockHandler.releaseLock(lock);	//释放锁
     	}else {
-    		logger.warn("定时任务[TTS查证]未能获取锁！！！");
+    		logger.warn("定时任务[TTS重试]未能获取锁！！！");
     	}
 	}
 }

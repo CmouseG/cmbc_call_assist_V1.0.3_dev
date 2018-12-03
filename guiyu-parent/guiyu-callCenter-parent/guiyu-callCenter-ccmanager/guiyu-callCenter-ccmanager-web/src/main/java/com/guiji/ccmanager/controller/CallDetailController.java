@@ -1,12 +1,14 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
+import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.utils.DateUtil;
@@ -40,7 +42,7 @@ import java.util.Map;
  * @Description:  通话记录列表，通话记录详情
  */
 @RestController
-public class CallDetailController {
+public class CallDetailController implements ICallPlanDetail {
 
     private final Logger log = LoggerFactory.getLogger(CallManagerOutApiController.class);
 
@@ -105,7 +107,7 @@ public class CallDetailController {
     }
 
 
-    @ApiOperation(value = "查看通话记录详情")
+    @ApiOperation(value = "查看通话记录详情，前台页面使用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
@@ -121,6 +123,24 @@ public class CallDetailController {
 
         log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
+    }
+
+    @ApiOperation(value = "查看通话记录详情,供后台服务使用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value="getCallPlanDetailRecord")
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallPlanDetailRecord(String callId){
+
+        log.info("get request getCallPlanDetailRecord，callId[{}]", callId);
+
+        if(StringUtils.isBlank(callId)){
+            return Result.error(Constant.ERROR_PARAM);
+        }
+        CallPlanDetailRecordVO callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callId);
+
+        log.info("reponse success getCallPlanDetailRecord，callId[{}]", callId);
+        return Result.ok(callPlanDetailRecordVO);
     }
 
     @ApiOperation(value = "下载通话记录")

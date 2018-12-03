@@ -943,6 +943,146 @@ public class LineInfoExample {
             addCriterion("remark not between", value1, value2, "remark");
             return (Criteria) this;
         }
+
+        public Criteria andCreatetByIsNull() {
+            addCriterion("createt_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByIsNotNull() {
+            addCriterion("createt_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByEqualTo(String value) {
+            addCriterion("createt_by =", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByNotEqualTo(String value) {
+            addCriterion("createt_by <>", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByGreaterThan(String value) {
+            addCriterion("createt_by >", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByGreaterThanOrEqualTo(String value) {
+            addCriterion("createt_by >=", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByLessThan(String value) {
+            addCriterion("createt_by <", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByLessThanOrEqualTo(String value) {
+            addCriterion("createt_by <=", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByLike(String value) {
+            addCriterion("createt_by like", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByNotLike(String value) {
+            addCriterion("createt_by not like", value, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByIn(List<String> values) {
+            addCriterion("createt_by in", values, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByNotIn(List<String> values) {
+            addCriterion("createt_by not in", values, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByBetween(String value1, String value2) {
+            addCriterion("createt_by between", value1, value2, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatetByNotBetween(String value1, String value2) {
+            addCriterion("createt_by not between", value1, value2, "createtBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNull() {
+            addCriterion("update_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNotNull() {
+            addCriterion("update_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByEqualTo(String value) {
+            addCriterion("update_by =", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotEqualTo(String value) {
+            addCriterion("update_by <>", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThan(String value) {
+            addCriterion("update_by >", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThanOrEqualTo(String value) {
+            addCriterion("update_by >=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThan(String value) {
+            addCriterion("update_by <", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThanOrEqualTo(String value) {
+            addCriterion("update_by <=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLike(String value) {
+            addCriterion("update_by like", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotLike(String value) {
+            addCriterion("update_by not like", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIn(List<String> values) {
+            addCriterion("update_by in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotIn(List<String> values) {
+            addCriterion("update_by not in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByBetween(String value1, String value2) {
+            addCriterion("update_by between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotBetween(String value1, String value2) {
+            addCriterion("update_by not between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -54,7 +54,9 @@ public class CustAiAccountController {
 	 * @return
 	 */
 	@RequestMapping(value = "/saveUserAiCfgBaseInfo", method = RequestMethod.POST)
-	public Result.ReturnData<UserAiCfgBaseInfo> saveUserAiCfgBaseInfo(@RequestBody UserAiCfgBaseInfo userAiCfgBaseInfo){
+	public Result.ReturnData<UserAiCfgBaseInfo> saveUserAiCfgBaseInfo(
+			@RequestBody UserAiCfgBaseInfo userAiCfgBaseInfo,
+			@RequestHeader Long userId){
 		if(userAiCfgBaseInfo == null
 				|| StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())
 				|| userAiCfgBaseInfo.getAiTotalNum() == null
@@ -62,6 +64,11 @@ public class CustAiAccountController {
 				) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		if(userId != null) {
+			//当前登录用户
+			userAiCfgBaseInfo.setCrtUser(String.valueOf(userId));
+			userAiCfgBaseInfo.setUpdateUser(String.valueOf(userId));
 		}
 		userAiCfgBaseInfo = iUserAiCfgService.putupUserCfgBase(userAiCfgBaseInfo);
 		return Result.ok(userAiCfgBaseInfo);
@@ -173,7 +180,9 @@ public class CustAiAccountController {
 	 * @return
 	 */
 	@RequestMapping(value = "/saveUserAiCfg", method = RequestMethod.POST)
-	public Result.ReturnData<UserAiCfgInfo> saveUserAiCfg(@RequestBody UserAiCfgInfo userAiCfgInfo){
+	public Result.ReturnData<UserAiCfgInfo> saveUserAiCfg(
+			@RequestBody UserAiCfgInfo userAiCfgInfo,
+			@RequestHeader Long userId){
 		if(userAiCfgInfo == null
 				|| StrUtils.isEmpty(userAiCfgInfo.getUserId())
 				|| StrUtils.isEmpty(userAiCfgInfo.getTemplateIds())
@@ -182,6 +191,11 @@ public class CustAiAccountController {
 				) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		if(userId != null) {
+			//当前登录用户
+			userAiCfgInfo.setCrtUser(String.valueOf(userId));
+			userAiCfgInfo.setUpdateUser(String.valueOf(userId));
 		}
 		UserAiCfgInfo cfgInfo = iUserAiCfgService.userAiCfgChange(null,userAiCfgInfo);
 		return Result.ok(cfgInfo);

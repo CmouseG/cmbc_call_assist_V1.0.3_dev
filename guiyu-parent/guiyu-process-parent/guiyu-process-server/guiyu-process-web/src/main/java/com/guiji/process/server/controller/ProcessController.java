@@ -38,4 +38,10 @@ public class ProcessController {
         sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.STOP);
         return "success";
     }
+
+    @PostMapping("/restart")
+    public Object restart(@RequestBody ProcessCmdVO processCmdVO) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.RESTART);
+        return "success";
+    }
 }

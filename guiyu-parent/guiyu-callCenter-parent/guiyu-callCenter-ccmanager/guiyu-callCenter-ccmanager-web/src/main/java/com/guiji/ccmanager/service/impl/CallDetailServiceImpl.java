@@ -10,6 +10,7 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
+import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
@@ -152,7 +153,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public CallOutPlanVO getCallDetail(String callId) {
+    public CallPlanDetailRecordVO getCallDetail(String callId) {
 
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
 
@@ -181,13 +182,25 @@ public class CallDetailServiceImpl implements CallDetailService {
                 resList.add(callOutDetailVO);
             }
 
-            CallOutPlanVO callOutPlanVO = new CallOutPlanVO();
-            BeanUtil.copyProperties(callOutPlan,callOutPlanVO);
-            callOutPlanVO.setDetailList(resList);
-            return callOutPlanVO;
+            CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
+            BeanUtil.copyProperties(callOutPlan,callPlanDetailRecordVO);
+            callPlanDetailRecordVO.setDetailList(resList);
+            return callPlanDetailRecordVO;
         }
 
         return null;
+    }
+
+    @Override
+    public CallPlanDetailRecordVO getCallPlanDetailRecord(String callId) {
+
+        CallPlanDetailRecordVO callPlanDetailRecordVO = getCallDetail(callId);
+       if(callPlanDetailRecordVO!=null){
+           CallOutRecord callOutRecord= callOutRecordMapper.selectByPrimaryKey(callId);
+           callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
+           return callPlanDetailRecordVO;
+       }
+       return null;
     }
 
     @Override

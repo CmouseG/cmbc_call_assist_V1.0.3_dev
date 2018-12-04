@@ -159,11 +159,12 @@ CREATE TABLE `sys_process` (
   `type` int(10) DEFAULT NULL COMMENT '进程类型：0:TTS 1:SELLBOT 99:AGENT ',
   `process_key` varchar(255) DEFAULT NULL COMMENT '扩展字段，type为TTS时存模型名称',
   `status` int(2) DEFAULT NULL COMMENT '状态0:UP1:DOWN2:BUSY3:MISSING',
-  `exec_status` int(2) DEFAULT NULL COMMENT '执行状态0执行完成1执行中',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1218 DEFAULT CHARSET=utf8;
+
+
 
 -- ----------------------------
 -- Table structure for sys_process_log
@@ -184,8 +185,13 @@ CREATE TABLE `sys_process_task` (
   `update_time` datetime DEFAULT NULL,
   `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
   `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+  `req_key` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+
+
+
+
 
 
 

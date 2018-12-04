@@ -86,6 +86,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             case PUBLISH_ROBOT_BOTSTENCE:
                 doPublishAfter(cmdMessageVO);
                 break;
+            case AFTER_RESTART:
+                doRestartAfter(cmdMessageVO);
+                break;
             default:
                 break;
         }
@@ -195,8 +198,38 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 SysProcessTask sysProcessTask = new SysProcessTask();
                 sysProcessTask.setIp(processInstanceVO.getIp());
                 sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessTask.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
                 sysProcessTask.setExecStatus(0);
-                sysProcessTaskService.insert(sysProcessTask);
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
+            }
+        }
+    }
+
+    private void doRestartAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                //更新数据库
+                //更新sys_process
+                SysProcess sysProcess = new SysProcess();
+                sysProcess.setIp(processInstanceVO.getIp());
+                sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcess.setExecStatus(0);
+                sysProcessService.update(sysProcess);
+
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setIp(processInstanceVO.getIp());
+                sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessTask.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTaskService.update(sysProcessTask);
                 // 删除缓存
                 redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
             }

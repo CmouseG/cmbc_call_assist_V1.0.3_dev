@@ -32,6 +32,8 @@ public class SysProcessTask implements Serializable {
 
     private Long updateBy;
 
+    private String reqKey;
+
     private String createTimeStr;
 
     private String updateTimeStr;
@@ -150,6 +152,14 @@ public class SysProcessTask implements Serializable {
         this.updateBy = updateBy;
     }
 
+    public String getReqKey() {
+        return reqKey;
+    }
+
+    public void setReqKey(String reqKey) {
+        this.reqKey = reqKey == null ? null : reqKey.trim();
+    }
+
     public String getCreateTimeStr() {
         return createTimeStr;
     }
@@ -186,6 +196,7 @@ public class SysProcessTask implements Serializable {
         sb.append(", updateTime=").append(updateTime);
         sb.append(", createBy=").append(createBy);
         sb.append(", updateBy=").append(updateBy);
+        sb.append(", reqKey=").append(reqKey);
         sb.append(", createTimeStr=").append(createTimeStr);
         sb.append(", updateTimeStr=").append(updateTimeStr);
         sb.append(", serialVersionUID=").append(serialVersionUID);

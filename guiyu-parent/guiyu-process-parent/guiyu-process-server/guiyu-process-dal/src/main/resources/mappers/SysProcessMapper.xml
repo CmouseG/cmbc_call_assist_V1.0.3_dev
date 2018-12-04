@@ -9,7 +9,6 @@
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="process_key" property="processKey" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="exec_status" property="execStatus" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -72,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, ip, port, `name`, `type`, process_key, `status`, exec_status, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str,create_time, update_time
+    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessExample" >
     select
@@ -111,12 +110,12 @@
   <insert id="insert" parameterType="com.guiji.process.server.dao.entity.SysProcess" >
     insert into sys_process (id, ip, port, 
       `name`, `type`, process_key, 
-      `status`, exec_status, create_time, 
-      update_time)
+      `status`, create_time, update_time
+      )
     values (#{id,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{processKey,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{execStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.process.server.dao.entity.SysProcess" >
     insert into sys_process
@@ -141,9 +140,6 @@
       </if>
       <if test="status != null" >
         `status`,
-      </if>
-      <if test="execStatus != null" >
-        exec_status,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -173,9 +169,6 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
-      </if>
-      <if test="execStatus != null" >
-        #{execStatus,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -215,9 +208,6 @@
       <if test="record.status != null" >
         `status` = #{record.status,jdbcType=INTEGER},
       </if>
-      <if test="record.execStatus != null" >
-        exec_status = #{record.execStatus,jdbcType=INTEGER},
-      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -238,7 +228,6 @@
       `type` = #{record.type,jdbcType=INTEGER},
       process_key = #{record.processKey,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=INTEGER},
-      exec_status = #{record.execStatus,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
@@ -266,9 +255,6 @@
       <if test="status != null" >
         `status` = #{status,jdbcType=INTEGER},
       </if>
-      <if test="execStatus != null" >
-        exec_status = #{execStatus,jdbcType=INTEGER},
-      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -286,7 +272,6 @@
       `type` = #{type,jdbcType=INTEGER},
       process_key = #{processKey,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=INTEGER},
-      exec_status = #{execStatus,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

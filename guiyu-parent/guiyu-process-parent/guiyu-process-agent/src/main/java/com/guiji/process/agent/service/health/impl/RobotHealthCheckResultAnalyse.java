@@ -40,4 +40,9 @@ public class RobotHealthCheckResultAnalyse implements IHealthCheckResultAnalyse 
         ImClientProtocolBO.getIntance().send(newCmdMsg,3);
 
     }
+
+    @Override
+    public void afertRestart(CommandResult cmdResult, ProcessInstanceVO processInstanceVO, List<String> parameters) {
+
+    }
 }

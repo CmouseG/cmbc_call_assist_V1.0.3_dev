@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.guiji.ai.dao.TtsModelMapper;
+import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.service.impl.TtsGpu;
@@ -36,7 +36,7 @@ public class RedistributeHandler {
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
 	@Autowired
-	TtsModelMapper ttsModelMapper;
+	TtsResultMapper ttsResultMapper;
 	@Autowired
     private RedisUtil redisUtil;
 
@@ -47,7 +47,7 @@ public class RedistributeHandler {
 		if (distributedLockHandler.tryLock(lock, 5*1000L, 100L, 3*60*1000L)) { // 尝试5s,每100ms尝试一次，持锁时间为3分钟
 			try {
 				logger.info("查询前10分钟内各模型对应GPU请求情况...");
-				List<Map<String, Object>> resultList = ttsModelMapper.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
+				List<Map<String, Object>> resultList = ttsResultMapper.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
 				
 				if(resultList != null && !resultList.isEmpty()){
 					logger.info("请求结果：" + resultList);

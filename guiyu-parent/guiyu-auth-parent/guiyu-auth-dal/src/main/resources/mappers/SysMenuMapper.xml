@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.user.dao.SysMenuMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysMenu" >
+ <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysMenu" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
@@ -9,7 +9,9 @@
     <result column="pid" property="pid" jdbcType="BIGINT" />
     <result column="permission" property="permission" jdbcType="VARCHAR" />
     <result column="is_show" property="isShow" jdbcType="BIGINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="type" property="type" jdbcType="CHAR" />
     <result column="level" property="level" jdbcType="CHAR" />
@@ -76,8 +78,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, `name`, description, url, pid, permission, is_show, create_time, update_time, 
-    `type`, `level`, appid, remarks, del_flag
+    id, `name`, description, url, pid, permission, is_show, create_id, create_time, update_id, 
+    update_time, `type`, `level`, appid, remarks, del_flag
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysMenuExample" >
     select
@@ -116,13 +118,15 @@
   <insert id="insert" parameterType="com.guiji.user.dao.entity.SysMenu" >
     insert into sys_menu (id, `name`, description, 
       url, pid, permission, 
-      is_show, create_time, update_time, 
-      `type`, `level`, appid, remarks, 
+      is_show, create_id, create_time, 
+      update_id, update_time, `type`, 
+      `level`, appid, remarks, 
       del_flag)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{url,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{permission,jdbcType=VARCHAR}, 
-      #{isShow,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{type,jdbcType=CHAR}, #{level,jdbcType=CHAR}, #{appid,jdbcType=BIGINT}, #{remarks,jdbcType=VARCHAR}, 
+      #{isShow,jdbcType=BIGINT}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{type,jdbcType=CHAR}, 
+      #{level,jdbcType=CHAR}, #{appid,jdbcType=BIGINT}, #{remarks,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysMenu" >
@@ -149,8 +153,14 @@
       <if test="isShow != null" >
         is_show,
       </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
       <if test="createTime != null" >
         create_time,
+      </if>
+      <if test="updateId != null" >
+        update_id,
       </if>
       <if test="updateTime != null" >
         update_time,
@@ -193,8 +203,14 @@
       <if test="isShow != null" >
         #{isShow,jdbcType=BIGINT},
       </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
@@ -246,8 +262,14 @@
       <if test="record.isShow != null" >
         is_show = #{record.isShow,jdbcType=BIGINT},
       </if>
+      <if test="record.createId != null" >
+        create_id = #{record.createId,jdbcType=BIGINT},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateId != null" >
+        update_id = #{record.updateId,jdbcType=BIGINT},
       </if>
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -281,7 +303,9 @@
       pid = #{record.pid,jdbcType=BIGINT},
       permission = #{record.permission,jdbcType=VARCHAR},
       is_show = #{record.isShow,jdbcType=BIGINT},
+      create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_id = #{record.updateId,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       `type` = #{record.type,jdbcType=CHAR},
       `level` = #{record.level,jdbcType=CHAR},
@@ -313,8 +337,14 @@
       <if test="isShow != null" >
         is_show = #{isShow,jdbcType=BIGINT},
       </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
@@ -345,7 +375,9 @@
       pid = #{pid,jdbcType=BIGINT},
       permission = #{permission,jdbcType=VARCHAR},
       is_show = #{isShow,jdbcType=BIGINT},
+      create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_id = #{updateId,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       `type` = #{type,jdbcType=CHAR},
       `level` = #{level,jdbcType=CHAR},
@@ -354,6 +386,7 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+ 
   
   
   

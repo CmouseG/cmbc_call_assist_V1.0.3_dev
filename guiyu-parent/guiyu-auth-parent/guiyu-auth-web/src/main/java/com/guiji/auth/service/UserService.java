@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.util.AuthUtil;
@@ -37,8 +36,6 @@ public class UserService {
 	 * @param user
 	 */
 	public void insert(SysUser user,Long roleId){
-		user.setCreateTime(new Date());
-		user.setUpdateTime(new Date());
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
 	}
@@ -93,7 +90,7 @@ public class UserService {
 	}
 	
 	
-	public void changePassword(String newPass,String oldPass,@RequestHeader Long userId) throws CheckConditionException{
+	public void changePassword(String newPass,String oldPass,Long userId) throws CheckConditionException{
 		newPass=AuthUtil.encrypt(newPass);
 		oldPass=AuthUtil.encrypt(oldPass);
 		SysUser sysUser =mapper.selectByPrimaryKey(userId);

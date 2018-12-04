@@ -20,7 +20,11 @@ public class SysMenu implements Serializable {
 
     private Long isShow;
 
+    private Long createId;
+
     private Date createTime;
+
+    private Long updateId;
 
     private Date updateTime;
 
@@ -32,11 +36,11 @@ public class SysMenu implements Serializable {
 
     private String remarks;
 
-    private String delFlag="0";
+    private String delFlag;
+    
+    private List<SysMenu> child=new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
-    
-    List<SysMenu> child=new ArrayList<SysMenu>();
 
     public Long getId() {
         return id;
@@ -94,12 +98,28 @@ public class SysMenu implements Serializable {
         this.isShow = isShow;
     }
 
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Long getUpdateId() {
+        return updateId;
+    }
+
+    public void setUpdateId(Long updateId) {
+        this.updateId = updateId;
     }
 
     public Date getUpdateTime() {
@@ -150,7 +170,7 @@ public class SysMenu implements Serializable {
         this.delFlag = delFlag == null ? null : delFlag.trim();
     }
     
-    public List<SysMenu> getChild() {
+	public List<SysMenu> getChild() {
 		return child;
 	}
 
@@ -171,7 +191,9 @@ public class SysMenu implements Serializable {
         sb.append(", pid=").append(pid);
         sb.append(", permission=").append(permission);
         sb.append(", isShow=").append(isShow);
+        sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
+        sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", type=").append(type);
         sb.append(", level=").append(level);

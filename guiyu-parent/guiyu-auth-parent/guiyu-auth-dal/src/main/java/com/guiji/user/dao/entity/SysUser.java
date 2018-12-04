@@ -18,11 +18,15 @@ public class SysUser implements Serializable {
 
     private String batchRecordUrl;
 
+    private Long createId;
+
     private Date createTime;
+
+    private Long updateId;
 
     private Date updateTime;
 
-    private String delFlag="0";
+    private String delFlag;
 
     private Date vaildTime;
 
@@ -84,12 +88,28 @@ public class SysUser implements Serializable {
         this.batchRecordUrl = batchRecordUrl == null ? null : batchRecordUrl.trim();
     }
 
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Long getUpdateId() {
+        return updateId;
+    }
+
+    public void setUpdateId(Long updateId) {
+        this.updateId = updateId;
     }
 
     public Date getUpdateTime() {
@@ -129,7 +149,9 @@ public class SysUser implements Serializable {
         sb.append(", pushType=").append(pushType);
         sb.append(", callRecordUrl=").append(callRecordUrl);
         sb.append(", batchRecordUrl=").append(batchRecordUrl);
+        sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
+        sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", vaildTime=").append(vaildTime);

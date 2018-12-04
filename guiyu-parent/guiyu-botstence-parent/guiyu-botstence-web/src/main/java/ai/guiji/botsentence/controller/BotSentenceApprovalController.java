@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceDomainMapper;
@@ -73,7 +74,7 @@ public class BotSentenceApprovalController {
 	
 	@Autowired
 	private BotSentenceDomainMapper botSentenceDomainMapper;
-
+	
 	/**
 	 *  获取待审核话术列表
 	 */
@@ -174,6 +175,8 @@ public class BotSentenceApprovalController {
 		}
 		
 		botSentenceApprovalService.passApproval(processId, list,userId);
+		
+		botSentenceApprovalService.publishSentence(processId,userId);
 		return ServerResult.createBySuccess();
 	}
 	

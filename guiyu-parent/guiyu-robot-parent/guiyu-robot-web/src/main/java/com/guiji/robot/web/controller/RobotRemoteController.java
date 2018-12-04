@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.dao.entity.TtsCallbackHis;
+import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
@@ -28,10 +29,13 @@ import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.UserAiCfgDetailVO;
+import com.guiji.robot.model.UserAiCfgVO;
 import com.guiji.robot.service.IAiAbilityCenterService;
 import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.impl.AiNewTransService;
+import com.guiji.robot.util.ControllerUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
@@ -54,6 +58,8 @@ public class RobotRemoteController implements IRobotRemote{
 	AiNewTransService aiNewTransService;
 	@Autowired
 	ITtsWavService iTtsWavService;
+	@Autowired
+	ControllerUtil controllerUtil;
 	
 	/************************1、资源服务************************/
 	
@@ -153,13 +159,25 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param aiCallNextReq
 	 * @return
 	 */
-	public Result.ReturnData<List<UserAiCfgInfo>> queryCustAccount(@RequestParam(value="userId",required=true)String userId){
+	public Result.ReturnData<UserAiCfgVO> queryCustAccount(@RequestParam(value="userId",required=true)String userId){
 		if(StrUtils.isEmpty(userId)) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
+		UserAiCfgVO userAiCfgVO = new UserAiCfgVO();
+		//查询用户机器人配置基本信息
+		UserAiCfgBaseInfo userAiCfgBaseInfo = iUserAiCfgService.queryUserAiCfgBaseInfoByUserId(userId);
+		//查询用户机器人配置分配详情
 		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
-		return Result.ok(list);
+		if(userAiCfgBaseInfo != null) {
+			userAiCfgVO.setUserId(userId);
+			userAiCfgVO.setAiTotalNum(userAiCfgBaseInfo.getAiTotalNum());
+		}
+		if(ListUtil.isNotEmpty(list)) {
+			List<UserAiCfgDetailVO> userDetailList = controllerUtil.changeUserAiCfg2VO(list);
+			userAiCfgVO.setUserAiCfgDetailList(userDetailList);
+		}
+		return Result.ok(userAiCfgVO);
 	}
 	
 	/**

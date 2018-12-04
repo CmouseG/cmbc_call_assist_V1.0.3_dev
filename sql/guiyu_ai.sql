@@ -44,6 +44,8 @@ DROP TABLE IF EXISTS `tts_result`;
 CREATE TABLE `tts_result` (
   `id` int(8) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `bus_id` varchar(255) DEFAULT NULL COMMENT '业务id',
+  `tts_ip` varchar(50) NOT NULL DEFAULT '' COMMENT 'tts服务器ip',
+  `tts_port` varchar(10) NOT NULL DEFAULT '' COMMENT 'tts服务器端口',
   `content` varchar(255) DEFAULT NULL COMMENT '待转换文本内容',
   `model` varchar(20) NOT NULL DEFAULT '' COMMENT '模型',
   `audio_url` varchar(1000) DEFAULT NULL COMMENT '输出音频文件url',

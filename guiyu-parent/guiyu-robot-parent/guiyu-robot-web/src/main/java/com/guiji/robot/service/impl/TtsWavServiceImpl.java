@@ -88,6 +88,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			if(StrUtils.isEmpty(ttsWavHis.getId())) {
 				//如果主键为空，那么新增一条信息
 				ttsWavHis.setCrtTime(new Date());
+				if(ttsWavHis.getErrorTryNum()==null) {
+					ttsWavHis.setErrorTryNum(0);
+				}
 				ttsWavHisMapper.insert(ttsWavHis);
 			}else {
 				//主键不为空，更新信息

@@ -24,9 +24,11 @@ import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
+import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.UserAiCfgBaseInfoVO;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
+import com.guiji.robot.util.ControllerUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
@@ -46,7 +48,8 @@ public class CustAiAccountController {
 	IUserAiCfgService iUserAiCfgService;
 	@Autowired
 	IAuth iAuth;
-	
+	@Autowired
+	ControllerUtil controllerUtil;
 	
 	/**
 	 * 新增或者修改用户机器人配置信息明细
@@ -164,12 +167,15 @@ public class CustAiAccountController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryCustAccountForPage/{pageNo}/{pageSize}", method = RequestMethod.POST)
-	public Result.ReturnData<Page<UserAiCfgInfo>> queryCustAccountForPage(
+	public Result.ReturnData<Page<UserAiCfgDetailVO>> queryCustAccountForPage(
 			 @PathVariable(value="pageNo",required=true)int pageNo,
 			 @PathVariable(value="pageSize",required=true)int pageSize,
 			 @RequestBody UserAiCfgQueryCondition condition){
+		//后端分页查询
 		Page<UserAiCfgInfo> page = iUserAiCfgService.queryCustAccountForPage(pageNo, pageSize, condition);
-		return Result.ok(page);
+		//处理转为前端需要的VO后返回
+		Page<UserAiCfgDetailVO> rtnPage = new Page<UserAiCfgDetailVO>(pageNo,page.getTotalRecord(),controllerUtil.changeUserAiCfg2VO(page.getRecords()));
+		return Result.ok(rtnPage);
 	}
 	
 	

@@ -1,5 +1,7 @@
 package com.guiji.process.server.service.impl;
 
+import com.guiji.common.constant.RedisConstant;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
@@ -12,6 +14,8 @@ import com.guiji.process.core.vo.CmdMsgSenderMap;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.dao.entity.SysProcess;
+import com.guiji.process.server.dao.entity.SysProcessTask;
+import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.*;
 import com.guiji.process.server.util.DeviceProcessUtil;
@@ -35,7 +39,8 @@ public class ProcessManageService implements IProcessManageService {
     private RedisUtil redisUtil;
     @Autowired
     private ISysProcessService processService;
-
+    @Autowired
+    private ISysProcessTaskService processTaskService;
     @Autowired
     private IProcessInstanceManageService processInstanceManageService;
     @Autowired
@@ -87,6 +92,11 @@ public class ProcessManageService implements IProcessManageService {
 
     @Override
     public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters) {
+        String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType);
+        if (StringUtils.isNotEmpty(hasRun)) {
+            throw new GuiyuException(GuiyuProcessExceptionEnum.PROCESS08000002.getErrorCode(),GuiyuProcessExceptionEnum.PROCESS08000002.getMsg());
+        }
+
         if(processInstanceVO == null || cmdType == null)
         {
             return false;
@@ -106,7 +116,29 @@ public class ProcessManageService implements IProcessManageService {
 
         CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
 
-        System.out.println("发送命令给客户端：" + cmdMessageVO);
+        // 更新数据库
+        // 更新sys_process中exec_status为执行中
+        SysProcess sysProcess = new SysProcess();
+        sysProcess.setIp(processInstanceVO.getIp());
+        sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+        sysProcess.setExecStatus(1);
+        processService.update(sysProcess);
+        // 新增sys_process_task
+        SysProcessTask sysProcessTask = new SysProcessTask();
+        sysProcessTask.setIp(processInstanceVO.getIp());
+        sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+        sysProcessTask.setCmdType(cmdType.getValue());
+        sysProcessTask.setProcessKey(processInstanceVO.getParamter().toString());
+        sysProcessTask.setParameters(parameters.toString());
+        sysProcessTask.setExecStatus(1);
+        sysProcessTask.setCreateTime(new Date());
+        sysProcessTask.setUpdateTime(new Date());
+        /*sysProcessTask.setCreateBy();
+        sysProcessTask.setUpdateBy();*/
+        processTaskService.insert(sysProcessTask);
+        // 操作写入缓存，控制5分钟内不能重复发起命令
+        redisUtil.set(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType,"hasRun");
+        redisUtil.expire(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType,RedisConstant.REDIS_PROCESS_TASK_EXPIRE);
         return true;
 
     }

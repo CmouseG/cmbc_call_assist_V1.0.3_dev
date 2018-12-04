@@ -81,6 +81,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * @param userAiCfgBaseInfo
 	 * @return
 	 */
+	@Transactional
 	public UserAiCfgBaseInfo putupUserCfgBase(UserAiCfgBaseInfo userAiCfgBaseInfo) {
 		if(userAiCfgBaseInfo != null) {
 			String id = userAiCfgBaseInfo.getId();
@@ -309,7 +310,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	@Transactional
 	public UserAiCfgInfo userAiCfgChange(UserAiCfgBaseInfo userBaseInfo,UserAiCfgInfo userAiCfgInfo) {
 		Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId(), RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId());
-		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
+		if (distributedLockHandler.tryLock(lock)) { // 持锁
 			try {
 				String id = userAiCfgInfo.getId();
 				//查询用户资源配置缓存数据
@@ -397,7 +398,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	public void delUserCfg(String userId,String id) {
 		if(StrUtils.isNotEmpty(id) && StrUtils.isNotEmpty(userId)) {
 			Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userId, RobotConstants.LOCK_NAME_CFG+userId);
-			if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
+			if (distributedLockHandler.tryLock(lock)) { // 持锁
 				try {
 					//根据id查询用户存量缓存数据
 					UserAiCfgInfo existUserAiCfgInfo = userAiCfgInfoMapper.selectByPrimaryKey(id);

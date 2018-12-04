@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.process.server.dao.SysProcessLogMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.process.server.dao.entity.SysProcessLog" >
+<mapper namespace="com.guiji.process.server.dao.SysProcessTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.process.server.dao.entity.SysProcessTask" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="process_id" property="processId" jdbcType="BIGINT" />
     <result column="ip" property="ip" jdbcType="VARCHAR" />
@@ -10,11 +10,12 @@
     <result column="process_key" property="processKey" jdbcType="VARCHAR" />
     <result column="parameters" property="parameters" jdbcType="VARCHAR" />
     <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="result_content" property="resultContent" jdbcType="VARCHAR" />
+    <result column="exec_status" property="execStatus" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="result_content" property="resultContent" jdbcType="VARCHAR" />
-    <result column="create_time_str" property="createTimeStr" jdbcType="VARCHAR" />
-    <result column="update_time_str" property="updateTimeStr" jdbcType="VARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="update_by" property="updateBy" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,17 +76,17 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, process_id, ip, port, cmd_type, process_key, `parameters`, `result`, create_time, 
-    update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str,result_content
+    id, process_id, ip, port, cmd_type, process_key, `parameters`, `result`, result_content, 
+    exec_status, create_time, update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str,create_by, update_by
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessLogExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessTaskExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from sys_process_log
+    from sys_process_task
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -99,31 +100,33 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from sys_process_log
+    from sys_process_task
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from sys_process_log
+    delete from sys_process_task
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.process.server.dao.entity.SysProcessLogExample" >
-    delete from sys_process_log
+  <delete id="deleteByExample" parameterType="com.guiji.process.server.dao.entity.SysProcessTaskExample" >
+    delete from sys_process_task
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.process.server.dao.entity.SysProcessLog" >
-    insert into sys_process_log (id, process_id, ip, 
+  <insert id="insert" parameterType="com.guiji.process.server.dao.entity.SysProcessTask" >
+    insert into sys_process_task (id, process_id, ip, 
       port, cmd_type, process_key, 
-      `parameters`, `result`, create_time, 
-      update_time, result_content)
+      `parameters`, `result`, result_content, 
+      exec_status, create_time, update_time, 
+      create_by, update_by)
     values (#{id,jdbcType=BIGINT}, #{processId,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, 
       #{port,jdbcType=VARCHAR}, #{cmdType,jdbcType=INTEGER}, #{processKey,jdbcType=VARCHAR}, 
-      #{parameters,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{resultContent,jdbcType=VARCHAR})
+      #{parameters,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{resultContent,jdbcType=VARCHAR}, 
+      #{execStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.process.server.dao.entity.SysProcessLog" >
-    insert into sys_process_log
+  <insert id="insertSelective" parameterType="com.guiji.process.server.dao.entity.SysProcessTask" >
+    insert into sys_process_task
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -149,14 +152,23 @@
       <if test="result != null" >
         `result`,
       </if>
+      <if test="resultContent != null" >
+        result_content,
+      </if>
+      <if test="execStatus != null" >
+        exec_status,
+      </if>
       <if test="createTime != null" >
         create_time,
       </if>
       <if test="updateTime != null" >
         update_time,
       </if>
-      <if test="resultContent != null" >
-        result_content,
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -184,25 +196,34 @@
       <if test="result != null" >
         #{result,jdbcType=VARCHAR},
       </if>
+      <if test="resultContent != null" >
+        #{resultContent,jdbcType=VARCHAR},
+      </if>
+      <if test="execStatus != null" >
+        #{execStatus,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="resultContent != null" >
-        #{resultContent,jdbcType=VARCHAR},
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.process.server.dao.entity.SysProcessLogExample" resultType="java.lang.Integer" >
-    select count(*) from sys_process_log
+  <select id="countByExample" parameterType="com.guiji.process.server.dao.entity.SysProcessTaskExample" resultType="java.lang.Integer" >
+    select count(*) from sys_process_task
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update sys_process_log
+    update sys_process_task
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
@@ -228,14 +249,23 @@
       <if test="record.result != null" >
         `result` = #{record.result,jdbcType=VARCHAR},
       </if>
+      <if test="record.resultContent != null" >
+        result_content = #{record.resultContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.execStatus != null" >
+        exec_status = #{record.execStatus,jdbcType=INTEGER},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.resultContent != null" >
-        result_content = #{record.resultContent,jdbcType=VARCHAR},
+      <if test="record.createBy != null" >
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateBy != null" >
+        update_by = #{record.updateBy,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -243,7 +273,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update sys_process_log
+    update sys_process_task
     set id = #{record.id,jdbcType=BIGINT},
       process_id = #{record.processId,jdbcType=BIGINT},
       ip = #{record.ip,jdbcType=VARCHAR},
@@ -252,15 +282,18 @@
       process_key = #{record.processKey,jdbcType=VARCHAR},
       `parameters` = #{record.parameters,jdbcType=VARCHAR},
       `result` = #{record.result,jdbcType=VARCHAR},
+      result_content = #{record.resultContent,jdbcType=VARCHAR},
+      exec_status = #{record.execStatus,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      result_content = #{record.resultContent,jdbcType=VARCHAR}
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      update_by = #{record.updateBy,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.process.server.dao.entity.SysProcessLog" >
-    update sys_process_log
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.process.server.dao.entity.SysProcessTask" >
+    update sys_process_task
     <set >
       <if test="processId != null" >
         process_id = #{processId,jdbcType=BIGINT},
@@ -283,20 +316,29 @@
       <if test="result != null" >
         `result` = #{result,jdbcType=VARCHAR},
       </if>
+      <if test="resultContent != null" >
+        result_content = #{resultContent,jdbcType=VARCHAR},
+      </if>
+      <if test="execStatus != null" >
+        exec_status = #{execStatus,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="resultContent != null" >
-        result_content = #{resultContent,jdbcType=VARCHAR},
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.process.server.dao.entity.SysProcessLog" >
-    update sys_process_log
+  <update id="updateByPrimaryKey" parameterType="com.guiji.process.server.dao.entity.SysProcessTask" >
+    update sys_process_task
     set process_id = #{processId,jdbcType=BIGINT},
       ip = #{ip,jdbcType=VARCHAR},
       port = #{port,jdbcType=VARCHAR},
@@ -304,9 +346,12 @@
       process_key = #{processKey,jdbcType=VARCHAR},
       `parameters` = #{parameters,jdbcType=VARCHAR},
       `result` = #{result,jdbcType=VARCHAR},
+      result_content = #{resultContent,jdbcType=VARCHAR},
+      exec_status = #{execStatus,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      result_content = #{resultContent,jdbcType=VARCHAR}
+      create_by = #{createBy,jdbcType=BIGINT},
+      update_by = #{updateBy,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

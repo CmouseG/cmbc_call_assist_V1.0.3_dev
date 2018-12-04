@@ -3,7 +3,7 @@ package com.guiji.process.server.dao.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SysProcessLog implements Serializable {
+public class SysProcessTask implements Serializable {
     private Long id;
 
     private Long processId;
@@ -20,11 +20,17 @@ public class SysProcessLog implements Serializable {
 
     private String result;
 
+    private String resultContent;
+
+    private Integer execStatus;
+
     private Date createTime;
 
     private Date updateTime;
 
-    private String resultContent;
+    private Long createBy;
+
+    private Long updateBy;
 
     private String createTimeStr;
 
@@ -96,6 +102,22 @@ public class SysProcessLog implements Serializable {
         this.result = result == null ? null : result.trim();
     }
 
+    public String getResultContent() {
+        return resultContent;
+    }
+
+    public void setResultContent(String resultContent) {
+        this.resultContent = resultContent == null ? null : resultContent.trim();
+    }
+
+    public Integer getExecStatus() {
+        return execStatus;
+    }
+
+    public void setExecStatus(Integer execStatus) {
+        this.execStatus = execStatus;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -112,12 +134,20 @@ public class SysProcessLog implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getResultContent() {
-        return resultContent;
+    public Long getCreateBy() {
+        return createBy;
     }
 
-    public void setResultContent(String resultContent) {
-        this.resultContent = resultContent == null ? null : resultContent.trim();
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
     }
 
     public String getCreateTimeStr() {
@@ -150,9 +180,12 @@ public class SysProcessLog implements Serializable {
         sb.append(", processKey=").append(processKey);
         sb.append(", parameters=").append(parameters);
         sb.append(", result=").append(result);
+        sb.append(", resultContent=").append(resultContent);
+        sb.append(", execStatus=").append(execStatus);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", resultContent=").append(resultContent);
+        sb.append(", createBy=").append(createBy);
+        sb.append(", updateBy=").append(updateBy);
         sb.append(", createTimeStr=").append(createTimeStr);
         sb.append(", updateTimeStr=").append(updateTimeStr);
         sb.append(", serialVersionUID=").append(serialVersionUID);

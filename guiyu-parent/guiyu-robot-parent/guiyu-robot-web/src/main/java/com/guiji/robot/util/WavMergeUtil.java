@@ -68,10 +68,10 @@ public class WavMergeUtil {
 			   bi1.close();
 		   }
 		   if(bi2 != null) {
-			   bi1.close();
+			   bi2.close();
 		   }
 		   if(bi3 != null) {
-			   bi1.close();
+			   bi3.close();
 		   }
 		} else {
 		   //否则只有一个,直接返回语音路径

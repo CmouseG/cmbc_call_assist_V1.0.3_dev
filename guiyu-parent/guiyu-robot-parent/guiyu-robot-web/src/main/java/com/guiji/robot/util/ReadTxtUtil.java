@@ -3,6 +3,8 @@ package com.guiji.robot.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.slf4j.Logger;
@@ -30,12 +32,16 @@ public class ReadTxtUtil {
 		if (StrUtils.isEmpty(filePath)) {
 			return null;
 		}
+		InputStream is = null;
+		InputStreamReader read = null;
+		BufferedReader bufferedReader = null;
 		try {
 			String encoding = "UTF-8";
 			File file = new File(filePath);
 			if (file.isFile() && file.exists()) { // 判断文件是否存在
-				InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);// 考虑到编码格式
-				BufferedReader bufferedReader = new BufferedReader(read);
+				is = new FileInputStream(file);
+				read = new InputStreamReader(is, encoding);// 考虑到编码格式
+				bufferedReader = new BufferedReader(read);
 				StringBuilder sb = new StringBuilder();
 				String lineTxt = null;
 				while ((lineTxt = bufferedReader.readLine()) != null) {
@@ -48,6 +54,11 @@ public class ReadTxtUtil {
 			}
 		} catch (Exception e) {
 			logger.error("读取文件"+filePath+"内容出错",e);
+		}finally {
+			if(bufferedReader!=null)
+				try {bufferedReader.close();} catch (IOException e) {e.printStackTrace();}
+				try {read.close();} catch (IOException e) {e.printStackTrace();}
+				try {is.close();} catch (IOException e) {e.printStackTrace();}
 		}
 		return null;
 	}

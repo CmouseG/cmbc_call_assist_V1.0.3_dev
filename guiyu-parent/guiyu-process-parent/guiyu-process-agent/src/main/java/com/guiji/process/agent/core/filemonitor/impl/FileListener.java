@@ -26,9 +26,10 @@ public final class FileListener extends FileAlterationListenerAdaptor {
     public void onFileChange(File file) {
         System.out.println("[修改]:" + file.getAbsolutePath());
         BufferedReader buf = null;
+        BufferedReader br = null;
         try {
             buf = new BufferedReader(new InputStreamReader(new FileInputStream(file),"GBK"));
-            BufferedReader br = new BufferedReader(buf);
+            br = new BufferedReader(buf);
             String line = null;
             ProcessCfgService.getIntance().onChanged(file);
         } catch (IOException e) {
@@ -36,6 +37,7 @@ public final class FileListener extends FileAlterationListenerAdaptor {
         } finally {
             // 这里释放系统 IO 资源
             IOUtils.closeQuietly(buf);
+            IOUtils.closeQuietly(br);
         }
     }
 

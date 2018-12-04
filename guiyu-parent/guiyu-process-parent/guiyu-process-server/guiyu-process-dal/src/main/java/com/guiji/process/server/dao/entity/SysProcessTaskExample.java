@@ -1024,6 +1024,76 @@ public class SysProcessTaskExample {
             addCriterion("update_by not between", value1, value2, "updateBy");
             return (Criteria) this;
         }
+
+        public Criteria andReqKeyIsNull() {
+            addCriterion("req_key is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyIsNotNull() {
+            addCriterion("req_key is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyEqualTo(String value) {
+            addCriterion("req_key =", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotEqualTo(String value) {
+            addCriterion("req_key <>", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyGreaterThan(String value) {
+            addCriterion("req_key >", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("req_key >=", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyLessThan(String value) {
+            addCriterion("req_key <", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyLessThanOrEqualTo(String value) {
+            addCriterion("req_key <=", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyLike(String value) {
+            addCriterion("req_key like", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotLike(String value) {
+            addCriterion("req_key not like", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyIn(List<String> values) {
+            addCriterion("req_key in", values, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotIn(List<String> values) {
+            addCriterion("req_key not in", values, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyBetween(String value1, String value2) {
+            addCriterion("req_key between", value1, value2, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotBetween(String value1, String value2) {
+            addCriterion("req_key not between", value1, value2, "reqKey");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

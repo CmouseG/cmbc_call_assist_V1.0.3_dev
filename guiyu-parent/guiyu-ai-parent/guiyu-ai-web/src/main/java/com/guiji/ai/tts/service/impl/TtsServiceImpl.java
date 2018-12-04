@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.TtsStatusMapper;
 import com.guiji.ai.dao.entity.TtsStatus;
+import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
@@ -50,7 +51,8 @@ public class TtsServiceImpl implements ITtsService
 		ExecutorService executorService = Executors.newFixedThreadPool(10);
 		// 结果集
 		Map<String, String> radioMap = new HashMap<String, String>();
-		String status = "S";
+		String tableStatus = AiConstants.FINISHED; //表状态
+		String status = "S"; //返回状态
 		String errMsg = null;
 
 		try
@@ -68,12 +70,16 @@ public class TtsServiceImpl implements ITtsService
 
 			// 封装后无返回值，必须自己whenComplete()获取
 			CompletableFuture.allOf(cfs).join();
+			
 		} catch (Exception e)
 		{
 			status = "F";
 			errMsg = e.getMessage();
+			tableStatus = AiConstants.FAIL;
 		}
 
+		ttsStatusMapper.updateStatusByBusId(ttsReqVO.getBusId(), tableStatus);
+		
 		// 回调机器人接口，返回数据
 		TtsCallback ttsCallback = new TtsCallback();
 		ttsCallback.setBusiId(ttsReqVO.getBusId());
@@ -111,18 +117,18 @@ public class TtsServiceImpl implements ITtsService
 
 	@Override
 	@Transactional
-	public String getTransferStatusByBusId(String busId) throws Exception
+	public String getTransferStatusByBusId(String busId)
 	{
-		String status = ttsStatusMapper.getReqStatusByBusId(busId);
-		switch (status)
+		String status = "";
+		try
 		{
-		case "2":
-			return "done";
-		case "1":
-			return "doing";
-		default:
-			return "undo";
+			status = ttsStatusMapper.getReqStatusByBusId(busId);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
+		return status;
+
 	}
 
 	@Override
@@ -153,7 +159,7 @@ public class TtsServiceImpl implements ITtsService
 		TtsStatus ttsStatus = new TtsStatus();
 		ttsStatus.setBusId(ttsReqVO.getBusId());
 		ttsStatus.setModel(ttsReqVO.getModel());
-		ttsStatus.setStatus("0");
+		ttsStatus.setStatus(AiConstants.UNTREATED); //未处理
 		ttsStatus.setCreateTime(new Date());
 		ttsStatus.setText_count(ttsReqVO.getContents().size());
 		SaveTtsStatusHandler.getInstance().add(ttsStatus, ttsStatusMapper);

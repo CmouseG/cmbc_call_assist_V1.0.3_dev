@@ -14,5 +14,7 @@ public interface TtsStatusMapper
 	List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status);
 
 	int insert(TtsStatus record);
+
+	int updateStatusByBusId(String busId, String status);
 	
 }

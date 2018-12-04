@@ -17,6 +17,8 @@
     <result column="create_by" property="createBy" jdbcType="BIGINT" />
     <result column="update_by" property="updateBy" jdbcType="BIGINT" />
     <result column="req_key" property="reqKey" jdbcType="VARCHAR" />
+    <result column="create_time_str" property="createTimeStr" jdbcType="VARCHAR" />
+    <result column="update_time_str" property="updateTimeStr" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >

@@ -14,6 +14,8 @@ public interface ISysProcessService {
 
     public boolean update(SysProcess sysProcess);
 
+    public List<SysProcess> list(SysProcess sysProcess);
+
     public boolean delete(long id);
 
     public Page<SysProcess> queryProcessPage(int pageNo, int pageSize, SysProcess sysProcess);

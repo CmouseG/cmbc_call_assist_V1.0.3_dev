@@ -5,6 +5,7 @@
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
+    <result column="ai_name" property="aiName" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="assign_date" property="assignDate" jdbcType="VARCHAR" />
     <result column="assign_time" property="assignTime" jdbcType="VARCHAR" />
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_id, ai_no, template_id, assign_date, assign_time, taskback_date, taskback_time, 
-    call_num, crt_time
+    id, user_id, ai_no, ai_name, template_id, assign_date, assign_time, taskback_date, 
+    taskback_time, call_num, crt_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.robot.dao.entity.AiCycleHisExample" >
     select
@@ -114,13 +115,13 @@
       SELECT genTabId('ai_cycle_his')
     </selectKey>
     insert into ai_cycle_his (id, user_id, ai_no, 
-      template_id, assign_date, assign_time, 
-      taskback_date, taskback_time, call_num, 
-      crt_time)
+      ai_name, template_id, assign_date, 
+      assign_time, taskback_date, taskback_time, 
+      call_num, crt_time)
     values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNo,jdbcType=VARCHAR}, 
-      #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, #{assignTime,jdbcType=VARCHAR}, 
-      #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, #{callNum,jdbcType=BIGINT}, 
-      #{crtTime,jdbcType=TIMESTAMP})
+      #{aiName,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, 
+      #{assignTime,jdbcType=VARCHAR}, #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, 
+      #{callNum,jdbcType=BIGINT}, #{crtTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -134,6 +135,9 @@
       </if>
       <if test="aiNo != null" >
         ai_no,
+      </if>
+      <if test="aiName != null" >
+        ai_name,
       </if>
       <if test="templateId != null" >
         template_id,
@@ -164,6 +168,9 @@
       </if>
       <if test="aiNo != null" >
         #{aiNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aiName != null" >
+        #{aiName,jdbcType=VARCHAR},
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
@@ -206,6 +213,9 @@
       <if test="record.aiNo != null" >
         ai_no = #{record.aiNo,jdbcType=VARCHAR},
       </if>
+      <if test="record.aiName != null" >
+        ai_name = #{record.aiName,jdbcType=VARCHAR},
+      </if>
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
@@ -237,6 +247,7 @@
     set id = #{record.id,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
+      ai_name = #{record.aiName,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       assign_date = #{record.assignDate,jdbcType=VARCHAR},
       assign_time = #{record.assignTime,jdbcType=VARCHAR},
@@ -256,6 +267,9 @@
       </if>
       <if test="aiNo != null" >
         ai_no = #{aiNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aiName != null" >
+        ai_name = #{aiName,jdbcType=VARCHAR},
       </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
@@ -285,6 +299,7 @@
     update ai_cycle_his
     set user_id = #{userId,jdbcType=VARCHAR},
       ai_no = #{aiNo,jdbcType=VARCHAR},
+      ai_name = #{aiName,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       assign_date = #{assignDate,jdbcType=VARCHAR},
       assign_time = #{assignTime,jdbcType=VARCHAR},

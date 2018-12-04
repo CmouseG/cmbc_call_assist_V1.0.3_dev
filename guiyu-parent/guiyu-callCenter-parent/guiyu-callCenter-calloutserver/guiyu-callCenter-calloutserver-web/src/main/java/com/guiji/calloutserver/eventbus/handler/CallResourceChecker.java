@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.eventbus.handler;
 
+import com.google.common.base.Preconditions;
 import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
@@ -7,11 +8,9 @@ import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.component.result.Result;
-import com.guiji.fsmanager.entity.ServiceTypeEnum;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallNext;
-import com.guiji.utils.ServerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -79,6 +78,7 @@ public class CallResourceChecker {
             log.warn("在初始化fsline时出现异常", e);
         }
 
+        Preconditions.checkNotNull(returnData, "null return data from sellbot");
         String aiNo = returnData.getBody().getAiNo();
         callOutPlan.setAiId(aiNo);
         callOutPlanService.update(callOutPlan);

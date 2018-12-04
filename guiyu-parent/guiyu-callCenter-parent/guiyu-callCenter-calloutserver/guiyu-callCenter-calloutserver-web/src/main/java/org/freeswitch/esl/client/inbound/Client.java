@@ -145,7 +145,7 @@ public class Client
             {
                 Thread.sleep( 250L );
             } 
-            catch ( InterruptedException e )
+            catch ( Exception e )
             {
                 log.warn("sleep出现异常", e);
             }

@@ -80,22 +80,19 @@ public class RequestHelper {
             }finally {
                 if(!unStopFlag){
                     retryTimes--;
-                    //请求失败，则不断重试
-                    if(retryTimes<=0){
-                        //超过指定的请求次数，则退出
-                        return null;
+                }
+
+                if(retryTimes>0) {
+                    totalDelaySeconds += delaySeconds;
+                    int totalSleepSeconds = (retryInterval + totalDelaySeconds);
+                    if (totalSleepSeconds >= maxRetryInterval) {
+                        totalSleepSeconds = maxRetryInterval;
                     }
-                }
+                    Thread.sleep(totalSleepSeconds * 1000L);
 
-                totalDelaySeconds+=delaySeconds;
-                int totalSleepSeconds = (retryInterval + totalDelaySeconds);
-                if(totalSleepSeconds >= maxRetryInterval){
-                    totalSleepSeconds = maxRetryInterval;
-                }
-                Thread.sleep(totalSleepSeconds * 1000L);
-
-                if(unStopFlag){
-                    isContinue = true;
+                    if (unStopFlag) {
+                        isContinue = true;
+                    }
                 }
             }
 

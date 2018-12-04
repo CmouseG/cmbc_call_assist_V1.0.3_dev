@@ -31,7 +31,5 @@ public interface TtsModelMapper {
     int updateByPrimaryKeySelective(TtsModel record);
 
     int updateByPrimaryKey(TtsModel record);
-    
-    //查询当前时间之前10分钟的GPU分配情况
-    List<Map<String, Object>> selectTenMinutesBefore(Date now);
+
 }

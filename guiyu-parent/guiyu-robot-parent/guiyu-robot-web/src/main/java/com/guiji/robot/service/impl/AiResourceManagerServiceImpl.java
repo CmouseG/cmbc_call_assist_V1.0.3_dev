@@ -98,7 +98,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			}
 			List<ProcessInstanceVO> instanceList = processInstanceListData.getBody();
 			if(instanceList == null || instanceList.isEmpty()) {
-				logger.error("调用进程管理申请{}个机器人异常，无空余可用机器人...");
+				logger.error("调用进程管理申请{}个机器人异常，无空余可用机器人...",addAiNum);
 				throw new RobotException(AiErrorEnum.AI00060008.getErrorCode(),AiErrorEnum.AI00060008.getErrorMsg());
 			}else {
 				logger.info("为用户{}申请到{}个机器人",checkAiReady.getUserId(),instanceList.size());

@@ -3,6 +3,7 @@ package com.guiji.process.agent;
 
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.component.result.Result;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.model.CfgProcessOperVO;
 import com.guiji.process.agent.model.CfgProcessVO;
@@ -18,11 +19,13 @@ import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 @Service
 public class ProcessAgentCmdHandler implements IProcessCmdHandler {
@@ -47,16 +50,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case RESTART:
-                cfgProcessOperVO = getNodeOper(CmdTypeEnum.STOP, cmdMessageVO.getProcessInstanceVO().getPort());
-                doCmd(cmdMessageVO, cfgProcessOperVO);
-                Thread.sleep(1000);//等待1s查看是否关闭成功
-                //  检查是否停掉，如果进程还在则kill -9
-                if (ProcessUtil.checkRun(processInstanceVO.getPort())) {
-                    ProcessUtil.killProcess(cmdMessageVO.getProcessInstanceVO().getPort());
-                }
-
-                cfgProcessOperVO = getNodeOper(CmdTypeEnum.START, cmdMessageVO.getProcessInstanceVO().getPort());
-                doCmd(cmdMessageVO, cfgProcessOperVO);
+                cfgProcessOperVO = getNodeOper(CmdTypeEnum.RESTART, cmdMessageVO.getProcessInstanceVO().getPort());
+                CommandResult commandResult = doCmd(cmdMessageVO, cfgProcessOperVO);
+                HealthCheckResultAnylyse.afterRestart(commandResult,processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters());
                 break;
 
             case UNKNOWN:
@@ -159,7 +155,6 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             // 发起命令
             cmdResult = CommandUtils.exec(cmd);
-            System.out.println("执行命令结果：：" + cmdResult.getOutput());
             // 执行完命令保存结果到内存记录
             ProcessUtil.afterCMD(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum());
         }
@@ -201,5 +196,4 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         // 更新本地状态
         ProcessStatusLocal.getInstance().put(cmdMessageVO.getProcessInstanceVO().getPort(), nowStatus);
     }
-
 }

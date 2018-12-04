@@ -12,4 +12,6 @@ public interface IHealthCheckResultAnalyse {
 
     void afertPublish(CommandResult cmdResult, ProcessInstanceVO processInstanceVO,List<String> parameters);
 
+    void afertRestart(CommandResult cmdResult, ProcessInstanceVO processInstanceVO,List<String> parameters);
+
 }

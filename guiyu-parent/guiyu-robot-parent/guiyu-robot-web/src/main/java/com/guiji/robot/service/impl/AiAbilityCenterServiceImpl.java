@@ -213,7 +213,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		if(aiCallApplyReq == null
 				|| StrUtils.isEmpty(aiCallApplyReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallApplyReq.getPhoneNo())
-				|| StrUtils.isEmpty(aiCallApplyReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallApplyReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallApplyReq.getUserId())) {
 			//必输校验不通过
@@ -340,7 +339,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				|| StrUtils.isEmpty(aiCallStartReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallStartReq.getAiNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getPhoneNo())
-				|| StrUtils.isEmpty(aiCallStartReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallStartReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallStartReq.getUserId())) {
 			//必输校验不通过

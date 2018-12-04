@@ -19,6 +19,7 @@
         <module>guiyu-mybatis-generator</module>
         <module>guiyu-component</module>
         <module>guiyu-message-queue</module>
+        <module>guiyu-sysoperalog-parent</module>
     </modules>
 
 

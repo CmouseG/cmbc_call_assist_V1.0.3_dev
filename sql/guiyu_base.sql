@@ -162,13 +162,15 @@ CREATE TABLE `sys_process` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1170 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1218 DEFAULT CHARSET=utf8;
+
+
 
 -- ----------------------------
 -- Table structure for sys_process_log
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_process_log`;
-CREATE TABLE `sys_process_log` (
+DROP TABLE IF EXISTS `sys_process_task`;
+CREATE TABLE `sys_process_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `process_id` bigint(20) DEFAULT NULL,
   `ip` varchar(100) DEFAULT NULL,
@@ -178,10 +180,20 @@ CREATE TABLE `sys_process_log` (
   `parameters` varchar(255) DEFAULT NULL COMMENT '命令参数',
   `result` varchar(255) DEFAULT NULL COMMENT '执行结果',
   `result_content` varchar(255) DEFAULT NULL,
+  `exec_status` int(2) DEFAULT NULL COMMENT '执行状态:0执行结束1执行中',
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
+  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+  `req_key` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+
+
+
+
+
+
 
 -- ----------------------------
 -- Table structure for sys_role

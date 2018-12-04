@@ -1,8 +1,8 @@
 package com.guiji.process.server.service.impl;
 
 
+import com.guiji.common.constant.RedisConstant;
 import com.guiji.common.model.process.ProcessStatusEnum;
-import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.guiyu.message.component.FanoutSender;
 import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 import com.guiji.process.core.IProcessCmdHandler;
@@ -10,10 +10,11 @@ import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.dao.entity.SysProcess;
-import com.guiji.process.server.dao.entity.SysProcessLog;
-import com.guiji.process.server.service.ISysProcessLogService;
+import com.guiji.process.server.dao.entity.SysProcessTask;
+import com.guiji.process.server.service.ISysProcessTaskService;
 import com.guiji.process.server.service.ISysProcessService;
 import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,10 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
     private ISysProcessService sysProcessService;
 
     @Autowired
-    private ISysProcessLogService sysProcessLogService;
+    private ISysProcessTaskService sysProcessTaskService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     private FanoutSender fanoutSender;
@@ -81,6 +85,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 break;
             case PUBLISH_ROBOT_BOTSTENCE:
                 doPublishAfter(cmdMessageVO);
+                break;
+            case AFTER_RESTART:
+                doRestartAfter(cmdMessageVO);
                 break;
             default:
                 break;
@@ -180,17 +187,51 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 fanoutSender.send("fanoutPublishBotstence", JsonUtils.bean2Json(publishBotstenceResultMsgVO));
 
                 //更新数据库
-                SysProcessLog sysProcessLog = new SysProcessLog();
-                sysProcessLog.setIp(processInstanceVO.getIp());
-                sysProcessLog.setPort(String.valueOf(processInstanceVO.getPort()));
-                sysProcessLog.setProcessKey(processInstanceVO.getProcessKey());
-                sysProcessLog.setCmdType(cmdMessageVO.getCmdType().getValue());
-                sysProcessLog.setParameters(cmdMessageVO.getParameters().toString());
-                sysProcessLog.setResult(cmdMessageVO.getCommandResult());
-                sysProcessLog.setResultContent(cmdMessageVO.getCommandResultDesc());
-                sysProcessLog.setCreateTime(new Date());
-                sysProcessLog.setUpdateTime(new Date());
-                sysProcessLogService.insert(sysProcessLog);
+                //更新sys_process
+                SysProcess sysProcess = new SysProcess();
+                sysProcess.setIp(processInstanceVO.getIp());
+                sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcess.setExecStatus(0);
+                sysProcessService.update(sysProcess);
+
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setIp(processInstanceVO.getIp());
+                sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessTask.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
+            }
+        }
+    }
+
+    private void doRestartAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                //更新数据库
+                //更新sys_process
+                SysProcess sysProcess = new SysProcess();
+                sysProcess.setIp(processInstanceVO.getIp());
+                sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcess.setExecStatus(0);
+                sysProcessService.update(sysProcess);
+
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setIp(processInstanceVO.getIp());
+                sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessTask.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
             }
         }
     }

@@ -166,10 +166,12 @@ public class TtsGpu extends TtsServiceProvide {
 	 * 保存数据库
 	 */
 	@Override
-	void savaToDB(String busiId, String model, String text, String audioUrl) {
+	void savaTtsResult(String busiId, String model, String text, String audioUrl) {
 		TtsResult ttsResult = new TtsResult();
 		ttsResult.setAudioUrl(audioUrl);
 		ttsResult.setBusId(busiId);
+		ttsResult.setIp(ip);
+		ttsResult.setPort(port);
 		ttsResult.setContent(text); //待转换文本内容
 		ttsResult.setCreateTime(new Date());
 		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除

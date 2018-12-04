@@ -307,13 +307,5 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
-	<!-- 查询当前时间之前10分钟的GPU分配情况 -->
-	<select id="selectTenMinutesBefore" resultType="java.util.HashMap">
-		SELECT model, COUNT(*) count FROM tts_model
-		WHERE create_time BETWEEN date_add(#{now,jdbcType=TIMESTAMP}, INTERVAL - 10 MINUTE) 
-		AND #{now jdbcType=TIMESTAMP}
-		GROUP BY model
-	</select>
 	
 </mapper>

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SysProcessLogExample {
+public class SysProcessTaskExample {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -15,7 +15,7 @@ public class SysProcessLogExample {
 
     protected Integer limitEnd;
 
-    public SysProcessLogExample() {
+    public SysProcessTaskExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -655,6 +655,136 @@ public class SysProcessLogExample {
             return (Criteria) this;
         }
 
+        public Criteria andResultContentIsNull() {
+            addCriterion("result_content is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentIsNotNull() {
+            addCriterion("result_content is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentEqualTo(String value) {
+            addCriterion("result_content =", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotEqualTo(String value) {
+            addCriterion("result_content <>", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentGreaterThan(String value) {
+            addCriterion("result_content >", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentGreaterThanOrEqualTo(String value) {
+            addCriterion("result_content >=", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentLessThan(String value) {
+            addCriterion("result_content <", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentLessThanOrEqualTo(String value) {
+            addCriterion("result_content <=", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentLike(String value) {
+            addCriterion("result_content like", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotLike(String value) {
+            addCriterion("result_content not like", value, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentIn(List<String> values) {
+            addCriterion("result_content in", values, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotIn(List<String> values) {
+            addCriterion("result_content not in", values, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentBetween(String value1, String value2) {
+            addCriterion("result_content between", value1, value2, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andResultContentNotBetween(String value1, String value2) {
+            addCriterion("result_content not between", value1, value2, "resultContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusIsNull() {
+            addCriterion("exec_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusIsNotNull() {
+            addCriterion("exec_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusEqualTo(Integer value) {
+            addCriterion("exec_status =", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusNotEqualTo(Integer value) {
+            addCriterion("exec_status <>", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusGreaterThan(Integer value) {
+            addCriterion("exec_status >", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("exec_status >=", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusLessThan(Integer value) {
+            addCriterion("exec_status <", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("exec_status <=", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusIn(List<Integer> values) {
+            addCriterion("exec_status in", values, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusNotIn(List<Integer> values) {
+            addCriterion("exec_status not in", values, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusBetween(Integer value1, Integer value2) {
+            addCriterion("exec_status between", value1, value2, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("exec_status not between", value1, value2, "execStatus");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -775,73 +905,193 @@ public class SysProcessLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andResultContentIsNull() {
-            addCriterion("result_content is null");
+        public Criteria andCreateByIsNull() {
+            addCriterion("create_by is null");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentIsNotNull() {
-            addCriterion("result_content is not null");
+        public Criteria andCreateByIsNotNull() {
+            addCriterion("create_by is not null");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentEqualTo(String value) {
-            addCriterion("result_content =", value, "resultContent");
+        public Criteria andCreateByEqualTo(Long value) {
+            addCriterion("create_by =", value, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentNotEqualTo(String value) {
-            addCriterion("result_content <>", value, "resultContent");
+        public Criteria andCreateByNotEqualTo(Long value) {
+            addCriterion("create_by <>", value, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentGreaterThan(String value) {
-            addCriterion("result_content >", value, "resultContent");
+        public Criteria andCreateByGreaterThan(Long value) {
+            addCriterion("create_by >", value, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentGreaterThanOrEqualTo(String value) {
-            addCriterion("result_content >=", value, "resultContent");
+        public Criteria andCreateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("create_by >=", value, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentLessThan(String value) {
-            addCriterion("result_content <", value, "resultContent");
+        public Criteria andCreateByLessThan(Long value) {
+            addCriterion("create_by <", value, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentLessThanOrEqualTo(String value) {
-            addCriterion("result_content <=", value, "resultContent");
+        public Criteria andCreateByLessThanOrEqualTo(Long value) {
+            addCriterion("create_by <=", value, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentLike(String value) {
-            addCriterion("result_content like", value, "resultContent");
+        public Criteria andCreateByIn(List<Long> values) {
+            addCriterion("create_by in", values, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentNotLike(String value) {
-            addCriterion("result_content not like", value, "resultContent");
+        public Criteria andCreateByNotIn(List<Long> values) {
+            addCriterion("create_by not in", values, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentIn(List<String> values) {
-            addCriterion("result_content in", values, "resultContent");
+        public Criteria andCreateByBetween(Long value1, Long value2) {
+            addCriterion("create_by between", value1, value2, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentNotIn(List<String> values) {
-            addCriterion("result_content not in", values, "resultContent");
+        public Criteria andCreateByNotBetween(Long value1, Long value2) {
+            addCriterion("create_by not between", value1, value2, "createBy");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentBetween(String value1, String value2) {
-            addCriterion("result_content between", value1, value2, "resultContent");
+        public Criteria andUpdateByIsNull() {
+            addCriterion("update_by is null");
             return (Criteria) this;
         }
 
-        public Criteria andResultContentNotBetween(String value1, String value2) {
-            addCriterion("result_content not between", value1, value2, "resultContent");
+        public Criteria andUpdateByIsNotNull() {
+            addCriterion("update_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByEqualTo(Long value) {
+            addCriterion("update_by =", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotEqualTo(Long value) {
+            addCriterion("update_by <>", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThan(Long value) {
+            addCriterion("update_by >", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("update_by >=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThan(Long value) {
+            addCriterion("update_by <", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThanOrEqualTo(Long value) {
+            addCriterion("update_by <=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIn(List<Long> values) {
+            addCriterion("update_by in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotIn(List<Long> values) {
+            addCriterion("update_by not in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByBetween(Long value1, Long value2) {
+            addCriterion("update_by between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotBetween(Long value1, Long value2) {
+            addCriterion("update_by not between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyIsNull() {
+            addCriterion("req_key is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyIsNotNull() {
+            addCriterion("req_key is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyEqualTo(String value) {
+            addCriterion("req_key =", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotEqualTo(String value) {
+            addCriterion("req_key <>", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyGreaterThan(String value) {
+            addCriterion("req_key >", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("req_key >=", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyLessThan(String value) {
+            addCriterion("req_key <", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyLessThanOrEqualTo(String value) {
+            addCriterion("req_key <=", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyLike(String value) {
+            addCriterion("req_key like", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotLike(String value) {
+            addCriterion("req_key not like", value, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyIn(List<String> values) {
+            addCriterion("req_key in", values, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotIn(List<String> values) {
+            addCriterion("req_key not in", values, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyBetween(String value1, String value2) {
+            addCriterion("req_key between", value1, value2, "reqKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqKeyNotBetween(String value1, String value2) {
+            addCriterion("req_key not between", value1, value2, "reqKey");
             return (Criteria) this;
         }
     }

@@ -89,7 +89,10 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 //				processInstanceListData.setBody(processList);
 //			}
 //		    /////// TEST/////
-			if(processInstanceListData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(processInstanceListData.getCode())){
+			if(processInstanceListData == null) {
+				logger.error("调用进程管理申请资源，返回数据为空..");
+				throw new RobotException(AiErrorEnum.AI00060007.getErrorCode(),AiErrorEnum.AI00060007.getErrorMsg());
+			}else if(!RobotConstants.RSP_CODE_SUCCESS.equals(processInstanceListData.getCode())) {
 				logger.error("调用进程管理申请{}个机器人资源异常...",addAiNum);
 				throw new RobotException(processInstanceListData.getCode(),processInstanceListData.getMsg());
 			}

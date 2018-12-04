@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.guiji.ai.api.ITts;
 import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
@@ -368,7 +367,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				content = content.replaceAll(Matcher.quoteReplacement(param), ttsVoiceReq.getParamMap().get(param));
 			}
 			if(content.contains("$")){
-				logger.error("模板{}的参数{}参数替换失败！",ttsVoiceReq.getTemplateId());
+				logger.error("模板{}的参数替换失败！",ttsVoiceReq.getTemplateId());
 				throw new RobotException(AiErrorEnum.AI00060010.getErrorCode(),AiErrorEnum.AI00060010.getErrorMsg());
 			}
 			data.setTtsContent(content);
@@ -387,7 +386,10 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			ReturnData<String> ttsRspData = iTts.translate(ttsReqVO);
 			
 			logger.info("完成TTS工具调用,返回参数:{}",ttsRspData);
-			if(ttsRspData == null || !RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode())){
+			if(ttsRspData == null) {
+				logger.error("调用TTS接口发生异常,返回数据为空！");
+				throw new RobotException(AiErrorEnum.AI00060029.getErrorCode(),AiErrorEnum.AI00060029.getErrorMsg());
+			}else if(!RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode())) {
 				logger.error("调用TTS工具生成语音失败，返回数据：{}"+ttsRspData);
 				throw new RobotException(ttsRspData.getCode(),ttsRspData.getMsg());
 			}

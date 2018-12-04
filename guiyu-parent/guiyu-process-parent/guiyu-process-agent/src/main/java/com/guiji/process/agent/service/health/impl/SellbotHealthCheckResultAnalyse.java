@@ -45,4 +45,25 @@ public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalys
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
         ImClientProtocolBO.getIntance().send(newCmdMsg,3);
     }
+
+    @Override
+    public void afertRestart(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,List<String> parameters) {
+        String result = CMD_RESULT_CODE99;
+        if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
+            if(cmdResult.getOutput().contains("started")){
+                result = "4";
+            } else {
+                result = "5";
+            }
+        }
+
+        // 发送给服务端
+        CmdMessageVO newCmdMsg = new CmdMessageVO();
+        newCmdMsg.setCmdType(CmdTypeEnum.AFTER_RESTART);
+        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setParameters(parameters);
+        newCmdMsg.setCommandResult(result);
+        newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
+        ImClientProtocolBO.getIntance().send(newCmdMsg,3);
+    }
 }

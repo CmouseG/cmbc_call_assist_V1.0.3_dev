@@ -42,4 +42,9 @@ public class FreeswitchHealthCheckResultAnalyse implements IHealthCheckResultAna
     }
 
     }
+
+    @Override
+    public void afertRestart(CommandResult cmdResult, ProcessInstanceVO processInstanceVO, List<String> parameters) {
+
+    }
 }

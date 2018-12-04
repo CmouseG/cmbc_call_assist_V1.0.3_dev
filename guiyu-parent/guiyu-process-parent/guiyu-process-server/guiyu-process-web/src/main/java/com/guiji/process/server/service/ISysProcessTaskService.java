@@ -1,6 +1,7 @@
 package com.guiji.process.server.service;
 
 import com.guiji.common.model.Page;
+import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.dao.entity.SysProcessTask;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface ISysProcessTaskService {
     public boolean delete(long id);
 
     public Page<SysProcessTask> queryProcessTaskPage(int pageNo, int pageSize, SysProcessTask sysProcessTask);
+
+    public boolean update(SysProcessTask sysProcessTask);
 }

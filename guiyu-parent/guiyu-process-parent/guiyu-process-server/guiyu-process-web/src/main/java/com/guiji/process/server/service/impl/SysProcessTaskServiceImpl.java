@@ -38,6 +38,21 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
     }
 
     @Override
+    public boolean update(SysProcessTask sysProcessTask) {
+        if (sysProcessTask != null) {
+            SysProcessTask sysProcessTaskTmp = new SysProcessTask();
+            sysProcessTaskTmp.setIp(sysProcessTask.getIp());
+            sysProcessTaskTmp.setPort(sysProcessTask.getPort());
+            sysProcessTaskTmp.setCmdType(sysProcessTask.getCmdType());
+            SysProcessTaskExample example = this.getExampleByCondition(sysProcessTaskTmp);
+            int result = sysProcessTaskMapper.updateByExampleSelective(sysProcessTask,example);
+            return result >0 ? true:false;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public Page<SysProcessTask> queryProcessTaskPage(int pageNo, int pageSize, SysProcessTask sysProcessTask) {
         Page<SysProcessTask> page = new Page<SysProcessTask>();
         SysProcessTaskExample example = this.getExampleByCondition(sysProcessTask);

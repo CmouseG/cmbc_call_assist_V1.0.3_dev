@@ -11,6 +11,9 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_time_str" property="createTimeStr" jdbcType="VARCHAR" />
+    <result column="update_time_str" property="updateTimeStr" jdbcType="VARCHAR" />
+    <result column="exec_status" property="execStatus" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -276,4 +279,12 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="getProcessByPage" resultType="BaseResultMap">
+    select a.id, a.ip, a.port, a.`name`, a.`type`, a.process_key, a.`status`, a.create_time, a.update_time,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(a.update_time,'%Y-%m-%d %H:%i:%s') as update_time_str,b.exec_status as exec_status
+    from sys_process a
+    LEFT JOIN sys_process_task b on a.id=b.process_id
+    where a.del_flag=0
+    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+  </select>
 </mapper>

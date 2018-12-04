@@ -117,13 +117,16 @@ public class ProcessManageService implements IProcessManageService {
         CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
 
         // 更新数据库
-        // 更新sys_process中exec_status为执行中
-        SysProcess sysProcess = new SysProcess();
-        sysProcess.setIp(processInstanceVO.getIp());
-        sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
-        sysProcess.setExecStatus(1);
-        processService.update(sysProcess);
         // 新增sys_process_task
+        SysProcess sysProcessTmp = new SysProcess();
+        sysProcessTmp.setIp(processInstanceVO.getIp());
+        sysProcessTmp.setPort(String.valueOf(processInstanceVO.getPort()));
+        List<SysProcess> sysProcessList = processService.list(sysProcessTmp);
+        Long processId = null;
+        if (sysProcessList != null && sysProcessList.size()>0) {
+            processId = sysProcessList.get(0).getId();
+        }
+
         SysProcessTask sysProcessTask = new SysProcessTask();
         sysProcessTask.setIp(processInstanceVO.getIp());
         sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
@@ -131,6 +134,8 @@ public class ProcessManageService implements IProcessManageService {
         sysProcessTask.setProcessKey(processInstanceVO.getParamter().toString());
         sysProcessTask.setParameters(parameters.toString());
         sysProcessTask.setExecStatus(1);
+        sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
+        sysProcessTask.setProcessId(processId);
         sysProcessTask.setCreateTime(new Date());
         sysProcessTask.setUpdateTime(new Date());
         /*sysProcessTask.setCreateBy();

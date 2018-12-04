@@ -41,9 +41,7 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
     public boolean update(SysProcessTask sysProcessTask) {
         if (sysProcessTask != null) {
             SysProcessTask sysProcessTaskTmp = new SysProcessTask();
-            sysProcessTaskTmp.setIp(sysProcessTask.getIp());
-            sysProcessTaskTmp.setPort(sysProcessTask.getPort());
-            sysProcessTaskTmp.setCmdType(sysProcessTask.getCmdType());
+            sysProcessTaskTmp.setReqKey(sysProcessTask.getReqKey());
             SysProcessTaskExample example = this.getExampleByCondition(sysProcessTaskTmp);
             int result = sysProcessTaskMapper.updateByExampleSelective(sysProcessTask,example);
             return result >0 ? true:false;
@@ -87,6 +85,8 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
             String result = sysProcessTask.getResult();//命令执行结果
             String resultContent = sysProcessTask.getResultContent();//命令执行结果描述
             Integer execStatus = sysProcessTask.getExecStatus();
+            String reqKey = sysProcessTask.getReqKey();
+            Long processId = sysProcessTask.getProcessId();
             SysProcessTaskExample example = new SysProcessTaskExample();
             SysProcessTaskExample.Criteria criteria = example.createCriteria();
             if(id != null) {
@@ -113,8 +113,14 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
             if(StrUtils.isNotEmpty(resultContent)) {
                 criteria.andResultContentEqualTo(resultContent);
             }
-            if(StrUtils.isNotEmpty(execStatus)) {
+            if(execStatus != null) {
                 criteria.andExecStatusEqualTo(execStatus);
+            }
+            if(StrUtils.isNotEmpty(reqKey)) {
+                criteria.andReqKeyEqualTo(reqKey);
+            }
+            if(processId != null) {
+                criteria.andProcessIdEqualTo(processId);
             }
 
             return example;

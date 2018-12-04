@@ -70,6 +70,14 @@ public class SysProcessServiceImpl implements ISysProcessService {
     }
 
     @Override
+    public List<SysProcess> list(SysProcess sysProcess) {
+        SysProcessExample example = this.getExampleByCondition(sysProcess);
+        if(example == null) example = new SysProcessExample();
+        List<SysProcess> list = sysProcessMapper.selectByExample(example);
+        return list;
+    }
+
+    @Override
     public boolean delete(long id) {
         int result = sysProcessMapper.deleteByPrimaryKey(id);
         return result >0 ? true:false;
@@ -112,10 +120,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
                 cmdMessageVO.setProcessInstanceVO(processInstanceVO);
                 cmdMessageVO.setCmdType(cmdTypeEnum);
                 cmdMessageVOs.add(cmdMessageVO);
-                String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdTypeEnum);
-                if (StringUtils.isNotEmpty(hasRun)) {
-                    throw new GuiyuException(GuiyuProcessExceptionEnum.PROCESS08000002.getErrorCode(),GuiyuProcessExceptionEnum.PROCESS08000002.getMsg());
-                }
+
             }
         }
         if(!cmdMessageVOs.isEmpty()) {

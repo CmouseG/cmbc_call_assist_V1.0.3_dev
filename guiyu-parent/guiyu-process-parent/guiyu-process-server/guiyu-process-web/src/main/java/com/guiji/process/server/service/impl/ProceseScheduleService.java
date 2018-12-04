@@ -107,7 +107,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
         deviceManageService.updateStatus(processInstanceVO);
 
 
-        // 通知更换模型 TODO 同步 并设定TTS的状态
+        // 通知更换模型
         List<String> parameters = new ArrayList<String>();
         parameters.add(srcModel);
         parameters.add(toModel);

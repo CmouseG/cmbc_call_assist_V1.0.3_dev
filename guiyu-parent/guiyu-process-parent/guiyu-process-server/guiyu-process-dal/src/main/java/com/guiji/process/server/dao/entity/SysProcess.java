@@ -26,6 +26,8 @@ public class SysProcess implements Serializable {
 
     private String updateTimeStr;
 
+    private Integer execStatus;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -116,6 +118,14 @@ public class SysProcess implements Serializable {
         this.updateTimeStr = updateTimeStr;
     }
 
+    public Integer getExecStatus() {
+        return execStatus;
+    }
+
+    public void setExecStatus(Integer execStatus) {
+        this.execStatus = execStatus;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -133,6 +143,7 @@ public class SysProcess implements Serializable {
         sb.append(", updateTime=").append(updateTime);
         sb.append(", createTimeStr=").append(createTimeStr);
         sb.append(", updateTimeStr=").append(updateTimeStr);
+        sb.append(", execStatus=").append(execStatus);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

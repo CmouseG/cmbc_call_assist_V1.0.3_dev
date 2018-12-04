@@ -23,8 +23,6 @@ public class ServerPoHandlerProto extends ChannelInboundHandlerAdapter {
 
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws UnsupportedEncodingException {
-		System.out.println("服务端收到消息: *************************************" +  ((CmdProtoMessage.ProtoMessage) msg).getType());
-		System.out.println("服务端收到消息: *************************************" +  ((CmdProtoMessage.ProtoMessage) msg).getContent());
 		String remoteIp = DeviceProcessUtil.getRemoreIp(ctx);
 		ConnectionPool.putChannel(remoteIp, ctx);
 

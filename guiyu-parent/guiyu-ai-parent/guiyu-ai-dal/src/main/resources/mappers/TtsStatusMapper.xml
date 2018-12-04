@@ -53,4 +53,10 @@
 		)
 	</insert>
 	
+	<update id="updateStatusByBusId">
+		UPDATE tts_status 
+		SET status = #{status,jdbcType=CHAR}
+		WHERE bus_id = #{busId,jdbcType=VARCHAR}
+	</update>
+	
 </mapper>

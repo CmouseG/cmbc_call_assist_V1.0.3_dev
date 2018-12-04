@@ -40,7 +40,7 @@ public class SaveTtsResultHandler {
 		try {
 			this.ttsResultMapper = ttsResultMapper;
 			productor.produce(ttsResult);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -81,6 +81,7 @@ public class SaveTtsResultHandler {
 					}
 				} catch (Exception e) {
 					logger.error("数据保存失败！", e);
+					break;
 				}
 			}
 		}

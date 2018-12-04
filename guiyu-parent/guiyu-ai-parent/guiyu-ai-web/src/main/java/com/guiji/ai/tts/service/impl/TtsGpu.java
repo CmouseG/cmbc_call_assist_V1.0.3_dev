@@ -166,7 +166,7 @@ public class TtsGpu extends TtsServiceProvide {
 	 * 保存数据库
 	 */
 	@Override
-	void savaToDB(String busiId, String model, String text, String audioUrl) {
+	void savaTtsResult(String busiId, String model, String text, String audioUrl) {
 		TtsResult ttsResult = new TtsResult();
 		ttsResult.setAudioUrl(audioUrl);
 		ttsResult.setBusId(busiId);

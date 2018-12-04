@@ -44,7 +44,7 @@ public class RedistributeHandler {
 	@Scheduled(fixedRate = 1000*60)
 	public void task() throws InterruptedException {
 		Lock lock = new Lock("LOCK_NAME", "LOCK_VALUE");
-		if (distributedLockHandler.tryLock(lock, 30*1000, 1000, 3*60*1000)) { // 尝试30s,每1s尝试一次，持锁时间为3分钟
+		if (distributedLockHandler.tryLock(lock, 5*1000L, 100L, 3*60*1000L)) { // 尝试5s,每100ms尝试一次，持锁时间为3分钟
 			try {
 				logger.info("查询前10分钟内各模型对应GPU请求情况...");
 				List<Map<String, Object>> resultList = ttsModelMapper.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>

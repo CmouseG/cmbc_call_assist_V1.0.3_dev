@@ -38,7 +38,7 @@ public class SaveTtsStatusHandler
 		try {
 			this.ttsStatusMapper = ttsStatusMapper;
 			productor.produce(ttsStatus);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -79,6 +79,7 @@ public class SaveTtsStatusHandler
 					}
 				} catch (Exception e) {
 					logger.error("数据保存失败！", e);
+					break;
 				}
 			}
 		}

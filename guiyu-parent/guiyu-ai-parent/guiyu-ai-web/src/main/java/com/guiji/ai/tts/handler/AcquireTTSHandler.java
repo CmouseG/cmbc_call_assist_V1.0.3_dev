@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.guiji.common.model.process.ProcessInstanceVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
-import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.service.impl.TtsGpu;
-import com.guiji.common.exception.GuiyuException;
+import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;

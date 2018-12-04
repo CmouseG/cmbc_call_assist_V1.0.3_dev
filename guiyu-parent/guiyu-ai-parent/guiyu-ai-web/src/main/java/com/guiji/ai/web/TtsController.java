@@ -55,7 +55,7 @@ public class TtsController implements ITts
 		} catch (Exception e)
 		{
 			logger.error("请求失败！", e);
-			return Result.error(AiConstants.AI_REQUEST);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 
 	}
@@ -67,16 +67,15 @@ public class TtsController implements ITts
 	@PostMapping(value = "getTtsResultByBusId")
 	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestParam String busId) 
 	{
-		TtsRspVO ttsRspVO = null;
+		TtsRspVO ttsRspVO = new TtsRspVO();
 		try
 		{
 			String status = ttsService.getTransferStatusByBusId(busId);
 
-			ttsRspVO = new TtsRspVO();
 			ttsRspVO.setBusId(busId);
 			ttsRspVO.setStatus(status);
 
-			if ("done".equals(status))
+			if (AiConstants.FINISHED.equals(status))
 			{
 				Map<String, String> radioMap = new HashMap<>();
 				List<Map<String, String>> resultMapList = ttsService.getTtsTransferResult(busId);
@@ -122,7 +121,6 @@ public class TtsController implements ITts
 				statusRspVO.setCreateTime((Date) restltMap.get("createTime"));
 				statusRspVOList.add(statusRspVO);
 			}
-			
 			
 		} catch (Exception e){
 			logger.error("查询失败", e);

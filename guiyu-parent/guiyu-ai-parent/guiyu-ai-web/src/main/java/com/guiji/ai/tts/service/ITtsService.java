@@ -23,7 +23,7 @@ public interface ITtsService {
      * @return
      * @throws Exception 
      */
-    public String getTransferStatusByBusId(String busId) throws Exception;
+    public String getTransferStatusByBusId(String busId);
     
     /**
      * 根据busiId查询TTS处理结果

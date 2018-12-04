@@ -6,7 +6,7 @@ public class AiConstants {
 	public static final String AI_GET_TTS_ERROR = "0500002"; // 没有获取到TTS
 	public static final String AI_GET_GPU_ERROR = "0500003"; // 没有获取到可用GPU
 	public static final String AI_CHANGE_TTS_ERROR = "0500003"; // 模型切换失败
-	public static final String AI_REQUEST = "0500004"; // 接收请求失败
+	public static final String AI_REQUEST_FAIL = "0500004"; // 请求失败
 	
 	public static final String GUIYUTTS = "GUIYU_TTS_";
 	public static final String AVALIABLE = "_0"; // 可用
@@ -20,5 +20,11 @@ public class AiConstants {
 	
 	public static final String ADD = "add";
 	public static final String SUB = "sub";
+	
+	//status 表状态
+	public static final String UNTREATED = "0"; //未处理
+	public static final String DOING = "1"; //正在处理
+	public static final String FINISHED = "2"; // 处理完成
+	public static final String FAIL = "3"; //处理失败
 	
 }

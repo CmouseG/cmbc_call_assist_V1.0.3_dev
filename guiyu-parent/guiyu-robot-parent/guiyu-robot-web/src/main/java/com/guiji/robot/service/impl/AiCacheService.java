@@ -236,6 +236,28 @@ public class AiCacheService {
 	
 	
 	/**
+	 * 从缓存中将模板清除掉后重新读取
+	 * @param templateId
+	 */
+	public void updateHsReplace(String templateId) {
+		if(StrUtils.isNotEmpty(templateId)) {
+			Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_TEMPLATE_RESOURCE, templateId);
+			if(cacheObj != null) {
+				//缓存中有，需要删除掉，重新拉取
+				logger.info("模板{}存在缓存中，需要更新缓存",templateId);
+				//删除缓存
+				redisUtil.hdel(RobotConstants.ROBOT_TEMPLATE_RESOURCE,templateId);
+				//重新获取redis
+				this.queyHsReplace(templateId);
+				
+			}else {
+				logger.info("模板{}没有缓存，不需要处理",templateId);
+			}
+		}
+	}
+	
+	
+	/**
 	 * 获取话术模板replace.json文件路径
 	 * @param hushuDirPath
 	 * @param ttsVoiceReq

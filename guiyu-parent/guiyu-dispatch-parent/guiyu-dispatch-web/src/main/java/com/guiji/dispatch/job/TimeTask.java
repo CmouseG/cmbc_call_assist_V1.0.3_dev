@@ -1,5 +1,6 @@
 package com.guiji.dispatch.job;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,11 @@ import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.util.Constant;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.CheckParamsReq;
+import com.guiji.robot.model.HsParam;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.utils.RedisUtil;
 
 @Component
@@ -28,20 +34,96 @@ public class TimeTask {
 	private IDispatchPlanService dispatchPlanService;
 	@Autowired
 	private ICallManagerOut callManagerOutApi;
-// @Autowired
-	// private IRobotRemote robotRemote;
-
+	@Autowired
+	private IRobotRemote robotRemote;
 	@Autowired
 	private RedisUtil redisUtil;
 
+	/**
+	 * 捞取号码初始化资源
+	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
-	public void selectPhonesByDate() {
+//	@PostMapping("selectPhoneInit")
+	public void selectPhoneInit() {
+		logger.info("捞取号码初始化资源..");
 		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
-		logger.info("startcallplan..");
-		// 分组排序
+		List<HsParam> sendData = new ArrayList<>();
+		for (DispatchPlan dispatchPlan : list) {
+			HsParam hsParam = new HsParam();
+			hsParam.setParams(dispatchPlan.getParams());
+			hsParam.setSeqid(dispatchPlan.getPlanUuid());
+			hsParam.setTemplateId(dispatchPlan.getRobot());
+			sendData.add(hsParam);
+		}
+		CheckParamsReq req = new CheckParamsReq();
+		req.setCheckers(sendData);
+		req.setNeedResourceInit(true);
+		robotRemote.checkParams(req);
+
+		// 批量修改状态flag
+		if (list.size() > 0) {
+			dispatchPlanService.batchUpdateFlag(list, Constant.IS_FLAG_1);
+		}
+		logger.info("有一批数据调用初始化资源结果数量....." + list.size());
+	}
+
+	/**
+	 * 获取当前资源情况
+	 */
+	@Scheduled(cron = "0 0/5 * * * ?")
+//	@PostMapping("getResourceResult")
+	public void getResourceResult() {
+		logger.info("获取当前初始化号码的请求资源结果");
+		List<DispatchPlan> selectPhoneByDateAndFlag = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_1);
+		List<String> ids = new ArrayList<>();
+		for (DispatchPlan dis : selectPhoneByDateAndFlag) {
+			ids.add(dis.getPlanUuid());
+		}
+		ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck = robotRemote.ttsComposeCheck(ids);
+		List<DispatchPlan> successList = new ArrayList<>();
+
+		if (ttsComposeCheck.success) {
+			if (ttsComposeCheck.getBody() != null) {
+				List<TtsComposeCheckRsp> body = ttsComposeCheck.getBody();
+				for (TtsComposeCheckRsp tts : body) {
+					if (tts.getStatus().equals("S")) {
+						DispatchPlan dis = new DispatchPlan();
+						dis.setFlag(Constant.IS_FLAG_2);
+						dis.setPlanUuid(tts.getSeqId());
+						successList.add(dis);
+					}
+				}
+			}
+		} else {
+			logger.info("获取当前初始化号码的请求资源结果失败了");
+		}
+		logger.info("当前准备好的资源号码有:" + successList.size());
+		boolean batchUpdateFlag = false;
+		if (successList.size() > 0) {
+			batchUpdateFlag = dispatchPlanService.batchUpdateFlag(successList, Constant.IS_FLAG_2);
+		}
+		logger.info("获取当前初始化号码的请求资源结果修改当结果" + batchUpdateFlag);
+	}
+
+	/**
+	 * 获取可以拨打的号码
+	 */
+	@Scheduled(cron = "0 0/1 * * * ?")
+//	@PostMapping("getSuccessPhones")
+	public void getSuccessPhones() {
+		logger.info(" 获取可以拨打的号码..");
+		List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2);
+		logger.info(" 获取可以拨打的号码count .."+list.size());
+		// 分组
 		Map<String, List<DispatchPlan>> collect = list.stream().collect(Collectors.groupingBy(d -> fetchGroupKey(d)));
 		for (Entry<String, List<DispatchPlan>> entry : collect.entrySet()) {
-			// 判断机器人是否准备就绪
+			if (redisUtil.get("robotId") != null) {
+				String str = (String) redisUtil.get("robotId");
+				if (str.contains(entry.getKey().split("-")[1])) {
+					logger.info("当前模板id正在升级中...." + entry.getKey().split("- ")[1]);
+					continue;
+				}
+			}
 			logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 			checkRedisAndDate(entry.getKey());
 		}

@@ -8,7 +8,11 @@ public class SysRole implements Serializable {
 
     private String name;
 
+    private Long createId;
+
     private Date createTime;
+
+    private Long updateId;
 
     private Date updateTime;
 
@@ -36,12 +40,28 @@ public class SysRole implements Serializable {
         this.name = name == null ? null : name.trim();
     }
 
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Long getUpdateId() {
+        return updateId;
+    }
+
+    public void setUpdateId(Long updateId) {
+        this.updateId = updateId;
     }
 
     public Date getUpdateTime() {
@@ -84,7 +104,9 @@ public class SysRole implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
+        sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
+        sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", initRole=").append(initRole);

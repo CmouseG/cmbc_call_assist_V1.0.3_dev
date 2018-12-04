@@ -21,8 +21,7 @@ public class MenuService {
 	private SysMenuMapper mapper;
 
 	public void insert(SysMenu menu){
-		menu.setCreateTime(new Date());
-		menu.setUpdateTime(new Date());
+		
 		mapper.insertSelective(menu);
 	}
 
@@ -31,7 +30,6 @@ public class MenuService {
 	}
 
 	public void update(SysMenu menu){
-		menu.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(menu);
 	}
 

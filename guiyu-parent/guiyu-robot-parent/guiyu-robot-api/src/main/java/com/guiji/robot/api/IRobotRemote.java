@@ -16,8 +16,11 @@ import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
+import com.guiji.robot.model.TtsCallback;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.UserAiCfgVO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -45,6 +48,14 @@ public interface IRobotRemote {
 	
 	
 	/************************2、能力服务************************/
+	@ApiOperation(value = "TTS语音合成结果检查")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "seqIdList", value = "会话id列表", required = true)
+    })
+    @PostMapping(value = "/remote/ttsComposeCheck")
+	Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody List<String> seqIdList);
+	
+	
 	@ApiOperation(value = "TTS语音下载")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ttsVoice", value = "tts语音合成请求信息", required = true)
@@ -52,6 +63,14 @@ public interface IRobotRemote {
     @PostMapping(value = "/remote/ttsCompose")
 	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
 	
+	
+	@ApiOperation(value = "TTS语音合成后的回call服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ttsCallbackList", value = "tts语音合成回调信息列表", required = true)
+    })
+    @PostMapping(value = "/remote/ttsCallback")
+	Result.ReturnData ttsCallback(@RequestBody List<TtsCallback> ttsCallbackList);
+
 	
 	@ApiOperation(value = "AI资源申请")
     @ApiImplicitParams({
@@ -98,6 +117,6 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "userId", value = "用户编号", required = true)
     })
     @PostMapping(value = "/remote/queryCustAccount")
-	Result.ReturnData queryCustAccount(@RequestParam(value="userId",required=true)String userId);
+	Result.ReturnData<UserAiCfgVO> queryCustAccount(@RequestParam(value="userId",required=true)String userId);
 	
 }

@@ -40,4 +40,7 @@ public class Constant {
 	public static final Integer  IS_CLEAN_0=0;
 	public static final Integer  IS_CLEAN_1=1;
 	
+	public static final String  IS_FLAG_0="0";
+	public static final String  IS_FLAG_1="1";
+	public static final String  IS_FLAG_2="2";
 }

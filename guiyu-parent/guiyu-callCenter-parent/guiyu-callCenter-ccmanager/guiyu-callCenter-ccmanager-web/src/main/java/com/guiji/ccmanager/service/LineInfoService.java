@@ -17,7 +17,7 @@ public interface LineInfoService {
 
     void addLineInfo(LineInfoVO lineInfoVO);
 
-    void updateLineInfo(LineInfoVO lineInfoVO);
+    void updateLineInfo(LineInfoVO lineInfoVO, Long userId);
 
     void delLineInfo(String id);
 

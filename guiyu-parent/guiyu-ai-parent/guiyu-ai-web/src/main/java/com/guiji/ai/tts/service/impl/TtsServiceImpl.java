@@ -1,5 +1,7 @@
 package com.guiji.ai.tts.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,72 +13,156 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
-import com.guiji.ai.tts.service.TtsService;
+import com.guiji.ai.dao.TtsResultMapper;
+import com.guiji.ai.dao.TtsStatusMapper;
+import com.guiji.ai.dao.entity.TtsStatus;
+import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
+import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.ai.vo.TtsRspVO;
-import com.guiji.common.exception.GuiyuException;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.TtsCallback;
 import com.guiji.utils.RedisUtil;
 
 /**
  * Created by ty on 2018/11/13.
  */
 @Service
-public class TtsServiceImpl implements TtsService {
+public class TtsServiceImpl implements ITtsService
+{
 	private static Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
-	
+
 	@Autowired
-    private RedisUtil redisUtil;
+	private RedisUtil redisUtil;
 	@Autowired
-	TtsServiceFactory ttsServiceFactory;
-	
-    @Override
-    public TtsRspVO translate(TtsReqVO ttsReqVO) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        // 结果集
-        Map<String,String> radioMap = new HashMap<String,String>();
-        List<String> taskList = ttsReqVO.getContents();
-        // 全流式处理转换成CompletableFuture[]+组装成一个无返回值CompletableFuture，join等待执行完毕。返回结果whenComplete获取
-        CompletableFuture[] cfs = taskList.stream()
-                .map(text -> CompletableFuture.supplyAsync(() -> calc(ttsReqVO.getBusId(),ttsReqVO.getModel(),text), executorService)
-                        .whenComplete((s, e) -> {
-                            radioMap.put(text,s);
-                        })
-                ).toArray(CompletableFuture[]::new);
+	IRobotRemote iRobotRemote;
+	@Autowired
+	TtsStatusMapper ttsStatusMapper;
+	@Autowired
+	TtsResultMapper ttsResultMapper;
+	@Autowired
+	TtsServiceProvideFactory serviceProvideFactory;
 
-        // 封装后无返回值，必须自己whenComplete()获取
-        CompletableFuture.allOf(cfs).join();
+	@Override
+	public void translate(TtsReqVO ttsReqVO)
+	{
+		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		// 结果集
+		Map<String, String> radioMap = new HashMap<String, String>();
+		String tableStatus = AiConstants.FINISHED; //表状态
+		String status = "S"; //返回状态
+		String errMsg = null;
 
-        TtsRspVO ttsRspVO = new TtsRspVO();
-        ttsRspVO.setBusId(ttsReqVO.getBusId());
-        ttsRspVO.setModel(ttsReqVO.getModel());
-        ttsRspVO.setAudios(radioMap);
-        return ttsRspVO;
-    }
+		try
+		{
+			List<String> taskList = ttsReqVO.getContents();
+			// 全流式处理转换成CompletableFuture[]+组装成一个无返回值CompletableFuture，join等待执行完毕。返回结果whenComplete获取
+			CompletableFuture[] cfs = taskList.stream()
+					.map(text -> CompletableFuture
+							.supplyAsync(() -> calc(ttsReqVO.getBusId(), ttsReqVO.getModel(), text), executorService)
+							.whenComplete((s, e) ->
+							{
+								radioMap.put(text, s);
+							}))
+					.toArray(CompletableFuture[]::new);
 
-    private String calc(String busId, String model, String text) {
-        String audioUrl = null;
-        try {
-        	//判断是否已经合成
-        	audioUrl = (String) redisUtil.get(model+"_"+text);
-        	if(audioUrl != null){
-                return audioUrl;
-        	}
-            //合成
-            ITtsServiceProvide provide = ttsServiceFactory.getTtsProvide(model);
-            if(provide == null){
-                throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_GET_GPU); //没有获取到可用GPU
-            }
-            audioUrl= provide.transfer(busId, model, text);
-            if(audioUrl != null){
-                redisUtil.set(model+"_"+text, audioUrl); //返回值url存入redis
-            }else{
-                logger.error("文本转语音失败！");
-            }
-        } catch (Exception e) {
-            logger.error("语音文件合成失败!" + e);
-        }
-        return audioUrl;
-    }
+			// 封装后无返回值，必须自己whenComplete()获取
+			CompletableFuture.allOf(cfs).join();
+			
+		} catch (Exception e)
+		{
+			status = "F";
+			errMsg = e.getMessage();
+			tableStatus = AiConstants.FAIL;
+		}
+
+		ttsStatusMapper.updateStatusByBusId(ttsReqVO.getBusId(), tableStatus);
+		
+		// 回调机器人接口，返回数据
+		TtsCallback ttsCallback = new TtsCallback();
+		ttsCallback.setBusiId(ttsReqVO.getBusId());
+		ttsCallback.setStatus(status);
+		ttsCallback.setErrorMsg(errMsg);
+		ttsCallback.setAudios(radioMap);
+
+		List<TtsCallback> resultList = new ArrayList<TtsCallback>();
+		resultList.add(ttsCallback);
+		iRobotRemote.ttsCallback(resultList);
+	}
+
+	private String calc(String busId, String model, String text)
+	{
+		String audioUrl = null;
+		try
+		{
+			// 判断是否已经合成
+			audioUrl = (String) redisUtil.get(model + "_" + text);
+			if (audioUrl != null)
+			{
+				return audioUrl;
+			}
+			// 合成
+			audioUrl = serviceProvideFactory.getTtsServiceProvide(model).transfer(busId, model, text);
+
+			redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
+
+		} catch (Exception e)
+		{
+			logger.error("转换错误!", e);
+		}
+		return audioUrl;
+	}
+
+	@Override
+	@Transactional
+	public String getTransferStatusByBusId(String busId)
+	{
+		String status = "";
+		try
+		{
+			status = ttsStatusMapper.getReqStatusByBusId(busId);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return status;
+
+	}
+
+	@Override
+	@Transactional
+	public List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status) throws Exception
+	{
+		List<Map<String, Object>> restltMapList = new ArrayList<>();
+		
+		restltMapList = ttsStatusMapper.getTtsStatus(startTime, endTime, model, status);
+		
+		return restltMapList;
+	}
+
+	@Override
+	@Transactional
+	public List<Map<String, String>> getTtsTransferResult(String busId) throws Exception
+	{
+		List<Map<String, String>> restltMapList = new ArrayList<>();
+		
+		restltMapList = ttsResultMapper.getTtsTransferResult(busId);
+		
+		return restltMapList;
+	}
+
+	@Override
+	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception
+	{
+		TtsStatus ttsStatus = new TtsStatus();
+		ttsStatus.setBusId(ttsReqVO.getBusId());
+		ttsStatus.setModel(ttsReqVO.getModel());
+		ttsStatus.setStatus(AiConstants.UNTREATED); //未处理
+		ttsStatus.setCreateTime(new Date());
+		ttsStatus.setText_count(ttsReqVO.getContents().size());
+		SaveTtsStatusHandler.getInstance().add(ttsStatus, ttsStatusMapper);
+		
+	}
 }

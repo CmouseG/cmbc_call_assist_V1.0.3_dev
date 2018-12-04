@@ -1,5 +1,6 @@
 package com.guiji.dispatch.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,8 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.service.IDispatchPlanService;
@@ -35,24 +36,26 @@ public class DispatchPlanController {
 	 * @return 响应报文 异常
 	 */
 	@PostMapping("addSchedule")
-	public boolean  addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
-		boolean result = false;
+	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
+		MessageDto dto = new MessageDto();
 		try {
-			result = dispatchPlanService.addSchedule(dispatchPlan, userId);
+			dto= dispatchPlanService.addSchedule(dispatchPlan, userId);
 		} catch (Exception e) {
-			logger.error("error",e);
+			logger.error("error", e);
 		}
-		return result;
+		return dto;
 	}
-	
+
 	/**
 	 * 查询任务
+	 * 
 	 * @return
 	 */
 	@PostMapping("queryDispatchPlanBatch")
-	@Log(info="查询批量信息")
-	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,@RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.queryDispatchPlanBatch(userId,isSuperAdmin);
+	@Log(info = "查询批量信息")
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
+			@RequestHeader Boolean isSuperAdmin) {
+		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin);
 
 	}
 
@@ -61,23 +64,26 @@ public class DispatchPlanController {
 	 * 
 	 * @param fileName
 	 * @param file
-	 * @return
+	 * @return	
 	 */
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
-	public Result.ReturnData batchImport(@RequestParam("file") MultipartFile file, @RequestHeader Long userId,
+	public MessageDto batchImport(@RequestParam("file") MultipartFile file, @RequestHeader Long userId,
 			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan) {
 		logger.info("batchImport start");
 		String fileName = file.getOriginalFilename();
-
-		boolean result = false;
+		MessageDto batchImport= new MessageDto();
+		
 		try {
-			result = dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan);
+			dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan);
 		} catch (Exception e) {
-			return Result.error("0203001");
+			batchImport.setResult(false);
+			batchImport.setMsg(e.getMessage());
+			logger.error("error", e);
 		}
+		
+		return batchImport;
 
-		return Result.ok(result);
 	}
 
 	/**
@@ -92,7 +98,7 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("queryDispatchPlanByParams")
-	@Log(info="查询任务计划")
+	@Log(info = "查询任务计划")
 	public Page<DispatchPlan> queryDispatchPlanByParams(@RequestParam(required = false, name = "phone") String phone,
 			@RequestParam(required = false, name = "planStatus") String planStatus,
 			@RequestParam(required = false, name = "startTime") String startTime,
@@ -100,12 +106,10 @@ public class DispatchPlanController {
 			@RequestParam(required = false, name = "batchId") Integer batchId,
 			@RequestParam(required = false, name = "replayType") String replayType,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize,
-			@RequestHeader Long userId,
-			@RequestHeader Boolean isSuperAdmin
-			) {
+			@RequestParam(required = true, name = "pagesize") int pagesize, @RequestHeader Long userId,
+			@RequestHeader Boolean isSuperAdmin) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize,userId,isSuperAdmin);
+				pagenum, pagesize, userId, isSuperAdmin);
 	}
 
 	/**
@@ -126,10 +130,10 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("operationAllPlanByBatchId")
-	@Log(info="一键修改状态")
-	public boolean operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
-			@RequestParam(required = true, name = "status") String status,@RequestHeader Long userId) {
-		return dispatchPlanService.operationAllPlanByBatchId(batchId, status,userId);
+	@Log(info = "一键修改状态")
+	public MessageDto operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
+			@RequestParam(required = true, name = "status") String status, @RequestHeader Long userId) {
+		return dispatchPlanService.operationAllPlanByBatchId(batchId, status, userId);
 	}
 
 	/**
@@ -142,8 +146,7 @@ public class DispatchPlanController {
 	public boolean deleteAllPlanByBatchId(@RequestBody IdsDto[] dto) {
 		return dispatchPlanService.batchDeletePlans(dto);
 	}
-	
-	
+
 	/**
 	 * 批量加入
 	 * 
@@ -151,18 +154,21 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("batchInsertDisplanPlan")
-	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan [] dispatchPlans,@RequestHeader Long userId) {
+	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan[] dispatchPlans, @RequestHeader Long userId) {
 		boolean result = false;
-		for(DispatchPlan dis : dispatchPlans){
+		for (DispatchPlan dis : dispatchPlans) {
 			try {
-				result = dispatchPlanService.addSchedule(dis, userId);
+				dispatchPlanService.addSchedule(dis, userId);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		}
 		return result;
-		
-		
+	}
+
+	@PostMapping("checkBatchName")
+	public boolean checkBatchName(@RequestParam(required = true, name = "batchName") String batchName) {
+		return dispatchPlanService.checkBatchId(batchName);
 	}
 
 	/**
@@ -176,4 +182,7 @@ public class DispatchPlanController {
 	public List<LineConcurrent> outLineinfos(@RequestHeader Long userId) {
 		return dispatchPlanService.outLineinfos(String.valueOf(userId));
 	}
+	
+	
+	
 }

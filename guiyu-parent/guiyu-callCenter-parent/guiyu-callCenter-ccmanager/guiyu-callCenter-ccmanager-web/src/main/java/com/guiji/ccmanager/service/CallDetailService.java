@@ -3,6 +3,7 @@ package com.guiji.ccmanager.service;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
+import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 
 import java.util.Date;
 import java.util.List;
@@ -31,4 +32,6 @@ public interface CallDetailService {
     List<CallOutRecord> getRecords(String callIds);
 
     void delRecord(String callId);
+
+    CallPlanDetailRecordVO getCallPlanDetailRecord(String callId);
 }

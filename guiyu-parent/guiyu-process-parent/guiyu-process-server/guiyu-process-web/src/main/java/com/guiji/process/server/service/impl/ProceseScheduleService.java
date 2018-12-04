@@ -9,6 +9,8 @@ import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.service.IProceseScheduleService;
+import com.guiji.process.server.service.IProcessAgentManageService;
+import com.guiji.process.server.service.IProcessInstanceManageService;
 import com.guiji.process.server.util.DeviceProcessUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +33,11 @@ public class ProceseScheduleService implements IProceseScheduleService {
     @Autowired
     private ProcessManageService deviceManageService;
 
+    @Autowired
+    private IProcessInstanceManageService processInstanceManageService;
+    @Autowired
+    private IProcessAgentManageService processAgentManageService;
+
     @Override
     public List<ProcessInstanceVO> getTTS(String model, int requestCount) {
         if (StringUtils.isEmpty(model)) {
@@ -41,7 +49,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
     @Override
     public List<ProcessInstanceVO> getTTS() {
-        return getAllDevices(ProcessTypeEnum.TTS);
+        return getDevices(ProcessTypeEnum.TTS, null, 65565);
     }
 
     @Override
@@ -53,10 +61,14 @@ public class ProceseScheduleService implements IProceseScheduleService {
     public boolean release(ProcessReleaseVO processReleaseVO) {
 
         for (ProcessInstanceVO processInstance:processReleaseVO.getProcessInstanceVOS()) {
-
-            processInstance.setWhoUsed("");
-            processInstance.setStatus(ProcessStatusEnum.UP);
-            deviceManageService.updateStatus(processInstance);
+            ProcessInstanceVO processInstanceVOOld= deviceManageService.getDevice(processInstance.getType(), processInstance.getIp(), processInstance.getPort());
+            if (processInstanceVOOld != null) {
+                if(processInstanceVOOld.getStatus() == ProcessStatusEnum.BUSYING) {
+                    processInstanceVOOld.setWhoUsed("");
+                    processInstanceVOOld.setStatus(ProcessStatusEnum.UP);
+                }
+                deviceManageService.updateStatus(processInstanceVOOld);
+            }
         }
 
         return true;
@@ -68,7 +80,10 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
             processInstance.setWhoUsed("");
             processInstance.setStatus(ProcessStatusEnum.UP);
-            deviceManageService.updateStatus(processInstance);
+            if(deviceManageService.getDevice(processInstance.getType(), processInstance.getIp(), processInstance.getPort()) != null)
+            {
+                deviceManageService.updateStatus(processInstance);
+            }
         }
 
         return true;
@@ -82,26 +97,15 @@ public class ProceseScheduleService implements IProceseScheduleService {
             return;
         }
 
-        String deviceKey = DeviceProcessUtil.getDeviceKey(processInstance.getType(), processInstance.getIp(), processInstance.getPort());
-
-        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
-
-        if(deviceVOMap !=  null && deviceVOMap.containsKey(deviceKey))
+        ProcessInstanceVO processInstanceVO = processInstanceManageService.get(processInstance.getIp(), processInstance.getPort());
+        if(processInstanceVO == null)
         {
-            ProcessInstanceVO processInstanceVO = (ProcessInstanceVO) deviceVOMap.get(deviceKey);
-            processInstanceVO.setProcessKey(toModel);
-
-            Map<String, Object> deviceVOMapTmp = new ConcurrentHashMap<String, Object>();
-            for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
-                deviceVOMapTmp.put((String) ent.getKey(), ent.getValue());
-            }
-            redisUtil.hmset(DeviceProcessConstant.ALL_DEVIECE_KEY, deviceVOMapTmp);
-
-            processInstanceVO.setWhoUsed(IdGenUtil.uuid());
-            processInstanceVO.setStatus(ProcessStatusEnum.BUSYING);
-
-            deviceManageService.updateStatus(processInstanceVO);
+            return;
         }
+        processInstanceVO.setWhoUsed(IdGenUtil.uuid());
+        processInstanceVO.setProcessKey(toModel);
+        deviceManageService.updateStatus(processInstanceVO);
+
 
         // 通知更换模型 TODO 同步 并设定TTS的状态
         List<String> parameters = new ArrayList<String>();
@@ -114,13 +118,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
-    public void publishResource(ProcessTypeEnum processTypeEnum, String file) {
-        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
-        if(deviceVOMap ==  null)
-        {
-            return;
-        }
-
+    public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file) {
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
         if(processTypeEnum == ProcessTypeEnum.SELLBOT)
         {
@@ -130,102 +128,85 @@ public class ProceseScheduleService implements IProceseScheduleService {
         {
             cmdType = CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE;
         }
+        else if(processTypeEnum == ProcessTypeEnum.ROBOT)
+        {
+            cmdType = CmdTypeEnum.PUBLISH_ROBOT_BOTSTENCE;
+        }
         else
         {
             return;
         }
 
-        ProcessInstanceVO processInstanceVO = null;
         List<String> parameters = new ArrayList<String>();
         parameters.add(file);
-
-        List<String> agents = new ArrayList<String>();
-        for (Map.Entry<Object, Object> ent:deviceVOMap.entrySet()) {
-
-            processInstanceVO =(ProcessInstanceVO) ent.getValue();
-            if(processInstanceVO.getType() == ProcessTypeEnum.AGENT && !agents.contains(processInstanceVO.getIp()))
-            {
-                agents.add(processInstanceVO.getIp());
-                processInstanceVO.setType(ProcessTypeEnum.AGENT);
-                deviceManageService.cmd(processInstanceVO, cmdType, parameters);
-            }
+        parameters.add(tmplId);
+        Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
+        if(allAgent == null)
+        {
+            return;
+        }
+        for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
+            ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
+            deviceManageService.cmd(agent, cmdType, parameters);
         }
     }
+
 
 
     private List<ProcessInstanceVO> getDevices(ProcessTypeEnum processTypeEnum, String key, int requestCount)
     {
         List<ProcessInstanceVO> result = new ArrayList<ProcessInstanceVO>();
 
-        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
-        if(deviceVOMap == null)
+        Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
+        if(allAgent == null)
         {
             return result;
         }
 
-        ProcessInstanceVO deviceVO = null;
+
         String whoUsed = IdGenUtil.uuid();
-
         int count = 0;
-        for (Map.Entry<Object, Object> ent: deviceVOMap.entrySet()) {
+        for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
 
-            if(count == requestCount)
+            if(requestCount == count)
             {
                 break;
             }
+            ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
+            Map<Object, Object> agentProcesses = (Map<Object, Object>) processInstanceManageService.query(((ProcessInstanceVO)agentEnv.getValue()).getIp());
 
-            try {
-                deviceVO = (ProcessInstanceVO) ent.getValue();
-                if(deviceVO.getStatus() == ProcessStatusEnum.UP && StringUtils.isEmpty(deviceVO.getWhoUsed()) && StringUtils.equals(key, deviceVO.getProcessKey()) && deviceVO.getType() == processTypeEnum)
+            boolean hasChanged = false;
+            for (Map.Entry<Object, Object> processesEnv: agentProcesses.entrySet()) {
+                if(requestCount == count)
                 {
-                    deviceVO.setStatus(ProcessStatusEnum.BUSYING);
-                    deviceVO.setWhoUsed(whoUsed);
+                    break;
+                }
 
-                    deviceManageService.updateStatus(deviceVO);
+                ProcessInstanceVO processInstance = (ProcessInstanceVO) processesEnv.getValue();
 
-                    result.add((ProcessInstanceVO) deviceVO.clone());
+                boolean keyFlg = true;
+                if(StringUtils.isNotEmpty(key))
+                {
+                    keyFlg = StringUtils.equals(key, processInstance.getProcessKey());
+                }
+
+                if(processInstance.getStatus() == ProcessStatusEnum.UP && StringUtils.isEmpty(processInstance.getWhoUsed()) && processInstance.getType() == processTypeEnum && keyFlg)
+                {
+                    processInstance.setStatus(ProcessStatusEnum.BUSYING);
+                    processInstance.setWhoUsed(whoUsed);
+
+                    deviceManageService.updateStatus(processInstance);
+
+                    result.add(processInstance);
                     count++;
+                    hasChanged = true;
                 }
             }
-            catch (Exception e)
+
+            if(hasChanged)
             {
-
+                processInstanceManageService.update(agent.getIp(), agentProcesses);
             }
-
-        }
-
-        return  result;
-    }
-
-    private List<ProcessInstanceVO> getAllDevices(ProcessTypeEnum processTypeEnum)
-    {
-        List<ProcessInstanceVO> result = new ArrayList<ProcessInstanceVO>();
-
-        Map<Object, Object> deviceVOMap = (Map<Object, Object>) redisUtil.hmget(DeviceProcessConstant.ALL_DEVIECE_KEY);
-        if(deviceVOMap == null)
-        {
-            return result;
-        }
-
-        ProcessInstanceVO deviceVO = null;
-        String whoUsed = IdGenUtil.uuid();
-
-        for (Map.Entry<Object, Object> ent: deviceVOMap.entrySet()) {
-            try {
-                deviceVO = (ProcessInstanceVO) ent.getValue();
-                if(deviceVO.getStatus() == ProcessStatusEnum.UP && StringUtils.isEmpty(deviceVO.getWhoUsed()) && deviceVO.getType() == processTypeEnum)
-                {
-                    deviceVO.setStatus(ProcessStatusEnum.BUSYING);
-                    deviceVO.setWhoUsed(whoUsed);
-
-                    deviceManageService.updateStatus(deviceVO);
-
-                    result.add((ProcessInstanceVO) deviceVO.clone());
-                }
-            } catch (Exception e){
-
-            }
-
         }
         return  result;
     }

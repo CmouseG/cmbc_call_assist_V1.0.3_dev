@@ -17,7 +17,6 @@ import java.util.List;
  * Created by ty on 2018/11/23.
  */
 @RestController
-@RequestMapping("/process")
 public class ProcessController {
     @Autowired
     ISysProcessService sysProcessService;
@@ -37,6 +36,12 @@ public class ProcessController {
     @PostMapping("/stop")
     public Object stop(@RequestBody ProcessCmdVO processCmdVO) {
         sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.STOP);
+        return "success";
+    }
+
+    @PostMapping("/restart")
+    public Object restart(@RequestBody ProcessCmdVO processCmdVO) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.RESTART);
         return "success";
     }
 }

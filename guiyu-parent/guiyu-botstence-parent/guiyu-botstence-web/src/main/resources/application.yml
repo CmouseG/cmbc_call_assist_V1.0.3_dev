@@ -10,11 +10,21 @@ spring:
       max-request-size: 100MB # 设置最大的请求文件的大小
       file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
       location: /  # 上传的临时目录     
-  datasource:
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_botstence?useUnicode=true&characterEncoding=utf-8
+  datasource: 
+    type: com.alibaba.druid.pool.DruidDataSource  
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_botstence?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: botstence
     password: botstence@1234
     driver-class-name: com.mysql.jdbc.Driver
+    minIdle: 1  
+    maxActive: 2  
+    initialSize: 1  
+    timeBetweenEvictionRunsMillis: 3000  
+    minEvictableIdleTimeMillis: 300000  
+    validationQuery: SELECT 'ZTM' FROM DUAL  
+    testWhileIdle: true  
+    testOnBorrow: false  
+    testOnReturn: false    
   redis:
     database: 0
     host: 127.0.0.1
@@ -25,6 +35,13 @@ spring:
       max-wait: -1
       min-idle: 0
       max-idle: 8
+  rabbitmq:
+    host: 192.168.1.81
+    prot: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
+        
       
 #数据库连接配置
 mybatis:

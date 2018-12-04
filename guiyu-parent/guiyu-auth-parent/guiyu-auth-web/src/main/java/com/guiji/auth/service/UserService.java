@@ -1,16 +1,20 @@
 package com.guiji.auth.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.util.AuthUtil;
+import com.guiji.ccmanager.api.ICallManagerOut;
+import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.api.IRobotRemote;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
@@ -22,13 +26,16 @@ public class UserService {
 	@Autowired
 	private SysUserMapper mapper;
 	
+	@Autowired
+	private IRobotRemote iRobotRemote;
+	
+	@Autowired
+	private ICallManagerOut iCallManagerOut;
 	/**
 	 * 新增用户
 	 * @param user
 	 */
 	public void insert(SysUser user,Long roleId){
-		user.setCreateTime(new Date());
-		user.setUpdateTime(new Date());
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
 	}
@@ -83,7 +90,7 @@ public class UserService {
 	}
 	
 	
-	public void changePassword(String newPass,String oldPass,@RequestHeader Long userId) throws CheckConditionException{
+	public void changePassword(String newPass,String oldPass,Long userId) throws CheckConditionException{
 		newPass=AuthUtil.encrypt(newPass);
 		oldPass=AuthUtil.encrypt(oldPass);
 		SysUser sysUser =mapper.selectByPrimaryKey(userId);
@@ -98,5 +105,16 @@ public class UserService {
 	
 	public void updateUserData(SysUser user){
 		mapper.updateByPrimaryKeySelective(user);
+	}
+	
+	public Map<String,Object> getUserInfo(Long userId){
+		Map<String,Object> result=new HashMap<>();
+		SysUser user=mapper.selectByPrimaryKey(userId);
+		ReturnData custAccount=iRobotRemote.queryCustAccount(String.valueOf(userId));
+		ReturnData<List<LineConcurrent>> callData=iCallManagerOut.getLineInfos(String.valueOf(userId));
+		result.put("user", user);
+		result.put("robot", custAccount.getBody());
+		result.put("call", callData.getBody());
+		return result;
 	}
 }

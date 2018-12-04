@@ -71,16 +71,16 @@ public class NasServiceImpl implements NasService {
 				skFile.setBusiId(sysFileReqVO.getBusiId()); //业务ID
 				skFile.setBusiType(sysFileReqVO.getBusiType()); //文件类型（业务类型）
 				skFile.setSysCode(sysFileReqVO.getSysCode()); //系统代码
+				//String loginId = "1";	//当前登录ID WebContextUtil.getLoginId() TODO
+				skFile.setCrtUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null); //创建人
+				skFile.setLstUpdateUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null);	//最后更新人
 			}
 			skFile.setFileName(fileName); //文件名称
 			skFile.setFileSize(Double.longBitsToDouble(file.getSize())); //文件大小
 			skFile.setFileType(StrUtils.isNotEmpty(ext) ? ext.toUpperCase() : null); //文件后缀，存储大写
 			skFile.setSkUrl(url); //文件URL
 			skFile.setSkThumbImageUrl(thumbUrl); //缩略图url
-			//String loginId = "1";	//当前登录ID WebContextUtil.getLoginId() TODO
-			skFile.setCrtUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null); //创建人
 			skFile.setCrtTime(new Date());	//创建时间
-			skFile.setLstUpdateUser(String.valueOf(sysFileReqVO.getUserId()));	//最后更新人
 			skFile.setLstUpdateTime(new Date()); //最后创建时间
 			skFile.setId(IdGenUtil.uuid());
 			sysFileMapper.insert(skFile);

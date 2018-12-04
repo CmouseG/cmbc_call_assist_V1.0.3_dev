@@ -50,17 +50,17 @@ public class TemplateServiceImpl implements TemplateService {
         ttsVoiceReq.setTemplateId(tempId);
         ttsVoiceReq.setSeqid(callId);
         Result.ReturnData<List<TtsVoice>> result = iRobotFeign.ttsCompose(ttsVoiceReq);
-        if(!result.getCode().equals("0")){
+        if(!result.getCode().equals("0")||result.getBody()==null){
             logger.warn("下载tts录音，获取录音URL失败:"+result.getCode());
             throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_TTS_DOWNLOAD);
         }
         List<TtsVoice> list = result.getBody();
         File ttsDir = new File(pathConfig.getTtsPath()+callId);  // 创建tts文件夹
-        if (ttsDir.isDirectory() && !ttsDir.exists()) {//文件不存在则创建
+        if (!ttsDir.exists()) {//文件不存在则创建
             ttsDir.mkdir();
         }
         for (TtsVoice ttsVoice:list) {
-            File ttsVoiceFile = new File(pathConfig.getTtsPath()+callId+"/"+ttsVoice.getTtsKey());
+            File ttsVoiceFile = new File(pathConfig.getTtsPath()+callId+"/"+ttsVoice.getTtsKey()+".wav");
             NetFileDownUtil util = new NetFileDownUtil(ttsVoice.getTtsUrl(),ttsVoiceFile);
             try {
                 util.downfile();

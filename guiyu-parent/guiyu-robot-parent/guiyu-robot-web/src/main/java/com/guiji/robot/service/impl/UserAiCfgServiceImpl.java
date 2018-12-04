@@ -68,6 +68,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				userAiCfgBaseInfoMapper.insert(userAiCfgBaseInfo);
 			}else {
 				//主键不为空，更新信息
+				userAiCfgBaseInfo.setUpdateTime(new Date());
 				userAiCfgBaseInfoMapper.updateByPrimaryKey(userAiCfgBaseInfo);
 			}
 		}
@@ -80,12 +81,31 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 * @param userAiCfgBaseInfo
 	 * @return
 	 */
+	@Transactional
 	public UserAiCfgBaseInfo putupUserCfgBase(UserAiCfgBaseInfo userAiCfgBaseInfo) {
 		if(userAiCfgBaseInfo != null) {
 			String id = userAiCfgBaseInfo.getId();
 			if(StrUtils.isNotEmpty(id)) {
 				//更新
-				throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+				//先查询存量的用户机器总数
+				UserAiCfgBaseInfo existUserAiCfgBaseInfo = userAiCfgBaseInfoMapper.selectByPrimaryKey(id);
+				String userId = existUserAiCfgBaseInfo.getUserId();
+				if(userAiCfgBaseInfo.getAiTotalNum()<existUserAiCfgBaseInfo.getAiTotalNum()) {
+					//如果数量减少了，那么需要让用户删除拆分信息重新配置
+					List<UserAiCfgInfo> cfgInfoList = this.queryUserAiCfgListByUserId(userId);
+					if(ListUtil.isNotEmpty(cfgInfoList)) {
+						throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+					}
+				}
+				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
+				if(StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())) {
+					userAiCfgBaseInfo.setTemplateIds(existUserAiCfgBaseInfo.getTemplateIds());
+				}
+				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
+					userAiCfgBaseInfo.setUserId(userId);
+				}
+				userAiCfgBaseInfo.setCrtUser(existUserAiCfgBaseInfo.getCrtUser());
+				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {
 				//新增
 				//1、初始化一条用户机器人线路拆分
@@ -121,6 +141,38 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
+	 * 分页查询 用户机器人配置基本信息
+	 * @param pageNo
+	 * @param pageSize
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(int pageNo, int pageSize,String userId) {
+		Page<UserAiCfgBaseInfo> page = new Page<UserAiCfgBaseInfo>();
+		int totalRecord = 0;
+		int limitStart = (pageNo-1)*pageSize;	//起始条数
+		int limitEnd = pageSize;	//查询条数
+		UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+		if(StrUtils.isNotEmpty(userId)) {
+			example.createCriteria().andUserIdEqualTo(userId);
+		}
+		//查询总数
+		totalRecord = userAiCfgBaseInfoMapper.countByExample(example);
+		if(totalRecord > 0) {
+			example.setLimitStart(limitStart);
+			example.setLimitEnd(limitEnd);
+			List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
+			page.setRecords(list);
+		}
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setTotal(totalRecord);
+		return page;
+	}
+	
+	
+	/**
 	 * 保存或者更新一条用户-机器人配置信息（不开放出去，必须调用变更服务）
 	 * 同时记录历史
 	 * @param userAiCfgInfo
@@ -137,6 +189,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				record.setHandleType(RobotConstants.HANDLE_TYPE_A); //新增
 			}else {
 				//主键不为空，更新信息
+				userAiCfgInfo.setUpdateTime(new Date());
 				userAiCfgInfoMapper.updateByPrimaryKey(userAiCfgInfo);
 				record.setHandleType(RobotConstants.HANDLE_TYPE_U); //更新
 			}
@@ -257,7 +310,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	@Transactional
 	public UserAiCfgInfo userAiCfgChange(UserAiCfgBaseInfo userBaseInfo,UserAiCfgInfo userAiCfgInfo) {
 		Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId(), RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId());
-		if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
+		if (distributedLockHandler.tryLock(lock)) { // 持锁
 			try {
 				String id = userAiCfgInfo.getId();
 				//查询用户资源配置缓存数据
@@ -272,8 +325,9 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					//更新1个配置项
 					//查询用户机器人数量
 					UserAiCfgInfo existUserAiCfgInfo = userAiCfgInfoMapper.selectByPrimaryKey(id);
-					userAiCfgInfo.setStatus(existUserAiCfgInfo.getStatus());
+					userAiCfgInfo.setCrtUser(existUserAiCfgInfo.getCrtUser());
 					userAiCfgInfo.setCrtTime(existUserAiCfgInfo.getCrtTime());
+					userAiCfgInfo.setStatus(existUserAiCfgInfo.getStatus());
 					//如果本次调整的机器人数量减少了，或者话术模板变更了，都认为机器人变更是资源减少的，此处设置下减少，机器人管理那边会清空机器人，重新根据配置拉起。
 					if(userAiCfgInfo.getAiNum()<existUserAiCfgInfo.getAiNum()) {
 						userResourceCache.setAiNum(userResourceCache.getAiNum()+(userAiCfgInfo.getAiNum()-existUserAiCfgInfo.getAiNum())); //变更后数量
@@ -344,7 +398,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	public void delUserCfg(String userId,String id) {
 		if(StrUtils.isNotEmpty(id) && StrUtils.isNotEmpty(userId)) {
 			Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userId, RobotConstants.LOCK_NAME_CFG+userId);
-			if (distributedLockHandler.tryLock(lock, 30*1000, 50, 3*60*1000)) { // 尝试30s,每30ms尝试一次，持锁时间为3分钟
+			if (distributedLockHandler.tryLock(lock)) { // 持锁
 				try {
 					//根据id查询用户存量缓存数据
 					UserAiCfgInfo existUserAiCfgInfo = userAiCfgInfoMapper.selectByPrimaryKey(id);

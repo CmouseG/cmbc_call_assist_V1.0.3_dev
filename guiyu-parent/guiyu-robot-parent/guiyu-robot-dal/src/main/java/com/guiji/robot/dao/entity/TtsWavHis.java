@@ -8,9 +8,19 @@ public class TtsWavHis implements Serializable {
 
     private String seqId;
 
+    private String busiId;
+
     private String templateId;
 
+    private String ttsTxtJsonData;
+
     private String status;
+
+    private String errorMsg;
+
+    private String errorType;
+
+    private Integer errorTryNum;
 
     private Date crtTime;
 
@@ -34,6 +44,14 @@ public class TtsWavHis implements Serializable {
         this.seqId = seqId == null ? null : seqId.trim();
     }
 
+    public String getBusiId() {
+        return busiId;
+    }
+
+    public void setBusiId(String busiId) {
+        this.busiId = busiId == null ? null : busiId.trim();
+    }
+
     public String getTemplateId() {
         return templateId;
     }
@@ -42,12 +60,44 @@ public class TtsWavHis implements Serializable {
         this.templateId = templateId == null ? null : templateId.trim();
     }
 
+    public String getTtsTxtJsonData() {
+        return ttsTxtJsonData;
+    }
+
+    public void setTtsTxtJsonData(String ttsTxtJsonData) {
+        this.ttsTxtJsonData = ttsTxtJsonData == null ? null : ttsTxtJsonData.trim();
+    }
+
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status == null ? null : status.trim();
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg == null ? null : errorMsg.trim();
+    }
+
+    public String getErrorType() {
+        return errorType;
+    }
+
+    public void setErrorType(String errorType) {
+        this.errorType = errorType == null ? null : errorType.trim();
+    }
+
+    public Integer getErrorTryNum() {
+        return errorTryNum;
+    }
+
+    public void setErrorTryNum(Integer errorTryNum) {
+        this.errorTryNum = errorTryNum;
     }
 
     public Date getCrtTime() {
@@ -74,8 +124,13 @@ public class TtsWavHis implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", seqId=").append(seqId);
+        sb.append(", busiId=").append(busiId);
         sb.append(", templateId=").append(templateId);
+        sb.append(", ttsTxtJsonData=").append(ttsTxtJsonData);
         sb.append(", status=").append(status);
+        sb.append(", errorMsg=").append(errorMsg);
+        sb.append(", errorType=").append(errorType);
+        sb.append(", errorTryNum=").append(errorTryNum);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", ttsJsonData=").append(ttsJsonData);
         sb.append(", serialVersionUID=").append(serialVersionUID);

@@ -10,6 +10,7 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
+import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
@@ -152,7 +153,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public CallOutPlanVO getCallDetail(String callId) {
+    public CallPlanDetailRecordVO getCallDetail(String callId) {
 
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
 
@@ -181,13 +182,25 @@ public class CallDetailServiceImpl implements CallDetailService {
                 resList.add(callOutDetailVO);
             }
 
-            CallOutPlanVO callOutPlanVO = new CallOutPlanVO();
-            BeanUtil.copyProperties(callOutPlan,callOutPlanVO);
-            callOutPlanVO.setDetailList(resList);
-            return callOutPlanVO;
+            CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
+            BeanUtil.copyProperties(callOutPlan,callPlanDetailRecordVO);
+            callPlanDetailRecordVO.setDetailList(resList);
+            return callPlanDetailRecordVO;
         }
 
         return null;
+    }
+
+    @Override
+    public CallPlanDetailRecordVO getCallPlanDetailRecord(String callId) {
+
+        CallPlanDetailRecordVO callPlanDetailRecordVO = getCallDetail(callId);
+       if(callPlanDetailRecordVO!=null){
+           CallOutRecord callOutRecord= callOutRecordMapper.selectByPrimaryKey(callId);
+           callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
+           return callPlanDetailRecordVO;
+       }
+       return null;
     }
 
     @Override
@@ -202,7 +215,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             for(CallOutDetail callOutDetail:list){
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
-                result += "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                result += getContext(botSay, customerSay);
             }
         }
         return  result;
@@ -226,17 +239,34 @@ public class CallDetailServiceImpl implements CallDetailService {
                 String customerSay = callOutDetail.getCustomerSayText();
 
                 if(map.get(callId)== null){
-                    String result = "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                    String result = getContext(botSay, customerSay);
                     map.put(callId,result);
                 }else{
                     String result=map.get(callId);
-                    result += "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+                    result += getContext(botSay, customerSay);
                     map.put(callId,result);
                 }
             }
         }
         return  map;
     }
+
+    private String getContext(String botSay,String customerSay){
+        if(customerSay == null){
+            customerSay = "";
+        }
+        if(botSay == null){
+            botSay = "";
+        }
+        if(StringUtils.isBlank(botSay)){
+           return  "客户："+ customerSay +"\r\n";
+        }else if(StringUtils.isBlank(customerSay)){
+            return "机器人："+ botSay +"\r\n";
+        }else{
+            return  "机器人："+ botSay +"\r\n客户："+  customerSay +"\r\n";
+        }
+    }
+
 
 
     @Override

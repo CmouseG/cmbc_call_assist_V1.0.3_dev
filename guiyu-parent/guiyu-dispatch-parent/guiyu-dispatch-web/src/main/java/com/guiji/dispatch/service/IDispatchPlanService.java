@@ -3,13 +3,12 @@ package com.guiji.dispatch.service;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 
@@ -22,7 +21,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 
      */
-  boolean addSchedule( DispatchPlan dispatchPlan,Long userId) throws Exception;
+	MessageDto addSchedule( DispatchPlan dispatchPlan,Long userId) throws Exception;
 
     /**
      * 查询任务列表
@@ -161,6 +160,9 @@ public interface IDispatchPlanService {
 	 */
 	List<DispatchPlan> selectPhoneByDate();
 	
+	List<DispatchPlan> selectPhoneByDateAndFlag(String flag);
+	
+	
 	/**
 	 * 批量修改状态
 	 * @param dto
@@ -174,7 +176,7 @@ public interface IDispatchPlanService {
 	 * @param status
 	 * @return
 	 */
-	boolean operationAllPlanByBatchId(Integer batchId,String status,Long userId);
+	MessageDto operationAllPlanByBatchId(Integer batchId,String status,Long userId);
 	
 	/**
 	 * 批量删除
@@ -195,4 +197,17 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	boolean updateReplayDate();
+	
+	/**
+	 * 检查批次是否存在
+	 * @return
+	 */
+	boolean checkBatchId(String name);
+	
+	/**
+	 * 批量修改状态位置
+	 * @param list
+	 * @return
+	 */
+	boolean batchUpdateFlag(List<DispatchPlan> list,String flag);
 }

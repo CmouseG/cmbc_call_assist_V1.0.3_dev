@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.robot.dao.TtsCallbackHisMapper;
 import com.guiji.robot.dao.TtsWavHisMapper;
+import com.guiji.robot.dao.entity.TtsCallbackHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.utils.StrUtils;
 
@@ -21,6 +23,8 @@ import com.guiji.utils.StrUtils;
 public class AiNewTransService {
 	@Autowired
 	TtsWavHisMapper ttsWavHisMapper;
+	@Autowired
+	TtsCallbackHisMapper ttsCallbackHisMapper;
 	
 	/**
 	 * 保存或者更新一TTS合成信息
@@ -34,13 +38,37 @@ public class AiNewTransService {
 			if(StrUtils.isEmpty(ttsWavHis.getId())) {
 				//如果主键为空，那么新增一条信息
 				ttsWavHis.setCrtTime(new Date());
+				if(ttsWavHis.getErrorTryNum()==null) {
+					ttsWavHis.setErrorTryNum(0);
+				}
 				ttsWavHisMapper.insert(ttsWavHis);
 			}else {
 				//主键不为空，更新信息
-				ttsWavHisMapper.updateByPrimaryKey(ttsWavHis);
+				ttsWavHisMapper.updateByPrimaryKeyWithBLOBs(ttsWavHis);
 			}
 		}
 		return ttsWavHis;
+	}
+	
+	
+	/**
+	 * 保存一条TTS合成的回call数据
+	 * 独立事务
+	 * @param ttsCallbackHis
+	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public TtsCallbackHis recordTtsCallback(TtsCallbackHis ttsCallbackHis) {
+		if(ttsCallbackHis != null) {
+			if(StrUtils.isEmpty(ttsCallbackHis.getId())) {
+				//如果主键为空，那么新增一条信息
+				ttsCallbackHis.setCrtTime(new Date());
+				ttsCallbackHisMapper.insert(ttsCallbackHis);
+			}else {
+				//主键不为空，更新信息
+				ttsCallbackHisMapper.updateByPrimaryKeyWithBLOBs(ttsCallbackHis);
+			}
+		}
+		return ttsCallbackHis;
 	}
 	
 }

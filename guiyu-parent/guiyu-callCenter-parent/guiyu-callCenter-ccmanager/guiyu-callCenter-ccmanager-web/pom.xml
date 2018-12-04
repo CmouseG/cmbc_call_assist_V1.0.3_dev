@@ -12,8 +12,14 @@
     <artifactId>guiyu-callCenter-ccmanager-web</artifactId>
 
     <dependencies>
+
         <dependency>
-            <artifactId>guiji-callCenter-ccmanager-api</artifactId>
+            <artifactId>guiyu-callCenter-dal</artifactId>
+            <groupId>guiji.ai</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>guiyu-callCenter-ccmanager-api</artifactId>
             <groupId>guiji.ai</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceDomainMapper;
@@ -73,7 +74,7 @@ public class BotSentenceApprovalController {
 	
 	@Autowired
 	private BotSentenceDomainMapper botSentenceDomainMapper;
-
+	
 	/**
 	 *  获取待审核话术列表
 	 */
@@ -174,6 +175,8 @@ public class BotSentenceApprovalController {
 		}
 		
 		botSentenceApprovalService.passApproval(processId, list,userId);
+		
+		botSentenceApprovalService.publishSentence(processId,userId);
 		return ServerResult.createBySuccess();
 	}
 	
@@ -214,34 +217,6 @@ public class BotSentenceApprovalController {
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();
 		String dirName = templateId;
-		
-		if(StringUtils.isBlank(selectedList)) {
-			throw new CommonException("请选择默认主流程！");
-		}
-		
-		String [] array = selectedList.split("-");
-		
-		//把之前的com_domain全部设置为空
-		botSentenceDomainExtMapper.batchUpdateComDomain(processId);
-		
-		List<BotSentenceDomain> list = new ArrayList<>();
-		
-		for(int i = 0 ; i < array.length ; i++) {
-			String domainId = array[i];
-			BotSentenceDomain domain = botSentenceDomainMapper.selectByPrimaryKey(domainId);
-			list.add(domain);
-		}
-		
-		//设置默认主流程
-		for(int i = 0 ; i < list.size() - 1 ; i++) {
-			BotSentenceDomain domain = list.get(i);
-			domain.setComDomain(list.get(i+1).getDomainName());
-			domain.setIsMainFlow("01");
-			domain.setLstUpdateTime(new Date());
-			//domain.setLstUpdateUser(UserUtil.getUserId());
-			botSentenceDomainMapper.updateByPrimaryKey(domain);
-		}
-		
 		
 		File file = fileGenerateService.fileGenerate(processId, dirName);
 		

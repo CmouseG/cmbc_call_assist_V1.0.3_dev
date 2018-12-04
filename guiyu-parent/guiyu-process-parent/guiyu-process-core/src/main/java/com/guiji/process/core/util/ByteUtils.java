@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import io.netty.buffer.ByteBuf;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 public class ByteUtils {
 
@@ -25,16 +26,8 @@ public class ByteUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				bi.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				oi.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			IOUtils.closeQuietly(bi);
+			IOUtils.closeQuietly(oi);
 		}
 		return obj;
 	}
@@ -50,16 +43,8 @@ public class ByteUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				bo.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				oo.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			IOUtils.closeQuietly(bo);
+			IOUtils.closeQuietly(oo);
 		}
 		return bytes;
 	}

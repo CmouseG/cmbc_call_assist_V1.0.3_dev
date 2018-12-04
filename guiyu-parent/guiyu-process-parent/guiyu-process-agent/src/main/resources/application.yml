@@ -14,8 +14,8 @@ spring:
       min-idle: 0
       max-idle: 8
 processServer:
-  ip: 192.168.139.1
+  ip: 192.168.1.78
   port: 18082
 agent:
-  monitorDir: D:\conf
-  monitorFile: D:\conf\cfg.json
+  monitorDir: /home/apps/config/agent
+  monitorFile: /home/apps/config/agent/cfg.json

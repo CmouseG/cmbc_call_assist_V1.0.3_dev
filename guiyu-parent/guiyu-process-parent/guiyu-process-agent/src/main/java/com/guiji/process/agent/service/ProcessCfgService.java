@@ -22,6 +22,8 @@ public class ProcessCfgService {
 
     public static Integer agentPort = 0;
 
+    private String file;
+
     public static ProcessCfgService getIntance()
     {
         return instance;
@@ -41,6 +43,8 @@ public class ProcessCfgService {
 
 
     private CfgAgentNodeVO readFileToVO(File file) throws IOException {
+
+        this.file = file.getAbsolutePath();
         String json = FileUtils.readFileToString(file);
 
         return  JsonUtils.json2Bean(json, CfgAgentNodeVO.class);
@@ -57,12 +61,7 @@ public class ProcessCfgService {
             e.printStackTrace();
             return;
         }
-
         initMap(cfgAgentNodeVO);
-
-
-
-
     }
 
     private void initMap(CfgAgentNodeVO cfgAgentNodeVO)
@@ -90,19 +89,12 @@ public class ProcessCfgService {
             }
         }
 
-        cfgMap.clear();
-
-        for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
-            cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
-            System.out.println(cfgProcessVO);
+        if (cfgMap != null) {
+            cfgMap.clear();
+            for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
+                cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
+            }
         }
-
-        CfgProcessVO cfgProcessVO = new CfgProcessVO();
-        cfgProcessVO.setPort(ProcessCfgService.agentPort);
-        cfgProcessVO.setName("agent");
-        cfgProcessVO.setProcessTypeEnum(ProcessTypeEnum.AGENT.getValue());
-        cfgProcessVO.setCfgNodeOpers(cfgAgentNodeVO.getNodeOpers());
-        cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
 
         // 发送注册信息
         Map<Integer, CfgProcessVO> cfgMap = ProcessCfgService.getIntance().cfgMap;
@@ -128,6 +120,28 @@ public class ProcessCfgService {
         }
 
 
+    }
+
+
+    public void refreshProcessKey(int port, String processKey)
+    {
+        CfgAgentNodeVO cfgAgentNodeVO = null;
+        File file = new File(this.file);
+        try {
+            cfgAgentNodeVO =   readFileToVO(file);
+            for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
+                if (cfgProcessVO.getPort() == port) {
+                    cfgProcessVO.setProcessKey(processKey);
+                    break;
+                }
+            }
+
+            FileUtils.write(file, JsonUtils.bean2Json(cfgAgentNodeVO));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
     }
 
 

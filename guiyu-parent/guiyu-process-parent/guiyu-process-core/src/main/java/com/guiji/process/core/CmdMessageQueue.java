@@ -25,6 +25,7 @@ public class CmdMessageQueue {
     }
 
     public void produce(CmdMessageVO deviceMsgVO) throws InterruptedException {
+
         queue.put(deviceMsgVO);
     }
 

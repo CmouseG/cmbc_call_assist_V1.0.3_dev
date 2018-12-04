@@ -3,14 +3,13 @@ package com.guiji.callcenter.fsmanager.config;
 import com.guiji.common.exception.ExceptionEnum;
 
 /**
- * fsagent服务异常的枚举
+ * fsmanager服务异常的枚举
  */
 public enum FsmanagerExceptionEnum implements ExceptionEnum {
 
     EXCP_FSMANAGER_LINE_REPEAT("0301003","创建线路失败，线路名称重复"),
-    EXCP_FSAGENT_UPLOAD_ERROR("0300005","录音上传失败"),
-    EXCP_FSAGENT_FSMANAGER_LINEXMLINFOS("0300007","从fsmanager服务获取线路信息失败"),
-    EXCP_FSAGENT_TTS_DOWNLOAD("0300008","从机器人中心获取TTS录音URL失败");
+    EXCP_FSMANAGER_NONE_FREESWITCH("0301002","申请freeswitch资源失败，空闲且正常的freeswitch为空"),
+    EXCP_FSMANAGER_FSAGENT_NO_RECORD("0301004","模板不存在");
     //返回码
     private String errorCode;
     //返回信息

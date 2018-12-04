@@ -27,6 +27,7 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
@@ -121,7 +122,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				}else {
 					logger.error("会话id：{},模板:{},不需要TTS合成，返回null",hsChecker.getSeqid(),hsChecker.getTemplateId());
 					result.setCheckMsg("不需要TTS合成");
-					result.setPass(false); //默认不通过，参数不存在
+					result.setPass(true); //默认通过，调用方可以认为数据可以正常入库，做后续操作
 					list.add(result);
 					continue;
 				}
@@ -140,31 +141,53 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	@Override
-	public List<TtsVoice> fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
+	public TtsComposeCheckRsp fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
 		if(ttsVoiceReq == null
 				|| StrUtils.isEmpty(ttsVoiceReq.getSeqid())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
+		TtsComposeCheckRsp rsp = new TtsComposeCheckRsp();
+		rsp.setSeqId(ttsVoiceReq.getSeqid());
 		//根据会话ID查找语音的TTS合成结果
 		TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(ttsVoiceReq.getSeqid());
 		if(ttsWavHis == null) {
-			logger.error("会话ID:{}TTS查不到数据");
-			throw new RobotException(AiErrorEnum.AI00060017.getErrorCode(),AiErrorEnum.AI00060017.getErrorMsg());
+			logger.error("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
+			rsp.setStatus(RobotConstants.TTS_STATUS_N);
 		}else {
+			rsp.setStatus(ttsWavHis.getStatus());
 			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
-				logger.error("会话ID:{}TTS数据合成中...");
-				throw new RobotException(AiErrorEnum.AI00060018.getErrorCode(),AiErrorEnum.AI00060018.getErrorMsg());
+				logger.error("会话ID:{}TTS数据合成中...",ttsVoiceReq.getSeqid());
 			}else if(RobotConstants.TTS_STATUS_F.equals(ttsWavHis.getStatus())) {
-				logger.error("会话ID:{}TTS数据合成失败!");
-				throw new RobotException(AiErrorEnum.AI00060019.getErrorCode(),AiErrorEnum.AI00060019.getErrorMsg());
+				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
 			}else {
 				//查询出合成后的数据JSON
 				String ttsJsonData = ttsWavHis.getTtsJsonData();
 				List<TtsVoice> list = JSON.parseArray(ttsJsonData, TtsVoice.class);
-				return list;
+				rsp.setTtsVoiceList(list);
 			}
 		}
+		return rsp;
+	}
+	
+	
+	/**
+	 * 批量TTS合成下载
+	 * @param seqIdList
+	 * @return
+	 */
+	public List<TtsComposeCheckRsp> ttsComposeCheck(List<String> seqIdList){
+		if(ListUtil.isNotEmpty(seqIdList)) {
+			List<TtsComposeCheckRsp> list = new ArrayList<TtsComposeCheckRsp>();
+			for(String seqId : seqIdList) {
+				TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
+				ttsVoiceReq.setSeqid(seqId);
+				TtsComposeCheckRsp rsp = this.fetchTtsUrls(ttsVoiceReq);
+				list.add(rsp);
+			}
+			return list;
+		}
+		return null;
 	}
 	
 	
@@ -190,7 +213,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		if(aiCallApplyReq == null
 				|| StrUtils.isEmpty(aiCallApplyReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallApplyReq.getPhoneNo())
-				|| StrUtils.isEmpty(aiCallApplyReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallApplyReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallApplyReq.getUserId())) {
 			//必输校验不通过
@@ -230,7 +252,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 						userResourceCache.setChgStatus(null);
 						aiCacheService.putUserResource(userResourceCache);
 					}else if(RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())){
-						//用户资源减少
+						//用户资源减少，先将现在空闲的机器人释放掉
+						this.releaseFreeAi(userId,userAiInuseList);
 						throw new RobotException(AiErrorEnum.AI00060004.getErrorCode(),AiErrorEnum.AI00060004.getErrorMsg());
 					}
 				}else {
@@ -316,7 +339,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				|| StrUtils.isEmpty(aiCallStartReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallStartReq.getAiNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getPhoneNo())
-				|| StrUtils.isEmpty(aiCallStartReq.getSeqid())
 				|| StrUtils.isEmpty(aiCallStartReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallStartReq.getUserId())) {
 			//必输校验不通过
@@ -450,6 +472,35 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//正常情况下，只需要把机器人设置为空闲即可。
 			iAiResourceManagerService.aiFree(nowAi);
 		}
+	}
+	
+	
+	/**
+	 * 将用户现在是空闲的机器人释放掉
+	 * @param userAiInuseList
+	 */
+	private void releaseFreeAi(String userId,List<AiInuseCache> userAiInuseList) {
+		if(ListUtil.isNotEmpty(userAiInuseList)) {
+			for(AiInuseCache ai : userAiInuseList) {
+				if(RobotConstants.AI_STATUS_F.equals(ai.getAiStatus())) {
+					//如果是用户资源减少，那么直接释放机器人
+					iAiResourceManagerService.aiRelease(ai);
+				}
+			}
+			//释放后再查下用户还有没有机器人了，如果没有了，就把用户机器人清空，并将用户资源状态重置为正常
+			List<AiInuseCache> newUserAiInuseList = aiCacheService.queryUserAiInUseList(userId);
+			if(newUserAiInuseList == null || newUserAiInuseList.isEmpty()) {
+				UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
+				if(userResourceCache != null) {
+					//用户资源变更状态，设置为正常(本次变更影响已处理完)
+					userResourceCache.setChgStatus(null);
+					aiCacheService.putUserResource(userResourceCache);
+				}
+				//将用户机器人清空
+				aiCacheService.delUserAis(userId);
+			}
+		}
+		logger.info("用户资源变更，释放用户{}空闲机器人",userId);
 	}
 	
 }

@@ -11,12 +11,11 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.IdGenerator;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.util.LoadProperties;
 
 import io.shardingsphere.api.config.TableRuleConfiguration;
@@ -26,6 +25,16 @@ import io.shardingsphere.api.config.strategy.StandardShardingStrategyConfigurati
 @Configuration
 public class ShardingDataSourceConfig {
 
+	@Value("${jdbc_driver0}")
+	private String jdbc_driver0;
+	@Value("${jdbc_url0}")
+	private String jdbc_url0;
+	@Value("${jdbc_username0}")
+	private String jdbc_username0;
+	@Value("${jdbc_password0}")
+	private String jdbc_password0;
+	
+	
     @Bean
     public DataSource getShardingDataSource() throws SQLException {
         ShardingConfiguration shardingConfiguration = new ShardingConfiguration();
@@ -45,10 +54,15 @@ public class ShardingDataSourceConfig {
 
     public DataSource getDataSource(){
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(LoadProperties.getProperty("jdbc_url0"));
-        dataSource.setUsername(LoadProperties.getProperty("jdbc_username0"));
-        dataSource.setPassword(LoadProperties.getProperty("jdbc_password0"));
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl(LoadProperties.getProperty("jdbc_url0"));
+//        dataSource.setUsername(LoadProperties.getProperty("jdbc_username0"));
+//        dataSource.setPassword(LoadProperties.getProperty("jdbc_password0"));
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        
+        dataSource.setUrl(jdbc_url0);
+        dataSource.setUsername(jdbc_username0);
+        dataSource.setPassword(jdbc_password0);
+        dataSource.setDriverClassName(jdbc_driver0);
         return dataSource;
     }
     
@@ -59,7 +73,7 @@ public class ShardingDataSourceConfig {
     private List<TableRuleConfiguration> tableRuleConfigurations(){
     	TableRuleConfiguration result = new TableRuleConfiguration();
     	result.setLogicTable("dispatch_plan");
-    	result.setActualDataNodes("guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1");
+    	result.setActualDataNodes("guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1,guiyu_dispatch.dispatch_plan_2");
     	result.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("phone",new PreciseSharding(),new RangeSharding()));
     	return Arrays.asList(result);
     }

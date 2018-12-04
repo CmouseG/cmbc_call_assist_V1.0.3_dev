@@ -15,13 +15,18 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.utils.RedisUtil;
 
 @RestController
 public class DispatchOutApiController implements IDispatchPlanOut {
+	
 	static Logger logger = LoggerFactory.getLogger(DispatchOutApiController.class);
+	
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
-
+	
+	@Autowired
+	private RedisUtil redisUtil;
 	/**
 	 * 完成
 	 *
@@ -66,7 +71,6 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 			logger.error("error", e);
 		}
 
-		System.out.println(dis.isSuccess());
 		if (list.size() > 0) {
 			list.get(list.size() - 1).setSuccess(dis.isSuccess());
 		}
@@ -76,6 +80,22 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Override
 	public ReturnData<Boolean> receiveRobotId(String RobotId) {
+		//把当前RobotId放入到redis中进行控制
+		ReturnData<Boolean> result = new ReturnData<>();
+		if( redisUtil.get("robotId")!=null){
+			Object object = redisUtil.get("robotId");
+			String newStr = object + ","+RobotId;
+			boolean set = redisUtil.set("robotId", newStr);
+			result.body = set;
+		}else{
+			boolean set = redisUtil.set("robotId", RobotId);
+			result.body = set;
+		}
+		return result;
+	}
+
+	@Override
+	public ReturnData<Boolean> successSchedule4TempId(String tempId) {
 		return null;
 	}
 

@@ -52,6 +52,20 @@ public interface IDispatchPlanOut {
     Result.ReturnData<Boolean> successSchedule(@RequestParam("planUuid") String planUuid);
     
     
+    
+    /**
+     * 完成升级模板
+     *
+     * @param planUuid 任务id
+     * @return 接受号码呼叫完成通知
+     */
+    @ApiOperation(value = "接受号码呼叫完成通知")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tempId", value = "tempId", dataType = "String", paramType = "query"),
+    })
+    @GetMapping(value="out/successSchedule4TempId")
+    Result.ReturnData<Boolean> successSchedule4TempId(@RequestParam("tempId") String tempId);
+    
     /**
      * 接受当前升级中的机器人id
      *
@@ -64,6 +78,9 @@ public interface IDispatchPlanOut {
     })
     @GetMapping(value="out/receiveRobotId")
     Result.ReturnData<Boolean> receiveRobotId(@RequestParam("RobotId") String RobotId);
+    
+    
+    
     
 
 }

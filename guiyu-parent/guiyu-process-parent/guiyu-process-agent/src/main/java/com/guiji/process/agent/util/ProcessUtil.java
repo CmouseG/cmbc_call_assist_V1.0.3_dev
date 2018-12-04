@@ -109,8 +109,7 @@ public class ProcessUtil {
             processInstanceVO.setStatus(ProcessStatusEnum.DOWN);
         }
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
-        String msg = JsonUtils.bean2Json(cmdMessageVO);
-        ImClientProtocolBO.getIntance().send(msg,3);
+        ImClientProtocolBO.getIntance().send(cmdMessageVO,3);
 
         //停止状态的进程自动重启
         if (ProcessStatusEnum.DOWN == processInstanceVO.getStatus()) {
@@ -130,14 +129,13 @@ public class ProcessUtil {
         processInstanceVO.setName(cfgProcessVO.getName());
         processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         processInstanceVO.setStatus(ProcessStatusEnum.REGISTER);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
-        String msg = JsonUtils.bean2Json(cmdMessageVO);
-        ImClientProtocolBO.getIntance().send(msg,3);
+        ImClientProtocolBO.getIntance().send(cmdMessageVO,3);
         ProcessStatusLocal.getInstance().put(port, processInstanceVO.getStatus());
     }
 
@@ -151,8 +149,7 @@ public class ProcessUtil {
         processInstanceVO.setProcessKey(cfgProcessVO.getProcessKey());
         processInstanceVO.setStatus(ProcessStatusEnum.UNREGISTER);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
-        String msg = JsonUtils.bean2Json(cmdMessageVO);
-        ImClientProtocolBO.getIntance().send(msg,3);
+        ImClientProtocolBO.getIntance().send(cmdMessageVO,3);
     }
 
     public static boolean neetExecute(int port,CmdTypeEnum cmdTypeEnum) {

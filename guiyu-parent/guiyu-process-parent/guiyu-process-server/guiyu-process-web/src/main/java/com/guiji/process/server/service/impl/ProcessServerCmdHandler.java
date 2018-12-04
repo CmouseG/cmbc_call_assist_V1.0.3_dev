@@ -1,12 +1,20 @@
 package com.guiji.process.server.service.impl;
 
 
+import com.guiji.common.constant.RedisConstant;
+import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.guiyu.message.component.FanoutSender;
+import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.dao.entity.SysProcess;
+import com.guiji.process.server.dao.entity.SysProcessTask;
+import com.guiji.process.server.service.ISysProcessTaskService;
 import com.guiji.process.server.service.ISysProcessService;
+import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +35,23 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
     @Autowired
     private ISysProcessService sysProcessService;
 
+    @Autowired
+    private ISysProcessTaskService sysProcessTaskService;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private FanoutSender fanoutSender;
+
     public void excute(CmdMessageVO cmdMessageVO)
     {
         if(cmdMessageVO == null)
         {
             return;
         }
+
+        logger.debug(cmdMessageVO.toString());
 
         switch (cmdMessageVO.getCmdType()) {
             case AGENTREGISTER:
@@ -58,6 +77,18 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             case HEALTH:
                 doHealthStatus(cmdMessageVO);
                 break;
+            case PULBLISH_SELLBOT_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
+                break;
+            case PULBLISH_FREESWITCH_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
+                break;
+            case PUBLISH_ROBOT_BOTSTENCE:
+                doPublishAfter(cmdMessageVO);
+                break;
+            case AFTER_RESTART:
+                doRestartAfter(cmdMessageVO);
+                break;
             default:
                 break;
         }
@@ -67,6 +98,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
     private void doHealthStatus(CmdMessageVO cmdMessageVO)
     {
+
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
         if(oldProcessInstanceVO == null)
@@ -75,7 +107,14 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             return;
         }
 
-        processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), processInstanceVO.getStatus());
+        ProcessStatusEnum toStatus = processInstanceVO.getStatus();
+        if(oldProcessInstanceVO.getStatus() == ProcessStatusEnum.BUSYING)
+        {
+            toStatus = ProcessStatusEnum.BUSYING;
+        }
+
+        System.out.println("doHealthStatus::" + processInstanceVO);
+        processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), toStatus);
     }
 
     private void doAgentRegister(CmdMessageVO cmdMessageVO) {
@@ -107,12 +146,6 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             return;
         }
 
-        ProcessInstanceVO oldProcessInstanceVO = processManageService.getDevice(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort());
-        if(oldProcessInstanceVO != null)
-        {
-            return;
-        }
-
         lst.add(processInstanceVO);
         processManageService.register(lst);
     }
@@ -136,6 +169,71 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
         lst.add(processInstanceVO);
         processManageService.unRegister(lst);
+    }
+
+    private void doPublishAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                //发布MQ通知消息
+                String tmplId =  cmdMessageVO.getParameters().get(1);
+                PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = new PublishBotstenceResultMsgVO();
+                publishBotstenceResultMsgVO.setProcessTypeEnum(processInstanceVO.getType());
+                publishBotstenceResultMsgVO.setTmplId(tmplId);
+                if (cmdMessageVO.getCommandResult() != null) {
+                    publishBotstenceResultMsgVO.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                }
+
+                fanoutSender.send("fanoutPublishBotstence", JsonUtils.bean2Json(publishBotstenceResultMsgVO));
+
+                //更新数据库
+                //更新sys_process
+                SysProcess sysProcess = new SysProcess();
+                sysProcess.setIp(processInstanceVO.getIp());
+                sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcess.setExecStatus(0);
+                sysProcessService.update(sysProcess);
+
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setIp(processInstanceVO.getIp());
+                sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessTask.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
+            }
+        }
+    }
+
+    private void doRestartAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                //更新数据库
+                //更新sys_process
+                SysProcess sysProcess = new SysProcess();
+                sysProcess.setIp(processInstanceVO.getIp());
+                sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcess.setExecStatus(0);
+                sysProcessService.update(sysProcess);
+
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setIp(processInstanceVO.getIp());
+                sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
+                sysProcessTask.setCmdType(cmdMessageVO.getCmdType().getValue());
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
+            }
+        }
     }
 
 }

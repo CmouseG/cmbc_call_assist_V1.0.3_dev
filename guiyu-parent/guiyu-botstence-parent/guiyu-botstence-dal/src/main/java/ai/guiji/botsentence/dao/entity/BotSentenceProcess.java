@@ -37,6 +37,8 @@ public class BotSentenceProcess implements Serializable {
     private String approveNotes;
 
     private String soundType;
+    
+    private String needTTs;
 
     private static final long serialVersionUID = 1L;
 
@@ -176,7 +178,15 @@ public class BotSentenceProcess implements Serializable {
         this.soundType = soundType == null ? null : soundType.trim();
     }
 
-    @Override
+    public String getNeedTTs() {
+		return needTTs;
+	}
+
+	public void setNeedTTs(String needTTs) {
+		this.needTTs = needTTs;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandUtils {
     static Logger logger = LoggerFactory.getLogger(CommandUtils.class);
-    public static int DEFAULT_TIMEOUT=1000;
+    public static int DEFAULT_TIMEOUT=100000;
     public static final int DEFAULT_INTERVAL=100;
     public static long startTime ;
     public static CommandResult exec(String command){
@@ -38,12 +38,14 @@ public class CommandUtils {
                 cmd[2] = command;
             } else if (osName.equals("Linux")) {  //linux
                 cmd = new String[3];
-                cmd[0] = "/bin/sh";
+                cmd[0] = "/bin/bash";
                 cmd[1] = "-c";
                 cmd[2] = command;
             } else {
-                cmd = new String[1];
-                cmd[0] = command;
+                cmd = new String[3];
+                cmd[0] = "/bin/bash";
+                cmd[1] = "-c";
+                cmd[2] = command;
             }
              process= Runtime.getRuntime().exec(cmd);
              commandResult = wait(process);
@@ -53,8 +55,8 @@ public class CommandUtils {
             if (process!=null){
                 process.destroy();
             }
-            return commandResult;
         }
+        return commandResult;
     }
 //判断是否超时
     public static  boolean isOverTime(){

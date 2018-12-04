@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.dispatch.api.IDispatchPlanOut;
+
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceBranchMapper;
 import ai.guiji.botsentence.dao.BotSentenceDomainMapper;
@@ -62,6 +64,9 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	
 	@Autowired
 	private UserAccountMapper userAccountMapper;
+	
+	@Autowired
+	private IDispatchPlanOut iDispatchPlanOut;
 	
 	@Override
 	public List<BotSentenceProcess> getListApprovaling(int pageSize, int pageNo, String templateName, String accountNo) {
@@ -131,7 +136,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		botSentenceProcess.setLstUpdateTime(new Date());
 		botSentenceProcess.setLstUpdateUser(userId.toString());
 		
-		
+		botSentenceProcessMapper.updateByPrimaryKey(botSentenceProcess);
 		//把之前的com_domain全部设置为空
 		botSentenceDomainExtMapper.batchUpdateComDomain(processId);
 		
@@ -145,12 +150,15 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			domain.setLstUpdateUser(userId.toString());
 			botSentenceDomainMapper.updateByPrimaryKey(domain);
 		}
+		
+		
 	}
 	
 	
 	public void publishSentence(String processId,Long userId){
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();
+		iDispatchPlanOut.receiveRobotId(templateId);
 		String dirName = DateUtil.getCurrentTime2() + "-" + templateId;
 	    File file = null;
 		try {

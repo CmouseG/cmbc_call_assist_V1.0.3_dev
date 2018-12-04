@@ -62,5 +62,5 @@ public interface IProceseScheduleService {
      * @param file
      * @return
      */
-    void publishResource(ProcessTypeEnum processTypeEnum, String file);
+    void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file);
 }

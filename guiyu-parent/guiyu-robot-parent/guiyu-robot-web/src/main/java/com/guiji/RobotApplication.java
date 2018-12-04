@@ -3,6 +3,7 @@ package com.guiji;
 import com.guiji.component.result.EnableAutoResultPack;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -15,10 +16,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * Created by ty on 2018/10/18.
  */
+@EnableRabbit
 @SpringBootApplication
 @EnableDiscoveryClient	//启用服务发现
 @EnableAutoResultPack	
-@EnableFeignClients	//启用feign
+//@EnableFeignClients	//启用feign
+@EnableFeignClients(basePackages={"*.guiji.*.api"})
 @EnableSwagger2	//启用swagger注解
 @EnableAsync  //启用异步
 @EnableScheduling	//启用定时任务

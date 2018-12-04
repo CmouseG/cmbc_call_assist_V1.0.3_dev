@@ -6,7 +6,9 @@ import com.guiji.process.agent.core.ImConnection;
 import com.guiji.process.agent.model.OperateVO;
 import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.MessageProto;
+import com.guiji.process.core.util.CmdMessageUtils;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.utils.JsonUtils;
@@ -43,8 +45,13 @@ public class ImClientProtocolBO {
         Channel channel = new ImConnection().connect(ImClientApp.imClientApp.configInit.getServerIp(), ImClientApp.imClientApp.configInit.getServerPort());
         channelGlobal = channel;
         String id = Inet4Address.getLocalHost().getHostAddress();
+
+
+        // 实体类传输数据，protobuf序列化
+        channel.pipeline().addLast(new ClientPoHandlerProto());
+
         // protobuf
-        MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setId(id);
+
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.AGENTREGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
@@ -52,29 +59,21 @@ public class ImClientProtocolBO {
         processInstanceVO.setType(processTypeEnum);
         processInstanceVO.setPort(agentPort);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
-        String msg = JsonUtils.bean2Json(cmdMessageVO);
-        builder.setContent(msg);
 
-        channel.writeAndFlush(builder);
-        send("start",2);
-
-        // 实体类传输数据，protobuf序列化
-        channel.pipeline().addLast(new ClientPoHandlerProto());
-		/*Message message = new Message();
-		message.setId(id);
-		message.setContent("hello yinjihuan");
-		channel.writeAndFlush(message);*/
-        //字符串传输数据
-        //channel.writeAndFlush("yinjihuan");
+        send(cmdMessageVO,3);
+        send(new CmdMessageVO(),2);
     }
 
 
-    public void send(String msg,int type) {
+    public void send(CmdMessageVO cmdMessageVO,int type) {
 
         //发送消息
-        MessageProto.Message.Builder builder = MessageProto.Message.newBuilder().setType(type);
-        builder.setContent(msg);
+        CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(cmdMessageVO);
+        builder.setType(type);
+
         channelGlobal.writeAndFlush(builder);
+
+        System.out.println("客户端发送消息：：" + cmdMessageVO);
     }
 
 

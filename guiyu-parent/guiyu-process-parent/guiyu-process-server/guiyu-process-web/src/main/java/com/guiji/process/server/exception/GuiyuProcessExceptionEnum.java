@@ -11,7 +11,8 @@ import com.guiji.common.exception.ExceptionEnum;
  * 影像系统异常码码定义枚举
  */
 public enum GuiyuProcessExceptionEnum implements ExceptionEnum {
-	EXCP_PROCESS_MODEL_NULL("08000001","获取指定模型TTS资源时，模型不能为空");
+	EXCP_PROCESS_MODEL_NULL("08000001","获取指定模型TTS资源时，模型不能为空"),
+	PROCESS08000002("08000002","命令正在执行中,请稍后再试");
 
 	//返回码
 	private String errorCode;

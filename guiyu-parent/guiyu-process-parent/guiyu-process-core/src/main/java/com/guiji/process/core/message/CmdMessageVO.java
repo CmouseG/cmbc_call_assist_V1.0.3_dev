@@ -10,11 +10,19 @@ public class CmdMessageVO  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String reqKey;
+
+    private CmdMsgTypeEnum msgTypeEnum;
+
     private CmdTypeEnum cmdType;
 
     private List<String> parameters;
 
     private ProcessInstanceVO processInstanceVO;
+
+    private String commandResult;
+
+    private String commandResultDesc;
 
     public CmdTypeEnum getCmdType() {
         return cmdType;
@@ -40,12 +48,48 @@ public class CmdMessageVO  implements Serializable {
         this.parameters = parameters;
     }
 
+    public String getReqKey() {
+        return reqKey;
+    }
+
+    public void setReqKey(String reqKey) {
+        this.reqKey = reqKey;
+    }
+
+    public CmdMsgTypeEnum getMsgTypeEnum() {
+        return msgTypeEnum;
+    }
+
+    public void setMsgTypeEnum(CmdMsgTypeEnum msgTypeEnum) {
+        this.msgTypeEnum = msgTypeEnum;
+    }
+
+    public String getCommandResult() {
+        return commandResult;
+    }
+
+    public void setCommandResult(String commandResult) {
+        this.commandResult = commandResult;
+    }
+
+    public String getCommandResultDesc() {
+        return commandResultDesc;
+    }
+
+    public void setCommandResultDesc(String commandResultDesc) {
+        this.commandResultDesc = commandResultDesc;
+    }
+
     @Override
     public String toString() {
         return "CmdMessageVO{" +
-                "cmdType=" + cmdType +
+                "reqKey='" + reqKey + '\'' +
+                ", msgTypeEnum=" + msgTypeEnum +
+                ", cmdType=" + cmdType +
                 ", parameters=" + parameters +
                 ", processInstanceVO=" + processInstanceVO +
+                ", commandResult='" + commandResult + '\'' +
+                ", commandResultDesc='" + commandResultDesc + '\'' +
                 '}';
     }
 }

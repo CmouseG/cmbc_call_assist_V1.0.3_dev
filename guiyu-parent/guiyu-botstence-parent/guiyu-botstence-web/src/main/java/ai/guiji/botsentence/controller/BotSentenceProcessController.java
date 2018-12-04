@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.entity.BotSentenceIntent;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
+import ai.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import ai.guiji.botsentence.service.IBotSentenceProcessService;
 import ai.guiji.botsentence.vo.BotSentenceProcessVO;
 import ai.guiji.botsentence.vo.CommonDialogVO;
@@ -107,7 +108,7 @@ public class BotSentenceProcessController {
 	 * @param
 	 */
 	@RequestMapping(value="createBotSentenceProcess")
-	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
+	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@RequestHeader Long userId) {
 		if(null != paramVO && StringUtils.isNotBlank(paramVO.getProcessId()) && 
 				StringUtils.isNotBlank(paramVO.getTemplateName())) {
 			paramVO.setFlag("00");
@@ -117,6 +118,10 @@ public class BotSentenceProcessController {
 		return ServerResult.createByErrorMessage("创建模板失败!");
 	}
 	
+	@RequestMapping(value="createAdminBotSentenceProcess")
+	public ServerResult<String> createAdminBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
+		return createBotSentenceProcess(paramVO,userId);
+	}
 	
 	/**
 	 * 修改话术
@@ -342,5 +347,17 @@ public class BotSentenceProcessController {
 	public ServerResult<BotSentenceIntent> queryIntentByBranchId(@JsonParam String branchId){
 		BotSentenceIntent intent = botSentenceProcessService.queryKeywordsListByBranchId(branchId);
 		return ServerResult.createBySuccess(intent);
+	}
+	
+	@RequestMapping(value="getTemplateBySelf")
+	public ServerResult<List<BotSentenceProcess>> getTemplateBySelf(@RequestHeader("userId") String accountNo){
+		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateBySelf(accountNo);
+		return ServerResult.createBySuccess(result);
+	}
+	
+	@RequestMapping(value="getTemplateById")
+	public ServerResult<List<BotSentenceProcess>> getTemplateById(String templateId){
+		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
+		return ServerResult.createBySuccess(result);
 	}
 }

@@ -168,7 +168,7 @@ CREATE TABLE `sys_process` (
 -- ----------------------------
 -- Table structure for sys_process_log
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_process_log`;
+DROP TABLE IF EXISTS `sys_process_task`;
 CREATE TABLE `sys_process_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `process_id` bigint(20) DEFAULT NULL,

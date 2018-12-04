@@ -40,6 +40,11 @@ public class Constant {
 	public static final String DEPLOYING = "05";
 	
 	/**
+	 * 流程，部署失败
+	 */
+	public static final String ERROR = "06";
+	
+	/**
 	 * 录音类型，挽回话术
 	 */
 	public static final String VOLICE_TYPE_REFUSE = "01";

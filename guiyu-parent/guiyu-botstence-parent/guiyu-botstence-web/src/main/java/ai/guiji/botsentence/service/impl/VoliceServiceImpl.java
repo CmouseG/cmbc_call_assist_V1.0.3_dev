@@ -604,86 +604,91 @@ public class VoliceServiceImpl implements IVoliceService {
 			fileCrypter(dir);
 			// 打成zip包
 
-			File standardZip = null;
+//			File standardZip = null;
 			String zipFileName = fileName;
 			// 打包成规定的格式
+			File zipFile;
 			try {
-				File zipFile;
+				
 				zipFileName = zipFileName.replaceAll("_en", "");
 				fileName = templateId.replaceAll("_en", "");
 				zipFile = File.createTempFile(fileName, ".zip");
 				this.zip(dir, zipFile.getPath());
-				standardZip = creatStandardZipStructure(zipFile, zipFileName, templateId);
+//				standardZip = creatStandardZipStructure(zipFile, zipFileName, templateId);
 			} catch (Exception e) {
 				logger.error("压缩打包json文件异常>..", e);
 				return false;
 			}
 
-			if (standardZip != null) {
-				// 本地保存zip文件
-				File localZipfile = new File(localUploadDir + zipFileName + ".zip");
-				try {
-					Files.copy(standardZip, localZipfile);
-
-					// 调用python工具
-					String os = System.getProperties().getProperty("os.name").toLowerCase();
-					if (os.startsWith("win")) {
-						logger.info("windows暂不支持");
-					} else {
-						String command = " python /usr/local/botsentence/check_client_pkg/check_client/polaris_console.py";
-						try {
-							Process process = Runtime.getRuntime().exec(command);
-
-							LineNumberReader br = new LineNumberReader(new InputStreamReader(process.getInputStream()));
-							StringBuffer sb = new StringBuffer();
-							String line;
-							while ((line = br.readLine()) != null) {
-								sb.append(line).append("\n");
-							}
-							logger.info("执行python命令结果....");
-							logger.info(sb.toString());
-
-							if (sb.toString().contains("add")) {
-								logger.info("执行python脚本成功...");
-							} else {
-								logger.info("执行python脚本失败...");
-								return false;
-							}
-
-						} catch (IOException e) {
-							logger.error("执行python工具异常...", e);
-							return false;
-						}
-					}
-
-					// 删除本地临时文件
-					// localZipfile.delete();
-
-				} catch (IOException e) {
-					logger.error("复制压缩zip包数据异常...", e);
-					return false;
-				} catch (Exception e) {
-					logger.error("调用agent异常...", e);
-					return false;
-				}
-
-				logger.info("待上传文件standardZip大小: " + standardZip.length());
-				logger.info("待上传文件localZipfile大小: " + localZipfile.length());
+			if (zipFile != null) {
+//				// 本地保存zip文件
+//				File localZipfile = new File(localUploadDir + zipFileName + ".zip");
+//				try {
+//					Files.copy(standardZip, localZipfile);
+//
+//					// 调用python工具
+//					String os = System.getProperties().getProperty("os.name").toLowerCase();
+//					if (os.startsWith("win")) {
+//						logger.info("windows暂不支持");
+//					} else {
+//						String command = " python /usr/local/botsentence/check_client_pkg/check_client/polaris_console.py";
+//						try {
+//							Process process = Runtime.getRuntime().exec(command);
+//
+//							LineNumberReader br = new LineNumberReader(new InputStreamReader(process.getInputStream()));
+//							StringBuffer sb = new StringBuffer();
+//							String line;
+//							while ((line = br.readLine()) != null) {
+//								sb.append(line).append("\n");
+//							}
+//							logger.info("执行python命令结果....");
+//							logger.info(sb.toString());
+//
+//							if (sb.toString().contains("add")) {
+//								logger.info("执行python脚本成功...");
+//							} else {
+//								logger.info("执行python脚本失败...");
+//								return false;
+//							}
+//
+//						} catch (IOException e) {
+//							logger.error("执行python工具异常...", e);
+//							return false;
+//						}
+//					}
+//
+//					// 删除本地临时文件
+//					// localZipfile.delete();
+//
+//				} catch (IOException e) {
+//					logger.error("复制压缩zip包数据异常...", e);
+//					return false;
+//				} catch (Exception e) {
+//					logger.error("调用agent异常...", e);
+//					return false;
+//				}
+//
+//				logger.info("待上传文件standardZip大小: " + standardZip.length());
+//				logger.info("待上传文件localZipfile大小: " + localZipfile.length());
 				
 				
 				// 上传
 				SysFileReqVO sysFileReqVO=new SysFileReqVO();
-				sysFileReqVO.setBusiId(processId);
+				sysFileReqVO.setBusiId(templateId);
 				sysFileReqVO.setSysCode(NAS_UPLAOD_SYSTEM_CODE);
-				SysFileRspVO sysFileRspVO=nasUtile.uploadNas(sysFileReqVO, localZipfile);
+				SysFileRspVO sysFileRspVO=nasUtile.uploadNas(sysFileReqVO, zipFile);
 				String uplaodFileName=sysFileRspVO.getFileName();
 				//部署
 				UpgrateResouceReq resouceReq=new UpgrateResouceReq();
 				resouceReq.setFile(uplaodFileName);
 				
-				resouceReq.setProcessTypeEnum(ProcessTypeEnum.TTS);
-				ReturnData<Boolean> result=iProcessSchedule.publishResource(resouceReq);
-				return result.getBody();
+				resouceReq.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
+				iProcessSchedule.publishResource(resouceReq);
+				resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
+				iProcessSchedule.publishResource(resouceReq);
+				resouceReq.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
+				iProcessSchedule.publishResource(resouceReq);
+				return true;
 			}
 			
 		}

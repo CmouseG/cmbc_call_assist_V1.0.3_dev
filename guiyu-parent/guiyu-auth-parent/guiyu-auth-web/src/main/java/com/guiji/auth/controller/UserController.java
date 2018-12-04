@@ -1,5 +1,6 @@
 package com.guiji.auth.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,20 +28,26 @@ public class UserController implements IAuth{
 	private UserService service;
 	
 	@RequestMapping("/user/regist")
-	public SysUser insert(SysUser user,Long roleId) throws Exception{
+	public SysUser insert(SysUser user,Long roleId,@RequestHeader Long userId) throws Exception{
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
 		}
 		user.setPassword(AuthUtil.encrypt(user.getPassword()));
+		user.setCreateId(userId);
+		user.setUpdateId(userId);
+		user.setCreateTime(new Date());
+		user.setUpdateTime(new Date());
 		service.insert(user,roleId);
 		return user;
 	}
 	
 	@RequestMapping("/user/update")
-	public void update(SysUser user,String[] roleId) throws CheckConditionException{
+	public void update(SysUser user,String[] roleId,@RequestHeader Long userId) throws CheckConditionException{
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
 		}
+		user.setUpdateId(userId);
+		user.setUpdateTime(new Date());
 		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		service.update(user,roleId);
 	}
@@ -75,6 +82,8 @@ public class UserController implements IAuth{
 	@RequestMapping("/user/updateUserData")
 	public void updateUserData(SysUser user,@RequestHeader Long userId) {
 		user.setId(userId);
+		user.setUpdateId(userId);
+		user.setUpdateTime(new Date());
 		service.updateUserData(user);
 	}
 	

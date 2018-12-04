@@ -335,6 +335,76 @@ public class AiCycleHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andAiNameIsNull() {
+            addCriterion("ai_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameIsNotNull() {
+            addCriterion("ai_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameEqualTo(String value) {
+            addCriterion("ai_name =", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameNotEqualTo(String value) {
+            addCriterion("ai_name <>", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameGreaterThan(String value) {
+            addCriterion("ai_name >", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameGreaterThanOrEqualTo(String value) {
+            addCriterion("ai_name >=", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameLessThan(String value) {
+            addCriterion("ai_name <", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameLessThanOrEqualTo(String value) {
+            addCriterion("ai_name <=", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameLike(String value) {
+            addCriterion("ai_name like", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameNotLike(String value) {
+            addCriterion("ai_name not like", value, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameIn(List<String> values) {
+            addCriterion("ai_name in", values, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameNotIn(List<String> values) {
+            addCriterion("ai_name not in", values, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameBetween(String value1, String value2) {
+            addCriterion("ai_name between", value1, value2, "aiName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAiNameNotBetween(String value1, String value2) {
+            addCriterion("ai_name not between", value1, value2, "aiName");
+            return (Criteria) this;
+        }
+
         public Criteria andTemplateIdIsNull() {
             addCriterion("template_id is null");
             return (Criteria) this;

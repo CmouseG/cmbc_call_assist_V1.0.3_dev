@@ -1,5 +1,6 @@
 package com.guiji.auth.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,11 @@ public class MenuController {
 	private MenuService service;
 
 	@RequestMapping("insert")
-	public void insert(SysMenu menu){
+	public void insert(SysMenu menu,@RequestHeader Long userId){
+		menu.setCreateId(userId);
+		menu.setUpdateId(userId);
+		menu.setCreateTime(new Date());
+		menu.setUpdateTime(new Date());
 		service.insert(menu);
 		
 	}
@@ -31,7 +36,9 @@ public class MenuController {
 	}
 
 	@RequestMapping("update")
-	public void update(SysMenu menu){
+	public void update(SysMenu menu,@RequestHeader Long userId){
+		menu.setUpdateId(userId);
+		menu.setUpdateTime(new Date());
 		service.update(menu);
 	}
 	

@@ -74,21 +74,6 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			}
 			//调用进程管理服务申请sellbot机器人资源
 			ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(addAiNum);
-//			///////// TEST/////
-//			ReturnData<List<ProcessInstanceVO>> processInstanceListData = new ReturnData<List<ProcessInstanceVO>>();
-//			processInstanceListData.setCode("0");
-//			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
-//			for(int i=0;i<addAiNum;i++) {
-//				ProcessInstanceVO test = new ProcessInstanceVO();
-//				test.setIp("192.168.1.50");
-//				DecimalFormat df=new DecimalFormat("00");
-//				String hh = df.format(i);
-//				int p = Integer.valueOf("150"+hh);
-//				test.setPort(p);
-//				processList.add(test);
-//				processInstanceListData.setBody(processList);
-//			}
-//		    /////// TEST/////
 			if(processInstanceListData == null) {
 				logger.error("调用进程管理申请资源，返回数据为空..");
 				throw new RobotException(AiErrorEnum.AI00060007.getErrorCode(),AiErrorEnum.AI00060007.getErrorMsg());
@@ -114,6 +99,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 					}
 					AiInuseCache aiInuse = new AiInuseCache();
 					aiInuse.setAiNo(this.genAiNo(instanceList.get(idx).getIp(), String.valueOf(instanceList.get(idx).getPort()))); //机器人临时编号
+					aiInuse.setAiName("硅语"+(idx+1)+"号"); //机器人名字
 					aiInuse.setAiStatus(RobotConstants.AI_STATUS_F); //新申请机器人默认空闲状态
 					aiInuse.setUserId(checkAiReady.getUserId()); //用户ID
 					aiInuse.setTemplateIds(addEntry.getKey()); //该机器人可用模板

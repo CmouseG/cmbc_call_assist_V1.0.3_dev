@@ -538,3 +538,26 @@ CREATE TABLE `volice_info` (
   `need_tts` tinyint(1) DEFAULT NULL COMMENT '????TTS??',
   PRIMARY KEY (`volice_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4279 DEFAULT CHARSET=utf8 COMMENT='????';
+
+drop FUNCTION IF EXISTS `genTabId`;
+CREATE FUNCTION `genTabId`(SEQ_NAME VARCHAR(64)) RETURNS varchar(32) CHARSET utf8
+    READS SQL DATA
+BEGIN
+	DECLARE TMP VARCHAR(14);
+	DECLARE TMP1 BIGINT;
+	DECLARE TMP2 VARCHAR(6);
+	DECLARE TMP3 VARCHAR(8);
+
+	UPDATE bd_table_sequence SET seq = seq + step WHERE table_name = SEQ_NAME;
+	SET TMP = DATE_FORMAT(NOW(),'%Y%m%d');
+	SELECT seq,sign,now_date INTO TMP1,TMP2,TMP3 FROM bd_table_sequence WHERE table_name=SEQ_NAME;
+  IF TMP3 = '' THEN
+		SET TMP3 = '19700101';
+	ELSEIF  TMP3 = NULL  THEN
+		SET TMP3 = '19700101';
+	END IF;
+	IF TMP3 <> TMP THEN 
+		UPDATE bd_table_sequence SET seq = 0 ,now_date = TMP WHERE table_name = SEQ_NAME;
+	END IF;
+	RETURN CONCAT(TMP,TMP2, LPAD(TMP1, 7, '0'),RIGHT(UUID_SHORT(),4));
+END

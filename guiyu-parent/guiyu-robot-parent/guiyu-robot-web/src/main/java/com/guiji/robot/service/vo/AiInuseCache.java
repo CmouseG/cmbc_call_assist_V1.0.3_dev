@@ -14,6 +14,8 @@ public class AiInuseCache {
 	private String userId;
 	//机器人编号
 	private String aiNo;
+	//机器人昵称
+	private String aiName;
 	//机器人IP
 	private String ip;
 	//机器人端口

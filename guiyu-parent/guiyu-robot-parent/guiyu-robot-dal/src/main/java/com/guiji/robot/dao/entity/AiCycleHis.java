@@ -10,6 +10,8 @@ public class AiCycleHis implements Serializable {
 
     private String aiNo;
 
+    private String aiName;
+
     private String templateId;
 
     private String assignDate;
@@ -48,6 +50,14 @@ public class AiCycleHis implements Serializable {
 
     public void setAiNo(String aiNo) {
         this.aiNo = aiNo == null ? null : aiNo.trim();
+    }
+
+    public String getAiName() {
+        return aiName;
+    }
+
+    public void setAiName(String aiName) {
+        this.aiName = aiName == null ? null : aiName.trim();
     }
 
     public String getTemplateId() {
@@ -115,6 +125,7 @@ public class AiCycleHis implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", userId=").append(userId);
         sb.append(", aiNo=").append(aiNo);
+        sb.append(", aiName=").append(aiName);
         sb.append(", templateId=").append(templateId);
         sb.append(", assignDate=").append(assignDate);
         sb.append(", assignTime=").append(assignTime);

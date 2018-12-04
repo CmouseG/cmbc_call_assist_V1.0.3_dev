@@ -252,12 +252,18 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     private String getContext(String botSay,String customerSay){
+        if(customerSay == null){
+            customerSay = "";
+        }
+        if(botSay == null){
+            botSay = "";
+        }
         if(StringUtils.isBlank(botSay)){
-           return  "客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+           return  "客户："+ customerSay +"\r\n";
         }else if(StringUtils.isBlank(customerSay)){
-            return "机器人："+(botSay==null ? "":botSay)+"\r\n";
+            return "机器人："+ botSay +"\r\n";
         }else{
-            return  "机器人："+(botSay==null ? "":botSay)+"\r\n客户："+ (customerSay==null ? "":customerSay)+"\r\n";
+            return  "机器人："+ botSay +"\r\n客户："+  customerSay +"\r\n";
         }
     }
 

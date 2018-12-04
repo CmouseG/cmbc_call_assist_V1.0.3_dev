@@ -20,7 +20,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableDiscoveryClient	//启用服务发现
 @EnableAutoResultPack	
-@EnableFeignClients	//启用feign
+//@EnableFeignClients	//启用feign
+@EnableFeignClients(basePackages={"*.guiji.*.api"})
 @EnableSwagger2	//启用swagger注解
 @EnableAsync  //启用异步
 @EnableScheduling	//启用定时任务

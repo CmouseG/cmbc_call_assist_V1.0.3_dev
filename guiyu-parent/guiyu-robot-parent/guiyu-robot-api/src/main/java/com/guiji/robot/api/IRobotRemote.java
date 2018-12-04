@@ -20,6 +20,7 @@ import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.UserAiCfgVO;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -116,6 +117,6 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "userId", value = "用户编号", required = true)
     })
     @PostMapping(value = "/remote/queryCustAccount")
-	Result.ReturnData queryCustAccount(@RequestParam(value="userId",required=true)String userId);
+	Result.ReturnData<UserAiCfgVO> queryCustAccount(@RequestParam(value="userId",required=true)String userId);
 	
 }

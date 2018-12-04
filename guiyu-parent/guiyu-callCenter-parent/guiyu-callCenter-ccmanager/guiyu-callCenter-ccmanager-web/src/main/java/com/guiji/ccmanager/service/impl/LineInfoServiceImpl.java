@@ -11,7 +11,8 @@ import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4Select;
-import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.ccmanager.vo.LineInfoAddVO;
+import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
@@ -117,7 +118,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public void addLineInfo(LineInfoVO lineInfoVO) {
+    public void addLineInfo(LineInfoAddVO lineInfoVO) {
 
         //本地存储数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -159,7 +160,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public void updateLineInfo(LineInfoVO lineInfoVO, Long userId){
+    public void updateLineInfo(LineInfoUpdateVO lineInfoVO, Long userId){
 
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(lineInfoVO.getLineId());
 

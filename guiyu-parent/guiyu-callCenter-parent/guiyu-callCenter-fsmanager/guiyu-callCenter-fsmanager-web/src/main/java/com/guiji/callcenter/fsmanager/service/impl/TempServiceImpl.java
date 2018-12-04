@@ -30,7 +30,7 @@ public class TempServiceImpl implements TempService{
             Result.ReturnData<Boolean> result = iTemplateApi.istempexist(tempId);
             if(!result.body){
                 //TODO 报警
-                logger.info("fsagent==>[{}]的录音不存在",server);
+                logger.info("fsagent==>[{}]的模板[{}]录音不存在",server,tempId);
                 throw new GuiyuException(FsmanagerExceptionEnum.EXCP_FSMANAGER_FSAGENT_NO_RECORD);
             }
         }

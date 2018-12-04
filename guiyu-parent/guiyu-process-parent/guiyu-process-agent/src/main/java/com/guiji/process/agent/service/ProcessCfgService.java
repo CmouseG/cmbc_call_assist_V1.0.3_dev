@@ -89,10 +89,11 @@ public class ProcessCfgService {
             }
         }
 
-        cfgMap.clear();
-
-        for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
-            cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
+        if (cfgMap != null) {
+            cfgMap.clear();
+            for (CfgProcessVO cfgProcessVO : cfgAgentNodeVO.getProcesses()) {
+                cfgMap.put(cfgProcessVO.getPort(), cfgProcessVO);
+            }
         }
 
         // 发送注册信息

@@ -30,7 +30,7 @@ public class ProcessMsgHandler {
         try {
             CmdMessageQueue.getInstance().produce(cmdMessageVO);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 

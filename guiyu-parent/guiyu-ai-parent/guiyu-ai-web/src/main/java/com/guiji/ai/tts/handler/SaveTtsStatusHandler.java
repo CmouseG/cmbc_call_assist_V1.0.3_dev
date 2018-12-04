@@ -10,53 +10,51 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.guiji.ai.dao.TtsResultMapper;
-import com.guiji.ai.dao.entity.TtsResult;
+import com.guiji.ai.dao.TtsStatusMapper;
+import com.guiji.ai.dao.entity.TtsStatus;
 
-/**
- * Created by ty on 2018/11/13.
- */
 @Component
-public class SaveToDBHandler {
-	private static Logger logger = LoggerFactory.getLogger(SaveToDBHandler.class);
+public class SaveTtsStatusHandler
+{
+	private static Logger logger = LoggerFactory.getLogger(SaveTtsStatusHandler.class);
 
-	private static final SaveToDBHandler INSTANCE = new SaveToDBHandler();
+	private static final SaveTtsStatusHandler INSTANCE = new SaveTtsStatusHandler();
 	private Productor productor = null;
 	private Consummer consummer = null;
-	TtsResultMapper ttsResultMapper;
+	TtsStatusMapper ttsStatusMapper;
 
-	private SaveToDBHandler() {
+	private SaveTtsStatusHandler() {
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		productor = new Productor();
 		consummer = new Consummer(productor);
 		executorService.execute(consummer);
 	}
 
-	public static SaveToDBHandler getInstance() {
+	public static SaveTtsStatusHandler getInstance() {
 		return INSTANCE;
 	}
 
-	public void add(TtsResult ttsResult, TtsResultMapper ttsResultMapper) {
+	public void add(TtsStatus ttsStatus, TtsStatusMapper ttsStatusMapper) {
 		try {
-			this.ttsResultMapper = ttsResultMapper;
-			productor.produce(ttsResult);
-		} catch (InterruptedException e) {
+			this.ttsStatusMapper = ttsStatusMapper;
+			productor.produce(ttsStatus);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public class Productor {
-		private BlockingQueue<TtsResult> queue = null;
+		private BlockingQueue<TtsStatus> queue = null;
 
 		protected Productor() {
-			queue = new LinkedBlockingQueue<TtsResult>();
+			queue = new LinkedBlockingQueue<TtsStatus>();
 		}
 
-		public void produce(TtsResult ttsResult) throws InterruptedException {
-			queue.put(ttsResult);
+		public void produce(TtsStatus ttsStatus) throws InterruptedException {
+			queue.put(ttsStatus);
 		}
 
-		public TtsResult get() throws InterruptedException {
+		public TtsStatus get() throws InterruptedException {
 			return queue.take();
 		}
 	}
@@ -70,17 +68,18 @@ public class SaveToDBHandler {
 
 		@Transactional
 		public void run() {
-			TtsResult record = new TtsResult();
+			TtsStatus record = new TtsStatus();
 			while (true) {
 				try {
 					record = this.productor.get();
 					if (record != null) {
 						logger.info("获取到一条待插入数据", record);
-						ttsResultMapper.insert(record);
+						ttsStatusMapper.insert(record);
 						logger.info("保存成功！");
 					}
 				} catch (Exception e) {
 					logger.error("数据保存失败！", e);
+					break;
 				}
 			}
 		}

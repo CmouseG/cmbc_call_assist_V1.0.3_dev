@@ -18,6 +18,8 @@ public class SysProcess implements Serializable {
 
     private Integer status;
 
+    private Integer execStatus;
+
     private Date createTime;
 
     private Date updateTime;
@@ -84,6 +86,14 @@ public class SysProcess implements Serializable {
         this.status = status;
     }
 
+    public Integer getExecStatus() {
+        return execStatus;
+    }
+
+    public void setExecStatus(Integer execStatus) {
+        this.execStatus = execStatus;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -129,6 +139,7 @@ public class SysProcess implements Serializable {
         sb.append(", type=").append(type);
         sb.append(", processKey=").append(processKey);
         sb.append(", status=").append(status);
+        sb.append(", execStatus=").append(execStatus);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", createTimeStr=").append(createTimeStr);

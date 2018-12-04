@@ -43,7 +43,7 @@ public class NettyHttpServer {
 			ChannelFuture f = bootstrap.bind(port).sync();
 			f.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Thread.currentThread().interrupt();
 		} finally {
 			workerGroup.shutdownGracefully();
 			bossGroup.shutdownGracefully();

@@ -14,7 +14,7 @@ public abstract class TtsServiceProvide {
 		// 上传文件服务器
 		String audioUrl = uploadToServer(busiId, file);
 		// 存储数据库和日志
-		savaToDB(busiId, model, text, audioUrl);
+		savaTtsResult(busiId, model, text, audioUrl);
 
 		return audioUrl;
 
@@ -24,5 +24,5 @@ public abstract class TtsServiceProvide {
 	
 	abstract String uploadToServer(String busiId, File file);
 
-	abstract void savaToDB(String busiId, String model, String text, String audioUrl);
+	abstract void savaTtsResult(String busiId, String model, String text, String audioUrl);
 }

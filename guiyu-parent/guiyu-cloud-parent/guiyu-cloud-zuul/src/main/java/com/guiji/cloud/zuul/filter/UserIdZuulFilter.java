@@ -1,5 +1,8 @@
 package com.guiji.cloud.zuul.filter;
 
+import com.guiji.cloud.zuul.exception.ZuulErrorEnum;
+import com.guiji.cloud.zuul.exception.ZuulException;
+import com.guiji.common.exception.GuiyuException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
@@ -38,7 +41,7 @@ public class UserIdZuulFilter extends ZuulFilter{
 		} catch (NullPointerException e) {
 			//处理下一些特殊不需要user的场景
 			if(!isWiteIpFlag) {
-				throw e;
+				throw new ZuulException(ZuulErrorEnum.Zuul00010001.getErrorCode(),ZuulErrorEnum.Zuul00010001.getErrorMsg());
 			}
 		}
 		return null;

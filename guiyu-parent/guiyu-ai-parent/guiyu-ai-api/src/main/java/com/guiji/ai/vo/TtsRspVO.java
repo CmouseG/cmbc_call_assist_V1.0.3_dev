@@ -17,7 +17,7 @@ public class TtsRspVO implements Serializable {
     @ApiModelProperty(value="业务ID")
     private String busId;
 
-    @ApiModelProperty(value="合成状态:S-成功;F-失败",required=true)
+    @ApiModelProperty(value="处理状态:0-未处理;1-处理中;2-已完成;3-处理失败",required=true)
 	private String status;
     
     @ApiModelProperty(value="失败原因")

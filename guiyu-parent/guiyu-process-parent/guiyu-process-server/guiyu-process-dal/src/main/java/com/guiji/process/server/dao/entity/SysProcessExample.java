@@ -585,6 +585,66 @@ public class SysProcessExample {
             return (Criteria) this;
         }
 
+        public Criteria andExecStatusIsNull() {
+            addCriterion("exec_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusIsNotNull() {
+            addCriterion("exec_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusEqualTo(Integer value) {
+            addCriterion("exec_status =", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusNotEqualTo(Integer value) {
+            addCriterion("exec_status <>", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusGreaterThan(Integer value) {
+            addCriterion("exec_status >", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("exec_status >=", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusLessThan(Integer value) {
+            addCriterion("exec_status <", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("exec_status <=", value, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusIn(List<Integer> values) {
+            addCriterion("exec_status in", values, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusNotIn(List<Integer> values) {
+            addCriterion("exec_status not in", values, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusBetween(Integer value1, Integer value2) {
+            addCriterion("exec_status between", value1, value2, "execStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andExecStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("exec_status not between", value1, value2, "execStatus");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

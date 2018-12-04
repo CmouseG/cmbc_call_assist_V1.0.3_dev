@@ -131,7 +131,7 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("operationAllPlanByBatchId")
 	@Log(info = "一键修改状态")
-	public boolean operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
+	public MessageDto operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
 			@RequestParam(required = true, name = "status") String status, @RequestHeader Long userId) {
 		return dispatchPlanService.operationAllPlanByBatchId(batchId, status, userId);
 	}
@@ -182,4 +182,7 @@ public class DispatchPlanController {
 	public List<LineConcurrent> outLineinfos(@RequestHeader Long userId) {
 		return dispatchPlanService.outLineinfos(String.valueOf(userId));
 	}
+	
+	
+	
 }

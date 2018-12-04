@@ -131,7 +131,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
-		
+
 		int result = dispatchPlanMapper.insert(dispatchPlan);
 
 		return dto;
@@ -344,6 +344,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
 		List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
 		logger.info("回调完成通知查询结果:" + list.size());
+
+		boolean checkRes = checkLastNum(list.get(0));
+		if (checkRes) {
+			// 回调批次拨打结束通知。
+		}
+
 		if (list.size() > 0) {
 			DispatchPlan dispatchPlan = list.get(0);
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
@@ -388,7 +394,25 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		}
 
-		return false;
+		return true;
+	}
+
+	/**
+	 * 检查是否完成号码通知了
+	 * 
+	 * @param dispatchPlan
+	 * @return
+	 */
+	private boolean checkLastNum(DispatchPlan dispatchPlan) {
+		DispatchPlanExample dis = new DispatchPlanExample();
+		dis.createCriteria().andBatchNameEqualTo(dispatchPlan.getBatchName())
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		int countByExample = dispatchPlanMapper.countByExample(dis);
+		if (countByExample <= 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public static String getTimeByMinute(int minute) {
@@ -594,7 +618,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setIsDel(Constant.IS_DEL_0);
 		dis.setStatusPlan(Constant.STATUSPLAN_1);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		//flag
+		// flag
 		dis.setFlag(Constant.IS_FLAG_0);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
 		return phones;
@@ -629,24 +653,55 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
+	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
 		logger.info("operationAllPlanByBatchId userId:" + userId);
-		int result = -1;
+		MessageDto result = new MessageDto();
 		if (batchId != 0) {
 			// 不选择传入0
 			DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
 			DispatchPlan dispatchPlan = new DispatchPlan();
 			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
+
+			// 根据批次号查询一条数据，判断到底是什么
+			DispatchPlanExample dis = new DispatchPlanExample();
+			dis.createCriteria().andBatchIdEqualTo(dispatchPlanBatch.getId());
+			DispatchPlan resultPlan = dispatchPlanMapper.selectByExample(dis).get(0);
+			// 0未计划1计划中2计划完成3暂停计划4停止计划
+			// 停止之后不能暂停 不能恢复
+			boolean res = checkStatus(status, resultPlan);
+			if (!res) {
+				result.setResult(false);
+				result.setMsg("当前批次号码状态不能进行当前状态");
+				return result;
+			}
 			dispatchPlan.setStatusPlan(Integer.valueOf(status));
-			result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
+			dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
 		} else {
 			DispatchPlan dis = new DispatchPlan();
-			dis.setStatusPlan(Integer.valueOf(status));
 			DispatchPlanExample example = new DispatchPlanExample();
 			example.createCriteria().andUserIdEqualTo(userId.intValue());
+			DispatchPlan dispatchPlan = dispatchPlanMapper.selectByExample(example).get(0);
+			boolean res = checkStatus(status, dispatchPlan);
+			if (!res) {
+				result.setResult(false);
+				result.setMsg("当前批次号码状态不能进行当前状态");
+				return result;
+			}
+			dis.setStatusPlan(Integer.valueOf(status));
 			dispatchPlanMapper.updateByExampleSelective(dis, example);
 		}
-		return result > 0 ? true : false;
+		return result;
+	}
+
+	private boolean checkStatus(String status, DispatchPlan dispatchPlan) {
+		if (Integer.valueOf(status)== Constant.STATUSPLAN_3 && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+			return false;
+		}
+		// 停止之后不能暂停 不能恢复
+		if (Integer.valueOf(status)== Constant.STATUSPLAN_1 && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -700,7 +755,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean batchUpdateFlag(List<DispatchPlan> list,String flag) {
+	public boolean batchUpdateFlag(List<DispatchPlan> list, String flag) {
 		List<String> ids = new ArrayList<>();
 
 		for (DispatchPlan dispatchPlan : list) {

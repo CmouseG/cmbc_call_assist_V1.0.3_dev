@@ -147,8 +147,11 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         CommandResult cmdResult = null;
         System.out.println("执行命令开始：：" + cmdMessageVO +", " + cfgProcessOperVO);
         if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum())) {
+            String cmd = "";
+            if(cfgProcessOperVO != null) {
+                cmd = cfgProcessOperVO.getCmd();
+            }
 
-            String cmd = cfgProcessOperVO.getCmd();
             if(cmdMessageVO.getParameters() != null && !cmdMessageVO.getParameters().isEmpty())
             {
                 cmd = MessageFormat.format(cfgProcessOperVO.getCmd(), cmdMessageVO.getParameters().toArray());

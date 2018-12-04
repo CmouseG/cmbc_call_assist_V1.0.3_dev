@@ -55,8 +55,8 @@ public class CommandUtils {
             if (process!=null){
                 process.destroy();
             }
-            return commandResult;
         }
+        return commandResult;
     }
 //判断是否超时
     public static  boolean isOverTime(){

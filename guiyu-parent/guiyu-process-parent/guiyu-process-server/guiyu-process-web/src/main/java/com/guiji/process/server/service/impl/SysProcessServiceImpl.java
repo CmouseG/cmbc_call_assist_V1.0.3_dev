@@ -1,5 +1,7 @@
 package com.guiji.process.server.service.impl;
 
+import com.guiji.common.constant.RedisConstant;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.ProcessMsgHandler;
@@ -9,8 +11,11 @@ import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.dao.SysProcessMapper;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.dao.entity.SysProcessExample;
+import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.service.ISysProcessService;
+import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,8 @@ public class SysProcessServiceImpl implements ISysProcessService {
     private final Logger logger = LoggerFactory.getLogger(SysProcessServiceImpl.class);
     @Autowired
     private SysProcessMapper sysProcessMapper;
+    @Autowired
+    private RedisUtil redisUtil;
     @Override
     public boolean insert(SysProcess sysProcess) {
         if (sysProcess == null) {
@@ -105,6 +112,10 @@ public class SysProcessServiceImpl implements ISysProcessService {
                 cmdMessageVO.setProcessInstanceVO(processInstanceVO);
                 cmdMessageVO.setCmdType(cmdTypeEnum);
                 cmdMessageVOs.add(cmdMessageVO);
+                String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdTypeEnum);
+                if (StringUtils.isNotEmpty(hasRun)) {
+                    throw new GuiyuException(GuiyuProcessExceptionEnum.PROCESS08000002.getErrorCode(),GuiyuProcessExceptionEnum.PROCESS08000002.getMsg());
+                }
             }
         }
         if(!cmdMessageVOs.isEmpty()) {

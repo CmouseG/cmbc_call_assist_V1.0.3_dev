@@ -32,7 +32,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.tts.constants.AiConstants;
-import com.guiji.ai.tts.handler.SaveToDBHandler;
+import com.guiji.ai.tts.handler.SaveTtsResultHandler;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.utils.NasUtil;
@@ -166,15 +166,17 @@ public class TtsGpu extends TtsServiceProvide {
 	 * 保存数据库
 	 */
 	@Override
-	void savaToDB(String busiId, String model, String text, String audioUrl) {
+	void savaTtsResult(String busiId, String model, String text, String audioUrl) {
 		TtsResult ttsResult = new TtsResult();
 		ttsResult.setAudioUrl(audioUrl);
 		ttsResult.setBusId(busiId);
+		ttsResult.setIp(ip);
+		ttsResult.setPort(port);
 		ttsResult.setContent(text); //待转换文本内容
 		ttsResult.setCreateTime(new Date());
 		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除
 		ttsResult.setModel(model);
-		SaveToDBHandler.getInstance().add(ttsResult, ttsResultMapper);
+		SaveTtsResultHandler.getInstance().add(ttsResult, ttsResultMapper);
 	}
 
 	public TtsGpu(String ip, String port) {

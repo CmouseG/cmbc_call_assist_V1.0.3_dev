@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.tts.constants.AiConstants;
@@ -27,7 +26,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
-@Component
+
 public class RedistributeHandler {
 	private static Logger logger = LoggerFactory.getLogger(RedistributeHandler.class);
 
@@ -41,7 +40,7 @@ public class RedistributeHandler {
     private RedisUtil redisUtil;
 
 	// 定时任务，启动时运行（每3分钟执行一次）
-	@Scheduled(fixedRate = 1000*60)
+	@Scheduled(fixedRate = 1000*60*3)
 	public void task() throws InterruptedException {
 		Lock lock = new Lock("LOCK_NAME", "LOCK_VALUE");
 		if (distributedLockHandler.tryLock(lock, 5*1000L, 100L, 3*60*1000L)) { // 尝试5s,每100ms尝试一次，持锁时间为3分钟
@@ -54,7 +53,10 @@ public class RedistributeHandler {
 					//重新分配策略
 					distributionStrategy(resultList);
 					
-				}else logger.info("前10分钟内没有请求");
+				}else 
+				{
+					logger.info("前10分钟内没有请求");
+				}
 			} catch (Exception e) {
 				logger.error("分配失败！", e);
 			}

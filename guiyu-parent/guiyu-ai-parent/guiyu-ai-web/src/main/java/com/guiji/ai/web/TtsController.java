@@ -22,6 +22,7 @@ import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
 import com.guiji.ai.vo.TtsStatusRspVO;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 
@@ -52,9 +53,14 @@ public class TtsController implements ITts
 
 			return Result.ok("success");
 
-		} catch (Exception e)
+		} catch (GuiyuException e)
 		{
 			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		}
+		catch(Exception ex)
+		{
+			logger.error("请求失败！", ex);
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 
@@ -86,10 +92,15 @@ public class TtsController implements ITts
 				ttsRspVO.setAudios(radioMap);
 			}
 
-		} catch (Exception e)
+		} catch (GuiyuException e)
 		{
-			logger.error("查询失败", e);
-			ttsRspVO.setErrorMsg(e.getMessage());
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		}
+		catch(Exception ex)
+		{
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 
 		return Result.ok(ttsRspVO);
@@ -122,10 +133,16 @@ public class TtsController implements ITts
 				statusRspVOList.add(statusRspVO);
 			}
 			
-		} catch (Exception e){
-			logger.error("查询失败", e);
+		} catch (GuiyuException e)
+		{
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
 		}
-
+		catch(Exception ex)
+		{
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
 		return Result.ok(statusRspVOList);
 	}
 }

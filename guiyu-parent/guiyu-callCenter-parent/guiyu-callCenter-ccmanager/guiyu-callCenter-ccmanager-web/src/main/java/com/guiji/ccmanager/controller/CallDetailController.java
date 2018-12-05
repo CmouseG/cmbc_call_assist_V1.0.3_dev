@@ -138,7 +138,7 @@ public class CallDetailController implements ICallPlanDetail {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value="getCallPlanDetailRecord")
+    @PostMapping(value="getCallPlanDetailRecord")
     public Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds){
 
         log.info("get request getCallPlanDetailRecord，callIds[{}]", callIds);

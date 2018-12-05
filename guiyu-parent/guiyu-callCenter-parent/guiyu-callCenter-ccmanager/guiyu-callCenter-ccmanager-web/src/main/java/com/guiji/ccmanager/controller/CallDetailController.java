@@ -61,7 +61,7 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "durationMin", value = "通话时长，最小值", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "durationMax", value = "通话时长，最大值", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "accurateIntent", value = "意向标签，以逗号分隔", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "freason", value = "F类说明，以逗号分隔。传数字，1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "freason", value = "直接传名称,以逗号分隔", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
@@ -106,6 +106,11 @@ public class CallDetailController implements ICallPlanDetail {
         return Result.ok(page);
     }
 
+    @ApiOperation(value = "查找f类说明列表")
+    @GetMapping(value="getFtypes")
+    public List<String> getFtypes(){
+        return callDetailService.getFtypes();
+    }
 
     @ApiOperation(value = "查看通话记录详情，前台页面使用")
     @ApiImplicitParams({
@@ -130,16 +135,13 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallPlanDetailRecord")
-    public Result.ReturnData<CallPlanDetailRecordVO> getCallPlanDetailRecord(String callId){
+    public Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds){
 
-        log.info("get request getCallPlanDetailRecord，callId[{}]", callId);
+        log.info("get request getCallPlanDetailRecord，callIds[{}]", callIds);
 
-        if(StringUtils.isBlank(callId)){
-            return Result.error(Constant.ERROR_PARAM);
-        }
-        CallPlanDetailRecordVO callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callId);
+        List<CallPlanDetailRecordVO> callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callIds);
 
-        log.info("reponse success getCallPlanDetailRecord，callId[{}]", callId);
+        log.info("reponse success getCallPlanDetailRecord，callId[{}]", callIds);
         return Result.ok(callPlanDetailRecordVO);
     }
 

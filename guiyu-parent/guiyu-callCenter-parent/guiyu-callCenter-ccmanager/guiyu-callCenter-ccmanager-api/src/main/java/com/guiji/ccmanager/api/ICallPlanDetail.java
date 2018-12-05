@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 /**
  * @Auther: 黎阳
  * @Date: 2018/12/3 0003 14:23
@@ -21,6 +23,6 @@ public interface ICallPlanDetail {
            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
    })
    @GetMapping(value="getCallPlanDetailRecord")
-   Result.ReturnData<CallPlanDetailRecordVO> getCallPlanDetailRecord(String callId);
+   Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds);
 
 }

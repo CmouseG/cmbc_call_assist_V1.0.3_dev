@@ -33,5 +33,7 @@ public interface CallDetailService {
 
     void delRecord(String callId);
 
-    CallPlanDetailRecordVO getCallPlanDetailRecord(String callId);
+    List<CallPlanDetailRecordVO> getCallPlanDetailRecord(List<String> callId);
+
+    List<String> getFtypes();
 }

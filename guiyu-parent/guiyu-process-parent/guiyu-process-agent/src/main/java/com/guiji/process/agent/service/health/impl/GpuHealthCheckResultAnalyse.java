@@ -13,7 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
-    private static final String CMD_RESULT_CODE99 = "99";
+    private static final String CMD_RESULT_CODE98 = "98";
+    private static final String CMD_RESULT_CODE99 = "98";
 
     @Override
     public ProcessStatusEnum check(CommandResult cmdResult) {
@@ -59,7 +60,7 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
     @Override
     public void afterRestoreModel(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey) {
-        String result = CMD_RESULT_CODE99;
+        String result = CMD_RESULT_CODE98;
         if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
             if(cmdResult.getOutput().contains("SUCCESS") || cmdResult.getOutput().contains("success")){
                 result = "8";

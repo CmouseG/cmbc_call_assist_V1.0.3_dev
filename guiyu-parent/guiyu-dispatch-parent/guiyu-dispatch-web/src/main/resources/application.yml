@@ -30,6 +30,13 @@ mybatis:
 jdbc:
   type: mysql
   
+ribbon:
+  ConnectTimeout: 1000
+  ReadTimeout: 1000
+  OkToRetryOnAllOperations: true
+  MaxAutoRetries: 1
+  MaxAutoRetriesNextServer: 3
+  
 properties:
   error: error.properties
  

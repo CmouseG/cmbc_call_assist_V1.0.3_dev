@@ -34,20 +34,40 @@ public class AcquireTTSHandler implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
 		List<ProcessInstanceVO> returnList = new ArrayList<>();
+		ReturnData<List<ProcessInstanceVO>> returnData = null;
 		
 		logger.info("getting all TTS...");
-		ReturnData<List<ProcessInstanceVO>> returnData = iProcessSchedule.getAllTTS();
-		if(returnData != null && returnData.getBody() != null && !returnData.getBody().isEmpty()){
+		while(true){
+			try
+			{
+				returnData = iProcessSchedule.getAllTTS();
+				if(returnData != null)
+				{
+					break;
+				}
+				
+			} catch (Exception e)
+			{
+				logger.error("Process服务异常...");
+				continue;
+			}
+		}
+		
+		if(returnData.getBody() != null && !returnData.getBody().isEmpty())
+		{
 			returnList = returnData.getBody();
-		}else{
+		}else
+		{
 			logger.info("没有获取到TTS!");
 			return;
 		}
 		logger.info("获取的TTS列表：" + returnList);
 		
-		Collections.sort(returnList, new Comparator<ProcessInstanceVO>() {
+		Collections.sort(returnList, new Comparator<ProcessInstanceVO>() 
+		{
 			@Override
-			public int compare(ProcessInstanceVO o1, ProcessInstanceVO o2) {
+			public int compare(ProcessInstanceVO o1, ProcessInstanceVO o2) 
+			{
 				return o1.getProcessKey().compareTo(o2.getProcessKey());
 			}
 		});
@@ -55,12 +75,14 @@ public class AcquireTTSHandler implements ApplicationRunner {
 		String modelName = returnList.get(0).getProcessKey();
 		List<Object> gpuList = new ArrayList<>();
 
-		for (int i = 0; i < returnList.size(); i++) {
+		for (int i = 0; i < returnList.size(); i++) 
+		{
 			TtsGpu gpu = new TtsGpu();
 			gpu.setIp(returnList.get(i).getIp());
 			gpu.setPort(String.valueOf(returnList.get(i).getPort()));
 
-			if (!returnList.get(i).getProcessKey().equals(modelName)) {
+			if (!returnList.get(i).getProcessKey().equals(modelName)) 
+			{
 				redisUtil.lSet(AiConstants.GUIYUTTS + modelName + AiConstants.AVALIABLE, gpuList);
 				modelName = returnList.get(i).getProcessKey();
 				gpuList = new ArrayList<>();

@@ -26,6 +26,7 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.TtsCallback;
+import com.guiji.robot.model.TtsComposeCheckReq;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
@@ -81,8 +82,8 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param ttsVoice
 	 * @return
 	 */
-	public Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody List<String> seqIdList){
-		List<TtsComposeCheckRsp> rspList = iAiAbilityCenterService.ttsComposeCheck(seqIdList);
+	public Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody TtsComposeCheckReq ttsComposeCheckReq){
+		List<TtsComposeCheckRsp> rspList = iAiAbilityCenterService.ttsComposeCheck(ttsComposeCheckReq);
 		return Result.ok(rspList);
 	}
 	

@@ -27,6 +27,7 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
+import com.guiji.robot.model.TtsComposeCheckReq;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
@@ -154,6 +155,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	@Override
 	public TtsComposeCheckRsp fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
 		if(ttsVoiceReq == null
+				|| StrUtils.isEmpty(ttsVoiceReq.getTemplateId())
 				|| StrUtils.isEmpty(ttsVoiceReq.getSeqid())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
@@ -164,7 +166,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(ttsVoiceReq.getSeqid());
 		if(ttsWavHis == null) {
 			logger.error("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
-			rsp.setStatus(RobotConstants.TTS_STATUS_N);
+			//逐个检查
+			HsReplace hsReplace = aiCacheService.queyHsReplace(ttsVoiceReq.getTemplateId());
+			if(hsReplace.isTemplate_tts_flag()) {
+				rsp.setStatus(RobotConstants.TTS_STATUS_S);
+			}else {
+				rsp.setStatus(RobotConstants.TTS_STATUS_N);
+			}
 		}else {
 			rsp.setStatus(ttsWavHis.getStatus());
 			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
@@ -187,11 +195,12 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @param seqIdList
 	 * @return
 	 */
-	public List<TtsComposeCheckRsp> ttsComposeCheck(List<String> seqIdList){
-		if(ListUtil.isNotEmpty(seqIdList)) {
+	public List<TtsComposeCheckRsp> ttsComposeCheck(TtsComposeCheckReq ttsComposeCheckReq){
+		if(ListUtil.isNotEmpty(ttsComposeCheckReq.getSeqIdList())) {
 			List<TtsComposeCheckRsp> list = new ArrayList<TtsComposeCheckRsp>();
-			for(String seqId : seqIdList) {
+			for(String seqId : ttsComposeCheckReq.getSeqIdList()) {
 				TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
+				ttsVoiceReq.setTemplateId(ttsComposeCheckReq.getTemplateId());
 				ttsVoiceReq.setSeqid(seqId);
 				TtsComposeCheckRsp rsp = this.fetchTtsUrls(ttsVoiceReq);
 				list.add(rsp);

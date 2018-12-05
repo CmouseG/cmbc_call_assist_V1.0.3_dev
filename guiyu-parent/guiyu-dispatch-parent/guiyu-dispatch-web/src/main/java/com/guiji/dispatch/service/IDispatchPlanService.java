@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.bean.IdsDto;
@@ -210,4 +211,26 @@ public interface IDispatchPlanService {
 	 * @return
 	 */
 	boolean batchUpdateFlag(List<DispatchPlan> list,String flag);
+	
+	int getcall4BatchName(String batchName,Integer status);
+	
+	/**
+	 * 
+	 * @param phone
+	 * @param planStaus
+	 * @param startTime
+	 * @param endTime
+	 * @param batchId
+	 * @param replayType
+	 * @param pagenum
+	 * @param pagesize
+	 * @param userId
+	 * @param isSuperAdmin
+	 * @return
+	 */
+	Page<DispatchPlan> queryDispatchPlan(String batchName,int pagenum,int pagesize);
+	
+	
+	JSONObject queryDispatchPlanByPhoens(String phone ,String batchName,int pagenum,int pagesize);
+	
 }

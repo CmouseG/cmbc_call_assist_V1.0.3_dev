@@ -386,8 +386,6 @@
       del_flag = #{delFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
- 
-  
   
   
   <select id="getMenuByUserId" resultType="com.guiji.user.dao.entity.SysMenu">
@@ -417,5 +415,24 @@
 	
 	<select id="getPermissionsByUrl" resultType="string">
 		SELECT permission FROM `sys_menu` where url=#{url} and permission is not null 
+	</select>
+	
+	
+	<select id="countByParamVo" resultType="int">
+		select count(1) from sys_menu where del_flag=0 
+		<if test="menuName != '' ">
+			and name=#{menuName}	
+		</if>
+	</select>
+	
+	<select id="selectByParamVo" resultType="map">
+		SELECT a.id,a.name,a.description,a.url,a.type,DATE_FORMAT(a.create_time,'%y-%m-%d') as createTime,b.username as createName
+		from sys_menu a
+		LEFT JOIN sys_user b on a.create_id=b.id
+		where a.del_flag=0
+		<if test="menuName !='' ">
+			and a.name=#{menuName}
+		</if>
+		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
 	</select>
 </mapper>

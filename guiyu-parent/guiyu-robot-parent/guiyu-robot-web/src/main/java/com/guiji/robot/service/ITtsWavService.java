@@ -65,7 +65,7 @@ public interface ITtsWavService {
 	 * 异步TTS合成操作
 	 * @param ttsVoiceReq
 	 */
-	void asynTtsCompose(HsParam hsChecker);
+	void asynTtsCompose(List<HsParam> hsCheckerList);
 	
 	
 	/**

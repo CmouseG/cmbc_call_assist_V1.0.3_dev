@@ -2,6 +2,8 @@ package com.guiji.process.server.service.impl;
 
 import com.guiji.common.model.Page;
 import com.guiji.process.server.dao.SysProcessTaskMapper;
+import com.guiji.process.server.dao.entity.SysProcess;
+import com.guiji.process.server.dao.entity.SysProcessExample;
 import com.guiji.process.server.dao.entity.SysProcessTask;
 import com.guiji.process.server.dao.entity.SysProcessTaskExample;
 import com.guiji.process.server.service.ISysProcessTaskService;
@@ -48,6 +50,14 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<SysProcessTask> list(SysProcessTask sysProcessTask) {
+        SysProcessTaskExample example = this.getExampleByCondition(sysProcessTask);
+        if(example == null) example = new SysProcessTaskExample();
+        List<SysProcessTask> list = sysProcessTaskMapper.selectByExample(example);
+        return list;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class RobotHealthCheckResultAnalyse implements IHealthCheckResultAnalyse 
     }
 
     @Override
-    public void afertPublish(CommandResult cmdResult, ProcessInstanceVO processInstanceVO,List<String> parameters) {
+    public void afertPublish(CommandResult cmdResult, ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey) {
         String result = CMD_RESULT_CODE99;
         if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
             String output = cmdResult.getOutput();
@@ -37,12 +37,33 @@ public class RobotHealthCheckResultAnalyse implements IHealthCheckResultAnalyse 
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
+        newCmdMsg.setReqKey(reqKey);
         ImClientProtocolBO.getIntance().send(newCmdMsg,3);
 
     }
 
     @Override
-    public void afertRestart(CommandResult cmdResult, ProcessInstanceVO processInstanceVO, List<String> parameters) {
+    public void afertRestart(CommandResult cmdResult, ProcessInstanceVO processInstanceVO, List<String> parameters,String reqKey) {
+
+    }
+
+    @Override
+    public void afterRestoreModel(CommandResult cmdResult, ProcessInstanceVO processInstanceVO, List<String> parameters,String reqKey) {
+
+    }
+
+    @Override
+    public void doNothing(ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey) {
+        String result = "10";
+        // 发送给服务端
+        CmdMessageVO newCmdMsg = new CmdMessageVO();
+        newCmdMsg.setCmdType(CmdTypeEnum.DO_NOTHING);
+        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setParameters(parameters);
+        newCmdMsg.setCommandResult(result);
+        newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
+        newCmdMsg.setReqKey(reqKey);
+        ImClientProtocolBO.getIntance().send(newCmdMsg,3);
 
     }
 }

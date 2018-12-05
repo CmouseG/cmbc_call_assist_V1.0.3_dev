@@ -25,10 +25,20 @@ public class FanoutRabbitConfig {
     public Queue PublishBotstenceRobotMessage() {
         return new Queue("fanoutPublishBotstence.ROBOT");
     }
+
+    @Bean
+    public Queue RestoreModelTTSMessage() {
+        return new Queue("fanoutRestoreModel.TTS");
+    }
  
     @Bean
     FanoutExchange fanoutExchange() {
         return new FanoutExchange("fanoutPublishBotstence");
+    }
+
+    @Bean
+    FanoutExchange fanoutRestoreModelExchange() {
+        return new FanoutExchange("fanoutRestoreModel");
     }
  
     @Bean
@@ -44,6 +54,11 @@ public class FanoutRabbitConfig {
     @Bean
     Binding bindingExchangeC(Queue PublishBotstenceRobotMessage, FanoutExchange fanoutExchange) {
         return BindingBuilder.bind(PublishBotstenceRobotMessage).to(fanoutExchange);
+    }
+
+    @Bean
+    Binding bindingExchangeD(Queue RestoreModelTTSMessage, FanoutExchange fanoutRestoreModelExchange) {
+        return BindingBuilder.bind(RestoreModelTTSMessage).to(fanoutRestoreModelExchange);
     }
  
 }

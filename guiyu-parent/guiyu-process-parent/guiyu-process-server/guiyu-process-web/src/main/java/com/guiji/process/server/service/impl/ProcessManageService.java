@@ -92,16 +92,17 @@ public class ProcessManageService implements IProcessManageService {
 
     @Override
     public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters) {
-        String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType);
+        /*String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType);
         if (StringUtils.isNotEmpty(hasRun)) {
             throw new GuiyuException(GuiyuProcessExceptionEnum.PROCESS08000002.getErrorCode(),GuiyuProcessExceptionEnum.PROCESS08000002.getMsg());
-        }
+        }*/
 
         if(processInstanceVO == null || cmdType == null)
         {
             return false;
         }
 
+        System.out.println("向客户端发送发布命令");
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
@@ -131,7 +132,7 @@ public class ProcessManageService implements IProcessManageService {
         sysProcessTask.setIp(processInstanceVO.getIp());
         sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
         sysProcessTask.setCmdType(cmdType.getValue());
-        sysProcessTask.setProcessKey(processInstanceVO.getParamter().toString());
+        sysProcessTask.setProcessKey(processInstanceVO.getProcessKey());
         sysProcessTask.setParameters(parameters.toString());
         sysProcessTask.setExecStatus(1);
         sysProcessTask.setReqKey(cmdMessageVO.getReqKey());

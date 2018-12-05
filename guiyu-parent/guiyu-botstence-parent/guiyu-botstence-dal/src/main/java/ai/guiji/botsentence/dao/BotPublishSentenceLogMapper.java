@@ -29,5 +29,4 @@ public interface BotPublishSentenceLogMapper {
     int updateByPrimaryKey(BotPublishSentenceLog record);
     
     Long getLastPublishSentence(String tempId);
-    
 }

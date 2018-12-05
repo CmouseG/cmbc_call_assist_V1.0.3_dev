@@ -185,6 +185,76 @@ public class BotPublishSentenceLogExample {
             return (Criteria) this;
         }
 
+        public Criteria andTempNameIsNull() {
+            addCriterion("temp_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameIsNotNull() {
+            addCriterion("temp_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameEqualTo(String value) {
+            addCriterion("temp_name =", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameNotEqualTo(String value) {
+            addCriterion("temp_name <>", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameGreaterThan(String value) {
+            addCriterion("temp_name >", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameGreaterThanOrEqualTo(String value) {
+            addCriterion("temp_name >=", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameLessThan(String value) {
+            addCriterion("temp_name <", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameLessThanOrEqualTo(String value) {
+            addCriterion("temp_name <=", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameLike(String value) {
+            addCriterion("temp_name like", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameNotLike(String value) {
+            addCriterion("temp_name not like", value, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameIn(List<String> values) {
+            addCriterion("temp_name in", values, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameNotIn(List<String> values) {
+            addCriterion("temp_name not in", values, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameBetween(String value1, String value2) {
+            addCriterion("temp_name between", value1, value2, "tempName");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempNameNotBetween(String value1, String value2) {
+            addCriterion("temp_name not between", value1, value2, "tempName");
+            return (Criteria) this;
+        }
+
         public Criteria andTemplateIdIsNull() {
             addCriterion("template_id is null");
             return (Criteria) this;
@@ -512,6 +582,76 @@ public class BotPublishSentenceLogExample {
 
         public Criteria andStatusNotBetween(String value1, String value2) {
             addCriterion("`status` not between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameIsNull() {
+            addCriterion("create_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameIsNotNull() {
+            addCriterion("create_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameEqualTo(String value) {
+            addCriterion("create_name =", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotEqualTo(String value) {
+            addCriterion("create_name <>", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameGreaterThan(String value) {
+            addCriterion("create_name >", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameGreaterThanOrEqualTo(String value) {
+            addCriterion("create_name >=", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameLessThan(String value) {
+            addCriterion("create_name <", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameLessThanOrEqualTo(String value) {
+            addCriterion("create_name <=", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameLike(String value) {
+            addCriterion("create_name like", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotLike(String value) {
+            addCriterion("create_name not like", value, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameIn(List<String> values) {
+            addCriterion("create_name in", values, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotIn(List<String> values) {
+            addCriterion("create_name not in", values, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameBetween(String value1, String value2) {
+            addCriterion("create_name between", value1, value2, "createName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateNameNotBetween(String value1, String value2) {
+            addCriterion("create_name not between", value1, value2, "createName");
             return (Criteria) this;
         }
     }

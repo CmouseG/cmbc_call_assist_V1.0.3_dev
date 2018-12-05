@@ -6,6 +6,8 @@ import java.util.Date;
 public class BotPublishSentenceLog implements Serializable {
     private Long id;
 
+    private String tempName;
+
     private String templateId;
 
     private String processId;
@@ -16,6 +18,8 @@ public class BotPublishSentenceLog implements Serializable {
 
     private String status;
 
+    private String createName;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -24,6 +28,14 @@ public class BotPublishSentenceLog implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTempName() {
+        return tempName;
+    }
+
+    public void setTempName(String tempName) {
+        this.tempName = tempName == null ? null : tempName.trim();
     }
 
     public String getTemplateId() {
@@ -66,6 +78,14 @@ public class BotPublishSentenceLog implements Serializable {
         this.status = status == null ? null : status.trim();
     }
 
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -73,11 +93,13 @@ public class BotPublishSentenceLog implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", tempName=").append(tempName);
         sb.append(", templateId=").append(templateId);
         sb.append(", processId=").append(processId);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
         sb.append(", status=").append(status);
+        sb.append(", createName=").append(createName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

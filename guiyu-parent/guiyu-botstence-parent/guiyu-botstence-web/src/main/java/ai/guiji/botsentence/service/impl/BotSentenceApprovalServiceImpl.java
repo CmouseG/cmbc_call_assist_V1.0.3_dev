@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.user.dao.entity.SysUser;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
@@ -159,17 +162,23 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	@Autowired
 	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
 	
+	@Autowired
+	private IAuth iAuth;
 	
 	public void publishSentence(String processId,Long userId){
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();
 		iDispatchPlanOut.receiveRobotId(templateId);
 		
+		ReturnData<SysUser> data=iAuth.getUserById(userId);
+		data.getBody().getUsername();
 		BotPublishSentenceLog record=new BotPublishSentenceLog();
 		record.setCreateId(userId);
 		record.setCreateTime(new Date());
 		record.setProcessId(processId);
 		record.setTemplateId(templateId);
+		record.setTempName(botSentenceProcess.getTemplateName());
+		record.setCreateName(data.getBody().getUsername());
 		record.setStatus("1");
 		botPublishSentenceLogMapper.insert(record);
 		
@@ -188,6 +197,8 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	    if(!b) {
 	    	throw new CommonException("话术部署失败!");
 	    }
+//	    botSentenceProcess.setState(Constant.DEPLOYING);//部署中
+//	    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 	}
 
 	@Override

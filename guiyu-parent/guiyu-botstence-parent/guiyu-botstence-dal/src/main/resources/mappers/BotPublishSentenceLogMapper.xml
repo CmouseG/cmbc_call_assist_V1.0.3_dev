@@ -3,11 +3,13 @@
 <mapper namespace="ai.guiji.botsentence.dao.BotPublishSentenceLogMapper" >
   <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="temp_name" property="tempName" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="process_id" property="processId" jdbcType="VARCHAR" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, template_id, process_id, create_id, create_time, `status`
+    id, temp_name, template_id, process_id, create_id, create_time, `status`, create_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" >
     select
@@ -105,18 +107,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
-    insert into bot_publish_sentence_log (id, template_id, process_id, 
-      create_id, create_time, `status`
-      )
-    values (#{id,jdbcType=BIGINT}, #{templateId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, 
-      #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}
-      )
+    insert into bot_publish_sentence_log (id, temp_name, template_id, 
+      process_id, create_id, create_time, 
+      `status`, create_name)
+    values (#{id,jdbcType=BIGINT}, #{tempName,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{processId,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     insert into bot_publish_sentence_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
+      </if>
+      <if test="tempName != null" >
+        temp_name,
       </if>
       <if test="templateId != null" >
         template_id,
@@ -133,10 +138,16 @@
       <if test="status != null" >
         `status`,
       </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
+      </if>
+      <if test="tempName != null" >
+        #{tempName,jdbcType=VARCHAR},
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
@@ -153,6 +164,9 @@
       <if test="status != null" >
         #{status,jdbcType=VARCHAR},
       </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" resultType="java.lang.Integer" >
@@ -166,6 +180,9 @@
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.tempName != null" >
+        temp_name = #{record.tempName,jdbcType=VARCHAR},
       </if>
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
@@ -182,6 +199,9 @@
       <if test="record.status != null" >
         `status` = #{record.status,jdbcType=VARCHAR},
       </if>
+      <if test="record.createName != null" >
+        create_name = #{record.createName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -190,11 +210,13 @@
   <update id="updateByExample" parameterType="map" >
     update bot_publish_sentence_log
     set id = #{record.id,jdbcType=BIGINT},
+      temp_name = #{record.tempName,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       process_id = #{record.processId,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      `status` = #{record.status,jdbcType=VARCHAR}
+      `status` = #{record.status,jdbcType=VARCHAR},
+      create_name = #{record.createName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -202,6 +224,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     update bot_publish_sentence_log
     <set >
+      <if test="tempName != null" >
+        temp_name = #{tempName,jdbcType=VARCHAR},
+      </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
       </if>
@@ -217,16 +242,21 @@
       <if test="status != null" >
         `status` = #{status,jdbcType=VARCHAR},
       </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     update bot_publish_sentence_log
-    set template_id = #{templateId,jdbcType=VARCHAR},
+    set temp_name = #{tempName,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
       process_id = #{processId,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      `status` = #{status,jdbcType=VARCHAR}
+      `status` = #{status,jdbcType=VARCHAR},
+      create_name = #{createName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

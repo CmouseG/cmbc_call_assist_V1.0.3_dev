@@ -168,7 +168,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//逐个检查
 			HsReplace hsReplace = aiCacheService.queyHsReplace(ttsVoiceReq.getTemplateId());
 			if(!hsReplace.isTemplate_tts_flag()) {
-				logger.info("会话ID：{}不需要TTS合成...");
+				logger.info("会话ID：{}不需要TTS合成...",ttsVoiceReq.getSeqid());
 				rsp.setStatus(RobotConstants.TTS_STATUS_S);
 			}else {
 				rsp.setStatus(RobotConstants.TTS_STATUS_N);

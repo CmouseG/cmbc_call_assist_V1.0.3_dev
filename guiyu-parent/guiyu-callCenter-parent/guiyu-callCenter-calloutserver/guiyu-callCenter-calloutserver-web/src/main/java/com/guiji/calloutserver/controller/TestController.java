@@ -52,6 +52,7 @@ public class TestController {
         callOutPlan.setCreateTime(new Date());
         callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
         callOutPlan.setCustomerId("16");
+        callOutPlan.setIsdel(0);
 
         callOutPlanService.add(callOutPlan);
 

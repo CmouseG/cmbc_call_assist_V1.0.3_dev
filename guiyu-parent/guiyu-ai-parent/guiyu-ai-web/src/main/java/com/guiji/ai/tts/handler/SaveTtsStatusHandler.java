@@ -79,7 +79,7 @@ public class SaveTtsStatusHandler
 					}
 				} catch (Exception e) {
 					logger.error("数据保存失败！", e);
-					break;
+					continue;
 				}
 			}
 		}

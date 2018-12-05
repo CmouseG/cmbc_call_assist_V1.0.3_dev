@@ -11,6 +11,7 @@ public class AiConstants {
 	public static final String GUIYUTTS = "GUIYU_TTS_";
 	public static final String AVALIABLE = "_0"; // 可用
 	public static final String UNAVALIABLE = "_1"; // 不可用
+	public static final String CHANGING = "_2"; //更改中了
 	
 	public static final String MODEL = "model"; // 模型
 	public static final String COUNT = "count"; // 次数

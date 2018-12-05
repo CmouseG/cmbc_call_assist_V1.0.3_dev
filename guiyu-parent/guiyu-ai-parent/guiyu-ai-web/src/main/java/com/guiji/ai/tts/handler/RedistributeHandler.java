@@ -69,7 +69,7 @@ public class RedistributeHandler {
 	// 分配策略
 	private void distributionStrategy(List<Map<String, Object>> mapList) throws Exception {
 		int requestSum = 0; // 所有模型请求总次数
-		int availableGpuSum = 0; // 所有模型可用GPU总数
+		int GpuSum = 0; // 所有模型可用GPU总数
 		List<GpuCountVO> gpuCountList = new ArrayList<>();
 		List<GpuCountVO> subGpuCountVOList = new ArrayList<>(); // 待回收对象列表
 		List<GpuCountVO> addGpuCountVOList = new ArrayList<>(); // 待分配对象列表
@@ -78,19 +78,27 @@ public class RedistributeHandler {
 		//获取所有计算公式需要的值
 		for (int i = 0; i < mapList.size(); i++) { //mapList（<model,reqCount>）
 			int availableGpuCount = 0; // 模型对应可用GPU数量
+			int unavailableGpuCount = 0;
 			String model = (String) mapList.get(i).get(AiConstants.MODEL);
+			int requestCount = (int) mapList.get(i).get(AiConstants.COUNT); // 单个模型请求次数
+			requestSum += requestCount;
 			List<Object> avaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0, -1); // 获取对应模型可用list
+			List<Object> unAvaliableGpuList = redisUtil.lGet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 0, -1); // 获取对应模型可用list
+			List<Object> modelGpuList = new ArrayList<>();
+			modelGpuList.addAll(avaliableGpuList);
+			modelGpuList.addAll(unAvaliableGpuList);
 			if(avaliableGpuList != null){
 				availableGpuCount = avaliableGpuList.size(); // 单个模型对应可用GPU数量
 			}
-			availableGpuSum += availableGpuCount;
-			int requestCount = (int) mapList.get(i).get(AiConstants.COUNT); // 单个模型请求次数
-			requestSum += requestCount;
-			gpuCountList.add(new GpuCountVO(model, requestCount, availableGpuCount, 0, avaliableGpuList));
+			if(unAvaliableGpuList != null){
+				unavailableGpuCount = unAvaliableGpuList.size();
+			}
+			GpuSum += (availableGpuCount + unavailableGpuCount);
+			gpuCountList.add(new GpuCountVO(model, requestCount, availableGpuCount, 0, modelGpuList));
 		}
 
 		//计算出changeCount
-		Map<String, List<GpuCountVO>> resMap = calChangeCount(requestSum, availableGpuSum, gpuCountList);
+		Map<String, List<GpuCountVO>> resMap = calChangeCount(requestSum, GpuSum, gpuCountList);
 		
 		subGpuCountVOList = (List<GpuCountVO>) resMap.get(AiConstants.SUB);
 		addGpuCountVOList = (List<GpuCountVO>) resMap.get(AiConstants.ADD);
@@ -124,7 +132,8 @@ public class RedistributeHandler {
 					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
-						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new TtsGpu(ip, port));
+//						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new TtsGpu(ip, port));
+						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.CHANGING, new TtsGpu(ip, port)); //更改中
 					}else{
 						throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS);
 					}

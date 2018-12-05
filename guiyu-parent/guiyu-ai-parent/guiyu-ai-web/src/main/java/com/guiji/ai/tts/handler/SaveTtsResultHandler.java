@@ -81,7 +81,7 @@ public class SaveTtsResultHandler {
 					}
 				} catch (Exception e) {
 					logger.error("数据保存失败！", e);
-					break;
+					continue;
 				}
 			}
 		}

@@ -9,10 +9,13 @@ import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.server.dao.SysProcessMapper;
+import com.guiji.process.server.dao.SysProcessTaskMapper;
 import com.guiji.process.server.dao.entity.SysProcess;
 import com.guiji.process.server.dao.entity.SysProcessExample;
+import com.guiji.process.server.dao.entity.SysProcessTask;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.service.ISysProcessService;
+import com.guiji.process.server.service.ISysProcessTaskService;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +36,8 @@ public class SysProcessServiceImpl implements ISysProcessService {
     private final Logger logger = LoggerFactory.getLogger(SysProcessServiceImpl.class);
     @Autowired
     private SysProcessMapper sysProcessMapper;
+    @Autowired
+    private ISysProcessTaskService sysProcessTaskService;
     @Autowired
     private RedisUtil redisUtil;
     @Override
@@ -96,6 +101,14 @@ public class SysProcessServiceImpl implements ISysProcessService {
         if(list != null && !list.isEmpty()) {
             List<SysProcess> rspSysProcessList = new ArrayList<SysProcess>();
             for(SysProcess process : list) {
+                SysProcessTask sysProcessTaskTmp = new SysProcessTask();
+                sysProcessTaskTmp.setIp(process.getIp());
+                sysProcessTaskTmp.setPort(process.getPort());
+                sysProcessTaskTmp.setExecStatus(1);
+                List<SysProcessTask> isExist = sysProcessTaskService.list(sysProcessTaskTmp);
+                if (isExist != null && isExist.size() > 0){
+                    process.setExecStatus(1);
+                }
                 rspSysProcessList.add(process);
             }
             page.setRecords(rspSysProcessList);
@@ -162,7 +175,6 @@ public class SysProcessServiceImpl implements ISysProcessService {
             if(StrUtils.isNotEmpty(processKey)) {
                 criteria.andProcessKeyLike(processKey);
             }
-            criteria.andTypeNotEqualTo(99);//过滤掉agent
             return example;
         }else {
             logger.info("查询进程列表");

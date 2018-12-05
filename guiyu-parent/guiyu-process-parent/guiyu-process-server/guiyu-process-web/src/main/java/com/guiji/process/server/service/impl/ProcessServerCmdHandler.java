@@ -3,8 +3,10 @@ package com.guiji.process.server.service.impl;
 
 import com.guiji.common.constant.RedisConstant;
 import com.guiji.common.model.process.ProcessStatusEnum;
+import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.guiyu.message.component.FanoutSender;
 import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
+import com.guiji.guiyu.message.model.RestoreModelResultMsgVO;
 import com.guiji.process.core.IProcessCmdHandler;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
@@ -88,6 +90,12 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 break;
             case AFTER_RESTART:
                 doRestartAfter(cmdMessageVO);
+                break;
+            case AFTER_RESTORE_MODEL:
+                doRestoreModelAfter(cmdMessageVO);
+                break;
+            case DO_NOTHING:
+                doNothing(cmdMessageVO);
                 break;
             default:
                 break;
@@ -176,7 +184,14 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 //发布MQ通知消息
                 String tmplId =  cmdMessageVO.getParameters().get(1);
                 PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = new PublishBotstenceResultMsgVO();
-                publishBotstenceResultMsgVO.setProcessTypeEnum(processInstanceVO.getType());
+                if (cmdMessageVO.getCmdType() == CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE) {
+                    publishBotstenceResultMsgVO.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
+                } else if (cmdMessageVO.getCmdType() == CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE) {
+                    publishBotstenceResultMsgVO.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
+                }else if (cmdMessageVO.getCmdType() == CmdTypeEnum.PUBLISH_ROBOT_BOTSTENCE) {
+                    publishBotstenceResultMsgVO.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
+                }
+
                 publishBotstenceResultMsgVO.setTmplId(tmplId);
                 if (cmdMessageVO.getCommandResult() != null) {
                     publishBotstenceResultMsgVO.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
@@ -199,6 +214,61 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
     }
 
     private void doRestartAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
+                sysProcessTask.setUpdateTime(new Date());
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
+            }
+        }
+    }
+
+    private void doRestoreModelAfter(CmdMessageVO cmdMessageVO) {
+        if (cmdMessageVO != null) {
+            ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
+            if (processInstanceVO != null){
+                //发布MQ通知消息
+                String from =  cmdMessageVO.getParameters().get(0);
+                String to =  cmdMessageVO.getParameters().get(1);
+                RestoreModelResultMsgVO restoreModelResultMsgVO = new RestoreModelResultMsgVO();
+                restoreModelResultMsgVO.setIp(processInstanceVO.getIp());
+                restoreModelResultMsgVO.setPort(processInstanceVO.getPort());
+                restoreModelResultMsgVO.setFrom(Integer.valueOf(from));
+                restoreModelResultMsgVO.setTo(Integer.valueOf(to));
+                if (cmdMessageVO.getCommandResult() != null) {
+                    if ("8".equals(cmdMessageVO.getCommandResult())) {
+                        restoreModelResultMsgVO.setResult(0);
+                    } else {
+                        restoreModelResultMsgVO.setResult(1);
+                    }
+
+                }
+
+                fanoutSender.send("fanoutRestoreModel", JsonUtils.bean2Json(restoreModelResultMsgVO));
+
+                //更新sys_process_task
+                SysProcessTask sysProcessTask = new SysProcessTask();
+                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
+                sysProcessTask.setExecStatus(0);
+                sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
+                sysProcessTask.setUpdateTime(new Date());
+                sysProcessTaskService.update(sysProcessTask);
+                // 删除缓存
+                redisUtil.del(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdMessageVO.getCmdType());
+            }
+        }
+    }
+
+    private void doNothing(CmdMessageVO cmdMessageVO) {
         if (cmdMessageVO != null) {
             ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
             if (processInstanceVO != null){

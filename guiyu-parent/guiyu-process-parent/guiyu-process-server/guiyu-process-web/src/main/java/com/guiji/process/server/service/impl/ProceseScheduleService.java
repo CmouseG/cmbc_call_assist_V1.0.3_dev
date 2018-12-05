@@ -119,6 +119,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
     @Override
     public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file) {
+        System.out.println("发布参数" + processTypeEnum + tmplId + file);
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
         if(processTypeEnum == ProcessTypeEnum.SELLBOT)
         {

@@ -656,161 +656,171 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		}
 		
 		
-		//生成replace.json
-		Map<String, Object> replaceMap = new LinkedHashMap<String, Object>();
-		replaceMap.put("template_tts_flag", "true");
-		replaceMap.put("tts_new", "true");
-		replaceMap.put("tts_partial", "true");
-		replaceMap.put("use_speaker_flag", botSentenceProcess.getSoundType());
-		
-		List<Integer> wavs = new ArrayList<>();
-		
-		List<VoliceInfo> ttsVoliceList = new ArrayList<>();
-		
-		for(VoliceInfo temp: voliceInfos) {
-			//判断当前文案否需要TTS合成
-			if(BotSentenceUtil.validateContainParam(temp.getContent())) {
-				logger.info("当前文案需要TTS合成");
-				logger.info(temp.getContent());
-				wavs.add(voliceIdsMap.get(temp.getVoliceId()));
-				ttsVoliceList.add(temp);
-			}
-		}
-		
-		replaceMap.put("num_sentence_merge_lst", wavs);
-		
-		replaceMap.put("old_num_sentence_merge_lst", wavs);
-		
-		//voliceIdsMap.get(key);
-		Map<String, List<String>> map1 = new LinkedHashMap<>();
-		Map<String, String> tts_pos_map1 = new LinkedHashMap<>();
-		Map<String, String> tts_pos_map2 = new LinkedHashMap<>();
-		
-		List<String> allParamList  = new ArrayList<>();
-		
-		for(VoliceInfo temp : ttsVoliceList) {
+		logger.info("判断是否需要TTS");
+		BotSentenceTtsTaskExample ttsParamExample = new BotSentenceTtsTaskExample();
+		ttsParamExample.createCriteria().andProcessIdEqualTo(processId);
+		int num = botSentenceTtsTaskMapper.countByExample(ttsParamExample);
+		if(num > 0) {
+			logger.info("当前话术需要TTS");
+			//生成replace.json
+			Map<String, Object> replaceMap = new LinkedHashMap<String, Object>();
+			replaceMap.put("template_tts_flag", "true");
+			replaceMap.put("tts_new", "true");
+			replaceMap.put("tts_partial", "true");
+			replaceMap.put("use_speaker_flag", botSentenceProcess.getSoundType());
 			
-			if(StringUtils.isNotBlank(temp.getContent())) {
-			   List<String> wavNameList = new ArrayList<>();
-			   
-			   BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
-				ttsTaskExample.createCriteria().andProcessIdEqualTo(processId)
-						.andBusiIdEqualTo(temp.getVoliceId().toString()).andBusiTypeEqualTo(Constant.TTS_BUSI_TYPE_01);
-				ttsTaskExample.setOrderByClause(" seq");
-				List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
-				if (null != taskList && taskList.size() > 0) {
-					for (BotSentenceTtsTask task : taskList) {
-						String seq = task.getSeq();
-						//使用序号替换voliceId
-						int index = voliceIdsMap.get(new Long(task.getBusiId()));
-						String wavName = index + "_" + seq.split("_")[1];
-						wavNameList.add(wavName);
-						
-						if(Constant.IS_PARAM_FALSE.equals(task.getIsParam())) {
-							if(StringUtils.isNotBlank(task.getVoliceUrl())) {
-								generateWAV(restTemplate, task.getVoliceUrl(), wavName, wavfile.getPath());
+			List<Integer> wavs = new ArrayList<>();
+			
+			List<VoliceInfo> ttsVoliceList = new ArrayList<>();
+			
+			for(VoliceInfo temp: voliceInfos) {
+				//判断当前文案否需要TTS合成
+				if(BotSentenceUtil.validateContainParam(temp.getContent())) {
+					logger.info("当前文案需要TTS合成");
+					logger.info(temp.getContent());
+					wavs.add(voliceIdsMap.get(temp.getVoliceId()));
+					ttsVoliceList.add(temp);
+				}
+			}
+			
+			replaceMap.put("num_sentence_merge_lst", wavs);
+			
+			replaceMap.put("old_num_sentence_merge_lst", wavs);
+			
+			//voliceIdsMap.get(key);
+			Map<String, List<String>> map1 = new LinkedHashMap<>();
+			Map<String, String> tts_pos_map1 = new LinkedHashMap<>();
+			Map<String, String> tts_pos_map2 = new LinkedHashMap<>();
+			
+			List<String> allParamList  = new ArrayList<>();
+			
+			for(VoliceInfo temp : ttsVoliceList) {
+				
+				if(StringUtils.isNotBlank(temp.getContent())) {
+				   List<String> wavNameList = new ArrayList<>();
+				   
+				   BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
+					ttsTaskExample.createCriteria().andProcessIdEqualTo(processId)
+							.andBusiIdEqualTo(temp.getVoliceId().toString()).andBusiTypeEqualTo(Constant.TTS_BUSI_TYPE_01);
+					ttsTaskExample.setOrderByClause(" seq");
+					List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
+					if (null != taskList && taskList.size() > 0) {
+						for (BotSentenceTtsTask task : taskList) {
+							String seq = task.getSeq();
+							//使用序号替换voliceId
+							int index = voliceIdsMap.get(new Long(task.getBusiId()));
+							String wavName = index + "_" + seq.split("_")[1];
+							wavNameList.add(wavName);
+							
+							if(Constant.IS_PARAM_FALSE.equals(task.getIsParam())) {
+								if(StringUtils.isNotBlank(task.getVoliceUrl())) {
+									generateWAV(restTemplate, task.getVoliceUrl(), wavName, wavfile.getPath());
+								}
+							}
+							
+							if(Constant.IS_PARAM_TRUE.equals(task.getIsParam())) {
+								tts_pos_map1.put(wavName, task.getContent());
+								allParamList.add(task.getContent());
 							}
 						}
-						
-						if(Constant.IS_PARAM_TRUE.equals(task.getIsParam())) {
-							tts_pos_map1.put(wavName, task.getContent());
-							allParamList.add(task.getContent());
-						}
 					}
+				   
+					map1.put(voliceIdsMap.get(temp.getVoliceId()).toString(), wavNameList);
 				}
-			   
-				map1.put(voliceIdsMap.get(temp.getVoliceId()).toString(), wavNameList);
 			}
-		}
-		
-		replaceMap.put("rec_tts_wav", map1);
-		
-		
-		//生成tts_pos
-		replaceMap.put("tts_pos", tts_pos_map1);
-		
-		
-		//生成replace_variables_flag
-		Collections.sort(allParamList);
-		replaceMap.put("replace_variables_flag", allParamList);
-		
-		//生成replace_variables_type
-		List<String> replace_variables_type_list = new ArrayList<>();
-		for(String param : allParamList) {
-			BotSentenceTtsParamExample ttsParamexample = new BotSentenceTtsParamExample();
-			ttsParamexample.createCriteria().andProcessIdEqualTo(processId).andParamKeyEqualTo(param);
-			List<BotSentenceTtsParam> ttsParamList = botSentenceTtsParamMapper.selectByExample(ttsParamexample);
-			if(null != ttsParamList && ttsParamList.size() > 0) {
-				if(StringUtils.isNotBlank(ttsParamList.get(0).getParamType())) {
-					replace_variables_type_list.add(ttsParamList.get(0).getParamType());
+			
+			replaceMap.put("rec_tts_wav", map1);
+			
+			
+			//生成tts_pos
+			replaceMap.put("tts_pos", tts_pos_map1);
+			
+			
+			//生成replace_variables_flag
+			Collections.sort(allParamList);
+			replaceMap.put("replace_variables_flag", allParamList);
+			
+			//生成replace_variables_type
+			List<String> replace_variables_type_list = new ArrayList<>();
+			for(String param : allParamList) {
+				BotSentenceTtsParamExample ttsParamexample = new BotSentenceTtsParamExample();
+				ttsParamexample.createCriteria().andProcessIdEqualTo(processId).andParamKeyEqualTo(param);
+				List<BotSentenceTtsParam> ttsParamList = botSentenceTtsParamMapper.selectByExample(ttsParamexample);
+				if(null != ttsParamList && ttsParamList.size() > 0) {
+					if(StringUtils.isNotBlank(ttsParamList.get(0).getParamType())) {
+						replace_variables_type_list.add(ttsParamList.get(0).getParamType());
+					}else {
+						replace_variables_type_list.add("normal");
+					}
+					
 				}else {
+					//throw new CommonException("变量"+param+"没有设置类型");
 					replace_variables_type_list.add("normal");
 				}
-				
-			}else {
-				//throw new CommonException("变量"+param+"没有设置类型");
-				replace_variables_type_list.add("normal");
 			}
-		}
-		replaceMap.put("replace_variables_type", replace_variables_type_list);
-		
-		//生成备用话术
-		for(VoliceInfo temp : ttsVoliceList) {
-			int index = voliceIdsMap.get(temp.getVoliceId());
-			String key = index + "_backup";
+			replaceMap.put("replace_variables_type", replace_variables_type_list);
 			
-			//查询当前文案的备用文案
-			BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
-			backupExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(temp.getVoliceId());
-			List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
-			if(null != backupList && backupList.size() > 0) {
-				String value = backupList.get(0).getContent();
-				replaceMap.put(key, value);
-				if(StringUtils.isNotBlank(backupList.get(0).getUrl())) {
-					//生成备用话术音频文件
-					generateWAV(restTemplate, backupList.get(0).getUrl(), key, wavfile.getPath());
-					
-					//为了校验通过，生成当前文案的录音 
-					generateWAV(restTemplate, backupList.get(0).getUrl(), index+"", wavfile.getPath());
+			//生成备用话术
+			for(VoliceInfo temp : ttsVoliceList) {
+				int index = voliceIdsMap.get(temp.getVoliceId());
+				String key = index + "_backup";
+				
+				//查询当前文案的备用文案
+				BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+				backupExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(temp.getVoliceId());
+				List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
+				if(null != backupList && backupList.size() > 0) {
+					String value = backupList.get(0).getContent();
+					replaceMap.put(key, value);
+					if(StringUtils.isNotBlank(backupList.get(0).getUrl())) {
+						//生成备用话术音频文件
+						generateWAV(restTemplate, backupList.get(0).getUrl(), key, wavfile.getPath());
+						
+						//为了校验通过，生成当前文案的录音 
+						generateWAV(restTemplate, backupList.get(0).getUrl(), index+"", wavfile.getPath());
+					}
 				}
 			}
-		}
-		
-		
-		//生成完整话术
-		for(VoliceInfo temp : ttsVoliceList) {
-			int index = voliceIdsMap.get(temp.getVoliceId());
-			String content = temp.getContent();
 			
-			 String regEx = "\\$[0-9]{4}";
-		    // 编译正则表达式
-		    Pattern pattern = Pattern.compile(regEx);
-		    Matcher matcher = pattern.matcher(content);
-		    List<String> paramList = new ArrayList<>();
-		    // 字符串是否与正则表达式相匹配
-		    while(matcher.find()) {
-		    	 String match = matcher.group();
-		    	 paramList.add(match);
-		    }
-		    
-		    for(String str : paramList) {
-		    	if(tts_pos_map2.containsKey(str)) {
-		    		content = content.replace(str, "$"+tts_pos_map2.get(str));
-		    	}
-		    }
 			
-			replaceMap.put(index + "_replace_sentence", content);
+			//生成完整话术
+			for(VoliceInfo temp : ttsVoliceList) {
+				int index = voliceIdsMap.get(temp.getVoliceId());
+				String content = temp.getContent();
+				
+				 String regEx = "\\$[0-9]{4}";
+			    // 编译正则表达式
+			    Pattern pattern = Pattern.compile(regEx);
+			    Matcher matcher = pattern.matcher(content);
+			    List<String> paramList = new ArrayList<>();
+			    // 字符串是否与正则表达式相匹配
+			    while(matcher.find()) {
+			    	 String match = matcher.group();
+			    	 paramList.add(match);
+			    }
+			    
+			    for(String str : paramList) {
+			    	if(tts_pos_map2.containsKey(str)) {
+			    		content = content.replace(str, "$"+tts_pos_map2.get(str));
+			    	}
+			    }
+				
+				replaceMap.put(index + "_replace_sentence", content);
+			}
+			
+			
+			String replacePath = templateCfgsDir+ FILE_SEPARATOR + "replace.json";
+			String replaceJson = JSON.toJSONString(replaceMap).replace("\"[", "[").replace("]\"", "]").replace("\\", "");
+			try {
+				FileUtil.writeFile(replacePath, formatJson(replaceJson));
+			} catch (IOException e) {
+				logger.error("write replace json file failed : " + selectDir + "replace.json", e);
+				return null;
+			}
+		}else{
+			logger.info("当前话术不需要TTS");
 		}
 		
-		
-		String replacePath = templateCfgsDir+ FILE_SEPARATOR + "replace.json";
-		String replaceJson = JSON.toJSONString(replaceMap).replace("\"[", "[").replace("]\"", "]").replace("\\", "");
-		try {
-			FileUtil.writeFile(replacePath, formatJson(replaceJson));
-		} catch (IOException e) {
-			logger.error("write replace json file failed : " + selectDir + "replace.json", e);
-			return null;
-		}
 		
 		//将文件发给sellbot
 		File dir=new File(processDir);

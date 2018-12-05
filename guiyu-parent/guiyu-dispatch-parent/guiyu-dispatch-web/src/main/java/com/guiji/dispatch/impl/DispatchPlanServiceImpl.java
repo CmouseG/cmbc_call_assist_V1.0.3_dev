@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,7 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallManagerOut;
+import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.entity.LineConcurrent;
+import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.IdsDto;
@@ -45,6 +48,8 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateProvider;
+import com.guiji.dispatch.util.HttpClientUtil;
+import com.guiji.dispatch.util.HttpUtils;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -71,7 +76,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private DateProvider dateProvider;
-	//
 	@Autowired
 	private IAuth authService;
 
@@ -80,6 +84,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private IRobotRemote robotRemote;
+
+	@Autowired
+	private IAuth auth;
+
+	@Autowired
+	private ICallPlanDetail callPlanDetail;
 
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
@@ -99,6 +109,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 			}
 		} else {
+			logger.info("test :" + checkParams.getMsg());
 			dto.setMsg(checkParams.getMsg());
 			dto.setResult(false);
 			logger.info("addSchedule校验参数失败");
@@ -120,7 +131,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setUserId(userId.intValue());
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 
-		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+//		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		dispatchPlan.setUserId(userId.intValue());
 		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
@@ -348,6 +359,43 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		boolean checkRes = checkLastNum(list.get(0));
 		if (checkRes) {
 			// 回调批次拨打结束通知。
+			logger.info("回调批次拨打结束通知开始 ");
+			ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
+			if (user.getBody() != null) {
+				String batchRecordUrl = user.getBody().getBatchRecordUrl();
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("batch_number", list.get(0).getBatchName());
+				jsonObject.put("operate", user.getBody().getUsername());
+				String sendHttpPost = "";
+				try {
+					sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl, jsonObject.toString());
+				} catch (Exception e) {
+					logger.error("error", e);
+				}
+				logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
+			} else {
+				logger.info("successSchedule 用户不存在");
+			}
+		}
+
+		List<String> ids = new ArrayList<>();
+		ids.add(list.get(0).getPlanUuid());
+		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
+		ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
+		if (user.getBody() != null) {
+			logger.info("通话记录通知开始");
+			String callRecordUrl = user.getBody().getCallRecordUrl();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("data", callPlanDetailRecord.getBody());
+			jsonObject.put("code", "0");
+			jsonObject.put("msg", "success");
+			String sendHttpPost = "";
+			try {
+				sendHttpPost = HttpClientUtil.doPostJson(callRecordUrl, jsonObject.toString());
+			} catch (Exception e) {
+				logger.error("error", e);
+			}
+			logger.info("通话记录通知结果 :" + sendHttpPost);
 		}
 
 		if (list.size() > 0) {
@@ -416,11 +464,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	public static String getTimeByMinute(int minute) {
-
 		Calendar calendar = Calendar.getInstance();
-
 		calendar.add(Calendar.MINUTE, minute);
-
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
 	}
 
@@ -508,6 +553,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		getBatchNames(selectByExample);
+
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
 		page.setTotal(count);
@@ -694,11 +740,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	private boolean checkStatus(String status, DispatchPlan dispatchPlan) {
-		if (Integer.valueOf(status)== Constant.STATUSPLAN_3 && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
+				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
 		// 停止之后不能暂停 不能恢复
-		if (Integer.valueOf(status)== Constant.STATUSPLAN_1 && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
+				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
 		return true;
@@ -764,9 +812,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		int result = -1;
 		for (String id : ids) {
 			DispatchPlan dis = new DispatchPlan();
-			dis.setPlanUuid(id);
+			DispatchPlanExample ex = new DispatchPlanExample();
+			ex.createCriteria().andPlanUuidEqualTo(id);
 			dis.setFlag(flag);
-			result = dispatchPlanMapper.updateByExampleSelective(dis, new DispatchPlanExample());
+			result = dispatchPlanMapper.updateByExampleSelective(dis,ex);
 		}
 		return result > 0 ? true : false;
 	}
@@ -788,6 +837,65 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setFlag(flag);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
 		return phones;
+	}
+
+	@Override
+	public int getcall4BatchName(String batchName, Integer status) {
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andBatchNameEqualTo(batchName).andStatusPlanEqualTo(status)
+				.andIsDelEqualTo(Constant.IS_DEL_0);
+		int result = dispatchPlanMapper.countByExample(ex);
+		return result;
+	}
+
+	@Override
+	public Page<DispatchPlan> queryDispatchPlan(String batchName, int pagenum, int pagesize) {
+		Page<DispatchPlan> page = new Page<>();
+		page.setPageNo(pagenum);
+		page.setPageSize((pagesize));
+		DispatchPlanExample example = new DispatchPlanExample();
+		example.setLimitStart((pagenum - 1) * pagesize);
+		example.setLimitEnd(pagesize);
+		// example.setOrderByClause("`gmt_create` DESC");
+		example.createCriteria().andBatchNameEqualTo(batchName);
+		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		int countByExample = dispatchPlanMapper.countByExample(example);
+
+		page.setRecords(selectByExample);
+		page.setTotal(countByExample);
+		return page;
+	}
+
+	@Override
+	public JSONObject queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize) {
+		JSONObject jsonObject = new JSONObject();
+		Page<DispatchPlan> page = new Page<>();
+		page.setPageNo(pagenum);
+		page.setPageSize((pagesize));
+		DispatchPlanExample example = new DispatchPlanExample();
+		Criteria createCriteria = example.createCriteria();
+		if (phone != null && phone != "") {
+			createCriteria.andPhoneEqualTo(phone);
+		}
+
+		if (batchName != null && batchName != "") {
+			createCriteria.andBatchNameEqualTo(batchName);
+		}
+		example.setLimitStart((pagenum - 1) * pagesize);
+		example.setLimitEnd(pagesize);
+
+		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		int countByExample = dispatchPlanMapper.countByExample(example);
+		page.setRecords(selectByExample);
+		page.setTotal(countByExample);
+
+		List<String> ids = new ArrayList<>();
+		for (DispatchPlan dis : selectByExample) {
+			ids.add(dis.getPlanUuid());
+		}
+		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
+		jsonObject.put("data", callPlanDetailRecord.getBody());
+		return jsonObject;
 	}
 
 }

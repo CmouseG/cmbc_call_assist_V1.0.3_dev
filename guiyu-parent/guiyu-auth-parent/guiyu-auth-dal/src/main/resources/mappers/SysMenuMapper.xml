@@ -426,7 +426,7 @@
 	</select>
 	
 	<select id="selectByParamVo" resultType="map">
-		SELECT a.id,a.name,a.description,a.url,a.type,DATE_FORMAT(a.create_time,'%y-%m-%d') as createTime,b.username as createName
+		SELECT a.id,a.name,a.description,a.url,a.type,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName,a.pid,a.level
 		from sys_menu a
 		LEFT JOIN sys_user b on a.create_id=b.id
 		where a.del_flag=0

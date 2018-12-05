@@ -19,14 +19,15 @@ import com.guiji.utils.RedisUtil;
 
 @RestController
 public class DispatchOutApiController implements IDispatchPlanOut {
-	
+
 	static Logger logger = LoggerFactory.getLogger(DispatchOutApiController.class);
-	
+
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
-	
+
 	@Autowired
 	private RedisUtil redisUtil;
+
 	/**
 	 * 完成
 	 *
@@ -80,23 +81,29 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Override
 	public ReturnData<Boolean> receiveRobotId(String RobotId) {
-		//把当前RobotId放入到redis中进行控制
+		logger.info("receiveRobotId 接受到了。");
 		ReturnData<Boolean> result = new ReturnData<>();
-		if( redisUtil.get("robotId")!=null){
-			Object object = redisUtil.get("robotId");
-			String newStr = object + ","+RobotId;
-			boolean set = redisUtil.set("robotId", newStr);
-			result.body = set;
-		}else{
-			boolean set = redisUtil.set("robotId", RobotId);
-			result.body = set;
-		}
+		boolean res = redisUtil.set(RobotId, RobotId);
+		result.body = res;
+		// if( redisUtil.get("robotId")!=null){
+		// Object object = redisUtil.get("robotId");
+		// String newStr = object + ","+RobotId;
+		// boolean set = redisUtil.set("robotId", newStr);
+		// result.body = set;
+		// }else{
+		// boolean set = redisUtil.set("robotId", RobotId);
+		// result.body = set;
+		// }
 		return result;
 	}
 
 	@Override
 	public ReturnData<Boolean> successSchedule4TempId(String tempId) {
-		return null;
+		logger.info("successSchedule4TempId  完成模板通知升级:" + tempId);
+		ReturnData<Boolean> result = new ReturnData<>();
+		redisUtil.del(tempId);
+		result.body = true;
+		return result;
 	}
 
 }

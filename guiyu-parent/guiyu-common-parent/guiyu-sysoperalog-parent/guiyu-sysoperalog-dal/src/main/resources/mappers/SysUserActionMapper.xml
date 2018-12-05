@@ -288,7 +288,10 @@
 			</if>
 		</where>
 		<if test="limitStart != null and limitStart >= 0">
-			limit #{limitStart,jdbcType=BIGINT} , #{limitEnd,jdbcType=BIGINT}
+			limit #{limitStart,jdbcType=BIGINT}
+		</if>
+		<if test="limitEnd != null and limitEnd >= 0">
+			, #{limitEnd,jdbcType=BIGINT}
 		</if>
 	</select>
   

@@ -86,8 +86,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				result.setPass(true); //默认校验通过
 				//校验下必输
 				if(StrUtils.isEmpty(hsChecker.getSeqid())
-						|| StrUtils.isEmpty(hsChecker.getTemplateId())
-						|| StrUtils.isEmpty(hsChecker.getParams())) {
+						|| StrUtils.isEmpty(hsChecker.getTemplateId())) {
 					result.setCheckMsg("必输项校验未通过");
 					result.setPass(false); //默认不通过，参数不存在
 					list.add(result);
@@ -96,6 +95,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				//逐个检查
 				HsReplace hsReplace = aiCacheService.queyHsReplace(hsChecker.getTemplateId());
 				if(hsReplace.isTemplate_tts_flag()) {
+					if(StrUtils.isEmpty(hsChecker.getParams())) {
+						//如果需要TTS，但是又没用参数，直接返回报错
+						result.setCheckMsg("参数校验不通过,参数不能为空");
+						result.setPass(false); //默认不通过，参数不存在
+						list.add(result);
+						continue;
+					}
 					//当前话术模板需要的参数
 					String[] needParams = hsReplace.getReplace_variables_flag();
 					if(needParams != null && needParams.length>0) {
@@ -148,6 +154,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	@Override
 	public TtsComposeCheckRsp fetchTtsUrls(TtsVoiceReq ttsVoiceReq){
 		if(ttsVoiceReq == null
+				|| StrUtils.isEmpty(ttsVoiceReq.getTemplateId())
 				|| StrUtils.isEmpty(ttsVoiceReq.getSeqid())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
@@ -157,8 +164,15 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		//根据会话ID查找语音的TTS合成结果
 		TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(ttsVoiceReq.getSeqid());
 		if(ttsWavHis == null) {
-			logger.error("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
-			rsp.setStatus(RobotConstants.TTS_STATUS_N);
+			logger.info("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
+			//逐个检查
+			HsReplace hsReplace = aiCacheService.queyHsReplace(ttsVoiceReq.getTemplateId());
+			if(!hsReplace.isTemplate_tts_flag()) {
+				logger.info("会话ID：{}不需要TTS合成...",ttsVoiceReq.getSeqid());
+				rsp.setStatus(RobotConstants.TTS_STATUS_S);
+			}else {
+				rsp.setStatus(RobotConstants.TTS_STATUS_N);
+			}
 		}else {
 			rsp.setStatus(ttsWavHis.getStatus());
 			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
@@ -181,12 +195,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @param seqIdList
 	 * @return
 	 */
-	public List<TtsComposeCheckRsp> ttsComposeCheck(List<String> seqIdList){
-		if(ListUtil.isNotEmpty(seqIdList)) {
+	public List<TtsComposeCheckRsp> ttsComposeCheck(List<TtsVoiceReq> ttsVoiceReqList){
+		if(ListUtil.isNotEmpty(ttsVoiceReqList)) {
 			List<TtsComposeCheckRsp> list = new ArrayList<TtsComposeCheckRsp>();
-			for(String seqId : seqIdList) {
-				TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
-				ttsVoiceReq.setSeqid(seqId);
+			for(TtsVoiceReq ttsVoiceReq : ttsVoiceReqList) {
 				TtsComposeCheckRsp rsp = this.fetchTtsUrls(ttsVoiceReq);
 				list.add(rsp);
 			}

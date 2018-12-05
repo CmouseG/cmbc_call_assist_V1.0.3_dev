@@ -599,44 +599,58 @@ public class VoliceServiceImpl implements IVoliceService {
 					break;
 				}
 			}
-
-			// 加密
-			fileCrypter(dir);
-			// 打成zip包
-
-//			File standardZip = null;
+			
 			String zipFileName = fileName;
 			// 打包成规定的格式
 			File zipFile;
+			
 			try {
-				
 				zipFileName = zipFileName.replaceAll("_en", "");
 				fileName = templateId.replaceAll("_en", "");
 				zipFile = File.createTempFile(fileName, ".zip");
 				this.zip(dir, zipFile.getPath());
-//				standardZip = creatStandardZipStructure(zipFile, zipFileName, templateId);
+			} catch (Exception e) {
+				logger.error("压缩打包json文件异常>..", e);
+				return false;
+			}
+			
+			// 上传
+			SysFileReqVO sysFileReqVO=new SysFileReqVO();
+			sysFileReqVO.setBusiId(templateId);
+			sysFileReqVO.setSysCode(NAS_UPLAOD_SYSTEM_CODE);
+			SysFileRspVO sysFileRspVO=nasUtile.uploadNas(sysFileReqVO, zipFile);
+			String uplaodFileName=sysFileRspVO.getSkUrl();
+			
+			UpgrateResouceReq resouceReq=new UpgrateResouceReq();
+			resouceReq.setFile(uplaodFileName);
+			resouceReq.setTmplId(templateId);
+			resouceReq.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
+			iProcessSchedule.publishResource(resouceReq);
+			resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
+			iProcessSchedule.publishResource(resouceReq);
+			
+			// 加密
+			fileCrypter(dir);
+			
+			try {
+				zipFileName = zipFileName.replaceAll("_en", "");
+				fileName = templateId.replaceAll("_en", "");
+				zipFile = File.createTempFile(fileName, ".zip");
+				this.zip(dir, zipFile.getPath());
 			} catch (Exception e) {
 				logger.error("压缩打包json文件异常>..", e);
 				return false;
 			}
 
 			if (zipFile != null) {
-				
 				// 上传
-				SysFileReqVO sysFileReqVO=new SysFileReqVO();
 				sysFileReqVO.setBusiId(templateId);
 				sysFileReqVO.setSysCode(NAS_UPLAOD_SYSTEM_CODE);
-				SysFileRspVO sysFileRspVO=nasUtile.uploadNas(sysFileReqVO, zipFile);
-				String uplaodFileName=sysFileRspVO.getSkUrl();
+				sysFileRspVO=nasUtile.uploadNas(sysFileReqVO, zipFile);
+				uplaodFileName=sysFileRspVO.getSkUrl();
 				//部署
-				UpgrateResouceReq resouceReq=new UpgrateResouceReq();
-				resouceReq.setFile(uplaodFileName);
-				resouceReq.setTmplId(templateId);
+				
 				resouceReq.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
-				iProcessSchedule.publishResource(resouceReq);
-				resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
-				iProcessSchedule.publishResource(resouceReq);
-				resouceReq.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
 				iProcessSchedule.publishResource(resouceReq);
 				return true;
 			}

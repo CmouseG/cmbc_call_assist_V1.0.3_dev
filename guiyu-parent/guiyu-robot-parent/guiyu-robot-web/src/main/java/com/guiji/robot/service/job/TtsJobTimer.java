@@ -59,7 +59,7 @@ public class TtsJobTimer {
 	@Scheduled(cron="0 0/10 9-20 * * ?")
     public void ttsCheck(){
     	Lock lock = new Lock("LOCK_ROBOT_TTS_CHECK_JOB", "LOCK_ROBOT_TTS_CHECK_JOB");
-    	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+    	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
     		long beginTime = System.currentTimeMillis();
             logger.info("定时任务，TTS查证...");
             //查询TTS数据超过10分钟的数据且状态仍为进行中的数据，主动发起查证
@@ -143,7 +143,7 @@ public class TtsJobTimer {
 	@Scheduled(cron="0 0/5 9-20 * * ?")
     public void ttsErrorRetry(){
 		Lock lock = new Lock("LOCK_ROBOT_TTS_RETRY_JOB", "LOCK_ROBOT_TTS_RETRY_JOB");
-    	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+		if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
     		long beginTime = System.currentTimeMillis();
             logger.info("定时任务，TTS重试...");
             //查询TTS数据状态为F，且异常类型为L（本地失败），且尝试次数<=3的数据

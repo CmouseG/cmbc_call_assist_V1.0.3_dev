@@ -183,6 +183,10 @@ public class DispatchPlanController {
 		return dispatchPlanService.outLineinfos(String.valueOf(userId));
 	}
 	
+	//累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，
+	
+	
+	
 	
 	
 }

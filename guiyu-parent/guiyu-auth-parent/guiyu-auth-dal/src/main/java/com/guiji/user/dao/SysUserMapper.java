@@ -57,4 +57,6 @@ public interface SysUserMapper {
     
     public boolean existUserName(SysUser user);
     
+    
+    
 }

@@ -10,8 +10,7 @@ import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysRoleMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysRoleExample;
-import com.guiji.user.dao.entity.SysUser;
-import com.guiji.user.dao.entity.SysUserExample;
+import com.guiji.user.vo.RoleParamVo;
 
 @Service
 public class RoleService {
@@ -46,14 +45,13 @@ public class RoleService {
 		return mapper.getRoles();
 	}
 	
-	public void getRoleByPage(Page<SysRole> page){
-		SysRoleExample example=new SysRoleExample();
-		example.setLimitStart((page.getPageNo()-1)*page.getPageSize());
-		example.setLimitEnd(page.getPageNo()*page.getPageSize());
-		int count=mapper.countByExample(example);
-		List<SysRole> list=mapper.selectByExample(example);
+	public Page<Object> getRoleByPage(RoleParamVo param){
+		Page<Object> page=new Page<Object>();
+		int count=mapper.countByParamVo(param);
+		List<Object> list=mapper.selectByParamVo(param);
 		page.setTotal(count);
 		page.setRecords(list);
+		return page;
 	}
 	
 	public List<SysRole> getRoleByName(String name){

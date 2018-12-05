@@ -681,7 +681,7 @@ public class VoliceServiceImpl implements IVoliceService {
 				//部署
 				UpgrateResouceReq resouceReq=new UpgrateResouceReq();
 				resouceReq.setFile(uplaodFileName);
-				
+				resouceReq.setTmplId(templateId);
 				resouceReq.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
 				iProcessSchedule.publishResource(resouceReq);
 				resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);

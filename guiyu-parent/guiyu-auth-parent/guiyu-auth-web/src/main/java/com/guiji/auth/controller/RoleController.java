@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.auth.service.RoleService;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.vo.RoleParamVo;
 
 @RestController
 @RequestMapping("role")
@@ -51,9 +52,8 @@ public class RoleController {
 	}
 	
 	@RequestMapping("/getRoleByPage")
-	public Page<SysRole> getRoleByPage(Page<SysRole> page){
-		service.getRoleByPage(page);
-		return page;
+	public Page<Object> getRoleByPage(RoleParamVo param){
+		return service.getRoleByPage(param);
 	}
 	
 	@RequestMapping("getRoleByName")

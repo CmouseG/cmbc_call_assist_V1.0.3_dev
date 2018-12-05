@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableSwagger2
-@MapperScan("com.guiji.sysoperalog.dao")
+@MapperScan("com.guiji.guiyu.sysoperalog.dao")
 public class Application
 {
 	public static void main(String[] args)

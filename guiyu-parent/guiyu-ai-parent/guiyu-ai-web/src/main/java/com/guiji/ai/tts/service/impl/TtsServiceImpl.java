@@ -19,9 +19,11 @@ import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.TtsStatusMapper;
 import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.TtsCallback;
 import com.guiji.utils.RedisUtil;
@@ -73,6 +75,7 @@ public class TtsServiceImpl implements ITtsService
 			
 		} catch (Exception e)
 		{
+			logger.error("处理失败！", e);
 			status = "F";
 			errMsg = e.getMessage();
 			tableStatus = AiConstants.FAIL;
@@ -95,23 +98,18 @@ public class TtsServiceImpl implements ITtsService
 	private String calc(String busId, String model, String text)
 	{
 		String audioUrl = null;
-		try
-		{
-			// 判断是否已经合成
-			audioUrl = (String) redisUtil.get(model + "_" + text);
-			if (audioUrl != null)
-			{
-				return audioUrl;
-			}
-			// 合成
-			audioUrl = serviceProvideFactory.getTtsServiceProvide(model).transfer(busId, model, text);
 
-			redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
-
-		} catch (Exception e)
+		// 判断是否已经合成
+		audioUrl = (String) redisUtil.get(model + "_" + text);
+		if (audioUrl != null)
 		{
-			logger.error("转换错误!", e);
+			return audioUrl;
 		}
+		// 合成
+		audioUrl = serviceProvideFactory.getTtsServiceProvide(model).transfer(busId, model, text);
+
+		redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
+
 		return audioUrl;
 	}
 
@@ -125,7 +123,7 @@ public class TtsServiceImpl implements ITtsService
 			status = ttsStatusMapper.getReqStatusByBusId(busId);
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS.getErrorCode(), e);
 		}
 		return status;
 

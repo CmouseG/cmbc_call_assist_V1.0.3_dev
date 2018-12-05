@@ -1,0 +1,54 @@
+server:
+  port: 18024
+spring:
+  application:
+    name: guiyu-callCenter-calloutserver
+sharding:
+  jdbc:
+    datasource:
+      names: guiyu_callcenter
+      guiyu_callcenter:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC&useSSL=false
+        username: callcenter
+        password: callcenter@1234
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+  
+#注册中心配置      
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://192.168.1.78:18001/eureka/
+#        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+properties:
+  error: error.properties
+
+fsbot:
+  homeDir: /Users/toolwiz.com/freeswitch/fsbot
+  recordingsDir: ${fsbot.homeDir}/recordings/
+  machineCode: SHANGHAI-000001
+  allowDisturbed: true
+  maxMediaTimeout: 8
+  workStartTime: 08:30
+  workEndTime: 21:00
+  callMaxCountPerDay: 3
+aliasr:
+  accessId: LTAInHHRM9fM0PHK
+  accessSecret: tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA  aleg
+ai:
+  url: http://47.98.109.96:%s
+  startPort: 15055
+  portCount: 3
+  wavFileHome: /home/aiwav/
+  realWavFileHome: ${fsbot.homeDir}/home/aiwav/
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000

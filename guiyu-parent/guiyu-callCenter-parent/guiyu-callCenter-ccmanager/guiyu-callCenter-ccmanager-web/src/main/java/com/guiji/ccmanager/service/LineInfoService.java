@@ -1,8 +1,8 @@
 package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
-import com.guiji.ccmanager.vo.LineInfo4Select;
-import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.ccmanager.vo.LineInfoAddVO;
+import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import java.util.List;
  */
 public interface LineInfoService {
 
-    List<LineInfo4Select> getLineInfoByCustom(String customerId, String lineName, int pageSizeInt, int pageNoInt);
+    List<LineInfo> getLineInfoByCustom(String customerId, String lineName, int pageSizeInt, int pageNoInt);
 
-    void addLineInfo(LineInfoVO lineInfoVO);
+    void addLineInfo(LineInfoAddVO lineInfoVO);
 
-    void updateLineInfo(LineInfoVO lineInfoVO, Long userId);
+    void updateLineInfo(LineInfoUpdateVO lineInfoVO, Long userId);
 
     void delLineInfo(String id);
 

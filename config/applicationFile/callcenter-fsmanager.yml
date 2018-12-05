@@ -1,0 +1,38 @@
+server:
+  port: 15001
+
+spring:
+  application:
+    name: guiyu-callcenter-fsmanager
+sharding:
+  jdbc:
+    datasource:
+      names: guiyu_callcenter
+      guiyu_callcenter:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC&useSSL=false
+        username: callcenter
+        password: callcenter@1234
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+gateway:
+  username: user
+  password: pwd
+
+properties:
+  error: properties/error.properties
+

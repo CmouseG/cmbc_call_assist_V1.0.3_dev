@@ -21,6 +21,8 @@ public class SysRole implements Serializable {
     private Integer initRole;
 
     private Integer superAdmin;
+    
+    private String createName;
 
     private static final long serialVersionUID = 1L;
 
@@ -95,8 +97,16 @@ public class SysRole implements Serializable {
     public void setSuperAdmin(Integer superAdmin) {
         this.superAdmin = superAdmin;
     }
+    
+    public String getCreateName() {
+		return createName;
+	}
 
-    @Override
+	public void setCreateName(String createName) {
+		this.createName = createName;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

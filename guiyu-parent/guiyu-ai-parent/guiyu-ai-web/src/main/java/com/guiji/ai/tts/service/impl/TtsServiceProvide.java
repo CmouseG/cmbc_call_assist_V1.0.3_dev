@@ -11,6 +11,10 @@ public abstract class TtsServiceProvide {
 
 		// 请求ip:port 返回音频文件
 		File file = transferByChild(model, text);
+		
+		if(file == null){
+			return null;
+		}
 		// 上传文件服务器
 		String audioUrl = uploadToServer(busiId, file);
 		// 存储数据库和日志

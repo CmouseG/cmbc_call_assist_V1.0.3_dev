@@ -5,7 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.guiji.component.result.EnableAutoResultPack;
 
@@ -18,7 +17,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableAutoResultPack
 @EnableFeignClients
-@EnableScheduling
 @EnableSwagger2
 @MapperScan("com.guiji.ai.dao")
 public class AiApplication {

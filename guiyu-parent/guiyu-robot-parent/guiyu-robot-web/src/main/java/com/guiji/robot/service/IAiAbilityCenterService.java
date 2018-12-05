@@ -2,7 +2,6 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallLngKeyMatchReq;
@@ -12,10 +11,7 @@ import com.guiji.robot.model.AiCallStartReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
-import com.guiji.robot.model.HsParam;
-import com.guiji.robot.model.TtsComposeCheckReq;
 import com.guiji.robot.model.TtsComposeCheckRsp;
-import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 
 /** 

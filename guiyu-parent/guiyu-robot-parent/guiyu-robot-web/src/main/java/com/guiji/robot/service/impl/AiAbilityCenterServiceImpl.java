@@ -27,7 +27,6 @@ import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
-import com.guiji.robot.model.TtsComposeCheckReq;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
@@ -196,13 +195,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @param seqIdList
 	 * @return
 	 */
-	public List<TtsComposeCheckRsp> ttsComposeCheck(TtsComposeCheckReq ttsComposeCheckReq){
-		if(ListUtil.isNotEmpty(ttsComposeCheckReq.getSeqIdList())) {
+	public List<TtsComposeCheckRsp> ttsComposeCheck(List<TtsVoiceReq> ttsVoiceReqList){
+		if(ListUtil.isNotEmpty(ttsVoiceReqList)) {
 			List<TtsComposeCheckRsp> list = new ArrayList<TtsComposeCheckRsp>();
-			for(String seqId : ttsComposeCheckReq.getSeqIdList()) {
-				TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
-				ttsVoiceReq.setTemplateId(ttsComposeCheckReq.getTemplateId());
-				ttsVoiceReq.setSeqid(seqId);
+			for(TtsVoiceReq ttsVoiceReq : ttsVoiceReqList) {
 				TtsComposeCheckRsp rsp = this.fetchTtsUrls(ttsVoiceReq);
 				list.add(rsp);
 			}

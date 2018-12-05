@@ -1,7 +1,6 @@
 package com.guiji.auth.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysMenuMapper;
 import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.dao.entity.SysMenuExample;
+import com.guiji.user.vo.MenuParamVo;
 
 @Service
 public class MenuService {
@@ -81,14 +81,13 @@ public class MenuService {
 		return list;
 	}
 	
-	public void getRoleByPage(Page<SysMenu> page){
-		SysMenuExample example=new SysMenuExample();
-		example.setLimitStart((page.getPageNo()-1)*page.getPageSize());
-		example.setLimitEnd(page.getPageNo()*page.getPageSize());
-		int count=mapper.countByExample(example);
-		List<SysMenu> list=mapper.selectByExample(example);
+	public Page<Object> getRoleByPage(MenuParamVo param){
+		Page<Object> page=new Page<>();
+		int count=mapper.countByParamVo(param);
+		List<Object> list=mapper.selectByParamVo(param);
 		page.setTotal(count);
 		page.setRecords(list);
+		return page;
 	}
 
 	public List<SysMenu> getMenuByName(String name){

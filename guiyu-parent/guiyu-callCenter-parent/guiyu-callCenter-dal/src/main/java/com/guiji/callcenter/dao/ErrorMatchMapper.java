@@ -16,6 +16,8 @@ public interface ErrorMatchMapper {
 
     List<ErrorMatch> selectByExample(ErrorMatchExample example);
 
+    List<String> selectDistinctErrorName();
+
     int updateByExampleSelective(@Param("record") ErrorMatch record, @Param("example") ErrorMatchExample example);
 
     int updateByExample(@Param("record") ErrorMatch record, @Param("example") ErrorMatchExample example);

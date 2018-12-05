@@ -1,6 +1,8 @@
 package com.guiji.robot.service.job;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,17 +54,19 @@ public class TtsJobTimer {
 	
 	/**
 	 * TTS查证服务
-	 * 处理TTS合成超过5分钟仍是处理中的数据
+	 * 处理TTS合成超过10分钟仍是处理中的数据
 	 */
-	@Scheduled(cron="0 0/5 9-20 * * ?")
+	@Scheduled(cron="0 0/10 9-20 * * ?")
     public void ttsCheck(){
     	Lock lock = new Lock("LOCK_ROBOT_TTS_CHECK_JOB", "LOCK_ROBOT_TTS_CHECK_JOB");
-    	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+    	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
     		long beginTime = System.currentTimeMillis();
             logger.info("定时任务，TTS查证...");
-            //查询TTS数据超过5分钟的数据且状态仍为进行中的数据，主动发起查证
+            //查询TTS数据超过10分钟的数据且状态仍为进行中的数据，主动发起查证
             TtsWavHisExample example = new TtsWavHisExample();
-            example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_P).andErrorTryNumLessThanOrEqualTo(3);
+            //获取10分钟前时间
+            Date tenMinBeforeDate = this.getMinFromCurrent(-10);
+            example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_P).andErrorTryNumLessThanOrEqualTo(3).andCrtTimeLessThanOrEqualTo(tenMinBeforeDate);
             //查询tts本地失败，且尝试次数小于<=3的数据重试
             List<TtsWavHis> ttsWavHisList = ttsWavHisMapper.selectByExample(example);
             if(ListUtil.isNotEmpty(ttsWavHisList)) {
@@ -139,7 +143,7 @@ public class TtsJobTimer {
 	@Scheduled(cron="0 0/5 9-20 * * ?")
     public void ttsErrorRetry(){
 		Lock lock = new Lock("LOCK_ROBOT_TTS_RETRY_JOB", "LOCK_ROBOT_TTS_RETRY_JOB");
-    	if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+		if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
     		long beginTime = System.currentTimeMillis();
             logger.info("定时任务，TTS重试...");
             //查询TTS数据状态为F，且异常类型为L（本地失败），且尝试次数<=3的数据
@@ -193,5 +197,18 @@ public class TtsJobTimer {
     	}else {
     		logger.warn("定时任务[TTS重试]未能获取锁！！！");
     	}
+	}
+	
+	/**
+	 * 获取当前时间的N分钟前或者后的日期
+	 * getMinFromCurrent
+	 * @param min
+	 * @return
+	 */
+	private Date getMinFromCurrent(int min) {
+		Calendar beforeTime = Calendar.getInstance();
+		beforeTime.add(Calendar.MINUTE, min);// 当前时间几分钟前或者后
+		Date beforeD = beforeTime.getTime();
+		return beforeD;
 	}
 }

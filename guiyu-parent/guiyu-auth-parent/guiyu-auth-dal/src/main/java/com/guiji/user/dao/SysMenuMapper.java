@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.dao.entity.SysMenuExample;
+import com.guiji.user.vo.MenuParamVo;
 
 public interface SysMenuMapper {
     int countByExample(SysMenuExample example);
@@ -41,4 +42,8 @@ public interface SysMenuMapper {
     List<Long> getSelectedMenuId(Long roleId);
     
     String getPermissionsByUrl(String url);
+    
+    public int countByParamVo(MenuParamVo param);
+    
+    public List<Object> selectByParamVo(MenuParamVo param);
 }

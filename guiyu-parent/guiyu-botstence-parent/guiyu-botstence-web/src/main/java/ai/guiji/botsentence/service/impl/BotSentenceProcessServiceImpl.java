@@ -1724,6 +1724,16 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				BotSentenceBranchExample example = new BotSentenceBranchExample();
 				example.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo(source.getDomainName());
 				List<BotSentenceBranch> list = botSentenceBranchMapper.selectByExample(example);
+				
+				//开场白于解释开场白分支关键字校验
+				if(Constant.DOMAIN_TYPE_START.equals(source.getType())) {
+					BotSentenceBranchExample startExample = new BotSentenceBranchExample();
+					startExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(source.getDomainName()).andNextEqualTo("解释开场白");
+					List<BotSentenceBranch> startList = botSentenceBranchMapper.selectByExample(startExample);
+					list.addAll(startList);
+				}
+				
+				
 				if(null != list && list.size() > 0) {
 					for(BotSentenceBranch branch : list) {
 						String intents = branch.getIntents();
@@ -1738,7 +1748,11 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 									if(null != keywordList && keywordList.length > 0) {
 										for(String str : keywordList) {
 											str = str.replace("\"", "");
-											keywords.put(str, branch.getLineName());
+											if(StringUtils.isNotBlank(branch.getLineName())) {
+												keywords.put(str, branch.getLineName());
+											}else {
+												keywords.put(str, branch.getNext());
+											}
 										}
 									}
 								}
@@ -1845,6 +1859,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			BotSentenceBranchExample branchexample = new BotSentenceBranchExample();
 			branchexample.createCriteria().andProcessIdEqualTo(processId).andIsShowEqualTo("1").andDomainEqualTo(botSentenceBranch.getDomain()).andBranchIdNotEqualTo(botSentenceBranch.getBranchId());
 			List<BotSentenceBranch> list = botSentenceBranchMapper.selectByExample(branchexample);
+			
+			//开场白于解释开场白分支关键字校验
+			if(Constant.DOMAIN_TYPE_START.equals(new_sourceDomain.getType())) {
+				BotSentenceBranchExample startExample = new BotSentenceBranchExample();
+				startExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(new_sourceDomain.getDomainName()).andNextEqualTo("解释开场白");
+				List<BotSentenceBranch> startList = botSentenceBranchMapper.selectByExample(startExample);
+				list.addAll(startList);
+			}
+			
 			if(null != list && list.size() > 0) {
 				for(BotSentenceBranch branch : list) {
 					String intents = branch.getIntents();
@@ -1857,7 +1880,11 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 								if(null != keywordList && keywordList.length > 0) {
 									for(String str : keywordList) {
 										str = str.replace("\"", "");
-										keywords.put(str, branch.getLineName());
+										if(StringUtils.isNotBlank(branch.getLineName())) {
+											keywords.put(str, branch.getLineName());
+										}else {
+											keywords.put(str, branch.getNext());
+										}
 									}
 								}
 							}

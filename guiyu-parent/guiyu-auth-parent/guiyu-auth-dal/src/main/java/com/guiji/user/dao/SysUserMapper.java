@@ -10,6 +10,7 @@ import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExample;
+import com.guiji.user.vo.UserParamVo;
 
 public interface SysUserMapper {
     int countByExample(SysUserExample example);
@@ -57,6 +58,9 @@ public interface SysUserMapper {
     
     public boolean existUserName(SysUser user);
     
+    public int countByParamVo(UserParamVo param);
+    
+    public List<Object> selectByParamVo(UserParamVo param);
     
     
 }

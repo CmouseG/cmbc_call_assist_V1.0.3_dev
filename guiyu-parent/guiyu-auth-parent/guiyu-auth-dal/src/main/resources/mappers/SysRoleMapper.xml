@@ -293,10 +293,20 @@
   </insert>
   
   <select id="countByParamVo" resultType="int">
-  	SELECT count(1) from sys_role where name=#{roleName} and del_flag=0
+  	SELECT count(1) from sys_role where del_flag=0
+  	<if test="roleName != '' ">
+			and name=#{roleName}	
+	</if>
   </select>
   
   <select id="selectByParamVo" resultType="map">
-  	 
+  	 select a.name,a.desc,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName 
+  	 from sys_role a
+	 LEFT JOIN sys_user b on a.create_id 
+	 where a.del_flag=0
+	 <if test="roleName != '' ">
+			and name=#{roleName}	
+	 </if>
+	 limit ${(pageNo-1)*pageSize}, #{pageSize}
   </select>
 </mapper>

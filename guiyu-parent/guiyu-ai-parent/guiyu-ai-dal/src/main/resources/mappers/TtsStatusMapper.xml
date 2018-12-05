@@ -16,7 +16,7 @@
 		SELECT bus_id, model, text_count, create_time FROM tts_status
 		<where>
 			<if test="status != null and status != '' ">
-				and status = #{status,jdbcType=VARCHAR}
+				status = #{status,jdbcType=VARCHAR}
 			</if>
 			<if test="model !=null and model != '' ">
 				AND model = #{model,jdbcType=VARCHAR}

@@ -61,19 +61,21 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "durationMin", value = "通话时长，最小值", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "durationMax", value = "通话时长，最大值", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "accurateIntent", value = "意向标签，以逗号分隔", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "freason", value = "F类说明，以逗号分隔。传数字，1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "freason", value = "直接传名称,以逗号分隔", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
-                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId , @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
+                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId ,String isRead,
+                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
 
         log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
-                        "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}]",
-                startDate, endDate, userId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+                        "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}], isRead[{}]",
+                startDate, endDate, userId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
@@ -91,8 +93,8 @@ public class CallDetailController implements ICallPlanDetail {
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
 
-        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
-        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);
@@ -106,6 +108,11 @@ public class CallDetailController implements ICallPlanDetail {
         return Result.ok(page);
     }
 
+    @ApiOperation(value = "查找f类说明列表")
+    @GetMapping(value="getFtypes")
+    public List<String> getFtypes(){
+        return callDetailService.getFtypes();
+    }
 
     @ApiOperation(value = "查看通话记录详情，前台页面使用")
     @ApiImplicitParams({
@@ -120,6 +127,8 @@ public class CallDetailController implements ICallPlanDetail {
             return Result.error(Constant.ERROR_PARAM);
         }
         CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(callId);
+        //修改状态为已读
+        callDetailService.updateIsRead(callId);
 
         log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
@@ -129,17 +138,14 @@ public class CallDetailController implements ICallPlanDetail {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value="getCallPlanDetailRecord")
-    public Result.ReturnData<CallPlanDetailRecordVO> getCallPlanDetailRecord(String callId){
+    @PostMapping(value="getCallPlanDetailRecord")
+    public Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(@RequestBody List<String> callIds){
 
-        log.info("get request getCallPlanDetailRecord，callId[{}]", callId);
+        log.info("get request getCallPlanDetailRecord，callIds[{}]", callIds);
 
-        if(StringUtils.isBlank(callId)){
-            return Result.error(Constant.ERROR_PARAM);
-        }
-        CallPlanDetailRecordVO callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callId);
+        List<CallPlanDetailRecordVO> callPlanDetailRecordVO = callDetailService.getCallPlanDetailRecord(callIds);
 
-        log.info("reponse success getCallPlanDetailRecord，callId[{}]", callId);
+        log.info("reponse success getCallPlanDetailRecord，callId[{}]", callIds);
         return Result.ok(callPlanDetailRecordVO);
     }
 

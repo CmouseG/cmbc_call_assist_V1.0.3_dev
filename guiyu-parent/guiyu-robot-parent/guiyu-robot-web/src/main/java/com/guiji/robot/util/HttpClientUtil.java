@@ -58,10 +58,11 @@ public class HttpClientUtil {
 	 */
 	public static String doGet(String url, Map<String, String> param) {
 		// 创建Httpclient对象
-		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpClient httpclient = null;
 		String resultString = "";
 		CloseableHttpResponse response = null;
 		try {
+			httpclient = HttpClients.createDefault();
 			// 创建uri
 			URIBuilder builder = new URIBuilder(url);
 			if (param != null) {
@@ -85,7 +86,9 @@ public class HttpClientUtil {
 				if (response != null) {
 					response.close();
 				}
-				httpclient.close();
+				if(httpclient != null) {
+					httpclient.close();
+				}
 			} catch (IOException e) {
 				logger.error("关闭连接异常！",e);
 			}
@@ -105,10 +108,11 @@ public class HttpClientUtil {
 	 */
 	public static String doPost(String url, Map<String, String> param) {
 		// 创建Httpclient对象
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpClient httpClient = null;
 		CloseableHttpResponse response = null;
 		String resultString = "";
 		try {
+			httpClient = HttpClients.createDefault();
 			// 创建Http Post请求
 			HttpPost httpPost = new HttpPost(url);
 			// 创建参数列表
@@ -128,7 +132,12 @@ public class HttpClientUtil {
 			logger.error("调用接口异常！",e);
 		} finally {
 			try {
-				response.close();
+				if(response!=null) {
+					response.close();
+				}
+				if(httpClient!=null) {
+					httpClient.close();
+				}
 			} catch (IOException e) {
 				logger.error("关闭连接异常！",e);
 			}
@@ -149,10 +158,11 @@ public class HttpClientUtil {
 	 */
 	public static String doPostJson(String url, String json) {
 		// 创建Httpclient对象
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpClient httpClient = null;
 		CloseableHttpResponse response = null;
 		String resultString = "";
 		try {
+			httpClient = HttpClients.createDefault();
 			// 创建Http Post请求
 			HttpPost httpPost = new HttpPost(url);
 			// 创建请求内容
@@ -165,7 +175,12 @@ public class HttpClientUtil {
 			logger.error("调用接口异常！",e);
 		} finally {
 			try {
-				response.close();
+				if(response != null) {
+					response.close();
+				}
+				if(httpClient != null) {
+					httpClient.close();
+				}
 			} catch (IOException e) {
 				logger.error("关闭连接异常！",e);
 			}
@@ -266,7 +281,7 @@ public class HttpClientUtil {
 	 */
 	public String doPostStream(String sendUrl, String sendParam,String backEncodType) {
 		StringBuffer receive = new StringBuffer();
-		BufferedWriter wr = null;
+		BufferedReader rd = null;
 		try {
 			if (backEncodType == null || backEncodType.equals("")) {
 				backEncodType = "UTF-8";
@@ -287,7 +302,7 @@ public class HttpClientUtil {
 					.valueOf(sendParam.getBytes().length));
 			DataOutputStream dos = new DataOutputStream(URLConn.getOutputStream());
 			dos.writeBytes(sendParam);
-			BufferedReader rd = new BufferedReader(new InputStreamReader(
+			rd = new BufferedReader(new InputStreamReader(
 					URLConn.getInputStream(), backEncodType));
 			String line;
 			while ((line = rd.readLine()) != null) {
@@ -298,13 +313,13 @@ public class HttpClientUtil {
 			receive.append("访问产生了异常-->").append(e.getMessage());
 			e.printStackTrace();
 		} finally {
-			if (wr != null) {
+			if (rd != null) {
 				try {
-					wr.close();
+					rd.close();
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}
-				wr = null;
+				rd = null;
 			}
 		}
 		return receive.toString();
@@ -354,26 +369,32 @@ public class HttpClientUtil {
 	
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 //		String url = "http://192.168.1.78:18041/remote/checkParams";
-		String url = "http://localhost:18041/remote/checkParams";
-		String jsonBegin = "{\r\n" + 
-				"	\"needResourceInit\":true,\r\n" + 
-				"	\"checkers\":[";
-		String jsonEnd = "	]\r\n" + 
-				"}";
-		String json = "";
-		for(int i=0;i<50;i++) {
-			String jsonStep = "{\r\n" + 
-					"			\"seqid\":\""+i+"\",\r\n" + 
-					"			\"templateId\":\"ttscs_46188_en\",\r\n" + 
-					"			\"params\":\"你好我知道的"+i+"打发啊a的|1"+i+"2.41\"\r\n" + 
-					"		},";
-			json = json + jsonStep;
+		String url = "http://192.168.1.78:18041/remote/checkParams";
+		long beginTime = System.currentTimeMillis();
+		for(int m=0;m<600;m++) {
+			String jsonBegin = "{\r\n" + 
+					"	\"needResourceInit\":true,\r\n" + 
+					"	\"checkers\":[";
+			String jsonEnd = "	]\r\n" + 
+					"}";
+			String json = "";
+			for(int i=0;i<1;i++) {
+				String jsonStep = "{\r\n" + 
+						"			\"seqid\":\""+m+"\",\r\n" + 
+						"			\"templateId\":\"ttscs_46188_en\",\r\n" + 
+						"			\"params\":\"你好我知的"+m+"打发啊a的|1"+m+"1.41\"\r\n" + 
+						"		},";
+				json = json + jsonStep;
+			}
+			json = json.substring(0,json.length()-1);
+			json = jsonBegin + json + jsonEnd;
+			HttpClientUtil.doPostJson(url, json);
+			System.out.println("第"+m+"次调用");
+			Thread.sleep(1000);
 		}
-		json = json.substring(0,json.length()-1);
-		json = jsonBegin + json + jsonEnd;
-		System.out.println(json);
-		HttpClientUtil.doPostJson(url, json);
+		long endTime = System.currentTimeMillis();
+		System.out.println("============全部结束===========耗时"+(endTime-beginTime)+"秒");
 	}
 }

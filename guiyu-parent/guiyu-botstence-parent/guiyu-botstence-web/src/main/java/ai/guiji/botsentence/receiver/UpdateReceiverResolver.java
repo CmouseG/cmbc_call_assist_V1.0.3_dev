@@ -12,7 +12,9 @@ import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 
 import ai.guiji.botsentence.constant.Constant;
+import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
+import ai.guiji.botsentence.dao.entity.BotPublishSentenceLog;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
 
@@ -27,12 +29,16 @@ public class UpdateReceiverResolver {
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
+	@Autowired
+	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
+	
 	public void resolver(PublishBotstenceResultMsgVO param){
 		String tempId=param.getTmplId();
 		UpdateReceiverVo vo=cache.get(tempId);
 		if(vo==null){
 			vo=new UpdateReceiverVo();
 			vo.setTmplId(tempId);
+			cache.put(tempId, vo);
 		}
 		
 		if(param.getProcessTypeEnum()==ProcessTypeEnum.SELLBOT){
@@ -50,6 +56,13 @@ public class UpdateReceiverResolver {
 			BotSentenceProcess botSentenceProcess =list.get(0);
 			botSentenceProcess.setState(Constant.APPROVE_ONLINE);//部署中
 		    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
+		    
+		    BotPublishSentenceLog record=new BotPublishSentenceLog();
+		    Long id=botPublishSentenceLogMapper.getLastPublishSentence(tempId);
+		    record.setId(id);
+		    record.setStatus("2");
+		    botPublishSentenceLogMapper.updateByPrimaryKeySelective(record);
+		    
 		}
 		
 		if(vo.getSellbot()!=-1 && vo.getRobot()!=-1 && vo.getRobot()!=-1){
@@ -64,6 +77,12 @@ public class UpdateReceiverResolver {
 			BotSentenceProcess botSentenceProcess =list.get(0);
 			botSentenceProcess.setState(Constant.ERROR);//部署中
 		    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
+		    
+		    BotPublishSentenceLog record=new BotPublishSentenceLog();
+		    Long id=botPublishSentenceLogMapper.getLastPublishSentence(tempId);
+		    record.setId(id);
+		    record.setStatus("3");
+		    botPublishSentenceLogMapper.updateByPrimaryKey(record);
 		}
 	}
 

@@ -7,6 +7,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 /**
  * @Auther: 黎阳
@@ -20,7 +23,7 @@ public interface ICallPlanDetail {
    @ApiImplicitParams({
            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
    })
-   @GetMapping(value="getCallPlanDetailRecord")
-   Result.ReturnData<CallPlanDetailRecordVO> getCallPlanDetailRecord(String callId);
+   @PostMapping(value="getCallPlanDetailRecord")
+   Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds);
 
 }

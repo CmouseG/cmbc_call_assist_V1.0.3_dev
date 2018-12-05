@@ -67,6 +67,10 @@
   <sql id="Base_Column_List" >
     error_type, key_word, error_name
   </sql>
+  <select id="selectDistinctErrorName" resultType="java.lang.String">
+    select   error_name
+    from error_match group by error_name order by error_name
+  </select>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ErrorMatchExample" >
     select
     <if test="distinct" >

@@ -30,6 +30,7 @@
     <result column="has_tts" property="hasTts" jdbcType="BIT" />
     <result column="ai_id" property="aiId" jdbcType="VARCHAR" />
     <result column="isdel" property="isdel" jdbcType="INTEGER" />
+    <result column="isread" property="isread" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -93,7 +94,8 @@
     call_id, phone_num, customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time, 
     agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time, 
     hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction, 
-    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, isdel
+    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, isdel, 
+    isread
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallInPlanExample" >
     select
@@ -139,7 +141,7 @@
       call_state, hangup_direction, accurate_intent, 
       reason, hangup_code, originate_cmd, 
       remarks, has_tts, ai_id, 
-      isdel)
+      isdel, isread)
     values (#{callId,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, 
       #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{serverid,jdbcType=VARCHAR}, 
       #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{agentChannelUuid,jdbcType=VARCHAR}, 
@@ -149,7 +151,7 @@
       #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, #{originateCmd,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR}, 
-      #{isdel,jdbcType=INTEGER})
+      #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInPlan" >
     insert into call_in_plan
@@ -238,6 +240,9 @@
       <if test="isdel != null" >
         isdel,
       </if>
+      <if test="isread != null" >
+        isread,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callId != null" >
@@ -323,6 +328,9 @@
       </if>
       <if test="isdel != null" >
         #{isdel,jdbcType=INTEGER},
+      </if>
+      <if test="isread != null" >
+        #{isread,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -419,6 +427,9 @@
       <if test="record.isdel != null" >
         isdel = #{record.isdel,jdbcType=INTEGER},
       </if>
+      <if test="record.isread != null" >
+        isread = #{record.isread,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -453,7 +464,8 @@
       remarks = #{record.remarks,jdbcType=VARCHAR},
       has_tts = #{record.hasTts,jdbcType=BIT},
       ai_id = #{record.aiId,jdbcType=VARCHAR},
-      isdel = #{record.isdel,jdbcType=INTEGER}
+      isdel = #{record.isdel,jdbcType=INTEGER},
+      isread = #{record.isread,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -542,6 +554,9 @@
       <if test="isdel != null" >
         isdel = #{isdel,jdbcType=INTEGER},
       </if>
+      <if test="isread != null" >
+        isread = #{isread,jdbcType=INTEGER},
+      </if>
     </set>
     where call_id = #{callId,jdbcType=VARCHAR}
   </update>
@@ -573,7 +588,8 @@
       remarks = #{remarks,jdbcType=VARCHAR},
       has_tts = #{hasTts,jdbcType=BIT},
       ai_id = #{aiId,jdbcType=VARCHAR},
-      isdel = #{isdel,jdbcType=INTEGER}
+      isdel = #{isdel,jdbcType=INTEGER},
+      isread = #{isread,jdbcType=INTEGER}
     where call_id = #{callId,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -2004,6 +2004,66 @@ public class CallOutPlanExample {
             addCriterion("isdel not between", value1, value2, "isdel");
             return (Criteria) this;
         }
+
+        public Criteria andIsreadIsNull() {
+            addCriterion("isread is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadIsNotNull() {
+            addCriterion("isread is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadEqualTo(Integer value) {
+            addCriterion("isread =", value, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadNotEqualTo(Integer value) {
+            addCriterion("isread <>", value, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadGreaterThan(Integer value) {
+            addCriterion("isread >", value, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadGreaterThanOrEqualTo(Integer value) {
+            addCriterion("isread >=", value, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadLessThan(Integer value) {
+            addCriterion("isread <", value, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadLessThanOrEqualTo(Integer value) {
+            addCriterion("isread <=", value, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadIn(List<Integer> values) {
+            addCriterion("isread in", values, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadNotIn(List<Integer> values) {
+            addCriterion("isread not in", values, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadBetween(Integer value1, Integer value2) {
+            addCriterion("isread between", value1, value2, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsreadNotBetween(Integer value1, Integer value2) {
+            addCriterion("isread not between", value1, value2, "isread");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

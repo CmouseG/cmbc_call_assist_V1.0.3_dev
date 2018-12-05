@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.auth.service.MenuService;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysMenu;
+import com.guiji.user.vo.MenuParamVo;
 
 @RestController
 @RequestMapping("menu")
@@ -58,9 +59,8 @@ public class MenuController {
 	} 
 	
 	@RequestMapping("/getMenuByPage")
-	public Page<SysMenu> getMenuByPage(Page<SysMenu> page){
-		service.getRoleByPage(page);
-		return page;
+	public Page<Object> getMenuByPage(MenuParamVo param){
+		return service.getRoleByPage(param);
 	}
 	
 	@RequestMapping("getMenuByName")

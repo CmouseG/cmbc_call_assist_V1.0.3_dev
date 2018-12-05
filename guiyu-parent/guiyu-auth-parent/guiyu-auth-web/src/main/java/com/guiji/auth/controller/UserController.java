@@ -17,6 +17,7 @@ import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.vo.UserParamVo;
 
 /**
  * Created by ty on 2018/10/22.
@@ -58,9 +59,8 @@ public class UserController implements IAuth{
 	}
 
 	@RequestMapping("/user/getUserByPage")
-	public Page<Map<String,String>> getUserByPage(Page<Map<String,String>> page){
-		service.getUserByPage(page);
-		return page;
+	public Page<Object> getUserByPage(UserParamVo param){
+		return service.getUserByPage(param);
 	}
 	
 	@RequestMapping("/user/getUserById")

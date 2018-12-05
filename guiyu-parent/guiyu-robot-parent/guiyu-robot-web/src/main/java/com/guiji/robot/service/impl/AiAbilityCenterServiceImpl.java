@@ -77,6 +77,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		boolean isNeedResourceInit = checkParamsReq.isNeedResourceInit();	//是否需要同步准备资源
 		List<HsParam> checkers = checkParamsReq.getCheckers();
 		if(ListUtil.isNotEmpty(checkers)) {
+			//本地异步处理的需要合成TTS的数据
+			List<HsParam> localTtsDealList = new ArrayList<HsParam>();
 			//列表不为空
 			for(HsParam hsChecker : checkers) {
 				CheckResult result = new CheckResult();
@@ -116,8 +118,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 					}
 					if(isNeedResourceInit && result.isPass() && hsReplace.isTemplate_tts_flag()) {
 						//1、需要初始化资源  2、参数校验通过 3、需要TTS合成
-						logger.info("会话:{}校验通过,异步发起tts合成申请，请求参数:{}",hsChecker.getSeqid(),hsChecker);
-						iTtsWavService.asynTtsCompose(hsChecker);
+						localTtsDealList.add(hsChecker);
 					}
 				}else {
 					logger.error("会话id：{},模板:{},不需要TTS合成，返回null",hsChecker.getSeqid(),hsChecker.getTemplateId());
@@ -127,6 +128,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 					continue;
 				}
 				list.add(result);
+			}
+			if(ListUtil.isNotEmpty(localTtsDealList)) {
+				logger.info("异步发起TTS合成,共计:{}条数据",localTtsDealList.size());
+				iTtsWavService.asynTtsCompose(localTtsDealList);
 			}
 		}else {
 			return list;

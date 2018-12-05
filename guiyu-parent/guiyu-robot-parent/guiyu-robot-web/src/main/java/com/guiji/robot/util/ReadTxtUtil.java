@@ -56,9 +56,9 @@ public class ReadTxtUtil {
 			logger.error("读取文件"+filePath+"内容出错",e);
 		}finally {
 			if(bufferedReader!=null)
-				try {bufferedReader.close();} catch (IOException e) {e.printStackTrace();}
-				try {read.close();} catch (IOException e) {e.printStackTrace();}
-				try {is.close();} catch (IOException e) {e.printStackTrace();}
+				try {if(bufferedReader!=null) {bufferedReader.close();}} catch (IOException e) {e.printStackTrace();}
+				try {if(read!=null) {read.close();}} catch (IOException e) {e.printStackTrace();}
+				try {if(is!=null) {is.close();}} catch (IOException e) {e.printStackTrace();}
 		}
 		return null;
 	}

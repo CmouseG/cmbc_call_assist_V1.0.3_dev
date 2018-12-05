@@ -11,7 +11,8 @@ public enum GuiyuAIExceptionEnum implements ExceptionEnum{
 	EXCP_AI_NO_TTS_ReqVO("0500005","请求对象TtsReqVO为空"),
 	EXCP_AI_NO_BUSID("0500006","busId不存在或为空字符串"),
 	EXCP_AI_NO_MODEL("0500007","model不存在或为空字符串"),
-	EXCP_AI_NO_CONTENTS("0500008","缺少文本内容");
+	EXCP_AI_NO_CONTENTS("0500008","缺少文本内容"),
+	EXCP_AI_UP_TO_NAS("0500009","上传NAS失败");
 	
 	
 	//返回码

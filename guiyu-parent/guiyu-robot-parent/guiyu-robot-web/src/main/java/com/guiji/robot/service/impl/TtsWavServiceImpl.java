@@ -200,9 +200,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			}else {
 				ttsWavHis.setErrorMsg("TTS合成失败,发生异常...");
 			}
+			//独立事务保存-更新，放入异常信息
+			ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
 		}
-		//独立事务保存
-		ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
 	}
 	
 	
@@ -238,13 +238,9 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			logger.error("TTS参数校验失败，抛出异常！");
 			throw new RobotException(AiErrorEnum.AI00060009.getErrorCode(),AiErrorEnum.AI00060009.getErrorMsg());
 		}
-		//4、调用TTS接口，发送要合成的语音文本，并返回模板中对应的 key-文本内容，落地
-		String busiId = com.guiji.utils.SystemUtil.getBusiSerialNo("TTS"); //调用TTS工具的唯一编号
-		Map<String,String> ttsTempTxtMap = this.fillParamAndTranslate(busiId,hsReplace, ttsVoiceReq);
-		//5、保存请求文本信息
-		String jsonTxtStr = JSON.toJSONString(ttsTempTxtMap);	//key-要合成的txt文本 json
-		ttsWavHis.setBusiId(busiId);
-		ttsWavHis.setTtsTxtJsonData(jsonTxtStr);
+		//4、调用TTS接口，发送要合成的语音文本
+		//调用填充参数，并调用TTS接口进行处理
+		this.fillParamAndTranslate(ttsWavHis,hsReplace, ttsVoiceReq);
 	}
 	
 	
@@ -350,12 +346,12 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	
 	/**
 	 * 填充参数并调用TTS工具合成
-	 * @param busiId :业务唯一id
+	 * @param ttsWavHis :合成记录
 	 * @param tmpFilePath 临时文件目录
 	 * @param hsReplace replate.json文件
 	 * @param ttsVoiceReq 请求信息
 	 */
-	public Map<String,String> fillParamAndTranslate(String busiId,HsReplace hsReplace,TtsVoiceReq ttsVoiceReq){
+	public Map<String,String> fillParamAndTranslate(TtsWavHis ttsWavHis,HsReplace hsReplace,TtsVoiceReq ttsVoiceReq){
 		//调用TTS语音合成服务，合成语音
 		Map<String,String> ttsPos = hsReplace.getTts_pos(); //需要转语音的文本
 		List<String> contents = new ArrayList<String>();	//参数替换后的文本
@@ -380,6 +376,13 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		//遍历将生成的wav落地
 		try {
 			//数据准备后调用TTS工具批量生成语音
+			String busiId = com.guiji.utils.SystemUtil.getBusiSerialNo("TTS"); //调用TTS工具的唯一编号
+			//调用接口前先将数据独立事务落地，以防止回调过快，查不到事务未提交的数据
+			String jsonTxtStr = JSON.toJSONString(ttsTempDataMap);	//key-要合成的txt文本 json
+			ttsWavHis.setBusiId(busiId);
+			ttsWavHis.setTtsTxtJsonData(jsonTxtStr);
+			ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
+			//开始拼装调用
 			TtsReqVO ttsReqVO = new TtsReqVO();
 			ttsReqVO.setBusId(busiId);	//唯一key
 			ttsReqVO.setModel(hsReplace.getUse_speaker_flag());
@@ -387,7 +390,6 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			//调用TTS工具
 			logger.info("开始调用TTS工具，请求参数:{}...",ttsReqVO);
 			ReturnData<String> ttsRspData = iTts.translate(ttsReqVO);
-			
 			logger.info("完成TTS工具调用,返回参数:{}",ttsRspData);
 			if(ttsRspData == null) {
 				logger.error("调用TTS接口发生异常,返回数据为空！");

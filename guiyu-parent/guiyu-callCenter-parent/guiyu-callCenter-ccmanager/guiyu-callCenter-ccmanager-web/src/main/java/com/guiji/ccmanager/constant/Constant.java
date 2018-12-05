@@ -27,6 +27,7 @@ public class Constant {
     public static final String ERROR_TEMP_NOTEXIST = "0303004";
     public static final String ERROR_TEMP_DOWNLOADFAIL = "0303005";
     public static final String ERROR_CODEC = "0303006";
+    public static final String ERROR_VALIDATE = "0303007";
 
 
 

@@ -1,9 +1,10 @@
 package com.guiji.ccmanager.controller;
 
+import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
-import com.guiji.ccmanager.vo.LineInfo4Select;
-import com.guiji.ccmanager.vo.LineInfoVO;
+import com.guiji.ccmanager.vo.LineInfoAddVO;
+import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +40,7 @@ public class LineInfoController {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getLineInfos")
-    public Result.ReturnData<Page<LineInfo4Select>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin ){
+    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin ){
 
         log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]",lineName, pageSize, pageNo);
 
@@ -47,10 +49,10 @@ public class LineInfoController {
         }
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo4Select> list =  lineInfoService.getLineInfoByCustom(isSuperAdmin ? null : String.valueOf(userId),lineName,pageSizeInt,pageNoInt);
+        List<LineInfo> list =  lineInfoService.getLineInfoByCustom(isSuperAdmin ? null : String.valueOf(userId),lineName,pageSizeInt,pageNoInt);
         int count = lineInfoService.getLineInfoByCustomCount(isSuperAdmin ? null : String.valueOf(userId),lineName);
 
-        Page<LineInfo4Select> page = new Page<LineInfo4Select>();
+        Page<LineInfo> page = new Page<LineInfo>();
         page.setPageNo(pageNoInt);
         page.setPageSize(pageSizeInt);
         page.setTotal(count);
@@ -62,18 +64,9 @@ public class LineInfoController {
 
     @ApiOperation(value = "增加线路接口")
     @PostMapping(value="addLineInfo")
-    public Result.ReturnData<Boolean> addLineInfo(@RequestBody LineInfoVO lineInfoVO,@RequestHeader Long userId ){
+    public Result.ReturnData<Boolean> addLineInfo(@RequestBody @Validated LineInfoAddVO lineInfoVO, @RequestHeader Long userId ){
 
-        log.info("get request addLineInfo，lineInfoVO[{}]",lineInfoVO);
-
-        lineInfoVO.setCustomerId(String.valueOf(userId));
-        if(lineInfoVO.getSipIp()==null || lineInfoVO.getSipPort() == null || lineInfoVO.getCodec() == null){
-            return Result.error(Constant.ERROR_PARAM);
-        }
-        String codec = lineInfoVO.getCodec();
-        if(!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU) ){
-            return Result.error(Constant.ERROR_CODEC);
-        }
+        log.info("get request addLineInfo，LineInfoAddVO[{}]",lineInfoVO);
         lineInfoVO.setCustomerId(String.valueOf(userId));
         lineInfoService.addLineInfo(lineInfoVO);
         return Result.ok(true);
@@ -81,20 +74,11 @@ public class LineInfoController {
 
     @ApiOperation(value = "修改线路接口")
     @PostMapping(value="updateLineInfo")
-    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody LineInfoVO lineInfoVO,@RequestHeader Long userId){
-
-        log.info("get request updateLineInfo，lineInfoVO[{}]",lineInfoVO);
-
+    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId){
         if(lineInfoVO.getLineId()==0){
             return Result.error(Constant.ERROR_PARAM);
         }
-        if( lineInfoVO.getCodec()!=null) {
-            String codec = lineInfoVO.getCodec();
-            if (!codec.equals(Constant.CODEC_G729) && !codec.equals(Constant.CODEC_PCMA) && !codec.equals(Constant.CODEC_PCMU)) {
-                return Result.error(Constant.ERROR_CODEC);
-            }
-        }
-        log.info("response success updateLineInfo，lineInfoVO[{}]",lineInfoVO);
+        log.info("get request updateLineInfo，lineInfoVO[{}]",lineInfoVO);
         lineInfoService.updateLineInfo(lineInfoVO,userId);
         return Result.ok(true);
     }

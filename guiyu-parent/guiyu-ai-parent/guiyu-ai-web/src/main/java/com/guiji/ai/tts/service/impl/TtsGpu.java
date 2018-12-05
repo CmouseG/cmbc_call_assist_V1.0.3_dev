@@ -32,7 +32,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.dao.entity.TtsResult;
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsResultHandler;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.utils.NasUtil;
@@ -157,7 +159,7 @@ public class TtsGpu extends TtsServiceProvide {
 			file.delete(); //删除本地文件
 		} catch (Exception e) {
 			logger.error(file.getName() + "上传失败！", e);
-			return null;
+			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_UP_TO_NAS);
 		}
 		return audioUrl;
 	}

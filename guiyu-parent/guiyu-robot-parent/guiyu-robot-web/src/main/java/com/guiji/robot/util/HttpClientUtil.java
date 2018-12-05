@@ -355,14 +355,25 @@ public class HttpClientUtil {
 	
 	
 	public static void main(String[] args) {
-//		String url = "http://118.190.90.174:8088/sms.aspx";
-//		Map<String,String> param = new HashMap<String,String>();
-//		param.put("action", "send");
-//		param.put("userid", "173");
-//		param.put("account", "ydxyk-zy");
-//		param.put("password", "gjzh1203");
-//		param.put("mobile", "15221738675");
-//		param.put("content", "【光大银行】邀您申请额度高至10万元的光大银行大额信用卡，可取现！立即申请(http://t.cn/Rk0agQc)验证码1234,回T退订");
-//		HttpClientUtil.doPost(url, param);
+//		String url = "http://192.168.1.78:18041/remote/checkParams";
+		String url = "http://localhost:18041/remote/checkParams";
+		String jsonBegin = "{\r\n" + 
+				"	\"needResourceInit\":true,\r\n" + 
+				"	\"checkers\":[";
+		String jsonEnd = "	]\r\n" + 
+				"}";
+		String json = "";
+		for(int i=0;i<50;i++) {
+			String jsonStep = "{\r\n" + 
+					"			\"seqid\":\""+i+"\",\r\n" + 
+					"			\"templateId\":\"ttscs_46188_en\",\r\n" + 
+					"			\"params\":\"你好我知道的"+i+"打发啊a的|1"+i+"2.41\"\r\n" + 
+					"		},";
+			json = json + jsonStep;
+		}
+		json = json.substring(0,json.length()-1);
+		json = jsonBegin + json + jsonEnd;
+		System.out.println(json);
+		HttpClientUtil.doPostJson(url, json);
 	}
 }

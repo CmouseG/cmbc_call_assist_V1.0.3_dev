@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
@@ -171,37 +170,43 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	
 	/**
 	 * 异步TTS合成操作
+	 * @Async 方法内部使用@Transaction没有效果，所以不能加，过程中碰到一个问题，如果在异步方法中调用Propagation.REQUIRES_NEW的方法，
+	 * 		      如果异步方法中嵌套了@Transaction，那么直接卡死，所以去掉了调用方法过程中的@Transaction，直接使用其他服务的REQUIRES_NEW处理
 	 * @param ttsVoiceReq
 	 */
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	@Async
-	public void asynTtsCompose(HsParam hsChecker) {
-		TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
-		BeanUtil.copyProperties(hsChecker, ttsVoiceReq);
-		//1、TTS合成记录，初始-合成中状态
-		TtsWavHis ttsWavHis = new TtsWavHis();
-		ttsWavHis.setSeqId(hsChecker.getSeqid());
-		ttsWavHis.setTemplateId(hsChecker.getTemplateId());
-		ttsWavHis.setStatus(RobotConstants.TTS_STATUS_P); //合成中
-		try {
-			//2、异步调用tts工具合成
-			this.ttsCompose(ttsWavHis,ttsVoiceReq);
-		} catch (Exception e) {
-			logger.error("TTS合成失败！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid(),e);
-			//4、合成后更新为合成状态
-			ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
-			ttsWavHis.setErrorType(RobotConstants.TTS_ERROR_TYPE_P); //调用接口失败
-			String errorMsg = e.getMessage();
-			if(StrUtils.isNotEmpty(errorMsg)) {
-				if(errorMsg.length()>1024) {
-					errorMsg = errorMsg.substring(0, 1024);
+	public void asynTtsCompose(List<HsParam> hsCheckerList) {
+		if(ListUtil.isNotEmpty(hsCheckerList)) {
+			for(HsParam hsChecker : hsCheckerList) {
+				logger.info("会话:{}校验通过,异步发起tts合成申请，请求参数:{}",hsChecker.getSeqid(),hsChecker);
+				TtsVoiceReq ttsVoiceReq = new TtsVoiceReq();
+				BeanUtil.copyProperties(hsChecker, ttsVoiceReq);
+				//1、TTS合成记录，初始-合成中状态
+				TtsWavHis ttsWavHis = new TtsWavHis();
+				ttsWavHis.setSeqId(hsChecker.getSeqid());
+				ttsWavHis.setTemplateId(hsChecker.getTemplateId());
+				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_P); //合成中
+				try {
+					//2、异步调用tts工具合成
+					this.ttsCompose(ttsWavHis,ttsVoiceReq);
+				} catch (Exception e) {
+					logger.error("TTS合成失败！模板ID:{},会话ID:{}",hsChecker.getTemplateId(),hsChecker.getSeqid(),e);
+					//4、合成后更新为合成状态
+					ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
+					ttsWavHis.setErrorType(RobotConstants.TTS_ERROR_TYPE_P); //调用接口失败
+					String errorMsg = e.getMessage();
+					if(StrUtils.isNotEmpty(errorMsg)) {
+						if(errorMsg.length()>1024) {
+							errorMsg = errorMsg.substring(0, 1024);
+						}
+						ttsWavHis.setErrorMsg(errorMsg);
+					}else {
+						ttsWavHis.setErrorMsg("TTS合成失败,发生异常...");
+					}
+					//独立事务保存-更新，放入异常信息
+					ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
 				}
-				ttsWavHis.setErrorMsg(errorMsg);
-			}else {
-				ttsWavHis.setErrorMsg("TTS合成失败,发生异常...");
 			}
-			//独立事务保存-更新，放入异常信息
-			ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
 		}
 	}
 	
@@ -215,7 +220,6 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @param  ttsVoiceReq
 	 * @return 合成后的语音列表
 	 */
-	@Transactional
 	@Override
 	public void ttsCompose(TtsWavHis ttsWavHis,TtsVoiceReq ttsVoiceReq){
 		//1、必输校验

@@ -18,6 +18,7 @@ import com.guiji.robot.api.IRobotRemote;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.vo.UserParamVo;
 
 
 @Service
@@ -78,11 +79,13 @@ public class UserService {
 		return mapper.getPermByRoleId(roleId);
 	}
 	
-	public void getUserByPage(Page<Map<String,String>> page){
-		int count=mapper.count();
-		List<Map<String,String>> userList=mapper.getUsersByPage(page);
+	public Page<Object>  getUserByPage(UserParamVo param){
+		Page<Object> page=new Page<>();
+		int count=mapper.countByParamVo(param);
+		List<Object> userList=mapper.selectByParamVo(param);
 		page.setTotal(count);
 		page.setRecords(userList);
+		return page;
 	}
 	
 	public boolean existUserName(SysUser user){

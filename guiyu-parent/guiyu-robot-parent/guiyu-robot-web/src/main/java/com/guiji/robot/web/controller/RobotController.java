@@ -115,6 +115,7 @@ public class RobotController {
 					for(int i=0;i<userResourceCache.getAiNum();i++) {
 						AiInuseCache aiInuseCache = new AiInuseCache();
 						aiInuseCache.setAiNo("AI"+i); //机器人编号
+						aiInuseCache.setAiName("硅语"+(i+1)+"号"); //机器人名字
 						aiInuseCache.setAiStatus(RobotConstants.AI_STATUS_F); //空闲
 						aiInuseCache.setCallNum(0);
 						aiInuseCache.setUserId(qUserId);

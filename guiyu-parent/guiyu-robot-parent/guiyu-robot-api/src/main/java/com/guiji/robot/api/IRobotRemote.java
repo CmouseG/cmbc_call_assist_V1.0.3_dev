@@ -54,7 +54,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "seqIdList", value = "会话id列表", required = true)
     })
     @PostMapping(value = "/remote/ttsComposeCheck")
-	Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody TtsComposeCheckReq ttsComposeCheckReq);
+	Result.ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck(@RequestBody List<TtsVoiceReq> ttsVoiceReqList);
 	
 	
 	@ApiOperation(value = "TTS语音下载")

@@ -45,10 +45,10 @@ public interface IAiAbilityCenterService {
 	
 	/**
 	 * 批量TTS合成下载
-	 * @param ttsComposeCheckReq
+	 * @param ttsVoiceReqList
 	 * @return
 	 */
-	public List<TtsComposeCheckRsp> ttsComposeCheck(TtsComposeCheckReq ttsComposeCheckReq);
+	public List<TtsComposeCheckRsp> ttsComposeCheck(List<TtsVoiceReq> ttsVoiceReqList);
 	
 	
 	/**

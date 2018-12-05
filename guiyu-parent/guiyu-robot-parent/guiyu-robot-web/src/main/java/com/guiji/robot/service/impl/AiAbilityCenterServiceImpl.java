@@ -165,10 +165,11 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		//根据会话ID查找语音的TTS合成结果
 		TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(ttsVoiceReq.getSeqid());
 		if(ttsWavHis == null) {
-			logger.error("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
+			logger.info("会话ID:{}TTS查不到数据",ttsVoiceReq.getSeqid());
 			//逐个检查
 			HsReplace hsReplace = aiCacheService.queyHsReplace(ttsVoiceReq.getTemplateId());
-			if(hsReplace.isTemplate_tts_flag()) {
+			if(!hsReplace.isTemplate_tts_flag()) {
+				logger.info("会话ID：{}不需要TTS合成...");
 				rsp.setStatus(RobotConstants.TTS_STATUS_S);
 			}else {
 				rsp.setStatus(RobotConstants.TTS_STATUS_N);

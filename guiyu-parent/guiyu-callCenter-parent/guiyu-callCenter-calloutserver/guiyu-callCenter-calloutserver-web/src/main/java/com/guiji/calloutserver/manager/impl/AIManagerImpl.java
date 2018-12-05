@@ -206,9 +206,12 @@ public class AIManagerImpl implements AIManager {
     }
 
     @Override
-    public void releaseAi(String uuid) {
+    public void releaseAi(CallOutPlan callOutPlan) {
         AiHangupReq hangupReq = new AiHangupReq();
-        hangupReq.setSeqid(uuid);
+        hangupReq.setSeqid(callOutPlan.getCallId());
+        hangupReq.setAiNo(callOutPlan.getAiId());
+        hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
+        hangupReq.setUserId(callOutPlan.getCustomerId());
         robotRemote.aiHangup(hangupReq);
         log.info("------------------- releaseAi success ");
     }

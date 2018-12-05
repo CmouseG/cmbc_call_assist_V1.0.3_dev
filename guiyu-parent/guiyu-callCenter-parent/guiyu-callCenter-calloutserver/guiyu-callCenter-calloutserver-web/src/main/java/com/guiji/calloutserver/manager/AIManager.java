@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.manager;
 
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.entity.AIInitRequest;
 import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
@@ -37,5 +38,5 @@ public interface AIManager {
      * 释放被占用的ai资源
      * @param uuid
      */
-    void releaseAi(String uuid);
+    void releaseAi(CallOutPlan uuid);
 }

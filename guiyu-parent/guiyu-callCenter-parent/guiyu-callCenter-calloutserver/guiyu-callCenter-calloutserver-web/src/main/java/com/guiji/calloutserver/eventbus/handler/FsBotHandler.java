@@ -366,7 +366,7 @@ public class FsBotHandler {
             asyncEventBus.post(afterCallEvent);
 
             //释放ai资源
-            aiManager.releaseAi(event.getUuid());
+            aiManager.releaseAi(callPlan);
 
             //释放实时通道相关资源
             channelHelper.hangup(event.getUuid());

@@ -10,7 +10,6 @@ import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
-import com.guiji.ccmanager.vo.LineInfo4Select;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.exception.GuiyuException;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,47 +65,54 @@ public class LineInfoServiceImpl implements LineInfoService {
         return example;
     }
 
-    public List<LineInfo4Select> getLineInfoByCustom(String customerId, String lineName, int pageSize, int pageNo) {
+    public List<LineInfo> getLineInfoByCustom(String customerId, String lineName, int pageSize, int pageNo) {
 
-        LineInfoExample example = getExample( customerId,  lineName);
+        LineInfoExample example = getExample(customerId,  lineName);
 
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
 
         List<LineInfo> list = lineInfoMapper.selectByExample(example);
-        List<LineInfo4Select> listResult = new ArrayList<LineInfo4Select>();
 
         Map<String,String> map = new HashMap<String,String>();
 
         if(list!=null && list.size()>0){
             for(LineInfo lineInfo:list){
-                LineInfo4Select lineInfo4Select = new LineInfo4Select();
-                BeanUtil.copyProperties(lineInfo,lineInfo4Select);
-
-                String userId = lineInfo.getCustomerId();
-                if(map.get(userId)==null){
-                    try {
-                        Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
-                        if(result!=null && result.getBody()!=null) {
-                            String userName = result.getBody().getUsername();
-                            if (userName != null) {
-                                map.put(userId, userName);
-                                lineInfo4Select.setUserName(userName);
-                            }
-                        }
-                    }catch (Exception e){
-                        log.error(" auth.getUserById error :"+ e);
-                    }
-
-                }else{
-                    lineInfo4Select.setUserName(map.get(userId));
+                String userId = lineInfo.getCreatetBy();
+                if(StringUtils.isNotBlank(userId)){
+                    String createuser = getUserName(map,  userId);
+                    lineInfo.setCreatetBy(createuser);
                 }
-                listResult.add(lineInfo4Select);
+                String userUpdate = lineInfo.getUpdateBy();
+                if(StringUtils.isNotBlank(userUpdate)){
+                    String updateuser = getUserName(map,  userUpdate);
+                    lineInfo.setUpdateBy(updateuser);
+                }
             }
         }
+        return list;
+    }
 
-        return listResult;
+    private String getUserName(Map<String,String> map, String userId){
+        if(map.get(userId)==null){
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                        map.put(userId, userName);
+                        return userName;
+                    }
+                }
+            }catch (Exception e){
+                log.error(" auth.getUserById error :"+ e);
+            }
+
+        }else{
+            return map.get(userId);
+        }
+        return null;
     }
 
     @Override

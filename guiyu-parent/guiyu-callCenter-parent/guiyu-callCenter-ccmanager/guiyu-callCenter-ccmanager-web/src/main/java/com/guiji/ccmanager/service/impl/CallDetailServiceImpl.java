@@ -44,8 +44,16 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Autowired
     ErrorMatchMapper errorMatchMapper;
 
-    public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId, String phoneNum,String durationMin, String durationMax,
-                                         String accurateIntent, String freason,String callId, String tempId){
+    @Override
+    public void updateIsRead(String callId) {
+        CallOutPlan callOutPlan = new CallOutPlan();
+        callOutPlan.setCallId(callId);
+        callOutPlan.setIsread(1);
+        callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
+    }
+
+    public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId, String phoneNum, String durationMin, String durationMax,
+                                         String accurateIntent, String freason, String callId, String tempId,String isRead){
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         if(startDate!=null){
@@ -88,16 +96,19 @@ public class CallDetailServiceImpl implements CallDetailService {
         if(StringUtils.isNotBlank(tempId)){
             criteria.andTempIdEqualTo(tempId);
         }
+        if(StringUtils.isNotBlank(isRead)){
+            criteria.andIsreadEqualTo(Integer.valueOf(isRead));
+        }
         criteria.andIsdelEqualTo(0);
         return example;
     }
 
     @Override
     public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
-                                                   String accurateIntent, String freason, String callId, String tempId ){
+                                                   String accurateIntent, String freason, String callId, String tempId,String isRead ){
 
 
-        CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum,  durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+        CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum,  durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
@@ -140,9 +151,9 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Override
     public int callrecordCount(Date startDate, Date endDate, String customerId, String phoneNum,String durationMin, String durationMax,
-                               String accurateIntent, String freason,String callId, String tempId) {
+                               String accurateIntent, String freason,String callId, String tempId, String isRead) {
 
-        CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum, durationMin, durationMax, accurateIntent,  freason, callId,  tempId);
+        CallOutPlanExample example = getExample( startDate,  endDate,  customerId, phoneNum, durationMin, durationMax, accurateIntent,  freason, callId,  tempId, isRead);
 
         return callOutPlanMapper.countByExample(example);
     }

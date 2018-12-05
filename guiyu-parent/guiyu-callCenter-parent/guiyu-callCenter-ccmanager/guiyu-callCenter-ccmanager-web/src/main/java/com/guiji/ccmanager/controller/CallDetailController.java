@@ -64,16 +64,18 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "freason", value = "直接传名称,以逗号分隔", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
-                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId , @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
+                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId ,String isRead,
+                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
 
         log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
-                        "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}]",
-                startDate, endDate, userId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+                        "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}], isRead[{}]",
+                startDate, endDate, userId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
 
         if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
             return Result.error(Constant.ERROR_PARAM);
@@ -91,8 +93,8 @@ public class CallDetailController implements ICallPlanDetail {
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
 
-        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
-        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId);
+        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);
@@ -125,6 +127,8 @@ public class CallDetailController implements ICallPlanDetail {
             return Result.error(Constant.ERROR_PARAM);
         }
         CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(callId);
+        //修改状态为已读
+        callDetailService.updateIsRead(callId);
 
         log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);

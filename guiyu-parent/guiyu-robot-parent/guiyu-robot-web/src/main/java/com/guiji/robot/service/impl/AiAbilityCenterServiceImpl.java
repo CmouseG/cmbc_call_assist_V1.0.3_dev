@@ -86,8 +86,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				result.setPass(true); //默认校验通过
 				//校验下必输
 				if(StrUtils.isEmpty(hsChecker.getSeqid())
-						|| StrUtils.isEmpty(hsChecker.getTemplateId())
-						|| StrUtils.isEmpty(hsChecker.getParams())) {
+						|| StrUtils.isEmpty(hsChecker.getTemplateId())) {
 					result.setCheckMsg("必输项校验未通过");
 					result.setPass(false); //默认不通过，参数不存在
 					list.add(result);
@@ -96,6 +95,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				//逐个检查
 				HsReplace hsReplace = aiCacheService.queyHsReplace(hsChecker.getTemplateId());
 				if(hsReplace.isTemplate_tts_flag()) {
+					if(StrUtils.isEmpty(hsChecker.getParams())) {
+						//如果需要TTS，但是又没用参数，直接返回报错
+						result.setCheckMsg("参数校验不通过,参数不能为空");
+						result.setPass(false); //默认不通过，参数不存在
+						list.add(result);
+						continue;
+					}
 					//当前话术模板需要的参数
 					String[] needParams = hsReplace.getReplace_variables_flag();
 					if(needParams != null && needParams.length>0) {

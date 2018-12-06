@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,5 +120,23 @@ public class UserService {
 		result.put("robot", custAccount.getBody());
 		result.put("call", callData.getBody());
 		return result;
+	}
+	
+	public void changeAccessKey(Long userId){
+		String key=AuthUtil.encryptMd2();
+		SysUser record=new SysUser();
+		record.setId(userId);
+		record.setUpdateId(userId);
+		record.setAccessKey(key);
+		mapper.updateByPrimaryKeySelective(record);
+	}
+	
+	public void changeSecretKey(Long userId){
+		String key=AuthUtil.encryptMd2();
+		SysUser record=new SysUser();
+		record.setId(userId);
+		record.setUpdateId(userId);
+		record.setSecretKey(key);
+		mapper.updateByPrimaryKeySelective(record);
 	}
 }

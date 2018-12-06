@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,14 +46,13 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
-import com.guiji.dispatch.util.DateProvider;
-import com.guiji.dispatch.util.HttpClientUtil;
-import com.guiji.dispatch.util.HttpUtils;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.DateUtil;
+import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
 
@@ -74,8 +72,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private DispatchHourMapper dispatchHourMapper;
 
-	@Autowired
-	private DateProvider dateProvider;
 	@Autowired
 	private IAuth authService;
 
@@ -125,8 +121,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
 		// 通知状态;通知状态1等待2失败3成功
 		dispatchPlanBatch.setStatusNotify(Constant.STATUSNOTIFY_0);
-		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
-		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusShow(dispatchPlan.getStatusShow());
 		dispatchPlanBatch.setUserId(userId.intValue());
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
@@ -135,8 +131,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setUserId(userId.intValue());
 		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
-		dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
-		dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		dispatchPlan.setIsDel(Constant.IS_DEL_0);
 		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
@@ -251,8 +247,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
-		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
-		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
 		// 查询用户名称
@@ -302,8 +298,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setUserId(userId.intValue());
 			dispatchPlan.setParams(params);
 			dispatchPlan.setPlanUuid(IdGenUtil.uuid());
-			dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
-			dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
+			dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
+			dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
 			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
@@ -688,7 +684,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
-				dis.setGmtModified(dateProvider.getCurrentTime());
+				dis.setGmtModified(DateUtil.getCurrent4Time());
 			} catch (Exception e) {
 				logger.error("error", e);
 			}

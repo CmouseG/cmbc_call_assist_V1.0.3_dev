@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
-import com.guiji.ai.tts.service.impl.TtsGpu;
+import com.guiji.ai.tts.service.impl.func.TtsGpu;
 import com.guiji.guiyu.message.model.RestoreModelResultMsgVO;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;

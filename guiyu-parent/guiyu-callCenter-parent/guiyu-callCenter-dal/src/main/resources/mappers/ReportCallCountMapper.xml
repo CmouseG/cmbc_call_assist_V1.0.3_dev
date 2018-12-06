@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.ReportCallCountMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.ReportCallCount" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="call_date" property="callDate" jdbcType="VARCHAR" />
+    <result column="count_a" property="countA" jdbcType="INTEGER" />
+    <result column="count_b" property="countB" jdbcType="INTEGER" />
+    <result column="count_c" property="countC" jdbcType="INTEGER" />
+    <result column="count_d" property="countD" jdbcType="INTEGER" />
+    <result column="count_e" property="countE" jdbcType="INTEGER" />
+    <result column="count_f" property="countF" jdbcType="INTEGER" />
+    <result column="count_u" property="countU" jdbcType="INTEGER" />
+    <result column="count_v" property="countV" jdbcType="INTEGER" />
+    <result column="count_w" property="countW" jdbcType="INTEGER" />
+    <result column="count_all" property="countAll" jdbcType="INTEGER" />
+    <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, call_date, count_a, count_b, count_c, count_d, count_e, count_f, count_u, count_v, 
+    count_w, count_all, accurate_intent, customer_id
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ReportCallCountExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from report_call_count
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from report_call_count
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from report_call_count
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.ReportCallCountExample" >
+    delete from report_call_count
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ReportCallCount" >
+    insert into report_call_count (id, call_date, count_a, 
+      count_b, count_c, count_d, 
+      count_e, count_f, count_u, 
+      count_v, count_w, count_all, 
+      accurate_intent, customer_id)
+    values (#{id,jdbcType=BIGINT}, #{callDate,jdbcType=VARCHAR}, #{countA,jdbcType=INTEGER}, 
+      #{countB,jdbcType=INTEGER}, #{countC,jdbcType=INTEGER}, #{countD,jdbcType=INTEGER}, 
+      #{countE,jdbcType=INTEGER}, #{countF,jdbcType=INTEGER}, #{countU,jdbcType=INTEGER}, 
+      #{countV,jdbcType=INTEGER}, #{countW,jdbcType=INTEGER}, #{countAll,jdbcType=INTEGER}, 
+      #{accurateIntent,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallCount" >
+    insert into report_call_count
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="callDate != null" >
+        call_date,
+      </if>
+      <if test="countA != null" >
+        count_a,
+      </if>
+      <if test="countB != null" >
+        count_b,
+      </if>
+      <if test="countC != null" >
+        count_c,
+      </if>
+      <if test="countD != null" >
+        count_d,
+      </if>
+      <if test="countE != null" >
+        count_e,
+      </if>
+      <if test="countF != null" >
+        count_f,
+      </if>
+      <if test="countU != null" >
+        count_u,
+      </if>
+      <if test="countV != null" >
+        count_v,
+      </if>
+      <if test="countW != null" >
+        count_w,
+      </if>
+      <if test="countAll != null" >
+        count_all,
+      </if>
+      <if test="accurateIntent != null" >
+        accurate_intent,
+      </if>
+      <if test="customerId != null" >
+        customer_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="callDate != null" >
+        #{callDate,jdbcType=VARCHAR},
+      </if>
+      <if test="countA != null" >
+        #{countA,jdbcType=INTEGER},
+      </if>
+      <if test="countB != null" >
+        #{countB,jdbcType=INTEGER},
+      </if>
+      <if test="countC != null" >
+        #{countC,jdbcType=INTEGER},
+      </if>
+      <if test="countD != null" >
+        #{countD,jdbcType=INTEGER},
+      </if>
+      <if test="countE != null" >
+        #{countE,jdbcType=INTEGER},
+      </if>
+      <if test="countF != null" >
+        #{countF,jdbcType=INTEGER},
+      </if>
+      <if test="countU != null" >
+        #{countU,jdbcType=INTEGER},
+      </if>
+      <if test="countV != null" >
+        #{countV,jdbcType=INTEGER},
+      </if>
+      <if test="countW != null" >
+        #{countW,jdbcType=INTEGER},
+      </if>
+      <if test="countAll != null" >
+        #{countAll,jdbcType=INTEGER},
+      </if>
+      <if test="accurateIntent != null" >
+        #{accurateIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.ReportCallCountExample" resultType="java.lang.Integer" >
+    select count(*) from report_call_count
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update report_call_count
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.callDate != null" >
+        call_date = #{record.callDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countA != null" >
+        count_a = #{record.countA,jdbcType=INTEGER},
+      </if>
+      <if test="record.countB != null" >
+        count_b = #{record.countB,jdbcType=INTEGER},
+      </if>
+      <if test="record.countC != null" >
+        count_c = #{record.countC,jdbcType=INTEGER},
+      </if>
+      <if test="record.countD != null" >
+        count_d = #{record.countD,jdbcType=INTEGER},
+      </if>
+      <if test="record.countE != null" >
+        count_e = #{record.countE,jdbcType=INTEGER},
+      </if>
+      <if test="record.countF != null" >
+        count_f = #{record.countF,jdbcType=INTEGER},
+      </if>
+      <if test="record.countU != null" >
+        count_u = #{record.countU,jdbcType=INTEGER},
+      </if>
+      <if test="record.countV != null" >
+        count_v = #{record.countV,jdbcType=INTEGER},
+      </if>
+      <if test="record.countW != null" >
+        count_w = #{record.countW,jdbcType=INTEGER},
+      </if>
+      <if test="record.countAll != null" >
+        count_all = #{record.countAll,jdbcType=INTEGER},
+      </if>
+      <if test="record.accurateIntent != null" >
+        accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerId != null" >
+        customer_id = #{record.customerId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update report_call_count
+    set id = #{record.id,jdbcType=BIGINT},
+      call_date = #{record.callDate,jdbcType=VARCHAR},
+      count_a = #{record.countA,jdbcType=INTEGER},
+      count_b = #{record.countB,jdbcType=INTEGER},
+      count_c = #{record.countC,jdbcType=INTEGER},
+      count_d = #{record.countD,jdbcType=INTEGER},
+      count_e = #{record.countE,jdbcType=INTEGER},
+      count_f = #{record.countF,jdbcType=INTEGER},
+      count_u = #{record.countU,jdbcType=INTEGER},
+      count_v = #{record.countV,jdbcType=INTEGER},
+      count_w = #{record.countW,jdbcType=INTEGER},
+      count_all = #{record.countAll,jdbcType=INTEGER},
+      accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
+      customer_id = #{record.customerId,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallCount" >
+    update report_call_count
+    <set >
+      <if test="callDate != null" >
+        call_date = #{callDate,jdbcType=VARCHAR},
+      </if>
+      <if test="countA != null" >
+        count_a = #{countA,jdbcType=INTEGER},
+      </if>
+      <if test="countB != null" >
+        count_b = #{countB,jdbcType=INTEGER},
+      </if>
+      <if test="countC != null" >
+        count_c = #{countC,jdbcType=INTEGER},
+      </if>
+      <if test="countD != null" >
+        count_d = #{countD,jdbcType=INTEGER},
+      </if>
+      <if test="countE != null" >
+        count_e = #{countE,jdbcType=INTEGER},
+      </if>
+      <if test="countF != null" >
+        count_f = #{countF,jdbcType=INTEGER},
+      </if>
+      <if test="countU != null" >
+        count_u = #{countU,jdbcType=INTEGER},
+      </if>
+      <if test="countV != null" >
+        count_v = #{countV,jdbcType=INTEGER},
+      </if>
+      <if test="countW != null" >
+        count_w = #{countW,jdbcType=INTEGER},
+      </if>
+      <if test="countAll != null" >
+        count_all = #{countAll,jdbcType=INTEGER},
+      </if>
+      <if test="accurateIntent != null" >
+        accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        customer_id = #{customerId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.ReportCallCount" >
+    update report_call_count
+    set call_date = #{callDate,jdbcType=VARCHAR},
+      count_a = #{countA,jdbcType=INTEGER},
+      count_b = #{countB,jdbcType=INTEGER},
+      count_c = #{countC,jdbcType=INTEGER},
+      count_d = #{countD,jdbcType=INTEGER},
+      count_e = #{countE,jdbcType=INTEGER},
+      count_f = #{countF,jdbcType=INTEGER},
+      count_u = #{countU,jdbcType=INTEGER},
+      count_v = #{countV,jdbcType=INTEGER},
+      count_w = #{countW,jdbcType=INTEGER},
+      count_all = #{countAll,jdbcType=INTEGER},
+      accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
+      customer_id = #{customerId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

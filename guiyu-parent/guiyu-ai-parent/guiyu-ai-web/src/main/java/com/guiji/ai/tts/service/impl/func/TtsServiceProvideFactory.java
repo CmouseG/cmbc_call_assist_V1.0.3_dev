@@ -1,7 +1,4 @@
-package com.guiji.ai.tts.service.impl;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.guiji.ai.tts.service.impl.func;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.utils.RedisUtil;
 
 /**

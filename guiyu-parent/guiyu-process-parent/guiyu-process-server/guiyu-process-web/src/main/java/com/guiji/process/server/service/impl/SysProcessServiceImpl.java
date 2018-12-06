@@ -91,6 +91,39 @@ public class SysProcessServiceImpl implements ISysProcessService {
     @Override
     public Page<SysProcess> queryProcessPage(int pageNo, int pageSize, SysProcess sysProcess) {
         Page<SysProcess> page = new Page<SysProcess>();
+        SysProcessExample example = this.getNoAgentExampleByCondition(sysProcess);
+        if(example == null) example = new SysProcessExample();
+        int totalRecord = sysProcessMapper.countByExample(example); //总数
+        example.setLimitStart((pageNo-1)*pageSize);	//起始条数
+        example.setLimitEnd(pageSize);	//结束条数
+        example.setOrderByClause("create_time desc");
+        //分页查询
+        List<SysProcess> list = sysProcessMapper.selectByExample(example);
+        if(list != null && !list.isEmpty()) {
+            List<SysProcess> rspSysProcessList = new ArrayList<SysProcess>();
+            for(SysProcess process : list) {
+                SysProcessTask sysProcessTaskTmp = new SysProcessTask();
+                sysProcessTaskTmp.setIp(process.getIp());
+                sysProcessTaskTmp.setPort(process.getPort());
+                sysProcessTaskTmp.setExecStatus(1);
+                List<SysProcessTask> isExist = sysProcessTaskService.list(sysProcessTaskTmp);
+                if (isExist != null && isExist.size() > 0){
+                    process.setExecStatus(1);
+                }
+                rspSysProcessList.add(process);
+            }
+            page.setRecords(rspSysProcessList);
+        }
+        page.setPageNo(pageNo);
+        page.setPageSize(pageSize);
+        page.setTotal(totalRecord);
+        return page;
+    }
+
+    @Override
+    public Page<SysProcess> queryAgentPage(int pageNo, int pageSize, SysProcess sysProcess) {
+        Page<SysProcess> page = new Page<SysProcess>();
+        sysProcess.setType(ProcessTypeEnum.AGENT.getValue());
         SysProcessExample example = this.getExampleByCondition(sysProcess);
         if(example == null) example = new SysProcessExample();
         int totalRecord = sysProcessMapper.countByExample(example); //总数
@@ -156,6 +189,47 @@ public class SysProcessServiceImpl implements ISysProcessService {
             String processKey = sysProcess.getProcessKey();//扩展字段，资源类型为TTS存模型名称
             SysProcessExample example = new SysProcessExample();
             SysProcessExample.Criteria criteria = example.createCriteria();
+            if(id != null) {
+                criteria.andIdEqualTo(id);
+            }
+            if(StrUtils.isNotEmpty(ip)) {
+                criteria.andIpEqualTo(ip);
+            }
+            if(StrUtils.isNotEmpty(port)) {
+                criteria.andPortEqualTo(port);
+            }
+            if(StrUtils.isNotEmpty(name)) {
+                criteria.andNameEqualTo(name);
+            }
+            if(type != null) {
+                criteria.andTypeEqualTo(type);
+            }
+            if(status != null) {
+                criteria.andStatusEqualTo(status);
+            }
+            if(StrUtils.isNotEmpty(processKey)) {
+                criteria.andProcessKeyLike(processKey);
+            }
+            return example;
+        }else {
+            logger.info("查询进程列表");
+        }
+        return null;
+    }
+
+    private SysProcessExample getNoAgentExampleByCondition(SysProcess sysProcess) {
+        logger.info("查询进程，查询条件="+sysProcess);
+        if(sysProcess != null) {
+            Long id = sysProcess.getId();	//主键ID
+            String ip = sysProcess.getIp();//ip
+            String port = sysProcess.getPort();	//端口
+            String name = sysProcess.getName();	//资源名称
+            Integer type = sysProcess.getType();	//资源类型
+            Integer status = sysProcess.getStatus();
+            String processKey = sysProcess.getProcessKey();//扩展字段，资源类型为TTS存模型名称
+            SysProcessExample example = new SysProcessExample();
+            SysProcessExample.Criteria criteria = example.createCriteria();
+            criteria.andTypeNotEqualTo(ProcessTypeEnum.AGENT.getValue());
             if(id != null) {
                 criteria.andIdEqualTo(id);
             }

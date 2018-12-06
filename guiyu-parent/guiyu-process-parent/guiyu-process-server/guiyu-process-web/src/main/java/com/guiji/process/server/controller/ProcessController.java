@@ -23,6 +23,11 @@ public class ProcessController {
         return sysProcessService.queryProcessPage(pageNo,pageSize,sysProcess);
     }
 
+    @GetMapping("/listAgent")
+    public Page<SysProcess> listAgent(int pageNo, int pageSize, SysProcess sysProcess) {
+        return sysProcessService.queryAgentPage(pageNo,pageSize,sysProcess);
+    }
+
 
     @PostMapping("/start")
     public Object start(@RequestBody ProcessCmdVO processCmdVO,@RequestHeader Long userId) {

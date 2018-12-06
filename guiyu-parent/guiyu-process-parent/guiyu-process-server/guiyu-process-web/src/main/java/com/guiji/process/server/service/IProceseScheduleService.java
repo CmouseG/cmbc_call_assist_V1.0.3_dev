@@ -22,6 +22,12 @@ public interface IProceseScheduleService {
      */
     List<ProcessInstanceVO> getTTS();
 
+    /**
+     * 获取所有可用的Sellbot数量
+     * @return
+     */
+    int sellbotCount();
+
 
     /**
      * 获取可用的Sellbot

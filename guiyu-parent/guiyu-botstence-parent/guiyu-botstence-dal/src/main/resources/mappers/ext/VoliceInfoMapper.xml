@@ -21,7 +21,7 @@
  	</update>
  	
  	<update id="updateVoliceUrlAndNameById">
- 		UPDATE volice_info set volice_url=#{url}, name=#{name} where volice_id=#{voliceId} 
+ 		UPDATE volice_info set volice_url=#{url}, flag=#{name} where volice_id=#{voliceId} 
  	</update>
  	
  	<select id="queryAllVoliceId" resultType="string">

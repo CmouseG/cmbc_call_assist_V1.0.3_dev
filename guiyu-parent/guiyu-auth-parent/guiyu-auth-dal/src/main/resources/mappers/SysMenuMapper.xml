@@ -433,6 +433,7 @@
 		<if test="menuName !='' ">
 			and a.name=#{menuName}
 		</if>
+		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
 	</select>
 </mapper>

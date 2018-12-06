@@ -48,6 +48,14 @@ public interface IProcessSchedule {
     Result.ReturnData<List<ProcessInstanceVO>> getAllTTS();
 
     /**
+     * 获取所有可用Sellbot格鼠
+     * @return
+     */
+    @ApiOperation(value = "返回sellbotCount")
+    @GetMapping(value="/sellbotCount")
+    Result.ReturnData<Integer> sellbotCount();
+
+    /**
      * 模型切换
      * @param fromModel
      * @param toModel

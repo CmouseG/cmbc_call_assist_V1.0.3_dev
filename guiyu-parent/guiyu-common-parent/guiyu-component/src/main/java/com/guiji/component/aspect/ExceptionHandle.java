@@ -17,10 +17,9 @@ public class ExceptionHandle
 	{
 		if(e instanceof GuiyuException){
 			GuiyuException ex = (GuiyuException) e;
-			logger.error("ErrorCode： " + ex.getErrorCode());
-			logger.error("ErrorMessage： " + ex.getErrorMessage());
+			logger.error("ErrorCode： " + ex.getErrorCode(), "ErrorMessage： " + ex.getErrorMessage(), ex);
         }
 		
-		logger.error("【系统异常】", e);
+		logger.info("【系统异常】", e);
 	}
 }

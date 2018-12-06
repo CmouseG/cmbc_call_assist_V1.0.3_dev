@@ -42,6 +42,7 @@ public class TtsServiceProvideFactory {
 
 		guiyuTtsGpu.setIp(guiyuTtsGpuRef.getIp());
 		guiyuTtsGpu.setPort(guiyuTtsGpuRef.getPort());
+		
 		return guiyuTtsGpu;
 	}
 }

@@ -8,8 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
@@ -20,50 +18,41 @@ import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
 @Component
-public class AcquireTTSHandler implements ApplicationRunner {
+public class AcquireTTSHandler {
 	private static Logger logger = LoggerFactory.getLogger(AcquireTTSHandler.class);
 	
 	@Autowired
-    private RedisUtil redisUtil;	
+    RedisUtil redisUtil;	
 	@Autowired
 	IProcessSchedule iProcessSchedule;
 
 	/**
-	 * 初始化
+	 * 获取所有的TTS
 	 */
-	@Override
-	public void run(ApplicationArguments arg0) throws Exception {
-		List<ProcessInstanceVO> returnList = new ArrayList<>();
+	public void getAllTTS() throws Exception {
+		List<ProcessInstanceVO> processInstanceList = new ArrayList<>();
 		ReturnData<List<ProcessInstanceVO>> returnData = null;
-		
+
 		logger.info("getting all TTS...");
-		while(true){
-			try
-			{
-				returnData = iProcessSchedule.getAllTTS();
-				if(returnData != null)
-				{
-					break;
-				}
-				
-			} catch (Exception e)
-			{
-				logger.error("Process服务异常...");
-				continue;
-			}
+		try
+		{
+			returnData = iProcessSchedule.getAllTTS();
+		} catch (Exception e)
+		{
+			logger.error("Process服务异常...", e);
 		}
-		
-		if(returnData.getBody() != null && !returnData.getBody().isEmpty())
+
+		if (returnData != null && returnData.getBody() != null && !returnData.getBody().isEmpty())
 		{
-			returnList = returnData.getBody();
-		}else
+			processInstanceList = returnData.getBody();
+		} else
 		{
-			logger.info("没有获取到TTS!");
+			logger.info("没有TTS!");
 			return;
 		}
-		logger.info("获取的TTS列表：" + returnList);
+		logger.info("获取的TTS列表：" + processInstanceList);
 		
-		Collections.sort(returnList, new Comparator<ProcessInstanceVO>() 
+		Collections.sort(processInstanceList, new Comparator<ProcessInstanceVO>() 
 		{
 			@Override
 			public int compare(ProcessInstanceVO o1, ProcessInstanceVO o2) 
@@ -72,19 +61,19 @@ public class AcquireTTSHandler implements ApplicationRunner {
 			}
 		});
 
-		String modelName = returnList.get(0).getProcessKey();
+		String modelName = processInstanceList.get(0).getProcessKey();
 		List<Object> gpuList = new ArrayList<>();
 
-		for (int i = 0; i < returnList.size(); i++) 
+		for (int i = 0; i < processInstanceList.size(); i++) 
 		{
 			TtsGpu gpu = new TtsGpu();
-			gpu.setIp(returnList.get(i).getIp());
-			gpu.setPort(String.valueOf(returnList.get(i).getPort()));
+			gpu.setIp(processInstanceList.get(i).getIp());
+			gpu.setPort(String.valueOf(processInstanceList.get(i).getPort()));
 
-			if (!returnList.get(i).getProcessKey().equals(modelName)) 
+			if (!processInstanceList.get(i).getProcessKey().equals(modelName)) 
 			{
 				redisUtil.lSet(AiConstants.GUIYUTTS + modelName + AiConstants.AVALIABLE, gpuList);
-				modelName = returnList.get(i).getProcessKey();
+				modelName = processInstanceList.get(i).getProcessKey();
 				gpuList = new ArrayList<>();
 			}
 			gpuList.add(gpu);

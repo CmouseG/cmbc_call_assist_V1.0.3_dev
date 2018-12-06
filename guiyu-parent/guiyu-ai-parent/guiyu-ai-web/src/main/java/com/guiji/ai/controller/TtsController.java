@@ -1,4 +1,4 @@
-package com.guiji.ai.web;
+package com.guiji.ai.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
-import com.guiji.ai.tts.TtsReqQueue;
+import com.guiji.ai.tts.TtsReqVOQueue;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TtsReqVO;
@@ -48,7 +48,7 @@ public class TtsController implements ITts
 				//入库
 				ttsService.saveTtsStatus(ttsReqVO);
 				//入队列
-				TtsReqQueue.getInstance().produce(ttsReqVO);
+				TtsReqVOQueue.getInstance().produce(ttsReqVO);
 			}
 
 			return Result.ok("success");

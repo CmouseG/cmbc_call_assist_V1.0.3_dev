@@ -44,7 +44,7 @@ public class InterfaceController {
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		// 校验tocken
-		
+
 		return dispatchPlanService.queryDispatchPlanByPhoens(phone, batchNumber, pagenum, pagesize);
 	}
 

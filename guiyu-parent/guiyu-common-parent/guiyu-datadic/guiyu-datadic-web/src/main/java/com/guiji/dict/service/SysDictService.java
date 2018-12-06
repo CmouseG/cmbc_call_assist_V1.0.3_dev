@@ -9,7 +9,7 @@ import java.util.List;
  * Created by ty on 2018/10/29.
  */
 public interface SysDictService {
-    public SysDict saveOrUpdateDict(SysDict sysDict);
+    public SysDict saveOrUpdateDict(SysDict sysDict,Long userId);
 
     public List<SysDict> queryDictList(SysDict sysDict);
 

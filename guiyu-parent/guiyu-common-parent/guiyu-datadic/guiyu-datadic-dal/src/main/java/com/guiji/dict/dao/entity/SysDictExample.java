@@ -784,6 +784,126 @@ public class SysDictExample {
             addCriterion("update_time not between", value1, value2, "updateTime");
             return (Criteria) this;
         }
+
+        public Criteria andCreateIdIsNull() {
+            addCriterion("create_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdIsNotNull() {
+            addCriterion("create_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdEqualTo(Long value) {
+            addCriterion("create_id =", value, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdNotEqualTo(Long value) {
+            addCriterion("create_id <>", value, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdGreaterThan(Long value) {
+            addCriterion("create_id >", value, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("create_id >=", value, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdLessThan(Long value) {
+            addCriterion("create_id <", value, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdLessThanOrEqualTo(Long value) {
+            addCriterion("create_id <=", value, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdIn(List<Long> values) {
+            addCriterion("create_id in", values, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdNotIn(List<Long> values) {
+            addCriterion("create_id not in", values, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdBetween(Long value1, Long value2) {
+            addCriterion("create_id between", value1, value2, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateIdNotBetween(Long value1, Long value2) {
+            addCriterion("create_id not between", value1, value2, "createId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdIsNull() {
+            addCriterion("update_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdIsNotNull() {
+            addCriterion("update_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdEqualTo(Long value) {
+            addCriterion("update_id =", value, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdNotEqualTo(Long value) {
+            addCriterion("update_id <>", value, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdGreaterThan(Long value) {
+            addCriterion("update_id >", value, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("update_id >=", value, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdLessThan(Long value) {
+            addCriterion("update_id <", value, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdLessThanOrEqualTo(Long value) {
+            addCriterion("update_id <=", value, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdIn(List<Long> values) {
+            addCriterion("update_id in", values, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdNotIn(List<Long> values) {
+            addCriterion("update_id not in", values, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdBetween(Long value1, Long value2) {
+            addCriterion("update_id between", value1, value2, "updateId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateIdNotBetween(Long value1, Long value2) {
+            addCriterion("update_id not between", value1, value2, "updateId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -31,7 +31,7 @@ public class SysDictServiceImpl implements SysDictService {
     private RedisUtil redisUtil;
     @Override
     @Transactional
-    public SysDict saveOrUpdateDict(SysDict sysDict) {
+    public SysDict saveOrUpdateDict(SysDict sysDict,Long userId) {
         if(sysDict != null) {
             Long id = sysDict.getId();	//主键ID
             if(StrUtils.isEmpty(id)) {
@@ -39,12 +39,15 @@ public class SysDictServiceImpl implements SysDictService {
                 sysDict.setDelFlag("0");
                 sysDict.setCreateTime(new Date());
                 sysDict.setUpdateTime(new Date());
+                sysDict.setCreateId(userId);
+                sysDict.setUpdateId(userId);
                 sysDictMapper.insert(sysDict);
 
                 logger.info("新增字典成功"+sysDict);
             }else {
                 logger.info("更新字典");
                 sysDict.setUpdateTime(new Date());
+                sysDict.setUpdateId(userId);
                 sysDictMapper.updateByPrimaryKeySelective(sysDict);
                 logger.info("更新字典成功"+sysDict);
             }

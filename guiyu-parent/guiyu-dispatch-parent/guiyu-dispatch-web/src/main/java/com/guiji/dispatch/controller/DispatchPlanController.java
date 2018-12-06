@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.bean.IdsDto;
@@ -39,7 +40,7 @@ public class DispatchPlanController {
 	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
 		MessageDto dto = new MessageDto();
 		try {
-			dto= dispatchPlanService.addSchedule(dispatchPlan, userId);
+			dto = dispatchPlanService.addSchedule(dispatchPlan, userId);
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
@@ -64,7 +65,7 @@ public class DispatchPlanController {
 	 * 
 	 * @param fileName
 	 * @param file
-	 * @return	
+	 * @return
 	 */
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
@@ -72,8 +73,8 @@ public class DispatchPlanController {
 			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan) {
 		logger.info("batchImport start");
 		String fileName = file.getOriginalFilename();
-		MessageDto batchImport= new MessageDto();
-		
+		MessageDto batchImport = new MessageDto();
+
 		try {
 			dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan);
 		} catch (Exception e) {
@@ -81,7 +82,7 @@ public class DispatchPlanController {
 			batchImport.setMsg(e.getMessage());
 			logger.error("error", e);
 		}
-		
+
 		return batchImport;
 
 	}
@@ -182,11 +183,11 @@ public class DispatchPlanController {
 	public List<LineConcurrent> outLineinfos(@RequestHeader Long userId) {
 		return dispatchPlanService.outLineinfos(String.valueOf(userId));
 	}
-	
-	//累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，
-	
-	
-	
-	
-	
+
+	// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+	@PostMapping("getServiceStatistics")
+	public JSONObject getServiceStatistics() {
+		return dispatchPlanService.getServiceStatistics();
+	}
+
 }

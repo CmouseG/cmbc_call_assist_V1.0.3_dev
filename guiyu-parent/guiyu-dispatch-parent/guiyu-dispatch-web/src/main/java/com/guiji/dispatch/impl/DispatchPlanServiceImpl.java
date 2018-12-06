@@ -326,6 +326,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 
 			dispatchPlanMapper.insert(dispatchPlan);
+			dispatchPlanBatch.setId(null);
 			dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		}
 		return result;
@@ -552,7 +553,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		getBatchNames(selectByExample);
+//		getBatchNames(selectByExample);
 
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
@@ -895,6 +896,38 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
 		jsonObject.put("data", callPlanDetailRecord.getBody());
+		return jsonObject;
+	}
+
+	
+	
+	@Override
+	public JSONObject getServiceStatistics() {
+		JSONObject jsonObject = new JSONObject();
+//		累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+		
+		int countNums = dispatchPlanMapper.countByExample( new DispatchPlanExample());	
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		int calledNums = dispatchPlanMapper.countByExample(ex);
+		
+		DispatchPlanExample ex1 = new DispatchPlanExample();
+		ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+		ex1.setOrderByClause("`gmt_create` DESC");
+		DispatchPlan dispatchPlan = dispatchPlanMapper.selectByExample(ex1).get(0);
+		
+		
+		DispatchPlanExample ex2 = new DispatchPlanExample();
+		ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		ex2.setOrderByClause("`gmt_create` DESC");
+		DispatchPlan dispatchPlan1 = dispatchPlanMapper.selectByExample(ex2).get(0);
+		
+		jsonObject.put("countNums", countNums);
+		jsonObject.put("calledNums", calledNums);
+		jsonObject.put("lastPlanDate", dispatchPlan.getCallData());
+		jsonObject.put("lastCalledDate", dispatchPlan1.getCallData());
+		
+		
 		return jsonObject;
 	}
 

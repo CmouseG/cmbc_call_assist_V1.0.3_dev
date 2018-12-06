@@ -233,4 +233,6 @@ public interface IDispatchPlanService {
 	
 	JSONObject queryDispatchPlanByPhoens(String phone ,String batchName,int pagenum,int pagesize);
 	
+	JSONObject getServiceStatistics();
+	
 }

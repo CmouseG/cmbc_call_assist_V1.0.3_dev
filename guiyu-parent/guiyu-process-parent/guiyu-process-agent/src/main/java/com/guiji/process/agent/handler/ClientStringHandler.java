@@ -2,6 +2,8 @@ package com.guiji.process.agent.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 当编解码器为字符串时用来接收数据
@@ -9,10 +11,11 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  *
  */
 public class ClientStringHandler extends ChannelInboundHandlerAdapter {
+	private final Logger logger = LoggerFactory.getLogger(ClientStringHandler.class);
 	
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		System.out.println("client:" + msg.toString());
+		logger.info("client:" + msg.toString());
 	}
 
 	@Override

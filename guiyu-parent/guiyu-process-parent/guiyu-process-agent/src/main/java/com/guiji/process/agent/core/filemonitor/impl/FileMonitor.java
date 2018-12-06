@@ -1,21 +1,23 @@
 package com.guiji.process.agent.core.filemonitor.impl;
 
+import com.guiji.process.agent.ProcessAgentCmdHandler;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class FileMonitor {
+    private final Logger logger = LoggerFactory.getLogger(FileMonitor.class);
 
     public  void monitor(String rootDir)
     {
-        System.out.println("*********************************启动成功*********************************");
-        // 监控目录
-
+        logger.info("*********************************启动成功*********************************");
         // 轮询间隔 5 秒
         long interval = TimeUnit.SECONDS.toMillis(1);
         // 创建过滤器
@@ -36,7 +38,7 @@ public class FileMonitor {
         // 开始监控
         try{
             monitor.start();
-            System.out.println("***************监控中***************");
+            logger.info("***************监控中***************");
         }
         catch (Exception e){
             e.printStackTrace();

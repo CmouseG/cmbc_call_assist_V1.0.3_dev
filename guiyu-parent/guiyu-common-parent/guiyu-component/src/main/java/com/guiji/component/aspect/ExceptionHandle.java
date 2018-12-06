@@ -21,6 +21,6 @@ public class ExceptionHandle
 			logger.error("ErrorMessage： " + ex.getErrorMessage());
         }
 		
-		logger.error("【系统异常】", e);
+		logger.info("【系统异常】", e);
 	}
 }

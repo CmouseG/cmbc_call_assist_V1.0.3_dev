@@ -128,7 +128,7 @@ public class RedistributeHandler {
 					String port = gpuSumList.get(0).getPort();
 					//调进程管理接口-模型切换
 					logger.info("change TTS ...");
-					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
+					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port), null);
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
 //						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new TtsGpu(ip, port));

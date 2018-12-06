@@ -1,4 +1,4 @@
-package com.guiji.ai.web;
+package com.guiji.ai.controller;
 
 import java.util.ArrayList;
 import java.util.Date;

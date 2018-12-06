@@ -25,7 +25,7 @@ public class ControllerLogAspect
 	@Autowired
 	ExceptionHandle exceptionHandle;
 
-	@Pointcut("execution(public * com.guiji.*.web.*.*(..))")
+	@Pointcut("execution(public * com.guiji.*.controller.*.*(..))")
 	public void log()
 	{
 	}

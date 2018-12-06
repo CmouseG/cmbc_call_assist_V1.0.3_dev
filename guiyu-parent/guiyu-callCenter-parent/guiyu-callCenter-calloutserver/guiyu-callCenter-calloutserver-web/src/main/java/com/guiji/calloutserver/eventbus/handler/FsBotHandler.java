@@ -191,7 +191,7 @@ public class FsBotHandler {
                 //只有在播放状态，才去调用isMatch接口，如果不是播放状态，则直接调用hello
                 if(channelHelper.isInPlay(event.getUuid())){
                     //判断是否匹配到关键词
-                    if(!aiManager.isMatch(event.getUuid(), event.getAsrText())){
+                    if(!aiManager.isMatch(event.getUuid(), event.getAsrText(), callPlan.getAiId(), callPlan.getCustomerId())){
                         log.debug("sellbot识别未匹配，识别内容为[{}]，跳过后续的放音处理。", event.getAsrText());
                         CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
                         callDetail.setCallDetailType(ECallDetailType.UNMATCH.ordinal());

@@ -19,7 +19,7 @@ public interface AIManager {
      * @param sentence
      * @return
      */
-    boolean isMatch(String callUuid, String sentence);
+    boolean isMatch(String callUuid, String sentence, String aiNo, String userId);
 
     /**
      * 发起ai请求

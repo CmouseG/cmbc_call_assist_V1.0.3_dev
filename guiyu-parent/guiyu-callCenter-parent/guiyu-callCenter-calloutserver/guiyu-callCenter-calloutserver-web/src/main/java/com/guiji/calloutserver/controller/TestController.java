@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
+import com.guiji.calloutserver.eventbus.handler.CallResourceChecker;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,10 @@ public class TestController {
     @Autowired
     AsyncEventBus asyncEventBus;
 
+
+    @Autowired
+    CallResourceChecker callResourceChecker;
+
     @GetMapping("/testcall")
     public CallOutPlan startTestCall(@RequestParam String number, @RequestParam String temp, @RequestParam Integer lineId){
         log.debug("收到测试呼叫请求, 号码[{}], 模板[{}],线路id[{}]", number, temp, lineId);
@@ -51,14 +56,14 @@ public class TestController {
         callOutPlan.setCallState(ECallState.init.ordinal());
         callOutPlan.setCreateTime(new Date());
         callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
-        callOutPlan.setCustomerId("16");
+        callOutPlan.setCustomerId("1");
         callOutPlan.setIsdel(0);
         callOutPlan.setIsread(0);
 
         callOutPlanService.add(callOutPlan);
-
-        CallResourceReadyEvent event = new CallResourceReadyEvent(callOutPlan);
-        asyncEventBus.post(event);
+        callResourceChecker.checkCallResources(callOutPlan);
+//        CallResourceReadyEvent event = new CallResourceReadyEvent(callOutPlan);
+//        asyncEventBus.post(event);
 
         return callOutPlan;
     }

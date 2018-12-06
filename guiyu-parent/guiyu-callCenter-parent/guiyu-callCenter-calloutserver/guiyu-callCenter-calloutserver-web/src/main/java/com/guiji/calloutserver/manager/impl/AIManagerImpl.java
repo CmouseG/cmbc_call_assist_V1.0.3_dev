@@ -106,9 +106,11 @@ public class AIManagerImpl implements AIManager {
         log.info("开始发起sellbot请求，request[{}]", aiRequest);
         AIResponse aiResponse;
         try {
+            CallOutPlan callPlan = callOutPlanService.findByCallId(aiRequest.getUuid());
+
             if(aiRequest.isCallMatch()){
                 log.info("请求sellbot之前，先调用isMatch判断关键词是否匹配");
-                SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(aiRequest.getUuid(), aiRequest.getSentence());
+                SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(aiRequest.getUuid(), aiRequest.getSentence(), callPlan.getAiId(), callPlan.getCustomerId());
                 if(!sellbotIsMatchResponse.isMatched()){
                     log.info("该识别未匹配到sellbot关键字，退出");
                     aiResponse = new AIResponse();
@@ -118,8 +120,6 @@ public class AIManagerImpl implements AIManager {
                     return aiResponse;
                 }
             }
-
-            CallOutPlan callPlan = callOutPlanService.findByCallId(aiRequest.getUuid());
 
             AiCallNextReq aiCallNextReq = new  AiCallNextReq();
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
@@ -168,11 +168,11 @@ public class AIManagerImpl implements AIManager {
      * @param sentence
      * @return
      */
-    public boolean isMatch(String callUuid, String sentence){
+    public boolean isMatch(String callUuid, String sentence, String aiNo, String userId){
         boolean isMatched = false;
 
         try {
-            SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(callUuid, sentence);
+            SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(callUuid, sentence, aiNo, userId);
             isMatched = sellbotIsMatchResponse.isMatched();
         } catch (Exception e) {
             log.warn("isMatch出现异常", e);
@@ -187,11 +187,13 @@ public class AIManagerImpl implements AIManager {
      * @return
      */
 
-    private SellbotIsMatchResponse sendIsMatchRequest(String callUuid, String sentence) throws Exception {
+    private SellbotIsMatchResponse sendIsMatchRequest(String callUuid, String sentence, String aiNo, String userId) throws Exception {
         try {
             AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
             aiCallLngKeyMatchReq.setSentence(sentence);
             aiCallLngKeyMatchReq.setSeqid(callUuid);
+            aiCallLngKeyMatchReq.setAiNo(aiNo);
+            aiCallLngKeyMatchReq.setUserId(userId);
             Result.ReturnData<AiCallNext> result = robotRemote.aiLngKeyMatch(aiCallLngKeyMatchReq);
 
             String resp =result.getBody().getSellbotJson();

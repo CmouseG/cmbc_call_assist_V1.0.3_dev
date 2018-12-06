@@ -68,6 +68,7 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
         int totalRecord = sysProcessTaskMapper.countByExample(example); //总数
         example.setLimitStart((pageNo-1)*pageSize);	//起始条数
         example.setLimitEnd(pageSize);	//结束条数
+        example.setOrderByClause("create_time desc");//按时间倒序显示
         //分页查询
         List<SysProcessTask> list = sysProcessTaskMapper.selectByExample(example);
         if(list != null && !list.isEmpty()) {

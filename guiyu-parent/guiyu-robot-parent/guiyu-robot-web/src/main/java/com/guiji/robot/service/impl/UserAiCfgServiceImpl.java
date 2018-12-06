@@ -197,6 +197,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			record.setCrtTime(new Date());
 			record.setBusiId(userAiCfgInfo.getId());
 			BeanUtil.copyProperties(userAiCfgInfo, record);
+			record.setTemplateId(userAiCfgInfo.getTemplateIds());
 			userAiCfgHisInfoMapper.insert(record);
 		}
 		return userAiCfgInfo;

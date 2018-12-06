@@ -16,12 +16,12 @@ public class FileToolUtil {
 
         if (file.exists()) {
             if (file.isDirectory()) {
-                System.out.println("dir exists");
+                logger.debug("dir exists");
             } else {
-                System.out.println("the same name file exists, can not create dir");
+                logger.debug("the same name file exists, can not create dir");
             }
         } else {
-            System.out.println("dir not exists, create it ...");
+            logger.debug("dir not exists, create it ...");
             file.mkdir();
         }
     }

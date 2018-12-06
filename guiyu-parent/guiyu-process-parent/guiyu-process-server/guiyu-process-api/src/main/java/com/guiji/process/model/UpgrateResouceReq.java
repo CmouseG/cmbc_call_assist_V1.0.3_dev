@@ -10,6 +10,8 @@ public class UpgrateResouceReq {
 
     private String tmplId;
 
+    private Long userId;
+
     public ProcessTypeEnum getProcessTypeEnum() {
         return processTypeEnum;
     }
@@ -34,12 +36,21 @@ public class UpgrateResouceReq {
         this.tmplId = tmplId;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "UpgrateResouceReq{" +
                 "processTypeEnum=" + processTypeEnum +
                 ", file='" + file + '\'' +
                 ", tmplId='" + tmplId + '\'' +
+                ", userId=" + userId +
                 '}';
     }
 }

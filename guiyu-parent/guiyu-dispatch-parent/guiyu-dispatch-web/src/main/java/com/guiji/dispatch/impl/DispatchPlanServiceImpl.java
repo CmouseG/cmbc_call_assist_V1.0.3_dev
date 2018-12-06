@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,14 +46,13 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
-import com.guiji.dispatch.util.DateProvider;
-import com.guiji.dispatch.util.HttpClientUtil;
-import com.guiji.dispatch.util.HttpUtils;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.DateUtil;
+import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
 
@@ -74,8 +72,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private DispatchHourMapper dispatchHourMapper;
 
-	@Autowired
-	private DateProvider dateProvider;
 	@Autowired
 	private IAuth authService;
 
@@ -125,8 +121,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
 		// 通知状态;通知状态1等待2失败3成功
 		dispatchPlanBatch.setStatusNotify(Constant.STATUSNOTIFY_0);
-		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
-		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusShow(dispatchPlan.getStatusShow());
 		dispatchPlanBatch.setUserId(userId.intValue());
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
@@ -135,8 +131,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setUserId(userId.intValue());
 		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
-		dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
-		dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		dispatchPlan.setIsDel(Constant.IS_DEL_0);
 		dispatchPlan.setBatchId(dispatchPlanBatch.getId());
@@ -251,8 +247,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
-		dispatchPlanBatch.setGmtModified(dateProvider.getCurrentTime());
-		dispatchPlanBatch.setGmtCreate(dateProvider.getCurrentTime());
+		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
+		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
 		// 查询用户名称
@@ -302,8 +298,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setUserId(userId.intValue());
 			dispatchPlan.setParams(params);
 			dispatchPlan.setPlanUuid(IdGenUtil.uuid());
-			dispatchPlan.setGmtModified(dateProvider.getCurrentTime());
-			dispatchPlan.setGmtCreate(dateProvider.getCurrentTime());
+			dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
+			dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
 			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
@@ -326,6 +322,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 
 			dispatchPlanMapper.insert(dispatchPlan);
+			dispatchPlanBatch.setId(null);
 			dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		}
 		return result;
@@ -552,7 +549,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		getBatchNames(selectByExample);
+//		getBatchNames(selectByExample);
 
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
@@ -635,8 +632,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.setLimitEnd(requestCount);
 		}
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-
-		// // 同步状态;0未同步1已同步
+		//同步状态;0未同步1已同步
 		for (DispatchPlan dispatchPlan : phones) {
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
 			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
@@ -687,7 +683,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
-				dis.setGmtModified(dateProvider.getCurrentTime());
+				dis.setGmtModified(DateUtil.getCurrent4Time());
 			} catch (Exception e) {
 				logger.error("error", e);
 			}
@@ -895,6 +891,38 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
 		jsonObject.put("data", callPlanDetailRecord.getBody());
+		return jsonObject;
+	}
+
+	
+	
+	@Override
+	public JSONObject getServiceStatistics() {
+		JSONObject jsonObject = new JSONObject();
+//		累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+		
+		int countNums = dispatchPlanMapper.countByExample( new DispatchPlanExample());	
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		int calledNums = dispatchPlanMapper.countByExample(ex);
+		
+		DispatchPlanExample ex1 = new DispatchPlanExample();
+		ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+		ex1.setOrderByClause("`gmt_create` DESC");
+		DispatchPlan dispatchPlan = dispatchPlanMapper.selectByExample(ex1).get(0);
+		
+		
+		DispatchPlanExample ex2 = new DispatchPlanExample();
+		ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		ex2.setOrderByClause("`gmt_create` DESC");
+		DispatchPlan dispatchPlan1 = dispatchPlanMapper.selectByExample(ex2).get(0);
+		
+		jsonObject.put("countNums", countNums);
+		jsonObject.put("calledNums", calledNums);
+		jsonObject.put("lastPlanDate", dispatchPlan.getCallData());
+		jsonObject.put("lastCalledDate", dispatchPlan1.getCallData());
+		
+		
 		return jsonObject;
 	}
 

@@ -59,7 +59,7 @@ public interface IProceseScheduleService {
      * @param deviceVO
      * @return
      */
-    void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO deviceVO);
+    void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO deviceVO,Long userId);
 
 
     /**
@@ -68,5 +68,5 @@ public interface IProceseScheduleService {
      * @param file
      * @return
      */
-    void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file);
+    void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file,Long userId);
 }

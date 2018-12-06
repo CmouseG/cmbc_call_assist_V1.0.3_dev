@@ -20,5 +20,5 @@ public interface ISysProcessService {
 
     public Page<SysProcess> queryProcessPage(int pageNo, int pageSize, SysProcess sysProcess);
 
-    public void executeCmd(List<SysProcess> sysProcessList, CmdTypeEnum cmdTypeEnum);
+    public void executeCmd(List<SysProcess> sysProcessList, CmdTypeEnum cmdTypeEnum,Long userId);
 }

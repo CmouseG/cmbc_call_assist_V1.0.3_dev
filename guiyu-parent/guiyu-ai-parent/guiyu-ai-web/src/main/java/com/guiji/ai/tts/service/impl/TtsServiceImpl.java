@@ -1,7 +1,6 @@
 package com.guiji.ai.tts.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,17 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.guiji.ai.dao.TtsResultMapper;
-import com.guiji.ai.dao.TtsStatusMapper;
-import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.tts.constants.AiConstants;
-import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
-import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
+import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
+import com.guiji.ai.tts.service.impl.func.TtsServiceProvideFactory;
 import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.TtsCallback;
 import com.guiji.utils.RedisUtil;
@@ -37,13 +31,11 @@ public class TtsServiceImpl implements ITtsService
 	private static Logger logger = LoggerFactory.getLogger(TtsServiceImpl.class);
 
 	@Autowired
-	private RedisUtil redisUtil;
+	RedisUtil redisUtil;
 	@Autowired
 	IRobotRemote iRobotRemote;
 	@Autowired
-	TtsStatusMapper ttsStatusMapper;
-	@Autowired
-	TtsResultMapper ttsResultMapper;
+	IStatusService statusService;
 	@Autowired
 	TtsServiceProvideFactory serviceProvideFactory;
 
@@ -81,7 +73,7 @@ public class TtsServiceImpl implements ITtsService
 			tableStatus = AiConstants.FAIL;
 		}
 
-		ttsStatusMapper.updateStatusByBusId(ttsReqVO.getBusId(), tableStatus);
+		statusService.updateStatusByBusId(ttsReqVO.getBusId(), tableStatus);
 		
 		// 回调机器人接口，返回数据
 		TtsCallback ttsCallback = new TtsCallback();
@@ -108,59 +100,17 @@ public class TtsServiceImpl implements ITtsService
 		// 合成
 		audioUrl = serviceProvideFactory.getTtsServiceProvide(model).transfer(busId, model, text);
 
-		redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
+		redisUtil.set(model + "_" + text, audioUrl, 60*30); // 返回值url存入redis 失效时间为30分钟
 
 		return audioUrl;
 	}
 
-	@Override
-	@Transactional
-	public String getTransferStatusByBusId(String busId)
-	{
-		String status = "";
-		try
-		{
-			status = ttsStatusMapper.getReqStatusByBusId(busId);
-		} catch (Exception e)
-		{
-			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS.getErrorCode(), e);
-		}
-		return status;
 
-	}
 
-	@Override
-	@Transactional
-	public List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status) throws Exception
-	{
-		List<Map<String, Object>> restltMapList = new ArrayList<>();
-		
-		restltMapList = ttsStatusMapper.getTtsStatus(startTime, endTime, model, status);
-		
-		return restltMapList;
-	}
 
-	@Override
-	@Transactional
-	public List<Map<String, String>> getTtsTransferResult(String busId) throws Exception
-	{
-		List<Map<String, String>> restltMapList = new ArrayList<>();
-		
-		restltMapList = ttsResultMapper.getTtsTransferResult(busId);
-		
-		return restltMapList;
-	}
 
-	@Override
-	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception
-	{
-		TtsStatus ttsStatus = new TtsStatus();
-		ttsStatus.setBusId(ttsReqVO.getBusId());
-		ttsStatus.setModel(ttsReqVO.getModel());
-		ttsStatus.setStatus(AiConstants.UNTREATED); //未处理
-		ttsStatus.setCreateTime(new Date());
-		ttsStatus.setText_count(ttsReqVO.getContents().size());
-		SaveTtsStatusHandler.getInstance().add(ttsStatus, ttsStatusMapper);
-		
-	}
+
+
+
+
 }

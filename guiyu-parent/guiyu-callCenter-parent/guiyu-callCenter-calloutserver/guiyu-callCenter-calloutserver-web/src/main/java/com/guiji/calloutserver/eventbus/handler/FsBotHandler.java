@@ -366,7 +366,6 @@ public class FsBotHandler {
             asyncEventBus.post(afterCallEvent);
 
             //释放ai资源
-            // todo 如果释放资源失败怎么办，比如机器人中心挂了
             aiManager.releaseAi(callPlan);
 
             //释放实时通道相关资源

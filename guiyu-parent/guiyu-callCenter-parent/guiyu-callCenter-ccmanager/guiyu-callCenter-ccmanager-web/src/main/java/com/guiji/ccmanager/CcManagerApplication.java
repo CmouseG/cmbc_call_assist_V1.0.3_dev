@@ -11,7 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(scanBasePackages = "com.guiji")
 @EnableDiscoveryClient
 @EnableSwagger2
-@EnableFeignClients(basePackages = "com.guiji")
+@EnableFeignClients(basePackages = {"com.guiji","ai.guiji"})
 @EnableAutoResultPack
 @MapperScan("com.guiji.*.dao")
 public class CcManagerApplication{

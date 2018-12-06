@@ -1,4 +1,4 @@
-package com.guiji.ai.tts.service.impl;
+package com.guiji.ai.tts.service.impl.func;
 
 import java.io.File;
 
@@ -11,10 +11,11 @@ public abstract class TtsServiceProvide {
 
 		// 请求ip:port 返回音频文件
 		File file = transferByChild(model, text);
-		
-		if(file == null){
+		if(file == null)
+		{
 			return null;
 		}
+		
 		// 上传文件服务器
 		String audioUrl = uploadToServer(busiId, file);
 		// 存储数据库和日志
@@ -24,9 +25,9 @@ public abstract class TtsServiceProvide {
 
 	}
 
-	abstract File transferByChild(String model, String text);
+	public abstract File transferByChild(String model, String text);
 	
-	abstract String uploadToServer(String busiId, File file);
+	public abstract String uploadToServer(String busiId, File file);
 
-	abstract void savaTtsResult(String busiId, String model, String text, String audioUrl);
+	public abstract void savaTtsResult(String busiId, String model, String text, String audioUrl);
 }

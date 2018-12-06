@@ -24,6 +24,10 @@ public class SysDict implements Serializable {
 
     private Date updateTime;
 
+    private Long createId;
+
+    private Long updateId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -106,6 +110,22 @@ public class SysDict implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
+    public Long getUpdateId() {
+        return updateId;
+    }
+
+    public void setUpdateId(Long updateId) {
+        this.updateId = updateId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -122,6 +142,8 @@ public class SysDict implements Serializable {
         sb.append(", delFlag=").append(delFlag);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", createId=").append(createId);
+        sb.append(", updateId=").append(updateId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

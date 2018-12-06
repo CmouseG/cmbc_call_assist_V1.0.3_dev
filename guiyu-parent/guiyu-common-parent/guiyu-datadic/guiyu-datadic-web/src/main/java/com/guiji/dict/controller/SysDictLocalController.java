@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,8 @@ public class SysDictLocalController {
 
     @ApiOperation(value="新增/更新字典信息", notes="根据是否有ID新增或者更新字典信息")
     @RequestMapping(value = "/saveOrUpdateDict", method = RequestMethod.POST)
-    public SysDict saveOrUpdateDict(SysDict sysDict) {
-        return sysDictService.saveOrUpdateDict(sysDict);
+    public SysDict saveOrUpdateDict(SysDict sysDict,@RequestHeader Long userId) {
+        return sysDictService.saveOrUpdateDict(sysDict,userId);
     }
 
     @ApiOperation(value="查询字典信息", notes="根据查询条件查询字典信息")

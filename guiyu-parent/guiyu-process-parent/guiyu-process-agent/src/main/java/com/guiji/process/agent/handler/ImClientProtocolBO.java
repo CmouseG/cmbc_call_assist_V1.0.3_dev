@@ -13,6 +13,8 @@ import com.guiji.process.core.vo.CmdTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.utils.JsonUtils;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -23,8 +25,7 @@ import java.util.List;
  * Created by ty on 2018/11/19.
  */
 public class ImClientProtocolBO {
-    /*public static final String HOST = "127.0.0.1";
-    public static int PORT = 18082;*/
+    private final Logger logger = LoggerFactory.getLogger(ImClientProtocolBO.class);
     public static Channel channelGlobal = null;
     public static List<OperateVO> operateVOList = new ArrayList<OperateVO>();
     public static long operateIntervalTime = 30000;//命令操作间隔30s
@@ -73,7 +74,8 @@ public class ImClientProtocolBO {
 
         channelGlobal.writeAndFlush(builder);
 
-        System.out.println("客户端发送消息：：" + cmdMessageVO);
+
+        logger.debug("客户端发送消息：：" + cmdMessageVO);
     }
 
 

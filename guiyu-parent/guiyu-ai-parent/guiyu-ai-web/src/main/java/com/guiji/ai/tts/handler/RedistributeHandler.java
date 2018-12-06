@@ -16,16 +16,16 @@ import org.springframework.scheduling.annotation.Scheduled;
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
-import com.guiji.ai.tts.service.impl.TtsGpu;
+import com.guiji.ai.tts.service.impl.func.TtsGpu;
 import com.guiji.ai.tts.vo.GpuCountVO;
-import com.guiji.ai.tts.vo.TtsGpuVO;
+import com.guiji.ai.vo.TtsGpuVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
+import com.guiji.process.model.ChangeModelReq;
 import com.guiji.utils.RedisUtil;
-
 
 public class RedistributeHandler {
 	private static Logger logger = LoggerFactory.getLogger(RedistributeHandler.class);
@@ -128,8 +128,13 @@ public class RedistributeHandler {
 					String ip = gpuSumList.get(0).getIp();
 					String port = gpuSumList.get(0).getPort();
 					//调进程管理接口-模型切换
+					ChangeModelReq changeModelReq = new ChangeModelReq();
+					changeModelReq.setFromModel(fromModel);
+					changeModelReq.setToModel(model);
+					changeModelReq.setIp(ip);
+					changeModelReq.setPort(Integer.parseInt(port));
 					logger.info("change TTS ...");
-					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(fromModel,model,ip,Integer.parseInt(port));
+					ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(changeModelReq);
 					if(returnData != null && returnData.getBody()){
 						//将指定gpu添加到指定model的可用列表中
 //						redisUtil.lSet(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, new TtsGpu(ip, port));

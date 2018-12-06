@@ -82,17 +82,16 @@ public class RequestHelper {
                     retryTimes--;
                 }
 
-                if(retryTimes>0) {
+                if(unStopFlag || retryTimes>0) {
                     totalDelaySeconds += delaySeconds;
                     int totalSleepSeconds = (retryInterval + totalDelaySeconds);
                     if (totalSleepSeconds >= maxRetryInterval) {
                         totalSleepSeconds = maxRetryInterval;
                     }
                     Thread.sleep(totalSleepSeconds * 1000L);
-
-                    if (unStopFlag) {
-                        isContinue = true;
-                    }
+                     isContinue = true;
+                }else{
+                    isContinue = false;
                 }
             }
 

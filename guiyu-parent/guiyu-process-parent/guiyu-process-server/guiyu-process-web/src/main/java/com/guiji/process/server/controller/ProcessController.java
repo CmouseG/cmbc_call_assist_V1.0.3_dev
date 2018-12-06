@@ -25,20 +25,20 @@ public class ProcessController {
 
 
     @PostMapping("/start")
-    public Object start(@RequestBody ProcessCmdVO processCmdVO) {
-        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.START);
+    public Object start(@RequestBody ProcessCmdVO processCmdVO,@RequestHeader Long userId) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.START,userId);
         return "success";
     }
 
     @PostMapping("/stop")
-    public Object stop(@RequestBody ProcessCmdVO processCmdVO) {
-        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.STOP);
+    public Object stop(@RequestBody ProcessCmdVO processCmdVO,@RequestHeader Long userId) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.STOP,userId);
         return "success";
     }
 
     @PostMapping("/restart")
-    public Object restart(@RequestBody ProcessCmdVO processCmdVO) {
-        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.RESTART);
+    public Object restart(@RequestBody ProcessCmdVO processCmdVO,@RequestHeader Long userId) {
+        sysProcessService.executeCmd(processCmdVO.getSysProcessList(),CmdTypeEnum.RESTART,userId);
         return "success";
     }
 }

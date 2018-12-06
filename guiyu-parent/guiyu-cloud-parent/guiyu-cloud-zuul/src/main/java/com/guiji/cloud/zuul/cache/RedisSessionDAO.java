@@ -28,7 +28,7 @@ public class RedisSessionDAO extends CachingSessionDAO {
 	@Override
 	protected void doUpdate(Session session) {
 		sessionCache.set(session.getId().toString(), session);
-		System.out.println("doUpdate");
+		//System.out.println("doUpdate");
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class RedisSessionDAO extends CachingSessionDAO {
 		String sessionId=session.getId().toString();
 		sessionCache.del(sessionId);
 		timeCache.del(sessionId);
-		System.out.println("doDelete");
+		//System.out.println("doDelete");
 	}
 
 	@Override
@@ -47,13 +47,13 @@ public class RedisSessionDAO extends CachingSessionDAO {
 	        assignSessionId(session, sessionId);
 			timeCache.set((String)sessionId, 1);
 		}
-		System.out.println("doCreate");
+		//System.out.println("doCreate");
         return sessionId;
 	}
 
 	@Override
 	protected Session doReadSession(Serializable sessionId) {
-		System.out.println("doReadSession");
+		//System.out.println("doReadSession");
 		return (Session) sessionCache.get(sessionId.toString());
 	}
 	

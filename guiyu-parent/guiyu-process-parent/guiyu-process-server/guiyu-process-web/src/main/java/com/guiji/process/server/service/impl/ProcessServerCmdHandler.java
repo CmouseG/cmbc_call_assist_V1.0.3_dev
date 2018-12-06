@@ -66,15 +66,15 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 doUnRegister(cmdMessageVO);
                 break;
             case RESTART:
-                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.RESTART, cmdMessageVO.getParameters());
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.RESTART, cmdMessageVO.getParameters(),cmdMessageVO.getUserId());
                 break;
             case UNKNOWN:
                 break;
             case START:
-                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.START, cmdMessageVO.getParameters());
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.START, cmdMessageVO.getParameters(),cmdMessageVO.getUserId());
                 break;
             case STOP:
-                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.STOP, cmdMessageVO.getParameters());
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.STOP, cmdMessageVO.getParameters(),cmdMessageVO.getUserId());
                 break;
             case HEALTH:
                 doHealthStatus(cmdMessageVO);
@@ -123,23 +123,6 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
         processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), toStatus);
     }
-
-    private void doAgentRegister(CmdMessageVO cmdMessageVO) {
-        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-        // 存入数据库
-        SysProcess sysProcess = new SysProcess();
-        sysProcess.setIp(processInstanceVO.getIp());
-        sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
-        sysProcess.setName(processInstanceVO.getName());
-        sysProcess.setProcessKey(processInstanceVO.getProcessKey());
-        sysProcess.setStatus(processInstanceVO.getStatus().getValue());
-        sysProcess.setType(processInstanceVO.getType().getValue());
-        sysProcess.setCreateTime(new Date());
-        sysProcess.setUpdateTime(new Date());
-        sysProcessService.insert(sysProcess);
-
-    }
-
 
     private void doRegister(CmdMessageVO cmdMessageVO)
     {

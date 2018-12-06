@@ -622,6 +622,216 @@ public class SysUserExample {
             return (Criteria) this;
         }
 
+        public Criteria andIntenLabelIsNull() {
+            addCriterion("inten_label is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelIsNotNull() {
+            addCriterion("inten_label is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelEqualTo(String value) {
+            addCriterion("inten_label =", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelNotEqualTo(String value) {
+            addCriterion("inten_label <>", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelGreaterThan(String value) {
+            addCriterion("inten_label >", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelGreaterThanOrEqualTo(String value) {
+            addCriterion("inten_label >=", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelLessThan(String value) {
+            addCriterion("inten_label <", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelLessThanOrEqualTo(String value) {
+            addCriterion("inten_label <=", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelLike(String value) {
+            addCriterion("inten_label like", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelNotLike(String value) {
+            addCriterion("inten_label not like", value, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelIn(List<String> values) {
+            addCriterion("inten_label in", values, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelNotIn(List<String> values) {
+            addCriterion("inten_label not in", values, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelBetween(String value1, String value2) {
+            addCriterion("inten_label between", value1, value2, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntenLabelNotBetween(String value1, String value2) {
+            addCriterion("inten_label not between", value1, value2, "intenLabel");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyIsNull() {
+            addCriterion("access_key is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyIsNotNull() {
+            addCriterion("access_key is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyEqualTo(String value) {
+            addCriterion("access_key =", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyNotEqualTo(String value) {
+            addCriterion("access_key <>", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyGreaterThan(String value) {
+            addCriterion("access_key >", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("access_key >=", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyLessThan(String value) {
+            addCriterion("access_key <", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyLessThanOrEqualTo(String value) {
+            addCriterion("access_key <=", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyLike(String value) {
+            addCriterion("access_key like", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyNotLike(String value) {
+            addCriterion("access_key not like", value, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyIn(List<String> values) {
+            addCriterion("access_key in", values, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyNotIn(List<String> values) {
+            addCriterion("access_key not in", values, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyBetween(String value1, String value2) {
+            addCriterion("access_key between", value1, value2, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAccessKeyNotBetween(String value1, String value2) {
+            addCriterion("access_key not between", value1, value2, "accessKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyIsNull() {
+            addCriterion("secret_key is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyIsNotNull() {
+            addCriterion("secret_key is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyEqualTo(String value) {
+            addCriterion("secret_key =", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotEqualTo(String value) {
+            addCriterion("secret_key <>", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyGreaterThan(String value) {
+            addCriterion("secret_key >", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("secret_key >=", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyLessThan(String value) {
+            addCriterion("secret_key <", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyLessThanOrEqualTo(String value) {
+            addCriterion("secret_key <=", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyLike(String value) {
+            addCriterion("secret_key like", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotLike(String value) {
+            addCriterion("secret_key not like", value, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyIn(List<String> values) {
+            addCriterion("secret_key in", values, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotIn(List<String> values) {
+            addCriterion("secret_key not in", values, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyBetween(String value1, String value2) {
+            addCriterion("secret_key between", value1, value2, "secretKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andSecretKeyNotBetween(String value1, String value2) {
+            addCriterion("secret_key not between", value1, value2, "secretKey");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateIdIsNull() {
             addCriterion("create_id is null");
             return (Criteria) this;

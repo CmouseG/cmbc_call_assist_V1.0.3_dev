@@ -9,6 +9,9 @@
     <result column="push_type" property="pushType" jdbcType="VARCHAR" />
     <result column="call_record_url" property="callRecordUrl" jdbcType="VARCHAR" />
     <result column="batch_record_url" property="batchRecordUrl" jdbcType="VARCHAR" />
+    <result column="inten_label" property="intenLabel" jdbcType="VARCHAR" />
+    <result column="access_key" property="accessKey" jdbcType="VARCHAR" />
+    <result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
@@ -76,7 +79,8 @@
   </sql>
   <sql id="Base_Column_List" >
     id, username, `password`, `status`, push_type, call_record_url, batch_record_url, 
-    create_id, create_time, update_id, update_time, del_flag, vaild_time
+    inten_label, access_key, secret_key, create_id, create_time, update_id, update_time, 
+    del_flag, vaild_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysUserExample" >
     select
@@ -116,12 +120,14 @@
   
     insert into sys_user (id, username, `password`, 
       `status`, push_type, call_record_url, 
-      batch_record_url, create_id, create_time, 
+      batch_record_url, inten_label, access_key, 
+      secret_key, create_id, create_time, 
       update_id, update_time, del_flag, 
       vaild_time)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{pushType,jdbcType=VARCHAR}, #{callRecordUrl,jdbcType=VARCHAR}, 
-      #{batchRecordUrl,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR}, 
+      #{secretKey,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}, 
       #{vaildTime,jdbcType=DATE})
   </insert>
@@ -148,6 +154,15 @@
       </if>
       <if test="batchRecordUrl != null" >
         batch_record_url,
+      </if>
+      <if test="intenLabel != null" >
+        inten_label,
+      </if>
+      <if test="accessKey != null" >
+        access_key,
+      </if>
+      <if test="secretKey != null" >
+        secret_key,
       </if>
       <if test="createId != null" >
         create_id,
@@ -189,6 +204,15 @@
       </if>
       <if test="batchRecordUrl != null" >
         #{batchRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="intenLabel != null" >
+        #{intenLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="accessKey != null" >
+        #{accessKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        #{secretKey,jdbcType=VARCHAR},
       </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
@@ -240,6 +264,15 @@
       <if test="record.batchRecordUrl != null" >
         batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
       </if>
+      <if test="record.intenLabel != null" >
+        inten_label = #{record.intenLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accessKey != null" >
+        access_key = #{record.accessKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secretKey != null" >
+        secret_key = #{record.secretKey,jdbcType=VARCHAR},
+      </if>
       <if test="record.createId != null" >
         create_id = #{record.createId,jdbcType=BIGINT},
       </if>
@@ -272,6 +305,9 @@
       push_type = #{record.pushType,jdbcType=VARCHAR},
       call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
       batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
+      inten_label = #{record.intenLabel,jdbcType=VARCHAR},
+      access_key = #{record.accessKey,jdbcType=VARCHAR},
+      secret_key = #{record.secretKey,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=BIGINT},
@@ -303,6 +339,15 @@
       <if test="batchRecordUrl != null" >
         batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
       </if>
+      <if test="intenLabel != null" >
+        inten_label = #{intenLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="accessKey != null" >
+        access_key = #{accessKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
       </if>
@@ -332,6 +377,9 @@
       push_type = #{pushType,jdbcType=VARCHAR},
       call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
       batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
+      inten_label = #{intenLabel,jdbcType=VARCHAR},
+      access_key = #{accessKey,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=BIGINT},
@@ -444,7 +492,19 @@
 		<if test="userName != '' ">
 			and username=#{userName}	
 		</if>
+		<if test="roleId !='' ">
+			and c.id=#{roleId}
+		</if>
 		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getSecretKey" resultType="string">
+		SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
+		limit 1 
+	</select>
+	
+	<select id="checkSecretKey" resultType="boolean">
+		SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
 	</select>
 </mapper> 

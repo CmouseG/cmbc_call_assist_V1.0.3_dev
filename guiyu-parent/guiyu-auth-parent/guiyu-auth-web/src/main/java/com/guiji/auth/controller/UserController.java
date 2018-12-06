@@ -91,4 +91,15 @@ public class UserController implements IAuth{
 	public Map<String,Object> getUserInfo(@RequestHeader Long userId){
 		return service.getUserInfo(userId);
 	}
+	
+	@RequestMapping("/user/changeAccessKey")
+	public void changeAccessKey(@RequestHeader Long userId){
+		service.changeAccessKey(userId);
+	}
+	
+	@RequestMapping("/user/changeSecretKey")
+	public void changeSecretKey(@RequestHeader Long userId){
+		service.changeSecretKey(userId);
+	}
+	
 }

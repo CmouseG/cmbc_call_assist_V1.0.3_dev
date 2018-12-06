@@ -62,5 +62,10 @@ public interface SysUserMapper {
     
     public List<Object> selectByParamVo(UserParamVo param);
     
+    public String getSecretKey(String accessKey);
+    
+    public boolean checkSecretKey(String secretKey);
+    
+    public boolean checkAccessKey(String AccessKey);
     
 }

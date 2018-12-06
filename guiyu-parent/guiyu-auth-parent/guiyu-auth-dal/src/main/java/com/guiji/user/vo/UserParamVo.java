@@ -9,6 +9,8 @@ public class UserParamVo {
 	private int pageSize = 20;
 	
 	private String userName="";
+	
+	private String roleId="";
 
 	public int getPageNo() {
 		return pageNo;
@@ -41,6 +43,13 @@ public class UserParamVo {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+
+	public String getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
 	
 }

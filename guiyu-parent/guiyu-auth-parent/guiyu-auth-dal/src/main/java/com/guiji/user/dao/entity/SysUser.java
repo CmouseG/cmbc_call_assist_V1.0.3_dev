@@ -18,6 +18,12 @@ public class SysUser implements Serializable {
 
     private String batchRecordUrl;
 
+    private String intenLabel="";
+
+    private String accessKey;
+
+    private String secretKey;
+
     private Long createId;
 
     private Date createTime;
@@ -88,6 +94,30 @@ public class SysUser implements Serializable {
         this.batchRecordUrl = batchRecordUrl == null ? null : batchRecordUrl.trim();
     }
 
+    public String getIntenLabel() {
+        return intenLabel;
+    }
+
+    public void setIntenLabel(String intenLabel) {
+        this.intenLabel = intenLabel == null ? null : intenLabel.trim();
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey == null ? null : accessKey.trim();
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey == null ? null : secretKey.trim();
+    }
+
     public Long getCreateId() {
         return createId;
     }
@@ -149,6 +179,9 @@ public class SysUser implements Serializable {
         sb.append(", pushType=").append(pushType);
         sb.append(", callRecordUrl=").append(callRecordUrl);
         sb.append(", batchRecordUrl=").append(batchRecordUrl);
+        sb.append(", intenLabel=").append(intenLabel);
+        sb.append(", accessKey=").append(accessKey);
+        sb.append(", secretKey=").append(secretKey);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);

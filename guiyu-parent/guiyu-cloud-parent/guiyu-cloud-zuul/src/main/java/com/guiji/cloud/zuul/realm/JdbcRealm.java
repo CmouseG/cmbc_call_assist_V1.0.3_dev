@@ -30,6 +30,7 @@ public class JdbcRealm extends AuthorizingRealm{
 	    setCredentialsMatcher(matcher);
 	}
 	
+	
 	/**
 	 * 权限
 	 */

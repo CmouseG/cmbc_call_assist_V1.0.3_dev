@@ -48,6 +48,7 @@ import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceBranchMapper;
 import ai.guiji.botsentence.dao.BotSentenceDomainMapper;
 import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
+import ai.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
 import ai.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import ai.guiji.botsentence.dao.VoliceInfoMapper;
 import ai.guiji.botsentence.dao.entity.BotSentenceBranch;
@@ -55,6 +56,8 @@ import ai.guiji.botsentence.dao.entity.BotSentenceBranchExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceDomain;
 import ai.guiji.botsentence.dao.entity.BotSentenceDomainExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
+import ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup;
+import ai.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceTtsTask;
 import ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import ai.guiji.botsentence.dao.entity.BusinessAnswerTaskExt;
@@ -108,6 +111,9 @@ public class VoliceServiceImpl implements IVoliceService {
 
 	@Autowired
 	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
+	
+	@Autowired
+	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 
@@ -1019,8 +1025,8 @@ public class VoliceServiceImpl implements IVoliceService {
 				+ DateUtil.yyyyMMddHHmmss2.format(new Date(System.currentTimeMillis())) + "_" + process.getTemplateId()
 				+ ".wav";
 		String voliceUrl = qiuniuUploadUtil.upload(inStream, keyName);
-		if (Constant.VOLICE_TYPE_BACKUP.equals(type) || Constant.VOLICE_TYPE_TTS.equals(type)) {
-			String voliceId2 = voliceId.split("_")[0];
+		String voliceId2 = voliceId.split("_")[0];
+		if (Constant.VOLICE_TYPE_TTS.equals(type)) {
 			// 更新tts任务表的url
 			BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
 			ttsTaskExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(voliceId2)
@@ -1033,7 +1039,20 @@ public class VoliceServiceImpl implements IVoliceService {
 				task.setLstUpdateUser(userId.toString());
 				botSentenceTtsTaskMapper.updateByPrimaryKey(task);
 			}
-		} else {
+		} else if(Constant.VOLICE_TYPE_BACKUP.equals(type)){
+			//更新备用话术表URL
+			//查询当前文案的备用文案
+			BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+			backupExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(new Long(voliceId2));
+			List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
+			if(null != backupList && backupList.size() > 0) {
+				BotSentenceTtsBackup backup = backupList.get(0);
+				backup.setUrl(voliceUrl);
+				backup.setLstUpdateTime(new Date(System.currentTimeMillis()));
+				backup.setLstUpdateUser(userId.toString());
+				botSentenceTtsBackupMapper.updateByPrimaryKey(backup);
+			}
+		}else {
 			VoliceInfo volice = this.getVoliceInfo(new Long(voliceId));
 			this.updateVoliceInfo(new Long(voliceId), volice.getType(), voliceUrl,userId);
 		}

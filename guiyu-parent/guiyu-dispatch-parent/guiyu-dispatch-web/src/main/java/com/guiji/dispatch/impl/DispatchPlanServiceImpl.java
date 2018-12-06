@@ -632,8 +632,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.setLimitEnd(requestCount);
 		}
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-
-		// // 同步状态;0未同步1已同步
+		//同步状态;0未同步1已同步
 		for (DispatchPlan dispatchPlan : phones) {
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
 			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);

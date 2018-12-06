@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.guiji.ai.vo.TtsGpuReqVO;
+import com.guiji.ai.vo.TtsGpuVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
@@ -45,5 +47,14 @@ public interface ITts {
      */
     @ApiOperation(value="查询TTS处理状态")
     @PostMapping(value = "getTtsStatus")
-    public ReturnData<List<TtsStatusRspVO>> getTtsStatus(TtsStatusReqVO ttsStatusReqVO);  
+    public ReturnData<List<TtsStatusRspVO>> getTtsStatus(TtsStatusReqVO ttsStatusReqVO); 
+    
+    /**
+     * 获取GPU模型列表
+     * @return
+     */
+    @ApiOperation(value="获取GPU模型列表")
+    @PostMapping(value = "getAllGpu")
+    public ReturnData<List<TtsGpuVO>> getAllGpuByPage(TtsGpuReqVO ttsGpuReqVO);
+    
 }

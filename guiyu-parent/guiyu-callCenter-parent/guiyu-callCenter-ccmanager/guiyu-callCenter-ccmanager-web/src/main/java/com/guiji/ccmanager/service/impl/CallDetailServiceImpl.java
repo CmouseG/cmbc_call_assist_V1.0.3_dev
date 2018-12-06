@@ -69,10 +69,10 @@ public class CallDetailServiceImpl implements CallDetailService {
             criteria.andPhoneNumEqualTo(phoneNum);
         }
         if(StringUtils.isNotBlank(durationMin)){
-            criteria.andDurationGreaterThan(Integer.valueOf(durationMin)*1000);
+            criteria.andDurationGreaterThan(Integer.valueOf(durationMin));
         }
         if(StringUtils.isNotBlank(durationMax)){
-            criteria.andDurationLessThanOrEqualTo(Integer.valueOf(durationMax)*1000);
+            criteria.andDurationLessThanOrEqualTo(Integer.valueOf(durationMax));
         }
         if(StringUtils.isNotBlank(accurateIntent)){
             if(accurateIntent.contains(",")){
@@ -246,16 +246,18 @@ public class CallDetailServiceImpl implements CallDetailService {
                 BeanUtil.copyProperties(callOutPlan,callPlanDetailRecordVO);
                 if(detailList!=null && detailList.size()>0) {
                     for (CallOutDetailVO callOutDetailVO : detailList) {
-                        List<CallOutDetailVO> detailIn = callPlanDetailRecordVO.getDetailList();
-                        if (detailIn != null) {
-                            detailIn.add(callOutDetailVO);
-                        } else {
-                            detailIn = new ArrayList<CallOutDetailVO>();
-                            detailIn.add(callOutDetailVO);
+                        if(callOutDetailVO.getCallId().equals(callOutPlan.getCallId())){
+                            List<CallOutDetailVO> detailIn = callPlanDetailRecordVO.getDetailList();
+                            if (detailIn != null) {
+                                detailIn.add(callOutDetailVO);
+                            } else {
+                                List<CallOutDetailVO> detailInNew = new ArrayList<CallOutDetailVO>();
+                                detailInNew.add(callOutDetailVO);
+                                callPlanDetailRecordVO.setDetailList(detailInNew);
+                            }
                         }
                     }
                 }
-                resList.add(callPlanDetailRecordVO);
 
                 if(recordList!=null && recordList.size()>0){
                     for(CallOutRecord callOutRecord:recordList){
@@ -264,7 +266,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                         }
                     }
                 }
-
+                resList.add(callPlanDetailRecordVO);
             }
 
             return resList;

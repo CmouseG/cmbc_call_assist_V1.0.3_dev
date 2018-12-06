@@ -3,9 +3,7 @@ package com.guiji.component.aspect;
 import javax.servlet.http.HttpServletRequest;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -27,7 +25,7 @@ public class ControllerLogAspect
 	@Autowired
 	ExceptionHandle exceptionHandle;
 
-	@Pointcut("execution(public * com.guiji.*.web.controller.*.*(..))")
+	@Pointcut("execution(public * com.guiji.*.controller.*.*(..))")
 	public void log()
 	{
 	}
@@ -42,8 +40,13 @@ public class ControllerLogAspect
 	{
 		ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = sra.getRequest();
-		logger.debug("RQEUEST...：service:" + joinPoint.getSignature().getDeclaringTypeName() + "."
-				+ joinPoint.getSignature().getName() + ";  params:" + JSON.toJSONString(joinPoint.getArgs()));
+		logger.info("Request_url：" + request.getRequestURI());
+		logger.info("Request_ip：" + request.getRemoteHost());
+		logger.info("Request_method：" + request.getMethod());
+		logger.info("Request_classMethod：" 
+				+ joinPoint.getSignature().getDeclaringTypeName() + "."
+				+ joinPoint.getSignature().getName());
+		logger.info("Request_args：" + JSON.toJSONString(joinPoint.getArgs()));
 	}
 
 	/**
@@ -53,25 +56,7 @@ public class ControllerLogAspect
 	@AfterReturning(returning = "result", pointcut = "log()")
 	public void doAfterReturning(Object result)
 	{
-		logger.debug("RESPONSE...：" + JSON.toJSONString(result));
+		logger.info("Response...：" + JSON.toJSONString(result));
 	}
 
-	/**
-	 * 环绕通知
-	 * @param proceedingJoinPoint
-	 * @return
-	 * @throws Throwable
-	 */
-	@Around("log()")
-	public void doAround(ProceedingJoinPoint proceedingJoinPoint)
-	{
-		try
-		{
-			
-		} catch (Exception e)
-		{
-			exceptionHandle.exceptionGet(e);
-		}
-		
-	}
 }

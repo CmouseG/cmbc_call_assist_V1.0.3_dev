@@ -26,7 +26,6 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
 
-
 public class RedistributeHandler {
 	private static Logger logger = LoggerFactory.getLogger(RedistributeHandler.class);
 

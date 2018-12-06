@@ -64,7 +64,8 @@ public class TtsGpu extends TtsServiceProvide {
 	TtsResultMapper ttsResultMapper;
 
 	@Override
-	File transferByChild(String model, String text) {
+	public File transferByChild(String model, String text) 
+	{
 		PoolingHttpClientConnectionManager cm = null;
 		CloseableHttpResponse response = null;
 		CloseableHttpClient httpClient = null;
@@ -72,9 +73,15 @@ public class TtsGpu extends TtsServiceProvide {
 		File file = null;
 		try {
 			File directory = new File(filePath);
-			if (!directory.exists()) directory.mkdirs();
+			if (!directory.exists())
+			{
+				directory.mkdirs();
+			} 
 			file = new File(filePath + System.currentTimeMillis() + ".wav"); //文件保存路径
-			if (!file.exists()) file.createNewFile();
+			if (!file.exists()) 
+			{
+				file.createNewFile();
+			}
 			out = new FileOutputStream(file);
 			
 			ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
@@ -97,7 +104,11 @@ public class TtsGpu extends TtsServiceProvide {
 			httpClient = HttpClients.custom().setConnectionManager(cm).build();
 			HttpPost httpPost = new HttpPost("http://" + ip + ":" + port + "/synthesize");
 			// 配置超时时间
-			RequestConfig config = RequestConfig.custom().setConnectTimeout(ConnectTimeout).setSocketTimeout(SocketTimeout).build();
+			RequestConfig config = RequestConfig
+					.custom()
+					.setConnectTimeout(ConnectTimeout)
+					.setSocketTimeout(SocketTimeout)
+					.build();
 			httpPost.setConfig(config);
 
 			// 添加请求参数
@@ -109,18 +120,21 @@ public class TtsGpu extends TtsServiceProvide {
 
 			logger.info("请求GPU...");
 			response = httpClient.execute(httpPost); // 发送http请求
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) 
+			{
 				HttpEntity responseEntity = response.getEntity();
 				responseEntity.writeTo(out); // 写到输出流中
 			}
 			// 释放GPU
 			releaseGpu(model, ip, port);
-		} catch (Exception e) {
-			logger.error("请求GPU失败！", e);
+		} catch (Exception e) 
+		{
+			logger.error("请求GPU失败 ！！！", e);
 			// 释放GPU
 			releaseGpu(model, ip, port);
 			return null;
-		} finally {
+		} finally 
+		{
 			IOUtils.closeQuietly(out);
 			IOUtils.closeQuietly(response);
 			IOUtils.closeQuietly(httpClient);
@@ -142,22 +156,26 @@ public class TtsGpu extends TtsServiceProvide {
 	 * 上传文件服务器
 	 */
 	@Override
-	String uploadToServer(String busiId, File file) {
+	public String uploadToServer(String busiId, File file)
+	{
 		String audioUrl = null;
-		try {
+		try
+		{
 			SysFileReqVO sysFileReqVO = new SysFileReqVO();
 			sysFileReqVO.setBusiId(busiId);
-			sysFileReqVO.setBusiType(AiConstants.BUSITYPE); //上传的影像文件业务类型
-			sysFileReqVO.setSysCode(AiConstants.SYSCODE); //文件上传系统码
+			sysFileReqVO.setBusiType(AiConstants.BUSITYPE); // 上传的影像文件业务类型
+			sysFileReqVO.setSysCode(AiConstants.SYSCODE); // 文件上传系统码
 			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
-			//调用本地工具-上传文件到NAS服务器
+			// 调用本地工具-上传文件到NAS服务器
 			logger.info(file.getName() + "上传文件到NAS服务器...");
 			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, file);
-			if(sysFileRsp != null) {
+			if (sysFileRsp != null)
+			{
 				audioUrl = sysFileRsp.getSkUrl();
 			}
-			file.delete(); //删除本地文件
-		} catch (Exception e) {
+			file.delete(); // 删除本地文件
+		} catch (Exception e)
+		{
 			logger.error(file.getName() + "上传失败！", e);
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_UP_TO_NAS);
 		}
@@ -168,7 +186,7 @@ public class TtsGpu extends TtsServiceProvide {
 	 * 保存数据库
 	 */
 	@Override
-	void savaTtsResult(String busiId, String model, String text, String audioUrl) {
+	public void savaTtsResult(String busiId, String model, String text, String audioUrl) {
 		TtsResult ttsResult = new TtsResult();
 		ttsResult.setAudioUrl(audioUrl);
 		ttsResult.setBusId(busiId);

@@ -11,9 +11,10 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="create_time_str" property="createTimeStr" jdbcType="VARCHAR" />
     <result column="update_time_str" property="updateTimeStr" jdbcType="VARCHAR" />
-    <result column="exec_status" property="execStatus" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
+    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time, create_id, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
+    update_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessExample" >
     select
@@ -113,12 +115,12 @@
   <insert id="insert" parameterType="com.guiji.process.server.dao.entity.SysProcess" >
     insert into sys_process (id, ip, port, 
       `name`, `type`, process_key, 
-      `status`, create_time, update_time
-      )
+      `status`, create_time, update_time, 
+      create_id, update_id)
     values (#{id,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{processKey,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createId,jdbcType=BIGINT}, #{updateId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.process.server.dao.entity.SysProcess" >
     insert into sys_process
@@ -150,6 +152,12 @@
       <if test="updateTime != null" >
         update_time,
       </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="updateId != null" >
+        update_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -178,6 +186,12 @@
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -217,6 +231,12 @@
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.createId != null" >
+        create_id = #{record.createId,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateId != null" >
+        update_id = #{record.updateId,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -232,7 +252,9 @@
       process_key = #{record.processKey,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      create_id = #{record.createId,jdbcType=BIGINT},
+      update_id = #{record.updateId,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -264,6 +286,12 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -276,15 +304,9 @@
       process_key = #{processKey,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=BIGINT},
+      update_id = #{updateId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
-
-  <!--<select id="getProcessByPage" resultType="BaseResultMap">
-    select a.id, a.ip, a.port, a.`name`, a.`type`, a.process_key, a.`status`, a.create_time, a.update_time,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(a.update_time,'%Y-%m-%d %H:%i:%s') as update_time_str,b.exec_status as exec_status
-    from sys_process a
-    LEFT JOIN sys_process_task b on a.id=b.process_id
-    where a.del_flag=0
-    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-  </select>-->
 </mapper>

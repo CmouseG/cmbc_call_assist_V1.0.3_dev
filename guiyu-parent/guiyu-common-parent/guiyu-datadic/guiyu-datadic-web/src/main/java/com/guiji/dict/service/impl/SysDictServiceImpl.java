@@ -1,10 +1,12 @@
 package com.guiji.dict.service.impl;
 
 import com.guiji.common.constant.RedisConstant;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.dict.dao.SysDictMapper;
 import com.guiji.dict.dao.entity.SysDict;
 import com.guiji.dict.dao.entity.SysDictExample;
+import com.guiji.dict.exception.GuiyuDatadicExceptionEnum;
 import com.guiji.dict.service.SysDictService;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
@@ -32,6 +34,8 @@ public class SysDictServiceImpl implements SysDictService {
     @Override
     @Transactional
     public SysDict saveOrUpdateDict(SysDict sysDict,Long userId) {
+        // 校验参数
+        check(sysDict);
         if(sysDict != null) {
             Long id = sysDict.getId();	//主键ID
             if(StrUtils.isEmpty(id)) {
@@ -145,5 +149,23 @@ public class SysDictServiceImpl implements SysDictService {
             logger.info("查询全部字典列表");
         }
         return null;
+    }
+
+    private void check(SysDict sysDict) {
+        if (sysDict.getDictType() != null && sysDict.getDictType().length() > 20) {
+            throw new GuiyuException(GuiyuDatadicExceptionEnum.DATADIC00020001.getErrorCode(),GuiyuDatadicExceptionEnum.DATADIC00020001.getMsg());
+        }
+
+        if (sysDict.getDictKey() != null && sysDict.getDictKey().length() > 20) {
+            throw new GuiyuException(GuiyuDatadicExceptionEnum.DATADIC00020002.getErrorCode(),GuiyuDatadicExceptionEnum.DATADIC00020002.getMsg());
+        }
+
+        if (sysDict.getDictValue() != null && sysDict.getDictValue().length() > 255) {
+            throw new GuiyuException(GuiyuDatadicExceptionEnum.DATADIC00020003.getErrorCode(),GuiyuDatadicExceptionEnum.DATADIC00020003.getMsg());
+        }
+
+        if (sysDict.getDescription() != null && sysDict.getDescription().length() > 255) {
+            throw new GuiyuException(GuiyuDatadicExceptionEnum.DATADIC00020004.getErrorCode(),GuiyuDatadicExceptionEnum.DATADIC00020004.getMsg());
+        }
     }
 }

@@ -83,6 +83,7 @@ public class SysDictServiceImpl implements SysDictService {
         int totalRecord = sysDictMapper.countByExample(example); //总数
         example.setLimitStart((pageNo-1)*pageSize);	//起始条数
         example.setLimitEnd(pageSize);	//结束条数
+        example.setOrderByClause("create_time desc");
         //分页查询
         List<SysDict> list = sysDictMapper.selectByExample(example);
         if(list != null && !list.isEmpty()) {

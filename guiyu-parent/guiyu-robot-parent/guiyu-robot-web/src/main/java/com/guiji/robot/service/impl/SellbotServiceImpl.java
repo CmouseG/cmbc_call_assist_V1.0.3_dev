@@ -28,8 +28,6 @@ import com.guiji.utils.StrUtils;
 public class SellbotServiceImpl implements ISellbotService{
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private static final String HTTP_URL = "http://192.168.1.50:15000"; 
-	
 	
 	/**
 	 * sellbot初始化接口,每通电话前需要调用下初始化操作。
@@ -65,7 +63,7 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @return
 	 */
 	public String sayhello(AiBaseInfo ai,SellbotSayhelloReq sellbotSayhelloReq) {
-		String url = HTTP_URL;
+		String url = "http://"+ai.getIp()+":"+ai.getPort();
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotSayhelloReq));
 		if(StrUtils.isNotEmpty(sellbotRsp)) {
 			String result = StringEscapeUtils.unescapeJava(sellbotRsp);
@@ -89,7 +87,7 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @return
 	 */
 	public String match(AiBaseInfo ai,SellbotMatchReq sellbotMatchReq) {
-		String url = HTTP_URL+"/is_match";
+		String url = "http://"+ai.getIp()+":"+ai.getPort()+"/is_match";
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotMatchReq));
 		String result = StringEscapeUtils.unescapeJava(sellbotRsp);
 		return result;

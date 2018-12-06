@@ -20,6 +20,7 @@
         <module>guiyu-common-parent</module>
         <module>guiyu-process-parent</module>
         <module>guiyu-botstence-parent</module>
+        <module>guiyu-di-parent</module>
     </modules>
     <packaging>pom</packaging>
 

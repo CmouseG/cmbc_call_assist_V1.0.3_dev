@@ -96,6 +96,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
         int totalRecord = sysProcessMapper.countByExample(example); //总数
         example.setLimitStart((pageNo-1)*pageSize);	//起始条数
         example.setLimitEnd(pageSize);	//结束条数
+        example.setOrderByClause("create_time desc");
         //分页查询
         List<SysProcess> list = sysProcessMapper.selectByExample(example);
         if(list != null && !list.isEmpty()) {
@@ -120,7 +121,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
     }
 
     @Override
-    public void executeCmd(List<SysProcess> sysProcessList, CmdTypeEnum cmdTypeEnum) {
+    public void executeCmd(List<SysProcess> sysProcessList, CmdTypeEnum cmdTypeEnum,Long userId) {
         List<CmdMessageVO> cmdMessageVOs = new ArrayList<CmdMessageVO>();
         if (sysProcessList != null) {
             for(SysProcess sysProcess : sysProcessList) {
@@ -132,6 +133,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
                 CmdMessageVO cmdMessageVO = new CmdMessageVO();
                 cmdMessageVO.setProcessInstanceVO(processInstanceVO);
                 cmdMessageVO.setCmdType(cmdTypeEnum);
+                cmdMessageVO.setUserId(userId);
                 cmdMessageVOs.add(cmdMessageVO);
 
             }

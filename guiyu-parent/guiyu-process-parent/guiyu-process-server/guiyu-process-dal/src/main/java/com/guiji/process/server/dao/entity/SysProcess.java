@@ -22,6 +22,10 @@ public class SysProcess implements Serializable {
 
     private Date updateTime;
 
+    private Long createId;
+
+    private Long updateId;
+
     private String createTimeStr;
 
     private String updateTimeStr;
@@ -102,6 +106,22 @@ public class SysProcess implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
+    public Long getUpdateId() {
+        return updateId;
+    }
+
+    public void setUpdateId(Long updateId) {
+        this.updateId = updateId;
+    }
+
     public String getCreateTimeStr() {
         return createTimeStr;
     }
@@ -141,6 +161,8 @@ public class SysProcess implements Serializable {
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", createId=").append(createId);
+        sb.append(", updateId=").append(updateId);
         sb.append(", createTimeStr=").append(createTimeStr);
         sb.append(", updateTimeStr=").append(updateTimeStr);
         sb.append(", execStatus=").append(execStatus);

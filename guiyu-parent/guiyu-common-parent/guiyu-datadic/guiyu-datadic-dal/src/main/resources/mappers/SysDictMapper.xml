@@ -12,6 +12,8 @@
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="update_id" property="updateId" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -73,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, dict_key, dict_value, dict_type, description, pid, remarks, del_flag, create_time, 
-    update_time
+    update_time, create_id, update_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dict.dao.entity.SysDictExample" >
     select
@@ -113,11 +115,13 @@
     insert into sys_dict (id, dict_key, dict_value, 
       dict_type, description, pid, 
       remarks, del_flag, create_time, 
-      update_time)
+      update_time, create_id, update_id
+      )
     values (#{id,jdbcType=BIGINT}, #{dictKey,jdbcType=VARCHAR}, #{dictValue,jdbcType=VARCHAR}, 
       #{dictType,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, 
       #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{updateTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=BIGINT}, #{updateId,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dict.dao.entity.SysDict" >
     insert into sys_dict
@@ -152,6 +156,12 @@
       <if test="updateTime != null" >
         update_time,
       </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="updateId != null" >
+        update_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -183,6 +193,12 @@
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -225,6 +241,12 @@
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.createId != null" >
+        create_id = #{record.createId,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateId != null" >
+        update_id = #{record.updateId,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -241,7 +263,9 @@
       remarks = #{record.remarks,jdbcType=VARCHAR},
       del_flag = #{record.delFlag,jdbcType=CHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      create_id = #{record.createId,jdbcType=BIGINT},
+      update_id = #{record.updateId,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -276,6 +300,12 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=BIGINT},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -289,7 +319,9 @@
       remarks = #{remarks,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=CHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=BIGINT},
+      update_id = #{updateId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

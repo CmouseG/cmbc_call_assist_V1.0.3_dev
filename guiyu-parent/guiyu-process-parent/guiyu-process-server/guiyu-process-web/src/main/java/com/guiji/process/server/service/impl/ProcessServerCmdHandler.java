@@ -66,15 +66,15 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 doUnRegister(cmdMessageVO);
                 break;
             case RESTART:
-                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.RESTART, cmdMessageVO.getParameters());
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.RESTART, cmdMessageVO.getParameters(),cmdMessageVO.getUserId());
                 break;
             case UNKNOWN:
                 break;
             case START:
-                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.START, cmdMessageVO.getParameters());
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.START, cmdMessageVO.getParameters(),cmdMessageVO.getUserId());
                 break;
             case STOP:
-                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.STOP, cmdMessageVO.getParameters());
+                processManageService.cmd(cmdMessageVO.getProcessInstanceVO(), CmdTypeEnum.STOP, cmdMessageVO.getParameters(),cmdMessageVO.getUserId());
                 break;
             case HEALTH:
                 doHealthStatus(cmdMessageVO);

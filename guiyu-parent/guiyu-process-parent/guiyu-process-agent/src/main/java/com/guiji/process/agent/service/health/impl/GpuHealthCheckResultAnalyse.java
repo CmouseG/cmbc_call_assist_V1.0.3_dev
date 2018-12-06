@@ -21,7 +21,6 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
 
         if (cmdResult != null && StringUtils.isNotEmpty(cmdResult.getOutput())) {
-            System.out.println("GpuHealthCheckResultAnalyse:" +cmdResult.getOutput());
             if(cmdResult.getOutput().contains("1"))
             {
                 return ProcessStatusEnum.UP;

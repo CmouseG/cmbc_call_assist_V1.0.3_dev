@@ -91,7 +91,7 @@ public class ProcessManageService implements IProcessManageService {
     }
 
     @Override
-    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters) {
+    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters,Long userId) {
         /*String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType);
         if (StringUtils.isNotEmpty(hasRun)) {
             throw new GuiyuException(GuiyuProcessExceptionEnum.PROCESS08000002.getErrorCode(),GuiyuProcessExceptionEnum.PROCESS08000002.getMsg());
@@ -102,7 +102,6 @@ public class ProcessManageService implements IProcessManageService {
             return false;
         }
 
-        System.out.println("向客户端发送发布命令");
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
@@ -139,8 +138,8 @@ public class ProcessManageService implements IProcessManageService {
         sysProcessTask.setProcessId(processId);
         sysProcessTask.setCreateTime(new Date());
         sysProcessTask.setUpdateTime(new Date());
-        /*sysProcessTask.setCreateBy();
-        sysProcessTask.setUpdateBy();*/
+        sysProcessTask.setCreateBy(userId);
+        sysProcessTask.setUpdateBy(userId);
         processTaskService.insert(sysProcessTask);
         // 操作写入缓存，控制5分钟内不能重复发起命令
         redisUtil.set(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType,"hasRun");

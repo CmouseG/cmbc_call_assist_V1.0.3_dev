@@ -30,7 +30,7 @@ import java.util.List;
 @Service
 public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(ProcessAgentCmdHandler.class);
 
     public void excute(CmdMessageVO cmdMessageVO) throws  Exception {
 
@@ -41,7 +41,6 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         CfgProcessOperVO cfgProcessOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
-        System.out.println("cfgProcessOperVO" + cfgProcessOperVO);
         if(cfgProcessOperVO == null ) {
             HealthCheckResultAnylyse.doNothing(processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
             return;
@@ -74,7 +73,6 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case RESTORE_MODEL:
-                System.out.println("RESTORE_MODEL");
                 CommandResult restoreResult = doCmd(cmdMessageVO, cfgProcessOperVO);
                 HealthCheckResultAnylyse.afterRestoreModel(restoreResult,processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
                 // 更新配置文件
@@ -143,7 +141,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
     private CommandResult doCmd(CmdMessageVO cmdMessageVO, CfgProcessOperVO cfgProcessOperVO) {
 
         CommandResult cmdResult = null;
-        System.out.println("执行命令开始：：" + cmdMessageVO +", " + cfgProcessOperVO);
+        logger.debug("执行命令开始：：" + cmdMessageVO +", " + cfgProcessOperVO);
         if (ProcessUtil.neetExecute(cmdMessageVO.getProcessInstanceVO().getPort(), cfgProcessOperVO.getCmdTypeEnum())) {
             String cmd = "";
             if(cfgProcessOperVO != null) {

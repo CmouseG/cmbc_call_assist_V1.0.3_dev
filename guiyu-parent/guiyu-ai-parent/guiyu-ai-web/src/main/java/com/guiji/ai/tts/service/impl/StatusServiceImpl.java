@@ -62,7 +62,7 @@ public class StatusServiceImpl implements IStatusService
 		ttsStatus.setModel(ttsReqVO.getModel());
 		ttsStatus.setStatus(AiConstants.UNTREATED); //未处理
 		ttsStatus.setCreateTime(new Date());
-		ttsStatus.setText_count(ttsReqVO.getContents().size());
+		ttsStatus.setTextCount(ttsReqVO.getContents().size());
 		SaveTtsStatusHandler.getInstance().add(ttsStatus, ttsStatusMapper);
 		
 	}

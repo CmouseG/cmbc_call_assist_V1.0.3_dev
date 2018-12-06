@@ -27,7 +27,7 @@ public class TtsListener
 
 		} catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error("定时获取TTS发生异常！", e);
 		}
 	}
 }

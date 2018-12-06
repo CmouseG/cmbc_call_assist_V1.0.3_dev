@@ -1,9 +1,13 @@
 package com.guiji.ai.dao;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.dao.entity.TtsStatusExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface TtsStatusMapper {
     int countByExample(TtsStatusExample example);
@@ -27,4 +31,10 @@ public interface TtsStatusMapper {
     int updateByPrimaryKeySelective(TtsStatus record);
 
     int updateByPrimaryKey(TtsStatus record);
+    
+    String getReqStatusByBusId(String busId);
+
+	List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status);
+	
+	int updateStatusByBusId(String busId, String status);
 }

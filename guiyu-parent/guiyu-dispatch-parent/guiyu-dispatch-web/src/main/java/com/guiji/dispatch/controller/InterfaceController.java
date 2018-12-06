@@ -82,9 +82,9 @@ public class InterfaceController {
 		jsonObject.put("data", queryDispatchPlan);
 		return jsonObject;
 	}
+	
+	
+	
+	
 
-	@PostMapping("/testtest")
-	public void testtest(@RequestBody String re) {
-		System.out.println(re);
-	}
 }

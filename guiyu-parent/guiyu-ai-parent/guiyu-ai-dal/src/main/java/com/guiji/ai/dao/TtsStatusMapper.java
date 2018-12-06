@@ -1,20 +1,30 @@
 package com.guiji.ai.dao;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.guiji.ai.dao.entity.TtsStatus;
+import com.guiji.ai.dao.entity.TtsStatusExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
-public interface TtsStatusMapper
-{
+public interface TtsStatusMapper {
+    int countByExample(TtsStatusExample example);
 
-	String getReqStatusByBusId(String busId);
+    int deleteByExample(TtsStatusExample example);
 
-	List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status);
+    int deleteByPrimaryKey(Integer id);
 
-	int insert(TtsStatus record);
+    int insert(TtsStatus record);
 
-	int updateStatusByBusId(String busId, String status);
-	
+    int insertSelective(TtsStatus record);
+
+    List<TtsStatus> selectByExample(TtsStatusExample example);
+
+    TtsStatus selectByPrimaryKey(Integer id);
+
+    int updateByExampleSelective(@Param("record") TtsStatus record, @Param("example") TtsStatusExample example);
+
+    int updateByExample(@Param("record") TtsStatus record, @Param("example") TtsStatusExample example);
+
+    int updateByPrimaryKeySelective(TtsStatus record);
+
+    int updateByPrimaryKey(TtsStatus record);
 }

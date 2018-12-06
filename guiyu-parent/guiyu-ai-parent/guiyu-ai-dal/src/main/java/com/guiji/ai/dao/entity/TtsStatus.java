@@ -3,92 +3,94 @@ package com.guiji.ai.dao.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class TtsStatus implements Serializable
-{
-	private Integer id;
+public class TtsStatus implements Serializable {
+    private Integer id;
 
     private String busId;
-    
+
     private String model;
-    
+
     private String status;
-    
-    private Integer text_count;
-    
+
     private Date createTime;
-    
+
     private Date updateTime;
-	
-	private static final long serialVersionUID = 1L;
 
-	public Integer getId()
-	{
-		return id;
-	}
+    private Integer textCount;
 
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public String getBusId()
-	{
-		return busId;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setBusId(String busId)
-	{
-		this.busId = busId;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getModel()
-	{
-		return model;
-	}
+    public String getBusId() {
+        return busId;
+    }
 
-	public void setModel(String model)
-	{
-		this.model = model;
-	}
+    public void setBusId(String busId) {
+        this.busId = busId == null ? null : busId.trim();
+    }
 
-	public String getStatus()
-	{
-		return status;
-	}
+    public String getModel() {
+        return model;
+    }
 
-	public void setStatus(String status)
-	{
-		this.status = status;
-	}
+    public void setModel(String model) {
+        this.model = model == null ? null : model.trim();
+    }
 
-	public Integer getText_count()
-	{
-		return text_count;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setText_count(Integer text_count)
-	{
-		this.text_count = text_count;
-	}
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
+    }
 
-	public Date getCreateTime()
-	{
-		return createTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setCreateTime(Date createTime)
-	{
-		this.createTime = createTime;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public Date getUpdateTime()
-	{
-		return updateTime;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setUpdateTime(Date updateTime)
-	{
-		this.updateTime = updateTime;
-	}
-	
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getTextCount() {
+        return textCount;
+    }
+
+    public void setTextCount(Integer textCount) {
+        this.textCount = textCount;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", busId=").append(busId);
+        sb.append(", model=").append(model);
+        sb.append(", status=").append(status);
+        sb.append(", createTime=").append(createTime);
+        sb.append(", updateTime=").append(updateTime);
+        sb.append(", textCount=").append(textCount);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append("]");
+        return sb.toString();
+    }
 }

@@ -95,7 +95,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
-    public void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO processInstance) {
+    public void restoreTtsModel(String srcModel, String toModel, ProcessInstanceVO processInstance,Long userId) {
 
         if(StringUtils.equals(srcModel, toModel))
         {
@@ -116,14 +116,14 @@ public class ProceseScheduleService implements IProceseScheduleService {
         List<String> parameters = new ArrayList<String>();
         parameters.add(srcModel);
         parameters.add(toModel);
-        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters);
+        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters,userId);
 
         //processInstance.setWhoUsed(IdGenUtil.uuid());
         //updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);
     }
 
     @Override
-    public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file) {
+    public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file,Long userId) {
         System.out.println("发布参数" + processTypeEnum + tmplId + file);
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
         if(processTypeEnum == ProcessTypeEnum.SELLBOT)
@@ -153,7 +153,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
         }
         for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
             ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
-            deviceManageService.cmd(agent, cmdType, parameters);
+            deviceManageService.cmd(agent, cmdType, parameters,userId);
         }
     }
 

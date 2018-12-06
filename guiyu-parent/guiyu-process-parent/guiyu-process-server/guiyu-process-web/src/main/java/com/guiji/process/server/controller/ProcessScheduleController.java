@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,12 +48,12 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
-    public Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel, @RequestParam("ip") String ip, @RequestParam("port") int port) {
+    public Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel, @RequestParam("ip") String ip, @RequestParam("port") int port,@RequestHeader Long userId) {
         ProcessInstanceVO processInstance = new ProcessInstanceVO();
         processInstance.setType(ProcessTypeEnum.TTS);
         processInstance.setIp(ip);
         processInstance.setPort(port);
-        processScheduleService.restoreTtsModel(fromModel,toModel,processInstance);
+        processScheduleService.restoreTtsModel(fromModel,toModel,processInstance,userId);
         return Result.ok();
     }
 
@@ -69,9 +70,9 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
-    public Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req) {
+    public Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req,@RequestHeader Long userId) {
         System.out.println("调用到了");
-        processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile());
+        processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile(),userId);
         return Result.ok();
     }
 

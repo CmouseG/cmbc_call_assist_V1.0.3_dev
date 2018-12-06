@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -71,7 +68,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "port", value = "端口", dataType = "int", paramType = "query")
     })
     @GetMapping(value="/changeTTS")
-    Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel,@RequestParam("ip") String ip,@RequestParam("port") int port);
+    Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel,@RequestParam("ip") String ip,@RequestParam("port") int port,@RequestHeader Long userId);
 
 
     /**
@@ -110,7 +107,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "req", value = "发布资源", dataType = "UpgrateResouceReq", paramType = "query"),
     })
     @PostMapping(value="/publishResource")
-    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req);
+    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req,@RequestHeader Long userId);
 
 }
 

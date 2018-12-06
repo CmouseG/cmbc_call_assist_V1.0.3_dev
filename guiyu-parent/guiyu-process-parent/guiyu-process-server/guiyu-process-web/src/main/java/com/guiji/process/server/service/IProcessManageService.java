@@ -30,7 +30,7 @@ public interface IProcessManageService {
      * @param cmdType 对设备处理
      * @return
      */
-    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters);
+    boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters,Long userId);
 
     /**
      * 获取设备的状态

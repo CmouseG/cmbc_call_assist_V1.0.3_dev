@@ -120,7 +120,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
     }
 
     @Override
-    public void executeCmd(List<SysProcess> sysProcessList, CmdTypeEnum cmdTypeEnum) {
+    public void executeCmd(List<SysProcess> sysProcessList, CmdTypeEnum cmdTypeEnum,Long userId) {
         List<CmdMessageVO> cmdMessageVOs = new ArrayList<CmdMessageVO>();
         if (sysProcessList != null) {
             for(SysProcess sysProcess : sysProcessList) {
@@ -132,6 +132,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
                 CmdMessageVO cmdMessageVO = new CmdMessageVO();
                 cmdMessageVO.setProcessInstanceVO(processInstanceVO);
                 cmdMessageVO.setCmdType(cmdTypeEnum);
+                cmdMessageVO.setUserId(userId);
                 cmdMessageVOs.add(cmdMessageVO);
 
             }

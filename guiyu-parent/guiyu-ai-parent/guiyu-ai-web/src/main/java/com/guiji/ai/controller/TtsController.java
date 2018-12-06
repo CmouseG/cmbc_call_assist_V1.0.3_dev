@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
@@ -21,6 +20,8 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
+import com.guiji.ai.vo.TaskListReqVO;
+import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -74,7 +75,7 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getTtsResultByBusId")
-	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestParam String busId) {
+	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestBody String busId) {
 		TtsRspVO ttsRspVO = new TtsRspVO();
 		try
 		{
@@ -135,7 +136,8 @@ public class TtsController implements ITts
 	 * 获取GPU模型列表
 	 */
 	@Override
-	public ReturnData<List<TtsGpuVO>> getAllGpuByPage(TtsGpuReqVO ttsGpuReqVO)
+	@PostMapping(value = "getAllGpuByPage")
+	public ReturnData<List<TtsGpuVO>> getAllGpuByPage(@RequestBody TtsGpuReqVO ttsGpuReqVO)
 	{
 		//结果集
 		List<TtsGpuVO>  ttsGpuList = new ArrayList<>();
@@ -151,6 +153,18 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return  Result.ok(ttsGpuList);
+	}
+
+	/**
+	 * 获取任务列表
+	 */
+	@Override
+	@PostMapping(value = "getTaskList")
+	public ReturnData<List<TaskListRspVO>> getTaskList(@RequestBody TaskListReqVO taskListReqVO)
+	{
+		List<TaskListRspVO> taskListRspList = new ArrayList<>();
+	
+		return Result.ok(taskListRspList);
 	}
 	
 }

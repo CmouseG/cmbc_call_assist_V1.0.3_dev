@@ -102,7 +102,6 @@ public class ProcessManageService implements IProcessManageService {
             return false;
         }
 
-        System.out.println("向客户端发送发布命令");
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();

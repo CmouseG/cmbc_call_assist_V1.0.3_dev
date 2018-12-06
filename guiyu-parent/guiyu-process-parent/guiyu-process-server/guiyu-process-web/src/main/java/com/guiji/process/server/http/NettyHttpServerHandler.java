@@ -1,6 +1,7 @@
 package com.guiji.process.server.http;
 
 import com.guiji.process.core.util.ByteUtils;
+import com.guiji.process.server.handler.ServerPoHandlerProto;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.EmptyByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,14 +17,17 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.LastHttpContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyHttpServerHandler extends ChannelInboundHandlerAdapter {
+	Logger logger = LoggerFactory.getLogger(NettyHttpServerHandler.class);
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (msg instanceof HttpRequest) {
 			DefaultHttpRequest request = (DefaultHttpRequest) msg;
-			System.out.println("URI:" + request.getUri());
+			logger.debug("URI:" + request.getUri());
 			System.err.println(msg);
 		}
 		
@@ -31,10 +35,10 @@ public class NettyHttpServerHandler extends ChannelInboundHandlerAdapter {
 			LastHttpContent httpContent = (LastHttpContent) msg;
 			ByteBuf byteData = httpContent.content();
 			if (byteData instanceof EmptyByteBuf) {
-				System.out.println("Content：无数据");
+				logger.debug("Content：无数据");
 			} else {
 				String content = new String(ByteUtils.objectToByte(byteData));
-				System.out.println("Content:" + content);
+				logger.debug("Content:" + content);
 			}
 		}
 		

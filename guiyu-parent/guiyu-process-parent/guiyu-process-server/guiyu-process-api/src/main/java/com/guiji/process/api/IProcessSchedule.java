@@ -2,6 +2,7 @@ package com.guiji.process.api;
 
 import com.guiji.component.result.Result;
 import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.ChangeModelReq;
 import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import io.swagger.annotations.ApiImplicitParam;
@@ -54,21 +55,15 @@ public interface IProcessSchedule {
 
     /**
      * 模型切换
-     * @param fromModel
-     * @param toModel
-     * @param ip
-     * @param port
+     * @param req 切换模型
      * @return
      */
     @ApiOperation(value = "changeTTS")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "fromModel", value = "原模型", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "toModel", value = "新模型", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "ip", value = "ip", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "port", value = "端口", dataType = "int", paramType = "query")
+            @ApiImplicitParam(name = "req", value = "切换模型", dataType = "ChangeModelReq", paramType = "query"),
     })
-    @GetMapping(value="/changeTTS")
-    Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel,@RequestParam("ip") String ip,@RequestParam("port") int port,@RequestHeader Long userId);
+    @PostMapping(value="/changeTTS")
+    Result.ReturnData<Boolean> changeTTS(@RequestBody ChangeModelReq req);
 
 
     /**
@@ -107,7 +102,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "req", value = "发布资源", dataType = "UpgrateResouceReq", paramType = "query"),
     })
     @PostMapping(value="/publishResource")
-    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req,@RequestHeader Long userId);
+    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req);
 
 }
 

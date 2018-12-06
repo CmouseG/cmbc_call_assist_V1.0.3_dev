@@ -14,7 +14,6 @@ public class ClientPoHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
 		Message message = (Message) msg;
-		System.out.println("client:" + message.getContent() + message.toString());
 	}
 
 	@Override

@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
-import com.guiji.ai.tts.service.impl.TtsGpu;
+import com.guiji.ai.tts.service.IModelService;
+import com.guiji.ai.tts.service.impl.func.TtsGpu;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
@@ -22,7 +23,9 @@ public class AcquireTTSHandler {
 	private static Logger logger = LoggerFactory.getLogger(AcquireTTSHandler.class);
 	
 	@Autowired
-    RedisUtil redisUtil;	
+    RedisUtil redisUtil;
+	@Autowired
+	IModelService modelService;
 	@Autowired
 	IProcessSchedule iProcessSchedule;
 
@@ -64,16 +67,19 @@ public class AcquireTTSHandler {
 		String modelName = processInstanceList.get(0).getProcessKey();
 		List<Object> gpuList = new ArrayList<>();
 
-		for (int i = 0; i < processInstanceList.size(); i++) 
+		for (ProcessInstanceVO processInstance : processInstanceList) 
 		{
+			//入库
+			modelService.saveModel(processInstance);
+			
 			TtsGpu gpu = new TtsGpu();
-			gpu.setIp(processInstanceList.get(i).getIp());
-			gpu.setPort(String.valueOf(processInstanceList.get(i).getPort()));
+			gpu.setIp(processInstance.getIp());
+			gpu.setPort(String.valueOf(processInstance.getPort()));
 
-			if (!processInstanceList.get(i).getProcessKey().equals(modelName)) 
+			if (!processInstance.getProcessKey().equals(modelName)) 
 			{
 				redisUtil.lSet(AiConstants.GUIYUTTS + modelName + AiConstants.AVALIABLE, gpuList);
-				modelName = processInstanceList.get(i).getProcessKey();
+				modelName = processInstance.getProcessKey();
 				gpuList = new ArrayList<>();
 			}
 			gpuList.add(gpu);

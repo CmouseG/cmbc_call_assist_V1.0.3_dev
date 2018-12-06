@@ -32,23 +32,19 @@
 
 	<insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsStatus">
 		insert into tts_status 
-		(
-			id, 
+		( 
 			bus_id,
 			model, 
 			status, 
-			create_time, 
-			update_time, 
+			create_time,
 			text_count
 		)
 		values 
 		(
-			#{id,jdbcType=INTEGER}, 
 			#{busId,jdbcType=VARCHAR},
 			#{model,jdbcType=VARCHAR}, 
 			#{status,jdbcType=CHAR},
 			#{createTime,jdbcType=TIMESTAMP},
-			#{updateTime,jdbcType=TIMESTAMP},
 			#{text_count ,jdbcType=INTEGER}
 		)
 	</insert>

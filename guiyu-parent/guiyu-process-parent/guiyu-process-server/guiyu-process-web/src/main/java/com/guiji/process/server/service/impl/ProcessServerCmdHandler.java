@@ -124,23 +124,6 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
         processManageService.updateStatus(processInstanceVO.getType(), processInstanceVO.getIp(), processInstanceVO.getPort(), toStatus);
     }
 
-    private void doAgentRegister(CmdMessageVO cmdMessageVO) {
-        ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
-        // 存入数据库
-        SysProcess sysProcess = new SysProcess();
-        sysProcess.setIp(processInstanceVO.getIp());
-        sysProcess.setPort(String.valueOf(processInstanceVO.getPort()));
-        sysProcess.setName(processInstanceVO.getName());
-        sysProcess.setProcessKey(processInstanceVO.getProcessKey());
-        sysProcess.setStatus(processInstanceVO.getStatus().getValue());
-        sysProcess.setType(processInstanceVO.getType().getValue());
-        sysProcess.setCreateTime(new Date());
-        sysProcess.setUpdateTime(new Date());
-        sysProcessService.insert(sysProcess);
-
-    }
-
-
     private void doRegister(CmdMessageVO cmdMessageVO)
     {
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();

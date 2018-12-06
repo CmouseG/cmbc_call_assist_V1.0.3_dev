@@ -9,6 +9,5 @@ public interface StatisticMapper {
     void deleteYesterday();
     void insertIntoReportCallCount(List<ReportCallCount> list);
     List<ReportCallCount> selectFromCallOutPlan();
-
     List<Map> getIntentCountOnTime(Map map);
 }

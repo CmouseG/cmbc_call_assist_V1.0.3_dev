@@ -59,7 +59,7 @@
     GROUP BY customer_id,accurate_intent
   </select>
 
-  <select id="getIntentCountOnTime" resultType="com.guiji.ccmanager.vo.ReportCallCount" parameterType="java.util.Map">
+  <select id="getIntentCountOnTime" resultType="com.guiji.callcenter.dao.entity.ReportCallCountShow" parameterType="java.util.Map">
     SELECT
     call_date as callDate,
     sum(count_a) as A,

@@ -16,5 +16,8 @@ public interface ISysProcessTaskService {
 
     public Page<SysProcessTask> queryProcessTaskPage(int pageNo, int pageSize, SysProcessTask sysProcessTask);
 
+    public List<SysProcessTask> list(SysProcessTask sysProcessTask);
+
+
     public boolean update(SysProcessTask sysProcessTask);
 }

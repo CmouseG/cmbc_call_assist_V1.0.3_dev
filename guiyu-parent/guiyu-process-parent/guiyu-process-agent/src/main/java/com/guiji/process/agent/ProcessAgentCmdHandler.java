@@ -41,7 +41,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         CfgProcessOperVO cfgProcessOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
+        System.out.println("cfgProcessOperVO" + cfgProcessOperVO);
         if(cfgProcessOperVO == null ) {
+            HealthCheckResultAnylyse.doNothing(processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
             return;
         }
 
@@ -52,7 +54,7 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
             case RESTART:
                 cfgProcessOperVO = getNodeOper(CmdTypeEnum.RESTART, cmdMessageVO.getProcessInstanceVO().getPort());
                 CommandResult commandResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afterRestart(commandResult,processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters());
+                HealthCheckResultAnylyse.afterRestart(commandResult,processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
                 break;
 
             case UNKNOWN:
@@ -72,9 +74,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
                 break;
 
             case RESTORE_MODEL:
-
-                doCmd(cmdMessageVO, cfgProcessOperVO);
-
+                System.out.println("RESTORE_MODEL");
+                CommandResult restoreResult = doCmd(cmdMessageVO, cfgProcessOperVO);
+                HealthCheckResultAnylyse.afterRestoreModel(restoreResult,processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
                 // 更新配置文件
                 ProcessCfgService.getIntance().refreshProcessKey(cmdMessageVO.getProcessInstanceVO().getPort(), cmdMessageVO.getParameters().get(1));
                 Thread.sleep(30000);//等待1s查看是否关闭成功
@@ -90,16 +92,16 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
 
             case PULBLISH_SELLBOT_BOTSTENCE:
                 CommandResult sellbotResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(sellbotResult,processInstanceVO,ProcessTypeEnum.SELLBOT,cmdMessageVO.getParameters());
+                HealthCheckResultAnylyse.afertPublish(sellbotResult,processInstanceVO,ProcessTypeEnum.SELLBOT,cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
                 break;
 
             case PULBLISH_FREESWITCH_BOTSTENCE:
                 CommandResult freeswitchResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(freeswitchResult,processInstanceVO,ProcessTypeEnum.FREESWITCH,cmdMessageVO.getParameters());
+                HealthCheckResultAnylyse.afertPublish(freeswitchResult,processInstanceVO,ProcessTypeEnum.FREESWITCH,cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
                 break;
             case PUBLISH_ROBOT_BOTSTENCE:
                 CommandResult robotResult = doCmd(cmdMessageVO, cfgProcessOperVO);
-                HealthCheckResultAnylyse.afertPublish(robotResult,processInstanceVO,ProcessTypeEnum.ROBOT,cmdMessageVO.getParameters());
+                HealthCheckResultAnylyse.afertPublish(robotResult,processInstanceVO,ProcessTypeEnum.ROBOT,cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
                 break;
             default:
                 break;

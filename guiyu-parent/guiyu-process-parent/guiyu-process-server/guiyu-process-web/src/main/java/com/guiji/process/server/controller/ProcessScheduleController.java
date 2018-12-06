@@ -41,6 +41,12 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
+    public Result.ReturnData<Integer> sellbotCount() {
+        int count = processScheduleService.sellbotCount();
+        return Result.ok(Integer.valueOf(count));
+    }
+
+    @Override
     public Result.ReturnData<Boolean> changeTTS(@RequestParam("fromModel") String fromModel, @RequestParam("toModel") String toModel, @RequestParam("ip") String ip, @RequestParam("port") int port) {
         ProcessInstanceVO processInstance = new ProcessInstanceVO();
         processInstance.setType(ProcessTypeEnum.TTS);
@@ -63,7 +69,8 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
-    public Result.ReturnData<Boolean> publishResource(UpgrateResouceReq req) {
+    public Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req) {
+        System.out.println("调用到了");
         processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile());
         return Result.ok();
     }

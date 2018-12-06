@@ -37,7 +37,7 @@ public class HealthCheckResultAnylyse {
         return result;
     }
 
-    public static void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters) {
+    public static void afertPublish(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
         IHealthCheckResultAnalyse analyse = null;
         switch (processType) {
             case SELLBOT:
@@ -56,10 +56,10 @@ public class HealthCheckResultAnylyse {
         }
 
         if (analyse != null) {
-            analyse.afertPublish(cmdResult,processInstanceVO,parameters);
+            analyse.afertPublish(cmdResult,processInstanceVO,parameters,reqKey);
         }
     }
-    public static void afterRestart(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters) {
+    public static void afterRestart(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
         IHealthCheckResultAnalyse analyse = null;
         switch (processType) {
             case SELLBOT:
@@ -78,7 +78,53 @@ public class HealthCheckResultAnylyse {
         }
 
         if (analyse != null) {
-            analyse.afertRestart(cmdResult,processInstanceVO,parameters);
+            analyse.afertRestart(cmdResult,processInstanceVO,parameters,reqKey);
+        }
+    }
+
+    public static void afterRestoreModel(CommandResult cmdResult,ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
+        IHealthCheckResultAnalyse analyse = null;
+        switch (processType) {
+            case SELLBOT:
+                analyse = new SellbotHealthCheckResultAnalyse();
+                break;
+
+            case TTS:
+                analyse = new GpuHealthCheckResultAnalyse();
+                break;
+            case FREESWITCH:
+                analyse = new FreeswitchHealthCheckResultAnalyse();
+                break;
+            case ROBOT:
+                analyse = new RobotHealthCheckResultAnalyse();
+                break;
+        }
+
+        if (analyse != null) {
+            analyse.afterRestoreModel(cmdResult,processInstanceVO,parameters,reqKey);
+        }
+    }
+
+    public static void doNothing(ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
+        IHealthCheckResultAnalyse analyse = null;
+        switch (processType) {
+            case SELLBOT:
+                analyse = new SellbotHealthCheckResultAnalyse();
+                break;
+
+            case TTS:
+                analyse = new GpuHealthCheckResultAnalyse();
+                break;
+            case FREESWITCH:
+                analyse = new FreeswitchHealthCheckResultAnalyse();
+                break;
+            case ROBOT:
+                analyse = new RobotHealthCheckResultAnalyse();
+                break;
+        }
+
+        if (analyse != null) {
+            analyse.doNothing(processInstanceVO,parameters,reqKey);
         }
     }
 }

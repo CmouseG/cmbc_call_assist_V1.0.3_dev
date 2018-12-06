@@ -32,6 +32,7 @@ public class CmdMessageUtils {
 			builder.setParameters(parameters==null?"":parameters);
 
 			if (cmdMessageVO.getProcessInstanceVO() != null) {
+
 				builder.setPort(cmdMessageVO.getProcessInstanceVO().getPort());
 				builder.setProcessKey(cmdMessageVO.getProcessInstanceVO().getProcessKey()==null?"":cmdMessageVO.getProcessInstanceVO().getProcessKey());
 				builder.setName(cmdMessageVO.getProcessInstanceVO().getName()==null?"":cmdMessageVO.getProcessInstanceVO().getName());

@@ -53,6 +53,11 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
+    public int sellbotCount() {
+        return deviceCount(ProcessTypeEnum.SELLBOT);
+    }
+
+    @Override
     public List<ProcessInstanceVO> getSellbot(int requestCount) {
         return getDevices(ProcessTypeEnum.SELLBOT,null, requestCount);
     }
@@ -119,6 +124,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
 
     @Override
     public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file) {
+        System.out.println("发布参数" + processTypeEnum + tmplId + file);
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
         if(processTypeEnum == ProcessTypeEnum.SELLBOT)
         {
@@ -209,6 +215,26 @@ public class ProceseScheduleService implements IProceseScheduleService {
             }
         }
         return  result;
+    }
+
+    private int deviceCount(ProcessTypeEnum processTypeEnum){
+        List<ProcessInstanceVO> result = new ArrayList<ProcessInstanceVO>();
+        int count = 0;
+
+        Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
+        if(allAgent == null){
+            return count;
+        }
+        for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
+            Map<Object, Object> agentProcesses = (Map<Object, Object>) processInstanceManageService.query(((ProcessInstanceVO)agentEnv.getValue()).getIp());
+            for (Map.Entry<Object, Object> processesEnv: agentProcesses.entrySet()) {
+                ProcessInstanceVO processInstance = (ProcessInstanceVO) processesEnv.getValue();
+                if(processInstance.getType() == processTypeEnum && (processInstance.getStatus() == ProcessStatusEnum.UP || processInstance.getStatus() == ProcessStatusEnum.BUSYING)){
+                    count++;
+                }
+            }
+        }
+        return  count;
     }
 
 }

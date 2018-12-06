@@ -41,6 +41,9 @@ import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample.Criteria;
 import ai.guiji.botsentence.dao.entity.BotSentenceTemplate;
+import ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup;
+import ai.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
+import ai.guiji.botsentence.dao.entity.BotSentenceTtsTask;
 import ai.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import ai.guiji.botsentence.dao.entity.BusinessAnswerTaskExt;
 import ai.guiji.botsentence.dao.entity.VoliceInfo;
@@ -690,34 +693,13 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			if(StringUtils.isBlank(branch.getResponse())) {
 				throw new CommonException("节点[" + domainName + "]文案不完整!");
 			}
-			
+			 
 			String response = branch.getResponse().substring(1,branch.getResponse().length()-1).split(",")[0];
 			VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(response));
 			if(StringUtils.isBlank(volice.getContent())) {
 				throw new CommonException("节点[" + domainName + "]文案不完整!");
 			}
 		}
-		
-		
-		
-		/*BotSentenceDomainExample domainExample2 = new BotSentenceDomainExample();
-		domainExample2.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andDomainNameNotIn(domainList);
-		List<String> domainList2 = new ArrayList<>();
-		List<BotSentenceDomain> list2 = botSentenceDomainMapper.selectByExample(domainExample2);
-		if(null != list && list.size() > 0) {
-			for(BotSentenceDomain domain : list2) {
-				if(!"end".equals(domain.getType())) {
-					domainList2.add(domain.getDomainName());
-				}
-			}
-		}
-		
-		if(domainList2.size() > 0) {
-			throw new CommonException("提交失败,节点"+domainList2.toString()+"应该是结束类型!");
-		}*/
-		
-		
-		
 		
 		//判断当前话术流程是否全部都已上传了录音信息
 		BotSentenceBranchExample example = new BotSentenceBranchExample();
@@ -740,6 +722,60 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		
 		
+		
+		boolean needTts = false;
+		
+		//校验TTS录音是否已上传
+		BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
+		ttsExample.createCriteria().andProcessIdEqualTo(processId).andIsParamEqualTo(Constant.IS_PARAM_FALSE);
+		List<BotSentenceTtsTask> ttsList =  botSentenceTtsTaskMapper.selectByExample(ttsExample);
+		
+		if(null != ttsList && ttsList.size() > 0) {
+			needTts = true;
+			for(BotSentenceTtsTask task : ttsList) {
+				if(StringUtils.isBlank(task.getVoliceUrl())) {
+					throw new CommonException("存在未上传录音的tts文案!");
+				}
+				
+				String voliceId = task.getBusiId();
+				VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));
+				//校验是否编辑备用话术
+				if(StringUtils.isNotBlank(volice.getContent())) {
+					String content = volice.getContent();
+					if(BotSentenceUtil.validateContainParam(content)) {
+						//根据voliceId查询用话术
+						BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+						backupExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(volice.getVoliceId());
+						List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
+						if(null != backupList && backupList.size() > 0) {
+							if(StringUtils.isBlank(backupList.get(0).getContent())) {
+								throw new CommonException("备用话术未维护!");
+							}
+						}else {
+							throw new CommonException("备用话术未维护!");
+						}
+						
+					}
+				}
+			}
+		}
+		
+		//校验通用对话录音是否已上传
+		BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+		backupExample.createCriteria().andProcessIdEqualTo(processId);
+		List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
+		if(null != backupList && backupList.size() > 0) {
+			for(BotSentenceTtsBackup backup : backupList) {
+				if(null != backup.getContent() && StringUtils.isNotBlank(backup.getContent().trim()) && StringUtils.isBlank(backup.getUrl())) {
+					throw new CommonException("存在未上传录音的备用话术!");
+				}
+			}
+		}
+		
+		//校验是否保存录音师
+		if(needTts && StringUtils.isBlank(process.getSoundType())) {
+			throw new CommonException("当前话术需要TTS，请选择配音师!");
+		}
 		
 		
 		process.setState("01");//审核中

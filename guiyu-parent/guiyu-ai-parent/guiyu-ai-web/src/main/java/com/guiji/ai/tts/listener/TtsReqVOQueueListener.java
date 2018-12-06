@@ -1,4 +1,4 @@
-package com.guiji.ai.tts.config;
+package com.guiji.ai.tts.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -10,7 +10,7 @@ import com.guiji.ai.tts.handler.TranslateHandler;
 import com.guiji.ai.tts.service.ITtsService;
 
 @Component
-public class QueueListener implements ApplicationRunner{
+public class TtsReqVOQueueListener implements ApplicationRunner{
 
 	@Autowired
 	ITtsService ttsService;

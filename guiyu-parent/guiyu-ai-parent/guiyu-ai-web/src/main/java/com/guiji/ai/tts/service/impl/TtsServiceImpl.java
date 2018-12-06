@@ -108,7 +108,7 @@ public class TtsServiceImpl implements ITtsService
 		// 合成
 		audioUrl = serviceProvideFactory.getTtsServiceProvide(model).transfer(busId, model, text);
 
-		redisUtil.set(model + "_" + text, audioUrl); // 返回值url存入redis
+		redisUtil.set(model + "_" + text, audioUrl, 60*30); // 返回值url存入redis 失效时间为30分钟
 
 		return audioUrl;
 	}
@@ -151,6 +151,9 @@ public class TtsServiceImpl implements ITtsService
 		return restltMapList;
 	}
 
+	/**
+	 * ttsReqVO入库
+	 */
 	@Override
 	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception
 	{

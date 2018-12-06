@@ -1,4 +1,4 @@
-package com.guiji.ai.tts.config;
+package com.guiji.ai.tts.listener;
 
 import java.util.List;
 
@@ -23,20 +23,20 @@ import com.guiji.utils.RedisUtil;
 @RabbitListener(queues = "fanoutRestoreModel.TTS")
 public class AiMqListener
 {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final Logger logger = LoggerFactory.getLogger(AiMqListener.class);
 
 	@Autowired
 	RedisUtil redisUtil;
 
 	/**
-	 * 监听进程管理队列消息，目前主要处理： 1、
-	 * 
+	 * 监听进程管理队列消息
 	 * @param message
 	 */
 	@RabbitHandler
 	public void process(String message)
 	{
 
+		logger.info("TTS模型切换...");
 		RestoreModelResultMsgVO restoreModelResultMsgVO = JsonUtils.json2Bean(message, RestoreModelResultMsgVO.class);
 		
 		if (restoreModelResultMsgVO.getResult() == 1)
@@ -62,6 +62,7 @@ public class AiMqListener
 		redisUtil.lSet(AiConstants.GUIYUTTS + toModel + AiConstants.AVALIABLE, new TtsGpu(ip, port));
 		redisUtil.lRemove(AiConstants.GUIYUTTS + fromMode + AiConstants.CHANGING, 1, gpuList.get(index));
 
+		logger.info("TTS模型切换完成...");
 	}
 
 }

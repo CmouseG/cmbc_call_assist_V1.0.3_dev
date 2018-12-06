@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Set;
+
 /**
  * @Auther: 黎阳
  * @Date: 2018/12/4 0004 19:42
@@ -20,7 +24,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class BizExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.OK)
     public ReturnData bindException(MethodArgumentNotValidException e) {
          BindingResult bindingResult = e.getBindingResult();
          String errorMesssage = "校验失败:";
@@ -30,5 +34,17 @@ public class BizExceptionHandler {
         ReturnData returnData = new ReturnData(Constant.ERROR_VALIDATE,errorMesssage,false);
         return returnData;
      }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public ReturnData bindException(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> bindingResult = e.getConstraintViolations();
+        String errorMesssage = "校验失败:";
+        for (ConstraintViolation constraintViolation : bindingResult){
+            errorMesssage += constraintViolation.getMessage() + "！ ";
+        }
+        ReturnData returnData = new ReturnData(Constant.ERROR_VALIDATE,errorMesssage,false);
+        return returnData;
+    }
 
 }

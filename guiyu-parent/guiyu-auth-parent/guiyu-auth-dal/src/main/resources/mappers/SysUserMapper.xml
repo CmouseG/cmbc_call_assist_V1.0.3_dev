@@ -420,7 +420,8 @@
 	</select> -->
 	
 	<select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
-		select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin from sys_role a
+		select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin 
+		from sys_role a
 		LEFT JOIN sys_role_user b on a.id=b.role_id
 		LEFT JOIN sys_user c on c.id=b.user_id
 		where c.id=#{id}

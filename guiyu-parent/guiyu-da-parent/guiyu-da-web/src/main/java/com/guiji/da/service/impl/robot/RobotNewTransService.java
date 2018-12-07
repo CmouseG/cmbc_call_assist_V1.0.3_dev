@@ -28,7 +28,7 @@ public class RobotNewTransService {
 	RobotCallProcessStatMapper robotCallProcessStatMapper; 
 	
 	/**
-	 * 保存或者更新一TTS合成信息
+	 * 保存或更新一个通话记录
 	 * 独立事物
 	 * @param ttsWavHis
 	 * @return

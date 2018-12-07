@@ -2,6 +2,8 @@ package com.guiji.robot.service.impl;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +26,7 @@ import com.guiji.utils.StrUtils;
 */
 @Service
 public class AiNewTransService {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	TtsWavHisMapper ttsWavHisMapper;
 	@Autowired
@@ -86,14 +89,19 @@ public class AiNewTransService {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public RobotCallHis recordRobotCallHis(RobotCallHis robotCallHis) {
 		if(robotCallHis != null) {
-			if(StrUtils.isEmpty(robotCallHis.getId())) {
-				//如果主键为空，那么新增一条信息
-				robotCallHis.setCrtTime(new Date());
-				robotCallHis.setCrtDate(DateUtil.getCurrentymd()); //创建日期 yyyy-MM-dd
-				robotCallHisMapper.insert(robotCallHis);	//创建时间
-			}else {
-				//主键不为空，更新信息
-				robotCallHisMapper.updateByPrimaryKeyWithBLOBs(robotCallHis);
+			try {
+				if(StrUtils.isEmpty(robotCallHis.getId())) {
+					//如果主键为空，那么新增一条信息
+					robotCallHis.setCrtTime(new Date());
+					robotCallHis.setCrtDate(DateUtil.getCurrentymd()); //创建日期 yyyy-MM-dd
+					robotCallHisMapper.insert(robotCallHis);	//创建时间
+				}else {
+					//主键不为空，更新信息
+					robotCallHisMapper.updateByPrimaryKeyWithBLOBs(robotCallHis);
+				}
+			} catch (Exception e) {
+				//不抛出异常,不能影响正常通话
+				logger.error("保存通话"+robotCallHis.getSeqId()+"记录发生异常",e);
 			}
 		}
 		return robotCallHis;

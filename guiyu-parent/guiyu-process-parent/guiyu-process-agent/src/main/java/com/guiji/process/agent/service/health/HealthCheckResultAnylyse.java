@@ -12,6 +12,7 @@ import com.guiji.process.agent.service.health.impl.RobotHealthCheckResultAnalyse
 import com.guiji.process.agent.service.health.impl.SellbotHealthCheckResultAnalyse;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.utils.BeanUtil;
 
 import java.util.List;
 
@@ -111,10 +112,13 @@ public class HealthCheckResultAnylyse {
 
     public static void doNothing(ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
         String result = "10";
+
+        ProcessInstanceVO processInstanceVOTmp = new ProcessInstanceVO();
+        BeanUtil.copyProperties(processInstanceVO, processInstanceVOTmp);
         // 发送给服务端
         CmdMessageVO newCmdMsg = new CmdMessageVO();
         newCmdMsg.setCmdType(CmdTypeEnum.DO_NOTHING);
-        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setProcessInstanceVO(processInstanceVOTmp);
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());

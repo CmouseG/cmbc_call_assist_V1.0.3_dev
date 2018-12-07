@@ -112,9 +112,6 @@ public class ProcessManageService implements IProcessManageService {
         cmdMessageVO.setParameters(parameters);
         CmdProtoMessage.ProtoMessage.Builder builder = CmdMessageUtils.convert(cmdMessageVO);
         builder.setType(2);
-        ctx.writeAndFlush(builder);
-
-        CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
 
         // 更新数据库
         // 新增sys_process_task
@@ -144,6 +141,9 @@ public class ProcessManageService implements IProcessManageService {
         // 操作写入缓存，控制5分钟内不能重复发起命令
         redisUtil.set(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType,"hasRun");
         redisUtil.expire(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType,RedisConstant.REDIS_PROCESS_TASK_EXPIRE);
+
+        ctx.writeAndFlush(builder);
+        CmdMsgSenderMap.getInstance().produce(cmdMessageVO);
         return true;
 
     }

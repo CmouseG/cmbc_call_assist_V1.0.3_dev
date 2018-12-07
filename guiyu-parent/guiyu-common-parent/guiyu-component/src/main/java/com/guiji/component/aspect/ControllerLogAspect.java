@@ -36,16 +36,23 @@ public class ControllerLogAspect
 	@Before("log()")
 	public void doBefore(JoinPoint joinPoint)
 	{
-		ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		HttpServletRequest request = sra.getRequest();
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(joinPoint.getSignature().getDeclaringTypeName()).append(".").append(joinPoint.getSignature().getName()).append("|") // 类名.方法名
-		  .append(request.getRequestURI()).append("|") // url
-		  .append(JSON.toJSONString(joinPoint.getArgs())).append("|") // args
-		  .append(request.getRemoteHost()); // ip
-		
-		logger.info(sb.toString());
+		try
+		{
+			ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+			HttpServletRequest request = sra.getRequest();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(joinPoint.getSignature().getDeclaringTypeName()).append(".").append(joinPoint.getSignature().getName()).append("|") // 类名.方法名
+					.append(request.getRequestURI()).append("|") // url
+					.append(JSON.toJSONString(joinPoint.getArgs())).append("|") // args
+					.append(request.getRemoteHost()); // ip
+
+			logger.info(sb.toString());
+
+		} catch (Exception e) {
+			
+		}
+
 	}
 
 	/**
@@ -55,7 +62,13 @@ public class ControllerLogAspect
 	@AfterReturning(returning = "result", pointcut = "log()")
 	public void doAfterReturning(Object result)
 	{
-		logger.info("Response...：" + JSON.toJSONString(result));
+		try
+		{
+			logger.info("Response...：" + JSON.toJSONString(result));
+			
+		} catch (Exception e) {
+			
+		}
 	}
 	
 	/**

@@ -73,4 +73,12 @@
   	where a.template_id=#{templateId}
   </select>
   
+  
+  <select id="getAvailableTemplateBySelf" resultType="map">
+  	select a.template_id,a.template_name,IFNULL(b.needTTs,0) as needTTs
+	from bot_available_template a
+	LEFT JOIN (select template_id,count(need_tts)>0 as needTTs from volice_info where need_tts=1 GROUP BY template_id) b on b.template_id=a.template_id
+  	where a.user_id=#{accountNo}
+  </select>
+  
 </mapper>

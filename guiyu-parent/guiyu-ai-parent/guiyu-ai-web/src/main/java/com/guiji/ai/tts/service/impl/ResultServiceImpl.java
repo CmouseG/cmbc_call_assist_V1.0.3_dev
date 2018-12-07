@@ -19,7 +19,6 @@ public class ResultServiceImpl implements IResultService
 	TtsResultMapper ttsResultMapper;
 
 
-
 	@Override
 	@Transactional
 	public List<Map<String, String>> getTtsTransferResultByBusId(String busId) throws Exception

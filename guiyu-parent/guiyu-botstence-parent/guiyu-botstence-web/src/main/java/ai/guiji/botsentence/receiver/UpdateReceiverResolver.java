@@ -14,9 +14,11 @@ import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
+import ai.guiji.botsentence.dao.entity.BotAvailableTemplate;
 import ai.guiji.botsentence.dao.entity.BotPublishSentenceLog;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
+import ai.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
 
 @Component
 public class UpdateReceiverResolver {
@@ -28,6 +30,9 @@ public class UpdateReceiverResolver {
 	
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
+	
+	@Autowired
+	private VoliceInfoExtMapper voliceInfoExtMapper;
 	
 	@Autowired
 	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
@@ -63,6 +68,15 @@ public class UpdateReceiverResolver {
 		    record.setStatus("2");
 		    botPublishSentenceLogMapper.updateByPrimaryKeySelective(record);
 		    
+		    //添加可用话术
+		    BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
+		    botAvailableTemplate.setTemplateId(tempId);
+		    botAvailableTemplate.setTemplateName(botSentenceProcess.getTemplateName());
+		    botAvailableTemplate.setUserId(botSentenceProcess.getCrtUser());
+		    botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);
+		    
+		    //清空volice的【新增】和【修改】
+			voliceInfoExtMapper.updateVoliceFlag(botSentenceProcess.getProcessId());
 		}
 		
 		if(vo.getSellbot()!=-1 && vo.getRobot()!=-1 && vo.getRobot()!=-1){

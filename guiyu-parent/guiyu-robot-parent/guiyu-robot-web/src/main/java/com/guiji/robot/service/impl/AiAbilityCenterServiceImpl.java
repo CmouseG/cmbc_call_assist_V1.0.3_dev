@@ -1,6 +1,7 @@
 package com.guiji.robot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.robot.constants.RobotConstants;
+import com.guiji.robot.dao.entity.RobotCallHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
@@ -65,6 +67,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	ITtsWavService iTtsWavService;
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
+	@Autowired
+	AiNewTransService robotNewTransService;
 	
 	/**
 	 * 导入任务时话术参数检查以及准备TTS合成
@@ -383,6 +387,14 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());
 			aiNext.setSellbotJson(sellbotRsp);
+			/**6、保存一通电话记录(放最后) **/
+			RobotCallHis robotCallHis = new RobotCallHis();
+			robotCallHis.setUserId(userId);
+			robotCallHis.setAiNo(aiCallStartReq.getAiNo());
+			robotCallHis.setSeqId(aiCallStartReq.getSeqid());
+			robotCallHis.setTemplateId(aiCallStartReq.getTemplateId());
+			robotCallHis.setAssignTime(new Date());
+			robotNewTransService.recordRobotCallHis(robotCallHis);
 			return aiNext;
 		} catch (Exception e) {
 			logger.error("{}的机器人{}在拨打电话{}时调用SELLBOT接口发生异常!",aiCallStartReq.getUserId(),nowAi.getAiNo(),aiCallStartReq.getPhoneNo(),e);

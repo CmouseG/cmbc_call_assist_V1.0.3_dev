@@ -373,6 +373,7 @@ public class VoliceServiceImpl implements IVoliceService {
 					vo.setTitle("备用话术" + index);
 					vo.setContent(backup.getBackup());
 					vo.setVoliceUrl(backup.getUrl());
+					vo.setFlag("【新增】");
 					if (StringUtils.isNotBlank(backup.getUrl())) {
 						vo.setHasVolice("是");
 					} else {

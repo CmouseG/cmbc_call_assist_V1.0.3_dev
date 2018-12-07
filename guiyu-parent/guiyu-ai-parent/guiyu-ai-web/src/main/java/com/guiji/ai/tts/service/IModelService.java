@@ -1,9 +1,7 @@
 package com.guiji.ai.tts.service;
 
-import java.util.List;
-
 import com.guiji.ai.vo.TtsGpuReqVO;
-import com.guiji.ai.vo.TtsGpuVO;
+import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.common.model.process.ProcessInstanceVO;
 
 public interface IModelService
@@ -16,9 +14,8 @@ public interface IModelService
 
 	/**
 	 * 获取GPU模型列表
-	 * 分页
 	 * @return
 	 */
-	public List<TtsGpuVO> getAllGpuByPage(TtsGpuReqVO ttsGpuReqVO);
+	public TtsGpuRspVO getGpuList(TtsGpuReqVO ttsGpuReqVO);
 	
 }

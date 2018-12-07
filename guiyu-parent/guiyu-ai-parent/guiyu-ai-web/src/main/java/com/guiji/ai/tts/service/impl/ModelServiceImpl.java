@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guiji.ai.dao.TtsModelMapper;
 import com.guiji.ai.dao.entity.TtsModel;
 import com.guiji.ai.dao.entity.TtsModelExample;
+import com.guiji.ai.dao.entity.TtsModelExample.Criteria;
 import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.vo.TtsGpuReqVO;
+import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsGpuVO;
 import com.guiji.common.model.process.ProcessInstanceVO;
 
@@ -37,28 +39,52 @@ public class ModelServiceImpl implements IModelService
 
 	@Override
 	@Transactional
-	public List<TtsGpuVO> getAllGpuByPage(TtsGpuReqVO ttsGpuReqVO)
+	public TtsGpuRspVO getGpuList(TtsGpuReqVO ttsGpuReqVO)
 	{
-		List<TtsGpuVO> TtsGpuList = new ArrayList<>();
+		TtsGpuRspVO ttsGpuRsp = new TtsGpuRspVO();
 		
-		int pageSize = ttsGpuReqVO.getPageSize();
-		int pageNum = ttsGpuReqVO.getPageNum();
+		List<TtsGpuVO> ttsGpuList = new ArrayList<>();
+		List<TtsModel> modelList = new ArrayList<>();
 		
-		TtsModelExample ttsModelExample = new TtsModelExample();
-		ttsModelExample.setLimitStart((pageNum - 1) * pageSize);
-		ttsModelExample.setLimitEnd(pageSize);
+		TtsModelExample example = new TtsModelExample();
 		
-		List<TtsModel> modelList = modelMapper.selectByExample(ttsModelExample);
-		
-		for(TtsModel ttsMolde : modelList)
+		if(ttsGpuReqVO == null){
+			modelList = modelMapper.selectByExample(example);
+		}else
 		{
-			TtsGpuVO gpuVO = new TtsGpuVO();
-			gpuVO.setModel(ttsMolde.getModel());
-			gpuVO.setIp(ttsMolde.getTtsIp());
-			gpuVO.setPort(ttsMolde.getTtsPort());
-			TtsGpuList.add(gpuVO);
+			Criteria criteria = example.createCriteria();
+			if(ttsGpuReqVO.getModel() != null){
+				criteria.andModelEqualTo(ttsGpuReqVO.getModel());
+			}
+			if(ttsGpuReqVO.getIp() != null){
+				criteria.andTtsIpEqualTo(ttsGpuReqVO.getIp());
+			}
+			if(ttsGpuReqVO.getPort() != null){
+				criteria.andTtsPortEqualTo(ttsGpuReqVO.getPort());
+			}
+			if(ttsGpuReqVO.getPageNum() != null && ttsGpuReqVO.getPageSize() != null){
+				example.setLimitStart((ttsGpuReqVO.getPageNum() - 1) * ttsGpuReqVO.getPageSize());
+				example.setLimitEnd(ttsGpuReqVO.getPageSize());
+			}
+			
+			modelList = modelMapper.selectByExample(example);
 		}
-		return TtsGpuList;
+		
+		if(modelList != null){
+			for(TtsModel ttsMolde : modelList)
+			{
+				TtsGpuVO gpuVO = new TtsGpuVO();
+				gpuVO.setModel(ttsMolde.getModel());
+				gpuVO.setIp(ttsMolde.getTtsIp());
+				gpuVO.setPort(ttsMolde.getTtsPort());
+				ttsGpuList.add(gpuVO);
+			}
+		}
+		
+		ttsGpuRsp.setTotalNum(ttsGpuList.size());
+		ttsGpuRsp.setTtsGpuList(ttsGpuList);
+		
+		return ttsGpuRsp;
 	}
 
 }

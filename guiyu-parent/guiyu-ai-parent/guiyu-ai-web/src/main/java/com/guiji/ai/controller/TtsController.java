@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
-import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.tts.TtsReqVOQueue;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.IModelService;
@@ -21,8 +20,9 @@ import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TaskListReqVO;
+import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
-import com.guiji.ai.vo.TtsGpuVO;
+import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
@@ -101,18 +101,18 @@ public class TtsController implements ITts
 	}
 
 	/**
-	 * 查询TTS处理状态
+	 * 查询TTS处理状态列表
 	 */
 	@Override
 	@PostMapping(value = "getTtsStatus")
-	public ReturnData<List<TtsStatusRspVO>> getTtsStatus(@RequestBody TtsStatusReqVO ttsStatusReqVO) 
+	public ReturnData<List<TtsStatusRspVO>> getTtsStatusList(@RequestBody(required = false) TtsStatusReqVO ttsStatusReqVO) 
 	{
 		//结果集
 		List<TtsStatusRspVO> statusRspVOList = new ArrayList<>();
 		try
 		{
 			logger.info("开始查询tts处理状态...");
-			statusRspVOList = statusService.getTtsStatus(ttsStatusReqVO);
+			statusRspVOList = statusService.getTtsStatusList(ttsStatusReqVO);
 				
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -129,14 +129,13 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getAllGpuByPage")
-	public ReturnData<List<TtsGpuVO>> getAllGpuByPage(@RequestBody TtsGpuReqVO ttsGpuReqVO)
+	public ReturnData<TtsGpuRspVO> getGpuList(@RequestBody(required = false) TtsGpuReqVO ttsGpuReqVO)
 	{
-		//结果集
-		List<TtsGpuVO>  ttsGpuList = new ArrayList<>();
+		TtsGpuRspVO ttsGpuRsp = new TtsGpuRspVO();
 		try
 		{
 			logger.info("获取GPU模型列表...");
-			ttsGpuList = modelService.getAllGpuByPage(ttsGpuReqVO);
+			ttsGpuRsp = modelService.getGpuList(ttsGpuReqVO);
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -145,7 +144,7 @@ public class TtsController implements ITts
 			logger.error("请求失败！", ex);
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
-		return  Result.ok(ttsGpuList);
+		return  Result.ok(ttsGpuRsp);
 	}
 
 	/**
@@ -153,14 +152,13 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getTaskList")
-	public ReturnData<List<TtsStatus>> getTaskList(@RequestBody TaskListReqVO taskListReqVO)
+	public ReturnData<TaskListRspVO> getTaskList(@RequestBody(required = false) TaskListReqVO taskListReqVO)
 	{
-		//结果集
-		List<TtsStatus> taskListRspList = new ArrayList<>();
+		TaskListRspVO taskListRspVO = new TaskListRspVO();
 		try
 		{
 			logger.info("获取任务列表...");
-			taskListRspList = statusService.getTaskList(taskListReqVO);
+			taskListRspVO = statusService.getTaskList(taskListReqVO);
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -169,7 +167,7 @@ public class TtsController implements ITts
 			logger.error("请求失败！", ex);
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
-		return Result.ok(taskListRspList);
+		return Result.ok(taskListRspVO);
 	}
 	
 }

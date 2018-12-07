@@ -251,24 +251,6 @@
 		#{busId,jdbcType=VARCHAR}
 	</select>
 
-	<select id="getTtsStatus" resultType="java.util.HashMap">
-		SELECT bus_id, model, text_count, create_time FROM tts_status
-		<where>
-			<if test="status != null and status != '' ">
-				status = #{status,jdbcType=VARCHAR}
-			</if>
-			<if test="model !=null and model != '' ">
-				AND model = #{model,jdbcType=VARCHAR}
-			</if>
-			<if test="startTime != null ">
-				AND <![CDATA[create_time >= #{startTime,jdbcType=TIMESTAMP}]]>
-			</if>
-			<if test="endTime != null ">
-				AND <![CDATA[create_time <= #{endTime,jdbcType=TIMESTAMP}]]> 
-			</if>
-		</where>
-	</select>
-
 	<update id="updateStatusByBusId">
 		UPDATE tts_status
 		SET status = #{status,jdbcType=CHAR}

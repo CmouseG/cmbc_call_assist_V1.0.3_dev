@@ -8,8 +8,6 @@ import com.guiji.common.model.process.ProcessInstanceVO;
 
 public interface IModelService
 {
-
-
 	/**
 	 * 保存到tts_model表
 	 * @param processInstance
@@ -22,4 +20,5 @@ public interface IModelService
 	 * @return
 	 */
 	public List<TtsGpuVO> getAllGpuByPage(TtsGpuReqVO ttsGpuReqVO);
+	
 }

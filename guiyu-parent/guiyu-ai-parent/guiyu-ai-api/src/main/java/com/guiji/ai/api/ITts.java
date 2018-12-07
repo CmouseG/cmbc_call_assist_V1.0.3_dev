@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.vo.TaskListReqVO;
-import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -66,6 +66,6 @@ public interface ITts {
      */
     @ApiOperation(value="获取任务列表")
     @PostMapping(value = "getTaskList")
-    public ReturnData<List<TaskListRspVO>> getTaskList(TaskListReqVO taskListReqVO);
+    public ReturnData<List<TtsStatus>> getTaskList(TaskListReqVO taskListReqVO);
     
 }

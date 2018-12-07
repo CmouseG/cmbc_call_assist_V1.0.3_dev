@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.da.dao.RobotCallProcessStatMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.da.dao.entity.RobotCallProcessStat" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="stat_date" property="statDate" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="ai_answer" property="aiAnswer" jdbcType="VARCHAR" />
+    <result column="current_domain" property="currentDomain" jdbcType="VARCHAR" />
+    <result column="domain_type" property="domainType" jdbcType="VARCHAR" />
+    <result column="total_stat" property="totalStat" jdbcType="INTEGER" />
+    <result column="refused_stat" property="refusedStat" jdbcType="VARCHAR" />
+    <result column="hangup_stat" property="hangupStat" jdbcType="VARCHAR" />
+    <result column="match_stat" property="matchStat" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, stat_date, template_id, ai_answer, current_domain, domain_type, total_stat, 
+    refused_stat, hangup_stat, match_stat, crt_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.da.dao.entity.RobotCallProcessStatExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from robot_call_process_stat
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from robot_call_process_stat
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from robot_call_process_stat
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.da.dao.entity.RobotCallProcessStatExample" >
+    delete from robot_call_process_stat
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('robot_call_process_stat')
+    </selectKey>
+    insert into robot_call_process_stat (id, user_id, stat_date, 
+      template_id, ai_answer, current_domain, 
+      domain_type, total_stat, refused_stat, 
+      hangup_stat, match_stat, crt_time
+      )
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{statDate,jdbcType=VARCHAR}, 
+      #{templateId,jdbcType=VARCHAR}, #{aiAnswer,jdbcType=VARCHAR}, #{currentDomain,jdbcType=VARCHAR}, 
+      #{domainType,jdbcType=VARCHAR}, #{totalStat,jdbcType=INTEGER}, #{refusedStat,jdbcType=VARCHAR}, 
+      #{hangupStat,jdbcType=VARCHAR}, #{matchStat,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('robot_call_process_stat')
+    </selectKey>
+    insert into robot_call_process_stat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="statDate != null" >
+        stat_date,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="aiAnswer != null" >
+        ai_answer,
+      </if>
+      <if test="currentDomain != null" >
+        current_domain,
+      </if>
+      <if test="domainType != null" >
+        domain_type,
+      </if>
+      <if test="totalStat != null" >
+        total_stat,
+      </if>
+      <if test="refusedStat != null" >
+        refused_stat,
+      </if>
+      <if test="hangupStat != null" >
+        hangup_stat,
+      </if>
+      <if test="matchStat != null" >
+        match_stat,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=VARCHAR},
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="statDate != null" >
+        #{statDate,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="aiAnswer != null" >
+        #{aiAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="currentDomain != null" >
+        #{currentDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="domainType != null" >
+        #{domainType,jdbcType=VARCHAR},
+      </if>
+      <if test="totalStat != null" >
+        #{totalStat,jdbcType=INTEGER},
+      </if>
+      <if test="refusedStat != null" >
+        #{refusedStat,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupStat != null" >
+        #{hangupStat,jdbcType=VARCHAR},
+      </if>
+      <if test="matchStat != null" >
+        #{matchStat,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.da.dao.entity.RobotCallProcessStatExample" resultType="java.lang.Integer" >
+    select count(*) from robot_call_process_stat
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update robot_call_process_stat
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.statDate != null" >
+        stat_date = #{record.statDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aiAnswer != null" >
+        ai_answer = #{record.aiAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currentDomain != null" >
+        current_domain = #{record.currentDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.domainType != null" >
+        domain_type = #{record.domainType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.totalStat != null" >
+        total_stat = #{record.totalStat,jdbcType=INTEGER},
+      </if>
+      <if test="record.refusedStat != null" >
+        refused_stat = #{record.refusedStat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hangupStat != null" >
+        hangup_stat = #{record.hangupStat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.matchStat != null" >
+        match_stat = #{record.matchStat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update robot_call_process_stat
+    set id = #{record.id,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      stat_date = #{record.statDate,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      ai_answer = #{record.aiAnswer,jdbcType=VARCHAR},
+      current_domain = #{record.currentDomain,jdbcType=VARCHAR},
+      domain_type = #{record.domainType,jdbcType=VARCHAR},
+      total_stat = #{record.totalStat,jdbcType=INTEGER},
+      refused_stat = #{record.refusedStat,jdbcType=VARCHAR},
+      hangup_stat = #{record.hangupStat,jdbcType=VARCHAR},
+      match_stat = #{record.matchStat,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
+    update robot_call_process_stat
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="statDate != null" >
+        stat_date = #{statDate,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="aiAnswer != null" >
+        ai_answer = #{aiAnswer,jdbcType=VARCHAR},
+      </if>
+      <if test="currentDomain != null" >
+        current_domain = #{currentDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="domainType != null" >
+        domain_type = #{domainType,jdbcType=VARCHAR},
+      </if>
+      <if test="totalStat != null" >
+        total_stat = #{totalStat,jdbcType=INTEGER},
+      </if>
+      <if test="refusedStat != null" >
+        refused_stat = #{refusedStat,jdbcType=VARCHAR},
+      </if>
+      <if test="hangupStat != null" >
+        hangup_stat = #{hangupStat,jdbcType=VARCHAR},
+      </if>
+      <if test="matchStat != null" >
+        match_stat = #{matchStat,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
+    update robot_call_process_stat
+    set user_id = #{userId,jdbcType=VARCHAR},
+      stat_date = #{statDate,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      ai_answer = #{aiAnswer,jdbcType=VARCHAR},
+      current_domain = #{currentDomain,jdbcType=VARCHAR},
+      domain_type = #{domainType,jdbcType=VARCHAR},
+      total_stat = #{totalStat,jdbcType=INTEGER},
+      refused_stat = #{refusedStat,jdbcType=VARCHAR},
+      hangup_stat = #{hangupStat,jdbcType=VARCHAR},
+      match_stat = #{matchStat,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

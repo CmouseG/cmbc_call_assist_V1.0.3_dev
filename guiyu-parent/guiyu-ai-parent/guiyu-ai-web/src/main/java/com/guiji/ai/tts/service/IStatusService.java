@@ -2,8 +2,8 @@ package com.guiji.ai.tts.service;
 
 import java.util.List;
 
-import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.vo.TaskListReqVO;
+import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
 import com.guiji.ai.vo.TtsStatusRspVO;
@@ -27,7 +27,7 @@ public interface IStatusService
      * @param status
      * @return
      */
-    public List<TtsStatusRspVO> getTtsStatus(TtsStatusReqVO ttsStatusReqVO);
+    public List<TtsStatusRspVO> getTtsStatusList(TtsStatusReqVO ttsStatusReqVO);
     
     /**
      * 保存到tts_status表
@@ -48,6 +48,6 @@ public interface IStatusService
 	 * @param taskListReqVO
 	 * @return
 	 */
-	public List<TtsStatus> getTaskList(TaskListReqVO taskListReqVO);
+	public TaskListRspVO getTaskList(TaskListReqVO taskListReqVO);
  
 }

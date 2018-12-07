@@ -34,6 +34,7 @@ import com.guiji.robot.service.vo.AiTemplateVO;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.UserAiCfgBaseInfoVO;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
+import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ControllerUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.user.dao.entity.SysUser;
@@ -140,6 +141,7 @@ public class CustAiAccountController {
 				UserAiCfgBaseInfoVO vo = new UserAiCfgBaseInfoVO();
 				BeanUtil.copyProperties(base, vo);
 				String uId = base.getUserId();
+				//设置用户名称
 				if(userMap.get(uId)!=null) {
 					vo.setUserName(userMap.get(uId));
 				}else {
@@ -150,6 +152,15 @@ public class CustAiAccountController {
 						vo.setUserName(userName);
 						userMap.put(uId, userName);
 					}
+				}
+				//设置是否分配了机器人
+				UserResourceCache userResourceCache = aiCacheService.getUserResource(uId);
+				if(userResourceCache != null && userResourceCache.getAiNum() > 0) {
+					//已分配机器人数量
+					vo.setAssignNum(userResourceCache.getAiNum());
+				}else {
+					//默认0
+					vo.setAssignNum(0);
 				}
 				rtnList.add(vo);
 			}

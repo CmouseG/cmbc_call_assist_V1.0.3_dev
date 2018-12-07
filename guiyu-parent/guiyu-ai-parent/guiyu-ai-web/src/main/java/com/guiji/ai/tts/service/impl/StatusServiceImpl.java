@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guiji.ai.dao.TtsStatusMapper;
 import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.dao.entity.TtsStatusExample;
+import com.guiji.ai.dao.entity.TtsStatusExample.Criteria;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.vo.TaskListReqVO;
+import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
 import com.guiji.ai.vo.TtsStatusRspVO;
@@ -46,7 +49,7 @@ public class StatusServiceImpl implements IStatusService
 	
 	@Override
 	@Transactional
-	public List<TtsStatusRspVO> getTtsStatus(TtsStatusReqVO ttsStatusReqVO)
+	public List<TtsStatusRspVO> getTtsStatusList(TtsStatusReqVO ttsStatusReqVO)
 	{
 		//结果集
 		List<TtsStatusRspVO> ttsStatusRspList = new ArrayList<>();
@@ -99,16 +102,42 @@ public class StatusServiceImpl implements IStatusService
 
 	@Override
 	@Transactional
-	public List<TtsStatus> getTaskList(TaskListReqVO taskListReqVO)
+	public TaskListRspVO getTaskList(TaskListReqVO taskListReqVO)
 	{
+		TaskListRspVO taskListRspVO = new TaskListRspVO();
+		
+		List<TtsStatus> ttsStatusList = new ArrayList<>();
 		TtsStatusExample TtsStatusExample = new TtsStatusExample();
-		TtsStatusExample.createCriteria().andBusIdEqualTo(taskListReqVO.getBusId())
-										 .andModelEqualTo(taskListReqVO.getModel())
-										 .andStatusEqualTo(taskListReqVO.getStatus())
-										 .andCreateTimeGreaterThanOrEqualTo(taskListReqVO.getStartTime())
-										 .andCreateTimeLessThanOrEqualTo(taskListReqVO.getEndTime());
+		
+		if(taskListReqVO == null)
+		{
+			ttsStatusList = ttsStatusMapper.selectByExample(TtsStatusExample);
+		}
+		else
+		{
+			Criteria criteria = TtsStatusExample.createCriteria();
+			if(StringUtils.isNotEmpty(taskListReqVO.getBusId())){
+				criteria.andBusIdEqualTo(taskListReqVO.getBusId());
+			}
+			if(StringUtils.isNotEmpty(taskListReqVO.getModel())){
+				criteria.andModelEqualTo(taskListReqVO.getModel());
+			}
+			if(StringUtils.isNotEmpty(taskListReqVO.getStatus())){
+				criteria.andStatusEqualTo(taskListReqVO.getStatus());
+			}
+			if(taskListReqVO.getStartTime() != null){
+				criteria.andCreateTimeGreaterThanOrEqualTo(taskListReqVO.getStartTime());
+			}
+			if(taskListReqVO.getEndTime() != null){
+				criteria.andCreateTimeLessThanOrEqualTo(taskListReqVO.getEndTime());
+			}
+			ttsStatusList = ttsStatusMapper.selectByExample(TtsStatusExample);
+		}
 
-		return ttsStatusMapper.selectByExample(TtsStatusExample);
+		taskListRspVO.setTotalNum(ttsStatusList.size());
+		taskListRspVO.setTtsStatusList(ttsStatusList);
+		
+		return taskListRspVO;
 				
 	}
 

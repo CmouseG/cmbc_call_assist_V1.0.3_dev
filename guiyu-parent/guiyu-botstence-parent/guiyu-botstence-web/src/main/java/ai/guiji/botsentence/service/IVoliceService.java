@@ -77,7 +77,7 @@ public interface IVoliceService {
 	 * @param processId
 	 * @param inStream
 	 */
-	public boolean uploadVoliceJsonZip(File dir,String fileName,String processId, String templateId);
+	public boolean uploadVoliceJsonZip(File dir,String fileName,String processId, String templateId,Long userId);
 	
 	/**
 	 * 保存挽回话术池

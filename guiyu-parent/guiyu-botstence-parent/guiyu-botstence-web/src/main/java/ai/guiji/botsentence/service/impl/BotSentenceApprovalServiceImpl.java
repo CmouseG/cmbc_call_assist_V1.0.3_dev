@@ -195,7 +195,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	    }
 	    botSentenceProcess.setState(Constant.DEPLOYING);//部署中
 	    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
-	    boolean b = fileGenerateService.autoDeploy(file, dirName, processId, templateId);
+	    boolean b = fileGenerateService.autoDeploy(file, dirName, processId, templateId,userId);
 	    if(!b) {
 	    	throw new CommonException("话术部署失败!");
 	    }

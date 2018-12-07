@@ -444,13 +444,20 @@ public class VoliceServiceImpl implements IVoliceService {
 
 						boolean needTts = false;
 						String seq = "";
-
+						logger.info("当前文件名: " + name);
 						String[] arrays = name.split("\\.");
 						String voliceId = arrays[0];
+						Integer index = null;
+						
+						logger.info("voliceId: " + voliceId);
+						
 						if (voliceId.indexOf("_") > 0) {// 表示是需要TTS合成的话术
 							seq = voliceId;
 							voliceId = voliceId.split("_")[0];
+							index = new Integer(arrays[0].split("_")[1]);
 							needTts = true;
+							
+							logger.info("index: " + index);
 						}
 
 						String suffix = name.substring(name.lastIndexOf(".") + 1);
@@ -466,26 +473,45 @@ public class VoliceServiceImpl implements IVoliceService {
 							sizeFileList.add(name);
 							entryInStream.close();
 							continue;
-							// throw new CommonException("序号"+voliceId+"文件大小超过1M,请您压缩后重新上传");
 						}
 
 						if (voliceIds.contains(voliceId)) {
 							String url = qiuniuUploadUtil.upload(entryInStream, null);
 
 							if (needTts) {
-								// 更新tts任务表的url
-								BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
-								ttsTaskExample.createCriteria().andProcessIdEqualTo(processId)
-										.andBusiIdEqualTo(voliceId).andSeqEqualTo(seq);
-								List<BotSentenceTtsTask> list = botSentenceTtsTaskMapper
-										.selectByExample(ttsTaskExample);
-								if (null != list && list.size() > 0) {
-									BotSentenceTtsTask task = list.get(0);
-									task.setVoliceUrl(url);
-									task.setLstUpdateTime(new Date(System.currentTimeMillis()));
-									task.setLstUpdateUser(userId.toString());
-									botSentenceTtsTaskMapper.updateByPrimaryKey(task);
+								
+								if (index > 0) {
+									logger.info("当前话术是TTS合成录音 ...");
+									// 更新tts任务表的url
+									BotSentenceTtsTaskExample ttsTaskExample = new BotSentenceTtsTaskExample();
+									ttsTaskExample.createCriteria().andProcessIdEqualTo(processId)
+											.andBusiIdEqualTo(voliceId).andSeqEqualTo(seq);
+									List<BotSentenceTtsTask> list = botSentenceTtsTaskMapper
+											.selectByExample(ttsTaskExample);
+									if (null != list && list.size() > 0) {
+										BotSentenceTtsTask task = list.get(0);
+										task.setVoliceUrl(url);
+										task.setLstUpdateTime(new Date(System.currentTimeMillis()));
+										task.setLstUpdateUser(userId.toString());
+										botSentenceTtsTaskMapper.updateByPrimaryKey(task);
+									}
+								}else if(index == 0){
+									logger.info("当前话术是备用话术的录音 ...");
+									//更新备用话术表URL
+									//查询当前文案的备用文案
+									BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+									backupExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(new Long(voliceId));
+									List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
+									if(null != backupList && backupList.size() > 0) {
+										BotSentenceTtsBackup backup = backupList.get(0);
+										backup.setUrl(url);
+										backup.setLstUpdateTime(new Date(System.currentTimeMillis()));
+										backup.setLstUpdateUser(userId.toString());
+										botSentenceTtsBackupMapper.updateByPrimaryKey(backup);
+									}
 								}
+								
+								
 
 							} else {
 								VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));
@@ -585,7 +611,7 @@ public class VoliceServiceImpl implements IVoliceService {
 	}
 
 	@Override
-	public boolean uploadVoliceJsonZip(File dir, String fileName, String processId, String templateId) {
+	public boolean uploadVoliceJsonZip(File dir, String fileName, String processId, String templateId,Long userId) {
 		//查詢任務中心,是否可以发布
 		ReturnData<Boolean> checkResult=iDispatchPlanOut.receiveRobotId(templateId);
 		if(checkResult.getBody()){
@@ -628,6 +654,7 @@ public class VoliceServiceImpl implements IVoliceService {
 			String uplaodFileName=sysFileRspVO.getSkUrl();
 			
 			UpgrateResouceReq resouceReq=new UpgrateResouceReq();
+			resouceReq.setUserId(userId);
 			resouceReq.setFile(uplaodFileName);
 			resouceReq.setTmplId(templateId);
 			resouceReq.setProcessTypeEnum(ProcessTypeEnum.ROBOT);

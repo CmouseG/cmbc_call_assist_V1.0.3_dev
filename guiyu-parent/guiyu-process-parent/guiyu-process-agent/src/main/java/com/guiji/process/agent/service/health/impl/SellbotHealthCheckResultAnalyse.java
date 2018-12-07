@@ -73,19 +73,4 @@ public class SellbotHealthCheckResultAnalyse implements IHealthCheckResultAnalys
     public void afterRestoreModel(CommandResult cmdResult, ProcessInstanceVO processInstanceVO, List<String> parameters,String reqKey) {
 
     }
-
-    @Override
-    public void doNothing(ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey) {
-        String result = "10";
-        // 发送给服务端
-        CmdMessageVO newCmdMsg = new CmdMessageVO();
-        newCmdMsg.setCmdType(CmdTypeEnum.DO_NOTHING);
-        newCmdMsg.setProcessInstanceVO(processInstanceVO);
-        newCmdMsg.setParameters(parameters);
-        newCmdMsg.setCommandResult(result);
-        newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
-        newCmdMsg.setReqKey(reqKey);
-        ImClientProtocolBO.getIntance().send(newCmdMsg,3);
-
-    }
 }

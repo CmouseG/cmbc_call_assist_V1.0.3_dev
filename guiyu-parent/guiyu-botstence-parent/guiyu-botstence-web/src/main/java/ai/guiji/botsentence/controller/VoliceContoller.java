@@ -77,27 +77,29 @@ public class VoliceContoller {
     @RequestMapping("uploadVoliceZip")
     @ResponseBody
     public ServerResult<Object> uploadVoliceZip(MultipartFile multipartFile, @RequestParam("processId") String processId, @RequestHeader Long userId) {
-        try {
-//			String name = UserUtil.getUserName();
-            String fileName = multipartFile.getOriginalFilename();
-            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-            if (!"zip".equals(suffix)) {
-                return ServerResult.createByErrorMessage("请上传zip格式压缩文件!");
-            }
-            if (null != multipartFile && StringUtils.isNotBlank(processId)) {
-
-                long size = multipartFile.getSize();
-                if (size > 100 * 1024 * 1024) {
-                    throw new CommonException("压缩文件大小超过100M,请您压缩后重新上传");
-                }
-
-                InputStream inStream = multipartFile.getInputStream();
-                List<String> list = service.uploadVoliceZip(processId, inStream, userId);
-                return ServerResult.createBySuccess(list);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String fileName = multipartFile.getOriginalFilename();
+        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        if (!"zip".equals(suffix)) {
+            return ServerResult.createByErrorMessage("请上传zip格式压缩文件!");
         }
+        if (null != multipartFile && StringUtils.isNotBlank(processId)) {
+
+            long size = multipartFile.getSize();
+            if (size > 80 * 1024 * 1024) {
+                throw new CommonException("压缩文件大小超过80M,请您压缩后重新上传");
+            }
+
+            List<String> list;
+			try {
+				InputStream inStream = multipartFile.getInputStream();
+				list = service.uploadVoliceZip(processId, inStream, userId);
+				return ServerResult.createBySuccess(list);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            
+        }
+        
         return ServerResult.createByError();
     }
 

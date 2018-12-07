@@ -59,4 +59,8 @@ public class RoleService {
 		example.createCriteria().andNameEqualTo(name);
 		return mapper.selectByExample(example);
 	} 
+	
+	public boolean existRoleName(SysRole role){
+		return mapper.existRoleName(role);
+	}
 }

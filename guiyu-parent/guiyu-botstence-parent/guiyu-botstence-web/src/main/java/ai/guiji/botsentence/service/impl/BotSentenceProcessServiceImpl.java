@@ -904,7 +904,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				vo.setHuashu(volice.getContent());//话术
 				vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-				//vo.setLuoji("失败邀约");//逻辑
 				vo.setYujin("失败邀约");//语境
 				vo.setTitle("失败邀约");
 				vo.setBranchId(branch.getBranchId());
@@ -1140,6 +1139,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						vo.setTemplateId(branch.getTemplateId());
 						vo.setProcessId(processId);
 						vo.setBranchName(branch.getBranchName());
+						vo.setTitle(volice.getDomainName());
 						voliceIdList.add(volice.getVoliceId());
 						branchList.add(vo);
 					}

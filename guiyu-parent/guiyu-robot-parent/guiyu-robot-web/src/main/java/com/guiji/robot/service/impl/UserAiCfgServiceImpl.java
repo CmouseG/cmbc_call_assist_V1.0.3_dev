@@ -108,11 +108,11 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {
 				//新增
-				//1、初始化一条用户机器人线路拆分
-				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
-				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
-				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
-				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
+				//1、初始化一条用户机器人线路拆分(此处修改为不自动分配，因为开户时可能模板还没有发布，所以此处不处理 modify 2018-12-7)
+//				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
+//				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+//				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
+//				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
 			}
 			//2、新增或者更新基本信息
 			this.saveOrUpdate(userAiCfgBaseInfo);
@@ -162,6 +162,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		if(totalRecord > 0) {
 			example.setLimitStart(limitStart);
 			example.setLimitEnd(limitEnd);
+			example.setOrderByClause(" crt_time desc");
 			List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
 			page.setRecords(list);
 		}

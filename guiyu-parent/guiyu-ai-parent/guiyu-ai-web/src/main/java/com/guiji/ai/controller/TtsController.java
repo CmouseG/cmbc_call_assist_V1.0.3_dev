@@ -135,6 +135,7 @@ public class TtsController implements ITts
 		List<TtsGpuVO>  ttsGpuList = new ArrayList<>();
 		try
 		{
+			logger.info("获取GPU模型列表...");
 			ttsGpuList = modelService.getAllGpuByPage(ttsGpuReqVO);
 			
 		} catch (GuiyuException e){
@@ -158,6 +159,7 @@ public class TtsController implements ITts
 		List<TtsStatus> taskListRspList = new ArrayList<>();
 		try
 		{
+			logger.info("获取任务列表...");
 			taskListRspList = statusService.getTaskList(taskListReqVO);
 			
 		} catch (GuiyuException e){

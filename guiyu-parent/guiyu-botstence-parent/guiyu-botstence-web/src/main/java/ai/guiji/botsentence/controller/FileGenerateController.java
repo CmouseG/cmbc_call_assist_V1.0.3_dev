@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,14 +58,14 @@ public class FileGenerateController {
 	
 	@RequestMapping(value="fileGenerate")
 	@Transactional
-	public ServerResult fileGenerate(@JsonParam String processId) throws IOException, SftpException, JSchException{
+	public ServerResult fileGenerate(@JsonParam String processId,@RequestHeader Long userId) throws IOException, SftpException, JSchException{
 		// 获取流程对象
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();
 		String dirName = DateUtil.getCurrentTime2() + "-" + templateId;
 	    File file = fileGenerateService.fileGenerate(processId, dirName);
 	    
-	    boolean result = fileGenerateService.autoDeploy(file, dirName, processId, templateId);
+	    boolean result = fileGenerateService.autoDeploy(file, dirName, processId, templateId,userId);
 	    if(result) {
 	    	return ServerResult.createBySuccess();
 	    }else {

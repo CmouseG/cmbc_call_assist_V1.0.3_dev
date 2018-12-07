@@ -1,7 +1,6 @@
 package com.guiji.ai.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
+import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.tts.TtsReqVOQueue;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.IModelService;
@@ -21,7 +21,6 @@ import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TaskListReqVO;
-import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -106,22 +105,15 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getTtsStatus")
-	public ReturnData<List<TtsStatusRspVO>> getTtsStatus(@RequestBody TtsStatusReqVO ttsStatusReqVO) {
+	public ReturnData<List<TtsStatusRspVO>> getTtsStatus(@RequestBody TtsStatusReqVO ttsStatusReqVO) 
+	{
+		//结果集
 		List<TtsStatusRspVO> statusRspVOList = new ArrayList<>();
 		try
 		{
 			logger.info("开始查询tts处理状态...");
-			List<Map<String, Object>> restltMapList = statusService.getTtsStatus(ttsStatusReqVO.getStartTime(),
-					ttsStatusReqVO.getEndTime(), ttsStatusReqVO.getModel(), ttsStatusReqVO.getStatus());
-			
-			for(Map<String, Object> restltMap : restltMapList){
-				TtsStatusRspVO statusRspVO = new TtsStatusRspVO();
-				statusRspVO.setBusId((String) restltMap.get("busi_id"));
-				statusRspVO.setModel((String) restltMap.get("model"));
-				statusRspVO.setCount((Integer) restltMap.get("count"));
-				statusRspVO.setCreateTime((Date) restltMap.get("createTime"));
-				statusRspVOList.add(statusRspVO);
-			}	
+			statusRspVOList = statusService.getTtsStatus(ttsStatusReqVO);
+				
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
 			return Result.error(e.getErrorCode());
@@ -160,10 +152,21 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getTaskList")
-	public ReturnData<List<TaskListRspVO>> getTaskList(@RequestBody TaskListReqVO taskListReqVO)
+	public ReturnData<List<TtsStatus>> getTaskList(@RequestBody TaskListReqVO taskListReqVO)
 	{
-		List<TaskListRspVO> taskListRspList = new ArrayList<>();
-	
+		//结果集
+		List<TtsStatus> taskListRspList = new ArrayList<>();
+		try
+		{
+			taskListRspList = statusService.getTaskList(taskListReqVO);
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
 		return Result.ok(taskListRspList);
 	}
 	

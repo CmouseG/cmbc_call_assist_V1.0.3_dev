@@ -836,8 +836,8 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 	}
 	
 	
-	public boolean autoDeploy(File dir, String dirName, String processId, String templateId) {
-		return voliceService.uploadVoliceJsonZip(dir, dirName,processId,templateId);
+	public boolean autoDeploy(File dir, String dirName, String processId, String templateId,Long userId) {
+		return voliceService.uploadVoliceJsonZip(dir, dirName,processId,templateId,userId);
 	}
 	
 

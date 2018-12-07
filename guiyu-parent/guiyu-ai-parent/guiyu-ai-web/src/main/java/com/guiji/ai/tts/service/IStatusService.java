@@ -1,10 +1,12 @@
 package com.guiji.ai.tts.service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
+import com.guiji.ai.dao.entity.TtsStatus;
+import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TtsReqVO;
+import com.guiji.ai.vo.TtsStatusReqVO;
+import com.guiji.ai.vo.TtsStatusRspVO;
 
 public interface IStatusService
 {
@@ -25,19 +27,27 @@ public interface IStatusService
      * @param status
      * @return
      */
-    public List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status) throws Exception;
+    public List<TtsStatusRspVO> getTtsStatus(TtsStatusReqVO ttsStatusReqVO);
     
     /**
      * 保存到tts_status表
      * @param ttsReqVO
      * @throws Exception 
      */
-	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception;
+	public void saveTtsStatus(TtsReqVO ttsReqVO);
 
 	/**
 	 * 根据busId修改表状态
 	 * @param busId
 	 * @param status
 	 */
-	public void updateStatusByBusId(String busId, String status); 
+	public void updateStatusByBusId(String busId, String status);
+
+	/**
+	 * 获取任务列表
+	 * @param taskListReqVO
+	 * @return
+	 */
+	public List<TtsStatus> getTaskList(TaskListReqVO taskListReqVO);
+ 
 }

@@ -132,7 +132,7 @@ public class ProcessManageService implements IProcessManageService {
         sysProcessTask.setPort(String.valueOf(processInstanceVO.getPort()));
         sysProcessTask.setCmdType(cmdType.getValue());
         sysProcessTask.setProcessKey(processInstanceVO.getProcessKey());
-        sysProcessTask.setParameters(parameters.toString());
+        sysProcessTask.setParameters(parameters == null?null:parameters.toString());
         sysProcessTask.setExecStatus(1);
         sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
         sysProcessTask.setProcessId(processId);

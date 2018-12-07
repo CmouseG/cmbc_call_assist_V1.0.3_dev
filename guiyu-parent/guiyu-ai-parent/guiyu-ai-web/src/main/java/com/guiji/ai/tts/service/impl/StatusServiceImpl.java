@@ -3,7 +3,6 @@ package com.guiji.ai.tts.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.ai.dao.TtsStatusMapper;
 import com.guiji.ai.dao.entity.TtsStatus;
+import com.guiji.ai.dao.entity.TtsStatusExample;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
+import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TtsReqVO;
+import com.guiji.ai.vo.TtsStatusReqVO;
+import com.guiji.ai.vo.TtsStatusRspVO;
 import com.guiji.common.exception.GuiyuException;
 
 @Service
@@ -39,23 +42,42 @@ public class StatusServiceImpl implements IStatusService
 		return status;
 
 	}
+
 	
 	@Override
 	@Transactional
-	public List<Map<String, Object>> getTtsStatus(Date startTime, Date endTime, String model, String status) throws Exception
+	public List<TtsStatusRspVO> getTtsStatus(TtsStatusReqVO ttsStatusReqVO)
 	{
-		List<Map<String, Object>> restltMapList = new ArrayList<>();
+		//结果集
+		List<TtsStatusRspVO> ttsStatusRspList = new ArrayList<>();
 		
-		restltMapList = ttsStatusMapper.getTtsStatus(startTime, endTime, model, status);
+		TtsStatusExample example = new TtsStatusExample();
+		example.createCriteria().andModelEqualTo(ttsStatusReqVO.getModel())
+								.andStatusEqualTo(ttsStatusReqVO.getStatus())
+								.andCreateTimeGreaterThanOrEqualTo(ttsStatusReqVO.getStartTime())
+								.andCreateTimeLessThanOrEqualTo(ttsStatusReqVO.getEndTime());
 		
-		return restltMapList;
+		List<TtsStatus> ttsStatusList = ttsStatusMapper.selectByExample(example);
+		
+		for(TtsStatus ttsStatus : ttsStatusList)
+		{
+			TtsStatusRspVO ttsStatusRsp = new TtsStatusRspVO();
+			ttsStatusRsp.setBusId(ttsStatus.getBusId());
+			ttsStatusRsp.setModel(ttsStatus.getModel());
+			ttsStatusRsp.setCount(ttsStatus.getTextCount());
+			ttsStatusRsp.setCreateTime(ttsStatus.getCreateTime());
+			ttsStatusRspList.add(ttsStatusRsp);
+		}
+		
+		return ttsStatusRspList;
 	}
+
 	
 	/**
 	 * ttsReqVO入库
 	 */
 	@Override
-	public void saveTtsStatus(TtsReqVO ttsReqVO) throws Exception
+	public void saveTtsStatus(TtsReqVO ttsReqVO)
 	{
 		TtsStatus ttsStatus = new TtsStatus();
 		ttsStatus.setBusId(ttsReqVO.getBusId());
@@ -74,4 +96,20 @@ public class StatusServiceImpl implements IStatusService
 		ttsStatusMapper.updateStatusByBusId(busId, status);
 		
 	}
+
+	@Override
+	@Transactional
+	public List<TtsStatus> getTaskList(TaskListReqVO taskListReqVO)
+	{
+		TtsStatusExample TtsStatusExample = new TtsStatusExample();
+		TtsStatusExample.createCriteria().andBusIdEqualTo(taskListReqVO.getBusId())
+										 .andModelEqualTo(taskListReqVO.getModel())
+										 .andStatusEqualTo(taskListReqVO.getStatus())
+										 .andCreateTimeGreaterThanOrEqualTo(taskListReqVO.getStartTime())
+										 .andCreateTimeLessThanOrEqualTo(taskListReqVO.getEndTime());
+
+		return ttsStatusMapper.selectByExample(TtsStatusExample);
+				
+	}
+
 }

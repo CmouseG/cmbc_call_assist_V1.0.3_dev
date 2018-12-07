@@ -1,14 +1,12 @@
 package com.guiji.ai.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.ai.dao.entity.TtsModel;
 import com.guiji.ai.dao.entity.TtsModelExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface TtsModelMapper {
-    int countByExample(TtsModelExample example);
+    long countByExample(TtsModelExample example);
 
     int deleteByExample(TtsModelExample example);
 
@@ -29,5 +27,4 @@ public interface TtsModelMapper {
     int updateByPrimaryKeySelective(TtsModel record);
 
     int updateByPrimaryKey(TtsModel record);
-
 }

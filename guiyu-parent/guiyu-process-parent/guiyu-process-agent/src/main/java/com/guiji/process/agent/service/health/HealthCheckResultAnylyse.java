@@ -3,11 +3,15 @@ package com.guiji.process.agent.service.health;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.component.result.Result;
+import com.guiji.process.agent.handler.ImClientProtocolBO;
 import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.impl.FreeswitchHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.GpuHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.RobotHealthCheckResultAnalyse;
 import com.guiji.process.agent.service.health.impl.SellbotHealthCheckResultAnalyse;
+import com.guiji.process.core.message.CmdMessageVO;
+import com.guiji.process.core.vo.CmdTypeEnum;
 
 import java.util.List;
 
@@ -106,25 +110,15 @@ public class HealthCheckResultAnylyse {
     }
 
     public static void doNothing(ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
-        IHealthCheckResultAnalyse analyse = null;
-        switch (processType) {
-            case SELLBOT:
-                analyse = new SellbotHealthCheckResultAnalyse();
-                break;
-
-            case TTS:
-                analyse = new GpuHealthCheckResultAnalyse();
-                break;
-            case FREESWITCH:
-                analyse = new FreeswitchHealthCheckResultAnalyse();
-                break;
-            case ROBOT:
-                analyse = new RobotHealthCheckResultAnalyse();
-                break;
-        }
-
-        if (analyse != null) {
-            analyse.doNothing(processInstanceVO,parameters,reqKey);
-        }
+        String result = "10";
+        // 发送给服务端
+        CmdMessageVO newCmdMsg = new CmdMessageVO();
+        newCmdMsg.setCmdType(CmdTypeEnum.DO_NOTHING);
+        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setParameters(parameters);
+        newCmdMsg.setCommandResult(result);
+        newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
+        newCmdMsg.setReqKey(reqKey);
+        ImClientProtocolBO.getIntance().send(newCmdMsg,3);
     }
 }

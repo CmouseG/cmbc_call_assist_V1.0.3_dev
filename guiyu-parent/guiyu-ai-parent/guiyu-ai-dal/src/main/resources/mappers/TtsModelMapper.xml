@@ -1,38 +1,37 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.ai.dao.TtsModelMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.ai.dao.entity.TtsModel" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="company" property="company" jdbcType="VARCHAR" />
-    <result column="model" property="model" jdbcType="VARCHAR" />
-    <result column="tts_ip" property="ttsIp" jdbcType="VARCHAR" />
-    <result column="tts_port" property="ttsPort" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="CHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_by" property="createBy" jdbcType="BIGINT" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="update_by" property="updateBy" jdbcType="BIGINT" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.ai.dao.TtsModelMapper">
+  <resultMap id="BaseResultMap" type="com.guiji.ai.dao.entity.TtsModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="model" jdbcType="VARCHAR" property="model" />
+    <result column="tts_ip" jdbcType="VARCHAR" property="ttsIp" />
+    <result column="tts_port" jdbcType="VARCHAR" property="ttsPort" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="company" jdbcType="VARCHAR" property="company" />
   </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
-                <when test="criterion.singleValue" >
+                <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>
-                <when test="criterion.betweenValue" >
+                <when test="criterion.betweenValue">
                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
                 </when>
-                <when test="criterion.listValue" >
+                <when test="criterion.listValue">
                   and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
                   </foreach>
                 </when>
@@ -43,25 +42,25 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
-                <when test="criterion.singleValue" >
+                <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>
-                <when test="criterion.betweenValue" >
+                <when test="criterion.betweenValue">
                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
                 </when>
-                <when test="criterion.listValue" >
+                <when test="criterion.listValue">
                   and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
                   </foreach>
                 </when>
@@ -72,178 +71,168 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Base_Column_List" >
-    id, company, model, tts_ip, tts_port, `status`, create_time, create_by, update_time, 
-    update_by, del_flag
+  <sql id="Base_Column_List">
+    id, model, tts_ip, tts_port, `status`, create_time, create_by, update_time, update_by, 
+    company
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.ai.dao.entity.TtsModelExample" >
+  <select id="selectByExample" parameterType="com.guiji.ai.dao.entity.TtsModelExample" resultMap="BaseResultMap">
     select
-    <if test="distinct" >
+    <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
     from tts_model
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
-    <if test="orderByClause != null" >
+    <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
-    <if test="limitStart != null and limitStart>=0" >
+    <if test="limitStart != null and limitStart>=0">
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tts_model
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tts_model
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.ai.dao.entity.TtsModelExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.ai.dao.entity.TtsModelExample">
     delete from tts_model
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsModel" >
-    insert into tts_model (id, company, model, 
-      tts_ip, tts_port, `status`, 
-      create_time, create_by, update_time, 
-      update_by, del_flag)
-    values (#{id,jdbcType=INTEGER}, #{company,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 
-      #{ttsIp,jdbcType=VARCHAR}, #{ttsPort,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=CHAR})
+  <insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsModel">
+    insert into tts_model (id, model, tts_ip, 
+      tts_port, `status`, create_time, 
+      create_by, update_time, update_by, 
+      company)
+    values (#{id,jdbcType=INTEGER}, #{model,jdbcType=VARCHAR}, #{ttsIp,jdbcType=VARCHAR}, 
+      #{ttsPort,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{company,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.ai.dao.entity.TtsModel" >
+  <insert id="insertSelective" parameterType="com.guiji.ai.dao.entity.TtsModel">
     insert into tts_model
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="company != null" >
-        company,
-      </if>
-      <if test="model != null" >
+      <if test="model != null">
         model,
       </if>
-      <if test="ttsIp != null" >
+      <if test="ttsIp != null">
         tts_ip,
       </if>
-      <if test="ttsPort != null" >
+      <if test="ttsPort != null">
         tts_port,
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         `status`,
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time,
       </if>
-      <if test="createBy != null" >
+      <if test="createBy != null">
         create_by,
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         update_time,
       </if>
-      <if test="updateBy != null" >
+      <if test="updateBy != null">
         update_by,
       </if>
-      <if test="delFlag != null" >
-        del_flag,
+      <if test="company != null">
+        company,
       </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="company != null" >
-        #{company,jdbcType=VARCHAR},
-      </if>
-      <if test="model != null" >
+      <if test="model != null">
         #{model,jdbcType=VARCHAR},
       </if>
-      <if test="ttsIp != null" >
+      <if test="ttsIp != null">
         #{ttsIp,jdbcType=VARCHAR},
       </if>
-      <if test="ttsPort != null" >
+      <if test="ttsPort != null">
         #{ttsPort,jdbcType=VARCHAR},
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         #{status,jdbcType=CHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null" >
+      <if test="createBy != null">
         #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateBy != null" >
+      <if test="updateBy != null">
         #{updateBy,jdbcType=BIGINT},
       </if>
-      <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+      <if test="company != null">
+        #{company,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.ai.dao.entity.TtsModelExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.ai.dao.entity.TtsModelExample" resultType="java.lang.Long">
     select count(*) from tts_model
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map" >
+  <update id="updateByExampleSelective" parameterType="map">
     update tts_model
-    <set >
-      <if test="record.id != null" >
+    <set>
+      <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.company != null" >
-        company = #{record.company,jdbcType=VARCHAR},
-      </if>
-      <if test="record.model != null" >
+      <if test="record.model != null">
         model = #{record.model,jdbcType=VARCHAR},
       </if>
-      <if test="record.ttsIp != null" >
+      <if test="record.ttsIp != null">
         tts_ip = #{record.ttsIp,jdbcType=VARCHAR},
       </if>
-      <if test="record.ttsPort != null" >
+      <if test="record.ttsPort != null">
         tts_port = #{record.ttsPort,jdbcType=VARCHAR},
       </if>
-      <if test="record.status != null" >
+      <if test="record.status != null">
         `status` = #{record.status,jdbcType=CHAR},
       </if>
-      <if test="record.createTime != null" >
+      <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.createBy != null" >
+      <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=BIGINT},
       </if>
-      <if test="record.updateTime != null" >
+      <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.updateBy != null" >
+      <if test="record.updateBy != null">
         update_by = #{record.updateBy,jdbcType=BIGINT},
       </if>
-      <if test="record.delFlag != null" >
-        del_flag = #{record.delFlag,jdbcType=CHAR},
+      <if test="record.company != null">
+        company = #{record.company,jdbcType=VARCHAR},
       </if>
     </set>
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByExample" parameterType="map" >
+  <update id="updateByExample" parameterType="map">
     update tts_model
     set id = #{record.id,jdbcType=INTEGER},
-      company = #{record.company,jdbcType=VARCHAR},
       model = #{record.model,jdbcType=VARCHAR},
       tts_ip = #{record.ttsIp,jdbcType=VARCHAR},
       tts_port = #{record.ttsPort,jdbcType=VARCHAR},
@@ -252,51 +241,47 @@
       create_by = #{record.createBy,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       update_by = #{record.updateBy,jdbcType=BIGINT},
-      del_flag = #{record.delFlag,jdbcType=CHAR}
-    <if test="_parameter != null" >
+      company = #{record.company,jdbcType=VARCHAR}
+    <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.ai.dao.entity.TtsModel" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.ai.dao.entity.TtsModel">
     update tts_model
-    <set >
-      <if test="company != null" >
-        company = #{company,jdbcType=VARCHAR},
-      </if>
-      <if test="model != null" >
+    <set>
+      <if test="model != null">
         model = #{model,jdbcType=VARCHAR},
       </if>
-      <if test="ttsIp != null" >
+      <if test="ttsIp != null">
         tts_ip = #{ttsIp,jdbcType=VARCHAR},
       </if>
-      <if test="ttsPort != null" >
+      <if test="ttsPort != null">
         tts_port = #{ttsPort,jdbcType=VARCHAR},
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         `status` = #{status,jdbcType=CHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null" >
+      <if test="createBy != null">
         create_by = #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateBy != null" >
+      <if test="updateBy != null">
         update_by = #{updateBy,jdbcType=BIGINT},
       </if>
-      <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+      <if test="company != null">
+        company = #{company,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.ai.dao.entity.TtsModel" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.ai.dao.entity.TtsModel">
     update tts_model
-    set company = #{company,jdbcType=VARCHAR},
-      model = #{model,jdbcType=VARCHAR},
+    set model = #{model,jdbcType=VARCHAR},
       tts_ip = #{ttsIp,jdbcType=VARCHAR},
       tts_port = #{ttsPort,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
@@ -304,8 +289,7 @@
       create_by = #{createBy,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=BIGINT},
-      del_flag = #{delFlag,jdbcType=CHAR}
+      company = #{company,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-	
 </mapper>

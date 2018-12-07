@@ -15,7 +15,4 @@ public interface IHealthCheckResultAnalyse {
     void afertRestart(CommandResult cmdResult, ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey);
 
     void afterRestoreModel(CommandResult cmdResult, ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey);
-
-    void doNothing(ProcessInstanceVO processInstanceVO,List<String> parameters,String reqKey);
-
 }

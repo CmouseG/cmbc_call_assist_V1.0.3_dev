@@ -42,7 +42,9 @@ public class ProcessAgentCmdHandler implements IProcessCmdHandler {
         ProcessInstanceVO processInstanceVO = cmdMessageVO.getProcessInstanceVO();
         CfgProcessOperVO cfgProcessOperVO = getNodeOper(cmdMessageVO.getCmdType(), cmdMessageVO.getProcessInstanceVO().getPort());
         if(cfgProcessOperVO == null ) {
-            HealthCheckResultAnylyse.doNothing(processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
+            if (cmdMessageVO.getCmdType() != CmdTypeEnum.HEALTH) {
+                HealthCheckResultAnylyse.doNothing(processInstanceVO,processInstanceVO.getType(),cmdMessageVO.getParameters(),cmdMessageVO.getReqKey());
+            }
             return;
         }
 

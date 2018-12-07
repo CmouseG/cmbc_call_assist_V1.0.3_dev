@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.da.dao.RobotCallHisMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.da.dao.entity.RobotCallHis" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="seq_id" property="seqId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
+    <result column="assign_time" property="assignTime" jdbcType="TIMESTAMP" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="crt_date" property="crtDate" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.guiji.da.dao.entity.RobotCallHis" extends="BaseResultMap" >
+    <result column="sellbot_callback_json" property="sellbotCallbackJson" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, seq_id, user_id, ai_no, assign_time, template_id, crt_date, crt_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    sellbot_callback_json
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.da.dao.entity.RobotCallHisExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from robot_call_his
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.da.dao.entity.RobotCallHisExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from robot_call_his
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from robot_call_his
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from robot_call_his
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.da.dao.entity.RobotCallHisExample" >
+    delete from robot_call_his
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('robot_call_his')
+    </selectKey>
+    insert into robot_call_his (id, seq_id, user_id, 
+      ai_no, assign_time, template_id, 
+      crt_date, crt_time, sellbot_callback_json
+      )
+    values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{aiNo,jdbcType=VARCHAR}, #{assignTime,jdbcType=TIMESTAMP}, #{templateId,jdbcType=VARCHAR}, 
+      #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
+    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
+      SELECT genTabId('robot_call_his')
+    </selectKey>
+    insert into robot_call_his
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      id,
+      <if test="seqId != null" >
+        seq_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="aiNo != null" >
+        ai_no,
+      </if>
+      <if test="assignTime != null" >
+        assign_time,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="crtDate != null" >
+        crt_date,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="sellbotCallbackJson != null" >
+        sellbot_callback_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{id,jdbcType=VARCHAR},
+      <if test="seqId != null" >
+        #{seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="aiNo != null" >
+        #{aiNo,jdbcType=VARCHAR},
+      </if>
+      <if test="assignTime != null" >
+        #{assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtDate != null" >
+        #{crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sellbotCallbackJson != null" >
+        #{sellbotCallbackJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.da.dao.entity.RobotCallHisExample" resultType="java.lang.Integer" >
+    select count(*) from robot_call_his
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update robot_call_his
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seqId != null" >
+        seq_id = #{record.seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aiNo != null" >
+        ai_no = #{record.aiNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assignTime != null" >
+        assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtDate != null" >
+        crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sellbotCallbackJson != null" >
+        sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update robot_call_his
+    set id = #{record.id,jdbcType=VARCHAR},
+      seq_id = #{record.seqId,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      ai_no = #{record.aiNo,jdbcType=VARCHAR},
+      assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update robot_call_his
+    set id = #{record.id,jdbcType=VARCHAR},
+      seq_id = #{record.seqId,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      ai_no = #{record.aiNo,jdbcType=VARCHAR},
+      assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
+    update robot_call_his
+    <set >
+      <if test="seqId != null" >
+        seq_id = #{seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="aiNo != null" >
+        ai_no = #{aiNo,jdbcType=VARCHAR},
+      </if>
+      <if test="assignTime != null" >
+        assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtDate != null" >
+        crt_date = #{crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sellbotCallbackJson != null" >
+        sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
+    update robot_call_his
+    set seq_id = #{seqId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      ai_no = #{aiNo,jdbcType=VARCHAR},
+      assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      crt_date = #{crtDate,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
+    update robot_call_his
+    set seq_id = #{seqId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      ai_no = #{aiNo,jdbcType=VARCHAR},
+      assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      crt_date = #{crtDate,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

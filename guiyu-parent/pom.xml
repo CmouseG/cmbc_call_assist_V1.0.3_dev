@@ -21,6 +21,7 @@
         <module>guiyu-process-parent</module>
         <module>guiyu-botstence-parent</module>
         <module>guiyu-di-parent</module>
+        <module>guiyu-da-parent</module>
     </modules>
     <packaging>pom</packaging>
 

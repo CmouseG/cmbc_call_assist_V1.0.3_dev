@@ -173,6 +173,73 @@ create index ai_cycle_his_idx4 on ai_cycle_his
    taskback_time
 );
 
+create table robot_call_his
+(
+   id                   varchar(32) not null,
+   seq_id               varchar(32) comment '会话id',
+   user_id              varchar(50) not null comment '用户编号',
+   ai_no                varchar(50) comment '机器人编号',
+   assign_time          datetime comment '分配时间',
+   template_id          varchar(50) comment '话术模板',
+   sellbot_callback_json text comment 'sellbot回调报文',
+   crt_date             varchar(10) comment '创建日期',
+   crt_time             datetime comment '创建时间',
+   primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table robot_call_his comment '通话历史';
+
+create index robot_call_his_idx1 on robot_call_his
+(
+   seq_id
+);
+
+create index robot_call_his_idx2 on robot_call_his
+(
+   assign_time
+);
+
+create index robot_call_his_idx3 on robot_call_his
+(
+   user_id
+);
+
+
+create table robot_call_process_stat
+(
+   id                   varchar(32) not null,
+   user_id              varchar(50) comment '用户编号',
+   stat_date            varchar(10) comment '统计日期',
+   template_id          varchar(50) comment '模板编号',
+   ai_answer            varchar(1024) comment 'AI话术',
+   current_domain       varchar(50) comment '当前域',
+   domain_type          varchar(3) comment '域类型 1-主流程;2-一般问题;9-其他',
+   total_stat           int comment '总数统计',
+   refused_stat         varchar(100) comment '拒绝统计(0-不拒绝,1-用户拒绝;9-未应答)',
+   hangup_stat          varchar(100) comment '挂断统计(0-未挂断   1：用户挂断   2：AI挂断)',
+   match_stat           varchar(100) comment '匹配统计',
+   crt_time             datetime comment '创建时间'，
+   primary key (id)
+);
+
+alter table robot_call_process_stat comment '机器人通话流程分析';
+
+create index robot_call_process_stat_idx1 on robot_call_process_stat
+(
+   user_id
+);
+
+create index robot_call_process_stat_idx2 on robot_call_process_stat
+(
+   template_id
+);
+
+create index robot_call_process_stat_idx3 on robot_call_process_stat
+(
+   stat_date
+);
+
+
 CREATE TABLE `bd_table_sequence` (
   `table_name` varchar(64) NOT NULL,
   `seq` bigint(12) DEFAULT NULL,
@@ -189,6 +256,8 @@ INSERT INTO bd_table_sequence (table_name, seq, step, SIGN, now_date) VALUES ('t
 INSERT INTO bd_table_sequence (table_name, seq, step, SIGN, now_date) VALUES ('user_ai_cfg_base_info', 0, 1, 'UAB', '20181201');
 INSERT INTO bd_table_sequence (table_name, seq, step, SIGN, now_date) VALUES ('user_ai_cfg_his_info', 1, 1, 'UCH', '20181202');
 INSERT INTO bd_table_sequence (table_name, seq, step, SIGN, now_date) VALUES ('user_ai_cfg_info', 1, 1, 'UAH', '20181202');
+INSERT INTO bd_table_sequence (table_name, seq, step, sign, now_date) VALUES ('robot_call_process_stat', 1, 1, 'PS', '20181206');
+INSERT INTO bd_table_sequence (table_name, seq, step, sign, now_date) VALUES ('robot_call_his', 1, 1, 'CH', '20181206');
 
 
 DROP FUNCTION genTabId;

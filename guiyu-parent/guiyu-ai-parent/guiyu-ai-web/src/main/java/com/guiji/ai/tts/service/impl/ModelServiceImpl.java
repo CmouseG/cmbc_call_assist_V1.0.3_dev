@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,13 +54,13 @@ public class ModelServiceImpl implements IModelService
 		}else
 		{
 			Criteria criteria = example.createCriteria();
-			if(ttsGpuReqVO.getModel() != null){
+			if(StringUtils.isNotEmpty(ttsGpuReqVO.getModel())){
 				criteria.andModelEqualTo(ttsGpuReqVO.getModel());
 			}
-			if(ttsGpuReqVO.getIp() != null){
+			if(StringUtils.isNotEmpty(ttsGpuReqVO.getIp())){
 				criteria.andTtsIpEqualTo(ttsGpuReqVO.getIp());
 			}
-			if(ttsGpuReqVO.getPort() != null){
+			if(StringUtils.isNotEmpty(ttsGpuReqVO.getPort())){
 				criteria.andTtsPortEqualTo(ttsGpuReqVO.getPort());
 			}
 			if(ttsGpuReqVO.getPageNum() != null && ttsGpuReqVO.getPageSize() != null){

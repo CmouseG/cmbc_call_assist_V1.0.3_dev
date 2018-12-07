@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,13 +116,13 @@ public class StatusServiceImpl implements IStatusService
 		else
 		{
 			Criteria criteria = TtsStatusExample.createCriteria();
-			if(taskListReqVO.getBusId() != null){
+			if(StringUtils.isNotEmpty(taskListReqVO.getBusId())){
 				criteria.andBusIdEqualTo(taskListReqVO.getBusId());
 			}
-			if(taskListReqVO.getModel() != null){
+			if(StringUtils.isNotEmpty(taskListReqVO.getModel())){
 				criteria.andModelEqualTo(taskListReqVO.getModel());
 			}
-			if(taskListReqVO.getStatus() != null){
+			if(StringUtils.isNotEmpty(taskListReqVO.getStatus())){
 				criteria.andStatusEqualTo(taskListReqVO.getStatus());
 			}
 			if(taskListReqVO.getStartTime() != null){

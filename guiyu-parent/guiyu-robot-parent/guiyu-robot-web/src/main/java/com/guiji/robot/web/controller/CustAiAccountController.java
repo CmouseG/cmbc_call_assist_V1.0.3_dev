@@ -2,8 +2,10 @@ package com.guiji.robot.web.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +22,16 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.service.impl.AiCacheService;
+import com.guiji.robot.service.vo.AiTemplateVO;
+import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.UserAiCfgBaseInfoVO;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.util.ControllerUtil;
@@ -33,6 +39,10 @@ import com.guiji.robot.util.ListUtil;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
+
+import ai.guiji.botsentence.api.IBotSentenceProcess;
+import ai.guiji.botsentence.api.entity.BotSentenceProcess;
+import ai.guiji.botsentence.api.entity.ServerResult;
 
 /** 
 * @ClassName: CustAiCfgAccountController 
@@ -50,6 +60,10 @@ public class CustAiAccountController {
 	IAuth iAuth;
 	@Autowired
 	ControllerUtil controllerUtil;
+	@Autowired
+	IBotSentenceProcess iBotSentenceProcess;
+	@Autowired
+	AiCacheService aiCacheService;
 	
 	/**
 	 * 新增或者修改用户机器人配置信息明细
@@ -158,6 +172,78 @@ public class CustAiAccountController {
 		}
 		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
 		return Result.ok(list);
+	}
+	
+	
+	/**
+	 * 查询用户正在使用的机器人开户账号明细
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/queryCustRobotTemplateList", method = RequestMethod.POST)
+	public Result.ReturnData<List<AiTemplateVO>> queryCustRobotTemplateList(
+			@RequestParam(value="userId",required=false)String qUserId,
+			@RequestHeader Long userId){
+		if(StrUtils.isEmpty(qUserId) && userId==null) {
+			//必输校验
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		} 
+		if(StrUtils.isEmpty(qUserId)) {
+			//如果查询用户为空，那么查询系统登陆用户，否则查询该用户
+			qUserId = userId.toString();
+		}
+		List<AiTemplateVO> rtnList = new ArrayList<AiTemplateVO>();
+		List<UserAiCfgInfo> list = iUserAiCfgService.queryUserAiCfgListByUserId(qUserId);
+		if(ListUtil.isNotEmpty(list)) {
+			//开始获取用户配置的机器人列表
+			Set<String> templateSet = new HashSet<String>();
+			for(UserAiCfgInfo cfg : list) {
+				if(RobotConstants.USER_CFG_STATUS_S.equals(cfg.getStatus())) {
+					//只要正常状态数据
+					String templateIds = cfg.getTemplateIds();
+					if(StrUtils.isNotEmpty(templateIds)) {
+						if(StrUtils.isNotEmpty(templateIds)) {
+							String[] templateArray = templateIds.split(",");	//多模板逗号分隔
+							for(String templateId : templateArray) {
+								//放入set,防重
+								templateSet.add(templateId);
+							}
+						}
+					}
+				}
+			}
+			//开始设置返回对象list
+			if(templateSet != null && !templateSet.isEmpty()) {
+				for(String templateId : templateSet) {
+					//缓存中没有，重新查询
+					ServerResult<List<BotSentenceProcess>> templateData = iBotSentenceProcess.getTemplateById(templateId);
+					if(templateData != null && ListUtil.isNotEmpty(templateData.getData())) {
+						BotSentenceProcess botSentenceProcess = templateData.getData().get(0);
+						if(botSentenceProcess != null) {
+							AiTemplateVO aiTemplateVO = new AiTemplateVO();
+							aiTemplateVO.setTemplateId(templateId);
+							aiTemplateVO.setTemplateName(botSentenceProcess.getTemplateName());
+							rtnList.add(aiTemplateVO);
+						}else {
+							logger.error("查不到对应的话术模板{}",templateId);
+						}
+					}
+				}
+				//开始设置tts标志
+				if(rtnList != null && !rtnList.isEmpty()) {
+					for(AiTemplateVO vo : rtnList) {
+						String templateId = vo.getTemplateId();
+						HsReplace hsReplace = aiCacheService.queyHsReplace(templateId);
+						if(hsReplace!=null && hsReplace.isTemplate_tts_flag()) {
+							vo.setTtsFlag(true);
+						}else {
+							vo.setTtsFlag(false);
+						}
+					}
+				}
+			}
+		}
+		return Result.ok(rtnList);
 	}
 	
 	

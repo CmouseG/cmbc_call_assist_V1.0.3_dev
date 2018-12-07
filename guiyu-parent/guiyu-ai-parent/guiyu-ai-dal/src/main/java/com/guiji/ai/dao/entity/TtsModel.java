@@ -6,8 +6,6 @@ import java.util.Date;
 public class TtsModel implements Serializable {
     private Integer id;
 
-    private String company;
-
     private String model;
 
     private String ttsIp;
@@ -24,7 +22,7 @@ public class TtsModel implements Serializable {
 
     private Long updateBy;
 
-    private String delFlag;
+    private String company;
 
     private static final long serialVersionUID = 1L;
 
@@ -34,14 +32,6 @@ public class TtsModel implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company == null ? null : company.trim();
     }
 
     public String getModel() {
@@ -108,12 +98,12 @@ public class TtsModel implements Serializable {
         this.updateBy = updateBy;
     }
 
-    public String getDelFlag() {
-        return delFlag;
+    public String getCompany() {
+        return company;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
+    public void setCompany(String company) {
+        this.company = company == null ? null : company.trim();
     }
 
     @Override
@@ -123,7 +113,6 @@ public class TtsModel implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", company=").append(company);
         sb.append(", model=").append(model);
         sb.append(", ttsIp=").append(ttsIp);
         sb.append(", ttsPort=").append(ttsPort);
@@ -132,7 +121,7 @@ public class TtsModel implements Serializable {
         sb.append(", createBy=").append(createBy);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", updateBy=").append(updateBy);
-        sb.append(", delFlag=").append(delFlag);
+        sb.append(", company=").append(company);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

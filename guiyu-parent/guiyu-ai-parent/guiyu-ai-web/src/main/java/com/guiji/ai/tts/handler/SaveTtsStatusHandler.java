@@ -74,7 +74,7 @@ public class SaveTtsStatusHandler
 					record = this.productor.get();
 					if (record != null) {
 						logger.info("获取到一条待插入数据", record);
-						ttsStatusMapper.insert(record);
+						ttsStatusMapper.insertSelective(record);
 						logger.info("保存成功！");
 					}
 				} catch (Exception e) {

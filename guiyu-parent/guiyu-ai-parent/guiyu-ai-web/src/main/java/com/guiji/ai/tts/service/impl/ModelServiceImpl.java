@@ -35,7 +35,7 @@ public class ModelServiceImpl implements IModelService
 		ttsModel.setTtsIp(processInstance.getIp());
 		ttsModel.setTtsPort(String.valueOf(processInstance.getPort()));
 		ttsModel.setCreateTime(new Date());
-		modelMapper.insert(ttsModel);
+		modelMapper.insertSelective(ttsModel);
 	}
 
 	@Override

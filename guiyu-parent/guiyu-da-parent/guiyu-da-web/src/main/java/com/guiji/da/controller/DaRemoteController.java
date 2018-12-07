@@ -3,12 +3,13 @@ package com.guiji.da.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
 import com.guiji.da.api.IDaRemote;
 import com.guiji.da.service.robot.ISellbotCallbackService;
+import com.guiji.utils.StrUtils;
 
 /** 
 * @ClassName: DaRemoteImpl 
@@ -27,8 +28,13 @@ public class DaRemoteController implements IDaRemote{
 	 * @param sellbotJson
 	 * @return
 	 */
-	public Result.ReturnData receiveSellbotCallback(@RequestParam(value="sellbotJson",required=true)String sellbotJson){
-		iSellbotCallbackService.receiveSellbotCallback(sellbotJson);
-		return Result.ok();
+	public Result.ReturnData receiveSellbotCallback(@RequestBody String sellbotJson){
+		if(StrUtils.isNotEmpty(sellbotJson)) {
+			iSellbotCallbackService.receiveSellbotCallback(sellbotJson);
+			return Result.ok();
+		}else {
+			logger.error("请求参数json不能为空!");
+			return Result.error("00060001");
+		}
 	}
 }

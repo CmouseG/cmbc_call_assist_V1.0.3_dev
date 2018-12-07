@@ -162,6 +162,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		if(totalRecord > 0) {
 			example.setLimitStart(limitStart);
 			example.setLimitEnd(limitEnd);
+			example.setOrderByClause(" crt_time desc");
 			List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
 			page.setRecords(list);
 		}

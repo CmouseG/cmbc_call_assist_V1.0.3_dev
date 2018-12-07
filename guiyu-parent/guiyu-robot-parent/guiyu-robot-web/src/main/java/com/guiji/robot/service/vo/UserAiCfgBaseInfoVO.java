@@ -14,4 +14,6 @@ import lombok.Data;
 public class UserAiCfgBaseInfoVO extends UserAiCfgBaseInfo{
 	//用户名称
 	private String userName;
+	//已分配的机器人数量
+	private int assignNum;
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.guiyu.sysoperalog.dao.entity.SysUserAction;
 import com.guiji.sysoperalog.vo.ConditionVO;
-import com.guiji.sysoperalog.vo.SysUserActionVO;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -27,7 +26,7 @@ public interface ISysOperaLog
 	 */
 	@ApiOperation(value="插入数据")
     @PostMapping(value = "insert")
-	public ReturnData<Integer> insert(SysUserActionVO sysUserAction);
+	public ReturnData<Integer> insert(SysUserAction sysUserAction);
 	
 	/**
 	 * 根据条件获取数据

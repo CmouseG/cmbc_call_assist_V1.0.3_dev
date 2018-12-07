@@ -1,6 +1,5 @@
 package com.guiji.guiyu.sysoperalog.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -36,9 +35,5 @@ public interface SysUserActionMapper {
     int updateByPrimaryKeyWithBLOBs(SysUserAction record);
 
     int updateByPrimaryKey(SysUserAction record);
-
-	// 根据条件查询
-	List<SysUserAction> getSysUserActionByCondition(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
-			@Param("limitStart") Integer limitStart, @Param("limitEnd") Integer limitEnd);
 
 }

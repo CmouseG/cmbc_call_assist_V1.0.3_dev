@@ -4,13 +4,21 @@ import java.util.List;
 
 import com.guiji.guiyu.sysoperalog.dao.entity.SysUserAction;
 import com.guiji.sysoperalog.vo.ConditionVO;
-import com.guiji.sysoperalog.vo.SysUserActionVO;
 
 public interface ISysOperaLogService
 {
-	
-	int insertSysUserAction(SysUserActionVO sysUserActionVO) throws Exception;
+	/**
+	 * 保存数据
+	 * @param sysUserAction
+	 * @return
+	 */
+	int insertSysUserAction(SysUserAction sysUserAction);
 
-	List<SysUserAction> getSysUserActionByCondition(ConditionVO condition) throws Exception;
+	/**
+	 * 根据条件查询SysUserAction列表
+	 * @param condition
+	 * @return
+	 */
+	List<SysUserAction> getSysUserActionByCondition(ConditionVO condition);
 
 }

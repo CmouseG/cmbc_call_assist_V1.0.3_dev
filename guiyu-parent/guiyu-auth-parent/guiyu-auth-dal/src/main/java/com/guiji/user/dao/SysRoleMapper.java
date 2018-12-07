@@ -38,4 +38,6 @@ public interface SysRoleMapper {
     public int countByParamVo(RoleParamVo param);
     
     public List<Object> selectByParamVo(RoleParamVo param);
+    
+    public boolean existRoleName(SysRole role);
 }

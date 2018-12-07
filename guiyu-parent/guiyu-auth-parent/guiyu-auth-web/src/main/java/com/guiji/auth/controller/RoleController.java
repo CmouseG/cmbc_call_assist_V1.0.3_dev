@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.RoleService;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysRole;
@@ -21,7 +22,10 @@ public class RoleController {
 	private RoleService service;
 	
 	@RequestMapping("insert")
-	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId){
+	public void insert(SysRole role,String[] menuIds,@RequestHeader Long userId) throws CheckConditionException{
+		if(service.existRoleName(role)){
+			throw new CheckConditionException("00010007");
+		}
 		role.setCreateId(userId);
 		role.setUpdateId(userId);
 		role.setCreateTime(new Date());
@@ -35,7 +39,10 @@ public class RoleController {
 	}
 	
 	@RequestMapping("update")
-	public void update(SysRole role,String[] menuIds,@RequestHeader Long userId){
+	public void update(SysRole role,String[] menuIds,@RequestHeader Long userId) throws CheckConditionException{
+		if(service.existRoleName(role)){
+			throw new CheckConditionException("00010007");
+		}
 		role.setUpdateId(userId);
 		role.setUpdateTime(new Date());
 		service.update(role,menuIds);

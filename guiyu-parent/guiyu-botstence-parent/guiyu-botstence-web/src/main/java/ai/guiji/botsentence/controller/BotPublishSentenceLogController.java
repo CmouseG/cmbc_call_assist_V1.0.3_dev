@@ -27,6 +27,7 @@ public class BotPublishSentenceLogController {
 		example.setLimitStart((pageNo-1)*pageSize);
 		example.setLimitEnd(pageSize*pageNo);
 		example.createCriteria().andCreateIdEqualTo(userId);
+		example.setOrderByClause(" create_time desc");
 		List<BotPublishSentenceLog>  results =botPublishSentenceLogMapper.selectByExample(example);
 		Page<BotPublishSentenceLog> page = new Page<BotPublishSentenceLog>();
 		int totalNum=botPublishSentenceLogMapper.countByExample(example);

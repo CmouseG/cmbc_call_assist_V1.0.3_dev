@@ -3,12 +3,14 @@ package com.guiji.auth.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.MenuService;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysMenu;
@@ -20,9 +22,14 @@ public class MenuController {
 
 	@Autowired
 	private MenuService service;
-
+	
+	private static String URL_MATCH="^/(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\/])+(\\?{0,1}(([A-Za-z0-9-~]+\\={0,1})([A-Za-z0-9-~]*)\\&{0,1})*)$";
+	
 	@RequestMapping("insert")
-	public void insert(SysMenu menu,@RequestHeader Long userId){
+	public void insert(SysMenu menu,@RequestHeader Long userId) throws CheckConditionException{
+		if(!Pattern.matches(URL_MATCH, menu.getUrl())){
+			throw new CheckConditionException("00010008");
+		}
 		menu.setCreateId(userId);
 		menu.setUpdateId(userId);
 		menu.setCreateTime(new Date());
@@ -37,7 +44,10 @@ public class MenuController {
 	}
 
 	@RequestMapping("update")
-	public void update(SysMenu menu,@RequestHeader Long userId){
+	public void update(SysMenu menu,@RequestHeader Long userId) throws CheckConditionException{
+		if(!Pattern.matches(URL_MATCH, menu.getUrl())){
+			throw new CheckConditionException("00010008");
+		}
 		menu.setUpdateId(userId);
 		menu.setUpdateTime(new Date());
 		service.update(menu);

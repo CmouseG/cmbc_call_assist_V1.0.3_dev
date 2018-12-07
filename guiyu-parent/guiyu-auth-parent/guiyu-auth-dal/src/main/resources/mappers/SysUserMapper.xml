@@ -490,7 +490,7 @@
 		left join sys_user e on e.id=a.create_id
 		where a.del_flag=0
 		<if test="userName != '' ">
-			and username=#{userName}	
+			and a.username=#{userName}	
 		</if>
 		<if test="roleId !='' ">
 			and c.id=#{roleId}

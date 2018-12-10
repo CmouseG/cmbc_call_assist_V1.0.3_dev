@@ -262,7 +262,7 @@
   
   <select id="getLastPublishSentence" resultType="long">
   	select id from bot_publish_sentence_log where template_id=#{tempId} and status="1"
-	ORDER BY id ASC
+	ORDER BY id desc
 	LIMIT 1 
   </select>
   

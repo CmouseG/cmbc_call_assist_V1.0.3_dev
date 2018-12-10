@@ -118,10 +118,13 @@ public class TtsServiceImpl implements ITtsService
 			return false;
 		}
 		
-		//放入插队队列
 		try
 		{
+			//放入插队队列
 			JumpTaskQueue.getInstance().produce(ttsReqVo);
+			//修改表状态
+			statusService.updateJumpFlagByBusId(busId);
+			
 		} catch (InterruptedException e)
 		{
 			logger.error("插队队列 put错误");

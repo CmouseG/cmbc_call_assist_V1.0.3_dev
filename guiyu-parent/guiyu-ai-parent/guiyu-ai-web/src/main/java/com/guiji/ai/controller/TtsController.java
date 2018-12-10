@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
@@ -76,7 +77,7 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getTtsResultByBusId")
-	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestBody String busId) {
+	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestParam String busId) {
 		TtsRspVO ttsRspVO = new TtsRspVO();
 		try
 		{
@@ -176,7 +177,8 @@ public class TtsController implements ITts
 	 * 任务插队
 	 */
 	@Override
-	public ReturnData<Boolean> jumpQueue(@RequestBody String busId)
+	@PostMapping(value = "jumpQueue")
+	public ReturnData<Boolean> jumpQueue(@RequestParam String busId)
 	{
 		try
 		{

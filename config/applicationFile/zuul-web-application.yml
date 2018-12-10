@@ -131,7 +131,7 @@ zuul:
       service-id: guiyu-process-web
     guiyu-da-web:
       path: /da/**
-      service-id: guiyu-da-web  
+      service-id: guiyu-da-web
 hystrix:
   command:
     default:

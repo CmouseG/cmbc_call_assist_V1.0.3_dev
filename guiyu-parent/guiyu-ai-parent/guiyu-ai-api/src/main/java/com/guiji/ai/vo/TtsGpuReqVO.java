@@ -10,13 +10,13 @@ public class TtsGpuReqVO
 {
 	@ApiModelProperty(value="模型名称")
 	private String model;
-	@ApiModelProperty(value="ip")
+	@ApiModelProperty(value="IP地址")
 	private String ip;
-	@ApiModelProperty(value="port")
+	@ApiModelProperty(value="端口")
 	private String port;
-	@ApiModelProperty(value="pageSize")
+	@ApiModelProperty(value="每页条数")
 	private Integer pageSize;
-	@ApiModelProperty(value="pageNum")
+	@ApiModelProperty(value="页码")
 	private Integer pageNum;
 	
 }

@@ -8,6 +8,7 @@ import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.IHealthCheckResultAnalyse;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -32,8 +33,11 @@ public class FreeswitchHealthCheckResultAnalyse implements IHealthCheckResultAna
 
         // 发送给服务端
         CmdMessageVO newCmdMsg = new CmdMessageVO();
+        ProcessInstanceVO tmp = new ProcessInstanceVO();
+        BeanUtil.copyProperties(processInstanceVO, tmp);
+
         newCmdMsg.setCmdType(CmdTypeEnum.PULBLISH_FREESWITCH_BOTSTENCE);
-        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setProcessInstanceVO(tmp);
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());

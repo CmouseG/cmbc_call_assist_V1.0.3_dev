@@ -69,6 +69,7 @@ CREATE TABLE `tts_status` (
   `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `text_count` int(8) DEFAULT '0' COMMENT '文本数量',
+  `jump_flag` char(1) DEFAULT 'N' COMMENT '任务优先处理标识：N未优先，Y已优先',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

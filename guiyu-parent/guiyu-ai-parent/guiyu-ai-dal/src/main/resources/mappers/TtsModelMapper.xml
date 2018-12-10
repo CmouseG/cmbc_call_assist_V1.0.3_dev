@@ -292,4 +292,9 @@
       company = #{company,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectModelGpuCount" resultType="java.util.HashMap">
+  	SELECT model, COUNT(*) count FROM tts_model
+	GROUP BY model
+  </select>
 </mapper>

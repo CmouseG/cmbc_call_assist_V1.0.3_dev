@@ -262,8 +262,10 @@ public class RobotCallProcessStatServiceImpl implements IRobotCallProcessStatSer
 	 */
 	private List<RobotCallProcessStatCache> genTemplateCallCache(Map<String,RobotCallProcessStatCache> robotCacheMap) {
 		List<RobotCallProcessStatCache> list = new ArrayList<RobotCallProcessStatCache>();
-		for (Map.Entry<String,RobotCallProcessStatCache> robotCacheEntry : robotCacheMap.entrySet()) {
-			list.add(robotCacheEntry.getValue());
+		if(robotCacheMap != null && !robotCacheMap.isEmpty()) {
+			for (Map.Entry<String,RobotCallProcessStatCache> robotCacheEntry : robotCacheMap.entrySet()) {
+				list.add(robotCacheEntry.getValue());
+			}
 		}
 		return list;
 	}

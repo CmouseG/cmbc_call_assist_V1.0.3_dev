@@ -14,10 +14,7 @@ import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
 import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
-import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
-import com.guiji.calloutserver.eventbus.event.AsrCustomerEvent;
-import com.guiji.calloutserver.eventbus.event.ChannelAnswerEvent;
-import com.guiji.calloutserver.eventbus.event.ChannelHangupEvent;
+import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsManager;
@@ -364,6 +361,10 @@ public class FsBotHandler {
             //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
             AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan,false);
             asyncEventBus.post(afterCallEvent);
+
+            //报表统计事件
+//            StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
+//            asyncEventBus.post(statisticReportEvent);
 
             //释放ai资源
             aiManager.releaseAi(callPlan);

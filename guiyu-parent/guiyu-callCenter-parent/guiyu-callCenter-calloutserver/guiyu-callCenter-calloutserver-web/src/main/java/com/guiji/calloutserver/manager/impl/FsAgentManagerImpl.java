@@ -83,9 +83,9 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public Boolean istempexist(String tempId) {
+    public Result.ReturnData<Boolean> istempexist(String tempId) {
         Result.ReturnData<Boolean>  result = iTemplate.istempexist(tempId);
-        return result.getBody();
+        return result;
     }
 
     @Override

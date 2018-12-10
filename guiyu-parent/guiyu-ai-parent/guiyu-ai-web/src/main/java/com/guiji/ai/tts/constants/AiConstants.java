@@ -28,4 +28,6 @@ public class AiConstants {
 	public static final String FINISHED = "2"; // 处理完成
 	public static final String FAIL = "3"; //处理失败
 	
+	public static final String TASK = "AI_Task_"; //任务前缀
+	
 }

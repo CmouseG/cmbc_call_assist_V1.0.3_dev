@@ -32,6 +32,6 @@ public interface TtsStatusMapper {
     
     String getReqStatusByBusId(String busId);
 	
-	int updateStatusByBusId(String busId, String status);
+	int updateStatusByBusId(@Param("busId") String busId, @Param("status") String status);
 
 }

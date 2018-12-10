@@ -71,7 +71,8 @@
     sum(count_u) as U,
     sum(count_v) as V,
     sum(count_w) as W,
-    sum(count_all) as countAll
+    sum(count_all) as countAll,
+    sum(count_all) - sum(count_f) as hang
     FROM
     report_call_count
     WHERE
@@ -82,5 +83,33 @@
     </if>
     GROUP BY call_date
     order by callDate
+  </select>
+
+  <update id="updateTodayCountAndDruation" parameterType="com.guiji.callcenter.dao.entity.ReportCallToday" >
+    update report_call_today
+    set call_count = call_count +1,duration_all=duration_all+ #{durationAll,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+
+  </update>
+
+
+  <select id="countReportCallDay" resultMap="BaseResultMap">
+    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS call_date ,accurate_intent,
+    customer_id ,COUNT(call_id) AS count_all,
+    IF(accurate_intent='A',COUNT(call_id),0) AS count_a,
+    IF(accurate_intent='B',COUNT(call_id),0) AS count_b,
+    IF(accurate_intent='C',COUNT(call_id),0) AS count_c,
+    IF(accurate_intent='D',COUNT(call_id),0) AS count_d,
+    IF(accurate_intent='E',COUNT(call_id),0) AS count_e,
+    IF(accurate_intent='F',COUNT(call_id),0) AS count_f,
+    IF(accurate_intent='U',COUNT(call_id),0) AS count_u,
+    IF(accurate_intent='V',COUNT(call_id),0) AS count_v,
+    IF(accurate_intent='W',COUNT(call_id),0) AS count_w
+    FROM
+    call_out_plan
+    WHERE
+    call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+    AND call_start_time &lt; CURRENT_DATE()
+    GROUP BY customer_id,accurate_intent
   </select>
 </mapper>

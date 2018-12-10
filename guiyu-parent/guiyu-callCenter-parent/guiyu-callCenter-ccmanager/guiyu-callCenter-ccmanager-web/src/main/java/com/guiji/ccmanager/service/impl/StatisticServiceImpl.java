@@ -36,4 +36,14 @@ public class StatisticServiceImpl implements StatisticService {
 
     }
 
+    @Override
+    public List<Map> getDashboardCallData(Long aLong, String startDate, String endDate) {
+
+        //今天
+        //非今天
+
+
+        return null;
+    }
+
 }

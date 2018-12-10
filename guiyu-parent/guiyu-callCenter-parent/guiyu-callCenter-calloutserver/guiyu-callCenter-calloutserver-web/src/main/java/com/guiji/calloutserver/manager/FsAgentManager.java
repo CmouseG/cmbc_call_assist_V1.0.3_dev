@@ -1,6 +1,6 @@
 package com.guiji.calloutserver.manager;
 
-import com.google.common.cache.Cache;
+import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 
@@ -33,7 +33,7 @@ public interface FsAgentManager {
      * @param tempId
      * @return
      */
-     Boolean istempexist(String tempId);
+     Result.ReturnData<Boolean> istempexist(String tempId);
 
     /**
      * 初始化模板录音时长缓存

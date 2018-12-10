@@ -1,0 +1,96 @@
+package com.guiji.callcenter.dao.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class ReportCallDay implements Serializable {
+    private Long id;
+
+    private Date callDate;
+
+    private Integer durationType;
+
+    private String intent;
+
+    private String reason;
+
+    private Integer callCount;
+
+    private Long durationAll;
+
+    private static final long serialVersionUID = 1L;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getCallDate() {
+        return callDate;
+    }
+
+    public void setCallDate(Date callDate) {
+        this.callDate = callDate;
+    }
+
+    public Integer getDurationType() {
+        return durationType;
+    }
+
+    public void setDurationType(Integer durationType) {
+        this.durationType = durationType;
+    }
+
+    public String getIntent() {
+        return intent;
+    }
+
+    public void setIntent(String intent) {
+        this.intent = intent == null ? null : intent.trim();
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason == null ? null : reason.trim();
+    }
+
+    public Integer getCallCount() {
+        return callCount;
+    }
+
+    public void setCallCount(Integer callCount) {
+        this.callCount = callCount;
+    }
+
+    public Long getDurationAll() {
+        return durationAll;
+    }
+
+    public void setDurationAll(Long durationAll) {
+        this.durationAll = durationAll;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", callDate=").append(callDate);
+        sb.append(", durationType=").append(durationType);
+        sb.append(", intent=").append(intent);
+        sb.append(", reason=").append(reason);
+        sb.append(", callCount=").append(callCount);
+        sb.append(", durationAll=").append(durationAll);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append("]");
+        return sb.toString();
+    }
+}

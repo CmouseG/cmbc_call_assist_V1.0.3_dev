@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -60,74 +61,80 @@ public class TtsJobTimer {
     public void ttsCheck(){
     	Lock lock = new Lock("LOCK_ROBOT_TTS_CHECK_JOB", "LOCK_ROBOT_TTS_CHECK_JOB");
     	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
-    		long beginTime = System.currentTimeMillis();
-            logger.info("定时任务，TTS查证...");
-            //查询TTS数据超过10分钟的数据且状态仍为进行中的数据，主动发起查证
-            TtsWavHisExample example = new TtsWavHisExample();
-            //获取10分钟前时间
-            Date tenMinBeforeDate = this.getMinFromCurrent(-10);
-            example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_P).andErrorTryNumLessThanOrEqualTo(3).andCrtTimeLessThanOrEqualTo(tenMinBeforeDate);
-            //查询tts本地失败，且尝试次数小于<=3的数据重试
-            List<TtsWavHis> ttsWavHisList = ttsWavHisMapper.selectByExample(example);
-            if(ListUtil.isNotEmpty(ttsWavHisList)) {
-            	//需要TTS内部处理的数据
-            	List<TtsCallback> ttsCallbackList = new ArrayList<TtsCallback>();
-            	for(TtsWavHis ttsWavHis : ttsWavHisList) {
-            		String busiId = ttsWavHis.getBusiId();
-            		if(StrUtils.isNotEmpty(busiId)) {
-            			//业务编号不为空，开始到AI服务进行TTS查证
-            			ReturnData<TtsRspVO> ttsRspData = iTts.getTtsResultByBusId(busiId);
-            			if(ttsRspData != null && RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode()) && ttsRspData.getBody()!=null){
-            				TtsRspVO ttsRspVO = ttsRspData.getBody();
-            				String status = ttsRspVO.getStatus();	//TTS查证接口返回状态
-            				//查证接口只处理终态，成功、失败
-            				if(RobotConstants.TTS_INTERFACE_DOING.equals(status)) {
-            					//将状态转为内部完成状态
-            					status = RobotConstants.TTS_STATUS_S;
-            				}else if(RobotConstants.TTS_INTERFACE_FAIL.equals(status)) {
-            					//将状态转为内部失败状态
-            					status = RobotConstants.TTS_STATUS_F;
-            				}else {
-            					logger.info("数据{}调研TTS接口状态{}不是终态,continue",busiId,status);
-            					continue;
-            				}
-            				/** 开始保存TTS返回结果  **/
-            				TtsCallbackHis ttsCallbackHis = new TtsCallbackHis();
-            				ttsCallbackHis.setBusiId(busiId);
-            				ttsCallbackHis.setTemplateId(ttsWavHis.getTemplateId());
-            				if(ttsRspVO.getAudios()!=null) {
-            					//将消息转未JSON报文
-            					String jsonData = JSON.toJSONString(ttsRspVO.getAudios());
-            					ttsCallbackHis.setTtsJsonData(jsonData);
-            				}
-            				ttsCallbackHis.setStatus(status);
-            				String errorMsg = ttsRspVO.getErrorMsg();
-            				if(StrUtils.isNotEmpty(errorMsg) && errorMsg.length()>1024) {
-            					//如果异常信息超长，截取下
-            					errorMsg = errorMsg.substring(0, 1024);
-            				}
-            				ttsCallbackHis.setErrorMsg(errorMsg);
-            				//新开事务保存
-            				aiNewTransService.recordTtsCallback(ttsCallbackHis);
-            				/** 开始TTS本次处理  **/
-            				TtsCallback ttsCallback = new TtsCallback();
-            				BeanUtil.copyProperties(ttsCallbackHis, ttsCallback);
-            				ttsCallback.setAudios(ttsRspVO.getAudios());
-            				ttsCallbackList.add(ttsCallback);
-            			}
-            		}
-            		ttsWavHis.setErrorTryNum((ttsWavHis.getErrorTryNum()==null?0:ttsWavHis.getErrorTryNum())+1);	//重试次数+1
-            		aiNewTransService.recordTtsWav(ttsWavHis);
-            	}
-            	if(ListUtil.isNotEmpty(ttsWavHisList)) {
-            		logger.info("本次需要异步处理的TTS数据量为{}条",ttsWavHisList.size());
-            		//异步处理TTS数据
-        			iTtsWavService.asynTtsCallback(ttsCallbackList);
-            	}
-            }
-            long endTime = System.currentTimeMillis();
-            logger.info("定时任务，用时{}S,[TTS查证]完成...",(endTime-beginTime)/1000);
-            distributedLockHandler.releaseLock(lock);	//释放锁
+    		try {
+				long beginTime = System.currentTimeMillis();
+				logger.info("定时任务，TTS查证...");
+				//查询TTS数据超过10分钟的数据且状态仍为进行中的数据，主动发起查证
+				TtsWavHisExample example = new TtsWavHisExample();
+				//获取10分钟前时间
+				Date tenMinBeforeDate = this.getMinFromCurrent(-10);
+				example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_P).andErrorTryNumLessThanOrEqualTo(3).andCrtTimeLessThanOrEqualTo(tenMinBeforeDate);
+				//查询tts本地失败，且尝试次数小于<=3的数据重试
+				List<TtsWavHis> ttsWavHisList = ttsWavHisMapper.selectByExample(example);
+				if(ListUtil.isNotEmpty(ttsWavHisList)) {
+					//需要TTS内部处理的数据
+					List<TtsCallback> ttsCallbackList = new ArrayList<TtsCallback>();
+					for(TtsWavHis ttsWavHis : ttsWavHisList) {
+						String busiId = ttsWavHis.getBusiId();
+						if(StrUtils.isNotEmpty(busiId)) {
+							//业务编号不为空，开始到AI服务进行TTS查证
+							ReturnData<TtsRspVO> ttsRspData = iTts.getTtsResultByBusId(busiId);
+							if(ttsRspData != null && RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode()) && ttsRspData.getBody()!=null){
+								TtsRspVO ttsRspVO = ttsRspData.getBody();
+								String status = ttsRspVO.getStatus();	//TTS查证接口返回状态
+								//查证接口只处理终态，成功、失败
+								if(RobotConstants.TTS_INTERFACE_DOING.equals(status)) {
+									//将状态转为内部完成状态
+									status = RobotConstants.TTS_STATUS_S;
+								}else if(RobotConstants.TTS_INTERFACE_FAIL.equals(status)) {
+									//将状态转为内部失败状态
+									status = RobotConstants.TTS_STATUS_F;
+								}else {
+									logger.info("数据{}调研TTS接口状态{}不是终态,continue",busiId,status);
+									continue;
+								}
+								/** 开始保存TTS返回结果  **/
+								TtsCallbackHis ttsCallbackHis = new TtsCallbackHis();
+								ttsCallbackHis.setBusiId(busiId);
+								ttsCallbackHis.setTemplateId(ttsWavHis.getTemplateId());
+								if(ttsRspVO.getAudios()!=null) {
+									//将消息转未JSON报文
+									String jsonData = JSON.toJSONString(ttsRspVO.getAudios());
+									ttsCallbackHis.setTtsJsonData(jsonData);
+								}
+								ttsCallbackHis.setStatus(status);
+								String errorMsg = ttsRspVO.getErrorMsg();
+								if(StrUtils.isNotEmpty(errorMsg) && errorMsg.length()>1024) {
+									//如果异常信息超长，截取下
+									errorMsg = errorMsg.substring(0, 1024);
+								}
+								ttsCallbackHis.setErrorMsg(errorMsg);
+								//新开事务保存
+								aiNewTransService.recordTtsCallback(ttsCallbackHis);
+								/** 开始TTS本次处理  **/
+								TtsCallback ttsCallback = new TtsCallback();
+								BeanUtil.copyProperties(ttsCallbackHis, ttsCallback);
+								ttsCallback.setAudios(ttsRspVO.getAudios());
+								ttsCallbackList.add(ttsCallback);
+							}
+						}
+						ttsWavHis.setErrorTryNum((ttsWavHis.getErrorTryNum()==null?0:ttsWavHis.getErrorTryNum())+1);	//重试次数+1
+						aiNewTransService.recordTtsWav(ttsWavHis);
+					}
+					if(ListUtil.isNotEmpty(ttsWavHisList)) {
+						logger.info("本次需要异步处理的TTS数据量为{}条",ttsWavHisList.size());
+						//异步处理TTS数据
+						iTtsWavService.asynTtsCallback(ttsCallbackList);
+					}
+				}
+				long endTime = System.currentTimeMillis();
+				logger.info("定时任务，用时{}S,[TTS查证]完成...",(endTime-beginTime)/1000);
+			} catch (BeansException e) {
+				logger.error("定时任务[TTS查证]发生异常",e);
+				throw e;
+			}finally {
+				distributedLockHandler.releaseLock(lock);	//释放锁
+			}
     	}else {
     		logger.warn("定时任务[TTS查证]未能获取锁！！！");
     	}
@@ -144,56 +151,62 @@ public class TtsJobTimer {
     public void ttsErrorRetry(){
 		Lock lock = new Lock("LOCK_ROBOT_TTS_RETRY_JOB", "LOCK_ROBOT_TTS_RETRY_JOB");
 		if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
-    		long beginTime = System.currentTimeMillis();
-            logger.info("定时任务，TTS重试...");
-            //查询TTS数据状态为F，且异常类型为L（本地失败），且尝试次数<=3的数据
-            TtsWavHisExample example = new TtsWavHisExample();
-            example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_F)
-            	.andErrorTypeEqualTo(RobotConstants.TTS_ERROR_TYPE_L).andErrorTryNumLessThanOrEqualTo(3);
-            //查询tts本地失败，且尝试次数小于<=3的数据重试
-            List<TtsWavHis> ttsWavHisList = ttsWavHisMapper.selectByExample(example);
-            if(ListUtil.isNotEmpty(ttsWavHisList)) {
-            	List<TtsWavHis> errorTtsWavHisList = new ArrayList<TtsWavHis>();	//重新发起时校验没通过的数据
-            	//需要重新发起异步本地处理的list
-            	List<TtsCallback> ttsCallbackHistList = new ArrayList<TtsCallback>();
-            	for(TtsWavHis ttsWavHis : ttsWavHisList) {
-            		String busiId = ttsWavHis.getBusiId();	//调用TTS的业务编号
-            		if(StrUtils.isNotEmpty(busiId)) {
-            			//查询TTS回调本地历史表
-            			TtsCallbackHis ttsCallbackHis = iTtsWavService.queryTtsCallbackHisByBusiId(busiId);
-            			if(ttsCallbackHis != null) {
-            				TtsCallback ttsCallback = new TtsCallback();
-            				BeanUtil.copyProperties(ttsCallbackHis, ttsCallback);	//属性拷贝
-            				if(StrUtils.isNotEmpty(ttsCallbackHis.getTtsJsonData())) {
-            					//将JSON转对象
-            					Map<String,String> audios = JsonUtils.json2Bean(ttsCallbackHis.getTtsJsonData(), Map.class);
-            					ttsCallback.setAudios(audios);
-            				}
-            				ttsCallbackHistList.add(ttsCallback);
-            			}else {
-            				logger.error("TTS重新{}发起异常,查不到本地callback历史！",ttsWavHis);
-            				errorTtsWavHisList.add(ttsWavHis);
-            			}
-            		}else {
-            			logger.error("TTS重新{}发起异常,busiId为空！",ttsWavHis);
-            			errorTtsWavHisList.add(ttsWavHis);
-            		}
-            	}
-            	if(ListUtil.isNotEmpty(errorTtsWavHisList)) {
-                	logger.info("重新发起TTS本地处理，失败的数据，共计{}条",errorTtsWavHisList.size());
-                	for(TtsWavHis ttsWavHis : errorTtsWavHisList) {
-                		ttsWavHis.setErrorTryNum((ttsWavHis.getErrorTryNum()==null?0:ttsWavHis.getErrorTryNum())+1);	//失败次数+1
-                		aiNewTransService.recordTtsWav(ttsWavHis);
-                	}
-                }
-            	if(ListUtil.isNotEmpty(ttsCallbackHistList)) {
-            		logger.info("需要重新发起本地TTS处理的数据，共计{}条",ttsCallbackHistList.size());
-            		iTtsWavService.asynTtsCallback(ttsCallbackHistList);
-            	}
-            }
-            long endTime = System.currentTimeMillis();
-            logger.info("定时任务，用时{}S,[TTS查证]完成...",(endTime-beginTime)/1000);
-            distributedLockHandler.releaseLock(lock);	//释放锁
+    		try {
+				long beginTime = System.currentTimeMillis();
+				logger.info("定时任务，TTS重试...");
+				//查询TTS数据状态为F，且异常类型为L（本地失败），且尝试次数<=3的数据
+				TtsWavHisExample example = new TtsWavHisExample();
+				example.createCriteria().andStatusEqualTo(RobotConstants.TTS_STATUS_F)
+					.andErrorTypeEqualTo(RobotConstants.TTS_ERROR_TYPE_L).andErrorTryNumLessThanOrEqualTo(3);
+				//查询tts本地失败，且尝试次数小于<=3的数据重试
+				List<TtsWavHis> ttsWavHisList = ttsWavHisMapper.selectByExample(example);
+				if(ListUtil.isNotEmpty(ttsWavHisList)) {
+					List<TtsWavHis> errorTtsWavHisList = new ArrayList<TtsWavHis>();	//重新发起时校验没通过的数据
+					//需要重新发起异步本地处理的list
+					List<TtsCallback> ttsCallbackHistList = new ArrayList<TtsCallback>();
+					for(TtsWavHis ttsWavHis : ttsWavHisList) {
+						String busiId = ttsWavHis.getBusiId();	//调用TTS的业务编号
+						if(StrUtils.isNotEmpty(busiId)) {
+							//查询TTS回调本地历史表
+							TtsCallbackHis ttsCallbackHis = iTtsWavService.queryTtsCallbackHisByBusiId(busiId);
+							if(ttsCallbackHis != null) {
+								TtsCallback ttsCallback = new TtsCallback();
+								BeanUtil.copyProperties(ttsCallbackHis, ttsCallback);	//属性拷贝
+								if(StrUtils.isNotEmpty(ttsCallbackHis.getTtsJsonData())) {
+									//将JSON转对象
+									Map<String,String> audios = JsonUtils.json2Bean(ttsCallbackHis.getTtsJsonData(), Map.class);
+									ttsCallback.setAudios(audios);
+								}
+								ttsCallbackHistList.add(ttsCallback);
+							}else {
+								logger.error("TTS重新{}发起异常,查不到本地callback历史！",ttsWavHis);
+								errorTtsWavHisList.add(ttsWavHis);
+							}
+						}else {
+							logger.error("TTS重新{}发起异常,busiId为空！",ttsWavHis);
+							errorTtsWavHisList.add(ttsWavHis);
+						}
+					}
+					if(ListUtil.isNotEmpty(errorTtsWavHisList)) {
+				    	logger.info("重新发起TTS本地处理，失败的数据，共计{}条",errorTtsWavHisList.size());
+				    	for(TtsWavHis ttsWavHis : errorTtsWavHisList) {
+				    		ttsWavHis.setErrorTryNum((ttsWavHis.getErrorTryNum()==null?0:ttsWavHis.getErrorTryNum())+1);	//失败次数+1
+				    		aiNewTransService.recordTtsWav(ttsWavHis);
+				    	}
+				    }
+					if(ListUtil.isNotEmpty(ttsCallbackHistList)) {
+						logger.info("需要重新发起本地TTS处理的数据，共计{}条",ttsCallbackHistList.size());
+						iTtsWavService.asynTtsCallback(ttsCallbackHistList);
+					}
+				}
+				long endTime = System.currentTimeMillis();
+				logger.info("定时任务，用时{}S,[TTS查证]完成...",(endTime-beginTime)/1000);
+			} catch (BeansException e) {
+				logger.error("定时任务[TTS重试]发生异常",e);
+				throw e;
+			}finally {
+				distributedLockHandler.releaseLock(lock);	//释放锁
+			}
     	}else {
     		logger.warn("定时任务[TTS重试]未能获取锁！！！");
     	}

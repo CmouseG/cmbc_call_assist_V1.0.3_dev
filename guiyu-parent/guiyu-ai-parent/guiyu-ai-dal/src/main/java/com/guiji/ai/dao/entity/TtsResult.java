@@ -7,10 +7,10 @@ public class TtsResult implements Serializable {
     private Integer id;
 
     private String busId;
-    
-    private String ip;
-    
-    private String port;
+
+    private String ttsIp;
+
+    private String ttsPort;
 
     private String content;
 
@@ -46,27 +46,23 @@ public class TtsResult implements Serializable {
         this.busId = busId == null ? null : busId.trim();
     }
 
-    public String getIp()
-	{
-		return ip;
-	}
+    public String getTtsIp() {
+        return ttsIp;
+    }
 
-	public void setIp(String ip)
-	{
-		this.ip = ip;
-	}
+    public void setTtsIp(String ttsIp) {
+        this.ttsIp = ttsIp == null ? null : ttsIp.trim();
+    }
 
-	public String getPort()
-	{
-		return port;
-	}
+    public String getTtsPort() {
+        return ttsPort;
+    }
 
-	public void setPort(String port)
-	{
-		this.port = port;
-	}
+    public void setTtsPort(String ttsPort) {
+        this.ttsPort = ttsPort == null ? null : ttsPort.trim();
+    }
 
-	public String getContent() {
+    public String getContent() {
         return content;
     }
 
@@ -138,6 +134,8 @@ public class TtsResult implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", busId=").append(busId);
+        sb.append(", ttsIp=").append(ttsIp);
+        sb.append(", ttsPort=").append(ttsPort);
         sb.append(", content=").append(content);
         sb.append(", model=").append(model);
         sb.append(", audioUrl=").append(audioUrl);

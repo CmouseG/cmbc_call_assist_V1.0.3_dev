@@ -297,4 +297,12 @@
   	SELECT model, COUNT(*) count FROM tts_model
 	GROUP BY model
   </select>
+  
+  <update id="updateModelByIpPort">
+  	update tts_model
+  	set model = #{model,jdbcType=VARCHAR}
+  	where tts_ip = #{ip,jdbcType=VARCHAR}
+  	and tts_port = #{port,jdbcType=VARCHAR}
+  </update>
+  
 </mapper>

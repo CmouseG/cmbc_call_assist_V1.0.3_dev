@@ -31,4 +31,8 @@ public interface TtsModelMapper {
     int updateByPrimaryKey(TtsModel record);
 
 	List<Map<String, Object>> selectModelGpuCount();
+
+	void updateModelByIpPort();
+
+	int updateModelByIpPort(@Param("ip") String ip, @Param("port") String port, @Param("model") String model);
 }

@@ -26,5 +26,10 @@ public interface IModelService
 	 * @return
 	 */
 	public List<ModelGpuNumVO> getModelGpus();
+
+	/**
+	 * 根据ip，port修改model（模型切换后修改表数据）
+	 */
+	public void updateModelByIpPort(String ip, String port, String model);
 	
 }

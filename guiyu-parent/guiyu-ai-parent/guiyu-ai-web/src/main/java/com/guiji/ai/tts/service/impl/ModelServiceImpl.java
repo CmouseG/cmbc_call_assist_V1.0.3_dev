@@ -42,7 +42,6 @@ public class ModelServiceImpl implements IModelService
 	}
 
 	@Override
-	@Transactional
 	public TtsGpuRspVO getGpuList(TtsGpuReqVO ttsGpuReqVO)
 	{
 		TtsGpuRspVO ttsGpuRsp = new TtsGpuRspVO();
@@ -108,6 +107,13 @@ public class ModelServiceImpl implements IModelService
 			modelGpuNumVOList.add(modelGpuNumVO);
 		}
 		return null;
+	}
+
+	@Override
+	@Transactional
+	public void updateModelByIpPort(String ip, String port, String model)
+	{
+		modelMapper.updateModelByIpPort(ip, port, model);
 	}
 
 }

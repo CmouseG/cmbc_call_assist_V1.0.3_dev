@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import com.guiji.ai.tts.handler.AcquireTTSHandler;
 
 @Component
-public class TtsListener
+public class TtsAcquireListener
 {
-	private static final Logger logger = LoggerFactory.getLogger(TtsListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(TtsAcquireListener.class);
 
 	@Autowired
 	AcquireTTSHandler acquireTTSHandler;

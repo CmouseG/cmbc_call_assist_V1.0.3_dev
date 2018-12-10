@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
-import com.guiji.ai.tts.TtsReqVOQueue;
+import com.guiji.ai.tts.TtsReqQueue;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
@@ -56,8 +56,10 @@ public class TtsController implements ITts
 			if (ttsReqVO != null && !ttsReqVO.getContents().isEmpty()) {
 				//入库
 				statusService.saveTtsStatus(ttsReqVO);
+				//入redis
+				ttsService.saveTask(ttsReqVO);
 				//入队列
-				TtsReqVOQueue.getInstance().produce(ttsReqVO);
+				TtsReqQueue.getInstance().produce(ttsReqVO);
 			}
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -168,6 +170,26 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return Result.ok(taskListRspVO);
+	}
+
+	/**
+	 * 任务插队
+	 */
+	@Override
+	public ReturnData<Boolean> jumpQueue(@RequestBody String busId)
+	{
+		try
+		{
+			logger.info("执行任务插队...");
+			return Result.ok(ttsService.taskJump(busId));
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
 	}
 	
 }

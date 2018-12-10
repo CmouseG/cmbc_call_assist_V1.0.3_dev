@@ -20,6 +20,7 @@ public class ReportCallCountShow {
     private int V;
     private int W;
     private int countAll;
+    private int hang;
 
     public String getCallDate() {
         return callDate;
@@ -107,5 +108,13 @@ public class ReportCallCountShow {
 
     public void setCountAll(int countAll) {
         this.countAll = countAll;
+    }
+
+    public int getHang() {
+        return hang;
+    }
+
+    public void setHang(int hang) {
+        this.hang = hang;
     }
 }

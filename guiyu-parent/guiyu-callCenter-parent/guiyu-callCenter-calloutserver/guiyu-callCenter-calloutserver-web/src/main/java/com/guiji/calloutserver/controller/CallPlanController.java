@@ -5,7 +5,9 @@ import com.guiji.callcenter.dao.entity.LineCount;
 import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.calloutserver.entity.CCException;
 import com.guiji.calloutserver.eventbus.event.StartCallPlanEvent;
+import com.guiji.calloutserver.eventbus.handler.CallResourceChecker;
 import com.guiji.calloutserver.manager.EurekaManager;
+import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.LineCountService;
 import com.guiji.component.result.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +30,13 @@ public class CallPlanController implements ICallPlan {
     @Autowired
     EurekaManager eurekaManager;
 
+    @Autowired
+    FsAgentManager fsAgentManager;
+
     @Override
     public Result.ReturnData startCallPlan(String customerId, String tempId, Integer lineId) {
         log.info("收到启动呼叫计划请求，customerId[{}], tempId[{}],lineId[{}]", customerId, tempId, lineId);
 
-//        List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId("192.168.1.78:18024", lineId);
         List<LineCount> lineCountList = lineCountService.findByInstanceIdAndLineId(eurekaManager.getInstanceId(), lineId);
         if(lineCountList==null || lineCountList.size()==0){
             //线路不存在
@@ -59,6 +63,24 @@ public class CallPlanController implements ICallPlan {
             log.warn("启动计划失败，线路正在使用中[{}]", lineId);
             return Result.error(CCException.LINE_BUSY);
         }
+
+        try{
+            Result.ReturnData<Boolean> result =  fsAgentManager.istempexist(tempId);
+            if(!result.getBody()){
+                log.warn("启动呼叫计划失败，模板不存在[{}]", lineId);
+                return Result.error(CCException.TEMP_NOTEXISIT);
+            }
+        }catch (Exception e){
+            log.warn("启动呼叫计划失败，模板不存在[{}]", lineId);
+            return Result.error(CCException.TEMP_NOTEXISIT);
+        }
+        try {
+            fsAgentManager.getwavlength(tempId);
+        }catch (Exception e){
+            log.warn("启动呼叫计划失败，下载录音文件时长失败[{}]", lineId);
+            return Result.error(CCException.GET_WAV_LEN_ERROR);
+        }
+
         asyncEventBus.post(new StartCallPlanEvent(customerId, tempId, currentLine));
         return Result.ok();
     }

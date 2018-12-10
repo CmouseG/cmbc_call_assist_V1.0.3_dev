@@ -39,8 +39,9 @@ public class CallResourceChecker {
      */
     public void checkCallResources(CallOutPlan callOutPlan){
         //启动多个线程，用于检测各个资源的状态
-        checkTemp(callOutPlan);
-        checkTts(callOutPlan);
+        checkTemp(callOutPlan.getTempId());
+//        checkTts(callOutPlan);
+        // todo 这个出现异常要干嘛？？
         checkSellbot(callOutPlan);
 
         asyncEventBus.post(new CallResourceReadyEvent(callOutPlan));
@@ -73,11 +74,12 @@ public class CallResourceChecker {
                     //TODO: 报警
                     log.warn("申请机器人资源失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 1,60,true);
+            }, 5, 1, 1,60,true);
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }
 
+        //todo 我为什么要抛一个空指针呢
         Preconditions.checkNotNull(returnData, "null return data from sellbot");
         String aiNo = returnData.getBody().getAiNo();
         callOutPlan.setAiId(aiNo);
@@ -95,10 +97,9 @@ public class CallResourceChecker {
 
     /**
      * 检查模板是否就位
-     * @param callOutPlan
      */
-    private void checkTemp(CallOutPlan callOutPlan) {
-        fsAgentManager.istempexist(callOutPlan.getTempId());
-        fsAgentManager.getwavlength(callOutPlan.getTempId());
+    public void checkTemp(String tempId) {
+        fsAgentManager.istempexist(tempId);
+        fsAgentManager.getwavlength(tempId);
     }
 }

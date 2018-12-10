@@ -5,10 +5,12 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
+import com.guiji.calloutserver.eventbus.event.StatisticReportEvent;
 import com.guiji.calloutserver.eventbus.handler.CallResourceChecker;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,4 +69,5 @@ public class TestController {
 
         return callOutPlan;
     }
+
 }

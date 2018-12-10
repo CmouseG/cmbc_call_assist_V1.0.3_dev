@@ -2,6 +2,7 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.ReportCallCount;
+import com.guiji.callcenter.dao.entity.ReportCallDay;
 import com.guiji.ccmanager.service.ReportSchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,15 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
     @Override
     public void reportCallCountScheduler() {
-
         statisticMapper.deleteYesterday();
         List<ReportCallCount> list = statisticMapper.selectFromCallOutPlan();
         statisticMapper.insertIntoReportCallCount(list);
+    }
 
+    @Override
+    public void reportCallDayScheduler() {
+//        statisticMapper.deleteYesterday();
+        List<ReportCallDay> list = statisticMapper.countReportCallDay();
+        statisticMapper.insertReportCallDay(list);
     }
 }

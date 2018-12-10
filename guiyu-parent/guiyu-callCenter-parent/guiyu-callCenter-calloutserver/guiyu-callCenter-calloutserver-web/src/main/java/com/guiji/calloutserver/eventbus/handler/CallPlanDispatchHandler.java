@@ -142,12 +142,13 @@ public class CallPlanDispatchHandler {
                 callPlan.setIsread(0);
                 log.info("----------- getAvailableSchedules callPlan [{}] ", callPlan);
                 callOutPlanService.add(callPlan);
+
                 callResourceChecker.checkCallResources(callPlan);
             }
 
         } catch (Exception e) {
             log.warn("在挂断后拉取新计划出现异常", e);
-            //TODO: 报警
+            //TODO: 报警，这里需要做些事情啊，回掉调度中心？
         }
     }
 

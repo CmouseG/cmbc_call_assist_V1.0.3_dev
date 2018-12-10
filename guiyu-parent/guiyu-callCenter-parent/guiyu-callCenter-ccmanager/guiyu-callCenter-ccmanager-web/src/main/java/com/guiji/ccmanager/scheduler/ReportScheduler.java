@@ -24,7 +24,7 @@ public class ReportScheduler {
     @Autowired
     ReportSchedulerService reportSchedulerService;
 
-    @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
+/*    @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
 //    @Scheduled(cron = "0/3 * * * * ?") // 测试
     public void reportCallCountScheduler(){
 
@@ -33,5 +33,16 @@ public class ReportScheduler {
         log.info("----------- end reportCallCountScheduler -----------");
 
     }
+
+
+//    @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
+    @Scheduled(cron = "0/3 * * * * ?") // 测试
+    public void reportCallDayScheduler(){
+
+        log.info("----------- start reportCallDayScheduler -----------");
+        reportSchedulerService.reportCallDayScheduler();
+        log.info("----------- end reportCallDayScheduler -----------");
+
+    }*/
 
 }

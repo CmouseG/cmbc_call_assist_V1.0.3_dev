@@ -11,4 +11,6 @@ import java.util.Map;
  */
 public interface StatisticService {
     List<Map> getIntentCountOnTime(Long userId, String startDate, String endDate) throws ParseException;
+
+    List<Map> getDashboardCallData(Long aLong, String startDate, String endDate);
 }

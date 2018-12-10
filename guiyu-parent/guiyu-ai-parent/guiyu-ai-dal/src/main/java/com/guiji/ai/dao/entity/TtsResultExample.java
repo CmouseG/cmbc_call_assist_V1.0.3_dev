@@ -255,6 +255,146 @@ public class TtsResultExample {
             return (Criteria) this;
         }
 
+        public Criteria andTtsIpIsNull() {
+            addCriterion("tts_ip is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpIsNotNull() {
+            addCriterion("tts_ip is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpEqualTo(String value) {
+            addCriterion("tts_ip =", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpNotEqualTo(String value) {
+            addCriterion("tts_ip <>", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpGreaterThan(String value) {
+            addCriterion("tts_ip >", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpGreaterThanOrEqualTo(String value) {
+            addCriterion("tts_ip >=", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpLessThan(String value) {
+            addCriterion("tts_ip <", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpLessThanOrEqualTo(String value) {
+            addCriterion("tts_ip <=", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpLike(String value) {
+            addCriterion("tts_ip like", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpNotLike(String value) {
+            addCriterion("tts_ip not like", value, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpIn(List<String> values) {
+            addCriterion("tts_ip in", values, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpNotIn(List<String> values) {
+            addCriterion("tts_ip not in", values, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpBetween(String value1, String value2) {
+            addCriterion("tts_ip between", value1, value2, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsIpNotBetween(String value1, String value2) {
+            addCriterion("tts_ip not between", value1, value2, "ttsIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortIsNull() {
+            addCriterion("tts_port is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortIsNotNull() {
+            addCriterion("tts_port is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortEqualTo(String value) {
+            addCriterion("tts_port =", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortNotEqualTo(String value) {
+            addCriterion("tts_port <>", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortGreaterThan(String value) {
+            addCriterion("tts_port >", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortGreaterThanOrEqualTo(String value) {
+            addCriterion("tts_port >=", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortLessThan(String value) {
+            addCriterion("tts_port <", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortLessThanOrEqualTo(String value) {
+            addCriterion("tts_port <=", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortLike(String value) {
+            addCriterion("tts_port like", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortNotLike(String value) {
+            addCriterion("tts_port not like", value, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortIn(List<String> values) {
+            addCriterion("tts_port in", values, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortNotIn(List<String> values) {
+            addCriterion("tts_port not in", values, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortBetween(String value1, String value2) {
+            addCriterion("tts_port between", value1, value2, "ttsPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andTtsPortNotBetween(String value1, String value2) {
+            addCriterion("tts_port not between", value1, value2, "ttsPort");
+            return (Criteria) this;
+        }
+
         public Criteria andContentIsNull() {
             addCriterion("content is null");
             return (Criteria) this;

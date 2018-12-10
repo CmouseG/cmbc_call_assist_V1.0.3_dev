@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.component.result.Result;
 import com.guiji.da.constants.DaConstants;
 import com.guiji.da.service.robot.IRobotCallProcessStatService;
+import com.guiji.da.service.robot.ISellbotCallbackService;
 import com.guiji.da.service.vo.RobotCallProcessStatCache;
 import com.guiji.da.service.vo.RobotCallProcessStatQueryCondition;
 import com.guiji.da.service.vo.RobotCallProcessStatVO;
 import com.guiji.da.service.vo.RobotCallProcessStatView;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.StrUtils;
 
 /** 
 * @ClassName: RobotDaController 
@@ -32,10 +34,29 @@ public class RobotDaController {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	IRobotCallProcessStatService iRobotCallProcessStatService;
+	@Autowired
+	ISellbotCallbackService iSellbotCallbackService;
 	
 	/**
-	 * 新增或者修改用户机器人配置信息明细
-	 * @param userAiCfgInfo
+	 * 接收SELLBOT通话分析回调
+	 * @param sellbotJson
+	 * @return
+	 */
+	@RequestMapping(value = "/receiveSellbotCallback", method = RequestMethod.POST)
+	public Result.ReturnData receiveSellbotCallback(@RequestBody String sellbotJson){
+		if(StrUtils.isNotEmpty(sellbotJson)) {
+			iSellbotCallbackService.receiveSellbotCallback(sellbotJson);
+			return Result.ok();
+		}else {
+			logger.error("请求参数json不能为空!");
+			return Result.error("00060001");
+		}
+	}
+	
+	
+	/**
+	 * 查询robot量化分析数据
+	 * @param condition
 	 * @return
 	 */
 	@RequestMapping(value = "/queryRobotCallStat", method = RequestMethod.POST)

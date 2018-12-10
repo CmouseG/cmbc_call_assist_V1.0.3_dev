@@ -18,6 +18,8 @@ public class TtsStatus implements Serializable {
 
     private Integer textCount;
 
+    private String jumpFlag;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -76,6 +78,14 @@ public class TtsStatus implements Serializable {
         this.textCount = textCount;
     }
 
+    public String getJumpFlag() {
+        return jumpFlag;
+    }
+
+    public void setJumpFlag(String jumpFlag) {
+        this.jumpFlag = jumpFlag == null ? null : jumpFlag.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -89,6 +99,7 @@ public class TtsStatus implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", textCount=").append(textCount);
+        sb.append(", jumpFlag=").append(jumpFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

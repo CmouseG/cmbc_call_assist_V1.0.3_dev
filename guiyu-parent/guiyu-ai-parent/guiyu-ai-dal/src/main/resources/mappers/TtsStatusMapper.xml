@@ -1,34 +1,35 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.ai.dao.TtsStatusMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.ai.dao.entity.TtsStatus" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="bus_id" property="busId" jdbcType="VARCHAR" />
-    <result column="model" property="model" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="CHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="text_count" property="textCount" jdbcType="INTEGER" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.ai.dao.TtsStatusMapper">
+  <resultMap id="BaseResultMap" type="com.guiji.ai.dao.entity.TtsStatus">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="bus_id" jdbcType="VARCHAR" property="busId" />
+    <result column="model" jdbcType="VARCHAR" property="model" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="text_count" jdbcType="INTEGER" property="textCount" />
+    <result column="jump_flag" jdbcType="CHAR" property="jumpFlag" />
   </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
-                <when test="criterion.singleValue" >
+                <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>
-                <when test="criterion.betweenValue" >
+                <when test="criterion.betweenValue">
                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
                 </when>
-                <when test="criterion.listValue" >
+                <when test="criterion.listValue">
                   and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
                   </foreach>
                 </when>
@@ -39,25 +40,25 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
-                <when test="criterion.singleValue" >
+                <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>
-                <when test="criterion.betweenValue" >
+                <when test="criterion.betweenValue">
                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
                 </when>
-                <when test="criterion.listValue" >
+                <when test="criterion.listValue">
                   and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
                   </foreach>
                 </when>
@@ -68,136 +69,145 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Base_Column_List" >
-    id, bus_id, model, `status`, create_time, update_time, text_count
+  <sql id="Base_Column_List">
+    id, bus_id, model, `status`, create_time, update_time, text_count, jump_flag
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.ai.dao.entity.TtsStatusExample" >
+  <select id="selectByExample" parameterType="com.guiji.ai.dao.entity.TtsStatusExample" resultMap="BaseResultMap">
     select
-    <if test="distinct" >
+    <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
     from tts_status
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
-    <if test="orderByClause != null" >
+    <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
-    <if test="limitStart != null and limitStart>=0" >
+    <if test="limitStart != null and limitStart>=0">
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tts_status
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tts_status
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.ai.dao.entity.TtsStatusExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.ai.dao.entity.TtsStatusExample">
     delete from tts_status
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsStatus" >
+  <insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsStatus">
     insert into tts_status (id, bus_id, model, 
       `status`, create_time, update_time, 
-      text_count)
+      text_count, jump_flag)
     values (#{id,jdbcType=INTEGER}, #{busId,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 
       #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{textCount,jdbcType=INTEGER})
+      #{textCount,jdbcType=INTEGER}, #{jumpFlag,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.ai.dao.entity.TtsStatus" >
+  <insert id="insertSelective" parameterType="com.guiji.ai.dao.entity.TtsStatus">
     insert into tts_status
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         id,
       </if>
-      <if test="busId != null" >
+      <if test="busId != null">
         bus_id,
       </if>
-      <if test="model != null" >
+      <if test="model != null">
         model,
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         `status`,
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time,
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         update_time,
       </if>
-      <if test="textCount != null" >
+      <if test="textCount != null">
         text_count,
       </if>
+      <if test="jumpFlag != null">
+        jump_flag,
+      </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="busId != null" >
+      <if test="busId != null">
         #{busId,jdbcType=VARCHAR},
       </if>
-      <if test="model != null" >
+      <if test="model != null">
         #{model,jdbcType=VARCHAR},
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         #{status,jdbcType=CHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="textCount != null" >
+      <if test="textCount != null">
         #{textCount,jdbcType=INTEGER},
+      </if>
+      <if test="jumpFlag != null">
+        #{jumpFlag,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.ai.dao.entity.TtsStatusExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.ai.dao.entity.TtsStatusExample" resultType="java.lang.Long">
     select count(*) from tts_status
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map" >
+  <update id="updateByExampleSelective" parameterType="map">
     update tts_status
-    <set >
-      <if test="record.id != null" >
+    <set>
+      <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.busId != null" >
+      <if test="record.busId != null">
         bus_id = #{record.busId,jdbcType=VARCHAR},
       </if>
-      <if test="record.model != null" >
+      <if test="record.model != null">
         model = #{record.model,jdbcType=VARCHAR},
       </if>
-      <if test="record.status != null" >
+      <if test="record.status != null">
         `status` = #{record.status,jdbcType=CHAR},
       </if>
-      <if test="record.createTime != null" >
+      <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.updateTime != null" >
+      <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.textCount != null" >
+      <if test="record.textCount != null">
         text_count = #{record.textCount,jdbcType=INTEGER},
       </if>
+      <if test="record.jumpFlag != null">
+        jump_flag = #{record.jumpFlag,jdbcType=CHAR},
+      </if>
     </set>
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByExample" parameterType="map" >
+  <update id="updateByExample" parameterType="map">
     update tts_status
     set id = #{record.id,jdbcType=INTEGER},
       bus_id = #{record.busId,jdbcType=VARCHAR},
@@ -205,43 +215,48 @@
       `status` = #{record.status,jdbcType=CHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      text_count = #{record.textCount,jdbcType=INTEGER}
-    <if test="_parameter != null" >
+      text_count = #{record.textCount,jdbcType=INTEGER},
+      jump_flag = #{record.jumpFlag,jdbcType=CHAR}
+    <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.ai.dao.entity.TtsStatus" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.ai.dao.entity.TtsStatus">
     update tts_status
-    <set >
-      <if test="busId != null" >
+    <set>
+      <if test="busId != null">
         bus_id = #{busId,jdbcType=VARCHAR},
       </if>
-      <if test="model != null" >
+      <if test="model != null">
         model = #{model,jdbcType=VARCHAR},
       </if>
-      <if test="status != null" >
+      <if test="status != null">
         `status` = #{status,jdbcType=CHAR},
       </if>
-      <if test="createTime != null" >
+      <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null" >
+      <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="textCount != null" >
+      <if test="textCount != null">
         text_count = #{textCount,jdbcType=INTEGER},
+      </if>
+      <if test="jumpFlag != null">
+        jump_flag = #{jumpFlag,jdbcType=CHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.ai.dao.entity.TtsStatus" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.ai.dao.entity.TtsStatus">
     update tts_status
     set bus_id = #{busId,jdbcType=VARCHAR},
       model = #{model,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      text_count = #{textCount,jdbcType=INTEGER}
+      text_count = #{textCount,jdbcType=INTEGER},
+      jump_flag = #{jumpFlag,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -254,7 +269,13 @@
 	<update id="updateStatusByBusId">
 		UPDATE tts_status
 		SET status = #{status,jdbcType=CHAR}
-		WHERE bus_id =
-		#{busId,jdbcType=VARCHAR}
+		WHERE bus_id = #{busId,jdbcType=VARCHAR}
 	</update>
+	
+	<update id="updateJumpFlagByBusId">
+		UPDATE tts_status
+		SET jump_flag = 'Y'
+		WHERE bus_id = #{busId,jdbcType=VARCHAR}
+	</update>
+  
 </mapper>

@@ -141,4 +141,11 @@ public class StatusServiceImpl implements IStatusService
 				
 	}
 
+
+	@Override
+	public void updateJumpFlagByBusId(String busId)
+	{
+		ttsStatusMapper.updateJumpFlagByBusId(busId);
+	}
+
 }

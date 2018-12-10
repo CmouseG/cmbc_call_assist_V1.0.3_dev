@@ -13,6 +13,6 @@ import com.guiji.user.dao.entity.SysRole;
 public interface IApiLogin {
 	
 	@RequestMapping("apiLogin")
-	public ReturnData<List<SysRole>> getRoleByUserId(@RequestParam("userId") Long userId);
+	public ReturnData<List<SysRole>> apiLogin(@RequestParam("accessKey")String accessKey,@RequestParam("secretKey")String secretKey);
 	
 }

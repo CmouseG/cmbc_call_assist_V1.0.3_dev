@@ -133,7 +133,7 @@ public class CallPlanDispatchHandler {
         //挂断后再请求一个呼叫数据，不让线路空闲
         try {
             List<CallOutPlan> list = dispatchService.pullCallPlan(Integer.valueOf(calloutPlan.getCustomerId()),1,calloutPlan.getLineId());
-
+            log.info("----------- getAvailableSchedules callPlan list size [{}] ", list.size());
             if(list!=null && list.size()>0){
                 CallOutPlan callPlan= list.get(0);
                 callPlan.setCallState(ECallState.call_prepare.ordinal());
@@ -141,9 +141,26 @@ public class CallPlanDispatchHandler {
                 callPlan.setIsdel(0);
                 callPlan.setIsread(0);
                 log.info("----------- getAvailableSchedules callPlan [{}] ", callPlan);
+
                 callOutPlanService.add(callPlan);
 
-                callResourceChecker.checkCallResources(callPlan);
+                try {
+//            如果申请机器人异常 ，回掉失败给调度中心,下次还可以拉取该次通话
+//              callResourceChecker.checkCallResources(callPlan);
+//                    callResourceChecker.checkTemp(callPlan.getTempId());
+//        checkTts(callOutPlan);
+                    callResourceChecker.checkSellbot(callPlan);
+                }catch (NullPointerException e){
+                    //回掉给调度中心，更改通话记录
+                    callPlan.setCallState(ECallState.norobot_fail.ordinal());
+                    callPlan.setReason(e.getMessage());
+                    callOutPlanService.update(callPlan);
+                    dispatchService.successSchedule(callPlan.getCallId());
+                    return;
+                }
+                asyncEventBus.post(new CallResourceReadyEvent(callPlan));
+                log.info("---------------------CallResourceReadyEvent post "+callPlan.getPhoneNum());
+
             }
 
         } catch (Exception e) {

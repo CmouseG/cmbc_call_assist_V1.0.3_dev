@@ -9,6 +9,7 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.helper.RequestHelper;
+import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutRecordService;
@@ -35,7 +36,7 @@ public class AfterCallHandler {
     FsAgentManager fsAgentManager;
 
     @Autowired
-    IDispatchPlanOut  dispatchPlanOut;
+    DispatchManager dispatchManager;
 
     @Autowired
     AsyncEventBus asyncEventBus;
@@ -63,25 +64,7 @@ public class AfterCallHandler {
                 }
 
                 //调度中心
-                Result.ReturnData returnData = null;
-                try {
-                    returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                        @Override
-                        public Result.ReturnData execute() {
-                            return dispatchPlanOut.successSchedule(callPlan.getCallId());
-                        }
-
-                        @Override
-                        public void onErrorResult(Result.ReturnData result) {
-                            //TODO: 报警
-                            log.warn("调度中心回掉是否成功出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
-                        }
-                    }, -1, 1, 3,120,true);
-                } catch (Exception e) {
-                    log.warn("调度中心回掉是否成功时出现异常", e);
-                }
-
-                log.info("===================================successSchedule:" + callPlan.getCallId());
+                dispatchManager.successSchedule(callPlan.getCallId());
 
             }
         } catch (Exception ex) {

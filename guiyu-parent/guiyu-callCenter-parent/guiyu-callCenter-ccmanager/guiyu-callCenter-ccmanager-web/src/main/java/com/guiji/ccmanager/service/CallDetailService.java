@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.ccmanager.vo.CallDetailUpdateReq;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
@@ -38,4 +39,6 @@ public interface CallDetailService {
     List<String> getFtypes();
 
     void updateIsRead(String callId);
+
+    void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq);
 }

@@ -127,7 +127,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setUserId(userId.intValue());
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 
-//		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+		// dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		dispatchPlan.setUserId(userId.intValue());
 		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
@@ -227,7 +227,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
-
 		boolean result = false;
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
@@ -549,7 +548,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-//		getBatchNames(selectByExample);
 
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
@@ -613,10 +611,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setLine(lineId);
 		dis.setCallHour(String.valueOf(hour));
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
-
+		dis.setFlag(Constant.IS_FLAG_2);
 		List<String> list = new ArrayList<>();
 		Object object2 = redisUtil.get("robotId");
-		System.out.println(object2);
 		if (redisUtil.get("robotId") != null) {
 			logger.info("当前模板升级中，接口 queryAvailableSchedules 对应模板查不到数据，" + redisUtil.get("robotId"));
 			String object = (String) redisUtil.get("robotId");
@@ -632,11 +629,17 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.setLimitEnd(requestCount);
 		}
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		//同步状态;0未同步1已同步
+		// 同步状态;0未同步1已同步
+
+		List<DispatchPlan> updateStatus = new ArrayList<>();
+
 		for (DispatchPlan dispatchPlan : phones) {
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
-			dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
+			updateStatus.add(dispatchPlan);
+			// dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
 		}
+		// 批量修改状态
+		int res = dispatchPlanMapper.updateDispatchPlanList(updateStatus);
 		// 判断当前任务是否查询完毕
 		int count = dispatchPlanMapper.countByExample(ex);
 		if (count <= requestCount) {
@@ -745,6 +748,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
+		// 一键恢复针对暂停的不能操作
+		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
+				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
+			return false;
+		}
 		return true;
 	}
 
@@ -811,7 +819,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(id);
 			dis.setFlag(flag);
-			result = dispatchPlanMapper.updateByExampleSelective(dis,ex);
+			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		}
 		return result > 0 ? true : false;
 	}
@@ -894,36 +902,104 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return jsonObject;
 	}
 
-	
-	
 	@Override
-	public JSONObject getServiceStatistics() {
+	public JSONObject getServiceStatistics(Long userId) {
 		JSONObject jsonObject = new JSONObject();
-//		累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
-		
-		int countNums = dispatchPlanMapper.countByExample( new DispatchPlanExample());	
+		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+
+		int countNums = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		Criteria andStatusPlanEqualTo = ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		if (userId != 0) {
+			andStatusPlanEqualTo.andUserIdEqualTo(userId.intValue());
+		}
 		int calledNums = dispatchPlanMapper.countByExample(ex);
-		
+
 		DispatchPlanExample ex1 = new DispatchPlanExample();
-		ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+		Criteria andStatusPlanEqualTo2 = ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+		if (userId != 0) {
+			andStatusPlanEqualTo2.andUserIdEqualTo(userId.intValue());
+		}
 		ex1.setOrderByClause("`gmt_create` DESC");
 		DispatchPlan dispatchPlan = dispatchPlanMapper.selectByExample(ex1).get(0);
-		
-		
+
 		DispatchPlanExample ex2 = new DispatchPlanExample();
-		ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		Criteria andStatusPlanEqualTo3 = ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
+				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+		if (userId != 0) {
+			andStatusPlanEqualTo3.andUserIdEqualTo(userId.intValue());
+		}
+
 		ex2.setOrderByClause("`gmt_create` DESC");
 		DispatchPlan dispatchPlan1 = dispatchPlanMapper.selectByExample(ex2).get(0);
-		
+
+		ReturnData<SysUser> user = auth.getUserById(userId);
+		if (user.getBody() != null) {
+			SysUser body = user.getBody();
+			long stateTimeLong = new Date().getTime();
+			long endTimeLong = body.getCreateTime().getTime();
+			// 结束时间-开始时间 = 天数
+			long day = (stateTimeLong - endTimeLong) / (24 * 60 * 60 * 1000);
+			jsonObject.put("day", day);
+		}
+
 		jsonObject.put("countNums", countNums);
 		jsonObject.put("calledNums", calledNums);
 		jsonObject.put("lastPlanDate", dispatchPlan.getCallData());
 		jsonObject.put("lastCalledDate", dispatchPlan1.getCallData());
-		
-		
 		return jsonObject;
+	}
+
+	@Override
+	public JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin) {
+		DispatchPlanExample ex = new DispatchPlanExample();
+		Criteria createCriteria = ex.createCriteria();
+		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()),
+						new Timestamp(sdf.parse(endTime).getTime()));
+				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
+			} catch (ParseException e) {
+				logger.error("error", e);
+			}
+		}
+		if (!isSuperAdmin) {
+			createCriteria.andUserIdEqualTo(userId.intValue());
+		}
+
+		DispatchPlanExample ex1 = new DispatchPlanExample();
+		Criteria createCriteria1 = ex1.createCriteria();
+		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				createCriteria1.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()),
+						new Timestamp(sdf.parse(endTime).getTime()));
+				createCriteria1.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
+			} catch (ParseException e) {
+				logger.error("error", e);
+			}
+		}
+		if (!isSuperAdmin) {
+			createCriteria1.andUserIdEqualTo(userId.intValue());
+		}
+
+		int taskCount = dispatchPlanMapper.countByExample(ex);
+		int calledCount = dispatchPlanMapper.countByExample(ex1);
+		int Batchcount = dispatchPlanBatchMapper.countByExample(new DispatchPlanBatchExample());
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("taskCount", taskCount);
+		jsonObject.put("calledCount", calledCount);
+		jsonObject.put("Batchcount", Batchcount);
+		return jsonObject;
+	}
+
+	@Override
+	public boolean insertDispatchPlanList(List<DispatchPlan> list) {
+		int result = dispatchPlanMapper.insertDispatchPlanList(list);
+		return result > 0 ? true : false;
 	}
 
 }

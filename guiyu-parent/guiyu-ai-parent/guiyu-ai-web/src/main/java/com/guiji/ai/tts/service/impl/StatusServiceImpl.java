@@ -31,7 +31,6 @@ public class StatusServiceImpl implements IStatusService
 	TtsStatusMapper ttsStatusMapper;
 
 	@Override
-	@Transactional
 	public String getTransferStatusByBusId(String busId)
 	{
 		String status = "";
@@ -48,7 +47,6 @@ public class StatusServiceImpl implements IStatusService
 
 	
 	@Override
-	@Transactional
 	public List<TtsStatusRspVO> getTtsStatusList(TtsStatusReqVO ttsStatusReqVO)
 	{
 		//结果集
@@ -101,7 +99,6 @@ public class StatusServiceImpl implements IStatusService
 	}
 
 	@Override
-	@Transactional
 	public TaskListRspVO getTaskList(TaskListReqVO taskListReqVO)
 	{
 		TaskListRspVO taskListRspVO = new TaskListRspVO();
@@ -143,6 +140,7 @@ public class StatusServiceImpl implements IStatusService
 
 
 	@Override
+	@Transactional
 	public void updateJumpFlagByBusId(String busId)
 	{
 		ttsStatusMapper.updateJumpFlagByBusId(busId);

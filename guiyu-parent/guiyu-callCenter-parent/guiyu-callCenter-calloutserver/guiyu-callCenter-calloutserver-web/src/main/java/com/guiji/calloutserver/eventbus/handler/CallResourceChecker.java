@@ -75,7 +75,7 @@ public class CallResourceChecker {
                     msg[0] = result.getMsg();
                     log.warn("申请机器人资源失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, 5, 1, 3,120,true);
+            }, 5, 1, 5,180,true);
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }

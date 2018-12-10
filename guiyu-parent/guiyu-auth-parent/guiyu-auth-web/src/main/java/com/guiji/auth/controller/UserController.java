@@ -16,6 +16,7 @@ import com.guiji.auth.util.AuthUtil;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.vo.UserParamVo;
 
@@ -100,6 +101,12 @@ public class UserController implements IAuth{
 	@RequestMapping("/user/changeSecretKey")
 	public void changeSecretKey(@RequestHeader Long userId){
 		service.changeSecretKey(userId);
+	}
+	
+	
+	@RequestMapping("/user/getRoleByUserId")
+	public ReturnData<List<SysRole>> getRoleByUserId(Long userId){
+		return Result.ok(service.getRoleByUserId(userId));
 	}
 	
 }

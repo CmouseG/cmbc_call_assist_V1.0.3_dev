@@ -1,9 +1,12 @@
 package ai.guiji.botsentence.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import ai.guiji.botsentence.dao.entity.BotAvailableTemplate;
 import ai.guiji.botsentence.dao.entity.BotPublishSentenceLog;
 import ai.guiji.botsentence.dao.entity.BotPublishSentenceLogExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface BotPublishSentenceLogMapper {
     int countByExample(BotPublishSentenceLogExample example);
@@ -29,4 +32,8 @@ public interface BotPublishSentenceLogMapper {
     int updateByPrimaryKey(BotPublishSentenceLog record);
     
     Long getLastPublishSentence(String tempId);
+    
+    void insertAvailableTemplate(BotAvailableTemplate template);
+    
+    void deleteAvailableTemplate(BotAvailableTemplate template);
 }

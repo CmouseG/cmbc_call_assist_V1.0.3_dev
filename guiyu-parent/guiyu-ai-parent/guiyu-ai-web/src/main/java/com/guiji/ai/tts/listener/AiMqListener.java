@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
+import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.impl.func.TtsGpu;
 import com.guiji.guiyu.message.model.RestoreModelResultMsgVO;
 import com.guiji.utils.JsonUtils;
@@ -27,6 +28,8 @@ public class AiMqListener
 
 	@Autowired
 	RedisUtil redisUtil;
+	@Autowired
+	IModelService modelService;
 
 	/**
 	 * 监听进程管理队列消息
@@ -61,6 +64,9 @@ public class AiMqListener
 
 		redisUtil.lSet(AiConstants.GUIYUTTS + toModel + AiConstants.AVALIABLE, new TtsGpu(ip, port));
 		redisUtil.lRemove(AiConstants.GUIYUTTS + fromMode + AiConstants.CHANGING, 1, gpuList.get(index));
+		
+		//修改表数据
+		modelService.updateModelByIpPort(ip, port, String.valueOf(toModel));
 
 		logger.info("TTS模型切换完成...");
 	}

@@ -1,6 +1,7 @@
 package com.guiji.robot.web.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -57,6 +58,10 @@ public class RobotController {
 			qUserId = userId.toString();
 		}
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserInUseAiList(qUserId);
+		if(ListUtil.isNotEmpty(aiList)) {
+			//按机器人名称正序
+			aiList.sort(Comparator.comparing(AiInuseCache::getAiName).thenComparing(AiInuseCache::getAiName));
+		}
 		return Result.ok(aiList);
 	}
 	
@@ -80,6 +85,10 @@ public class RobotController {
 			qUserId = userId.toString();
 		}
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserBusyUseAiList(qUserId);
+		if(ListUtil.isNotEmpty(aiList)) {
+			//按机器人名称正序
+			aiList.sort(Comparator.comparing(AiInuseCache::getAiName).thenComparing(AiInuseCache::getAiName));
+		}
 		return Result.ok(aiList);
 	}
 	
@@ -123,6 +132,10 @@ public class RobotController {
 					}
 				}
 			}
+		}
+		if(ListUtil.isNotEmpty(aiList)) {
+			//按机器人名称正序
+			aiList.sort(Comparator.comparing(AiInuseCache::getAiName).thenComparing(AiInuseCache::getAiName));
 		}
 		return Result.ok(aiList);
 	}

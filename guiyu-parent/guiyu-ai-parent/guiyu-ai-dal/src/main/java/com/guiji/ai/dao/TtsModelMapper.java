@@ -3,6 +3,8 @@ package com.guiji.ai.dao;
 import com.guiji.ai.dao.entity.TtsModel;
 import com.guiji.ai.dao.entity.TtsModelExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TtsModelMapper {
@@ -27,4 +29,10 @@ public interface TtsModelMapper {
     int updateByPrimaryKeySelective(TtsModel record);
 
     int updateByPrimaryKey(TtsModel record);
+
+	List<Map<String, Object>> selectModelGpuCount();
+
+	void updateModelByIpPort();
+
+	int updateModelByIpPort(@Param("ip") String ip, @Param("port") String port, @Param("model") String model);
 }

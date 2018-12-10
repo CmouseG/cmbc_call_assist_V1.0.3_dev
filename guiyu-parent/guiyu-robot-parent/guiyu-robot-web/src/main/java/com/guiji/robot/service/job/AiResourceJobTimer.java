@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -50,23 +51,29 @@ public class AiResourceJobTimer {
     public void aiResourRel(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_RELEASE_JOB", "LOCK_ROBOT_AI_RELEASE_JOB");
     	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
-    		long beginTime = System.currentTimeMillis();
-            logger.info("定时任务，准备发起[释放全量已分配机器人]开始...");
-            //查询所有用户已分配的机器人列表
-            Map<String,List<AiInuseCache>> allUserAiInUserMap = aiCacheService.queryAllAiInUse();
-            if(allUserAiInUserMap != null && !allUserAiInUserMap.isEmpty()) {
-            	for(Map.Entry<String, List<AiInuseCache>> allUserAiInuseEntry : allUserAiInUserMap.entrySet()) {
-            		String userId = allUserAiInuseEntry.getKey();	//用户ID
-            		List<AiInuseCache> aiList = allUserAiInuseEntry.getValue();	//用户已分配的机器人
-            		logger.info("开始释放用户{}[{}]个机器人...",userId,aiList==null?0:aiList.size());
-            		//释放机器人资源
-            		iAiResourceManagerService.aiBatchRelease(aiList);
-            		logger.info("释放用户{}[{}]个机器人...完成",userId,aiList==null?0:aiList.size());
-            	}
-            }
-            long endTime = System.currentTimeMillis();
-            logger.info("定时任务，用时{}S,[释放全量已分配机器人]完成...",(endTime-beginTime)/1000);
-            distributedLockHandler.releaseLock(lock);	//释放锁
+    		try {
+				long beginTime = System.currentTimeMillis();
+				logger.info("定时任务，准备发起[释放全量已分配机器人]开始...");
+				//查询所有用户已分配的机器人列表
+				Map<String,List<AiInuseCache>> allUserAiInUserMap = aiCacheService.queryAllAiInUse();
+				if(allUserAiInUserMap != null && !allUserAiInUserMap.isEmpty()) {
+					for(Map.Entry<String, List<AiInuseCache>> allUserAiInuseEntry : allUserAiInUserMap.entrySet()) {
+						String userId = allUserAiInuseEntry.getKey();	//用户ID
+						List<AiInuseCache> aiList = allUserAiInuseEntry.getValue();	//用户已分配的机器人
+						logger.info("开始释放用户{}[{}]个机器人...",userId,aiList==null?0:aiList.size());
+						//释放机器人资源
+						iAiResourceManagerService.aiBatchRelease(aiList);
+						logger.info("释放用户{}[{}]个机器人...完成",userId,aiList==null?0:aiList.size());
+					}
+				}
+				long endTime = System.currentTimeMillis();
+				logger.info("定时任务，用时{}S,[释放全量已分配机器人]完成...",(endTime-beginTime)/1000);
+			} catch (Exception e) {
+				logger.error("定时任务[晚间释放机器人]发生异常",e);
+				throw e;
+			}finally {
+				distributedLockHandler.releaseLock(lock);	//释放锁
+			}
     	}else {
     		logger.warn("定时任务[晚间释放机器人]未能获取锁！！！");
     	}
@@ -82,38 +89,44 @@ public class AiResourceJobTimer {
     public void aiFree(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_FREE_JOB", "LOCK_ROBOT_AI_FREE_JOB");
     	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
-    		long beginTime = System.currentTimeMillis();
-            logger.info("定时任务，检查一直被占用未释放的机器人...");
-            //查询所有用户已分配的机器人列表
-            Map<String,List<AiInuseCache>> allUserAiInUserMap = aiCacheService.queryAllAiInUse();
-            if(allUserAiInUserMap != null && !allUserAiInUserMap.isEmpty()) {
-            	for(Map.Entry<String, List<AiInuseCache>> allUserAiInuseEntry : allUserAiInUserMap.entrySet()) {
-            		String userId = allUserAiInuseEntry.getKey();	//用户ID
-            		List<AiInuseCache> aiList = allUserAiInuseEntry.getValue();	//用户已分配的机器人
-            		if(ListUtil.isNotEmpty(aiList)) {
-            			for(AiInuseCache ai : aiList) {
-            				if(RobotConstants.AI_STATUS_B.equals(ai.getAiStatus())) {
-            					//如果现在是忙的状态
-            					//这通电话开始时间
-            					String callTimeStr = ai.getCallingTime();
-            					Date callTime = DateUtil.parseDate(callTimeStr);
-            					if(System.currentTimeMillis()-callTime.getTime() > BUSY_TIMEOUT){
-            						//如果这通电话忙的状态超过了10分钟没有更新，那么将该机器人设置为挂断
-            						AiHangupReq aiHangupReq = new AiHangupReq();
-            						BeanUtil.copyProperties(ai, aiHangupReq); //属性拷贝
-            						aiHangupReq.setPhoneNo(ai.getCallingPhone()); //正在拨打的手机号
-            						//强制挂断电话
-            						iAiAbilityCenterService.aiHangup(aiHangupReq);
-            						logger.info("强制挂断电话,{}",ai);
-            					}
-            				}
-            			}
-            		}
-            	}
-            }
-            long endTime = System.currentTimeMillis();
-            logger.info("定时任务，用时{}S,[检查一直被占用未释放的机器人]完成...",(endTime-beginTime)/1000);
-            distributedLockHandler.releaseLock(lock);	//释放锁
+    		try {
+				long beginTime = System.currentTimeMillis();
+				logger.info("定时任务，检查一直被占用未释放的机器人...");
+				//查询所有用户已分配的机器人列表
+				Map<String,List<AiInuseCache>> allUserAiInUserMap = aiCacheService.queryAllAiInUse();
+				if(allUserAiInUserMap != null && !allUserAiInUserMap.isEmpty()) {
+					for(Map.Entry<String, List<AiInuseCache>> allUserAiInuseEntry : allUserAiInUserMap.entrySet()) {
+						String userId = allUserAiInuseEntry.getKey();	//用户ID
+						List<AiInuseCache> aiList = allUserAiInuseEntry.getValue();	//用户已分配的机器人
+						if(ListUtil.isNotEmpty(aiList)) {
+							for(AiInuseCache ai : aiList) {
+								if(RobotConstants.AI_STATUS_B.equals(ai.getAiStatus())) {
+									//如果现在是忙的状态
+									//这通电话开始时间
+									String callTimeStr = ai.getCallingTime();
+									Date callTime = DateUtil.parseDate(callTimeStr);
+									if(System.currentTimeMillis()-callTime.getTime() > BUSY_TIMEOUT){
+										//如果这通电话忙的状态超过了10分钟没有更新，那么将该机器人设置为挂断
+										AiHangupReq aiHangupReq = new AiHangupReq();
+										BeanUtil.copyProperties(ai, aiHangupReq); //属性拷贝
+										aiHangupReq.setPhoneNo(ai.getCallingPhone()); //正在拨打的手机号
+										//强制挂断电话
+										iAiAbilityCenterService.aiHangup(aiHangupReq);
+										logger.info("强制挂断电话,{}",ai);
+									}
+								}
+							}
+						}
+					}
+				}
+				long endTime = System.currentTimeMillis();
+				logger.info("定时任务，用时{}S,[检查一直被占用未释放的机器人]完成...",(endTime-beginTime)/1000);
+			} catch (BeansException e) {
+				logger.error("定时任务[检查一直被占用未释放的机器人]发生异常",e);
+				throw e;
+			}finally {
+				distributedLockHandler.releaseLock(lock);	//释放锁
+			}
     	}else {
     		logger.warn("定时任务[检查一直被占用未释放的机器人]未能获取锁！！！");
     	}

@@ -13,6 +13,18 @@ public interface ITtsService
 	 * @return
 	 */
     public void translate(TtsReqVO ttsReqVO);
-    
 
+    /**
+     * 任务插队
+     * @param busId
+     * @return
+     */
+	public Boolean taskJump(String busId);
+
+	/**
+	 * 将任务保存到redis
+	 * @param ttsReqVO
+	 */
+	public void saveTask(TtsReqVO ttsReqVO);
+    
 }

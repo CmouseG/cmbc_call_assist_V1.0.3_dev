@@ -265,4 +265,13 @@
 	ORDER BY id ASC
 	LIMIT 1 
   </select>
+  
+  <delete id="deleteAvailableTemplate">
+  	delete from bot_available_template where template_id=#{templateId} and user_id=#{userId}
+  </delete>
+  
+  <insert id="insertAvailableTemplate">
+  	INSERT into bot_available_template(template_id,template_name,user_id)
+	VALUES(#{templateId},#{templateName},#{userId})
+  </insert>
 </mapper>

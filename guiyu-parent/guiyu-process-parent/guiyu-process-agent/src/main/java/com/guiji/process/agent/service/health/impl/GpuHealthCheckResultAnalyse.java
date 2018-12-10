@@ -9,6 +9,7 @@ import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.IHealthCheckResultAnalyse;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +53,11 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
         // 发送给服务端
         CmdMessageVO newCmdMsg = new CmdMessageVO();
+        ProcessInstanceVO tmp = new ProcessInstanceVO();
+        BeanUtil.copyProperties(processInstanceVO, tmp);
+
         newCmdMsg.setCmdType(CmdTypeEnum.AFTER_RESTART);
-        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setProcessInstanceVO(tmp);
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
@@ -74,8 +78,11 @@ public class GpuHealthCheckResultAnalyse implements IHealthCheckResultAnalyse {
 
         // 发送给服务端
         CmdMessageVO newCmdMsg = new CmdMessageVO();
+        ProcessInstanceVO tmp = new ProcessInstanceVO();
+        BeanUtil.copyProperties(processInstanceVO, tmp);
+
         newCmdMsg.setCmdType(CmdTypeEnum.AFTER_RESTORE_MODEL);
-        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        newCmdMsg.setProcessInstanceVO(tmp);
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());

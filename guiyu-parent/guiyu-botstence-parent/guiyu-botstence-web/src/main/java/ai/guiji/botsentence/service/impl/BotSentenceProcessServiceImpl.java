@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysRole;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotSentenceAdditionMapper;
@@ -173,28 +176,32 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		return botSentenceProcessMapper.selectByExample(example);
 	}
 
+	@Autowired
+	private IAuth iAuth;
+	
 	@Override
 	public int countBotSentenceProcess(String templateName, String accountNo,Long userId) {
+		ReturnData<List<SysRole>> role=iAuth.getRoleByUserId(userId);
+		Long roleId=0l;
+		if(role.getBody().size()>0){
+			roleId=role.getBody().get(0).getId();
+		}
+		
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
-		Criteria criteria2 = example.createCriteria();
 		
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%" + templateName + "%");
-			//criteria2.andTemplateIdLike("%" + templateName + "%");
 		}
 		if(StringUtils.isNotBlank(accountNo)) {
 			criteria.andAccountNoEqualTo(accountNo);
-			//criteria2.andAccountNoEqualTo(accountNo);
 		}
 
-		criteria.andCrtUserEqualTo(userId.toString());
-		//criteria2.andCrtUserEqualTo(userId);
+		if(roleId != 1){
+			criteria.andCrtUserEqualTo(userId.toString());
+		}
 		
 		criteria.andStateNotEqualTo("99");
-		//criteria2.andStateNotEqualTo("99");
-		
-		//example.or(criteria2);
 		return botSentenceProcessMapper.countByExample(example);
 	}
 
@@ -3073,4 +3080,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public List<BotSentenceProcess> getTemplateById(String templateId) {
 		return botSentenceProcessExtMapper.getTemplateById(templateId);
 	}
+	
+	
+	public List<Object> getAvailableTemplateBySelf(String accountNo) {
+		return botSentenceProcessExtMapper.getAvailableTemplateBySelf(accountNo);
+	}
+	
 }

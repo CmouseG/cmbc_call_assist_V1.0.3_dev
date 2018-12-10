@@ -360,4 +360,10 @@ public class BotSentenceProcessController {
 		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
 		return ServerResult.createBySuccess(result);
 	}
+	
+	@RequestMapping(value="getAvailableTemplateBySelf")
+	public ServerResult<List<Object>> getAvailableTemplateBySelf(@RequestHeader("userId") String accountNo) {
+		List<Object> result= botSentenceProcessService.getAvailableTemplateBySelf(accountNo);
+		return ServerResult.createBySuccess(result);
+	}
 }

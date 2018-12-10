@@ -65,7 +65,6 @@ public interface IBotSentenceProcessService {
 	public void delete(String processId,Long userId);
 	
 	
-	
 	public List queryCommonDialog(String processId);
 	
 	public void updateCommonDialog(String voliceId, String content, String keywords, String intentId, String branchId,Long userId);
@@ -103,4 +102,6 @@ public interface IBotSentenceProcessService {
 	public List<BotSentenceProcess> getTemplateBySelf(String accountNo);
 	
 	public List<BotSentenceProcess> getTemplateById(String templateId);
+	
+	public List<Object> getAvailableTemplateBySelf(String accountNo);
 }

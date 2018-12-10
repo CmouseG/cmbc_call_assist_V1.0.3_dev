@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.ai.tts.JumpTaskQueue;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
@@ -103,6 +104,37 @@ public class TtsServiceImpl implements ITtsService
 		redisUtil.set(model + "_" + text, audioUrl, 60*30); // 返回值url存入redis 失效时间为30分钟
 
 		return audioUrl;
+	}
+
+	/**
+	 * 任务插队
+	 */
+	@Override
+	public Boolean taskJump(String busId)
+	{
+		TtsReqVO ttsReqVo = (TtsReqVO) redisUtil.get(AiConstants.TASK + busId);
+		if(ttsReqVo == null){
+			logger.info("此任务正在执行或已执行结束，不可以插队！");
+			return false;
+		}
+		
+		//放入插队队列
+		try
+		{
+			JumpTaskQueue.getInstance().produce(ttsReqVo);
+		} catch (InterruptedException e)
+		{
+			logger.error("插队队列 put错误");
+			return false;
+		}
+		
+		return true;
+	}
+
+	@Override
+	public void saveTask(TtsReqVO ttsReqVO)
+	{
+		redisUtil.set(AiConstants.TASK + ttsReqVO.getBusId(), ttsReqVO);
 	}
 
 }

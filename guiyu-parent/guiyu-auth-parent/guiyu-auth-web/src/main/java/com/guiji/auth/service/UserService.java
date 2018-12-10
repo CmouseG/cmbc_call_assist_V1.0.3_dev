@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.UserAiCfgVO;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
@@ -114,7 +114,7 @@ public class UserService {
 	public Map<String,Object> getUserInfo(Long userId){
 		Map<String,Object> result=new HashMap<>();
 		SysUser user=mapper.selectByPrimaryKey(userId);
-		ReturnData custAccount=iRobotRemote.queryCustAccount(String.valueOf(userId));
+		ReturnData<UserAiCfgVO> custAccount=iRobotRemote.queryCustAccount(String.valueOf(userId));
 		ReturnData<List<LineConcurrent>> callData=iCallManagerOut.getLineInfos(String.valueOf(userId));
 		result.put("user", user);
 		result.put("robot", custAccount.getBody());
@@ -139,4 +139,5 @@ public class UserService {
 		record.setSecretKey(key);
 		mapper.updateByPrimaryKeySelective(record);
 	}
+	
 }

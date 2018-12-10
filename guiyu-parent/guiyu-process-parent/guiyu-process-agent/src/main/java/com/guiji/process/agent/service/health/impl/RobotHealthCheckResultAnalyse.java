@@ -8,6 +8,7 @@ import com.guiji.process.agent.model.CommandResult;
 import com.guiji.process.agent.service.health.IHealthCheckResultAnalyse;
 import com.guiji.process.core.message.CmdMessageVO;
 import com.guiji.process.core.vo.CmdTypeEnum;
+import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -33,7 +34,9 @@ public class RobotHealthCheckResultAnalyse implements IHealthCheckResultAnalyse 
         // 发送给服务端
         CmdMessageVO newCmdMsg = new CmdMessageVO();
         newCmdMsg.setCmdType(CmdTypeEnum.PUBLISH_ROBOT_BOTSTENCE);
-        newCmdMsg.setProcessInstanceVO(processInstanceVO);
+        ProcessInstanceVO tmp = new ProcessInstanceVO();
+        BeanUtil.copyProperties(processInstanceVO, tmp);
+        newCmdMsg.setProcessInstanceVO(tmp);
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());

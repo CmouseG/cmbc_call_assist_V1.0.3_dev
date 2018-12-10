@@ -68,4 +68,13 @@ public interface ITts {
     @PostMapping(value = "getTaskList")
     public ReturnData<TaskListRspVO> getTaskList(TaskListReqVO taskListReqVO);
     
+    /**
+     * 任务插队
+     * @param busId
+     * @return
+     */
+    @ApiOperation(value="任务插队")
+    @PostMapping(value = "jumpQueue")
+    public ReturnData<Boolean> jumpQueue(String busId);
+    
 }

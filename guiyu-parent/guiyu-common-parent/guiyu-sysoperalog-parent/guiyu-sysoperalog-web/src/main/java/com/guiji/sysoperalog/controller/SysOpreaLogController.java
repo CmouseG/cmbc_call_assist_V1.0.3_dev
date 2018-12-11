@@ -33,7 +33,7 @@ public class SysOpreaLogController implements ISysOperaLog
 	 * @param sysUserAction
 	 * @return
 	 */
-	@PostMapping(value = "insert")
+	@PostMapping(value = "save")
 	public ReturnData<String> save(@RequestBody SysUserAction sysUserAction)
 	{
 		String result = "success";

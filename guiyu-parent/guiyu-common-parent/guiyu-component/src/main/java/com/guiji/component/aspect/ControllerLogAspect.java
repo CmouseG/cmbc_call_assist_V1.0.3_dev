@@ -31,7 +31,7 @@ public class ControllerLogAspect
 {
 	private static final Logger logger = LoggerFactory.getLogger(ControllerLogAspect.class);
 	
-	SysUserAction SysUserAction = new SysUserAction();
+	SysUserAction SysUserAction = null;
 	
 	@Autowired
 	private RestTemplate restTemplate;
@@ -123,6 +123,7 @@ public class ControllerLogAspect
 			sb.append(parameter.getName()).append("|");
 		}
 		
+		SysUserAction = new SysUserAction();
 		SysUserAction.setOperatype(annotation.operaType());
 		SysUserAction.setOperatarget(annotation.operaTarget());
 		SysUserAction.setOperateTime(new Date());

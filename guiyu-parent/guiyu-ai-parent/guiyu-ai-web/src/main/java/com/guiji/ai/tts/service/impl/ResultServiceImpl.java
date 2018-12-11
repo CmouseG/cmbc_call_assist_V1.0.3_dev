@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.ai.dao.TtsResultMapper;
 import com.guiji.ai.tts.constants.AiConstants;
@@ -23,7 +22,6 @@ public class ResultServiceImpl implements IResultService
 
 
 	@Override
-	@Transactional
 	public List<Map<String, String>> getTtsTransferResultByBusId(String busId) throws Exception
 	{
 		List<Map<String, String>> restltMapList = new ArrayList<>();
@@ -34,7 +32,6 @@ public class ResultServiceImpl implements IResultService
 	}
 	
 	@Override
-	@Transactional
 	public List<ModelRequestNumVO> selectTenMinutesBefore(Date date)
 	{
 		//结果集

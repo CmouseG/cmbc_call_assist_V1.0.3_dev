@@ -1,14 +1,12 @@
 package com.guiji.ai.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.dao.entity.TtsStatusExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface TtsStatusMapper {
-    int countByExample(TtsStatusExample example);
+    long countByExample(TtsStatusExample example);
 
     int deleteByExample(TtsStatusExample example);
 
@@ -34,4 +32,5 @@ public interface TtsStatusMapper {
 	
 	int updateStatusByBusId(@Param("busId") String busId, @Param("status") String status);
 
+	int updateJumpFlagByBusId(String busId);
 }

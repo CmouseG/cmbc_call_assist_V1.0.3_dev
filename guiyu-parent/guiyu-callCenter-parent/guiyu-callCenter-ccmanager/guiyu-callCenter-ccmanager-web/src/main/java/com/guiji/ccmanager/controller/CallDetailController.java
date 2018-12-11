@@ -6,6 +6,7 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
+import com.guiji.ccmanager.vo.CallDetailUpdateReq;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -335,6 +337,19 @@ public class CallDetailController implements ICallPlanDetail {
         }
         callDetailService.delRecord(callIds);
         return Result.ok(true);
+    }
+
+
+    @ApiOperation(value = "修改通话记录详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callDetailId", value = "callDetailId", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "customerSayText", value = "customerSayText", dataType = "String", paramType = "query", required = true)
+    })
+    @PostMapping(value="updateCallDetailCustomerSayText")
+    public Result.ReturnData<List<CallPlanDetailRecordVO>> updateCallDetailCustomerSayText(@RequestBody @Validated CallDetailUpdateReq callDetailUpdateReq){
+
+        callDetailService.updateCallDetailCustomerSayText(callDetailUpdateReq);
+        return Result.ok();
     }
 
 }

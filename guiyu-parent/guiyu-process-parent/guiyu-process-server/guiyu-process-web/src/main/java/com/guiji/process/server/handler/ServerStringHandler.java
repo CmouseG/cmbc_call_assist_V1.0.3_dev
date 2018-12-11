@@ -1,5 +1,6 @@
 package com.guiji.process.server.handler;
 
+import com.guiji.process.core.message.CmdProtoMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -12,8 +13,8 @@ public class ServerStringHandler extends ChannelInboundHandlerAdapter {
 	
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		System.err.println("server:" + msg.toString());
-		ctx.writeAndFlush(msg.toString() + "你好");
+        CmdProtoMessage.ProtoMessage message = (CmdProtoMessage.ProtoMessage) msg;
+		System.err.println("server:" + message.getContent());
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.entity.ReportCallDay;
 import com.guiji.callcenter.dao.entity.ReportCallHour;
 import com.guiji.callcenter.dao.entity.ReportCallToday;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -34,13 +35,17 @@ public interface StatisticMapper {
 
     void insertReportCallHour(List<ReportCallHour> listOut);
 
-    List<DashboardOverView> getDashboardOverViewAgoDurationAll();
-    List<DashboardOverView> getDashboardOverViewAgoNotConnect();
-    List<DashboardOverView> getDashboardOverViewAgoConnect();
-    List<DashboardOverView> getDashboardOverViewAgoDuration5();
-    List<DashboardOverView> getDashboardOverViewAgoDuration10();
-    List<DashboardOverView> getDashboardOverViewAgoDuration30();
+    List<DashboardOverView> getDashboardOverViewAgoDurationAll(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewAgoNotConnect(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewAgoConnect(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewAgoDuration5(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewAgoDuration10(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewAgoDuration30(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("customerId") String customerId);
 
-    List<DashboardOverView> getDashboardOverViewAgo(String startDate, String endDate);
-    List<DashboardOverView> getDashboardOverViewToday();
+    List<DashboardOverView> getDashboardOverViewTodayDurationAll(@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewTodayNotConnect(@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewTodayConnect(@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewTodayDuration5(@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewTodayDuration10(@Param("customerId") String customerId);
+    List<DashboardOverView> getDashboardOverViewTodayDuration30(@Param("customerId") String customerId);
 }

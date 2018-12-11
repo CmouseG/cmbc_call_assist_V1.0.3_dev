@@ -74,20 +74,15 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
             log.warn("temp is not exist,tempId:"+tempId);
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_TEMP_NOTEXIST);
         }
+
         //调用所有calloutserver的启动客户呼叫计划接口
         List<String> serverEurekaList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
+
+        // todo 至少要有一个calloutserver线路可用，才能启动呼叫计划
+
         for(String server:serverEurekaList) {
             ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + server);
             callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
-
-//            if(customerId.equals("28")){
-//                ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + "192.168.6.28:18024");
-//                callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
-//            }else{
-//                ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + "192.168.1.78:18024");
-//                callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
-//            }
-
         }
 
     }

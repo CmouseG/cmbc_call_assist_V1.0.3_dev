@@ -67,17 +67,17 @@ public class CallPlanController implements ICallPlan {
         try{
             Result.ReturnData<Boolean> result =  fsAgentManager.istempexist(tempId);
             if(!result.getBody()){
-                log.warn("启动呼叫计划失败，模板不存在[{}]", lineId);
+                log.warn("启动呼叫计划失败，模板不存在[{}]", tempId);
                 return Result.error(CCException.TEMP_NOTEXISIT);
             }
         }catch (Exception e){
-            log.warn("启动呼叫计划失败，模板不存在[{}]", lineId);
+            log.warn("启动呼叫计划失败，模板不存在[{}]", tempId);
             return Result.error(CCException.TEMP_NOTEXISIT);
         }
         try {
             fsAgentManager.getwavlength(tempId);
         }catch (Exception e){
-            log.warn("启动呼叫计划失败，下载录音文件时长失败[{}]", lineId);
+            log.warn("启动呼叫计划失败，下载录音文件时长失败[{}]", tempId);
             return Result.error(CCException.GET_WAV_LEN_ERROR);
         }
 

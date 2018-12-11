@@ -58,13 +58,15 @@ public class DispatchManagerImpl implements DispatchManager {
                     log.warn("获取调度中心呼叫计划出现异常[{}]", result);
                     //TODO: 报警
                 }
-            }, -1, 1, 1, 20);
+            }, -1, 1, 3, 300, true);
 
-            List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
-//            Preconditions.checkState(dispatchPlans!=null && dispatchPlans.size()>0, "从调度中心拿到的数据为空");
-            if (dispatchPlans != null && dispatchPlans.size() > 0) {
-                callOutPlans = toCallPlan(dispatchPlans);
+            if(disPatchResult!=null && disPatchResult.getBody()!=null){
+                List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
+                if (dispatchPlans != null && dispatchPlans.size() > 0) {
+                    callOutPlans = toCallPlan(dispatchPlans);
+                }
             }
+
         } catch (Exception ex) {
             log.warn("请求调度中心呼叫计划出现异常", ex);
             //TODO: 报警，请求调度中心数据异常

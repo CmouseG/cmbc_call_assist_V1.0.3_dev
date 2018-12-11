@@ -27,6 +27,7 @@ public class ControllerLogAspect
 	@Pointcut("execution(public * com.guiji.*.controller.*.*(..))")
 	public void log()
 	{
+		
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class ControllerLogAspect
 					.append(JSON.toJSONString(joinPoint.getArgs())).append("|") // args
 					.append(request.getRemoteHost()); // ip
 
-			logger.info(sb.toString());
+			logger.debug(sb.toString());
 
 		} catch (Exception e) {
 			
@@ -64,7 +65,7 @@ public class ControllerLogAspect
 	{
 		try
 		{
-			logger.info("Response...：" + JSON.toJSONString(result));
+			logger.debug("Response...：" + JSON.toJSONString(result));
 			
 		} catch (Exception e) {
 			
@@ -84,7 +85,7 @@ public class ControllerLogAspect
 			logger.error("ErrorCode： " + ex.getErrorCode(), "ErrorMessage： " + ex.getErrorMessage(), ex);
 		}
 		
-		logger.info("【系统异常】", e);
+		logger.error("【系统异常】", e);
 	}
 
 }

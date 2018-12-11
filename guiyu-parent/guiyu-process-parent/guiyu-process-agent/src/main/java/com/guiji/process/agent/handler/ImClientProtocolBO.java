@@ -53,7 +53,7 @@ public class ImClientProtocolBO {
 
         // protobuf
 
-        CmdMessageVO cmdMessageVO = new CmdMessageVO();
+        /*CmdMessageVO cmdMessageVO = new CmdMessageVO();
         cmdMessageVO.setCmdType(CmdTypeEnum.AGENTREGISTER);
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         processInstanceVO.setIp(Inet4Address.getLocalHost().getHostAddress());
@@ -61,7 +61,7 @@ public class ImClientProtocolBO {
         processInstanceVO.setPort(agentPort);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);
 
-        send(cmdMessageVO,3);
+        send(cmdMessageVO,3);*/
         send(new CmdMessageVO(),2);
     }
 

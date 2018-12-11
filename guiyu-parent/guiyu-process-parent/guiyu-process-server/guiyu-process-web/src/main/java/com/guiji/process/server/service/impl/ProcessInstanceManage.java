@@ -9,7 +9,9 @@ import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,6 +53,24 @@ public class ProcessInstanceManage implements IProcessInstanceManageService {
         agentMap.put(process.getIp() + "_" + process.getPort(), process);
 
         updateAgent("GY_PROCESS_" + process.getIp(), agentMap);
+
+        List<String> ipList = (List<String>)redisUtil.get("GY_PROCESS_" + process.getType());
+        if (ipList == null || ipList.size() <= 0) {
+            ipList = new ArrayList<String>();
+            ipList.add(process.getIp());
+        } else {
+            boolean needAnd = true;
+            for (String ip : ipList) {
+                if (ip.equals(process.getIp())) {
+                    needAnd = false;
+                    break;
+                }
+            }
+            if (needAnd) {
+                ipList.add(process.getIp());
+            }
+        }
+        redisUtil.set("GY_PROCESS_" + process.getType(),ipList);
 
         // 存入数据库
         SysProcess sysProcess = new SysProcess();

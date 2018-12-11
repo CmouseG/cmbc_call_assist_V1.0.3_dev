@@ -91,7 +91,7 @@ public class ProcessManageService implements IProcessManageService {
     }
 
     @Override
-    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters,Long userId) {
+    public boolean cmd(ProcessInstanceVO processInstanceVO, CmdTypeEnum cmdType, List<String> parameters,Long userId,String reqKey) {
         /*String hasRun = (String)redisUtil.get(RedisConstant.REDIS_PROCESS_TASK_PREFIX + processInstanceVO.getIp()+"_" + processInstanceVO.getPort()+"_"+cmdType);
         if (StringUtils.isNotEmpty(hasRun)) {
             throw new GuiyuException(GuiyuProcessExceptionEnum.PROCESS08000002.getErrorCode(),GuiyuProcessExceptionEnum.PROCESS08000002.getMsg());
@@ -105,7 +105,7 @@ public class ProcessManageService implements IProcessManageService {
         // 调用底层通信，发送命令
         ChannelHandlerContext ctx = ConnectionPool.getChannel(processInstanceVO.getIp());
         CmdMessageVO cmdMessageVO = new CmdMessageVO();
-        cmdMessageVO.setReqKey(IdGenUtil.uuid());
+        cmdMessageVO.setReqKey(reqKey);
         cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.REQ);
         cmdMessageVO.setCmdType(cmdType);
         cmdMessageVO.setProcessInstanceVO(processInstanceVO);

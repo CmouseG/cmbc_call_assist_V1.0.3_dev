@@ -8,6 +8,7 @@ import com.guiji.process.core.vo.*;
 import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
+import com.guiji.process.server.model.ProcessTask;
 import com.guiji.process.server.service.IProceseScheduleService;
 import com.guiji.process.server.service.IProcessAgentManageService;
 import com.guiji.process.server.service.IProcessInstanceManageService;
@@ -18,10 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -116,7 +114,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
         List<String> parameters = new ArrayList<String>();
         parameters.add(srcModel);
         parameters.add(toModel);
-        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters,userId);
+        deviceManageService.cmd(processInstance, CmdTypeEnum.RESTORE_MODEL, parameters,userId,IdGenUtil.uuid());
 
         //processInstance.setWhoUsed(IdGenUtil.uuid());
         //updateActiveCacheList(DeviceTypeEnum.TTS.name()+ "_" + toModel, processInstance);
@@ -145,14 +143,44 @@ public class ProceseScheduleService implements IProceseScheduleService {
         List<String> parameters = new ArrayList<String>();
         parameters.add(file);
         parameters.add(tmplId);
+
+        List<String> allIp = (List<String>) redisUtil.get("GY_PROCESS_" + processTypeEnum);
         Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
-        if(allAgent == null)
+        if(allAgent == null || allIp == null)
         {
             return;
         }
+
+        String jobId = IdGenUtil.uuid();
+        Map<String,ProcessTask> processTaskMap = new ConcurrentHashMap<String,ProcessTask>();
         for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
             ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
-            deviceManageService.cmd(agent, cmdType, parameters,userId);
+            if(!allIp.contains(agent.getIp())) {
+                continue;
+            }
+            String reqKey = IdGenUtil.uuid();
+            ProcessTask processTask = new ProcessTask();
+            processTask.setRetryCount(1);
+            processTask.setExeTime(new Date());
+            processTask.setProcessInstanceVO(agent);
+            processTask.setCmdType(cmdType);
+            processTask.setParameters(parameters);
+            processTask.setUserId(userId);
+            processTask.setReqKey(reqKey);
+            processTaskMap.put(reqKey,processTask);
+        }
+        List<String> jobList = (List<String>) redisUtil.get("GY_PROCESS_JOB");
+        if (jobList == null) {
+            jobList = new ArrayList<String>();
+            jobList.add(jobId);
+        } else {
+            jobList.add(jobId);
+        }
+        redisUtil.set("GY_PROCESS_JOB",jobList);
+        redisUtil.set(jobId,processTaskMap);
+
+        for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
+            deviceManageService.cmd(entry.getValue().getProcessInstanceVO(), cmdType, parameters,userId,entry.getKey());
         }
     }
 

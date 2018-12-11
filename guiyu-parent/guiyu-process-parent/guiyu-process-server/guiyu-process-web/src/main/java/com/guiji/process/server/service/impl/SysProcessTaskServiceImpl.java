@@ -29,6 +29,16 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
         if (sysProcessTask == null) {
             return false;
         }
+        // 相同reqKey不重复插入
+        SysProcessTask tmp = new SysProcessTask();
+        tmp.setReqKey(sysProcessTask.getReqKey());
+        SysProcessTaskExample example = this.getExampleByCondition(tmp);
+        if(example == null) example = new SysProcessTaskExample();
+        List<SysProcessTask> list = sysProcessTaskMapper.selectByExample(example);
+        if (list != null && list.size() > 0) {
+            return false;
+        }
+
         int result = sysProcessTaskMapper.insert(sysProcessTask);
         return result > 0 ? true : false;
     }

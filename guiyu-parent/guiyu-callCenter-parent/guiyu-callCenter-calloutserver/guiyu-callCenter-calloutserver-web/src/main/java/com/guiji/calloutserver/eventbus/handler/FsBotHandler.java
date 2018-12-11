@@ -329,6 +329,7 @@ public class FsBotHandler {
     @Subscribe
     public void handleHangup(ChannelHangupEvent event){
         log.info("收到Hangup事件[{}], 准备进行处理", event);
+
         try {
 
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
@@ -354,6 +355,7 @@ public class FsBotHandler {
             }else{
                 callPlan.setCallState(ECallState.hangup_ok.ordinal());
             }
+            log.info("-----callPlan callState ------:"+callPlan.getCallState());
 
             callOutPlanService.update(callPlan);
 

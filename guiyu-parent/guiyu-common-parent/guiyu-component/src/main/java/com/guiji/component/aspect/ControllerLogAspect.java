@@ -23,7 +23,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.alibaba.fastjson.JSON;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.guiyu.sysoperalog.dao.entity.SysUserAction;
 
 @Aspect
 @Component

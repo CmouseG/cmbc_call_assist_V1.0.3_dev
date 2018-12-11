@@ -1,5 +1,6 @@
 package com.guiji.process.server.handler;
 
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.Message;
 import com.guiji.process.server.core.ConnectionPool;
 import com.guiji.process.server.util.DeviceProcessUtil;
@@ -11,7 +12,7 @@ public class ServerPoHandler extends ChannelInboundHandlerAdapter {
 	@Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String remoteIp = DeviceProcessUtil.getRemoreIp(ctx);
-		Message message = (Message) msg;
+        CmdProtoMessage.ProtoMessage message = (CmdProtoMessage.ProtoMessage) msg;
 		if (ConnectionPool.getChannel(remoteIp) == null) {
 			ConnectionPool.putChannel(remoteIp, ctx);
 		}

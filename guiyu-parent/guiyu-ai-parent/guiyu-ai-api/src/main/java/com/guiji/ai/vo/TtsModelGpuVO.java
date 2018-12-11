@@ -2,7 +2,7 @@ package com.guiji.ai.vo;
 
 import java.io.Serializable;
 
-public class TtsGpuVO implements Serializable
+public class TtsModelGpuVO implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -35,10 +35,10 @@ public class TtsGpuVO implements Serializable
 		this.model = model;
 	}
 	
-	public TtsGpuVO()
+	public TtsModelGpuVO()
 	{}
 	
-	public TtsGpuVO(String ip, String port, String model)
+	public TtsModelGpuVO(String ip, String port, String model)
 	{
 		this.ip = ip;
 		this.port = port;

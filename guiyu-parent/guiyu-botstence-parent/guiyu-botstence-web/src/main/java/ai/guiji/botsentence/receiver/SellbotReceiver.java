@@ -21,6 +21,7 @@ public class SellbotReceiver {
 	
 	@RabbitHandler
 	public void process(String message) {
+		logger.info("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : xiaohuozi");
 		PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message,PublishBotstenceResultMsgVO.class);
 		System.out.println("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO.toString());
 		resolver.resolver(publishBotstenceResultMsgVO);

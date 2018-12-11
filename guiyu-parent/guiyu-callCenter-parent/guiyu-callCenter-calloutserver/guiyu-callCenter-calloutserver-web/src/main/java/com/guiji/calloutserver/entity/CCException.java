@@ -52,5 +52,14 @@ public class CCException {
      */
     public static String SELLBOT_NO_RESPONSE = "0305008";
 
+    /**
+     * 模板不存在
+     */
+    public static String TEMP_NOTEXISIT = "0305009";
+    /**
+     * 模板不存在
+     */
+    public static String GET_WAV_LEN_ERROR = "0305010";
+
 
 }

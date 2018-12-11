@@ -29,6 +29,8 @@ public class DispatchPlanController {
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 
+	
+	
 	/**
 	 * 单个导入任务
 	 * 
@@ -57,7 +59,6 @@ public class DispatchPlanController {
 	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
 			@RequestHeader Boolean isSuperAdmin) {
 		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin);
-
 	}
 
 	/**
@@ -186,8 +187,25 @@ public class DispatchPlanController {
 
 	// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
 	@PostMapping("getServiceStatistics")
-	public JSONObject getServiceStatistics() {
-		return dispatchPlanService.getServiceStatistics();
+	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
+		if (!isSuperAdmin) {
+			userId = 0l;
+		}
+		return dispatchPlanService.getServiceStatistics(userId);
+	}
+
+	/**
+	 * 任务概览：批次数，任务数，拨打数
+	 * 
+	 * @param userId
+	 * @param isSuperAdmin
+	 * @return
+	 */
+	@PostMapping("getData")
+	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
+			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
+			@RequestHeader Boolean isSuperAdmin) {
+		return dispatchPlanService.getServiceStatistics(userId,startTime,endTime,isSuperAdmin);
 	}
 
 }

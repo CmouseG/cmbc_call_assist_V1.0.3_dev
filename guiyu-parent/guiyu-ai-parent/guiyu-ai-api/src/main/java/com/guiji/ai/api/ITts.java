@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
+import com.guiji.ai.vo.TtsBusIdVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -40,7 +41,7 @@ public interface ITts {
      */
     @ApiOperation(value="根据busiId查询TTS处理结果")
     @PostMapping(value = "getTtsResultByBusId")
-    public ReturnData<TtsRspVO> getTtsResultByBusId(String busId);
+    public ReturnData<TtsRspVO> getTtsResultByBusId(TtsBusIdVO ttsBusIdVO);
     
     /**
      * 查询TTS处理状态
@@ -67,5 +68,14 @@ public interface ITts {
     @ApiOperation(value="获取任务列表")
     @PostMapping(value = "getTaskList")
     public ReturnData<TaskListRspVO> getTaskList(TaskListReqVO taskListReqVO);
+    
+    /**
+     * 任务插队
+     * @param busId
+     * @return
+     */
+    @ApiOperation(value="任务插队")
+    @PostMapping(value = "jumpQueue")
+    public ReturnData<Boolean> jumpQueue(TtsBusIdVO ttsBusIdVO);
     
 }

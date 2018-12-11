@@ -1,5 +1,7 @@
 package com.guiji.ccmanager.service;
 
+import com.guiji.callcenter.dao.entityext.DashboardOverView;
+
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -11,4 +13,6 @@ import java.util.Map;
  */
 public interface StatisticService {
     List<Map> getIntentCountOnTime(Long userId, String startDate, String endDate) throws ParseException;
+
+    List<DashboardOverView> getDashboardOverView(Long userId, String startDate, String endDate);
 }

@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.CallDetailService;
+import com.guiji.ccmanager.vo.CallDetailUpdateReq;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
@@ -145,7 +146,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     public CallPlanDetailRecordVO getCallDetail(String callId) {
 
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
-
+        callOutPlan.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
         if (callOutPlan != null) {
 
             CallOutDetailExample example = new CallOutDetailExample();
@@ -355,5 +356,13 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public List<String> getFtypes() {
         return errorMatchMapper.selectDistinctErrorName();
+    }
+
+    @Override
+    public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq) {
+        CallOutDetail record = new CallOutDetail();
+        record.setCustomerSayText(callDetailUpdateReq.getCustomerSayText());
+        record.setCallDetailId(callDetailUpdateReq.getCallDetailId());
+        callOutDetailMapper.updateByPrimaryKeySelective(record);
     }
 }

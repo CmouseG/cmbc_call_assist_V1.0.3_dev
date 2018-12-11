@@ -59,6 +59,7 @@
     </logger>
     
     <logger name="org.springframework.web.servlet.mvc" level="info"/>
+    <logger name="com.guiji.component.aspect.ControllerLogAspect" level="error"/>
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

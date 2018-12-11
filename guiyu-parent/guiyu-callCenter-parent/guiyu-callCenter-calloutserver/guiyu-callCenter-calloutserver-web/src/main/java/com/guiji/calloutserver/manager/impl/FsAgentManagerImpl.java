@@ -83,17 +83,50 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public Boolean istempexist(String tempId) {
-        Result.ReturnData<Boolean>  result = iTemplate.istempexist(tempId);
-        return result.getBody();
+    public Result.ReturnData<Boolean> istempexist(String tempId) {
+
+        Result.ReturnData<Boolean> returnData = null;
+        try{
+            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+                @Override
+                public Result.ReturnData execute() {
+                    return  iTemplate.istempexist(tempId);
+                }
+
+                @Override
+                public void onErrorResult(Result.ReturnData result) {
+                    log.warn("判断模板是否存在，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                }
+            }, 5, 1, 2, 60,true);
+        }catch (Exception ex){
+            log.warn("判断模板是否存在出现异常", ex);
+        }
+
+        return returnData;
     }
 
     @Override
     public Map<String, Double> getwavlength(String tempId){
 
         if(wavCaches.getIfPresent(tempId)==null){
-            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
-            if(result.success){
+            Result.ReturnData<List<WavLengthVO>> result = null;
+            try{
+                result = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+                    @Override
+                    public Result.ReturnData execute() {
+                        return  iTemplate.getwavlength(tempId.replace("_en","_rec"));
+                    }
+
+                    @Override
+                    public void onErrorResult(Result.ReturnData result) {
+                        log.warn("判断模板是否存在，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                    }
+                }, 5, 1, 2, 60,true);
+            }catch (Exception ex){
+                log.warn("判断模板是否存在出现异常", ex);
+            }
+
+            if(result!=null && result.success){
                 List<WavLengthVO> list = result.getBody();
                 if(list!=null && list.size()>0){
                     Map<String,Double> map =new HashMap<String,Double>();

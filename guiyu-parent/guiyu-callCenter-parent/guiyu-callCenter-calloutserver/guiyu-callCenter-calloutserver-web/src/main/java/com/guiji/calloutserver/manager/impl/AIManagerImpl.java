@@ -233,7 +233,7 @@ public class AIManagerImpl implements AIManager {
             log.warn("在释放机器人资源是出现异常", e);
         }
 
-        log.info("------------------- releaseAi success ");
+        log.info("------------------- releaseAi success aino:" + hangupReq.getAiNo());
     }
 
 

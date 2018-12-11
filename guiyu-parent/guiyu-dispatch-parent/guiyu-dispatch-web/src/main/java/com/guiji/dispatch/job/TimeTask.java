@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
@@ -49,7 +48,7 @@ public class TimeTask {
 	 * 捞取号码初始化资源
 	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
-	// @PostMapping("selectPhoneInit")
+//	 @PostMapping("selectPhoneInit")
 	public void selectPhoneInit() {
 		Lock lock = new Lock("selectPhoneInitJob", "selectPhoneInitJob");
 		if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
@@ -99,7 +98,6 @@ public class TimeTask {
 				req.setTemplateId(dis.getRobot());
 				ttsVoiceReqList.add(req);
 			}
-
 			ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck = robotRemote.ttsComposeCheck(ttsVoiceReqList);
 			List<DispatchPlan> successList = new ArrayList<>();
 
@@ -133,27 +131,27 @@ public class TimeTask {
 	 * 获取可以拨打的号码
 	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
-	// @PostMapping("getSuccessPhones")
+//	 @PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		Lock lock = new Lock("getSuccessPhonesJob", "getSuccessPhonesJob");
-		if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-			logger.info(" 获取可以拨打的号码..");
-			List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2);
-			logger.info(" 获取可以拨打的号码count .." + list.size());
-			// 分组
-			Map<String, List<DispatchPlan>> collect = list.stream()
-					.collect(Collectors.groupingBy(d -> fetchGroupKey(d)));
-			for (Entry<String, List<DispatchPlan>> entry : collect.entrySet()) {
-				if (redisUtil.get(entry.getKey().split("-")[1]) != null) {
-					logger.info("当前模板id正在升级中...." + entry.getKey().split("- ")[1]);
-					continue;
+			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+				logger.info(" 获取可以拨打的号码..");
+				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2);
+				logger.info(" 获取可以拨打的号码count .." + list.size());
+				// 分组
+				Map<String, List<DispatchPlan>> collect = list.stream()
+						.collect(Collectors.groupingBy(d -> fetchGroupKey(d)));
+				for (Entry<String, List<DispatchPlan>> entry : collect.entrySet()) {
+					if (redisUtil.get(entry.getKey().split("-")[1]) != null) {
+						logger.info("当前模板id正在升级中...." + entry.getKey().split("-")[1]);
+						continue;
+					}
+					// }
+					logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+					checkRedisAndDate(entry.getKey());
 				}
-				// }
-				logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-				checkRedisAndDate(entry.getKey());
-			}
-			distributedLockHandler.releaseLock(lock); // 释放锁
-		}
+				distributedLockHandler.releaseLock(lock); // 释放锁
+			} 
 	}
 
 	// 每天凌晨1点执行一次
@@ -166,6 +164,12 @@ public class TimeTask {
 			distributedLockHandler.releaseLock(lock); // 释放锁
 		}
 	}
+	
+	
+	public void reTryThirdInterface(){
+		
+	}
+	
 
 	/**
 	 * 判断redis是否在当前key

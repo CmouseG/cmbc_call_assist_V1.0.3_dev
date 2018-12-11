@@ -37,7 +37,7 @@ public interface IStatusService
 	public void saveTtsStatus(TtsReqVO ttsReqVO);
 
 	/**
-	 * 根据busId修改表状态
+	 * 根据busId修改任务状态
 	 * @param busId
 	 * @param status
 	 */
@@ -49,5 +49,12 @@ public interface IStatusService
 	 * @return
 	 */
 	public TaskListRspVO getTaskList(TaskListReqVO taskListReqVO);
+
+	/**
+	 * 根据busId修改优先处理标志
+	 * @param busId
+	 * @param status
+	 */
+	public void updateJumpFlagByBusId(String busId);
  
 }

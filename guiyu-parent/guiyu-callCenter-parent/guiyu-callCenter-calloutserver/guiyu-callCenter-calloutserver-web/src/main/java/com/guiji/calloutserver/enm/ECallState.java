@@ -44,5 +44,10 @@ public enum ECallState {
     /**
      * 呼叫失败挂断
      */
-    hangup_fail
+    hangup_fail,
+
+    /**
+     * 机器人没有资源，无法呼叫结束
+     */
+    norobot_fail
 }

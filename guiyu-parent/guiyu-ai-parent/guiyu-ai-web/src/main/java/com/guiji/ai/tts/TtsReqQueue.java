@@ -8,20 +8,20 @@ import com.guiji.ai.vo.TtsReqVO;
 /**
  * Created by ty on 2018/11/21.
  */
-public class TtsReqVOQueue {
+public class TtsReqQueue {
 
-    private static final TtsReqVOQueue instance = new TtsReqVOQueue();
+    private static final TtsReqQueue instance = new TtsReqQueue();
 
     private BlockingQueue<TtsReqVO> queue = null;
 
-    private TtsReqVOQueue()
+    private TtsReqQueue()
     {
         queue = new LinkedBlockingQueue<TtsReqVO>();
     }
 
-    public static TtsReqVOQueue getInstance()
+    public static TtsReqQueue getInstance()
     {
-        return TtsReqVOQueue.instance;
+        return TtsReqQueue.instance;
     }
 
     public void produce(TtsReqVO ttsReqVO) throws InterruptedException {

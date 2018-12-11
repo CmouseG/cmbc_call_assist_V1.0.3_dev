@@ -574,6 +574,76 @@ public class TtsStatusExample {
             addCriterion("text_count not between", value1, value2, "textCount");
             return (Criteria) this;
         }
+
+        public Criteria andJumpFlagIsNull() {
+            addCriterion("jump_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagIsNotNull() {
+            addCriterion("jump_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagEqualTo(String value) {
+            addCriterion("jump_flag =", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagNotEqualTo(String value) {
+            addCriterion("jump_flag <>", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagGreaterThan(String value) {
+            addCriterion("jump_flag >", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("jump_flag >=", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagLessThan(String value) {
+            addCriterion("jump_flag <", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagLessThanOrEqualTo(String value) {
+            addCriterion("jump_flag <=", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagLike(String value) {
+            addCriterion("jump_flag like", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagNotLike(String value) {
+            addCriterion("jump_flag not like", value, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagIn(List<String> values) {
+            addCriterion("jump_flag in", values, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagNotIn(List<String> values) {
+            addCriterion("jump_flag not in", values, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagBetween(String value1, String value2) {
+            addCriterion("jump_flag between", value1, value2, "jumpFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andJumpFlagNotBetween(String value1, String value2) {
+            addCriterion("jump_flag not between", value1, value2, "jumpFlag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

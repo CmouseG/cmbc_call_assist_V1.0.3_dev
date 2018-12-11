@@ -14,10 +14,7 @@ import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
 import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
-import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
-import com.guiji.calloutserver.eventbus.event.AsrCustomerEvent;
-import com.guiji.calloutserver.eventbus.event.ChannelAnswerEvent;
-import com.guiji.calloutserver.eventbus.event.ChannelHangupEvent;
+import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsManager;
@@ -162,7 +159,6 @@ public class FsBotHandler {
     private void handleNormalAsr(CallOutPlan callPlan, AsrCustomerEvent event){
         log.info("收到正常情况下的客户AliAsr事件[{}], 准备进行处理", event);
         long initStartTime = new Date().getTime();
-        log.info("-------------------call state: "+callPlan.getCallState());
         try {
             //判断通道状态，如果还未接听，则跳过
             if (callPlan.getCallState() == ECallState.init.ordinal() ||
@@ -333,6 +329,7 @@ public class FsBotHandler {
     @Subscribe
     public void handleHangup(ChannelHangupEvent event){
         log.info("收到Hangup事件[{}], 准备进行处理", event);
+
         try {
 
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
@@ -358,12 +355,17 @@ public class FsBotHandler {
             }else{
                 callPlan.setCallState(ECallState.hangup_ok.ordinal());
             }
+            log.info("-----callPlan callState ------:"+callPlan.getCallState());
 
             callOutPlanService.update(callPlan);
 
             //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
             AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan,false);
             asyncEventBus.post(afterCallEvent);
+
+            //报表统计事件
+//            StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
+//            asyncEventBus.post(statisticReportEvent);
 
             //释放ai资源
             aiManager.releaseAi(callPlan);

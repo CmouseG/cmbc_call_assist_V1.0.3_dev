@@ -34,4 +34,6 @@ public interface BotPublishSentenceLogMapper {
     Long getLastPublishSentence(String tempId);
     
     void insertAvailableTemplate(BotAvailableTemplate template);
+    
+    void deleteAvailableTemplate(BotAvailableTemplate template);
 }

@@ -39,8 +39,8 @@ public class CallResourceChecker {
      */
     public void checkCallResources(CallOutPlan callOutPlan){
         //启动多个线程，用于检测各个资源的状态
-        checkTemp(callOutPlan);
-        checkTts(callOutPlan);
+        checkTemp(callOutPlan.getTempId());
+//        checkTts(callOutPlan);
         checkSellbot(callOutPlan);
 
         asyncEventBus.post(new CallResourceReadyEvent(callOutPlan));
@@ -51,7 +51,7 @@ public class CallResourceChecker {
      * 检查sellbot资源是否就位
      * @param callOutPlan
      */
-    private void checkSellbot(CallOutPlan callOutPlan) {
+    public void checkSellbot(CallOutPlan callOutPlan) {
 
         AiCallApplyReq aiCallApplyReq = new AiCallApplyReq();
         aiCallApplyReq.setPhoneNo(callOutPlan.getPhoneNum());
@@ -61,6 +61,7 @@ public class CallResourceChecker {
 
 
         Result.ReturnData<AiCallNext> returnData = null;
+        final String[] msg = {""};
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -71,14 +72,16 @@ public class CallResourceChecker {
                 @Override
                 public void onErrorResult(Result.ReturnData result) {
                     //TODO: 报警
+                    msg[0] = result.getMsg();
                     log.warn("申请机器人资源失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 1,60,true);
+            }, 5, 1, 5,180,true);
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }
 
-        Preconditions.checkNotNull(returnData, "null return data from sellbot");
+        Preconditions.checkNotNull(returnData, msg.length>0 ? msg[0]:"没有机器人资源");
+
         String aiNo = returnData.getBody().getAiNo();
         callOutPlan.setAiId(aiNo);
         callOutPlanService.update(callOutPlan);
@@ -95,10 +98,9 @@ public class CallResourceChecker {
 
     /**
      * 检查模板是否就位
-     * @param callOutPlan
      */
-    private void checkTemp(CallOutPlan callOutPlan) {
-        fsAgentManager.istempexist(callOutPlan.getTempId());
-        fsAgentManager.getwavlength(callOutPlan.getTempId());
+    public void checkTemp(String tempId) {
+        fsAgentManager.istempexist(tempId);
+        fsAgentManager.getwavlength(tempId);
     }
 }

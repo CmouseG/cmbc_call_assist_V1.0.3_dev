@@ -28,8 +28,8 @@ eureka:
     lease-expiration-duration-in-seconds: 10
   client:
       service-url:
-        defaultZone: http://192.168.1.78:18001/eureka/
-#        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+#       defaultZone: http://192.168.1.78:18001/eureka/
+       defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
 jdbc:

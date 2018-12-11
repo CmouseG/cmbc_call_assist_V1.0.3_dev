@@ -7,10 +7,10 @@ public interface IBlackListService {
 	
 	boolean save(BlackList blackList);
 	
-	boolean delete(Long id);
-	
 	boolean update(BlackList blackList);
 	
 	public Page<BlackList> queryBlackListByParams(int pagenum,int pagesize);
+
+	boolean delete(String phone);
 	
 }

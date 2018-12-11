@@ -29,6 +29,8 @@ public class DispatchPlanController {
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 
+	
+	
 	/**
 	 * 单个导入任务
 	 * 
@@ -57,7 +59,6 @@ public class DispatchPlanController {
 	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
 			@RequestHeader Boolean isSuperAdmin) {
 		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin);
-
 	}
 
 	/**
@@ -204,7 +205,6 @@ public class DispatchPlanController {
 	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
 			@RequestHeader Boolean isSuperAdmin) {
-
 		return dispatchPlanService.getServiceStatistics(userId,startTime,endTime,isSuperAdmin);
 	}
 

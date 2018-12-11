@@ -10,7 +10,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DistributedLockHandler {
+public class DistributedLockHandler
+{
 	private static final Logger logger = LoggerFactory.getLogger(DistributedLockHandler.class);
 	private final static long LOCK_EXPIRE = 30 * 1000L; // 单个业务持有锁的时间30s，防止死锁
 	private final static long LOCK_TRY_INTERVAL = 20L; // 默认20ms尝试一次
@@ -21,53 +22,68 @@ public class DistributedLockHandler {
 
 	/**
 	 * 尝试获取全局锁
+	 * 
 	 * @param lock
 	 * @return
 	 */
-	public boolean tryLock(Lock lock) {
+	public boolean tryLock(Lock lock)
+	{
 		return getLock(lock, LOCK_TRY_TIMEOUT, LOCK_TRY_INTERVAL, LOCK_EXPIRE);
 	}
 
-	public boolean tryLock(Lock lock, long timeout) {
+	public boolean tryLock(Lock lock, long timeout)
+	{
 		return getLock(lock, timeout, LOCK_TRY_INTERVAL, LOCK_EXPIRE);
 	}
 
-	public boolean tryLock(Lock lock, long timeout, long tryInterval) {
+	public boolean tryLock(Lock lock, long timeout, long tryInterval)
+	{
 		return getLock(lock, timeout, tryInterval, LOCK_EXPIRE);
 	}
 
-	public boolean tryLock(Lock lock, long timeout, long tryInterval, long lockExpireTime) {
+	public boolean tryLock(Lock lock, long timeout, long tryInterval, long lockExpireTime)
+	{
 		return getLock(lock, timeout, tryInterval, lockExpireTime);
 	}
 
 	/**
 	 * 操作redis获取全局锁
+	 * 
 	 * @param lock
 	 * @param timeout
 	 * @param tryInterval
 	 * @param lockExpireTime
 	 * @return
 	 */
-	public boolean getLock(Lock lock, long timeout, long tryInterval, long lockExpireTime) {
-		try {
-			if (StringUtils.isEmpty(lock.getName()) || StringUtils.isEmpty(lock.getValue())) { //对lock进行校验
+	public boolean getLock(Lock lock, long timeout, long tryInterval, long lockExpireTime)
+	{
+		try
+		{
+			if (StringUtils.isEmpty(lock.getName()) || StringUtils.isEmpty(lock.getValue())) // 对lock进行校验
+			{
 				return false;
 			}
 			long startTime = System.currentTimeMillis();
-			while (true) {
-				if (template.opsForValue().setIfAbsent(lock.getName(), lock.getValue())) {
+			while (true)
+			{
+				if (!template.hasKey(lock.getName()))
+				{
 					template.opsForValue().set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
 					logger.info(Thread.currentThread().getName() + " : get lock");
 					return true;
-				} else {
+				} 
+				else
+				{
 					logger.info(Thread.currentThread().getName() + " : ----> lock is exist!!!");
 				}
-				if (System.currentTimeMillis() - startTime > timeout) {
+				if (System.currentTimeMillis() - startTime > timeout)
+				{
 					return false;
 				}
 				Thread.sleep(tryInterval);
 			}
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			logger.error(e.getMessage());
 			return false;
 		}
@@ -76,8 +92,10 @@ public class DistributedLockHandler {
 	/**
 	 * 释放锁
 	 */
-	public void releaseLock(Lock lock) {
-		if (!StringUtils.isEmpty(lock.getName())) {
+	public void releaseLock(Lock lock)
+	{
+		if (!StringUtils.isEmpty(lock.getName()))
+		{
 			logger.info(Thread.currentThread().getName() + " : delete lock");
 			template.delete(lock.getName());
 		}

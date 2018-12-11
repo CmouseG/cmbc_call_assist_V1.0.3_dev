@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 测试环境
-Source Server Version : 50707
+Source Server         : tBtest
+Source Server Version : 50722
 Source Host           : 192.168.1.81:3306
 Source Database       : guiyu_base
 
 Target Server Type    : MYSQL
-Target Server Version : 50707
+Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2018-12-03 17:35:21
+Date: 2018-12-11 14:57:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -30,10 +30,6 @@ CREATE TABLE `receive_message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息读取表';
 
 -- ----------------------------
--- Records of receive_message
--- ----------------------------
-
--- ----------------------------
 -- Table structure for send_message
 -- ----------------------------
 DROP TABLE IF EXISTS `send_message`;
@@ -50,10 +46,6 @@ CREATE TABLE `send_message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息表';
 
 -- ----------------------------
--- Records of send_message
--- ----------------------------
-
--- ----------------------------
 -- Table structure for sys_app
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_app`;
@@ -65,10 +57,6 @@ CREATE TABLE `sys_app` (
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of sys_app
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for sys_dict
@@ -85,8 +73,10 @@ CREATE TABLE `sys_dict` (
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
+  `create_id` bigint(20) DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_file
@@ -121,7 +111,9 @@ CREATE TABLE `sys_menu` (
   `pid` bigint(20) DEFAULT NULL,
   `permission` varchar(255) DEFAULT NULL COMMENT '权限标识',
   `is_show` bigint(20) DEFAULT NULL,
+  `create_id` bigint(20) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `type` char(2) NOT NULL,
   `level` char(2) NOT NULL,
@@ -129,8 +121,7 @@ CREATE TABLE `sys_menu` (
   `remarks` varchar(255) DEFAULT NULL COMMENT '备注信息',
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_menu_role
@@ -140,12 +131,13 @@ CREATE TABLE `sys_menu_role` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` bigint(20) unsigned NOT NULL,
   `menu_id` bigint(20) unsigned NOT NULL,
+  `create_id` bigint(20) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1181 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=1803 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_process
@@ -161,13 +153,13 @@ CREATE TABLE `sys_process` (
   `status` int(2) DEFAULT NULL COMMENT '状态0:UP1:DOWN2:BUSY3:MISSING',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `create_id` bigint(20) DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1218 DEFAULT CHARSET=utf8;
-
-
+) ENGINE=InnoDB AUTO_INCREMENT=1266 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for sys_process_log
+-- Table structure for sys_process_task
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_process_task`;
 CREATE TABLE `sys_process_task` (
@@ -187,13 +179,7 @@ CREATE TABLE `sys_process_task` (
   `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
   `req_key` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
-
-
-
-
-
-
+) ENGINE=InnoDB AUTO_INCREMENT=1056 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -202,14 +188,16 @@ DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL COMMENT '名称',
+  `desc` varchar(255) DEFAULT NULL,
+  `create_id` bigint(20) NOT NULL,
   `create_time` datetime DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
-  `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `del_flag` char(1) DEFAULT '0' COMMENT '删除标记',
   `init_role` int(1) DEFAULT NULL COMMENT '是否是初始化角色0是1不是，初始化数据不能删除',
   `super_admin` int(1) DEFAULT NULL COMMENT '是否是超级管理员0是1不是',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_role_user
@@ -219,11 +207,13 @@ CREATE TABLE `sys_role_user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL,
   `role_id` bigint(20) unsigned NOT NULL,
+  `create_id` bigint(20) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=151 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -237,12 +227,17 @@ CREATE TABLE `sys_user` (
   `push_type` varchar(1) DEFAULT NULL COMMENT '1表示平台推送，2表示主动获取',
   `call_record_url` varchar(255) DEFAULT NULL COMMENT '通话记录推送地址',
   `batch_record_url` varchar(255) DEFAULT NULL COMMENT '批次结束推送地址',
+  `inten_label` varchar(255) DEFAULT '' COMMENT '意向标签',
+  `access_key` varchar(255) DEFAULT NULL,
+  `secret_key` varchar(255) DEFAULT NULL,
+  `create_id` bigint(20) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
+  `update_id` bigint(20) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `vaild_time` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_user_action
@@ -256,11 +251,7 @@ CREATE TABLE `sys_user_action` (
   `data` text COMMENT '用户提交的数据',
   `url` varchar(255) NOT NULL DEFAULT '' COMMENT '操作URL',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户操作日志表';
-
--- ----------------------------
--- Records of sys_user_action
--- ----------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户操作日志表';
 
 -- ----------------------------
 -- Table structure for sys_user_ext
@@ -281,10 +272,6 @@ CREATE TABLE `sys_user_ext` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of sys_user_ext
--- ----------------------------
-
--- ----------------------------
 -- Table structure for sys_user_login_record
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user_login_record`;
@@ -298,10 +285,6 @@ CREATE TABLE `sys_user_login_record` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户登陆记录表';
 
 -- ----------------------------
--- Records of sys_user_login_record
--- ----------------------------
-
--- ----------------------------
 -- Table structure for user_api
 -- ----------------------------
 DROP TABLE IF EXISTS `user_api`;
@@ -313,7 +296,3 @@ CREATE TABLE `user_api` (
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of user_api
--- ----------------------------

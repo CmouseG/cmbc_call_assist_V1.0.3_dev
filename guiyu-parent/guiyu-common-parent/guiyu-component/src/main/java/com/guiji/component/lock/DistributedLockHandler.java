@@ -74,7 +74,7 @@ public class DistributedLockHandler
 				} 
 				else
 				{
-					logger.info(Thread.currentThread().getName() + " : ----> lock is exist!!!");
+					logger.info(Thread.currentThread().getName() + lock.getName() +" : ----> lock is exist!!!");
 				}
 				if (System.currentTimeMillis() - startTime > timeout)
 				{
@@ -96,7 +96,7 @@ public class DistributedLockHandler
 	{
 		if (!StringUtils.isEmpty(lock.getName()))
 		{
-			logger.info(Thread.currentThread().getName() + " : delete lock");
+			logger.info(Thread.currentThread().getName() + lock.getName() + " : delete lock");
 			template.delete(lock.getName());
 		}
 	}

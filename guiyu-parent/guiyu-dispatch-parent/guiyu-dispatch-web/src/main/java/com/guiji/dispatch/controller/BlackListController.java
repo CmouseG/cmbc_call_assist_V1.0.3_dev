@@ -21,8 +21,8 @@ public class BlackListController {
 		return blackListService.save(blackList);
 	}
 	@PostMapping("deleteBlackListById")
-	public boolean deleteBlackListById(@RequestParam(required = true, name = "id") Long id) {
-		return blackListService.delete(id);
+	public boolean deleteBlackListById(@RequestParam(required = true, name = "phone") String phone) {
+		return blackListService.delete(phone);
 	}
 	
 	@PostMapping("updateBlackList")
@@ -35,6 +35,8 @@ public class BlackListController {
 			@RequestParam(required = true, name = "pagesize") int pagesize){
 		return blackListService.queryBlackListByParams(pagenum, pagesize);
 	}
+	
+	
 
 
 }

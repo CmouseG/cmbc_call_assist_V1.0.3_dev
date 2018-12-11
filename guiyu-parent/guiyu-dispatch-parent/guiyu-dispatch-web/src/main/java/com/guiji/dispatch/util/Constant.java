@@ -43,4 +43,8 @@ public class Constant {
 	public static final String  IS_FLAG_0="0";
 	public static final String  IS_FLAG_1="1";
 	public static final String  IS_FLAG_2="2";
+	
+	public static final Integer THIRD_INTERFACE_RETRYTIMES = 9;
+	
+	
 }

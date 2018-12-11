@@ -11,11 +11,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface SysOperaLog
 {
-	String actionName();
-	
-	long userId();
-	
-	String url();
-	
-	String data();
+	String operaType();
+	String operaTarget();
 }

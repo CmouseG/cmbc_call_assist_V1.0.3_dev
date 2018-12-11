@@ -6,13 +6,13 @@ import java.util.Date;
 public class SysUserAction implements Serializable {
     private Long id;
 
-    private String actionName;
+    private String operatype;
+
+    private String operatarget;
 
     private Long userId;
 
     private Date operateTime;
-
-    private String url;
 
     private String data;
 
@@ -26,12 +26,20 @@ public class SysUserAction implements Serializable {
         this.id = id;
     }
 
-    public String getActionName() {
-        return actionName;
+    public String getOperatype() {
+        return operatype;
     }
 
-    public void setActionName(String actionName) {
-        this.actionName = actionName == null ? null : actionName.trim();
+    public void setOperatype(String operatype) {
+        this.operatype = operatype == null ? null : operatype.trim();
+    }
+
+    public String getOperatarget() {
+        return operatarget;
+    }
+
+    public void setOperatarget(String operatarget) {
+        this.operatarget = operatarget == null ? null : operatarget.trim();
     }
 
     public Long getUserId() {
@@ -50,14 +58,6 @@ public class SysUserAction implements Serializable {
         this.operateTime = operateTime;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url == null ? null : url.trim();
-    }
-
     public String getData() {
         return data;
     }
@@ -73,10 +73,10 @@ public class SysUserAction implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", actionName=").append(actionName);
+        sb.append(", operatype=").append(operatype);
+        sb.append(", operatarget=").append(operatarget);
         sb.append(", userId=").append(userId);
         sb.append(", operateTime=").append(operateTime);
-        sb.append(", url=").append(url);
         sb.append(", data=").append(data);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

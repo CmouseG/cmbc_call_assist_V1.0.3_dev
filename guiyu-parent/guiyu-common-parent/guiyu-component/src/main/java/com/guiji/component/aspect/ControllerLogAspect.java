@@ -1,6 +1,7 @@
 package com.guiji.component.aspect;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,18 +63,8 @@ public class ControllerLogAspect
 
 			logger.debug(sb.toString());
 			
-			 MethodSignature sign =  (MethodSignature)joinPoint.getSignature();
-		     Method method = sign.getMethod();
-		     SysOperaLog annotation = method.getAnnotation(SysOperaLog.class);
-		     if(annotation == null){
-		    	 return;
-		     }
-		     SysUserAction.setActionName(annotation.actionName());
-		     SysUserAction.setUserId(annotation.userId());
-		     SysUserAction.setOperateTime(new Date());
-		     SysUserAction.setUrl(annotation.url());
-		     SysUserAction.setData(annotation.data());
-		     restTemplate.postForObject("http://guiyu-cloud-zuul:18061/save", SysUserAction, ReturnData.class);
+			//执行http请求，调用sysOperaLog服务
+			executeHttp(joinPoint, request);
 		     
 
 		} catch (Exception e) {
@@ -112,6 +103,33 @@ public class ControllerLogAspect
 		}
 		
 		logger.error("【系统异常】", e);
+	}
+	
+	
+	private void executeHttp(JoinPoint joinPoint, HttpServletRequest request)
+	{
+		MethodSignature sign = (MethodSignature) joinPoint.getSignature();
+		Method method = sign.getMethod();
+		SysOperaLog annotation = method.getAnnotation(SysOperaLog.class);
+		if (annotation == null)
+		{
+			return;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		Parameter[] parameters = method.getParameters();
+		for (Parameter parameter : parameters)
+		{
+			sb.append(parameter.getName()).append("|");
+		}
+		
+		SysUserAction.setOperatype(annotation.operaType());
+		SysUserAction.setOperatarget(annotation.operaTarget());
+		SysUserAction.setOperateTime(new Date());
+		SysUserAction.setUserId(Long.parseLong(request.getHeader("userId")));
+		SysUserAction.setData(sb.toString());
+		
+		restTemplate.postForObject("http://guiyu-cloud-zuul:18061/save", SysUserAction, ReturnData.class);
 	}
 
 }

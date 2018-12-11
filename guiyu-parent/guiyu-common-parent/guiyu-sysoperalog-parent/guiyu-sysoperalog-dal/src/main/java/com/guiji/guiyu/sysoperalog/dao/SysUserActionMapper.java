@@ -1,14 +1,12 @@
 package com.guiji.guiyu.sysoperalog.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.guiyu.sysoperalog.dao.entity.SysUserAction;
 import com.guiji.guiyu.sysoperalog.dao.entity.SysUserActionExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface SysUserActionMapper {
-    int countByExample(SysUserActionExample example);
+    long countByExample(SysUserActionExample example);
 
     int deleteByExample(SysUserActionExample example);
 
@@ -35,5 +33,4 @@ public interface SysUserActionMapper {
     int updateByPrimaryKeyWithBLOBs(SysUserAction record);
 
     int updateByPrimaryKey(SysUserAction record);
-
 }

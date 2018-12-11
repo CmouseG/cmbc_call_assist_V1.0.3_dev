@@ -27,7 +27,6 @@ public class SysOperaLogServiceImpl implements ISysOperaLogService
 	}
 
 	@Override
-	@Transactional
 	public List<SysUserAction> getSysUserActionByCondition(ConditionVO condition)
 	{
 		SysUserActionExample example = new SysUserActionExample();

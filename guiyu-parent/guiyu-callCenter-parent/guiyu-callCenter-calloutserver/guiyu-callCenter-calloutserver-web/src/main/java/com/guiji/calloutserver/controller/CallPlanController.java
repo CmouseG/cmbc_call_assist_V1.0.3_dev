@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -64,20 +65,24 @@ public class CallPlanController implements ICallPlan {
             return Result.error(CCException.LINE_BUSY);
         }
 
-        try{
+       try{
             Result.ReturnData<Boolean> result =  fsAgentManager.istempexist(tempId);
             if(!result.getBody()){
-                log.warn("启动呼叫计划失败，模板不存在[{}]", lineId);
+                log.warn("启动呼叫计划失败，模板不存在[{}]", tempId);
                 return Result.error(CCException.TEMP_NOTEXISIT);
             }
         }catch (Exception e){
-            log.warn("启动呼叫计划失败，模板不存在[{}]", lineId);
+            log.warn("启动呼叫计划失败，出现异常,模板不存在[{}]", tempId);
             return Result.error(CCException.TEMP_NOTEXISIT);
         }
         try {
-            fsAgentManager.getwavlength(tempId);
+            Map<String, Double> map = fsAgentManager.getwavlength(tempId);
+            if(map==null || map.size()==0){
+                log.warn("启动呼叫计划失败，录音不存在，下载录音文件时长失败[{}]", tempId);
+                return Result.error(CCException.GET_WAV_LEN_ERROR);
+            }
         }catch (Exception e){
-            log.warn("启动呼叫计划失败，下载录音文件时长失败[{}]", lineId);
+            log.warn("启动呼叫计划失败，下载录音文件时长失败[{}]", tempId);
             return Result.error(CCException.GET_WAV_LEN_ERROR);
         }
 

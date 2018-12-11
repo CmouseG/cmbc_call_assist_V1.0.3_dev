@@ -1,8 +1,6 @@
 package com.guiji.callcenter.dao.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 public class ReportCallDayExample {
@@ -126,32 +124,6 @@ public class ReportCallDayExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
-            if (value == null) {
-                throw new RuntimeException("Value for " + property + " cannot be null");
-            }
-            addCriterion(condition, new java.sql.Date(value.getTime()), property);
-        }
-
-        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
-            if (values == null || values.size() == 0) {
-                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
-            }
-            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
-            Iterator<Date> iter = values.iterator();
-            while (iter.hasNext()) {
-                dateList.add(new java.sql.Date(iter.next().getTime()));
-            }
-            addCriterion(condition, dateList, property);
-        }
-
-        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
-            if (value1 == null || value2 == null) {
-                throw new RuntimeException("Between values for " + property + " cannot be null");
-            }
-            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
-        }
-
         public Criteria andIdIsNull() {
             addCriterion("id is null");
             return (Criteria) this;
@@ -222,53 +194,63 @@ public class ReportCallDayExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallDateEqualTo(Date value) {
-            addCriterionForJDBCDate("call_date =", value, "callDate");
+        public Criteria andCallDateEqualTo(String value) {
+            addCriterion("call_date =", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateNotEqualTo(Date value) {
-            addCriterionForJDBCDate("call_date <>", value, "callDate");
+        public Criteria andCallDateNotEqualTo(String value) {
+            addCriterion("call_date <>", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateGreaterThan(Date value) {
-            addCriterionForJDBCDate("call_date >", value, "callDate");
+        public Criteria andCallDateGreaterThan(String value) {
+            addCriterion("call_date >", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateGreaterThanOrEqualTo(Date value) {
-            addCriterionForJDBCDate("call_date >=", value, "callDate");
+        public Criteria andCallDateGreaterThanOrEqualTo(String value) {
+            addCriterion("call_date >=", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateLessThan(Date value) {
-            addCriterionForJDBCDate("call_date <", value, "callDate");
+        public Criteria andCallDateLessThan(String value) {
+            addCriterion("call_date <", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateLessThanOrEqualTo(Date value) {
-            addCriterionForJDBCDate("call_date <=", value, "callDate");
+        public Criteria andCallDateLessThanOrEqualTo(String value) {
+            addCriterion("call_date <=", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateIn(List<Date> values) {
-            addCriterionForJDBCDate("call_date in", values, "callDate");
+        public Criteria andCallDateLike(String value) {
+            addCriterion("call_date like", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateNotIn(List<Date> values) {
-            addCriterionForJDBCDate("call_date not in", values, "callDate");
+        public Criteria andCallDateNotLike(String value) {
+            addCriterion("call_date not like", value, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateBetween(Date value1, Date value2) {
-            addCriterionForJDBCDate("call_date between", value1, value2, "callDate");
+        public Criteria andCallDateIn(List<String> values) {
+            addCriterion("call_date in", values, "callDate");
             return (Criteria) this;
         }
 
-        public Criteria andCallDateNotBetween(Date value1, Date value2) {
-            addCriterionForJDBCDate("call_date not between", value1, value2, "callDate");
+        public Criteria andCallDateNotIn(List<String> values) {
+            addCriterion("call_date not in", values, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateBetween(String value1, String value2) {
+            addCriterion("call_date between", value1, value2, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateNotBetween(String value1, String value2) {
+            addCriterion("call_date not between", value1, value2, "callDate");
             return (Criteria) this;
         }
 
@@ -589,6 +571,76 @@ public class ReportCallDayExample {
 
         public Criteria andDurationAllNotBetween(Long value1, Long value2) {
             addCriterion("duration_all not between", value1, value2, "durationAll");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdIsNull() {
+            addCriterion("customer_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdIsNotNull() {
+            addCriterion("customer_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdEqualTo(String value) {
+            addCriterion("customer_id =", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdNotEqualTo(String value) {
+            addCriterion("customer_id <>", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdGreaterThan(String value) {
+            addCriterion("customer_id >", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdGreaterThanOrEqualTo(String value) {
+            addCriterion("customer_id >=", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdLessThan(String value) {
+            addCriterion("customer_id <", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdLessThanOrEqualTo(String value) {
+            addCriterion("customer_id <=", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdLike(String value) {
+            addCriterion("customer_id like", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdNotLike(String value) {
+            addCriterion("customer_id not like", value, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdIn(List<String> values) {
+            addCriterion("customer_id in", values, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdNotIn(List<String> values) {
+            addCriterion("customer_id not in", values, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdBetween(String value1, String value2) {
+            addCriterion("customer_id between", value1, value2, "customerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCustomerIdNotBetween(String value1, String value2) {
+            addCriterion("customer_id not between", value1, value2, "customerId");
             return (Criteria) this;
         }
     }

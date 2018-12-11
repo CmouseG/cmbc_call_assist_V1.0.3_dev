@@ -104,7 +104,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.BlackList" >
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.BlackList" useGeneratedKeys="true" keyProperty="id" >
     insert into black_list (id, phone, remark, 
       gmt_create, gmt_modified, `type`
       )

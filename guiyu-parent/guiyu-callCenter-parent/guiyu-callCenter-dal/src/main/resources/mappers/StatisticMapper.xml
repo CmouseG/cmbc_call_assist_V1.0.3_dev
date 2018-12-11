@@ -19,13 +19,13 @@
   </resultMap>
 
   <delete id="deleteYesterday">
-    delete from `report_call_count`
+    delete from report_call_count
     WHERE
     call_date = DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d')
   </delete>
 
   <insert id="insertIntoReportCallCount" parameterType="java.util.List">
-    INSERT INTO `report_call_count` (
+    INSERT INTO report_call_count (
     call_date ,accurate_intent,customer_id ,count_all,
     count_a,count_b,count_c,count_d,count_e,count_f,count_u,count_v,count_w)
     values
@@ -93,23 +93,166 @@
   </update>
 
 
-  <select id="countReportCallDay" resultMap="BaseResultMap">
-    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS call_date ,accurate_intent,
-    customer_id ,COUNT(call_id) AS count_all,
-    IF(accurate_intent='A',COUNT(call_id),0) AS count_a,
-    IF(accurate_intent='B',COUNT(call_id),0) AS count_b,
-    IF(accurate_intent='C',COUNT(call_id),0) AS count_c,
-    IF(accurate_intent='D',COUNT(call_id),0) AS count_d,
-    IF(accurate_intent='E',COUNT(call_id),0) AS count_e,
-    IF(accurate_intent='F',COUNT(call_id),0) AS count_f,
-    IF(accurate_intent='U',COUNT(call_id),0) AS count_u,
-    IF(accurate_intent='V',COUNT(call_id),0) AS count_v,
-    IF(accurate_intent='W',COUNT(call_id),0) AS count_w
+  <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+    customer_id as customerId,accurate_intent as intent,
+    if(accurate_intent = 'F',reason,null) as reason,
+    3 AS durationType, COUNT(*) AS callCount,SUM(duration) AS durationAll
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
-    AND call_start_time &lt; CURRENT_DATE()
-    GROUP BY customer_id,accurate_intent
+<!--    AND call_start_time &lt; CURRENT_DATE()-->
+    AND duration &gt;30
+    GROUP BY customer_id,accurate_intent,reason
   </select>
+  <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+    customer_id as customerId,accurate_intent as intent,
+    IF(accurate_intent = 'F',reason,NULL) AS reason, 2 AS durationType,
+    COUNT(*) AS callCount,SUM(duration) AS durationAll
+    FROM
+    call_out_plan
+    WHERE
+    call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+   <!-- AND call_start_time &lt; CURRENT_DATE()-->
+    AND duration &lt;30 and duration &gt;= 10
+    GROUP BY customer_id,accurate_intent,reason
+  </select>
+  <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+    customer_id as customerId,accurate_intent as intent,
+    IF(accurate_intent = 'F',reason,NULL) AS reason, 1 AS durationType,
+    COUNT(*) AS callCount,SUM(duration) AS durationAll
+    FROM
+    call_out_plan
+    WHERE
+    call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+   <!-- AND call_start_time &lt; CURRENT_DATE()-->
+    AND duration &lt;10 and duration &gt;= 5
+    GROUP BY customer_id,accurate_intent,reason
+  </select>
+  <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+    SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+    customer_id as customerId,accurate_intent as intent,
+    IF(accurate_intent = 'F',reason,NULL) AS reason, 0 AS durationType,
+    COUNT(*) AS callCount,SUM(duration) AS durationAll
+    FROM
+    call_out_plan
+    WHERE
+    call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+<!--    AND call_start_time &lt; CURRENT_DATE()-->
+    AND duration &lt;5
+    GROUP BY customer_id,accurate_intent,reason
+  </select>
+
+  <insert id="insertReportCallDay" parameterType="java.util.List">
+    INSERT INTO report_call_day (
+    call_date, duration_type,intent, reason, call_count,duration_all,customer_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.callDate,jdbcType=VARCHAR}, #{item.durationType,jdbcType=INTEGER}, #{item.intent,jdbcType=VARCHAR},
+      #{item.reason,jdbcType=VARCHAR}, #{item.callCount,jdbcType=INTEGER}, #{item.durationAll,jdbcType=BIGINT},
+      #{item.customerId,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+
+  <delete id="deleteReportCallDay">
+    delete from report_call_day
+    WHERE
+    call_date = DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d')
+  </delete>
+
+  <select id="countReportCallHourConnect" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
+    SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
+   sum(duration) as duration,count(*) as connectCount,customer_id as customerId, 0 as outCount
+    FROM
+    call_out_plan
+  WHERE
+    <!--    call_start_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+      and call_start_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+      and-->
+    accurate_intent != 'F'
+    group by customer_id
+  </select>
+  <select id="countReportCallHourOut" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
+    SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
+    sum(duration) as duration,count(*) as outCount,customer_id as customerId, 0 as connectCount
+    FROM
+    call_out_plan
+<!--    WHERE
+    call_start_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+    and call_start_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')-->
+    group by customer_id
+  </select>
+
+  <insert id="insertReportCallHour" parameterType="java.util.List">
+    INSERT INTO report_call_hour (
+    call_time,
+    out_count,
+    connect_count,
+    duration ,
+    customer_id )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.callTime,jdbcType=TIMESTAMP}, #{item.outCount,jdbcType=INTEGER}, #{item.connectCount,jdbcType=INTEGER},
+      #{item.duration,jdbcType=BIGINT}, #{item.customerId,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+
+  <select id="getDashboardOverViewToday" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT a.notConnect,b.connect,c.duration5,d.duration10,e.duration30,f.durationAll, f.customerId
+    FROM
+    (SELECT SUM(duration_all) AS durationAll, customer_id AS customerId FROM report_call_today  GROUP BY  customer_id) f
+    LEFT JOIN
+    (SELECT  SUM(call_count) AS notConnect, customer_id AS customerId FROM report_call_today  WHERE intent = 'F' GROUP BY  customer_id) a ON f.customerId = a.customerId
+    LEFT JOIN
+    (SELECT  SUM(call_count) AS connect, customer_id AS customerId FROM report_call_today WHERE intent != 'F' GROUP BY  customer_id) b ON f.customerId = b.customerId
+    LEFT JOIN
+    (SELECT SUM(call_count) AS duration5, customer_id AS customerId FROM report_call_today WHERE duration_type = 1 GROUP BY  customer_id) c ON f.customerId = c.customerId
+    LEFT JOIN
+    (SELECT SUM(call_count) AS duration10, customer_id AS customerId FROM report_call_today WHERE duration_type = 2 GROUP BY  customer_id) d ON f.customerId = d.customerId
+    LEFT JOIN
+    (SELECT SUM(call_count) AS duration30, customer_id AS customerId FROM report_call_today WHERE duration_type = 3 GROUP BY  customer_id) e ON f.customerId = e.customerId
+  </select>
+
+  <select id="getDashboardOverViewAgoDurationAll" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT SUM(duration_all) AS durationAll, customer_id AS customerId, call_date AS callDate
+    FROM report_call_day  WHERE call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    GROUP BY  customer_id,call_date
+    ORDER BY callDate
+  </select>
+  <select id="getDashboardOverViewAgoNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT  SUM(call_count) AS notConnect, customer_id AS customerId, call_date AS callDate
+    FROM report_call_day  WHERE intent = 'F' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    GROUP BY  customer_id,call_date
+    ORDER BY callDate
+  </select>
+  <select id="getDashboardOverViewAgoConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT  SUM(call_count) AS connect, customer_id AS customerId, call_date AS callDate
+    FROM report_call_day WHERE intent != 'F' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    GROUP BY  customer_id,call_date
+    ORDER BY callDate
+  </select>
+  <select id="getDashboardOverViewAgoDuration5" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT SUM(call_count) AS duration5, customer_id AS customerId, call_date AS callDate
+    FROM report_call_day WHERE duration_type = 1 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    GROUP BY  customer_id,call_date
+    ORDER BY callDate
+  </select>
+  <select id="getDashboardOverViewAgoDuration10" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT SUM(call_count) AS duration10, customer_id AS customerId, call_date AS callDate
+    FROM report_call_day WHERE duration_type = 2 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    GROUP BY  customer_id,call_date
+    ORDER BY callDate
+  </select>
+  <select id="getDashboardOverViewAgoDuration30" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+    SELECT SUM(call_count) AS duration30, customer_id AS customerId, call_date AS callDate
+    FROM report_call_day WHERE duration_type = 3 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    GROUP BY  customer_id,call_date
+    ORDER BY callDate
+  </select>
+
 </mapper>

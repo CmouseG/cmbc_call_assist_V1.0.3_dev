@@ -159,7 +159,6 @@ public class FsBotHandler {
     private void handleNormalAsr(CallOutPlan callPlan, AsrCustomerEvent event){
         log.info("收到正常情况下的客户AliAsr事件[{}], 准备进行处理", event);
         long initStartTime = new Date().getTime();
-        log.info("-------------------call state: "+callPlan.getCallState());
         try {
             //判断通道状态，如果还未接听，则跳过
             if (callPlan.getCallState() == ECallState.init.ordinal() ||

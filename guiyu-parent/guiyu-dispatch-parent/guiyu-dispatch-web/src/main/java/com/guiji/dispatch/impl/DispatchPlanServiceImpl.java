@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,12 +39,15 @@ import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.DispatchHourMapper;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
+import com.guiji.dispatch.dao.entity.BlackList;
 import com.guiji.dispatch.dao.entity.DispatchHourExample;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
+import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
@@ -55,6 +59,8 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
+
+import sun.util.logging.resources.logging;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
@@ -87,8 +93,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private ICallPlanDetail callPlanDetail;
 
+	@Autowired
+	private ThirdInterfaceRecordsMapper thirdInterfaceRecordsMapper;
+
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
+		boolean result = checkBalckList(dispatchPlan);
 		MessageDto dto = new MessageDto();
 		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		// 检查参数
@@ -105,7 +115,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 			}
 		} else {
-			logger.info("test :" + checkParams.getMsg());
 			dto.setMsg(checkParams.getMsg());
 			dto.setResult(false);
 			logger.info("addSchedule校验参数失败");
@@ -129,8 +138,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		// dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		dispatchPlan.setUserId(userId.intValue());
-		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
-		dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
+		if (result) {
+			// 当前黑名单
+			logger.info("当前号码添加处于黑名单状态:" + dispatchPlan.getPhone());
+			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+		} else {
+			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
+			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
+		}
 		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
@@ -139,8 +155,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
 
-		int result = dispatchPlanMapper.insert(dispatchPlan);
-
+		dispatchPlanMapper.insert(dispatchPlan);
 		return dto;
 	}
 
@@ -366,6 +381,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				try {
 					sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl, jsonObject.toString());
 				} catch (Exception e) {
+					if (insertThirdInterface(batchRecordUrl, jsonObject)) {
+						logger.info("回调错误记录新增成功...");
+					}
 					logger.error("error", e);
 				}
 				logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
@@ -380,18 +398,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
 		if (user.getBody() != null) {
 			logger.info("通话记录通知开始");
-			String callRecordUrl = user.getBody().getCallRecordUrl();
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("data", callPlanDetailRecord.getBody());
-			jsonObject.put("code", "0");
-			jsonObject.put("msg", "success");
-			String sendHttpPost = "";
-			try {
-				sendHttpPost = HttpClientUtil.doPostJson(callRecordUrl, jsonObject.toString());
-			} catch (Exception e) {
-				logger.error("error", e);
-			}
-			logger.info("通话记录通知结果 :" + sendHttpPost);
+			boolean insertThirdInterface = insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
+			logger.info("通话记录通知结果 :" + insertThirdInterface);
 		}
 
 		if (list.size() > 0) {
@@ -439,6 +449,21 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 
 		return true;
+	}
+
+	private boolean insertThirdInterface(String url, JSONObject jsonObject) {
+		ThirdInterfaceRecords record = new ThirdInterfaceRecords();
+		try {
+			record.setCreateTime(DateUtil.getCurrent4Time());
+		} catch (Exception e2) {
+			logger.error("error", e2);
+		}
+		record.setUrl(url);
+		record.setParams(jsonObject.toJSONString());
+		record.setTimes(Constant.THIRD_INTERFACE_RETRYTIMES);
+		logger.info("调用第三方接口异常，记录失败记录");
+		int res = thirdInterfaceRecordsMapper.insert(record);
+		return res > 0 ? true : false;
 	}
 
 	/**
@@ -555,26 +580,27 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return page;
 	}
 
-	private void getBatchNames(List<DispatchPlan> selectByExample) {
-		DispatchPlanBatchExample ex = new DispatchPlanBatchExample();
-		List<Integer> ids = new ArrayList<>();
-		for (DispatchPlan dispatchPlan : selectByExample) {
-			ids.add(dispatchPlan.getBatchId());
-		}
-		ex.createCriteria().andIdIn(ids);
-
-		if (ids.size() > 0) {
-			List<DispatchPlanBatch> Batch = dispatchPlanBatchMapper.selectByExample(ex);
-
-			for (DispatchPlanBatch batchBean : Batch) {
-				for (DispatchPlan plan : selectByExample) {
-					if (batchBean.getId().equals(plan.getBatchId())) {
-						plan.setBatchName(batchBean.getName());
-					}
-				}
-			}
-		}
-	}
+	// private void getBatchNames(List<DispatchPlan> selectByExample) {
+	// DispatchPlanBatchExample ex = new DispatchPlanBatchExample();
+	// List<Integer> ids = new ArrayList<>();
+	// for (DispatchPlan dispatchPlan : selectByExample) {
+	// ids.add(dispatchPlan.getBatchId());
+	// }
+	// ex.createCriteria().andIdIn(ids);
+	//
+	// if (ids.size() > 0) {
+	// List<DispatchPlanBatch> Batch =
+	// dispatchPlanBatchMapper.selectByExample(ex);
+	//
+	// for (DispatchPlanBatch batchBean : Batch) {
+	// for (DispatchPlan plan : selectByExample) {
+	// if (batchBean.getId().equals(plan.getBatchId())) {
+	// plan.setBatchName(batchBean.getName());
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	@Override
 	public List<LineConcurrent> outLineinfos(String userId) {
@@ -821,6 +847,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.setFlag(flag);
 			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		}
+
+		// List<DispatchPlan> modList = new ArrayList<>();
+		// for(DispatchPlan dis : modList){
+		// dis.setFlag(flag);
+		// }
+		// result = dispatchPlanMapper.updateDispatchPlanList(modList);
+		//
 		return result > 0 ? true : false;
 	}
 
@@ -1000,6 +1033,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public boolean insertDispatchPlanList(List<DispatchPlan> list) {
 		int result = dispatchPlanMapper.insertDispatchPlanList(list);
 		return result > 0 ? true : false;
+	}
+
+	public boolean checkBalckList(DispatchPlan dispatchPlan) {
+		if (redisUtil.get("blackList") != null) {
+			Map<String, BlackList> base = (Map) redisUtil.get("blackList");
+			if (base.containsKey(dispatchPlan.getPhone())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 
 }

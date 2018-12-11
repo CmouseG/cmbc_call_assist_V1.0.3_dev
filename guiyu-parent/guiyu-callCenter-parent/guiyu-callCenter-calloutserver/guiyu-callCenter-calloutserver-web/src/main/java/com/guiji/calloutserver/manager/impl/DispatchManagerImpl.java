@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
-import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.helper.RequestHelper;
+import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
@@ -42,13 +42,13 @@ public class DispatchManagerImpl implements DispatchManager {
      * @return
      */
     @Override
-    public List<CallOutPlan> pullCallPlan(int customerId, Integer requestNum, Integer lineId){
+    public List<CallOutPlan> pullCallPlan(int customerId, Integer requestNum, Integer lineId) {
         List<CallOutPlan> callOutPlans = new ArrayList<>();
         try {
             Result.ReturnData disPatchResult = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
-                    log.info("------------- iDispatchPlanOutApi queryAvailableSchedules customerId[{}],requestNum[{}],lineId[{}]",customerId, requestNum, lineId);
+                    log.info("------------- iDispatchPlanOutApi queryAvailableSchedules customerId[{}],requestNum[{}],lineId[{}]", customerId, requestNum, lineId);
                     Result.ReturnData returnData = iDispatchPlanOutApi.queryAvailableSchedules(customerId, requestNum, lineId);
                     return returnData;
                 }
@@ -58,14 +58,16 @@ public class DispatchManagerImpl implements DispatchManager {
                     log.warn("获取调度中心呼叫计划出现异常[{}]", result);
                     //TODO: 报警
                 }
-            }, -1, 1, 1, 20);
+            }, -1, 1, 3, 300, true);
 
-            List<DispatchPlan> dispatchPlans  = (List<DispatchPlan>) disPatchResult.getBody();
-//            Preconditions.checkState(dispatchPlans!=null && dispatchPlans.size()>0, "从调度中心拿到的数据为空");
-            if(dispatchPlans!=null && dispatchPlans.size()>0){
-                callOutPlans = toCallPlan(dispatchPlans);
+            if(disPatchResult!=null && disPatchResult.getBody()!=null){
+                List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
+                if (dispatchPlans != null && dispatchPlans.size() > 0) {
+                    callOutPlans = toCallPlan(dispatchPlans);
+                }
             }
-        }catch (Exception ex){
+
+        } catch (Exception ex) {
             log.warn("请求调度中心呼叫计划出现异常", ex);
             //TODO: 报警，请求调度中心数据异常
         }
@@ -75,13 +77,14 @@ public class DispatchManagerImpl implements DispatchManager {
 
     /**
      * 将调度中心返回的数据，转为CalloutPlan
+     *
      * @param dispatchPlans
      * @return
      */
     private List<CallOutPlan> toCallPlan(List<DispatchPlan> dispatchPlans) {
         Preconditions.checkNotNull(dispatchPlans, "将调度数据转为callPlan出现异常，调度数据为空");
         List<CallOutPlan> callOutPlans = new ArrayList<>(dispatchPlans.size());
-        for(DispatchPlan dispatchPlan: dispatchPlans){
+        for (DispatchPlan dispatchPlan : dispatchPlans) {
             CallOutPlan callOutPlan = new CallOutPlan();
             callOutPlan.setCallState(ECallState.init.ordinal());
             callOutPlan.setCreateTime(new Date());
@@ -98,5 +101,39 @@ public class DispatchManagerImpl implements DispatchManager {
         }
 
         return callOutPlans;
+    }
+
+    /**
+     *  回掉调度中心结果
+     */
+    @Override
+    public void successSchedule(String callId) {
+
+        //调度中心
+        Result.ReturnData returnData = null;
+        try
+
+        {
+            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+                @Override
+                public Result.ReturnData execute() {
+                    return iDispatchPlanOutApi.successSchedule(callId);
+                }
+
+                @Override
+                public void onErrorResult(Result.ReturnData result) {
+                    //TODO: 报警
+                    log.warn("调度中心回掉是否成功出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
+                }
+            }, -1, 1, 3, 120, true);
+        } catch (
+                Exception e)
+
+        {
+            log.warn("调度中心回掉是否成功时出现异常", e);
+        }
+
+        log.info("===================================successSchedule:" + callId);
+
     }
 }

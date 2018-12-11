@@ -42,14 +42,17 @@ public class StatisticReportHandler {
 
         String intent = callOutPlan.getAccurateIntent();
         String reason = callOutPlan.getReason();
+        String customerId = callOutPlan.getCustomerId();
         long duration = callOutPlan.getDuration().longValue();
         int durationType = getDurationType(duration);
 
         ReportCallTodayExample example = new ReportCallTodayExample();
         ReportCallTodayExample.Criteria criteria = example.createCriteria()
                 .andDurationTypeEqualTo(durationType)
-                .andIntentEqualTo(intent);
-        if(StringUtils.isNotBlank(reason)){
+                .andIntentEqualTo(intent)
+                .andCustomerIdEqualTo(customerId);
+
+        if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
             criteria.andReasonEqualTo(reason);
         }
 
@@ -58,12 +61,13 @@ public class StatisticReportHandler {
         if(list ==null || list.size()==0){
             ReportCallToday reportCallToday = new ReportCallToday();
             reportCallToday.setIntent(intent);
-            if(StringUtils.isNotBlank(reason)){
+            if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
                 reportCallToday.setReason(reason);
             }
             reportCallToday.setDurationAll(duration);
             reportCallToday.setDurationType(durationType);
             reportCallToday.setCallCount(1);
+            reportCallToday.setCustomerId(customerId);
             reportCallTodayMapper.insert(reportCallToday);
         }else{
             ReportCallToday reportCallToday = list.get(0);

@@ -25,8 +25,8 @@ public interface ISysOperaLog
 	 * @return
 	 */
 	@ApiOperation(value="插入数据")
-    @PostMapping(value = "insert")
-	public ReturnData<Integer> insert(SysUserAction sysUserAction);
+    @PostMapping(value = "save")
+	public ReturnData<String> save(SysUserAction sysUserAction);
 	
 	/**
 	 * 根据条件获取数据

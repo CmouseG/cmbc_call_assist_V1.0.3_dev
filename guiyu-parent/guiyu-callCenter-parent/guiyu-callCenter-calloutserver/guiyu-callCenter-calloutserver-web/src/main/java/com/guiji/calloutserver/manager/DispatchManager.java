@@ -20,4 +20,6 @@ public interface DispatchManager {
      * @return
      */
     List<CallOutPlan> pullCallPlan(int customerId, Integer requestCount, Integer lineId);
+
+    void successSchedule(String callId);
 }

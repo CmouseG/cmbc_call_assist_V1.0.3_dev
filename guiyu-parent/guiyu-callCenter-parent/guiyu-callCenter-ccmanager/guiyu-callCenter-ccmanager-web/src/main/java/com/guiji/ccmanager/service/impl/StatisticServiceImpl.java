@@ -1,16 +1,14 @@
 package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.StatisticMapper;
+import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.ccmanager.service.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: 黎阳
@@ -37,13 +35,25 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<Map> getDashboardCallData(Long aLong, String startDate, String endDate) {
+    public List<DashboardOverView> getDashboardOverView(Long userId, String startDate, String endDate) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String today = sdf.format(new Date());
+
+        List<DashboardOverView> listResult = new ArrayList<DashboardOverView>();
 
         //今天
+        if(endDate.equals(today)){
+           List<DashboardOverView> listToday = statisticMapper.getDashboardOverViewToday();
+           listResult.addAll(listToday);
+        }
         //非今天
+//        if(!startDate.equals(today)){
+//            List<DashboardOverView> listAgo = statisticMapper.getDashboardOverViewAgo(startDate,endDate);
+//            listResult.addAll(listAgo);
+//        }
 
-
-        return null;
+        return listResult;
     }
 
 }

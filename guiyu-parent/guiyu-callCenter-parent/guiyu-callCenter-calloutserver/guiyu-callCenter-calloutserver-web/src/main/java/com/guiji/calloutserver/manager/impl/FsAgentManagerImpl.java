@@ -84,8 +84,25 @@ public class FsAgentManagerImpl implements FsAgentManager {
 
     @Override
     public Result.ReturnData<Boolean> istempexist(String tempId) {
-        Result.ReturnData<Boolean>  result = iTemplate.istempexist(tempId);
-        return result;
+
+        Result.ReturnData<Boolean> returnData = null;
+        try{
+            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+                @Override
+                public Result.ReturnData execute() {
+                    return  iTemplate.istempexist(tempId);
+                }
+
+                @Override
+                public void onErrorResult(Result.ReturnData result) {
+                    log.warn("判断模板是否存在，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                }
+            }, 3, 1, 2, 60,true);
+        }catch (Exception ex){
+            log.warn("判断模板是否存在出现异常", ex);
+        }
+
+        return returnData;
     }
 
     @Override

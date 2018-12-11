@@ -28,6 +28,8 @@ public class CallOutPlanVO implements Serializable {
     private String tempId;
     @ApiModelProperty(value = "线路id")
     private Integer lineId;
+    private Date callStartTime;
+
     private String serverid;
     private String agentId;
     private Date agentAnswerTime;

@@ -19,6 +19,11 @@
         </dependency>
         <dependency>
             <groupId>guiji.ai</groupId>
+            <artifactId>guiyu-auth-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>guiji.ai</groupId>
             <artifactId>guiyu-auth-dal</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

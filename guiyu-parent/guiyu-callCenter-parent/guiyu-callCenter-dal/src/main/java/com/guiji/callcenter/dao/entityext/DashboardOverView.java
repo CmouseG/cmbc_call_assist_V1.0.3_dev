@@ -13,7 +13,16 @@ public class DashboardOverView {
     private int duration10;
     private int duration30;
     private int durationAll;
-    private String customerId;
+    private String callDate;
+
+
+    public String getCallDate() {
+        return callDate;
+    }
+
+    public void setCallDate(String callDate) {
+        this.callDate = callDate;
+    }
 
     public int getNotConnect() {
         return notConnect;
@@ -63,11 +72,4 @@ public class DashboardOverView {
         this.durationAll = durationAll;
     }
 
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
 }

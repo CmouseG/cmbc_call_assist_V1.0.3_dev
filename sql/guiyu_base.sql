@@ -245,11 +245,11 @@ CREATE TABLE `sys_user` (
 DROP TABLE IF EXISTS `sys_user_action`;
 CREATE TABLE `sys_user_action` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `action_name` varchar(255) NOT NULL DEFAULT '' COMMENT '行为名称',
+  `OperaType` varchar(32) NOT NULL DEFAULT '' COMMENT '操作',
+  `OperaTarget` varchar(32) NOT NULL DEFAULT '' COMMENT '操作对象',
   `user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '操作用户ID',
   `operate_time` datetime NOT NULL COMMENT '操作时间',
   `data` text COMMENT '用户提交的数据',
-  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '操作URL',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户操作日志表';
 

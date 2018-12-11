@@ -23,14 +23,14 @@ public class UserIdZuulFilter extends ZuulFilter{
 
 	@Override
 	public Object run() {
-		boolean isWiteIpFlag = false;
+//		boolean isWiteIpFlag = false;
 		RequestContext ctx = RequestContext.getCurrentContext();
 		// IP白名单
-		String whiteIPs = WhiteIPUtil.getIps();
-		String remoteIP = IpUtil.getIpAddress(ctx.getRequest());
-		if(StringUtils.isNotEmpty(whiteIPs) && whiteIPs.contains(remoteIP)) {
-			isWiteIpFlag = true;
-		}
+//		String whiteIPs = WhiteIPUtil.getIps();
+//		String remoteIP = IpUtil.getIpAddress(ctx.getRequest());
+//		if(StringUtils.isNotEmpty(whiteIPs) && whiteIPs.contains(remoteIP)) {
+//			isWiteIpFlag = true;
+//		}
 		Object userIdObj = SecurityUtils.getSubject().getSession().getAttribute("userId");
 		Object isSuperAdminObj = SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin");
 		try {
@@ -40,9 +40,9 @@ public class UserIdZuulFilter extends ZuulFilter{
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
 		} catch (NullPointerException e) {
 			//处理下一些特殊不需要user的场景
-			if(!isWiteIpFlag) {
-				throw new ZuulException(ZuulErrorEnum.Zuul00010001.getErrorCode(),ZuulErrorEnum.Zuul00010001.getErrorMsg());
-			}
+//			if(!isWiteIpFlag) {
+//				throw new ZuulException(ZuulErrorEnum.Zuul00010001.getErrorCode(),ZuulErrorEnum.Zuul00010001.getErrorMsg());
+//			}
 		}
 		return null;
 	}

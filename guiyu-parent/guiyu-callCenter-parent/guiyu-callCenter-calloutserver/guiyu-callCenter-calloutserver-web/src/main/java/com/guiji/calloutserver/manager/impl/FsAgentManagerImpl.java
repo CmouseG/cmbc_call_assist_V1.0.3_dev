@@ -97,7 +97,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
                 public void onErrorResult(Result.ReturnData result) {
                     log.warn("判断模板是否存在，错误码是[{}][{}]", result.getCode(), result.getMsg());
                 }
-            }, 3, 1, 2, 60,true);
+            }, 5, 1, 2, 60,true);
         }catch (Exception ex){
             log.warn("判断模板是否存在出现异常", ex);
         }
@@ -109,8 +109,24 @@ public class FsAgentManagerImpl implements FsAgentManager {
     public Map<String, Double> getwavlength(String tempId){
 
         if(wavCaches.getIfPresent(tempId)==null){
-            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
-            if(result.success){
+            Result.ReturnData<List<WavLengthVO>> result = null;
+            try{
+                result = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+                    @Override
+                    public Result.ReturnData execute() {
+                        return  iTemplate.getwavlength(tempId.replace("_en","_rec"));
+                    }
+
+                    @Override
+                    public void onErrorResult(Result.ReturnData result) {
+                        log.warn("判断模板是否存在，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                    }
+                }, 5, 1, 2, 60,true);
+            }catch (Exception ex){
+                log.warn("判断模板是否存在出现异常", ex);
+            }
+
+            if(result!=null && result.success){
                 List<WavLengthVO> list = result.getBody();
                 if(list!=null && list.size()>0){
                     Map<String,Double> map =new HashMap<String,Double>();

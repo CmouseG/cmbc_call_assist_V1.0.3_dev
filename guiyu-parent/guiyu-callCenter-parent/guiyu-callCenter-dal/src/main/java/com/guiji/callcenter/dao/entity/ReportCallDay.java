@@ -1,12 +1,11 @@
 package com.guiji.callcenter.dao.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class ReportCallDay implements Serializable {
     private Long id;
 
-    private Date callDate;
+    private String callDate;
 
     private Integer durationType;
 
@@ -18,6 +17,8 @@ public class ReportCallDay implements Serializable {
 
     private Long durationAll;
 
+    private String customerId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -28,12 +29,12 @@ public class ReportCallDay implements Serializable {
         this.id = id;
     }
 
-    public Date getCallDate() {
+    public String getCallDate() {
         return callDate;
     }
 
-    public void setCallDate(Date callDate) {
-        this.callDate = callDate;
+    public void setCallDate(String callDate) {
+        this.callDate = callDate == null ? null : callDate.trim();
     }
 
     public Integer getDurationType() {
@@ -76,6 +77,14 @@ public class ReportCallDay implements Serializable {
         this.durationAll = durationAll;
     }
 
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId == null ? null : customerId.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -89,6 +98,7 @@ public class ReportCallDay implements Serializable {
         sb.append(", reason=").append(reason);
         sb.append(", callCount=").append(callCount);
         sb.append(", durationAll=").append(durationAll);
+        sb.append(", customerId=").append(customerId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

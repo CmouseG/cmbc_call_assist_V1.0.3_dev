@@ -138,6 +138,8 @@ public class FsAgentManagerImpl implements FsAgentManager {
                 }
             }
 
+        }else{
+            return wavCaches.getIfPresent(tempId);
         }
         return null;
     }

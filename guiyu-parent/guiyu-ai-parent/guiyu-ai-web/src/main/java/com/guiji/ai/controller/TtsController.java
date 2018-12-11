@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ai.api.ITts;
@@ -22,6 +21,7 @@ import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
+import com.guiji.ai.vo.TtsBusIdVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -77,10 +77,11 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "getTtsResultByBusId")
-	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestParam String busId) {
+	public ReturnData<TtsRspVO> getTtsResultByBusId(@RequestBody TtsBusIdVO ttsBusIdVO) {
 		TtsRspVO ttsRspVO = new TtsRspVO();
 		try
 		{
+			String busId = ttsBusIdVO.getBusId();
 			String status = statusService.getTransferStatusByBusId(busId);
 			ttsRspVO.setBusId(busId);
 			ttsRspVO.setStatus(status);
@@ -178,12 +179,12 @@ public class TtsController implements ITts
 	 */
 	@Override
 	@PostMapping(value = "jumpQueue")
-	public ReturnData<Boolean> jumpQueue(@RequestParam String busId)
+	public ReturnData<Boolean> jumpQueue(@RequestBody TtsBusIdVO ttsBusIdVO)
 	{
 		try
 		{
 			logger.info("执行任务插队...");
-			return Result.ok(ttsService.taskJump(busId));
+			return Result.ok(ttsService.taskJump(ttsBusIdVO.getBusId()));
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);

@@ -1,4 +1,4 @@
-package com.guiji.sysoperalog.web;
+package com.guiji.sysoperalog.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.guiyu.sysoperalog.dao.entity.SysUserAction;
 import com.guiji.sysoperalog.api.ISysOperaLog;
 import com.guiji.sysoperalog.constants.SysOperaLogConstants;
+import com.guiji.sysoperalog.queue.SysOpreaLogQueue;
 import com.guiji.sysoperalog.service.ISysOperaLogService;
 import com.guiji.sysoperalog.vo.ConditionVO;
 
@@ -33,12 +34,13 @@ public class SysOpreaLogController implements ISysOperaLog
 	 * @return
 	 */
 	@PostMapping(value = "insert")
-	public ReturnData<Integer> insert(@RequestBody SysUserAction sysUserAction)
+	public ReturnData<String> save(@RequestBody SysUserAction sysUserAction)
 	{
-		Integer num  = 0;
+		String result = "success";
 		try
 		{
-			num = ISysOperaLogService.insertSysUserAction(sysUserAction);
+			// 入队列异步处理
+			SysOpreaLogQueue.getInstance().produce(sysUserAction);
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -48,7 +50,7 @@ public class SysOpreaLogController implements ISysOperaLog
 			return Result.error(SysOperaLogConstants.INSERT_ERROR);
 		}
 		
-		return Result.ok(num);
+		return Result.ok(result);
 	}
 	
 	/**

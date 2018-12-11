@@ -47,31 +47,9 @@ CREATE TABLE `bot_sentence_addition` (
 -- ----------------------------
 -- Table structure for bot_sentence_branch
 -- ----------------------------
-DROP TABLE IF EXISTS `bot_sentence_branch`;
-CREATE TABLE `bot_sentence_branch` (
-  `branch_id` varchar(32) NOT NULL COMMENT 'branch??',
-  `branch_name` varchar(256) DEFAULT NULL COMMENT 'branch??',
-  `seq` bigint(20) DEFAULT NULL COMMENT '??',
-  `process_id` varchar(32) DEFAULT NULL COMMENT '??????',
-  `template_id` varchar(256) DEFAULT NULL COMMENT '??????',
-  `response` varchar(1024) DEFAULT NULL COMMENT '?????',
-  `NEXT` varchar(256) DEFAULT NULL COMMENT '??domain',
-  `intents` varchar(256) DEFAULT NULL COMMENT '????',
-  `END` varchar(256) DEFAULT NULL COMMENT '????',
-  `domain` varchar(256) DEFAULT NULL COMMENT '??domain',
-  `key_words` text COMMENT '???',
-  `is_special_limit_free` varchar(1024) DEFAULT NULL COMMENT 'is_special_limit_free',
-  `user_ask` varchar(256) DEFAULT NULL COMMENT '????',
-  `crt_time` datetime DEFAULT NULL COMMENT '????',
-  `crt_user` varchar(32) DEFAULT NULL COMMENT '???',
-  `lst_update_time` datetime DEFAULT NULL COMMENT '??????',
-  `lst_update_user` varchar(32) DEFAULT NULL COMMENT '?????',
-  `line_name` varchar(256) DEFAULT NULL,
-  `is_show` varchar(32) DEFAULT NULL,
-  `respname` varchar(1024) DEFAULT NULL,
-  `type` varchar(32) DEFAULT NULL,
-  PRIMARY KEY (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='branch';
+DROP TABLE bot_sentence_branch;
+CREATE TABLE bot_sentence_branch (branch_id varchar(32) NOT NULL COMMENT 'branch编号', branch_name varchar(256) COMMENT 'branch名称', seq bigint COMMENT '序号', process_id varchar(32) COMMENT '话术流程编号', template_id varchar(256) COMMENT '话术模板编号', response varchar(1024) COMMENT '机器人应答', NEXT varchar(256) COMMENT '下一domain', intents varchar(256) COMMENT '意图列表', END varchar(256) COMMENT '结束应答', domain varchar(256) COMMENT '所属domain', key_words text COMMENT '关键词', is_special_limit_free varchar(1024) COMMENT 'is_special_limit_free', user_ask varchar(256) COMMENT '用户问答', crt_time datetime COMMENT '创建时间', crt_user varchar(32) COMMENT '创建人', lst_update_time datetime COMMENT '最后修改时间', lst_update_user varchar(32) COMMENT '最后修改人', line_name varchar(256), is_show varchar(32), respname varchar(1024), type varchar(32), PRIMARY KEY (branch_id), INDEX bot_sentence_branch_ix1 (domain)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='branch';
+
 
 -- ----------------------------
 -- Table structure for bot_sentence_domain
@@ -518,26 +496,31 @@ INSERT INTO `user_account_industry_relation` VALUES ('20151011RELA00000776376', 
 -- ----------------------------
 -- Table structure for volice_info
 -- ----------------------------
-DROP TABLE IF EXISTS `volice_info`;
-CREATE TABLE `volice_info` (
-  `volice_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '??ID',
-  `volice_url` varchar(512) DEFAULT NULL COMMENT '????URL',
-  `process_id` varchar(32) DEFAULT NULL COMMENT '??????',
-  `template_id` varchar(256) DEFAULT NULL COMMENT '??????',
-  `domain_name` varchar(256) DEFAULT NULL COMMENT '??domain',
-  `type` varchar(8) DEFAULT NULL COMMENT '??',
-  `num` varchar(32) DEFAULT NULL COMMENT '??',
-  `content` varchar(1024) DEFAULT NULL COMMENT '??',
-  `crt_time` datetime DEFAULT NULL COMMENT '????',
-  `crt_user` varchar(32) DEFAULT NULL COMMENT '???',
-  `lst_update_time` datetime DEFAULT NULL COMMENT '??????',
-  `lst_update_user` varchar(32) DEFAULT NULL COMMENT '?????',
-  `name` varchar(256) DEFAULT NULL,
-  `flag` varchar(32) DEFAULT NULL,
-  `old_id` bigint(20) DEFAULT NULL,
-  `need_tts` tinyint(1) DEFAULT NULL COMMENT '????TTS??',
-  PRIMARY KEY (`volice_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4279 DEFAULT CHARSET=utf8 COMMENT='????';
+DROP TABLE volice_info;
+CREATE TABLE volice_info (volice_id bigint NOT NULL AUTO_INCREMENT COMMENT '录音ID', volice_url varchar(512) COMMENT '录音文件URL', process_id varchar(32) COMMENT '话术流程编号', template_id varchar(256) COMMENT '话术模板编号', domain_name varchar(256) COMMENT '所属domain', type varchar(8) COMMENT '类型', num varchar(32) COMMENT '编号', content varchar(1024) COMMENT '内容', crt_time datetime COMMENT '创建时间', crt_user varchar(32) COMMENT '创建人', lst_update_time datetime COMMENT '最后修改时间', lst_update_user varchar(32) COMMENT '最后修改人', name varchar(256), flag varchar(32), old_id bigint, PRIMARY KEY (volice_id), INDEX volice_info_ix1 (domain_name)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='录音信息';
+
+DROP TABLE bot_available_template;
+CREATE TABLE `bot_available_template` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `template_id` varchar(32) NOT NULL,
+  `template_name` varchar(32) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+
+DROP TABLE bot_publish_sentence_log;
+CREATE TABLE `bot_publish_sentence_log` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `temp_name` varchar(255) DEFAULT NULL,
+  `template_id` varchar(32) NOT NULL,
+  `process_id` varchar(32) NOT NULL,
+  `create_id` bigint(20) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `status` varchar(10) NOT NULL COMMENT '状态1部署中2已上线3部署失败',
+  `create_name` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8;
+
 
 drop FUNCTION IF EXISTS `genTabId`;
 CREATE FUNCTION `genTabId`(SEQ_NAME VARCHAR(64)) RETURNS varchar(32) CHARSET utf8

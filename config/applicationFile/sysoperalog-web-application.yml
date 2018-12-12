@@ -1,0 +1,43 @@
+server:
+  port: 18018
+spring:
+  application:
+    name: guiyu-sysoperalog-web
+  datasource:
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    database: 0
+    host: 192.168.1.78
+    password: 123456
+    port: 6379
+    pool:
+      max-active: 8
+      max-wait: -1
+      min-idle: 0
+      max-idle: 8
+
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+properties:
+  error: properties/error.properties
+  threadpool: properties/threadPool.properties
+
+#网关地址
+gateway:
+  host: http://guiyu-cloud-zuul:18000/

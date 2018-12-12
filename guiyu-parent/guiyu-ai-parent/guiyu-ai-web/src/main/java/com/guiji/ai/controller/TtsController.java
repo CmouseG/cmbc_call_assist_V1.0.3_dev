@@ -29,6 +29,7 @@ import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
 import com.guiji.ai.vo.TtsStatusRspVO;
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.component.aspect.SysOperaLog;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 
@@ -107,7 +108,7 @@ public class TtsController implements ITts
 	 * 查询TTS处理状态列表
 	 */
 	@Override
-	@PostMapping(value = "getTtsStatus")
+	@PostMapping(value = "getTtsStatusList")
 	public ReturnData<List<TtsStatusRspVO>> getTtsStatusList(@RequestBody(required = false) TtsStatusReqVO ttsStatusReqVO) 
 	{
 		//结果集
@@ -131,7 +132,8 @@ public class TtsController implements ITts
 	 * 获取GPU模型列表
 	 */
 	@Override
-	@PostMapping(value = "getAllGpuByPage")
+	@SysOperaLog(operaTarget = "操作类型", operaType = "操作对象")
+	@PostMapping(value = "getGpuList")
 	public ReturnData<TtsGpuRspVO> getGpuList(@RequestBody(required = false) TtsGpuReqVO ttsGpuReqVO)
 	{
 		TtsGpuRspVO ttsGpuRsp = new TtsGpuRspVO();
@@ -193,5 +195,7 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 	}
+	
+	
 	
 }

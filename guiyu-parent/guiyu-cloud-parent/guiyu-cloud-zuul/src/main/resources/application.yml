@@ -132,6 +132,9 @@ zuul:
     guiyu-da-web:
       path: /da/**
       service-id: guiyu-da-web
+    guiyu-sysoperalog-web:
+      path: /log/**
+      service-id: guiyu-sysoperalog-web
 hystrix:
   command:
     default:

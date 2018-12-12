@@ -1,15 +1,11 @@
 package com.guiji.ccmanager.scheduler;
 
-import com.guiji.callcenter.dao.StatisticMapper;
-import com.guiji.callcenter.dao.entity.ReportCallCount;
 import com.guiji.ccmanager.service.ReportSchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @Auther: 黎阳
@@ -25,17 +21,6 @@ public class ReportScheduler {
     ReportSchedulerService reportSchedulerService;
 
     @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
-//    @Scheduled(cron = "0/3 * * * * ?") // 测试
-    public void reportCallCountScheduler(){
-
-        log.info("----------- start reportCallCountScheduler -----------");
-        reportSchedulerService.reportCallCountScheduler();
-        log.info("----------- end reportCallCountScheduler -----------");
-
-    }
-
-
-    @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallDayScheduler(){
 
@@ -45,7 +30,7 @@ public class ReportScheduler {
 
     }
 
-    //    @Scheduled(cron = "0 10 * * * ?") // 每个小时10分钟运行一次
+      @Scheduled(cron = "0 10 * * * ?") // 每个小时10分钟运行一次
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallHourScheduler(){
 

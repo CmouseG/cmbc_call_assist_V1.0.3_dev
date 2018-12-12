@@ -372,8 +372,8 @@ public class FsBotHandler {
             asyncEventBus.post(afterCallEvent);
 
             //报表统计事件
-//            StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
-//            asyncEventBus.post(statisticReportEvent);
+            StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
+            asyncEventBus.post(statisticReportEvent);
 
             //释放ai资源
             aiManager.releaseAi(callPlan);

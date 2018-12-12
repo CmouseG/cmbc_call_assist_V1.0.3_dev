@@ -2,7 +2,11 @@ package com.guiji.ai.dao;
 
 import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.dao.entity.TtsStatusExample;
+
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TtsStatusMapper {
@@ -33,4 +37,11 @@ public interface TtsStatusMapper {
 	int updateStatusByBusId(@Param("busId") String busId, @Param("status") String status);
 
 	int updateJumpFlagByBusId(String busId);
+
+	//按天统计
+	List<Map<String, Object>> getAcceptTasksByDays(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
+	//按月统计
+	List<Map<String, Object>> getAcceptTasksByMonths(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+
 }

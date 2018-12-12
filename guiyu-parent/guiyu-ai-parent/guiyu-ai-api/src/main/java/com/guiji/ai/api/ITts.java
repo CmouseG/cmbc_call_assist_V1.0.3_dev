@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.guiji.ai.vo.AcceptTaskReqVO;
+import com.guiji.ai.vo.AcceptTaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
@@ -77,6 +79,12 @@ public interface ITts {
     @PostMapping(value = "jumpQueue")
     public ReturnData<Boolean> jumpQueue(String busId);
     
-
+    /**
+     * 累计接受任务
+     * @return
+     */
+    @ApiOperation(value="累计接受任务")
+    @PostMapping(value = "acceptTasks")
+    public ReturnData<AcceptTaskRspVO> acceptTasks(AcceptTaskReqVO acceptTaskReqVO);
     
 }

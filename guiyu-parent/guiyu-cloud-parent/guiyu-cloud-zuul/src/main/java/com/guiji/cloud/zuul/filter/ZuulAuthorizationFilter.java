@@ -37,7 +37,7 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 		HttpServletRequest httpRequest=(HttpServletRequest) request;
 		String url=httpRequest.getRequestURI();
 		String permission= permissionResolve.parse(url);
-		if(StringUtils.isEmpty(permission)||!subject.isPermitted(permission)){
+		if(!StringUtils.isEmpty(permission)&&!subject.isPermitted(permission)){
 			flag=false;
 			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().println(getErrorMsg());

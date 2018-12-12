@@ -46,4 +46,6 @@ public interface SysMenuMapper {
     public int countByParamVo(MenuParamVo param);
     
     public List<Object> selectByParamVo(MenuParamVo param);
+    
+    public List<String> getPermissions();
 }

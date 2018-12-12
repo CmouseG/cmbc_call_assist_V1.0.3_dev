@@ -414,7 +414,7 @@
 	</select>
 	
 	<select id="getPermissionsByUrl" resultType="string">
-		SELECT permission FROM `sys_menu` where url=#{url} and permission is not null 
+		SELECT permission FROM `sys_menu` where url=#{url} and type=2
 	</select>
 	
 	
@@ -435,5 +435,9 @@
 		</if>
 		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="getPermissions" resultType="string">
+		SELECT url from sys_menu where del_flag=0 and type=2
 	</select>
 </mapper>

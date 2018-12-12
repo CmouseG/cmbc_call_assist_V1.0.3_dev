@@ -134,7 +134,7 @@ public class TtsController implements ITts
 	 * 获取GPU模型列表
 	 */
 	@Override
-	@SysOperaLog(operaTarget = "操作类型", operaType = "操作对象")
+	@SysOperaLog(operaTarget = "操作对象", operaType = "操作类型")
 	@PostMapping(value = "getGpuList")
 	public ReturnData<TtsGpuRspVO> getGpuList(@RequestBody(required = false) TtsGpuReqVO ttsGpuReqVO)
 	{

@@ -3,6 +3,7 @@ package com.guiji.ai.tts.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
+import com.guiji.ai.vo.AcceptTaskReqVO;
+import com.guiji.ai.vo.AcceptTaskRspVO;
+import com.guiji.ai.vo.AcceptTaskVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -51,14 +55,29 @@ public class StatusServiceImpl implements IStatusService
 	{
 		//结果集
 		List<TtsStatusRspVO> ttsStatusRspList = new ArrayList<>();
+		List<TtsStatus> ttsStatusList = new ArrayList<>();
 		
 		TtsStatusExample example = new TtsStatusExample();
-		example.createCriteria().andModelEqualTo(ttsStatusReqVO.getModel())
-								.andStatusEqualTo(ttsStatusReqVO.getStatus())
-								.andCreateTimeGreaterThanOrEqualTo(ttsStatusReqVO.getStartTime())
-								.andCreateTimeLessThanOrEqualTo(ttsStatusReqVO.getEndTime());
-		
-		List<TtsStatus> ttsStatusList = ttsStatusMapper.selectByExample(example);
+		if(ttsStatusReqVO == null)
+		{
+			ttsStatusList = ttsStatusMapper.selectByExample(example);
+		}else
+		{
+			Criteria criteria = example.createCriteria();
+			if(StringUtils.isNotEmpty(ttsStatusReqVO.getModel())){
+				criteria.andModelEqualTo(ttsStatusReqVO.getModel());
+			}
+			if(StringUtils.isNotEmpty(ttsStatusReqVO.getStatus())){
+				criteria.andStatusEqualTo(ttsStatusReqVO.getStatus());
+			}
+			if(ttsStatusReqVO.getStartTime() != null){
+				criteria.andCreateTimeGreaterThanOrEqualTo(ttsStatusReqVO.getStartTime());
+			}
+			if(ttsStatusReqVO.getEndTime() != null){
+				criteria.andCreateTimeLessThanOrEqualTo(ttsStatusReqVO.getEndTime());
+			}
+			ttsStatusList = ttsStatusMapper.selectByExample(example);
+		}
 		
 		for(TtsStatus ttsStatus : ttsStatusList)
 		{
@@ -144,6 +163,48 @@ public class StatusServiceImpl implements IStatusService
 	public void updateJumpFlagByBusId(String busId)
 	{
 		ttsStatusMapper.updateJumpFlagByBusId(busId);
+	}
+
+
+	/**
+	 * 累计接受任务
+	 */
+	@Override
+	public AcceptTaskRspVO acceptTasks(AcceptTaskReqVO acceptTaskReqVO)
+	{
+		AcceptTaskRspVO acceptTaskRspVO = new AcceptTaskRspVO();
+		List<AcceptTaskVO> acceptTaskVOList = new ArrayList<>();
+		
+		String dimension = acceptTaskReqVO.getDimension(); //维度
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		if("days".equals(dimension)) //按天统计
+		{
+			mapList = ttsStatusMapper.getAcceptTasksByDays(acceptTaskReqVO.getStartTime(), acceptTaskReqVO.getEndTime());
+			acceptTaskVOList = setAcceptTaskVO(mapList, dimension);
+		}
+		else if("months".equals(dimension)) //按月统计
+		{
+			mapList = ttsStatusMapper.getAcceptTasksByMonths(acceptTaskReqVO.getStartTime(), acceptTaskReqVO.getEndTime());
+			acceptTaskVOList = setAcceptTaskVO(mapList, dimension);
+		}
+		acceptTaskRspVO.setTotalNum(mapList.size());
+		acceptTaskRspVO.setTaskNums(acceptTaskVOList);
+		return acceptTaskRspVO;
+	}
+
+	//处理返回结果
+	private List<AcceptTaskVO> setAcceptTaskVO(List<Map<String, Object>> mapList, String dimension)
+	{
+		List<AcceptTaskVO> acceptTaskVOList = new ArrayList<>();
+		AcceptTaskVO acceptTaskVO = null;
+		
+		for(Map<String, Object> map : mapList){
+			acceptTaskVO = new AcceptTaskVO();
+			acceptTaskVO.setCount((long) map.get("countNum"));
+			acceptTaskVO.setDate((String) map.get("date"));
+			acceptTaskVOList.add(acceptTaskVO);
+		}
+		return acceptTaskVOList;		
 	}
 
 }

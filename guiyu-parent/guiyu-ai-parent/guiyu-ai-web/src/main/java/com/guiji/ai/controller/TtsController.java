@@ -20,8 +20,8 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
-import com.guiji.ai.vo.AcceptTaskReqVO;
-import com.guiji.ai.vo.AcceptTaskRspVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
@@ -199,13 +199,13 @@ public class TtsController implements ITts
 	}
 
 	@Override
-	@PostMapping(value = "acceptTasks")
-	public ReturnData<AcceptTaskRspVO> acceptTasks(@RequestBody AcceptTaskReqVO acceptTaskReqVO)
+	@PostMapping(value = "getAcceptTasks")
+	public ReturnData<TaskRspVO> getAcceptTasks(@RequestBody TaskReqVO acceptTaskReqVO)
 	{
-		AcceptTaskRspVO acceptTaskRspVO = new AcceptTaskRspVO();
+		TaskRspVO acceptTaskRspVO = new TaskRspVO();
 		try
 		{
-			acceptTaskRspVO = statusService.acceptTasks(acceptTaskReqVO);
+			acceptTaskRspVO = statusService.getTasks(acceptTaskReqVO);
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -215,6 +215,25 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return Result.ok(acceptTaskRspVO);
+	}
+
+	@Override
+	@PostMapping(value = "getCompleteTasks")
+	public ReturnData<TaskRspVO> getCompleteTasks(@RequestBody TaskReqVO completeTaskReqVO)
+	{
+		TaskRspVO completeTaskRspVO = new TaskRspVO();
+		try
+		{
+			completeTaskRspVO = statusService.getTasks(completeTaskReqVO);
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(completeTaskRspVO);
 	}
 	
 }

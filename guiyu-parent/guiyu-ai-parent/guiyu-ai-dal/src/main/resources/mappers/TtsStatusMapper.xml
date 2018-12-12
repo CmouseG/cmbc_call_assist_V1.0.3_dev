@@ -286,7 +286,7 @@
 				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
 			</if>
 			<if test="endTime != null">
-				And create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
+				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
 			</if>	
 		</where>
 		GROUP BY date
@@ -301,8 +301,40 @@
 				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
 			</if>
 			<if test="endTime != null">
-				create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
+				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
 			</if>	
+		</where>
+		GROUP BY date
+		ORDER BY date DESC
+	</select>
+	
+	<select id="getCompleteTasksByDays" resultType="java.util.Map">
+		SELECT count(id) countNum, DATE_FORMAT(create_time,'%Y-%m-%d') date
+		FROM tts_status
+		<where>
+			<if test="startTime != null">
+				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endTime != null">
+				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
+			</if>
+			AND `status` = '2'
+		</where>
+		GROUP BY date
+		ORDER BY date DESC
+	</select>
+	
+	<select id="getCompleteTasksByMonths" resultType="java.util.Map">
+		SELECT count(id) countNum, DATE_FORMAT(create_time,'%Y-%m') date
+		FROM tts_status
+		<where>
+			<if test="startTime != null">
+				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endTime != null">
+				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
+			</if>
+			AND `status` = '2'
 		</where>
 		GROUP BY date
 		ORDER BY date DESC

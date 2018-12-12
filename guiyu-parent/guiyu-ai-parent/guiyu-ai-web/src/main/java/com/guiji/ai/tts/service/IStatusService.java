@@ -2,8 +2,8 @@ package com.guiji.ai.tts.service;
 
 import java.util.List;
 
-import com.guiji.ai.vo.AcceptTaskReqVO;
-import com.guiji.ai.vo.AcceptTaskRspVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -60,9 +60,9 @@ public interface IStatusService
 	public void updateJumpFlagByBusId(String busId);
 
 	/**
-	 * 累计接受任务数
+	 * 累计任务数
 	 * @param acceptTaskReqVO
 	 */
-	public AcceptTaskRspVO acceptTasks(AcceptTaskReqVO acceptTaskReqVO);
+	public TaskRspVO getTasks(TaskReqVO taskReqVO);
  
 }

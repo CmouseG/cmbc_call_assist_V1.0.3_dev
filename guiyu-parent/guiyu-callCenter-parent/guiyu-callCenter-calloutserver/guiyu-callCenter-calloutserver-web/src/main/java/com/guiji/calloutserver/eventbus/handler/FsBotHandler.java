@@ -348,7 +348,15 @@ public class FsBotHandler {
             callPlan.setAnswerTime(event.getAnswerStamp());
             callPlan.setDuration(event.getDuration());
             callPlan.setBillSec(event.getBillSec());
-            callPlan.setHangupCode(event.getSipHangupCause());
+
+            String hangUp = event.getSipHangupCause();
+            if(!Strings.isNullOrEmpty(hangUp)){
+                callPlan.setHangupCode(hangUp);
+                if(hangUp.equals("503")){
+                    callPlan.setAccurateIntent("W");
+                    callPlan.setReason("503");
+                }
+            }
 
             if(!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <=0){
                 callPlan.setCallState(ECallState.hangup_fail.ordinal());

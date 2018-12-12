@@ -3,7 +3,7 @@ package com.guiji.ai.vo;
 import lombok.Data;
 
 @Data
-public class AcceptTaskVO
+public class TaskNumVO
 {
 	private Long count;
 	

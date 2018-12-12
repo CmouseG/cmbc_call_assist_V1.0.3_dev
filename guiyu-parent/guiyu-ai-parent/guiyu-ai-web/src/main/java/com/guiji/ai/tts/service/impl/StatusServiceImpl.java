@@ -18,9 +18,9 @@ import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
-import com.guiji.ai.vo.AcceptTaskReqVO;
-import com.guiji.ai.vo.AcceptTaskRspVO;
-import com.guiji.ai.vo.AcceptTaskVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
+import com.guiji.ai.vo.TaskNumVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -167,39 +167,56 @@ public class StatusServiceImpl implements IStatusService
 
 
 	/**
-	 * 累计接受任务
+	 * 累计任务
+	 * 根据returnFlag区分返回结果
 	 */
 	@Override
-	public AcceptTaskRspVO acceptTasks(AcceptTaskReqVO acceptTaskReqVO)
+	public TaskRspVO getTasks(TaskReqVO taskReqVO)
 	{
-		AcceptTaskRspVO acceptTaskRspVO = new AcceptTaskRspVO();
-		List<AcceptTaskVO> acceptTaskVOList = new ArrayList<>();
+		TaskRspVO acceptTaskRspVO = new TaskRspVO();
+		List<TaskNumVO> acceptTaskVOList = new ArrayList<>();
 		
-		String dimension = acceptTaskReqVO.getDimension(); //维度
+		String dimension = taskReqVO.getDimension(); //维度
 		List<Map<String, Object>> mapList = new ArrayList<>();
-		if("days".equals(dimension)) //按天统计
+		if("0".equals(taskReqVO.getReturnFlag())) //累计接受任务
 		{
-			mapList = ttsStatusMapper.getAcceptTasksByDays(acceptTaskReqVO.getStartTime(), acceptTaskReqVO.getEndTime());
-			acceptTaskVOList = setAcceptTaskVO(mapList, dimension);
+			if("days".equals(dimension)) //按天统计
+			{
+				mapList = ttsStatusMapper.getAcceptTasksByDays(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+			}
+			else if("months".equals(dimension)) //按月统计
+			{
+				mapList = ttsStatusMapper.getAcceptTasksByMonths(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+			}
 		}
-		else if("months".equals(dimension)) //按月统计
+		else if("1".equals(taskReqVO.getReturnFlag())) //累计完成任务
 		{
-			mapList = ttsStatusMapper.getAcceptTasksByMonths(acceptTaskReqVO.getStartTime(), acceptTaskReqVO.getEndTime());
-			acceptTaskVOList = setAcceptTaskVO(mapList, dimension);
+			if("days".equals(dimension)) //按天统计
+			{
+				mapList = ttsStatusMapper.getCompleteTasksByDays(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+			}
+			else if("months".equals(dimension)) //按月统计
+			{
+				mapList = ttsStatusMapper.getCompleteTasksByMonths(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+			}
 		}
+		
+		//处理返回结果
+		acceptTaskVOList = setTaskVO(mapList, dimension);
+		
 		acceptTaskRspVO.setTotalNum(mapList.size());
 		acceptTaskRspVO.setTaskNums(acceptTaskVOList);
 		return acceptTaskRspVO;
 	}
 
 	//处理返回结果
-	private List<AcceptTaskVO> setAcceptTaskVO(List<Map<String, Object>> mapList, String dimension)
+	private List<TaskNumVO> setTaskVO(List<Map<String, Object>> mapList, String dimension)
 	{
-		List<AcceptTaskVO> acceptTaskVOList = new ArrayList<>();
-		AcceptTaskVO acceptTaskVO = null;
+		List<TaskNumVO> acceptTaskVOList = new ArrayList<>();
+		TaskNumVO acceptTaskVO = null;
 		
 		for(Map<String, Object> map : mapList){
-			acceptTaskVO = new AcceptTaskVO();
+			acceptTaskVO = new TaskNumVO();
 			acceptTaskVO.setCount((long) map.get("countNum"));
 			acceptTaskVO.setDate((String) map.get("date"));
 			acceptTaskVOList.add(acceptTaskVO);

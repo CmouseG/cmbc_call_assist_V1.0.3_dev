@@ -38,10 +38,16 @@ public interface TtsStatusMapper {
 
 	int updateJumpFlagByBusId(String busId);
 
-	//按天统计
+	//按天统计 接受任务数
 	List<Map<String, Object>> getAcceptTasksByDays(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
-	//按月统计
+	//按月统计 接受任务数
 	List<Map<String, Object>> getAcceptTasksByMonths(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+	
+	//按天统计 完成任务数
+	List<Map<String, Object>> getCompleteTasksByDays(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+	
+	//按月统计 完成任务数
+	List<Map<String, Object>> getCompleteTasksByMonths(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
 }

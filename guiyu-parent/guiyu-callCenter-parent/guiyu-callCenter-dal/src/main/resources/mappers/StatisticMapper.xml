@@ -2,32 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.StatisticMapper" >
 
-  <select id="getIntentCountOnTime" resultType="com.guiji.callcenter.dao.entity.ReportCallCountShow" parameterType="java.util.Map">
-    SELECT
-    call_date as callDate,
-    sum(count_a) as A,
-    sum(count_b) as B,
-    sum(count_c) as C,
-    sum(count_d) as D,
-    sum(count_e) as E,
-    sum(count_f) as F,
-    sum(count_u) as U,
-    sum(count_v) as V,
-    sum(count_w) as W,
-    sum(count_all) as countAll,
-    sum(count_all) - sum(count_f) as hang
-    FROM
-    report_call_count
-    WHERE
-    call_date &gt;= #{startDate,jdbcType=VARCHAR}
-    AND call_date &lt; #{endDate,jdbcType=VARCHAR}
-    <if test="customer_id != null" >
-      AND customer_id = #{customer_id,jdbcType=VARCHAR}
-    </if>
-    GROUP BY call_date
-    order by callDate
-  </select>
-
   <update id="updateTodayCountAndDruation" parameterType="com.guiji.callcenter.dao.entity.ReportCallToday" >
     update report_call_today
     set call_count = call_count +1,duration_all=duration_all+ #{durationAll,jdbcType=BIGINT}

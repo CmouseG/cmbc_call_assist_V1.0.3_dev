@@ -77,4 +77,6 @@ public interface ITts {
     @PostMapping(value = "jumpQueue")
     public ReturnData<Boolean> jumpQueue(String busId);
     
+
+    
 }

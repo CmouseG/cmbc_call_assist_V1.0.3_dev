@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,6 +195,9 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			}
 		}*/
 		
+		List<List<String>> simList = BotSentenceUtil.getSimtxtKeywordsList(addition.getSimTxt());
+		Map<String, String> simLineMap = BotSentenceUtil.getSimtxtKeywordsByKeyword(simList, keys);//匹配到相似词库列表
+		
 		String message = "";
 		
 		for(int j = 0 ; j < keys.length ; j++) {
@@ -204,10 +209,23 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			
 			
 			//与相似词库去重
-			List<String> simKeywords = BotSentenceUtil.getSimtxtKeywords(addition.getSimTxt());
+			/*List<String> simKeywords = BotSentenceUtil.getSimtxtKeywords(addition.getSimTxt());
 			if(simKeywords.contains(keys[j])) {
 				String repeat = "【" + keys[j] + "】 与相似词库的关键字重复了";
 				message = message + repeat + "<br/>";
+			}*/
+		}
+		
+		//与相似词库校验
+		Set<String> set = keywords.keySet();
+		Iterator<String> iterator = set.iterator();
+		while(iterator.hasNext()) {
+			String next = iterator.next();
+			if(org.apache.commons.lang.StringUtils.isNotBlank(next.trim())) {
+				if(simLineMap.containsKey(next)) {
+					String repeat = "【" + simLineMap.get(next) + "】与 "+keywords.get(next)+"的关键词【"+next+"】的相似词重复了";
+					message = message + repeat + "<br/>";
+				}
 			}
 		}
 		
@@ -516,7 +534,7 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		List<Long> intentIds = new ArrayList<>();
 		intentIds.add(new Long(intent.getId()));
 		
-		//BotSentenceAddition addition = botSentenceAdditionMapper.selectByPrimaryKey(record.getProcessId());
+		BotSentenceAddition addition = botSentenceAdditionMapper.selectByPrimaryKey(record.getProcessId());
 		
 		//与除主流程之外的所有关键字去重
 		BotSentenceBranchExample branchexample = new BotSentenceBranchExample();
@@ -550,22 +568,8 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		
 		Map<String, String>  keywords = botSentenceProcessService.getAllMainFlowKeywords(record.getProcessId(), intentIds);
 		
-		
-		//获取select.json的关键词
-		/*BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
-		intentExample.createCriteria().andProcessIdEqualTo(record.getProcessId()).andForSelectEqualTo(1);
-		List<BotSentenceIntent> intentList = botSentenceIntentMapper.selectByExampleWithBLOBs(intentExample);
-		Map<String, String> selectKeywords = new HashMap<>();
-		
-		if(null != intentList && intentList.size() > 0) {
-			for(BotSentenceIntent temp : intentList) {
-				String[] select_keyword_array = BotSentenceUtil.getKeywords(temp.getKeywords()).get(0).replace("\"", "").split(",");
-				for(int i = 0 ; i < select_keyword_array.length ; i++) {
-					selectKeywords.put(select_keyword_array[i], temp.getDomainName());
-				}
-			}
-		}*/
-		
+		List<List<String>> simList = BotSentenceUtil.getSimtxtKeywordsList(addition.getSimTxt());
+		Map<String, String> simLineMap = BotSentenceUtil.getSimtxtKeywordsByKeyword(simList, keys);//匹配到相似词库列表
 		String message = "";
 		
 		for(int j = 0 ; j < keys.length ; j++) {
@@ -575,22 +579,19 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 				message = message + repeat + "<br/>";
 				//throw new CommonException("关键字【" + keywords_array[j] + "】重复");
 			}
-			
-			
-			//与相似词库去重
-			/*List<String> simKeywords = BotSentenceUtil.getSimtxtKeywords(addition.getSimTxt());
-			if(simKeywords.contains(keys[j])) {
-				String repeat = "【" + keys[j] + "】 与相似词库的关键字重复了";
-				message = message + repeat + "<br/>";
-				//throw new CommonException("关键字【" + keys[j] + "】与相似词库重复");
-			}*/
-			
-			//与select.json去重
-			/*if(selectKeywords.containsKey(keys[j])) {
-				String repeat = "【" + keys[j] + "】 与 select的【" + selectKeywords.get(keys[j]) + "】的关键字重复了";
-				message = message + repeat + "<br/>";
-			}*/
-			
+		}
+		
+		//与相似词库校验
+		Set<String> set = keywords.keySet();
+		Iterator<String> iterator = set.iterator();
+		while(iterator.hasNext()) {
+			String next = iterator.next();
+			if(org.apache.commons.lang.StringUtils.isNotBlank(next.trim())) {
+				if(simLineMap.containsKey(next)) {
+					String repeat = "【" + simLineMap.get(next) + "】与 "+keywords.get(next)+"的关键词【"+next+"】的相似词重复了";
+					message = message + repeat + "<br/>";
+				}
+			}
 		}
 		
 		if(org.apache.commons.lang.StringUtils.isNotBlank(message)) {

@@ -1,7 +1,10 @@
 package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.StatisticMapper;
+import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
+import com.guiji.callcenter.dao.entityext.IntentCount;
+import com.guiji.callcenter.dao.entityext.ReasonCount;
 import com.guiji.ccmanager.service.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,4 +150,53 @@ public class StatisticServiceImpl implements StatisticService {
         return listResult;
     }
 
+    @Override
+    public List<IntentCount> getIntentCount(String userId, String startDate, String endDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String today = sdf.format(new Date());
+
+        List<IntentCount> listResult = new ArrayList<IntentCount>();
+
+        //非今天
+        if(!startDate.equals(today)){
+            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,userId);
+            listResult.addAll(listAgo);
+        }
+
+        //今天
+        if(endDate.equals(today)){
+            List<IntentCount> listToday = statisticMapper.getIntentCountToday(userId);
+            listResult.addAll(listToday);
+        }
+
+        return listResult;
+    }
+
+    @Override
+    public List<CallCountHour> getConnectDataHour(String userId, Date startDate, Date endDate){
+        List<CallCountHour> list = statisticMapper.getConnectDataHour(startDate,endDate,userId);
+        return list;
+    }
+
+    @Override
+    public List<ReasonCount> getConnectReasonDay(String userId, String startDate, String endDate){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String today = sdf.format(new Date());
+
+        List<ReasonCount> listResult = new ArrayList<ReasonCount>();
+
+        //非今天
+        if(!startDate.equals(today)){
+            List<ReasonCount> listAgo = statisticMapper.getReasonCountAgo(startDate,endDate,userId);
+            listResult.addAll(listAgo);
+        }
+
+        //今天
+        if(endDate.equals(today)){
+            List<ReasonCount> listToday = statisticMapper.getReasonCountToday(userId);
+            listResult.addAll(listToday);
+        }
+
+        return listResult;
+    }
 }

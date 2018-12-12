@@ -38,7 +38,7 @@ CREATE TABLE `bot_sentence_addition` (
   `sim_txt` mediumblob,
   `template_json` varchar(500) DEFAULT NULL,
   `weights_txt` varchar(255) DEFAULT NULL,
-  `options_json` varchar(255) DEFAULT NULL,
+  `options_json` varchar(512) DEFAULT NULL,
   `stopwords_txt` varchar(255) DEFAULT NULL,
   `userdict_txt` blob,
   PRIMARY KEY (`process_id`)

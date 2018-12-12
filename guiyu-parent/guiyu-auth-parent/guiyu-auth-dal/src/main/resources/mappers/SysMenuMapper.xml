@@ -431,7 +431,7 @@
 		LEFT JOIN sys_user b on a.create_id=b.id
 		where a.del_flag=0
 		<if test="menuName !='' ">
-			and a.name=#{menuName}
+			and a.name like concat('%',#{menuName},'%')
 		</if>
 		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}

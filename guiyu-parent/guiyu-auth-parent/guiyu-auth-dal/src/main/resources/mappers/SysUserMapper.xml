@@ -494,7 +494,7 @@
 			and a.username=#{userName}	
 		</if>
 		<if test="roleId !='' ">
-			and c.id=#{roleId}
+			and c.id like concat('%',#{roleId},'%')
 		</if>
 		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}

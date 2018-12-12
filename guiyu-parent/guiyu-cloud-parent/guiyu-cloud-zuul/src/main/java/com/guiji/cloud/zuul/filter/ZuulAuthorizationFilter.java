@@ -5,6 +5,7 @@ import com.guiji.cloud.zuul.config.PermissionResolve;
 import com.guiji.cloud.zuul.white.WhiteIPUtil;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.utils.NetworkUtil;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class ZuulAuthorizationFilter extends AccessControlFilter {
 		boolean flag=true;
 		// IP白名单
 		String whiteIPs = WhiteIPUtil.getIps();
-		String remoteIP = request.getRemoteAddr();
+		String remoteIP = NetworkUtil.getIpAddress((HttpServletRequest)request);
 		if(StringUtils.isNotEmpty(whiteIPs)  && whiteIPs.contains(remoteIP)) {
 			return flag;
 		}

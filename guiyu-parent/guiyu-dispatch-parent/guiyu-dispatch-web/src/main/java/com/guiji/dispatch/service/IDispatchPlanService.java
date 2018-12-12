@@ -65,15 +65,6 @@ public interface IDispatchPlanService {
      */
     boolean cancelSchedule(final String planUuid) ;
 
-    /**
-
-    /**
-     * 返回可以拨打的任务给呼叫中心
-     *
-     * @param schedule 请求参数
-     * @return 响应报文
-     */
-    List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId,DispatchPlan dispatchPlan) ;
 
     /**
      * 查询任务提交处理结果
@@ -238,4 +229,7 @@ public interface IDispatchPlanService {
 	JSONObject getServiceStatistics(Long userId, String startTime, String endTime,Boolean isSuperAdmin);
 	
 	boolean insertDispatchPlanList(List<DispatchPlan> list);
+
+	List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId, DispatchPlan isSuccess,
+			boolean flag);
 }

@@ -40,7 +40,6 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Override
 	@GetMapping(value = "out/successSchedule")
 	public ReturnData<Boolean> successSchedule(String planUuid) {
-		logger.info("完成接口开始执行.....");
 		boolean result = dispatchPlanService.successSchedule(planUuid);
 		ReturnData<Boolean> res = new ReturnData<>();
 		res.body = result;
@@ -60,7 +59,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		logger.info("返回可以拨打的任务给呼叫中心开始查询.......");
 		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService
-				.queryAvailableSchedules(userId, requestCount, lineId, dis);
+				.queryAvailableSchedules(userId, requestCount, lineId, dis,true);
 		List<DispatchPlan> list = new ArrayList<>();
 		try {
 			for (com.guiji.dispatch.dao.entity.DispatchPlan plan : queryAvailableSchedules) {

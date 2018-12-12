@@ -14,7 +14,7 @@ import lombok.Data;
 @ApiModel(value="AiHangupReq对象",description="电话挂断后调用释放机器人")
 public class AiHangupReq {
 	@ApiModelProperty(value="会话ID，该电话整个会话过程中唯一编号",required=true)
-	private String seqid;
+	private String seqId;
 	@ApiModelProperty(value="用户编号",required=true)
 	private String userId;
 	@ApiModelProperty(value="号码",required=true)

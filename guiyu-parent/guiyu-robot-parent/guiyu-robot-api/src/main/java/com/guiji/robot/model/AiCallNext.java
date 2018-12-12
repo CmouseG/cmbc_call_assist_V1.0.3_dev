@@ -15,6 +15,8 @@ import lombok.Data;
 public class AiCallNext {
 	@ApiModelProperty(value="机器人编号，开始拨打电话时分配的机器人",required=true)
 	private String aiNo;
+	@ApiModelProperty(value="相应过程中helloStatus必输(play-播放;wait-无操作)")
+	private String helloStatus;
 	@ApiModelProperty(value="sellbot返回的原始JSON报文",required=true)
 	private String sellbotJson;
 }

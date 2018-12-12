@@ -18,6 +18,7 @@ import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.service.vo.AiFlowSentenceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.UserResourceCache;
@@ -254,6 +255,55 @@ public class AiCacheService {
 				logger.info("模板{}没有缓存，不需要处理",templateId);
 			}
 		}
+	}
+	
+	
+	
+	/**
+	 * 新增消息流数据
+	 * @param userResourceCache
+	 */
+	public void putFlowSentence(AiFlowSentenceCache aiFlowSentenceCache){
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put(String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache);
+		//提交到redis
+		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache);
+	}
+	
+	
+	/**
+	 * 根据会话Id查询消息流数据
+	 * @param userId
+	 * @return
+	 */
+	public Map<Long,AiFlowSentenceCache> queryFlowSentence(String seqId){
+		Map<Object,Object> allMap = redisUtil.hmget(RobotConstants.ROBOT_SENTENCE_RESOURCE+seqId);
+		if(allMap != null && !allMap.isEmpty()) {
+			Map<Long,AiFlowSentenceCache> rtnMap = new HashMap<Long,AiFlowSentenceCache>();
+			for (Map.Entry<Object,Object> aiEntry : allMap.entrySet()) { 
+				rtnMap.put(Long.valueOf((String)aiEntry.getKey()), (AiFlowSentenceCache)aiEntry.getValue());
+			}
+			return rtnMap;
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 删除某个会话ID下的消息流
+	 * @param seqId 会话id
+	 */
+	public void delAllSentenceBySeqId(String seqId) {
+		redisUtil.del(RobotConstants.ROBOT_SENTENCE_RESOURCE+seqId);
+	}
+	
+	
+	/**
+	 * 删除某个某个会话下某个时间点的消息流
+	 * @param userId
+	 */
+	public void delSentence(String seqId,Long timestamp) {
+		redisUtil.hdel(RobotConstants.ROBOT_SENTENCE_RESOURCE+seqId,String.valueOf(timestamp));
 	}
 	
 	

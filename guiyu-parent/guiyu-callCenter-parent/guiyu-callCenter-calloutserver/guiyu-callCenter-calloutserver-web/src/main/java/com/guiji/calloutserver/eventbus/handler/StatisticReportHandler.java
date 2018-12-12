@@ -63,6 +63,10 @@ public class StatisticReportHandler {
             reportCallToday.setIntent(intent);
             if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
                 reportCallToday.setReason(reason);
+            }else if(intent != null && intent.equals("W") && StringUtils.isNotBlank(reason)){
+                reportCallToday.setReason(reason);
+            }else{
+                reportCallToday.setReason("已接通");
             }
             reportCallToday.setDurationAll(duration);
             reportCallToday.setDurationType(durationType);

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.cloud.zuul.config.AuthUtil;
 import com.guiji.cloud.zuul.service.ZuulService;
 import com.guiji.cloud.zuul.token.ApiKeyToken;
@@ -25,7 +26,7 @@ public class LoginController {
 	private ZuulService zuulService;
 	
 	@RequestMapping("login")
-	public Serializable login(String username,String password){
+	public boolean login(String username,String password){
 		boolean isSuperAdmin = false;
 		UsernamePasswordToken token=new UsernamePasswordToken(username,password);
 		Subject subject = SecurityUtils.getSubject();
@@ -43,7 +44,7 @@ public class LoginController {
 		}
 		session.setAttribute("userId", userId);
 		session.setAttribute("isSuperAdmin", isSuperAdmin);
-		return session.getId();
+		return isSuperAdmin;
 	}
 	
 	

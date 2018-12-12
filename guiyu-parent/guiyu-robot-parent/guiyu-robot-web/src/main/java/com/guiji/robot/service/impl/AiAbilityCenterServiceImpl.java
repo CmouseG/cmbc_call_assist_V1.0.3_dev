@@ -5,14 +5,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.robot.constants.RobotConstants;
@@ -25,6 +29,7 @@ import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -37,6 +42,7 @@ import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.ISellbotService;
 import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.vo.AiBaseInfo;
+import com.guiji.robot.service.vo.AiFlowSentenceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.AiResourceApply;
 import com.guiji.robot.service.vo.HsReplace;
@@ -45,6 +51,7 @@ import com.guiji.robot.service.vo.SellbotRestoreReq;
 import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
+import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.StrUtils;
 
@@ -232,7 +239,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	public AiCallNext aiCallApply(AiCallApplyReq aiCallApplyReq){
 		/**1、请求参数校验 **/
 		if(aiCallApplyReq == null
-				|| StrUtils.isEmpty(aiCallApplyReq.getSeqid())
+				|| StrUtils.isEmpty(aiCallApplyReq.getSeqId())
 				|| StrUtils.isEmpty(aiCallApplyReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiCallApplyReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallApplyReq.getUserId())) {
@@ -320,7 +327,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				/**4、机器人设置为忙**/
 				nowAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
 				nowAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
-				nowAi.setSeqId(aiCallApplyReq.getSeqid());
+				nowAi.setSeqId(aiCallApplyReq.getSeqId());
 				nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
 				iAiResourceManagerService.aiBusy(nowAi);
 				/**5、返回**/
@@ -357,7 +364,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	public AiCallNext aiCallStart(AiCallStartReq aiCallStartReq) {
 		/**1、请求参数校验 **/
 		if(aiCallStartReq == null
-				|| StrUtils.isEmpty(aiCallStartReq.getSeqid())
+				|| StrUtils.isEmpty(aiCallStartReq.getSeqId())
 				|| StrUtils.isEmpty(aiCallStartReq.getAiNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getTemplateId())
@@ -382,7 +389,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			SellbotRestoreReq sellbotRestoreReq = new SellbotRestoreReq();
 			sellbotRestoreReq.setCfg(aiCallStartReq.getTemplateId()); //话术模板
 			sellbotRestoreReq.setPhonenum(aiCallStartReq.getPhoneNo());	//手机号
-			sellbotRestoreReq.setSeqid(aiCallStartReq.getSeqid());	//会话ID
+			sellbotRestoreReq.setSeqid(aiCallStartReq.getSeqId());	//会话ID
 			String sellbotRsp = iSellbotService.restore(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotRestoreReq);
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());
@@ -391,7 +398,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			RobotCallHis robotCallHis = new RobotCallHis();
 			robotCallHis.setUserId(userId);
 			robotCallHis.setAiNo(aiCallStartReq.getAiNo());
-			robotCallHis.setSeqId(aiCallStartReq.getSeqid());
+			robotCallHis.setSeqId(aiCallStartReq.getSeqId());
 			robotCallHis.setTemplateId(aiCallStartReq.getTemplateId());
 			robotCallHis.setAssignTime(new Date());
 			robotNewTransService.recordRobotCallHis(robotCallHis);
@@ -433,6 +440,46 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	
 	
 	/**
+	 * 软电话通讯过程中消息推送
+	 * 异步处理
+	 * @param aiFlowMsgPushReq
+	 */
+	@Async
+	public void flowMsgPush(AiFlowMsgPushReq aiFlowMsgPushReq){
+		if(aiFlowMsgPushReq == null
+				|| StrUtils.isEmpty(aiFlowMsgPushReq.getUserId())
+				|| StrUtils.isEmpty(aiFlowMsgPushReq.getAiNo())
+				|| StrUtils.isEmpty(aiFlowMsgPushReq.getSeqId())
+				|| StrUtils.isEmpty(aiFlowMsgPushReq.getSentence())
+				|| aiFlowMsgPushReq.getTimestamp()<=0) {
+			//必输校验不通过
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		//客户一句话
+		String sentence = aiFlowMsgPushReq.getSentence();
+		//长度为2的情况去除标点符号
+		if(sentence.length()==2) {
+			sentence = this.cnText(sentence);
+			aiFlowMsgPushReq.setSentence(sentence);
+		}
+		if(StrUtils.isEmpty(aiFlowMsgPushReq.getSentence())) {
+			return;
+		}
+		//判断是否需要噪音检测
+		boolean isNeedVoiceCheckFlag = this.isNeedVoiceCheck(aiFlowMsgPushReq);
+		if(isNeedVoiceCheckFlag) {
+			//需要噪音检测
+			//TODO
+//			if("噪音") return;
+		}
+		//放入redis
+		AiFlowSentenceCache aiFlowSentenceCache = new AiFlowSentenceCache();
+		BeanUtil.copyProperties(aiFlowMsgPushReq, aiFlowSentenceCache);
+		aiCacheService.putFlowSentence(aiFlowSentenceCache);
+	}
+	
+	
+	/**
 	 * 用户语音AI响应
 	 * @param aiCallNextReq
 	 * @return
@@ -442,20 +489,47 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		if(aiCallNextReq == null
 				|| StrUtils.isEmpty(aiCallNextReq.getUserId())
 				|| StrUtils.isEmpty(aiCallNextReq.getAiNo())
-				|| StrUtils.isEmpty(aiCallNextReq.getSentence())) {
+				|| StrUtils.isEmpty(aiCallNextReq.getStatus())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
+		AiCallNext aiNext = new AiCallNext();
+		aiNext.setAiNo(aiCallNextReq.getAiNo());
+		SellbotSayhelloReq sellbotSayhelloReq = new SellbotSayhelloReq();
 		AiInuseCache nowAi = iAiResourceManagerService.queryUserAi(aiCallNextReq.getUserId(), aiCallNextReq.getAiNo());
 		if(nowAi == null) {
 			//机器人不存在
 			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
-		SellbotSayhelloReq sellbotSayhelloReq = new SellbotSayhelloReq();
-		sellbotSayhelloReq.setSentence(aiCallNextReq.getSentence());
+		//从缓存中获取一条长度最长的sentence同ai交互
+		AiFlowSentenceCache sentenceCache = this.getMsgFlowSentence(aiCallNextReq);
+		if(sentenceCache != null) {
+			//先过滤掉wait的数据操作
+			String waitFlag = this.flowMsgWaitDeal(sentenceCache, aiCallNextReq);
+			//不管处理结果如何,从缓存中清掉这个已经用掉的数据
+			aiCacheService.delSentence(sentenceCache.getSeqId(), sentenceCache.getTimestamp());
+			if(RobotConstants.HELLO_STATUS_WAIT.equals(waitFlag)) {
+				//如果结果是wait操作
+				aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
+				return aiNext;
+			}
+		}else {
+			logger.info("会话ID:{}没有获取到有效的流消息",aiCallNextReq.getSeqId());
+			//流消息未发送,客户8S没说话,机器人要回一句
+			//默认打断次数配置，后续根据 话术模板 取个性化配置
+			int break_time = 8;
+			if(aiCallNextReq.getWaitCnt() < break_time){
+				logger.info("会话ID:{},,等待时间{},小于限制时间:{}...return wait",aiCallNextReq.getSeqId(),aiCallNextReq.getWaitCnt(),break_time);
+				aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
+				return aiNext;
+			}else {
+				logger.info("会话ID：{},等待时间{},超过限制时间:{}",aiCallNextReq.getSeqId(),aiCallNextReq.getWaitCnt(),break_time);
+				//静音超时事件
+				sellbotSayhelloReq.setSilence_exceed(true);
+			}
+		}
+		sellbotSayhelloReq.setSentence(sentenceCache==null?null:sentenceCache.getSentence());
 		String sellbotRsp = iSellbotService.sayhello(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotSayhelloReq);
-		AiCallNext aiNext = new AiCallNext();
-		aiNext.setAiNo(aiCallNextReq.getAiNo());
 		aiNext.setSellbotJson(sellbotRsp);
 		return aiNext;
 	}
@@ -465,12 +539,14 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * 电话挂断通知AI释放资源
 	 * 1、检查用户资源变更锁，如果减少，那么将该机器人资源释放掉
 	 * 2、正常情况下，将机器人状态变更为空闲，可以接收其他电话请求
+	 * 3、清空消息流缓存
 	 * @param aiHangupReq
 	 */
 	@Override
 	public void aiHangup(AiHangupReq aiHangupReq) {
 		/**1、请求参数校验 **/
 		if(aiHangupReq == null
+				|| StrUtils.isEmpty(aiHangupReq.getSeqId())
 				|| StrUtils.isEmpty(aiHangupReq.getAiNo())
 				|| StrUtils.isEmpty(aiHangupReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiHangupReq.getUserId())) {
@@ -496,11 +572,12 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				//将用户机器人清空
 				aiCacheService.delUserAis(aiHangupReq.getUserId());
 			}
-			
 		}else {
 			//正常情况下，只需要把机器人设置为空闲即可。
 			iAiResourceManagerService.aiFree(nowAi);
 		}
+		/**3、清空消息流缓存**/
+		aiCacheService.delAllSentenceBySeqId(aiHangupReq.getSeqId());
 	}
 	
 	
@@ -532,4 +609,163 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		logger.info("用户资源变更，释放用户{}空闲机器人",userId);
 	}
 	
+	
+	/**
+	 * 去除标点符号，保留中文
+	 * @param str
+	 * @return
+	 */
+	private String cnText(String str) {
+		if(StrUtils.isNotEmpty(str)) {
+			Pattern pattern = Pattern.compile("[^\u4E00-\u9FA5]");
+	        //[\u4E00-\u9FA5]是unicode2的中文区间
+	        Matcher matcher = pattern.matcher(str);
+	        str = matcher.replaceAll("");
+		}
+		return str;
+	}
+	
+	/**
+	 * 是否需要走噪音检测
+	 * @param sentence
+	 * @return
+	 */
+	private boolean isNeedVoiceCheck(AiFlowMsgPushReq aiFlowMsgPushReq) {
+		//长度>4不需要走噪音检测
+		if(aiFlowMsgPushReq.getSentence().length()>4) {
+			return false;
+		}
+		//白名单不走噪音检测
+		if(this.constants(RobotConstants.white_list, aiFlowMsgPushReq.getSentence())) {
+			return false;
+		}
+		//关键字匹配了，不需要走噪音检测
+		AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
+		BeanUtil.copyProperties(aiFlowMsgPushReq, aiCallLngKeyMatchReq);
+		boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
+		if(isMatched) {
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * 是否匹配了关键字
+	 * @param aiCallLngKeyMatchReq
+	 * @return
+	 */
+	private boolean isMatched(AiCallLngKeyMatchReq aiCallLngKeyMatchReq) {
+		if(aiCallLngKeyMatchReq != null) {
+			AiCallNext aiCallNext = this.aiLngKeyMatch(aiCallLngKeyMatchReq);
+			if(aiCallNext != null && StrUtils.isNotEmpty(aiCallNext.getSellbotJson())) {
+				JSONObject jsonObject = JSON.parseObject(aiCallNext.getSellbotJson());
+				String matched = jsonObject.getString("matched");
+				if("1".equals(matched)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 从消息缓存流中获取一条消息同AI交互
+	 * @return
+	 */
+	private AiFlowSentenceCache getMsgFlowSentence(AiCallNextReq aiCallNextReq) {
+		//播音状态时(status=1)，time_stamp表示播音开始的时间，空间状态时(status=0),表示播音结束的时间
+		long beginVoiceTime = aiCallNextReq.getTimestamp();
+		if(RobotConstants.CALL_STATUS_OVER.equals(aiCallNextReq.getStatus())) {
+			//如果现在状态是语音播放结束,那么时间-800ms
+			beginVoiceTime = beginVoiceTime - 800;
+		}
+		String seqId = aiCallNextReq.getSeqId();
+		//从缓存中读取
+		Map<Long,AiFlowSentenceCache> sentenceMap = aiCacheService.queryFlowSentence(seqId);
+		if(sentenceMap!=null && !sentenceMap.isEmpty()) {
+			//sentence最长的消息
+			AiFlowSentenceCache maxLengthSentence = null;
+			int maxLength = 0;
+			for (Map.Entry<Long,AiFlowSentenceCache> sentenceEntry : sentenceMap.entrySet()) {
+				//缓存数据时间>播音开始时间
+				if(sentenceEntry.getKey().longValue()>beginVoiceTime) {
+					if(maxLengthSentence == null && sentenceEntry.getValue().getSentence().length()>maxLength) {
+						maxLengthSentence = sentenceEntry.getValue();
+						maxLength = sentenceEntry.getValue().getSentence().length();
+					}
+				}
+			}
+			return maxLengthSentence;
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 消息流开始处理-wait处理
+	 * 1、status=999(开场白)
+	 * 	  是否命中关键字,未命中,wait
+	 * 2、status=1(播音中)	
+	 *   2.1、命中黑名单-wait
+	 *   2.2、流消息语音识别的内容长度小于3且没有匹配关键字-wait
+	 * @param sentenceCache
+	 * @param aiCallNextReq
+	 */
+	private String flowMsgWaitDeal(AiFlowSentenceCache sentenceCache,AiCallNextReq aiCallNextReq) {
+		//播音状态
+		String status = aiCallNextReq.getStatus();
+		if(RobotConstants.CALL_STATUS_BEGIN.equals(status)) {
+			//开场白
+			AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
+			BeanUtil.copyProperties(aiCallNextReq, aiCallLngKeyMatchReq);
+			//设置sentence
+			aiCallLngKeyMatchReq.setSentence(sentenceCache.getSentence());
+			boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
+			if(!isMatched) {
+				logger.info("会话ID:{},sentence:{}匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+				//未匹配关键字
+				return RobotConstants.HELLO_STATUS_WAIT;
+			}
+		}else if(RobotConstants.CALL_STATUS_ING.equals(status)) {
+			//播音中
+			//匹配黑名单
+			if(this.constants(RobotConstants.black_list,sentenceCache.getSentence())) {
+				logger.info("会话ID:{},sentence:{}匹配黑名单...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+				return RobotConstants.HELLO_STATUS_WAIT;
+			}
+			if(sentenceCache.getSentence().length()<3) {
+				//长度<3且没有命中关键字-wait
+				AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
+				BeanUtil.copyProperties(aiCallNextReq, aiCallLngKeyMatchReq);
+				aiCallLngKeyMatchReq.setSentence(sentenceCache.getSentence());
+				boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
+				if(!isMatched) {
+					//未匹配关键字
+					logger.info("会话ID:{},sentence:{}长度<3且匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+					return RobotConstants.HELLO_STATUS_WAIT;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 检查txt文本中是否包含了数组中的字符串
+	 * @param array
+	 * @param txt
+	 * @return
+	 */
+	private boolean constants(List<String> array,String txt) {
+		if(ListUtil.isNotEmpty(array) && StrUtils.isNotEmpty(txt)) {
+			for(String str:array) {
+				if(txt.indexOf(str)>=0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

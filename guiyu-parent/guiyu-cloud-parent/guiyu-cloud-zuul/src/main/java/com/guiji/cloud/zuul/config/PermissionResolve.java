@@ -11,7 +11,12 @@ public class PermissionResolve {
 	private ZuulService zuulService;
 	
 	public String parse(String key){
-		return zuulService.getPermissionsByUrl(key);
+		int index=key.indexOf("/", 1);
+		if(index==-1){
+			key=key.substring(index,key.length());
+			return zuulService.getPermissionsByUrl(key);
+		}
+		return "";
 	}
 
 }

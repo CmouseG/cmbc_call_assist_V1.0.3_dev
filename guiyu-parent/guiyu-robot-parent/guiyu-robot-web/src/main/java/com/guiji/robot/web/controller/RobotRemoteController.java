@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -106,6 +108,13 @@ public class RobotRemoteController implements IRobotRemote{
 	public Result.ReturnData<AiCallNext> aiCallApply(@RequestBody AiCallApplyReq aiCallApplyReq){
 		AiCallNext aiCallNext = iAiAbilityCenterService.aiCallApply(aiCallApplyReq);
 		return Result.ok(aiCallNext);
+	}
+	
+	
+	@PostMapping(value = "/remote/flowMsgPush")
+	public Result.ReturnData flowMsgPush(@RequestBody AiFlowMsgPushReq aiFlowMsgPushReq){
+		iAiAbilityCenterService.flowMsgPush(aiFlowMsgPushReq);
+		return Result.ok();
 	}
 	
 	

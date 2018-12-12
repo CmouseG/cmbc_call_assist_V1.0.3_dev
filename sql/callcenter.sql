@@ -1,10 +1,9 @@
 
-
-CREATE DATABASE  IF NOT EXISTS `guiyu_callcenter` DEFAULT CHARACTER SET utf8 ;
+CREATE DATABASE  IF NOT EXISTS  `guiyu_callcenter`  DEFAULT CHARACTER SET utf8 ;
 
 USE `guiyu_callcenter`;
 
-/*Table structure for table `call_in_detail` */
+
 
 DROP TABLE IF EXISTS `call_in_detail`;
 
@@ -130,6 +129,7 @@ CREATE TABLE `call_in_plan` (
   `has_tts` tinyint(1) DEFAULT NULL,
   `ai_id` varchar(50) DEFAULT NULL,
   `isdel` int(2) DEFAULT '0',
+  `isread` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -168,6 +168,7 @@ CREATE TABLE `call_in_plan_0` (
   `has_tts` tinyint(1) DEFAULT NULL,
   `ai_id` varchar(50) DEFAULT NULL,
   `isdel` int(2) DEFAULT '0',
+  `isread` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -206,9 +207,11 @@ CREATE TABLE `call_in_plan_1` (
   `has_tts` tinyint(1) DEFAULT NULL,
   `ai_id` varchar(50) DEFAULT NULL,
   `isdel` int(2) DEFAULT '0',
+  `isread` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Data for the table `call_in_plan_1` */
 
 /*Table structure for table `call_in_record` */
 
@@ -271,9 +274,7 @@ CREATE TABLE `call_out_detail_0` (
   PRIMARY KEY (`call_detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-/*Table structure for table `call_out_detail_1` */
-
+/
 DROP TABLE IF EXISTS `call_out_detail_1`;
 
 CREATE TABLE `call_out_detail_1` (
@@ -296,7 +297,6 @@ CREATE TABLE `call_out_detail_1` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `call_out_detail_record` */
 
 DROP TABLE IF EXISTS `call_out_detail_record`;
 
@@ -313,7 +313,6 @@ CREATE TABLE `call_out_detail_record` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `call_out_plan` */
 
 DROP TABLE IF EXISTS `call_out_plan`;
 
@@ -346,7 +345,8 @@ CREATE TABLE `call_out_plan` (
   `has_tts` tinyint(1) DEFAULT NULL,
   `ai_id` varchar(50) DEFAULT NULL,
   `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
-  `isdel` int(2) DEFAULT '0',
+  `isdel` int(2) NOT NULL DEFAULT '0',
+  `isread` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -385,12 +385,12 @@ CREATE TABLE `call_out_plan_0` (
   `has_tts` tinyint(1) DEFAULT NULL,
   `ai_id` varchar(50) DEFAULT NULL,
   `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
-  `isdel` int(2) DEFAULT '0',
+  `isdel` int(2) NOT NULL DEFAULT '0',
+  `isread` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `call_out_plan_1` */
 
 DROP TABLE IF EXISTS `call_out_plan_1`;
 
@@ -423,12 +423,11 @@ CREATE TABLE `call_out_plan_1` (
   `has_tts` tinyint(1) DEFAULT NULL,
   `ai_id` varchar(50) DEFAULT NULL,
   `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
-  `isdel` int(2) DEFAULT '0',
+  `isdel` int(2) NOT NULL DEFAULT '0',
+  `isread` int(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-/*Table structure for table `call_out_record` */
 
 DROP TABLE IF EXISTS `call_out_record`;
 
@@ -440,7 +439,6 @@ CREATE TABLE `call_out_record` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `error_match` */
 
 DROP TABLE IF EXISTS `error_match`;
 
@@ -508,7 +506,6 @@ CREATE TABLE `fs_bind` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `line_config` */
 
 DROP TABLE IF EXISTS `line_config`;
 
@@ -520,7 +517,6 @@ CREATE TABLE `line_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*Table structure for table `line_count` */
 
 DROP TABLE IF EXISTS `line_count`;
 
@@ -531,8 +527,6 @@ CREATE TABLE `line_count` (
   `used_concurrent_calls` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-/*Table structure for table `line_info` */
 
 DROP TABLE IF EXISTS `line_info`;
 
@@ -552,4 +546,73 @@ CREATE TABLE `line_info` (
   `createt_by` varchar(255) DEFAULT NULL,
   `update_by` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`line_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=249 DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `report_call_count`;
+
+CREATE TABLE `report_call_count` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `call_date` varchar(20) NOT NULL,
+  `count_a` int(11) DEFAULT '0',
+  `count_b` int(11) DEFAULT '0',
+  `count_c` int(11) DEFAULT '0',
+  `count_d` int(11) DEFAULT '0',
+  `count_e` int(11) DEFAULT '0',
+  `count_f` int(11) DEFAULT '0',
+  `count_u` int(11) DEFAULT '0',
+  `count_v` int(11) DEFAULT '0',
+  `count_w` int(11) DEFAULT '0',
+  `count_all` int(11) DEFAULT '0',
+  `accurate_intent` varchar(10) DEFAULT NULL,
+  `customer_id` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
+
+/*Data for the table `report_call_count` */
+
+/*Table structure for table `report_call_day` */
+
+DROP TABLE IF EXISTS `report_call_day`;
+
+CREATE TABLE `report_call_day` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `call_date` varchar(50) DEFAULT NULL,
+  `duration_type` int(2) DEFAULT NULL,
+  `intent` varchar(10) DEFAULT NULL,
+  `reason` varchar(50) DEFAULT NULL,
+  `call_count` int(11) DEFAULT NULL,
+  `duration_all` bigint(20) DEFAULT NULL,
+  `customer_id` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS `report_call_hour`;
+
+CREATE TABLE `report_call_hour` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `call_time` datetime DEFAULT NULL,
+  `out_count` int(11) DEFAULT NULL,
+  `connect_count` int(11) DEFAULT NULL,
+  `duration` bigint(20) DEFAULT NULL,
+  `customer_id` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+
+
+DROP TABLE IF EXISTS `report_call_today`;
+
+CREATE TABLE `report_call_today` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `duration_type` int(2) DEFAULT NULL,
+  `intent` varchar(10) DEFAULT NULL,
+  `reason` varchar(50) DEFAULT NULL,
+  `call_count` int(11) DEFAULT NULL,
+  `duration_all` bigint(20) DEFAULT NULL,
+  `customer_id` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+

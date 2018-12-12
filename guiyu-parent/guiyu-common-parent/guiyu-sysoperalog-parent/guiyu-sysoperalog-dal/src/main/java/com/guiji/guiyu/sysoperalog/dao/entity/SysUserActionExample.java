@@ -185,73 +185,143 @@ public class SysUserActionExample {
             return (Criteria) this;
         }
 
-        public Criteria andActionNameIsNull() {
-            addCriterion("action_name is null");
+        public Criteria andOperatypeIsNull() {
+            addCriterion("OperaType is null");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameIsNotNull() {
-            addCriterion("action_name is not null");
+        public Criteria andOperatypeIsNotNull() {
+            addCriterion("OperaType is not null");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameEqualTo(String value) {
-            addCriterion("action_name =", value, "actionName");
+        public Criteria andOperatypeEqualTo(String value) {
+            addCriterion("OperaType =", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameNotEqualTo(String value) {
-            addCriterion("action_name <>", value, "actionName");
+        public Criteria andOperatypeNotEqualTo(String value) {
+            addCriterion("OperaType <>", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameGreaterThan(String value) {
-            addCriterion("action_name >", value, "actionName");
+        public Criteria andOperatypeGreaterThan(String value) {
+            addCriterion("OperaType >", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameGreaterThanOrEqualTo(String value) {
-            addCriterion("action_name >=", value, "actionName");
+        public Criteria andOperatypeGreaterThanOrEqualTo(String value) {
+            addCriterion("OperaType >=", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameLessThan(String value) {
-            addCriterion("action_name <", value, "actionName");
+        public Criteria andOperatypeLessThan(String value) {
+            addCriterion("OperaType <", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameLessThanOrEqualTo(String value) {
-            addCriterion("action_name <=", value, "actionName");
+        public Criteria andOperatypeLessThanOrEqualTo(String value) {
+            addCriterion("OperaType <=", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameLike(String value) {
-            addCriterion("action_name like", value, "actionName");
+        public Criteria andOperatypeLike(String value) {
+            addCriterion("OperaType like", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameNotLike(String value) {
-            addCriterion("action_name not like", value, "actionName");
+        public Criteria andOperatypeNotLike(String value) {
+            addCriterion("OperaType not like", value, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameIn(List<String> values) {
-            addCriterion("action_name in", values, "actionName");
+        public Criteria andOperatypeIn(List<String> values) {
+            addCriterion("OperaType in", values, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameNotIn(List<String> values) {
-            addCriterion("action_name not in", values, "actionName");
+        public Criteria andOperatypeNotIn(List<String> values) {
+            addCriterion("OperaType not in", values, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameBetween(String value1, String value2) {
-            addCriterion("action_name between", value1, value2, "actionName");
+        public Criteria andOperatypeBetween(String value1, String value2) {
+            addCriterion("OperaType between", value1, value2, "operatype");
             return (Criteria) this;
         }
 
-        public Criteria andActionNameNotBetween(String value1, String value2) {
-            addCriterion("action_name not between", value1, value2, "actionName");
+        public Criteria andOperatypeNotBetween(String value1, String value2) {
+            addCriterion("OperaType not between", value1, value2, "operatype");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetIsNull() {
+            addCriterion("OperaTarget is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetIsNotNull() {
+            addCriterion("OperaTarget is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetEqualTo(String value) {
+            addCriterion("OperaTarget =", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetNotEqualTo(String value) {
+            addCriterion("OperaTarget <>", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetGreaterThan(String value) {
+            addCriterion("OperaTarget >", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetGreaterThanOrEqualTo(String value) {
+            addCriterion("OperaTarget >=", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetLessThan(String value) {
+            addCriterion("OperaTarget <", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetLessThanOrEqualTo(String value) {
+            addCriterion("OperaTarget <=", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetLike(String value) {
+            addCriterion("OperaTarget like", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetNotLike(String value) {
+            addCriterion("OperaTarget not like", value, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetIn(List<String> values) {
+            addCriterion("OperaTarget in", values, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetNotIn(List<String> values) {
+            addCriterion("OperaTarget not in", values, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetBetween(String value1, String value2) {
+            addCriterion("OperaTarget between", value1, value2, "operatarget");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatargetNotBetween(String value1, String value2) {
+            addCriterion("OperaTarget not between", value1, value2, "operatarget");
             return (Criteria) this;
         }
 
@@ -372,76 +442,6 @@ public class SysUserActionExample {
 
         public Criteria andOperateTimeNotBetween(Date value1, Date value2) {
             addCriterion("operate_time not between", value1, value2, "operateTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlIsNull() {
-            addCriterion("url is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlIsNotNull() {
-            addCriterion("url is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlEqualTo(String value) {
-            addCriterion("url =", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlNotEqualTo(String value) {
-            addCriterion("url <>", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlGreaterThan(String value) {
-            addCriterion("url >", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlGreaterThanOrEqualTo(String value) {
-            addCriterion("url >=", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlLessThan(String value) {
-            addCriterion("url <", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlLessThanOrEqualTo(String value) {
-            addCriterion("url <=", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlLike(String value) {
-            addCriterion("url like", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlNotLike(String value) {
-            addCriterion("url not like", value, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlIn(List<String> values) {
-            addCriterion("url in", values, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlNotIn(List<String> values) {
-            addCriterion("url not in", values, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlBetween(String value1, String value2) {
-            addCriterion("url between", value1, value2, "url");
-            return (Criteria) this;
-        }
-
-        public Criteria andUrlNotBetween(String value1, String value2) {
-            addCriterion("url not between", value1, value2, "url");
             return (Criteria) this;
         }
     }

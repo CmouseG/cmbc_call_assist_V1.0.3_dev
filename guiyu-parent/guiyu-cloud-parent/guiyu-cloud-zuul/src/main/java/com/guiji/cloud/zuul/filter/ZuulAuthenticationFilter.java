@@ -4,12 +4,14 @@ import com.google.gson.Gson;
 import com.guiji.cloud.zuul.white.WhiteIPUtil;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.utils.NetworkUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 登陆校验
@@ -28,7 +30,7 @@ public class ZuulAuthenticationFilter extends AccessControlFilter{
 			throws Exception {
 		// IP白名单
 		String whiteIPs = WhiteIPUtil.getIps();
-		String remoteIP = request.getRemoteAddr();
+		String remoteIP = NetworkUtil.getIpAddress((HttpServletRequest)request);
 		if(StringUtils.isNotEmpty(whiteIPs) && whiteIPs.contains(remoteIP)) {
 			return true;
 		}

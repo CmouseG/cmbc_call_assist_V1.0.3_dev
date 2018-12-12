@@ -13,6 +13,7 @@ import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -81,11 +82,21 @@ public interface IRobotRemote {
 	
 	
 	@ApiOperation(value = "拨打AI电话")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "aiCallStartReq", value = "发起电话拨打请求", required = true)
-    })
-    @PostMapping(value = "/remote/aiCallStart")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "aiCallStartReq", value = "发起电话拨打请求", required = true)
+	})
+	@PostMapping(value = "/remote/aiCallStart")
 	Result.ReturnData<AiCallNext> aiCallStart(@RequestBody AiCallStartReq aiCallStartReq);
+	
+	
+	
+	@ApiOperation(value = "AI消息流推送")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "aiFlowMsgPushReq", value = "通话过程中的消息推送", required = true)
+    })
+    @PostMapping(value = "/remote/flowMsgPush")
+	Result.ReturnData flowMsgPush(@RequestBody AiFlowMsgPushReq aiFlowMsgPushReq);
+	
 	
 	
 	@ApiOperation(value = "sellbot关键字匹配，预校验下是否命中了关键字，命中后调用方再调aiCallNext，减轻主流程压力")

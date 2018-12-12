@@ -69,12 +69,12 @@ public class DistributedLockHandler
 				if (!template.hasKey(lock.getName()))
 				{
 					template.opsForValue().set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
-					logger.info(Thread.currentThread().getName() + " : get lock");
+					logger.info(Thread.currentThread().getName() + " : get lock[" + lock.getName() + "]");
 					return true;
 				} 
 				else
 				{
-					logger.info(Thread.currentThread().getName() + lock.getName() +" : ----> lock is exist!!!");
+					logger.info(Thread.currentThread().getName() + " : ----> lock[" + lock.getName() + "] is exist!!!");
 				}
 				if (System.currentTimeMillis() - startTime > timeout)
 				{
@@ -96,7 +96,7 @@ public class DistributedLockHandler
 	{
 		if (!StringUtils.isEmpty(lock.getName()))
 		{
-			logger.info(Thread.currentThread().getName() + lock.getName() + " : delete lock");
+			logger.info(Thread.currentThread().getName() + " : delete lock[" + lock.getName() + "]");
 			template.delete(lock.getName());
 		}
 	}

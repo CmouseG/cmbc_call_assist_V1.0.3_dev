@@ -34,6 +34,7 @@ public class MenuController {
 		menu.setUpdateId(userId);
 		menu.setCreateTime(new Date());
 		menu.setUpdateTime(new Date());
+		menu.setPermission(menu.getUrl().replace("/", ":"));
 		service.insert(menu);
 		
 	}

@@ -1,5 +1,8 @@
 package com.guiji.robot.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 /** 
 * @ClassName: RobotConstants 
 * @Description: AI机器人能力中心常量类
@@ -51,6 +54,19 @@ public class RobotConstants {
 	public static final String LOCK_NAME_ASSIGN = "LOCK_ROBOT_USER_AI_ASSIGN_";	//资源锁-用户机器人分配
 	
 	/**
+	 * 播音状态
+	 */
+	public static final String CALL_STATUS_OVER = "0"; //播音结束
+	public static final String CALL_STATUS_ING = "1"; //播音中
+	public static final String CALL_STATUS_BEGIN = "999"; //开场白
+	
+	/**
+	 * 返回告诉软电话的处理动作
+	 */
+	public static final String HELLO_STATUS_PLAY = "play"; //播放
+	public static final String HELLO_STATUS_WAIT = "wait"; //继续不做动作
+	
+	/**
 	 * 分配的机器人缓存
 	 */
 	public static final String ROBOT_ASSIGN_AI = "ROBOT_USER_AI_";
@@ -64,4 +80,18 @@ public class RobotConstants {
 	 * 话术模板资源
 	 */
 	public static final String ROBOT_TEMPLATE_RESOURCE = "ROBOT_TEMPLATE_RESOURCE";
+	
+	/**
+	 * 用户AI通话信息流资源
+	 */
+	public static final String ROBOT_SENTENCE_RESOURCE = "ROBOT_SENTENCE_";
+	
+	
+	//单字白名单，这些单字不忽略
+	public static final List<String> filter_text = Arrays.asList("滚", "交", "叫", "教", "较", "角", "带", "贷", "代", "好", "哦", "没", "行", "是", "想", "嗯", "不", "讲", "有");
+	//黑名单
+	public static final List<String> black_list = Arrays.asList("喂", "你好", "您好");
+	//白名单
+	public static final List<String> white_list = Arrays.asList("恩", "嗯", "好", "好的", "是", "是的", "知道", "明白");
+
 }

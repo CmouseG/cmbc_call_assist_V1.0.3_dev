@@ -7,8 +7,6 @@ package com.guiji.ccmanager.service;
  */
 public interface ReportSchedulerService {
 
-   void reportCallCountScheduler();
-
     void reportCallDayScheduler();
 
     void reportCallHourScheduler();

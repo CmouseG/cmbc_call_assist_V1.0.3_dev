@@ -2,7 +2,6 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.ReportCallDayMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
-import com.guiji.callcenter.dao.entity.ReportCallCount;
 import com.guiji.callcenter.dao.entity.ReportCallDay;
 import com.guiji.callcenter.dao.entity.ReportCallHour;
 import com.guiji.ccmanager.service.ReportSchedulerService;
@@ -26,12 +25,6 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Autowired
     ReportCallDayMapper reportCallDayMapper;
 
-    @Override
-    public void reportCallCountScheduler() {
-        statisticMapper.deleteYesterday();
-        List<ReportCallCount> list = statisticMapper.selectFromCallOutPlan();
-        statisticMapper.insertIntoReportCallCount(list);
-    }
 
     @Override
     public void reportCallDayScheduler() {

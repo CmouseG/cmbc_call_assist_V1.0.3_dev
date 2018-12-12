@@ -23,7 +23,7 @@ public class SysOperaLogServiceImpl implements ISysOperaLogService
 	@Transactional
 	public int insertSysUserAction(SysUserAction sysUserAction)
 	{
-		return sysUserActionMapper.insert(sysUserAction);	
+		return sysUserActionMapper.insertSelective(sysUserAction);	
 	}
 
 	@Override

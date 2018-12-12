@@ -8,6 +8,7 @@ import com.guiji.robot.model.AiCallLngKeyMatchReq;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
 import com.guiji.robot.model.AiHangupReq;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -78,6 +79,12 @@ public interface IAiAbilityCenterService {
 	 */
 	AiCallNext aiLngKeyMatch(AiCallLngKeyMatchReq aiCallLngKeyMatchReq);
 	
+	
+	/**
+	 * 软电话通讯过程中消息推送
+	 * @param aiFlowMsgPushReq
+	 */
+	void flowMsgPush(AiFlowMsgPushReq aiFlowMsgPushReq);
 	
 	/**
 	 * 用户语音AI响应

@@ -1,5 +1,5 @@
 server:
-  port: 18061
+  port: 18018
 spring:
   application:
     name: guiyu-sysoperalog-web

@@ -20,6 +20,8 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
@@ -132,7 +134,7 @@ public class TtsController implements ITts
 	 * 获取GPU模型列表
 	 */
 	@Override
-	@SysOperaLog(operaTarget = "操作类型", operaType = "操作对象")
+	@SysOperaLog(operaTarget = "操作对象", operaType = "操作类型")
 	@PostMapping(value = "getGpuList")
 	public ReturnData<TtsGpuRspVO> getGpuList(@RequestBody(required = false) TtsGpuReqVO ttsGpuReqVO)
 	{
@@ -195,7 +197,43 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 	}
-	
-	
+
+	@Override
+	@PostMapping(value = "getAcceptTasks")
+	public ReturnData<TaskRspVO> getAcceptTasks(@RequestBody TaskReqVO acceptTaskReqVO)
+	{
+		TaskRspVO acceptTaskRspVO = new TaskRspVO();
+		try
+		{
+			acceptTaskRspVO = statusService.getTasks(acceptTaskReqVO);
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(acceptTaskRspVO);
+	}
+
+	@Override
+	@PostMapping(value = "getCompleteTasks")
+	public ReturnData<TaskRspVO> getCompleteTasks(@RequestBody TaskReqVO completeTaskReqVO)
+	{
+		TaskRspVO completeTaskRspVO = new TaskRspVO();
+		try
+		{
+			completeTaskRspVO = statusService.getTasks(completeTaskReqVO);
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(completeTaskRspVO);
+	}
 	
 }

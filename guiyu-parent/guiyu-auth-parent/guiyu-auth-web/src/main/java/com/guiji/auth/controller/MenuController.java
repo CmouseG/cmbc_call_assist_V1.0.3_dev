@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.MenuService;
 import com.guiji.common.model.Page;
+import com.guiji.component.aspect.SysOperaLog;
 import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.vo.MenuParamVo;
 
@@ -27,9 +28,10 @@ public class MenuController {
 	
 	@RequestMapping("insert")
 	public void insert(SysMenu menu,@RequestHeader Long userId) throws CheckConditionException{
-		if(!Pattern.matches(URL_MATCH, menu.getUrl())){
+		if(!"/".equals(menu.getUrl())&&!Pattern.matches(URL_MATCH, menu.getUrl())){
 			throw new CheckConditionException("00010008");
 		}
+		
 		menu.setCreateId(userId);
 		menu.setUpdateId(userId);
 		menu.setCreateTime(new Date());
@@ -40,7 +42,7 @@ public class MenuController {
 		service.insert(menu);
 		
 	}
-
+	
 	@RequestMapping("delete")
 	public void delete(Long id){
 		service.delete(id);

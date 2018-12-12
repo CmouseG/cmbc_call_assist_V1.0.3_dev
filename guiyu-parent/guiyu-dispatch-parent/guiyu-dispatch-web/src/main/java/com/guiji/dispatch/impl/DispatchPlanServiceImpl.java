@@ -59,9 +59,6 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
-import com.sun.glass.ui.Size;
-
-import sun.util.logging.resources.logging;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {

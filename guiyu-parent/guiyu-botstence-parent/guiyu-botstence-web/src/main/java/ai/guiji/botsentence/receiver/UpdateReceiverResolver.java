@@ -73,6 +73,8 @@ public class UpdateReceiverResolver {
 			List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
 			BotSentenceProcess botSentenceProcess =list.get(0);
 			botSentenceProcess.setState(Constant.ERROR);//部署中
+			int version=Integer.valueOf(botSentenceProcess.getVersion())+1;
+			botSentenceProcess.setVersion(String.valueOf(version));
 		    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 		    
 		    BotPublishSentenceLog record=new BotPublishSentenceLog();

@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
@@ -48,7 +50,7 @@ public interface ITts {
      * @return
      */
     @ApiOperation(value="查询TTS处理状态")
-    @PostMapping(value = "getTtsStatus")
+    @PostMapping(value = "getTtsStatusList")
     public ReturnData<List<TtsStatusRspVO>> getTtsStatusList(TtsStatusReqVO ttsStatusReqVO); 
     
     /**
@@ -56,7 +58,7 @@ public interface ITts {
      * @return
      */
     @ApiOperation(value="获取GPU模型列表")
-    @PostMapping(value = "getAllGpu")
+    @PostMapping(value = "getGpuList")
     public ReturnData<TtsGpuRspVO> getGpuList(TtsGpuReqVO ttsGpuReqVO);
     
     /**
@@ -77,6 +79,18 @@ public interface ITts {
     @PostMapping(value = "jumpQueue")
     public ReturnData<Boolean> jumpQueue(String busId);
     
-
+    /**
+     * 累计接受任务
+     * @return
+     */
+    @ApiOperation(value="累计接受任务")
+    @PostMapping(value = "getAcceptTasks")
+    public ReturnData<TaskRspVO> getAcceptTasks(TaskReqVO taskReqVO);
     
+    /**
+     * 累计完成任务
+     */
+    @ApiOperation(value="累计完成任务")
+    @PostMapping(value = "getCompleteTasks")
+    public ReturnData<TaskRspVO> getCompleteTasks(TaskReqVO taskReqVO);
 }

@@ -8,6 +8,8 @@ public class SysRole implements Serializable {
 
     private String name;
 
+    private String desc;
+
     private Long createId;
 
     private Date createTime;
@@ -21,8 +23,6 @@ public class SysRole implements Serializable {
     private Integer initRole;
 
     private Integer superAdmin;
-    
-    private String createName;
 
     private static final long serialVersionUID = 1L;
 
@@ -40,6 +40,14 @@ public class SysRole implements Serializable {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc == null ? null : desc.trim();
     }
 
     public Long getCreateId() {
@@ -97,16 +105,8 @@ public class SysRole implements Serializable {
     public void setSuperAdmin(Integer superAdmin) {
         this.superAdmin = superAdmin;
     }
-    
-    public String getCreateName() {
-		return createName;
-	}
 
-	public void setCreateName(String createName) {
-		this.createName = createName;
-	}
-
-	@Override
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -114,6 +114,7 @@ public class SysRole implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
+        sb.append(", desc=").append(desc);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);

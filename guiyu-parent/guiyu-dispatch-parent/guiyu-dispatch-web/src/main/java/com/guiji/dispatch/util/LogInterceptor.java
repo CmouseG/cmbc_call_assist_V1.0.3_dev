@@ -85,7 +85,7 @@ public class LogInterceptor implements HandlerInterceptor {
 				operatorLogService.saveOperatorLog(log);
 			}
 		} catch (Exception e) {
-			logger.error("[记录操作日志时失败]", e.getMessage());
+			logger.error("[记录操作日志时失败]", e);
 		}
 	}
 

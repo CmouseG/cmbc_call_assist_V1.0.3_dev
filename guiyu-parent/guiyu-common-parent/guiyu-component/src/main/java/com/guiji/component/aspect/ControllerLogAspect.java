@@ -127,10 +127,13 @@ public class ControllerLogAspect
 		SysUserAction.setOperatype(annotation.operaType());
 		SysUserAction.setOperatarget(annotation.operaTarget());
 		SysUserAction.setOperateTime(new Date());
-		SysUserAction.setUserId(Long.parseLong(request.getHeader("userId")));
+		String userId = request.getHeader("userId");
+		if(userId != null){
+			SysUserAction.setUserId(Long.parseLong(userId));
+		}
 		SysUserAction.setData(sb.toString());
 		
-		restTemplate.postForObject("http://guiyu-cloud-zuul:18061/save", SysUserAction, ReturnData.class);
+		restTemplate.postForObject("http://guiyu-cloud-zuul:18000/log/save", SysUserAction, ReturnData.class);
 	}
 
 }

@@ -59,6 +59,7 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
+import com.sun.glass.ui.Size;
 
 import sun.util.logging.resources.logging;
 
@@ -361,11 +362,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean successSchedule(String planUuid) {
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
+		logger.info("----------------------------successSchedule-------------------------------------");
 		logger.info("回调完成通知planUuid:" + planUuid);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidEqualTo(planUuid);
 		List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
 		logger.info("回调完成通知查询结果:" + list.size());
+		if (list.size() <= 0) {
+			logger.info("回调完成通知查询结果 uuid错误！");
+			return false;
+		}
 
 		boolean checkRes = checkLastNum(list.get(0));
 		if (checkRes) {
@@ -439,7 +452,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			logger.info("回调完成通知修改结果" + result);
 			// 判断下一批计算是否还有相同的推送任务，如果没有则设置redis失效时间为0
 			List<DispatchPlan> queryAvailableSchedules = queryAvailableSchedules(dispatchPlan.getUserId(), 1,
-					dispatchPlan.getLine(), new DispatchPlan());
+					dispatchPlan.getLine(), new DispatchPlan(), false);
 			if (queryAvailableSchedules.size() <= 0) {
 				String key = dispatchPlan.getUserId() + "-" + dispatchPlan.getRobot() + "-" + dispatchPlan.getLine();
 				redisUtil.del(key);
@@ -516,7 +529,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
 			boolean isSuperAdmin) {
-		logger.info("queryDispatchPlanByParams isSuperAdmin:" + isSuperAdmin);
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -617,7 +629,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId,
-			DispatchPlan isSuccess) {
+			DispatchPlan isSuccess, boolean flag) {
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -649,14 +669,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 		dis.setRobotIds(list);
-
 		if (requestCount != 0) {
 			dis.setLimitStart(0);
 			dis.setLimitEnd(requestCount);
 		}
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
+		logger.info("queryAvailableSchedules phones size" + phones.size());
 		// 同步状态;0未同步1已同步
-
 		List<DispatchPlan> updateStatus = new ArrayList<>();
 
 		for (DispatchPlan dispatchPlan : phones) {
@@ -664,14 +683,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			updateStatus.add(dispatchPlan);
 			// dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
 		}
-		// 批量修改状态
-		int res = dispatchPlanMapper.updateDispatchPlanList(updateStatus);
-		// 判断当前任务是否查询完毕
-		int count = dispatchPlanMapper.countByExample(ex);
-		if (count <= requestCount) {
-			isSuccess.setSuccess(false);
+		if (phones.size() > 0) {
+			logger.info("当前queryAvailableSchedules号码:" + phones.get(0).getPlanUuid() + "--------"
+					+ phones.get(0).getPhone());
+			logger.info("当前queryAvailableSchedules号码:" + phones.get(0));
 		}
 
+		if (flag) {
+			// 批量修改状态
+			if (updateStatus.size() > 0) {
+				int res = dispatchPlanMapper.updateDispatchPlanList(updateStatus);
+				// 判断当前任务是否查询完毕
+				int count = dispatchPlanMapper.countByExample(ex);
+				if (count <= requestCount) {
+					isSuccess.setSuccess(false);
+				}
+			}
+		}
 		return phones;
 	}
 

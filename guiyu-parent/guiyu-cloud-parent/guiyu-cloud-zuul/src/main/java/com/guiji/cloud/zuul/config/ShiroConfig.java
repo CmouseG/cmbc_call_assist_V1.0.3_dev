@@ -1,7 +1,12 @@
 package com.guiji.cloud.zuul.config;
 
-import com.guiji.cloud.zuul.filter.ZuulAuthenticationFilter;
-import com.guiji.cloud.zuul.filter.ZuulAuthorizationFilter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.Filter;
+
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
@@ -13,11 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Filter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.guiji.cloud.zuul.filter.ZuulAuthenticationFilter;
+import com.guiji.cloud.zuul.filter.ZuulAuthorizationFilter;
+import com.guiji.user.dao.SysMenuMapper;
 
 @Configuration
 public class ShiroConfig {
@@ -36,7 +39,6 @@ public class ShiroConfig {
         filters.put("zuulAuthc", new ZuulAuthenticationFilter());
         filters.put("zuulPerms", new ZuulAuthorizationFilter(resolve));
         
-        
         shiroFilterFactoryBean.setFilters(filters);
         
         // 必须设置 SecurityManager
@@ -53,7 +55,6 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/getUserId", "zuulAuthc");
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
         filterChainDefinitionMap.put("/**", "zuulAuthc,zuulPerms");
-//        filterChainDefinitionMap.put("/**", "anon");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

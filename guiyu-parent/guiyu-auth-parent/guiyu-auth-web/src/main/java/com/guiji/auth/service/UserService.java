@@ -122,22 +122,24 @@ public class UserService {
 		return result;
 	}
 	
-	public void changeAccessKey(Long userId){
+	public String changeAccessKey(Long userId){
 		String key=AuthUtil.encryptMd2();
 		SysUser record=new SysUser();
 		record.setId(userId);
 		record.setUpdateId(userId);
 		record.setAccessKey(key);
 		mapper.updateByPrimaryKeySelective(record);
+		return key;
 	}
 	
-	public void changeSecretKey(Long userId){
+	public String changeSecretKey(Long userId){
 		String key=AuthUtil.encryptMd2();
 		SysUser record=new SysUser();
 		record.setId(userId);
 		record.setUpdateId(userId);
 		record.setSecretKey(key);
 		mapper.updateByPrimaryKeySelective(record);
+		return key;
 	}
 	
 }

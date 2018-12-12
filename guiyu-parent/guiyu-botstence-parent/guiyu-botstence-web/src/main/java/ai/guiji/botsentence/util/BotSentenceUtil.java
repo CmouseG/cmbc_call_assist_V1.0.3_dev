@@ -1,18 +1,15 @@
 package ai.guiji.botsentence.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-
-import com.alibaba.fastjson.JSONObject;
 
 import ai.guiji.botsentence.constant.Constant;
 
@@ -263,6 +260,49 @@ public class BotSentenceUtil {
 	    // 字符串是否与正则表达式相匹配
 	    boolean rs = matcher.find();
 	    return rs;
+	}
+	
+	
+	public static Map<String, String> getSimtxtKeywordsByKeyword(List<List<String>> simList, String[] keys){
+		Map<String, String> map = new HashMap<>();
+		List<String> result = new ArrayList<>();
+		if(null != simList && simList.size() > 0) {
+			for(int i = 0 ; i < simList.size() ; i++) {
+				List<String> line = simList.get(i);
+				for(int j = 0 ; j < keys.length ; j++) {
+					if(line.contains(keys[j])) {//当前行包含该关键词，则返回当前行的关键字列表
+						//result.addAll(line);
+						for(int m = 0 ; m < line.size() ; m++) {
+							map.put(line.get(m), keys[j]);
+						}
+					}
+				}
+			}
+		}
+		return map;
+	}
+	
+	public static List<List<String>> getSimtxtKeywordsList(String simTxt){
+		List<List<String>> result = new ArrayList<>();
+		Map<String, String> map = new HashMap<>();
+		String [] line_array = simTxt.split("\n");
+		if(null != line_array && line_array.length > 0) {
+			for(int i = 0 ; i < line_array.length ; i++) {
+				List<String> list = new ArrayList<>();
+				String line = line_array[i];
+				String []array2 = line.split(":");
+				if(null != array2 && array2.length > 1) {
+					list.add(array2[0].trim());
+					String[] keywords = array2[1].split("\\s+");
+					for(int j = 0 ; j < keywords.length ; j++) {
+						//map.put(keywords[j], array2[0].trim());
+						list.add(keywords[j]);
+					}
+				}
+				result.add(list);
+			}
+		}
+		return result;
 	}
 	
 }

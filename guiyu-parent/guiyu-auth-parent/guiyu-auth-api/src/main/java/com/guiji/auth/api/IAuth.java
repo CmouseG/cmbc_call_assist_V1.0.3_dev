@@ -19,4 +19,10 @@ public interface IAuth {
 	
 	@RequestMapping("/user/getRoleByUserId")
 	public ReturnData<List<SysRole>> getRoleByUserId(@RequestParam("userId") Long userId);
+	
+	@RequestMapping("/user/changeAccessKey")
+	public ReturnData<String> changeAccessKey(@RequestParam("userId") Long userId);
+	
+	@RequestMapping("/user/changeSecretKey")
+	public ReturnData<String> changeSecretKey(@RequestParam("userId") Long userId);
 }

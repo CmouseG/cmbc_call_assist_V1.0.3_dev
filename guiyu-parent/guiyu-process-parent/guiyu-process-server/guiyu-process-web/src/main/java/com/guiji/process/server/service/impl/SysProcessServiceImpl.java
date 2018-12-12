@@ -230,6 +230,8 @@ public class SysProcessServiceImpl implements ISysProcessService {
             SysProcessExample example = new SysProcessExample();
             SysProcessExample.Criteria criteria = example.createCriteria();
             criteria.andTypeNotEqualTo(ProcessTypeEnum.AGENT.getValue());
+            criteria.andTypeNotEqualTo(ProcessTypeEnum.FREESWITCH.getValue());
+            criteria.andTypeNotEqualTo(ProcessTypeEnum.ROBOT.getValue());
             if(id != null) {
                 criteria.andIdEqualTo(id);
             }

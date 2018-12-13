@@ -52,14 +52,14 @@ public class ChannelHelper {
      * @param uuid  通道uuid
      * @param mediaFile 媒体文件
      * @param mediaFileDuration 媒体文件时长
-     * @param isLock    是否锁定通道
+     * @param isPrologue    是否是开场白
      * @param isEnd     通话是否结束
      */
-    private void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isEnd) {
-        log.debug("需要设置通道媒体文件[{}]的属性，时间为[{}], isLock[{}], isEnd[{}]", mediaFile, mediaFileDuration, isLock, isEnd);
+    private void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isPrologue, boolean isEnd) {
+        log.debug("需要设置通道媒体文件[{}]的属性，时间为[{}], isPrologue[{}], isEnd[{}]", mediaFile, mediaFileDuration, isPrologue, isEnd);
 
         Channel channel = channelService.findByUuid(uuid);
-        setChannel(channel, uuid, mediaFile, mediaFileDuration, isLock, isEnd);
+        setChannel(channel, uuid, mediaFile, mediaFileDuration, isPrologue, isEnd);
 
         if(isEnd){
             //预约挂断，在指定时长后挂断当前通道
@@ -70,12 +70,12 @@ public class ChannelHelper {
         localFsServer.playToChannel(uuid, mediaFile);
     }
 
-    public void playAiReponse(AIResponse aiResponse, boolean isLock){
-        playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isLock);
+    public void playAiReponse(AIResponse aiResponse, boolean isPrologue){
+        playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isPrologue);
     }
 
-    public void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock) {
-        playFile(uuid, mediaFile, mediaFileDuration, isLock, false);
+    public void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isPrologue) {
+        playFile(uuid, mediaFile, mediaFileDuration, isPrologue, false);
     }
 
     /**
@@ -86,7 +86,7 @@ public class ChannelHelper {
      * @param mediaFileDuration
      * @param agentGroup
      */
-    public void playAndTransferToAgentGroup(CallOutPlan callPlan, String mediaFile, Double mediaFileDuration, String agentGroup){
+/*    public void playAndTransferToAgentGroup(CallOutPlan callPlan, String mediaFile, Double mediaFileDuration, String agentGroup){
         log.info("需要锁定通道媒体文件[{}]的播放，锁定时间为[{}]", mediaFile, mediaFileDuration);
 
         String uuid = callPlan.getCallId();
@@ -99,7 +99,7 @@ public class ChannelHelper {
         localFsServer.playToChannel(uuid, mediaFile);
         channel.setMediaFileName(mediaFile);
         channelService.save(channel);
-    }
+    }*/
 
     /**
      * 播放机器人说话，并在说完话之后挂断
@@ -108,7 +108,7 @@ public class ChannelHelper {
      * @param mediaFileDuration
      */
     public void playFileToChannelAndHangup(String uuid, String mediaFile, Double mediaFileDuration){
-        playFile(uuid, mediaFile, mediaFileDuration, true, true);
+        playFile(uuid, mediaFile, mediaFileDuration, false, true);
     }
 
     /**
@@ -116,9 +116,9 @@ public class ChannelHelper {
      * @param uuid
      * @return
      */
-    public boolean isChannelLock(String uuid){
-        return channelService.isMediaLock(uuid);
-    }
+//    public boolean isChannelLock(String uuid){
+//        return channelService.isMediaLock(uuid);
+//    }
 
     /**
      * 判断当前通道是否在播放媒体
@@ -173,7 +173,7 @@ public class ChannelHelper {
      * @param mediaFileDuration
      * @param isEnd
      */
-    private void setChannel(Channel callMedia, String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isEnd){
+    private void setChannel(Channel callMedia, String uuid, String mediaFile, Double mediaFileDuration, boolean isPrologue, boolean isEnd){
         if(callMedia == null){
             callMedia = new Channel();
             callMedia.setChannelId(uuid);
@@ -183,7 +183,7 @@ public class ChannelHelper {
         }
 
         callMedia.setMediaFileName(mediaFile);
-//        callMedia.setIsMediaLock(isLock);
+        callMedia.setIsPrologue(isPrologue);
         callMedia.setStartPlayTime(new Date());
         channelService.save(callMedia);
 
@@ -229,7 +229,7 @@ public class ChannelHelper {
      * @param uuid
      * @param lockTimeLen  单位为秒
      */
-    private void setChannel(String uuid, Double lockTimeLen, boolean isEnd, AfterLockHandle handler){
+/*    private void setChannel(String uuid, Double lockTimeLen, boolean isEnd, AfterLockHandle handler){
         channelService.updateMediaLock(uuid, true);
 
         log.info("使用定时服务约定执行时间，timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
@@ -247,7 +247,7 @@ public class ChannelHelper {
                     }
                 },
                 lockTimeLen.longValue(), TimeUnit.SECONDS);
-    }
+    }*/
 
     /**
      * 释放资源，停止后续处理

@@ -34,9 +34,9 @@ public class Channel {
     private Double mediaFileDuration;
 
     /**
-     * 锁定通道媒体, 在锁定期间，不允许播放其他媒体
+     * 是否是开场白
      */
-    private Boolean isMediaLock;
+    private Boolean isPrologue;
 
     /**
      * 打断时间

@@ -96,7 +96,7 @@ public class FsBotHandler {
             //todo 此处如果异常，缺少后续处理，更改calloutplan状态，回掉调度中心
             Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
-            channelHelper.playAiReponse(aiResponse,false);
+            channelHelper.playAiReponse(aiResponse,true);
 
             //更新callplan
             if(callPlan.getCallState()==null || callPlan.getCallState()<ECallState.answer.ordinal()){
@@ -297,8 +297,8 @@ public class FsBotHandler {
             callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
 //        }
 
-        boolean isLock = !fsBotConfig.isAllowDisturbed();
-        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), isLock);
+//        boolean isLock = !fsBotConfig.isAllowDisturbed();
+        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), false);
     }
 
     /**

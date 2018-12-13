@@ -522,11 +522,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return page;
 	}
 
-	@Override
-	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-			boolean isSuperAdmin, Integer selectUserId, String robotName) {
 
+	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
+	String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
+	boolean isSuperAdmin, Integer selectUserId, String robotName) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -582,16 +581,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andUserIdEqualTo(userId.intValue());
 		} else {
 			// 超级用户
-			if (selectUserId != -1) {
+			if (selectUserId !=null) {
 				createCriteria.andUserIdEqualTo(selectUserId.intValue());
 			}
-			if (robotName != "" || robotName != null) {
+			if (robotName != "" && robotName != null) {
 				createCriteria.andRobotEqualTo(robotName);
 			}
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 
+		//转换userName
+		for(DispatchPlan dis : selectByExample){
+			
+		}
+		
+		
+		
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
 		page.setTotal(count);
@@ -990,7 +996,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			andStatusPlanEqualTo2.andUserIdEqualTo(userId.intValue());
 		}
 		ex1.setOrderByClause("`gmt_create` DESC");
-		DispatchPlan dispatchPlan = dispatchPlanMapper.selectByExample(ex1).get(0);
+		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
+		DispatchPlan dis = new DispatchPlan();
+		
+		if(selectByExample.size()>0){
+			dis = selectByExample.get(selectByExample.size() - 1);
+		}
 
 		DispatchPlanExample ex2 = new DispatchPlanExample();
 		Criteria andStatusPlanEqualTo3 = ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
@@ -1000,8 +1011,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 
 		ex2.setOrderByClause("`gmt_create` DESC");
-		DispatchPlan dispatchPlan1 = dispatchPlanMapper.selectByExample(ex2).get(0);
-
+		 List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
+		
+		 DispatchPlan dis1 = new DispatchPlan();
+		 
+		
+		 if (selectByExample2.size()>0) {
+			 dis1 = selectByExample2.get(0);
+		}
+		 
 		ReturnData<SysUser> user = auth.getUserById(userId);
 		if (user.getBody() != null) {
 			SysUser body = user.getBody();
@@ -1009,13 +1027,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			long endTimeLong = body.getCreateTime().getTime();
 			// 结束时间-开始时间 = 天数
 			long day = (stateTimeLong - endTimeLong) / (24 * 60 * 60 * 1000);
-			jsonObject.put("day", day);
+			jsonObject.put("useDay", day);
 		}
 
 		jsonObject.put("countNums", countNums);
 		jsonObject.put("calledNums", calledNums);
-		jsonObject.put("lastPlanDate", dispatchPlan.getCallData());
-		jsonObject.put("lastCalledDate", dispatchPlan1.getCallData());
+		jsonObject.put("lastPlanDate", dis.getCallData());
+		jsonObject.put("lastCalledDate", dis1.getCallData());
 		return jsonObject;
 	}
 

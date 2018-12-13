@@ -18,6 +18,8 @@ import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
+import com.guiji.ai.vo.RatioReqVO;
+import com.guiji.ai.vo.RatioRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TaskNumVO;
@@ -240,6 +242,38 @@ public class StatusServiceImpl implements IStatusService
 		taskRspVO.setTotalNum(taskNumVOList.size());
 		taskRspVO.setTaskNumsList(taskNumVOList);
 		return taskRspVO;
+	}
+
+
+	@Override
+	public RatioRspVO getRatio(RatioReqVO ratioReqVO)
+	{
+		RatioRspVO ratioRspVO = new RatioRspVO();
+		// 条件查询
+		TtsStatusExample example1 = new TtsStatusExample();
+		TtsStatusExample example2 = new TtsStatusExample();
+		Criteria criteria1 = example1.createCriteria();
+		Criteria criteria2 = example2.createCriteria();
+		if (ratioReqVO.getStartTime() != null){
+			criteria1.andCreateTimeGreaterThanOrEqualTo(ratioReqVO.getStartTime());
+			criteria2.andCreateTimeGreaterThanOrEqualTo(ratioReqVO.getStartTime());
+		}
+		if (ratioReqVO.getEndTime() != null){
+			criteria1.andCreateTimeLessThanOrEqualTo(ratioReqVO.getEndTime());
+			criteria2.andCreateTimeLessThanOrEqualTo(ratioReqVO.getEndTime());
+		}
+		
+		criteria1.andStatusEqualTo("2"); //2已完成
+		int successCount = ttsStatusMapper.selectByExample(example1).size();
+		criteria2.andStatusEqualTo("3"); //3处理失败
+		int failCount = ttsStatusMapper.selectByExample(example2).size();
+
+		int successRatio = (int) Math.round(100.0 * successCount / (successCount + failCount));
+		int failRatio = (int) Math.round(100.0 * failCount / (successCount + failCount));
+		
+		ratioRspVO.setSuccessRatio(String.valueOf(successRatio)+ "%");
+		ratioRspVO.setFailRatio(String.valueOf(failRatio)+ "%");
+		return ratioRspVO;
 	}
 
 }

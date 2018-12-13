@@ -21,6 +21,8 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
+import com.guiji.ai.vo.RatioReqVO;
+import com.guiji.ai.vo.RatioRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TaskReqVO;
@@ -265,6 +267,28 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return Result.ok(waitTaskRspVO);
+	}
+
+	/**
+	 * 失败率，成功率
+	 */
+	@Override
+	@PostMapping(value = "getRatio")
+	public ReturnData<RatioRspVO> getRatio(@RequestBody RatioReqVO ratioReqVO)
+	{
+		RatioRspVO ratioRspVO = new RatioRspVO();
+		try
+		{
+			ratioRspVO = statusService.getRatio(ratioReqVO);
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(ratioRspVO);
 	}
 	
 }

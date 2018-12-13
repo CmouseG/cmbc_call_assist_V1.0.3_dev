@@ -6,6 +6,8 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.guiji.ai.vo.RatioReqVO;
+import com.guiji.ai.vo.RatioRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TaskReqVO;
@@ -102,4 +104,12 @@ public interface ITts {
     @ApiOperation(value="待合成任务数")
     @GetMapping(value = "getWaitTasks")
     public ReturnData<TaskRspVO> getWaitTasks();
+    
+    /**
+     * 成功率，失败率
+     * @return
+     */
+    @ApiOperation(value="成功率/失败率")
+    @GetMapping(value = "getRatio")
+    public ReturnData<RatioRspVO> getRatio(RatioReqVO ratioReqVO);
 }

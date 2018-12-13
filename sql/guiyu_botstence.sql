@@ -198,6 +198,7 @@ CREATE TABLE `bot_sentence_template` (
   `industry_id` varchar(256) DEFAULT NULL,
   `industry_name` varchar(256) DEFAULT NULL,
   `host` varchar(32) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`process_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已生效话术模板';
 

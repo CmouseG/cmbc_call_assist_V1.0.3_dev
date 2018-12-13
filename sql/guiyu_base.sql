@@ -230,6 +230,7 @@ CREATE TABLE `sys_user` (
   `inten_label` varchar(255) DEFAULT '' COMMENT '意向标签',
   `access_key` varchar(255) DEFAULT NULL,
   `secret_key` varchar(255) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL COMMENT '企业code',
   `create_id` bigint(20) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_id` bigint(20) DEFAULT NULL,
@@ -237,7 +238,9 @@ CREATE TABLE `sys_user` (
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `vaild_time` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 -- ----------------------------
 -- Table structure for sys_user_action

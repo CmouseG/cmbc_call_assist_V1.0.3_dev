@@ -362,8 +362,8 @@ public class BotSentenceProcessController {
 	}
 	
 	@RequestMapping(value="getAvailableTemplateBySelf")
-	public ServerResult<List<Object>> getAvailableTemplateBySelf(@RequestHeader("userId") String accountNo) {
-		List<Object> result= botSentenceProcessService.getAvailableTemplateBySelf(accountNo);
+	public ServerResult<List<Object>> getAvailableTemplateBySelf(String userId) {
+		List<Object> result= botSentenceProcessService.getAvailableTemplateBySelf(userId);
 		return ServerResult.createBySuccess(result);
 	}
 }

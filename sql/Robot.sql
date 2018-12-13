@@ -176,7 +176,7 @@ create index ai_cycle_his_idx4 on ai_cycle_his
 create table robot_call_his
 (
    id                   varchar(32) not null,
-   seq_id               varchar(32) comment '会话id',
+   seq_id               varchar(50) comment '会话id',
    user_id              varchar(50) not null comment '用户编号',
    ai_no                varchar(50) comment '机器人编号',
    assign_time          datetime comment '分配时间',

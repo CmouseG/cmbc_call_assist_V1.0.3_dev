@@ -21,14 +21,18 @@ import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample;
+import com.guiji.dispatch.model.ModularLogs;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IModularLogsService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
+import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
 
 @Component
@@ -50,7 +54,9 @@ public class TimeTask {
 
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
-
+	@Autowired
+	private IModularLogsService modularLogs;
+	
 	/**
 	 * 捞取号码初始化资源
 	 */

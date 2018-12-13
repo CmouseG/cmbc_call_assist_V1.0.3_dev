@@ -336,13 +336,13 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 						userResourceCache.setChgStatus(RobotConstants.USER_CHG_STATUS_S); //资源变更-减少
 					}else if(userAiCfgInfo.getAiNum()>existUserAiCfgInfo.getAiNum()) {
 						//本次变更机器人数量增加量
-						int addAiNum = userResourceCache.getAiNum()+(userAiCfgInfo.getAiNum()-existUserAiCfgInfo.getAiNum());
+						int addAiNum = userAiCfgInfo.getAiNum()-existUserAiCfgInfo.getAiNum();
 						//新增配置项
 						if(this.isOverAiNumCheck(userBaseInfo,userAiCfgInfo.getUserId(), addAiNum)) {
 							//校验是否有超过用户总机器人数量
 							throw new RobotException(AiErrorEnum.AI00060021.getErrorCode(),AiErrorEnum.AI00060021.getErrorMsg());
 						}
-						userResourceCache.setAiNum(addAiNum); //变更后数量
+						userResourceCache.setAiNum(userResourceCache.getAiNum()+addAiNum); //变更后数量
 						if(!RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())) {
 							//如果目前的资源变更状态是减少，处理完成前，那么不能变为增加
 							userResourceCache.setChgStatus(RobotConstants.USER_CHG_STATUS_A); //资源变更-增加
@@ -480,6 +480,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				}
 			}
 			if(existAiNum+addAiNum > totalNum) {
+				logger.error("已存在的AI数量:{}+本次增加的AI数量:{},大于用户配置的总AI数:{}",existAiNum,addAiNum,totalNum);
 				return true;
 			}
 		}

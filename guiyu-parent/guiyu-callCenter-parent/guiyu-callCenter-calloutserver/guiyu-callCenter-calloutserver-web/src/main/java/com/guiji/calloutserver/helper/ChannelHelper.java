@@ -194,7 +194,7 @@ public class ChannelHelper {
         log.info("使用定时服务setChannel,timeLen[{}],isEnd[{}]", mediaFileDuration, isEnd);
         ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
                     if (!isEnd) {
-                        log.info("在[{}]秒之后，将通道[{}]媒体文件清理掉，isPrologue设置为[{}]", mediaFileDuration, uuid, false);
+                        log.debug("在[{}]秒之后，将通道[{}]媒体文件清理掉，isPrologue设置为[{}]", mediaFileDuration, uuid, false);
                         channelService.updateMediaLock(uuid, false, null, null);
                         afterMediaChecker.addAfterMediaCheck(uuid);
                     } else {

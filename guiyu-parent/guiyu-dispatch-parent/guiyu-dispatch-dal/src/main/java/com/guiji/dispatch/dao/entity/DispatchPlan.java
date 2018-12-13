@@ -74,9 +74,20 @@ public class DispatchPlan implements Serializable {
 
 	private List<String> robotIds;
 	
+	private String userName ;
+	
+	
+	
     
-    
-    public List<String> getRobotIds() {
+    public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public List<String> getRobotIds() {
 		return robotIds;
 	}
 

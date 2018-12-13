@@ -593,10 +593,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		//转换userName
 		for(DispatchPlan dis : selectByExample){
-			
+			ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
+			if(user.getBody() !=null){
+				dis.setUserName(user.getBody().getUsername());
+			}
 		}
-		
-		
 		
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);

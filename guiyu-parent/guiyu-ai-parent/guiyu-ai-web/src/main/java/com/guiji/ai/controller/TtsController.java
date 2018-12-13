@@ -207,12 +207,12 @@ public class TtsController implements ITts
      */
 	@Override
 	@PostMapping(value = "getAcceptTasks")
-	public ReturnData<TaskRspVO> getAcceptTasks(@RequestBody TaskReqVO acceptTaskReqVO)
+	public ReturnData<TaskRspVO> getTasks(@RequestBody TaskReqVO taskReqVO)
 	{
-		TaskRspVO acceptTaskRspVO = new TaskRspVO();
+		TaskRspVO taskRspVO = new TaskRspVO();
 		try
 		{
-			acceptTaskRspVO = statusService.getTasks(acceptTaskReqVO);
+			taskRspVO = statusService.getTasks(taskReqVO);
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -221,29 +221,7 @@ public class TtsController implements ITts
 			logger.error("请求失败！", ex);
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
-		return Result.ok(acceptTaskRspVO);
-	}
-
-	/**
-     * 累计完成任务
-     */
-	@Override
-	@PostMapping(value = "getCompleteTasks")
-	public ReturnData<TaskRspVO> getCompleteTasks(@RequestBody TaskReqVO completeTaskReqVO)
-	{
-		TaskRspVO completeTaskRspVO = new TaskRspVO();
-		try
-		{
-			completeTaskRspVO = statusService.getTasks(completeTaskReqVO);
-			
-		} catch (GuiyuException e){
-			logger.error("请求失败！", e);
-			return Result.error(e.getErrorCode());
-		} catch (Exception ex){
-			logger.error("请求失败！", ex);
-			return Result.error(AiConstants.AI_REQUEST_FAIL);
-		}
-		return Result.ok(completeTaskRspVO);
+		return Result.ok(taskRspVO);
 	}
 
 	/**

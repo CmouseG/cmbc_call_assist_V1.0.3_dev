@@ -262,8 +262,7 @@
 
 	<select id="getReqStatusByBusId">
 		SELECT status FROM tts_status
-		WHERE t.bus_id =
-		#{busId,jdbcType=VARCHAR}
+		WHERE t.bus_id = #{busId,jdbcType=VARCHAR}
 	</select>
 
 	<update id="updateStatusByBusId">
@@ -338,6 +337,13 @@
 		</where>
 		GROUP BY date
 		ORDER BY date DESC
+	</select>
+	
+	<select id="getWaitTasks" resultType="java.util.Map">
+		SELECT model, count(id) countNum 
+		FROM tts_status 
+		WHERE `status` = '0' 
+		GROUP BY model
 	</select>
   
 </mapper>

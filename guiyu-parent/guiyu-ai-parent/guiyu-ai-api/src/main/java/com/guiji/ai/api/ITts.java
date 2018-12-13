@@ -3,12 +3,13 @@ package com.guiji.ai.api;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.guiji.ai.vo.TaskReqVO;
-import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -93,4 +94,12 @@ public interface ITts {
     @ApiOperation(value="累计完成任务")
     @PostMapping(value = "getCompleteTasks")
     public ReturnData<TaskRspVO> getCompleteTasks(TaskReqVO taskReqVO);
+    
+    /**
+     * 待合成任务数（分模型）
+     * @return
+     */
+    @ApiOperation(value="待合成任务数")
+    @GetMapping(value = "getWaitTasks")
+    public ReturnData<TaskRspVO> getWaitTasks();
 }

@@ -64,5 +64,11 @@ public interface IStatusService
 	 * @param acceptTaskReqVO
 	 */
 	public TaskRspVO getTasks(TaskReqVO taskReqVO);
+
+	/**
+	 * 待合成任务数（分模型）
+	 * @return
+	 */
+	public TaskRspVO getWaitTasks();
  
 }

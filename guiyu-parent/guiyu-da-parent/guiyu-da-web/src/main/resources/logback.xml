@@ -50,7 +50,7 @@
     </appender>
 
 
-    <logger name="com.guiji.di.dao" level="debug">
+    <logger name="com.guiji.da.dao" level="debug">
         <appender-ref ref="SQL"/>
     </logger>
     <logger name="org.springframework.web.servlet.mvc" level="info"/>

@@ -40,4 +40,13 @@ public class ReportScheduler {
 
     }
 
+    @Scheduled(cron = "0 1 0 * * ?") //凌晨的时候清空report_call_today
+//    @Scheduled(cron = "0/5 * * * * ?") // 测试
+    public void reportCallTodayTruncate(){
+
+        log.info("----------- start reportCallTodayTruncate -----------");
+        reportSchedulerService.reportCallTodayTruncate();
+        log.info("----------- end reportCallTodayTruncate -----------");
+
+    }
 }

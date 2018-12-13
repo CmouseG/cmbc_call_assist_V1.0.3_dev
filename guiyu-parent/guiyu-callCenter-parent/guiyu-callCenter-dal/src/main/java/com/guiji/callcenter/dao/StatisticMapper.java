@@ -55,4 +55,8 @@ public interface StatisticMapper {
 
     List<ReasonCount> getReasonCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("customerId") String customerId);
     List<ReasonCount> getReasonCountToday(@Param("customerId") String customerId);
+
+    void reportCallTodayTruncate();
+
+    void deleteReportCallHour();
 }

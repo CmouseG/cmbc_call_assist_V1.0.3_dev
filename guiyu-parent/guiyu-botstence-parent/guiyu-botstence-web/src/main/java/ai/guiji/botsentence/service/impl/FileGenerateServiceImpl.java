@@ -67,6 +67,7 @@ import ai.guiji.botsentence.dao.entity.VoliceInfoExample;
 import ai.guiji.botsentence.service.IFileGenerateService;
 import ai.guiji.botsentence.service.IVoliceService;
 import ai.guiji.botsentence.util.BotSentenceUtil;
+import ai.guiji.botsentence.vo.OptionsJson;
 import ai.guiji.component.client.util.FileUtil;
 import ai.guiji.component.client.util.IOUtil;
 import org.springframework.core.io.Resource;
@@ -579,14 +580,28 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 
 		// 生成一些附加的文件
 		BotSentenceAddition botSentenceAddition = botSentenceAdditionMapper.selectByPrimaryKey(processId);
-		String optionJson = botSentenceAddition.getOptionsJson();
 		
+		/*String optionJson = botSentenceAddition.getOptionsJson();
 		//替换optionjson里面的模板名称和编号
-		optionJson = replateTemplateOption(optionJson, templateId, botSentenceProcess.getIndustry());
+		optionJson = replateTemplateOption(optionJson, templateId, botSentenceProcess.getIndustry());*/
+
+		//生成options.josn
+		OptionsJson option = new OptionsJson();
+		option.setCheck_sim(true);
+		option.setCur_domain_prior(true);
+		option.setUse_endfiles_list(true);
+		option.setUse_not_match_logic(true);
+		option.setNot_match_solution("solution_two");
+		option.setTrade(botSentenceProcess.getIndustry());
+		option.setTempname(botSentenceProcess.getTemplateId());
+		option.setDes(botSentenceProcess.getTemplateName());
+		option.setDianame(botSentenceProcess.getTemplateName());
+		String optionJson = BotSentenceUtil.javaToJson(option, OptionsJson.class);
+		
 		
 		String optionPath = templateCfgsDir+ FILE_SEPARATOR + "options.json";
 		try {
-			FileUtil.writeFile(optionPath, formatJson(optionJson));
+			FileUtil.writeFile(optionPath, optionJson);
 		} catch (IOException e) {
 			logger.error("generate options.json has exception:", e);
 			return null;

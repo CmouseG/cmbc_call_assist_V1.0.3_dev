@@ -11,6 +11,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ai.guiji.botsentence.constant.Constant;
 
 public class BotSentenceUtil {
@@ -304,5 +307,19 @@ public class BotSentenceUtil {
 		}
 		return result;
 	}
-	
+
+	/**
+	 * 把java对象转换成json字符串，并格式化
+	 * @return
+	 */
+	public static String javaToJson(Object obj, Class type) {
+		String jsonStr = JSON.toJSONString(obj);
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Object mapperObj = mapper.readValue(jsonStr, type);
+		    return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapperObj);
+		}catch(Exception e) {
+			return jsonStr;
+		}
+	}
 }

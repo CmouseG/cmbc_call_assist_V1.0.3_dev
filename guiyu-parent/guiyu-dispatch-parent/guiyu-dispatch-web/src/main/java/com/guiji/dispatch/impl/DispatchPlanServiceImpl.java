@@ -59,9 +59,6 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.RedisUtil;
-import com.sun.glass.ui.Size;
-
-import sun.util.logging.resources.logging;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
@@ -528,7 +525,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-			boolean isSuperAdmin) {
+			boolean isSuperAdmin, Integer selectUserId, String robotName) {
+
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -582,6 +580,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		if (!isSuperAdmin) {
 			createCriteria.andUserIdEqualTo(userId.intValue());
+		} else {
+			// 超级用户
+			if (selectUserId != -1) {
+				createCriteria.andUserIdEqualTo(selectUserId.intValue());
+			}
+			if (robotName != "" || robotName != null) {
+				createCriteria.andRobotEqualTo(robotName);
+			}
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);

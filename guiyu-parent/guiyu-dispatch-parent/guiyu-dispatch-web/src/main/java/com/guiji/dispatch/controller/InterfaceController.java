@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
+import com.guiji.auth.api.IApiLogin;
 import com.guiji.auth.api.IAuth;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.DispatchPlanList;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
@@ -24,6 +27,8 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
+
+import springfox.documentation.spring.web.json.Json;
 
 /**
  * 第三方接口
@@ -36,9 +41,11 @@ public class InterfaceController {
 
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
-
+	@Autowired
 	private IAuth auth;
-
+	@Autowired
+	private IApiLogin apiLogin;
+	
 	static Logger logger = LoggerFactory.getLogger(InterfaceController.class);
 
 	/**
@@ -92,16 +99,44 @@ public class InterfaceController {
 		jsonObject.put("data", queryDispatchPlan);
 		return jsonObject;
 	}
+	@GetMapping("/getToken")
+	public JSONObject getToken(@RequestParam(required = true, name = "access_key") String access_key,
+			@RequestParam(required = true, name = "secret_key") String secret_key){
+		JSONObject jsonObject = new JSONObject();
+		ReturnData<String> apiLogin2 = apiLogin.apiLogin(access_key, secret_key);
+		jsonObject.put("token", apiLogin2.getBody());
+		return  jsonObject;
+	}
+	
+	
+	@GetMapping("/changeAccessKey")
+	public JSONObject changeAccessKey(@RequestHeader Long userId){
+		JSONObject jsonObject = new JSONObject();
+		ReturnData<String> changeAccessKey = auth.changeAccessKey(userId);
+		jsonObject.put("AccessKey", changeAccessKey.getBody());
+		return  jsonObject;
+	}
+	
+	
+	@GetMapping("/changeSecretKey")
+	public JSONObject changeSecretKey(@RequestHeader Long userId){
+		JSONObject jsonObject = new JSONObject();
+		 ReturnData<String> changeSecretKey = auth.changeSecretKey(userId);
+		jsonObject.put("SecretKey", changeSecretKey.getBody());
+		return  jsonObject;
+	}
+	
+	
 
 	@PostMapping("/addPhones")
 	public JSONObject addPhones(@RequestBody DispatchPlanList dispatchPlanList, @RequestHeader Long userId) {
 		JSONObject jsonObject = new JSONObject();
 		boolean result = true;
-//		ReturnData<SysUser> user = auth.getUserById(userId);
+		ReturnData<SysUser> user = auth.getUserById(userId);
 		String userName = "";
-//		if (user.getBody() != null) {
-//			userName = user.getBody().getUsername();
-//		}
+		if (user.getBody() != null) {
+			userName = user.getBody().getUsername();
+		}
 
 		List<DispatchPlan> fails = new ArrayList<>();
 		List<DispatchPlan> succ = new ArrayList<>();
@@ -157,8 +192,6 @@ public class InterfaceController {
 				fails.add(dis);
 			}
 		}
-		
-		
 		boolean insertDispatchPlanList = dispatchPlanService.insertDispatchPlanList(succ);
 		logger.info("批量写入结果 ： "+ insertDispatchPlanList);
 		jsonObject.put("succSize", succ.size());

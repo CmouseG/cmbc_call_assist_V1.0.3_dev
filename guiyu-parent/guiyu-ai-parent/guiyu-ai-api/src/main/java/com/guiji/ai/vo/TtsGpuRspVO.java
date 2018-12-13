@@ -12,8 +12,6 @@ public class TtsGpuRspVO
 {
 	@ApiModelProperty(value="查询总数")
 	private Integer totalNum;
-	@ApiModelProperty(value="每页条数")
-	private Integer pageSize = 10;
 	@ApiModelProperty(value="GPU列表")
 	private List<TtsModelGpuVO> ttsGpuList;
 	

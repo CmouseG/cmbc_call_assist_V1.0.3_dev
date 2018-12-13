@@ -20,6 +20,9 @@ public class TaskListReqVO
 	private Date startTime;
 	@ApiModelProperty(value="结束时间")
 	private Date endTime;
-	
+	@ApiModelProperty(value="每页条数")
+	private Integer pageSize;
+	@ApiModelProperty(value="页码")
+	private Integer pageNum;
 	
 }

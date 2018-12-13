@@ -19,7 +19,7 @@ public interface AIManager {
      * @param sentence
      * @return
      */
-    boolean isMatch(String callUuid, String sentence, String aiNo, String userId);
+//    boolean isMatch(String callUuid, String sentence, String aiNo, String userId);
 
     /**
      * 发起ai请求
@@ -32,7 +32,7 @@ public interface AIManager {
 
     post /remote/aiCallNex
      */
-    AIResponse sendAiRequest(AIRequest aiRequest) throws Exception;
+    void sendAiRequest(AIRequest aiRequest) throws Exception;
 
     /**
      * 释放被占用的ai资源

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.concurrent.*;
 
 /**
@@ -29,13 +30,10 @@ public class ChannelHelper {
     ChannelService channelService;
 
     @Autowired
-    AiConfig aiConfig;
+    RobotNextHelper robotNextHelper;
 
     @Autowired
     LocalFsServer localFsServer;
-
-    @Autowired
-    AsyncEventBus simpleEventSender;
 
     @Autowired
     AfterMediaChecker afterMediaChecker;
@@ -173,7 +171,6 @@ public class ChannelHelper {
      * @param uuid
      * @param mediaFile
      * @param mediaFileDuration
-     * @param isLock
      * @param isEnd
      */
     private void setChannel(Channel callMedia, String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isEnd){
@@ -186,11 +183,13 @@ public class ChannelHelper {
         }
 
         callMedia.setMediaFileName(mediaFile);
-        callMedia.setIsMediaLock(isLock);
+//        callMedia.setIsMediaLock(isLock);
+        callMedia.setStartPlayTime(new Date());
         channelService.save(callMedia);
 
+        //把之前的定时器停掉
         stopTimer(uuid);
-
+        //设置一个新的定时器
         log.debug("使用定时服务setChannel,timeLen[{}],isEnd[{}]", mediaFileDuration, isEnd);
         ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
                     if (!isEnd) {
@@ -260,6 +259,7 @@ public class ChannelHelper {
         //停止该通道相关的各种计时器
         log.info("停止通道[{}]的各种计时器", uuid);
         stopTimer(uuid);
+        robotNextHelper.stopAiCallNextTimer(uuid);
     }
 
     interface AfterLockHandle{

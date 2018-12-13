@@ -16,6 +16,7 @@ import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
 import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.helper.ChannelHelper;
+import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsManager;
 import com.guiji.calloutserver.config.FsBotConfig;
@@ -23,8 +24,10 @@ import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutDetailService;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.ErrorMatchService;
+import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Date;
+import java.util.Timer;
 
 @Service
 @Slf4j
@@ -63,6 +67,10 @@ public class FsBotHandler {
 
     @Autowired
     AsyncEventBus asyncEventBus;
+
+    @Autowired
+    RobotNextHelper robotNextHelper;
+
     //注册这个监听器
     @PostConstruct
     public void register() {
@@ -85,13 +93,15 @@ public class FsBotHandler {
 
             Long startTime = new Date().getTime();
             AIResponse aiResponse = aiManager.applyAi(request);
+            //todo 此处如果异常，缺少后续处理，更改calloutplan状态，回掉调度中心
             Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse,false);
 
             //更新callplan
-//            callPlan.setAiId(aiResponse.getAiId());
-            callPlan.setCallState(ECallState.answer.ordinal());
+            if(callPlan.getCallState()==null || callPlan.getCallState()<ECallState.answer.ordinal()){
+                callPlan.setCallState(ECallState.answer.ordinal());
+            }
             callPlan.setAnswerTime(new Date());
             callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
             callOutPlanService.update(callPlan);
@@ -118,6 +128,15 @@ public class FsBotHandler {
             callOutDetailRecord.setBotRecordFile(aiResponse.getWavFile());
             callOutDetailRecord.setCallDetailId(callDetail.getCallDetailId());
             callOutDetailRecordService.save(callOutDetailRecord);
+
+            //启动定时器，500ms请求一次aiCallNext接口
+            AiCallNextReq aiCallNextReq = new AiCallNextReq();
+            aiCallNextReq.setUserId(callPlan.getCustomerId());
+            aiCallNextReq.setTemplateId(callPlan.getTempId());
+            aiCallNextReq.setAiNo(aiResponse.getAiId());
+            aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
+            aiCallNextReq.setSeqId(callPlan.getCallId());
+            robotNextHelper.startAiCallNextTimer(aiCallNextReq);
         }catch (Exception ex){
             //TODO:报警
             log.warn("在处理ChannelAnswer时出错异常", ex);
@@ -177,12 +196,12 @@ public class FsBotHandler {
             }
 
             //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
-            if (channelHelper.isChannelLock(event.getUuid())) {
+/*            if (channelHelper.isChannelLock(event.getUuid())) {
                 log.info("通道媒体[{}]已被锁定，跳过该次识别请求", event.getUuid());
                 return;
-            }
+            }*/
 
-            //如果是系统产生的事件，则跳过isMatch处理，因为需要该事件来触发下一步的说话内容
+/*            //如果是系统产生的事件，则跳过isMatch处理，因为需要该事件来触发下一步的说话内容
             if(!event.isGenerated()){
                 //只有在播放状态，才去调用isMatch接口，如果不是播放状态，则直接调用hello
                 if(channelHelper.isInPlay(event.getUuid())){
@@ -196,22 +215,24 @@ public class FsBotHandler {
                         return;
                     }
                 }
-            }
+            }*/
 
-            if(!channelHelper.isAllowDisturb(event.getUuid())){
+/*            if(!channelHelper.isAllowDisturb(event.getUuid())){
                 log.debug("通道媒体[{}]不符合打断条件，禁止打断", event.getUuid());
                 return;
-            }
+            }*/
+
 
             //发起ai请求
-            long aiStartTime = new Date().getTime();
+//            long aiStartTime = new Date().getTime();
             AIRequest aiRequest = new AIRequest(event);
-            aiRequest.setCallMatch(false);
-            AIResponse aiResponse = aiManager.sendAiRequest(aiRequest);
-            long aiEndTime = new Date().getTime();
+//            aiRequest.setCallMatch(false);
+            aiManager.sendAiRequest(aiRequest);
+//            long aiEndTime = new Date().getTime();
 
-            CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
-            log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
+
+            buildCallOutDetail(callPlan.getCallId(), event);
+           /* log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
             if(aiResponse.getAiResponseType() == EAIResponseType.NORMAL) {       //机器人正常放音
                 log.info("sellbot结果为正常放音");
                 callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
@@ -239,7 +260,7 @@ public class FsBotHandler {
             callOutDetailService.save(callDetail);
 
             //保存CallDetailRecord
-            callOutDetailRecordService.add(callPlan.getCallId(), callDetail.getCallDetailId(), event.getFileName(), aiResponse.getWavFile());
+            callOutDetailRecordService.add(callPlan.getCallId(), callDetail.getCallDetailId(), event.getFileName(), aiResponse.getWavFile());*/
         }catch (Exception ex){
             log.warn("handleNormalAsr: 在处理AliAsr时出错异常", ex);
         }
@@ -267,27 +288,24 @@ public class FsBotHandler {
 
     /**
      * 正常应答播放
-     * @param event
-     * @param callPlan
      * @param callDetail
      */
-    private void playNormal(AsrCustomerEvent event, CallOutPlan callPlan, AIResponse aiResponse, CallOutDetail callDetail) {
-        if (event.isGenerated()) {
-            callDetail.setCallDetailType(ECallDetailType.ASR_EMPTY_GENERATED.ordinal());
-        } else {
+    public void playNormal(String uuid, AIResponse aiResponse, CallOutDetail callDetail) {
+//        if (event.isGenerated()) {
+//            callDetail.setCallDetailType(ECallDetailType.ASR_EMPTY_GENERATED.ordinal());
+//        } else {
             callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
-        }
+//        }
 
         boolean isLock = !fsBotConfig.isAllowDisturbed();
-        channelHelper.playFile(event.getUuid(), aiResponse.getWavFile(), aiResponse.getWavDuration(), isLock);
+        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), isLock);
     }
 
     /**
      * 转人工
-     * @param callPlan
      * @param sellbotResponse
      */
-    private void playToAgent(CallOutPlan callPlan, AIResponse sellbotResponse) {
+    public void playToAgent(AIResponse sellbotResponse) {
 //        //获取转人工的队列号
 //        Template template = templateRepository.findByTempId(callPlan.getTempId());
 //        callPlan.setAgentGroupId(template.getAgentGroupId());
@@ -303,26 +321,39 @@ public class FsBotHandler {
 //        simpleEventSender.sendEvent(toAgentEvent);
     }
 
-    private CallOutDetail buildCallOutDetail(CallOutPlan callPlan, AsrCustomerEvent event) {
-        CallOutDetail callDetail = new CallOutDetail();
-        callDetail.setCallId(callPlan.getCallId());
+    public void buildCallOutDetail(String callId, AsrCustomerEvent event) {
 
-        Long duration = event.getAsrDuration();
-        if(event.getAsrDuration()== null || event.getAsrDuration()<=0){
-            duration = 1000L;
+        if(StringUtils.isNotBlank(event.getAsrText())){
+            CallOutDetail callDetail = new CallOutDetail();
+            callDetail.setCallId(callId);
+
+            Long duration = event.getAsrDuration();
+            if(event.getAsrDuration()== null || event.getAsrDuration()<=0){
+                duration = 1000L;
+            }
+
+            //估算用户说话时间 = 当前时间 - asr识别时长
+            LocalDateTime currentTime = LocalDateTime.now();
+            currentTime = currentTime.minus(duration, ChronoField.MILLI_OF_DAY.getBaseUnit());
+            callDetail.setCustomerSayTime(java.sql.Timestamp.valueOf(currentTime));
+
+            callDetail.setCustomerSayText(event.getAsrText());
+            callDetail.setAsrDuration(Math.toIntExact(event.getAsrDuration()));
+
+            callDetail.setTotalDuration(Math.toIntExact(event.getAsrDuration()));
+            String detailId = IdGenUtil.uuid();
+            callDetail.setCallDetailId(detailId);
+            callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
+            callOutDetailService.save(callDetail);
+
+            CallOutDetailRecord calloutDetailRecord = new CallOutDetailRecord();
+            calloutDetailRecord.setCallDetailId(detailId);
+            calloutDetailRecord.setCallId(callId);
+            calloutDetailRecord.setCustomerRecordFile(event.getFileName());
+
+            callOutDetailRecordService.save(calloutDetailRecord);
         }
 
-        //估算用户说话时间 = 当前时间 - asr识别时长
-        LocalDateTime currentTime = LocalDateTime.now();
-        currentTime = currentTime.minus(duration, ChronoField.MILLI_OF_DAY.getBaseUnit());
-        callDetail.setCustomerSayTime(java.sql.Timestamp.valueOf(currentTime));
-
-        callDetail.setCustomerSayText(event.getAsrText());
-        callDetail.setAsrDuration(Math.toIntExact(event.getAsrDuration()));
-
-        callDetail.setTotalDuration(Math.toIntExact(event.getAsrDuration()));
-        callDetail.setCallDetailId(IdGenUtil.uuid());
-        return callDetail;
     }
 
     //收到hangup事件的时候，释放sellbot资源
@@ -343,6 +374,9 @@ public class FsBotHandler {
             if(callOutDetail!=null){
                 callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                 callPlan.setReason(callOutDetail.getReason());
+            }else{//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
+                callPlan.setAccurateIntent("W");
+                callPlan.setReason(event.getSipHangupCause());
             }
             callPlan.setHangupTime(event.getHangupStamp());
             callPlan.setAnswerTime(event.getAnswerStamp());
@@ -363,7 +397,6 @@ public class FsBotHandler {
             }else{
                 callPlan.setCallState(ECallState.hangup_ok.ordinal());
             }
-            log.info("-----callPlan callState ------:"+callPlan.getCallState());
 
             callOutPlanService.update(callPlan);
 
@@ -375,11 +408,11 @@ public class FsBotHandler {
             StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
             asyncEventBus.post(statisticReportEvent);
 
+            //释放实时通道相关资源
+            channelHelper.hangup(event.getUuid());
             //释放ai资源
             aiManager.releaseAi(callPlan);
 
-            //释放实时通道相关资源
-            channelHelper.hangup(event.getUuid());
         }catch (Exception ex){
             log.warn("在处理AliAsr时出错异常", ex);
         }

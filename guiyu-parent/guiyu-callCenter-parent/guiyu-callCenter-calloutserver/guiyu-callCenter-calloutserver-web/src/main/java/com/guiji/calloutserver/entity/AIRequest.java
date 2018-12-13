@@ -24,7 +24,7 @@ public class AIRequest {
      * 是否在调用识别请求前，调用isMatch判断是否关键词匹配
      * 默认调用
      */
-    private boolean isCallMatch = true;
+//    private boolean isCallMatch = true;
 
     public AIRequest(AsrCustomerEvent event){
         //AIRequest.builder().uuid(event.getUuid()).sentence(event.getAsrText()).state("state").isCallMatch(isMatch).build();
@@ -32,12 +32,12 @@ public class AIRequest {
         this.sentence = event.getAsrText();
         this.state = "state";
         //默认调用sellbot的is_match检测
-        this.isCallMatch=true;
+//        this.isCallMatch=true;
 
         //如果是系统自己产生的事件，则绕过is_match检测，否则仍旧无法激活对话
-        if(event.isGenerated()){
-            log.info("收到系统自己产生的AliAsr事件，准备进一步激活会话");
-            this.isCallMatch = false;
-        }
+//        if(event.isGenerated()){
+//            log.info("收到系统自己产生的AliAsr事件，准备进一步激活会话");
+//            this.isCallMatch = false;
+//        }
     }
 }

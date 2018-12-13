@@ -31,6 +31,12 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     }
 
     @Override
+    public void update(CallOutDetail callOutDetail) {
+        callOutDetailMapper.updateByPrimaryKeySelective(callOutDetail);
+    }
+
+
+    @Override
     public void save(CallOutDetail calloutdetail, String recordFile) {
 
     }

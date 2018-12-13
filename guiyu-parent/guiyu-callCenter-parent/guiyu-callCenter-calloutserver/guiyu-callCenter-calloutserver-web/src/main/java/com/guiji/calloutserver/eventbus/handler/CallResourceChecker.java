@@ -55,7 +55,7 @@ public class CallResourceChecker {
 
         AiCallApplyReq aiCallApplyReq = new AiCallApplyReq();
         aiCallApplyReq.setPhoneNo(callOutPlan.getPhoneNum());
-        aiCallApplyReq.setSeqid(callOutPlan.getCallId());
+        aiCallApplyReq.setSeqId(callOutPlan.getCallId());
         aiCallApplyReq.setTemplateId(callOutPlan.getTempId());
         aiCallApplyReq.setUserId(callOutPlan.getCustomerId());
 

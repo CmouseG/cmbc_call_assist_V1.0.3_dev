@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -65,6 +66,7 @@ public class ChannelServiceImpl implements ChannelService {
         callMedia.setIsMediaLock(isLock);
         callMedia.setMediaFileName(wavFile);
         callMedia.setDisturbTime(disturbTime);
+        callMedia.setEndPlayTime(new Date());
         save(callMedia);
     }
 

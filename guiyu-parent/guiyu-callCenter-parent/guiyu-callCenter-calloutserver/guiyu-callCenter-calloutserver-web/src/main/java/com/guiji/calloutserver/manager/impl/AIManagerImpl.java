@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * @Auther: 魏驰
  * @Date: 2018/11/9 17:38
@@ -46,7 +48,7 @@ public class AIManagerImpl implements AIManager {
             aiCallStartReq.setAiNo(aiRequest.getAiId());
             String tempId = aiRequest.getTempId();
             aiCallStartReq.setTemplateId(tempId);
-            aiCallStartReq.setSeqid(aiRequest.getUuid());
+            aiCallStartReq.setSeqId(aiRequest.getUuid());
             aiCallStartReq.setUserId(aiRequest.getUserId());
 
             Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
@@ -101,14 +103,13 @@ public class AIManagerImpl implements AIManager {
      * @return
      * @throws Exception
      */
-    public AIResponse sendAiRequest(AIRequest aiRequest) throws Exception {
+    public void sendAiRequest(AIRequest aiRequest) throws Exception {
 
         log.info("开始发起sellbot请求，request[{}]", aiRequest);
-        AIResponse aiResponse;
         try {
             CallOutPlan callPlan = callOutPlanService.findByCallId(aiRequest.getUuid());
 
-            if(aiRequest.isCallMatch()){
+/*            if(aiRequest.isCallMatch()){
                 log.info("请求sellbot之前，先调用isMatch判断关键词是否匹配");
                 SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(aiRequest.getUuid(), aiRequest.getSentence(), callPlan.getAiId(), callPlan.getCustomerId());
                 if(!sellbotIsMatchResponse.isMatched()){
@@ -119,26 +120,21 @@ public class AIManagerImpl implements AIManager {
                     aiResponse.setResponseTxt(sellbotIsMatchResponse.getSentence());
                     return aiResponse;
                 }
-            }
+            }*/
 
-            AiCallNextReq aiCallNextReq = new  AiCallNextReq();
-            aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
-            aiCallNextReq.setAiNo(callPlan.getAiId());
-            aiCallNextReq.setSentence(aiRequest.getSentence());
-            aiCallNextReq.setSeqid(aiRequest.getUuid());
-            String tempId = callPlan.getTempId();
-            aiCallNextReq.setTemplateId(callPlan.getTempId());
-            aiCallNextReq.setUserId(callPlan.getCustomerId());
-            Result.ReturnData<AiCallNext> result =  robotRemote.aiCallNext(aiCallNextReq);
-            AiCallNext aiCallNext= result.getBody();
+            AiFlowMsgPushReq aiFlowMsgPushReq = new AiFlowMsgPushReq();
+            aiFlowMsgPushReq.setAiNo(callPlan.getAiId());
+            aiFlowMsgPushReq.setSentence(aiRequest.getSentence());
+            aiFlowMsgPushReq.setSeqId(aiRequest.getUuid());
+            aiFlowMsgPushReq.setTemplateId(callPlan.getTempId());
+            aiFlowMsgPushReq.setTimestamp(new Date().getTime());
+            aiFlowMsgPushReq.setUserId(callPlan.getCustomerId());
+            robotRemote.flowMsgPush(aiFlowMsgPushReq);
+
+       /*     AiCallNext aiCallNext= result.getBody();
             String resp = aiCallNext.getSellbotJson();
 
-            log.info("robotRemote.aiCallNext getSellbotJson[{}]", resp);
-//[{"state": "结束_未匹配", "answer": "好的，要么您先忙，我们后面再联系，再见！", "wav_filename": "xtw_rec/48.wav", "sentence": "", "end": 1,
-//                    "log_file": "/home/log_sellbot/logic/20181122_15000/z4266vafb9a34f62b992d3a1ec00cxxx.log", "intent": "B", "accurate_intent": "B",
-//                    "reason": "有效对话轮数:3", "user_attentions": "[('未匹配响应', 2), ('结束_未匹配', 2), ('开场白', 1), ('拒绝', 1)]", "UserInfo": "",
-//                    "used_time_ms": 3.1519999999999997, "match_nothing": 1, "dtmfflag": "false", "dtmflen": "1", "dtmftimeout": "10", "dtmfend": "", "dtmfresult": "-1"}]
-
+            log.info("robotRemote.flowMsgPush getSellbotJson[{}]", resp);
 
             SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
             Preconditions.checkState(sellbotResponse!=null && sellbotResponse.isValid(), "invalid applyAi response");
@@ -153,10 +149,10 @@ public class AIManagerImpl implements AIManager {
             aiResponse.setWavFile(sellbotResponse.getWav_filename());
             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
             aiResponse.setAiResponseType(sellbotResponse.getEnd());
-            aiResponse.setWavDuration(fsAgentManager.getWavDruation(tempId, sellbotResponse.getWav_filename()));
-            return aiResponse;
+            aiResponse.setWavDuration(fsAgentManager.getWavDruation(callPlan.getTempId(), sellbotResponse.getWav_filename()));
+            return aiResponse;*/
         }catch (Exception ex){
-            log.warn("sellbot的aiCallNext出现异常", ex);
+            log.warn("sellbot的flowMsgPush出现异常", ex);
             throw new Exception(ex.getMessage());
         }
 
@@ -168,7 +164,7 @@ public class AIManagerImpl implements AIManager {
      * @param sentence
      * @return
      */
-    public boolean isMatch(String callUuid, String sentence, String aiNo, String userId){
+/*    public boolean isMatch(String callUuid, String sentence, String aiNo, String userId){
         boolean isMatched = false;
 
         try {
@@ -179,7 +175,7 @@ public class AIManagerImpl implements AIManager {
         }
 
         return isMatched;
-    }
+    }*/
 
 
     /**
@@ -187,11 +183,11 @@ public class AIManagerImpl implements AIManager {
      * @return
      */
 
-    private SellbotIsMatchResponse sendIsMatchRequest(String callUuid, String sentence, String aiNo, String userId) throws Exception {
+/*    private SellbotIsMatchResponse sendIsMatchRequest(String callUuid, String sentence, String aiNo, String userId) throws Exception {
         try {
             AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
             aiCallLngKeyMatchReq.setSentence(sentence);
-            aiCallLngKeyMatchReq.setSeqid(callUuid);
+            aiCallLngKeyMatchReq.setSeqId(callUuid);
             aiCallLngKeyMatchReq.setAiNo(aiNo);
             aiCallLngKeyMatchReq.setUserId(userId);
             Result.ReturnData<AiCallNext> result = robotRemote.aiLngKeyMatch(aiCallLngKeyMatchReq);
@@ -205,12 +201,12 @@ public class AIManagerImpl implements AIManager {
             log.warn("sellbot的aiLngKeyMatch出现异常", ex);
             throw new Exception(ex.getMessage());
         }
-    }
+    }*/
 
     @Override
     public void releaseAi(CallOutPlan callOutPlan) {
         AiHangupReq hangupReq = new AiHangupReq();
-        hangupReq.setSeqid(callOutPlan.getCallId());
+        hangupReq.setSeqId(callOutPlan.getCallId());
         hangupReq.setAiNo(callOutPlan.getAiId());
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(callOutPlan.getCustomerId());

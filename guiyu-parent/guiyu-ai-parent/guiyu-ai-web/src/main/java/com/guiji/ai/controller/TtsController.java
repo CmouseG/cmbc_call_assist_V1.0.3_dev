@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +21,10 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
-import com.guiji.ai.vo.TaskReqVO;
-import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
@@ -198,6 +199,10 @@ public class TtsController implements ITts
 		}
 	}
 
+	/**
+     * 累计接受任务
+     * @return
+     */
 	@Override
 	@PostMapping(value = "getAcceptTasks")
 	public ReturnData<TaskRspVO> getAcceptTasks(@RequestBody TaskReqVO acceptTaskReqVO)
@@ -217,6 +222,9 @@ public class TtsController implements ITts
 		return Result.ok(acceptTaskRspVO);
 	}
 
+	/**
+     * 累计完成任务
+     */
 	@Override
 	@PostMapping(value = "getCompleteTasks")
 	public ReturnData<TaskRspVO> getCompleteTasks(@RequestBody TaskReqVO completeTaskReqVO)
@@ -234,6 +242,29 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return Result.ok(completeTaskRspVO);
+	}
+
+	/**
+     * 待合成任务数（分模型）
+     * @return
+     */
+	@Override
+	@GetMapping(value = "getWaitTasks")
+	public ReturnData<TaskRspVO> getWaitTasks()
+	{
+		TaskRspVO waitTaskRspVO = new TaskRspVO();
+		try
+		{
+			waitTaskRspVO = statusService.getWaitTasks();
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(waitTaskRspVO);
 	}
 	
 }

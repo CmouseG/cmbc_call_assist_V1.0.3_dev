@@ -15,9 +15,7 @@ public class TaskRspVO implements Serializable
 	
 	@ApiModelProperty(value="查询总数")
 	private Integer totalNum;
-	@ApiModelProperty(value="每页条数")
-	private Integer pageSize = 10;
-	@ApiModelProperty(value="任务数")
-	private List<TaskNumVO> taskNums;
+	@ApiModelProperty(value="任务数列表")
+	private List<TaskNumVO> taskNumsList;
 	
 }

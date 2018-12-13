@@ -44,38 +44,34 @@ public class ModelServiceImpl implements IModelService
 	@Override
 	public TtsGpuRspVO getGpuList(TtsGpuReqVO ttsGpuReqVO)
 	{
+		// 返回结果对象
 		TtsGpuRspVO ttsGpuRsp = new TtsGpuRspVO();
-		
+		// 返回结果对象中结果集
 		List<TtsModelGpuVO> ttsGpuList = new ArrayList<>();
+		// 数据库查询结果集
 		List<TtsModel> modelList = new ArrayList<>();
-		
+		//条件查询
 		TtsModelExample example = new TtsModelExample();
-		
-		if(ttsGpuReqVO == null){
-			modelList = modelMapper.selectByExample(example);
-		}else
-		{
-			Criteria criteria = example.createCriteria();
-			if(StringUtils.isNotEmpty(ttsGpuReqVO.getModel())){
-				criteria.andModelEqualTo(ttsGpuReqVO.getModel());
-			}
-			if(StringUtils.isNotEmpty(ttsGpuReqVO.getIp())){
-				criteria.andTtsIpEqualTo(ttsGpuReqVO.getIp());
-			}
-			if(StringUtils.isNotEmpty(ttsGpuReqVO.getPort())){
-				criteria.andTtsPortEqualTo(ttsGpuReqVO.getPort());
-			}
-			if(ttsGpuReqVO.getPageNum() != null && ttsGpuReqVO.getPageSize() != null){
-				example.setLimitStart((ttsGpuReqVO.getPageNum() - 1) * ttsGpuReqVO.getPageSize());
-				example.setLimitEnd(ttsGpuReqVO.getPageSize());
-			}
-			
-			modelList = modelMapper.selectByExample(example);
+		Criteria criteria = example.createCriteria();
+		if (StringUtils.isNotEmpty(ttsGpuReqVO.getModel())){
+			criteria.andModelEqualTo(ttsGpuReqVO.getModel());
 		}
-		
-		if(modelList != null){
-			for(TtsModel ttsMolde : modelList)
-			{
+		if (StringUtils.isNotEmpty(ttsGpuReqVO.getIp())){
+			criteria.andTtsIpEqualTo(ttsGpuReqVO.getIp());
+		}
+		if (StringUtils.isNotEmpty(ttsGpuReqVO.getPort())){
+			criteria.andTtsPortEqualTo(ttsGpuReqVO.getPort());
+		}
+		modelList = modelMapper.selectByExample(example);
+		ttsGpuRsp.setTotalNum(modelList.size()); // 不分页总条数
+
+		example.setLimitStart((ttsGpuReqVO.getPageNum() - 1) * ttsGpuReqVO.getPageSize());
+		example.setLimitEnd(ttsGpuReqVO.getPageSize());
+		modelList = modelMapper.selectByExample(example);
+
+		if (modelList != null)
+		{
+			for (TtsModel ttsMolde : modelList){
 				TtsModelGpuVO gpuVO = new TtsModelGpuVO();
 				gpuVO.setModel(ttsMolde.getModel());
 				gpuVO.setIp(ttsMolde.getTtsIp());
@@ -84,9 +80,7 @@ public class ModelServiceImpl implements IModelService
 			}
 		}
 		
-		ttsGpuRsp.setTotalNum(ttsGpuList.size());
 		ttsGpuRsp.setTtsGpuList(ttsGpuList);
-		
 		return ttsGpuRsp;
 	}
 
@@ -106,7 +100,7 @@ public class ModelServiceImpl implements IModelService
 			modelGpuNumVO.setGpuNums((int) map.get(AiConstants.COUNT));
 			modelGpuNumVOList.add(modelGpuNumVO);
 		}
-		return null;
+		return modelGpuNumVOList;
 	}
 
 	@Override

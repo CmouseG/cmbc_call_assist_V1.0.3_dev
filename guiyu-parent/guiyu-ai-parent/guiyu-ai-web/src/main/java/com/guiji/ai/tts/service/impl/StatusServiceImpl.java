@@ -18,11 +18,11 @@ import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
-import com.guiji.ai.vo.TaskReqVO;
-import com.guiji.ai.vo.TaskRspVO;
-import com.guiji.ai.vo.TaskNumVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
+import com.guiji.ai.vo.TaskNumVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsStatusReqVO;
 import com.guiji.ai.vo.TtsStatusRspVO;
@@ -120,41 +120,38 @@ public class StatusServiceImpl implements IStatusService
 	@Override
 	public TaskListRspVO getTaskList(TaskListReqVO taskListReqVO)
 	{
+		// 返回结果对象
 		TaskListRspVO taskListRspVO = new TaskListRspVO();
-		
+		// 数据库查询结果集
 		List<TtsStatus> ttsStatusList = new ArrayList<>();
-		TtsStatusExample TtsStatusExample = new TtsStatusExample();
-		
-		if(taskListReqVO == null)
-		{
-			ttsStatusList = ttsStatusMapper.selectByExample(TtsStatusExample);
+		// 条件查询
+		TtsStatusExample example = new TtsStatusExample();
+		Criteria criteria = example.createCriteria();
+		if (StringUtils.isNotEmpty(taskListReqVO.getBusId())){
+			criteria.andBusIdEqualTo(taskListReqVO.getBusId());
 		}
-		else
-		{
-			Criteria criteria = TtsStatusExample.createCriteria();
-			if(StringUtils.isNotEmpty(taskListReqVO.getBusId())){
-				criteria.andBusIdEqualTo(taskListReqVO.getBusId());
-			}
-			if(StringUtils.isNotEmpty(taskListReqVO.getModel())){
-				criteria.andModelEqualTo(taskListReqVO.getModel());
-			}
-			if(StringUtils.isNotEmpty(taskListReqVO.getStatus())){
-				criteria.andStatusEqualTo(taskListReqVO.getStatus());
-			}
-			if(taskListReqVO.getStartTime() != null){
-				criteria.andCreateTimeGreaterThanOrEqualTo(taskListReqVO.getStartTime());
-			}
-			if(taskListReqVO.getEndTime() != null){
-				criteria.andCreateTimeLessThanOrEqualTo(taskListReqVO.getEndTime());
-			}
-			ttsStatusList = ttsStatusMapper.selectByExample(TtsStatusExample);
+		if (StringUtils.isNotEmpty(taskListReqVO.getModel())){
+			criteria.andModelEqualTo(taskListReqVO.getModel());
 		}
+		if (StringUtils.isNotEmpty(taskListReqVO.getStatus())){
+			criteria.andStatusEqualTo(taskListReqVO.getStatus());
+		}
+		if (taskListReqVO.getStartTime() != null){
+			criteria.andCreateTimeGreaterThanOrEqualTo(taskListReqVO.getStartTime());
+		}
+		if (taskListReqVO.getEndTime() != null){
+			criteria.andCreateTimeLessThanOrEqualTo(taskListReqVO.getEndTime());
+		}
+		ttsStatusList = ttsStatusMapper.selectByExample(example);
+		taskListRspVO.setTotalNum(ttsStatusList.size()); // 不分页总条数
 
-		taskListRspVO.setTotalNum(ttsStatusList.size());
+		example.setLimitStart((taskListReqVO.getPageNum() - 1) * taskListReqVO.getPageSize());
+		example.setLimitEnd(taskListReqVO.getPageSize());
+		ttsStatusList = ttsStatusMapper.selectByExample(example);
+
 		taskListRspVO.setTtsStatusList(ttsStatusList);
-		
 		return taskListRspVO;
-				
+
 	}
 
 
@@ -173,8 +170,8 @@ public class StatusServiceImpl implements IStatusService
 	@Override
 	public TaskRspVO getTasks(TaskReqVO taskReqVO)
 	{
-		TaskRspVO acceptTaskRspVO = new TaskRspVO();
-		List<TaskNumVO> acceptTaskVOList = new ArrayList<>();
+		TaskRspVO taskRspVO = new TaskRspVO();
+		List<TaskNumVO> taskNumVOList = new ArrayList<>();
 		
 		String dimension = taskReqVO.getDimension(); //维度
 		List<Map<String, Object>> mapList = new ArrayList<>();
@@ -202,26 +199,47 @@ public class StatusServiceImpl implements IStatusService
 		}
 		
 		//处理返回结果
-		acceptTaskVOList = setTaskVO(mapList, dimension);
+		taskNumVOList = setTaskVO(mapList, dimension);
 		
-		acceptTaskRspVO.setTotalNum(mapList.size());
-		acceptTaskRspVO.setTaskNums(acceptTaskVOList);
-		return acceptTaskRspVO;
+		taskRspVO.setTotalNum(taskNumVOList.size());
+		taskRspVO.setTaskNumsList(taskNumVOList);
+		return taskRspVO;
 	}
 
 	//处理返回结果
 	private List<TaskNumVO> setTaskVO(List<Map<String, Object>> mapList, String dimension)
 	{
-		List<TaskNumVO> acceptTaskVOList = new ArrayList<>();
-		TaskNumVO acceptTaskVO = null;
+		List<TaskNumVO> taskNumVOList = new ArrayList<>();
+		TaskNumVO taskNumVO = null;
 		
 		for(Map<String, Object> map : mapList){
-			acceptTaskVO = new TaskNumVO();
-			acceptTaskVO.setCount((long) map.get("countNum"));
-			acceptTaskVO.setDate((String) map.get("date"));
-			acceptTaskVOList.add(acceptTaskVO);
+			taskNumVO = new TaskNumVO();
+			taskNumVO.setCount((long) map.get("countNum"));
+			taskNumVO.setDate((String) map.get("date"));
+			taskNumVOList.add(taskNumVO);
 		}
-		return acceptTaskVOList;		
+		return taskNumVOList;		
+	}
+
+
+	@Override
+	public TaskRspVO getWaitTasks()
+	{
+		TaskRspVO taskRspVO = new TaskRspVO();
+		List<TaskNumVO> taskNumVOList = new ArrayList<>();
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		
+		mapList = ttsStatusMapper.getWaitTasks();
+		for(Map<String, Object> map : mapList){
+			TaskNumVO taskNumVO = new TaskNumVO();
+			taskNumVO.setModel((String) map.get("model"));
+			taskNumVO.setCount((Long) map.get("countNum"));
+			taskNumVOList.add(taskNumVO);
+		}
+		
+		taskRspVO.setTotalNum(taskNumVOList.size());
+		taskRspVO.setTaskNumsList(taskNumVOList);
+		return taskRspVO;
 	}
 
 }

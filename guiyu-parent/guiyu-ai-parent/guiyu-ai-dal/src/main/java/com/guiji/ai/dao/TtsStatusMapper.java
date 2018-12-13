@@ -50,4 +50,7 @@ public interface TtsStatusMapper {
 	//按月统计 完成任务数
 	List<Map<String, Object>> getCompleteTasksByMonths(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
+	//待合成任务数（分模型）
+	List<Map<String, Object>> getWaitTasks();
+
 }

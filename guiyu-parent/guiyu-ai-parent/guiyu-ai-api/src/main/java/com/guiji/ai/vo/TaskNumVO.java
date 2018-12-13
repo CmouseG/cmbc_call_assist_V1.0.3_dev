@@ -8,4 +8,6 @@ public class TaskNumVO
 	private Long count;
 	
 	private String date;
+	
+	private String model;
 }

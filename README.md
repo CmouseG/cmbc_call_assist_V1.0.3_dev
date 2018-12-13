@@ -80,3 +80,8 @@ http://192.168.1.187:8081/
 5. Mysql5.7版本，并配置主从
 6. FreeSwitch
 7. Redis5.0
+
+## 记录用户操作日志方法 ##
+1. 引入component模块
+2. 在接口上加上注解，@SysOperaLog(operaTarget = "操作对象", operaType = "操作类型") 例如：数据字典增加接口，操作对象填“数据字典”，操作类型填“增加”
+3. 请求头中塞入userId就可以记录用户操作日志

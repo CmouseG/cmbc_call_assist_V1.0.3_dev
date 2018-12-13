@@ -66,10 +66,13 @@ import ai.guiji.botsentence.dao.entity.VoliceInfo;
 import ai.guiji.botsentence.dao.entity.VoliceInfoExample;
 import ai.guiji.botsentence.service.IFileGenerateService;
 import ai.guiji.botsentence.service.IVoliceService;
+import ai.guiji.botsentence.util.AudioConvertUtil;
 import ai.guiji.botsentence.util.BotSentenceUtil;
 import ai.guiji.botsentence.vo.OptionsJson;
 import ai.guiji.component.client.util.FileUtil;
 import ai.guiji.component.client.util.IOUtil;
+import ai.guiji.component.exception.CommonException;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -877,7 +880,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 	 * 下载音频文件
 	 */
 	public void generateWAV(RestTemplate template, String url,String name,String dir) throws IOException {
-		logger.info("downloading...." + url);
+		/*logger.info("downloading...." + url);
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<Resource> httpEntity = new HttpEntity<Resource>(headers);
 		ResponseEntity<byte[]> response = template.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
@@ -890,26 +893,76 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		fos1.close();
 
 		
-//		File wavFile = new File(dir + FILE_SEPARATOR + "temp2_" + name + ".wav");
-//		boolean flag = AudioConvertUtil.converWav(file.getPath(), wavFile.getPath());
-//		if(!flag) {
-//			throw new CommonException("转换wav失败"+file.getName());
-//		}
-//		
-//		if(file.delete()) {
-//			logger.info("删除临时文件"+file.getName()+"成功...");
-//		}
-//		
-//		
-//		//去掉音频信息头
-//		File finnalFile = new File(dir + FILE_SEPARATOR + name + ".wav");
-//		boolean flag2 = AudioConvertUtil.removeHeadInfo(wavFile.getPath(), finnalFile.getPath());
-//		if(!flag2) {
-//			throw new CommonException("清空头信息失败"+wavFile.getName());
-//		}
-//		if(wavFile.delete()) {
-//			logger.info("删除临时文件"+wavFile.getName()+"成功...");
-//		}
+		File wavFile = new File(dir + FILE_SEPARATOR + "temp2_" + name + ".wav");
+		boolean flag = AudioConvertUtil.converWav(file.getPath(), wavFile.getPath());
+		if(!flag) {
+			throw new CommonException("转换wav失败"+file.getName());
+		}
+		
+		if(file.delete()) {
+			logger.info("删除临时文件"+file.getName()+"成功...");
+		}
+		
+		
+		//去掉音频信息头
+		File finnalFile = new File(dir + FILE_SEPARATOR + name + ".wav");
+		boolean flag2 = AudioConvertUtil.removeHeadInfo(wavFile.getPath(), finnalFile.getPath());
+		if(!flag2) {
+			throw new CommonException("清空头信息失败"+wavFile.getName());
+		}
+		if(wavFile.delete()) {
+			logger.info("删除临时文件"+wavFile.getName()+"成功...");
+		}*/
+		
+		logger.info("downloading...." + url);
+		String os = System.getProperties().getProperty("os.name").toLowerCase();
+		logger.info("当前操作系统: " + os);
+		if(os.startsWith("win")) {
+			HttpHeaders headers = new HttpHeaders();
+			HttpEntity<Resource> httpEntity = new HttpEntity<Resource>(headers);
+			ResponseEntity<byte[]> response = template.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
+			logger.info(">>>>> return code:" + response.getStatusCodeValue());
+			File file = new File(dir + FILE_SEPARATOR + name + ".wav");
+			
+			FileOutputStream fos1 = new FileOutputStream(file);
+			fos1.write(response.getBody());
+			fos1.flush();
+			fos1.close();
+		}else {
+
+			HttpHeaders headers = new HttpHeaders();
+			HttpEntity<Resource> httpEntity = new HttpEntity<Resource>(headers);
+			ResponseEntity<byte[]> response = template.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
+			logger.info(">>>>> return code:" + response.getStatusCodeValue());
+			File file = new File(dir + FILE_SEPARATOR + "temp_"+ name + ".wav");
+			
+			FileOutputStream fos1 = new FileOutputStream(file);
+			fos1.write(response.getBody());
+			fos1.flush();
+			fos1.close();
+
+			
+			File wavFile = new File(dir + FILE_SEPARATOR + "temp2_" + name + ".wav");
+			boolean flag = AudioConvertUtil.converWav(file.getPath(), wavFile.getPath());
+			if(!flag) {
+				throw new CommonException("转换wav失败"+file.getName());
+			}
+			
+			if(file.delete()) {
+				logger.info("删除临时文件"+file.getName()+"成功...");
+			}
+			
+			
+			//去掉音频信息头
+			File finnalFile = new File(dir + FILE_SEPARATOR + name + ".wav");
+			boolean flag2 = AudioConvertUtil.removeHeadInfo(wavFile.getPath(), finnalFile.getPath());
+			if(!flag2) {
+				throw new CommonException("清空头信息失败"+wavFile.getName());
+			}
+			if(wavFile.delete()) {
+				logger.info("删除临时文件"+wavFile.getName()+"成功...");
+			}
+		}
 	}
 	
 

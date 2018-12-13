@@ -737,6 +737,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 							}
 							
 							if(Constant.IS_PARAM_TRUE.equals(task.getIsParam())) {
+								tts_pos_map2.put(task.getContent(), wavName);
 								tts_pos_map1.put(wavName, task.getContent());
 								allParamList.add(task.getContent());
 							}

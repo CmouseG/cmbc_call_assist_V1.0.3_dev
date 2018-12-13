@@ -1,6 +1,5 @@
 package com.guiji.ai.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,10 +31,7 @@ import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
-import com.guiji.ai.vo.TtsStatusReqVO;
-import com.guiji.ai.vo.TtsStatusRspVO;
 import com.guiji.common.exception.GuiyuException;
-import com.guiji.component.aspect.SysOperaLog;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 
@@ -110,30 +107,6 @@ public class TtsController implements ITts
 	}
 
 	/**
-	 * 查询TTS处理状态列表
-	 */
-	@Override
-	@PostMapping(value = "getTtsStatusList")
-	public ReturnData<List<TtsStatusRspVO>> getTtsStatusList(@RequestBody(required = false) TtsStatusReqVO ttsStatusReqVO) 
-	{
-		//结果集
-		List<TtsStatusRspVO> statusRspVOList = new ArrayList<>();
-		try
-		{
-			logger.info("开始查询tts处理状态...");
-			statusRspVOList = statusService.getTtsStatusList(ttsStatusReqVO);
-				
-		} catch (GuiyuException e){
-			logger.error("请求失败！", e);
-			return Result.error(e.getErrorCode());
-		} catch (Exception ex){
-			logger.error("请求失败！", ex);
-			return Result.error(AiConstants.AI_REQUEST_FAIL);
-		}
-		return Result.ok(statusRspVOList);
-	}
-
-	/**
 	 * 获取GPU模型列表
 	 */
 	@Override
@@ -183,8 +156,8 @@ public class TtsController implements ITts
 	 * 任务插队
 	 */
 	@Override
-	@PostMapping(value = "jumpQueue")
-	public ReturnData<Boolean> jumpQueue(@RequestParam(value="busId",required=true) String busId)
+	@GetMapping("/jumpQueue/{busId}")
+	public ReturnData<Boolean> jumpQueue(@PathVariable("busId") String busId)
 	{
 		try
 		{
@@ -201,7 +174,7 @@ public class TtsController implements ITts
 	}
 
 	/**
-     * 累计接受任务
+     * 累计任务
      * @return
      */
 	@Override

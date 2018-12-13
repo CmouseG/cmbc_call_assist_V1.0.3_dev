@@ -26,8 +26,6 @@ import com.guiji.ai.vo.TaskNumVO;
 import com.guiji.ai.vo.TaskReqVO;
 import com.guiji.ai.vo.TaskRspVO;
 import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.ai.vo.TtsStatusReqVO;
-import com.guiji.ai.vo.TtsStatusRspVO;
 import com.guiji.common.exception.GuiyuException;
 
 @Service
@@ -50,50 +48,6 @@ public class StatusServiceImpl implements IStatusService
 		return status;
 
 	}
-
-	
-	@Override
-	public List<TtsStatusRspVO> getTtsStatusList(TtsStatusReqVO ttsStatusReqVO)
-	{
-		//结果集
-		List<TtsStatusRspVO> ttsStatusRspList = new ArrayList<>();
-		List<TtsStatus> ttsStatusList = new ArrayList<>();
-		
-		TtsStatusExample example = new TtsStatusExample();
-		if(ttsStatusReqVO == null)
-		{
-			ttsStatusList = ttsStatusMapper.selectByExample(example);
-		}else
-		{
-			Criteria criteria = example.createCriteria();
-			if(StringUtils.isNotEmpty(ttsStatusReqVO.getModel())){
-				criteria.andModelEqualTo(ttsStatusReqVO.getModel());
-			}
-			if(StringUtils.isNotEmpty(ttsStatusReqVO.getStatus())){
-				criteria.andStatusEqualTo(ttsStatusReqVO.getStatus());
-			}
-			if(ttsStatusReqVO.getStartTime() != null){
-				criteria.andCreateTimeGreaterThanOrEqualTo(ttsStatusReqVO.getStartTime());
-			}
-			if(ttsStatusReqVO.getEndTime() != null){
-				criteria.andCreateTimeLessThanOrEqualTo(ttsStatusReqVO.getEndTime());
-			}
-			ttsStatusList = ttsStatusMapper.selectByExample(example);
-		}
-		
-		for(TtsStatus ttsStatus : ttsStatusList)
-		{
-			TtsStatusRspVO ttsStatusRsp = new TtsStatusRspVO();
-			ttsStatusRsp.setBusId(ttsStatus.getBusId());
-			ttsStatusRsp.setModel(ttsStatus.getModel());
-			ttsStatusRsp.setCount(ttsStatus.getTextCount());
-			ttsStatusRsp.setCreateTime(ttsStatus.getCreateTime());
-			ttsStatusRspList.add(ttsStatusRsp);
-		}
-		
-		return ttsStatusRspList;
-	}
-
 	
 	/**
 	 * ttsReqVO入库

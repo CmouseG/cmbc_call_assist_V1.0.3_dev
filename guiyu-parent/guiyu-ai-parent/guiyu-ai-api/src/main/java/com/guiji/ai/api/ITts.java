@@ -1,9 +1,8 @@
 package com.guiji.ai.api;
 
-import java.util.List;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.guiji.ai.vo.RatioReqVO;
@@ -16,8 +15,6 @@ import com.guiji.ai.vo.TtsGpuReqVO;
 import com.guiji.ai.vo.TtsGpuRspVO;
 import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.ai.vo.TtsRspVO;
-import com.guiji.ai.vo.TtsStatusReqVO;
-import com.guiji.ai.vo.TtsStatusRspVO;
 import com.guiji.component.result.Result.ReturnData;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -56,18 +53,6 @@ public interface ITts {
     public ReturnData<TtsRspVO> getTtsResultByBusId(String busId);
     
     /**
-     * 查询TTS处理状态
-     * @param busiId
-     * @return
-     */
-    @ApiOperation(value="查询TTS处理状态")
-    @ApiImplicitParams({ 
-		@ApiImplicitParam(name = "TtsStatusReq", value = "TTS状态查询请求对象", required = true) 
-	})
-    @PostMapping(value = "getTtsStatusList")
-    public ReturnData<List<TtsStatusRspVO>> getTtsStatusList(TtsStatusReqVO ttsStatusReqVO); 
-    
-    /**
      * 获取GPU模型列表
      * @return
      */
@@ -99,8 +84,8 @@ public interface ITts {
     @ApiImplicitParams({ 
 		@ApiImplicitParam(name = "busId", value = "业务编号", required = true) 
 	})
-    @PostMapping(value = "jumpQueue")
-    public ReturnData<Boolean> jumpQueue(String busId);
+    @GetMapping("/jumpQueue/{busId}")
+    public ReturnData<Boolean> jumpQueue(@PathVariable("busId") String busId);
     
     /**
      * 累计任务数

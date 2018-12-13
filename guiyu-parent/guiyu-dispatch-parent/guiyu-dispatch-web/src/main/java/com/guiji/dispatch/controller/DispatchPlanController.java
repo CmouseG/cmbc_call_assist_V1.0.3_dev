@@ -109,9 +109,11 @@ public class DispatchPlanController {
 			@RequestParam(required = false, name = "replayType") String replayType,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize, @RequestHeader Long userId,
-			@RequestHeader Boolean isSuperAdmin) {
+			@RequestHeader Boolean isSuperAdmin,
+			@RequestParam(required = false, name = "selectUserId") Integer selectUserId,
+			@RequestParam(required = false, name = "robotName") String robotName) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize, userId, isSuperAdmin);
+				pagenum, pagesize, userId, isSuperAdmin,selectUserId,robotName);
 	}
 
 	/**
@@ -185,7 +187,12 @@ public class DispatchPlanController {
 		return dispatchPlanService.outLineinfos(String.valueOf(userId));
 	}
 
-	// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+	/**
+	 * 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+	 * @param userId
+	 * @param isSuperAdmin
+	 * @return
+	 */
 	@PostMapping("getServiceStatistics")
 	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
 		if (!isSuperAdmin) {

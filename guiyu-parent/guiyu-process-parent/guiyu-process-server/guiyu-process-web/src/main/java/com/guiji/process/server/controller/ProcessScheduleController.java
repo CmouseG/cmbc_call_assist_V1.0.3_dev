@@ -1,6 +1,7 @@
 package com.guiji.process.server.controller;
 
 import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.component.aspect.SysOperaLog;
 import com.guiji.component.result.Result;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.model.ChangeModelReq;
@@ -71,6 +72,7 @@ public class ProcessScheduleController implements IProcessSchedule {
     }
 
     @Override
+    @SysOperaLog(operaTarget = "进程管理", operaType = "发布话术")
     public Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req) {
         processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile(),req.getUserId());
         return Result.ok();

@@ -68,7 +68,6 @@ public class RobotNextHelper {
                     try {
                         log.info("-------------start  schedule aiCallNext callId:" + callId);
                         Channel channel = channelService.findByUuid(callId);
-                        log.info("------------->>>>>>> channel [{}]", channel);
                         Long startTime = channel.getStartPlayTime().getTime();
 
                         if (channel.getEndPlayTime() != null && startTime < channel.getEndPlayTime().getTime()) {//播放结束
@@ -82,13 +81,7 @@ public class RobotNextHelper {
                             aiCallNextReq.setStatus("1");
                             aiCallNextReq.setTimestamp(channel.getStartPlayTime().getTime());
                         }
-                        log.info("--------------------robotRemote.aiCallNext aiCallNextReq[{}]", aiCallNextReq);
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
-                        log.info("=====================robotRemote.aiCallNext result[{}]", result);
-// [ReturnData [code=0, msg=请求成功, success=true, body=AiCallNext(aiNo=192168150150132018121388527561, helloStatus=null, sellbotJson={"UserInfo":"","accurate_intent":"D","answer":"那打扰您了,祝您生活愉快，再见！",
-// "answered_branch":"failed_enter","answered_domain":"结束","cfg_ver":"","dtmfend":"","dtmfflag":"false","dtmflen":"1","dtmfresult":"-1","dtmftimeout":"10","end":1,"intent":"D","match_nothing":0,
-// "reason":"得分 <= 9.0 or 得分 < 0.0，实际得分: -10，或者接通即挂断","sentence":"我不是我","seqid":"30e9da92-fe81-4f85-988c-141253c52f3f","state":"结束","used_time_ms":69.617,"user_attentions":
-// "[('结束', 2), ('开场白', 1)]","wav_filename":"csqtz_47115_rec/5.wav"}
                         AiCallNext aiCallNext = result.getBody();
                         String status = aiCallNext.getHelloStatus();
                         if (status.equals("play")) {
@@ -113,7 +106,6 @@ public class RobotNextHelper {
                             dealWithResponse(aiResponse);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
                         log.error("scheduledExecutorService.scheduleAtFixedRate has error: callId[{}]",callId);
                     }
                 },
@@ -125,7 +117,7 @@ public class RobotNextHelper {
 
     public void dealWithResponse(AIResponse aiResponse) {
         String callId = aiResponse.getCallId();
-        CallOutDetail callDetail = callOutDetailService.getLastDetail(callId);
+        CallOutDetail callDetail = callOutDetailService.getLastDetailCustomer(callId);
 
         if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
             callDetail = new CallOutDetail();
@@ -170,13 +162,10 @@ public class RobotNextHelper {
             log.warn("未知的sellbot返回类型[{}], 跳过处理", aiResponse.getAiResponseType());
         }
 
-//        long stopTime = new Date().getTime();
-//        callDetail.setAiDuration((int)(aiEndTime - aiStartTime));
         callDetail.setBotAnswerText(aiResponse.getResponseTxt());
         callDetail.setBotAnswerTime(new Date());
         callDetail.setAccurateIntent(aiResponse.getAccurateIntent());
         callDetail.setReason(aiResponse.getReason());
-//        callDetail.setTotalDuration((int)(stopTime - initStartTime + callDetail.getAsrDuration()));
     }
 
 

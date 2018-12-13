@@ -14,4 +14,6 @@ public interface CallOutDetailService {
     void save(CallOutDetail calloutdetail, String recordFile);
 
     CallOutDetail getLastDetail(String callId);
+
+    CallOutDetail getLastDetailCustomer(String callId);
 }

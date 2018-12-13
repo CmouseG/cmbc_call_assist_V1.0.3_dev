@@ -225,31 +225,6 @@ public class ChannelHelper {
 
 
     /**
-     * 锁定通道指定时长, 单位为秒
-     * @param uuid
-     * @param lockTimeLen  单位为秒
-     */
-/*    private void setChannel(String uuid, Double lockTimeLen, boolean isEnd, AfterLockHandle handler){
-        channelService.updateMediaLock(uuid, true);
-
-        log.info("使用定时服务约定执行时间，timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
-        ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
-                    if (!isEnd) {
-                        log.info("通道[{}]锁定时间[{}]已完成，解除锁定", uuid, lockTimeLen);
-                        channelService.updateMediaLock(uuid, false);
-                    } else {
-                        log.info("播放结束，开始删除callMedia");
-                        channelService.delete(uuid);
-                    }
-
-                    if (handler != null) {
-                        handler.handle();
-                    }
-                },
-                lockTimeLen.longValue(), TimeUnit.SECONDS);
-    }*/
-
-    /**
      * 释放资源，停止后续处理
      */
     public void hangup(String uuid){
@@ -262,7 +237,4 @@ public class ChannelHelper {
         robotNextHelper.stopAiCallNextTimer(uuid);
     }
 
-    interface AfterLockHandle{
-        void handle();
-    }
 }

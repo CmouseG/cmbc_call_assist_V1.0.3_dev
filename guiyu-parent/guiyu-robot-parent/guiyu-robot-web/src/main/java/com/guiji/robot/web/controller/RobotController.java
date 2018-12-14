@@ -149,7 +149,7 @@ public class RobotController {
 	 * @return
 	 */
 	@RequestMapping(value = "/aiResourRelease", method = RequestMethod.POST)
-	public Result.ReturnData aiResourRelease(String userId){
+	public Result.ReturnData aiResourRelease(@RequestParam(value="userId",required=false)String userId){
 		if(StrUtils.isEmpty(userId)) {
 			//如果参数userId是空，那么释放所有空闲机器人
 			Map<String,List<AiInuseCache>> allUserAiInUserMap = aiCacheService.queryAllAiInUse();

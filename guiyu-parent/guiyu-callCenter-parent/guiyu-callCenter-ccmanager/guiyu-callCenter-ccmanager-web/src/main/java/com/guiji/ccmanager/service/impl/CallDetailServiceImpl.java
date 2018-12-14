@@ -152,7 +152,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             CallOutDetailExample example = new CallOutDetailExample();
             CallOutDetailExample.Criteria criteria = example.createCriteria();
             criteria.andCallIdEqualTo(callId);
-            example.setOrderByClause("bot_answer_time asc");
+            example.setOrderByClause("IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
             List<CallOutDetail> details = callOutDetailMapper.selectByExample(example);
 
             CallOutDetailRecordExample exampleRecord = new CallOutDetailRecordExample();

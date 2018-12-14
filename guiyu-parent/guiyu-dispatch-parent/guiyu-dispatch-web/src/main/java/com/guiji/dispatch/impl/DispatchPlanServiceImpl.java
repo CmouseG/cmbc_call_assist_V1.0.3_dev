@@ -522,10 +522,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return page;
 	}
 
-
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
-	String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-	boolean isSuperAdmin, Integer selectUserId, String robotName) {
+			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
+			boolean isSuperAdmin, Integer selectUserId, String robotName) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -581,7 +580,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andUserIdEqualTo(userId.intValue());
 		} else {
 			// 超级用户
-			if (selectUserId !=null) {
+			if (selectUserId != null) {
 				createCriteria.andUserIdEqualTo(selectUserId.intValue());
 			}
 			if (robotName != "" && robotName != null) {
@@ -591,14 +590,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 
-		//转换userName
-		for(DispatchPlan dis : selectByExample){
+		// 转换userName
+		for (DispatchPlan dis : selectByExample) {
 			ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
-			if(user.getBody() !=null){
+			if (user.getBody() != null) {
 				dis.setUserName(user.getBody().getUsername());
 			}
 		}
-		
+
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
 		page.setTotal(count);
@@ -783,20 +782,28 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			boolean res = checkStatus(status, resultPlan);
 			if (!res) {
 				result.setResult(false);
-				result.setMsg("当前批次号码状态不能进行当前状态");
+				result.setMsg("当前批次号码状态不能进行当前操作");
 				return result;
 			}
 			dispatchPlan.setStatusPlan(Integer.valueOf(status));
-			dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0);
+			dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 		} else {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
-			example.createCriteria().andUserIdEqualTo(userId.intValue());
-			DispatchPlan dispatchPlan = dispatchPlanMapper.selectByExample(example).get(0);
-			boolean res = checkStatus(status, dispatchPlan);
+			example.createCriteria().andUserIdEqualTo(userId.intValue()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
+					.andIsDelEqualTo(Constant.IS_DEL_0);
+			;
+			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+			DispatchPlan dis1 = new DispatchPlan();
+			if (selectByExample.size() > 0) {
+				dis1 = selectByExample.get(0);
+			}
+			boolean res = checkStatus(status, dis1);
 			if (!res) {
 				result.setResult(false);
-				result.setMsg("当前批次号码状态不能进行当前状态");
+				result.setMsg("当前批次号码状态不能进行当前操作");
 				return result;
 			}
 			dis.setStatusPlan(Integer.valueOf(status));
@@ -810,6 +817,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
+		//暂停能恢复 ，停止不能变。
+		
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
@@ -980,7 +989,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public JSONObject getServiceStatistics(Long userId) {
 		JSONObject jsonObject = new JSONObject();
 		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
-
 		int countNums = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria andStatusPlanEqualTo = ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
@@ -999,8 +1007,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		ex1.setOrderByClause("`gmt_create` DESC");
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
 		DispatchPlan dis = new DispatchPlan();
-		
-		if(selectByExample.size()>0){
+
+		if (selectByExample.size() > 0) {
 			dis = selectByExample.get(selectByExample.size() - 1);
 		}
 
@@ -1012,15 +1020,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 
 		ex2.setOrderByClause("`gmt_create` DESC");
-		 List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
-		
-		 DispatchPlan dis1 = new DispatchPlan();
-		 
-		
-		 if (selectByExample2.size()>0) {
-			 dis1 = selectByExample2.get(0);
+		List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
+
+		DispatchPlan dis1 = new DispatchPlan();
+
+		if (selectByExample2.size() > 0) {
+			dis1 = selectByExample2.get(0);
 		}
-		 
+
 		ReturnData<SysUser> user = auth.getUserById(userId);
 		if (user.getBody() != null) {
 			SysUser body = user.getBody();

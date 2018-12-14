@@ -725,7 +725,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			aiCallLngKeyMatchReq.setSentence(sentenceCache.getSentence());
 			boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
 			if(!isMatched) {
-				logger.info("会话ID:{},sentence:{}匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+				logger.info("会话ID:{},sentence:{},匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 				//未匹配关键字
 				return RobotConstants.HELLO_STATUS_WAIT;
 			}
@@ -733,7 +733,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//播音中
 			//匹配黑名单
 			if(this.constants(RobotConstants.black_list,sentenceCache.getSentence())) {
-				logger.info("会话ID:{},sentence:{}匹配黑名单...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+				logger.info("会话ID:{},sentence:{},匹配黑名单...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 				return RobotConstants.HELLO_STATUS_WAIT;
 			}
 			if(sentenceCache.getSentence().length()<3) {
@@ -744,7 +744,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
 				if(!isMatched) {
 					//未匹配关键字
-					logger.info("会话ID:{},sentence:{}长度<3且匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+					logger.info("会话ID:{},sentence:{},长度<3且未匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 					return RobotConstants.HELLO_STATUS_WAIT;
 				}
 			}

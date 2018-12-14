@@ -13,7 +13,7 @@
   <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
-    if(accurate_intent = 'F',reason,'已接通') as reason,
+    if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason,
     3 AS durationType, COUNT(*) AS callCount,SUM(duration) AS durationAll
     FROM
     call_out_plan
@@ -26,7 +26,7 @@
   <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
-    if(accurate_intent = 'F',reason,'已接通') as reason, 2 AS durationType,
+    if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 2 AS durationType,
     COUNT(*) AS callCount,SUM(duration) AS durationAll
     FROM
     call_out_plan
@@ -39,7 +39,7 @@
   <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
-    if(accurate_intent = 'F',reason,'已接通') as reason, 1 AS durationType,
+    if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 1 AS durationType,
     COUNT(*) AS callCount,SUM(duration) AS durationAll
     FROM
     call_out_plan
@@ -52,14 +52,14 @@
   <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
-    if(accurate_intent = 'F',reason,'已接通') as reason, 0 AS durationType,
+    if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 0 AS durationType,
     COUNT(*) AS callCount,SUM(duration) AS durationAll
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND call_start_time &lt; CURRENT_DATE()
-    AND duration &lt;5
+    AND duration &lt; 5
     GROUP BY customer_id,accurate_intent,reason
   </select>
 
@@ -90,7 +90,7 @@
       call_start_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
       and call_start_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
       and
-    accurate_intent != 'F'
+    accurate_intent != 'F' and accurate_intent != 'W'
     group by customer_id
   </select>
   <select id="countReportCallHourOut" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
@@ -129,14 +129,14 @@
   <select id="getDashboardOverViewTodayNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
    SELECT  SUM(call_count) AS notConnect, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today
-    WHERE intent = 'F'
+    WHERE intent = 'F' OR intent = 'W'
     <if test="customerId != null" >
     AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
   </select>
   <select id="getDashboardOverViewTodayConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
     SELECT  SUM(call_count) AS connect,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
-    FROM report_call_today WHERE intent != 'F'
+    FROM report_call_today WHERE intent != 'F' AND intent != 'W'
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -174,7 +174,7 @@
   </select>
   <select id="getDashboardOverViewAgoNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
     SELECT  SUM(call_count) AS notConnect,  call_date AS callDate
-    FROM report_call_day  WHERE intent = 'F' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    FROM report_call_day  WHERE (intent = 'F' OR intent = 'W') AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -183,7 +183,7 @@
   </select>
   <select id="getDashboardOverViewAgoConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
     SELECT  SUM(call_count) AS connect, call_date AS callDate
-    FROM report_call_day WHERE intent != 'F' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+    FROM report_call_day WHERE intent != 'F' AND intent != 'W' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -221,7 +221,7 @@
   <select id="getIntentCountAgo" resultType="com.guiji.callcenter.dao.entityext.IntentCount">
     SELECT SUM(call_count) AS callCount,  call_date AS callDate, intent
     FROM report_call_day
-    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR} and intent  IS NOT NULL
+    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and intent  IS NOT NULL
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -240,18 +240,21 @@
   <select id="getConnectDataHour" resultType="com.guiji.callcenter.dao.entityext.CallCountHour">
     SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(duration) AS duration
     FROM report_call_hour
-    WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt;= #{endDate,jdbcType=TIMESTAMP}
+    WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
     GROUP BY  callHour
     ORDER BY callHour
   </select>
+  <delete id="deleteReportCallHour">
+    delete from report_call_hour where call_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+  </delete>
 
   <select id="getReasonCountAgo" resultType="com.guiji.callcenter.dao.entityext.ReasonCount">
     SELECT SUM(call_count) AS callCount,  call_date AS callDate, reason
     FROM report_call_day
-    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR} and reason  IS NOT NULL
+    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and reason  IS NOT NULL
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -267,4 +270,7 @@
     </if>
     GROUP BY  reason
   </select>
+  <update id="reportCallTodayTruncate">
+    truncate table report_call_today
+  </update>
 </mapper>

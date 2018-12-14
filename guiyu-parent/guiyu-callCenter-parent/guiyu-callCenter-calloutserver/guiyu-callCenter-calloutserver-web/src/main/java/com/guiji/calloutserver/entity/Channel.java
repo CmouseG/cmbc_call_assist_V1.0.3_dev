@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.Date;
 
 /**
  * @Auther: 魏驰
@@ -33,14 +34,25 @@ public class Channel {
     private Double mediaFileDuration;
 
     /**
-     * 锁定通道媒体, 在锁定期间，不允许播放其他媒体
+     * 是否是开场白
      */
-    private Boolean isMediaLock;
+    private Boolean isPrologue;
 
     /**
      * 打断时间
      */
     private LocalTime disturbTime;
+
+    /**
+     * 开始播放时间
+     */
+    private Date startPlayTime;
+
+
+    /**
+     * 结束播放时间
+     */
+    private Date endPlayTime;
 
     /**
      * 当前通道是否正在播放媒体

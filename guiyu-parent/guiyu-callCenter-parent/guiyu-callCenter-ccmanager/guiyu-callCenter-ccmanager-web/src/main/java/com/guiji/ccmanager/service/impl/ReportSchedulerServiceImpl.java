@@ -22,10 +22,6 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Autowired
     StatisticMapper statisticMapper;
 
-    @Autowired
-    ReportCallDayMapper reportCallDayMapper;
-
-
     @Override
     public void reportCallDayScheduler() {
 
@@ -56,21 +52,25 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
     @Override
     public void reportCallHourScheduler() {
+        statisticMapper.deleteReportCallHour();
         List<ReportCallHour>  listOut = statisticMapper.countReportCallHourOut();
         List<ReportCallHour> listConnect = statisticMapper.countReportCallHourConnect();
-        if(listOut!=null && listOut.size()>0 && listConnect!=null && listConnect.size()>0){
-            for(ReportCallHour out:listOut){
-                for(ReportCallHour connect:listConnect){
-                    if(out.getCustomerId().equals(connect.getCustomerId())){
-                        out.setConnectCount(connect.getConnectCount());
+        if(listOut!=null && listOut.size()>0){
+            if(listConnect!=null && listConnect.size()>0){
+                for(ReportCallHour out:listOut){
+                    for(ReportCallHour connect:listConnect){
+                        if(out.getCustomerId().equals(connect.getCustomerId())){
+                            out.setConnectCount(connect.getConnectCount());
+                        }
                     }
                 }
             }
+            statisticMapper.insertReportCallHour(listOut);
         }
-
-        statisticMapper.insertReportCallHour(listOut);
-
     }
 
-
+    @Override
+    public void reportCallTodayTruncate() {
+        statisticMapper.reportCallTodayTruncate();
+    }
 }

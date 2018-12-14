@@ -24,20 +24,20 @@ public class CallOutDetailRecordServiceImpl implements CallOutDetailRecordServic
 
     @Override
     public void save(CallOutDetailRecord callOutDetailRecord) {
-        callOutDetailRecordMapper.insert(callOutDetailRecord);
+        callOutDetailRecordMapper.insertSelective(callOutDetailRecord);
     }
     @Override
     public void update(CallOutDetailRecord callOutDetailRecord) {
         callOutDetailRecordMapper.updateByPrimaryKeySelective(callOutDetailRecord);
     }
     @Override
-    public void add(String callId, String callDetailId, String customerWavFile, String botWavFile) {
+    public void add(String callId, String callDetailId, String botWavFile) {
         CallOutDetailRecord record = new CallOutDetailRecord();
         record.setCallId(callId);
         record.setCallDetailId(callDetailId);
-        record.setCustomerRecordFile(customerWavFile);
+//        record.setCustomerRecordFile(customerWavFile);
         record.setBotRecordFile(botWavFile);
-        callOutDetailRecordMapper.insert(record);
+        callOutDetailRecordMapper.insertSelective(record);
     }
 
     @Override

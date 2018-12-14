@@ -1,5 +1,6 @@
 package com.guiji.dict.controller;
 
+import com.guiji.component.aspect.SysOperaLog;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dict.api.ISysDict;
@@ -25,6 +26,7 @@ public class SysDictController implements ISysDict {
     @Autowired
     private SysDictService sysDictService;
     @Override
+    @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称查询数据字典")
     public ReturnData<List<SysDictVO>> getDictByType(String dictType) {
         List<SysDictVO> result = new ArrayList<SysDictVO>();
         SysDict sysDictQ = new SysDict();
@@ -39,6 +41,7 @@ public class SysDictController implements ISysDict {
     }
 
     @Override
+    @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称和key查询数据字典")
     public ReturnData<List<SysDictVO>> getDictValue(String dictType, String dictKey) {
         List<SysDictVO> result = new ArrayList<SysDictVO>();
         SysDict sysDictQ = new SysDict();

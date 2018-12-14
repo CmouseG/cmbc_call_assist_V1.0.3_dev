@@ -50,7 +50,6 @@ public class OperatorLogUtil {
         Log sysLog = method.getAnnotation(Log.class);
         log.setModule(sysLog.info());
         log.setParams(request.getQueryString());
-        log.setUserId(Integer.valueOf(request.getHeader("userId")));
         return log;
     }
 

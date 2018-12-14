@@ -2,6 +2,7 @@ package com.guiji.ccmanager.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -18,6 +19,7 @@ public class LineInfoAddVO implements Serializable {
 
     @ApiModelProperty(value = "线路名称")
     @NotBlank(message = "线路名称不能为空")
+    @Length(max = 30,message = "线路名称长度不能超过30个字符")
     private String lineName;
 
     @ApiModelProperty(value = "sip线路IP地址")

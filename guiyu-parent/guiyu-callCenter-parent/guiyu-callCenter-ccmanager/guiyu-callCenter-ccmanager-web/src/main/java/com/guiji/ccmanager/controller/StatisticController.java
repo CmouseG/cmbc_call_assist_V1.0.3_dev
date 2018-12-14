@@ -92,9 +92,16 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getIntentCount")
-    public List<Map> getIntentCount(@NotNull(message = "startDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                    @NotNull(message = "endDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+    public List<Map> getIntentCount(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
+                                    @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
                                     @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
+
+        if(StringUtils.isBlank(endDate)){
+            endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        }
+        if(StringUtils.isBlank(startDate)){
+            startDate = endDate;
+        }
 
         String[] arr = {"A","B","C","D","E","F","W"};
         Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
@@ -162,11 +169,17 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getConnectDataHour")
-    public List<CallCountHour> getConnectDataHour(@NotNull(message = "startDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                                  @NotNull(message = "endDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+    public List<CallCountHour> getConnectDataHour(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
+                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isBlank(endDate)){
+            endDate = sdf.format(new Date());
+        }
+        if(StringUtils.isBlank(startDate)){
+            startDate = endDate;
+        }
         return statisticService.getConnectDataHour(isSuperAdmin ? null : String.valueOf(userId), sdf.parse(startDate), sdf.parse(endDate));
     }
 
@@ -177,10 +190,16 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getConnectReasonDay")
-    public List<Map> getConnectReasonDay(@NotNull(message = "startDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                         @NotNull(message = "endDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+    public List<Map> getConnectReasonDay(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
+                                         @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
                                          @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
+        if(StringUtils.isBlank(endDate)){
+            endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        }
+        if(StringUtils.isBlank(startDate)){
+            startDate = endDate;
+        }
         List<ReasonCount> list = statisticService.getConnectReasonDay(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate);
 
         List<String> typeList = callDetailService.getFtypes();

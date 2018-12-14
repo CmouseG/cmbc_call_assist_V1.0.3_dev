@@ -31,6 +31,12 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     }
 
     @Override
+    public void update(CallOutDetail callOutDetail) {
+        callOutDetailMapper.updateByPrimaryKeySelective(callOutDetail);
+    }
+
+
+    @Override
     public void save(CallOutDetail calloutdetail, String recordFile) {
 
     }
@@ -38,17 +44,31 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     @Override
     public CallOutDetail getLastDetail(String callId) {
 
+        return getLastDetailCommon(callId, true);
+    }
+
+    @Override
+    public CallOutDetail getLastDetailCustomer(String callId) {
+
+        return getLastDetailCommon(callId, false);
+    }
+
+    public CallOutDetail getLastDetailCommon(String callId, boolean isIntentNotNull) {
+
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
         criteria.andCallIdEqualTo(callId);
-        criteria.andAccurateIntentIsNotNull();
+        if (isIntentNotNull) {
+            criteria.andAccurateIntentIsNotNull();
+        }
         example.setOrderByClause("customer_say_time desc");
         example.setLimitStart(0);
         example.setLimitEnd(1);
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
-        if(list!=null && list.size()>0){
+        if (list != null && list.size() > 0) {
             return list.get(0);
         }
         return null;
     }
+
 }

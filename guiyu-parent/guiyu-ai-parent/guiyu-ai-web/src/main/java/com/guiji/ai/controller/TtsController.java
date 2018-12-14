@@ -21,6 +21,8 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
+import com.guiji.ai.vo.RatioReqVO;
+import com.guiji.ai.vo.RatioRspVO;
 import com.guiji.ai.vo.TaskListReqVO;
 import com.guiji.ai.vo.TaskListRspVO;
 import com.guiji.ai.vo.TaskReqVO;
@@ -135,7 +137,6 @@ public class TtsController implements ITts
 	 * 获取GPU模型列表
 	 */
 	@Override
-	@SysOperaLog(operaTarget = "操作对象", operaType = "操作类型")
 	@PostMapping(value = "getGpuList")
 	public ReturnData<TtsGpuRspVO> getGpuList(@RequestBody(required = false) TtsGpuReqVO ttsGpuReqVO)
 	{
@@ -205,12 +206,12 @@ public class TtsController implements ITts
      */
 	@Override
 	@PostMapping(value = "getAcceptTasks")
-	public ReturnData<TaskRspVO> getAcceptTasks(@RequestBody TaskReqVO acceptTaskReqVO)
+	public ReturnData<TaskRspVO> getTasks(@RequestBody TaskReqVO taskReqVO)
 	{
-		TaskRspVO acceptTaskRspVO = new TaskRspVO();
+		TaskRspVO taskRspVO = new TaskRspVO();
 		try
 		{
-			acceptTaskRspVO = statusService.getTasks(acceptTaskReqVO);
+			taskRspVO = statusService.getTasks(taskReqVO);
 			
 		} catch (GuiyuException e){
 			logger.error("请求失败！", e);
@@ -219,29 +220,7 @@ public class TtsController implements ITts
 			logger.error("请求失败！", ex);
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
-		return Result.ok(acceptTaskRspVO);
-	}
-
-	/**
-     * 累计完成任务
-     */
-	@Override
-	@PostMapping(value = "getCompleteTasks")
-	public ReturnData<TaskRspVO> getCompleteTasks(@RequestBody TaskReqVO completeTaskReqVO)
-	{
-		TaskRspVO completeTaskRspVO = new TaskRspVO();
-		try
-		{
-			completeTaskRspVO = statusService.getTasks(completeTaskReqVO);
-			
-		} catch (GuiyuException e){
-			logger.error("请求失败！", e);
-			return Result.error(e.getErrorCode());
-		} catch (Exception ex){
-			logger.error("请求失败！", ex);
-			return Result.error(AiConstants.AI_REQUEST_FAIL);
-		}
-		return Result.ok(completeTaskRspVO);
+		return Result.ok(taskRspVO);
 	}
 
 	/**
@@ -265,6 +244,28 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return Result.ok(waitTaskRspVO);
+	}
+
+	/**
+	 * 失败率，成功率
+	 */
+	@Override
+	@PostMapping(value = "getRatio")
+	public ReturnData<RatioRspVO> getRatio(@RequestBody RatioReqVO ratioReqVO)
+	{
+		RatioRspVO ratioRspVO = new RatioRspVO();
+		try
+		{
+			ratioRspVO = statusService.getRatio(ratioReqVO);
+			
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(ratioRspVO);
 	}
 	
 }

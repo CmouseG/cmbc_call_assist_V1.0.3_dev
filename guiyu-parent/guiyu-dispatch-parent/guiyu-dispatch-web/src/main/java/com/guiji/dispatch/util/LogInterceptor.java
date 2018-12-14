@@ -82,7 +82,7 @@ public class LogInterceptor implements HandlerInterceptor {
 //				String userId = request.getHeader("userId");
 //				logger.info("afterCompletion userId"+userId);
 //				log.setUserId(Integer.valueOf(userId));
-				operatorLogService.saveOperatorLog(log);
+//				operatorLogService.saveOperatorLog(log);
 			}
 		} catch (Exception e) {
 			logger.error("[记录操作日志时失败]", e);

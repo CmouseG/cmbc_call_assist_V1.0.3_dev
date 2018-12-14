@@ -54,6 +54,12 @@ public class RobotConstants {
 	public static final String LOCK_NAME_ASSIGN = "LOCK_ROBOT_USER_AI_ASSIGN_";	//资源锁-用户机器人分配
 	
 	/**
+	 * 通话状态
+	 */
+	public static final String CALLINT_STATUS_I = "I"; //I-通话中
+	public static final String CALLING_STATUS_S = "S"; //S-通话完成
+	
+	/**
 	 * 播音状态
 	 */
 	public static final String CALL_STATUS_OVER = "0"; //播音结束

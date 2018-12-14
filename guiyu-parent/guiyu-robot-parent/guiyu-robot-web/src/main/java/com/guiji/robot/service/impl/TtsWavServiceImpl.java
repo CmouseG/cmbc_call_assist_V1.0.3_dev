@@ -185,6 +185,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				TtsWavHis ttsWavHis = new TtsWavHis();
 				ttsWavHis.setSeqId(hsChecker.getSeqid());
 				ttsWavHis.setTemplateId(hsChecker.getTemplateId());
+				ttsWavHis.setReqParams(hsChecker.getParams());
 				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_P); //合成中
 				try {
 					//2、异步调用tts工具合成

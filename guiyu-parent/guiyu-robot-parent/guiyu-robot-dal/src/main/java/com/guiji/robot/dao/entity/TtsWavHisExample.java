@@ -405,6 +405,76 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andReqParamsIsNull() {
+            addCriterion("req_params is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsIsNotNull() {
+            addCriterion("req_params is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsEqualTo(String value) {
+            addCriterion("req_params =", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsNotEqualTo(String value) {
+            addCriterion("req_params <>", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsGreaterThan(String value) {
+            addCriterion("req_params >", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsGreaterThanOrEqualTo(String value) {
+            addCriterion("req_params >=", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsLessThan(String value) {
+            addCriterion("req_params <", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsLessThanOrEqualTo(String value) {
+            addCriterion("req_params <=", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsLike(String value) {
+            addCriterion("req_params like", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsNotLike(String value) {
+            addCriterion("req_params not like", value, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsIn(List<String> values) {
+            addCriterion("req_params in", values, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsNotIn(List<String> values) {
+            addCriterion("req_params not in", values, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsBetween(String value1, String value2) {
+            addCriterion("req_params between", value1, value2, "reqParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andReqParamsNotBetween(String value1, String value2) {
+            addCriterion("req_params not between", value1, value2, "reqParams");
+            return (Criteria) this;
+        }
+
         public Criteria andTtsTxtJsonDataIsNull() {
             addCriterion("tts_txt_json_data is null");
             return (Criteria) this;

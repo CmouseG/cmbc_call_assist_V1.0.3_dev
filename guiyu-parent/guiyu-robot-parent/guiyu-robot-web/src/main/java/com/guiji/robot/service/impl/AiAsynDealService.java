@@ -1,5 +1,6 @@
 package com.guiji.robot.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +10,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.dispatch.api.IModularLogsOut;
+import com.guiji.dispatch.model.Constant;
+import com.guiji.dispatch.model.ModularLogs;
 import com.guiji.robot.dao.entity.AiCycleHis;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.service.IAiCycleHisService;
@@ -28,6 +32,8 @@ public class AiAsynDealService {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	IAiCycleHisService iAiCycleHisService;
+	@Autowired
+	IModularLogsOut iModularLogsOut;
 	
 	/**
 	 * 异步记录用户账户配置信息变更
@@ -81,4 +87,27 @@ public class AiAsynDealService {
 	}
 	
 	
+	/**
+	 * 调用调度中心服务记录一个电话从开始到结束，各个模块的处理流程，便于查找问题
+	 * @param id
+	 * @param phone
+	 * @param status
+	 * @param msg
+	 */
+	@Async
+	public void recordCallLog(String seqId,String phone,Integer status,String msg) {
+		ModularLogs modularLogs = new ModularLogs();
+		modularLogs.setPlanUuid(seqId);
+		modularLogs.setPhone(phone);
+		modularLogs.setStatus(status);
+		modularLogs.setMsg(msg);
+		modularLogs.setCreateTime(new Date());
+		modularLogs.setModularName(Constant.MODULAR_ROBOT);
+		try {
+			iModularLogsOut.notifyLogs(modularLogs);
+		} catch (Exception e) {
+			//记录日志，异常不抛出
+			logger.error("记录调用中心电话日志发生异常!",e);
+		}
+	}
 }

@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -765,29 +766,39 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
-		logger.info("operationAllPlanByBatchId userId:" + userId);
+		Map<String, String> map = new HashMap<>();
+		map.put("1", "计划中");
+		map.put("2", "计划完成");
+		map.put("3", "暂停计划");
+		map.put("4", "停止计划");
 		MessageDto result = new MessageDto();
 		if (batchId != 0) {
 			// 不选择传入0
 			DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
 			DispatchPlan dispatchPlan = new DispatchPlan();
-			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
+//			dispatchPlan.setBatchId(dispatchPlanBatch.getId());
 
 			// 根据批次号查询一条数据，判断到底是什么
 			DispatchPlanExample dis = new DispatchPlanExample();
 			dis.createCriteria().andBatchIdEqualTo(dispatchPlanBatch.getId());
-			DispatchPlan resultPlan = dispatchPlanMapper.selectByExample(dis).get(0);
+			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(dis);
+			DispatchPlan resultPlan = new DispatchPlan();
+			
+			if(selectByExample.size()>0)
+			{
+				resultPlan = selectByExample.get(0);
+				boolean res = checkStatus(status, resultPlan);
+				if (!res) {
+					result.setResult(false);
+					result.setMsg("当前批次号码状态处于"+map.get(resultPlan.getStatusPlan())+"不能进行此状态操作");
+					return result;
+				}
+			}
 			// 0未计划1计划中2计划完成3暂停计划4停止计划
 			// 停止之后不能暂停 不能恢复
-			boolean res = checkStatus(status, resultPlan);
-			if (!res) {
-				result.setResult(false);
-				result.setMsg("当前批次号码状态不能进行当前操作");
-				return result;
-			}
 			dispatchPlan.setStatusPlan(Integer.valueOf(status));
 			DispatchPlanExample ex1 = new DispatchPlanExample();
-			ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0);
+			ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId());
 			dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 		} else {
 			DispatchPlan dis = new DispatchPlan();
@@ -799,12 +810,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan dis1 = new DispatchPlan();
 			if (selectByExample.size() > 0) {
 				dis1 = selectByExample.get(0);
-			}
-			boolean res = checkStatus(status, dis1);
-			if (!res) {
-				result.setResult(false);
-				result.setMsg("当前批次号码状态不能进行当前操作");
-				return result;
+				boolean res = checkStatus(status, dis1);
+				if (!res) {
+					result.setResult(false);
+					result.setMsg("当前批次号码状态处于"+map.get(dis1.getStatusPlan())+"不能进行此状态操作");
+					return result;
+				}
 			}
 			dis.setStatusPlan(Integer.valueOf(status));
 			dispatchPlanMapper.updateByExampleSelective(dis, example);

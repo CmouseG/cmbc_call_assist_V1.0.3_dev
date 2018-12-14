@@ -153,34 +153,6 @@ public class CustAiAccountController {
 						userMap.put(uId, userName);
 					}
 				}
-				//设置创建人名称
-				if(StrUtils.isNotEmpty(base.getCrtUser())) {
-					if(userMap.get(base.getCrtUser())!=null) {
-						vo.setCrtUserName(userMap.get(base.getCrtUser()));
-					}else {
-						//缓存中没有，重新查
-						ReturnData<SysUser> userData = iAuth.getUserById(Long.parseLong(base.getCrtUser()));
-						if(userData != null && userData.getBody()!=null) {
-							String userName = userData.getBody().getUsername();
-							vo.setCrtUserName(userName);
-							userMap.put(base.getCrtUser(), userName);
-						}
-					}
-				}
-				//设置更新人名称
-				if(StrUtils.isNotEmpty(base.getUpdateUser())) {
-					if(userMap.get(base.getUpdateUser())!=null) {
-						vo.setUpdateUserName(userMap.get(base.getUpdateUser()));
-					}else {
-						//缓存中没有，重新查
-						ReturnData<SysUser> userData = iAuth.getUserById(Long.parseLong(base.getUpdateUser()));
-						if(userData != null && userData.getBody()!=null) {
-							String userName = userData.getBody().getUsername();
-							vo.setUpdateUserName(userName);
-							userMap.put(base.getUpdateUser(), userName);
-						}
-					}
-				}
 				//设置是否分配了机器人
 				UserResourceCache userResourceCache = aiCacheService.getUserResource(uId);
 				if(userResourceCache != null && userResourceCache.getAiNum() > 0) {

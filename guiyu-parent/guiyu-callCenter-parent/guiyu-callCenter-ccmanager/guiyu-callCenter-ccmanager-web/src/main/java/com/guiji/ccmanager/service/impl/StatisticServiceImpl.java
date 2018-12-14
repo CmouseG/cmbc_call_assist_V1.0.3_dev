@@ -1,6 +1,9 @@
 package com.guiji.ccmanager.service.impl;
 
+import com.guiji.callcenter.dao.ErrorMatchMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
+import com.guiji.callcenter.dao.entity.ErrorMatch;
+import com.guiji.callcenter.dao.entity.ErrorMatchExample;
 import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
@@ -198,5 +201,11 @@ public class StatisticServiceImpl implements StatisticService {
         }
 
         return listResult;
+    }
+
+    @Override
+    public List<ErrorMatch> getErrorMaths() {
+
+        return statisticMapper.getErrorMaths();
     }
 }

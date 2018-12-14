@@ -184,76 +184,6 @@ public class ErrorMatchExample {
             return (Criteria) this;
         }
 
-        public Criteria andKeyWordIsNull() {
-            addCriterion("key_word is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordIsNotNull() {
-            addCriterion("key_word is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordEqualTo(String value) {
-            addCriterion("key_word =", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordNotEqualTo(String value) {
-            addCriterion("key_word <>", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordGreaterThan(String value) {
-            addCriterion("key_word >", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordGreaterThanOrEqualTo(String value) {
-            addCriterion("key_word >=", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordLessThan(String value) {
-            addCriterion("key_word <", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordLessThanOrEqualTo(String value) {
-            addCriterion("key_word <=", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordLike(String value) {
-            addCriterion("key_word like", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordNotLike(String value) {
-            addCriterion("key_word not like", value, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordIn(List<String> values) {
-            addCriterion("key_word in", values, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordNotIn(List<String> values) {
-            addCriterion("key_word not in", values, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordBetween(String value1, String value2) {
-            addCriterion("key_word between", value1, value2, "keyWord");
-            return (Criteria) this;
-        }
-
-        public Criteria andKeyWordNotBetween(String value1, String value2) {
-            addCriterion("key_word not between", value1, value2, "keyWord");
-            return (Criteria) this;
-        }
-
         public Criteria andErrorNameIsNull() {
             addCriterion("error_name is null");
             return (Criteria) this;
@@ -321,6 +251,146 @@ public class ErrorMatchExample {
 
         public Criteria andErrorNameNotBetween(String value1, String value2) {
             addCriterion("error_name not between", value1, value2, "errorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameIsNull() {
+            addCriterion("en_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameIsNotNull() {
+            addCriterion("en_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameEqualTo(String value) {
+            addCriterion("en_name =", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameNotEqualTo(String value) {
+            addCriterion("en_name <>", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameGreaterThan(String value) {
+            addCriterion("en_name >", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameGreaterThanOrEqualTo(String value) {
+            addCriterion("en_name >=", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameLessThan(String value) {
+            addCriterion("en_name <", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameLessThanOrEqualTo(String value) {
+            addCriterion("en_name <=", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameLike(String value) {
+            addCriterion("en_name like", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameNotLike(String value) {
+            addCriterion("en_name not like", value, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameIn(List<String> values) {
+            addCriterion("en_name in", values, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameNotIn(List<String> values) {
+            addCriterion("en_name not in", values, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameBetween(String value1, String value2) {
+            addCriterion("en_name between", value1, value2, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnNameNotBetween(String value1, String value2) {
+            addCriterion("en_name not between", value1, value2, "enName");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordIsNull() {
+            addCriterion("key_word is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordIsNotNull() {
+            addCriterion("key_word is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordEqualTo(String value) {
+            addCriterion("key_word =", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordNotEqualTo(String value) {
+            addCriterion("key_word <>", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordGreaterThan(String value) {
+            addCriterion("key_word >", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordGreaterThanOrEqualTo(String value) {
+            addCriterion("key_word >=", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordLessThan(String value) {
+            addCriterion("key_word <", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordLessThanOrEqualTo(String value) {
+            addCriterion("key_word <=", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordLike(String value) {
+            addCriterion("key_word like", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordNotLike(String value) {
+            addCriterion("key_word not like", value, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordIn(List<String> values) {
+            addCriterion("key_word in", values, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordNotIn(List<String> values) {
+            addCriterion("key_word not in", values, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordBetween(String value1, String value2) {
+            addCriterion("key_word between", value1, value2, "keyWord");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeyWordNotBetween(String value1, String value2) {
+            addCriterion("key_word not between", value1, value2, "keyWord");
             return (Criteria) this;
         }
     }

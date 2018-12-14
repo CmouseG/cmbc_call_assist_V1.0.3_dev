@@ -39,8 +39,8 @@ public class TemplateServiceImpl implements TemplateService {
     IRobotRemote iRobotFeign;
     @Override
     public boolean istempexist(String tempId) {
-        tempId = tempId.substring(0,tempId.lastIndexOf("_")+1) ;
-        String tempPath = pathConfig.getTempPath() + tempId+"en";
+        String tempen = tempId.replaceAll("rec","en");
+        String tempPath = pathConfig.getTempPath() + tempen;
         return FileUtil.isExist(tempPath);
     }
 
@@ -94,8 +94,9 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<WavLengthVO> getwavlength(String tempId) {
-        tempId = tempId.substring(0,tempId.lastIndexOf("_")+1) ;
-        String tempPath = pathConfig.getTempPath() + tempId+"en/"+tempId+"rec";
+        String temprec = tempId;
+        String tempen = tempId.replaceAll("rec","en");
+        String tempPath = pathConfig.getTempPath() + tempen+"/"+temprec;
         List<WavLengthVO> list = new ArrayList<WavLengthVO>();
         File tempFile = new File(tempPath);
         if(!tempFile.exists()){

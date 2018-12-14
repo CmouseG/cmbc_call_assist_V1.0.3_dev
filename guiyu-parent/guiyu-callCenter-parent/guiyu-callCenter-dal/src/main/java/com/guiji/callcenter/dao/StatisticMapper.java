@@ -1,5 +1,6 @@
 package com.guiji.callcenter.dao;
 
+import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.callcenter.dao.entity.ReportCallDay;
 import com.guiji.callcenter.dao.entity.ReportCallHour;
 import com.guiji.callcenter.dao.entity.ReportCallToday;
@@ -59,4 +60,6 @@ public interface StatisticMapper {
     void reportCallTodayTruncate();
 
     void deleteReportCallHour();
+
+    List<ErrorMatch> getErrorMaths();
 }

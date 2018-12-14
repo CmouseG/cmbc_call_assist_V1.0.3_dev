@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.service;
 
+import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
@@ -25,4 +26,6 @@ public interface StatisticService {
     List<CallCountHour> getConnectDataHour(String userId, Date startDate, Date endDate);
 
     List<ReasonCount> getConnectReasonDay(String userId, String startDate, String endDate);
+
+    List<ErrorMatch> getErrorMaths();
 }

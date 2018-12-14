@@ -273,4 +273,9 @@
   <update id="reportCallTodayTruncate">
     truncate table report_call_today
   </update>
+  <select id="getErrorMaths" resultType="com.guiji.callcenter.dao.entity.ErrorMatch">
+    select error_name as errorName,en_name as enName
+    from error_match
+    group by error_name,en_name
+  </select>
 </mapper>

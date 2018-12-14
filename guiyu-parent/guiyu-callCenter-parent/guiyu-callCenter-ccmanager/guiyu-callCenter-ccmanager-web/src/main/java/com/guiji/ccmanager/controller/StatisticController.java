@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.controller;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
@@ -13,6 +14,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +37,7 @@ import java.util.*;
 @Validated
 @RestController
 public class StatisticController {
-
+    private final Logger log = LoggerFactory.getLogger(StatisticController.class);
     @Autowired
     StatisticService statisticService;
     @Autowired
@@ -80,9 +83,13 @@ public class StatisticController {
         result.setDuration5(duration5);
         result.setDuration30(duration30);
         result.setDurationAll(durationAll/60);
-        result.setAllCalls(notConnect+connect);
-        result.setConnectRate(getFloat4Precision((float)connect/(notConnect+connect)));
-
+        int allConnect = notConnect+connect;
+        result.setAllCalls(allConnect);
+        if(allConnect == 0 || connect ==0){
+            result.setConnectRate(0);
+        }else {
+            result.setConnectRate(getFloat4Precision((float) connect / (notConnect + connect)));
+        }
         return result;
     }
 
@@ -104,10 +111,14 @@ public class StatisticController {
         }
 
         String[] arr = {"A","B","C","D","E","F","W"};
-        Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
-        String intent = result.getBody().getIntenLabel();
-        if(StringUtils.isNotBlank(intent)){
-            arr = intent.split(",");
+        try{
+            Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
+            String intent = result.getBody().getIntenLabel();
+            if(StringUtils.isNotBlank(intent)){
+                arr = intent.split(",");
+            }
+        }catch (Exception e){
+            log.error("iAuth.getUserById userId[{}] has error :"+e,userId);
         }
         List<String> typeList = Arrays.asList(arr);
 
@@ -190,9 +201,9 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getConnectReasonDay")
-    public List<Map> getConnectReasonDay(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                         @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
-                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
+    public List<Map<String, List<Map<String, ReasonDetail>>>> getConnectReasonDay(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
+                                                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+                                                                                  @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
         if(StringUtils.isBlank(endDate)){
             endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -203,7 +214,9 @@ public class StatisticController {
         List<ReasonCount> list = statisticService.getConnectReasonDay(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate);
 
         List<String> typeList = callDetailService.getFtypes();
-        typeList.add("已接通");
+        if(!typeList.contains("已接通")){
+            typeList.add("已接通");
+        }
         typeList.add("其他");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -215,7 +228,7 @@ public class StatisticController {
         Calendar cal = new GregorianCalendar();
         cal.setTime(sDate);
 
-        List<Map> resList = new ArrayList<>();
+        List<Map<String,Object>> resList = new ArrayList<>();
 
         for (int i = 0; i <= days; i++) {
             String startDateStr = sdf.format(sDate);
@@ -248,7 +261,39 @@ public class StatisticController {
             cal.add(Calendar.DATE, 1);
             sDate = cal.getTime();
         }
-        return resList;
+
+        List<ErrorMatch> listErrorMatch = statisticService.getErrorMaths();
+
+        //对中午的结果，进行转换，转成英文的
+        List<Map<String,List<Map<String,ReasonDetail>>>> returnList = new ArrayList();
+        for(Map<String,Object> map:resList){
+           String callDate = (String) map.get("callDate");
+           Map<String,List<Map<String,ReasonDetail>>> dateMap = new HashMap();
+            List<Map<String,ReasonDetail>> listEnnameMap = new ArrayList();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String key = entry.getKey();
+                Map<String,ReasonDetail> mapEnName = new HashMap();
+                if(!key.equals("callDate") && !key.equals("allCount")){
+                    ReasonDetail reasonDetail = new ReasonDetail();
+                    reasonDetail.setName(key);
+                    reasonDetail.setCount((Integer) entry.getValue());
+                    for(ErrorMatch errorMatch:listErrorMatch){
+                        if(errorMatch.getErrorName().equals(key)){
+                            mapEnName.put(errorMatch.getEnName(),reasonDetail);
+                        }
+                    }
+                }else if(key.equals("allCount")){
+                    mapEnName.put("allCount",new ReasonDetail("allCount",(Integer) entry.getValue()));
+                }
+                if(mapEnName.size()>0){
+                    listEnnameMap.add(mapEnName);
+                }
+            }
+            dateMap.put(callDate,listEnnameMap);
+            returnList.add(dateMap);
+        }
+
+        return returnList;
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {
@@ -257,6 +302,30 @@ public class StatisticController {
     }
     public static float getFloat4Precision(float f){
         return Float.valueOf(new DecimalFormat("#.0000").format(f));
+    }
+
+
+    class ReasonDetail{
+        String name;
+        int count;
+        public ReasonDetail() {
+        }
+        public ReasonDetail(String name, int count) {
+            this.name = name;
+            this.count = count;
+        }
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public int getCount() {
+            return count;
+        }
+        public void setCount(int count) {
+            this.count = count;
+        }
     }
 
 }

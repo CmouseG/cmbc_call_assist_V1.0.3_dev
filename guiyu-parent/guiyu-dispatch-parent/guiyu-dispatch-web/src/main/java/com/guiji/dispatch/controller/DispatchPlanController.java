@@ -195,10 +195,7 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("getServiceStatistics")
 	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
-		if (!isSuperAdmin) {
-			userId = 0l;
-		}
-		return dispatchPlanService.getServiceStatistics(userId);
+		return dispatchPlanService.getServiceStatistics(userId,isSuperAdmin);
 	}
 
 	/**

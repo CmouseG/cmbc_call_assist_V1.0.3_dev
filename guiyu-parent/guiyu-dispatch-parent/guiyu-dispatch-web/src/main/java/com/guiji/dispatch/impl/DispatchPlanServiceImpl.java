@@ -998,14 +998,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public JSONObject getServiceStatistics(Long userId) {
+	public JSONObject getServiceStatistics(Long userId,Boolean isSuperAdmin) {
 		JSONObject jsonObject = new JSONObject();
 		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
 		int countNums = dispatchPlanMapper.countByExample(new DispatchPlanExample());
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria andStatusPlanEqualTo = ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
-		if (userId != 0) {
+		if (!isSuperAdmin) {
 			andStatusPlanEqualTo.andUserIdEqualTo(userId.intValue());
 		}
 		int calledNums = dispatchPlanMapper.countByExample(ex);
@@ -1013,7 +1013,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		DispatchPlanExample ex1 = new DispatchPlanExample();
 		Criteria andStatusPlanEqualTo2 = ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
-		if (userId != 0) {
+		if (!isSuperAdmin) {
 			andStatusPlanEqualTo2.andUserIdEqualTo(userId.intValue());
 		}
 		ex1.setOrderByClause("`gmt_create` DESC");
@@ -1027,7 +1027,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		DispatchPlanExample ex2 = new DispatchPlanExample();
 		Criteria andStatusPlanEqualTo3 = ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
-		if (userId != 0) {
+		if (!isSuperAdmin) {
 			andStatusPlanEqualTo3.andUserIdEqualTo(userId.intValue());
 		}
 

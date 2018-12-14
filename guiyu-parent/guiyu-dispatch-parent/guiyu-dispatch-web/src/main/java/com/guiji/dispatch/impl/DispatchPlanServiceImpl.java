@@ -817,7 +817,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
-		//暂停能恢复 ，停止不能变。
+		//暂停能恢复 ，停止不能。
 		
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
@@ -825,10 +825,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			return false;
 		}
 		// 一键恢复针对暂停的不能操作
-		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
-				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
-			return false;
-		}
+//		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
+//				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
+//			return false;
+//		}
 		return true;
 	}
 

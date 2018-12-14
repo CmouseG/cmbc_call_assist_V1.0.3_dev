@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
+import com.guiji.dispatch.model.Constant;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.RobotCallHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
@@ -38,6 +39,7 @@ import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.IAiAbilityCenterService;
+import com.guiji.robot.service.IAiCycleHisService;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.ISellbotService;
 import com.guiji.robot.service.ITtsWavService;
@@ -76,6 +78,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	DistributedLockHandler distributedLockHandler;
 	@Autowired
 	AiNewTransService robotNewTransService;
+	@Autowired
+	IAiCycleHisService iAiCycleHisService;
+	@Autowired
+	AiAsynDealService aiAsynDealService;
 	
 	/**
 	 * 导入任务时话术参数检查以及准备TTS合成
@@ -189,7 +195,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
 				logger.error("会话ID:{}TTS数据合成中...",ttsVoiceReq.getSeqid());
 			}else if(RobotConstants.TTS_STATUS_F.equals(ttsWavHis.getStatus())) {
-				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
+//				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
 			}else {
 				//查询出合成后的数据JSON
 				String ttsJsonData = ttsWavHis.getTtsJsonData();
@@ -330,13 +336,19 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				nowAi.setSeqId(aiCallApplyReq.getSeqId());
 				nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
 				iAiResourceManagerService.aiBusy(nowAi);
-				/**5、返回**/
+				/**5、记录调用中心log**/
+				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "机器人申请成功,机器人编号:"+nowAi.getAiNo());
+				/**6、返回**/
 				AiCallNext aiCallNext = new AiCallNext();
 				aiCallNext.setAiNo(nowAi.getAiNo());
 				return aiCallNext;
 			} catch (RobotException e) {
+				//记录log
+				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "机器人申请失败,"+e.getErrorMessage());
 				throw e; 
 			} catch (Exception e1) {
+				//记录log
+				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "机器人申请失败,未知异常");
 				logger.error("机器人分配异常！",e1);
 				throw new RobotException(AiErrorEnum.AI00060028.getErrorCode(),AiErrorEnum.AI00060028.getErrorMsg());
 			}finally {
@@ -369,6 +381,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				|| StrUtils.isEmpty(aiCallStartReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallStartReq.getUserId())) {
+			//记录log
+			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "开始拨打电话,必输参数校验失败!");
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
@@ -376,6 +390,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		//根据参数查询本次要调用的机器人
 		AiInuseCache nowAi = aiCacheService.queryAiInuse(userId, aiCallStartReq.getAiNo());
 		if(nowAi == null) {
+			//记录log
+			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "开始拨打电话,用户无该模板空闲的机器人!");
 			//无空闲的机器人
 			throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
 		}
@@ -387,6 +403,26 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		try {
 			/**5、调用sellbot打电话 **/
 			SellbotRestoreReq sellbotRestoreReq = new SellbotRestoreReq();
+			//获取话术模板配置文件
+			HsReplace hsReplace = aiCacheService.queyHsReplace(aiCallStartReq.getTemplateId());
+			if(hsReplace !=null && hsReplace.isTemplate_tts_flag()) {
+				//需要TTS合成，将参数信息也发给sellbot，用来交互过程中返回完成sentence信息
+				TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(aiCallStartReq.getSeqId());
+				if(ttsWavHis != null) {
+					String[] replace_variables_flag = hsReplace.getReplace_variables_flag();
+					//将参数设置为|分隔
+					if(replace_variables_flag != null && replace_variables_flag.length>0) {
+						String keyStr = "";
+						for(String key:replace_variables_flag) {
+							keyStr = keyStr+"|"+key;
+						}
+						//去掉第一个|
+						keyStr = keyStr.substring(1);
+						sellbotRestoreReq.setKey(keyStr);	//参数key
+					}
+					sellbotRestoreReq.setVal(ttsWavHis.getReqParams());	//	参数值
+				}
+			}
 			sellbotRestoreReq.setCfg(aiCallStartReq.getTemplateId()); //话术模板
 			sellbotRestoreReq.setPhonenum(aiCallStartReq.getPhoneNo());	//手机号
 			sellbotRestoreReq.setSeqid(aiCallStartReq.getSeqId());	//会话ID
@@ -401,9 +437,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			robotCallHis.setSeqId(aiCallStartReq.getSeqId());
 			robotCallHis.setTemplateId(aiCallStartReq.getTemplateId());
 			robotCallHis.setAssignTime(new Date());
+			robotCallHis.setCallStatus(RobotConstants.CALLINT_STATUS_I);	//通话中
 			robotNewTransService.recordRobotCallHis(robotCallHis);
+			/**7、记录调用中心日志**/
+			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "开始拨打电话,成功!");
 			return aiNext;
 		} catch (Exception e) {
+			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "开始拨打电话,发生未知异常!");
 			logger.error("{}的机器人{}在拨打电话{}时调用SELLBOT接口发生异常!",aiCallStartReq.getUserId(),nowAi.getAiNo(),aiCallStartReq.getPhoneNo(),e);
 			throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
 		}
@@ -538,9 +578,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	
 	/**
 	 * 电话挂断通知AI释放资源
-	 * 1、检查用户资源变更锁，如果减少，那么将该机器人资源释放掉
-	 * 2、正常情况下，将机器人状态变更为空闲，可以接收其他电话请求
-	 * 3、清空消息流缓存
+	 * 1、挂断后将通话历史设置为完成
+	 * 2、检查用户资源变更锁，如果减少，那么将该机器人资源释放掉
+	 * 3、正常情况下，将机器人状态变更为空闲，可以接收其他电话请求
+	 * 4、清空消息流缓存
 	 * @param aiHangupReq
 	 */
 	@Override
@@ -551,12 +592,23 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				|| StrUtils.isEmpty(aiHangupReq.getAiNo())
 				|| StrUtils.isEmpty(aiHangupReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiHangupReq.getUserId())) {
+			//记录log
+			aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "挂断电话,请求必输参数校验失败!");
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		/**2、资源校验以及准备**/
+		/**2、将通话历史设置为完成 **/
+		RobotCallHis robotCallHis = iAiCycleHisService.queryRobotCallhisBySeqId(aiHangupReq.getSeqId());
+		if(robotCallHis != null) {
+			robotCallHis.setCallStatus(RobotConstants.CALLING_STATUS_S); //通话完成
+		}
+		robotNewTransService.recordRobotCallHis(robotCallHis);
+		
+		/**3、资源校验以及准备**/
 		AiInuseCache nowAi = iAiResourceManagerService.queryUserAi(aiHangupReq.getUserId(), aiHangupReq.getAiNo());
 		if(nowAi == null) {
+			//记录log
+			aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "挂断电话,机器人"+aiHangupReq.getAiNo()+"不存在");
 			//机器人不存在
 			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
@@ -577,8 +629,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//正常情况下，只需要把机器人设置为空闲即可。
 			iAiResourceManagerService.aiFree(nowAi);
 		}
-		/**3、清空消息流缓存**/
+		/**4、清空消息流缓存**/
 		aiCacheService.delAllSentenceBySeqId(aiHangupReq.getSeqId());
+		/**5、记录log **/
+		aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "挂断电话完成!");
 	}
 	
 	
@@ -725,7 +779,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			aiCallLngKeyMatchReq.setSentence(sentenceCache.getSentence());
 			boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
 			if(!isMatched) {
-				logger.info("会话ID:{},sentence:{}匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+				logger.info("会话ID:{},sentence:{},匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 				//未匹配关键字
 				return RobotConstants.HELLO_STATUS_WAIT;
 			}
@@ -733,7 +787,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//播音中
 			//匹配黑名单
 			if(this.constants(RobotConstants.black_list,sentenceCache.getSentence())) {
-				logger.info("会话ID:{},sentence:{}匹配黑名单...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+				logger.info("会话ID:{},sentence:{},匹配黑名单...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 				return RobotConstants.HELLO_STATUS_WAIT;
 			}
 			if(sentenceCache.getSentence().length()<3) {
@@ -744,7 +798,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
 				if(!isMatched) {
 					//未匹配关键字
-					logger.info("会话ID:{},sentence:{}长度<3且匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+					logger.info("会话ID:{},sentence:{},长度<3且未匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 					return RobotConstants.HELLO_STATUS_WAIT;
 				}
 			}

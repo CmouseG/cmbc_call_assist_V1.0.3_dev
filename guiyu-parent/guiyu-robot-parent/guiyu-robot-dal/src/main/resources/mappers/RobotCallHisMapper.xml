@@ -8,6 +8,7 @@
     <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
     <result column="assign_time" property="assignTime" jdbcType="TIMESTAMP" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="call_status" property="callStatus" jdbcType="VARCHAR" />
     <result column="crt_date" property="crtDate" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -73,7 +74,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, seq_id, user_id, ai_no, assign_time, template_id, crt_date, crt_time
+    id, seq_id, user_id, ai_no, assign_time, template_id, call_status, crt_date, crt_time
   </sql>
   <sql id="Blob_Column_List" >
     sellbot_callback_json
@@ -137,12 +138,12 @@
     </selectKey>
     insert into robot_call_his (id, seq_id, user_id, 
       ai_no, assign_time, template_id, 
-      crt_date, crt_time, sellbot_callback_json
-      )
+      call_status, crt_date, crt_time, 
+      sellbot_callback_json)
     values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
       #{aiNo,jdbcType=VARCHAR}, #{assignTime,jdbcType=TIMESTAMP}, #{templateId,jdbcType=VARCHAR}, 
-      #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
-      )
+      #{callStatus,jdbcType=VARCHAR}, #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{sellbotCallbackJson,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.RobotCallHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -165,6 +166,9 @@
       </if>
       <if test="templateId != null" >
         template_id,
+      </if>
+      <if test="callStatus != null" >
+        call_status,
       </if>
       <if test="crtDate != null" >
         crt_date,
@@ -192,6 +196,9 @@
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="callStatus != null" >
+        #{callStatus,jdbcType=VARCHAR},
       </if>
       <if test="crtDate != null" >
         #{crtDate,jdbcType=VARCHAR},
@@ -231,6 +238,9 @@
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
+      <if test="record.callStatus != null" >
+        call_status = #{record.callStatus,jdbcType=VARCHAR},
+      </if>
       <if test="record.crtDate != null" >
         crt_date = #{record.crtDate,jdbcType=VARCHAR},
       </if>
@@ -253,6 +263,7 @@
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
       template_id = #{record.templateId,jdbcType=VARCHAR},
+      call_status = #{record.callStatus,jdbcType=VARCHAR},
       crt_date = #{record.crtDate,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR}
@@ -268,6 +279,7 @@
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
       template_id = #{record.templateId,jdbcType=VARCHAR},
+      call_status = #{record.callStatus,jdbcType=VARCHAR},
       crt_date = #{record.crtDate,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
@@ -292,6 +304,9 @@
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
       </if>
+      <if test="callStatus != null" >
+        call_status = #{callStatus,jdbcType=VARCHAR},
+      </if>
       <if test="crtDate != null" >
         crt_date = #{crtDate,jdbcType=VARCHAR},
       </if>
@@ -311,6 +326,7 @@
       ai_no = #{aiNo,jdbcType=VARCHAR},
       assign_time = #{assignTime,jdbcType=TIMESTAMP},
       template_id = #{templateId,jdbcType=VARCHAR},
+      call_status = #{callStatus,jdbcType=VARCHAR},
       crt_date = #{crtDate,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
@@ -323,6 +339,7 @@
       ai_no = #{aiNo,jdbcType=VARCHAR},
       assign_time = #{assignTime,jdbcType=TIMESTAMP},
       template_id = #{templateId,jdbcType=VARCHAR},
+      call_status = #{callStatus,jdbcType=VARCHAR},
       crt_date = #{crtDate,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}

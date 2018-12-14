@@ -35,8 +35,12 @@ public class UserAiCfgDetailVO {
     private Date crtTime;
     @ApiModelProperty(value="创建人")
     private String crtUser;
+    @ApiModelProperty(value="创建人名称")
+  	private String crtUserName;
     @ApiModelProperty(value="更新时间")
     private Date updateTime;
     @ApiModelProperty(value="更新人")
     private String updateUser;
+  	@ApiModelProperty(value="更新人名称")
+  	private String updateUserName;
 }

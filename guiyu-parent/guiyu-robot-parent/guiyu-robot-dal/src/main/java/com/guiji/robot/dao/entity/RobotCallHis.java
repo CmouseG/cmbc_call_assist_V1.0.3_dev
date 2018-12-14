@@ -16,6 +16,8 @@ public class RobotCallHis implements Serializable {
 
     private String templateId;
 
+    private String callStatus;
+
     private String crtDate;
 
     private Date crtTime;
@@ -72,6 +74,14 @@ public class RobotCallHis implements Serializable {
         this.templateId = templateId == null ? null : templateId.trim();
     }
 
+    public String getCallStatus() {
+        return callStatus;
+    }
+
+    public void setCallStatus(String callStatus) {
+        this.callStatus = callStatus == null ? null : callStatus.trim();
+    }
+
     public String getCrtDate() {
         return crtDate;
     }
@@ -108,6 +118,7 @@ public class RobotCallHis implements Serializable {
         sb.append(", aiNo=").append(aiNo);
         sb.append(", assignTime=").append(assignTime);
         sb.append(", templateId=").append(templateId);
+        sb.append(", callStatus=").append(callStatus);
         sb.append(", crtDate=").append(crtDate);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", sellbotCallbackJson=").append(sellbotCallbackJson);

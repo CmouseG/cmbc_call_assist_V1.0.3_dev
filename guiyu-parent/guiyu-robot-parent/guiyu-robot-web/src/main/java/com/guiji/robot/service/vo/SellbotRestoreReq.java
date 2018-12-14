@@ -16,4 +16,8 @@ public class SellbotRestoreReq {
 	private String seqid;
 	//电话号码
 	private String phonenum;
+	//给sellbot用来合成tts完整sentence变量
+	private String key;
+	//给sellbot用来合成tts完整sentence变量
+	private String val;
 }

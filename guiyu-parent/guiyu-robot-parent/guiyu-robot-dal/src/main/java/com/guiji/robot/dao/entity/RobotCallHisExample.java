@@ -535,6 +535,76 @@ public class RobotCallHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andCallStatusIsNull() {
+            addCriterion("call_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusIsNotNull() {
+            addCriterion("call_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusEqualTo(String value) {
+            addCriterion("call_status =", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusNotEqualTo(String value) {
+            addCriterion("call_status <>", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusGreaterThan(String value) {
+            addCriterion("call_status >", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("call_status >=", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusLessThan(String value) {
+            addCriterion("call_status <", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusLessThanOrEqualTo(String value) {
+            addCriterion("call_status <=", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusLike(String value) {
+            addCriterion("call_status like", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusNotLike(String value) {
+            addCriterion("call_status not like", value, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusIn(List<String> values) {
+            addCriterion("call_status in", values, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusNotIn(List<String> values) {
+            addCriterion("call_status not in", values, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusBetween(String value1, String value2) {
+            addCriterion("call_status between", value1, value2, "callStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallStatusNotBetween(String value1, String value2) {
+            addCriterion("call_status not between", value1, value2, "callStatus");
+            return (Criteria) this;
+        }
+
         public Criteria andCrtDateIsNull() {
             addCriterion("crt_date is null");
             return (Criteria) this;

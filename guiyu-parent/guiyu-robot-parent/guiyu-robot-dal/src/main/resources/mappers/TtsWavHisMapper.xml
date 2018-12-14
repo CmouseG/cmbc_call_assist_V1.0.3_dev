@@ -6,6 +6,7 @@
     <result column="seq_id" property="seqId" jdbcType="VARCHAR" />
     <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="req_params" property="reqParams" jdbcType="VARCHAR" />
     <result column="tts_txt_json_data" property="ttsTxtJsonData" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="CHAR" />
     <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
@@ -75,8 +76,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, seq_id, busi_id, template_id, tts_txt_json_data, `status`, error_msg, error_type, 
-    error_try_num, crt_time
+    id, seq_id, busi_id, template_id, req_params, tts_txt_json_data, `status`, error_msg, 
+    error_type, error_try_num, crt_time
   </sql>
   <sql id="Blob_Column_List" >
     tts_json_data
@@ -139,13 +140,15 @@
       SELECT genTabId('tts_wav_his')
     </selectKey>
     insert into tts_wav_his (id, seq_id, busi_id, 
-      template_id, tts_txt_json_data, `status`, 
-      error_msg, error_type, error_try_num, 
-      crt_time, tts_json_data)
+      template_id, req_params, tts_txt_json_data, 
+      `status`, error_msg, error_type, 
+      error_try_num, crt_time, tts_json_data
+      )
     values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
-      #{templateId,jdbcType=VARCHAR}, #{ttsTxtJsonData,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
-      #{errorMsg,jdbcType=VARCHAR}, #{errorType,jdbcType=CHAR}, #{errorTryNum,jdbcType=INTEGER}, 
-      #{crtTime,jdbcType=TIMESTAMP}, #{ttsJsonData,jdbcType=LONGVARCHAR})
+      #{templateId,jdbcType=VARCHAR}, #{reqParams,jdbcType=VARCHAR}, #{ttsTxtJsonData,jdbcType=VARCHAR}, 
+      #{status,jdbcType=CHAR}, #{errorMsg,jdbcType=VARCHAR}, #{errorType,jdbcType=CHAR}, 
+      #{errorTryNum,jdbcType=INTEGER}, #{crtTime,jdbcType=TIMESTAMP}, #{ttsJsonData,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -162,6 +165,9 @@
       </if>
       <if test="templateId != null" >
         template_id,
+      </if>
+      <if test="reqParams != null" >
+        req_params,
       </if>
       <if test="ttsTxtJsonData != null" >
         tts_txt_json_data,
@@ -195,6 +201,9 @@
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="reqParams != null" >
+        #{reqParams,jdbcType=VARCHAR},
       </if>
       <if test="ttsTxtJsonData != null" >
         #{ttsTxtJsonData,jdbcType=VARCHAR},
@@ -240,6 +249,9 @@
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
+      <if test="record.reqParams != null" >
+        req_params = #{record.reqParams,jdbcType=VARCHAR},
+      </if>
       <if test="record.ttsTxtJsonData != null" >
         tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
       </if>
@@ -272,6 +284,7 @@
       seq_id = #{record.seqId,jdbcType=VARCHAR},
       busi_id = #{record.busiId,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
+      req_params = #{record.reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=CHAR},
       error_msg = #{record.errorMsg,jdbcType=VARCHAR},
@@ -289,6 +302,7 @@
       seq_id = #{record.seqId,jdbcType=VARCHAR},
       busi_id = #{record.busiId,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
+      req_params = #{record.reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{record.status,jdbcType=CHAR},
       error_msg = #{record.errorMsg,jdbcType=VARCHAR},
@@ -310,6 +324,9 @@
       </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="reqParams != null" >
+        req_params = #{reqParams,jdbcType=VARCHAR},
       </if>
       <if test="ttsTxtJsonData != null" >
         tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
@@ -340,6 +357,7 @@
     set seq_id = #{seqId,jdbcType=VARCHAR},
       busi_id = #{busiId,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
+      req_params = #{reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
       error_msg = #{errorMsg,jdbcType=VARCHAR},
@@ -354,6 +372,7 @@
     set seq_id = #{seqId,jdbcType=VARCHAR},
       busi_id = #{busiId,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
+      req_params = #{reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
       `status` = #{status,jdbcType=CHAR},
       error_msg = #{errorMsg,jdbcType=VARCHAR},

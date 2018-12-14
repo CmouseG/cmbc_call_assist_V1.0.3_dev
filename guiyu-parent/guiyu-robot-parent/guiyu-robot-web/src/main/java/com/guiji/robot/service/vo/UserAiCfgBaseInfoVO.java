@@ -16,4 +16,9 @@ public class UserAiCfgBaseInfoVO extends UserAiCfgBaseInfo{
 	private String userName;
 	//已分配的机器人数量
 	private int assignNum;
+	//创建用户名称
+	private String crtUserName;
+	//更新用户名称
+	private String updateUserName;
+	
 }

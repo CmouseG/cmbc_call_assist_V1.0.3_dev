@@ -195,7 +195,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
 				logger.error("会话ID:{}TTS数据合成中...",ttsVoiceReq.getSeqid());
 			}else if(RobotConstants.TTS_STATUS_F.equals(ttsWavHis.getStatus())) {
-				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
+//				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
 			}else {
 				//查询出合成后的数据JSON
 				String ttsJsonData = ttsWavHis.getTtsJsonData();

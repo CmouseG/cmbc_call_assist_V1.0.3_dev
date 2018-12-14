@@ -766,11 +766,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
-		Map<String, String> map = new HashMap<>();
-		map.put("1", "计划中");
-		map.put("2", "计划完成");
-		map.put("3", "暂停计划");
-		map.put("4", "停止计划");
+		Map<Integer, String> map = new HashMap<>();
+		map.put(1, "计划中状态");
+		map.put(2, "完成状态");
+		map.put(3, "暂停状态");
+		map.put(4, "停止状态");
 		MessageDto result = new MessageDto();
 		if (batchId != 0) {
 			// 不选择传入0
@@ -803,6 +803,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		} else {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
+			//根据用户id来查询
 			example.createCriteria().andUserIdEqualTo(userId.intValue()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
 					.andIsDelEqualTo(Constant.IS_DEL_0);
 			;
@@ -824,18 +825,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	private boolean checkStatus(String status, DispatchPlan dispatchPlan) {
+		
+		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
-		//暂停能恢复 ，停止不能。
 		
-		// 停止之后不能暂停 不能恢复
+
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
 			return false;
 		}
-		// 一键恢复针对暂停的不能操作
 //		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 //				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
 //			return false;

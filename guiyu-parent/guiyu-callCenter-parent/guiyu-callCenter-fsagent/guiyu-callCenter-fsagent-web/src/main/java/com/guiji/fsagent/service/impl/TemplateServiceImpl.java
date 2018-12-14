@@ -39,8 +39,8 @@ public class TemplateServiceImpl implements TemplateService {
     IRobotRemote iRobotFeign;
     @Override
     public boolean istempexist(String tempId) {
-        String tempen = tempId.replaceAll("rec","en");
-        String tempPath = pathConfig.getTempPath() + tempen;
+        tempId = tempId.substring(0,tempId.lastIndexOf("_")+1) ;
+        String tempPath = pathConfig.getTempPath() + tempId+"en";
         return FileUtil.isExist(tempPath);
     }
 

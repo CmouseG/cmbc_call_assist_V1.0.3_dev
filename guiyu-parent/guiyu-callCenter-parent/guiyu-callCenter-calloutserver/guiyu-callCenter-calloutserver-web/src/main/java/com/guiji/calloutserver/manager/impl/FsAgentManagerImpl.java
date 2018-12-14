@@ -151,7 +151,13 @@ public class FsAgentManagerImpl implements FsAgentManager {
         if(map==null){
             map = getwavlength(tempId);
         }
+        if(filename.contains("/")){
+            String[] arr = filename.split("/");
+            String result = arr[arr.length-1];
+            return map.get(result);
+        }else{
+            return map.get(filename);
+        }
 
-       return map.get(filename.replace("_rec","_en").replace(tempId+"/",""));
     }
 }

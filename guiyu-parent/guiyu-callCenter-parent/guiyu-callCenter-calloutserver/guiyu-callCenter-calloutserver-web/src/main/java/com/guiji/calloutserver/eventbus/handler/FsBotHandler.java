@@ -18,6 +18,7 @@ import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
+import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsManager;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutDetailService;
@@ -62,6 +63,9 @@ public class FsBotHandler {
     @Autowired
     RobotNextHelper robotNextHelper;
 
+    @Autowired
+    DispatchManager dispatchService;
+
     //注册这个监听器
     @PostConstruct
     public void register() {
@@ -83,8 +87,22 @@ public class FsBotHandler {
             AIInitRequest request = new AIInitRequest(callPlan.getCallId(), callPlan.getTempId(), callPlan.getPhoneNum(), callPlan.getCustomerId(), callPlan.getAiId());
 
             Long startTime = new Date().getTime();
-            AIResponse aiResponse = aiManager.applyAi(request);
-            //todo 此处如果异常，缺少后续处理，更改calloutplan状态，回掉调度中心
+
+            AIResponse aiResponse = null;
+            try{
+                aiResponse = aiManager.applyAi(request);
+                Preconditions.checkNotNull(aiResponse, "aiResponse is null error");
+            }catch (Exception e){//申请资源异常 ，回调调度中心，更改calloutplan的状态
+                log.error("-----error---------aiManager.applyAi:"+e);
+                //回掉给调度中心，更改通话记录
+                callPlan.setCallState(ECallState.norobot_fail.ordinal());
+                callPlan.setAccurateIntent("F");
+                callPlan.setReason(e.getMessage());
+                callOutPlanService.update(callPlan);
+                dispatchService.successSchedule(callPlan.getCallId());
+                return;
+            }
+
             Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse, true);
@@ -251,6 +269,7 @@ public class FsBotHandler {
 
     public void buildCallOutDetail(String callId, AsrCustomerEvent event) {
 
+        //开场白之前的asr识别不记录，识别太灵敏了，导致太多无用通话记录
         if (StringUtils.isNotBlank(event.getAsrText())) {
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callId);

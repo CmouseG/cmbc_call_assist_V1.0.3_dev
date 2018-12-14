@@ -59,7 +59,7 @@
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND call_start_time &lt; CURRENT_DATE()
-    AND duration &lt;5
+    AND duration &lt; 5
     GROUP BY customer_id,accurate_intent,reason
   </select>
 
@@ -221,7 +221,7 @@
   <select id="getIntentCountAgo" resultType="com.guiji.callcenter.dao.entityext.IntentCount">
     SELECT SUM(call_count) AS callCount,  call_date AS callDate, intent
     FROM report_call_day
-    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR} and intent  IS NOT NULL
+    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and intent  IS NOT NULL
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -240,7 +240,7 @@
   <select id="getConnectDataHour" resultType="com.guiji.callcenter.dao.entityext.CallCountHour">
     SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(duration) AS duration
     FROM report_call_hour
-    WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt;= #{endDate,jdbcType=TIMESTAMP}
+    WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
@@ -254,7 +254,7 @@
   <select id="getReasonCountAgo" resultType="com.guiji.callcenter.dao.entityext.ReasonCount">
     SELECT SUM(call_count) AS callCount,  call_date AS callDate, reason
     FROM report_call_day
-    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR} and reason  IS NOT NULL
+    where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and reason  IS NOT NULL
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>

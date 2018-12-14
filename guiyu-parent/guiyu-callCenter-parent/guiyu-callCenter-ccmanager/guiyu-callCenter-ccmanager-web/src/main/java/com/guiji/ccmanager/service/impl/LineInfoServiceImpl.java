@@ -9,6 +9,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
+import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
@@ -51,7 +52,7 @@ public class LineInfoServiceImpl implements LineInfoService {
     @Autowired
     private DiscoveryClient discoveryClient;
     @Autowired
-    private IAuth auth;
+    CacheManager cacheManager;
 
     public LineInfoExample getExample(String customerId, String lineName){
         LineInfoExample example = new LineInfoExample();
@@ -75,45 +76,25 @@ public class LineInfoServiceImpl implements LineInfoService {
 
         List<LineInfo> list = lineInfoMapper.selectByExample(example);
 
-        Map<String,String> map = new HashMap<String,String>();
-
         if(list!=null && list.size()>0){
             for(LineInfo lineInfo:list){
                 String userId = lineInfo.getCreatetBy();
                 if(StringUtils.isNotBlank(userId)){
-                    String createuser = getUserName(map,  userId);
-                    lineInfo.setCreatetBy(createuser);
+                    lineInfo.setCreatetBy(cacheManager.getUserName(userId));
                 }
                 String userUpdate = lineInfo.getUpdateBy();
                 if(StringUtils.isNotBlank(userUpdate)){
-                    String updateuser = getUserName(map,  userUpdate);
-                    lineInfo.setUpdateBy(updateuser);
+                    lineInfo.setUpdateBy(cacheManager.getUserName(userId));
+                }
+                String cId = lineInfo.getCustomerId();
+                if(StringUtils.isNotBlank(cId)){
+                    lineInfo.setCustomerId( cacheManager.getUserName(cId));
                 }
             }
         }
         return list;
     }
 
-    private String getUserName(Map<String,String> map, String userId){
-        if(map.get(userId)==null){
-            try {
-                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
-                if(result!=null && result.getBody()!=null) {
-                    String userName = result.getBody().getUsername();
-                    if (userName != null) {
-                        map.put(userId, userName);
-                        return userName;
-                    }
-                }
-            }catch (Exception e){
-                log.error(" auth.getUserById error :"+ e);
-            }
-
-        }else{
-            return map.get(userId);
-        }
-        return null;
-    }
 
     @Override
     public int getLineInfoByCustomCount(String customerId, String lineName) {

@@ -66,7 +66,7 @@ public class RobotNextHelper {
         String callId = aiCallNextReq.getSeqId();
         ScheduledFuture<?> schedule = scheduledExecutorService.scheduleAtFixedRate(() -> {
                     try {
-                        log.info("-------------start  schedule aiCallNext callId:" + callId);
+                        log.debug("-------------start  schedule aiCallNext callId:" + callId);
                         Channel channel = channelService.findByUuid(callId);
                         Long startTime = channel.getStartPlayTime().getTime();
 
@@ -87,7 +87,7 @@ public class RobotNextHelper {
                         if (status.equals("play")) {
                             String resp = aiCallNext.getSellbotJson();
 
-                            log.info("robotRemote.flowMsgPush getSellbotJson[{}]", resp);
+                            log.debug("robotRemote.flowMsgPush getSellbotJson[{}]", resp);
 
                             SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
                             Preconditions.checkState(sellbotResponse != null && sellbotResponse.isValid(), "invalid aiCallNext response");
@@ -99,14 +99,21 @@ public class RobotNextHelper {
                             aiResponse.setAiId(aiCallNext.getAiNo());
                             aiResponse.setCallId(callId);
                             aiResponse.setReason(sellbotResponse.getReason());
-                            aiResponse.setWavFile(sellbotResponse.getWav_filename());
+
+                            String wavFilename = getWavFilename(sellbotResponse.getWav_filename(),aiCallNextReq.getTemplateId());
+                            Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
+                            aiResponse.setWavFile(wavFilename);
+
                             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
                             aiResponse.setAiResponseType(sellbotResponse.getEnd());
-                            aiResponse.setWavDuration(fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), sellbotResponse.getWav_filename()));
+
+                            Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename);
+                            Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
+                            aiResponse.setWavDuration(wavDruation);
                             dealWithResponse(aiResponse);
                         }
                     } catch (Exception e) {
-                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: callId[{}]",callId);
+                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: callId[{}]", callId);
                     }
                 },
                 0, 500, TimeUnit.MILLISECONDS);
@@ -117,10 +124,10 @@ public class RobotNextHelper {
 
     public void dealWithResponse(AIResponse aiResponse) {
         String callId = aiResponse.getCallId();
-        CallOutDetail callDetail = callOutDetailService.getLastDetailCustomer(callId);
-
-        if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
-            callDetail = new CallOutDetail();
+//        CallOutDetail callDetail = callOutDetailService.getLastDetailCustomer(callId);
+//
+//        if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
+        CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callId);
             callDetail.setCallDetailId(IdGenUtil.uuid());
             setDetailValues(aiResponse, callDetail, callId);
@@ -130,15 +137,15 @@ public class RobotNextHelper {
             callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
             callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
             callOutDetailRecordService.save(callDetailRecord);
-        } else {
-            setDetailValues(aiResponse, callDetail, callId);
-            callOutDetailService.update(callDetail);
-
-            CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
-            callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
-            callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
-            callOutDetailRecordService.update(callDetailRecord);
-        }
+//        } else {
+//            setDetailValues(aiResponse, callDetail, callId);
+//            callOutDetailService.update(callDetail);
+//
+//            CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
+//            callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
+//            callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
+//            callOutDetailRecordService.update(callDetailRecord);
+//        }
 
     }
 
@@ -184,4 +191,25 @@ public class RobotNextHelper {
             }
         }
     }
+
+    /**
+     * 返回标准的文件名称
+     */
+    public static String getWavFilename(String filename, String tempId) {
+
+        if (tempId.endsWith("_en")) {
+            tempId = tempId.replace("_en", "_rec");
+        }
+
+        if (filename != null) {
+            if (filename.contains("/")) {
+                String[] arr = filename.split("/");
+                String result = arr[arr.length - 1];
+                return tempId + "/" + result;
+            }
+            return tempId + "/" + filename;
+        }
+        return null;
+    }
+
 }

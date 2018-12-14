@@ -16,4 +16,5 @@ public interface CallOutDetailService {
     CallOutDetail getLastDetail(String callId);
 
     CallOutDetail getLastDetailCustomer(String callId);
+
 }

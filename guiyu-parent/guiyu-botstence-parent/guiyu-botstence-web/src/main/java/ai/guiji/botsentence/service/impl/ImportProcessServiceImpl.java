@@ -22,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysUser;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.controller.server.vo.ImportBranchVO;
@@ -91,47 +94,47 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 	private BotSentenceAdditionMapper botSentenceAdditionMapper;
 	@Autowired
 	private QiuniuUploadUtil qiuniuUploadUtil;
-	@Autowired
-	private BotSentenceProcessServiceImpl botSentenceProcessServiceImpl;
-	
+
 	@Autowired
 	private BotSentenceIndustryMapper botSentenceIndustryMapper;
-	
+
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
-	
+
 	@Autowired
 	private VoliceServiceImpl voliceServiceImpl;
+
+	@Autowired
+	private IAuth iAuth;
 
 	private Logger logger = LoggerFactory.getLogger(ImportProcessServiceImpl.class);
 
 	public static void main(String[] args) {
- 
+
 	}
 
 	@Override
 	@Transactional
 	public void importProcess(File templateFile, String templateType, String templatId,Long userId) {
-
-		
-		
 		handleData(templateFile, templateType, templatId,userId);
 	}
 
 	public boolean handleData(File templateFile, String templateType, String templatId,Long userId) {
 
+		ReturnData<SysUser> data=iAuth.getUserById(userId);
+		String orgCode=data.getBody().getOrgCode();
+		String userName=data.getBody().getUsername();
+		String orgName=data.getBody().getOrgName();
 		if(StringUtils.isBlank(userId.toString())) {
 			logger.error("用户信息为空");
 			return false;
 		}
-		
+
 		Date date = new Date();
-		//String filePath = "C:\\\\Users\\\\Administrator\\\\Desktop\\\\POS机";
-		//File sourceFile = new File(filePath);
 		logger.info("------>>start import data,file:" + templateFile.getName());
 		List<File> listFile = new ArrayList<File>();
 		FileUtil.getAllFilePaths(templateFile, listFile);
-		
+
 		//String templateName="";
 		String template_id = "";
 		String trade = "";
@@ -148,39 +151,31 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					trade = json.getString("trade");
 					des = json.getString("des");
 					template_name = json.getString("dianame");//模板名称
-					
+
 				} catch (IOException e) {
 					logger.error("加载options.json文件异常", e);
 					return false;
 				}
 			}
 		}
-		
+
 		logger.info("话术模板编号: " + template_id);
 		logger.info("行业: " + trade);
 		logger.info("话术模板描述: " + des);
 		logger.info("话术模板名称: " + template_name);
-		
+
 		if(StringUtils.isBlank(template_name)) {
 			template_name = "未命名";
-			//throw new CommonException("模板名称不能为空!");
 		}
-		
+
 		if(StringUtils.isBlank(trade)) {
 			trade = "未知行业";
-			//throw new CommonException("行业不能为空!");
 		}
-		
-		//校验模板名是否重复
-		/*boolean flag = validateTempateName(trade, userId);
-		if(!flag) {
-			throw new CommonException("当前行业名称已存在,请重新更换名称再进行导入!");
-		}*/
-		
+
 		String processId = "";
-		
+
 		if("02".equals(templateType)) {//导入个人流程
-			
+
 			if(StringUtils.isNotBlank(templatId)) {
 				logger.info("更新话术模板");
 				logger.info("模板编号:" + template_id);
@@ -195,37 +190,37 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					BotSentenceDomainExample deleteDomainExample = new BotSentenceDomainExample();
 					deleteDomainExample.createCriteria().andProcessIdEqualTo(processId);
 					botSentenceDomainMapper.deleteByExample(deleteDomainExample);
-					
+
 					//删除branch
 					BotSentenceBranchExample deleteBranchExample = new BotSentenceBranchExample();
 					deleteBranchExample.createCriteria().andProcessIdEqualTo(processId);
 					botSentenceBranchMapper.deleteByExample(deleteBranchExample);
-					
+
 					//删除intent
 					BotSentenceIntentExample deleteIntentExample = new BotSentenceIntentExample();
 					deleteIntentExample.createCriteria().andProcessIdEqualTo(processId);
 					botSentenceIntentMapper.deleteByExample(deleteIntentExample);
-					
+
 					//删除volice
 					VoliceInfoExample deleteVoliceExample = new VoliceInfoExample();
 					deleteVoliceExample.createCriteria().andProcessIdEqualTo(processId);
 					voliceInfoMapper.deleteByExample(deleteVoliceExample);
-					
+
 					//删除label
 					BotSentenceLabelExample deleteLabelExample = new BotSentenceLabelExample();
 					deleteLabelExample.createCriteria().andProcessIdEqualTo(processId);
 					botSentenceLabelMapper.deleteByExample(deleteLabelExample);
-					
+
 					//删除addition
 					BotSentenceAdditionExample deleteAdditionExample = new BotSentenceAdditionExample();
 					deleteAdditionExample.createCriteria().andProcessIdEqualTo(processId);
 					botSentenceAdditionMapper.deleteByExample(deleteAdditionExample);
-					
-					
+
+
 				}else {
 					throw new CommonException("当前模板不存在!");
 				}
-				
+
 			}else {
 				// 插入process
 				processId = importProcessMapper.getProcessId();
@@ -233,7 +228,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceProcess.setProcessId(processId);
 				botSentenceProcess.setState(Constant.APPROVE_MAEKING);
 				botSentenceProcess.setTemplateType("02");
-				
+
 				//生成模板编号
 				Pinyin4jUtil util= new Pinyin4jUtil();
 				String pingyin = "";
@@ -243,27 +238,30 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					logger.error("生成首字母异常...", e);
 					pingyin = SystemUtil.getSysJournalNo(5, false);
 				}
-				
+
 				template_id = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
-				
+
 				botSentenceProcess.setTemplateId(template_id);//模板编号
 				botSentenceProcess.setTemplateName(template_name);//模板名称
 				botSentenceProcess.setCrtTime(date);//创建时间
 				botSentenceProcess.setIndustry(trade);//行业
 				botSentenceProcess.setVersion("0");//默认版本为0
 				botSentenceProcess.setAccountNo(userId.toString());//设置账号
+				botSentenceProcess.setOrgCode(orgCode);
+				botSentenceProcess.setUserName(userName);
+				botSentenceProcess.setOrgName(orgName);
 				botSentenceProcess.setCrtUser(userId.toString());
-				importProcessMapper.insertSelective(botSentenceProcess);
-				
+				botSentenceProcessMapper.insertSelective(botSentenceProcess);
+
 				processId =botSentenceProcess.getProcessId(); 
 			}
-			
+
 		}else {//默认为导入话术模板
 			//判断当前模板是否已存在，如果存在则更新
 			BotSentenceTemplateExample queryExample = new BotSentenceTemplateExample();
 			queryExample.createCriteria().andTemplateIdEqualTo(template_id);
 			List<BotSentenceTemplate> list = botSentenceTemplateMapper.selectByExample(queryExample);
-			
+
 			//判断当前行业是否存在，如果存在，则不处理，如果不存在，则新增一条行业信息
 			BotSentenceIndustryExample industryExample = new BotSentenceIndustryExample();
 			industryExample.createCriteria().andIndustryNameEqualTo(trade);
@@ -279,9 +277,9 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceIndustryMapper.insert(botSentenceIndustry);
 				tradeId = botSentenceIndustry.getIndustryId();
 			}
-			
+
 			BotSentenceTemplate template = null;
-			
+
 			if(null != list && list.size() > 0) {
 				logger.info("当前话术模板已存在，自动覆盖，保证话术模板流程编号不变....");
 				template = list.get(0);
@@ -299,41 +297,41 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				}
 				processId =template.getProcessId();
 				botSentenceTemplateMapper.updateByPrimaryKey(template);
-				
-				
+
+
 				//先删除当前话术有关的数据
 				//删除domain
 				BotSentenceDomainExample deleteDomainExample = new BotSentenceDomainExample();
 				deleteDomainExample.createCriteria().andProcessIdEqualTo(processId);
 				botSentenceDomainMapper.deleteByExample(deleteDomainExample);
-				
+
 				//删除branch
 				BotSentenceBranchExample deleteBranchExample = new BotSentenceBranchExample();
 				deleteBranchExample.createCriteria().andProcessIdEqualTo(processId);
 				botSentenceBranchMapper.deleteByExample(deleteBranchExample);
-				
+
 				//删除intent
 				BotSentenceIntentExample deleteIntentExample = new BotSentenceIntentExample();
 				deleteIntentExample.createCriteria().andProcessIdEqualTo(processId);
 				botSentenceIntentMapper.deleteByExample(deleteIntentExample);
-				
+
 				//删除volice
 				VoliceInfoExample deleteVoliceExample = new VoliceInfoExample();
 				deleteVoliceExample.createCriteria().andProcessIdEqualTo(processId);
 				voliceInfoMapper.deleteByExample(deleteVoliceExample);
-				
+
 				//删除label
 				BotSentenceLabelExample deleteLabelExample = new BotSentenceLabelExample();
 				deleteLabelExample.createCriteria().andProcessIdEqualTo(processId);
 				botSentenceLabelMapper.deleteByExample(deleteLabelExample);
-				
+
 				//删除addition
 				BotSentenceAdditionExample deleteAdditionExample = new BotSentenceAdditionExample();
 				deleteAdditionExample.createCriteria().andProcessIdEqualTo(processId);
 				botSentenceAdditionMapper.deleteByExample(deleteAdditionExample);
-				
-				
-				
+
+
+
 			}else {
 				logger.info("当前话术不存在，创建新的话术模板...");
 				template = new BotSentenceTemplate();
@@ -350,43 +348,28 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				}else {
 					template.setTemplateName(trade);
 				}
-				
+
 				template.setAccountNo(userId.toString());//设置账号
 				template.setVersion("0");//默认版本为0
 				botSentenceTemplateMapper.insertSelective(template);
 				processId =template.getProcessId();
 			}
-			
-			
-			
-			
-			
-			
-			//保存账号与行业关系表
-			/*UserAccountIndustryRelation relation = new UserAccountIndustryRelation();
-			relation.setAccountNo(userId);
-			//relation.setAccountName(requestParam.getAccountName());
-			relation.setIndustryId(template_id);
-			relation.setIndustryName(trade);
-			relation.setCrtTime(new Date(System.currentTimeMillis()));
-			relation.setCrtUser("crm");
-			relationMapper.insert(relation);*/
+
 		}
-		
+
 
 		// txt等文件的一些附加信息
 		String sim_txt = "";
 		String template_json = "";
 		String weights_txt = "";
-		//String options_json = "";
 		String stopwords_txt = "";
 		String userdict_txt = "";
-		
+
 		// 存储mav的url
 		Map<String, String> mavMap = new HashMap<String, String>();
 		// <*后的id,volice_id>
 		Map<String, Long> voliceMap = new HashMap<String, Long>();
-		
+
 		for (File file : listFile) {
 			if (file.getName().endsWith("_rec")) {
 				if("02".equals(templateType)) {//导入本地模板不需要导入录音文件
@@ -406,8 +389,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 						}
 					}
 				}
-			
-				
+
+
 			} else if (file.getName().equals("select.json")) {// 处理select.json，插入到intent表
 				try {
 					String selectContent = FileUtil.readToString(file);
@@ -538,13 +521,13 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		// 处理domain
 		List<BotSentenceDomain> domainList = new ArrayList<BotSentenceDomain>();
 		List<BotSentenceBranch> branchList = new ArrayList<BotSentenceBranch>();
-		
+
 		Map<String, ImportDomainVO> domainMap = new HashMap<>();
 		List<String> validateBranchList = new ArrayList<>();
-		
+
 		List<String> mainDomainList = new ArrayList<>();
 		List<String> mainBranchList = new ArrayList<>();
-		
+
 		for (File file : listFile) {
 			String fileName = file.getName();
 			if (fileName.equals("new_domain_cfg")) {
@@ -559,12 +542,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 							JSONObject jSONObjectDomainDetail = (JSONObject) JSON.parseObject(domainJson).get(domainName);
 							ImportDomainVO importDomainVO = JSONObject.parseObject(jSONObjectDomainDetail.toJSONString(),
 									ImportDomainVO.class);
-							
+
 							//校验是否存在指向一般问题的domain
 							if(!"一般问题".equals(domainName) && "一般问题".equals(importDomainVO.getCom_domain())) {
 								throw new CommonException("导入模板失败,流程"+domainName+"指向了一般问题!");
 							}
-							
+
 							String branchStr = importDomainVO.getBranch();
 							JSONObject objects = JSON.parseObject(branchStr);
 							if (objects != null && !objects.isEmpty()) {
@@ -574,36 +557,36 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 									ImportBranchVO importBranchVO = JSON.parseObject(branchJSONObject.toJSONString(), ImportBranchVO.class);
 									if(!"negative".equals(branchName) && !"一般问题".equals(domainName) && !"投诉".equals(domainName) 
 											&& StringUtils.isNotBlank(importDomainVO.getCom_domain())) {
-										
+
 										logger.info(domainName+importBranchVO.getNext());
-										
+
 										if(validateBranchList.contains(domainName+importBranchVO.getNext())) {
 											throw new CommonException("导入模板失败,流程"+domainName+"存在多条分支同时指向"+importBranchVO.getNext());	
 										}
 										validateBranchList.add(domainName+importBranchVO.getNext());
-										
+
 									}
 									//把属于流程的保存下来，剔除掉negative
 									if(!"negative".equals(branchName) && !mainDomainList.contains(importBranchVO.getNext())) {
 										mainDomainList.add(importBranchVO.getNext());
 									}
-									
+
 									if(!"negative".equals(branchName) && !mainBranchList.contains(domainName + "," + branchName)) {
 										mainBranchList.add(domainName + "," + branchName);
 									}
-									
+
 									//校验是否存在指向一般问题的domain
 									if( !"一般问题".equals(domainName) && !"投诉".equals(domainName) && "一般问题".equals(importBranchVO.getNext()) && StringUtils.isNotBlank(importDomainVO.getCom_domain())) {
 										throw new CommonException("导入模板失败,流程"+domainName+"指向了一般问题!");
 									}
 								}
 							}
-							
+
 							//把属于流程的保存下来
 							if(!"解释开场白".equals(domainName) && !mainDomainList.contains(domainName)) {
 								mainDomainList.add(domainName);
 							}
-							
+
 							domainMap.put(domainName, importDomainVO);
 						} catch (IOException e) {
 							logger.error("read new_domain_cfg: json file IOException:" + e);
@@ -613,55 +596,19 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				}
 			}
 		}
-		
-		
+
+
 		//遍历domainmap
 		for(String key : domainMap.keySet()) {
 			Map<String, String> responseMap = new HashMap<String, String>();
 			processDomains(domainMap.get(key), key,
 					processId, voliceMap, date,domainList,branchList,responseMap,template_id, mavMap, mainDomainList, mainBranchList,userId);
 		}
-		
-		
-		/*for (File file : listFile) {
-			String fileName = file.getName();
-			if (fileName.equals("new_domain_cfg")) {
-				File[] domainFiles = file.listFiles();
-				for (File domainFile : domainFiles) {
-					String domainFileName = domainFile.getName();
-					// <*后的id,*前面的内容>
-					Map<String, String> responseMap = new HashMap<String, String>();
-					if (domainFileName.endsWith(".json")) {
-						try {
-							processDomains(FileUtil.readToString(domainFile), domainFileName.replace(".json", ""),
-									processId, voliceMap, date,domainList,branchList,responseMap,template_id, userId, mavMap);
-						} catch (IOException e) {
-							logger.error("read new_domain_cfg: json file IOException:" + e);
-							return false;
-						}
-					}
-				}
-			}
-		}*/
-		
-		
-		/*String domainName = "开场白";
-		BotSentenceDomain startExplainDomain = null;
-		for(BotSentenceDomain temp : domainList) {
-			if("解释开场白".equals(temp.getDomainName())) {
-				startExplainDomain = temp;
-			}
-		}
-		
-		
-		while(StringUtils.isNotBlank(domainName)) {
-			domainName = setMainFlow(domainName, domainList, startExplainDomain);
-		}*/
-		
+
 		List<String> mainDomainNameList = new ArrayList<>();
 		BotSentenceDomain startDomain = null;
 		BotSentenceDomain startExplainDomain = null;
-		
+
 		for(BotSentenceDomain temp : domainList) {
 			if("1".equals(temp.getCategory())) {
 				if("开场白".equals(temp.getDomainName())) {
@@ -678,16 +625,16 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			}else {
 				temp.setCategory("3");
 			}
-			
+
 			if("解释开场白".equals(temp.getDomainName())) {
 				startExplainDomain = temp;
 				temp.setType("start_explain");
 				temp.setCategory("3");
 			}
-			
+
 			temp.setTemplateId(template_id);
 		}
-		
+
 		//如果开场白下一节点是解释开场白，则修改开场白指向解释开场白的下级节点
 		boolean flag = false;
 		if(null != startDomain && null != startExplainDomain) {
@@ -696,23 +643,23 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				startDomain.setComDomain(startExplainDomain.getComDomain());
 			}
 		}
-		
-		
+
+
 		logger.info("保存domain开始...");
-		
+
 		//保存domain
 		for(BotSentenceDomain botSentenceDomain:domainList) {
 			botSentenceDomainMapper.insertSelective(botSentenceDomain);
 			//initparent(botSentenceDomain.getProcessId());//初始化parent字段
 		}
 		logger.info("保存domain结束...");
-		
+
 		logger.info("开始初始化坐标...");
 		//初始化数据
 		initPositive(domainList);
 		logger.info("初始化坐标结束...");
-		
-		
+
+
 		//branch设置resp，然后插入库中
 		for(BotSentenceBranch botSentenceBranch:branchList) {
 			String resps = botSentenceBranch.getResponse();
@@ -728,23 +675,14 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			}
 			botSentenceBranch.setResponse(response+"]");
 			botSentenceBranch.setTemplateId(template_id);
-			
+
 			//设置branch的line
 			if (mainDomainNameList.contains(botSentenceBranch.getNext()) && mainDomainNameList.contains(botSentenceBranch.getDomain())){
 				if("positive".equals(botSentenceBranch.getBranchName())) {
-					//判断当前domain是否为主流程，如果是，则设置为未拒绝，否则为分支
-					/*BotSentenceDomain domain = botSentenceProcessServiceImpl.getDomain(processId, botSentenceBranch.getDomain());
-					if("01".equals(domain.getIsMainFlow())) {
-						botSentenceBranch.setLineName("未拒绝");
-						botSentenceBranch.setType(Constant.BRANCH_TYPE_POSITIVE);
-					}else {
-						botSentenceBranch.setType(Constant.BRANCH_TYPE_NORMAL);
-						botSentenceBranch.setLineName("分支");
-					}*/
-					
+
 					botSentenceBranch.setLineName("未拒绝");
 					botSentenceBranch.setType(Constant.BRANCH_TYPE_POSITIVE);
-					
+
 					botSentenceBranch.setIsShow("1");
 				}else if(botSentenceBranch.getBranchName().startsWith("special")) {
 					botSentenceBranch.setLineName("分支");
@@ -757,22 +695,22 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceBranch.setIsShow(null);
 				botSentenceBranch.setType(null);
 			}
-			
+
 			if(flag) {
 				if("positive".equals(botSentenceBranch.getBranchName()) && "解释开场白".equals(botSentenceBranch.getDomain())) {
 					botSentenceBranch.setDomain("开场白");
 				}
 			}
-			
-			
+
+
 			botSentenceBranchMapper.insertSelective(botSentenceBranch);
 		}
-		
+
 		logger.info("------>>end import data,processId:" + processId);
 		return true;
 
 	}
-	
+
 	public void setLevel(List<BotSentenceBranch> branchList,String domainName,Map<String,Integer> mapLevel) {
 
 		for(BotSentenceBranch botSentenceBranch:branchList) {
@@ -794,7 +732,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		}
 
 	}
-	
+
 
 	public void processDomains(ImportDomainVO importDomainVO, String domainName, String processId, Map<String, Long> voliceMap,
 			Date date,List<BotSentenceDomain> domainList,List<BotSentenceBranch> branchList, Map<String, String> responseMap, String templateId, Map<String, String> mavMap
@@ -863,7 +801,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		if (objects != null && !objects.isEmpty()) {
 			for (Entry<String, Object> entry : objects.entrySet()) {
 				String branchName = entry.getKey();
-				
+
 				JSONObject branchJSONObject = (JSONObject) entry.getValue();
 				ImportBranchVO importBranchVO = JSON.parseObject(branchJSONObject.toJSONString(), ImportBranchVO.class);
 
@@ -887,7 +825,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 							responseMap.put(getId(resp), getRespContent(resp));
 							responseMost = responseMost+getId(resp)+",";
 						}
-//						responseMost += voliceMap.get(getId(resp)) + ",";
+						//						responseMost += voliceMap.get(getId(resp)) + ",";
 					}
 					branchMost.setResponse(responseMost);
 				}
@@ -919,14 +857,14 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				branchList.add(branchMost);
 			}
 		}
-		
+
 		//处理挽回文案
 		for(int j = branchList.size()-1 ; j >= 0 ; j--) {
 			BotSentenceBranch temp = branchList.get(j);
 			if(temp.getBranchName().startsWith("refuse_")) {
 				branchList.remove(temp);//删除当前
 			}
-			
+
 			/*if(temp.getBranchName().startsWith("refuse_") && temp.getResponse().indexOf(",") > 0) {
 				branchList.remove(temp);//删除当前
 				String[] array = temp.getResponse().split(",");
@@ -950,8 +888,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				}
 			}*/
 		}
-		
-		
+
+
 		// domain插入
 		BotSentenceDomain botSentenceDomain = new BotSentenceDomain();
 		botSentenceDomain.setComDomain(importDomainVO.getCom_domain());
@@ -980,10 +918,10 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		}else {
 			botSentenceDomain.setCategory("3");
 		}*/
-		
-		
+
+
 		domainList.add(botSentenceDomain);
-		
+
 		// 插入volice录音信息
 		for(Entry<String, String> entry : responseMap.entrySet()) {
 			String id = entry.getKey();
@@ -1016,7 +954,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		}
 		return id;
 	}
-	
+
 	/**
 	 * 获取说话内容*前面的内容
 	 * 
@@ -1024,31 +962,31 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 	 * @return
 	 */
 	public String getRespContent(String reponse) {
-		
+
 		String[] recordArr = reponse.split("\\*");
 		String respContent = "";
 		for(int i=0;i<recordArr.length-1;i++) {
 			respContent = respContent + recordArr[i];
 		}
-		
+
 		if (respContent.endsWith("\"")) {
 			respContent = respContent.substring(0, respContent.length()-1);
 		}
-		
+
 		if (respContent.startsWith("\"")) {
 			respContent = respContent.substring(1, respContent.length());
 		}
- 
+
 		return respContent;
 	}
 
-	
+
 	private void initparent(String processId) {
 		//查询开场白节点
 		BotSentenceDomainExample example = new BotSentenceDomainExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1");
 		List<BotSentenceDomain> list2 = botSentenceDomainMapper.selectByExample(example);
-		
+
 		for(int i = 0 ; i < list2.size() ; i++) {
 			BotSentenceDomain domain = list2.get(i);
 			if(StringUtils.isNotBlank(domain.getComDomain())) {
@@ -1072,12 +1010,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceDomainMapper.updateByPrimaryKey(domain);
 			}
 		}
-		
-		
-		
+
+
+
 	}
-	
-	
+
+
 	//设置x和y坐标
 	private void initPositive(List<BotSentenceDomain> domainList) {
 		BotSentenceDomain domain = null;
@@ -1092,11 +1030,11 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceDomainMapper.updateByPrimaryKey(domain);
 			}
 		}
-		
+
 		Map<String, BotSentenceDomain> map = new HashMap<>();
-		
+
 		List<String> mainDomainList = new ArrayList<>();
-		
+
 		int y = 100;
 		int num = 0;
 		while(StringUtils.isNotBlank(domain.getComDomain())) {
@@ -1116,13 +1054,13 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				domain.setIsMainFlow("01");
 				botSentenceDomainMapper.updateByPrimaryKey(domain);
 				map.put(domain.getDomainName(), domain);
-				
+
 				mainDomainList.add(domain.getDomainName());
 			}
 		}
-		
+
 		//根据条件查询
-		
+
 		for(String temp : mainDomainList) {
 			BotSentenceDomainExample positionExample = new BotSentenceDomainExample();
 			positionExample.createCriteria().andProcessIdEqualTo(domain.getProcessId()).andCategoryEqualTo("1").andComDomainEqualTo(temp)
@@ -1136,8 +1074,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceDomainMapper.updateByPrimaryKey(tempDomain);
 			}
 		}
-		
-		
+
+
 		BotSentenceDomainExample positionExample = new BotSentenceDomainExample();
 		positionExample.createCriteria().andProcessIdEqualTo(domain.getProcessId()).andCategoryEqualTo("1")
 		.andPositionXIsNull().andPositionYIsNull();
@@ -1159,16 +1097,16 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 						}
 					}
 				}
-				
+
 				temp.setPositionX(temp_x);
 				temp.setPositionY(temp_y);
 				botSentenceDomainMapper.updateByPrimaryKey(temp);
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	private void updateMainBranchName(String processId) {
 		BotSentenceDomainExample positionExample = new BotSentenceDomainExample();
 		positionExample.createCriteria().andProcessIdEqualTo(processId).andCategoryEqualTo("1").andIsMainFlowEqualTo("01");
@@ -1184,20 +1122,20 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			}
 		}
 	}
-	
-	
+
+
 	private String setMainFlow(String domainName, List<BotSentenceDomain> domainList, BotSentenceDomain startExplainDomain) {
-		
+
 		for(int i = 0 ; i < domainList.size() ; i++) {
 			BotSentenceDomain temp = domainList.get(i);
-			
+
 			if(domainName.equals(temp.getDomainName())) {
-				
+
 				if("解释开场白".equals(temp.getComDomain())) {//如果当前domain的下一节点为解释开场白，则修改当前节点指向下一节点，跳过解释开场白节点
 					temp.setComDomain(startExplainDomain.getComDomain());
 				}
-				
-				
+
+
 				temp.setCategory("1");
 				temp.setIsMainFlow("01");
 				logger.info("当前domain: " + temp.getDomainName() + "为主流程...");
@@ -1206,7 +1144,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		}
 		return null;
 	}
-	
+
 	private boolean validateTempateName(String templateName, String userId) {
 		BotSentenceTemplateExample example = new BotSentenceTemplateExample();
 		example.createCriteria().andTemplateTypeEqualTo("01").andTemplateNameEqualTo(templateName);
@@ -1214,17 +1152,17 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		if(num > 0) {
 			return false;
 		}
-		
+
 		BotSentenceTemplateExample example1 = new BotSentenceTemplateExample();
 		example1.createCriteria().andTemplateTypeEqualTo("02").andTemplateNameEqualTo(templateName).andAccountNoEqualTo(userId);
 		int num1 = botSentenceTemplateMapper.countByExample(example1);
 		if(num1 > 0) {
 			return false;
 		}
-		
-		
+
+
 		return true;
 	}
-	
-	
+
+
 }

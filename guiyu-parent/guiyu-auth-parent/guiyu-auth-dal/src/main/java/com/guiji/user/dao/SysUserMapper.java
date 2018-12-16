@@ -68,4 +68,6 @@ public interface SysUserMapper {
     
     public boolean checkAccessKey(String AccessKey);
     
+    public SysUser getUserById(Long id);
+    
 }

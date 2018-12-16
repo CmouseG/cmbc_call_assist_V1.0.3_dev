@@ -37,6 +37,8 @@ public class SysUser implements Serializable {
     private String delFlag="0";
 
     private Date vaildTime;
+    
+    private String orgName;
 
     private static final long serialVersionUID = 1L;
 
@@ -176,7 +178,15 @@ public class SysUser implements Serializable {
         this.vaildTime = vaildTime;
     }
 
-    @Override
+    public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

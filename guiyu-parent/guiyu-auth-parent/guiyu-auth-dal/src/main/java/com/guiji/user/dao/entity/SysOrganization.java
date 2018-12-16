@@ -12,6 +12,9 @@ public class SysOrganization implements Serializable {
 
     private String type;
 
+    private String robot;
+
+    private String line;
     private String delFlag="0";
 
     private Long createId;
@@ -21,6 +24,10 @@ public class SysOrganization implements Serializable {
     private Long updateId;
 
     private Date updateTime;
+    
+    private String createName;
+    private String updateName;
+    private String parentName;
 
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +61,22 @@ public class SysOrganization implements Serializable {
 
     public void setType(String type) {
         this.type = type == null ? null : type.trim();
+    }
+
+    public String getRobot() {
+        return robot;
+    }
+
+    public void setRobot(String robot) {
+        this.robot = robot == null ? null : robot.trim();
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public void setLine(String line) {
+        this.line = line == null ? null : line.trim();
     }
 
     public String getDelFlag() {
@@ -106,6 +129,8 @@ public class SysOrganization implements Serializable {
         sb.append(", name=").append(name);
         sb.append(", code=").append(code);
         sb.append(", type=").append(type);
+        sb.append(", robot=").append(robot);
+        sb.append(", line=").append(line);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);

@@ -65,7 +65,7 @@ public class UserService {
 	}
 	
 	public SysUser getUserById(Long id){
-		return mapper.selectByPrimaryKey(id);
+		return mapper.getUserById(id);
 	}
 	
 	public List<Map<String,String>> getUserByName(String userName){

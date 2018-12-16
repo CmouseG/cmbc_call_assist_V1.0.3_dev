@@ -32,7 +32,7 @@ public class OrganizationService {
 		}else if(QY_ORG.equals(type)){
 			example.createCriteria().andTypeEqualTo(QY_ORG).andCodeLike(record.getCode()+"%");
 			int num=sysOrganizationMapper.countByExample(example);
-			String code=record.getCode()+(num+1);
+			String code=record.getCode()+"."+(num+1);
 			record.setCode(code);
 		}
 		sysOrganizationMapper.insert(record);
@@ -47,13 +47,11 @@ public class OrganizationService {
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 	}
 	
-	public Page<SysOrganization> selectByPage(Page<SysOrganization> page){
+	public Page<Object> selectByPage(Page<Object> page){
 		SysOrganizationExample example=new SysOrganizationExample();
 		example.createCriteria().andDelFlagEqualTo("0");
 		int num=sysOrganizationMapper.countByExample(example);
-		example.setLimitStart((page.getPageNo()-1)*page.getPageSize());
-		example.setLimitEnd(page.getPageNo()*page.getPageSize());
-		List<SysOrganization> list=sysOrganizationMapper.selectByExample(example);
+		List<Object> list=sysOrganizationMapper.selectByPage(page);
 		page.setTotal(num);
 		page.setRecords(list);
 		return page;

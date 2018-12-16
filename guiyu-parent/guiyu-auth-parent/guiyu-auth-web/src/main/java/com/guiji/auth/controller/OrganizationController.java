@@ -45,7 +45,7 @@ public class OrganizationController {
 	}
 	
 	@RequestMapping("selectByPage")
-	public Page<SysOrganization> selectByPage(Page<SysOrganization> page){
+	public Page<Object> selectByPage(Page<Object> page){
 		return organizationService.selectByPage(page);
 	}
 	

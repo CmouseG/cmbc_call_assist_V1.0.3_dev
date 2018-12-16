@@ -523,4 +523,15 @@
 	<select id="checkSecretKey" resultType="boolean">
 		SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
 	</select>
+	
+	<select id="getUserById" resultType="com.guiji.user.dao.entity.SysUser">
+		SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as callRecordUrl,
+		a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as accessKey,
+		a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
+		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,b.`name` as orgName
+		from sys_user a
+		LEFT JOIN sys_organization b on a.org_code=b.`code`
+		where a.id=#{userId}
+	</select>
+	
 </mapper> 

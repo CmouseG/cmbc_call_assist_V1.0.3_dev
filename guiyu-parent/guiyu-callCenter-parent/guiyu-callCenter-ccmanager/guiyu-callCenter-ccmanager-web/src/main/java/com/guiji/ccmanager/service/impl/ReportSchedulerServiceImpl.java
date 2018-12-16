@@ -46,7 +46,9 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
             list.addAll(list0);
         }
 
-        statisticMapper.insertReportCallDay(list);
+        if(list!=null && list.size()>0){
+            statisticMapper.insertReportCallDay(list);
+        }
 
     }
 

@@ -17,7 +17,8 @@ public enum CcmanagerExceptionEnum implements ExceptionEnum {
     EXCP_CCMANAGER_CODEC("0303006","codec not right"),
     EXCP_CCMANAGER_FSMANAGER_ADDLINE("0303007","fsmanageer add line error"),
     EXCP_CCMANAGER_FSMANAGER_EDITLINE("0303008","fsmanageer edit line error"),
-    EXCP_CCMANAGER_FSMANAGER_DELETELINE("0303008","fsmanageer delete line error");
+    EXCP_CCMANAGER_FSMANAGER_DELETELINE("0303009","fsmanageer delete line error"),
+    EXCP_CCMANAGER_CALLOUTSERVER_ERROR("0303010","callouserver null or error");
 
     //返回码
     private String errorCode;

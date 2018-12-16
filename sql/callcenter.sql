@@ -571,7 +571,6 @@ CREATE TABLE `report_call_count` (
 /*Data for the table `report_call_count` */
 
 /*Table structure for table `report_call_day` */
-
 DROP TABLE IF EXISTS `report_call_day`;
 
 CREATE TABLE `report_call_day` (
@@ -583,8 +582,9 @@ CREATE TABLE `report_call_day` (
   `call_count` int(11) DEFAULT NULL,
   `duration_all` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
+  `tempid` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=322 DEFAULT CHARSET=utf8;
 
 
 
@@ -597,8 +597,9 @@ CREATE TABLE `report_call_hour` (
   `connect_count` int(11) DEFAULT NULL,
   `duration` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
+  `tempid` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 
 
@@ -612,6 +613,7 @@ CREATE TABLE `report_call_today` (
   `call_count` int(11) DEFAULT NULL,
   `duration_all` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
+  `tempid` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

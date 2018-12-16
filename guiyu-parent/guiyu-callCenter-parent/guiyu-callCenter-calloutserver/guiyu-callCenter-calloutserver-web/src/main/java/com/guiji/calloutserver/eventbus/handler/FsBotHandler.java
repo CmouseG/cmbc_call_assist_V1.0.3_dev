@@ -21,7 +21,6 @@ import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsManager;
 import com.guiji.calloutserver.service.*;
-import com.guiji.dispatch.model.Constant;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;

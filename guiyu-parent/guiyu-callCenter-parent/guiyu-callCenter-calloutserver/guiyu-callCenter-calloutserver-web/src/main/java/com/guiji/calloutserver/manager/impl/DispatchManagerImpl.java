@@ -33,7 +33,9 @@ public class DispatchManagerImpl implements DispatchManager {
 
     @Autowired
     EurekaManager eurekaManager;
-    private DispatchLogService dispatchLogService;
+
+    @Autowired
+    DispatchLogService dispatchLogService;
 
     /**
      * 拉取呼叫计划

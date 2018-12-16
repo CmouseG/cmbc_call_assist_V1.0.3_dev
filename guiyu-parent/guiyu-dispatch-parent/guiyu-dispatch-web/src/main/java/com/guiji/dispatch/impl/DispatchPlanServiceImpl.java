@@ -109,14 +109,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				if (!checkResult.isPass()) {
 					dto.setMsg(checkResult.getCheckMsg());
 					dto.setResult(false);
-					logger.info("addSchedule校验参数失败");
 					return dto;
 				}
 			}
 		} else {
 			dto.setMsg(checkParams.getMsg());
 			dto.setResult(false);
-			logger.info("addSchedule校验参数失败");
 			return dto;
 		}
 
@@ -596,6 +594,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
 			if (user.getBody() != null) {
 				dis.setUserName(user.getBody().getUsername());
+			}
+		}
+		
+		//如果是超级用户可以查看全部数据
+		if(!isSuperAdmin){
+			for (DispatchPlan dis : selectByExample) {
+				String phoneNumber = dis.getPhone().substring(0, 3) + "****" +  dis.getPhone().substring(7,  dis.getPhone().length());
+				dis.setPhone(phoneNumber);
 			}
 		}
 

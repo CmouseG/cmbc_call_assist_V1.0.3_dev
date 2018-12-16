@@ -14,63 +14,63 @@
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason,
-    3 AS durationType, COUNT(*) AS callCount,SUM(duration) AS durationAll
+    3 AS durationType, COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND call_start_time &lt; CURRENT_DATE()
     AND duration &gt;30
-    GROUP BY customer_id,accurate_intent,reason
+    GROUP BY customer_id,accurate_intent,reason,temp_id
   </select>
   <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 2 AS durationType,
-    COUNT(*) AS callCount,SUM(duration) AS durationAll
+    COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND call_start_time &lt; CURRENT_DATE()
     AND duration &lt;30 and duration &gt;= 10
-    GROUP BY customer_id,accurate_intent,reason
+    GROUP BY customer_id,accurate_intent,reason,temp_id
   </select>
   <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 1 AS durationType,
-    COUNT(*) AS callCount,SUM(duration) AS durationAll
+    COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND call_start_time &lt; CURRENT_DATE()
     AND duration &lt;10 and duration &gt;= 5
-    GROUP BY customer_id,accurate_intent,reason
+    GROUP BY customer_id,accurate_intent,reason,temp_id
   </select>
   <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     customer_id as customerId,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 0 AS durationType,
-    COUNT(*) AS callCount,SUM(duration) AS durationAll
+    COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND call_start_time &lt; CURRENT_DATE()
     AND duration &lt; 5
-    GROUP BY customer_id,accurate_intent,reason
+    GROUP BY customer_id,accurate_intent,reason,temp_id
   </select>
 
   <insert id="insertReportCallDay" parameterType="java.util.List">
     INSERT INTO report_call_day (
-    call_date, duration_type,intent, reason, call_count,duration_all,customer_id)
+    call_date, duration_type,intent, reason, call_count,duration_all,customer_id,tempid)
     values
     <foreach collection="list" item="item" index="index" separator=",">
       (#{item.callDate,jdbcType=VARCHAR}, #{item.durationType,jdbcType=INTEGER}, #{item.intent,jdbcType=VARCHAR},
       #{item.reason,jdbcType=VARCHAR}, #{item.callCount,jdbcType=INTEGER}, #{item.durationAll,jdbcType=BIGINT},
-      #{item.customerId,jdbcType=VARCHAR}
+      #{item.customerId,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>
@@ -83,7 +83,7 @@
 
   <select id="countReportCallHourConnect" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
     SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
-   sum(duration) as duration,count(*) as connectCount,customer_id as customerId, 0 as outCount
+   sum(duration) as duration,count(*) as connectCount,customer_id as customerId, 0 as outCount,temp_id as tempid
     FROM
     call_out_plan
   WHERE
@@ -91,17 +91,17 @@
       and call_start_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
       and
     accurate_intent != 'F' and accurate_intent != 'W'
-    group by customer_id
+    group by customer_id,temp_id
   </select>
   <select id="countReportCallHourOut" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
     SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
-    sum(duration) as duration,count(*) as outCount,customer_id as customerId, 0 as connectCount
+    sum(duration) as duration,count(*) as outCount,customer_id as customerId, 0 as connectCount,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     call_start_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
     and call_start_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
-    group by customer_id
+    group by customer_id,temp_id
   </select>
 
   <insert id="insertReportCallHour" parameterType="java.util.List">
@@ -110,11 +110,12 @@
     out_count,
     connect_count,
     duration ,
-    customer_id )
+    customer_id ,
+    tempid)
     values
     <foreach collection="list" item="item" index="index" separator=",">
       (#{item.callTime,jdbcType=TIMESTAMP}, #{item.outCount,jdbcType=INTEGER}, #{item.connectCount,jdbcType=INTEGER},
-      #{item.duration,jdbcType=BIGINT}, #{item.customerId,jdbcType=VARCHAR}
+      #{item.duration,jdbcType=BIGINT}, #{item.customerId,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>
@@ -125,6 +126,9 @@
     <if test="customerId != null" >
     WHERE customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
   </select>
   <select id="getDashboardOverViewTodayNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
    SELECT  SUM(call_count) AS notConnect, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
@@ -133,12 +137,18 @@
     <if test="customerId != null" >
     AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
   </select>
   <select id="getDashboardOverViewTodayConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
     SELECT  SUM(call_count) AS connect,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today WHERE intent != 'F' AND intent != 'W'
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
   </select>
   <select id="getDashboardOverViewTodayDuration5" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
@@ -147,12 +157,18 @@
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
   </select>
   <select id="getDashboardOverViewTodayDuration10" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
     SELECT SUM(call_count) AS duration10, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today WHERE duration_type = 2
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
   </select>
   <select id="getDashboardOverViewTodayDuration30" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
@@ -161,6 +177,9 @@
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
   </select>
 
   <select id="getDashboardOverViewAgoDurationAll" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
@@ -168,6 +187,9 @@
     FROM report_call_day  WHERE call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
     GROUP BY  call_date
     ORDER BY callDate
@@ -178,6 +200,9 @@
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
     GROUP BY  call_date
     ORDER BY callDate
   </select>
@@ -186,6 +211,9 @@
     FROM report_call_day WHERE intent != 'F' AND intent != 'W' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
     GROUP BY call_date
     ORDER BY callDate
@@ -196,6 +224,9 @@
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
     GROUP BY  call_date
     ORDER BY callDate
   </select>
@@ -205,6 +236,9 @@
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
     GROUP BY  customer_id,call_date
     ORDER BY callDate
   </select>
@@ -213,6 +247,9 @@
     FROM report_call_day WHERE duration_type = 3 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="customerId != null" >
       AND customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
     GROUP BY  call_date
     ORDER BY callDate
@@ -225,6 +262,9 @@
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
     GROUP BY  callDate,intent
     ORDER BY  callDate
   </select>
@@ -235,6 +275,9 @@
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
     GROUP BY  intent
   </select>
   <select id="getConnectDataHour" resultType="com.guiji.callcenter.dao.entityext.CallCountHour">
@@ -243,6 +286,9 @@
     WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
     GROUP BY  callHour
     ORDER BY callHour
@@ -258,6 +304,9 @@
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
+    </if>
     GROUP BY  callDate,reason
     ORDER BY  callDate
   </select>
@@ -267,6 +316,9 @@
     where reason  IS NOT NULL
     <if test="customerId != null" >
       and customer_id = #{customerId,jdbcType=VARCHAR}
+    </if>
+    <if test="tempId != null" >
+      AND tempid = #{tempId,jdbcType=VARCHAR}
     </if>
     GROUP BY  reason
   </select>

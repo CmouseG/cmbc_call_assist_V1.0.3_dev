@@ -53,10 +53,10 @@ public class StatisticController {
     })
     @GetMapping(value = "getDashboardOverView")
     public DashboardOverViewRes getDashboardOverView(@NotNull(message = "startDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                                  @NotNull(message = "endDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+                                                  @NotNull(message = "endDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
-        List<DashboardOverView> list = statisticService.getDashboardOverView(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate);
+        List<DashboardOverView> list = statisticService.getDashboardOverView(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate, tempId);
         DashboardOverViewRes result = new DashboardOverViewRes();
 
         int connect =0;
@@ -100,7 +100,7 @@ public class StatisticController {
     })
     @GetMapping(value = "getIntentCount")
     public List<Map> getIntentCount(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                    @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+                                    @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
                                     @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
         if(StringUtils.isBlank(endDate)){
@@ -122,7 +122,7 @@ public class StatisticController {
         }
         List<String> typeList = Arrays.asList(arr);
 
-        List<IntentCount> list = statisticService.getIntentCount(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate);
+        List<IntentCount> list = statisticService.getIntentCount(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate, tempId);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date sDate = sdf.parse(startDate);
@@ -181,7 +181,7 @@ public class StatisticController {
     })
     @GetMapping(value = "getConnectDataHour")
     public List<CallCountHour> getConnectDataHour(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -191,7 +191,7 @@ public class StatisticController {
         if(StringUtils.isBlank(startDate)){
             startDate = endDate;
         }
-        return statisticService.getConnectDataHour(isSuperAdmin ? null : String.valueOf(userId), sdf.parse(startDate), sdf.parse(endDate));
+        return statisticService.getConnectDataHour(isSuperAdmin ? null : String.valueOf(userId), sdf.parse(startDate), sdf.parse(endDate), tempId);
     }
 
 
@@ -202,7 +202,7 @@ public class StatisticController {
     })
     @GetMapping(value = "getConnectReasonDay")
     public List<Map<String, List<Map<String, ReasonDetail>>>> getConnectReasonDay(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,
+                                                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
                                                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
         if(StringUtils.isBlank(endDate)){
@@ -211,7 +211,7 @@ public class StatisticController {
         if(StringUtils.isBlank(startDate)){
             startDate = endDate;
         }
-        List<ReasonCount> list = statisticService.getConnectReasonDay(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate);
+        List<ReasonCount> list = statisticService.getConnectReasonDay(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate, tempId);
 
         List<String> typeList = callDetailService.getFtypes();
         if(!typeList.contains("已接通")){

@@ -19,6 +19,8 @@ public class ReportCallDay implements Serializable {
 
     private String customerId;
 
+    private String tempid;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -85,6 +87,14 @@ public class ReportCallDay implements Serializable {
         this.customerId = customerId == null ? null : customerId.trim();
     }
 
+    public String getTempid() {
+        return tempid;
+    }
+
+    public void setTempid(String tempid) {
+        this.tempid = tempid == null ? null : tempid.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -99,6 +109,7 @@ public class ReportCallDay implements Serializable {
         sb.append(", callCount=").append(callCount);
         sb.append(", durationAll=").append(durationAll);
         sb.append(", customerId=").append(customerId);
+        sb.append(", tempid=").append(tempid);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

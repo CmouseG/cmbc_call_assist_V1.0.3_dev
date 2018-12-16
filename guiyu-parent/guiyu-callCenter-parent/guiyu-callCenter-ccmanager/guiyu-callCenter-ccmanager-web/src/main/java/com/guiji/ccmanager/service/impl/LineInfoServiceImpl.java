@@ -111,6 +111,8 @@ public class LineInfoServiceImpl implements LineInfoService {
         BeanUtil.copyProperties(lineInfoVO,lineInfo);
         lineInfo.setCreateDate(DateUtil.getCurrentTime());
         lineInfo.setCreatetBy(lineInfoVO.getCustomerId());
+        lineInfo.setUpdateDate(DateUtil.getCurrentTime());
+        lineInfo.setUpdateBy(lineInfoVO.getCustomerId());
         lineInfoMapper.insertSelective(lineInfo);
 
         //调用fsmanager的增加线路接口

@@ -64,7 +64,7 @@ public class AfterCallHandler {
                 }
 
                 //调度中心
-                dispatchManager.successSchedule(callPlan.getCallId());
+                dispatchManager.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());
 
             }
         } catch (Exception ex) {

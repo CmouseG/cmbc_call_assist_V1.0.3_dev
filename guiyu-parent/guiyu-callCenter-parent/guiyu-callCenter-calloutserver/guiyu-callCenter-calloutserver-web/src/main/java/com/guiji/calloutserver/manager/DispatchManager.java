@@ -21,5 +21,5 @@ public interface DispatchManager {
      */
     List<CallOutPlan> pullCallPlan(int customerId, Integer requestCount, Integer lineId);
 
-    void successSchedule(String callId);
+    void successSchedule(String callId, String phoneNo);
 }

@@ -7,6 +7,7 @@ import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
+import com.guiji.calloutserver.service.DispatchLogService;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.AiCallApplyReq;
@@ -32,6 +33,8 @@ public class CallResourceChecker {
     IRobotRemote robotRemote;
     @Autowired
     CallOutPlanService callOutPlanService;
+    @Autowired
+    DispatchLogService dispatchLogService;
 
     /**
      * 检查呼叫依赖的各项资源是否齐备，只有完全齐备，才允许进行后面的呼叫
@@ -62,6 +65,7 @@ public class CallResourceChecker {
 
         Result.ReturnData<AiCallNext> returnData = null;
         final String[] msg = {""};
+        dispatchLogService.startServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "start call robot aiCallApply");
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -79,7 +83,7 @@ public class CallResourceChecker {
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }
-
+        dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "end call robot aiCallApply");
         Preconditions.checkNotNull(returnData, msg.length>0 ? msg[0]:"没有机器人资源");
 
         String aiNo = returnData.getBody().getAiNo();

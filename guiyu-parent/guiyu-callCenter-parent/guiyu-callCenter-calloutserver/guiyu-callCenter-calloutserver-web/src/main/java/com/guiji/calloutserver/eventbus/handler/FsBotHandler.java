@@ -20,10 +20,8 @@ import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsManager;
-import com.guiji.calloutserver.service.CallOutDetailRecordService;
-import com.guiji.calloutserver.service.CallOutDetailService;
-import com.guiji.calloutserver.service.CallOutPlanService;
-import com.guiji.calloutserver.service.ErrorMatchService;
+import com.guiji.calloutserver.service.*;
+import com.guiji.dispatch.model.Constant;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +64,7 @@ public class FsBotHandler {
     @Autowired
     DispatchManager dispatchService;
 
+
     //注册这个监听器
     @PostConstruct
     public void register() {
@@ -99,7 +98,7 @@ public class FsBotHandler {
                 callPlan.setAccurateIntent("F");
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
-                dispatchService.successSchedule(callPlan.getCallId());
+                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());
                 return;
             }
 

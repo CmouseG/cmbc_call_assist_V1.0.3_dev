@@ -57,6 +57,9 @@ public class CallPlanDispatchHandler {
     @Autowired
     AsyncEventBus asyncEventBus;
 
+    @Autowired
+    DispatchLogService dispatchLogService;
+
     //注册这个监听器
     @PostConstruct
     public void register() {
@@ -158,7 +161,7 @@ public class CallPlanDispatchHandler {
                     callPlan.setAccurateIntent("F");
                     callPlan.setReason(e.getMessage());
                     callOutPlanService.update(callPlan);
-                    dispatchService.successSchedule(callPlan.getCallId());
+                    dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());
                     return;
                 }
                 asyncEventBus.post(new CallResourceReadyEvent(callPlan));

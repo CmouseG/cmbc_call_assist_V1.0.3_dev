@@ -7,6 +7,7 @@ import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.EurekaManager;
+import com.guiji.calloutserver.service.DispatchLogService;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.DispatchPlan;
@@ -32,6 +33,7 @@ public class DispatchManagerImpl implements DispatchManager {
 
     @Autowired
     EurekaManager eurekaManager;
+    private DispatchLogService dispatchLogService;
 
     /**
      * 拉取呼叫计划
@@ -107,12 +109,13 @@ public class DispatchManagerImpl implements DispatchManager {
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String callId) {
+    public void successSchedule(String callId, String phoneNo) {
 
         //调度中心
         Result.ReturnData returnData = null;
-        try
+        dispatchLogService.startServiceRequestLog(callId,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "start call dispatcher successSchedule");
 
+        try
         {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -126,14 +129,14 @@ public class DispatchManagerImpl implements DispatchManager {
                     log.warn("调度中心回掉是否成功出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
             }, -1, 1, 3, 120, true);
-        } catch (
-                Exception e)
-
+        } catch ( Exception e)
         {
             log.warn("调度中心回掉是否成功时出现异常", e);
         }
 
         log.info("===================================successSchedule:" + callId);
+        dispatchLogService.endServiceRequestLog(callId,phoneNo, returnData, "end call dispatcher successSchedule");
+
 
     }
 }

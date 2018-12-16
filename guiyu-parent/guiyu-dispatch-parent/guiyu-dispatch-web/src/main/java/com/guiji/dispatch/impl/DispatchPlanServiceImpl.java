@@ -798,13 +798,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// 停止之后不能暂停 不能恢复
 			dispatchPlan.setStatusPlan(Integer.valueOf(status));
 			DispatchPlanExample ex1 = new DispatchPlanExample();
-			ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId());
+			ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId());
 			dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 		} else {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
 			//根据用户id来查询
-			example.createCriteria().andUserIdEqualTo(userId.intValue()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
+			example.createCriteria().andUserIdEqualTo(userId.intValue())
 					.andIsDelEqualTo(Constant.IS_DEL_0);
 			;
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);

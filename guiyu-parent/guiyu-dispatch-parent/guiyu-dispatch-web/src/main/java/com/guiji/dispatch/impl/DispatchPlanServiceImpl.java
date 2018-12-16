@@ -109,14 +109,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				if (!checkResult.isPass()) {
 					dto.setMsg(checkResult.getCheckMsg());
 					dto.setResult(false);
-					logger.info("addSchedule校验参数失败");
 					return dto;
 				}
 			}
 		} else {
 			dto.setMsg(checkParams.getMsg());
 			dto.setResult(false);
-			logger.info("addSchedule校验参数失败");
 			return dto;
 		}
 
@@ -598,6 +596,17 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				dis.setUserName(user.getBody().getUsername());
 			}
 		}
+		
+		//如果是超级用户可以查看全部数据
+		if(!isSuperAdmin){
+			for (DispatchPlan dis : selectByExample) {
+				if(dis.getPhone().length() <=7){
+					continue;
+				}
+				String phoneNumber = dis.getPhone().substring(0, 3) + "****" +  dis.getPhone().substring(7,  dis.getPhone().length());
+				dis.setPhone(phoneNumber);
+			}
+		}
 
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);
@@ -798,13 +807,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// 停止之后不能暂停 不能恢复
 			dispatchPlan.setStatusPlan(Integer.valueOf(status));
 			DispatchPlanExample ex1 = new DispatchPlanExample();
-			ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId());
+			ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId());
 			dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 		} else {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
 			//根据用户id来查询
-			example.createCriteria().andUserIdEqualTo(userId.intValue()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
+			example.createCriteria().andUserIdEqualTo(userId.intValue())
 					.andIsDelEqualTo(Constant.IS_DEL_0);
 			;
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);

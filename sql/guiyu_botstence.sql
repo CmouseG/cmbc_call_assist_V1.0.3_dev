@@ -30,6 +30,35 @@ CREATE TABLE `bd_table_sequence` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for bot_available_template
+-- ----------------------------
+DROP TABLE IF EXISTS `bot_available_template`;
+CREATE TABLE `bot_available_template` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `template_id` varchar(32) NOT NULL,
+  `template_name` varchar(32) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `org_code` varchar(255) NOT NULL COMMENT '用户名',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for bot_publish_sentence_log
+-- ----------------------------
+DROP TABLE IF EXISTS `bot_publish_sentence_log`;
+CREATE TABLE `bot_publish_sentence_log` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `temp_name` varchar(255) DEFAULT NULL,
+  `template_id` varchar(32) NOT NULL,
+  `process_id` varchar(32) NOT NULL,
+  `create_id` bigint(20) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `status` varchar(10) NOT NULL COMMENT '状态1部署中2已上线3部署失败',
+  `create_name` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for bot_sentence_addition
 -- ----------------------------
 DROP TABLE IF EXISTS `bot_sentence_addition`;
@@ -162,6 +191,9 @@ CREATE TABLE `bot_sentence_process` (
   `approve_user` varchar(32) DEFAULT NULL COMMENT '审批人',
   `approve_notes` varchar(1024) DEFAULT NULL COMMENT '审批意见',
   `sound_type` varchar(32) DEFAULT NULL COMMENT '录音师编号',
+  `org_code` varchar(255) DEFAULT NULL COMMENT '组织编码',
+  `org_name` varchar(255) DEFAULT NULL COMMENT '企业名称',
+  `user_name` varchar(255) DEFAULT NULL COMMENT '用户名称',
   PRIMARY KEY (`process_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='话术流程';
 
@@ -198,7 +230,6 @@ CREATE TABLE `bot_sentence_template` (
   `industry_id` varchar(256) DEFAULT NULL,
   `industry_name` varchar(256) DEFAULT NULL,
   `host` varchar(32) DEFAULT NULL,
-  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`process_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='已生效话术模板';
 
@@ -268,6 +299,16 @@ CREATE TABLE `bot_sentence_tts_task` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1 COMMENT='TTS合成任务表';
 
+-- ----------------------------
+-- Table structure for bot_user_available
+-- ----------------------------
+DROP TABLE IF EXISTS `bot_user_available`;
+CREATE TABLE `bot_user_available` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `available_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_menu

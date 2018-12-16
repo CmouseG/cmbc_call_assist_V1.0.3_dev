@@ -35,6 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
+
 import ai.guiji.botsentence.service.IImportProcessService;
 import ai.guiji.component.client.util.IOUtil;
 import ai.guiji.component.model.ServerResult;
@@ -57,6 +63,9 @@ public class ImportProcessController {
 	private String tempDir;
 	
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
+	
+	@Autowired
+	private IAuth iAuth;
 	
 	@RequestMapping(value="importAdminProcess")
 	public ServerResult importAdminProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestParam Long userId) throws Exception{

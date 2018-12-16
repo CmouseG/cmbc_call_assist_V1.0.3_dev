@@ -43,34 +43,4 @@ public class BotPublishSentenceLogController {
 		return ServerResult.createBySuccess(page);
 	}
 	
-	@Autowired
-	private UpdateReceiverResolver resolver;
-	
-	@RequestMapping("test")
-	public void test(PublishBotstenceResultMsgVO param){
-		param.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
-		resolver.resolver(param);
-		param.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
-		resolver.resolver(param);
-		param.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
-		resolver.resolver(param);
-	}
-	
-	@RequestMapping("testsellbot")
-	public void testsellbot(PublishBotstenceResultMsgVO param){
-		param.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
-		resolver.resolver(param);
-	}
-	
-	@RequestMapping("testrobot")
-	public void testrobot(PublishBotstenceResultMsgVO param){
-		param.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
-		resolver.resolver(param);
-	}
-	
-	@RequestMapping("testfreeswitch")
-	public void testfreeswitch(PublishBotstenceResultMsgVO param){
-		param.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
-		resolver.resolver(param);
-	}
 }

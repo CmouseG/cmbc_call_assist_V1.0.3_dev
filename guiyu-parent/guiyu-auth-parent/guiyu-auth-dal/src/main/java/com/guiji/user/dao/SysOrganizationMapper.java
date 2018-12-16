@@ -1,9 +1,12 @@
 package com.guiji.user.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysOrganizationExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface SysOrganizationMapper {
     int countByExample(SysOrganizationExample example);
@@ -27,4 +30,6 @@ public interface SysOrganizationMapper {
     int updateByPrimaryKeySelective(SysOrganization record);
 
     int updateByPrimaryKey(SysOrganization record);
+    
+    List<Object> selectByPage(Page page);
 }

@@ -39,6 +39,11 @@ public class BotSentenceProcess implements Serializable {
     private String soundType;
     
     private String needTTs;
+	
+	private String orgCode;
+    private String orgName;
+
+    private String userName;
 
     private static final long serialVersionUID = 1L;
 
@@ -185,6 +190,30 @@ public class BotSentenceProcess implements Serializable {
 	public void setNeedTTs(String needTTs) {
 		this.needTTs = needTTs;
 	}
+	
+	public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName == null ? null : orgName.trim();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
+    }
 
 	@Override
     public String toString() {
@@ -209,6 +238,9 @@ public class BotSentenceProcess implements Serializable {
         sb.append(", approveUser=").append(approveUser);
         sb.append(", approveNotes=").append(approveNotes);
         sb.append(", soundType=").append(soundType);
+        sb.append(", orgCode=").append(orgCode);
+        sb.append(", orgName=").append(orgName);
+        sb.append(", userName=").append(userName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

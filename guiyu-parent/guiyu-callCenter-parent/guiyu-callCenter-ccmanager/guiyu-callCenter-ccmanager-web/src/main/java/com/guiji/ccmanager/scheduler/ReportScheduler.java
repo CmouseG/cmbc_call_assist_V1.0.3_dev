@@ -1,6 +1,8 @@
 package com.guiji.ccmanager.scheduler;
 
 import com.guiji.ccmanager.service.ReportSchedulerService;
+import com.guiji.component.lock.DistributedLockHandler;
+import com.guiji.component.lock.Lock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,13 +21,24 @@ public class ReportScheduler {
 
     @Autowired
     ReportSchedulerService reportSchedulerService;
+    @Autowired
+    DistributedLockHandler distributedLockHandler;
 
     @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallDayScheduler(){
 
         log.info("----------- start reportCallDayScheduler -----------");
-        reportSchedulerService.reportCallDayScheduler();
+        Lock lock = new Lock("ReportScheduler.reportCallDayScheduler", "ReportScheduler.reportCallDayScheduler");
+        try {
+            if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+                reportSchedulerService.reportCallDayScheduler();
+            }
+        } catch (Exception e) {
+            log.info("reportCallDayScheduler error", e);
+        } finally {
+            distributedLockHandler.releaseLock(lock);// 释放锁
+        }
         log.info("----------- end reportCallDayScheduler -----------");
 
     }
@@ -35,7 +48,16 @@ public class ReportScheduler {
     public void reportCallHourScheduler(){
 
         log.info("----------- start reportCallHourScheduler -----------");
-        reportSchedulerService.reportCallHourScheduler();
+          Lock lock = new Lock("ReportScheduler.reportCallHourScheduler", "ReportScheduler.reportCallHourScheduler");
+          try {
+              if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+                  reportSchedulerService.reportCallHourScheduler();
+              }
+          } catch (Exception e) {
+              log.info("reportCallHourScheduler error", e);
+          } finally {
+              distributedLockHandler.releaseLock(lock);// 释放锁
+          }
         log.info("----------- end reportCallHourScheduler -----------");
 
     }
@@ -45,7 +67,16 @@ public class ReportScheduler {
     public void reportCallTodayTruncate(){
 
         log.info("----------- start reportCallTodayTruncate -----------");
-        reportSchedulerService.reportCallTodayTruncate();
+        Lock lock = new Lock("ReportScheduler.reportCallTodayTruncate", "ReportScheduler.reportCallTodayTruncate");
+        try {
+            if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+                reportSchedulerService.reportCallTodayTruncate();
+            }
+        } catch (Exception e) {
+            log.info("reportCallTodayTruncate error", e);
+        } finally {
+            distributedLockHandler.releaseLock(lock);// 释放锁
+        }
         log.info("----------- end reportCallTodayTruncate -----------");
 
     }

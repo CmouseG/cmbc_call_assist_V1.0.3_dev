@@ -22,6 +22,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysUser;
 
 import ai.guiji.botsentence.constant.Constant;
+import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import ai.guiji.botsentence.dao.BotSentenceAdditionMapper;
 import ai.guiji.botsentence.dao.BotSentenceBranchMapper;
 import ai.guiji.botsentence.dao.BotSentenceDomainMapper;
@@ -31,6 +32,7 @@ import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
 import ai.guiji.botsentence.dao.BotSentenceTemplateMapper;
 import ai.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
 import ai.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
+import ai.guiji.botsentence.dao.entity.BotAvailableTemplate;
 import ai.guiji.botsentence.dao.entity.BotSentenceAddition;
 import ai.guiji.botsentence.dao.entity.BotSentenceBranch;
 import ai.guiji.botsentence.dao.entity.BotSentenceBranchExample;
@@ -774,7 +776,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		process.setLstUpdateUser(userId.toString());
 		botSentenceProcessMapper.updateByPrimaryKey(process);
 		logger.info("提交审核成功...");
+		
+		BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
+	    botAvailableTemplate.setTemplateId(process.getTemplateId());
+	    botAvailableTemplate.setUserId(Long.valueOf(process.getCrtUser()));
+	    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
 	}
+	
+	@Autowired
+	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
 
 	/**
 	 * 修改话术模板

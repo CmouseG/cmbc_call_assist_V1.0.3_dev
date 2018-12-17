@@ -1,7 +1,9 @@
 package com.guiji.dispatch.controller;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +31,6 @@ public class DispatchPlanController {
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 
-	
-	
 	/**
 	 * 单个导入任务
 	 * 
@@ -113,7 +113,7 @@ public class DispatchPlanController {
 			@RequestParam(required = false, name = "selectUserId") Integer selectUserId,
 			@RequestParam(required = false, name = "robotName") String robotName) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize, userId, isSuperAdmin,selectUserId,robotName);
+				pagenum, pagesize, userId, isSuperAdmin, selectUserId, robotName);
 	}
 
 	/**
@@ -160,7 +160,14 @@ public class DispatchPlanController {
 	@PostMapping("batchInsertDisplanPlan")
 	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan[] dispatchPlans, @RequestHeader Long userId) {
 		boolean result = false;
-		for (DispatchPlan dis : dispatchPlans) {
+		// 对号码进行去重
+		List<DispatchPlan> succList = new ArrayList<>();
+		for (int i = 0; i < dispatchPlans.length; i++) {
+			if (!succList.contains(dispatchPlans[i])) {
+				succList.add(dispatchPlans[i]);
+			}
+		}
+		for (DispatchPlan dis : succList) {
 			try {
 				dispatchPlanService.addSchedule(dis, userId);
 			} catch (Exception e) {
@@ -189,13 +196,14 @@ public class DispatchPlanController {
 
 	/**
 	 * 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
+	 * 
 	 * @param userId
 	 * @param isSuperAdmin
 	 * @return
 	 */
 	@PostMapping("getServiceStatistics")
 	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId,isSuperAdmin);
+		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin);
 	}
 
 	/**
@@ -209,7 +217,7 @@ public class DispatchPlanController {
 	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
 			@RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId,startTime,endTime,isSuperAdmin);
+		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin);
 	}
 
 }

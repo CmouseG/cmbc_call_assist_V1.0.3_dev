@@ -54,7 +54,7 @@ public class ControllerUtil {
 							templateNames = templateNames + "," +templateMap.get(template);
 						}else {
 							//缓存中没有，重新查询
-							ServerResult<List<BotSentenceProcess>> templateData = null;//iBotSentenceProcess.getTemplateById(template);
+							ServerResult<List<BotSentenceProcess>> templateData = iBotSentenceProcess.getTemplateById(template);
 							if(templateData != null && ListUtil.isNotEmpty(templateData.getData())) {
 								BotSentenceProcess botSentenceProcess = templateData.getData().get(0);
 								if(botSentenceProcess != null) {

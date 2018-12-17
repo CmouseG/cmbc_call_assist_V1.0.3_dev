@@ -119,7 +119,31 @@ public class SysOrganization implements Serializable {
         this.updateTime = updateTime;
     }
 
-    @Override
+    public String getCreateName() {
+		return createName;
+	}
+
+	public void setCreateName(String createName) {
+		this.createName = createName;
+	}
+
+	public String getUpdateName() {
+		return updateName;
+	}
+
+	public void setUpdateName(String updateName) {
+		this.updateName = updateName;
+	}
+
+	public String getParentName() {
+		return parentName;
+	}
+
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

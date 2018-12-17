@@ -6,6 +6,7 @@ import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
 import com.guiji.callcenter.dao.entityext.ReasonCount;
+import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.StatisticService;
 import com.guiji.ccmanager.vo.DashboardOverViewRes;
 import com.guiji.component.result.Result;
@@ -105,15 +106,19 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getIntentCount")
-    public List<Map> getIntentCount(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                    @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
-                                    @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
+    public Result.ReturnData<Object> getIntentCount(String startDate, String endDate, String tempId,
+                                                    @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
         if(StringUtils.isBlank(endDate)){
             endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         }
         if(StringUtils.isBlank(startDate)){
             startDate = endDate;
+        }
+
+        String regEx = "^\\d{4}-\\d{2}-\\d{2}$";
+        if(!startDate.matches(regEx) || !endDate.matches(regEx)){
+            return Result.error(Constant.ERROR_DATEFORMAT);
         }
 
         String[] arr = {"A","B","C","D","E","F","W"};
@@ -176,7 +181,7 @@ public class StatisticController {
             cal.add(Calendar.DATE, 1);
             sDate = cal.getTime();
         }
-        return resList;
+        return Result.ok(resList);
 
     }
 
@@ -186,9 +191,8 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getConnectDataHour")
-    public List<CallCountHour> getConnectDataHour(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
-                                                  @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
+    public Result.ReturnData<Object> getConnectDataHour(String startDate, String endDate, String tempId,
+                                                        @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         if(StringUtils.isBlank(endDate)){
@@ -197,7 +201,12 @@ public class StatisticController {
         if(StringUtils.isBlank(startDate)){
             startDate = endDate;
         }
-        return statisticService.getConnectDataHour(isSuperAdmin ? null : String.valueOf(userId), sdf.parse(startDate), sdf.parse(endDate), tempId);
+        String regEx = "^\\d{4}-\\d{2}-\\d{2}$";
+        if(!startDate.matches(regEx) || !endDate.matches(regEx)){
+            return Result.error(Constant.ERROR_DATEFORMAT);
+        }
+        List<CallCountHour> list = statisticService.getConnectDataHour(isSuperAdmin ? null : String.valueOf(userId), sdf.parse(startDate), sdf.parse(endDate), tempId);
+        return Result.ok(list);
     }
 
 
@@ -207,15 +216,18 @@ public class StatisticController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getConnectReasonDay")
-    public List<Map<String, List<Map<String, ReasonDetail>>>> getConnectReasonDay(@Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String startDate,
-                                                                                  @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
-                                                                                  @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
+    public Result.ReturnData<Object> getConnectReasonDay(String startDate, String endDate, String tempId,
+                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) throws ParseException {
 
         if(StringUtils.isBlank(endDate)){
             endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         }
         if(StringUtils.isBlank(startDate)){
             startDate = endDate;
+        }
+        String regEx = "^\\d{4}-\\d{2}-\\d{2}$";
+        if(!startDate.matches(regEx) || !endDate.matches(regEx)){
+           return Result.error(Constant.ERROR_DATEFORMAT);
         }
         List<ReasonCount> list = statisticService.getConnectReasonDay(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate, tempId);
 
@@ -299,7 +311,7 @@ public class StatisticController {
             returnList.add(dateMap);
         }
 
-        return returnList;
+        return Result.ok(returnList);
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {

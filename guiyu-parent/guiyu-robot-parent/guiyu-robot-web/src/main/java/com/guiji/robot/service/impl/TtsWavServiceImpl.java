@@ -70,7 +70,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	TtsCallbackHisMapper ttsCallbackHisMapper;
 	@Value("${file.tmpPath:apps/tmp/}")
     private String tempFilePath;	//文件临时目录
-	@Value("${file.hushuDir:home/botstence_tmpl/}")
+	@Value("${file.hushuDir:home/botstence_robot_tmpl/}")
     private String hushuDir;	//话术模板存放目录
 	
 	

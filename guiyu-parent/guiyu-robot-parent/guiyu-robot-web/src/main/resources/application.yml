@@ -20,7 +20,7 @@ spring:
     testOnReturn: false
   redis:
     database: 0 # Redis数据库索引（默认为0）
-    host: 127.0.0.1 # Redis服务器地址
+    host: 192.168.1.81 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
     password: 123456 # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
@@ -44,7 +44,7 @@ mybatis:
 #临时目录
 file:
   tmpPath: apps/tmp/
-  hushuDir: home/botstence_tmpl/
+  hushuDir: home/botstence_robot_tmpl/
   
 properties:
   error: properties/error.properties

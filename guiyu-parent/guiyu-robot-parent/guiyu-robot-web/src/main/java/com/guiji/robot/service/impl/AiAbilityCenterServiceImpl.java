@@ -409,17 +409,17 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				//需要TTS合成，将参数信息也发给sellbot，用来交互过程中返回完成sentence信息
 				TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(aiCallStartReq.getSeqId());
 				if(ttsWavHis != null) {
-					String[] replace_variables_flag = hsReplace.getReplace_variables_flag();
+//					String[] replace_variables_flag = hsReplace.getReplace_variables_flag();
 					//将参数设置为|分隔
-					if(replace_variables_flag != null && replace_variables_flag.length>0) {
-						String keyStr = "";
-						for(String key:replace_variables_flag) {
-							keyStr = keyStr+"|"+key;
-						}
-						//去掉第一个|
-						keyStr = keyStr.substring(1);
-						sellbotRestoreReq.setKey(keyStr);	//参数key
-					}
+//					if(replace_variables_flag != null && replace_variables_flag.length>0) {
+//						String keyStr = "";
+//						for(String key:replace_variables_flag) {
+//							keyStr = keyStr+"|"+key;
+//						}
+//						//去掉第一个|
+//						keyStr = keyStr.substring(1);
+//						sellbotRestoreReq.setKey(keyStr);	//参数key
+//					}
 					sellbotRestoreReq.setVal(ttsWavHis.getReqParams());	//	参数值
 				}
 			}

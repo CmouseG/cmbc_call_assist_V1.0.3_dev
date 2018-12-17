@@ -14,10 +14,12 @@ public class SellbotRestoreReq {
 	private String cfg;
 	//会话ID
 	private String seqid;
+	//是否大客户--默认直接写死true（sellbot有不同处理，比如：不校验TTS是否合成-不走备用话术，返回要播放的语音地址不是全路径等）
+	private boolean big_customer = true;
 	//电话号码
 	private String phonenum;
-	//给sellbot用来合成tts完整sentence变量
-	private String key;
+	//给sellbot用来合成tts完整sentence变量 name|money|date
+//	private String key;
 	//给sellbot用来合成tts完整sentence变量
 	private String val;
 }

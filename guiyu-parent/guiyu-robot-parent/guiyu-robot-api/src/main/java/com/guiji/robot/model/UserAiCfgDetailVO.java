@@ -19,6 +19,8 @@ public class UserAiCfgDetailVO {
 	private String id;
 	@ApiModelProperty(value="用户编号",required=true)
     private String userId;
+	@ApiModelProperty(value="用户名称")
+  	private String userName;
     @ApiModelProperty(value="机器人数量",required=true)
     private Integer aiNum;
     @ApiModelProperty(value="模板编号,多模板逗号分隔",required=true)

@@ -271,8 +271,8 @@
   </delete>
   
   <insert id="insertAvailableTemplate">
-  	INSERT into bot_available_template(template_id,template_name,user_id,user_name)
-	VALUES(#{templateId},#{templateName},#{userId},#{userName})
+  	INSERT into bot_available_template(template_id,template_name,user_id,org_code)
+	VALUES(#{templateId},#{templateName},#{userId},#{orgCode})
   </insert>
 
 	

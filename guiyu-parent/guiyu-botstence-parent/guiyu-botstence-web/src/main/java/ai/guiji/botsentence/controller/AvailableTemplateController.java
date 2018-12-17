@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
+
 import ai.guiji.botsentence.dao.entity.BotAvailableTemplate;
+import ai.guiji.botsentence.receiver.UpdateReceiverResolver;
 import ai.guiji.botsentence.service.impl.AvailableTemplateService;
 import ai.guiji.component.client.config.JsonParam;
 import ai.guiji.component.model.ServerResult;
@@ -53,5 +57,22 @@ public class AvailableTemplateController {
 	public ServerResult addUserAvailableTemplate(@JsonParam Long userId,@JsonParam String availableIds){
 		availableTemplateService.addUserAvailableTemplate(userId,availableIds);
 		return ServerResult.createBySuccess();
+	}
+	
+	@Autowired
+	private UpdateReceiverResolver updateReceiverResolver;
+	
+	@RequestMapping("test")
+	public boolean test(String name){
+		PublishBotstenceResultMsgVO param=new PublishBotstenceResultMsgVO();
+		param.setResult(0);
+		param.setTmplId(name);
+		param.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
+		updateReceiverResolver.resolver(param);
+		param.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
+		updateReceiverResolver.resolver(param);
+		param.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
+		updateReceiverResolver.resolver(param);
+		return true;
 	}
 }

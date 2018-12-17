@@ -848,18 +848,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
-			return false;
+			return true;
 		}
 
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
-			return false;
+			return true;
 		}
 		// if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 		// && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
 		// return false;
 		// }
-		return true;
+		return false;
 	}
 
 	@Override

@@ -1,0 +1,21 @@
+server:
+  port: 8081
+properties:
+  error: properties/error.properties
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password: 123456
+    port: 6379
+    pool:
+      max-active: 8
+      max-wait: -1
+      min-idle: 0
+      max-idle: 8
+processServer:
+  ip: 192.168.1.78
+  port: 18082
+agent:
+  monitorDir: /home/apps/config/agent
+  monitorFile: /home/apps/config/agent/cfg.json

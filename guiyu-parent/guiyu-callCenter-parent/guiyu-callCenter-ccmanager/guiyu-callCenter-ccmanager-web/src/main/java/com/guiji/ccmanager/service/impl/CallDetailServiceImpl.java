@@ -10,6 +10,7 @@ import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.utils.BeanUtil;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId, String phoneNum, String durationMin, String durationMax,
-                                         String accurateIntent, String freason, String callId, String tempId, String isRead) {
+                                         String accurateIntent, String freason, String callId, String tempId, String isRead,Boolean isSuperAdmin) {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         if (startDate != null) {
@@ -62,7 +63,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (endDate != null) {
             criteria.andCallStartTimeLessThan(endDate);
         }
-        if (StringUtils.isNotBlank(customerId)) {
+        if (StringUtils.isNotBlank(customerId) && !isSuperAdmin) {
             criteria.andCustomerIdEqualTo(customerId);
         }
         if (StringUtils.isNotBlank(phoneNum)) {
@@ -104,17 +105,23 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
+    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
                                                    String accurateIntent, String freason, String callId, String tempId, String isRead) {
 
 
-        CallOutPlanExample example = getExample(startDate, endDate, customerId, phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead);
+        CallOutPlanExample example = getExample(startDate, endDate, customerId, phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
         example.setOrderByClause("call_start_time desc");
 
-        List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
+        List<CallOutPlan> list;
+        if(isSuperAdmin){
+            example.setCustomerId(customerId);
+            list = callOutPlanMapper.selectByExample4Encrypt(example);
+        }else{
+            list = callOutPlanMapper.selectByExample(example);
+        }
 
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 
@@ -135,9 +142,9 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Override
     public int callrecordCount(Date startDate, Date endDate, String customerId, String phoneNum, String durationMin, String durationMax,
-                               String accurateIntent, String freason, String callId, String tempId, String isRead) {
+                               String accurateIntent, String freason, String callId, String tempId, String isRead, Boolean isSuperAdmin) {
 
-        CallOutPlanExample example = getExample(startDate, endDate, customerId, phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead);
+        CallOutPlanExample example = getExample(startDate, endDate, customerId, phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
 
         return callOutPlanMapper.countByExample(example);
     }

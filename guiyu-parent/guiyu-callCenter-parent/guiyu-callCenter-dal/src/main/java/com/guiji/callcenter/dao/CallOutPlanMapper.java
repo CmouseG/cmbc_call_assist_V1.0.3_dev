@@ -17,6 +17,7 @@ public interface CallOutPlanMapper {
     int insertSelective(CallOutPlan record);
 
     List<CallOutPlan> selectByExample(CallOutPlanExample example);
+    List<CallOutPlan> selectByExample4Encrypt(CallOutPlanExample example);
 
     CallOutPlan selectByPrimaryKey(String callId);
 

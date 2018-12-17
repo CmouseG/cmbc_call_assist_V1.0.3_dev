@@ -95,8 +95,8 @@ public class CallDetailController implements ICallPlanDetail {
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
 
-        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin ? null : String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
-        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin,String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead, isSuperAdmin);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);

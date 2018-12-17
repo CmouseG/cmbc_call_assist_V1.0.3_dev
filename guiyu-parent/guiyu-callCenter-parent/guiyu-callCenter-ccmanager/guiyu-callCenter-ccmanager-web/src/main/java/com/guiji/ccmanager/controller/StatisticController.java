@@ -45,6 +45,12 @@ public class StatisticController {
     @Autowired
     IAuth iAuth;
 
+    @ApiOperation(value = "几条通话线路,总共几路并发")
+    @GetMapping(value = "getLineCountAndConcurrent")
+    public Map getLineCountAndConcurrent(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin){
+        return  statisticService.getLineCountAndConcurrent(userId,isSuperAdmin);
+    }
+
 
     @ApiOperation(value = "首页Dashboard,通话记录总数，接通数，未接通数，接通率,总通话时长，通话30秒以上数量，通话10-30秒数量，通话5-10秒数量")
     @ApiImplicitParams({

@@ -62,4 +62,6 @@ public interface StatisticMapper {
     void deleteReportCallHour();
 
     List<ErrorMatch> getErrorMaths();
+
+    Map getLineCountAndConcurrent(@Param("customerId") String customerId);
 }

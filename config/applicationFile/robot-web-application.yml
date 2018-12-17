@@ -38,7 +38,7 @@ spring:
       
     
 mybatis:   
-  mapperLocations: classpath*:mappers/*.xml  
+  mapperLocations: classpath*:mappers/**/*.xml
   config-location: classpath:config/mybatis-config.xml      
 
 #临时目录

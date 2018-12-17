@@ -49,9 +49,10 @@ public class ModularMqListener {
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
 			try {
+				logger.info("消费的数据有问题");
 				channel.basicAck(message2.getMessageProperties().getDeliveryTag(), false);
 			} catch (IOException e1) {
-				logger.error("已经接受并消费掉了，不会再重复发送消费有问题了");
+				logger.info("已经接受并消费掉了，不会再重复发送消费有问题了");
 			}
 		}
 	}

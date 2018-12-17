@@ -8,6 +8,7 @@ import com.guiji.callcenter.dao.entityext.ReasonCount;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -26,4 +27,6 @@ public interface StatisticService {
     List<ReasonCount> getConnectReasonDay(String userId, String startDate, String endDate, String tempId);
 
     List<ErrorMatch> getErrorMaths();
+
+    Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin);
 }

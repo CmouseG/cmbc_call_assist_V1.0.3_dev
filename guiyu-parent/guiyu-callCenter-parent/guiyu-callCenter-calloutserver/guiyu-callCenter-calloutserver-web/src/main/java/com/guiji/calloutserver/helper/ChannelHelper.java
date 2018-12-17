@@ -56,11 +56,11 @@ public class ChannelHelper {
      * @param isPrologue    是否是开场白
      * @param isEnd     通话是否结束
      */
-    private void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isPrologue, boolean isEnd) {
+    private void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isEnd, boolean isPrologue) {
         log.info("需要设置通道媒体文件[{}]的属性，时间为[{}], isPrologue[{}], isEnd[{}]", mediaFile, mediaFileDuration, isPrologue, isEnd);
 
         Channel channel = channelService.findByUuid(uuid);
-        setChannel(channel, uuid, mediaFile, mediaFileDuration, isPrologue, isEnd);
+        setChannel(channel, uuid, mediaFile, mediaFileDuration, isLock, isEnd, isPrologue);
 
         if(isEnd){
             //预约挂断，在指定时长后挂断当前通道
@@ -71,12 +71,12 @@ public class ChannelHelper {
         localFsServer.playToChannel(uuid, mediaFile);
     }
 
-    public void playAiReponse(AIResponse aiResponse, boolean isPrologue){
-        playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isPrologue);
+    public void playAiReponse(AIResponse aiResponse, boolean isLock, boolean isPrologue){
+        playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isLock, false, isPrologue);
     }
 
-    public void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isPrologue) {
-        playFile(uuid, mediaFile, mediaFileDuration, isPrologue, false);
+    public void playFile(String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isPrologue) {
+        playFile(uuid, mediaFile, mediaFileDuration, isLock, false, isPrologue);
     }
 
     /**
@@ -109,7 +109,7 @@ public class ChannelHelper {
      * @param mediaFileDuration
      */
     public void playFileToChannelAndHangup(String uuid, String mediaFile, Double mediaFileDuration){
-        playFile(uuid, mediaFile, mediaFileDuration, false, true);
+        playFile(uuid, mediaFile, mediaFileDuration, true, true,false);
     }
 
     /**
@@ -117,9 +117,9 @@ public class ChannelHelper {
      * @param uuid
      * @return
      */
-//    public boolean isChannelLock(String uuid){
-//        return channelService.isMediaLock(uuid);
-//    }
+    public boolean isChannelLock(String uuid){
+        return channelService.isMediaLock(uuid);
+    }
 
     /**
      * 判断当前通道是否在播放媒体
@@ -174,7 +174,7 @@ public class ChannelHelper {
      * @param mediaFileDuration
      * @param isEnd
      */
-    private void setChannel(Channel callMedia, String uuid, String mediaFile, Double mediaFileDuration, boolean isPrologue, boolean isEnd){
+    private void setChannel(Channel callMedia, String uuid, String mediaFile, Double mediaFileDuration, boolean isLock, boolean isEnd, boolean isPrologue){
         if(callMedia == null){
             callMedia = new Channel();
             callMedia.setChannelId(uuid);
@@ -185,6 +185,7 @@ public class ChannelHelper {
 
         callMedia.setMediaFileName(mediaFile);
         callMedia.setIsPrologue(isPrologue);
+        callMedia.setIsMediaLock(isLock);
         callMedia.setStartPlayTime(new Date());
         channelService.save(callMedia);
 
@@ -195,7 +196,7 @@ public class ChannelHelper {
         ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
                     if (!isEnd) {
                         log.info("在[{}]秒之后，将通道[{}]媒体文件清理掉，isPrologue设置为[{}]", mediaFileDuration, uuid, false);
-                        channelService.updateMediaLock(uuid, false, null, null);
+                        channelService.updateMediaLock(uuid, false,false, null, null);
                         afterMediaChecker.addAfterMediaCheck(uuid);
                     } else {
                         log.info("播放结束，开始删除callMedia[{}]", uuid);

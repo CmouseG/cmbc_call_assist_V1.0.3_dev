@@ -56,13 +56,14 @@ public class ChannelServiceImpl implements ChannelService {
     }*/
 
     @Transactional
-    public void updateMediaLock(String uuid, Boolean isPrologue, String wavFile, LocalTime disturbTime){
+    public void updateMediaLock(String uuid, Boolean isLock,Boolean isPrologue, String wavFile, LocalTime disturbTime){
         Channel callMedia = findByUuid(uuid);
         if(callMedia == null){
             callMedia = new Channel();
             callMedia.setChannelId(uuid);
         }
 
+        callMedia.setIsMediaLock(isLock);
         callMedia.setIsPrologue(isPrologue);
         callMedia.setMediaFileName(wavFile);
         callMedia.setDisturbTime(disturbTime);
@@ -75,9 +76,9 @@ public class ChannelServiceImpl implements ChannelService {
         caches.invalidate(channelId);
     }
 
- /*   @Override
+    @Override
     public boolean isMediaLock(String uuid) {
         Channel channel = findByUuid(uuid);
         return channel!=null && channel.getIsMediaLock();
-    }*/
+    }
 }

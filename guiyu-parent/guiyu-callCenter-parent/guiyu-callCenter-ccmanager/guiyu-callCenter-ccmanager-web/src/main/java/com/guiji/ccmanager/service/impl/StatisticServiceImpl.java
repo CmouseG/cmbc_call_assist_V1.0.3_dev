@@ -205,4 +205,10 @@ public class StatisticServiceImpl implements StatisticService {
 
         return statisticMapper.getErrorMaths();
     }
+
+    @Override
+    public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin) {
+       return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId));
+    }
+
 }

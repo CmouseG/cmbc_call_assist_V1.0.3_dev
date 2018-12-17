@@ -273,7 +273,7 @@ CREATE TABLE `call_out_detail_0` (
   PRIMARY KEY (`call_detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/
+
 DROP TABLE IF EXISTS `call_out_detail_1`;
 
 CREATE TABLE `call_out_detail_1` (

@@ -49,6 +49,10 @@ public class BotSentenceProcessVO implements Serializable {
     private String host;//域名
     
     private String machineCode;//机器码
+    
+	private String orgCode;
+    private String orgName;
+    private String userName;
 
     private static final long serialVersionUID = 1L;
 
@@ -260,6 +264,29 @@ public class BotSentenceProcessVO implements Serializable {
 	public void setMachineCode(String machineCode) {
 		this.machineCode = machineCode;
 	}
-	
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
     
 }

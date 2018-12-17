@@ -1,9 +1,9 @@
 package com.guiji.dispatch.controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,15 +161,16 @@ public class DispatchPlanController {
 	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan[] dispatchPlans, @RequestHeader Long userId) {
 		boolean result = false;
 		// 对号码进行去重
-		List<DispatchPlan> succList = new ArrayList<>();
+		Map<String,DispatchPlan> succList = new  HashMap<>();
+		
 		for (int i = 0; i < dispatchPlans.length; i++) {
-			if (!succList.contains(dispatchPlans[i])) {
-				succList.add(dispatchPlans[i]);
+			if (!succList.containsKey(dispatchPlans[i].getPhone())) {
+				succList.put(dispatchPlans[i].getPhone(),dispatchPlans[i]);
 			}
 		}
-		for (DispatchPlan dis : succList) {
+		for (Entry<String, DispatchPlan> entry : succList.entrySet()) { 
 			try {
-				dispatchPlanService.addSchedule(dis, userId);
+				dispatchPlanService.addSchedule(entry.getValue(), userId);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}

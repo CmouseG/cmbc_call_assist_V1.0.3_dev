@@ -310,7 +310,7 @@
   
   <select id="selectByPage" resultType="map">
   	select a.id,a.name,a.code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName
+	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
 	LEFT JOIN sys_user c on a.update_id=c.id

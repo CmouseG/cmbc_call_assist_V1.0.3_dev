@@ -45,12 +45,12 @@ public class Constant {
 
 	public static final Integer THIRD_INTERFACE_RETRYTIMES = 9;
 
-	// 0开始 1结束 2异常
-	public static final Integer MODULAR_STATUS_0 = 0;
-	public static final Integer MODULAR_STATUS_1 = 1;
-	public static final Integer MODULAR_STATUS_2 = 2;
+	//任务状态
+	public static final Integer MODULAR_STATUS_START = 0;
+	public static final Integer MODULAR_STATUS_END = 1;
+	public static final Integer MODULAR_STATUS_ERROR = 2;
 
-	//0代表人物模块
-	public static final Integer MODULAR_NAME = 0;
+	//0代表任务模块
+	public static final Integer MODULAR_NAME_DISPATCH = 0;
 
 }

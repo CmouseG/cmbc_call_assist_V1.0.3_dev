@@ -598,9 +598,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		
 		//如果是超级用户可以查看全部数据
-		if(!isSuperAdmin){
+		if(isSuperAdmin){
 			for (DispatchPlan dis : selectByExample) {
 				if(dis.getPhone().length() <=7){
+					continue;
+				}
+				if(userId == dis.getUserId().longValue()){
 					continue;
 				}
 				String phoneNumber = dis.getPhone().substring(0, 3) + "****" +  dis.getPhone().substring(7,  dis.getPhone().length());
@@ -1060,7 +1063,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 
 		jsonObject.put("countNums", countNums);
-		jsonObject.put("calledNums", calledNums);
+		jsonObject.put("noCallNums", calledNums);
 		jsonObject.put("lastPlanDate", dis.getCallData());
 		jsonObject.put("lastCalledDate", dis1.getCallData());
 		return jsonObject;

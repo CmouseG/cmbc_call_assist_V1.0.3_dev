@@ -1100,7 +1100,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			try {
 				createCriteria1.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()),
 						new Timestamp(sdf.parse(endTime).getTime()));
-				createCriteria1.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+				createCriteria1.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_2);
 			} catch (ParseException e) {
 				logger.error("error", e);
 			}
@@ -1114,7 +1114,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		int Batchcount = dispatchPlanBatchMapper.countByExample(new DispatchPlanBatchExample());
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("taskCount", taskCount);
-		jsonObject.put("noCallNums", calledCount);
+		jsonObject.put("calledNums", calledCount);
 		jsonObject.put("Batchcount", Batchcount);
 		return jsonObject;
 	}

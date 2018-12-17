@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysOrganizationMapper;
@@ -16,25 +17,13 @@ public class OrganizationService {
 	@Autowired
 	private SysOrganizationMapper sysOrganizationMapper;
 	
-	//代理商类型
-	private static final String DLS_ORG="1";
-	
-	//企业类型
-	private static final String QY_ORG="2";
-	
 	public void add(SysOrganization record){
 		String type=record.getType();
 		SysOrganizationExample example=new SysOrganizationExample();
-		if(DLS_ORG.equals(type)){
-			example.createCriteria().andTypeEqualTo(DLS_ORG);
-			int code=sysOrganizationMapper.countByExample(example);
-			record.setCode(String.valueOf(code+1));
-		}else if(QY_ORG.equals(type)){
-			example.createCriteria().andTypeEqualTo(QY_ORG).andCodeLike(record.getCode()+"%");
-			int num=sysOrganizationMapper.countByExample(example);
-			String code=record.getCode()+"."+(num+1);
-			record.setCode(code);
-		}
+		example.createCriteria().andCodeLike(record.getCode()+"._");
+		int num=sysOrganizationMapper.countByExample(example);
+		String code=record.getCode()+"."+(num+1);
+		record.setCode(code);
 		sysOrganizationMapper.insert(record);
 	}
 	
@@ -59,7 +48,11 @@ public class OrganizationService {
 	
 	public List<SysOrganization> getOrgByType(String type){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0").andTypeEqualTo(type);
+		if(StringUtils.isEmpty(type)){
+			example.createCriteria().andDelFlagEqualTo("0");
+		}else{
+			example.createCriteria().andDelFlagEqualTo("0").andTypeEqualTo(type);
+		}
 		return sysOrganizationMapper.selectByExample(example);
 	}
 }

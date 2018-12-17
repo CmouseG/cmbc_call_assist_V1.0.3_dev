@@ -103,7 +103,7 @@ public class FsBotHandler {
 
             Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
-            channelHelper.playAiReponse(aiResponse, true);
+            channelHelper.playAiReponse(aiResponse, false,true);
 
             //更新callplan
             if (callPlan.getCallState() == null || callPlan.getCallState() < ECallState.answer.ordinal()) {
@@ -202,6 +202,13 @@ public class FsBotHandler {
                 log.warn("当前通话[{}]正在转人工，忽略掉客户说话asr[{}]", callPlan.getCallId(), event.getAsrText());
                 return;
             }
+
+            //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
+            if (channelHelper.isChannelLock(event.getUuid())) {
+                log.info("通道媒体[{}]已被锁定，跳过该次识别请求", event.getUuid());
+                return;
+            }
+
             AIRequest aiRequest = new AIRequest(event);
 
             aiManager.sendAiRequest(aiRequest);
@@ -241,7 +248,7 @@ public class FsBotHandler {
      */
     public void playNormal(String uuid, AIResponse aiResponse, CallOutDetail callDetail) {
         callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
-        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), false);
+        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), false, false);
     }
 
     /**

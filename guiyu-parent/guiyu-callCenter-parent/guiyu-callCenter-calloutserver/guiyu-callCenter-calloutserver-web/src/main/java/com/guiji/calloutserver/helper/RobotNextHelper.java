@@ -85,6 +85,13 @@ public class RobotNextHelper {
                         AiCallNext aiCallNext = result.getBody();
                         String status = aiCallNext.getHelloStatus();
                         if (status.equals("play")) {
+
+                            //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
+                            if (channelHelper.isChannelLock(callId)) {
+                                log.info("通道媒体[{}]已被锁定，跳过该次识别请求 startAiCallNextTimer", callId);
+                                return;
+                            }
+
                             String resp = aiCallNext.getSellbotJson();
 
                             log.debug("robotRemote.flowMsgPush getSellbotJson[{}]", resp);

@@ -17,8 +17,8 @@ public interface ChannelService {
 
 //    void updateMediaLock(String channelId, boolean isLock);
 
-    void updateMediaLock(String uuid, Boolean isPrologue, String wavFile, LocalTime disturbTime);
+    void updateMediaLock(String uuid, Boolean isLock, Boolean isPrologue, String wavFile, LocalTime disturbTime);
 
-//    boolean isMediaLock(String uuid);
+    boolean isMediaLock(String uuid);
 
 }

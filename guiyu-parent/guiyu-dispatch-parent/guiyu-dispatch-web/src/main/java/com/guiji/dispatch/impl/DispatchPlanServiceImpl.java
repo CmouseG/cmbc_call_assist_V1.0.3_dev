@@ -598,15 +598,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		
 		//如果是超级用户可以查看全部数据
-		if(!isSuperAdmin){
-			for (DispatchPlan dis : selectByExample) {
-				if(dis.getPhone().length() <=7){
-					continue;
-				}
-				String phoneNumber = dis.getPhone().substring(0, 3) + "****" +  dis.getPhone().substring(7,  dis.getPhone().length());
-				dis.setPhone(phoneNumber);
-			}
-		}
+//		if(!isSuperAdmin){
+//			for (DispatchPlan dis : selectByExample) {
+//				if(dis.getPhone().length() <=7){
+//					continue;
+//				}
+//				String phoneNumber = dis.getPhone().substring(0, 3) + "****" +  dis.getPhone().substring(7,  dis.getPhone().length());
+//				dis.setPhone(phoneNumber);
+//			}
+//		}
 
 		int count = dispatchPlanMapper.countByExample(example);
 		page.setRecords(selectByExample);

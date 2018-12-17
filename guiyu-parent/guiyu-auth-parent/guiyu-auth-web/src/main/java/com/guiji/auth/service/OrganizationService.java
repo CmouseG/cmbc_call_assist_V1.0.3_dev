@@ -18,7 +18,6 @@ public class OrganizationService {
 	private SysOrganizationMapper sysOrganizationMapper;
 	
 	public void add(SysOrganization record){
-		String type=record.getType();
 		SysOrganizationExample example=new SysOrganizationExample();
 		example.createCriteria().andCodeLike(record.getCode()+"._");
 		int num=sysOrganizationMapper.countByExample(example);

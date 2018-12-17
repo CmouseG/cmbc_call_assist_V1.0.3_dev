@@ -63,10 +63,10 @@ public class AvailableTemplateController {
 	private UpdateReceiverResolver updateReceiverResolver;
 	
 	@RequestMapping("test")
-	public boolean test(){
+	public boolean test(String name){
 		PublishBotstenceResultMsgVO param=new PublishBotstenceResultMsgVO();
 		param.setResult(0);
-		param.setTmplId("test111");
+		param.setTmplId(name);
 		param.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
 		updateReceiverResolver.resolver(param);
 		param.setProcessTypeEnum(ProcessTypeEnum.ROBOT);

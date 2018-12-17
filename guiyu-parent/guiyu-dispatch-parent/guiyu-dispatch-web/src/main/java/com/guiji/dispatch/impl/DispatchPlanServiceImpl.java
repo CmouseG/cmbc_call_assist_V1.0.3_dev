@@ -896,10 +896,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		DispatchPlan dis = new DispatchPlan();
 		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setStatusPlan(Constant.STATUSPLAN_1);
+		dis.setStatusSync(Constant.STATUS_SYNC_0);
+		dis.setClean(Constant.IS_CLEAN_0);
 
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1);
-
 		int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		return result > 0 ? true : false;
 	}

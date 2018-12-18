@@ -58,7 +58,7 @@ public class DownloadStatisticController {
         if (!startDate.matches(regEx) || !endDate.matches(regEx)) {
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
-        String fileName = startDate+"-"+endDate+"拨打结果统计.xls";
+        String fileName = startDate+"_"+endDate+"拨打结果统计.xls";
         HttpDownload.setHeader(resp, fileName);
 
         List<Map<String, Object>> list = statisticService.getIntentCount(isSuperAdmin ? null : userId, startDate, endDate, tempId);
@@ -95,6 +95,9 @@ public class DownloadStatisticController {
         WritableCellFormat format = new WritableCellFormat();
         format.setBorder(Border.ALL, BorderLineStyle.THIN);
         format.setWrap(true);
+
+        sheet.setColumnView(0, 12);
+        sheet.setColumnView(1, 12);
 
         sheet.addCell(new Label(0, 0, "话术模板："));
         if (StringUtils.isBlank(tempId)) {

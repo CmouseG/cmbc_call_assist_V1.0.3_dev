@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ccmanager.api.ICallManagerOut;
@@ -27,14 +27,16 @@ import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IModularLogsService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.CheckParamsReq;
+import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.RedisUtil;
 
-@Component
-// @RestController
+//@Component
+ @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -76,21 +78,21 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info("捞取号码初始化资源..");
 				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
-//				List<HsParam> sendData = new ArrayList<>();
-//				for (DispatchPlan dispatchPlan : list) {
-//					HsParam hsParam = new HsParam();
-//					hsParam.setParams(dispatchPlan.getParams());
-//					hsParam.setSeqid(dispatchPlan.getPlanUuid());
-//					hsParam.setTemplateId(dispatchPlan.getRobot());
-//					sendData.add(hsParam);
-//				}
-//
-//				if (sendData.size() > 0) {
-//					CheckParamsReq req = new CheckParamsReq();
-//					req.setCheckers(sendData);
-//					req.setNeedResourceInit(true);
-//					robotRemote.checkParams(req);
-//				}
+				List<HsParam> sendData = new ArrayList<>();
+				for (DispatchPlan dispatchPlan : list) {
+					HsParam hsParam = new HsParam();
+					hsParam.setParams(dispatchPlan.getParams());
+					hsParam.setSeqid(dispatchPlan.getPlanUuid());
+					hsParam.setTemplateId(dispatchPlan.getRobot());
+					sendData.add(hsParam);
+				}
+
+				if (sendData.size() > 0) {
+					CheckParamsReq req = new CheckParamsReq();
+					req.setCheckers(sendData);
+					req.setNeedResourceInit(true);
+					robotRemote.checkParams(req);
+				}
 
 				// 批量修改状态flag
 				if (list.size() > 0) {
@@ -109,8 +111,8 @@ public class TimeTask {
 	/**
 	 * 获取当前资源情况
 	 */
-	@Scheduled(cron = "0 0/2 * * * ?")
-//	 @PostMapping("getResourceResult")
+//	@Scheduled(cron = "0 0/2 * * * ?")
+	 @PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");

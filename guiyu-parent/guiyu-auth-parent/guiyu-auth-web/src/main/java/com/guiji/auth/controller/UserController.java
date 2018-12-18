@@ -66,13 +66,6 @@ public class UserController implements IAuth{
 		return user;
 	}
 	
-	public static void main(String[] args) {
-		String s="2018-08-09";
-		ZoneId zoneId = ZoneId.systemDefault();
-		LocalDate localDate=LocalDate.parse(s);
-		ZonedDateTime zdt = localDate.atStartOfDay(zoneId);
-        Date date = Date.from(zdt.toInstant());
-	}
 	
 	private Date parseStringDate(String date){
 		ZoneId zoneId = ZoneId.systemDefault();
@@ -88,7 +81,9 @@ public class UserController implements IAuth{
 		}
 		user.setUpdateId(userId);
 		user.setUpdateTime(new Date());
-		user.setPassword(AuthUtil.encrypt(user.getPassword()));
+		if(!StringUtils.isEmpty(user.getPassword())){
+			user.setPassword(AuthUtil.encrypt(user.getPassword()));
+		}
 		service.update(user,roleId);
 	}
 	

@@ -61,4 +61,11 @@ public class OrganizationService {
 	public List<SysOrganization> getOrgByUserId(Long userId){
 		return sysOrganizationMapper.getOrgByUserId(userId);
 	}
+	
+	public boolean checkName(String name){
+		SysOrganizationExample example=new SysOrganizationExample();
+		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo("0");
+		int num=sysOrganizationMapper.countByExample(example);
+		return num==0;
+	}
 }

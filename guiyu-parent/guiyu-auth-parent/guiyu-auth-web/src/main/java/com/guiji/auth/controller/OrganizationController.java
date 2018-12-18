@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysOrganization;
@@ -21,7 +22,10 @@ public class OrganizationController {
 	
 	
 	@RequestMapping("add")
-	public SysOrganization add(SysOrganization record,@RequestHeader long userId){
+	public SysOrganization add(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+		if(!organizationService.checkName(record.getName())){
+			throw new CheckConditionException("00010009");
+		}
 		record.setCreateId(userId);
 		record.setUpdateId(userId);
 		record.setCreateTime(new Date());

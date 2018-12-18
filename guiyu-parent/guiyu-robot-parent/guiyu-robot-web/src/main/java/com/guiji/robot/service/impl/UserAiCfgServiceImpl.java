@@ -126,6 +126,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
 					userAiCfgBaseInfo.setUserId(userId);
 				}
+				userAiCfgBaseInfo.setId(existUserAiCfgBaseInfo.getId());
 				userAiCfgBaseInfo.setCrtUser(existUserAiCfgBaseInfo.getCrtUser());
 				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {

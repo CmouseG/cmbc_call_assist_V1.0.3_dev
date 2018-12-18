@@ -318,4 +318,8 @@
 	where a.del_flag=0
 	limit ${(pageNo-1)*pageSize}, #{pageSize}
   </select>
+  
+  <select id="getOrgByUserId" resultMap="BaseResultMap">
+  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%')
+  </select>
 </mapper>

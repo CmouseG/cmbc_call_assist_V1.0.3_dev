@@ -372,4 +372,6 @@ public class CallDetailServiceImpl implements CallDetailService {
         record.setCallDetailId(callDetailUpdateReq.getCallDetailId());
         callOutDetailMapper.updateByPrimaryKeySelective(record);
     }
+
+
 }

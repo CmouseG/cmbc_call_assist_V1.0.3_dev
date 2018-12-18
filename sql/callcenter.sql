@@ -526,7 +526,6 @@ CREATE TABLE `line_count` (
   `used_concurrent_calls` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 DROP TABLE IF EXISTS `line_info`;
 
 CREATE TABLE `line_info` (
@@ -544,8 +543,9 @@ CREATE TABLE `line_info` (
   `remark` varchar(255) DEFAULT NULL,
   `createt_by` varchar(255) DEFAULT NULL,
   `update_by` varchar(255) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`line_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=249 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `report_call_count`;

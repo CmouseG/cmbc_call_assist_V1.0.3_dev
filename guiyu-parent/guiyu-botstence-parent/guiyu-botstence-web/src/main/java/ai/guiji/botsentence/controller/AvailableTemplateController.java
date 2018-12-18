@@ -41,11 +41,13 @@ public class AvailableTemplateController {
 		return ServerResult.createBySuccess(list);
 	}
 	
+	
+	
 	/**
 	 * 管理员查找用户可用话术
 	 */
 	@RequestMapping("getAdminUserAvailableTemplate")
-	public ServerResult getAdminUserAvailableTemplate(@JsonParam Long userId){
+	public ServerResult getAdminUserAvailableTemplate(Long userId){
 		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId);
 		return ServerResult.createBySuccess(list);
 	}

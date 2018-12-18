@@ -155,7 +155,7 @@ public class CallDetailController implements ICallPlanDetail {
     @GetMapping(value="downloadDialogue")
     public void downloadDialogue(String callId,HttpServletResponse resp) throws UnsupportedEncodingException {
         String fileName = "通话记录.xls";
-        setHeader(resp, fileName);
+        HttpDownload.setHeader(resp, fileName);
 
         //生成文件
         String context = callDetailService.getDialogue(callId);
@@ -199,11 +199,7 @@ public class CallDetailController implements ICallPlanDetail {
         wb.close();
     }
 
-    public void setHeader(HttpServletResponse resp, String fileName) throws UnsupportedEncodingException {
-        resp.setContentType("application/octet-stream;charset=GBK");
-        resp.setHeader("Content-Disposition", "attachment;filename="+
-                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
-    }
+
 
     @ApiOperation(value = "下载通话记录Excel压缩包,callIds以逗号分隔")
     @GetMapping(value="downloadDialogueZip")
@@ -257,7 +253,7 @@ public class CallDetailController implements ICallPlanDetail {
        }
 
         String fileName = "通话记录.zip";
-        setHeader(resp, fileName);
+        HttpDownload.setHeader(resp, fileName);
 
         OutputStream out=null;
         try {
@@ -298,7 +294,7 @@ public class CallDetailController implements ICallPlanDetail {
         }
 
         String fileName = "record.zip";
-        setHeader(resp, fileName);
+        HttpDownload.setHeader(resp, fileName);
 
         OutputStream out=null;
         try {

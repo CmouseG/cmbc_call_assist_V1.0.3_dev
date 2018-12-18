@@ -3,9 +3,9 @@ package com.guiji.ccmanager.service;
 import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
-import com.guiji.callcenter.dao.entityext.IntentCount;
 import com.guiji.callcenter.dao.entityext.ReasonCount;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ public interface StatisticService {
 
     List<DashboardOverView> getDashboardOverView(String userId, String startDate, String endDate, String tempId);
 
-    List<IntentCount> getIntentCount(String userId, String startDate, String endDate, String tempId);
+    List<Map<String, Object>> getIntentCount(Long userId, String startDate, String endDate, String tempId) throws ParseException;
 
     List<CallCountHour> getConnectDataHour(String userId, Date startDate, Date endDate, String tempId);
 

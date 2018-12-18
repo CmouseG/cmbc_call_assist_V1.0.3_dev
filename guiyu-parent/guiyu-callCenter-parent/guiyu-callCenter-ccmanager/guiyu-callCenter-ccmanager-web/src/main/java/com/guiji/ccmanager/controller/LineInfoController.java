@@ -73,17 +73,29 @@ public class LineInfoController {
 
         log.info("get request addLineInfo，LineInfoAddVO[{}]", lineInfoVO);
         lineInfoVO.setCustomerId(String.valueOf(userId));
+
+        //如果没传递orgcode，则以当前用户orgcode为准
+        if(StringUtils.isNotBlank(lineInfoVO.getOrgCode())){
+            orgCode = lineInfoVO.getOrgCode();
+        }
+
         lineInfoService.addLineInfo(lineInfoVO,orgCode);
         return Result.ok(true);
     }
 
     @ApiOperation(value = "修改线路接口")
     @PostMapping(value = "updateLineInfo")
-    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId) {
+    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId, @RequestHeader String orgCode) {
         if (lineInfoVO.getLineId() == 0) {
             return Result.error(Constant.ERROR_PARAM);
         }
         log.info("get request updateLineInfo，lineInfoVO[{}]", lineInfoVO);
+
+        //如果没传递orgcode，则以当前用户orgcode为准
+        if(StringUtils.isBlank(lineInfoVO.getOrgCode())){
+            lineInfoVO.setOrgCode(orgCode);
+        }
+
         lineInfoService.updateLineInfo(lineInfoVO, userId);
         return Result.ok(true);
     }

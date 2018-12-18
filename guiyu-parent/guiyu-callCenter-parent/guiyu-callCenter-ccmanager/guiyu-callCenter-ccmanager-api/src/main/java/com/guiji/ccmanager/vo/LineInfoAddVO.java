@@ -49,6 +49,8 @@ public class LineInfoAddVO implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public String getCustomerId() {
@@ -123,9 +125,18 @@ public class LineInfoAddVO implements Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
     @Override
     public String toString() {
-        return "LineInfoVO{" +
+        return "LineInfoAddVO{" +
                 "customerId='" + customerId + '\'' +
                 ", lineName='" + lineName + '\'' +
                 ", sipIp='" + sipIp + '\'' +
@@ -135,6 +146,7 @@ public class LineInfoAddVO implements Serializable {
                 ", calleePrefix='" + calleePrefix + '\'' +
                 ", maxConcurrentCalls=" + maxConcurrentCalls +
                 ", remark='" + remark + '\'' +
+                ", orgCode='" + orgCode + '\'' +
                 '}';
     }
 }

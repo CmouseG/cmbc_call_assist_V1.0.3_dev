@@ -548,27 +548,6 @@ CREATE TABLE `line_info` (
 ) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `report_call_count`;
-
-CREATE TABLE `report_call_count` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `call_date` varchar(20) NOT NULL,
-  `count_a` int(11) DEFAULT '0',
-  `count_b` int(11) DEFAULT '0',
-  `count_c` int(11) DEFAULT '0',
-  `count_d` int(11) DEFAULT '0',
-  `count_e` int(11) DEFAULT '0',
-  `count_f` int(11) DEFAULT '0',
-  `count_u` int(11) DEFAULT '0',
-  `count_v` int(11) DEFAULT '0',
-  `count_w` int(11) DEFAULT '0',
-  `count_all` int(11) DEFAULT '0',
-  `accurate_intent` varchar(10) DEFAULT NULL,
-  `customer_id` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
-
-/*Data for the table `report_call_count` */
 
 /*Table structure for table `report_call_day` */
 DROP TABLE IF EXISTS `report_call_day`;

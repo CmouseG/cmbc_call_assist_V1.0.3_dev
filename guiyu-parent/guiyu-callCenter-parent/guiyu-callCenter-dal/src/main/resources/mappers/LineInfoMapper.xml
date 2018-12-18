@@ -16,6 +16,7 @@
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="createt_by" property="createtBy" jdbcType="VARCHAR" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -77,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     line_id, customer_id, line_name, sip_ip, sip_port, codec, caller_num, callee_prefix, 
-    max_concurrent_calls, create_date, update_date, remark, createt_by, update_by
+    max_concurrent_calls, create_date, update_date, remark, createt_by, update_by, org_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.LineInfoExample" >
     select
@@ -114,19 +115,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"   keyProperty="lineId" >
-  insert into line_info (line_id, customer_id, line_name,
+    insert into line_info (line_id, customer_id, line_name, 
       sip_ip, sip_port, codec, 
       caller_num, callee_prefix, max_concurrent_calls, 
       create_date, update_date, remark, 
-      createt_by, update_by)
+      createt_by, update_by, org_code
+      )
     values (#{lineId,jdbcType=INTEGER}, #{customerId,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR}, 
       #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=VARCHAR}, #{codec,jdbcType=VARCHAR}, 
       #{callerNum,jdbcType=VARCHAR}, #{calleePrefix,jdbcType=VARCHAR}, #{maxConcurrentCalls,jdbcType=INTEGER}, 
       #{createDate,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{createtBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR})
+      #{createtBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"   keyProperty="lineId" >
-  insert into line_info
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" useGeneratedKeys="true"   keyProperty="lineId" >
+    insert into line_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="lineId != null" >
         line_id,
@@ -169,6 +172,9 @@
       </if>
       <if test="updateBy != null" >
         update_by,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -213,6 +219,9 @@
       </if>
       <if test="updateBy != null" >
         #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -267,6 +276,9 @@
       <if test="record.updateBy != null" >
         update_by = #{record.updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -287,7 +299,8 @@
       update_date = #{record.updateDate,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       createt_by = #{record.createtBy,jdbcType=VARCHAR},
-      update_by = #{record.updateBy,jdbcType=VARCHAR}
+      update_by = #{record.updateBy,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -334,6 +347,9 @@
       <if test="updateBy != null" >
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where line_id = #{lineId,jdbcType=INTEGER}
   </update>
@@ -351,7 +367,8 @@
       update_date = #{updateDate,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       createt_by = #{createtBy,jdbcType=VARCHAR},
-      update_by = #{updateBy,jdbcType=VARCHAR}
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where line_id = #{lineId,jdbcType=INTEGER}
   </update>
 </mapper>

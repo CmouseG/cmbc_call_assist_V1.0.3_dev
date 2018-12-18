@@ -1,6 +1,5 @@
 package com.guiji.ccmanager.service.impl;
 
-import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.LineCountMapper;
 import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.entity.LineCount;
@@ -11,12 +10,12 @@ import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.LineInfoService;
+import com.guiji.ccmanager.vo.LineInfo4AllotRes;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
-import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
@@ -29,9 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -104,7 +102,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public void addLineInfo(LineInfoAddVO lineInfoVO) {
+    public void addLineInfo(LineInfoAddVO lineInfoVO, String orgCode) {
 
         //本地存储数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -113,6 +111,8 @@ public class LineInfoServiceImpl implements LineInfoService {
         lineInfo.setCreatetBy(lineInfoVO.getCustomerId());
         lineInfo.setUpdateDate(DateUtil.getCurrentTime());
         lineInfo.setUpdateBy(lineInfoVO.getCustomerId());
+        lineInfo.setOrgCode(orgCode);
+        lineInfo.setCustomerId("0");
         lineInfoMapper.insertSelective(lineInfo);
 
         //调用fsmanager的增加线路接口
@@ -230,5 +230,60 @@ public class LineInfoServiceImpl implements LineInfoService {
         List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
 
         return lineInfos;
+    }
+
+    @Override
+    public List<LineInfo4AllotRes> getLineInfos4Allot(String customerId, Long userId, Boolean isSuperAdmin, String orgCode) {
+
+        LineInfoExample example = new LineInfoExample();
+        LineInfoExample.Criteria criteria = example.createCriteria();
+
+        criteria.andOrgCodeLike(orgCode+"%");
+        List customerList = new ArrayList();
+        customerList.add(customerId);
+        customerList.add("0");
+        criteria.andCustomerIdIn(customerList);
+
+        List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
+        List<LineInfo4AllotRes> resList = new ArrayList<>();
+        if(lineInfos!=null && lineInfos.size()>0){
+            for(LineInfo lineInfo:lineInfos){
+                LineInfo4AllotRes lineInfo4AllotRes = new LineInfo4AllotRes();
+                lineInfo4AllotRes.setLineId(lineInfo.getLineId());
+                lineInfo4AllotRes.setLineName(lineInfo.getLineName());
+                if(lineInfo.getCustomerId()!=null && lineInfo.getCustomerId().equals(customerId)){
+                    lineInfo4AllotRes.setAlloted(true);
+                }else{
+                    lineInfo4AllotRes.setAlloted(false);
+                }
+                resList.add(lineInfo4AllotRes);
+            }
+
+        }
+        return resList;
+    }
+
+    @Override
+    @Transactional
+    public void allotLineInfo(String customerId, String lineIds) {
+
+        //先把该客户的都置为0
+        LineInfoExample example = new LineInfoExample();
+        example.createCriteria().andCustomerIdEqualTo(customerId);
+        LineInfo record = new LineInfo();
+        record.setCustomerId("0");
+        lineInfoMapper.updateByExampleSelective(record,example);
+
+        //重新分配
+        if(StringUtils.isNotBlank(lineIds)){
+            String[] arr = lineIds.split(",");
+            for(String lineID:arr){
+                LineInfo updateLine = new LineInfo();
+                updateLine.setCustomerId(customerId);
+                updateLine.setLineId(Integer.valueOf(lineID));
+                lineInfoMapper.updateByPrimaryKeySelective(updateLine);
+            }
+        }
+
     }
 }

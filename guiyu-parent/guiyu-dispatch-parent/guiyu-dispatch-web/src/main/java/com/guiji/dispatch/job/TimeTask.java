@@ -111,8 +111,8 @@ public class TimeTask {
 	/**
 	 * 获取当前资源情况
 	 */
-//	@Scheduled(cron = "0 0/2 * * * ?")
-	 @PostMapping("getResourceResult")
+	@Scheduled(cron = "0 0/2 * * * ?")
+//	 @PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");

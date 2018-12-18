@@ -31,6 +31,8 @@ public class LineInfo implements Serializable {
 
     private String updateBy;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getLineId() {
@@ -145,6 +147,14 @@ public class LineInfo implements Serializable {
         this.updateBy = updateBy == null ? null : updateBy.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -165,6 +175,7 @@ public class LineInfo implements Serializable {
         sb.append(", remark=").append(remark);
         sb.append(", createtBy=").append(createtBy);
         sb.append(", updateBy=").append(updateBy);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -79,6 +79,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public boolean isMediaLock(String uuid) {
         Channel channel = findByUuid(uuid);
-        return channel!=null && channel.getIsMediaLock();
+        //开场白前面的用户说话不处理，sellbot提示结束之后用户说话不处理。故将channel!=null 改为channel==null
+        return channel==null || channel.getIsMediaLock();
     }
 }

@@ -171,7 +171,9 @@ public class CallPlanDispatchHandler {
 
         } catch (Exception e) {
             log.warn("在挂断后拉取新计划出现异常", e);
-            //TODO: 报警，这里需要做些事情啊，回掉调度中心？
+            //这里会出一个异常，比如重复的id,需要重新发一个事件出来，不然会少一路并发数
+            AfterCallEvent afterCallEventAgain = new AfterCallEvent(afterCallEvent.getCallPlan(),true);
+            asyncEventBus.post(afterCallEventAgain);
         }
     }
 

@@ -58,4 +58,9 @@ public class OrganizationController {
 	public List<SysOrganization> getOrgByType(String type){
 		return organizationService.getOrgByType(type);
 	}
+	
+	@RequestMapping("getOrgByUserId")
+	public List<SysOrganization> getOrgByUserId(@RequestHeader Long userId){
+		return organizationService.getOrgByUserId(userId);
+	}
 }

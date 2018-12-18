@@ -32,4 +32,6 @@ public interface SysOrganizationMapper {
     int updateByPrimaryKey(SysOrganization record);
     
     List<Object> selectByPage(Page page);
+    
+    public List<SysOrganization> getOrgByUserId(Long userId);
 }

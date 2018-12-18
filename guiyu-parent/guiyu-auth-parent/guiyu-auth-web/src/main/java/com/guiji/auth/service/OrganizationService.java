@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysOrganizationMapper;
@@ -53,5 +55,10 @@ public class OrganizationService {
 			example.createCriteria().andDelFlagEqualTo("0").andTypeEqualTo(type);
 		}
 		return sysOrganizationMapper.selectByExample(example);
+	}
+	
+	@RequestMapping("getOrgByUserId")
+	public List<SysOrganization> getOrgByUserId(Long userId){
+		return sysOrganizationMapper.getOrgByUserId(userId);
 	}
 }

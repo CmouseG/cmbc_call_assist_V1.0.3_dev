@@ -54,7 +54,7 @@ public class AvailableTemplateController {
 	 * 用户添加可用话术
 	 */
 	@RequestMapping("addUserAvailableTemplate")
-	public ServerResult addUserAvailableTemplate(@JsonParam Long userId,@JsonParam String availableIds){
+	public ServerResult addUserAvailableTemplate(Long userId,String availableIds){
 		availableTemplateService.addUserAvailableTemplate(userId,availableIds);
 		return ServerResult.createBySuccess();
 	}

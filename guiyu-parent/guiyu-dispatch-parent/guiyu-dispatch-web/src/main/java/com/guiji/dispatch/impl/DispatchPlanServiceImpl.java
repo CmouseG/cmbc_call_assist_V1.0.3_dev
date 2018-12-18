@@ -792,7 +792,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			// 根据批次号查询一条数据，判断到底是什么
 			DispatchPlanExample dis = new DispatchPlanExample();
-			dis.createCriteria().andBatchIdEqualTo(dispatchPlanBatch.getId());
+			dis.createCriteria().andBatchIdEqualTo(dispatchPlanBatch.getId()).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);;
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(dis);
 			DispatchPlan resultPlan = new DispatchPlan();
 
@@ -817,7 +817,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
 			// 根据用户id来查询
-			example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0);
+			example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 			for (DispatchPlan dispatchPlan : selectByExample) {
 				boolean res = checkStatus(status, dispatchPlan);

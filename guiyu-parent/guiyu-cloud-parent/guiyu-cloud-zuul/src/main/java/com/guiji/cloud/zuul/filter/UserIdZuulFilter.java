@@ -32,11 +32,13 @@ public class UserIdZuulFilter extends ZuulFilter{
 //			isWiteIpFlag = true;
 //		}
 		Object userIdObj = SecurityUtils.getSubject().getSession().getAttribute("userId");
+		Object orgCode = SecurityUtils.getSubject().getSession().getAttribute("orgCode");
 		Object isSuperAdminObj = SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin");
 		try {
 			String userId=userIdObj.toString();
 			String isSuperAdmin = isSuperAdminObj.toString();
 			ctx.addZuulRequestHeader("userId", userId);
+			ctx.addZuulRequestHeader("orgCode", orgCode.toString());
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
 		} catch (NullPointerException e) {
 			//处理下一些特殊不需要user的场景

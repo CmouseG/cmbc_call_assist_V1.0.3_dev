@@ -193,9 +193,13 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public String createBotSentenceTemplate(BotSentenceProcessVO paramVO,Long userId) {
 		
 		ReturnData<SysUser> data=iAuth.getUserById(userId);
-		String orgCode=data.getBody().getOrgCode();
 		String userName=data.getBody().getUsername();
-		String orgName=data.getBody().getOrgName();
+		String orgCode=paramVO.getOrgCode();
+		String orgName=paramVO.getOrgName();
+		if(org.springframework.util.StringUtils.isEmpty(paramVO.getOrgCode())){
+			orgCode=data.getBody().getOrgCode();
+			orgName=data.getBody().getOrgName();
+		}
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
 		if(null == paramVO || StringUtils.isBlank(paramVO.getProcessId())) {

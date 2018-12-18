@@ -63,4 +63,9 @@ public class OrganizationController {
 	public List<SysOrganization> getOrgByUserId(@RequestHeader Long userId){
 		return organizationService.getOrgByUserId(userId);
 	}
+	
+	@RequestMapping("getAdminOrgByUserId")
+	public List<SysOrganization> getAdminOrgByUserId(Long userId){
+		return organizationService.getOrgByUserId(userId);
+	}
 }

@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -43,15 +44,8 @@ public class DownloadStatisticController {
 
     @ApiOperation(value = "量化分析，拨打结果统计，导出excel")
     @GetMapping(value = "downloadIntentCount")
-    public Result.ReturnData<Object> downloadIntentCount(HttpServletResponse resp) throws ParseException, UnsupportedEncodingException {
-//        public Result.ReturnData<Object> downloadIntentCount(String startDate, String endDate, String tempId, @RequestHeader Long userId,
-//                @RequestHeader Boolean isSuperAdmin, HttpServletResponse resp) throws ParseException, UnsupportedEncodingException {
-
-        String startDate = "2018-12-01";
-        String endDate = "2018-12-30";
-        Long userId = 1L;
-        String tempId = null;
-        Boolean isSuperAdmin = true;
+    public Result.ReturnData<Object> downloadIntentCount(String startDate, String endDate, String tempId, @RequestHeader Long userId,
+                                                         @RequestHeader Boolean isSuperAdmin, HttpServletResponse resp) throws ParseException, UnsupportedEncodingException {
 
         if (StringUtils.isBlank(endDate)) {
             endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -64,7 +58,7 @@ public class DownloadStatisticController {
         if (!startDate.matches(regEx) || !endDate.matches(regEx)) {
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
-        String fileName = "拨打结果统计.xls";
+        String fileName = startDate+"-"+endDate+"拨打结果统计.xls";
         HttpDownload.setHeader(resp, fileName);
 
         List<Map<String, Object>> list = statisticService.getIntentCount(isSuperAdmin ? null : userId, startDate, endDate, tempId);
@@ -73,7 +67,7 @@ public class DownloadStatisticController {
         OutputStream out = null;
         try {
             out = resp.getOutputStream();
-            generateIntentCountExcel(list, out,startDate, endDate, tempId);
+            generateIntentCountExcel(list, out, startDate, endDate, tempId);
 
         } catch (IOException e) {
             log.error("downloadDialogue IOException :" + e);
@@ -93,7 +87,7 @@ public class DownloadStatisticController {
         return null;
     }
 
-    public void generateIntentCountExcel(List<Map<String, Object>> list, OutputStream out,String startDate,String endDate,
+    public void generateIntentCountExcel(List<Map<String, Object>> list, OutputStream out, String startDate, String endDate,
                                          String tempId) throws IOException, WriteException, ParseException {
         WritableWorkbook wb = Workbook.createWorkbook(out);
 
@@ -110,7 +104,7 @@ public class DownloadStatisticController {
             sheet.addCell(new Label(1, 0, tempName == null ? "" : tempName));
         }
         sheet.addCell(new Label(2, 0, "起止时间："));
-        sheet.addCell(new Label(3, 0, startDate+"-"+endDate));
+        sheet.addCell(new Label(3, 0, startDate + "-" + endDate));
 
 
         List<String> metaDatas = new ArrayList<>();
@@ -122,8 +116,8 @@ public class DownloadStatisticController {
             }
         }
 
-        Map<String,Integer> sumMap = new HashMap<>();
-        int sumnAllCallsCount =0;
+        Map<String, Integer> sumMap = new HashMap<>();
+        int sumnAllCallsCount = 0;
         int sumConnectCount = 0;
         int sumACount = 0;
         int jlength = list.size();
@@ -143,16 +137,16 @@ public class DownloadStatisticController {
             }
 
             int i = 2;
-            for(String metaIntent : metaDatas){
+            for (String metaIntent : metaDatas) {
                 if (j == 1) {
                     sheet.addCell(new Label(i, j, metaIntent));
                 }
                 sheet.addCell(new Label(i, j + 1, map.get(metaIntent).toString()));
-                if(sumMap.get(metaIntent)==null){
-                    sumMap.put(metaIntent,(int) map.get(metaIntent));
-                }else{
+                if (sumMap.get(metaIntent) == null) {
+                    sumMap.put(metaIntent, (int) map.get(metaIntent));
+                } else {
                     int old = sumMap.get(metaIntent);
-                    sumMap.put(metaIntent,(int) map.get(metaIntent)+old);
+                    sumMap.put(metaIntent, (int) map.get(metaIntent) + old);
                 }
                 i++;
             }
@@ -189,26 +183,26 @@ public class DownloadStatisticController {
 
         }
 
-        sheet.addCell(new Label(0, jlength+2, "合计"));
+        sheet.addCell(new Label(0, jlength + 2, "合计"));
         int k = 2;
-        for(String metaIntent : metaDatas){
-            sheet.addCell(new Label(k, jlength+2, sumMap.get(metaIntent).toString()));
+        for (String metaIntent : metaDatas) {
+            sheet.addCell(new Label(k, jlength + 2, sumMap.get(metaIntent).toString()));
             k++;
         }
-        sheet.addCell(new Label(k, jlength+2, String.valueOf(sumnAllCallsCount)));
-        sheet.addCell(new Label(k+1, jlength+2, String.valueOf(sumConnectCount)));
-        sheet.addCell(new Label(k+2, jlength+2, getPercentValue(sumConnectCount, sumnAllCallsCount)));
-        sheet.addCell(new Label(k+3, jlength+2, getPercentValue(sumACount, sumnAllCallsCount)));
+        sheet.addCell(new Label(k, jlength + 2, String.valueOf(sumnAllCallsCount)));
+        sheet.addCell(new Label(k + 1, jlength + 2, String.valueOf(sumConnectCount)));
+        sheet.addCell(new Label(k + 2, jlength + 2, getPercentValue(sumConnectCount, sumnAllCallsCount)));
+        sheet.addCell(new Label(k + 3, jlength + 2, getPercentValue(sumACount, sumnAllCallsCount)));
 
-        sheet.addCell(new Label(0, jlength+3, "类别"));
-        sheet.addCell(new Label(1, jlength+3, "数量"));
-        sheet.addCell(new Label(2, jlength+3, "占比"));
+        sheet.addCell(new Label(0, jlength + 3, "类别"));
+        sheet.addCell(new Label(1, jlength + 3, "数量"));
+        sheet.addCell(new Label(2, jlength + 3, "占比"));
 
         int l = 4;
-        for(String metaIntent : metaDatas){
-            sheet.addCell(new Label(0, jlength+l, metaIntent+"类"));
-            sheet.addCell(new Label(1, jlength+l, sumMap.get(metaIntent).toString()));
-            sheet.addCell(new Label(2, jlength+l, getPercentValue( sumMap.get(metaIntent), sumnAllCallsCount)));
+        for (String metaIntent : metaDatas) {
+            sheet.addCell(new Label(0, jlength + l, metaIntent + "类"));
+            sheet.addCell(new Label(1, jlength + l, sumMap.get(metaIntent).toString()));
+            sheet.addCell(new Label(2, jlength + l, getPercentValue(sumMap.get(metaIntent), sumnAllCallsCount)));
             l++;
         }
 

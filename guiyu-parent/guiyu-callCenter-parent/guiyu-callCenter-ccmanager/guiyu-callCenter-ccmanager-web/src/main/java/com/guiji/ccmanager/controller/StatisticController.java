@@ -14,6 +14,11 @@ import com.guiji.user.dao.entity.SysUser;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import jxl.Workbook;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
+import jxl.write.*;
+import jxl.write.biff.RowsExceededException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +28,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.Boolean;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -121,67 +131,9 @@ public class StatisticController {
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
 
-        String[] arr = {"A","B","C","D","E","F","W"};
-        try{
-            Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
-            String intent = result.getBody().getIntenLabel();
-            if(StringUtils.isNotBlank(intent)){
-                arr = intent.split(",");
-            }
-        }catch (Exception e){
-            log.error("iAuth.getUserById userId[{}] has error :"+e,userId);
-        }
-        List<String> typeList = Arrays.asList(arr);
+        List<Map<String,Object>> list = statisticService.getIntentCount(isSuperAdmin ? null : userId, startDate, endDate, tempId);
 
-        List<IntentCount> list = statisticService.getIntentCount(isSuperAdmin ? null : String.valueOf(userId), startDate, endDate, tempId);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date sDate = sdf.parse(startDate);
-        Date eDate = sdf.parse(endDate);
-
-        int days = differentDaysByMillisecond(sDate, eDate);
-
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(sDate);
-
-        List<Map> resList = new ArrayList<>();
-
-        for (int i = 0; i <= days; i++) {
-            String startDateStr = sdf.format(sDate);
-            Map map = new HashMap();
-            map.put("callDate", startDateStr);
-
-            for (String type : typeList) {
-                map.put(type, 0);
-            }
-
-            int connectCount =0;
-            int notConnectCount =0;
-
-            if (list != null && list.size() > 0) {
-                for (IntentCount intentCount : list) {
-                    String callDate = intentCount.getCallDate();
-                    if (callDate.equals(startDateStr)) {
-                        String intentIn = intentCount.getIntent();
-                        map.put(intentIn, intentCount.getCallCount());
-                        if(intentIn.equals("F") || intentIn.equals("W") ){
-                            notConnectCount+=intentCount.getCallCount();
-                        }else{
-                            connectCount+=intentCount.getCallCount();
-                        }
-                    }
-                }
-            }
-            int allCallsCount = connectCount+notConnectCount;
-            map.put("connectCount", connectCount);
-            map.put("notConnectCount", notConnectCount);
-            map.put("allCallsCount", allCallsCount);
-
-            resList.add(map);
-            cal.add(Calendar.DATE, 1);
-            sDate = cal.getTime();
-        }
-        return Result.ok(resList);
+        return Result.ok(list);
 
     }
 

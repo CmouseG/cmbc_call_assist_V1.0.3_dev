@@ -214,6 +214,9 @@ public class RobotNextHelper {
                 String result = arr[arr.length - 1];
                 return tempId + "/" + result;
             }
+            if(!filename.endsWith(".wav")){
+                filename =filename+".wav";
+            }
             return tempId + "/" + filename;
         }
         return null;

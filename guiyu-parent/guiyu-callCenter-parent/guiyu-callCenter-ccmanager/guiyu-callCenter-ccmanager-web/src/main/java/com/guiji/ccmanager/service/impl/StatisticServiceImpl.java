@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.callcenter.dao.entityext.CallCountHour;
@@ -7,35 +8,32 @@ import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
 import com.guiji.callcenter.dao.entityext.ReasonCount;
 import com.guiji.ccmanager.service.StatisticService;
+import com.guiji.component.result.Result;
+import com.guiji.user.dao.entity.SysUser;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.guiji.ccmanager.controller.StatisticController.differentDaysByMillisecond;
 
 /**
  * @Auther: 黎阳
  * @Date: 2018/12/5 0005 15:42
  * @Description:
  */
+@Slf4j
 @Service
 public class StatisticServiceImpl implements StatisticService {
 
     @Autowired
     StatisticMapper statisticMapper;
-
-/*    @Override
-    public List<Map> getIntentCountOnTime(Long userId, String startDate, String endDate) throws ParseException {
-
-        Map map = new HashMap();
-        if(userId!=null){
-            map.put("customer_id",userId);
-        }
-        map.put("startDate",startDate);
-        map.put("endDate",endDate);
-        return statisticMapper.getIntentCountOnTime(map);
-
-    }*/
+    @Autowired
+    IAuth iAuth;
 
     @Override
     public List<DashboardOverView> getDashboardOverView(String userId, String startDate, String endDate, String tempId) {
@@ -151,7 +149,72 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<IntentCount> getIntentCount(String userId, String startDate, String endDate, String tempId) {
+    public List<Map<String, Object>> getIntentCount(Long userId, String startDate, String endDate, String tempId) throws ParseException {
+
+        String[] arr = {"A","B","C","D","E","F","W"};
+        try{
+            Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
+            String intent = result.getBody().getIntenLabel();
+            if(StringUtils.isNotBlank(intent)){
+                arr = intent.split(",");
+            }
+        }catch (Exception e){
+            log.error("iAuth.getUserById userId[{}] has error :"+e,userId);
+        }
+        List<String> typeList = Arrays.asList(arr);
+
+        List<IntentCount> list = getIntentCountList(userId!=null ? String.valueOf(userId): null, startDate, endDate, tempId);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date sDate = sdf.parse(startDate);
+        Date eDate = sdf.parse(endDate);
+
+        int days = differentDaysByMillisecond(sDate, eDate);
+
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(sDate);
+
+        List<Map<String,Object>> resList = new ArrayList<>();
+
+        for (int i = 0; i <= days; i++) {
+            String startDateStr = sdf.format(sDate);
+            Map map = new HashMap();
+            map.put("callDate", startDateStr);
+
+            for (String type : typeList) {
+                map.put(type, 0);
+            }
+
+            int connectCount =0;
+            int notConnectCount =0;
+
+            if (list != null && list.size() > 0) {
+                for (IntentCount intentCount : list) {
+                    String callDate = intentCount.getCallDate();
+                    if (callDate.equals(startDateStr)) {
+                        String intentIn = intentCount.getIntent();
+                        map.put(intentIn, intentCount.getCallCount());
+                        if(intentIn.equals("F") || intentIn.equals("W") ){
+                            notConnectCount+=intentCount.getCallCount();
+                        }else{
+                            connectCount+=intentCount.getCallCount();
+                        }
+                    }
+                }
+            }
+            int allCallsCount = connectCount+notConnectCount;
+            map.put("connectCount", connectCount);
+            map.put("notConnectCount", notConnectCount);
+            map.put("allCallsCount", allCallsCount);
+
+            resList.add(map);
+            cal.add(Calendar.DATE, 1);
+            sDate = cal.getTime();
+        }
+        return resList;
+    }
+
+    public List<IntentCount> getIntentCountList(String userId, String startDate, String endDate, String tempId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 

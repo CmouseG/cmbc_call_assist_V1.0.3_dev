@@ -123,10 +123,10 @@ public class BotSentenceProcessController {
 		return ServerResult.createByErrorMessage("创建模板失败!");
 	}
 	
-	@RequestMapping(value="createAdminBotSentenceProcess")
-	public ServerResult<String> createAdminBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
-		return createBotSentenceProcess(paramVO,userId);
-	}
+//	@RequestMapping(value="createAdminBotSentenceProcess")
+//	public ServerResult<String> createAdminBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
+//		return createBotSentenceProcess(paramVO,userId);
+//	}
 	
 	/**
 	 * 修改话术

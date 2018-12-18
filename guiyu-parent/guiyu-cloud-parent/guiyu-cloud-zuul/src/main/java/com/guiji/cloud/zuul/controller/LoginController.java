@@ -11,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guiji.auth.api.IAuth;
 import com.guiji.cloud.zuul.config.AuthUtil;
 import com.guiji.cloud.zuul.service.ZuulService;
 import com.guiji.cloud.zuul.token.ApiKeyToken;
+import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 
 @RestController	
 @RequestMapping
@@ -24,6 +25,9 @@ public class LoginController {
 	
 	@Autowired
 	private ZuulService zuulService;
+	
+	@Autowired
+	private SysUserMapper sysUserMapper;
 	
 	@RequestMapping("login")
 	public boolean login(String username,String password){
@@ -42,7 +46,9 @@ public class LoginController {
 				}
 			}
 		}
+		SysUser sysUser=sysUserMapper.getUserById(userId);
 		session.setAttribute("userId", userId);
+		session.setAttribute("orgCode", sysUser.getOrgCode());
 		session.setAttribute("isSuperAdmin", isSuperAdmin);
 		return isSuperAdmin;
 	}

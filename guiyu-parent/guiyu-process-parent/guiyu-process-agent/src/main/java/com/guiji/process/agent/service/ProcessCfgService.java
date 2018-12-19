@@ -20,6 +20,8 @@ public class ProcessCfgService {
     private static ProcessCfgService instance = new ProcessCfgService();
     public static final Map<Integer, CfgProcessVO> cfgMap = new ConcurrentHashMap<Integer, CfgProcessVO>();
 
+    public static CfgAgentNodeVO gloablCfgAgentNodeVO = null;
+
     public static Integer agentPort = 0;
 
     private String file;
@@ -62,6 +64,12 @@ public class ProcessCfgService {
             return;
         }
         initMap(cfgAgentNodeVO);
+        gloablCfgAgentNodeVO = cfgAgentNodeVO;
+    }
+
+    public void reConnect()
+    {
+        initMap(gloablCfgAgentNodeVO);
     }
 
     private void initMap(CfgAgentNodeVO cfgAgentNodeVO)

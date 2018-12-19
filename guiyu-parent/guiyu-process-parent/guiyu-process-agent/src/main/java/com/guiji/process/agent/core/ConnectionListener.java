@@ -3,6 +3,7 @@ package com.guiji.process.agent.core;
 import com.guiji.ImClientApp;
 import com.guiji.process.agent.handler.ClientPoHandlerProto;
 import com.guiji.process.agent.handler.ImClientProtocolBO;
+import com.guiji.process.agent.service.ProcessCfgService;
 import com.guiji.process.core.message.CmdMessageVO;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -35,6 +36,7 @@ public class ConnectionListener implements ChannelFutureListener {
 					ImClientProtocolBO.getIntance().channelGlobal = channel;
 
 					ImClientProtocolBO.getIntance().send(new CmdMessageVO(),2);
+					ProcessCfgService.getIntance().reConnect();
 				}
 			}, 1L, TimeUnit.SECONDS);
 		} else {

@@ -395,6 +395,216 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
+        public Criteria andRobotIsNull() {
+            addCriterion("robot is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotIsNotNull() {
+            addCriterion("robot is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotEqualTo(String value) {
+            addCriterion("robot =", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotEqualTo(String value) {
+            addCriterion("robot <>", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotGreaterThan(String value) {
+            addCriterion("robot >", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotGreaterThanOrEqualTo(String value) {
+            addCriterion("robot >=", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotLessThan(String value) {
+            addCriterion("robot <", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotLessThanOrEqualTo(String value) {
+            addCriterion("robot <=", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotLike(String value) {
+            addCriterion("robot like", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotLike(String value) {
+            addCriterion("robot not like", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotIn(List<String> values) {
+            addCriterion("robot in", values, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotIn(List<String> values) {
+            addCriterion("robot not in", values, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotBetween(String value1, String value2) {
+            addCriterion("robot between", value1, value2, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotBetween(String value1, String value2) {
+            addCriterion("robot not between", value1, value2, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineIsNull() {
+            addCriterion("line is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineIsNotNull() {
+            addCriterion("line is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineEqualTo(String value) {
+            addCriterion("line =", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotEqualTo(String value) {
+            addCriterion("line <>", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineGreaterThan(String value) {
+            addCriterion("line >", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineGreaterThanOrEqualTo(String value) {
+            addCriterion("line >=", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineLessThan(String value) {
+            addCriterion("line <", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineLessThanOrEqualTo(String value) {
+            addCriterion("line <=", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineLike(String value) {
+            addCriterion("line like", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotLike(String value) {
+            addCriterion("line not like", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineIn(List<String> values) {
+            addCriterion("line in", values, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotIn(List<String> values) {
+            addCriterion("line not in", values, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineBetween(String value1, String value2) {
+            addCriterion("line between", value1, value2, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotBetween(String value1, String value2) {
+            addCriterion("line not between", value1, value2, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenIsNull() {
+            addCriterion("`open` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenIsNotNull() {
+            addCriterion("`open` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenEqualTo(String value) {
+            addCriterion("`open` =", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenNotEqualTo(String value) {
+            addCriterion("`open` <>", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenGreaterThan(String value) {
+            addCriterion("`open` >", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenGreaterThanOrEqualTo(String value) {
+            addCriterion("`open` >=", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenLessThan(String value) {
+            addCriterion("`open` <", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenLessThanOrEqualTo(String value) {
+            addCriterion("`open` <=", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenLike(String value) {
+            addCriterion("`open` like", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenNotLike(String value) {
+            addCriterion("`open` not like", value, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenIn(List<String> values) {
+            addCriterion("`open` in", values, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenNotIn(List<String> values) {
+            addCriterion("`open` not in", values, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenBetween(String value1, String value2) {
+            addCriterion("`open` between", value1, value2, "open");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenNotBetween(String value1, String value2) {
+            addCriterion("`open` not between", value1, value2, "open");
+            return (Criteria) this;
+        }
+
         public Criteria andDelFlagIsNull() {
             addCriterion("del_flag is null");
             return (Criteria) this;

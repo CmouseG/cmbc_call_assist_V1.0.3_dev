@@ -47,6 +47,16 @@ public class OrganizationService {
 		return page;
 	}
 	
+	public Page<Object> selectOpenByPage(Page<Object> page){
+		SysOrganizationExample example=new SysOrganizationExample();
+		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("1");
+		int num=sysOrganizationMapper.countByExample(example);
+		List<Object> list=sysOrganizationMapper.selectByPage(page);
+		page.setTotal(num);
+		page.setRecords(list);
+		return page;
+	}
+	
 	public List<SysOrganization> getOrgByType(String type){
 		SysOrganizationExample example=new SysOrganizationExample();
 		if(StringUtils.isEmpty(type)){
@@ -67,5 +77,18 @@ public class OrganizationService {
 		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo("0");
 		int num=sysOrganizationMapper.countByExample(example);
 		return num==0;
+	}
+	
+	public boolean checkName(String name,Long id){
+		SysOrganizationExample example=new SysOrganizationExample();
+		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo("0").andIdNotEqualTo(id);
+		int num=sysOrganizationMapper.countByExample(example);
+		return num==0;
+	}
+	
+	public List<SysOrganization> getOrgNotOpen(){
+		SysOrganizationExample example=new SysOrganizationExample();
+		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0");
+		return sysOrganizationMapper.selectByExample(example);
 	}
 }

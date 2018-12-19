@@ -148,6 +148,7 @@ CREATE TABLE `sys_organization` (
   `robot` varchar(255) DEFAULT NULL COMMENT '机器人数量',
   `line` varchar(255) DEFAULT NULL COMMENT '线路数量',
   `del_flag` varchar(1) NOT NULL COMMENT '删除标志',
+  `open` varchar(1) DEFAULT NULL,
   `create_id` bigint(20) NOT NULL,
   `create_time` datetime NOT NULL,
   `update_id` bigint(20) NOT NULL,

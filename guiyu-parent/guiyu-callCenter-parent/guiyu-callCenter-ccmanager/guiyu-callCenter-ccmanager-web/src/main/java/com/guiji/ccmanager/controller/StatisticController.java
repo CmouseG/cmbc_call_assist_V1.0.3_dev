@@ -234,7 +234,7 @@ public class StatisticController {
 
         List<ErrorMatch> listErrorMatch = statisticService.getErrorMaths();
 
-        //对中午的结果，进行转换，转成英文的
+        //对中文的结果，进行转换，转成英文的
         List<Map<String,List<Map<String,ReasonDetail>>>> returnList = new ArrayList();
         for(Map<String,Object> map:resList){
            String callDate = (String) map.get("callDate");
@@ -243,7 +243,7 @@ public class StatisticController {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 String key = entry.getKey();
                 Map<String,ReasonDetail> mapEnName = new HashMap();
-                if(!key.equals("callDate") && !key.equals("allCount")){
+                if(!key.equals("callDate") && !key.equals("allCount") && !key.equals("其他")){
                     ReasonDetail reasonDetail = new ReasonDetail();
                     reasonDetail.setName(key);
                     reasonDetail.setCount((Integer) entry.getValue());
@@ -254,6 +254,8 @@ public class StatisticController {
                     }
                 }else if(key.equals("allCount")){
                     mapEnName.put("allCount",new ReasonDetail("allCount",(Integer) entry.getValue()));
+                }else if(key.equals("其他")){
+                    mapEnName.put("other",new ReasonDetail("其他",(Integer) entry.getValue()));
                 }
                 if(mapEnName.size()>0){
                     listEnnameMap.add(mapEnName);

@@ -59,6 +59,7 @@ import ai.guiji.botsentence.dao.entity.VoliceInfo;
 import ai.guiji.botsentence.dao.entity.VoliceInfoExample;
 import ai.guiji.botsentence.dao.ext.ImportProcessMapper;
 import ai.guiji.botsentence.service.IImportProcessService;
+import ai.guiji.botsentence.vo.BotSentenceProcessVO;
 import ai.guiji.component.client.util.FileUtil;
 import ai.guiji.component.client.util.FtpUploadUtil;
 import ai.guiji.component.client.util.Pinyin4jUtil;
@@ -115,16 +116,20 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 
 	@Override
 	@Transactional
-	public void importProcess(File templateFile, String templateType, String templatId,Long userId) {
-		handleData(templateFile, templateType, templatId,userId);
+	public void importProcess(File templateFile, BotSentenceProcessVO paramVO,Long userId) {
+		handleData(templateFile, paramVO,userId);
 	}
 
-	public boolean handleData(File templateFile, String templateType, String templatId,Long userId) {
-
+	public boolean handleData(File templateFile, BotSentenceProcessVO paramVO,Long userId) {
+		String templatId=paramVO.getTemplateId();
 		ReturnData<SysUser> data=iAuth.getUserById(userId);
-		String orgCode=data.getBody().getOrgCode();
 		String userName=data.getBody().getUsername();
-		String orgName=data.getBody().getOrgName();
+		String orgCode=paramVO.getOrgCode();
+		String orgName=paramVO.getOrgName();
+		if(org.springframework.util.StringUtils.isEmpty(paramVO.getOrgCode())){
+			orgCode=data.getBody().getOrgCode();
+			orgName=data.getBody().getOrgName();
+		}
 		if(StringUtils.isBlank(userId.toString())) {
 			logger.error("用户信息为空");
 			return false;
@@ -173,8 +178,9 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		}
 
 		String processId = "";
+		
 
-		if("02".equals(templateType)) {//导入个人流程
+		if("02".equals(paramVO.getTemplateType())) {//导入个人流程
 
 			if(StringUtils.isNotBlank(templatId)) {
 				logger.info("更新话术模板");
@@ -372,7 +378,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 
 		for (File file : listFile) {
 			if (file.getName().endsWith("_rec")) {
-				if("02".equals(templateType)) {//导入本地模板不需要导入录音文件
+				if("02".equals(paramVO.getTemplateType())) {//导入本地模板不需要导入录音文件
 					logger.info("导入本地模板，不需要导入录音文件>..");
 				}else {
 					File[] mavFiles = file.listFiles();

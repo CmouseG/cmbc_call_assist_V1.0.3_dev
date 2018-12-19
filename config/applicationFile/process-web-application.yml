@@ -40,4 +40,3 @@ eureka:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 properties:
   error: properties/error.properties
-localIP:

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ImServerListener implements ApplicationRunner {
-    @Value("${localIP}")
+    @Value("${localIP:}")
     private String localIP;
 
     @Autowired

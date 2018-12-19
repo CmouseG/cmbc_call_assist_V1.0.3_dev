@@ -221,7 +221,7 @@ create table robot_call_process_stat
    refused_stat         varchar(100) comment '拒绝统计(0-不拒绝,1-用户拒绝;9-未应答)',
    hangup_stat          varchar(100) comment '挂断统计(0-未挂断   1：用户挂断   2：AI挂断)',
    match_stat           varchar(100) comment '匹配统计',
-   crt_time             datetime comment '创建时间'，
+   crt_time             datetime comment '创建时间',
    primary key (id)
 );
 

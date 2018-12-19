@@ -15,6 +15,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.util.internal.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ImServer {
 
-	public void run(int port) {
+	public void run(String ip,int port) {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         
@@ -75,7 +76,13 @@ public class ImServer {
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         
         try {
-			ChannelFuture f = bootstrap.bind(port).sync();
+			if(StringUtil.isNullOrEmpty(ip))
+			{
+				ChannelFuture f = bootstrap.bind(port).sync();
+			}else {
+				ChannelFuture f = bootstrap.bind(ip,port).sync();
+			}
+			ChannelFuture f = bootstrap.bind(ip,port).sync();
 			 f.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();

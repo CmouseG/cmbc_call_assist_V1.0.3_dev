@@ -158,7 +158,7 @@ public class CallPlanDispatchHandler {
                 }catch (NullPointerException e){
                     //回掉给调度中心，更改通话记录
                     callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                    callPlan.setAccurateIntent("F");
+                    callPlan.setAccurateIntent("W");
                     callPlan.setReason(e.getMessage());
                     callOutPlanService.update(callPlan);
                     dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());

@@ -72,7 +72,7 @@ public class AIManagerImpl implements AIManager {
             public void onErrorResult(Result.ReturnData result) {
 
             }
-        }, 5, 1, 2, 60, true);
+        }, 4, 1, 1, 60, true);
         dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),aiRequest.getPhoneNum(), returnData, "end call robot aiCallStart");
 
         if (returnData == null) {

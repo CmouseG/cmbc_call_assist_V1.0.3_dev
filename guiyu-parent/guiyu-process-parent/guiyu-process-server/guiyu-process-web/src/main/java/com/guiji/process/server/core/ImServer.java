@@ -76,13 +76,13 @@ public class ImServer {
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         
         try {
+			ChannelFuture f = null;
 			if(StringUtil.isNullOrEmpty(ip))
 			{
-				ChannelFuture f = bootstrap.bind(port).sync();
+				f = bootstrap.bind(port).sync();
 			}else {
-				ChannelFuture f = bootstrap.bind(ip,port).sync();
+				f = bootstrap.bind(ip,port).sync();
 			}
-			ChannelFuture f = bootstrap.bind(ip,port).sync();
 			 f.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();

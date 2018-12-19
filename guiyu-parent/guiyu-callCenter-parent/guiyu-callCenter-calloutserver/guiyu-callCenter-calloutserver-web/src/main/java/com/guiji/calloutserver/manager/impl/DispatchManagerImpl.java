@@ -68,7 +68,7 @@ public class DispatchManagerImpl implements DispatchManager {
                 List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
                 if (dispatchPlans != null && dispatchPlans.size() > 0) {
                     callOutPlans = toCallPlan(dispatchPlans);
-                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getCallId(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"end dispacher queryAvailableSchedules");
+                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getCallId(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心回调结果");
                 }
             }
 
@@ -116,7 +116,7 @@ public class DispatchManagerImpl implements DispatchManager {
 
         //调度中心
         Result.ReturnData returnData = null;
-        dispatchLogService.startServiceRequestLog(callId,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "start call dispatcher successSchedule");
+        dispatchLogService.startServiceRequestLog(callId,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向调度中心回调结果");
 
         try
         {
@@ -138,7 +138,7 @@ public class DispatchManagerImpl implements DispatchManager {
         }
 
         log.info("======================successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
-        dispatchLogService.endServiceRequestLog(callId,phoneNo, returnData, "end call dispatcher successSchedule");
+        dispatchLogService.endServiceRequestLog(callId,phoneNo, returnData, "结束向调度中心回调结果");
 
 
     }

@@ -91,4 +91,8 @@ public class OrganizationService {
 		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0");
 		return sysOrganizationMapper.selectByExample(example);
 	}
+	
+	public boolean existChildren(SysOrganization record){
+		return sysOrganizationMapper.existChildren(record);
+	}
 }

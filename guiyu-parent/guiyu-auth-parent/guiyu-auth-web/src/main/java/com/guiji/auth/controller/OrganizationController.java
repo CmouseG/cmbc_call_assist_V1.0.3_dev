@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +36,10 @@ public class OrganizationController {
 	}
 	
 	@RequestMapping("delete")
-	public void delte(SysOrganization record,@RequestHeader long userId){
+	public void delte(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+		if(organizationService.existChildren(record)){
+			throw new CheckConditionException("00010010");
+		}
 		record.setUpdateId(userId);
 		record.setUpdateTime(new Date());
 		organizationService.delte(record);
@@ -43,8 +47,10 @@ public class OrganizationController {
 	
 	@RequestMapping("update")
 	public void update(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
-		if(!organizationService.checkName(record.getName(),record.getId())){
-			throw new CheckConditionException("00010009");
+		if(!StringUtils.isEmpty(record.getName())){
+			if(!organizationService.checkName(record.getName(),record.getId())){
+				throw new CheckConditionException("00010009");
+			}
 		}
 		record.setUpdateId(userId);
 		record.setUpdateTime(new Date());

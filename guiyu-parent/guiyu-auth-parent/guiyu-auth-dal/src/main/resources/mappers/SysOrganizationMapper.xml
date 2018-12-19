@@ -320,6 +320,6 @@
   </select>
   
   <select id="getOrgByUserId" resultMap="BaseResultMap">
-  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%')
+  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_falg=0
   </select>
 </mapper>

@@ -112,7 +112,7 @@ public class DispatchManagerImpl implements DispatchManager {
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String callId, String phoneNo) {
+    public void successSchedule(String callId, String phoneNo, String intent) {
 
         //调度中心
         Result.ReturnData returnData = null;
@@ -137,7 +137,7 @@ public class DispatchManagerImpl implements DispatchManager {
             log.warn("调度中心回掉是否成功时出现异常", e);
         }
 
-        log.info("===================================successSchedule:" + callId);
+        log.info("======================successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
         dispatchLogService.endServiceRequestLog(callId,phoneNo, returnData, "end call dispatcher successSchedule");
 
 

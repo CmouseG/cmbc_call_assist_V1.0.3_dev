@@ -161,7 +161,7 @@ public class CallPlanDispatchHandler {
                     callPlan.setAccurateIntent("W");
                     callPlan.setReason(e.getMessage());
                     callOutPlanService.update(callPlan);
-                    dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());
+                    dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                     return;
                 }
                 asyncEventBus.post(new CallResourceReadyEvent(callPlan));

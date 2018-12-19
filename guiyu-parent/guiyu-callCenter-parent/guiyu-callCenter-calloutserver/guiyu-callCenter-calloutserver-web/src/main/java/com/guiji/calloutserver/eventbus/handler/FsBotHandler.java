@@ -97,7 +97,7 @@ public class FsBotHandler {
                 callPlan.setAccurateIntent("W");
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
-                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());
+                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                 return;
             }
 

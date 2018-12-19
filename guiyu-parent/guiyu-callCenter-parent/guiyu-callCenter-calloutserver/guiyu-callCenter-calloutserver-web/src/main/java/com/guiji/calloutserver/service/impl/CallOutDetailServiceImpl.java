@@ -61,7 +61,7 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
         if (isIntentNotNull) {
             criteria.andAccurateIntentIsNotNull();
         }
-        example.setOrderByClause("customer_say_time desc");
+        example.setOrderByClause("bot_answer_time desc");
         example.setLimitStart(0);
         example.setLimitEnd(1);
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);

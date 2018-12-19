@@ -68,7 +68,7 @@ public class DispatchManagerImpl implements DispatchManager {
                 List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
                 if (dispatchPlans != null && dispatchPlans.size() > 0) {
                     callOutPlans = toCallPlan(dispatchPlans);
-                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getCallId(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心回调结果");
+                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getCallId(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心拉取号码");
                 }
             }
 

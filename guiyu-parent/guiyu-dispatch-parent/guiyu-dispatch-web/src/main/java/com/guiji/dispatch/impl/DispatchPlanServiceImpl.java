@@ -790,7 +790,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		map.put(3, "暂停状态");
 		map.put(4, "停止状态");
 		MessageDto result = new MessageDto();
-		if (batchId > -1) {
+		if (batchId != 0) {
 			DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
 			DispatchPlan dispatchPlan = new DispatchPlan();
 			// dispatchPlan.setBatchId(dispatchPlanBatch.getId());

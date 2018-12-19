@@ -141,6 +141,7 @@ create table ai_cycle_his
    id                   varchar(32) not null,
    user_id              varchar(50) comment '用户编号',
    ai_no                varchar(50) comment '机器人编号',
+   ai_name              varchar(50) comment '机器人昵称',
    template_id          varchar(50) comment '话术模板',
    assign_date          varchar(10) comment '分配日期',
    assign_time          varchar(20) comment '分配时间',

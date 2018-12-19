@@ -90,11 +90,11 @@ public class FsBotHandler {
             try{
                 aiResponse = aiManager.applyAi(request);
                 Preconditions.checkNotNull(aiResponse, "aiResponse is null error");
-            }catch (Exception e){//申请资源异常 ，回调调度中心，更改calloutplan的状态
+            }catch (Exception e){//申请资源异常 ，回调调度中心，更改calloutplan的状态  //todo 此处应该有告警，没有机器人资源
                 log.error("-----error---------aiManager.applyAi:"+e);
                 //回掉给调度中心，更改通话记录
                 callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                callPlan.setAccurateIntent("F");
+                callPlan.setAccurateIntent("W");
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
                 dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum());

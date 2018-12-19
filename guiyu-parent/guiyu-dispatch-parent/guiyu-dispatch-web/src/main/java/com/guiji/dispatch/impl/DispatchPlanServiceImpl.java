@@ -790,7 +790,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		map.put(3, "暂停状态");
 		map.put(4, "停止状态");
 		MessageDto result = new MessageDto();
-		if (batchId != 0) {
+		if (batchId > -1) {
 			DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
 			DispatchPlan dispatchPlan = new DispatchPlan();
 			// dispatchPlan.setBatchId(dispatchPlanBatch.getId());
@@ -816,7 +816,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
-				ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId());
+				ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId()).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 			}
 

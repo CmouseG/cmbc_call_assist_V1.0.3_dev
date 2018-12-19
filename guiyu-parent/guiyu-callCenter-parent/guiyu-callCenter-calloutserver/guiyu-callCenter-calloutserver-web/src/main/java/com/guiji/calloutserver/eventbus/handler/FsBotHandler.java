@@ -331,7 +331,7 @@ public class FsBotHandler {
             } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
                 if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
-                    if(hangUp!=null){
+                    if(callPlan.getReason()!=null && hangUp!=null){
                         callPlan.setReason(hangUp);
                     }
                 }
@@ -341,12 +341,12 @@ public class FsBotHandler {
             callPlan.setDuration(event.getDuration());
             callPlan.setBillSec(event.getBillSec());
 
-            if (!Strings.isNullOrEmpty(hangUp)) {
+           if (!Strings.isNullOrEmpty(hangUp)) {
                 callPlan.setHangupCode(hangUp);
-                if (hangUp.equals("503")) {
+          /*      if (hangUp.equals("503")) {
                     callPlan.setAccurateIntent("W");
                     callPlan.setReason("503");
-                }
+                }*/
             }
 
             if (!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <= 0) {

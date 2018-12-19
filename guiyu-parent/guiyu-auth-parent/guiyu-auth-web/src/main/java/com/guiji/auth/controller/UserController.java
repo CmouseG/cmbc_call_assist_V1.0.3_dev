@@ -75,7 +75,16 @@ public class UserController implements IAuth{
 	}
 	
 	@RequestMapping("/user/update")
-	public void update(SysUser user,String[] roleId,@RequestHeader Long userId) throws CheckConditionException{
+	public void update(SysUserVo param,@RequestHeader Long userId) throws CheckConditionException{
+		SysUser user=new SysUser();
+		user.setId(param.getId());
+		user.setUsername(param.getUsername());
+		user.setPassword(param.getPassword());
+		user.setStatus(param.getStatus());
+		user.setPushType(param.getPushType());
+		user.setIntenLabel(param.getIntenLabel());
+		user.setOrgCode(param.getOrgCode());
+		
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
 		}
@@ -84,7 +93,7 @@ public class UserController implements IAuth{
 		if(!StringUtils.isEmpty(user.getPassword())){
 			user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		}
-		service.update(user,roleId);
+		service.update(user,param.getRoleId());
 	}
 	
 	@RequestMapping("/user/delete")

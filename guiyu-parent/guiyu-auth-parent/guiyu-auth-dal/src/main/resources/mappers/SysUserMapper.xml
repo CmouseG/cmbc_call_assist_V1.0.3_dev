@@ -406,11 +406,8 @@
   
   <insert id="addRole">
 		delete from sys_role_user where user_id=#{userId};
-		insert into sys_role_user(user_id,role_id,create_time) values
-		<foreach collection="roleIds" item="item" separator=",">
-		(#{userId},#{item},now())
-		</foreach>
-		;
+		insert into sys_role_user(user_id,role_id,create_time) 
+		values (#{userId},#{roleIds},now());
 	</insert>
 	
 	<select id="getPassword" resultType="string">
@@ -499,7 +496,7 @@
 	<select id="selectByParamVo" resultType="map">
 		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
 		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
-		e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,
+		e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
 		LEFT JOIN sys_role c on c.id=b.role_id

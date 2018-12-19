@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ModularLogsMQ {
     @Bean
-    public Queue PublishBotstenceSellbotMessage() {
+    public Queue ModularLogsMQ() {
         return new Queue("dispatch.ModularLogs");
     }
 }

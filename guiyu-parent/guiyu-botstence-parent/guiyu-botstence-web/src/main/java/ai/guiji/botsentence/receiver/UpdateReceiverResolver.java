@@ -33,8 +33,8 @@ public class UpdateReceiverResolver {
 	
 	private Map<String,UpdateReceiverVo> cache=new HashMap<>();
 	
-//	@Autowired
-//	private IDispatchPlanOut iDispatchPlanOut;
+	@Autowired
+	private IDispatchPlanOut iDispatchPlanOut;
 	
 	@Autowired
 	private VoliceInfoExtMapper voliceInfoExtMapper;
@@ -67,7 +67,7 @@ public class UpdateReceiverResolver {
 		logger.info("--------------------------cache------------------------");
 		if(vo.getSellbot()!=-1 && vo.getRobot()!=-1 && vo.getFreeswitch()!=-1){
 			cache.remove(tempId);
-//			iDispatchPlanOut.successSchedule4TempId(tempId);
+			iDispatchPlanOut.successSchedule4TempId(tempId);
 		}
 		if(vo.getSellbot()==1 || vo.getRobot()==1 || vo.getFreeswitch()==1){
 			BotSentenceProcessExample example=new BotSentenceProcessExample();

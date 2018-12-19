@@ -62,9 +62,9 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         criteria.andLineIdEqualTo(Integer.valueOf(lineId));
         criteria.andCallStateBetween(Constant.CALLSTATE_INIT,Constant.CALLSTATE_AGENT_ANSWER);
 
-        //对于电话都打了1个小时，还没有打完的要排除掉，认为任务没有正常回掉调度中心
+        //对于电话都打了2个小时，还没有打完的要排除掉，认为任务没有正常回掉调度中心。当然也有可能是makecall的时候异常了，所有设大一点。
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.HOUR, -1);
+        c.add(Calendar.HOUR, -2);
         criteria.andCreateTimeGreaterThan(c.getTime());
 
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);

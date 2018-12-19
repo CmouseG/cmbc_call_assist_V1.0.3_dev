@@ -123,7 +123,7 @@ public class DispatchManagerImpl implements DispatchManager {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
-                    return iDispatchPlanOutApi.successSchedule(callId);
+                    return iDispatchPlanOutApi.successSchedule(callId,intent);
                 }
 
                 @Override

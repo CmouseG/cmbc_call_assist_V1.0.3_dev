@@ -39,7 +39,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	 */
 	@Override
 	@GetMapping(value = "out/successSchedule")
-	public ReturnData<Boolean> successSchedule(String planUuid) {
+	public ReturnData<Boolean> successSchedule(String planUuid,String label) {
 		boolean result = dispatchPlanService.successSchedule(planUuid);
 		ReturnData<Boolean> res = new ReturnData<>();
 		res.body = result;

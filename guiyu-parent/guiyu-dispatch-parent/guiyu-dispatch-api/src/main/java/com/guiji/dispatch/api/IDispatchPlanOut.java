@@ -47,9 +47,10 @@ public interface IDispatchPlanOut {
     @ApiOperation(value = "接受号码呼叫完成通知")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "planUuid", value = "planUuid", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "planUuid", value = "label", dataType = "String", paramType = "query")
     })
     @GetMapping(value="out/successSchedule")
-    Result.ReturnData<Boolean> successSchedule(@RequestParam("planUuid") String planUuid);
+    Result.ReturnData<Boolean> successSchedule(@RequestParam("planUuid") String planUuid,@RequestParam("label") String label);
     
     
     

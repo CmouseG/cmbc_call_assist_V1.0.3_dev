@@ -657,13 +657,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId,
 			DispatchPlan isSuccess, boolean flag) {
 		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
-		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
+		logger.info("-----------------------------------------------------------------------------------------");
+		logger.info("---------------------------------------------------------------------------------------- ");
+		logger.info("-----------------------------------------------------------------------------------------");
+		logger.info("---------------------------------------------------------------------------------------- ");
+		logger.info("-----------------------------------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------------------------------");
+		logger.info("---------------------------------------------------------------------------------------- ");
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -700,7 +700,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.setLimitEnd(requestCount);
 		}
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		logger.info("queryAvailableSchedules phones size" + phones.size());
 		// 同步状态;0未同步1已同步
 		List<DispatchPlan> updateStatus = new ArrayList<>();
 
@@ -709,21 +708,27 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			updateStatus.add(dispatchPlan);
 			// dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
 		}
-		if (phones.size() > 0) {
-			logger.info("当前queryAvailableSchedules号码:" + phones.get(0).getPlanUuid() + "--------"
-					+ phones.get(0).getPhone());
-			logger.info("当前queryAvailableSchedules号码:" + phones.get(0));
-		}
-
 		if (flag) {
 			// 批量修改状态
 			if (updateStatus.size() > 0) {
-				int res = dispatchPlanMapper.updateDispatchPlanList(updateStatus);
-				// 判断当前任务是否查询完毕
-				int count = dispatchPlanMapper.countByExample(ex);
-				if (count <= requestCount) {
-					isSuccess.setSuccess(false);
+				for (DispatchPlan dispatchPlan : phones) {
+					dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+					DispatchPlanExample ex1 = new DispatchPlanExample();
+					//为了防止并发
+					ex1.createCriteria().andPlanUuidEqualTo(dispatchPlan.getPlanUuid()).andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
+					int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
+					if(result<=0){
+						queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
+					}
 				}
+
+				// int res =
+				// dispatchPlanMapper.updateDispatchPlanList(updateStatus);
+				// 判断当前任务是否查询完毕
+				// int count = dispatchPlanMapper.countByExample(ex);
+				// if (count <= requestCount) {
+				// isSuccess.setSuccess(false);
+				// }
 			}
 		}
 		return phones;

@@ -6,18 +6,6 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/apps/logs/callcenter/calloutserver/log.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/home/apps/logs/callcenter/calloutserver/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{MM/dd/yyyy HH:mm:ss} %-5level ${version} [%thread]%logger{16} - %msg%n
-            </pattern>
-        </encoder>
-    </appender>
-
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
@@ -37,10 +25,10 @@
         </layout>
     </appender>
 
-    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/apps/logs/callcenter/calloutserver/sql.log</file>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/home/apps/logs/callcenter/calloutserver/log.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/home/apps/logs/callcenter/calloutserver/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>/home/apps/logs/callcenter/calloutserver/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -49,12 +37,8 @@
         </encoder>
     </appender>
 
-
-    <logger name="com.guiji.*.dao" level="debug">
-        <appender-ref ref="SQL"/>
-    </logger>
     <logger name="org.freeswitch.esl.client" level="ERROR">
-        <appender-ref ref="SQL"/>
+        <appender-ref ref="ERROR_FILE"/>
     </logger>
 
     <logger name="org.springframework.web.servlet.mvc" level="info"/>
@@ -62,6 +46,5 @@
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="SQL"/>
     </root>
 </configuration>

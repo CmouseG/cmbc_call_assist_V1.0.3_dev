@@ -8,6 +8,7 @@
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="robot" property="robot" jdbcType="VARCHAR" />
     <result column="line" property="line" jdbcType="VARCHAR" />
+    <result column="open" property="open" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="VARCHAR" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -73,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, `name`, code, `type`, robot, line, del_flag, create_id, create_time, update_id, 
-    update_time
+    id, `name`, code, `type`, robot, line, `open`, del_flag, create_id, create_time, 
+    update_id, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysOrganizationExample" >
     select
@@ -113,12 +114,14 @@
   <insert id="insert" parameterType="com.guiji.user.dao.entity.SysOrganization" >
     insert into sys_organization (id, `name`, code, 
       `type`, robot, line, 
-      del_flag, create_id, create_time, 
-      update_id, update_time)
+      `open`, del_flag, create_id, 
+      create_time, update_id, update_time
+      )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+      #{open,jdbcType=VARCHAR}, #{delFlag,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" >
     insert into sys_organization
@@ -140,6 +143,9 @@
       </if>
       <if test="line != null" >
         line,
+      </if>
+      <if test="open != null" >
+        `open`,
       </if>
       <if test="delFlag != null" >
         del_flag,
@@ -175,6 +181,9 @@
       </if>
       <if test="line != null" >
         #{line,jdbcType=VARCHAR},
+      </if>
+      <if test="open != null" >
+        #{open,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=VARCHAR},
@@ -220,6 +229,9 @@
       <if test="record.line != null" >
         line = #{record.line,jdbcType=VARCHAR},
       </if>
+      <if test="record.open != null" >
+        `open` = #{record.open,jdbcType=VARCHAR},
+      </if>
       <if test="record.delFlag != null" >
         del_flag = #{record.delFlag,jdbcType=VARCHAR},
       </if>
@@ -248,6 +260,7 @@
       `type` = #{record.type,jdbcType=VARCHAR},
       robot = #{record.robot,jdbcType=VARCHAR},
       line = #{record.line,jdbcType=VARCHAR},
+      `open` = #{record.open,jdbcType=VARCHAR},
       del_flag = #{record.delFlag,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -275,6 +288,9 @@
       <if test="line != null" >
         line = #{line,jdbcType=VARCHAR},
       </if>
+      <if test="open != null" >
+        `open` = #{open,jdbcType=VARCHAR},
+      </if>
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=VARCHAR},
       </if>
@@ -300,6 +316,7 @@
       `type` = #{type,jdbcType=VARCHAR},
       robot = #{robot,jdbcType=VARCHAR},
       line = #{line,jdbcType=VARCHAR},
+      `open` = #{open,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -320,6 +337,6 @@
   </select>
   
   <select id="getOrgByUserId" resultMap="BaseResultMap">
-  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_falg=0
+  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_flag=0
   </select>
 </mapper>

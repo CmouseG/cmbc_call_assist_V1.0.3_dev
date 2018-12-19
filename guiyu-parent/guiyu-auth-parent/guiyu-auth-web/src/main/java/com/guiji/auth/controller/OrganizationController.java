@@ -42,7 +42,10 @@ public class OrganizationController {
 	}
 	
 	@RequestMapping("update")
-	public void update(SysOrganization record,@RequestHeader long userId){
+	public void update(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+		if(!organizationService.checkName(record.getName(),record.getId())){
+			throw new CheckConditionException("00010009");
+		}
 		record.setUpdateId(userId);
 		record.setUpdateTime(new Date());
 		organizationService.update(record);
@@ -53,6 +56,11 @@ public class OrganizationController {
 		return organizationService.selectByPage(page);
 	}
 	
+	@RequestMapping("selectOpenByPage")
+	public Page<Object> selectOpenByPage(Page<Object> page){
+		return organizationService.selectOpenByPage(page);
+	}
+	
 	/**
 	 * 获取全部的代理
 	 * @param type
@@ -61,6 +69,16 @@ public class OrganizationController {
 	@RequestMapping("getOrgByType")
 	public List<SysOrganization> getOrgByType(String type){
 		return organizationService.getOrgByType(type);
+	}
+	
+	/**
+	 * 获取未开户
+	 * @param type
+	 * @return
+	 */
+	@RequestMapping("getOrgNotOpen")
+	public List<SysOrganization> getOrgNotOpen(){
+		return organizationService.getOrgNotOpen();
 	}
 	
 	@RequestMapping("getOrgByUserId")

@@ -15,6 +15,7 @@ public class SysOrganization implements Serializable {
     private String robot;
 
     private String line;
+	private String open="0";
     private String delFlag="0";
 
     private Long createId;
@@ -141,6 +142,14 @@ public class SysOrganization implements Serializable {
 
 	public void setParentName(String parentName) {
 		this.parentName = parentName;
+	}
+
+	public String getOpen() {
+		return open;
+	}
+
+	public void setOpen(String open) {
+		this.open = open;
 	}
 
 	@Override

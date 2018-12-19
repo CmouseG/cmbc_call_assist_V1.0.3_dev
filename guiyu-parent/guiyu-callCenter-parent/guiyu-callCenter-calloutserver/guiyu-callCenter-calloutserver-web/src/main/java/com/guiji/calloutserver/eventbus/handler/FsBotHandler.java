@@ -321,21 +321,26 @@ public class FsBotHandler {
                 return;
             }
 
+            String hangUp = event.getSipHangupCause();
+
             //将calloutdetail里面的意向标签更新到calloutplan里面
             CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
             if (callOutDetail != null) {
                 callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                 callPlan.setReason(callOutDetail.getReason());
             } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
-                callPlan.setAccurateIntent("W");
-                callPlan.setReason(event.getSipHangupCause());
+                if(callPlan.getAccurateIntent()==null){
+                    callPlan.setAccurateIntent("W");
+                    if(hangUp!=null){
+                        callPlan.setReason(hangUp);
+                    }
+                }
             }
             callPlan.setHangupTime(event.getHangupStamp());
             callPlan.setAnswerTime(event.getAnswerStamp());
             callPlan.setDuration(event.getDuration());
             callPlan.setBillSec(event.getBillSec());
 
-            String hangUp = event.getSipHangupCause();
             if (!Strings.isNullOrEmpty(hangUp)) {
                 callPlan.setHangupCode(hangUp);
                 if (hangUp.equals("503")) {

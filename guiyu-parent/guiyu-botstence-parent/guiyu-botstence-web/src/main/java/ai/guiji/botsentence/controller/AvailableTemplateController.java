@@ -33,6 +33,15 @@ public class AvailableTemplateController {
 	}
 	
 	/**
+	 * 企业可用话术
+	 */
+	@RequestMapping("getAdminOrgAvailableTemplate")
+	public ServerResult getAdminOrgAvailableTemplate(@JsonParam Long userId){
+		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId);
+		return ServerResult.createBySuccess(list);
+	}
+	
+	/**
 	 * 用户可用话术
 	 */
 	@RequestMapping("getUserAvailableTemplate")

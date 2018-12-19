@@ -6,6 +6,8 @@ import com.guiji.common.exception.GuiyuException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.guiji.cloud.zuul.util.IpUtil;
@@ -15,6 +17,7 @@ import com.netflix.zuul.context.RequestContext;
 
 @Component
 public class UserIdZuulFilter extends ZuulFilter{
+	Logger logger = LoggerFactory.getLogger(UserIdZuulFilter.class);
 
 	@Override
 	public boolean shouldFilter() {
@@ -40,6 +43,7 @@ public class UserIdZuulFilter extends ZuulFilter{
 			ctx.addZuulRequestHeader("userId", userId);
 			ctx.addZuulRequestHeader("orgCode", orgCode.toString());
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
+			logger.info("isSuperAdmin:" + isSuperAdmin);
 		} catch (NullPointerException e) {
 			//处理下一些特殊不需要user的场景
 //			if(!isWiteIpFlag) {

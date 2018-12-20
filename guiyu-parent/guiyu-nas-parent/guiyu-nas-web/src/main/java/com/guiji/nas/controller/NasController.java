@@ -53,11 +53,11 @@ public class NasController implements INas {
 			SysFileRspVO sysFileRspVO = nasService.uploadFile(sysFileReqVO, file);
 			if (StrUtils.isNotEmpty(sysFileRspVO.getSkUrl())) {
 				//返回的URL加上访问主机地址
-				sysFileRspVO.setSkUrl(hostUrl + sysFileRspVO.getSkUrl());
+				sysFileRspVO.setSkUrl(sysFileRspVO.getSkUrl());
 			}
 			if (StrUtils.isNotEmpty(sysFileRspVO.getSkThumbImageUrl())) {
 				//返回的URL加上访问主机地址
-				sysFileRspVO.setSkUrl(hostUrl + sysFileRspVO.getSkThumbImageUrl());
+				sysFileRspVO.setSkUrl(sysFileRspVO.getSkThumbImageUrl());
 			}
 			logger.info("文件上传成功!", file.getName());
 			//返回成功状态和数据

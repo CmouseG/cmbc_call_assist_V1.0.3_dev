@@ -15,5 +15,5 @@ public interface UserAiCfgInfoMapperExt {
 	 * @param condition
 	 * @return
 	 */
-	int countUserAi(UserAiCfgQuery condition);
+	Integer countUserAi(UserAiCfgQuery condition);
 }

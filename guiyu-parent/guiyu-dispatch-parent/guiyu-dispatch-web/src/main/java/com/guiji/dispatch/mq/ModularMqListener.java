@@ -34,6 +34,7 @@ public class ModularMqListener {
 	@RabbitHandler
 	public void process(String message,Channel channel,Message message2) {
 		try {
+			logger.info("消费数据message"+message);
 			ModularLogs logs = JsonUtils.json2Bean(message, ModularLogs.class);
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(logs.getPlanUuid());
@@ -48,8 +49,9 @@ public class ModularMqListener {
 			modularLogsMapper.insert(logs);
 		} catch (Exception e) {
 			//这次消息，我已经接受并消费掉了，不会再重复发送消费
+			logger.info("error",e);
 			try {
-				logger.info("消费的数据有问题");
+				logger.info("消费的数据有问题---------------------------------------");
 				channel.basicAck(message2.getMessageProperties().getDeliveryTag(), false);
 			} catch (IOException e1) {
 				logger.info("已经接受并消费掉了，不会再重复发送消费有问题了");

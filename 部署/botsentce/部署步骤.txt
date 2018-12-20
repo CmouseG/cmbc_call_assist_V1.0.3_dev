@@ -1,0 +1,5 @@
+创建/apps/template目录
+创建/apps/template_encode目录
+创建/apps/cfgs目录
+把copyfiles.zip包解压到/apps/template目录下
+把standard_head.wav放到/apps/cfgs目录下

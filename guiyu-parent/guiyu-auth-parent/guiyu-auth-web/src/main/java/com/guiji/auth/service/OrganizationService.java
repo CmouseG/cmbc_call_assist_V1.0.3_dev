@@ -95,4 +95,14 @@ public class OrganizationService {
 	public boolean existChildren(SysOrganization record){
 		return sysOrganizationMapper.existChildren(record);
 	}
+	
+	public SysOrganization getOrgByCode(String code){
+		SysOrganizationExample example=new SysOrganizationExample();
+		example.createCriteria().andDelFlagEqualTo("0").andCodeEqualTo(code);
+		List<SysOrganization> list=sysOrganizationMapper.selectByExample(example);
+		if(list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
 }

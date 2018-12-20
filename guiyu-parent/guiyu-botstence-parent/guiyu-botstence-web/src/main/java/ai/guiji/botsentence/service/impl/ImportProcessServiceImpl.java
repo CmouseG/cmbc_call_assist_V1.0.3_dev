@@ -378,9 +378,9 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 
 		for (File file : listFile) {
 			if (file.getName().endsWith("_rec")) {
-				if("02".equals(paramVO.getTemplateType())) {//导入本地模板不需要导入录音文件
-					logger.info("导入本地模板，不需要导入录音文件>..");
-				}else {
+//				if("02".equals(paramVO.getTemplateType())) {//导入本地模板不需要导入录音文件
+//					logger.info("导入本地模板，不需要导入录音文件>..");
+//				}else {
 					File[] mavFiles = file.listFiles();
 					for (File wavFile : mavFiles) {
 						String wavName = wavFile.getName();
@@ -394,7 +394,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 							}
 						}
 					}
-				}
+//				}
 
 
 			} else if (file.getName().equals("select.json")) {// 处理select.json，插入到intent表

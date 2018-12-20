@@ -6,7 +6,8 @@ spring:
   # REDIS (RedisProperties)
   redis:
     database: 0
-    host: 192.168.1.78
+   # host: 192.168.1.81
+    host: localhost
     password: 123456
     port: 6379  
     pool:
@@ -17,26 +18,45 @@ spring:
   cache:
     type: redis
     cache-names: shiro.session,shiro.time 
+  rabbitmq:
+   #   host: 192.168.1.81
+     host: localhost
+     port: 5672
+     virtual-host: /
+     username: guiyu
+     password: 123456
 #注册中心配置      
 eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
   client:
-      service-url:
-           defaultZone: http://192.168.1.78:18001/eureka/
+    service-url:
+     # defaultZone: http://192.168.1.78:18001/eureka/
+      defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
 jdbc:
   type: mysql
-  
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 1   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 3  #切换实例的重试次数
+  eureka:
+    enabled: true
+
 properties:
   error: error.properties
  
 jdbc_driver0: 
       com.mysql.jdbc.Driver
 jdbc_url0: 
-     jdbc:mysql://192.168.1.81:3306/guiyu_dispatch?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+     jdbc:mysql://192.168.1.57:3306/guiyu_dispatch?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0:
      root
 jdbc_password0: 

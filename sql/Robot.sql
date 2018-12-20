@@ -2,6 +2,7 @@ create table user_ai_cfg_base_info
 (
    id                   varchar(32) not null,
    user_id              varchar(50) not null comment '用户编号',
+   org_code             varchar(50),
    ai_total_num         int comment '机器人数量',
    template_ids         varchar(200) comment '话术模板',
    crt_time             datetime comment '创建时间',
@@ -14,6 +15,10 @@ alter table user_ai_cfg_base_info comment '用户机器人账户基本信息';
 create index user_ai_cfg_base_info_idx1 on user_ai_cfg_base_info
 (
    user_id
+);
+create index user_ai_cfg_base_info_idx2 on user_ai_cfg_base_info
+(
+   org_code
 );
 create table user_ai_cfg_info
 (

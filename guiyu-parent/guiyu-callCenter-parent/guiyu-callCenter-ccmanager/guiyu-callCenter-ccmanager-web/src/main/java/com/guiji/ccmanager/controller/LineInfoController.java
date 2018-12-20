@@ -12,13 +12,13 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -69,33 +69,26 @@ public class LineInfoController {
 
     @ApiOperation(value = "增加线路接口")
     @PostMapping(value = "addLineInfo")
-    public Result.ReturnData<Boolean> addLineInfo(@RequestBody @Validated LineInfoAddVO lineInfoVO, @RequestHeader Long userId, @RequestHeader String orgCode) {
+    public Result.ReturnData<Boolean> addLineInfo(@RequestBody @Validated LineInfoAddVO lineInfoVO, @RequestHeader Long userId) {
 
         log.info("get request addLineInfo，LineInfoAddVO[{}]", lineInfoVO);
-        lineInfoVO.setCustomerId(String.valueOf(userId));
 
-        //如果没传递orgcode，则以当前用户orgcode为准
-        if(StringUtils.isNotBlank(lineInfoVO.getOrgCode())){
-            orgCode = lineInfoVO.getOrgCode();
+        if (StringUtils.isBlank(lineInfoVO.getOrgCode())) {
+            return Result.error(Constant.ERROR_PARAM);
         }
-
-        lineInfoService.addLineInfo(lineInfoVO,orgCode);
+        lineInfoVO.setCustomerId(String.valueOf(userId));
+        lineInfoService.addLineInfo(lineInfoVO);
         return Result.ok(true);
     }
 
     @ApiOperation(value = "修改线路接口")
     @PostMapping(value = "updateLineInfo")
-    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId, @RequestHeader String orgCode) {
+    public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId) {
         if (lineInfoVO.getLineId() == 0) {
             return Result.error(Constant.ERROR_PARAM);
         }
         log.info("get request updateLineInfo，lineInfoVO[{}]", lineInfoVO);
-
-        //如果没传递orgcode，则以当前用户orgcode为准
-        if(StringUtils.isBlank(lineInfoVO.getOrgCode())){
-            lineInfoVO.setOrgCode(orgCode);
-        }
-
+        lineInfoVO.setCustomerId(null);
         lineInfoService.updateLineInfo(lineInfoVO, userId);
         return Result.ok(true);
     }
@@ -113,11 +106,13 @@ public class LineInfoController {
 
     @ApiOperation(value = "查询线路，用于分配查询")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query")
+            @ApiImplicitParam(name = "customerId", value = "客户Id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "orgCode", value = "组织机构", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getLineInfos4Allot")
-    public List<LineInfo4AllotRes> getLineInfos4Allot(@NotNull(message = "customerId不能为空") String customerId,
-                                                      @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,@RequestHeader String orgCode) {
+    public List<LineInfo4AllotRes> getLineInfos4Allot(@NotEmpty(message = "用户id不能为空") String customerId,
+                                                      @NotEmpty(message = "组织机构不能为空") String orgCode,
+                                                      @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
 
         log.info("get request getLineInfos4Allot，customerId[{}]，userId[{}]，orgCode[{}]", customerId, userId, orgCode);
 
@@ -133,17 +128,17 @@ public class LineInfoController {
     })
     @PostMapping(value = "allotLineInfo")
     public Result.ReturnData allotLineInfo(@RequestBody Map<String, String> reqMap,
-                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,@RequestHeader String orgCode) {
+                                           @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
 
         log.info("post request allotLineInfo，userId[{}]，orgCode[{}], reqMap[{}]", userId, orgCode, reqMap);
 
         String customerId = reqMap.get("customerId");
         String lineIds = reqMap.get("lineIds");
-        if(customerId == null || lineIds==null){
+        if (customerId == null || lineIds == null) {
             return Result.error(Constant.ERROR_PARAM);
         }
 
-        lineInfoService.allotLineInfo(customerId,lineIds);
+        lineInfoService.allotLineInfo(customerId, lineIds);
 
         return Result.ok();
     }

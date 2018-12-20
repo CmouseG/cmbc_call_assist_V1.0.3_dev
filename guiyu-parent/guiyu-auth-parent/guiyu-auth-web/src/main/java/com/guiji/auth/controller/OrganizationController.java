@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IOrg;
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysOrganization;
 
 @RestController
 @RequestMapping("organization")
-public class OrganizationController {
+public class OrganizationController implements IOrg{
 
 	@Autowired
 	private OrganizationService organizationService;
@@ -96,4 +99,10 @@ public class OrganizationController {
 	public List<SysOrganization> getAdminOrgByUserId(Long userId){
 		return organizationService.getOrgByUserId(userId);
 	}
+	
+	@RequestMapping("getOrgByCode")
+	public ReturnData<SysOrganization> getOrgByCode(String code){
+		return Result.ok(organizationService.getOrgByCode(code));
+	}
+
 }

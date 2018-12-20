@@ -7,9 +7,9 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/apps/logs/guiyu-cloud-zuul/log.log</file>
+        <file>/home/apps/logs/guiyu-cloud-zuul/log.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/apps/logs/guiyu-cloud-zuul/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>/home/apps/logs/guiyu-cloud-zuul/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

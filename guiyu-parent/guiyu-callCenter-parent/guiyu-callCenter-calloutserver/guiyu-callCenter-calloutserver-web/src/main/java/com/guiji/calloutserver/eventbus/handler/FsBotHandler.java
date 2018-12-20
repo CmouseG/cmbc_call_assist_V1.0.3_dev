@@ -331,7 +331,7 @@ public class FsBotHandler {
             } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
                 if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
-                    if(callPlan.getReason()!=null && hangUp!=null){
+                    if(callPlan.getReason()==null && hangUp!=null){
                         callPlan.setReason(hangUp);
                     }
                 }

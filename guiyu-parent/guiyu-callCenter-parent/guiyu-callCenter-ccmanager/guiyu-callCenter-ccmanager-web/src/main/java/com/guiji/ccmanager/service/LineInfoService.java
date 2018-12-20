@@ -16,7 +16,7 @@ public interface LineInfoService {
 
     List<LineInfo> getLineInfoByCustom(String customerId, String lineName, int pageSizeInt, int pageNoInt);
 
-    void addLineInfo(LineInfoAddVO lineInfoVO, String orgCode);
+    void addLineInfo(LineInfoAddVO lineInfoVO);
 
     void updateLineInfo(LineInfoUpdateVO lineInfoVO, Long userId);
 

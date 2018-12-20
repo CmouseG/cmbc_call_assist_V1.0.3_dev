@@ -102,7 +102,7 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     @Transactional
-    public void addLineInfo(LineInfoAddVO lineInfoVO, String orgCode) {
+    public void addLineInfo(LineInfoAddVO lineInfoVO) {
 
         //本地存储数据库lineinfo
         LineInfo lineInfo = new LineInfo();
@@ -111,7 +111,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         lineInfo.setCreatetBy(lineInfoVO.getCustomerId());
         lineInfo.setUpdateDate(DateUtil.getCurrentTime());
         lineInfo.setUpdateBy(lineInfoVO.getCustomerId());
-        lineInfo.setOrgCode(orgCode);
+        lineInfo.setOrgCode(lineInfoVO.getOrgCode());
         lineInfo.setCustomerId("0");
         lineInfoMapper.insertSelective(lineInfo);
 

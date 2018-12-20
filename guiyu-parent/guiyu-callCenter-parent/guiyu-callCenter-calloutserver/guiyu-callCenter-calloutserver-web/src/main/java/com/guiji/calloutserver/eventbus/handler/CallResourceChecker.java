@@ -64,8 +64,8 @@ public class CallResourceChecker {
 
 
         Result.ReturnData<AiCallNext> returnData = null;
-        final String[] msg = {""};
-        dispatchLogService.startServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "start call robot aiCallApply");
+        final String[] msg = {"没有机器人资源"};
+        dispatchLogService.startServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallApply");
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -83,8 +83,8 @@ public class CallResourceChecker {
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }
-        dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "end call robot aiCallApply");
-        Preconditions.checkNotNull(returnData, msg.length>0 ? msg[0]:"没有机器人资源");
+        dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallApply");
+        Preconditions.checkNotNull(returnData, msg[0]);
 
         String aiNo = returnData.getBody().getAiNo();
         callOutPlan.setAiId(aiNo);

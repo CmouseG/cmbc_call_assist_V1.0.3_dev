@@ -383,19 +383,21 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
 			if (user.getBody() != null) {
 				String batchRecordUrl = user.getBody().getBatchRecordUrl();
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("batch_number", list.get(0).getBatchName());
-				jsonObject.put("operate", user.getBody().getUsername());
-				String sendHttpPost = "";
-				try {
-					sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl, jsonObject.toString());
-				} catch (Exception e) {
-					if (insertThirdInterface(batchRecordUrl, jsonObject)) {
-						logger.info("回调错误记录新增成功...");
+				if (batchRecordUrl != null) {
+					JSONObject jsonObject = new JSONObject();
+					jsonObject.put("batch_number", list.get(0).getBatchName());
+					jsonObject.put("operate", user.getBody().getUsername());
+					String sendHttpPost = "";
+					try {
+						sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl, jsonObject.toString());
+					} catch (Exception e) {
+						if (insertThirdInterface(batchRecordUrl, jsonObject)) {
+							logger.info("回调错误记录新增成功...");
+						}
+						logger.error("error", e);
 					}
-					logger.error("error", e);
+					logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
 				}
-				logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
 			} else {
 				logger.info("successSchedule 用户不存在");
 			}
@@ -406,11 +408,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
 		ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
 		if (user.getBody() != null) {
-			logger.info("通话记录通知开始");
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("data", callPlanDetailRecord.getBody());
-			boolean insertThirdInterface = insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
-			logger.info("通话记录通知结果 :" + insertThirdInterface);
+			if (user.getBody().getCallRecordUrl() != null) {
+				logger.info("通话记录通知开始");
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("data", callPlanDetailRecord.getBody());
+				boolean insertThirdInterface = insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
+				logger.info("通话记录通知结果 :" + insertThirdInterface);
+			}
 		}
 
 		if (list.size() > 0) {
@@ -714,10 +718,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				for (DispatchPlan dispatchPlan : phones) {
 					dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
 					DispatchPlanExample ex1 = new DispatchPlanExample();
-					//为了防止并发
-					ex1.createCriteria().andPlanUuidEqualTo(dispatchPlan.getPlanUuid()).andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
+					// 为了防止并发
+					ex1.createCriteria().andPlanUuidEqualTo(dispatchPlan.getPlanUuid())
+							.andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
 					int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
-					if(result<=0){
+					if (result <= 0) {
 						queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
 					}
 				}
@@ -816,7 +821,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
-				ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId()).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+				ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
+						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 			}
 

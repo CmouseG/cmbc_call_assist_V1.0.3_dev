@@ -116,7 +116,8 @@ public class CustAiAccountController {
 			//如果请求参数user是空，且是管理员，才统计全部
 			qUserId = null;
 			//是超级管理员，显示已经配置的所有用户的总共机器人数量
-			int totalAiNum = userAiCfgInfoMapperExt.countUserAi(new UserAiCfgQuery());
+			Integer totalAiNumInt = userAiCfgInfoMapperExt.countUserAi(new UserAiCfgQuery());
+			int totalAiNum = (totalAiNumInt==null)?0:totalAiNumInt;
 			userAiCfgBaseInfo = new UserAiCfgBaseInfo();
 			userAiCfgBaseInfo.setAiTotalNum(totalAiNum);
 		}else {

@@ -1002,7 +1002,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
 				ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
-						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+				.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 			}
 
@@ -1011,7 +1011,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample example = new DispatchPlanExample();
 			// 根据用户id来查询
 			example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0)
-					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 			for (DispatchPlan dispatchPlan : selectByExample) {
 				boolean res = checkStatus(status, dispatchPlan);

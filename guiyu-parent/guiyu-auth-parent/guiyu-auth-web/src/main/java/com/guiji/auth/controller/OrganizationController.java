@@ -31,6 +31,7 @@ public class OrganizationController implements IOrg{
 			throw new CheckConditionException("00010009");
 		}
 		record.setOpen("0");
+		record.setDelFlag("0");
 		record.setCreateId(userId);
 		record.setUpdateId(userId);
 		record.setCreateTime(new Date());

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2018-12-20 10:11:56
+Date: 2018-12-21 10:21:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -187,6 +187,7 @@ CREATE TABLE `dispatch_plan_1` (
 -- ----------------------------
 -- Records of dispatch_plan_1
 -- ----------------------------
+
 -- ----------------------------
 -- Table structure for `dispatch_plan_2`
 -- ----------------------------
@@ -226,7 +227,6 @@ CREATE TABLE `dispatch_plan_2` (
 -- ----------------------------
 -- Records of dispatch_plan_2
 -- ----------------------------
-INSERT INTO `dispatch_plan_2` VALUES ('226', '94624c1090764ba6bf34f78767d7555c', '118', null, '18913828775', '', '硅基科技|软件大道', '1', '0', null, null, 'zyf007_78239_en', '250', null, null, '0', '20181217', '9,10,11,12,13,14,15,16,17,18,19,20', '2018-12-17 16:48:13', '2018-12-17 16:48:13', '0', '0', '0', 'zyftest', '测试线路', 'zyf007', '89898989', '1');
 
 -- ----------------------------
 -- Table structure for `dispatch_plan_batch`
@@ -315,6 +315,23 @@ CREATE TABLE `modular_logs` (
 -- Records of modular_logs
 -- ----------------------------
 
+-- ----------------------------
+-- Table structure for `send_msg_records`
+-- ----------------------------
+DROP TABLE IF EXISTS `send_msg_records`;
+CREATE TABLE `send_msg_records` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `statusCode` varchar(1024) NOT NULL,
+  `statusMsg` varchar(1024) NOT NULL,
+  `requestId` varchar(1024) NOT NULL,
+  `phone` varchar(1024) NOT NULL,
+  `create_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of send_msg_records
+-- ----------------------------
 -- ----------------------------
 -- Table structure for `sms_platform`
 -- ----------------------------

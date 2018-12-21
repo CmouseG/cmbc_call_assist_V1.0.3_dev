@@ -30,6 +30,7 @@ public class OrganizationController implements IOrg{
 		if(!organizationService.checkName(record.getName())){
 			throw new CheckConditionException("00010009");
 		}
+		record.setOpen("0");
 		record.setCreateId(userId);
 		record.setUpdateId(userId);
 		record.setCreateTime(new Date());

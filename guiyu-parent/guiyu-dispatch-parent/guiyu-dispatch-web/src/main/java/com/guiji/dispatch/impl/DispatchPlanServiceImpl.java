@@ -1001,8 +1001,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
-				ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
-				.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+				
+				if(status.equals("1")){
+					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
+					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+				}else{
+					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
+					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+				}
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 			}
 
@@ -1010,8 +1016,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
 			// 根据用户id来查询
-			example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0)
-					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+			if(status.equals("1")){
+				example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0)
+						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+			}else{
+				example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+			}
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 			for (DispatchPlan dispatchPlan : selectByExample) {
 				boolean res = checkStatus(status, dispatchPlan);

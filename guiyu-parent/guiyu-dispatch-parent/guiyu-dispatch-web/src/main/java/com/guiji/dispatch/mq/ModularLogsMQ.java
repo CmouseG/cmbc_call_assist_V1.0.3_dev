@@ -10,4 +10,10 @@ public class ModularLogsMQ {
     public Queue ModularLogsMQ() {
         return new Queue("dispatch.ModularLogs");
     }
+    
+    @Bean
+    public Queue MessageMQ() {
+        return new Queue("dispatch.MessageMQ");
+    }
+    
 }

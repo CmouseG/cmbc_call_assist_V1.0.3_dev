@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.UserSmsConfigMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.UserSmsConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="call_result" property="callResult" jdbcType="VARCHAR" />
+    <result column="sms_tunnel_id" property="smsTunnelId" jdbcType="INTEGER" />
+    <result column="sms_template_id" property="smsTemplateId" jdbcType="INTEGER" />
+    <result column="sms_template_data" property="smsTemplateData" jdbcType="VARCHAR" />
+    <result column="create_id" property="createId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_id" property="updateId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.guiji.dispatch.dao.entity.UserSmsConfig" extends="BaseResultMap" >
+    <result column="sms_content" property="smsContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, template_id, call_result, sms_tunnel_id, sms_template_id, sms_template_data, 
+    create_id, create_time, update_id, update_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    sms_content
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfigExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_sms_config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfigExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from user_sms_config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from user_sms_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_sms_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfigExample" >
+    delete from user_sms_config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfig" >
+    insert into user_sms_config (id, user_id, template_id, 
+      call_result, sms_tunnel_id, sms_template_id, 
+      sms_template_data, create_id, create_time, 
+      update_id, update_time, sms_content
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{templateId,jdbcType=VARCHAR}, 
+      #{callResult,jdbcType=VARCHAR}, #{smsTunnelId,jdbcType=INTEGER}, #{smsTemplateId,jdbcType=INTEGER}, 
+      #{smsTemplateData,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{smsContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfig" >
+    insert into user_sms_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="callResult != null" >
+        call_result,
+      </if>
+      <if test="smsTunnelId != null" >
+        sms_tunnel_id,
+      </if>
+      <if test="smsTemplateId != null" >
+        sms_template_id,
+      </if>
+      <if test="smsTemplateData != null" >
+        sms_template_data,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateId != null" >
+        update_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="smsContent != null" >
+        sms_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="callResult != null" >
+        #{callResult,jdbcType=VARCHAR},
+      </if>
+      <if test="smsTunnelId != null" >
+        #{smsTunnelId,jdbcType=INTEGER},
+      </if>
+      <if test="smsTemplateId != null" >
+        #{smsTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="smsTemplateData != null" >
+        #{smsTemplateData,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="smsContent != null" >
+        #{smsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfigExample" resultType="java.lang.Integer" >
+    select count(*) from user_sms_config
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_sms_config
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callResult != null" >
+        call_result = #{record.callResult,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smsTunnelId != null" >
+        sms_tunnel_id = #{record.smsTunnelId,jdbcType=INTEGER},
+      </if>
+      <if test="record.smsTemplateId != null" >
+        sms_template_id = #{record.smsTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="record.smsTemplateData != null" >
+        sms_template_data = #{record.smsTemplateData,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createId != null" >
+        create_id = #{record.createId,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateId != null" >
+        update_id = #{record.updateId,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.smsContent != null" >
+        sms_content = #{record.smsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update user_sms_config
+    set id = #{record.id,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      call_result = #{record.callResult,jdbcType=VARCHAR},
+      sms_tunnel_id = #{record.smsTunnelId,jdbcType=INTEGER},
+      sms_template_id = #{record.smsTemplateId,jdbcType=INTEGER},
+      sms_template_data = #{record.smsTemplateData,jdbcType=VARCHAR},
+      create_id = #{record.createId,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_id = #{record.updateId,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      sms_content = #{record.smsContent,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_sms_config
+    set id = #{record.id,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      call_result = #{record.callResult,jdbcType=VARCHAR},
+      sms_tunnel_id = #{record.smsTunnelId,jdbcType=INTEGER},
+      sms_template_id = #{record.smsTemplateId,jdbcType=INTEGER},
+      sms_template_data = #{record.smsTemplateData,jdbcType=VARCHAR},
+      create_id = #{record.createId,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_id = #{record.updateId,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfig" >
+    update user_sms_config
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="callResult != null" >
+        call_result = #{callResult,jdbcType=VARCHAR},
+      </if>
+      <if test="smsTunnelId != null" >
+        sms_tunnel_id = #{smsTunnelId,jdbcType=INTEGER},
+      </if>
+      <if test="smsTemplateId != null" >
+        sms_template_id = #{smsTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="smsTemplateData != null" >
+        sms_template_data = #{smsTemplateData,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="smsContent != null" >
+        sms_content = #{smsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfig" >
+    update user_sms_config
+    set user_id = #{userId,jdbcType=INTEGER},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      call_result = #{callResult,jdbcType=VARCHAR},
+      sms_tunnel_id = #{smsTunnelId,jdbcType=INTEGER},
+      sms_template_id = #{smsTemplateId,jdbcType=INTEGER},
+      sms_template_data = #{smsTemplateData,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_id = #{updateId,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      sms_content = #{smsContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.UserSmsConfig" >
+    update user_sms_config
+    set user_id = #{userId,jdbcType=INTEGER},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      call_result = #{callResult,jdbcType=VARCHAR},
+      sms_tunnel_id = #{smsTunnelId,jdbcType=INTEGER},
+      sms_template_id = #{smsTemplateId,jdbcType=INTEGER},
+      sms_template_data = #{smsTemplateData,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_id = #{updateId,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

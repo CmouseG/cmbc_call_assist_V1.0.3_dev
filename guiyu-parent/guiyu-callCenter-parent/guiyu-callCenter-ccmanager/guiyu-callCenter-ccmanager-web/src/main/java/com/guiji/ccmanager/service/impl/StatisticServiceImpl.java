@@ -162,6 +162,9 @@ public class StatisticServiceImpl implements StatisticService {
             log.error("iAuth.getUserById userId[{}] has error :"+e,userId);
         }
         List<String> typeList = Arrays.asList(arr);
+        if(!typeList.contains("W")){
+            typeList.add("W");
+        }
 
         List<IntentCount> list = getIntentCountList(userId!=null ? String.valueOf(userId): null, startDate, endDate, tempId);
 

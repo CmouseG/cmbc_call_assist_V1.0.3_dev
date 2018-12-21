@@ -51,14 +51,14 @@ public class NasController implements INas {
 		logger.info("文件开始上传!", file.getName());
 		try {
 			SysFileRspVO sysFileRspVO = nasService.uploadFile(sysFileReqVO, file);
-			if (StrUtils.isNotEmpty(sysFileRspVO.getSkUrl())) {
+			/*if (StrUtils.isNotEmpty(sysFileRspVO.getSkUrl())) {
 				//返回的URL加上访问主机地址
 				sysFileRspVO.setSkUrl(sysFileRspVO.getSkUrl());
 			}
 			if (StrUtils.isNotEmpty(sysFileRspVO.getSkThumbImageUrl())) {
 				//返回的URL加上访问主机地址
 				sysFileRspVO.setSkUrl(sysFileRspVO.getSkThumbImageUrl());
-			}
+			}*/
 			logger.info("文件上传成功!", file.getName());
 			//返回成功状态和数据
 			return Result.ok(sysFileRspVO);
@@ -100,14 +100,14 @@ public class NasController implements INas {
 			for(SysFile sysFile : fileList) {
 				SysFileRspVO fileRsp = new SysFileRspVO();
 				BeanUtil.copyProperties(sysFile, fileRsp);
-				if(StrUtils.isNotEmpty(fileRsp.getSkUrl())) {
+				/*if(StrUtils.isNotEmpty(fileRsp.getSkUrl())) {
 					//返回的URL加上访问主机地址
-					fileRsp.setSkUrl(hostUrl + fileRsp.getSkUrl());
+					fileRsp.setSkUrl(fileRsp.getSkUrl());
 				}
 				if(StrUtils.isNotEmpty(fileRsp.getSkThumbImageUrl())) {
 					//返回的URL加上访问主机地址
-					fileRsp.setSkUrl(hostUrl + fileRsp.getSkThumbImageUrl());
-				}
+					fileRsp.setSkUrl(fileRsp.getSkThumbImageUrl());
+				}*/
 				fileRspList.add(fileRsp);
 			}
 			return Result.ok(fileRspList);

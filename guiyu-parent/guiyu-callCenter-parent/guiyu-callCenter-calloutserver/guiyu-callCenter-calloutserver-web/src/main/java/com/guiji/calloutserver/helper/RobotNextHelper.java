@@ -64,9 +64,19 @@ public class RobotNextHelper {
 
     public void startAiCallNextTimer(AiCallNextReq aiCallNextReq) {
         String callId = aiCallNextReq.getSeqId();
+        Channel channelInit = channelService.findByUuid(callId);
+        if(channelInit == null){ //channelInit为null表示已经hangup了，不需要后面的循环调用了,直接return
+            log.info("startAiCallNextTimer findByUuid channelInit is null callId[{}]",callId);
+            return;
+        }
+
         ScheduledFuture<?> schedule = scheduledExecutorService.scheduleAtFixedRate(() -> {
                     try {
                         Channel channel = channelService.findByUuid(callId);
+                        if(channel == null){
+                            log.info("startAiCallNextTimer findByUuid is null callId[{}]",callId);
+                            return;
+                        }
                         Long startTime = channel.getStartPlayTime().getTime();
 
                         if (channel.getEndPlayTime() != null && startTime < channel.getEndPlayTime().getTime()) {//播放结束
@@ -124,6 +134,7 @@ public class RobotNextHelper {
                     }
                 },
                 0, 500, TimeUnit.MILLISECONDS);
+
         scheduleConcurrentHashMap.put(callId, schedule);
 
     }

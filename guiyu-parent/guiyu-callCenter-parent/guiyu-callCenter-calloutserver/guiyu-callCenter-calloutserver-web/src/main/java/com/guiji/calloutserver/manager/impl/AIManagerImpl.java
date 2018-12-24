@@ -150,6 +150,7 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(callOutPlan.getCustomerId());
 
+        log.info("释放机器人资源，aiId[{}]", callOutPlan.getAiId());
         dispatchLogService.startServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求挂断");
         Result.ReturnData returnData = null;
         try {
@@ -166,7 +167,7 @@ public class AIManagerImpl implements AIManager {
                 }
             }, -1, 1, 3, 120, true);
         } catch (Exception e) {
-            log.warn("在释放机器人资源是出现异常", e);
+            log.warn("在释放机器人资源是出现异常, aiId:"+callOutPlan.getAiId(), e);
         }
         dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求挂断");
 

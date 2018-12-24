@@ -154,7 +154,7 @@ public class CallPlanDispatchHandler {
 //            如果申请机器人异常 ，回掉失败给调度中心,下次还可以拉取该次通话
 //              callResourceChecker.checkCallResources(callPlan);
 //                    callResourceChecker.checkTemp(callPlan.getTempId());
-//        checkTts(callOutPlan);
+//        checkTts(callOutPlan)
                     log.info("开始检查机器人资源");
                     callResourceChecker.checkSellbot(callPlan);
                 }catch (NullPointerException e){

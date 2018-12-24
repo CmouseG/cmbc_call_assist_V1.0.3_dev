@@ -1,5 +1,6 @@
 package com.guiji.process.server.controller;
 
+import com.guiji.process.core.message.CmdProtoMessage;
 import com.guiji.process.core.message.Message;
 import com.guiji.process.server.core.ConnectionPool;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,9 +26,14 @@ public class MessageController {
 	@GetMapping("/push")
 	public Object pushAllMessage(String content) {
 		ConnectionPool.getChannels().forEach(c -> {
-			Message message = new Message();
+			//发送响应
+			CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder().setType(2);
+			builder.setContent(content);
+			c.writeAndFlush(builder);
+
+			/*Message message = new Message();
 			message.setContent(content);
-			c.writeAndFlush(content);
+			c.writeAndFlush(content);*/
 		});
 		return "success";
 	}
@@ -41,9 +47,13 @@ public class MessageController {
 	@GetMapping("/push/{clientId}")
 	public Object pushAllMessage(@PathVariable("clientId")String clientId, String content) {
 		ChannelHandlerContext channel = ConnectionPool.getChannel(clientId);
-		Message message = new Message();
+		//发送响应
+		CmdProtoMessage.ProtoMessage.Builder builder = CmdProtoMessage.ProtoMessage.newBuilder().setType(2);
+		builder.setContent(content);
+		channel.writeAndFlush(builder);
+		/*Message message = new Message();
 		message.setContent(content);
-		channel.writeAndFlush(content);
+		channel.writeAndFlush(content);*/
 		return "success";
 	}
 	

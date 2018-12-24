@@ -34,7 +34,6 @@ public class ModularMqListener {
 	@RabbitHandler
 	public void process(String message,Channel channel,Message message2) {
 		try {
-			logger.info("消费数据message"+message);
 			ModularLogs logs = JsonUtils.json2Bean(message, ModularLogs.class);
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(logs.getPlanUuid());

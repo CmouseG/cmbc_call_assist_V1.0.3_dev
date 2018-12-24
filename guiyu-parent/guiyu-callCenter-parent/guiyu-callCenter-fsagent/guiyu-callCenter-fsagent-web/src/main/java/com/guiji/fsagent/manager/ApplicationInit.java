@@ -47,7 +47,7 @@ public class ApplicationInit {
             freeSwitch = new FreeSWITCH(fsConfig.getHomeDir(), serviceId);
             ReloadLine();
         } catch (Exception e) {
-            log.warn("初始化fsagent出现异常", e);
+            logger.warn("初始化fsagent出现异常", e);
             //TODO: 报警
         }
     }

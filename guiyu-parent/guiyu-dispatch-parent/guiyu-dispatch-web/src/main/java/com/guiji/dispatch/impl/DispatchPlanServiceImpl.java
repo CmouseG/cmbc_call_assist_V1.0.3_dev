@@ -331,7 +331,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			if (phones.size() != hashSet.size()) {
 				throw new Exception("当前号码存在重复的数据,请检查文件");
 			}
-			System.out.println("---------------------" + phone);
 			dispatchPlan.setPhone(phone);
 			dispatchPlan.setAttach(attach);
 			dispatchPlan.setUserId(userId.intValue());
@@ -361,7 +360,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 //		} else {
 //			throw new Exception("请求校验参数失败,请检查机器人的参数");
 //		}
-		System.out.println(succ);
+		logger.info("-----------------------------11111111111111111111111111---------------------");
 		List<List<DispatchPlan>> averageAssign = averageAssign(succ, 10);
 		for (List<DispatchPlan> tmpList : averageAssign) {
 			logger.info("批量插入开始--------------");

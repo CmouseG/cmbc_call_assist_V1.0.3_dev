@@ -3,6 +3,7 @@ package com.guiji.ccmanager.service.impl;
 import ai.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
+import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallDetailUpdateReq;
@@ -101,6 +102,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             criteria.andIsreadEqualTo(Integer.valueOf(isRead));
         }
         criteria.andIsdelEqualTo(0);
+        criteria.andCallStateGreaterThanOrEqualTo(Constant.CALLSTATE_HANGUP_OK);
         return example;
     }
 

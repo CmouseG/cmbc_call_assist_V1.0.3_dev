@@ -39,6 +39,7 @@ public class Constant {
     public static final int CALLSTATE_TO_AGENT = 4;//转人工
     public static final int CALLSTATE_AGENT_ANSWER = 5;//座席应答管段刚加入的计划，等待调度
     public static final int CALLSTATE_HANGUP = 6;//挂断
+    public static final int CALLSTATE_HANGUP_OK =7;//呼叫成功挂断
 
 
     public static final String CODEC_PCMA = "PCMA";

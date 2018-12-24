@@ -264,7 +264,20 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				}
 				//查询用户已分配的机器人
 				List<AiInuseCache> userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
-				if(StrUtils.isNotEmpty(userResourceCache.getChgStatus())){
+				//如果没有分配机器人，不需要校验资源变更状态，直接分配
+				if(userAiInuseList == null || userAiInuseList.isEmpty()) {
+					//用户资源没有变化，但是如果用户现在还没有分配资源，那么重新分配机器人
+					//本次需要申请的机器人数量
+					int addAiNum = userResourceCache.getAiNum();
+					logger.info("用户{}现在还没有初始化可用资源，重新分配{}个机器人",userResourceCache.getUserId(),addAiNum);
+					if(addAiNum > 0) {
+						AiResourceApply aiResourceApply = new AiResourceApply();
+						aiResourceApply.setUserId(userId);
+						aiResourceApply.setAiNum(addAiNum);
+						iAiResourceManagerService.aiAssign(aiResourceApply);
+					}
+				}else if(StrUtils.isNotEmpty(userResourceCache.getChgStatus())){
+					//否则已经分配过机器人,那么根据资源变更状态,重新分配下
 					if(RobotConstants.USER_CHG_STATUS_A.equals(userResourceCache.getChgStatus())) {
 						//用户资源增加
 						//本次需要申请的机器人数量
@@ -289,20 +302,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 						//用户资源减少，先将现在空闲的机器人释放掉
 						this.releaseFreeAi(userId,userAiInuseList);
 						throw new RobotException(AiErrorEnum.AI00060004.getErrorCode(),AiErrorEnum.AI00060004.getErrorMsg());
-					}
-				}else {
-					//用户资源没有变化
-					if(userAiInuseList == null || userAiInuseList.isEmpty()) {
-						//用户资源没有变化，但是如果用户现在还没有分配资源，那么重新分配机器人
-						//本次需要申请的机器人数量
-						int addAiNum = userResourceCache.getAiNum();
-						logger.info("用户{}现在还没有初始化可用资源，重新分配{}个机器人",userResourceCache.getUserId(),addAiNum);
-						if(addAiNum > 0) {
-							AiResourceApply aiResourceApply = new AiResourceApply();
-							aiResourceApply.setUserId(userId);
-							aiResourceApply.setAiNum(addAiNum);
-							iAiResourceManagerService.aiAssign(aiResourceApply);
-						}
 					}
 				}
 				/**3、机器人分配 **/

@@ -620,7 +620,6 @@
 		<if test="line != null">
 			and line = #{line}
 		</if>
-
 		<if test="flag != null">
 			and flag = #{flag}
 		</if>
@@ -665,22 +664,24 @@
 		</foreach>
 	</insert>
 
-	<update id="updateDispatchPlanList" parameterType="java.util.List">
+	<update id="updateDispatchPlanList" parameterType="map">
 		update dispatch_plan
-		
-		<trim prefix="set" suffixOverrides=",">
-            <trim prefix="status_sync =case" suffix="end,">
-                <foreach collection="list" item="item" index="index">
-                     when plan_uuid=#{item.planUuid} then #{item.statusSync}
-                </foreach>
-            </trim>
-        </trim>
-		<!--<if test="_parameter != null" > <include refid="Update_By_Example_Where_Clause" 
-			/> </if> -->
-		where plan_uuid in
- 	<foreach collection="list" index="index" item="item" separator="," open="(" close=")">
-            #{item.planUuid,jdbcType=VARCHAR}
+		  set flag = #{flag}
+			where plan_uuid in
+         <foreach item="item" index="index" collection="params" open="("
+            separator="," close=")">
+               #{item}
         </foreach>
-
 	</update>
+	
+		<update id="updateDispatchPlanListByStatus" parameterType="map">
+		update dispatch_plan
+		  set status_plan = #{status}
+			where plan_uuid in
+         <foreach item="item" index="index" collection="params" open="("
+            separator="," close=")">
+               #{item}
+        </foreach>
+	</update>
+	
 </mapper>

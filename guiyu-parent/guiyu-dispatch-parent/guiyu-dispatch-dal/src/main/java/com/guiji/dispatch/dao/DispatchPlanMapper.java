@@ -3,6 +3,8 @@ package com.guiji.dispatch.dao;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface DispatchPlanMapper {
@@ -32,6 +34,8 @@ public interface DispatchPlanMapper {
 
 	int insertDispatchPlanList(List<DispatchPlan> list);
 	
-	int updateDispatchPlanList(List<DispatchPlan> list);
-
+	int updateDispatchPlanList(@Param("params") List<String> list , @Param("flag")String flag);
+	
+	int updateDispatchPlanListByStatus(@Param("params") List<String> list , @Param("status")String status);
+	
 }

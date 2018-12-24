@@ -20,7 +20,6 @@ import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +62,7 @@ public class RobotNextHelper {
     }
 
     public void startAiCallNextTimer(AiCallNextReq aiCallNextReq) {
+        log.info("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
         String callId = aiCallNextReq.getSeqId();
         Channel channelInit = channelService.findByUuid(callId);
         if(channelInit == null){ //channelInit为null表示已经hangup了，不需要后面的循环调用了,直接return
@@ -72,6 +72,7 @@ public class RobotNextHelper {
 
         ScheduledFuture<?> schedule = scheduledExecutorService.scheduleAtFixedRate(() -> {
                     try {
+                        log.info("根据callId[{}]获取channel", callId);
                         Channel channel = channelService.findByUuid(callId);
                         if(channel == null){
                             log.info("startAiCallNextTimer findByUuid is null callId[{}]",callId);

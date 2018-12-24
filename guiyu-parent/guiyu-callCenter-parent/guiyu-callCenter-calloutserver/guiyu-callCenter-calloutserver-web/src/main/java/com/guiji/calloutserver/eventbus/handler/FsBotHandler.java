@@ -26,6 +26,7 @@ import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.metadata.CallParameterMetaData;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -314,11 +315,12 @@ public class FsBotHandler {
         log.info("收到Hangup事件[{}], 准备进行处理", event);
 
         try {
-
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
             if (callPlan == null) {
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;
+            }else{
+                log.info("根据挂断事件找到CallOutPlan[{}]", callPlan.getCallId());
             }
 
             String hangUp = event.getSipHangupCause();
@@ -326,6 +328,7 @@ public class FsBotHandler {
             //将calloutdetail里面的意向标签更新到calloutplan里面
             CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
             if (callOutDetail != null) {
+                log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
                 callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                 callPlan.setReason(callOutDetail.getReason());
             } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
@@ -358,16 +361,20 @@ public class FsBotHandler {
             callOutPlanService.update(callPlan);
 
             //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
+            log.info("构建afterCallEvent，后续流转");
             AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan, false);
             asyncEventBus.post(afterCallEvent);
 
             //报表统计事件
+            log.info("构建StatisticReportEvent，报表流转");
             StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
             asyncEventBus.post(statisticReportEvent);
 
             //释放实时通道相关资源
+            log.info("开始释放Channel资源,uuid[{}]", event.getUuid());
             channelHelper.hangup(event.getUuid());
             //释放ai资源
+            log.info("开始释放ai资源,callplanId[{}], aiId[{}]", callPlan.getCallId(), callPlan.getAiId());
             aiManager.releaseAi(callPlan);
 
         } catch (Exception ex) {

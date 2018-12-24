@@ -66,7 +66,6 @@ public class RobotNextHelper {
         String callId = aiCallNextReq.getSeqId();
         ScheduledFuture<?> schedule = scheduledExecutorService.scheduleAtFixedRate(() -> {
                     try {
-                        log.debug("-------------start  schedule aiCallNext callId:" + callId);
                         Channel channel = channelService.findByUuid(callId);
                         Long startTime = channel.getStartPlayTime().getTime();
 
@@ -81,6 +80,7 @@ public class RobotNextHelper {
                             aiCallNextReq.setStatus("1");
                             aiCallNextReq.setTimestamp(channel.getStartPlayTime().getTime());
                         }
+                        log.info("-------------start  robotRemote aiCallNext callId:" + callId);
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
                         String status = aiCallNext.getHelloStatus();
@@ -120,7 +120,7 @@ public class RobotNextHelper {
                             dealWithResponse(aiResponse);
                         }
                     } catch (Exception e) {
-                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: callId[{}]:"+e, callId);
+                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: callId[{}]:",e, callId);
                     }
                 },
                 0, 500, TimeUnit.MILLISECONDS);

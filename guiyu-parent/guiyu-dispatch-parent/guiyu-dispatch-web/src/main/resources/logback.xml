@@ -50,11 +50,11 @@
     </appender>
 
 
-    <logger name="com.guiji.dispatch.dao" level="info">
+    <logger name="com.guiji.dispatch.dao" level="debug">
         <appender-ref ref="SQL"/>
     </logger>
     
-    <logger name="ai.guiji.user.dao" level="info">
+    <logger name="ai.guiji.user.dao" level="debug">
         <appender-ref ref="SQL"/>
     </logger>
     

@@ -35,7 +35,6 @@ public class MessageMQListtener {
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
-		logger.info("MessageMQListtener消费数据message" + message);
 		try {
 			sendMsgDto msgDto = JsonUtils.json2Bean(message, sendMsgDto.class);
 			String url = "http://api.ytx.net/" + "201512/sid/" + msgDto.getAccountSID() + "/"
@@ -71,7 +70,6 @@ public class MessageMQListtener {
 			msgRe.setStatuscode(statusCode);
 			msgRe.setStatusmsg(statusMsg);
 			int insert = sendMsgMapper.insert(msgRe);
-			logger.info("-----------------记录短信记录-------------------");
 		} catch (Exception e) {
 			logger.info("error",e);
 			try {

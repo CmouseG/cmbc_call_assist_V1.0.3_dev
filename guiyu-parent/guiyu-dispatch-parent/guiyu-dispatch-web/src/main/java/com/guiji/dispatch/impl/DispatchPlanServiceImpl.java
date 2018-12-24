@@ -246,16 +246,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean OperationAllDispatchByUserId(Integer userId, Integer status) {
-		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andUserIdEqualTo(userId);
-		List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
-		int result = 0;
-		for (DispatchPlan batch : list) {
-			DispatchPlan dispatchPlan = new DispatchPlan();
-			dispatchPlan.setUserId(batch.getUserId());
-			dispatchPlan.setStatusPlan(status);
-			result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
-		}
+		DispatchPlan dispatchPlan = new DispatchPlan();
+		dispatchPlan.setUserId(userId);
+		dispatchPlan.setStatusPlan(status);
+		logger.info("OperationAllDispatchByUserId updateByExample");
+		int result = 	dispatchPlanMapper.updateByExample(dispatchPlan, new DispatchPlanExample());
+		logger.info("OperationAllDispatchByUserId end");
 		return result > 0 ? true : false;
 	}
 
@@ -290,6 +286,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
+		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
 		if (SysUser != null) {
@@ -297,7 +294,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		// 重复校验
 		List phones = new ArrayList<>();
-
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			if (row == null) {
@@ -361,9 +357,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 
 			dispatchPlanMapper.insert(dispatchPlan);
-			dispatchPlanBatch.setId(null);
-			dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		}
+		dispatchPlanBatch.setId(null);
+		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+
 		return result;
 	}
 
@@ -625,7 +622,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// logger.info("-----------------记录短信记录-------------------");
 
 		} else {
-			logger.info("当前用户没配置短信");
+			logger.info("当前用户没信息");
 		}
 
 		return true;
@@ -935,6 +932,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		// flag
 		dis.setFlag(Constant.IS_FLAG_0);
+		// 设置分页
+		dis.setLimitStart(0);
+		dis.setLimitEnd(1000);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
 		return phones;
 	}
@@ -1001,27 +1001,30 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
-				
-				if(status.equals("1")){
+
+				if (status.equals("1")) {
 					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
-					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
-				}else{
+							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
+							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+				} else {
 					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
-					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 				}
+				logger.info("operationAllPlanByBatchId开始时间");
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
+				logger.info("operationAllPlanByBatchId结束时间");
 			}
 
 		} else {
 			DispatchPlan dis = new DispatchPlan();
 			DispatchPlanExample example = new DispatchPlanExample();
 			// 根据用户id来查询
-			if(status.equals("1")){
+			if (status.equals("1")) {
 				example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0)
 						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
-			}else{
+			} else {
 				example.createCriteria().andUserIdEqualTo(userId.intValue()).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 			}
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 			for (DispatchPlan dispatchPlan : selectByExample) {
@@ -1030,7 +1033,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					continue;
 				}
 				dis.setStatusPlan(Integer.valueOf(status));
+				logger.info("operationAllPlanByBatchId开始时间");
 				dispatchPlanMapper.updateByExampleSelective(dis, example);
+				logger.info("operationAllPlanByBatchId结束时间");
 			}
 			// DispatchPlan dis1 = new DispatchPlan();
 			// if (selectByExample.size() > 0) {
@@ -1045,6 +1050,25 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// dis.setStatusPlan(Integer.valueOf(status));
 			// dispatchPlanMapper.updateByExampleSelective(dis, example);
 			// }
+		}
+		return result;
+	}
+
+	public static <T> List<List<T>> averageAssign(List<T> source, int n) {
+		List<List<T>> result = new ArrayList<List<T>>();
+		int remaider = source.size() % n; // (先计算出余数)
+		int number = source.size() / n; // 然后是商
+		int offset = 0;// 偏移量
+		for (int i = 0; i < n; i++) {
+			List<T> value = null;
+			if (remaider > 0) {
+				value = source.subList(i * number + offset, (i + 1) * number + offset + 1);
+				remaider--;
+				offset++;
+			} else {
+				value = source.subList(i * number + offset, (i + 1) * number + offset);
+			}
+			result.add(value);
 		}
 		return result;
 	}
@@ -1128,20 +1152,17 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ids.add(dispatchPlan.getPlanUuid());
 		}
 		int result = -1;
-		for (String id : ids) {
-			DispatchPlan dis = new DispatchPlan();
-			DispatchPlanExample ex = new DispatchPlanExample();
-			ex.createCriteria().andPlanUuidEqualTo(id);
-			dis.setFlag(flag);
-			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
-		}
-
-		// List<DispatchPlan> modList = new ArrayList<>();
-		// for(DispatchPlan dis : modList){
+		// for (String id : ids) {
+		// DispatchPlan dis = new DispatchPlan();
+		// DispatchPlanExample ex = new DispatchPlanExample();
+		// ex.createCriteria().andPlanUuidEqualTo(id);
 		// dis.setFlag(flag);
+		// result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		// }
-		// result = dispatchPlanMapper.updateDispatchPlanList(modList);
-		//
+		// Map<String, Object> = new
+		// map.put("flag",flag);
+		// map.put("list", ids);
+		result = dispatchPlanMapper.updateDispatchPlanList(ids, flag);
 		return result > 0 ? true : false;
 	}
 
@@ -1160,6 +1181,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setStatusPlan(Constant.STATUSPLAN_1);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setFlag(flag);
+		dis.setLimitStart(0);
+		dis.setLimitEnd(1000);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
 		return phones;
 	}

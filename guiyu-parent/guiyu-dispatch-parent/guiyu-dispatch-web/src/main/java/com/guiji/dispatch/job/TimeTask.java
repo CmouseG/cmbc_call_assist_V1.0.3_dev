@@ -36,7 +36,7 @@ import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.RedisUtil;
 
 //@Component
- @RestController
+@RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -56,7 +56,7 @@ public class TimeTask {
 	DistributedLockHandler distributedLockHandler;
 	@Autowired
 	private IModularLogsService modularLogs;
-	
+
 	/**
 	 * 捞取号码初始化资源
 	 */
@@ -78,6 +78,7 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info("捞取号码初始化资源..");
 				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
+				logger.info("数量size"+list.size());
 				List<HsParam> sendData = new ArrayList<>();
 				for (DispatchPlan dispatchPlan : list) {
 					HsParam hsParam = new HsParam();
@@ -96,7 +97,9 @@ public class TimeTask {
 
 				// 批量修改状态flag
 				if (list.size() > 0) {
+					logger.info("selectPhoneInit修改开始......");
 					dispatchPlanService.batchUpdateFlag(list, Constant.IS_FLAG_1);
+					logger.info("selectPhoneInit修改结束......");
 				}
 				logger.info("有一批数据调用初始化资源结果数量....." + list.size());
 				distributedLockHandler.releaseLock(lock); // 释放锁
@@ -138,7 +141,7 @@ public class TimeTask {
 					req.setSeqid(dis.getPlanUuid());
 					req.setTemplateId(dis.getRobot());
 					ttsVoiceReqList.add(req);
-					
+
 					ModularLogs log = new ModularLogs();
 					log.setCreateTime(DateUtil.getCurrent4Time());
 					log.setModularName(Constant.MODULAR_NAME_DISPATCH);
@@ -150,7 +153,7 @@ public class TimeTask {
 					beforeLogs.add(log);
 				}
 				modularLogs.notifyLogsList(beforeLogs);
-				
+
 				ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck = robotRemote.ttsComposeCheck(ttsVoiceReqList);
 				List<DispatchPlan> successList = new ArrayList<>();
 
@@ -159,7 +162,7 @@ public class TimeTask {
 					if (ttsComposeCheck.getBody() != null) {
 						List<TtsComposeCheckRsp> body = ttsComposeCheck.getBody();
 						for (TtsComposeCheckRsp tts : body) {
-							//记录logs
+							// 记录logs
 							ModularLogs log = new ModularLogs();
 							log.setCreateTime(DateUtil.getCurrent4Time());
 							log.setModularName(Constant.MODULAR_NAME_DISPATCH);
@@ -171,7 +174,7 @@ public class TimeTask {
 								dis.setFlag(Constant.IS_FLAG_2);
 								dis.setPlanUuid(tts.getSeqId());
 								successList.add(dis);
-							}else if (tts.getStatus().equals("F")){
+							} else if (tts.getStatus().equals("F")) {
 								log.setStatus(Constant.MODULAR_STATUS_ERROR);
 								log.setMsg("校验资源状态返回结果为F");
 							}
@@ -185,7 +188,19 @@ public class TimeTask {
 				logger.info("当前准备好的资源号码有:" + successList.size());
 				boolean batchUpdateFlag = false;
 				if (successList.size() > 0) {
+					// List<List<DispatchPlan>> averageAssign =
+					// averageAssign(successList, 30);
+					// int count = 1;
+					// for (List<DispatchPlan> list : averageAssign) {
+					// logger.info("批量修改了{}次结束了" + count);
+					logger.info("getResourceResult修改开始......");
 					batchUpdateFlag = dispatchPlanService.batchUpdateFlag(successList, Constant.IS_FLAG_2);
+					logger.info("getResourceResult修改结束......");
+					// count++;
+					// }
+					// batchUpdateFlag =
+					// dispatchPlanService.batchUpdateFlag(successList,
+					// Constant.IS_FLAG_2);
 				}
 				logger.info("获取当前初始化号码的请求资源结果修改当结果" + batchUpdateFlag);
 				distributedLockHandler.releaseLock(lock); // 释放锁
@@ -195,6 +210,31 @@ public class TimeTask {
 		} finally {
 			distributedLockHandler.releaseLock(lock); // 释放锁
 		}
+	}
+
+	/**
+	 * 将一个list均分成n个list,主要通过偏移量来实现的
+	 * 
+	 * @param source
+	 * @return
+	 */
+	public static <T> List<List<T>> averageAssign(List<T> source, int n) {
+		List<List<T>> result = new ArrayList<List<T>>();
+		int remaider = source.size() % n; // (先计算出余数)
+		int number = source.size() / n; // 然后是商
+		int offset = 0;// 偏移量
+		for (int i = 0; i < n; i++) {
+			List<T> value = null;
+			if (remaider > 0) {
+				value = source.subList(i * number + offset, (i + 1) * number + offset + 1);
+				remaider--;
+				offset++;
+			} else {
+				value = source.subList(i * number + offset, (i + 1) * number + offset);
+			}
+			result.add(value);
+		}
+		return result;
 	}
 
 	/**
@@ -267,27 +307,26 @@ public class TimeTask {
 		}
 	}
 
-	 @Scheduled(cron = "0 0/1 * * * ?")
-//	@PostMapping("reTryThirdInterface")
+	@Scheduled(cron = "0 0/1 * * * ?")
+	// @PostMapping("reTryThirdInterface")
 	public void reTryThirdInterface() {
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
-			logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
 		Lock lock = new Lock("reTryThirdInterfaceJob.TimeTask", "reTryThirdInterfaceJob.TimeTask");
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				ThirdInterfaceRecordsExample ex = new ThirdInterfaceRecordsExample();
-				//大于0
+				// 大于0
 				ex.createCriteria().andTimesGreaterThan(0);
-				List<ThirdInterfaceRecords> selectByExample = thirdInterfaceRecordsMapper
-						.selectByExample(ex);
+				List<ThirdInterfaceRecords> selectByExample = thirdInterfaceRecordsMapper.selectByExample(ex);
 				for (ThirdInterfaceRecords record : selectByExample) {
 					try {
 						String result = HttpClientUtil.doPostJson(record.getUrl(), record.getParams());

@@ -120,7 +120,7 @@ public class RobotNextHelper {
                             dealWithResponse(aiResponse);
                         }
                     } catch (Exception e) {
-                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: callId[{}]:",e, callId);
+                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: ",e);
                     }
                 },
                 0, 500, TimeUnit.MILLISECONDS);

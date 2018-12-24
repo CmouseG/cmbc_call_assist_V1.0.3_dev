@@ -6,8 +6,8 @@ spring:
   application:
     name: guiyu-cloud-zuul
   zipkin:
-      base-url: http://guiyu-cloud-monitor:18003
-      enabled: true
+    base-url: http://guiyu-cloud-monitor:18003
+    enabled: true
   http:
     encoding:
       charset: UTF-8
@@ -60,10 +60,10 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 10
   client:
-      service-url:
-        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
-      instance:
-        status-page-url: http://localhost:18000/swagger-ui.html
+    service-url:
+      defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+    instance:
+      status-page-url: http://localhost:18000/swagger-ui.html
 ##网关地址
 gateway:
    host: http://guiyu-cloud-zuul:18000/

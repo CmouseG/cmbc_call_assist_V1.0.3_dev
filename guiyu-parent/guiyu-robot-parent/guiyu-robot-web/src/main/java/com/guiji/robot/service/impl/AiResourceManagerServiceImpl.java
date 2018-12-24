@@ -205,7 +205,6 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			ProcessReleaseVO processReleaseVO = new ProcessReleaseVO();
 			processReleaseVO.setProcessInstanceVOS(processList);
 			iProcessSchedule.release(processReleaseVO);
-			iProcessSchedule.release(processReleaseVO);
     		//清理该用户分配机器人缓存数据
     		aiCacheService.delUserAis(aiList.get(0).getUserId());
 			//异步记录日志

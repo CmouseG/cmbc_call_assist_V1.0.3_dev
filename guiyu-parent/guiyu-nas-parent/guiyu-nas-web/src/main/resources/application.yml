@@ -33,8 +33,8 @@ eureka:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
-      service-url:
-        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+    service-url:
+      defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 #fastdfs配置
 fdfs:
   soTimeout: 1500         #获取文件超时时间

@@ -44,7 +44,7 @@ public class UserIdZuulFilter extends ZuulFilter{
 			ctx.addZuulRequestHeader("orgCode", orgCode.toString());
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
 		} catch (NullPointerException e) {
-			e.printStackTrace();
+			logger.error("userIdZuulFilter:" + e.getMessage());
 			//处理下一些特殊不需要user的场景
 //			if(!isWiteIpFlag) {
 //				throw new ZuulException(ZuulErrorEnum.Zuul00010001.getErrorCode(),ZuulErrorEnum.Zuul00010001.getErrorMsg());

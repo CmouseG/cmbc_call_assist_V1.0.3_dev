@@ -67,6 +67,7 @@ public class RequestHelper {
                 if(result!=null){
                     //请求成功立刻返回
                     if(result.success){
+                        isContinue = false;
                         return result;
                     }else{
                         requestApi.onErrorResult(result);
@@ -81,21 +82,18 @@ public class RequestHelper {
                 if(!unStopFlag){
                     retryTimes--;
                 }
-
-                if(unStopFlag || retryTimes>0) {
+                if(isContinue && (unStopFlag || retryTimes>0)) {
                     totalDelaySeconds += delaySeconds;
                     int totalSleepSeconds = (retryInterval + totalDelaySeconds);
                     if (totalSleepSeconds >= maxRetryInterval) {
                         totalSleepSeconds = maxRetryInterval;
                     }
                     Thread.sleep(totalSleepSeconds * 1000L);
-                     isContinue = true;
                 }else{
                     isContinue = false;
                 }
             }
 
-//            System.out.println(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()) + ",  retryTimes:"+retryTimes+",totalDelaySeconds = [" + totalDelaySeconds + "], totalSleepSeconds = [" + totalSleepSeconds + "], isContinue = [" + isContinue + "]");
         }while (isContinue);
 
         return null;

@@ -149,7 +149,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<Map<String, Object>> getIntentCount(Long userId, String startDate, String endDate, String tempId) throws ParseException {
+    public List<Map<String, Object>> getIntentCount(Boolean isSuperAdmin, Long userId, String startDate, String endDate, String tempId) throws ParseException {
 
         String[] arr = {"A","B","C","D","E","F","W"};
         try{
@@ -161,12 +161,12 @@ public class StatisticServiceImpl implements StatisticService {
         }catch (Exception e){
             log.error("iAuth.getUserById userId[{}] has error :"+e,userId);
         }
-        List<String> typeList = Arrays.asList(arr);
+        List<String> typeList = new ArrayList<>(Arrays.asList(arr));
         if(!typeList.contains("W")){
             typeList.add("W");
         }
 
-        List<IntentCount> list = getIntentCountList(userId!=null ? String.valueOf(userId): null, startDate, endDate, tempId);
+        List<IntentCount> list = getIntentCountList(!isSuperAdmin ? String.valueOf(userId): null, startDate, endDate, tempId);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date sDate = sdf.parse(startDate);

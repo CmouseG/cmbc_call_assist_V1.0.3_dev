@@ -287,7 +287,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-
+		
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
 
@@ -348,23 +348,24 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			succ.add(dispatchPlan);
 		}
 		// 检查校验参数
-//		ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
-//		if (checkParams.success) {
-//			if (checkParams.getBody() != null) {
-//				List<CheckResult> body = checkParams.getBody();
-//				CheckResult checkResult = body.get(0);
-//				if (!checkResult.isPass()) {
-//					throw new Exception("机器人合成" + checkResult.getCheckMsg());
-//				}
-//			}
-//		} else {
-//			throw new Exception("请求校验参数失败,请检查机器人的参数");
-//		}
+		// ReturnData<List<CheckResult>> checkParams =
+		// checkParams(dispatchPlan);
+		// if (checkParams.success) {
+		// if (checkParams.getBody() != null) {
+		// List<CheckResult> body = checkParams.getBody();
+		// CheckResult checkResult = body.get(0);
+		// if (!checkResult.isPass()) {
+		// throw new Exception("机器人合成" + checkResult.getCheckMsg());
+		// }
+		// }
+		// } else {
+		// throw new Exception("请求校验参数失败,请检查机器人的参数");
+		// }
 		logger.info("-----------------------------11111111111111111111111111---------------------");
 		List<List<DispatchPlan>> averageAssign = averageAssign(succ, 10);
 		for (List<DispatchPlan> tmpList : averageAssign) {
 			logger.info("批量插入开始--------------");
-			if(tmpList.size()>0){
+			if (tmpList.size() > 0) {
 				dispatchPlanMapper.insertDispatchPlanList(tmpList);
 			}
 			logger.info("批量插入结束-----------------");
@@ -373,7 +374,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		return result;
 	}
-	
 
 	public boolean isNumeric(String str) {
 		Pattern pattern = Pattern.compile("[0-9]*");
@@ -1010,7 +1010,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
-
 				if (status.equals("1")) {
 					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
@@ -1051,8 +1050,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			logger.info("当前update size" + averageAssign.size());
 			for (List<String> list : averageAssign) {
 				logger.info("start ");
-				dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
-				logger.info("end ");
+				if (list.size() > 0) {
+					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
+				}
+				logger.info("end");
 			}
 		}
 		return result;
@@ -1078,7 +1079,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	private boolean checkStatus(String status, DispatchPlan dispatchPlan) {
-
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {

@@ -45,12 +45,12 @@ public class TemplateController implements ITemplate {
 
     @Override
     public Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO) {
-        logger.info("收到上传录音请求RecordReqVO[{}]", recordReqVO);
         if (StringUtils.isBlank(recordReqVO.getFileName()) || StringUtils.isBlank(recordReqVO.getBusiId()) ||
                 StringUtils.isBlank(recordReqVO.getBusiType()) || StringUtils.isBlank(recordReqVO.getSysCode())) {
             logger.info("上传录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
+        logger.info("收到上传录音请求RecordReqVO[{}]", recordReqVO);
         RecordVO result = templateService.uploadrecord(recordReqVO);
         return Result.ok(result);
     }

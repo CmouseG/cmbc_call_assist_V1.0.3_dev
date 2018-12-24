@@ -15,8 +15,8 @@ public class SysOrganization implements Serializable {
     private String robot;
 
     private String line;
-	private String open="0";
-    private String delFlag="0";
+	private String open;
+    private String delFlag;
 
     private Long createId;
 

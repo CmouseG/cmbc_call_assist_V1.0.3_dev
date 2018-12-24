@@ -76,6 +76,9 @@ public class NasServiceImpl implements NasService {
 				skFile.setLstUpdateUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null);	//最后更新人
 			}
 			skFile.setFileName(fileName); //文件名称
+			if (file.getSize() <= 0) {//文件大小不能为0
+				throw new GuiyuException(GuiyuNasExceptionEnum.EXCP_NAS_UPLOAD_FILE_SIZE_NOTNULL);
+			}
 			skFile.setFileSize(Double.longBitsToDouble(file.getSize())); //文件大小
 			skFile.setFileType(StrUtils.isNotEmpty(ext) ? ext.toUpperCase() : null); //文件后缀，存储大写
 			skFile.setSkUrl(url); //文件URL

@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysOrganizationMapper;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysOrganizationExample;
+import com.guiji.user.dao.entity.SysOrganizationExample.Criteria;
 
 @Service
 public class OrganizationService {
@@ -20,9 +20,7 @@ public class OrganizationService {
 	private SysOrganizationMapper sysOrganizationMapper;
 	
 	public void add(SysOrganization record){
-		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andCodeLike(record.getCode()+"._");
-		int num=sysOrganizationMapper.countByExample(example);
+		int num=sysOrganizationMapper.countCode(record.getCode());
 		String code=record.getCode()+"."+(num+1);
 		record.setCode(code);
 		sysOrganizationMapper.insert(record);
@@ -51,7 +49,7 @@ public class OrganizationService {
 		SysOrganizationExample example=new SysOrganizationExample();
 		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("1");
 		int num=sysOrganizationMapper.countByExample(example);
-		List<Object> list=sysOrganizationMapper.selectByPage(page);
+		List<Object> list=sysOrganizationMapper.selectOpenByPage(page);
 		page.setTotal(num);
 		page.setRecords(list);
 		return page;

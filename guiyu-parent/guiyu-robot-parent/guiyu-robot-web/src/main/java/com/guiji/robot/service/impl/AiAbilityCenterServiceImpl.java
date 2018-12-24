@@ -336,9 +336,18 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				nowAi.setSeqId(aiCallApplyReq.getSeqId());
 				nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
 				iAiResourceManagerService.aiBusy(nowAi);
-				/**5、记录调用中心log**/
+				/**5、保存一通电话记录(放最后) **/
+				RobotCallHis robotCallHis = new RobotCallHis();
+				robotCallHis.setUserId(userId);
+				robotCallHis.setAiNo(nowAi.getAiNo());
+				robotCallHis.setSeqId(aiCallApplyReq.getSeqId());
+				robotCallHis.setTemplateId(aiCallApplyReq.getTemplateId());
+				robotCallHis.setAssignTime(new Date());
+				robotCallHis.setCallStatus(RobotConstants.CALLINT_STATUS_I);	//通话中
+				robotNewTransService.recordRobotCallHis(robotCallHis);
+				/**6、记录调用中心log**/
 				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "机器人申请成功,机器人编号:"+nowAi.getAiNo());
-				/**6、返回**/
+				/**7、返回**/
 				AiCallNext aiCallNext = new AiCallNext();
 				aiCallNext.setAiNo(nowAi.getAiNo());
 				return aiCallNext;
@@ -430,16 +439,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());
 			aiNext.setSellbotJson(sellbotRsp);
-			/**6、保存一通电话记录(放最后) **/
-			RobotCallHis robotCallHis = new RobotCallHis();
-			robotCallHis.setUserId(userId);
-			robotCallHis.setAiNo(aiCallStartReq.getAiNo());
-			robotCallHis.setSeqId(aiCallStartReq.getSeqId());
-			robotCallHis.setTemplateId(aiCallStartReq.getTemplateId());
-			robotCallHis.setAssignTime(new Date());
-			robotCallHis.setCallStatus(RobotConstants.CALLINT_STATUS_I);	//通话中
-			robotNewTransService.recordRobotCallHis(robotCallHis);
-			/**7、记录调用中心日志**/
+			/**6、记录调用中心日志**/
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "开始拨打电话,成功!");
 			return aiNext;
 		} catch (Exception e) {

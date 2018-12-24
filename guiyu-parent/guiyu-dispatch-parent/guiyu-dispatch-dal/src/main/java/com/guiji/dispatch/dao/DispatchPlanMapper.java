@@ -36,8 +36,6 @@ public interface DispatchPlanMapper {
 	
 	int updateDispatchPlanList(@Param("params") List<String> list , @Param("flag")String flag);
 	
-//	int updateDispatchPlanList4UserId(@Param("params") List<String> list , @Param("status")String status);
+	int updateDispatchPlanListByStatus(@Param("params") List<String> list , @Param("status")String status);
 	
-	
-
 }

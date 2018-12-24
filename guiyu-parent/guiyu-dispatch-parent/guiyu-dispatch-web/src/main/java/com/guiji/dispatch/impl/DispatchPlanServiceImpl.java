@@ -250,7 +250,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setUserId(userId);
 		dispatchPlan.setStatusPlan(status);
 		logger.info("OperationAllDispatchByUserId updateByExample");
-		int result = 	dispatchPlanMapper.updateByExample(dispatchPlan, new DispatchPlanExample());
+		int result = dispatchPlanMapper.updateByExample(dispatchPlan, new DispatchPlanExample());
 		logger.info("OperationAllDispatchByUserId end");
 		return result > 0 ? true : false;
 	}
@@ -984,7 +984,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample dis = new DispatchPlanExample();
 			dis.createCriteria().andBatchIdEqualTo(dispatchPlanBatch.getId())
 					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
-			;
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(dis);
 			DispatchPlan resultPlan = new DispatchPlan();
 
@@ -996,7 +995,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					result.setMsg("当前批次号码状态处于" + map.get(resultPlan.getStatusPlan()) + "不能进行此状态操作");
 					return result;
 				}
-
 				// 0未计划1计划中2计划完成3暂停计划4停止计划
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
@@ -1027,29 +1025,24 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 			}
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+			List<DispatchPlan> succ = new ArrayList<>();
+			List<String> ids = new ArrayList<>();
 			for (DispatchPlan dispatchPlan : selectByExample) {
 				boolean res = checkStatus(status, dispatchPlan);
 				if (res) {
 					continue;
 				}
-				dis.setStatusPlan(Integer.valueOf(status));
-				logger.info("operationAllPlanByBatchId开始时间");
-				dispatchPlanMapper.updateByExampleSelective(dis, example);
-				logger.info("operationAllPlanByBatchId结束时间");
+				ids.add(dispatchPlan.getPlanUuid());
+				succ.add(dispatchPlan);
 			}
-			// DispatchPlan dis1 = new DispatchPlan();
-			// if (selectByExample.size() > 0) {
-			// dis1 = selectByExample.get(0);
-			// boolean res = checkStatus(status, dis1);
-			// if (!res) {
-			// result.setResult(false);
-			// result.setMsg("当前批次号码状态处于" + map.get(dis1.getStatusPlan()) +
-			// "不能进行此状态操作");
-			// return result;
-			// }
-			// dis.setStatusPlan(Integer.valueOf(status));
-			// dispatchPlanMapper.updateByExampleSelective(dis, example);
-			// }
+			dis.setStatusPlan(Integer.valueOf(status));
+			List<List<String>> averageAssign = averageAssign(ids, 10);
+			logger.info("当前update size"+averageAssign.size());
+			for (List<String> list : averageAssign) {
+				logger.info("start ");
+				dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
+				logger.info("end ");
+			}
 		}
 		return result;
 	}

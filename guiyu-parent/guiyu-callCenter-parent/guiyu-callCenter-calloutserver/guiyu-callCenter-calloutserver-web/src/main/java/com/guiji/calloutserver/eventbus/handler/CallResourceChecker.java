@@ -55,6 +55,7 @@ public class CallResourceChecker {
      * @param callOutPlan
      */
     public void checkSellbot(CallOutPlan callOutPlan) {
+        log.info("检查sellbot资源，callOutPlan[{}]", callOutPlan);
 
         AiCallApplyReq aiCallApplyReq = new AiCallApplyReq();
         aiCallApplyReq.setPhoneNo(callOutPlan.getPhoneNum());
@@ -62,6 +63,7 @@ public class CallResourceChecker {
         aiCallApplyReq.setTemplateId(callOutPlan.getTempId());
         aiCallApplyReq.setUserId(callOutPlan.getCustomerId());
 
+        log.info("发起的ai请求为[{}]", aiCallApplyReq);
 
         Result.ReturnData<AiCallNext> returnData = null;
         final String[] msg = {"没有机器人资源"};
@@ -86,10 +88,10 @@ public class CallResourceChecker {
         dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallApply");
         Preconditions.checkNotNull(returnData, msg[0]);
 
+        log.info("收到ai请求返回结果[{}]", returnData.getBody());
         String aiNo = returnData.getBody().getAiNo();
         callOutPlan.setAiId(aiNo);
         callOutPlanService.update(callOutPlan);
-
     }
 
     /**

@@ -78,6 +78,7 @@ public class CallPlanDispatchHandler {
             //调用调度中心的获取客户呼叫计划(请求数=并发数)，获取初始呼叫计划
             Integer requestNum = event.getLineCount().getMaxConcurrentCalls();
 
+            log.info("开始构建[{}]个空白AfterCallEvent事件，驱动后续拨打", requestNum);
             for (int i=1;i<=requestNum;i++) {
                 log.info("------ getAvailableSchedules:"+lineCount.getLineId()+"  ," + i);
 //                getAvailableSchedules(Integer.valueOf(event.getCustomerId()), lineCount.getLineId(), event.getTempId());
@@ -131,7 +132,7 @@ public class CallPlanDispatchHandler {
      */
     @Subscribe
     public void handleAfterCallEvent(AfterCallEvent afterCallEvent){
-        log.info("收到AfterCallEvent, 检查是否有待拨打的计划");
+        log.info("收到AfterCallEvent[{}], 检查是否有待拨打的计划", afterCallEvent);
 
         CallOutPlan calloutPlan = afterCallEvent.getCallPlan();
 
@@ -154,6 +155,7 @@ public class CallPlanDispatchHandler {
 //              callResourceChecker.checkCallResources(callPlan);
 //                    callResourceChecker.checkTemp(callPlan.getTempId());
 //        checkTts(callOutPlan);
+                    log.info("开始检查机器人资源");
                     callResourceChecker.checkSellbot(callPlan);
                 }catch (NullPointerException e){
                     //回掉给调度中心，更改通话记录
@@ -166,9 +168,7 @@ public class CallPlanDispatchHandler {
                 }
                 asyncEventBus.post(new CallResourceReadyEvent(callPlan));
                 log.info("---------------------CallResourceReadyEvent post "+callPlan.getPhoneNum());
-
             }
-
         } catch (Exception e) {
             log.warn("在挂断后拉取新计划出现异常", e);
             //这里会出一个异常，比如重复的id,需要重新发一个事件出来，不然会少一路并发数

@@ -131,7 +131,7 @@ public class StatisticController {
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
 
-        List<Map<String,Object>> list = statisticService.getIntentCount(isSuperAdmin ? null : userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<Map<String,Object>> list = statisticService.getIntentCount(isSuperAdmin, userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
 
         return Result.ok(list);
 

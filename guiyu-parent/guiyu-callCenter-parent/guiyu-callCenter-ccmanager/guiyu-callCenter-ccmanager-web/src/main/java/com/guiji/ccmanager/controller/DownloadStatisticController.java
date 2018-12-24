@@ -61,7 +61,7 @@ public class DownloadStatisticController {
         String fileName = startDate+"_"+endDate+"拨打结果统计.xls";
         HttpDownload.setHeader(resp, fileName);
 
-        List<Map<String, Object>> list = statisticService.getIntentCount(isSuperAdmin ? null : userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<Map<String, Object>> list = statisticService.getIntentCount(isSuperAdmin,userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
 
 
         OutputStream out = null;

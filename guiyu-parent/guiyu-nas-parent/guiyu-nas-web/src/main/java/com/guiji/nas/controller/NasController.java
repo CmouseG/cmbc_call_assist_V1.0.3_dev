@@ -66,6 +66,8 @@ public class NasController implements INas {
 			logger.error("文件上传失败!", e);
 			if (GuiyuNasExceptionEnum.EXCP_NAS_UPLOAD_ERROR.name().equals(e.getName())) {
 				return Result.error(NasErrorConstant.NAS_UPLOAD_FILE_NULL);
+			} else if (GuiyuNasExceptionEnum.EXCP_NAS_UPLOAD_FILE_SIZE_NOTNULL.name().equals(e.getName())) {
+				return Result.error(NasErrorConstant.NAS_UPLOAD_FILESIZE_NOTNULL);
 			} else {
 				return Result.error(NasErrorConstant.NAS_UPLOAD_ERROR);
 			}

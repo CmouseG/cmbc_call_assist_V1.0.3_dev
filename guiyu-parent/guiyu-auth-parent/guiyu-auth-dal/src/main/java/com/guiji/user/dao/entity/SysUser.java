@@ -18,11 +18,13 @@ public class SysUser implements Serializable {
 
     private String batchRecordUrl;
 
-    private String intenLabel="";
+    private String intenLabel;
 
     private String accessKey;
 
     private String secretKey;
+
+    private String orgCode;
 
     private Long createId;
 
@@ -35,6 +37,8 @@ public class SysUser implements Serializable {
     private String delFlag="0";
 
     private Date vaildTime;
+    
+    private String orgName;
 
     private static final long serialVersionUID = 1L;
 
@@ -118,6 +122,14 @@ public class SysUser implements Serializable {
         this.secretKey = secretKey == null ? null : secretKey.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public Long getCreateId() {
         return createId;
     }
@@ -166,7 +178,15 @@ public class SysUser implements Serializable {
         this.vaildTime = vaildTime;
     }
 
-    @Override
+    public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -182,6 +202,7 @@ public class SysUser implements Serializable {
         sb.append(", intenLabel=").append(intenLabel);
         sb.append(", accessKey=").append(accessKey);
         sb.append(", secretKey=").append(secretKey);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);

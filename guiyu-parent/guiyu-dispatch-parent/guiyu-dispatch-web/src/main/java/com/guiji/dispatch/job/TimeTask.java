@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,18 +22,21 @@ import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample;
+import com.guiji.dispatch.model.ModularLogs;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IModularLogsService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.RedisUtil;
 
-@Component
-// @RestController
+//@Component
+ @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -52,7 +54,9 @@ public class TimeTask {
 
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
-
+	@Autowired
+	private IModularLogsService modularLogs;
+	
 	/**
 	 * 捞取号码初始化资源
 	 */
@@ -107,7 +111,7 @@ public class TimeTask {
 	/**
 	 * 获取当前资源情况
 	 */
-	@Scheduled(cron = "0 0/2 * * * ?")
+	@Scheduled(cron = "0 0/1 * * * ?")
 //	 @PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("-----------------------------------------------------------------");
@@ -128,27 +132,52 @@ public class TimeTask {
 						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1);
 
 				List<TtsVoiceReq> ttsVoiceReqList = new ArrayList<>();
+				List<ModularLogs> beforeLogs = new ArrayList<>();
 				for (DispatchPlan dis : selectPhoneByDateAndFlag) {
 					TtsVoiceReq req = new TtsVoiceReq();
 					req.setSeqid(dis.getPlanUuid());
 					req.setTemplateId(dis.getRobot());
 					ttsVoiceReqList.add(req);
+					
+					ModularLogs log = new ModularLogs();
+					log.setCreateTime(DateUtil.getCurrent4Time());
+					log.setModularName(Constant.MODULAR_NAME_DISPATCH);
+					log.setStatus(Constant.MODULAR_STATUS_START);
+					log.setPlanUuid(dis.getPlanUuid());
+					log.setPhone(dis.getPhone());
+					log.setBatchName(dis.getBatchName());
+					log.setMsg("前置检查资源模块");
+					beforeLogs.add(log);
 				}
+				modularLogs.notifyLogsList(beforeLogs);
+				
 				ReturnData<List<TtsComposeCheckRsp>> ttsComposeCheck = robotRemote.ttsComposeCheck(ttsVoiceReqList);
 				List<DispatchPlan> successList = new ArrayList<>();
 
+				List<ModularLogs> afterlogs = new ArrayList<>();
 				if (ttsComposeCheck.success) {
 					if (ttsComposeCheck.getBody() != null) {
 						List<TtsComposeCheckRsp> body = ttsComposeCheck.getBody();
 						for (TtsComposeCheckRsp tts : body) {
-							logger.info("当前请求状态:" + tts.getStatus());
+							//记录logs
+							ModularLogs log = new ModularLogs();
+							log.setCreateTime(DateUtil.getCurrent4Time());
+							log.setModularName(Constant.MODULAR_NAME_DISPATCH);
+							log.setStatus(Constant.MODULAR_STATUS_END);
+							log.setPlanUuid(tts.getSeqId());
+							log.setMsg("后置检查资源模块");
 							if (tts.getStatus().equals("S")) {
 								DispatchPlan dis = new DispatchPlan();
 								dis.setFlag(Constant.IS_FLAG_2);
 								dis.setPlanUuid(tts.getSeqId());
 								successList.add(dis);
+							}else if (tts.getStatus().equals("F")){
+								log.setStatus(Constant.MODULAR_STATUS_ERROR);
+								log.setMsg("校验资源状态返回结果为F");
 							}
+							afterlogs.add(log);
 						}
+						modularLogs.notifyLogsList(afterlogs);
 					}
 				} else {
 					logger.info("获取当前初始化号码的请求资源结果失败了");
@@ -200,7 +229,7 @@ public class TimeTask {
 					}
 					// }
 					logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-					checkRedisAndDate(entry.getKey());
+					checkRedisAndDate(entry.getKey(), entry.getValue());
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁
 			}
@@ -289,7 +318,7 @@ public class TimeTask {
 	 * 
 	 * @param key
 	 */
-	private void checkRedisAndDate(String key) {
+	private void checkRedisAndDate(String key, List<DispatchPlan> list) {
 		Object object = redisUtil.get(key);
 		logger.info("checkRedisAndDate key result:" + object);
 		if (object != null && object != "") {

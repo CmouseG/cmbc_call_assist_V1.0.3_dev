@@ -155,7 +155,7 @@ public class RobotCallProcessStatServiceImpl implements IRobotCallProcessStatSer
 				//统计日期必须为时间段
 				if(condition.getStatBeginDate().equals(condition.getStatEndDate())) {
 					//如果开始结束日期相等
-					criteria.andTemplateIdEqualTo(condition.getStatBeginDate());
+					criteria.andStatDateEqualTo(condition.getStatBeginDate());
 				}else {
 					criteria.andStatDateGreaterThanOrEqualTo(condition.getStatBeginDate());
 					criteria.andStatDateLessThanOrEqualTo(condition.getStatEndDate());

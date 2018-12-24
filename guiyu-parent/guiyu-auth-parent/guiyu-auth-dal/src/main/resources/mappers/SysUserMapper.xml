@@ -12,6 +12,7 @@
     <result column="inten_label" property="intenLabel" jdbcType="VARCHAR" />
     <result column="access_key" property="accessKey" jdbcType="VARCHAR" />
     <result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
@@ -79,8 +80,8 @@
   </sql>
   <sql id="Base_Column_List" >
     id, username, `password`, `status`, push_type, call_record_url, batch_record_url, 
-    inten_label, access_key, secret_key, create_id, create_time, update_id, update_time, 
-    del_flag, vaild_time
+    inten_label, access_key, secret_key, org_code, create_id, create_time, update_id, 
+    update_time, del_flag, vaild_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysUserExample" >
     select
@@ -121,15 +122,15 @@
     insert into sys_user (id, username, `password`, 
       `status`, push_type, call_record_url, 
       batch_record_url, inten_label, access_key, 
-      secret_key, create_id, create_time, 
-      update_id, update_time, del_flag, 
-      vaild_time)
+      secret_key, org_code, create_id, 
+      create_time, update_id, update_time, 
+      del_flag, vaild_time)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{pushType,jdbcType=VARCHAR}, #{callRecordUrl,jdbcType=VARCHAR}, 
       #{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR}, 
-      #{secretKey,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}, 
-      #{vaildTime,jdbcType=DATE})
+      #{secretKey,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=CHAR}, #{vaildTime,jdbcType=DATE})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
@@ -163,6 +164,9 @@
       </if>
       <if test="secretKey != null" >
         secret_key,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
       </if>
       <if test="createId != null" >
         create_id,
@@ -213,6 +217,9 @@
       </if>
       <if test="secretKey != null" >
         #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
       </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
@@ -273,6 +280,9 @@
       <if test="record.secretKey != null" >
         secret_key = #{record.secretKey,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="record.createId != null" >
         create_id = #{record.createId,jdbcType=BIGINT},
       </if>
@@ -308,6 +318,7 @@
       inten_label = #{record.intenLabel,jdbcType=VARCHAR},
       access_key = #{record.accessKey,jdbcType=VARCHAR},
       secret_key = #{record.secretKey,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=BIGINT},
@@ -348,6 +359,9 @@
       <if test="secretKey != null" >
         secret_key = #{secretKey,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
       </if>
@@ -380,6 +394,7 @@
       inten_label = #{intenLabel,jdbcType=VARCHAR},
       access_key = #{accessKey,jdbcType=VARCHAR},
       secret_key = #{secretKey,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=BIGINT},
@@ -391,11 +406,8 @@
   
   <insert id="addRole">
 		delete from sys_role_user where user_id=#{userId};
-		insert into sys_role_user(user_id,role_id,create_time) values
-		<foreach collection="roleIds" item="item" separator=",">
-		(#{userId},#{item},now())
-		</foreach>
-		;
+		insert into sys_role_user(user_id,role_id,create_time) 
+		values (#{userId},#{roleIds},now());
 	</insert>
 	
 	<select id="getPassword" resultType="string">
@@ -483,12 +495,14 @@
 	
 	<select id="selectByParamVo" resultType="map">
 		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,e.username as createName
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
+		e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,a.org_code as orgCode
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
 		LEFT JOIN sys_role c on c.id=b.role_id
 		LEFT JOIN sys_user_login_record d on d.user_id=a.id
 		left join sys_user e on e.id=a.create_id
+		left join sys_organization f on f.code=a.org_code
 		where a.del_flag=0
 		<if test="userName != '' ">
 			and a.username=#{userName}	
@@ -508,4 +522,15 @@
 	<select id="checkSecretKey" resultType="boolean">
 		SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
 	</select>
+	
+	<select id="getUserById" resultType="com.guiji.user.dao.entity.SysUser">
+		SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as callRecordUrl,
+		a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as accessKey,
+		a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
+		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,b.`name` as orgName
+		from sys_user a
+		LEFT JOIN sys_organization b on a.org_code=b.`code`
+		where a.id=#{userId}
+	</select>
+	
 </mapper> 

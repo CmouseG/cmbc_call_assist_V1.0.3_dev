@@ -3,15 +3,23 @@ package com.guiji.calloutserver.manager.impl;
 import com.google.common.base.Preconditions;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.constant.Constant;
-import com.guiji.calloutserver.entity.*;
+import com.guiji.calloutserver.entity.AIInitRequest;
+import com.guiji.calloutserver.entity.AIRequest;
+import com.guiji.calloutserver.entity.AIResponse;
+import com.guiji.calloutserver.entity.SellbotResponse;
 import com.guiji.calloutserver.helper.RequestHelper;
+import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
+import com.guiji.calloutserver.service.DispatchLogService;
 import com.guiji.calloutserver.util.CommonUtil;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
-import com.guiji.robot.model.*;
+import com.guiji.robot.model.AiCallNext;
+import com.guiji.robot.model.AiCallStartReq;
+import com.guiji.robot.model.AiFlowMsgPushReq;
+import com.guiji.robot.model.AiHangupReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,68 +45,75 @@ public class AIManagerImpl implements AIManager {
     @Autowired
     FsAgentManager fsAgentManager;
 
+    @Autowired
+    DispatchLogService dispatchLogService;
+
     /**
-     *  申请新的ai资源
+     * 申请新的ai资源
      */
     public AIResponse applyAi(AIInitRequest aiRequest) throws Exception {
 
-        try {
-            AiCallStartReq aiCallStartReq = new  AiCallStartReq();
-            aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
-            aiCallStartReq.setAiNo(aiRequest.getAiId());
-            String tempId = aiRequest.getTempId();
-            aiCallStartReq.setTemplateId(tempId);
-            aiCallStartReq.setSeqId(aiRequest.getUuid());
-            aiCallStartReq.setUserId(aiRequest.getUserId());
+        AiCallStartReq aiCallStartReq = new AiCallStartReq();
+        aiCallStartReq.setPhoneNo(aiRequest.getPhoneNum());
+        aiCallStartReq.setAiNo(aiRequest.getAiId());
+        String tempId = aiRequest.getTempId();
+        aiCallStartReq.setTemplateId(tempId);
+        aiCallStartReq.setSeqId(aiRequest.getUuid());
+        aiCallStartReq.setUserId(aiRequest.getUserId());
 
-            Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                @Override
-                public Result.ReturnData execute() {
-                    return robotRemote.aiCallStart(aiCallStartReq);
-                }
-
-                @Override
-                public void onErrorResult(Result.ReturnData result) {
-
-                }
-            }, 3, 1, 1, 60, true);
-
-            if(returnData == null){
-                log.warn("请求ai资源失败");
-                return null;
+        dispatchLogService.startServiceRequestLog(aiRequest.getUuid(),aiRequest.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallStart");
+        Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
+            @Override
+            public Result.ReturnData execute() {
+                return robotRemote.aiCallStart(aiCallStartReq);
             }
 
-            Result.ReturnData<AiCallNext> result =  returnData;
+            @Override
+            public void onErrorResult(Result.ReturnData result) {
 
-            //申请资源失败，抛出异常
-            Preconditions.checkState(result.success && result.getCode().equals(Constant.SUCCESS_COMMON), "failed robotRemote applyAi ");
+            }
+        }, 4, 1, 1, 60, true);
+        dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),aiRequest.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallStart");
 
-            AiCallNext aiCallNext =  result.getBody();
-            String resp = aiCallNext.getSellbotJson();
-            log.info(" aiCallStart result.getBody().getSellbotJson: "+resp);
-
-            SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
-            Preconditions.checkState(sellbotResponse!=null && sellbotResponse.isValid(), "invalid applyAi response");
-            log.info("获取到的sellbot restore结果为: response[{}]", sellbotResponse);
-            AIResponse aiResponse = new AIResponse();
-            aiResponse.setResult(true);
-            aiResponse.setMatched(true);
-            aiResponse.setCallId(aiRequest.getUuid());
-            aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
-            aiResponse.setReason(sellbotResponse.getReason());
-            aiResponse.setWavFile(sellbotResponse.getWav_filename());
-            aiResponse.setAiId(aiCallNext.getAiNo());
-            aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-            aiResponse.setWavDuration(fsAgentManager.getWavDruation(tempId, sellbotResponse.getWav_filename()));
-            return aiResponse;
-        }catch (Exception ex){
-            log.warn("sellbot的aiCallStart出现异常", ex);
-            throw new Exception(ex.getMessage());
+        if (returnData == null) {
+            log.warn("请求ai资源失败");
+            return null;
         }
+
+        Result.ReturnData<AiCallNext> result = returnData;
+
+        //申请资源失败，抛出异常
+        Preconditions.checkState(result.success && result.getCode().equals(Constant.SUCCESS_COMMON), "failed robotRemote applyAi ");
+
+        AiCallNext aiCallNext = result.getBody();
+        String resp = aiCallNext.getSellbotJson();
+        log.info(" aiCallStart result.getBody().getSellbotJson: " + resp);
+
+        SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
+        Preconditions.checkState(sellbotResponse != null && sellbotResponse.isValid(), "invalid applyAi response");
+        log.info("获取到的sellbot restore结果为: response[{}]", sellbotResponse);
+        AIResponse aiResponse = new AIResponse();
+        aiResponse.setResult(true);
+        aiResponse.setMatched(true);
+        aiResponse.setCallId(aiRequest.getUuid());
+        aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
+        aiResponse.setReason(sellbotResponse.getReason());
+
+        String wavFilename = RobotNextHelper.getWavFilename(sellbotResponse.getWav_filename(),tempId);
+        Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
+        aiResponse.setWavFile(wavFilename);
+        aiResponse.setAiId(aiCallNext.getAiNo());
+        aiResponse.setResponseTxt(sellbotResponse.getAnswer());
+        Double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename);
+        Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
+        aiResponse.setWavDuration(wavDruation);
+        return aiResponse;
     }
+
 
     /**
      * 发起ai请求
+     *
      * @param aiRequest
      * @return
      * @throws Exception
@@ -109,19 +124,6 @@ public class AIManagerImpl implements AIManager {
         try {
             CallOutPlan callPlan = callOutPlanService.findByCallId(aiRequest.getUuid());
 
-/*            if(aiRequest.isCallMatch()){
-                log.info("请求sellbot之前，先调用isMatch判断关键词是否匹配");
-                SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(aiRequest.getUuid(), aiRequest.getSentence(), callPlan.getAiId(), callPlan.getCustomerId());
-                if(!sellbotIsMatchResponse.isMatched()){
-                    log.info("该识别未匹配到sellbot关键字，退出");
-                    aiResponse = new AIResponse();
-                    aiResponse.setResult(true);
-                    aiResponse.setMatched(false);
-                    aiResponse.setResponseTxt(sellbotIsMatchResponse.getSentence());
-                    return aiResponse;
-                }
-            }*/
-
             AiFlowMsgPushReq aiFlowMsgPushReq = new AiFlowMsgPushReq();
             aiFlowMsgPushReq.setAiNo(callPlan.getAiId());
             aiFlowMsgPushReq.setSentence(aiRequest.getSentence());
@@ -129,79 +131,16 @@ public class AIManagerImpl implements AIManager {
             aiFlowMsgPushReq.setTemplateId(callPlan.getTempId());
             aiFlowMsgPushReq.setTimestamp(new Date().getTime());
             aiFlowMsgPushReq.setUserId(callPlan.getCustomerId());
-            robotRemote.flowMsgPush(aiFlowMsgPushReq);
+            dispatchLogService.startServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口flowMsgPush");
+            Result.ReturnData returnData = robotRemote.flowMsgPush(aiFlowMsgPushReq);
+            dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),callPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口flowMsgPush");
 
-       /*     AiCallNext aiCallNext= result.getBody();
-            String resp = aiCallNext.getSellbotJson();
-
-            log.info("robotRemote.flowMsgPush getSellbotJson[{}]", resp);
-
-            SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
-            Preconditions.checkState(sellbotResponse!=null && sellbotResponse.isValid(), "invalid applyAi response");
-
-            aiResponse = new AIResponse();
-            aiResponse.setResult(true);
-            aiResponse.setMatched(true);
-            aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
-            aiResponse.setAiId(aiCallNext.getAiNo());
-            aiResponse.setCallId(callPlan.getCallId());
-            aiResponse.setReason(sellbotResponse.getReason());
-            aiResponse.setWavFile(sellbotResponse.getWav_filename());
-            aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-            aiResponse.setAiResponseType(sellbotResponse.getEnd());
-            aiResponse.setWavDuration(fsAgentManager.getWavDruation(callPlan.getTempId(), sellbotResponse.getWav_filename()));
-            return aiResponse;*/
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.warn("sellbot的flowMsgPush出现异常", ex);
             throw new Exception(ex.getMessage());
         }
 
     }
-
-    /**
-     * 判断通话内容是否匹配到关键字
-     * @param callUuid
-     * @param sentence
-     * @return
-     */
-/*    public boolean isMatch(String callUuid, String sentence, String aiNo, String userId){
-        boolean isMatched = false;
-
-        try {
-            SellbotIsMatchResponse sellbotIsMatchResponse = sendIsMatchRequest(callUuid, sentence, aiNo, userId);
-            isMatched = sellbotIsMatchResponse.isMatched();
-        } catch (Exception e) {
-            log.warn("isMatch出现异常", e);
-        }
-
-        return isMatched;
-    }*/
-
-
-    /**
-     * 判断是否需要打断
-     * @return
-     */
-
-/*    private SellbotIsMatchResponse sendIsMatchRequest(String callUuid, String sentence, String aiNo, String userId) throws Exception {
-        try {
-            AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
-            aiCallLngKeyMatchReq.setSentence(sentence);
-            aiCallLngKeyMatchReq.setSeqId(callUuid);
-            aiCallLngKeyMatchReq.setAiNo(aiNo);
-            aiCallLngKeyMatchReq.setUserId(userId);
-            Result.ReturnData<AiCallNext> result = robotRemote.aiLngKeyMatch(aiCallLngKeyMatchReq);
-
-            String resp =result.getBody().getSellbotJson();
-            log.info(" robotRemote sendIsMatchRequest getSellbotJson：[{}]", resp); // {"match_keywords":["",""],"matched":0,"sentence":"嗯可以"}
-            SellbotIsMatchResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotIsMatchResponse.class);
-            log.info("获取到的sellbot结果为[{}]", sellbotResponse);
-            return sellbotResponse;
-        }catch (Exception ex){
-            log.warn("sellbot的aiLngKeyMatch出现异常", ex);
-            throw new Exception(ex.getMessage());
-        }
-    }*/
 
     @Override
     public void releaseAi(CallOutPlan callOutPlan) {
@@ -211,12 +150,13 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(callOutPlan.getCustomerId());
 
+        dispatchLogService.startServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求挂断");
         Result.ReturnData returnData = null;
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
-                    return  robotRemote.aiHangup(hangupReq);
+                    return robotRemote.aiHangup(hangupReq);
                 }
 
                 @Override
@@ -224,14 +164,14 @@ public class AIManagerImpl implements AIManager {
                     //TODO: 报警
                     log.warn("释放机器人资源出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 3,120,true);
+            }, -1, 1, 3, 120, true);
         } catch (Exception e) {
             log.warn("在释放机器人资源是出现异常", e);
         }
+        dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求挂断");
 
         log.info("------------------- releaseAi success aino:" + hangupReq.getAiNo());
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package com.guiji.ccmanager.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -18,6 +19,7 @@ public class LineInfoAddVO implements Serializable {
 
     @ApiModelProperty(value = "线路名称")
     @NotBlank(message = "线路名称不能为空")
+    @Length(max = 30,message = "线路名称长度不能超过30个字符")
     private String lineName;
 
     @ApiModelProperty(value = "sip线路IP地址")
@@ -46,6 +48,8 @@ public class LineInfoAddVO implements Serializable {
     private Integer maxConcurrentCalls;
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    private String orgCode;
 
     private static final long serialVersionUID = 1L;
 
@@ -121,9 +125,18 @@ public class LineInfoAddVO implements Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
     @Override
     public String toString() {
-        return "LineInfoVO{" +
+        return "LineInfoAddVO{" +
                 "customerId='" + customerId + '\'' +
                 ", lineName='" + lineName + '\'' +
                 ", sipIp='" + sipIp + '\'' +
@@ -133,6 +146,7 @@ public class LineInfoAddVO implements Serializable {
                 ", calleePrefix='" + calleePrefix + '\'' +
                 ", maxConcurrentCalls=" + maxConcurrentCalls +
                 ", remark='" + remark + '\'' +
+                ", orgCode='" + orgCode + '\'' +
                 '}';
     }
 }

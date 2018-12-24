@@ -31,7 +31,7 @@ CREATE TABLE `tts_model` (
   `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
   `company` varchar(50) DEFAULT NULL COMMENT '公司',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tts_model

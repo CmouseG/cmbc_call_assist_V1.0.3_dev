@@ -19,9 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 
 import ai.guiji.botsentence.constant.Constant;
+import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import ai.guiji.botsentence.dao.BotSentenceAdditionMapper;
 import ai.guiji.botsentence.dao.BotSentenceBranchMapper;
 import ai.guiji.botsentence.dao.BotSentenceDomainMapper;
@@ -31,6 +32,7 @@ import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
 import ai.guiji.botsentence.dao.BotSentenceTemplateMapper;
 import ai.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
 import ai.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
+import ai.guiji.botsentence.dao.entity.BotAvailableTemplate;
 import ai.guiji.botsentence.dao.entity.BotSentenceAddition;
 import ai.guiji.botsentence.dao.entity.BotSentenceBranch;
 import ai.guiji.botsentence.dao.entity.BotSentenceBranchExample;
@@ -140,28 +142,21 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private static final String branch_prefix = "special_";
 	private static final String line_prefix = "未命名";
 	
-	
 	@Override
 	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo,Long userId) {
 
+		ReturnData<SysUser> data=iAuth.getUserById(userId);
+		String orgCode=data.getBody().getOrgCode();
 		
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
-		Criteria criteria2 = example.createCriteria();
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%" + templateName + "%");
-			//criteria2.andTemplateIdLike("%" + templateName + "%");
-		}
-		if(StringUtils.isNotBlank(accountNo)) {
-			criteria.andAccountNoEqualTo(accountNo);
-			//criteria2.andAccountNoEqualTo(accountNo);
 		}
 		
-		criteria.andCrtUserEqualTo(userId.toString());
-		//criteria2.andCrtUserEqualTo(userId);
+		criteria.andOrgCodeLike(orgCode+"%");
 		
 		criteria.andStateNotEqualTo("99");
-		//criteria2.andStateNotEqualTo("99");
 		
 		//计算分页
 		int limitStart = (pageNo-1)*pageSize;
@@ -170,45 +165,41 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		example.setLimitEnd(limitEnd);
 		example.setOrderByClause(" crt_time desc");
 		
-		//example.or(criteria2);
-		
-		
 		return botSentenceProcessMapper.selectByExample(example);
 	}
 
-	@Autowired
-	private IAuth iAuth;
-	
 	@Override
 	public int countBotSentenceProcess(String templateName, String accountNo,Long userId) {
-		ReturnData<List<SysRole>> role=iAuth.getRoleByUserId(userId);
-		Long roleId=0l;
-		if(role.getBody().size()>0){
-			roleId=role.getBody().get(0).getId();
-		}
-		
+		ReturnData<SysUser> data=iAuth.getUserById(userId);
+		String orgCode=data.getBody().getOrgCode();
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%" + templateName + "%");
 		}
-		if(StringUtils.isNotBlank(accountNo)) {
-			criteria.andAccountNoEqualTo(accountNo);
-		}
-
-		if(roleId != 1){
-			criteria.andCrtUserEqualTo(userId.toString());
-		}
+		criteria.andOrgCodeLike(orgCode+"%");
+		criteria.andAccountNoEqualTo(String.valueOf(userId));
 		
 		criteria.andStateNotEqualTo("99");
 		return botSentenceProcessMapper.countByExample(example);
 	}
 
-
+	@Autowired
+	private IAuth iAuth;
+	
 	@Override
 	@Transactional
 	public String createBotSentenceTemplate(BotSentenceProcessVO paramVO,Long userId) {
+		
+		ReturnData<SysUser> data=iAuth.getUserById(userId);
+		String userName=data.getBody().getUsername();
+		String orgCode=paramVO.getOrgCode();
+		String orgName=paramVO.getOrgName();
+		if(org.springframework.util.StringUtils.isEmpty(paramVO.getOrgCode())){
+			orgCode=data.getBody().getOrgCode();
+			orgName=data.getBody().getOrgName();
+		}
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
 		if(null == paramVO || StringUtils.isBlank(paramVO.getProcessId())) {
@@ -237,6 +228,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			}
 			
 			String templateId = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
+			process.setOrgCode(orgCode);
+			process.setUserName(userName);
+			process.setOrgName(orgName);
 			process.setState("00");//制作中
 			process.setVersion("0");//初始版本为0
 			process.setAccountNo(userId.toString());//所属账号
@@ -331,22 +325,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			for(BotSentenceBranch temp : branchList) {
 				BotSentenceBranch vo = new BotSentenceBranch();
 				BeanUtil.copyProperties(temp, vo);
-				
-				//保存意图信息
-				/*String intents = temp.getIntents();
-				logger.info("当前意图信息为: " + intents);
-				if(StringUtils.isNotBlank(intents)) {
-					String[] intentsArray = intents.split(",");
-					for(int i = 0 ; i < intentsArray.length ; i++) {
-						if(intentIdList.contains(new Long(intentsArray[i].trim()))) {
-							continue;
-						}
-						
-						intentIdList.add(new Long(intentsArray[i].trim()));
-					}
-				}*/
-				
-				
 				//保存录音信息
 				String resp = temp.getResponse();
 				String resp_new = "";
@@ -802,7 +780,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		process.setLstUpdateUser(userId.toString());
 		botSentenceProcessMapper.updateByPrimaryKey(process);
 		logger.info("提交审核成功...");
+		
+		BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
+	    botAvailableTemplate.setTemplateId(process.getTemplateId());
+	    botAvailableTemplate.setUserId(Long.valueOf(process.getCrtUser()));
+	    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
 	}
+	
+	@Autowired
+	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
 
 	/**
 	 * 修改话术模板

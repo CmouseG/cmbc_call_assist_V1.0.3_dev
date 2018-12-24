@@ -19,6 +19,9 @@
     <result column="approve_user" property="approveUser" jdbcType="VARCHAR" />
     <result column="approve_notes" property="approveNotes" jdbcType="VARCHAR" />
     <result column="sound_type" property="soundType" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -81,7 +84,7 @@
   <sql id="Base_Column_List" >
     process_id, template_id, template_name, template_type, version, industry, account_no, 
     old_process_id, crt_time, crt_user, lst_update_time, lst_update_user, `state`, approve_time, 
-    approve_user, approve_notes, sound_type
+    approve_user, approve_notes, sound_type, org_code, org_name, user_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
     select
@@ -126,13 +129,15 @@
       account_no, old_process_id, crt_time, 
       crt_user, lst_update_time, lst_update_user, 
       `state`, approve_time, approve_user, 
-      approve_notes, sound_type)
+      approve_notes, sound_type, org_code, 
+      org_name, user_name)
     values (#{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
       #{templateType,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
       #{accountNo,jdbcType=VARCHAR}, #{oldProcessId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
       #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
       #{state,jdbcType=VARCHAR}, #{approveTime,jdbcType=TIMESTAMP}, #{approveUser,jdbcType=VARCHAR}, 
-      #{approveNotes,jdbcType=VARCHAR}, #{soundType,jdbcType=VARCHAR})
+      #{approveNotes,jdbcType=VARCHAR}, #{soundType,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
+      #{orgName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
     <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
@@ -140,7 +145,9 @@
     </selectKey>
     insert into bot_sentence_process
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      process_id,
+      <if test="processId != null" >
+        process_id,
+      </if>
       <if test="templateId != null" >
         template_id,
       </if>
@@ -189,9 +196,20 @@
       <if test="soundType != null" >
         sound_type,
       </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="orgName != null" >
+        org_name,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{processId,jdbcType=VARCHAR},
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
       </if>
@@ -239,6 +257,15 @@
       </if>
       <if test="soundType != null" >
         #{soundType,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -302,6 +329,15 @@
       <if test="record.soundType != null" >
         sound_type = #{record.soundType,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgName != null" >
+        org_name = #{record.orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userName != null" >
+        user_name = #{record.userName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -325,7 +361,10 @@
       approve_time = #{record.approveTime,jdbcType=TIMESTAMP},
       approve_user = #{record.approveUser,jdbcType=VARCHAR},
       approve_notes = #{record.approveNotes,jdbcType=VARCHAR},
-      sound_type = #{record.soundType,jdbcType=VARCHAR}
+      sound_type = #{record.soundType,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      org_name = #{record.orgName,jdbcType=VARCHAR},
+      user_name = #{record.userName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -381,6 +420,15 @@
       <if test="soundType != null" >
         sound_type = #{soundType,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
     </set>
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
@@ -401,7 +449,11 @@
       approve_time = #{approveTime,jdbcType=TIMESTAMP},
       approve_user = #{approveUser,jdbcType=VARCHAR},
       approve_notes = #{approveNotes,jdbcType=VARCHAR},
-      sound_type = #{soundType,jdbcType=VARCHAR}
+      sound_type = #{soundType,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR}
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
+
 </mapper>

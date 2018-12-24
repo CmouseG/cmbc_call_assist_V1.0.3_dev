@@ -1,4 +1,3 @@
-
 CREATE DATABASE  IF NOT EXISTS  `guiyu_callcenter`  DEFAULT CHARACTER SET utf8 ;
 
 USE `guiyu_callcenter`;
@@ -274,7 +273,7 @@ CREATE TABLE `call_out_detail_0` (
   PRIMARY KEY (`call_detail_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/
+
 DROP TABLE IF EXISTS `call_out_detail_1`;
 
 CREATE TABLE `call_out_detail_1` (
@@ -445,49 +444,49 @@ DROP TABLE IF EXISTS `error_match`;
 CREATE TABLE `error_match` (
   `error_type` int(2) DEFAULT NULL,
   `error_name` varchar(100) DEFAULT NULL,
+  `en_name` varchar(100) DEFAULT NULL,
   `key_word` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `error_match` */
 
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (0,'无人接听','无人接听');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','您的电话已欠费');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','续交话费');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','手机号码已暂停');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','您的手机号码');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','继续使用');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','无法呼出');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (1,'主叫停机','您的电话已被停机');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (2,'被叫停机','欠费');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (2,'被叫停机','停机');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (2,'被叫停机','通话已经被');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (2,'被叫停机','所拨打的用户通话');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (2,'被叫停机','暂停服务');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (2,'被叫停机','未开通语音');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (3,'关机或不在服务区','关机');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (3,'关机或不在服务区','不在服务区');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','占线');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','通话中');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','正在通话');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','无法接通');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','正忙');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','无法接听');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','联通秘书');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','来电助手');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','来电宝');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','短信的方式');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (4,'占线','短信方式');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (5,'空号','空号');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (5,'空号','不存在');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (5,'空号','不在使用');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (6,'呼叫受限','越权使用');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (6,'呼叫受限','呼叫受限');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (6,'呼叫受限','呼叫该号码');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (6,'呼叫受限','语音信箱');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (7,'用户挂断','用户挂断');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (8,'无效号码','无效号码');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (9,'已接通','已接通');
-insert  into `error_match`(`error_type`,`error_name`,`key_word`) values (10,'无人接听','无人接听');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (0,'无人接听','no_answer','无人接听');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','您的电话已欠费');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','续交话费');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','手机号码已暂停');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','您的手机号码');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','继续使用');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','无法呼出');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (1,'主叫停机','initiative_stop','您的电话已被停机');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (2,'被叫停机','passive_stop','欠费');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (2,'被叫停机','passive_stop','停机');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (2,'被叫停机','passive_stop','通话已经被');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (2,'被叫停机','passive_stop','所拨打的用户通话');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (2,'被叫停机','passive_stop','暂停服务');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (2,'被叫停机','passive_stop','未开通语音');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (3,'关机或不在服务区','power_off','关机');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (3,'关机或不在服务区','power_off','不在服务区');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','占线');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','通话中');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','正在通话');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','无法接通');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','正忙');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','无法接听');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','联通秘书');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','来电助手');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','来电宝');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','短信的方式');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (4,'占线','busy','短信方式');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (5,'空号','vacant_number','空号');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (5,'空号','vacant_number','不存在');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (5,'空号','vacant_number','不在使用');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (6,'呼叫受限','call_limit','越权使用');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (6,'呼叫受限','call_limit','呼叫受限');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (6,'呼叫受限','call_limit','呼叫该号码');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (6,'呼叫受限','call_limit','语音信箱');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (7,'用户挂断','user_hangup','用户挂断');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (8,'无效号码','Invalid_number','无效号码');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (9,'已接通','connected','已接通');
+insert  into `error_match`(`error_type`,`error_name`,`en_name`,`key_word`) values (10,'无人接听','no_answer','无人接听');
 
 /*Table structure for table `fs_bind` */
 
@@ -527,7 +526,6 @@ CREATE TABLE `line_count` (
   `used_concurrent_calls` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 DROP TABLE IF EXISTS `line_info`;
 
 CREATE TABLE `line_info` (
@@ -545,34 +543,13 @@ CREATE TABLE `line_info` (
   `remark` varchar(255) DEFAULT NULL,
   `createt_by` varchar(255) DEFAULT NULL,
   `update_by` varchar(255) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`line_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=249 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `report_call_count`;
-
-CREATE TABLE `report_call_count` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `call_date` varchar(20) NOT NULL,
-  `count_a` int(11) DEFAULT '0',
-  `count_b` int(11) DEFAULT '0',
-  `count_c` int(11) DEFAULT '0',
-  `count_d` int(11) DEFAULT '0',
-  `count_e` int(11) DEFAULT '0',
-  `count_f` int(11) DEFAULT '0',
-  `count_u` int(11) DEFAULT '0',
-  `count_v` int(11) DEFAULT '0',
-  `count_w` int(11) DEFAULT '0',
-  `count_all` int(11) DEFAULT '0',
-  `accurate_intent` varchar(10) DEFAULT NULL,
-  `customer_id` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
-
-/*Data for the table `report_call_count` */
 
 /*Table structure for table `report_call_day` */
-
 DROP TABLE IF EXISTS `report_call_day`;
 
 CREATE TABLE `report_call_day` (
@@ -584,8 +561,9 @@ CREATE TABLE `report_call_day` (
   `call_count` int(11) DEFAULT NULL,
   `duration_all` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
+  `tempid` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=322 DEFAULT CHARSET=utf8;
 
 
 
@@ -598,8 +576,9 @@ CREATE TABLE `report_call_hour` (
   `connect_count` int(11) DEFAULT NULL,
   `duration` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
+  `tempid` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
 
 
@@ -613,6 +592,7 @@ CREATE TABLE `report_call_today` (
   `call_count` int(11) DEFAULT NULL,
   `duration_all` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
+  `tempid` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

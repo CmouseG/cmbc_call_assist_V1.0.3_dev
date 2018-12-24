@@ -3,6 +3,7 @@ package com.guiji.robot.web.controller;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,4 +140,40 @@ public class RobotController {
 		}
 		return Result.ok(aiList);
 	}
+	
+	
+	/**
+	 * 手工释放机器人资源
+	 * 本接口为预留接口，正常的资源释放是在每天晚上8:30自动释放所有空闲的机器人的，但是某些情况还是需要手工释放资源，所以开出个口子
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/aiResourRelease", method = RequestMethod.POST)
+	public Result.ReturnData aiResourRelease(@RequestParam(value="userId",required=false)String userId){
+		if(StrUtils.isEmpty(userId)) {
+			//如果参数userId是空，那么释放所有空闲机器人
+			Map<String,List<AiInuseCache>> allUserAiInUserMap = aiCacheService.queryAllAiInUse();
+			if(allUserAiInUserMap != null && !allUserAiInUserMap.isEmpty()) {
+				for(Map.Entry<String, List<AiInuseCache>> allUserAiInuseEntry : allUserAiInUserMap.entrySet()) {
+					userId = allUserAiInuseEntry.getKey();	//用户ID
+					List<AiInuseCache> aiList = allUserAiInuseEntry.getValue();	//用户已分配的机器人
+					logger.info("开始释放用户{}[{}]个机器人...",userId,aiList==null?0:aiList.size());
+					//释放机器人资源
+					iAiResourceManagerService.aiBatchRelease(aiList);
+					logger.info("释放用户{}[{}]个机器人...完成",userId,aiList==null?0:aiList.size());
+				}
+			}
+		}else {
+			//不为空,释放该用户空闲机器人资源
+			List<AiInuseCache> aiList = aiCacheService.queryUserAiInUseList(userId);
+			if(ListUtil.isNotEmpty(aiList)) {
+				logger.info("开始释放用户{}[{}]个机器人...",userId,aiList==null?0:aiList.size());
+				//释放机器人资源
+				iAiResourceManagerService.aiBatchRelease(aiList);
+				logger.info("释放用户{}[{}]个机器人...完成",userId,aiList==null?0:aiList.size());
+			}
+		}
+		return Result.ok();
+	}
+			
 }

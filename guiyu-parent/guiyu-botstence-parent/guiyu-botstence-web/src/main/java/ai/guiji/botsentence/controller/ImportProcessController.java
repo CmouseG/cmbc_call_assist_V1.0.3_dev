@@ -35,7 +35,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
+
 import ai.guiji.botsentence.service.IImportProcessService;
+import ai.guiji.botsentence.vo.BotSentenceProcessVO;
+import ai.guiji.component.client.config.JsonParam;
 import ai.guiji.component.client.util.IOUtil;
 import ai.guiji.component.model.ServerResult;
 
@@ -58,13 +66,16 @@ public class ImportProcessController {
 	
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 	
+	@Autowired
+	private IAuth iAuth;
+	
 	@RequestMapping(value="importAdminProcess")
-	public ServerResult importAdminProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestParam Long userId) throws Exception{
-		return importProcess(multipartFile,templateType,userId);
+	public ServerResult importAdminProcess(MultipartFile multipartFile,BotSentenceProcessVO paramVO,@RequestParam Long userId) throws Exception{
+		return importProcess(multipartFile,paramVO,userId);
 	}
 	
 	@RequestMapping(value="importProcess")
-	public ServerResult importProcess(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestHeader Long userId) throws Exception{
+	public ServerResult importProcess(MultipartFile multipartFile,BotSentenceProcessVO paramVO,@RequestHeader Long userId) throws Exception{
 		String fileName = multipartFile.getOriginalFilename();
 		String suffix =  fileName.substring(fileName.lastIndexOf(".") + 1);
 		if(!"zip".equals(suffix)) {
@@ -88,7 +99,7 @@ public class ImportProcessController {
 		 
 		unZipFiles(zipFile, descFile.getPath());
 		logger.info("本地存储上传话术模板临时路径 : " + descFile.getPath());
-		importProcessService.importProcess(descFile, templateType, null,userId);
+		importProcessService.importProcess(descFile, paramVO,userId);
 		
 		FileUtils.deleteDirectory(descFile);
 		logger.info("删除临时路径..." + descFile.getPath());
@@ -101,7 +112,7 @@ public class ImportProcessController {
 	
 
 	@RequestMapping(value="importProcessInit")
-	public ServerResult importProcessInit(MultipartFile multipartFile,@RequestParam("templateType") String templateType,@RequestParam("templatId") String templatId,@RequestHeader Long userId) throws Exception{
+	public ServerResult importProcessInit(MultipartFile multipartFile,BotSentenceProcessVO paramVO,@RequestHeader Long userId) throws Exception{
 		String fileName = multipartFile.getOriginalFilename();
 		String suffix =  fileName.substring(fileName.lastIndexOf(".") + 1);
 		if(!"zip".equals(suffix)) {
@@ -121,7 +132,7 @@ public class ImportProcessController {
 		 
 		unZipFiles(zipFile, descFile.getPath());
 		logger.info("本地存储上传话术模板临时路径 : " + descFile.getPath());
-		importProcessService.importProcess(descFile, templateType, templatId,userId);
+		importProcessService.importProcess(descFile, paramVO,userId);
 
 		FileUtils.deleteDirectory(descFile);
 		logger.info("删除临时路径..." + descFile.getPath());

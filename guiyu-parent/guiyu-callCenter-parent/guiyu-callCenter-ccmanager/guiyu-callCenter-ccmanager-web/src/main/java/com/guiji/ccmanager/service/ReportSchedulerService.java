@@ -10,4 +10,6 @@ public interface ReportSchedulerService {
     void reportCallDayScheduler();
 
     void reportCallHourScheduler();
+
+    void reportCallTodayTruncate();
 }

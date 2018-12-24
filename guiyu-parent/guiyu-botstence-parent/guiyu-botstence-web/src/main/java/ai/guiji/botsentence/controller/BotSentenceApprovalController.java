@@ -70,12 +70,6 @@ public class BotSentenceApprovalController {
 	@Autowired
 	private VoliceServiceImpl voliceServiceImpl;
 	
-	@Autowired
-	private BotSentenceDomainExtMapper botSentenceDomainExtMapper;
-	
-	@Autowired
-	private BotSentenceDomainMapper botSentenceDomainMapper;
-	
 	/**
 	 *  获取待审核话术列表
 	 */

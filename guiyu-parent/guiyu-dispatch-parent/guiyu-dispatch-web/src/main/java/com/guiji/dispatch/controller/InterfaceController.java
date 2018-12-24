@@ -46,6 +46,7 @@ public class InterfaceController {
 	@Autowired
 	private IApiLogin apiLogin;
 	
+	
 	static Logger logger = LoggerFactory.getLogger(InterfaceController.class);
 
 	/**
@@ -202,6 +203,14 @@ public class InterfaceController {
 	public static boolean isInteger(String str) {
 		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
 		return pattern.matcher(str).matches();
+	}
+	
+	@PostMapping("/test")
+	public void test(){
+		DispatchPlan dis = new DispatchPlan();
+		dis.setUserId(1);
+		dis.setPhone("13815443105");
+		dispatchPlanService.test(dis, "A");
 	}
 
 }

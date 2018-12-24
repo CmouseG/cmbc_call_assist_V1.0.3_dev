@@ -25,6 +25,8 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
+import com.guiji.robot.dao.entity.ext.UserAiCfgQuery;
+import com.guiji.robot.dao.ext.UserAiCfgInfoMapperExt;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.model.UserAiCfgDetailVO;
@@ -65,6 +67,8 @@ public class CustAiAccountController {
 	IBotSentenceProcess iBotSentenceProcess;
 	@Autowired
 	AiCacheService aiCacheService;
+	@Autowired
+	UserAiCfgInfoMapperExt userAiCfgInfoMapperExt;
 	
 	/**
 	 * 新增或者修改用户机器人配置信息明细
@@ -99,12 +103,31 @@ public class CustAiAccountController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryUserAiCfgBaseInfoByUserId", method = RequestMethod.POST)
-	public Result.ReturnData<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByUserId(@RequestParam(value="userId",required=true)String userId){
-		if(StrUtils.isEmpty(userId)) {
+	public Result.ReturnData<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByUserId(
+			@RequestParam(value="userId",required=false)String qUserId,
+			@RequestHeader Long userId, 
+			@RequestHeader Boolean isSuperAdmin){
+		if(StrUtils.isEmpty(qUserId) && userId==null) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		} 
+		UserAiCfgBaseInfo userAiCfgBaseInfo = null;
+		if(StrUtils.isEmpty(qUserId) && isSuperAdmin) {
+			//如果请求参数user是空，且是管理员，才统计全部
+			qUserId = null;
+			//是超级管理员，显示已经配置的所有用户的总共机器人数量
+			Integer totalAiNumInt = userAiCfgInfoMapperExt.countUserAi(new UserAiCfgQuery());
+			int totalAiNum = (totalAiNumInt==null)?0:totalAiNumInt;
+			userAiCfgBaseInfo = new UserAiCfgBaseInfo();
+			userAiCfgBaseInfo.setAiTotalNum(totalAiNum);
+		}else {
+			if(StrUtils.isEmpty(qUserId)) {
+				//如果查询用户为空，那么查询系统登陆用户，否则查询该用户
+				qUserId = userId.toString();
+			}
+			//不是超级管理员，返回当前用户的机器人账户基本信息配置
+			userAiCfgBaseInfo = iUserAiCfgService.queryUserAiCfgBaseInfoByUserId(qUserId);
 		}
-		UserAiCfgBaseInfo userAiCfgBaseInfo = iUserAiCfgService.queryUserAiCfgBaseInfoByUserId(userId);
 		return Result.ok(userAiCfgBaseInfo);
 	}
 	

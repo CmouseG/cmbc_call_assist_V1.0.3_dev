@@ -139,6 +139,23 @@ CREATE TABLE `sys_menu_role` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1803 DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `sys_organization`;
+CREATE TABLE `sys_organization` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL COMMENT '企业名称',
+  `code` varchar(255) NOT NULL COMMENT '编码',
+  `type` varchar(1) NOT NULL COMMENT '类型',
+  `robot` varchar(255) DEFAULT NULL COMMENT '机器人数量',
+  `line` varchar(255) DEFAULT NULL COMMENT '线路数量',
+  `del_flag` varchar(1) NOT NULL COMMENT '删除标志',
+  `open` varchar(1) DEFAULT NULL,
+  `create_id` bigint(20) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `update_id` bigint(20) NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
 -- ----------------------------
 -- Table structure for sys_process
 -- ----------------------------
@@ -230,6 +247,7 @@ CREATE TABLE `sys_user` (
   `inten_label` varchar(255) DEFAULT '' COMMENT '意向标签',
   `access_key` varchar(255) DEFAULT NULL,
   `secret_key` varchar(255) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL COMMENT '企业code',
   `create_id` bigint(20) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_id` bigint(20) DEFAULT NULL,
@@ -237,7 +255,9 @@ CREATE TABLE `sys_user` (
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `vaild_time` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 -- ----------------------------
 -- Table structure for sys_user_action

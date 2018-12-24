@@ -2,6 +2,8 @@ package ai.guiji.botsentence.service;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import ai.guiji.botsentence.dao.entity.BotSentenceDomain;
 import ai.guiji.botsentence.dao.entity.BotSentenceIntent;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
@@ -17,6 +19,7 @@ import ai.guiji.botsentence.vo.ProcessInfo;
 import ai.guiji.botsentence.vo.RefuseBranchVO;
 import ai.guiji.botsentence.vo.SaveNodeVO;
 import ai.guiji.component.client.config.JsonParam;
+import ai.guiji.component.model.ServerResult;
 
 /**
  * 
@@ -104,4 +107,5 @@ public interface IBotSentenceProcessService {
 	public List<BotSentenceProcess> getTemplateById(String templateId);
 	
 	public List<Object> getAvailableTemplateBySelf(String accountNo);
+	
 }

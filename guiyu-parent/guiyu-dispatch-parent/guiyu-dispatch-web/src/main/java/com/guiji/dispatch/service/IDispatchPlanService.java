@@ -89,7 +89,7 @@ public interface IDispatchPlanService {
      * @param planUuid 任务id
      * @return 响应报文
      */
-    boolean successSchedule(String planUuid) ;
+    boolean successSchedule(String planUuid,String label) ;
 
     /**
      * 批量导入
@@ -224,7 +224,7 @@ public interface IDispatchPlanService {
 	
 	JSONObject queryDispatchPlanByPhoens(String phone ,String batchName,int pagenum,int pagesize);
 	
-	JSONObject getServiceStatistics(Long userId);
+	JSONObject getServiceStatistics(Long userId,Boolean isSuperAdmin);
 
 	JSONObject getServiceStatistics(Long userId, String startTime, String endTime,Boolean isSuperAdmin);
 	
@@ -232,4 +232,6 @@ public interface IDispatchPlanService {
 
 	List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId, DispatchPlan isSuccess,
 			boolean flag);
+	
+	public void test(DispatchPlan sendSMsDispatchPlan, String label);
 }

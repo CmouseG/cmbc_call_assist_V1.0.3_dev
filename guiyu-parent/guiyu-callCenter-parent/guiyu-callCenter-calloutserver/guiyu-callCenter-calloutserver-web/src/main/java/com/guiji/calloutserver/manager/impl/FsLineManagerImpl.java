@@ -41,7 +41,7 @@ public class FsLineManagerImpl implements FsLineManager {
                     //TODO: 报警
                     log.warn("请求fsline失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 1, 60);
+            }, -1, 1, 1, 60, true);
         }catch (Exception ex){
             log.warn("获取fsline出现异常", ex);
             //TODO: 报警，获取fsline异常

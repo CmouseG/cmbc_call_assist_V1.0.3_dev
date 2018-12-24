@@ -30,6 +30,35 @@ CREATE TABLE `bd_table_sequence` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for bot_available_template
+-- ----------------------------
+DROP TABLE IF EXISTS `bot_available_template`;
+CREATE TABLE `bot_available_template` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `template_id` varchar(32) NOT NULL,
+  `template_name` varchar(32) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `org_code` varchar(255) NOT NULL COMMENT '用户名',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for bot_publish_sentence_log
+-- ----------------------------
+DROP TABLE IF EXISTS `bot_publish_sentence_log`;
+CREATE TABLE `bot_publish_sentence_log` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `temp_name` varchar(255) DEFAULT NULL,
+  `template_id` varchar(32) NOT NULL,
+  `process_id` varchar(32) NOT NULL,
+  `create_id` bigint(20) NOT NULL,
+  `create_time` datetime NOT NULL,
+  `status` varchar(10) NOT NULL COMMENT '状态1部署中2已上线3部署失败',
+  `create_name` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for bot_sentence_addition
 -- ----------------------------
 DROP TABLE IF EXISTS `bot_sentence_addition`;
@@ -162,6 +191,9 @@ CREATE TABLE `bot_sentence_process` (
   `approve_user` varchar(32) DEFAULT NULL COMMENT '审批人',
   `approve_notes` varchar(1024) DEFAULT NULL COMMENT '审批意见',
   `sound_type` varchar(32) DEFAULT NULL COMMENT '录音师编号',
+  `org_code` varchar(255) DEFAULT NULL COMMENT '组织编码',
+  `org_name` varchar(255) DEFAULT NULL COMMENT '企业名称',
+  `user_name` varchar(255) DEFAULT NULL COMMENT '用户名称',
   PRIMARY KEY (`process_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='话术流程';
 
@@ -267,6 +299,16 @@ CREATE TABLE `bot_sentence_tts_task` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1 COMMENT='TTS合成任务表';
 
+-- ----------------------------
+-- Table structure for bot_user_available
+-- ----------------------------
+DROP TABLE IF EXISTS `bot_user_available`;
+CREATE TABLE `bot_user_available` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL,
+  `available_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -497,7 +539,26 @@ INSERT INTO `user_account_industry_relation` VALUES ('20151011RELA00000776376', 
 -- Table structure for volice_info
 -- ----------------------------
 DROP TABLE IF EXISTS volice_info;
-CREATE TABLE volice_info (volice_id bigint NOT NULL AUTO_INCREMENT COMMENT '录音ID', volice_url varchar(512) COMMENT '录音文件URL', process_id varchar(32) COMMENT '话术流程编号', template_id varchar(256) COMMENT '话术模板编号', domain_name varchar(256) COMMENT '所属domain', type varchar(8) COMMENT '类型', num varchar(32) COMMENT '编号', content varchar(1024) COMMENT '内容', crt_time datetime COMMENT '创建时间', crt_user varchar(32) COMMENT '创建人', lst_update_time datetime COMMENT '最后修改时间', lst_update_user varchar(32) COMMENT '最后修改人', name varchar(256), flag varchar(32), old_id bigint, PRIMARY KEY (volice_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='录音信息';
+CREATE TABLE `volice_info` (
+  `volice_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '录音ID',
+  `volice_url` varchar(512) DEFAULT NULL COMMENT '录音文件URL',
+  `process_id` varchar(32) DEFAULT NULL COMMENT '话术流程编号',
+  `template_id` varchar(256) DEFAULT NULL COMMENT '话术模板编号',
+  `domain_name` varchar(256) DEFAULT NULL COMMENT '所属domain',
+  `type` varchar(8) DEFAULT NULL COMMENT '类型',
+  `num` varchar(32) DEFAULT NULL COMMENT '编号',
+  `content` varchar(1024) DEFAULT NULL COMMENT '内容',
+  `crt_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `crt_user` varchar(32) DEFAULT NULL COMMENT '创建人',
+  `lst_update_time` datetime DEFAULT NULL COMMENT '最后修改时间',
+  `lst_update_user` varchar(32) DEFAULT NULL COMMENT '最后修改人',
+  `name` varchar(256) DEFAULT NULL,
+  `flag` varchar(32) DEFAULT NULL,
+  `old_id` bigint(20) DEFAULT NULL,
+  `need_tts` tinyint(1) DEFAULT NULL COMMENT '是否需要tts合成',
+  PRIMARY KEY (`volice_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13695 DEFAULT CHARSET=utf8 COMMENT='录音信息';
+
 
 DROP TABLE IF EXISTS bot_available_template;
 CREATE TABLE `bot_available_template` (

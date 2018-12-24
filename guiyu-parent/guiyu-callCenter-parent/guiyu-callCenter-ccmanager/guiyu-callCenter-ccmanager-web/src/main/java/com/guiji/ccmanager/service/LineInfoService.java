@@ -1,6 +1,7 @@
 package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.LineInfo;
+import com.guiji.ccmanager.vo.LineInfo4AllotRes;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 
@@ -24,4 +25,8 @@ public interface LineInfoService {
     int getLineInfoByCustomCount(String customerId, String lineName);
 
     List<LineInfo> outLineinfos(String customerId);
+
+    List<LineInfo4AllotRes> getLineInfos4Allot(String customerId, Long userId, Boolean isSuperAdmin, String orgCode);
+
+    void allotLineInfo(String customerId, String lineIds);
 }

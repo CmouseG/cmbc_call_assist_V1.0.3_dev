@@ -43,7 +43,7 @@ public class ChannelServiceImpl implements ChannelService {
         return caches.getIfPresent(channelId);
     }
 
-    @Override
+/*    @Override
     public void updateMediaLock(String uuid, boolean isLock){
         Channel channel = findByUuid(uuid);
         if(channel == null){
@@ -53,10 +53,10 @@ public class ChannelServiceImpl implements ChannelService {
 
         channel.setIsMediaLock(isLock);
         save(channel);
-    }
+    }*/
 
     @Transactional
-    public void updateMediaLock(String uuid, Boolean isLock, String wavFile, LocalTime disturbTime){
+    public void updateMediaLock(String uuid, Boolean isLock,Boolean isPrologue, String wavFile, LocalTime disturbTime){
         Channel callMedia = findByUuid(uuid);
         if(callMedia == null){
             callMedia = new Channel();
@@ -64,6 +64,7 @@ public class ChannelServiceImpl implements ChannelService {
         }
 
         callMedia.setIsMediaLock(isLock);
+        callMedia.setIsPrologue(isPrologue);
         callMedia.setMediaFileName(wavFile);
         callMedia.setDisturbTime(disturbTime);
         callMedia.setEndPlayTime(new Date());
@@ -78,6 +79,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public boolean isMediaLock(String uuid) {
         Channel channel = findByUuid(uuid);
-        return channel!=null && channel.getIsMediaLock();
+        //开场白前面的用户说话不处理，sellbot提示结束之后用户说话不处理。故将channel!=null 改为channel==null
+        return channel==null || channel.getIsMediaLock();
     }
 }

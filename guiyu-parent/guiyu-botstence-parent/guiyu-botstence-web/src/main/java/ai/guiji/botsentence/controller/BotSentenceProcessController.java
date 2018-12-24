@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysUser;
+
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.entity.BotSentenceIntent;
 import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
@@ -42,8 +46,9 @@ public class BotSentenceProcessController {
 	private IBotSentenceProcessService botSentenceProcessService;
 	
 	
+	
 	/**
-	 * 根据条件查询话术流程列表
+	 * 根据条件查询话术流程列表 
 	 * @param pageSize
 	 * @param pageNo
 	 * @param templateName
@@ -118,10 +123,10 @@ public class BotSentenceProcessController {
 		return ServerResult.createByErrorMessage("创建模板失败!");
 	}
 	
-	@RequestMapping(value="createAdminBotSentenceProcess")
-	public ServerResult<String> createAdminBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
-		return createBotSentenceProcess(paramVO,userId);
-	}
+//	@RequestMapping(value="createAdminBotSentenceProcess")
+//	public ServerResult<String> createAdminBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO,@JsonParam Long userId) {
+//		return createBotSentenceProcess(paramVO,userId);
+//	}
 	
 	/**
 	 * 修改话术
@@ -360,10 +365,6 @@ public class BotSentenceProcessController {
 		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
 		return ServerResult.createBySuccess(result);
 	}
+
 	
-	@RequestMapping(value="getAvailableTemplateBySelf")
-	public ServerResult<List<Object>> getAvailableTemplateBySelf(@RequestHeader("userId") String accountNo) {
-		List<Object> result= botSentenceProcessService.getAvailableTemplateBySelf(accountNo);
-		return ServerResult.createBySuccess(result);
-	}
 }

@@ -39,8 +39,8 @@ public class TemplateServiceImpl implements TemplateService {
     IRobotRemote iRobotFeign;
     @Override
     public boolean istempexist(String tempId) {
-        String tempen = tempId.replaceAll("rec","en");
-        String tempPath = pathConfig.getTempPath() + tempen;
+        tempId = tempId.substring(0,tempId.lastIndexOf("_")+1) ;
+        String tempPath = pathConfig.getTempPath() + tempId+"en";
         return FileUtil.isExist(tempPath);
     }
 
@@ -83,6 +83,14 @@ public class TemplateServiceImpl implements TemplateService {
         sysFileReqVO.setUserId(recordReqVO.getUserId());
         sysFileReqVO.setThumbImageFlag("0");
         String uploadFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();
+       if(FileUtil.isExist(uploadFile)) {
+           logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadFile);
+           throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
+       }
+       if(FileUtil.getWavDuration(uploadFile)==0){
+           logger.info("上传录音失败,录音文件长度为0，文件名为:[{}]",uploadFile);
+           throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NO_LENGTH);
+       }
         SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadFile));
         if(sysFileRspVO==null){
             logger.info("上传录音失败,失败的文件为:[{}]",uploadFile);
@@ -94,9 +102,8 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<WavLengthVO> getwavlength(String tempId) {
-        String temprec = tempId;
-        String tempen = tempId.replaceAll("rec","en");
-        String tempPath = pathConfig.getTempPath() + tempen+"/"+temprec;
+        tempId = tempId.substring(0,tempId.lastIndexOf("_")+1) ;
+        String tempPath = pathConfig.getTempPath() + tempId+"en/"+tempId+"rec";
         List<WavLengthVO> list = new ArrayList<WavLengthVO>();
         File tempFile = new File(tempPath);
         if(!tempFile.exists()){

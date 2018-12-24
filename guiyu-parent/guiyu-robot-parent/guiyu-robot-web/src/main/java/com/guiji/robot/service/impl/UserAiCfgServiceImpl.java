@@ -1,6 +1,7 @@
 package com.guiji.robot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -84,26 +85,48 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	@Transactional
 	public UserAiCfgBaseInfo putupUserCfgBase(UserAiCfgBaseInfo userAiCfgBaseInfo) {
 		if(userAiCfgBaseInfo != null) {
-			String id = userAiCfgBaseInfo.getId();
-			if(StrUtils.isNotEmpty(id)) {
+			UserAiCfgBaseInfo existUserAiCfgBaseInfo = null;
+			if(StrUtils.isNotEmpty(userAiCfgBaseInfo.getId())) {
+				//如果主键不为空，那主键查询
+				existUserAiCfgBaseInfo = userAiCfgBaseInfoMapper.selectByPrimaryKey(userAiCfgBaseInfo.getId());
+			}else if(StrUtils.isNotEmpty(userAiCfgBaseInfo.getUserId())) {
+				//用户ID不为空，根据用户查询是否存在
+				UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+				example.createCriteria().andUserIdEqualTo(userAiCfgBaseInfo.getUserId());
+				List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
+				if(ListUtil.isNotEmpty(list)) {
+					existUserAiCfgBaseInfo = list.get(0);
+				}
+			}
+			if(existUserAiCfgBaseInfo != null) {
 				//更新
-				//先查询存量的用户机器总数
-				UserAiCfgBaseInfo existUserAiCfgBaseInfo = userAiCfgBaseInfoMapper.selectByPrimaryKey(id);
 				String userId = existUserAiCfgBaseInfo.getUserId();
-				if(userAiCfgBaseInfo.getAiTotalNum()<existUserAiCfgBaseInfo.getAiTotalNum()) {
-					//如果数量减少了，那么需要让用户删除拆分信息重新配置
-					List<UserAiCfgInfo> cfgInfoList = this.queryUserAiCfgListByUserId(userId);
+				//查询用户拆分配置
+				List<UserAiCfgInfo> cfgInfoList = this.queryUserAiCfgListByUserId(userId);
+				boolean isCleanFlag = false; 	//是否清数据
+				if(userAiCfgBaseInfo.getAiTotalNum()<existUserAiCfgBaseInfo.getAiTotalNum()
+						|| this.subTemplateChange(userAiCfgBaseInfo.getTemplateIds(), cfgInfoList)) {
+					//如果总数量减少了或者 模板变更减少了，删除现有拆分数据，并重新自动分配
 					if(ListUtil.isNotEmpty(cfgInfoList)) {
-						throw new RobotException(AiErrorEnum.AI00060024.getErrorCode(),AiErrorEnum.AI00060024.getErrorMsg());
+						//删除用户数据
+						this.delUserAllCfg(userId);
 					}
+					isCleanFlag = true;
 				}
 				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 				if(StrUtils.isEmpty(userAiCfgBaseInfo.getTemplateIds())) {
 					userAiCfgBaseInfo.setTemplateIds(existUserAiCfgBaseInfo.getTemplateIds());
+				}else if(isCleanFlag || cfgInfoList==null || cfgInfoList.isEmpty()) {
+					//如果新的模板不为空，并且（数据被清理过了，或者原本就没有拆分数据），那么初始化下
+					UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
+					BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+					userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
+					this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
 				}
 				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
 					userAiCfgBaseInfo.setUserId(userId);
 				}
+				userAiCfgBaseInfo.setId(existUserAiCfgBaseInfo.getId());
 				userAiCfgBaseInfo.setCrtUser(existUserAiCfgBaseInfo.getCrtUser());
 				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {
@@ -391,6 +414,54 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
+	 * 删除用户所有分配的数据
+	 * @param userId
+	 * @param id
+	 */
+	@Transactional
+	public void delUserAllCfg(String userId) {
+		if(StrUtils.isNotEmpty(userId)) {
+			Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userId, RobotConstants.LOCK_NAME_CFG+userId);
+			if (distributedLockHandler.tryLock(lock)) { // 持锁
+				try {
+					//删除表数据
+					UserAiCfgInfoExample example = new UserAiCfgInfoExample();
+					example.createCriteria().andUserIdEqualTo(userId);
+					List<UserAiCfgInfo> userAiCfgList = userAiCfgInfoMapper.selectByExample(example);
+					if(ListUtil.isNotEmpty(userAiCfgList)) {
+						for(UserAiCfgInfo uac : userAiCfgList) {
+							//逐条删除数据
+							userAiCfgInfoMapper.deleteByPrimaryKey(uac.getId());
+							//记录一条用户账户变更历史
+							UserAiCfgHisInfo record = new UserAiCfgHisInfo();
+							record.setCrtTime(new Date());
+							record.setBusiId(uac.getId());
+							BeanUtil.copyProperties(uac, record);
+							record.setHandleType(RobotConstants.HANDLE_TYPE_D); //删除
+							userAiCfgHisInfoMapper.insert(record);
+						}
+					}
+					//删除缓存数据
+					aiCacheService.delUserResource(userId);
+				} catch (RobotException e) {
+					throw e; 
+				} catch (Exception e1) {
+					logger.error("机器人线路拆分删除异常！",e1);
+					throw new RobotException(AiErrorEnum.AI00060023.getErrorCode(),AiErrorEnum.AI00060023.getErrorMsg());
+				}finally {
+					//释放锁
+					distributedLockHandler.releaseLock(lock);
+				}
+			}else {
+				logger.error("用户资源删除未能获取到锁!");
+			}
+		}else {
+			logger.error("userid不能为空！");
+		}
+	}
+	
+	
+	/**
 	 * 删除用户一条资源配置信息
 	 * @param userId
 	 * @param id
@@ -507,5 +578,29 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return example;
+	}
+	
+	
+	/**
+	 * 获取最新的模板和已经拆分使用的模板，对比下是否有减少了，如果有减少返回true(默认不减少)
+	 * @param nowTemps
+	 * @param cfgInfoList
+	 */
+	private boolean subTemplateChange(String nowTemps,List<UserAiCfgInfo> cfgInfoList) {
+		if(StrUtils.isNotEmpty(nowTemps) && ListUtil.isNotEmpty(cfgInfoList)) {
+			List<String> nowTempList = Arrays.asList(nowTemps.split(","));
+			List<String> existTempList = new ArrayList<String>();
+			for(UserAiCfgInfo info : cfgInfoList) {
+				String templates = info.getTemplateIds();
+				if(StrUtils.isNotEmpty(templates)) {
+					existTempList.addAll(Arrays.asList(templates.split(",")));
+				}
+			}
+			//如果新的没有包含老的
+			if(!nowTempList.containsAll(existTempList)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

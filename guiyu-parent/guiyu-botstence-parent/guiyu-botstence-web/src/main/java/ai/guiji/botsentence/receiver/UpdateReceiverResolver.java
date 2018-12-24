@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.auth.api.IAuth;
 import com.guiji.common.model.process.ProcessTypeEnum;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.guiyu.message.model.PublishBotstenceResultMsgVO;
+import com.guiji.user.dao.entity.SysUser;
 
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
@@ -38,7 +41,6 @@ public class UpdateReceiverResolver {
 	
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
-	
 	
 	@Autowired
 	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
@@ -73,8 +75,6 @@ public class UpdateReceiverResolver {
 			List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
 			BotSentenceProcess botSentenceProcess =list.get(0);
 			botSentenceProcess.setState(Constant.ERROR);//部署中
-			int version=Integer.valueOf(botSentenceProcess.getVersion())+1;
-			botSentenceProcess.setVersion(String.valueOf(version));
 		    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 		    
 		    BotPublishSentenceLog record=new BotPublishSentenceLog();
@@ -83,11 +83,6 @@ public class UpdateReceiverResolver {
 		    record.setStatus("3");
 		    botPublishSentenceLogMapper.updateByPrimaryKeySelective(record);
 		    
-		    BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
-		    botAvailableTemplate.setTemplateId(tempId);
-		    botAvailableTemplate.setTemplateName(botSentenceProcess.getTemplateName());
-		    botAvailableTemplate.setUserId(botSentenceProcess.getCrtUser());
-		    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
 		}
 		
 		if(vo.getSellbot()==0 && vo.getRobot()==0 && vo.getFreeswitch()==0){
@@ -98,17 +93,21 @@ public class UpdateReceiverResolver {
 				List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
 				BotSentenceProcess botSentenceProcess =list.get(0);
 				botSentenceProcess.setState(Constant.APPROVE_ONLINE);//部署中
+				int version=Integer.valueOf(botSentenceProcess.getVersion())+1;
+				botSentenceProcess.setVersion(String.valueOf(version));
 			    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 			    BotPublishSentenceLog record=new BotPublishSentenceLog();
 			    Long id=botPublishSentenceLogMapper.getLastPublishSentence(tempId);
 			    record.setId(id);
 			    record.setStatus("2");
 			    botPublishSentenceLogMapper.updateByPrimaryKeySelective(record);
+			    
 			    //添加可用话术
 			    BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
 			    botAvailableTemplate.setTemplateId(tempId);
 			    botAvailableTemplate.setTemplateName(botSentenceProcess.getTemplateName());
-			    botAvailableTemplate.setUserId(botSentenceProcess.getCrtUser());
+			    botAvailableTemplate.setUserId(Long.valueOf(botSentenceProcess.getCrtUser()));
+			    botAvailableTemplate.setOrgCode(botSentenceProcess.getOrgCode());;
 			    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
 			    botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);
 //			    

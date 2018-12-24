@@ -66,10 +66,13 @@ import ai.guiji.botsentence.dao.entity.VoliceInfo;
 import ai.guiji.botsentence.dao.entity.VoliceInfoExample;
 import ai.guiji.botsentence.service.IFileGenerateService;
 import ai.guiji.botsentence.service.IVoliceService;
+import ai.guiji.botsentence.util.AudioConvertUtil;
 import ai.guiji.botsentence.util.BotSentenceUtil;
 import ai.guiji.botsentence.vo.OptionsJson;
 import ai.guiji.component.client.util.FileUtil;
 import ai.guiji.component.client.util.IOUtil;
+import ai.guiji.component.exception.CommonException;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -298,6 +301,83 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory()) && !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))
 					|| "解释开场白".equals(botSentenceDomain.getDomainName())){
 				BotSentenceBranchExample intentExample = new BotSentenceBranchExample();
+				intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
+				List<BotSentenceBranch> intentList = botSentenceBranchMapper.selectByExample(intentExample);
+				List<String> keywords = getIntentKeys(intentList.get(0).getIntents());
+				
+				String keywords_str = "";
+				for(String temp : keywords) {
+					keywords_str = keywords_str + "," + temp;
+				}
+				if(keywords_str.length() > 0) {
+					keywords_str = keywords_str.substring(1, keywords_str.length());
+				}
+				keywords_str = "[" + keywords_str + "]";
+				List<String> keywordsList = BotSentenceUtil.getKeywords(keywords_str);
+				String singleKeywordStr = keywordsList.get(0);
+				String complexywordStr = keywordsList.get(1);
+				String [] single_array = singleKeywordStr.split(",");
+				
+				List<String> allKeyWords2 = new ArrayList<>();
+				for(String temp : allKeywords) {
+					String [] array = temp.split(",");
+					if(null != array && array.length > 0) {
+						for(int i = 0 ; i < array.length ; i++) {
+							if(StringUtils.isNotBlank(array[i])) {
+								allKeyWords2.add(array[i]);
+							}
+						}
+					}
+				}
+				
+				List<String> allRefuseKeyWords = new ArrayList<>();
+				for(String temp : single_array) {
+					String [] array = temp.split(",");
+					if(null != array && array.length > 0) {
+						for(int i = 0 ; i < array.length ; i++) {
+							if(StringUtils.isNotBlank(array[i])) {
+								allRefuseKeyWords.add(array[i]);
+							}
+						}
+					}
+				}
+				
+				for(String keyword : allKeyWords2) {
+					if(allRefuseKeyWords.contains(keyword)){
+						allRefuseKeyWords.remove(keyword);
+					}
+				}
+				
+				List<String> newRefuseKeyWords = new ArrayList<>();
+				String newRefuseKeyWordsStr = "";
+				
+				for(String temp : allRefuseKeyWords) {
+					//temp = temp.replace("\"", "");
+					//newRefuseKeyWords.add(temp);
+					newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + temp;
+				}
+				
+				
+				if(StringUtils.isNotBlank(complexywordStr)) {
+					newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + complexywordStr;
+				}
+				if(newRefuseKeyWordsStr.length() > 0) {
+					newRefuseKeyWordsStr = newRefuseKeyWordsStr.substring(1, newRefuseKeyWordsStr.length());
+				}
+				newRefuseKeyWords.add(newRefuseKeyWordsStr);
+				
+				Map map = new HashMap();
+				refuseBranchNodeVO.setNext(domainName);
+				refuseBranchNodeVO.setKeys(newRefuseKeyWords);
+				refuseBranchNodeVO.setEnd("结束");
+				refuseBranchNodeVO.setIs_special_limit_free(true);
+				refuseBranchNodeVO.setResponse(refuseResponse);
+				map.put("refuse_" + domainName, refuseBranchNodeVO);
+				branchShow.add(map);
+			
+				
+				/*
+				BotSentenceBranchExample intentExample = new BotSentenceBranchExample();
 				
 				intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
 				List<BotSentenceBranch> intentList = botSentenceBranchMapper.selectByExample(intentExample);
@@ -347,7 +427,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 				refuseBranchNodeVO.setResponse(refuseResponse);
 				map.put("refuse_" + domainName, refuseBranchNodeVO);
 				branchShow.add(map);
-			}
+			*/}
 			
 			domainVO.setBranch(branchShow);
 
@@ -734,6 +814,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 							}
 							
 							if(Constant.IS_PARAM_TRUE.equals(task.getIsParam())) {
+								tts_pos_map2.put(task.getContent(), wavName);
 								tts_pos_map1.put(wavName, task.getContent());
 								allParamList.add(task.getContent());
 							}
@@ -877,7 +958,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 	 * 下载音频文件
 	 */
 	public void generateWAV(RestTemplate template, String url,String name,String dir) throws IOException {
-		logger.info("downloading...." + url);
+		/*logger.info("downloading...." + url);
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<Resource> httpEntity = new HttpEntity<Resource>(headers);
 		ResponseEntity<byte[]> response = template.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
@@ -890,26 +971,76 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		fos1.close();
 
 		
-//		File wavFile = new File(dir + FILE_SEPARATOR + "temp2_" + name + ".wav");
-//		boolean flag = AudioConvertUtil.converWav(file.getPath(), wavFile.getPath());
-//		if(!flag) {
-//			throw new CommonException("转换wav失败"+file.getName());
-//		}
-//		
-//		if(file.delete()) {
-//			logger.info("删除临时文件"+file.getName()+"成功...");
-//		}
-//		
-//		
-//		//去掉音频信息头
-//		File finnalFile = new File(dir + FILE_SEPARATOR + name + ".wav");
-//		boolean flag2 = AudioConvertUtil.removeHeadInfo(wavFile.getPath(), finnalFile.getPath());
-//		if(!flag2) {
-//			throw new CommonException("清空头信息失败"+wavFile.getName());
-//		}
-//		if(wavFile.delete()) {
-//			logger.info("删除临时文件"+wavFile.getName()+"成功...");
-//		}
+		File wavFile = new File(dir + FILE_SEPARATOR + "temp2_" + name + ".wav");
+		boolean flag = AudioConvertUtil.converWav(file.getPath(), wavFile.getPath());
+		if(!flag) {
+			throw new CommonException("转换wav失败"+file.getName());
+		}
+		
+		if(file.delete()) {
+			logger.info("删除临时文件"+file.getName()+"成功...");
+		}
+		
+		
+		//去掉音频信息头
+		File finnalFile = new File(dir + FILE_SEPARATOR + name + ".wav");
+		boolean flag2 = AudioConvertUtil.removeHeadInfo(wavFile.getPath(), finnalFile.getPath());
+		if(!flag2) {
+			throw new CommonException("清空头信息失败"+wavFile.getName());
+		}
+		if(wavFile.delete()) {
+			logger.info("删除临时文件"+wavFile.getName()+"成功...");
+		}*/
+		
+		logger.info("downloading...." + url);
+		String os = System.getProperties().getProperty("os.name").toLowerCase();
+		logger.info("当前操作系统: " + os);
+		if(os.startsWith("win")) {
+			HttpHeaders headers = new HttpHeaders();
+			HttpEntity<Resource> httpEntity = new HttpEntity<Resource>(headers);
+			ResponseEntity<byte[]> response = template.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
+			logger.info(">>>>> return code:" + response.getStatusCodeValue());
+			File file = new File(dir + FILE_SEPARATOR + name + ".wav");
+			
+			FileOutputStream fos1 = new FileOutputStream(file);
+			fos1.write(response.getBody());
+			fos1.flush();
+			fos1.close();
+		}else {
+
+			HttpHeaders headers = new HttpHeaders();
+			HttpEntity<Resource> httpEntity = new HttpEntity<Resource>(headers);
+			ResponseEntity<byte[]> response = template.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
+			logger.info(">>>>> return code:" + response.getStatusCodeValue());
+			File file = new File(dir + FILE_SEPARATOR + "temp_"+ name + ".wav");
+			
+			FileOutputStream fos1 = new FileOutputStream(file);
+			fos1.write(response.getBody());
+			fos1.flush();
+			fos1.close();
+
+			
+			File wavFile = new File(dir + FILE_SEPARATOR + "temp2_" + name + ".wav");
+			boolean flag = AudioConvertUtil.converWav(file.getPath(), wavFile.getPath());
+			if(!flag) {
+				throw new CommonException("转换wav失败"+file.getName());
+			}
+			
+			if(file.delete()) {
+				logger.info("删除临时文件"+file.getName()+"成功...");
+			}
+			
+			
+			//去掉音频信息头
+			File finnalFile = new File(dir + FILE_SEPARATOR + name + ".wav");
+			boolean flag2 = AudioConvertUtil.removeHeadInfo(wavFile.getPath(), finnalFile.getPath());
+			if(!flag2) {
+				throw new CommonException("清空头信息失败"+wavFile.getName());
+			}
+			if(wavFile.delete()) {
+				logger.info("删除临时文件"+wavFile.getName()+"成功...");
+			}
+		}
 	}
 	
 

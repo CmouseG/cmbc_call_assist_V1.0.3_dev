@@ -31,7 +31,7 @@ public class ControllerLogAspect
 {
 	private static final Logger logger = LoggerFactory.getLogger(ControllerLogAspect.class);
 	
-	SysUserAction SysUserAction = null;
+	SysUserAction sysUserAction = null;
 	
 	@Autowired
 	private RestTemplate restTemplate;
@@ -123,17 +123,17 @@ public class ControllerLogAspect
 			sb.append(parameter.getName()).append("|");
 		}
 		
-		SysUserAction = new SysUserAction();
-		SysUserAction.setOperatype(annotation.operaType());
-		SysUserAction.setOperatarget(annotation.operaTarget());
-		SysUserAction.setOperateTime(new Date());
+		sysUserAction = new SysUserAction();
+		sysUserAction.setOperatype(annotation.operaType());
+		sysUserAction.setOperatarget(annotation.operaTarget());
+		sysUserAction.setOperateTime(new Date());
 		String userId = request.getHeader("userId");
 		if(userId != null){
-			SysUserAction.setUserId(Long.parseLong(userId));
+			sysUserAction.setUserId(Long.parseLong(userId));
 		}
-		SysUserAction.setData(sb.toString());
+		sysUserAction.setData(sb.toString());
 		
-		restTemplate.postForObject("http://guiyu-cloud-zuul:18000/log/save", SysUserAction, ReturnData.class);
+		restTemplate.postForObject("http://guiyu-cloud-zuul:18000/log/save", sysUserAction, ReturnData.class);
 	}
 
 }

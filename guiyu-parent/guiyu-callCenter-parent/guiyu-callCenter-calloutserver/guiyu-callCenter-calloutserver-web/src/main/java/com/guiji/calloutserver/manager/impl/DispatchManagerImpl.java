@@ -7,6 +7,7 @@ import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.EurekaManager;
+import com.guiji.calloutserver.service.DispatchLogService;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.DispatchPlan;
@@ -32,6 +33,9 @@ public class DispatchManagerImpl implements DispatchManager {
 
     @Autowired
     EurekaManager eurekaManager;
+
+    @Autowired
+    DispatchLogService dispatchLogService;
 
     /**
      * 拉取呼叫计划
@@ -64,6 +68,7 @@ public class DispatchManagerImpl implements DispatchManager {
                 List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
                 if (dispatchPlans != null && dispatchPlans.size() > 0) {
                     callOutPlans = toCallPlan(dispatchPlans);
+                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getCallId(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心拉取号码");
                 }
             }
 
@@ -107,17 +112,18 @@ public class DispatchManagerImpl implements DispatchManager {
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String callId) {
+    public void successSchedule(String callId, String phoneNo, String intent) {
 
         //调度中心
         Result.ReturnData returnData = null;
-        try
+        dispatchLogService.startServiceRequestLog(callId,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向调度中心回调结果");
 
+        try
         {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
-                    return iDispatchPlanOutApi.successSchedule(callId);
+                    return iDispatchPlanOutApi.successSchedule(callId,intent);
                 }
 
                 @Override
@@ -126,14 +132,14 @@ public class DispatchManagerImpl implements DispatchManager {
                     log.warn("调度中心回掉是否成功出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
             }, -1, 1, 3, 120, true);
-        } catch (
-                Exception e)
-
+        } catch ( Exception e)
         {
             log.warn("调度中心回掉是否成功时出现异常", e);
         }
 
-        log.info("===================================successSchedule:" + callId);
+        log.info("======================successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
+        dispatchLogService.endServiceRequestLog(callId,phoneNo, returnData, "结束向调度中心回调结果");
+
 
     }
 }

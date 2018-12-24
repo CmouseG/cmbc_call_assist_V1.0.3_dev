@@ -15,7 +15,7 @@
  */
 package org.freeswitch.esl.client.inbound;
 
-import org.freeswitch.esl.client.internal.info.ExecutionHandler;
+import org.freeswitch.esl.client.internal.debug.ExecutionHandler;
 import org.freeswitch.esl.client.transport.message.EslFrameDecoder;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;

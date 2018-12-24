@@ -38,13 +38,13 @@ spring:
       
     
 mybatis:   
-  mapperLocations: classpath*:mappers/*.xml  
+  mapperLocations: classpath*:mappers/**/*.xml
   config-location: classpath:config/mybatis-config.xml      
 
 #临时目录
 file:
   tmpPath: apps/tmp/
-  hushuDir: home/botstence_tmpl/
+  hushuDir: home/botstence_robot_tmpl/
   
 properties:
   error: properties/error.properties

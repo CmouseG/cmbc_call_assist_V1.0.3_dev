@@ -46,7 +46,7 @@ public class UserService {
 	 * 修改密码
 	 * @param user
 	 */
-	public void update(SysUser user,String[] roleIds){
+	public void update(SysUser user,Long roleIds){
 		user.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(user);
 		mapper.addRole(user.getId(),roleIds);
@@ -65,7 +65,7 @@ public class UserService {
 	}
 	
 	public SysUser getUserById(Long id){
-		return mapper.selectByPrimaryKey(id);
+		return mapper.getUserById(id);
 	}
 	
 	public List<Map<String,String>> getUserByName(String userName){

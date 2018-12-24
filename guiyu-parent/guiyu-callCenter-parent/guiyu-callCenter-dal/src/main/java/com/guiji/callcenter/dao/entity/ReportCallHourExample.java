@@ -494,6 +494,76 @@ public class ReportCallHourExample {
             addCriterion("customer_id not between", value1, value2, "customerId");
             return (Criteria) this;
         }
+
+        public Criteria andTempidIsNull() {
+            addCriterion("tempid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidIsNotNull() {
+            addCriterion("tempid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidEqualTo(String value) {
+            addCriterion("tempid =", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidNotEqualTo(String value) {
+            addCriterion("tempid <>", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidGreaterThan(String value) {
+            addCriterion("tempid >", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidGreaterThanOrEqualTo(String value) {
+            addCriterion("tempid >=", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidLessThan(String value) {
+            addCriterion("tempid <", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidLessThanOrEqualTo(String value) {
+            addCriterion("tempid <=", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidLike(String value) {
+            addCriterion("tempid like", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidNotLike(String value) {
+            addCriterion("tempid not like", value, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidIn(List<String> values) {
+            addCriterion("tempid in", values, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidNotIn(List<String> values) {
+            addCriterion("tempid not in", values, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidBetween(String value1, String value2) {
+            addCriterion("tempid between", value1, value2, "tempid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTempidNotBetween(String value1, String value2) {
+            addCriterion("tempid not between", value1, value2, "tempid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

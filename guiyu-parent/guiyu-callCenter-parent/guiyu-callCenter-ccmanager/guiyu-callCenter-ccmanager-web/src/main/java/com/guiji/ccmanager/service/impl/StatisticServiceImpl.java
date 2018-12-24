@@ -1,11 +1,17 @@
 package com.guiji.ccmanager.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.StatisticMapper;
+import com.guiji.callcenter.dao.entity.ErrorMatch;
 import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
 import com.guiji.callcenter.dao.entityext.ReasonCount;
 import com.guiji.ccmanager.service.StatisticService;
+import com.guiji.component.result.Result;
+import com.guiji.user.dao.entity.SysUser;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,32 +19,24 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.guiji.ccmanager.controller.StatisticController.differentDaysByMillisecond;
+
 /**
  * @Auther: 黎阳
  * @Date: 2018/12/5 0005 15:42
  * @Description:
  */
+@Slf4j
 @Service
 public class StatisticServiceImpl implements StatisticService {
 
     @Autowired
     StatisticMapper statisticMapper;
+    @Autowired
+    IAuth iAuth;
 
     @Override
-    public List<Map> getIntentCountOnTime(Long userId, String startDate, String endDate) throws ParseException {
-
-        Map map = new HashMap();
-        if(userId!=null){
-            map.put("customer_id",userId);
-        }
-        map.put("startDate",startDate);
-        map.put("endDate",endDate);
-        return statisticMapper.getIntentCountOnTime(map);
-
-    }
-
-    @Override
-    public List<DashboardOverView> getDashboardOverView(String userId, String startDate, String endDate) {
+    public List<DashboardOverView> getDashboardOverView(String userId, String startDate, String endDate, String tempId) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
@@ -48,12 +46,12 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<DashboardOverView> listAgoDurationAll = statisticMapper.getDashboardOverViewAgoDurationAll(startDate,endDate,userId);
-            List<DashboardOverView> listAgoNotConnect = statisticMapper.getDashboardOverViewAgoNotConnect(startDate,endDate,userId);
-            List<DashboardOverView> listAgoConnect = statisticMapper.getDashboardOverViewAgoConnect(startDate,endDate,userId);
-            List<DashboardOverView> listAgoDuration5 = statisticMapper.getDashboardOverViewAgoDuration5(startDate,endDate,userId);
-            List<DashboardOverView> listAgoDuration10 = statisticMapper.getDashboardOverViewAgoDuration10(startDate,endDate,userId);
-            List<DashboardOverView> listAgoDuration30 = statisticMapper.getDashboardOverViewAgoDuration30(startDate,endDate,userId);
+            List<DashboardOverView> listAgoDurationAll = statisticMapper.getDashboardOverViewAgoDurationAll(startDate,endDate,userId, tempId);
+            List<DashboardOverView> listAgoNotConnect = statisticMapper.getDashboardOverViewAgoNotConnect(startDate,endDate,userId, tempId);
+            List<DashboardOverView> listAgoConnect = statisticMapper.getDashboardOverViewAgoConnect(startDate,endDate,userId, tempId);
+            List<DashboardOverView> listAgoDuration5 = statisticMapper.getDashboardOverViewAgoDuration5(startDate,endDate,userId, tempId);
+            List<DashboardOverView> listAgoDuration10 = statisticMapper.getDashboardOverViewAgoDuration10(startDate,endDate,userId, tempId);
+            List<DashboardOverView> listAgoDuration30 = statisticMapper.getDashboardOverViewAgoDuration30(startDate,endDate,userId, tempId);
             if(listAgoDurationAll!=null && listAgoDurationAll.size()>0){
                 for(DashboardOverView durationAll:listAgoDurationAll){
                     if(listAgoNotConnect!=null && listAgoNotConnect.size()>0) {
@@ -98,12 +96,12 @@ public class StatisticServiceImpl implements StatisticService {
 
         //今天
         if(endDate.equals(today)){
-            List<DashboardOverView> listTodayDurationAll = statisticMapper.getDashboardOverViewTodayDurationAll(userId);
-            List<DashboardOverView> listTodayNotConnect = statisticMapper.getDashboardOverViewTodayNotConnect(userId);
-            List<DashboardOverView> listTodayConnect = statisticMapper.getDashboardOverViewTodayConnect(userId);
-            List<DashboardOverView> listTodayDuration5 = statisticMapper.getDashboardOverViewTodayDuration5(userId);
-            List<DashboardOverView> listTodayDuration10 = statisticMapper.getDashboardOverViewTodayDuration10(userId);
-            List<DashboardOverView> listTodayDuration30 = statisticMapper.getDashboardOverViewTodayDuration30(userId);
+            List<DashboardOverView> listTodayDurationAll = statisticMapper.getDashboardOverViewTodayDurationAll(userId, tempId);
+            List<DashboardOverView> listTodayNotConnect = statisticMapper.getDashboardOverViewTodayNotConnect(userId, tempId);
+            List<DashboardOverView> listTodayConnect = statisticMapper.getDashboardOverViewTodayConnect(userId, tempId);
+            List<DashboardOverView> listTodayDuration5 = statisticMapper.getDashboardOverViewTodayDuration5(userId, tempId);
+            List<DashboardOverView> listTodayDuration10 = statisticMapper.getDashboardOverViewTodayDuration10(userId, tempId);
+            List<DashboardOverView> listTodayDuration30 = statisticMapper.getDashboardOverViewTodayDuration30(userId, tempId);
 
             if(listTodayDurationAll!=null && listTodayDurationAll.size()>0){
                 for(DashboardOverView durationAll:listTodayDurationAll){
@@ -151,7 +149,75 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<IntentCount> getIntentCount(String userId, String startDate, String endDate) {
+    public List<Map<String, Object>> getIntentCount(Boolean isSuperAdmin, Long userId, String startDate, String endDate, String tempId) throws ParseException {
+
+        String[] arr = {"A","B","C","D","E","F","W"};
+        try{
+            Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
+            String intent = result.getBody().getIntenLabel();
+            if(StringUtils.isNotBlank(intent)){
+                arr = intent.split(",");
+            }
+        }catch (Exception e){
+            log.error("iAuth.getUserById userId[{}] has error :"+e,userId);
+        }
+        List<String> typeList = new ArrayList<>(Arrays.asList(arr));
+        if(!typeList.contains("W")){
+            typeList.add("W");
+        }
+
+        List<IntentCount> list = getIntentCountList(!isSuperAdmin ? String.valueOf(userId): null, startDate, endDate, tempId);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date sDate = sdf.parse(startDate);
+        Date eDate = sdf.parse(endDate);
+
+        int days = differentDaysByMillisecond(sDate, eDate);
+
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(sDate);
+
+        List<Map<String,Object>> resList = new ArrayList<>();
+
+        for (int i = 0; i <= days; i++) {
+            String startDateStr = sdf.format(sDate);
+            Map map = new HashMap();
+            map.put("callDate", startDateStr);
+
+            for (String type : typeList) {
+                map.put(type, 0);
+            }
+
+            int connectCount =0;
+            int notConnectCount =0;
+
+            if (list != null && list.size() > 0) {
+                for (IntentCount intentCount : list) {
+                    String callDate = intentCount.getCallDate();
+                    if (callDate.equals(startDateStr)) {
+                        String intentIn = intentCount.getIntent();
+                        map.put(intentIn, intentCount.getCallCount());
+                        if(intentIn.equals("F") || intentIn.equals("W") ){
+                            notConnectCount+=intentCount.getCallCount();
+                        }else{
+                            connectCount+=intentCount.getCallCount();
+                        }
+                    }
+                }
+            }
+            int allCallsCount = connectCount+notConnectCount;
+            map.put("connectCount", connectCount);
+            map.put("notConnectCount", notConnectCount);
+            map.put("allCallsCount", allCallsCount);
+
+            resList.add(map);
+            cal.add(Calendar.DATE, 1);
+            sDate = cal.getTime();
+        }
+        return resList;
+    }
+
+    public List<IntentCount> getIntentCountList(String userId, String startDate, String endDate, String tempId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 
@@ -159,13 +225,13 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,userId);
+            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,userId,tempId);
             listResult.addAll(listAgo);
         }
 
         //今天
         if(endDate.equals(today)){
-            List<IntentCount> listToday = statisticMapper.getIntentCountToday(userId);
+            List<IntentCount> listToday = statisticMapper.getIntentCountToday(userId,tempId);
             listResult.addAll(listToday);
         }
 
@@ -173,13 +239,13 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<CallCountHour> getConnectDataHour(String userId, Date startDate, Date endDate){
-        List<CallCountHour> list = statisticMapper.getConnectDataHour(startDate,endDate,userId);
+    public List<CallCountHour> getConnectDataHour(String userId, Date startDate, Date endDate, String tempId){
+        List<CallCountHour> list = statisticMapper.getConnectDataHour(startDate,endDate,userId,tempId);
         return list;
     }
 
     @Override
-    public List<ReasonCount> getConnectReasonDay(String userId, String startDate, String endDate){
+    public List<ReasonCount> getConnectReasonDay(String userId, String startDate, String endDate, String tempId){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 
@@ -187,16 +253,28 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<ReasonCount> listAgo = statisticMapper.getReasonCountAgo(startDate,endDate,userId);
+            List<ReasonCount> listAgo = statisticMapper.getReasonCountAgo(startDate,endDate,userId,tempId);
             listResult.addAll(listAgo);
         }
 
         //今天
         if(endDate.equals(today)){
-            List<ReasonCount> listToday = statisticMapper.getReasonCountToday(userId);
+            List<ReasonCount> listToday = statisticMapper.getReasonCountToday(userId,tempId);
             listResult.addAll(listToday);
         }
 
         return listResult;
     }
+
+    @Override
+    public List<ErrorMatch> getErrorMaths() {
+
+        return statisticMapper.getErrorMaths();
+    }
+
+    @Override
+    public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin) {
+       return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId));
+    }
+
 }

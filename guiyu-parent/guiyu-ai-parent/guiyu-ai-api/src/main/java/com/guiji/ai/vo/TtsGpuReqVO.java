@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value="TtsGpuReqVO对象",description="查询GPU模型列表")
+@ApiModel(value="TtsGpuReqVO对象",description="查询GPU模型列表请求对象")
 public class TtsGpuReqVO
 {
 	@ApiModelProperty(value="模型名称")

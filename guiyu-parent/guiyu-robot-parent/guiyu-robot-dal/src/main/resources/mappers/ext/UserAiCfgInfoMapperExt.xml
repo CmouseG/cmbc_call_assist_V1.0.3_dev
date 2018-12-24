@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.robot.dao.ext.UserAiCfgInfoMapperExt" >
+  
+  
+  <!-- 统计状态正常的所有用户的机器人总数-->
+  <select id="countUserAi" resultType="java.lang.Integer" parameterType="com.guiji.robot.dao.entity.ext.UserAiCfgQuery" >
+    select 
+    sum(ai_total_num)
+    from user_ai_cfg_base_info
+  </select>
+  
+</mapper>

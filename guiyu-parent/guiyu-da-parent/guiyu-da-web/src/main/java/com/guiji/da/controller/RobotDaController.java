@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,8 +61,16 @@ public class RobotDaController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryRobotCallStat", method = RequestMethod.POST)
-	public Result.ReturnData<RobotCallProcessStatView> queryRobotCallStat(@RequestBody RobotCallProcessStatQueryCondition condition){
+	public Result.ReturnData<RobotCallProcessStatView> queryRobotCallStat(
+			@RequestBody RobotCallProcessStatQueryCondition condition,
+			@RequestHeader Long userId, 
+			@RequestHeader Boolean isSuperAdmin){
 		logger.info("查询机器人通话流程分析：{}",condition);
+		if(condition == null) condition = new RobotCallProcessStatQueryCondition();
+		if(StrUtils.isEmpty(condition.getUserId()) && userId!= null && !isSuperAdmin) {
+			//如果请求参数中没有userId,直接使用登录人userId，且不是超级管理员
+			condition.setUserId(userId.toString());
+		}
 		List<RobotCallProcessStatCache> list = iRobotCallProcessStatService.queryRobotCallProcessStatByCondition(condition);
 		if(list != null && !list.isEmpty()) {
 			RobotCallProcessStatView robotCallProcessStatView = new RobotCallProcessStatView();

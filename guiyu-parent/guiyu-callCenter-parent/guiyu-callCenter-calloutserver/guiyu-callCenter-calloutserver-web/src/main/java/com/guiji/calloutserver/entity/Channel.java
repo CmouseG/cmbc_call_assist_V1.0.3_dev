@@ -39,6 +39,11 @@ public class Channel {
     private Boolean isMediaLock;
 
     /**
+     * 是否是开场白
+     */
+    private Boolean isPrologue;
+
+    /**
      * 打断时间
      */
     private LocalTime disturbTime;

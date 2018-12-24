@@ -36,7 +36,7 @@ public interface SysUserMapper {
     int updateByPrimaryKey(SysUser record);
     
     //
-    void addRole(@Param("userId")Long userId,@Param("roleIds")String[] roleIds);
+    void addRole(@Param("userId")Long userId,@Param("roleIds")Long roleIds);
     
     Set<String> getPermissions(String principal);
     
@@ -67,5 +67,7 @@ public interface SysUserMapper {
     public boolean checkSecretKey(String secretKey);
     
     public boolean checkAccessKey(String AccessKey);
+    
+    public SysUser getUserById(Long id);
     
 }

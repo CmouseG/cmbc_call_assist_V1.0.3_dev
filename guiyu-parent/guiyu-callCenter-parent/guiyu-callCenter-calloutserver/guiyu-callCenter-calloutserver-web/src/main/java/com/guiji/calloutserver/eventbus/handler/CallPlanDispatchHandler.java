@@ -57,6 +57,9 @@ public class CallPlanDispatchHandler {
     @Autowired
     AsyncEventBus asyncEventBus;
 
+    @Autowired
+    DispatchLogService dispatchLogService;
+
     //注册这个监听器
     @PostConstruct
     public void register() {
@@ -157,10 +160,10 @@ public class CallPlanDispatchHandler {
                 }catch (NullPointerException e){
                     //回掉给调度中心，更改通话记录
                     callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                    callPlan.setAccurateIntent("F");
+                    callPlan.setAccurateIntent("W");
                     callPlan.setReason(e.getMessage());
                     callOutPlanService.update(callPlan);
-                    dispatchService.successSchedule(callPlan.getCallId());
+                    dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                     return;
                 }
                 asyncEventBus.post(new CallResourceReadyEvent(callPlan));
@@ -168,7 +171,9 @@ public class CallPlanDispatchHandler {
             }
         } catch (Exception e) {
             log.warn("在挂断后拉取新计划出现异常", e);
-            //TODO: 报警，这里需要做些事情啊，回掉调度中心？
+            //这里会出一个异常，比如重复的id,需要重新发一个事件出来，不然会少一路并发数
+            AfterCallEvent afterCallEventAgain = new AfterCallEvent(afterCallEvent.getCallPlan(),true);
+            asyncEventBus.post(afterCallEventAgain);
         }
     }
 

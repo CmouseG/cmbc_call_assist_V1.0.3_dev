@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,6 +61,12 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(Integer.valueOf(lineId));
         criteria.andCallStateBetween(Constant.CALLSTATE_INIT,Constant.CALLSTATE_AGENT_ANSWER);
+
+        //对于电话都打了1.5个小时，还没有打完的要排除掉，认为任务没有正常回掉调度中心。当然也有可能是makecall的时候异常了，所有设大一点。
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, -90);
+        criteria.andCreateTimeGreaterThan(c.getTime());
+
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);
         if(existList!=null && existList.size()>0){
             // todo 报警
@@ -78,11 +86,30 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         //调用所有calloutserver的启动客户呼叫计划接口
         List<String> serverEurekaList = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
 
-        // todo 至少要有一个calloutserver线路可用，才能启动呼叫计划
+        //没有calloutserver服务
+        if(serverEurekaList==null || serverEurekaList.size()==0){
+            log.warn("calloutserver list is null,tempId:");
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_CALLOUTSERVER_ERROR);
+        }
 
+        //只要起动了一个calloutserver，计划就已经在跑了
+        boolean isPlanStrat = false;
         for(String server:serverEurekaList) {
-            ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + server);
-            callPlanApi.startCallPlan( customerId,tempId, Integer.valueOf(lineId));
+            try {
+                ICallPlan callPlanApi = FeignBuildUtil.feignBuilderTarget(ICallPlan.class, Constant.PROTOCOL + server);
+                Result.ReturnData result = callPlanApi.startCallPlan(customerId, tempId, Integer.valueOf(lineId));
+                if(result!=null  && result.getCode().equals(Constant.SUCCESS_COMMON)){
+                    isPlanStrat = true;
+                }else{
+                    log.error("calloutserver startCallPlan return ReturnData[{}]:",result);
+                }
+            }catch (Exception e){
+                log.error("calloutserver startCallPlan error:"+e);
+            }
+        }
+        if(!isPlanStrat){
+            log.warn("calloutserver has error ,not start plan");
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_CALLOUTSERVER_ERROR);
         }
 
     }

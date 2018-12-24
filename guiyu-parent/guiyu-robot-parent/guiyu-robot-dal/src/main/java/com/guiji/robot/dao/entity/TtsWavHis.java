@@ -12,6 +12,8 @@ public class TtsWavHis implements Serializable {
 
     private String templateId;
 
+    private String reqParams;
+
     private String ttsTxtJsonData;
 
     private String status;
@@ -58,6 +60,14 @@ public class TtsWavHis implements Serializable {
 
     public void setTemplateId(String templateId) {
         this.templateId = templateId == null ? null : templateId.trim();
+    }
+
+    public String getReqParams() {
+        return reqParams;
+    }
+
+    public void setReqParams(String reqParams) {
+        this.reqParams = reqParams == null ? null : reqParams.trim();
     }
 
     public String getTtsTxtJsonData() {
@@ -126,6 +136,7 @@ public class TtsWavHis implements Serializable {
         sb.append(", seqId=").append(seqId);
         sb.append(", busiId=").append(busiId);
         sb.append(", templateId=").append(templateId);
+        sb.append(", reqParams=").append(reqParams);
         sb.append(", ttsTxtJsonData=").append(ttsTxtJsonData);
         sb.append(", status=").append(status);
         sb.append(", errorMsg=").append(errorMsg);

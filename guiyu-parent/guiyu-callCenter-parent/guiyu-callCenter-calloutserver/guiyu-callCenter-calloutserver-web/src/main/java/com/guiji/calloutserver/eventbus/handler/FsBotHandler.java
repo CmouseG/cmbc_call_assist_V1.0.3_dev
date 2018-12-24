@@ -8,7 +8,7 @@ import com.guiji.callcenter.dao.entity.CallOutDetail;
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.ErrorMatch;
-import com.guiji.calloutserver.enm.EAIResponseType;
+import com.guiji.calloutserver.config.FsBotConfig;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
@@ -18,12 +18,9 @@ import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
+import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsManager;
-import com.guiji.calloutserver.config.FsBotConfig;
-import com.guiji.calloutserver.service.CallOutDetailRecordService;
-import com.guiji.calloutserver.service.CallOutDetailService;
-import com.guiji.calloutserver.service.CallOutPlanService;
-import com.guiji.calloutserver.service.ErrorMatchService;
+import com.guiji.calloutserver.service.*;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -33,20 +30,12 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Date;
-import java.util.Timer;
 
 @Service
 @Slf4j
 public class FsBotHandler {
-    @Autowired
-    FsBotConfig fsBotConfig;
-
-    @Autowired
-    FsManager fsManager;
-
     @Autowired
     AIManager aiManager;
 
@@ -71,35 +60,53 @@ public class FsBotHandler {
     @Autowired
     RobotNextHelper robotNextHelper;
 
+    @Autowired
+    DispatchManager dispatchService;
+
+
     //注册这个监听器
     @PostConstruct
     public void register() {
         asyncEventBus.register(this);
     }
-    
+
     //收到channel_answer事件，申请sellbot端口，并调用sellbot的restore方法
     @Subscribe
-    public void handleAnswer(ChannelAnswerEvent event){
+    public void handleAnswer(ChannelAnswerEvent event) {
         log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
         try {
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
-            if(callPlan == null){
+            if (callPlan == null) {
                 log.info("未知的应答事件，事件uuid[{}]，跳过处理", event.getUuid());
                 return;
             }
 
-            AIInitRequest request = new AIInitRequest(callPlan.getCallId(), callPlan.getTempId(), callPlan.getPhoneNum(), callPlan.getCustomerId(),callPlan.getAiId());
+            AIInitRequest request = new AIInitRequest(callPlan.getCallId(), callPlan.getTempId(), callPlan.getPhoneNum(), callPlan.getCustomerId(), callPlan.getAiId());
 
             Long startTime = new Date().getTime();
-            AIResponse aiResponse = aiManager.applyAi(request);
-            //todo 此处如果异常，缺少后续处理，更改calloutplan状态，回掉调度中心
+
+            AIResponse aiResponse = null;
+            try{
+                aiResponse = aiManager.applyAi(request);
+                Preconditions.checkNotNull(aiResponse, "aiResponse is null error");
+            }catch (Exception e){//申请资源异常 ，回调调度中心，更改calloutplan的状态  //todo 此处应该有告警，没有机器人资源
+                log.error("-----error---------aiManager.applyAi:"+e);
+                //回掉给调度中心，更改通话记录
+                callPlan.setCallState(ECallState.norobot_fail.ordinal());
+                callPlan.setAccurateIntent("W");
+                callPlan.setReason(e.getMessage());
+                callOutPlanService.update(callPlan);
+                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
+                return;
+            }
+
             Preconditions.checkNotNull(aiResponse, "null ai apply response");
             Long endTime = new Date().getTime();
-            channelHelper.playAiReponse(aiResponse,false);
+            channelHelper.playAiReponse(aiResponse, false,true);
 
             //更新callplan
-            if(callPlan.getCallState()==null || callPlan.getCallState()<ECallState.answer.ordinal()){
+            if (callPlan.getCallState() == null || callPlan.getCallState() < ECallState.answer.ordinal()) {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
             callPlan.setAnswerTime(new Date());
@@ -111,7 +118,7 @@ public class FsBotHandler {
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callPlan.getCallId());
             callDetail.setCallDetailId(detailID);
-            callDetail.setAiDuration(Math.toIntExact(endTime-startTime));
+            callDetail.setAiDuration(Math.toIntExact(endTime - startTime));
             callDetail.setTotalDuration(callDetail.getAiDuration());
             callDetail.setBotAnswerText(aiResponse.getResponseTxt());
             callDetail.setBotAnswerTime(new Date());
@@ -137,7 +144,7 @@ public class FsBotHandler {
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
             aiCallNextReq.setSeqId(callPlan.getCallId());
             robotNextHelper.startAiCallNextTimer(aiCallNextReq);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             //TODO:报警
             log.warn("在处理ChannelAnswer时出错异常", ex);
         }
@@ -145,39 +152,40 @@ public class FsBotHandler {
 
 
     @Subscribe
-    public void handleCustomerAsrEvent(AsrCustomerEvent event){
-        try{
+    public void handleCustomerAsrEvent(AsrCustomerEvent event) {
+        try {
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
-            if(callPlan==null){
+            if (callPlan == null) {
                 log.warn("收到的CustomerAsr，没有根据uuid[{}]找到对应的callPlan，跳过处理", event.getUuid());
                 return;
             }
 
-            if(callPlan.getCallState() == ECallState.agent_answer.ordinal()){
+            if (callPlan.getCallState() == ECallState.agent_answer.ordinal()) {
                 handleAfterAgentAsr(callPlan, event);
-            }else{
+            } else {
                 handleNormalAsr(callPlan, event);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.warn("处理AsrCustomerEvent出现异常", ex);
         }
     }
 
     /**
      * 处理转人工之后的客户asr处理
+     *
      * @param event
      */
-    private void handleAfterAgentAsr(CallOutPlan callPlan, AsrCustomerEvent event){
+    private void handleAfterAgentAsr(CallOutPlan callPlan, AsrCustomerEvent event) {
         log.info("收到转人工后的客户AliAsr事件[{}], 准备进行处理", event);
     }
 
     /**
      * 处理正常情况下的客户asr处理
+     *
      * @param event
      */
-    private void handleNormalAsr(CallOutPlan callPlan, AsrCustomerEvent event){
+    private void handleNormalAsr(CallOutPlan callPlan, AsrCustomerEvent event) {
         log.info("收到正常情况下的客户AliAsr事件[{}], 准备进行处理", event);
-        long initStartTime = new Date().getTime();
         try {
             //判断通道状态，如果还未接听，则跳过
             if (callPlan.getCallState() == ECallState.init.ordinal() ||
@@ -190,95 +198,42 @@ public class FsBotHandler {
             }
 
             //如果当前正处于转人工的状态，则忽略该asr识别
-            if(callPlan.getCallState() == ECallState.to_agent.ordinal()){
+            if (callPlan.getCallState() == ECallState.to_agent.ordinal()) {
                 log.warn("当前通话[{}]正在转人工，忽略掉客户说话asr[{}]", callPlan.getCallId(), event.getAsrText());
                 return;
             }
 
             //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
-/*            if (channelHelper.isChannelLock(event.getUuid())) {
+            if (channelHelper.isChannelLock(event.getUuid())) {
                 log.info("通道媒体[{}]已被锁定，跳过该次识别请求", event.getUuid());
                 return;
-            }*/
-
-/*            //如果是系统产生的事件，则跳过isMatch处理，因为需要该事件来触发下一步的说话内容
-            if(!event.isGenerated()){
-                //只有在播放状态，才去调用isMatch接口，如果不是播放状态，则直接调用hello
-                if(channelHelper.isInPlay(event.getUuid())){
-                    //判断是否匹配到关键词
-                    if(!aiManager.isMatch(event.getUuid(), event.getAsrText(), callPlan.getAiId(), callPlan.getCustomerId())){
-                        log.debug("sellbot识别未匹配，识别内容为[{}]，跳过后续的放音处理。", event.getAsrText());
-                        CallOutDetail callDetail = buildCallOutDetail(callPlan, event);
-                        callDetail.setCallDetailType(ECallDetailType.UNMATCH.ordinal());
-                        callDetail.setBotAnswerTime(new Date());//此字段用来排序，不为空
-                        callOutDetailService.save(callDetail);
-                        return;
-                    }
-                }
-            }*/
-
-/*            if(!channelHelper.isAllowDisturb(event.getUuid())){
-                log.debug("通道媒体[{}]不符合打断条件，禁止打断", event.getUuid());
-                return;
-            }*/
-
-
-            //发起ai请求
-//            long aiStartTime = new Date().getTime();
-            AIRequest aiRequest = new AIRequest(event);
-//            aiRequest.setCallMatch(false);
-            aiManager.sendAiRequest(aiRequest);
-//            long aiEndTime = new Date().getTime();
-
-
-            buildCallOutDetail(callPlan.getCallId(), event);
-           /* log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
-            if(aiResponse.getAiResponseType() == EAIResponseType.NORMAL) {       //机器人正常放音
-                log.info("sellbot结果为正常放音");
-                callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
-                playNormal(event, callPlan, aiResponse, callDetail);
-            }else if(aiResponse.getAiResponseType() == EAIResponseType.TO_AGENT){      //转人工
-                log.info("sellbot的结果为转人工");
-                callDetail.setCallDetailType(ECallDetailType.TOAGENT_INIT.ordinal());
-                playToAgent(callPlan, aiResponse);
-            }else if(aiResponse.getAiResponseType() == EAIResponseType.END){           //sellbot提示结束，则在播放完毕后挂机
-                log.info("sellbot的结果为通话结束");
-                callDetail.setCallDetailType(ECallDetailType.END.ordinal());
-                channelHelper.playFileToChannelAndHangup(event.getUuid(), aiResponse.getWavFile(), aiResponse.getWavDuration());
-            }else{
-                callDetail.setCallDetailType(ECallDetailType.ASR_EMPTY.ordinal());
-                log.warn("未知的sellbot返回类型[{}], 跳过处理", aiResponse.getAiResponseType());
             }
 
-            long stopTime = new Date().getTime();
-            callDetail.setAiDuration((int)(aiEndTime - aiStartTime));
-            callDetail.setBotAnswerText(aiResponse.getResponseTxt());
-            callDetail.setBotAnswerTime(new Date());
-            callDetail.setAccurateIntent(aiResponse.getAccurateIntent());
-            callDetail.setReason(aiResponse.getReason());
-            callDetail.setTotalDuration((int)(stopTime - initStartTime + callDetail.getAsrDuration()));
-            callOutDetailService.save(callDetail);
+            AIRequest aiRequest = new AIRequest(event);
 
-            //保存CallDetailRecord
-            callOutDetailRecordService.add(callPlan.getCallId(), callDetail.getCallDetailId(), event.getFileName(), aiResponse.getWavFile());*/
-        }catch (Exception ex){
+            aiManager.sendAiRequest(aiRequest);
+
+            buildCallOutDetail(callPlan.getCallId(), event);
+
+        } catch (Exception ex) {
             log.warn("handleNormalAsr: 在处理AliAsr时出错异常", ex);
         }
     }
 
     /**
      * 进行F类识别
+     *
      * @param callPlan
      * @param event
      */
     private void doWithErrorResponse(CallOutPlan callPlan, AsrCustomerEvent event) {
-        if(Strings.isNullOrEmpty(event.getAsrText())){
+        if (Strings.isNullOrEmpty(event.getAsrText())) {
             log.warn("F类识别失败，因asr识别结果为空");
             return;
         }
 
         ErrorMatch errorMatch = errorMatchService.findError(event.getAsrText());
-        if(errorMatch!=null){
+        if (errorMatch != null) {
             log.debug("F类识别结果为[{}]", errorMatch);
             callPlan.setAccurateIntent("F");
             callPlan.setReason(errorMatch.getErrorName());
@@ -288,21 +243,17 @@ public class FsBotHandler {
 
     /**
      * 正常应答播放
+     *
      * @param callDetail
      */
     public void playNormal(String uuid, AIResponse aiResponse, CallOutDetail callDetail) {
-//        if (event.isGenerated()) {
-//            callDetail.setCallDetailType(ECallDetailType.ASR_EMPTY_GENERATED.ordinal());
-//        } else {
-            callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
-//        }
-
-        boolean isLock = !fsBotConfig.isAllowDisturbed();
-        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), isLock);
+        callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
+        channelHelper.playFile(uuid, aiResponse.getWavFile(), aiResponse.getWavDuration(), false, false);
     }
 
     /**
      * 转人工
+     *
      * @param sellbotResponse
      */
     public void playToAgent(AIResponse sellbotResponse) {
@@ -323,12 +274,13 @@ public class FsBotHandler {
 
     public void buildCallOutDetail(String callId, AsrCustomerEvent event) {
 
-        if(StringUtils.isNotBlank(event.getAsrText())){
+        //开场白之前的asr识别不记录，识别太灵敏了，导致太多无用通话记录
+        if (StringUtils.isNotBlank(event.getAsrText())) {
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callId);
 
             Long duration = event.getAsrDuration();
-            if(event.getAsrDuration()== null || event.getAsrDuration()<=0){
+            if (event.getAsrDuration() == null || event.getAsrDuration() <= 0) {
                 duration = 1000L;
             }
 
@@ -358,50 +310,55 @@ public class FsBotHandler {
 
     //收到hangup事件的时候，释放sellbot资源
     @Subscribe
-    public void handleHangup(ChannelHangupEvent event){
+    public void handleHangup(ChannelHangupEvent event) {
         log.info("收到Hangup事件[{}], 准备进行处理", event);
 
         try {
 
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
-            if(callPlan == null){
+            if (callPlan == null) {
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;
             }
 
+            String hangUp = event.getSipHangupCause();
+
             //将calloutdetail里面的意向标签更新到calloutplan里面
             CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
-            if(callOutDetail!=null){
+            if (callOutDetail != null) {
                 callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                 callPlan.setReason(callOutDetail.getReason());
-            }else{//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
-                callPlan.setAccurateIntent("W");
-                callPlan.setReason(event.getSipHangupCause());
+            } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
+                if(callPlan.getAccurateIntent()==null){
+                    callPlan.setAccurateIntent("W");
+                    if(callPlan.getReason()==null && hangUp!=null){
+                        callPlan.setReason(hangUp);
+                    }
+                }
             }
             callPlan.setHangupTime(event.getHangupStamp());
             callPlan.setAnswerTime(event.getAnswerStamp());
             callPlan.setDuration(event.getDuration());
             callPlan.setBillSec(event.getBillSec());
 
-            String hangUp = event.getSipHangupCause();
-            if(!Strings.isNullOrEmpty(hangUp)){
+           if (!Strings.isNullOrEmpty(hangUp)) {
                 callPlan.setHangupCode(hangUp);
-                if(hangUp.equals("503")){
+          /*      if (hangUp.equals("503")) {
                     callPlan.setAccurateIntent("W");
                     callPlan.setReason("503");
-                }
+                }*/
             }
 
-            if(!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <=0){
+            if (!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <= 0) {
                 callPlan.setCallState(ECallState.hangup_fail.ordinal());
-            }else{
+            } else {
                 callPlan.setCallState(ECallState.hangup_ok.ordinal());
             }
 
             callOutPlanService.update(callPlan);
 
             //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
-            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan,false);
+            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan, false);
             asyncEventBus.post(afterCallEvent);
 
             //报表统计事件
@@ -413,7 +370,7 @@ public class FsBotHandler {
             //释放ai资源
             aiManager.releaseAi(callPlan);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.warn("在处理AliAsr时出错异常", ex);
         }
     }

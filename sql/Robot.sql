@@ -2,6 +2,7 @@ create table user_ai_cfg_base_info
 (
    id                   varchar(32) not null,
    user_id              varchar(50) not null comment '用户编号',
+   org_code             varchar(50),
    ai_total_num         int comment '机器人数量',
    template_ids         varchar(200) comment '话术模板',
    crt_time             datetime comment '创建时间',
@@ -14,6 +15,10 @@ alter table user_ai_cfg_base_info comment '用户机器人账户基本信息';
 create index user_ai_cfg_base_info_idx1 on user_ai_cfg_base_info
 (
    user_id
+);
+create index user_ai_cfg_base_info_idx2 on user_ai_cfg_base_info
+(
+   org_code
 );
 create table user_ai_cfg_info
 (
@@ -104,6 +109,7 @@ create table tts_wav_his
    seq_id               varchar(32) comment '会话Id',
    busi_id              varchar(32) comment '业务id,调用tts的唯一请求id',
    template_id          varchar(32) comment '话术模板编号',
+   req_params           varchar(1024) comment 'TTS合成请求参数',
    tts_txt_json_data    varchar(1024) comment '需要合成的文本JSON',
    tts_json_data        text comment 'TTS合成的语音JSON',
    status               char(1) comment '状态: P-合成中,S-完成, F-失败',
@@ -140,6 +146,7 @@ create table ai_cycle_his
    id                   varchar(32) not null,
    user_id              varchar(50) comment '用户编号',
    ai_no                varchar(50) comment '机器人编号',
+   ai_name              varchar(50) comment '机器人昵称',
    template_id          varchar(50) comment '话术模板',
    assign_date          varchar(10) comment '分配日期',
    assign_time          varchar(20) comment '分配时间',
@@ -176,11 +183,12 @@ create index ai_cycle_his_idx4 on ai_cycle_his
 create table robot_call_his
 (
    id                   varchar(32) not null,
-   seq_id               varchar(32) comment '会话id',
+   seq_id               varchar(50) comment '会话id',
    user_id              varchar(50) not null comment '用户编号',
    ai_no                varchar(50) comment '机器人编号',
    assign_time          datetime comment '分配时间',
    template_id          varchar(50) comment '话术模板',
+   call_status          varchar(3) comment '通话状态:S-通话完成,I-通话中',
    sellbot_callback_json text comment 'sellbot回调报文',
    crt_date             varchar(10) comment '创建日期',
    crt_time             datetime comment '创建时间',
@@ -218,7 +226,7 @@ create table robot_call_process_stat
    refused_stat         varchar(100) comment '拒绝统计(0-不拒绝,1-用户拒绝;9-未应答)',
    hangup_stat          varchar(100) comment '挂断统计(0-未挂断   1：用户挂断   2：AI挂断)',
    match_stat           varchar(100) comment '匹配统计',
-   crt_time             datetime comment '创建时间'，
+   crt_time             datetime comment '创建时间',
    primary key (id)
 );
 

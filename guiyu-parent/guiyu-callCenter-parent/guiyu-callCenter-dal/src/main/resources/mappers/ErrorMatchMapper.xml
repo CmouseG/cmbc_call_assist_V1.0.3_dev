@@ -3,8 +3,9 @@
 <mapper namespace="com.guiji.callcenter.dao.ErrorMatchMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.ErrorMatch" >
     <result column="error_type" property="errorType" jdbcType="INTEGER" />
-    <result column="key_word" property="keyWord" jdbcType="VARCHAR" />
     <result column="error_name" property="errorName" jdbcType="VARCHAR" />
+    <result column="en_name" property="enName" jdbcType="VARCHAR" />
+    <result column="key_word" property="keyWord" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,12 +66,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    error_type, key_word, error_name
+    error_type, error_name, en_name, key_word
   </sql>
-  <select id="selectDistinctErrorName" resultType="java.lang.String">
-    select   error_name
-    from error_match group by error_name order by error_name
-  </select>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ErrorMatchExample" >
     select
     <if test="distinct" >
@@ -96,10 +93,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
-    insert into error_match (error_type, key_word, error_name
-      )
-    values (#{errorType,jdbcType=INTEGER}, #{keyWord,jdbcType=VARCHAR}, #{errorName,jdbcType=VARCHAR}
-      )
+    insert into error_match (error_type, error_name, en_name, 
+      key_word)
+    values (#{errorType,jdbcType=INTEGER}, #{errorName,jdbcType=VARCHAR}, #{enName,jdbcType=VARCHAR}, 
+      #{keyWord,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
     insert into error_match
@@ -107,22 +104,28 @@
       <if test="errorType != null" >
         error_type,
       </if>
-      <if test="keyWord != null" >
-        key_word,
-      </if>
       <if test="errorName != null" >
         error_name,
+      </if>
+      <if test="enName != null" >
+        en_name,
+      </if>
+      <if test="keyWord != null" >
+        key_word,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="errorType != null" >
         #{errorType,jdbcType=INTEGER},
       </if>
-      <if test="keyWord != null" >
-        #{keyWord,jdbcType=VARCHAR},
-      </if>
       <if test="errorName != null" >
         #{errorName,jdbcType=VARCHAR},
+      </if>
+      <if test="enName != null" >
+        #{enName,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWord != null" >
+        #{keyWord,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -138,11 +141,14 @@
       <if test="record.errorType != null" >
         error_type = #{record.errorType,jdbcType=INTEGER},
       </if>
-      <if test="record.keyWord != null" >
-        key_word = #{record.keyWord,jdbcType=VARCHAR},
-      </if>
       <if test="record.errorName != null" >
         error_name = #{record.errorName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enName != null" >
+        en_name = #{record.enName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.keyWord != null" >
+        key_word = #{record.keyWord,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -152,10 +158,15 @@
   <update id="updateByExample" parameterType="map" >
     update error_match
     set error_type = #{record.errorType,jdbcType=INTEGER},
-      key_word = #{record.keyWord,jdbcType=VARCHAR},
-      error_name = #{record.errorName,jdbcType=VARCHAR}
+      error_name = #{record.errorName,jdbcType=VARCHAR},
+      en_name = #{record.enName,jdbcType=VARCHAR},
+      key_word = #{record.keyWord,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  <select id="selectDistinctErrorName" resultType="java.lang.String">
+    select   error_name
+    from error_match group by error_name order by error_name
+  </select>
 </mapper>

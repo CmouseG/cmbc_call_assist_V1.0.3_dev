@@ -15,9 +15,9 @@ public interface ChannelService {
     Channel findByUuid(String channelId);
     void delete(String channelId);
 
-    void updateMediaLock(String channelId, boolean isLock);
+//    void updateMediaLock(String channelId, boolean isLock);
 
-    void updateMediaLock(String uuid, Boolean isLock, String wavFile, LocalTime disturbTime);
+    void updateMediaLock(String uuid, Boolean isLock, Boolean isPrologue, String wavFile, LocalTime disturbTime);
 
     boolean isMediaLock(String uuid);
 

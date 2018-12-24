@@ -91,6 +91,14 @@ public class AiCacheService {
 	}
 	
 	
+	/**
+	 * 删除用户资源缓存
+	 * @param userId
+	 */
+	public void delUserResource(String userId) {
+		redisUtil.hdel(RobotConstants.ROBOT_USER_RESOURCE,userId);
+	}
+	
 	
 	/**
 	 * 将分配好的机器人放入缓存

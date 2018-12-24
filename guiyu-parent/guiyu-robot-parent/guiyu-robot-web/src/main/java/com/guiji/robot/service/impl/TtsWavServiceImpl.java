@@ -70,7 +70,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	TtsCallbackHisMapper ttsCallbackHisMapper;
 	@Value("${file.tmpPath:apps/tmp/}")
     private String tempFilePath;	//文件临时目录
-	@Value("${file.hushuDir:home/botstence_tmpl/}")
+	@Value("${file.hushuDir:home/botstence_robot_tmpl/}")
     private String hushuDir;	//话术模板存放目录
 	
 	
@@ -185,6 +185,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				TtsWavHis ttsWavHis = new TtsWavHis();
 				ttsWavHis.setSeqId(hsChecker.getSeqid());
 				ttsWavHis.setTemplateId(hsChecker.getTemplateId());
+				ttsWavHis.setReqParams(hsChecker.getParams());
 				ttsWavHis.setStatus(RobotConstants.TTS_STATUS_P); //合成中
 				try {
 					//2、异步调用tts工具合成

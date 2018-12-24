@@ -2,14 +2,11 @@ package com.guiji.ccmanager.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URL;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  * @Auther: 黎阳
@@ -75,4 +72,10 @@ public class HttpDownload {
         bos.flush();
         return bos.toByteArray();
     }
+    public static void setHeader(HttpServletResponse resp, String fileName) throws UnsupportedEncodingException {
+        resp.setContentType("application/octet-stream;charset=GBK");
+        resp.setHeader("Content-Disposition", "attachment;filename="+
+                new String(fileName.getBytes("utf-8"),"iso-8859-1"));
+    }
+
 }

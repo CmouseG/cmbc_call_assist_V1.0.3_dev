@@ -264,6 +264,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
 		boolean result = false;
+
+		List<DispatchPlan> succ = new ArrayList<>();
+
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
@@ -279,22 +282,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			wb = new XSSFWorkbook(is);
 		}
 		Sheet sheet = wb.getSheetAt(0);
-
-		DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
+
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
-		if (SysUser != null) {
-			dispatchPlan.setUsername(SysUser.getBody().getUsername());
-		}
+
 		// 重复校验
 		List phones = new ArrayList<>();
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+			DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
+			dispatchPlanBatch.setName(dispatchPlan.getBatchName());
+			if (SysUser != null) {
+				dispatchPlan.setUsername(SysUser.getBody().getUsername());
+			}
 			Row row = sheet.getRow(r);
 			if (row == null) {
 				continue;
@@ -327,7 +331,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			if (phones.size() != hashSet.size()) {
 				throw new Exception("当前号码存在重复的数据,请检查文件");
 			}
-
+			System.out.println("---------------------" + phone);
 			dispatchPlan.setPhone(phone);
 			dispatchPlan.setAttach(attach);
 			dispatchPlan.setUserId(userId.intValue());
@@ -342,27 +346,35 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 			dispatchPlan.setIsTts(Constant.IS_TTS_0);
 			dispatchPlan.setFlag(Constant.IS_FLAG_0);
-			// 检查校验参数
-			ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
-			if (checkParams.success) {
-				if (checkParams.getBody() != null) {
-					List<CheckResult> body = checkParams.getBody();
-					CheckResult checkResult = body.get(0);
-					if (!checkResult.isPass()) {
-						throw new Exception("机器人合成" + checkResult.getCheckMsg());
-					}
-				}
-			} else {
-				throw new Exception("请求校验参数失败,请检查机器人的参数");
+			succ.add(dispatchPlan);
+		}
+		// 检查校验参数
+//		ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
+//		if (checkParams.success) {
+//			if (checkParams.getBody() != null) {
+//				List<CheckResult> body = checkParams.getBody();
+//				CheckResult checkResult = body.get(0);
+//				if (!checkResult.isPass()) {
+//					throw new Exception("机器人合成" + checkResult.getCheckMsg());
+//				}
+//			}
+//		} else {
+//			throw new Exception("请求校验参数失败,请检查机器人的参数");
+//		}
+		System.out.println(succ);
+		List<List<DispatchPlan>> averageAssign = averageAssign(succ, 10);
+		for (List<DispatchPlan> tmpList : averageAssign) {
+			logger.info("批量插入开始--------------");
+			if(tmpList.size()>0){
+				dispatchPlanMapper.insertDispatchPlanList(tmpList);
 			}
-
-			dispatchPlanMapper.insert(dispatchPlan);
+			logger.info("批量插入结束-----------------");
 		}
 		dispatchPlanBatch.setId(null);
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
-
 		return result;
 	}
+	
 
 	public boolean isNumeric(String str) {
 		Pattern pattern = Pattern.compile("[0-9]*");
@@ -1037,7 +1049,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			dis.setStatusPlan(Integer.valueOf(status));
 			List<List<String>> averageAssign = averageAssign(ids, 10);
-			logger.info("当前update size"+averageAssign.size());
+			logger.info("当前update size" + averageAssign.size());
 			for (List<String> list : averageAssign) {
 				logger.info("start ");
 				dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);

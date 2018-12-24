@@ -977,6 +977,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				logger.info("当前状态有问题...");
 				continue;
 			}
+			
+			//停止之后不能暂停
+			if (bean.getStatus().equals(Constant.STATUSPLAN_4)
+					&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
+				logger.info("当前状态有问题...");
+				continue;
+			}
+			
 
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());

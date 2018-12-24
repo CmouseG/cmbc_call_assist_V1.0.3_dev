@@ -6,8 +6,8 @@ spring:
   application:
     name: guiyu-cloud-zuul
   zipkin:
-      base-url: http://guiyu-cloud-monitor:18003
-      enabled: true
+    base-url: http://guiyu-cloud-monitor:18003
+    enabled: true
   http:
     encoding:
       charset: UTF-8

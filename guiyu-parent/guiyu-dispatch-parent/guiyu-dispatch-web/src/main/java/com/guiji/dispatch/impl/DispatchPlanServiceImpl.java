@@ -287,7 +287,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-		
+
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
 
@@ -962,8 +962,22 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean batchUpdatePlans(IdsDto[] dto) {
+
 		int result = 0;
 		for (IdsDto bean : dto) {
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
+			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
+			DispatchPlan dispatchPlan = null;
+			if (selectByExample.size() > 0) {
+				dispatchPlan = selectByExample.get(0);
+			}
+			if (bean.getStatus().equals(Constant.STATUSPLAN_1)
+					&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+				logger.info("当前状态有问题...");
+				continue;
+			}
+
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
@@ -971,6 +985,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			} catch (Exception e) {
 				logger.error("error", e);
 			}
+
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
 			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);

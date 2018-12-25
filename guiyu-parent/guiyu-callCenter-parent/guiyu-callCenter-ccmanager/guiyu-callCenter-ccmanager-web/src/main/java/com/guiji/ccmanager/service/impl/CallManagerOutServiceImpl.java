@@ -64,7 +64,7 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
 
         //对于电话都打了1.5个小时，还没有打完的要排除掉，认为任务没有正常回掉调度中心。当然也有可能是makecall的时候异常了，所有设大一点。
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, -90);
+        c.add(Calendar.MINUTE, -5);
         criteria.andCreateTimeGreaterThan(c.getTime());
 
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);

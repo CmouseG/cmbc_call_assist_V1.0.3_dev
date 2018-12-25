@@ -627,6 +627,7 @@
 		<if test="limitStart != null and limitStart>=0">
 			limit #{limitStart} , #{limitEnd}
 		</if>
+		for update
 	</select>
 
 	<insert id="insertDispatchPlanList" parameterType="java.util.List">

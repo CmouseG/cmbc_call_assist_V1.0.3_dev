@@ -15,8 +15,6 @@ public class CallOutPlanExample {
 
     protected Integer limitEnd;
 
-    protected String customerId;
-
     public CallOutPlanExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
@@ -84,14 +82,6 @@ public class CallOutPlanExample {
 
     public Integer getLimitEnd() {
         return limitEnd;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
     }
 
     protected abstract static class GeneratedCriteria {
@@ -2072,6 +2062,76 @@ public class CallOutPlanExample {
 
         public Criteria andIsreadNotBetween(Integer value1, Integer value2) {
             addCriterion("isread not between", value1, value2, "isread");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIsNull() {
+            addCriterion("org_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIsNotNull() {
+            addCriterion("org_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeEqualTo(String value) {
+            addCriterion("org_code =", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotEqualTo(String value) {
+            addCriterion("org_code <>", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeGreaterThan(String value) {
+            addCriterion("org_code >", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("org_code >=", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLessThan(String value) {
+            addCriterion("org_code <", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLessThanOrEqualTo(String value) {
+            addCriterion("org_code <=", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLike(String value) {
+            addCriterion("org_code like", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotLike(String value) {
+            addCriterion("org_code not like", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIn(List<String> values) {
+            addCriterion("org_code in", values, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotIn(List<String> values) {
+            addCriterion("org_code not in", values, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeBetween(String value1, String value2) {
+            addCriterion("org_code between", value1, value2, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotBetween(String value1, String value2) {
+            addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
     }

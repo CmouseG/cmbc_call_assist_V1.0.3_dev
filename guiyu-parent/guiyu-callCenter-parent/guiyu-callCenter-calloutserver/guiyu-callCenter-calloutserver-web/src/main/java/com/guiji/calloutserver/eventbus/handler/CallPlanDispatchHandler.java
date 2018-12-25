@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.eventbus.handler;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
@@ -102,6 +103,7 @@ public class CallPlanDispatchHandler {
      * @param event
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void handleCallResourceReadyEvent(CallResourceReadyEvent event){
         log.info("----------- CallResourceReadyEvent"+event.getCallPlan().getPhoneNum());
         //资源准备好，发起外呼
@@ -131,6 +133,7 @@ public class CallPlanDispatchHandler {
      * @param afterCallEvent
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void handleAfterCallEvent(AfterCallEvent afterCallEvent){
         log.info("收到AfterCallEvent[{}], 检查是否有待拨打的计划", afterCallEvent);
 

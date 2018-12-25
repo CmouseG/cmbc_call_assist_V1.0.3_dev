@@ -2,6 +2,7 @@ package com.guiji.calloutserver.eventbus.handler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
@@ -47,6 +48,7 @@ public class AfterCallHandler {
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     public void handleAfterCall(AfterCallEvent afterCallEvent) {
         try {
             log.info("收到AfterCallEvent事件[{}]", afterCallEvent);

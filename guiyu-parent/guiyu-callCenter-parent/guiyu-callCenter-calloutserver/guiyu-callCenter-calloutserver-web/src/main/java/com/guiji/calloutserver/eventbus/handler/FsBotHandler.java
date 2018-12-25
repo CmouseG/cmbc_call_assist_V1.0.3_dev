@@ -2,6 +2,7 @@ package com.guiji.calloutserver.eventbus.handler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutDetail;
@@ -73,6 +74,7 @@ public class FsBotHandler {
 
     //收到channel_answer事件，申请sellbot端口，并调用sellbot的restore方法
     @Subscribe
+    @AllowConcurrentEvents
     public void handleAnswer(ChannelAnswerEvent event) {
         log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
@@ -154,6 +156,7 @@ public class FsBotHandler {
 
 
     @Subscribe
+    @AllowConcurrentEvents
     public void handleCustomerAsrEvent(AsrCustomerEvent event) {
         try {
             CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
@@ -312,6 +315,7 @@ public class FsBotHandler {
 
     //收到hangup事件的时候，释放sellbot资源
     @Subscribe
+    @AllowConcurrentEvents
     public void handleHangup(ChannelHangupEvent event) {
         log.info("收到Hangup事件[{}], 准备进行处理", event);
 

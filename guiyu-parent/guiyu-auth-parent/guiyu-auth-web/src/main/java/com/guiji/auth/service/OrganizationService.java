@@ -124,6 +124,7 @@ public class OrganizationService {
 				subOrgCode = preOrgCode + "." + lastOrgCodeNumber;
 			}
 			SysOrganization sysOrganizationUpdate = new SysOrganization();
+			sysOrganizationUpdate.setId(sysOrganization.getId());
 			sysOrganizationUpdate.setCode(orgCode);
 			sysOrganizationUpdate.setSubCode(subOrgCode);
 			sysOrganizationMapper.updateByPrimaryKeySelective(sysOrganizationUpdate);

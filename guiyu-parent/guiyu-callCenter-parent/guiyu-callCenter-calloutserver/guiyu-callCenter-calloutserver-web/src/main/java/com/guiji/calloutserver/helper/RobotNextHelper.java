@@ -66,7 +66,7 @@ public class RobotNextHelper {
         String callId = aiCallNextReq.getSeqId();
         Channel channelInit = channelService.findByUuid(callId);
         if(channelInit == null){ //channelInit为null表示已经hangup了，不需要后面的循环调用了,直接return
-            log.debug("startAiCallNextTimer findByUuid channelInit is null callId[{}]",callId);
+            log.info("startAiCallNextTimer findByUuid channelInit is null callId[{}]",callId);
             return;
         }
 
@@ -75,7 +75,7 @@ public class RobotNextHelper {
                         log.debug("根据callId[{}]获取channel", callId);
                         Channel channel = channelService.findByUuid(callId);
                         if(channel == null){
-                            log.debug("startAiCallNextTimer findByUuid is null callId[{}]",callId);
+                            log.info("startAiCallNextTimer findByUuid is null callId[{}]",callId);
                             return;
                         }
                         Long startTime = channel.getStartPlayTime().getTime();

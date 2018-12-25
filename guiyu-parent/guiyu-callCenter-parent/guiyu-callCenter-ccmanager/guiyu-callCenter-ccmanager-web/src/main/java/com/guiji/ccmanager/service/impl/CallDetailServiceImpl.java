@@ -115,7 +115,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("call_start_time desc");
+        example.setOrderByClause("create_time desc");
 
         List<CallOutPlan> list;
         if(isSuperAdmin){

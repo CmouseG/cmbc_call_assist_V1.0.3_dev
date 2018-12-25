@@ -45,7 +45,7 @@ public class StatisticReportHandler {
         String intent = callOutPlan.getAccurateIntent();
         String reason = callOutPlan.getReason();
         String tempId = callOutPlan.getTempId();
-        String customerId = callOutPlan.getCustomerId();
+        String orgCode = callOutPlan.getOrgCode();
         long duration = callOutPlan.getDuration().longValue();
         int durationType = getDurationType(duration);
 
@@ -54,7 +54,7 @@ public class StatisticReportHandler {
                 .andDurationTypeEqualTo(durationType)
                 .andIntentEqualTo(intent)
                 .andTempidEqualTo(tempId)
-                .andCustomerIdEqualTo(customerId);
+                .andOrgCodeEqualTo(orgCode);
 
         if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
             criteria.andReasonEqualTo(reason);
@@ -75,7 +75,7 @@ public class StatisticReportHandler {
             reportCallToday.setDurationAll(duration);
             reportCallToday.setDurationType(durationType);
             reportCallToday.setCallCount(1);
-            reportCallToday.setCustomerId(customerId);
+            reportCallToday.setOrgCode(orgCode);
             reportCallToday.setTempid(tempId);
             reportCallTodayMapper.insert(reportCallToday);
         }else{

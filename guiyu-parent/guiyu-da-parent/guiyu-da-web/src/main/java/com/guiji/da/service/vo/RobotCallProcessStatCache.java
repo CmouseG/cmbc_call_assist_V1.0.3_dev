@@ -11,6 +11,8 @@ import java.util.Map;
 public class RobotCallProcessStatCache {
 	//用户编号
 	private String userId;
+	//机构号
+	private String orgCode;
 	//统计日期
     private String statDate;
     //话术模板
@@ -163,15 +165,28 @@ public class RobotCallProcessStatCache {
 	public void setDomainandaianswer(String domainandaianswer) {
 		this.domainandaianswer = domainandaianswer;
 	}
+	/**
+	 * @return the orgCode
+	 */
+	public String getOrgCode() {
+		return orgCode;
+	}
+	/**
+	 * @param orgCode the orgCode to set
+	 */
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "RobotCallProcessStatCache [userId=" + userId + ", statDate=" + statDate + ", templateId=" + templateId
-				+ ", aiAnswer=" + aiAnswer + ", currentDomain=" + currentDomain + ", domainType=" + domainType
-				+ ", totalStat=" + totalStat + ", refusedStatMap=" + refusedStatMap + ", hangupStatMap=" + hangupStatMap
-				+ ", matchStatMap=" + matchStatMap + ", domainandaianswer=" + domainandaianswer + "]";
+		return "RobotCallProcessStatCache [userId=" + userId + ", orgCode=" + orgCode + ", statDate=" + statDate
+				+ ", templateId=" + templateId + ", aiAnswer=" + aiAnswer + ", currentDomain=" + currentDomain
+				+ ", domainType=" + domainType + ", totalStat=" + totalStat + ", refusedStatMap=" + refusedStatMap
+				+ ", hangupStatMap=" + hangupStatMap + ", matchStatMap=" + matchStatMap + ", domainandaianswer="
+				+ domainandaianswer + "]";
 	}
 	
 }

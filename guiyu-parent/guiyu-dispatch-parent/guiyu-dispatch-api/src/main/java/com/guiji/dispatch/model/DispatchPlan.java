@@ -49,6 +49,8 @@ public class DispatchPlan implements Serializable {
 
     private boolean isTts;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public boolean isSuccess() {
@@ -228,7 +230,15 @@ public class DispatchPlan implements Serializable {
 		this.isTts = isTts;
 	}
 
-	@Override
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -255,6 +265,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
         sb.append(", isTts=").append(isTts);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

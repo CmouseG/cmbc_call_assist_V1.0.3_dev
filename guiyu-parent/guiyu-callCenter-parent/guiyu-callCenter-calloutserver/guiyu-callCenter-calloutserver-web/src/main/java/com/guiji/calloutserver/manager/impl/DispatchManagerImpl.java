@@ -102,6 +102,7 @@ public class DispatchManagerImpl implements DispatchManager {
             callOutPlan.setServerid(eurekaManager.getInstanceId());
             callOutPlan.setHasTts(dispatchPlan.isTts());
             callOutPlan.setTempId(dispatchPlan.getRobot());
+            callOutPlan.setOrgCode(dispatchPlan.getOrgCode());
 
             callOutPlans.add(callOutPlan);
         }

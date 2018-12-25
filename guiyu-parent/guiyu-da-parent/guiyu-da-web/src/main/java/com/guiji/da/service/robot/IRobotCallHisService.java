@@ -11,14 +11,6 @@ import com.guiji.da.dao.entity.RobotCallHis;
 public interface IRobotCallHisService {
 	
 	/**
-	 * 保存或者更新通话记录
-	 * 通话记录
-	 * @param ttsWavHis
-	 * @return
-	 */
-	RobotCallHis saveOrUpdate(RobotCallHis robotCallbackHis);
-	
-	/**
 	 * 根据主键ID查询某个通话记录
 	 * @param id
 	 * @return

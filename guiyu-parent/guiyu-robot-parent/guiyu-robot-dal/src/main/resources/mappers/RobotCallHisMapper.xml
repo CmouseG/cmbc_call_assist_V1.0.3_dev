@@ -11,6 +11,7 @@
     <result column="call_status" property="callStatus" jdbcType="VARCHAR" />
     <result column="crt_date" property="crtDate" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.guiji.robot.dao.entity.RobotCallHis" extends="BaseResultMap" >
     <result column="sellbot_callback_json" property="sellbotCallbackJson" jdbcType="LONGVARCHAR" />
@@ -74,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, seq_id, user_id, ai_no, assign_time, template_id, call_status, crt_date, crt_time
+    id, seq_id, user_id, ai_no, assign_time, template_id, call_status, crt_date, crt_time, 
+    org_code
   </sql>
   <sql id="Blob_Column_List" >
     sellbot_callback_json
@@ -139,11 +141,11 @@
     insert into robot_call_his (id, seq_id, user_id, 
       ai_no, assign_time, template_id, 
       call_status, crt_date, crt_time, 
-      sellbot_callback_json)
+      org_code, sellbot_callback_json)
     values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
       #{aiNo,jdbcType=VARCHAR}, #{assignTime,jdbcType=TIMESTAMP}, #{templateId,jdbcType=VARCHAR}, 
       #{callStatus,jdbcType=VARCHAR}, #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
-      #{sellbotCallbackJson,jdbcType=LONGVARCHAR})
+      #{orgCode,jdbcType=VARCHAR}, #{sellbotCallbackJson,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.RobotCallHis" >
     <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
@@ -176,6 +178,9 @@
       <if test="crtTime != null" >
         crt_time,
       </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
       <if test="sellbotCallbackJson != null" >
         sellbot_callback_json,
       </if>
@@ -205,6 +210,9 @@
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
       </if>
       <if test="sellbotCallbackJson != null" >
         #{sellbotCallbackJson,jdbcType=LONGVARCHAR},
@@ -247,6 +255,9 @@
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="record.sellbotCallbackJson != null" >
         sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR},
       </if>
@@ -266,6 +277,7 @@
       call_status = #{record.callStatus,jdbcType=VARCHAR},
       crt_date = #{record.crtDate,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
       sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -281,7 +293,8 @@
       template_id = #{record.templateId,jdbcType=VARCHAR},
       call_status = #{record.callStatus,jdbcType=VARCHAR},
       crt_date = #{record.crtDate,jdbcType=VARCHAR},
-      crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -313,6 +326,9 @@
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="sellbotCallbackJson != null" >
         sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR},
       </if>
@@ -329,6 +345,7 @@
       call_status = #{callStatus,jdbcType=VARCHAR},
       crt_date = #{crtDate,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR},
       sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -341,7 +358,8 @@
       template_id = #{templateId,jdbcType=VARCHAR},
       call_status = #{callStatus,jdbcType=VARCHAR},
       crt_date = #{crtDate,jdbcType=VARCHAR},
-      crt_time = #{crtTime,jdbcType=TIMESTAMP}
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

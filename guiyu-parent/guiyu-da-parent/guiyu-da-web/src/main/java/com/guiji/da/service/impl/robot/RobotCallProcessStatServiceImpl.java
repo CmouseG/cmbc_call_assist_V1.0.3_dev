@@ -85,7 +85,6 @@ public class RobotCallProcessStatServiceImpl implements IRobotCallProcessStatSer
 			}
 		}
 		if(list != null && !list.isEmpty()) {
-			List<RobotCallProcessStat> rntList = new ArrayList<RobotCallProcessStat>();
 			//开始将查询到的数据进行合并处理，同以domain+aiAnswer为维度进行统计
 			Map<String, List<RobotCallProcessStatCache>> aiAnswerAGroupMap = new LinkedHashMap<String, List<RobotCallProcessStatCache>>();
 			GroupUtils.listGroup2Map(list, aiAnswerAGroupMap, RobotCallProcessStatCache.class, "getDomainandaianswer");// 根据domain+aiAnswer分组
@@ -148,6 +147,10 @@ public class RobotCallProcessStatServiceImpl implements IRobotCallProcessStatSer
 			if(StrUtils.isNotEmpty(condition.getUserId())) {
 				criteria.andUserIdEqualTo(condition.getUserId());
 			}
+			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
+				//按机构号查询，带上下级关系
+				criteria.andOrgCodeLike(condition.getOrgCode()+"%");
+			}
 			if(StrUtils.isNotEmpty(condition.getTemplateId())) {
 				criteria.andTemplateIdEqualTo(condition.getTemplateId());
 			}
@@ -178,16 +181,19 @@ public class RobotCallProcessStatServiceImpl implements IRobotCallProcessStatSer
 	public List<RobotCallProcessStatCache> queryTodayRobotProcessStat(RobotCallProcessStatQueryCondition condition) {
 		if(condition != null) {
 			String userId = condition.getUserId();	//用户id
+			String orgCode = condition.getOrgCode();	//机构号
 			String templateId = condition.getTemplateId();	//模板ID
-			if(StrUtils.isNotEmpty(userId) && StrUtils.isNotEmpty(templateId)) {
+			if(StrUtils.isNotEmpty(userId)) {
 				//根据用户ID、模板编号查询
 				Map<String,RobotCallProcessStatCache> robotCacheMap = robotCacheService.queryUserCallStatByUserAndTemplate(userId, templateId);
 				return genTemplateCallCache(robotCacheMap);
-			}else if(StrUtils.isNotEmpty(userId) && StrUtils.isEmpty(templateId)) {
-				//根据用户查询
-				List<Map<String,RobotCallProcessStatCache>> userRobotList = robotCacheService.queryUserCallStatList(userId);
-				return this.genUserCallCache(userRobotList);
-			}else if(StrUtils.isEmpty(userId) && StrUtils.isNotEmpty(templateId)) {
+			}else if(StrUtils.isNotEmpty(orgCode)) {
+				//根据机构查询
+				Map<String,List<Map<String,RobotCallProcessStatCache>>> allMap = robotCacheService.queryAllRobotCallProcessStat(templateId);
+				if(allMap != null && !allMap.isEmpty()) {
+					return this.genAllCallCacheByOrg(allMap, orgCode);
+				}
+			}else if(StrUtils.isEmpty(userId) && StrUtils.isEmpty(orgCode)) {
 				//查询所有，然后根据模板ID匹配
 				Map<String,List<Map<String,RobotCallProcessStatCache>>> allMap = robotCacheService.queryAllRobotCallProcessStat(templateId);
 				if(allMap != null && !allMap.isEmpty()) {
@@ -284,6 +290,37 @@ public class RobotCallProcessStatServiceImpl implements IRobotCallProcessStatSer
 		}
 		return list;
 	}
+	
+	/**
+	 * 将缓存中按机构统计数据转对象返回
+	 * @param allMap
+	 * @param templateId
+	 * @return
+	 */
+	private List<RobotCallProcessStatCache> genAllCallCacheByOrg(Map<String,List<Map<String,RobotCallProcessStatCache>>> allMap,String orgCode){
+		List<RobotCallProcessStatCache> list = new ArrayList<RobotCallProcessStatCache>();
+		if(allMap != null && !allMap.isEmpty()){
+			for (Map.Entry<String,List<Map<String,RobotCallProcessStatCache>>> allCacheEntry : allMap.entrySet()) {
+				String userId = allCacheEntry.getKey();	//用户ID
+				List<Map<String,RobotCallProcessStatCache>> userList = allCacheEntry.getValue();
+				if(userList != null && !userList.isEmpty()) {
+					for(Map<String,RobotCallProcessStatCache> templateCacheMap : userList) {
+						for (Map.Entry<String,RobotCallProcessStatCache> newMapEntry : templateCacheMap.entrySet()) {
+							RobotCallProcessStatCache cache = newMapEntry.getValue();
+							if(StrUtils.isNotEmpty(cache.getOrgCode())) {
+								//如果参数是管理员，机构如：1.1 ; 缓存数据是操作员:1.1.1，那么也应该可以统计的到
+								if(cache.getOrgCode().startsWith(orgCode)) {
+									list.add(newMapEntry.getValue());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
 	
 	/**
 	 * 将缓存中所有用户统计数据转对象返回

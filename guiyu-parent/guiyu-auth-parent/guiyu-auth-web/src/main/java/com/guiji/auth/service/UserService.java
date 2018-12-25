@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.user.dao.SysRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +34,18 @@ public class UserService {
 	
 	@Autowired
 	private ICallManagerOut iCallManagerOut;
+
+	@Autowired
+	private OrganizationService organizationService;
 	/**
 	 * 新增用户
 	 * @param user
 	 */
 	public void insert(SysUser user,Long roleId){
+        if (roleId == 4) {
+			String orgCode = organizationService.getSubOrgCode(user.getOrgCode());
+			user.setOrgCode(orgCode);
+		}
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
 	}

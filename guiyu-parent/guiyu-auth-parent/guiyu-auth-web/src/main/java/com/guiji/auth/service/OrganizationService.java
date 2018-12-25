@@ -20,9 +20,10 @@ public class OrganizationService {
 	private SysOrganizationMapper sysOrganizationMapper;
 	
 	public void add(SysOrganization record){
-		int num=sysOrganizationMapper.countCode(record.getCode());
-		String code=record.getCode()+"."+(num+1);
-		record.setCode(code);
+        String subCode = this.getSubOrgCode(record.getCode());
+		/*int num=sysOrganizationMapper.countCode(record.getCode());
+		String code=record.getCode()+"."+(num+1);*/
+		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
 	}
 	
@@ -86,7 +87,7 @@ public class OrganizationService {
 	
 	public List<SysOrganization> getOrgNotOpen(){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0");
+		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0").andTypeNotEqualTo("1");
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	
@@ -102,5 +103,32 @@ public class OrganizationService {
 			return list.get(0);
 		}
 		return null;
+	}
+
+	public String getSubOrgCode(String orgCode) {
+		String subOrgCode = null;
+		SysOrganization sysOrganization = null;
+		SysOrganizationExample example=new SysOrganizationExample();
+		example.createCriteria().andCodeEqualTo(orgCode);
+		List<SysOrganization> sysOrganizationList = sysOrganizationMapper.selectByExample(example);
+		if (sysOrganizationList != null && !sysOrganizationList.isEmpty()) {
+			sysOrganization = sysOrganizationList.get(0);
+		}
+		if (sysOrganization != null) {
+			if (StringUtils.isEmpty(sysOrganization.getSubCode())) {
+				subOrgCode = sysOrganization.getCode() + ".1";
+			} else {
+				String preOrgCode = sysOrganization.getSubCode().substring(0,sysOrganization.getSubCode().lastIndexOf("."));
+				String lastOrgCode = sysOrganization.getSubCode().substring(sysOrganization.getSubCode().lastIndexOf("."));
+				int lastOrgCodeNumber = Integer.valueOf(lastOrgCode) + 1;
+				subOrgCode = preOrgCode + "." + lastOrgCodeNumber;
+			}
+			SysOrganization sysOrganizationUpdate = new SysOrganization();
+			sysOrganizationUpdate.setCode(orgCode);
+			sysOrganizationUpdate.setSubCode(subOrgCode);
+			sysOrganizationMapper.updateByPrimaryKeySelective(sysOrganizationUpdate);
+		}
+
+		return subOrgCode;
 	}
 }

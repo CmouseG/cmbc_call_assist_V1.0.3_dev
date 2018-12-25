@@ -1340,7 +1340,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				return true;
 			} else {
 				return false;
-			}
+			}	
 		}
 		return false;
 	}
@@ -1374,6 +1374,28 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	// \"ce4063be6e334f0387fa6d987e16a87c\",\"templateId\": \"1\"}";
 	// System.out.println(sss.length());
 	// }
+	
+	
+	@Override
+	public List<DispatchPlan> selectPhoneByDate4Redis(String flag,Integer limit) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+
+		DispatchPlan dis = new DispatchPlan();
+		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setCallHour(String.valueOf(hour));
+		dis.setIsDel(Constant.IS_DEL_0);
+		dis.setStatusPlan(Constant.STATUSPLAN_1);
+		dis.setStatusSync(Constant.STATUS_SYNC_0);
+		dis.setFlag(flag);
+		dis.setLimitStart(0);
+		dis.setLimitEnd(limit);
+		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
+		return phones;
+	}
 
 	@Override
 	public void test(DispatchPlan sendSMsDispatchPlan, String label) {

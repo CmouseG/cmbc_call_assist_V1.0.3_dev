@@ -491,6 +491,9 @@
 		<if test="userName != '' ">
 			and username=#{userName}	
 		</if>
+        <if test="orgCode != null ">
+            and org_code REGEXP concat('^',#{orgCode},'.[0-9]+$')
+        </if>
 	</select>
 	
 	<select id="selectByParamVo" resultType="map">
@@ -510,6 +513,9 @@
 		<if test="roleId !='' ">
 			and c.id like concat('%',#{roleId},'%')
 		</if>
+        <if test="orgCode != null ">
+            and org_code REGEXP concat('^',#{orgCode},'.[0-9]+$')
+        </if>
 		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
 	</select>

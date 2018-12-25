@@ -87,7 +87,7 @@ public class OrganizationService {
 	
 	public List<SysOrganization> getOrgNotOpen(){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0");
+		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0").andTypeNotEqualTo("1");
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	

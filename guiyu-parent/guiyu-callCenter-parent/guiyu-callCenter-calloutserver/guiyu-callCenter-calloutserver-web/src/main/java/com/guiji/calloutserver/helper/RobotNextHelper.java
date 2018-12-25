@@ -62,20 +62,20 @@ public class RobotNextHelper {
     }
 
     public void startAiCallNextTimer(AiCallNextReq aiCallNextReq) {
-        log.info("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
+        log.debug("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
         String callId = aiCallNextReq.getSeqId();
         Channel channelInit = channelService.findByUuid(callId);
         if(channelInit == null){ //channelInit为null表示已经hangup了，不需要后面的循环调用了,直接return
-            log.info("startAiCallNextTimer findByUuid channelInit is null callId[{}]",callId);
+            log.debug("startAiCallNextTimer findByUuid channelInit is null callId[{}]",callId);
             return;
         }
 
         ScheduledFuture<?> schedule = scheduledExecutorService.scheduleAtFixedRate(() -> {
                     try {
-                        log.info("根据callId[{}]获取channel", callId);
+                        log.debug("根据callId[{}]获取channel", callId);
                         Channel channel = channelService.findByUuid(callId);
                         if(channel == null){
-                            log.info("startAiCallNextTimer findByUuid is null callId[{}]",callId);
+                            log.debug("startAiCallNextTimer findByUuid is null callId[{}]",callId);
                             return;
                         }
                         Long startTime = channel.getStartPlayTime().getTime();
@@ -91,7 +91,7 @@ public class RobotNextHelper {
                             aiCallNextReq.setStatus("1");
                             aiCallNextReq.setTimestamp(channel.getStartPlayTime().getTime());
                         }
-                        log.info("-------------start  robotRemote aiCallNext callId:" + callId);
+                        log.debug("-------------start  robotRemote aiCallNext callId:" + callId);
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
                         String status = aiCallNext.getHelloStatus();

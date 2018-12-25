@@ -2,6 +2,7 @@ package com.guiji.dispatch.job;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,17 +12,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample;
+import com.guiji.dispatch.impl.DispatchPlanPutCalldata;
 import com.guiji.dispatch.model.ModularLogs;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IModularLogsService;
@@ -35,8 +38,8 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.RedisUtil;
 
-@Component
-//@RestController
+//@Component
+ @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -57,11 +60,17 @@ public class TimeTask {
 	@Autowired
 	private IModularLogsService modularLogs;
 
+	@Autowired
+	private DispatchPlanPutCalldata patchPlanPutCalldata;
+
+	@Autowired
+	private DispatchPlanMapper dispatchMapper;
+
 	/**
 	 * 捞取号码初始化资源
 	 */
-	@Scheduled(cron = "0 0/1 * * * ?")
-//	 @PostMapping("selectPhoneInit")
+//	@Scheduled(cron = "0 0/1 * * * ?")
+	// @PostMapping("selectPhoneInit")
 	public void selectPhoneInit() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -78,7 +87,7 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info("捞取号码初始化资源..");
 				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
-				logger.info("数量size"+list.size());
+				logger.info("数量size" + list.size());
 				List<HsParam> sendData = new ArrayList<>();
 				for (DispatchPlan dispatchPlan : list) {
 					HsParam hsParam = new HsParam();
@@ -114,8 +123,8 @@ public class TimeTask {
 	/**
 	 * 获取当前资源情况
 	 */
-	@Scheduled(cron = "0 0/1 * * * ?")
-//	@PostMapping("getResourceResult")
+//	@Scheduled(cron = "0 0/1 * * * ?")
+	// @PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -240,8 +249,8 @@ public class TimeTask {
 	/**
 	 * 获取可以拨打的号码
 	 */
-	@Scheduled(cron = "0 0/1 * * * ?")
-//	 @PostMapping("getSuccessPhones")
+//	@Scheduled(cron = "0 0/1 * * * ?")
+	 @PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -268,7 +277,57 @@ public class TimeTask {
 						continue;
 					}
 					// }
+					//put redis
 					checkRedisAndDate(entry.getKey(), entry.getValue());
+				}
+				distributedLockHandler.releaseLock(lock); // 释放锁
+			}
+		} catch (Exception e) {
+			logger.info("error", e);
+		} finally {
+			distributedLockHandler.releaseLock(lock); // 释放锁
+		}
+	}
+
+//	@Scheduled(cron = "0 0/1 * * * ?")
+	@PostMapping("putRedisByphones")
+	public void putRedisByphones() {
+		logger.info("-----------------------------putRedisByphones------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		Lock lock = new Lock("putRedisByphones.TimeTask", "putRedisByphones.TimeTask");
+		try {
+			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+				logger.info(" 获取可以拨打的号码..");
+				// 获取userIdList
+//				List<DispatchPlan> selectPhoneByDate4UserId = dispatchPlanService
+//						.selectPhoneByDate4UserId(Constant.IS_FLAG_2, 1000);
+				Map<String, String> map = (HashMap) redisUtil.hmget("dispath-userIds");
+				if(map == null)
+				{
+					return;
+				}
+				
+				for (Entry<String, String> ent : map.entrySet()) {
+					String[] split = ent.getKey().split("-");
+					Integer limit = patchPlanPutCalldata.getQuerySize(Integer.valueOf(split[0]), Integer.valueOf(split[2]));
+					if (limit > 0) {
+						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Constant.IS_FLAG_2,
+								limit);
+						patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
+						List<String> ids = new ArrayList<>();
+						for (DispatchPlan dis : list) {
+							ids.add(dis.getPlanUuid());
+						}
+						dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+					}
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁
 			}
@@ -358,11 +417,19 @@ public class TimeTask {
 	 */
 	private void checkRedisAndDate(String key, List<DispatchPlan> list) {
 		Object object = redisUtil.get(key);
-//		logger.info("checkRedisAndDate key result:" + object);
+		// logger.info("checkRedisAndDate key result:" + object);
 		if (object != null && object != "") {
 			logger.info("当前推送已经推送过：在失效时间内，不重复推送:" + key);
 		} else {
 			String[] split = key.split("-");
+			
+			HashMap map = (HashMap) redisUtil.hmget("dispath-userIds");
+			if(map == null)
+			{
+				map = new HashMap<>();
+			}
+			map.put(key, key);
+			redisUtil.hmset("dispath-userIds", map);
 			ReturnData<Boolean> startcallplan = callManagerOutApi.startCallPlan(split[0], split[1], split[2]);
 			logger.info("启动客户呼叫计划结果" + startcallplan.success);
 			logger.info("启动客户呼叫计划结果详情 " + startcallplan.msg);

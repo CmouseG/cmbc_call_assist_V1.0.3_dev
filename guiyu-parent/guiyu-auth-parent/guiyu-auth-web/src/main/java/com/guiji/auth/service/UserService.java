@@ -80,7 +80,11 @@ public class UserService {
 		return mapper.getPermByRoleId(roleId);
 	}
 	
-	public Page<Object>  getUserByPage(UserParamVo param){
+	public Page<Object>  getUserByPage(UserParamVo param,Long userId){
+		SysUser loginUser = mapper.getUserById(userId);
+		if (loginUser != null) {
+			param.setOrgCode(loginUser.getOrgCode());
+		}
 		Page<Object> page=new Page<>();
 		int count=mapper.countByParamVo(param);
 		List<Object> userList=mapper.selectByParamVo(param);

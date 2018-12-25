@@ -915,10 +915,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 							.andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
 					int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 					if (result <= 0) {
-						queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
+						return queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
 					}
 				}
-
 				// int res =
 				// dispatchPlanMapper.updateDispatchPlanList(updateStatus);
 				// 判断当前任务是否查询完毕
@@ -1045,9 +1044,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 				}
-				logger.info("operationAllPlanByBatchId开始时间");
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
-				logger.info("operationAllPlanByBatchId结束时间");
 			}
 
 		} else {
@@ -1066,7 +1063,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			List<String> ids = new ArrayList<>();
 			for (DispatchPlan dispatchPlan : selectByExample) {
 				boolean res = checkStatus(status, dispatchPlan);
-				if (res) {
+				if (!res) {
 					continue;
 				}
 				ids.add(dispatchPlan.getPlanUuid());
@@ -1106,6 +1103,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+			return false;
+		}
+		
+		if (Integer.valueOf(status) == Constant.STATUSPLAN_4
+				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
+			return false;
+		}
+		
+		if (Integer.valueOf(status) == Constant.STATUSPLAN_4
+				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_2)) {
 			return false;
 		}
 
@@ -1358,6 +1365,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		DispatchPlanExample ex1 = new DispatchPlanExample();
 		Criteria createCriteria1 = ex1.createCriteria();
+		ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_2).andUserIdEqualTo(userId.intValue());
 		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try {

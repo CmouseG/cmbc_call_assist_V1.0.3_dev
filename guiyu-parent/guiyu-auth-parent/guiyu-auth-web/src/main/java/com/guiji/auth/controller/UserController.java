@@ -102,8 +102,8 @@ public class UserController implements IAuth{
 	}
 
 	@RequestMapping("/user/getUserByPage")
-	public Page<Object> getUserByPage(UserParamVo param){
-		return service.getUserByPage(param);
+	public Page<Object> getUserByPage(UserParamVo param,@RequestHeader Long userId){
+		return service.getUserByPage(param,userId);
 	}
 	
 	@RequestMapping("/user/getUserById")

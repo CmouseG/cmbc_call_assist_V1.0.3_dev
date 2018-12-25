@@ -74,7 +74,7 @@ public class RequestHelper {
                     }
                 }
             }catch (Exception e){// 出现异常 ，还会继续循环调用
-                log.error("requestApi.execute error:"+e);
+                log.error("requestApi.execute error:",e);
                 if(!isContinueOnException){//出现异常，无需继续，直接跳出
                     break;
                 }

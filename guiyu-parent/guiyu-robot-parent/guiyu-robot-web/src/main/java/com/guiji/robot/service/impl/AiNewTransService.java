@@ -9,12 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.dao.RobotCallHisMapper;
 import com.guiji.robot.dao.TtsCallbackHisMapper;
 import com.guiji.robot.dao.TtsWavHisMapper;
 import com.guiji.robot.dao.entity.RobotCallHis;
 import com.guiji.robot.dao.entity.TtsCallbackHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
+import com.guiji.robot.util.LocalCacheUtil;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.StrUtils;
 
@@ -33,6 +37,8 @@ public class AiNewTransService {
 	TtsCallbackHisMapper ttsCallbackHisMapper;
 	@Autowired
 	RobotCallHisMapper robotCallHisMapper; 
+	@Autowired
+	IAuth iAuth;
 	
 	/**
 	 * 保存或者更新一TTS合成信息
@@ -92,6 +98,24 @@ public class AiNewTransService {
 			try {
 				if(StrUtils.isEmpty(robotCallHis.getId())) {
 					//如果主键为空，那么新增一条信息
+					//查询用户机构信息
+					if(StrUtils.isNotEmpty(robotCallHis.getUserId())) {
+						if(LocalCacheUtil.isExist(robotCallHis.getUserId())) {
+							//缓存中有，直接取
+							SysUser sysUser = LocalCacheUtil.getT(robotCallHis.getUserId());
+							robotCallHis.setOrgCode(sysUser.getOrgCode());
+						}else{
+							//缓存中没有,重新查，并放入内存
+							ReturnData<SysUser> userRD = iAuth.getUserById(Long.valueOf(robotCallHis.getUserId()));
+							if(userRD != null && userRD.getBody()!=null) {
+								//内存1个小时有效
+								LocalCacheUtil.set(robotCallHis.getUserId(), userRD.getBody(), LocalCacheUtil.ONE_HOUR);
+								robotCallHis.setOrgCode(userRD.getBody().getOrgCode());
+							}else {
+								logger.error("用户ID:{},查询不到用户信息，返回：",robotCallHis.getUserId(),userRD);
+							}
+						}
+					}
 					robotCallHis.setCrtTime(new Date());
 					robotCallHis.setCrtDate(DateUtil.getCurrentymd()); //创建日期 yyyy-MM-dd
 					robotCallHisMapper.insert(robotCallHis);	//创建时间

@@ -124,7 +124,7 @@
     SELECT SUM(duration_all) AS durationAll,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today
     <if test="orgCode != null" >
-    WHERE org_code = #{orgCode,jdbcType=VARCHAR}
+    WHERE org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -135,7 +135,7 @@
     FROM report_call_today
     WHERE intent = 'F' OR intent = 'W'
     <if test="orgCode != null" >
-    AND org_code = #{orgCode,jdbcType=VARCHAR}
+    AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -145,7 +145,7 @@
     SELECT  SUM(call_count) AS connect,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today WHERE intent != 'F' AND intent != 'W'
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -155,7 +155,7 @@
     SELECT SUM(call_count) AS duration5, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today WHERE duration_type = 1
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -165,7 +165,7 @@
     SELECT SUM(call_count) AS duration10, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today WHERE duration_type = 2
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -175,7 +175,7 @@
     SELECT SUM(call_count) AS duration30, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
     FROM report_call_today WHERE duration_type = 3
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -186,7 +186,7 @@
     SELECT SUM(duration_all) AS durationAll,call_date AS callDate
     FROM report_call_day  WHERE call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -198,7 +198,7 @@
     SELECT  SUM(call_count) AS notConnect,  call_date AS callDate
     FROM report_call_day  WHERE (intent = 'F' OR intent = 'W') AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -210,7 +210,7 @@
     SELECT  SUM(call_count) AS connect, call_date AS callDate
     FROM report_call_day WHERE intent != 'F' AND intent != 'W' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -222,7 +222,7 @@
     SELECT SUM(call_count) AS duration5, call_date AS callDate
     FROM report_call_day WHERE duration_type = 1 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -234,7 +234,7 @@
     SELECT SUM(call_count) AS duration10, call_date AS callDate
     FROM report_call_day WHERE duration_type = 2 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -246,7 +246,7 @@
     SELECT SUM(call_count) AS duration30,  call_date AS callDate
     FROM report_call_day WHERE duration_type = 3 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
     <if test="orgCode != null" >
-      AND org_code = #{orgCode,jdbcType=VARCHAR}
+      AND org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -260,7 +260,7 @@
     FROM report_call_day
     where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and intent  IS NOT NULL
     <if test="orgCode != null" >
-      and org_code = #{orgCode,jdbcType=VARCHAR}
+      and org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -273,7 +273,7 @@
     FROM report_call_today
     where intent  IS NOT NULL
     <if test="orgCode != null" >
-      and org_code = #{orgCode,jdbcType=VARCHAR}
+      and org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -285,7 +285,7 @@
     FROM report_call_hour
     WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
     <if test="orgCode != null" >
-      and org_code = #{orgCode,jdbcType=VARCHAR}
+      and org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -302,7 +302,7 @@
     FROM report_call_day
     where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and reason  IS NOT NULL
     <if test="orgCode != null" >
-      and org_code = #{orgCode,jdbcType=VARCHAR}
+      and org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}
@@ -315,7 +315,7 @@
     FROM report_call_today
     where reason  IS NOT NULL
     <if test="orgCode != null" >
-      and org_code = #{orgCode,jdbcType=VARCHAR}
+      and org_code like #{orgCode,jdbcType=VARCHAR}
     </if>
     <if test="tempId != null" >
       AND tempid = #{tempId,jdbcType=VARCHAR}

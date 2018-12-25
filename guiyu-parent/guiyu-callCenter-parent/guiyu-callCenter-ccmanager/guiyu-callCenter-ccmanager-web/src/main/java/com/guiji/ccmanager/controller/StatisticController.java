@@ -73,7 +73,7 @@ public class StatisticController {
                                                   @NotNull(message = "endDate不能为空") @Pattern(regexp = "(^\\d{4}-\\d{2}-\\d{2}$)", message = "日期格式错误") String endDate,String tempId,
                                                   @RequestHeader String orgCode) throws ParseException {
 
-        List<DashboardOverView> list = statisticService.getDashboardOverView(orgCode, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<DashboardOverView> list = statisticService.getDashboardOverView(orgCode+"%", startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
         DashboardOverViewRes result = new DashboardOverViewRes();
 
         int connect =0;
@@ -131,7 +131,7 @@ public class StatisticController {
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
 
-        List<Map<String,Object>> list = statisticService.getIntentCount(orgCode,userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<Map<String,Object>> list = statisticService.getIntentCount(orgCode+"%",userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
 
         return Result.ok(list);
 
@@ -157,7 +157,7 @@ public class StatisticController {
         if(!startDate.matches(regEx) || !endDate.matches(regEx)){
             return Result.error(Constant.ERROR_DATEFORMAT);
         }
-        List<CallCountHour> list = statisticService.getConnectDataHour(orgCode, sdf.parse(startDate), sdf.parse(endDate), StringUtils.isNotBlank(tempId)? tempId: null);
+        List<CallCountHour> list = statisticService.getConnectDataHour(orgCode+"%", sdf.parse(startDate), sdf.parse(endDate), StringUtils.isNotBlank(tempId)? tempId: null);
         return Result.ok(list);
     }
 
@@ -181,7 +181,7 @@ public class StatisticController {
         if(!startDate.matches(regEx) || !endDate.matches(regEx)){
            return Result.error(Constant.ERROR_DATEFORMAT);
         }
-        List<ReasonCount> list = statisticService.getConnectReasonDay(orgCode, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<ReasonCount> list = statisticService.getConnectReasonDay(orgCode+"%", startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
 
         List<String> typeList = callDetailService.getFtypes();
         if(!typeList.contains("已接通")){

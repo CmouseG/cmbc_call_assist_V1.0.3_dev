@@ -15,6 +15,8 @@ public class CallOutPlanExample {
 
     protected Integer limitEnd;
 
+    protected String customerId;
+
     public CallOutPlanExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
@@ -82,6 +84,14 @@ public class CallOutPlanExample {
 
     public Integer getLimitEnd() {
         return limitEnd;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     protected abstract static class GeneratedCriteria {

@@ -106,8 +106,9 @@ public class FsBotHandler {
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse, false,true);
 
-            //更新callplan
-            if (callPlan.getCallState() == null || callPlan.getCallState() < ECallState.answer.ordinal()) {
+            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况
+            CallOutPlan callPlanNew = callOutPlanService.findByCallId(event.getUuid());
+            if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
             callPlan.setAnswerTime(new Date());

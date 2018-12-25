@@ -185,6 +185,7 @@ create table robot_call_his
    id                   varchar(32) not null,
    seq_id               varchar(50) comment '会话id',
    user_id              varchar(50) not null comment '用户编号',
+   org_code             varchar(50) comment '机构号',
    ai_no                varchar(50) comment '机器人编号',
    assign_time          datetime comment '分配时间',
    template_id          varchar(50) comment '话术模板',
@@ -215,7 +216,7 @@ create index robot_call_his_idx3 on robot_call_his
 
 create table robot_call_process_stat
 (
-   id                   varchar(32) not null,
+   id                   int not null auto_increment,
    user_id              varchar(50) comment '用户编号',
    stat_date            varchar(10) comment '统计日期',
    template_id          varchar(50) comment '模板编号',
@@ -226,25 +227,26 @@ create table robot_call_process_stat
    refused_stat         varchar(100) comment '拒绝统计(0-不拒绝,1-用户拒绝;9-未应答)',
    hangup_stat          varchar(100) comment '挂断统计(0-未挂断   1：用户挂断   2：AI挂断)',
    match_stat           varchar(100) comment '匹配统计',
+   org_code             varchar(50) comment '机构号',
    crt_time             datetime comment '创建时间',
    primary key (id)
-);
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 alter table robot_call_process_stat comment '机器人通话流程分析';
-
 create index robot_call_process_stat_idx1 on robot_call_process_stat
 (
    user_id
 );
-
 create index robot_call_process_stat_idx2 on robot_call_process_stat
 (
    template_id
 );
-
 create index robot_call_process_stat_idx3 on robot_call_process_stat
 (
    stat_date
+);
+create index robot_call_process_stat_idx4 on robot_call_process_stat
+(
+   org_code
 );
 
 

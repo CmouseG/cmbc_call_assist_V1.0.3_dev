@@ -163,6 +163,14 @@ public class LocalFsServer implements IEslEventListener {
         executeAsync(hangupCmd);
     }
 
+    /**
+     * 杀掉通道
+     * @param uuid
+     */
+    public void hangup(String uuid){
+        executeAsync("uuid_kill " + uuid);
+    }
+
     public String execute(String command){
         EslMessage eslMessage = getFsClient().sendSyncApiCommand(command, "");
         String response = StringUtils.join(eslMessage.getBodyLines(), "\n");

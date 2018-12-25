@@ -17,6 +17,7 @@ public class FsWatchDog {
     public void monitor(LocalFsServer fsManager){
         this.fsManager = fsManager;
 
+        log.info("开始启动FsWatchDog，防止esl连接断开");
         Thread thread = new Thread(() -> {
             while (true){
                 try {

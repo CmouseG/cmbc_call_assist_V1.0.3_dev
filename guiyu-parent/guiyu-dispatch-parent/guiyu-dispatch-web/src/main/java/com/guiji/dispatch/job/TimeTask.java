@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.component.lock.DistributedLockHandler;
@@ -38,8 +37,8 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.RedisUtil;
 
-//@Component
- @RestController
+@Component
+// @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -69,7 +68,7 @@ public class TimeTask {
 	/**
 	 * 捞取号码初始化资源
 	 */
-//	@Scheduled(cron = "0 0/1 * * * ?")
+	@Scheduled(cron = "0 0/1 * * * ?")
 	// @PostMapping("selectPhoneInit")
 	public void selectPhoneInit() {
 		logger.info("-----------------------------------------------------------------");
@@ -123,7 +122,7 @@ public class TimeTask {
 	/**
 	 * 获取当前资源情况
 	 */
-//	@Scheduled(cron = "0 0/1 * * * ?")
+	@Scheduled(cron = "0 0/1 * * * ?")
 	// @PostMapping("getResourceResult")
 	public void getResourceResult() {
 		logger.info("-----------------------------------------------------------------");
@@ -249,8 +248,8 @@ public class TimeTask {
 	/**
 	 * 获取可以拨打的号码
 	 */
-//	@Scheduled(cron = "0 0/1 * * * ?")
-	 @PostMapping("getSuccessPhones")
+	@Scheduled(cron = "0 0/1 * * * ?")
+//	 @PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -289,8 +288,8 @@ public class TimeTask {
 		}
 	}
 
-//	@Scheduled(cron = "0 0/1 * * * ?")
-	@PostMapping("putRedisByphones")
+	@Scheduled(cron = "0 0/1 * * * ?")
+//	@PostMapping("putRedisByphones")
 	public void putRedisByphones() {
 		logger.info("-----------------------------putRedisByphones------------------------------------");
 		logger.info("-----------------------------------------------------------------");

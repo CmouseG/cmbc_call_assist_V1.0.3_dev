@@ -81,6 +81,7 @@ public class FsEventHandler {
             event.setCustomerNum(eventHeaders.get("CC-Member-CID-Number"));
             event.setCustomerUuid(eventHeaders.get("CC-Member-Session-UUID"));
             event.setAgentGroupId(eventHeaders.get("CC-Queue"));
+            log.info("构建好AgentAnswerEvent[{}], 等待后续处理", event);
             asyncEventBus.post(event);
         }
     }
@@ -92,6 +93,7 @@ public class FsEventHandler {
         event.setCalledNum(eventHeaders.get("Caller-Destination-Number"));
         event.setAccessNum(eventHeaders.get("variable_AccessNum"));
 
+        log.info("构建好ChannelAnswerEvent[{}]，等待后续处理", event);
         asyncEventBus.post(event);
     }
 
@@ -120,6 +122,7 @@ public class FsEventHandler {
                 .sipHangupCause(eventHeaders.get("variable_sip_term_status"))
                 .build();
 
+        log.info("构建好ChannelHangupEvent[{}], 等待后续处理", event);
         asyncEventBus.post(event);
     }
 
@@ -152,12 +155,11 @@ public class FsEventHandler {
             event.setUuid(uuid);
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();
             BeanUtils.copyProperties(event, asrCustomerEvent);
+            log.info("构建好ALI_ASR事件[{}]，等待后续处理", event);
             asyncEventBus.post(asrCustomerEvent);
             event.setUuid(callPlan.getAgentChannelUuid());
         } else {
             log.warn("收到的Asr事件不属于当前系统(没有根据agentChannelUuid查到计划)，跳过处理，eventHeaders:[{}]", eventHeaders);
         }
-
-        log.info("开始处理ALI_ASR事件[{}]", event);
     }
 }

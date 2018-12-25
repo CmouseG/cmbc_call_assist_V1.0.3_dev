@@ -2,7 +2,7 @@
     <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread%X{sourceThread}]%logger{24} - %msg%n"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{MM/dd/yyyy HH:mm:ss} %-5level [%thread%X{sourceThread}]%logger{24} - %msg%n</pattern>
+            <pattern>%d{MM/dd/yyyy HH:mm:ss.SSS} %-5level [%thread%X{sourceThread}]%logger{24} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -32,7 +32,7 @@
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{MM/dd/yyyy HH:mm:ss} %-5level ${version} [%thread]%logger{16} - %msg%n
+            <pattern>%d{MM/dd/yyyy HH:mm:ss.SSS} %-5level ${version} [%thread]%logger{16} - %msg%n
             </pattern>
         </encoder>
     </appender>

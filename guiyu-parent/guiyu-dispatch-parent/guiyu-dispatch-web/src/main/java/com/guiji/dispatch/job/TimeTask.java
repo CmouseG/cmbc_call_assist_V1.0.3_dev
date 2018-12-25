@@ -268,7 +268,6 @@ public class TimeTask {
 						continue;
 					}
 					// }
-					logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 					checkRedisAndDate(entry.getKey(), entry.getValue());
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁
@@ -359,7 +358,7 @@ public class TimeTask {
 	 */
 	private void checkRedisAndDate(String key, List<DispatchPlan> list) {
 		Object object = redisUtil.get(key);
-		logger.info("checkRedisAndDate key result:" + object);
+//		logger.info("checkRedisAndDate key result:" + object);
 		if (object != null && object != "") {
 			logger.info("当前推送已经推送过：在失效时间内，不重复推送:" + key);
 		} else {

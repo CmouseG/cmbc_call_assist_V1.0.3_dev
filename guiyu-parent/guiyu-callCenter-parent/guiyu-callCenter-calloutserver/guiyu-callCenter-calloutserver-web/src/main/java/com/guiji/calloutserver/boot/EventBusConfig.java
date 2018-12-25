@@ -16,6 +16,6 @@ import java.util.concurrent.Executors;
 public class EventBusConfig {
     @Bean
     public AsyncEventBus asyncEventBus(){
-        return new AsyncEventBus(Executors.newFixedThreadPool(20));
+        return new AsyncEventBus(Executors.newCachedThreadPool());
     }
 }

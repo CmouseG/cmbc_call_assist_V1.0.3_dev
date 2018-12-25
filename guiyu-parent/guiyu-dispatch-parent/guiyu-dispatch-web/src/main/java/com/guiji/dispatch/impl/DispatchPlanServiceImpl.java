@@ -915,7 +915,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 							.andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
 					int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
 					if (result <= 0) {
-						queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
+						return queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
 					}
 				}
 				// int res =

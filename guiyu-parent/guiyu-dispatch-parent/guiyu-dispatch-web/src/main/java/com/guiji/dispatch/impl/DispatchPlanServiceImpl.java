@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallManagerOut;
@@ -264,7 +265,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
 		boolean result = false;
-
 		List<DispatchPlan> succ = new ArrayList<>();
 
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
@@ -283,6 +283,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		Sheet sheet = wb.getSheetAt(0);
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
+
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
@@ -361,17 +362,20 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// } else {
 		// throw new Exception("请求校验参数失败,请检查机器人的参数");
 		// }
-		logger.info("-----------------------------11111111111111111111111111---------------------");
 		List<List<DispatchPlan>> averageAssign = averageAssign(succ, 10);
+		dispatchPlanBatch.setId(null);
+		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 		for (List<DispatchPlan> tmpList : averageAssign) {
+			for (DispatchPlan dis : tmpList) {
+				dis.setBatchId(dispatchPlanBatch.getId());
+			}
 			logger.info("批量插入开始--------------");
 			if (tmpList.size() > 0) {
 				dispatchPlanMapper.insertDispatchPlanList(tmpList);
 			}
 			logger.info("批量插入结束-----------------");
 		}
-		dispatchPlanBatch.setId(null);
-		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
+
 		return result;
 	}
 
@@ -962,30 +966,28 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean batchUpdatePlans(IdsDto[] dto) {
-
 		int result = 0;
 		for (IdsDto bean : dto) {
-			DispatchPlanExample ex1 = new DispatchPlanExample();
-			ex1.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
-			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
-			DispatchPlan dispatchPlan = null;
-			if (selectByExample.size() > 0) {
-				dispatchPlan = selectByExample.get(0);
-			}
-			if (bean.getStatus().equals(Constant.STATUSPLAN_1)
-					&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
-				logger.info("当前状态有问题...");
-				continue;
-			}
-			
-			//停止之后不能暂停
-			if (bean.getStatus().equals(Constant.STATUSPLAN_4)
-					&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
-				logger.info("当前状态有问题...");
-				continue;
-			}
-			
-
+			// DispatchPlanExample ex1 = new DispatchPlanExample();
+			// ex1.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
+			// List<DispatchPlan> selectByExample =
+			// dispatchPlanMapper.selectByExample(ex1);
+			// DispatchPlan dispatchPlan = null;
+			// if (selectByExample.size() > 0) {
+			// dispatchPlan = selectByExample.get(0);
+			// }
+			// if (bean.getStatus().equals(Constant.STATUSPLAN_1)
+			// && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+			// logger.info("当前状态有问题...");
+			// continue;
+			// }
+			//
+			// // 停止之后不能暂停
+			// if (bean.getStatus().equals(Constant.STATUSPLAN_4)
+			// && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
+			// logger.info("当前状态有问题...");
+			// continue;
+			// }
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
@@ -1001,6 +1003,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return result > 0 ? true : false;
 	}
 
+	/**
+	 * 停止之后不能暂停 不能恢复
+	 */
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
 		Map<Integer, String> map = new HashMap<>();
@@ -1030,7 +1035,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					return result;
 				}
 				// 0未计划1计划中2计划完成3暂停计划4停止计划
-				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
 				if (status.equals("1")) {
@@ -1070,13 +1074,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			dis.setStatusPlan(Integer.valueOf(status));
 			List<List<String>> averageAssign = averageAssign(ids, 10);
-			logger.info("当前update size" + averageAssign.size());
 			for (List<String> list : averageAssign) {
-				logger.info("start ");
 				if (list.size() > 0) {
 					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
 				}
-				logger.info("end");
 			}
 		}
 		return result;
@@ -1105,18 +1106,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
-			return true;
+			return false;
 		}
 
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
-			return true;
+			return false;
 		}
 		// if (Integer.valueOf(status) == Constant.STATUSPLAN_1
 		// && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
 		// return false;
 		// }
-		return false;
+		return true;
 	}
 
 	@Override
@@ -1156,7 +1157,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setStatusPlan(Constant.STATUSPLAN_1);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setClean(Constant.IS_CLEAN_0);
-
+		try {
+			dis.setGmtModified(DateUtil.getCurrent4Time());
+		} catch (Exception e) {
+			logger.info("error", e);
+		}
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1);
 		int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);

@@ -166,7 +166,8 @@
     </if>
   </update>
   <select id="selectDistinctErrorName" resultType="java.lang.String">
-    select   error_name
-    from error_match group by error_name order by error_name
+    SELECT   error_name
+    FROM error_match   WHERE error_name != '已接通'
+    GROUP BY error_name ORDER BY error_name
   </select>
 </mapper>

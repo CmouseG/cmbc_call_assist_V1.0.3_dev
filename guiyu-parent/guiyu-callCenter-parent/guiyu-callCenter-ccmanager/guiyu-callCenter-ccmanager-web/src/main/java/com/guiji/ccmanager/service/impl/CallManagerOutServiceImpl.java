@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -67,6 +68,8 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         c.add(Calendar.MINUTE, -5);
         criteria.andCreateTimeGreaterThan(c.getTime());
 
+        updateCallState();//将5分钟前的没有回调的状态修改一下
+
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);
         if(existList!=null && existList.size()>0){
             // todo 报警
@@ -111,7 +114,28 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
             log.warn("calloutserver has error ,not start plan");
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_CALLOUTSERVER_ERROR);
         }
+        log.info("---end  startcallplan----");
+    }
 
+    @Async
+    public void updateCallState(){
+
+        log.info("---开始将10分钟之前，状态没有回调的通话记录，修改状态---");
+        CallOutPlanExample example = new CallOutPlanExample();
+        CallOutPlanExample.Criteria criteria = example.createCriteria();
+//        criteria.andLineIdEqualTo(Integer.valueOf(lineId));
+        criteria.andCallStateBetween(Constant.CALLSTATE_INIT,Constant.CALLSTATE_AGENT_ANSWER);
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, -10);
+        criteria.andCreateTimeLessThan(c.getTime());
+
+        CallOutPlan updateCallPlan = new CallOutPlan();
+        updateCallPlan.setCallState(Constant.CALLSTATE_HANGUP_FAIL);
+        updateCallPlan.setAccurateIntent("W");
+        updateCallPlan.setReason("系统通信异常");
+        callOutPlanMapper.updateByExampleSelective(updateCallPlan,example);
+        log.info("---结束将10分钟之前，状态没有回调的通话记录，修改状态---");
     }
 
     @Override

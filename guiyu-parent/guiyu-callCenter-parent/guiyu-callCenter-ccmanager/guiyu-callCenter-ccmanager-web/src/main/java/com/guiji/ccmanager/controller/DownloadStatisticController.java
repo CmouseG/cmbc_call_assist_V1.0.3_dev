@@ -237,7 +237,7 @@ public class DownloadStatisticController {
 
         SimpleDateFormat myFormatter = new SimpleDateFormat("yyyy-MM-dd");
         Date myDate = myFormatter.parse(date);
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE",Locale.CHINA);
         return formatter.format(myDate);
     }
 

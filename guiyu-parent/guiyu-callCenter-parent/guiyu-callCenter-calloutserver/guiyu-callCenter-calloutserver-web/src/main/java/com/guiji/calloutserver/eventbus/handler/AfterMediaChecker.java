@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.eventbus.handler;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.calloutserver.eventbus.event.AsrCustomerEvent;
@@ -37,6 +38,7 @@ public class AfterMediaChecker {
     ConcurrentHashMap<String, ScheduledFuture> futureConcurrentHashMap;
 
     @Subscribe
+    @AllowConcurrentEvents
     public void handleToAgent(ToAgentEvent toAgentEvent){
         String uuid = toAgentEvent.getCallPlan().getCallId();
         log.info("收到ToAgentEvent，开始从MediaChecker中移除计时器, uuid[{}]", uuid);

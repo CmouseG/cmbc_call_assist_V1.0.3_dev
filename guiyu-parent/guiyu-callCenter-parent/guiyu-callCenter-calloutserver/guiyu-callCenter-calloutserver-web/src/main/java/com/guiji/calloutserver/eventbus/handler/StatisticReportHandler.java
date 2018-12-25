@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.eventbus.handler;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.ReportCallTodayMapper;
@@ -36,6 +37,7 @@ public class StatisticReportHandler {
     }
 
     @Subscribe
+    @AllowConcurrentEvents
     public void handleAfterCall(StatisticReportEvent statisticReportEvent) {
 
         CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();

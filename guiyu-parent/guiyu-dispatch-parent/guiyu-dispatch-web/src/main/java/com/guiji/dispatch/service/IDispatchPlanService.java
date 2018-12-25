@@ -238,5 +238,5 @@ public interface IDispatchPlanService {
 	
 	public List<DispatchPlan> selectPhoneByDate4Redis(String flag,Integer limit);
 	
-	public List<DispatchPlan> selectPhoneByDate4UserId(String flag,Integer limit);
+//	public List<DispatchPlan> selectPhoneByDate4UserId(String flag,Integer limit);
 }

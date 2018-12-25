@@ -255,6 +255,76 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
+        public Criteria andSubCodeIsNull() {
+            addCriterion("sys_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeIsNotNull() {
+            addCriterion("sub_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeEqualTo(String value) {
+            addCriterion("sub_code =", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeNotEqualTo(String value) {
+            addCriterion("sub_code <>", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeGreaterThan(String value) {
+            addCriterion("sub_code >", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("sub_code >=", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeLessThan(String value) {
+            addCriterion("sub_code <", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeLessThanOrEqualTo(String value) {
+            addCriterion("sub_code <=", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeLike(String value) {
+            addCriterion("sub_code like", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeNotLike(String value) {
+            addCriterion("sub_code not like", value, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeIn(List<String> values) {
+            addCriterion("sub_code in", values, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeNotIn(List<String> values) {
+            addCriterion("sub_code not in", values, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeBetween(String value1, String value2) {
+            addCriterion("sub_code between", value1, value2, "subCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andSubCodeNotBetween(String value1, String value2) {
+            addCriterion("sub_code not between", value1, value2, "subCode");
+            return (Criteria) this;
+        }
+
         public Criteria andCodeIsNull() {
             addCriterion("code is null");
             return (Criteria) this;

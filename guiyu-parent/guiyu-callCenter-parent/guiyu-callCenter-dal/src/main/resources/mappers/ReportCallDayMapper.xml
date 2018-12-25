@@ -11,6 +11,7 @@
     <result column="duration_all" property="durationAll" jdbcType="BIGINT" />
     <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
     <result column="tempid" property="tempid" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,7 +73,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, call_date, duration_type, intent, reason, call_count, duration_all, customer_id, 
-    tempid
+    tempid, org_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" >
     select
@@ -111,12 +112,12 @@
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
     insert into report_call_day (id, call_date, duration_type, 
       intent, reason, call_count, 
-      duration_all, customer_id, tempid
-      )
+      duration_all, customer_id, tempid, 
+      org_code)
     values (#{id,jdbcType=BIGINT}, #{callDate,jdbcType=VARCHAR}, #{durationType,jdbcType=INTEGER}, 
       #{intent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{callCount,jdbcType=INTEGER}, 
-      #{durationAll,jdbcType=BIGINT}, #{customerId,jdbcType=VARCHAR}, #{tempid,jdbcType=VARCHAR}
-      )
+      #{durationAll,jdbcType=BIGINT}, #{customerId,jdbcType=VARCHAR}, #{tempid,jdbcType=VARCHAR}, 
+      #{orgCode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
     insert into report_call_day
@@ -148,6 +149,9 @@
       <if test="tempid != null" >
         tempid,
       </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -176,6 +180,9 @@
       </if>
       <if test="tempid != null" >
         #{tempid,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -215,6 +222,9 @@
       <if test="record.tempid != null" >
         tempid = #{record.tempid,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -230,7 +240,8 @@
       call_count = #{record.callCount,jdbcType=INTEGER},
       duration_all = #{record.durationAll,jdbcType=BIGINT},
       customer_id = #{record.customerId,jdbcType=VARCHAR},
-      tempid = #{record.tempid,jdbcType=VARCHAR}
+      tempid = #{record.tempid,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -262,6 +273,9 @@
       <if test="tempid != null" >
         tempid = #{tempid,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -274,7 +288,8 @@
       call_count = #{callCount,jdbcType=INTEGER},
       duration_all = #{durationAll,jdbcType=BIGINT},
       customer_id = #{customerId,jdbcType=VARCHAR},
-      tempid = #{tempid,jdbcType=VARCHAR}
+      tempid = #{tempid,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

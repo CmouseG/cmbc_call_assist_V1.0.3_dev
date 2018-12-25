@@ -115,7 +115,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("call_start_time desc");
+        example.setOrderByClause("create_time desc");
 
         List<CallOutPlan> list;
         if(isSuperAdmin){
@@ -273,7 +273,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
         criteria.andCallIdEqualTo(callId);
-        example.setOrderByClause("bot_answer_time");
+        example.setOrderByClause("IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
         String result = "";
         if (list != null && list.size() > 0) {
@@ -291,7 +291,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutDetailExample example = new CallOutDetailExample();
         String[] callidArr = callIds.split(",");
         example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
-        example.setOrderByClause("call_id,bot_answer_time");
+        example.setOrderByClause("call_id,IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
 
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
 

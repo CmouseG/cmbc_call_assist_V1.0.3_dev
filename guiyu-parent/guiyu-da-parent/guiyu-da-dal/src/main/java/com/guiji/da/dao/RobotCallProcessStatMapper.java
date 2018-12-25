@@ -10,7 +10,7 @@ public interface RobotCallProcessStatMapper {
 
     int deleteByExample(RobotCallProcessStatExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(RobotCallProcessStat record);
 
@@ -18,7 +18,7 @@ public interface RobotCallProcessStatMapper {
 
     List<RobotCallProcessStat> selectByExample(RobotCallProcessStatExample example);
 
-    RobotCallProcessStat selectByPrimaryKey(String id);
+    RobotCallProcessStat selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") RobotCallProcessStat record, @Param("example") RobotCallProcessStatExample example);
 

@@ -12,6 +12,8 @@ import lombok.Data;
 public class RobotCallProcessStatQueryCondition {
 	//用户id
 	private String userId;
+	//机构号
+	private String orgCode;
 	//统计开始日期
     private String statBeginDate;
     //统计结束日期

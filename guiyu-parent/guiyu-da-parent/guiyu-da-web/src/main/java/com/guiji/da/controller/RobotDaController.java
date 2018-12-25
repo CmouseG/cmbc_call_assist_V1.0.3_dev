@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
 import com.guiji.da.constants.DaConstants;
+import com.guiji.da.exception.DaErrorEnum;
+import com.guiji.da.exception.DaException;
 import com.guiji.da.service.robot.IRobotCallProcessStatService;
 import com.guiji.da.service.robot.ISellbotCallbackService;
 import com.guiji.da.service.vo.RobotCallProcessStatCache;
@@ -49,8 +51,7 @@ public class RobotDaController {
 			iSellbotCallbackService.receiveSellbotCallback(sellbotJson);
 			return Result.ok();
 		}else {
-			logger.error("请求参数json不能为空!");
-			return Result.error("00060001");
+			throw new DaException(DaErrorEnum.DA00060001.getErrorCode(),DaErrorEnum.DA00060001.getErrorMsg());
 		}
 	}
 	
@@ -63,13 +64,15 @@ public class RobotDaController {
 	@RequestMapping(value = "/queryRobotCallStat", method = RequestMethod.POST)
 	public Result.ReturnData<RobotCallProcessStatView> queryRobotCallStat(
 			@RequestBody RobotCallProcessStatQueryCondition condition,
-			@RequestHeader Long userId, 
+			@RequestHeader String orgCode,
 			@RequestHeader Boolean isSuperAdmin){
 		logger.info("查询机器人通话流程分析：{}",condition);
-		if(condition == null) condition = new RobotCallProcessStatQueryCondition();
-		if(StrUtils.isEmpty(condition.getUserId()) && userId!= null && !isSuperAdmin) {
-			//如果请求参数中没有userId,直接使用登录人userId，且不是超级管理员
-			condition.setUserId(userId.toString());
+		if(condition == null || StrUtils.isEmpty(condition.getTemplateId())) {
+			throw new DaException(DaErrorEnum.DA00060001.getErrorCode(),DaErrorEnum.DA00060001.getErrorMsg());
+		}
+		if(StrUtils.isEmpty(condition.getUserId()) && !isSuperAdmin) {
+			//如果请求参数中没有userId(没有固定按某人查询),且不是超级管理员，那就按机构查
+			condition.setOrgCode(orgCode);
 		}
 		List<RobotCallProcessStatCache> list = iRobotCallProcessStatService.queryRobotCallProcessStatByCondition(condition);
 		if(list != null && !list.isEmpty()) {

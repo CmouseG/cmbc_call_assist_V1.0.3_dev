@@ -130,6 +130,7 @@ public class SellbotCallbackServiceImpl implements ISellbotCallbackService{
 							robotCallProcessStat.setAiAnswer(aiAnswer);
 							robotCallProcessStat.setStatDate(statDate);
 							robotCallProcessStat.setUserId(robotCallHis.getUserId());	//	用户id
+							robotCallProcessStat.setOrgCode(robotCallHis.getOrgCode()); //机构号
 							robotCallProcessStat.setTemplateId(robotCallHis.getTemplateId());	//模板id
 						}
 						//设置拒绝统计
@@ -228,7 +229,7 @@ public class SellbotCallbackServiceImpl implements ISellbotCallbackService{
 			for (Map.Entry<String,Integer> newMapEntry : newMap.entrySet()) {
 				String key = newMapEntry.getKey();
 				Integer existNum = existMap.get(key);
-				Integer newNum = existMap.get(key);
+				Integer newNum = newMap.get(key);
 				existMap.put(key, (existNum==null?0:existNum)+(newNum==null?0:newNum));
 			}
 		}

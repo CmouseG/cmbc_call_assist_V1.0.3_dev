@@ -1,17 +1,14 @@
 package com.guiji.da.service.impl.robot;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.da.dao.RobotCallHisMapper;
 import com.guiji.da.dao.entity.RobotCallHis;
 import com.guiji.da.dao.entity.RobotCallHisExample;
 import com.guiji.da.service.robot.IRobotCallHisService;
-import com.guiji.utils.DateUtil;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -26,28 +23,6 @@ public class RobotCallHisServiceImpl implements IRobotCallHisService{
 	RobotCallHisMapper robotCallHisMapper; 
 	
 	
-	/**
-	 * 保存或者更新一TTS合成信息
-	 * 同时记录历史
-	 * @param robotCallbackHis
-	 * @return
-	 */
-	@Transactional
-	@Override
-	public RobotCallHis saveOrUpdate(RobotCallHis robotCallbackHis) {
-		if(robotCallbackHis != null) {
-			if(StrUtils.isEmpty(robotCallbackHis.getId())) {
-				//如果主键为空，那么新增一条信息
-				robotCallbackHis.setCrtTime(new Date());
-				robotCallbackHis.setCrtDate(DateUtil.getCurrentymd()); //创建日期 yyyy-MM-dd
-				robotCallHisMapper.insert(robotCallbackHis);	//创建时间
-			}else {
-				//主键不为空，更新信息
-				robotCallHisMapper.updateByPrimaryKeyWithBLOBs(robotCallbackHis);
-			}
-		}
-		return robotCallbackHis;
-	}
 	
 	/**
 	 * 根据主键ID查询某个通话记录

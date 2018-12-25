@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.da.dao.RobotCallProcessStatMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.da.dao.entity.RobotCallProcessStat" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="stat_date" property="statDate" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
@@ -13,6 +13,7 @@
     <result column="refused_stat" property="refusedStat" jdbcType="VARCHAR" />
     <result column="hangup_stat" property="hangupStat" jdbcType="VARCHAR" />
     <result column="match_stat" property="matchStat" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, user_id, stat_date, template_id, ai_answer, current_domain, domain_type, total_stat, 
-    refused_stat, hangup_stat, match_stat, crt_time
+    refused_stat, hangup_stat, match_stat, org_code, crt_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.da.dao.entity.RobotCallProcessStatExample" >
     select
@@ -95,15 +96,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from robot_call_process_stat
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from robot_call_process_stat
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.da.dao.entity.RobotCallProcessStatExample" >
     delete from robot_call_process_stat
@@ -112,27 +113,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('robot_call_process_stat')
-    </selectKey>
     insert into robot_call_process_stat (id, user_id, stat_date, 
       template_id, ai_answer, current_domain, 
       domain_type, total_stat, refused_stat, 
-      hangup_stat, match_stat, crt_time
-      )
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{statDate,jdbcType=VARCHAR}, 
+      hangup_stat, match_stat, org_code, 
+      crt_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{statDate,jdbcType=VARCHAR}, 
       #{templateId,jdbcType=VARCHAR}, #{aiAnswer,jdbcType=VARCHAR}, #{currentDomain,jdbcType=VARCHAR}, 
       #{domainType,jdbcType=VARCHAR}, #{totalStat,jdbcType=INTEGER}, #{refusedStat,jdbcType=VARCHAR}, 
-      #{hangupStat,jdbcType=VARCHAR}, #{matchStat,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}
-      )
+      #{hangupStat,jdbcType=VARCHAR}, #{matchStat,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('robot_call_process_stat')
-    </selectKey>
     insert into robot_call_process_stat
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      id,
+      <if test="id != null" >
+        id,
+      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -163,12 +160,17 @@
       <if test="matchStat != null" >
         match_stat,
       </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
       <if test="crtTime != null" >
         crt_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="userId != null" >
         #{userId,jdbcType=VARCHAR},
       </if>
@@ -199,6 +201,9 @@
       <if test="matchStat != null" >
         #{matchStat,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
       </if>
@@ -214,7 +219,7 @@
     update robot_call_process_stat
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=VARCHAR},
@@ -246,6 +251,9 @@
       <if test="record.matchStat != null" >
         match_stat = #{record.matchStat,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
@@ -256,7 +264,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update robot_call_process_stat
-    set id = #{record.id,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=VARCHAR},
       stat_date = #{record.statDate,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
@@ -267,6 +275,7 @@
       refused_stat = #{record.refusedStat,jdbcType=VARCHAR},
       hangup_stat = #{record.hangupStat,jdbcType=VARCHAR},
       match_stat = #{record.matchStat,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -305,11 +314,14 @@
       <if test="matchStat != null" >
         match_stat = #{matchStat,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.da.dao.entity.RobotCallProcessStat" >
     update robot_call_process_stat
@@ -323,7 +335,8 @@
       refused_stat = #{refusedStat,jdbcType=VARCHAR},
       hangup_stat = #{hangupStat,jdbcType=VARCHAR},
       match_stat = #{matchStat,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

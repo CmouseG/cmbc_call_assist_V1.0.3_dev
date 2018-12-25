@@ -100,6 +100,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 					AiInuseCache aiInuse = new AiInuseCache();
 					aiInuse.setAiNo(this.genAiNo(instanceList.get(idx).getIp(), String.valueOf(instanceList.get(idx).getPort()))); //机器人临时编号
 					aiInuse.setAiName("硅语"+(idx+1)+"号"); //机器人名字
+					aiInuse.setSortId(idx+1); //排序使用
 					aiInuse.setAiStatus(RobotConstants.AI_STATUS_F); //新申请机器人默认空闲状态
 					aiInuse.setUserId(checkAiReady.getUserId()); //用户ID
 					aiInuse.setTemplateIds(addEntry.getKey()); //该机器人可用模板

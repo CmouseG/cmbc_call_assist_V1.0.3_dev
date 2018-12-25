@@ -61,7 +61,7 @@ public class RobotController {
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserInUseAiList(qUserId);
 		if(ListUtil.isNotEmpty(aiList)) {
 			//按机器人名称正序
-			aiList.sort(Comparator.comparing(AiInuseCache::getAiName).thenComparing(AiInuseCache::getAiName));
+			aiList.sort(Comparator.comparing(AiInuseCache::getSortId).thenComparing(AiInuseCache::getSortId));
 		}
 		return Result.ok(aiList);
 	}
@@ -88,7 +88,7 @@ public class RobotController {
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserBusyUseAiList(qUserId);
 		if(ListUtil.isNotEmpty(aiList)) {
 			//按机器人名称正序
-			aiList.sort(Comparator.comparing(AiInuseCache::getAiName).thenComparing(AiInuseCache::getAiName));
+			aiList.sort(Comparator.comparing(AiInuseCache::getSortId).thenComparing(AiInuseCache::getSortId));
 		}
 		return Result.ok(aiList);
 	}
@@ -126,6 +126,7 @@ public class RobotController {
 						AiInuseCache aiInuseCache = new AiInuseCache();
 						aiInuseCache.setAiNo("AI"+i); //机器人编号
 						aiInuseCache.setAiName("硅语"+(i+1)+"号"); //机器人名字
+						aiInuseCache.setSortId(i); //排序ID
 						aiInuseCache.setAiStatus(RobotConstants.AI_STATUS_F); //空闲
 						aiInuseCache.setCallNum(0);
 						aiInuseCache.setUserId(qUserId);
@@ -136,7 +137,7 @@ public class RobotController {
 		}
 		if(ListUtil.isNotEmpty(aiList)) {
 			//按机器人名称正序
-			aiList.sort(Comparator.comparing(AiInuseCache::getAiName).thenComparing(AiInuseCache::getAiName));
+			aiList.sort(Comparator.comparing(AiInuseCache::getSortId).thenComparing(AiInuseCache::getSortId));
 		}
 		return Result.ok(aiList);
 	}

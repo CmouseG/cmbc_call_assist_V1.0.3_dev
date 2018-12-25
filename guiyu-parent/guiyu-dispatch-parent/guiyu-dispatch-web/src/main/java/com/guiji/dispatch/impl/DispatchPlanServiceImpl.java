@@ -264,6 +264,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str) throws Exception {
 		boolean result = false;
+
+		List<DispatchPlan> succ = new ArrayList<>();
+
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
@@ -279,22 +282,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			wb = new XSSFWorkbook(is);
 		}
 		Sheet sheet = wb.getSheetAt(0);
-
-		DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-		dispatchPlanBatch.setName(dispatchPlan.getBatchName());
+
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
-		if (SysUser != null) {
-			dispatchPlan.setUsername(SysUser.getBody().getUsername());
-		}
+
 		// 重复校验
 		List phones = new ArrayList<>();
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
+			DispatchPlan dispatchPlan = JSONObject.parseObject(str, DispatchPlan.class);
+			dispatchPlanBatch.setName(dispatchPlan.getBatchName());
+			if (SysUser != null) {
+				dispatchPlan.setUsername(SysUser.getBody().getUsername());
+			}
 			Row row = sheet.getRow(r);
 			if (row == null) {
 				continue;
@@ -327,7 +331,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			if (phones.size() != hashSet.size()) {
 				throw new Exception("当前号码存在重复的数据,请检查文件");
 			}
-
 			dispatchPlan.setPhone(phone);
 			dispatchPlan.setAttach(attach);
 			dispatchPlan.setUserId(userId.intValue());
@@ -342,25 +345,33 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 			dispatchPlan.setIsTts(Constant.IS_TTS_0);
 			dispatchPlan.setFlag(Constant.IS_FLAG_0);
-			// 检查校验参数
-			ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
-			if (checkParams.success) {
-				if (checkParams.getBody() != null) {
-					List<CheckResult> body = checkParams.getBody();
-					CheckResult checkResult = body.get(0);
-					if (!checkResult.isPass()) {
-						throw new Exception("机器人合成" + checkResult.getCheckMsg());
-					}
-				}
-			} else {
-				throw new Exception("请求校验参数失败,请检查机器人的参数");
+			succ.add(dispatchPlan);
+		}
+		// 检查校验参数
+		// ReturnData<List<CheckResult>> checkParams =
+		// checkParams(dispatchPlan);
+		// if (checkParams.success) {
+		// if (checkParams.getBody() != null) {
+		// List<CheckResult> body = checkParams.getBody();
+		// CheckResult checkResult = body.get(0);
+		// if (!checkResult.isPass()) {
+		// throw new Exception("机器人合成" + checkResult.getCheckMsg());
+		// }
+		// }
+		// } else {
+		// throw new Exception("请求校验参数失败,请检查机器人的参数");
+		// }
+		logger.info("-----------------------------11111111111111111111111111---------------------");
+		List<List<DispatchPlan>> averageAssign = averageAssign(succ, 10);
+		for (List<DispatchPlan> tmpList : averageAssign) {
+			logger.info("批量插入开始--------------");
+			if (tmpList.size() > 0) {
+				dispatchPlanMapper.insertDispatchPlanList(tmpList);
 			}
-
-			dispatchPlanMapper.insert(dispatchPlan);
+			logger.info("批量插入结束-----------------");
 		}
 		dispatchPlanBatch.setId(null);
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
-
 		return result;
 	}
 
@@ -951,8 +962,30 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean batchUpdatePlans(IdsDto[] dto) {
+
 		int result = 0;
 		for (IdsDto bean : dto) {
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
+			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
+			DispatchPlan dispatchPlan = null;
+			if (selectByExample.size() > 0) {
+				dispatchPlan = selectByExample.get(0);
+			}
+			if (bean.getStatus().equals(Constant.STATUSPLAN_1)
+					&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
+				logger.info("当前状态有问题...");
+				continue;
+			}
+			
+			//停止之后不能暂停
+			if (bean.getStatus().equals(Constant.STATUSPLAN_4)
+					&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
+				logger.info("当前状态有问题...");
+				continue;
+			}
+			
+
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
@@ -960,6 +993,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			} catch (Exception e) {
 				logger.error("error", e);
 			}
+
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
 			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
@@ -999,7 +1033,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 停止之后不能暂停 不能恢复
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
-
 				if (status.equals("1")) {
 					ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
@@ -1037,11 +1070,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			dis.setStatusPlan(Integer.valueOf(status));
 			List<List<String>> averageAssign = averageAssign(ids, 10);
-			logger.info("当前update size"+averageAssign.size());
+			logger.info("当前update size" + averageAssign.size());
 			for (List<String> list : averageAssign) {
 				logger.info("start ");
-				dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
-				logger.info("end ");
+				if (list.size() > 0) {
+					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
+				}
+				logger.info("end");
 			}
 		}
 		return result;
@@ -1067,7 +1102,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	private boolean checkStatus(String status, DispatchPlan dispatchPlan) {
-
 		// 停止之后不能暂停 不能恢复
 		if (Integer.valueOf(status) == Constant.STATUSPLAN_3
 				&& dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {

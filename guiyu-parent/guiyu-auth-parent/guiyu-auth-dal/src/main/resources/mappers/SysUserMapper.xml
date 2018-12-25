@@ -492,7 +492,7 @@
 			and username=#{userName}	
 		</if>
         <if test="orgCode != null ">
-            and a.org_code REGEXP concat('^',#{orgCode},'.[0-9]+$')
+            and org_code REGEXP concat('^',#{orgCode},'.[0-9]+$')
         </if>
 	</select>
 	

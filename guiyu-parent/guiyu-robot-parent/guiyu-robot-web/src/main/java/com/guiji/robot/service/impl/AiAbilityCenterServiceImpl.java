@@ -394,9 +394,11 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
+		logger.info("1-------");
 		String userId = aiCallStartReq.getUserId();
 		//根据参数查询本次要调用的机器人
 		AiInuseCache nowAi = aiCacheService.queryAiInuse(userId, aiCallStartReq.getAiNo());
+		logger.info("2-------"+nowAi.getAiNo());
 		if(nowAi == null) {
 			//记录log
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "开始拨打电话,用户无该模板空闲的机器人!");
@@ -410,9 +412,11 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		}
 		try {
 			/**5、调用sellbot打电话 **/
+			logger.info("3-------获取话术模板完成");
 			SellbotRestoreReq sellbotRestoreReq = new SellbotRestoreReq();
 			//获取话术模板配置文件
 			HsReplace hsReplace = aiCacheService.queyHsReplace(aiCallStartReq.getTemplateId());
+			logger.info("4-------获取话术模板完成");
 			if(hsReplace !=null && hsReplace.isTemplate_tts_flag()) {
 				//需要TTS合成，将参数信息也发给sellbot，用来交互过程中返回完成sentence信息
 				TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(aiCallStartReq.getSeqId());
@@ -435,11 +439,13 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			sellbotRestoreReq.setPhonenum(aiCallStartReq.getPhoneNo());	//手机号
 			sellbotRestoreReq.setSeqid(aiCallStartReq.getSeqId());	//会话ID
 			String sellbotRsp = iSellbotService.restore(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotRestoreReq);
+			logger.info("5-------调用sellbot完成");
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());
 			aiNext.setSellbotJson(sellbotRsp);
 			/**6、记录调用中心日志**/
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "开始拨打电话,成功!");
+			logger.info("6-------记录日志");
 			return aiNext;
 		} catch (Exception e) {
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "开始拨打电话,发生未知异常!");

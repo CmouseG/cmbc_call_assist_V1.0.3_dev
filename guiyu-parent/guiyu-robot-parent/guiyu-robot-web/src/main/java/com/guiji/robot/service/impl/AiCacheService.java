@@ -274,8 +274,8 @@ public class AiCacheService {
 	public void putFlowSentence(AiFlowSentenceCache aiFlowSentenceCache){
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put(String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache);
-		//提交到redis
-		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache);
+		//提交到redis（通话流数据，缓存10分钟即可）
+		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache,10*60);
 	}
 	
 	

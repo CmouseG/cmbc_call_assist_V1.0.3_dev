@@ -133,7 +133,7 @@ public class DispatchManagerImpl implements DispatchManager {
                     //TODO: 报警
                     log.warn("调度中心回掉是否成功出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 3, 120, true);
+            }, -1, 30, 0, 600, true);
         } catch ( Exception e)
         {
             log.warn("调度中心回掉是否成功时出现异常", e);

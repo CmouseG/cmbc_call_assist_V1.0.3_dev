@@ -33,33 +33,16 @@ import java.util.List;
 public class CallPlanDispatchHandler {
     @Autowired
     CallOutPlanService callOutPlanService;
-
     @Autowired
     CallOutRecordService callOutRecordService;
-
-    @Autowired
-    LineInfoService lineInfoService;
-
-    @Autowired
-    LineCountService lineCountService;
-
-    @Autowired
-    EurekaManager eurekaManager;
-
     @Autowired
     CallResourceChecker callResourceChecker;
-
     @Autowired
     CallService callService;
-
     @Autowired
     DispatchManager dispatchService;
-
     @Autowired
     AsyncEventBus asyncEventBus;
-
-    @Autowired
-    DispatchLogService dispatchLogService;
 
     //注册这个监听器
     @PostConstruct
@@ -154,6 +137,14 @@ public class CallPlanDispatchHandler {
 
             try {
                 callOutPlanService.add(callPlan);
+            } catch (Exception ex) {
+                log.warn("在挂断后拉取新计划出现异,插入calloutplan异常", ex);
+
+                CallOutPlan call = callOutPlanService.findByCallId(callPlan.getCallId());
+                scheduleAndSendEvent(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent(),afterCallEvent.getCallPlan());
+                return;
+            }
+            try {
                 log.info("开始检查机器人资源");
                 callResourceChecker.checkSellbot(callPlan);
             } catch (NullPointerException e) {
@@ -164,22 +155,28 @@ public class CallPlanDispatchHandler {
                 callPlan.setAccurateIntent("W");
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
-                dispatchService.successSchedule(callPlan.getCallId(), callPlan.getPhoneNum(), "W");
-                return;
-            } catch (Exception ex) {
-                log.warn("在挂断后拉取新计划出现异常", ex);
-                //这里会出一个异常，比如重复的id,需要重新发一个事件出来，不然会少一路并发数
-                AfterCallEvent afterCallEventAgain = new AfterCallEvent(afterCallEvent.getCallPlan(), true);
-                asyncEventBus.post(afterCallEventAgain);
-                //回调给调度中心，
-                CallOutPlan call = callOutPlanService.findByCallId(callPlan.getCallId());
-                dispatchService.successSchedule(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent());
+
+                scheduleAndSendEvent(callPlan.getCallId(),callPlan.getPhoneNum(),"W",afterCallEvent.getCallPlan());
                 return;
             }
+
             asyncEventBus.post(new CallResourceReadyEvent(callPlan));
             log.info("---------------------CallResourceReadyEvent post " + callPlan.getPhoneNum());
         }
 
+    }
+
+    /**
+     * 回调调度中心，并重新发一个事件出来
+     * @param callId  回调id
+     * @param phoneNum  回调电话
+     * @param intent  回调意向
+     * @param callOutPlan  构建空事件callOutPlan对象
+     */
+    private void scheduleAndSendEvent(String callId,String phoneNum,String intent,CallOutPlan callOutPlan){
+        dispatchService.successSchedule(callId, phoneNum, intent);
+        AfterCallEvent afterCallEventAgain = new AfterCallEvent(callOutPlan, true);
+        asyncEventBus.post(afterCallEventAgain);
     }
 
 

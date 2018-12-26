@@ -346,7 +346,7 @@
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
 	LEFT JOIN sys_user c on a.update_id=c.id
-	LEFT JOIN sys_organization d on d.`code`=SUBSTRING_INDEX(a.`code`, '.', 1) and d.type=1
+	LEFT JOIN sys_organization d on d.`code`=LEFT(a.`code`, LENGTH(a.`code`) - LOCATE('.', REVERSE(a.`code`))) and d.type=1
 	where a.del_flag=0
 	limit ${(pageNo-1)*pageSize}, #{pageSize}
   </select>

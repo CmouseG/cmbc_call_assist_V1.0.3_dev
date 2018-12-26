@@ -76,6 +76,7 @@ public class RobotNextHelper {
                         Channel channel = channelService.findByUuid(callId);
                         if(channel == null){
                             log.info("startAiCallNextTimer findByUuid is null callId[{}]",callId);
+                            stopAiCallNextTimer(callId);
                             return;
                         }
                         Long startTime = channel.getStartPlayTime().getTime();
@@ -205,6 +206,7 @@ public class RobotNextHelper {
             try {
                 log.info("stop send aiCallNext timer task，uuid[{}]", uuid);
                 scheduleConcurrentHashMap.get(uuid).cancel(true);
+                scheduleConcurrentHashMap.remove(uuid);
             } catch (Exception ex) {
                 log.error("stop send aiCallNext timer task has error:", ex);
             }

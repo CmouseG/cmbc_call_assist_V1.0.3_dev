@@ -164,6 +164,21 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	
 	
 	/**
+	 * 查询机构号查询机器人配置基本信息
+	 * @param orgCode
+	 * @return
+	 */
+	public List<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByOrgCode(String orgCode){
+		if(StrUtils.isNotEmpty(orgCode)) {
+			UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+			example.createCriteria().andOrgCodeLike(orgCode+"%");
+			return userAiCfgBaseInfoMapper.selectByExample(example);
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * 分页查询 用户机器人配置基本信息
 	 * @param pageNo
 	 * @param pageSize

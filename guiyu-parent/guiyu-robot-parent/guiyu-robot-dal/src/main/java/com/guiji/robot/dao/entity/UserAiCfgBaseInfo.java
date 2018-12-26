@@ -8,6 +8,8 @@ public class UserAiCfgBaseInfo implements Serializable {
 
     private String userId;
 
+    private String orgCode;
+
     private Integer aiTotalNum;
 
     private String templateIds;
@@ -36,6 +38,14 @@ public class UserAiCfgBaseInfo implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
     public Integer getAiTotalNum() {
@@ -94,6 +104,7 @@ public class UserAiCfgBaseInfo implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", userId=").append(userId);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", aiTotalNum=").append(aiTotalNum);
         sb.append(", templateIds=").append(templateIds);
         sb.append(", crtTime=").append(crtTime);

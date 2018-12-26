@@ -30,6 +30,14 @@ public interface IUserAiCfgService {
 	 */
 	public UserAiCfgBaseInfo queryUserAiCfgBaseInfoByUserId(String userId);
 	
+	
+	/**
+	 * 查询机构号查询机器人配置基本信息
+	 * @param orgCode
+	 * @return
+	 */
+	public List<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByOrgCode(String orgCode);
+	
 	/**
 	 * 分页查询 用户机器人配置基本信息
 	 * @param pageNo

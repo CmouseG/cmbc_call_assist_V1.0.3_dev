@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -149,6 +150,11 @@ public class UserController implements IAuth{
 	@RequestMapping("/user/getRoleByUserId")
 	public ReturnData<List<SysRole>> getRoleByUserId(Long userId){
 		return Result.ok(service.getRoleByUserId(userId));
+	}
+
+	@RequestMapping("/user/getOrgByUserId")
+	public ReturnData<SysOrganization> getOrgByUserId(Long userId){
+		return Result.ok(service.getOrgByUserId(userId));
 	}
 	
 }

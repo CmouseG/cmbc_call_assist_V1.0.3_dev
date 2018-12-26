@@ -2,6 +2,7 @@ package com.guiji.auth.api;
 
 import java.util.List;
 
+import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,5 +25,8 @@ public interface IAuth {
 	
 	@RequestMapping("/user/changeSecretKey")
 	public ReturnData<String> changeSecretKey(@RequestParam("userId") Long userId);
+
+	@RequestMapping("/user/getOrgByUserId")
+	public ReturnData<SysOrganization> getOrgByUserId(@RequestParam("userId") Long userId);
 	
 }

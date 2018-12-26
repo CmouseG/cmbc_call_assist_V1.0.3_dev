@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.guiji.user.dao.SysRoleMapper;
+import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +83,22 @@ public class UserService {
 	
 	public List<SysRole> getRoleByUserId(Long id){
 		return mapper.getRoleByUserId(id);
+	}
+
+	public SysOrganization getOrgByUserId(Long userId){
+		SysOrganization sysOrganization = null;
+		SysUser sysUser = mapper.getUserById(userId);
+		List<SysRole> sysRoleList = mapper.getRoleByUserId(userId);
+		String orgCode = null;
+		if (sysUser != null) {
+			orgCode = sysUser.getOrgCode();
+			if (sysRoleList != null && sysRoleList.size() > 0 && sysRoleList.get(0).getId() == 4) {
+				orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
+			}
+			sysOrganization = organizationService.getOrgByCode(orgCode);
+		}
+
+		return sysOrganization;
 	}
 	
 	public List<String> getPermByRoleId(Long roleId){

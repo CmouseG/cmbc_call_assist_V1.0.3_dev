@@ -138,6 +138,7 @@ public class CustAiAccountController {
 	 */
 	@RequestMapping(value = "/queryUserAiCfgBaseInfoByOrgCode", method = RequestMethod.POST)
 	public Result.ReturnData<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByOrgCode(
+			@RequestParam(value="orgCode",required=false)String qOrgCode,
 			@RequestHeader String orgCode, 
 			@RequestHeader Boolean isSuperAdmin){
 		UserAiCfgBaseInfo userAiCfgBaseInfo = new UserAiCfgBaseInfo();
@@ -149,6 +150,10 @@ public class CustAiAccountController {
 			userAiCfgBaseInfo.setAiTotalNum(totalAiNum);
 		}else {
 			//不是超级管理员，返回当前用户的机器人账户基本信息配置
+			if(StrUtils.isNotEmpty(qOrgCode)) {
+				//如果参数有查某个机构，那么不按默认查
+				orgCode = qOrgCode;
+			}
 			List<UserAiCfgBaseInfo> list = iUserAiCfgService.queryUserAiCfgBaseInfoByOrgCode(orgCode);
 			int aiTotalNum = 0;
 			if(ListUtil.isNotEmpty(list)) {

@@ -540,5 +540,47 @@ public class RedisUtil {
             return 0;
         }
     }
+    
+    
+    /**
+     * 压栈
+     * @param key 键
+     * @param value 值
+     * @return
+     */
+    public boolean leftPushAll(String key,List value) {
+        try {
+            redisTemplate.opsForList().leftPushAll(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean leftPush(String key,Object value) {
+        try {
+            redisTemplate.opsForList().leftPush(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    /**
+     * 出栈
+     * @param key 键
+     * @return
+     */
+    public Object lrightPop(String key) {
+        try {
+         return redisTemplate.opsForList().rightPop(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return null;
+    }
 }
   

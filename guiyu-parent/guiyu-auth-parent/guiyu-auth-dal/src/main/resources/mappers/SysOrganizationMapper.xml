@@ -14,7 +14,7 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="sub_code" property="sub_code" jdbcType="VARCHAR" />
+    <result column="sub_code" property="subCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -121,7 +121,7 @@
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, 
       #{open,jdbcType=VARCHAR}, #{delFlag,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{sub_code,jdbcType=VARCHAR}
+      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" >
@@ -205,7 +205,7 @@
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="subCode != null" >
-        #{sub_code,jdbcType=VARCHAR},
+        #{subCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

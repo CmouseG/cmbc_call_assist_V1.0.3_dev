@@ -1,6 +1,7 @@
 package com.guiji.dispatch.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -56,7 +57,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Override
 	@GetMapping(value = "out/queryAvailableSchedules")
 	public ReturnData<List<DispatchPlan>> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
-		logger.info("返回可以拨打的任务给呼叫中心开始查询.......");
+		
+		long start = System.currentTimeMillis();
+		logger.info("返回可以拨打的任务给呼叫中心开始查询......."+System.currentTimeMillis());
 		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService
 				.queryAvailableSchedules(userId, requestCount, lineId, dis, true);
@@ -74,7 +77,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		if (list.size() > 0) {
 			list.get(list.size() - 1).setSuccess(dis.isSuccess());
 		}
+		long end = System.currentTimeMillis();
 		logger.info("返回可以拨打的任务给呼叫中心结果数量:" + list.size());
+		logger.info("此次请求消费的时间为:" + (end - start));
 		if (list.size() > 0) {
 			logger.info("返回可以拨打的任务给呼叫中心结果号码:" + list.get(0).getPhone());
 			logger.info("返回可以拨打的任务给呼叫中心结果uuid:" + list.get(0).getPlanUuid());

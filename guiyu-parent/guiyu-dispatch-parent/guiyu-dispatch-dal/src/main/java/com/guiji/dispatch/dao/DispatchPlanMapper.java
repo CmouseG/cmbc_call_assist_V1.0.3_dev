@@ -38,4 +38,10 @@ public interface DispatchPlanMapper {
 	
 	int updateDispatchPlanListByStatus(@Param("params") List<String> list , @Param("status")String status);
 	
+	List<DispatchPlan> selectByCallHour4UserId(DispatchPlan record);
+
+	int updateDispatchPlanListByStatusSYNC(@Param("params") List<String> list , @Param("status")Integer status);
+	
+	
+	
 }

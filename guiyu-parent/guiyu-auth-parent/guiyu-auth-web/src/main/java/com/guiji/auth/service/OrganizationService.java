@@ -119,11 +119,12 @@ public class OrganizationService {
 				subOrgCode = sysOrganization.getCode() + ".1";
 			} else {
 				String preOrgCode = sysOrganization.getSubCode().substring(0,sysOrganization.getSubCode().lastIndexOf("."));
-				String lastOrgCode = sysOrganization.getSubCode().substring(sysOrganization.getSubCode().lastIndexOf("."));
+				String lastOrgCode = sysOrganization.getSubCode().substring(sysOrganization.getSubCode().lastIndexOf(".")+1,sysOrganization.getSubCode().length());
 				int lastOrgCodeNumber = Integer.valueOf(lastOrgCode) + 1;
 				subOrgCode = preOrgCode + "." + lastOrgCodeNumber;
 			}
 			SysOrganization sysOrganizationUpdate = new SysOrganization();
+			sysOrganizationUpdate.setId(sysOrganization.getId());
 			sysOrganizationUpdate.setCode(orgCode);
 			sysOrganizationUpdate.setSubCode(subOrgCode);
 			sysOrganizationMapper.updateByPrimaryKeySelective(sysOrganizationUpdate);

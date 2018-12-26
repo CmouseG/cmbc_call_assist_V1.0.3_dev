@@ -88,7 +88,7 @@ public class CallResourceChecker {
         dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallApply");
         Preconditions.checkNotNull(returnData, msg[0]);
 
-        log.info("收到ai请求返回结果[{}]", returnData.getBody());
+        log.info("sellbot资源检查通过，返回结果[{}]", returnData.getBody());
         String aiNo = returnData.getBody().getAiNo();
         callOutPlan.setAiId(aiNo);
         callOutPlanService.update(callOutPlan);

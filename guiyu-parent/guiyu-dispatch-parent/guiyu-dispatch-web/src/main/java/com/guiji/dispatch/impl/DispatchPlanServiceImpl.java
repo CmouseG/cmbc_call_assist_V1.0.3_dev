@@ -123,6 +123,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	private SmsTunnelMapper smsTunnerMapper;
 	@Autowired
 	private IMessageService msgService;
+	
+	@Autowired
+	private IDispatchPlanPutCalldata planPutCalldata;
 
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId) throws Exception {
@@ -860,74 +863,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		logger.info("-----------------------------------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------------------------------");
 		logger.info("---------------------------------------------------------------------------------------- ");
-		DispatchPlanExample ex = new DispatchPlanExample();
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
 
-		// 根据日期查询号码
-		ex.createCriteria().andCallDataEqualTo(Integer.valueOf(dateNowStr)).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andUserIdEqualTo(userId).andLineEqualTo(lineId)
-				.andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setUserId(userId);
-		dis.setLine(lineId);
-		dis.setCallHour(String.valueOf(hour));
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		dis.setFlag(Constant.IS_FLAG_2);
-		List<String> list = new ArrayList<>();
-		Object object2 = redisUtil.get("robotId");
-		if (redisUtil.get("robotId") != null) {
-			logger.info("当前模板升级中，接口 queryAvailableSchedules 对应模板查不到数据，" + redisUtil.get("robotId"));
-			String object = (String) redisUtil.get("robotId");
-			String[] split = object.split(",");
-			for (String str : split) {
-				list.add(str);
-			}
-		}
-		dis.setRobotIds(list);
-		if (requestCount != 0) {
-			dis.setLimitStart(0);
-			dis.setLimitEnd(requestCount);
-		}
-		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		// 同步状态;0未同步1已同步
-		List<DispatchPlan> updateStatus = new ArrayList<>();
-
-		for (DispatchPlan dispatchPlan : phones) {
-			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
-			updateStatus.add(dispatchPlan);
-			// dispatchPlanMapper.updateByPrimaryKeySelective(dispatchPlan);
-		}
-		if (flag) {
-			// 批量修改状态
-			if (updateStatus.size() > 0) {
-				for (DispatchPlan dispatchPlan : phones) {
-					dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
-					DispatchPlanExample ex1 = new DispatchPlanExample();
-					// 为了防止并发
-					ex1.createCriteria().andPlanUuidEqualTo(dispatchPlan.getPlanUuid())
-							.andStatusSyncEqualTo(Constant.STATUS_SYNC_0);
-					int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
-					if (result <= 0) {
-						return queryAvailableSchedules(userId, requestCount, lineId, isSuccess, true);
-					}
-				}
-				// int res =
-				// dispatchPlanMapper.updateDispatchPlanList(updateStatus);
-				// 判断当前任务是否查询完毕
-				// int count = dispatchPlanMapper.countByExample(ex);
-				// if (count <= requestCount) {
-				// isSuccess.setSuccess(false);
-				// }
-			}
-		}
-		return phones;
+		return planPutCalldata.get(userId, requestCount, lineId);
 	}
 
 	@Override
@@ -1403,7 +1340,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				return true;
 			} else {
 				return false;
-			}
+			}	
 		}
 		return false;
 	}
@@ -1437,6 +1374,28 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	// \"ce4063be6e334f0387fa6d987e16a87c\",\"templateId\": \"1\"}";
 	// System.out.println(sss.length());
 	// }
+	
+	
+	@Override
+	public List<DispatchPlan> selectPhoneByDate4Redis(String flag,Integer limit) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY);
+
+		DispatchPlan dis = new DispatchPlan();
+		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setCallHour(String.valueOf(hour));
+		dis.setIsDel(Constant.IS_DEL_0);
+		dis.setStatusPlan(Constant.STATUSPLAN_1);
+		dis.setStatusSync(Constant.STATUS_SYNC_0);
+		dis.setFlag(flag);
+		dis.setLimitStart(0);
+		dis.setLimitEnd(limit);
+		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
+		return phones;
+	}
 
 	@Override
 	public void test(DispatchPlan sendSMsDispatchPlan, String label) {

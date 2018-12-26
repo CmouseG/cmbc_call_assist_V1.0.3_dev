@@ -16,6 +16,7 @@ import com.guiji.calloutserver.entity.AIInitRequest;
 import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.entity.AIResponse;
 import com.guiji.calloutserver.eventbus.event.*;
+import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
@@ -65,6 +66,8 @@ public class FsBotHandler {
     @Autowired
     DispatchManager dispatchService;
 
+    @Autowired
+    LocalFsServer localFsServer;
 
     //注册这个监听器
     @PostConstruct
@@ -192,7 +195,7 @@ public class FsBotHandler {
     private void handleNormalAsr(CallOutPlan callPlan, AsrCustomerEvent event) {
         log.info("收到正常情况下的客户AliAsr事件[{}], 准备进行处理", event);
         try {
-            //判断通道状态，如果还未接听，则跳过
+            //判断通道状态，如果还未接听，则进行F类判断
             if (callPlan.getCallState() == ECallState.init.ordinal() ||
                     callPlan.getCallState() == ECallState.call_prepare.ordinal() ||
                     callPlan.getCallState() == ECallState.make_call.ordinal()) {
@@ -239,10 +242,16 @@ public class FsBotHandler {
 
         ErrorMatch errorMatch = errorMatchService.findError(event.getAsrText());
         if (errorMatch != null) {
-            log.debug("F类识别结果为[{}]", errorMatch);
+            log.info("F类识别结果为[{}]", errorMatch);
             callPlan.setAccurateIntent("F");
             callPlan.setReason(errorMatch.getErrorName());
             callOutPlanService.update(callPlan);
+
+            //判断是否已经做过F类判断，如果做过，则直接挂断该通话
+            if(errorMatch.getErrorType()>=0){
+                log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
+                localFsServer.hangup(callPlan.getCallId());
+            }
         }
     }
 

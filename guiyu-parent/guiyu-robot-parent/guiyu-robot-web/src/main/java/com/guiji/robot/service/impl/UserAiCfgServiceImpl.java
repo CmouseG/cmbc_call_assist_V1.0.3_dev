@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.common.model.Page;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.UserAiCfgBaseInfoMapper;
 import com.guiji.robot.dao.UserAiCfgHisInfoMapper;
@@ -32,6 +34,8 @@ import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
+import com.guiji.robot.util.LocalCacheUtil;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
 
@@ -54,6 +58,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	AiCacheService aiCacheService;
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
+	@Autowired
+	IAuth iAuth;
 	
 	
 	/**
@@ -136,6 +142,25 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 //				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
 //				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
 //				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
+				//设置用户机构号
+				//查询用户机构信息
+				if(StrUtils.isNotEmpty(userAiCfgBaseInfo.getUserId())) {
+					if(LocalCacheUtil.isExist(userAiCfgBaseInfo.getUserId())) {
+						//缓存中有，直接取
+						SysUser sysUser = LocalCacheUtil.getT(userAiCfgBaseInfo.getUserId());
+						userAiCfgBaseInfo.setOrgCode(sysUser.getOrgCode());
+					}else{
+						//缓存中没有,重新查，并放入内存
+						ReturnData<SysUser> userRD = iAuth.getUserById(Long.valueOf(userAiCfgBaseInfo.getUserId()));
+						if(userRD != null && userRD.getBody()!=null) {
+							//内存1个小时有效
+							LocalCacheUtil.set(userAiCfgBaseInfo.getUserId(), userRD.getBody(), LocalCacheUtil.ONE_HOUR);
+							userAiCfgBaseInfo.setOrgCode(userRD.getBody().getOrgCode());
+						}else {
+							logger.error("用户ID:{},查询不到用户信息，返回：",userAiCfgBaseInfo.getUserId(),userRD);
+						}
+					}
+				}
 			}
 			//2、新增或者更新基本信息
 			this.saveOrUpdate(userAiCfgBaseInfo);
@@ -158,6 +183,21 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			if(ListUtil.isNotEmpty(list)) {
 				return list.get(0);
 			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 查询机构号查询机器人配置基本信息
+	 * @param orgCode
+	 * @return
+	 */
+	public List<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByOrgCode(String orgCode){
+		if(StrUtils.isNotEmpty(orgCode)) {
+			UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+			example.createCriteria().andOrgCodeLike(orgCode+"%");
+			return userAiCfgBaseInfoMapper.selectByExample(example);
 		}
 		return null;
 	}

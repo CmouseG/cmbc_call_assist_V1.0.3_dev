@@ -70,7 +70,7 @@ public class AIManagerImpl implements AIManager {
 
             @Override
             public void onErrorResult(Result.ReturnData result) {
-
+                log.warn("调用机器人中心aiCallStart失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
             }
         }, 4, 1, 1, 60, true);
         dispatchLogService.endServiceRequestLog(aiRequest.getUuid(),aiRequest.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallStart");

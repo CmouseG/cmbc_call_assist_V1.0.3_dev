@@ -45,7 +45,7 @@ public class DownloadStatisticController {
     @ApiOperation(value = "量化分析，拨打结果统计，导出excel")
     @GetMapping(value = "downloadIntentCount")
     public Result.ReturnData<Object> downloadIntentCount(String startDate, String endDate, String tempId, @RequestHeader Long userId,
-                                                         @RequestHeader Boolean isSuperAdmin, HttpServletResponse resp) throws ParseException, UnsupportedEncodingException {
+                                                         @RequestHeader String orgCode, HttpServletResponse resp) throws ParseException, UnsupportedEncodingException {
 
         if (StringUtils.isBlank(endDate)) {
             endDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -61,7 +61,7 @@ public class DownloadStatisticController {
         String fileName = startDate+"_"+endDate+"拨打结果统计.xls";
         HttpDownload.setHeader(resp, fileName);
 
-        List<Map<String, Object>> list = statisticService.getIntentCount(isSuperAdmin,userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
+        List<Map<String, Object>> list = statisticService.getIntentCount(orgCode+"%",userId, startDate, endDate, StringUtils.isNotBlank(tempId)? tempId: null);
 
 
         OutputStream out = null;
@@ -237,7 +237,7 @@ public class DownloadStatisticController {
 
         SimpleDateFormat myFormatter = new SimpleDateFormat("yyyy-MM-dd");
         Date myDate = myFormatter.parse(date);
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE",Locale.CHINA);
         return formatter.format(myDate);
     }
 

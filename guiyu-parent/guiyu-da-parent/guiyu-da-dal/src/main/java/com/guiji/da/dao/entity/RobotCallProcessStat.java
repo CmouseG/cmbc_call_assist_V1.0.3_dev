@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class RobotCallProcessStat implements Serializable {
-    private String id;
+    private Integer id;
 
     private String userId;
 
@@ -26,16 +26,18 @@ public class RobotCallProcessStat implements Serializable {
 
     private String matchStat;
 
+    private String orgCode;
+
     private Date crtTime;
-    
+
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUserId() {
@@ -118,6 +120,14 @@ public class RobotCallProcessStat implements Serializable {
         this.matchStat = matchStat == null ? null : matchStat.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public Date getCrtTime() {
         return crtTime;
     }
@@ -126,7 +136,7 @@ public class RobotCallProcessStat implements Serializable {
         this.crtTime = crtTime;
     }
 
-	@Override
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -143,6 +153,7 @@ public class RobotCallProcessStat implements Serializable {
         sb.append(", refusedStat=").append(refusedStat);
         sb.append(", hangupStat=").append(hangupStat);
         sb.append(", matchStat=").append(matchStat);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", crtTime=").append(crtTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

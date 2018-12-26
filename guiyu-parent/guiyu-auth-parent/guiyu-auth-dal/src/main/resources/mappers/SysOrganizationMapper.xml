@@ -14,6 +14,7 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="sub_code" property="subCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, `name`, code, `type`, robot, line, `open`, del_flag, create_id, create_time, 
-    update_id, update_time
+    update_id, update_time,sub_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysOrganizationExample" >
     select
@@ -115,12 +116,12 @@
     insert into sys_organization (id, `name`, code, 
       `type`, robot, line, 
       `open`, del_flag, create_id, 
-      create_time, update_id, update_time
+      create_time, update_id, update_time,sub_code
       )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, 
       #{open,jdbcType=VARCHAR}, #{delFlag,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" >
@@ -162,6 +163,9 @@
       <if test="updateTime != null" >
         update_time,
       </if>
+      <if test="subCode != null" >
+        sub_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -199,6 +203,9 @@
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="subCode != null" >
+        #{subCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -247,6 +254,9 @@
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.subCode != null" >
+        sub_code = #{record.subCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -265,7 +275,8 @@
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=BIGINT},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+    sub_code = #{record.subCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -306,6 +317,9 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="subCode != null" >
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -321,12 +335,13 @@
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=BIGINT},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      sub_code = #{subCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   
   <select id="selectByPage" resultType="map">
-  	select a.id,a.name,a.code,a.type,a.create_time as createTime,a.update_time as updateTime,
+  	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
 	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
@@ -337,7 +352,7 @@
   </select>
   
   <select id="selectOpenByPage" resultType="map">
-  	select a.id,a.name,a.code,a.type,a.create_time as createTime,a.update_time as updateTime,
+  	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
 	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id

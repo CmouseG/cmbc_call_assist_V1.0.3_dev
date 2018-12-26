@@ -623,10 +623,11 @@
 		<if test="flag != null">
 			and flag = #{flag}
 		</if>
-		order by `gmt_create` DESC
+		order by `gmt_create` ASC
 		<if test="limitStart != null and limitStart>=0">
 			limit #{limitStart} , #{limitEnd}
 		</if>
+		for update
 	</select>
 
 	<insert id="insertDispatchPlanList" parameterType="java.util.List">

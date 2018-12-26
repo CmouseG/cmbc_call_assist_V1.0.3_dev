@@ -9,6 +9,7 @@ import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.CallManagerOutService;
+import com.guiji.ccmanager.service.CallStateService;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsline.api.IFsLine;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -45,6 +47,8 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
     private ICallPlan callPlanApi;
     @Autowired
     private DiscoveryClient discoveryClient;
+    @Autowired
+    CallStateService callStateService;
 
     @Override
     public void startcallplan(String customerId, String tempId, String lineId) {
@@ -64,9 +68,11 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
 
         //对于电话都打了1.5个小时，还没有打完的要排除掉，认为任务没有正常回掉调度中心。当然也有可能是makecall的时候异常了，所有设大一点。
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, -90);
+        c.add(Calendar.MINUTE, -5);
         criteria.andCreateTimeGreaterThan(c.getTime());
 
+        callStateService.updateCallState();//将5分钟前的没有回调的状态修改一下
+        log.info("---<<<<<<<<<<<<<<<<<<<<----");
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);
         if(existList!=null && existList.size()>0){
             // todo 报警
@@ -111,8 +117,10 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
             log.warn("calloutserver has error ,not start plan");
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_CALLOUTSERVER_ERROR);
         }
-
+        log.info("---end  startcallplan----");
     }
+
+
 
     @Override
     public CallOutPlan getCallRecordById(String callId) {

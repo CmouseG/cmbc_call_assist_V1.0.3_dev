@@ -20,6 +20,8 @@ public class AiInuseCache {
 	private String ip;
 	//机器人端口
 	private String port;
+	//前端页面显示排序使用
+	private int sortId;
 	//话术模板
 	private String templateIds;
 	//初始化日期yyyy-MM-dd

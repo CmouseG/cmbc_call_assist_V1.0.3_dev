@@ -22,6 +22,8 @@ public class RobotCallHis implements Serializable {
 
     private Date crtTime;
 
+    private String orgCode;
+
     private String sellbotCallbackJson;
 
     private static final long serialVersionUID = 1L;
@@ -98,6 +100,14 @@ public class RobotCallHis implements Serializable {
         this.crtTime = crtTime;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public String getSellbotCallbackJson() {
         return sellbotCallbackJson;
     }
@@ -121,6 +131,7 @@ public class RobotCallHis implements Serializable {
         sb.append(", callStatus=").append(callStatus);
         sb.append(", crtDate=").append(crtDate);
         sb.append(", crtTime=").append(crtTime);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", sellbotCallbackJson=").append(sellbotCallbackJson);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

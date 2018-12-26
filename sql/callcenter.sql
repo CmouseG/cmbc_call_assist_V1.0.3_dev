@@ -346,6 +346,7 @@ CREATE TABLE `call_out_plan` (
   `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
   `isdel` int(2) NOT NULL DEFAULT '0',
   `isread` int(2) NOT NULL DEFAULT '0',
+   `org_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -386,6 +387,7 @@ CREATE TABLE `call_out_plan_0` (
   `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
   `isdel` int(2) NOT NULL DEFAULT '0',
   `isread` int(2) NOT NULL DEFAULT '0',
+  `org_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -424,6 +426,7 @@ CREATE TABLE `call_out_plan_1` (
   `freason` int(2) DEFAULT NULL COMMENT '1:占线，2:无人接听,3:主叫停机,4:被叫停机,5:空号,6:关机,7:呼叫限制,8:用户拒接,9:无效号码,10:拒接',
   `isdel` int(2) NOT NULL DEFAULT '0',
   `isread` int(2) NOT NULL DEFAULT '0',
+  `org_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -562,6 +565,7 @@ CREATE TABLE `report_call_day` (
   `duration_all` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
   `tempid` varchar(50) DEFAULT NULL,
+    `org_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=322 DEFAULT CHARSET=utf8;
 
@@ -577,6 +581,7 @@ CREATE TABLE `report_call_hour` (
   `duration` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
   `tempid` varchar(50) DEFAULT NULL,
+    `org_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 
@@ -593,6 +598,7 @@ CREATE TABLE `report_call_today` (
   `duration_all` bigint(20) DEFAULT NULL,
   `customer_id` varchar(50) DEFAULT NULL,
   `tempid` varchar(50) DEFAULT NULL,
+    `org_code` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

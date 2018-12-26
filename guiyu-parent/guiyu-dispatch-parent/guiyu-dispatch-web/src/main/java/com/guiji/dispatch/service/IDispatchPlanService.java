@@ -234,4 +234,9 @@ public interface IDispatchPlanService {
 			boolean flag);
 	
 	public void test(DispatchPlan sendSMsDispatchPlan, String label);
+	
+	
+	public List<DispatchPlan> selectPhoneByDate4Redis(String flag,Integer limit);
+	
+//	public List<DispatchPlan> selectPhoneByDate4UserId(String flag,Integer limit);
 }

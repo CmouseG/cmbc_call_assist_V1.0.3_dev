@@ -10,6 +10,8 @@ public class SysOrganization implements Serializable {
 
     private String code;
 
+    private String subCode;
+
     private String type;
 
     private String robot;
@@ -152,7 +154,15 @@ public class SysOrganization implements Serializable {
 		this.open = open;
 	}
 
-	@Override
+    public String getSubCode() {
+        return subCode;
+    }
+
+    public void setSubCode(String subCode) {
+        this.subCode = subCode;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -169,6 +179,7 @@ public class SysOrganization implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", subCode=").append(subCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -154,14 +154,12 @@ public class CallPlanDispatchHandler {
                 callOutPlanService.add(callPlan);
 
                 try {
-//            如果申请机器人异常 ，回掉失败给调度中心,下次还可以拉取该次通话
-//              callResourceChecker.checkCallResources(callPlan);
-//                    callResourceChecker.checkTemp(callPlan.getTempId());
-//        checkTts(callOutPlan)
                     log.info("开始检查机器人资源");
                     callResourceChecker.checkSellbot(callPlan);
                 }catch (NullPointerException e){
                     //回掉给调度中心，更改通话记录
+                    //没有机器人资源，会少一路并发数，直接return了
+                    log.info("checkSellbot，检查机器人资源失败 callPlan[{}]",callPlan);
                     callPlan.setCallState(ECallState.norobot_fail.ordinal());
                     callPlan.setAccurateIntent("W");
                     callPlan.setReason(e.getMessage());
@@ -177,6 +175,8 @@ public class CallPlanDispatchHandler {
             //这里会出一个异常，比如重复的id,需要重新发一个事件出来，不然会少一路并发数
             AfterCallEvent afterCallEventAgain = new AfterCallEvent(afterCallEvent.getCallPlan(),true);
             asyncEventBus.post(afterCallEventAgain);
+            //回调给调度中心，
+//            dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
         }
     }
 

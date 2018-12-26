@@ -64,6 +64,8 @@ public class CallOutPlan implements Serializable {
 
     private Integer isread;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -306,6 +308,14 @@ public class CallOutPlan implements Serializable {
         this.isread = isread;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -342,6 +352,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", freason=").append(freason);
         sb.append(", isdel=").append(isdel);
         sb.append(", isread=").append(isread);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

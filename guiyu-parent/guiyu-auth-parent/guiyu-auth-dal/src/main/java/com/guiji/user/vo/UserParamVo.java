@@ -12,6 +12,8 @@ public class UserParamVo {
 	
 	private String roleId="";
 
+	private String orgCode;
+
 	public int getPageNo() {
 		return pageNo;
 	}
@@ -51,5 +53,12 @@ public class UserParamVo {
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
-	
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
 }

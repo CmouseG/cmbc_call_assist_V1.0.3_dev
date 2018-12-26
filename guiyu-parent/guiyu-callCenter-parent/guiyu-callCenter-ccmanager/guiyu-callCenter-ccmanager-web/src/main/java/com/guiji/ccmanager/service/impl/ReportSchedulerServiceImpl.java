@@ -61,7 +61,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
             if(listConnect!=null && listConnect.size()>0){
                 for(ReportCallHour out:listOut){
                     for(ReportCallHour connect:listConnect){
-                        if(out.getCustomerId().equals(connect.getCustomerId())){
+                        if(out.getOrgCode().equals(connect.getOrgCode())){
                             out.setConnectCount(connect.getConnectCount());
                         }
                     }

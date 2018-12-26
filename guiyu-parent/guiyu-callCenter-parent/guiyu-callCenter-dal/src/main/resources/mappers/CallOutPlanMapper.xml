@@ -32,6 +32,7 @@
     <result column="freason" property="freason" jdbcType="INTEGER" />
     <result column="isdel" property="isdel" jdbcType="INTEGER" />
     <result column="isread" property="isread" jdbcType="INTEGER" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -96,7 +97,7 @@
     agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time, 
     hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction, 
     accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason, 
-    isdel, isread
+    isdel, isread, org_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
     select
@@ -116,25 +117,25 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
-    select
-    call_id, IF(customer_id=#{customerId,jdbcType=VARCHAR},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
-    customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time,
-    agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time,
-    hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
-    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,
-    isdel, isread
-    from call_out_plan
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0" >
-      limit #{limitStart} , #{limitEnd}
-    </if>
-  </select>
+    <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
+        select
+        call_id, IF(customer_id=#{customerId,jdbcType=VARCHAR},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
+        customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time,
+        agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time,
+        hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
+        accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,
+        isdel, isread
+        from call_out_plan
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart != null and limitStart>=0" >
+            limit #{limitStart} , #{limitEnd}
+        </if>
+    </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
@@ -161,8 +162,8 @@
       call_state, hangup_direction, accurate_intent, 
       reason, hangup_code, originate_cmd, 
       remarks, has_tts, ai_id, 
-      freason, isdel, isread
-      )
+      freason, isdel, isread, 
+      org_code)
     values (#{callId,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, 
       #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{serverid,jdbcType=VARCHAR}, 
       #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{agentChannelUuid,jdbcType=VARCHAR}, 
@@ -172,8 +173,8 @@
       #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, #{originateCmd,jdbcType=VARCHAR}, 
       #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR}, 
-      #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER}
-      )
+      #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER}, 
+      #{orgCode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
     insert into call_out_plan
@@ -268,6 +269,9 @@
       <if test="isread != null" >
         isread,
       </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callId != null" >
@@ -359,6 +363,9 @@
       </if>
       <if test="isread != null" >
         #{isread,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -461,6 +468,9 @@
       <if test="record.isread != null" >
         isread = #{record.isread,jdbcType=INTEGER},
       </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -497,7 +507,8 @@
       ai_id = #{record.aiId,jdbcType=VARCHAR},
       freason = #{record.freason,jdbcType=INTEGER},
       isdel = #{record.isdel,jdbcType=INTEGER},
-      isread = #{record.isread,jdbcType=INTEGER}
+      isread = #{record.isread,jdbcType=INTEGER},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -592,6 +603,9 @@
       <if test="isread != null" >
         isread = #{isread,jdbcType=INTEGER},
       </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where call_id = #{callId,jdbcType=VARCHAR}
   </update>
@@ -625,7 +639,8 @@
       ai_id = #{aiId,jdbcType=VARCHAR},
       freason = #{freason,jdbcType=INTEGER},
       isdel = #{isdel,jdbcType=INTEGER},
-      isread = #{isread,jdbcType=INTEGER}
+      isread = #{isread,jdbcType=INTEGER},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where call_id = #{callId,jdbcType=VARCHAR}
   </update>
 </mapper>

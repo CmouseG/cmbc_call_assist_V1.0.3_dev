@@ -52,6 +52,7 @@ public class DispatchManagerImpl implements DispatchManager {
             Result.ReturnData disPatchResult = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
+                    log.info("============= start iDispatchPlanOutApi queryAvailableSchedules customerId[{}],requestNum[{}],lineId[{}]", customerId, requestNum, lineId);
                     Result.ReturnData returnData = iDispatchPlanOutApi.queryAvailableSchedules(customerId, requestNum, lineId);
                     log.info("------------- iDispatchPlanOutApi queryAvailableSchedules customerId[{}],requestNum[{}],lineId[{}],returnData[{}]", customerId, requestNum, lineId, returnData);
                     return returnData;
@@ -101,6 +102,7 @@ public class DispatchManagerImpl implements DispatchManager {
             callOutPlan.setServerid(eurekaManager.getInstanceId());
             callOutPlan.setHasTts(dispatchPlan.isTts());
             callOutPlan.setTempId(dispatchPlan.getRobot());
+            callOutPlan.setOrgCode(dispatchPlan.getOrgCode());
 
             callOutPlans.add(callOutPlan);
         }

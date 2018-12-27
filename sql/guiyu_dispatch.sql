@@ -142,8 +142,9 @@ CREATE TABLE `dispatch_plan_0` (
   `robot_name` varchar(32) DEFAULT NULL,
   `batch_name` varchar(32) DEFAULT NULL,
   `flag` varchar(32) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划任务';
+) ENGINE=InnoDB AUTO_INCREMENT=67499 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划任务';
 
 -- ----------------------------
 -- Records of dispatch_plan_0
@@ -176,13 +177,14 @@ CREATE TABLE `dispatch_plan_1` (
   `is_tts` int(4) DEFAULT '0',
   `replay_type` int(11) DEFAULT NULL,
   `is_del` int(11) DEFAULT NULL,
-  `username` varchar(32) DEFAULT NULL,
+  `username` varchar(30) DEFAULT NULL,
   `line_name` varchar(32) DEFAULT NULL,
   `robot_name` varchar(32) DEFAULT NULL,
   `batch_name` varchar(32) DEFAULT NULL,
   `flag` varchar(32) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划任务';
+) ENGINE=InnoDB AUTO_INCREMENT=172048 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划任务';
 
 -- ----------------------------
 -- Records of dispatch_plan_1
@@ -221,9 +223,9 @@ CREATE TABLE `dispatch_plan_2` (
   `robot_name` varchar(32) DEFAULT NULL,
   `batch_name` varchar(32) DEFAULT NULL,
   `flag` varchar(32) DEFAULT NULL,
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=227 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划任务';
-
+) ENGINE=InnoDB AUTO_INCREMENT=172048 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划任务';
 -- ----------------------------
 -- Records of dispatch_plan_2
 -- ----------------------------
@@ -241,8 +243,9 @@ CREATE TABLE `dispatch_plan_batch` (
   `times` int(1) DEFAULT NULL COMMENT '通知次数;通知次数',
   `gmt_create` datetime DEFAULT NULL COMMENT '创建时间;创建时间',
   `gmt_modified` datetime NOT NULL COMMENT '更新时间;更新时间',
+  `org_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=393 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划批次信息';
+) ENGINE=InnoDB AUTO_INCREMENT=448 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='计划批次信息';
 
 -- ----------------------------
 -- Records of dispatch_plan_batch

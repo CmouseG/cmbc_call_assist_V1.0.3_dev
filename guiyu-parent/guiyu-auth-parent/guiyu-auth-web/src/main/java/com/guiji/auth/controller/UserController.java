@@ -162,5 +162,9 @@ public class UserController implements IAuth{
 	public ReturnData<SysOrganization> getOrgByUserId(Long userId){
 		return Result.ok(service.getOrgByUserId(userId));
 	}
-	
+
+	@RequestMapping("/user/selectLikeUserName")
+	public List<Object> selectLikeUserName(UserParamVo param,@RequestHeader Long userId){
+		return service.selectLikeUserName(param,userId);
+	}
 }

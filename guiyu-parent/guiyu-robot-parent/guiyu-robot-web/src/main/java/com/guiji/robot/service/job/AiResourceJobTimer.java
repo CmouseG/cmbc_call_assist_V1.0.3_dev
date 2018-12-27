@@ -47,7 +47,7 @@ public class AiResourceJobTimer {
 	/**
 	 * 每天晚上释放分配给用户的机器人
 	 */
-    @Scheduled(cron="0 30 20 * * ?")
+    @Scheduled(cron="0 30 20,23 * * ?")
     public void aiResourRel(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_RELEASE_JOB", "LOCK_ROBOT_AI_RELEASE_JOB");
     	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试

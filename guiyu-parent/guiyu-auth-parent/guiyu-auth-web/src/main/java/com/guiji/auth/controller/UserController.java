@@ -52,10 +52,10 @@ public class UserController implements IAuth{
 		user.setPassword(AuthUtil.encrypt(user.getPassword()));
 		user.setCreateId(userId);
 		user.setUpdateId(userId);
-		if(StringUtils.isEmpty(param.getCreateTime())){
-			user.setCreateTime(new Date());
+		if(StringUtils.isEmpty(param.getStartTime())){
+			user.setStartTime(new Date());
 		}else{
-			user.setCreateTime(parseStringDate(param.getCreateTime()));
+			user.setStartTime(parseStringDate(param.getStartTime()));
 		}
 		
 		if(StringUtils.isEmpty(param.getVaildTime())){
@@ -85,7 +85,13 @@ public class UserController implements IAuth{
 		user.setPushType(param.getPushType());
 		user.setIntenLabel(param.getIntenLabel());
 		user.setOrgCode(param.getOrgCode());
-		
+		if(!StringUtils.isEmpty(param.getStartTime())){
+			user.setStartTime(parseStringDate(param.getStartTime()));
+		}
+		if(!StringUtils.isEmpty(param.getVaildTime())){
+			user.setVaildTime(parseStringDate(param.getVaildTime()));
+		}
+
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
 		}

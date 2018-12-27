@@ -47,6 +47,8 @@ public class UserService {
 			String orgCode = organizationService.getSubOrgCode(user.getOrgCode());
 			user.setOrgCode(orgCode);
 		}
+		user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
 	}

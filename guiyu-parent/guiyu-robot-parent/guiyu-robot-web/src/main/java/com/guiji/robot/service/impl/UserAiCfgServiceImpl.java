@@ -136,6 +136,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					userAiCfgBaseInfo.setUserId(userId);
 				}
 				userAiCfgBaseInfo.setId(existUserAiCfgBaseInfo.getId());
+				userAiCfgBaseInfo.setOrgCode(existUserAiCfgBaseInfo.getOrgCode());
 				userAiCfgBaseInfo.setCrtUser(existUserAiCfgBaseInfo.getCrtUser());
 				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {
@@ -195,7 +196,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				if(availableAiNum<0) availableAiNum = 0;
 				return availableAiNum;
 			}else {
-				//用户企业信息查询失败
+				logger.error("查询用户企业失败,{}",orgData);
 				throw new RobotException(AiErrorEnum.AI00060031.getErrorCode(),AiErrorEnum.AI00060031.getErrorMsg());
 			}
 		}
@@ -231,7 +232,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				throw new RobotException(AiErrorEnum.AI00060032.getErrorCode(),"用户本次配置的机器人数量超过了企业下可用机器人数量");
 			}
 		}else {
-			//用户企业信息查询失败
+			logger.error("查询用户企业失败,{}",orgData);
 			throw new RobotException(AiErrorEnum.AI00060031.getErrorCode(),AiErrorEnum.AI00060031.getErrorMsg());
 		}
 	}

@@ -179,10 +179,9 @@ public class CustAiAccountController {
 		if(StrUtils.isEmpty(qUserId)) {
 			//如果不传查询参数，那么默认查询当前用户
 			qUserId = userId.toString();
-			int availableAiNum = iUserAiCfgService.queryOrgAvailableAiNum(qUserId);
-			return Result.ok(availableAiNum);
 		}
-		return Result.ok(0);
+		int availableAiNum = iUserAiCfgService.queryOrgAvailableAiNum(qUserId);
+		return Result.ok(availableAiNum);
 	}
 	
 	/**

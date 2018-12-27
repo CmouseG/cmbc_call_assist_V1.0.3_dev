@@ -249,7 +249,7 @@ public class TimeTask {
 	 * 获取可以拨打的号码
 	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
-//	 @PostMapping("getSuccessPhones")
+	// @PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -276,7 +276,7 @@ public class TimeTask {
 						continue;
 					}
 					// }
-					//put redis
+					// put redis
 					checkRedisAndDate(entry.getKey(), entry.getValue());
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁
@@ -289,7 +289,7 @@ public class TimeTask {
 	}
 
 	@Scheduled(cron = "0 0/1 * * * ?")
-//	@PostMapping("putRedisByphones")
+	// @PostMapping("putRedisByphones")
 	public void putRedisByphones() {
 		logger.info("-----------------------------putRedisByphones------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -306,26 +306,31 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info(" 获取可以拨打的号码..");
 				// 获取userIdList
-//				List<DispatchPlan> selectPhoneByDate4UserId = dispatchPlanService
-//						.selectPhoneByDate4UserId(Constant.IS_FLAG_2, 1000);
+				// List<DispatchPlan> selectPhoneByDate4UserId =
+				// dispatchPlanService
+				// .selectPhoneByDate4UserId(Constant.IS_FLAG_2, 1000);
+				// System.out.println(selectPhoneByDate4UserId);
 				Map<String, String> map = (HashMap) redisUtil.hmget("dispath-userIds");
-				if(map == null)
-				{
+				if (map == null) {
 					return;
 				}
-				
 				for (Entry<String, String> ent : map.entrySet()) {
 					String[] split = ent.getKey().split("-");
-					Integer limit = patchPlanPutCalldata.getQuerySize(Integer.valueOf(split[0]), Integer.valueOf(split[2]));
+					Integer limit = patchPlanPutCalldata.getQuerySize(Integer.valueOf(split[0]),
+							Integer.valueOf(split[2]));
 					if (limit > 0) {
 						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Constant.IS_FLAG_2,
 								limit);
-						patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
+						if (list.size() > 0) {
+							patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
+						}
 						List<String> ids = new ArrayList<>();
 						for (DispatchPlan dis : list) {
 							ids.add(dis.getPlanUuid());
 						}
-						dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+						if(ids.size() >0){
+							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+						}
 					}
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁
@@ -339,6 +344,7 @@ public class TimeTask {
 
 	// 每天凌晨1点执行一次
 	@Scheduled(cron = "0 0 1 * * ?")
+	// @PostMapping("replayPhone")
 	public void replayPhone() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -353,8 +359,36 @@ public class TimeTask {
 		Lock lock = new Lock("replayPhoneJob.TimeTask", "replayPhoneJob.TimeTask");
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-				boolean result = dispatchPlanService.updateReplayDate();
-				logger.info("当前凌晨一点执行日期刷新操作了！" + result);
+				boolean result = dispatchPlanService.updateReplayDate(true);
+				logger.info("当前凌晨一点执行日期刷新操作了！不清除号码操作" + result);
+				distributedLockHandler.releaseLock(lock); // 释放锁
+			}
+		} catch (Exception e) {
+			logger.info("error", e);
+		} finally {
+			distributedLockHandler.releaseLock(lock); // 释放锁
+		}
+	}
+
+	// 每天凌晨1点执行一次
+	@Scheduled(cron = "0 0 1 * * ?")
+	// @PostMapping("replayPhoneClean")
+	public void replayPhoneClean() {
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------------------------------------------");
+		Lock lock = new Lock("replayPhoneClean", "replayPhoneClean.TimeTask");
+		try {
+			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
+				boolean result = dispatchPlanService.updateReplayDate(false);
+				logger.info("当前凌晨一点执行日期刷新操作了！不清除号码操作" + result);
 				distributedLockHandler.releaseLock(lock); // 释放锁
 			}
 		} catch (Exception e) {
@@ -421,10 +455,9 @@ public class TimeTask {
 			logger.info("当前推送已经推送过：在失效时间内，不重复推送:" + key);
 		} else {
 			String[] split = key.split("-");
-			
+
 			HashMap map = (HashMap) redisUtil.hmget("dispath-userIds");
-			if(map == null)
-			{
+			if (map == null) {
 				map = new HashMap<>();
 			}
 			map.put(key, key);

@@ -69,33 +69,17 @@ public class DispatchPlan implements Serializable {
     private String batchName;
 
     private String flag;
-
+    
     private static final long serialVersionUID = 1L;
 
 	private List<String> robotIds;
 	
 	private String userName ;
 	
-	
-	
-    
-    public String getUserName() {
-		return userName;
-	}
+    private String orgCode;
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
 
-	public List<String> getRobotIds() {
-		return robotIds;
-	}
-
-	public void setRobotIds(List<String> robotIds) {
-		this.robotIds = robotIds;
-	}
-
-	public Integer getStatusShow() {
+    public Integer getStatusShow() {
 		return statusShow;
 	}
 
@@ -125,6 +109,22 @@ public class DispatchPlan implements Serializable {
 
 	public void setLimitEnd(Integer limitEnd) {
 		this.limitEnd = limitEnd;
+	}
+
+	public List<String> getRobotIds() {
+		return robotIds;
+	}
+
+	public void setRobotIds(List<String> robotIds) {
+		this.robotIds = robotIds;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public Integer getId() {
@@ -351,6 +351,14 @@ public class DispatchPlan implements Serializable {
         this.flag = flag == null ? null : flag.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -385,6 +393,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", robotName=").append(robotName);
         sb.append(", batchName=").append(batchName);
         sb.append(", flag=").append(flag);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

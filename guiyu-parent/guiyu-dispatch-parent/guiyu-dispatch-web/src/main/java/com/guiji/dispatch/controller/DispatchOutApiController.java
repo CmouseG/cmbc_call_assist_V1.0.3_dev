@@ -74,9 +74,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 			logger.error("error", e);
 		}
 
-		if (list.size() > 0) {
-			list.get(list.size() - 1).setSuccess(dis.isSuccess());
-		}
+//		if (list.size() > 0) {
+//			list.get(list.size() - 1).setSuccess(dis.isSuccess());
+//		}
 		long end = System.currentTimeMillis();
 		logger.info("返回可以拨打的任务给呼叫中心结果数量:" + list.size());
 		logger.info("此次请求消费的时间为:" + (end - start));

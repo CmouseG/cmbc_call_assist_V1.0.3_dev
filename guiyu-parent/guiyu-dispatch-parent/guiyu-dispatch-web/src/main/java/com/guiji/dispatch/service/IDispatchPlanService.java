@@ -22,7 +22,7 @@ public interface IDispatchPlanService {
      * @return 响应报文
      * @throws Exception 
      */
-	MessageDto addSchedule( DispatchPlan dispatchPlan,Long userId) throws Exception;
+	MessageDto addSchedule( DispatchPlan dispatchPlan,Long userId,String orgCode) throws Exception;
 
     /**
      * 查询任务列表
@@ -99,7 +99,7 @@ public interface IDispatchPlanService {
      * @throws IOException 
      * @throws Exception 
      */
-    public boolean batchImport(String fileName, Long userId,MultipartFile file,String dispatchPlan) throws IOException, Exception ;
+    public boolean batchImport(String fileName, Long userId,MultipartFile file,String dispatchPlan,String orgCode) throws IOException, Exception ;
 
 	/**
 	 * 写入批次
@@ -127,7 +127,7 @@ public interface IDispatchPlanService {
 	 * @param pagesize
 	 * @return
 	 */
-	public Page<DispatchPlan> queryDispatchPlanByParams(String phone,String planStaus,String startTime,String endTime,Integer batchId, String replayType,int pagenum,int pagesize,Long userId,boolean isSuperAdmin,Integer selectUserId,String robotName);
+	public Page<DispatchPlan> queryDispatchPlanByParams(String phone,String planStaus,String startTime,String endTime,Integer batchId, String replayType,int pagenum,int pagesize,Long userId,boolean isSuperAdmin,Integer selectUserId,String robotName,String orgCode);
 	
 	/**
 	 * 获取客户呼叫计划 
@@ -182,13 +182,13 @@ public interface IDispatchPlanService {
 	 * 查询批次
 	 * @return
 	 */
-	List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin);
+	List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin,String orgCode);
 	
 	/**
 	 * 根据当前时间刷新日期
 	 * @return
 	 */
-	boolean updateReplayDate();
+	boolean updateReplayDate(Boolean flag);
 	
 	/**
 	 * 检查批次是否存在
@@ -224,9 +224,9 @@ public interface IDispatchPlanService {
 	
 	JSONObject queryDispatchPlanByPhoens(String phone ,String batchName,int pagenum,int pagesize);
 	
-	JSONObject getServiceStatistics(Long userId,Boolean isSuperAdmin);
+	JSONObject getServiceStatistics(Long userId,Boolean isSuperAdmin, String orgCode);
 
-	JSONObject getServiceStatistics(Long userId, String startTime, String endTime,Boolean isSuperAdmin);
+	JSONObject getServiceStatistics(Long userId, String startTime, String endTime,Boolean isSuperAdmin,String orgCode);
 	
 	boolean insertDispatchPlanList(List<DispatchPlan> list);
 
@@ -238,5 +238,5 @@ public interface IDispatchPlanService {
 	
 	public List<DispatchPlan> selectPhoneByDate4Redis(String flag,Integer limit);
 	
-//	public List<DispatchPlan> selectPhoneByDate4UserId(String flag,Integer limit);
+	public List<DispatchPlan> selectPhoneByDate4UserId(String flag,Integer limit);
 }

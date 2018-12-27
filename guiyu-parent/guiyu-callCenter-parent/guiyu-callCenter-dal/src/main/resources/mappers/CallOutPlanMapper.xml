@@ -476,6 +476,18 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  <update id="updateCallStateIntentReason" parameterType="map" >
+    update call_out_plan
+    SET
+    <if test="record.callState != null" >
+      call_state = #{record.callState,jdbcType=INTEGER},
+    </if>
+    accurate_intent = IF(accurate_intent IS NULL,#{record.accurateIntent,jdbcType=VARCHAR}, accurate_intent)  ,
+    reason = IF(accurate_intent IS NULL,#{record.reason,jdbcType=VARCHAR},reason )
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
   <update id="updateByExample" parameterType="map" >
     update call_out_plan
     set call_id = #{record.callId,jdbcType=VARCHAR},

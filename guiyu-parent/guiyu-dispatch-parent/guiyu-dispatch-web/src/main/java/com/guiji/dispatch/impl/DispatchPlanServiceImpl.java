@@ -1135,7 +1135,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
 		if (!isSuperAdmin) {
 			// createCriteria.andUserIdEqualTo(userId.intValue());
-			createCriteria.andOrgCodeEqualTo(orgCode);
+			createCriteria.andOrgCodeLike(orgCode+"%");
 		}
 		createCriteria.andStatusShowEqualTo(Constant.BATCH_STATUS_SHOW);
 		return dispatchPlanBatchMapper.selectByExample(example);

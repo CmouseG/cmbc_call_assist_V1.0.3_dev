@@ -22,6 +22,7 @@ public final class DateUtil {
     private static final String ymdhms = "yyyy-MM-dd HH:mm:ss";
     private static final String ymdhms2 = "yyyyMMddHHmmss";
     private static final String ymd = "yyyy-MM-dd";
+    private static final String ym = "yyyy-MM";
     private static final String year = "yyyy";
     private static final String month = "MM";
     private static final String day = "dd";
@@ -120,6 +121,19 @@ public final class DateUtil {
         } catch (ParseException e) {
             e.printStackTrace();
             dateResult = getNowDate();
+        }
+        return dateResult;
+    }
+
+    public static Date stringToDatePattern(String date,String pattern) {
+        Date dateResult = null;
+        try {
+            if(date != null && ""!=date){
+                dateResult = new SimpleDateFormat(pattern).parse(date);
+            }
+            return dateResult;
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         return dateResult;
     }

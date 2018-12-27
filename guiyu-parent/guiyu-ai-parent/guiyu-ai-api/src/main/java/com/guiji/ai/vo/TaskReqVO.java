@@ -14,9 +14,9 @@ public class TaskReqVO implements Serializable
 	private static final long serialVersionUID = 1L;
 	
 	@ApiModelProperty(value="起始时间")
-	private Date startTime;
+	private String startTime;
 	@ApiModelProperty(value="结束时间")
-	private Date endTime;
+	private String endTime;
 	@ApiModelProperty(value="维度（天，月）", required=true)
 	private String dimension;
 	@ApiModelProperty(value="返回标识，区分返回结果,0-累计接受任务数;1-累计完成任务数", required=true)

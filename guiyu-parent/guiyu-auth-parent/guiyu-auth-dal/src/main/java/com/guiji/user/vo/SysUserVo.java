@@ -16,9 +16,9 @@ public class SysUserVo {
 
     private String orgCode;
 
-    private String createTime;
-
     private String  vaildTime;
+
+    private String startTime;
     
     private Long roleId;
 
@@ -78,20 +78,20 @@ public class SysUserVo {
 		this.orgCode = orgCode;
 	}
 
-	public String getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(String createTime) {
-		this.createTime = createTime;
-	}
-
 	public String getVaildTime() {
 		return vaildTime;
 	}
 
 	public void setVaildTime(String vaildTime) {
 		this.vaildTime = vaildTime;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
 	}
 
 	public Long getRoleId() {

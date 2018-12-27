@@ -141,28 +141,27 @@ public class CustAiAccountController {
 			@RequestParam(value="orgCode",required=false)String qOrgCode,
 			@RequestHeader String orgCode, 
 			@RequestHeader Boolean isSuperAdmin){
+		//1、先按是否有传参   2、是否超管  3、使用登录orgcode
 		UserAiCfgBaseInfo userAiCfgBaseInfo = new UserAiCfgBaseInfo();
-		if(isSuperAdmin) {
+		if(StrUtils.isNotEmpty(qOrgCode)) {
+			//如果参数有查某个机构，那么不按默认查
+			orgCode = qOrgCode;
+		}else if(isSuperAdmin) {
 			//如果请求参数user是空，且是管理员，才统计全部
 			//是超级管理员，显示已经配置的所有用户的总共机器人数量
 			Integer totalAiNumInt = userAiCfgInfoMapperExt.countUserAi(new UserAiCfgQuery());
 			int totalAiNum = (totalAiNumInt==null)?0:totalAiNumInt;
 			userAiCfgBaseInfo.setAiTotalNum(totalAiNum);
-		}else {
-			//不是超级管理员，返回当前用户的机器人账户基本信息配置
-			if(StrUtils.isNotEmpty(qOrgCode)) {
-				//如果参数有查某个机构，那么不按默认查
-				orgCode = qOrgCode;
-			}
-			List<UserAiCfgBaseInfo> list = iUserAiCfgService.queryUserAiCfgBaseInfoByOrgCode(orgCode);
-			int aiTotalNum = 0;
-			if(ListUtil.isNotEmpty(list)) {
-				for(UserAiCfgBaseInfo cfg:list) {
-					aiTotalNum = aiTotalNum + (cfg.getAiTotalNum()==null?0:cfg.getAiTotalNum());
-				}
-			}
-			userAiCfgBaseInfo.setAiTotalNum(aiTotalNum);
+			return Result.ok(userAiCfgBaseInfo);
 		}
+		List<UserAiCfgBaseInfo> list = iUserAiCfgService.queryUserAiCfgBaseInfoByOrgCode(orgCode);
+		int aiTotalNum = 0;
+		if(ListUtil.isNotEmpty(list)) {
+			for(UserAiCfgBaseInfo cfg:list) {
+				aiTotalNum = aiTotalNum + (cfg.getAiTotalNum()==null?0:cfg.getAiTotalNum());
+			}
+		}
+		userAiCfgBaseInfo.setAiTotalNum(aiTotalNum);
 		return Result.ok(userAiCfgBaseInfo);
 	}
 	

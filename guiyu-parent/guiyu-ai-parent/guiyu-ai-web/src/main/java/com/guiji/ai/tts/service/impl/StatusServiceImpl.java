@@ -1,11 +1,15 @@
 package com.guiji.ai.tts.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.ai.vo.*;
+import com.guiji.utils.DateUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +22,6 @@ import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
-import com.guiji.ai.vo.RatioReqVO;
-import com.guiji.ai.vo.RatioRspVO;
-import com.guiji.ai.vo.TaskListReqVO;
-import com.guiji.ai.vo.TaskListRspVO;
-import com.guiji.ai.vo.TaskNumVO;
-import com.guiji.ai.vo.TaskReqVO;
-import com.guiji.ai.vo.TaskRspVO;
-import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.common.exception.GuiyuException;
 
 @Service
@@ -48,7 +44,7 @@ public class StatusServiceImpl implements IStatusService
 		return status;
 
 	}
-	
+
 	/**
 	 * ttsReqVO入库
 	 */
@@ -62,7 +58,7 @@ public class StatusServiceImpl implements IStatusService
 		ttsStatus.setCreateTime(new Date());
 		ttsStatus.setTextCount(ttsReqVO.getContents().size());
 		SaveTtsStatusHandler.getInstance().add(ttsStatus, ttsStatusMapper);
-		
+
 	}
 
 	@Override
@@ -70,7 +66,7 @@ public class StatusServiceImpl implements IStatusService
 	public void updateStatusByBusId(String busId, String status)
 	{
 		ttsStatusMapper.updateStatusByBusId(busId, status);
-		
+
 	}
 
 	@Override
@@ -128,35 +124,35 @@ public class StatusServiceImpl implements IStatusService
 	{
 		TaskRspVO taskRspVO = new TaskRspVO();
 		List<TaskNumVO> taskNumVOList = new ArrayList<>();
-		
+
 		String dimension = taskReqVO.getDimension(); //维度
 		List<Map<String, Object>> mapList = new ArrayList<>();
 		if("0".equals(taskReqVO.getReturnFlag())) //累计接受任务
 		{
 			if("days".equals(dimension)) //按天统计
 			{
-				mapList = ttsStatusMapper.getAcceptTasksByDays(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+				mapList = ttsStatusMapper.getAcceptTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
 			}
 			else if("months".equals(dimension)) //按月统计
 			{
-				mapList = ttsStatusMapper.getAcceptTasksByMonths(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+				mapList = ttsStatusMapper.getAcceptTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
 			}
 		}
 		else if("1".equals(taskReqVO.getReturnFlag())) //累计完成任务
 		{
 			if("days".equals(dimension)) //按天统计
 			{
-				mapList = ttsStatusMapper.getCompleteTasksByDays(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+				mapList = ttsStatusMapper.getCompleteTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
 			}
 			else if("months".equals(dimension)) //按月统计
 			{
-				mapList = ttsStatusMapper.getCompleteTasksByMonths(taskReqVO.getStartTime(), taskReqVO.getEndTime());
+				mapList = ttsStatusMapper.getCompleteTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
 			}
 		}
-		
+
 		//处理返回结果
 		taskNumVOList = setTaskVO(mapList, dimension);
-		
+
 		taskRspVO.setTotalNum(taskNumVOList.size());
 		taskRspVO.setTaskNumsList(taskNumVOList);
 		return taskRspVO;
@@ -167,14 +163,30 @@ public class StatusServiceImpl implements IStatusService
 	{
 		List<TaskNumVO> taskNumVOList = new ArrayList<>();
 		TaskNumVO taskNumVO = null;
-		
+
 		for(Map<String, Object> map : mapList){
 			taskNumVO = new TaskNumVO();
 			taskNumVO.setCount((long) map.get("countNum"));
 			taskNumVO.setDate((String) map.get("date"));
 			taskNumVOList.add(taskNumVO);
 		}
-		return taskNumVOList;		
+		return taskNumVOList;
+	}
+
+	//处理返回结果
+	private List<TaskLineNumVO> setTaskLineVO(List<Map<String, Object>> mapList, String dimension)
+	{
+		List<TaskLineNumVO> taskNumVOList = new ArrayList<>();
+		TaskLineNumVO taskLineNumVO = null;
+
+		for(Map<String, Object> map : mapList){
+			taskLineNumVO = new TaskLineNumVO();
+			taskLineNumVO.setCount((long) map.get("countNum"));
+			taskLineNumVO.setCompleteCount(((BigDecimal)map.get("countCompleteNum")).longValue());
+			taskLineNumVO.setDate((String) map.get("date"));
+			taskNumVOList.add(taskLineNumVO);
+		}
+		return taskNumVOList;
 	}
 
 
@@ -184,7 +196,7 @@ public class StatusServiceImpl implements IStatusService
 		TaskRspVO taskRspVO = new TaskRspVO();
 		List<TaskNumVO> taskNumVOList = new ArrayList<>();
 		List<Map<String, Object>> mapList = new ArrayList<>();
-		
+
 		mapList = ttsStatusMapper.getWaitTasks();
 		for(Map<String, Object> map : mapList){
 			TaskNumVO taskNumVO = new TaskNumVO();
@@ -192,7 +204,7 @@ public class StatusServiceImpl implements IStatusService
 			taskNumVO.setCount((Long) map.get("countNum"));
 			taskNumVOList.add(taskNumVO);
 		}
-		
+
 		taskRspVO.setTotalNum(taskNumVOList.size());
 		taskRspVO.setTaskNumsList(taskNumVOList);
 		return taskRspVO;
@@ -208,15 +220,27 @@ public class StatusServiceImpl implements IStatusService
 		TtsStatusExample example2 = new TtsStatusExample();
 		Criteria criteria1 = example1.createCriteria();
 		Criteria criteria2 = example2.createCriteria();
-		if (ratioReqVO.getStartTime() != null){
-			criteria1.andCreateTimeGreaterThanOrEqualTo(ratioReqVO.getStartTime());
-			criteria2.andCreateTimeGreaterThanOrEqualTo(ratioReqVO.getStartTime());
+		Date startTime = null;
+		Date endTime = null;
+		if (StringUtils.isNotEmpty(ratioReqVO.getStartTime())){
+			if (ratioReqVO.getStartTime().length() > 8) {
+				startTime = DateUtil.stringToDatePattern(ratioReqVO.getStartTime(),"yyyy-MM-dd");
+			} else {
+				startTime = DateUtil.stringToDatePattern(ratioReqVO.getStartTime(),"yyyy-MM");
+			}
+			criteria1.andCreateTimeGreaterThanOrEqualTo(startTime);
+			criteria2.andCreateTimeGreaterThanOrEqualTo(startTime);
 		}
-		if (ratioReqVO.getEndTime() != null){
-			criteria1.andCreateTimeLessThanOrEqualTo(ratioReqVO.getEndTime());
-			criteria2.andCreateTimeLessThanOrEqualTo(ratioReqVO.getEndTime());
+		if (StringUtils.isNotEmpty(ratioReqVO.getEndTime())){
+			if (ratioReqVO.getEndTime().length() > 8) {
+				endTime = DateUtil.stringToDatePattern(ratioReqVO.getEndTime(),"yyyy-MM-dd");
+			} else {
+				endTime = DateUtil.stringToDatePattern(ratioReqVO.getEndTime(),"yyyy-MM");
+			}
+			criteria1.andCreateTimeLessThanOrEqualTo(endTime);
+			criteria2.andCreateTimeLessThanOrEqualTo(endTime);
 		}
-		
+
 		criteria1.andStatusEqualTo("2"); //2已完成
 		int successCount = ttsStatusMapper.selectByExample(example1).size();
 		criteria2.andStatusEqualTo("3"); //3处理失败
@@ -224,10 +248,39 @@ public class StatusServiceImpl implements IStatusService
 
 		int successRatio = (int) Math.round(100.0 * successCount / (successCount + failCount));
 		int failRatio = (int) Math.round(100.0 * failCount / (successCount + failCount));
-		
+
 		ratioRspVO.setSuccessRatio(String.valueOf(successRatio)+ "%");
 		ratioRspVO.setFailRatio(String.valueOf(failRatio)+ "%");
 		return ratioRspVO;
+	}
+
+	/**
+	 * 累计任务
+	 * 根据returnFlag区分返回结果
+	 */
+	@Override
+	public TaskLineRspVO getTaskLine(TaskReqVO taskReqVO)
+	{
+		TaskLineRspVO taskLineRspVO = new TaskLineRspVO();
+		List<TaskLineNumVO> taskNumVOTotalList = new ArrayList<>();
+
+		String dimension = taskReqVO.getDimension(); //维度
+		List<Map<String, Object>> mapList = new ArrayList<>();
+
+		if("days".equals(dimension)) //按天统计
+		{
+			mapList = ttsStatusMapper.getTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
+		}
+		else if("months".equals(dimension)) //按月统计
+		{
+			mapList = ttsStatusMapper.getTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
+		}
+		//处理返回结果
+		taskNumVOTotalList = setTaskLineVO(mapList, dimension);
+
+		taskLineRspVO.setTotalNum(taskNumVOTotalList.size());
+		taskLineRspVO.setTaskLineNumsList(taskNumVOTotalList);
+		return taskLineRspVO;
 	}
 
 }

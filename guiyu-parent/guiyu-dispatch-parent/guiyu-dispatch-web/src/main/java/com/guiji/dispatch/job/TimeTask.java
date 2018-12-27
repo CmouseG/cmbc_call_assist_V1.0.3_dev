@@ -157,7 +157,6 @@ public class TimeTask {
 					log.setPlanUuid(dis.getPlanUuid());
 					log.setPhone(dis.getPhone());
 					log.setBatchName(dis.getBatchName());
-					log.setMsg("前置检查资源模块");
 					beforeLogs.add(log);
 				}
 				modularLogs.notifyLogsList(beforeLogs);
@@ -176,7 +175,6 @@ public class TimeTask {
 							log.setModularName(Constant.MODULAR_NAME_DISPATCH);
 							log.setStatus(Constant.MODULAR_STATUS_END);
 							log.setPlanUuid(tts.getSeqId());
-							log.setMsg("后置检查资源模块");
 							if (tts.getStatus().equals("S")) {
 								DispatchPlan dis = new DispatchPlan();
 								dis.setFlag(Constant.IS_FLAG_2);

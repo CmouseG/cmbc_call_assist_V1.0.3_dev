@@ -112,16 +112,23 @@ public class CallPlanDispatchHandler {
         //构建外呼命令，发起外呼
     }
 
+    @Subscribe
+    @AllowConcurrentEvents
+    public void successSchedule(AfterCallEvent afterCallEvent) {
+        CallOutPlan callPlan = afterCallEvent.getCallPlan();
+        log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
+        dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
+    }
+
     /**
      * 在一通呼叫挂断后，重新拉取呼叫计划
-     *
      * @param afterCallEvent
      */
     @Subscribe
     @AllowConcurrentEvents
     public void handleAfterCallEvent(AfterCallEvent afterCallEvent) {
         log.info("收到AfterCallEvent[{}], 检查是否有待拨打的计划", afterCallEvent);
-
+        //调度中心
         CallOutPlan calloutPlan = afterCallEvent.getCallPlan();
 
         //挂断后再请求一个呼叫数据，不让线路空闲
@@ -174,9 +181,9 @@ public class CallPlanDispatchHandler {
      * @param callOutPlan  构建空事件callOutPlan对象
      */
     private void scheduleAndSendEvent(String callId,String phoneNum,String intent,CallOutPlan callOutPlan){
-        dispatchService.successSchedule(callId, phoneNum, intent);
         AfterCallEvent afterCallEventAgain = new AfterCallEvent(callOutPlan, true);
         asyncEventBus.post(afterCallEventAgain);
+        dispatchService.successSchedule(callId, phoneNum, intent);
     }
 
 

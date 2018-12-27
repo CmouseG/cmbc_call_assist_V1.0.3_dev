@@ -4,6 +4,7 @@ import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
+import com.guiji.calloutserver.service.CallStateService;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.IFsResource;
 import com.guiji.fsmanager.entity.FsBindVO;
@@ -34,6 +35,8 @@ public class ApplicationInit {
 
     @Autowired
     FsAgentManager fsAgentManager;
+    @Autowired
+    CallStateService callStateService;
 
     /**
      * 在系统启动完成，需要进行初始化，包括以下内容：
@@ -49,6 +52,8 @@ public class ApplicationInit {
 
             localFsServer.init(fsBindVO);
             fsAgentManager.init(fsBindVO);
+
+            callStateService.updateCallState(false,eurekaManager.getInstanceId());
         } catch (Exception e) {
             log.warn("初始化calloutserver出现异常", e);
             //TODO: 报警

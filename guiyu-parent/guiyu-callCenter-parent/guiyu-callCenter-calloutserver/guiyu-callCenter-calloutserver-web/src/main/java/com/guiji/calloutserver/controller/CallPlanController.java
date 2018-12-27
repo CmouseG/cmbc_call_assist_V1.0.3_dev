@@ -8,6 +8,7 @@ import com.guiji.calloutserver.eventbus.event.StartCallPlanEvent;
 import com.guiji.calloutserver.eventbus.handler.CallResourceChecker;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
+import com.guiji.calloutserver.service.CallStateService;
 import com.guiji.calloutserver.service.LineCountService;
 import com.guiji.component.result.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -101,6 +102,7 @@ public class CallPlanController implements ICallPlan {
 
         log.info("构建StartCallPlanEvent事件，准备发起呼叫");
         asyncEventBus.post(new StartCallPlanEvent(customerId, tempId, currentLine));
+
         return Result.ok();
     }
 }

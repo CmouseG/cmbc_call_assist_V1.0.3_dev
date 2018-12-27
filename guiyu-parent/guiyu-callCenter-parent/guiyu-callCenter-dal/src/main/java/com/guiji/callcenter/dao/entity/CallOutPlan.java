@@ -66,6 +66,8 @@ public class CallOutPlan implements Serializable {
 
     private String orgCode;
 
+    private Integer batchId;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -316,6 +318,14 @@ public class CallOutPlan implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public Integer getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(Integer batchId) {
+        this.batchId = batchId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -353,6 +363,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", isdel=").append(isdel);
         sb.append(", isread=").append(isread);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", batchId=").append(batchId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

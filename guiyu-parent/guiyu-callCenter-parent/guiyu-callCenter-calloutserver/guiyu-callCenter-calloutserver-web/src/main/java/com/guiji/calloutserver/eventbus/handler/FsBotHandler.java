@@ -100,8 +100,10 @@ public class FsBotHandler {
                 log.error("-----error---------aiManager.applyAi:"+e);
                 //回掉给调度中心，更改通话记录
                 callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                callPlan.setAccurateIntent("W");
-                callPlan.setReason(e.getMessage());
+                if(callPlan.getAccurateIntent()!=null){
+                    callPlan.setAccurateIntent("W");
+                    callPlan.setReason(e.getMessage());
+                }
                 callOutPlanService.update(callPlan);
                 dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                 return;
@@ -374,11 +376,6 @@ public class FsBotHandler {
 
             callOutPlanService.update(callPlan);
 
-            //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
-            log.info("构建afterCallEvent，后续流转");
-            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan, false);
-            asyncEventBus.post(afterCallEvent);
-
             //报表统计事件
             log.info("构建StatisticReportEvent，报表流转");
             StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
@@ -391,6 +388,10 @@ public class FsBotHandler {
             log.info("开始释放ai资源,callplanId[{}], aiId[{}]", callPlan.getCallId(), callPlan.getAiId());
             aiManager.releaseAi(callPlan);
 
+            //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
+            log.info("构建afterCallEvent，后续流转");
+            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan, false);
+            asyncEventBus.post(afterCallEvent);
         } catch (Exception ex) {
             log.warn("在处理AliAsr时出错异常", ex);
         }

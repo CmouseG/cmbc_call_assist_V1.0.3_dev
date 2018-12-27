@@ -70,9 +70,6 @@ public class AfterCallHandler {
                 }else{
                     log.warn("录音文件大小为0，上传失败，callId[{}]", callPlan.getCallId());
                 }
-
-                //调度中心
-                dispatchManager.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
             }else{
                 log.info("该AfterCallEvent为空白驱动事件，忽略掉");
             }

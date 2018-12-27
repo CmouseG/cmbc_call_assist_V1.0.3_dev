@@ -52,5 +52,11 @@ public class Constant {
 
 	//0代表任务模块
 	public static final Integer MODULAR_NAME_DISPATCH = 0;
+	
+	public static final Integer BATCH_STATUS_SHOW = 0;
+	public static final Integer BATCH_STATUS_NO = 1;
+	
+	
+	
 
 }

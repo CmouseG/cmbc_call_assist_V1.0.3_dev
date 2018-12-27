@@ -2144,6 +2144,66 @@ public class CallOutPlanExample {
             addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
+
+        public Criteria andBatchIdIsNull() {
+            addCriterion("batch_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdIsNotNull() {
+            addCriterion("batch_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdEqualTo(Integer value) {
+            addCriterion("batch_id =", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdNotEqualTo(Integer value) {
+            addCriterion("batch_id <>", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdGreaterThan(Integer value) {
+            addCriterion("batch_id >", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("batch_id >=", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdLessThan(Integer value) {
+            addCriterion("batch_id <", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdLessThanOrEqualTo(Integer value) {
+            addCriterion("batch_id <=", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdIn(List<Integer> values) {
+            addCriterion("batch_id in", values, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdNotIn(List<Integer> values) {
+            addCriterion("batch_id not in", values, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdBetween(Integer value1, Integer value2) {
+            addCriterion("batch_id between", value1, value2, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("batch_id not between", value1, value2, "batchId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

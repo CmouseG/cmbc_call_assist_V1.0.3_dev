@@ -20,6 +20,8 @@ public class DispatchPlanBatch implements Serializable {
 
     private Date gmtModified;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -86,6 +88,14 @@ public class DispatchPlanBatch implements Serializable {
         this.gmtModified = gmtModified;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -100,6 +110,7 @@ public class DispatchPlanBatch implements Serializable {
         sb.append(", times=").append(times);
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -22,6 +22,7 @@ public interface CallOutPlanMapper {
     CallOutPlan selectByPrimaryKey(String callId);
 
     int updateByExampleSelective(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);
+    int updateCallStateIntentReason(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);
 
     int updateByExample(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);
 

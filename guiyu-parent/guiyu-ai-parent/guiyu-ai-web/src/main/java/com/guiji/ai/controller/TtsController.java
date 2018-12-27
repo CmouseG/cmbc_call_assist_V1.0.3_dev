@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.ai.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +22,6 @@ import com.guiji.ai.tts.service.IModelService;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.service.IStatusService;
 import com.guiji.ai.tts.service.ITtsService;
-import com.guiji.ai.vo.RatioReqVO;
-import com.guiji.ai.vo.RatioRspVO;
-import com.guiji.ai.vo.TaskListReqVO;
-import com.guiji.ai.vo.TaskListRspVO;
-import com.guiji.ai.vo.TaskReqVO;
-import com.guiji.ai.vo.TaskRspVO;
-import com.guiji.ai.vo.TtsGpuReqVO;
-import com.guiji.ai.vo.TtsGpuRspVO;
-import com.guiji.ai.vo.TtsReqVO;
-import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
@@ -239,6 +230,29 @@ public class TtsController implements ITts
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
 		return Result.ok(ratioRspVO);
+	}
+
+	/**
+	 * 累计任务
+	 * @return
+	 */
+	@Override
+	@PostMapping(value = "getTaskLine")
+	public ReturnData<TaskLineRspVO> getTaskLine(@RequestBody TaskReqVO taskReqVO)
+	{
+		TaskLineRspVO taskLineRspVO = new TaskLineRspVO();
+		try
+		{
+			taskLineRspVO = statusService.getTaskLine(taskReqVO);
+
+		} catch (GuiyuException e){
+			logger.error("请求失败！", e);
+			return Result.error(e.getErrorCode());
+		} catch (Exception ex){
+			logger.error("请求失败！", ex);
+			return Result.error(AiConstants.AI_REQUEST_FAIL);
+		}
+		return Result.ok(taskLineRspVO);
 	}
 	
 }

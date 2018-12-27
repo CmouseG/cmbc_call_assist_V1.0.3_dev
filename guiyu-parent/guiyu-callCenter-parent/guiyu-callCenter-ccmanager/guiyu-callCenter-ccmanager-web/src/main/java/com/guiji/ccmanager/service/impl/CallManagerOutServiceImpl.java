@@ -71,7 +71,7 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
         c.add(Calendar.MINUTE, -5);
         criteria.andCreateTimeGreaterThan(c.getTime());
 
-        callStateService.updateCallState();//将5分钟前的没有回调的状态修改一下
+//        callStateService.updateCallState();//将5分钟前的没有回调的状态修改一下
         log.info("---<<<<<<<<<<<<<<<<<<<<----");
         List<CallOutPlan> existList = callOutPlanMapper.selectByExample(example);
         if(existList!=null && existList.size()>0){

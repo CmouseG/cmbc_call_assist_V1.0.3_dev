@@ -39,10 +39,11 @@ public class DispatchPlanController {
 	 * @return 响应报文 异常
 	 */
 	@PostMapping("addSchedule")
-	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId) {
+	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId,
+			@RequestHeader String orgCode) {
 		MessageDto dto = new MessageDto();
 		try {
-			dto = dispatchPlanService.addSchedule(dispatchPlan, userId);
+			dto = dispatchPlanService.addSchedule(dispatchPlan, userId,orgCode);
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
@@ -57,8 +58,8 @@ public class DispatchPlanController {
 	@PostMapping("queryDispatchPlanBatch")
 	@Log(info = "查询批量信息")
 	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
-			@RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin);
+			@RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
+		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin,orgCode);
 	}
 
 	/**
@@ -71,13 +72,13 @@ public class DispatchPlanController {
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
 	public MessageDto batchImport(@RequestParam("file") MultipartFile file, @RequestHeader Long userId,
-			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan) {
+			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan, @RequestHeader String orgCode) {
 		logger.info("batchImport start");
 		String fileName = file.getOriginalFilename();
 		MessageDto batchImport = new MessageDto();
 
 		try {
-			dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan);
+			dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan,orgCode);
 		} catch (Exception e) {
 			batchImport.setResult(false);
 			batchImport.setMsg(e.getMessage());
@@ -109,11 +110,11 @@ public class DispatchPlanController {
 			@RequestParam(required = false, name = "replayType") String replayType,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize, @RequestHeader Long userId,
-			@RequestHeader Boolean isSuperAdmin,
+			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin,
 			@RequestParam(required = false, name = "selectUserId") Integer selectUserId,
 			@RequestParam(required = false, name = "robotName") String robotName) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize, userId, isSuperAdmin, selectUserId, robotName);
+				pagenum, pagesize, userId, isSuperAdmin, selectUserId, robotName,orgCode);
 	}
 
 	/**
@@ -158,19 +159,20 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("batchInsertDisplanPlan")
-	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan[] dispatchPlans, @RequestHeader Long userId) {
+	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan[] dispatchPlans, @RequestHeader Long userId,
+			@RequestHeader String orgCode) {
 		boolean result = false;
 		// 对号码进行去重
-		Map<String,DispatchPlan> succList = new  HashMap<>();
-		
+		Map<String, DispatchPlan> succList = new HashMap<>();
+
 		for (int i = 0; i < dispatchPlans.length; i++) {
 			if (!succList.containsKey(dispatchPlans[i].getPhone())) {
-				succList.put(dispatchPlans[i].getPhone(),dispatchPlans[i]);
+				succList.put(dispatchPlans[i].getPhone(), dispatchPlans[i]);
 			}
 		}
-		for (Entry<String, DispatchPlan> entry : succList.entrySet()) { 
+		for (Entry<String, DispatchPlan> entry : succList.entrySet()) {
 			try {
-				dispatchPlanService.addSchedule(entry.getValue(), userId);
+				dispatchPlanService.addSchedule(entry.getValue(), userId,orgCode);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
@@ -203,8 +205,8 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("getServiceStatistics")
-	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin);
+	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,@RequestHeader String orgCode) {
+		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin,orgCode);
 	}
 
 	/**
@@ -216,9 +218,9 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("getData")
 	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
-			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
+			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,@RequestHeader String orgCode,
 			@RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin);
+		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin,orgCode);
 	}
 
 }

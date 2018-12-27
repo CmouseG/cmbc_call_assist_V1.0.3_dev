@@ -47,6 +47,8 @@ public class UserService {
 			String orgCode = organizationService.getSubOrgCode(user.getOrgCode());
 			user.setOrgCode(orgCode);
 		}
+		user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
 	}
@@ -169,6 +171,15 @@ public class UserService {
 		record.setSecretKey(key);
 		mapper.updateByPrimaryKeySelective(record);
 		return key;
+	}
+
+	public List<Object>  selectLikeUserName(UserParamVo param,Long userId){
+		SysUser loginUser = mapper.getUserById(userId);
+		if (loginUser != null) {
+			param.setOrgCode(loginUser.getOrgCode());
+		}
+		List<Object> userList=mapper.selectLikeUserName(param);
+		return userList;
 	}
 	
 }

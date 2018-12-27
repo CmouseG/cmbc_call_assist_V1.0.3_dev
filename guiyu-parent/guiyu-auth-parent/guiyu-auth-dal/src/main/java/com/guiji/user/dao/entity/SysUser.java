@@ -37,6 +37,8 @@ public class SysUser implements Serializable {
     private String delFlag="0";
 
     private Date vaildTime;
+
+    private Date startTime;
     
     private String orgName;
 
@@ -186,7 +188,15 @@ public class SysUser implements Serializable {
 		this.orgName = orgName;
 	}
 
-	@Override
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -209,6 +219,7 @@ public class SysUser implements Serializable {
         sb.append(", updateTime=").append(updateTime);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", vaildTime=").append(vaildTime);
+        sb.append(", startTime=").append(startTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

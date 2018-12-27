@@ -11,7 +11,7 @@ import lombok.Data;
 public class RatioReqVO
 {
 	@ApiModelProperty(value="起始时间")
-	private Date startTime;
+	private String startTime;
 	@ApiModelProperty(value="结束时间")
-	private Date endTime;
+	private String endTime;
 }

@@ -26,7 +26,7 @@ public interface LineInfoService {
 
     List<LineInfo> outLineinfos(String customerId);
 
-    List<LineInfo4AllotRes> getLineInfos4Allot(String customerId, Long userId, Boolean isSuperAdmin, String orgCode);
+    List<LineInfo4AllotRes> getLineInfos4Allot(String customerId);
 
     void allotLineInfo(String customerId, String lineIds);
 }

@@ -82,6 +82,8 @@ public class BotSentenceProcessController {
 					vo.setStateName("已上线");
 				}else if(Constant.DEPLOYING.equals(temp.getState())) {
 					vo.setStateName("部署中");
+				}else if(Constant.ERROR.equals(temp.getState())) {
+					vo.setStateName("部署失败");
 				}
 				
 				

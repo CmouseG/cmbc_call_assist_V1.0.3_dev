@@ -47,7 +47,7 @@ public class CallStateServiceImpl implements CallStateService {
 
     @Async
     @Override
-    public void updateCallState(Boolean isDelay, String serverid) {
+    synchronized public void updateCallState(Boolean isDelay, String serverid) {
 
         log.info("---开始，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调，发空事件---", isDelay, serverid);
         CallOutPlanExample example = new CallOutPlanExample();

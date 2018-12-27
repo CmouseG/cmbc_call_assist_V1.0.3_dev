@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.callcenter.dao.LineCountMapper;
 import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.entity.LineCount;
@@ -16,6 +17,7 @@ import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
@@ -51,6 +53,8 @@ public class LineInfoServiceImpl implements LineInfoService {
     private DiscoveryClient discoveryClient;
     @Autowired
     CacheManager cacheManager;
+    @Autowired
+    private IAuth iAuth;
 
     public LineInfoExample getExample(String customerId, String lineName){
         LineInfoExample example = new LineInfoExample();
@@ -233,7 +237,10 @@ public class LineInfoServiceImpl implements LineInfoService {
     }
 
     @Override
-    public List<LineInfo4AllotRes> getLineInfos4Allot(String customerId, Long userId, Boolean isSuperAdmin, String orgCode) {
+    public List<LineInfo4AllotRes> getLineInfos4Allot(String customerId) {
+
+        Result.ReturnData<SysOrganization> data=iAuth.getOrgByUserId(Long.valueOf(customerId));
+        String orgCode=data.getBody().getCode();
 
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();

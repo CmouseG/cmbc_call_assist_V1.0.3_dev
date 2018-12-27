@@ -40,3 +40,8 @@ eureka:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 properties:
   error: properties/error.properties
+rabbit:
+  general:
+    fanout:                               #需要绑定交换机与队列关系
+      exchange: fanoutPublishBotstence|fanoutRestoreModel  #交换机名称
+      queue: fanoutPublishBotstence.SELLBOT,fanoutPublishBotstence.FREESWITCH,fanoutPublishBotstence.ROBOT|fanoutRestoreModel.TTS #队列名称

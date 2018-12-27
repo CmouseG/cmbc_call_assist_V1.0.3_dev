@@ -39,6 +39,13 @@ public interface IUserAiCfgService {
 	public List<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByOrgCode(String orgCode);
 	
 	/**
+	 * 查询用户所属企业下可用的机器人数量
+	 * @param userId
+	 * @return
+	 */
+	public int queryOrgAvailableAiNum(String userId);
+	
+	/**
 	 * 分页查询 用户机器人配置基本信息
 	 * @param pageNo
 	 * @param pageSize

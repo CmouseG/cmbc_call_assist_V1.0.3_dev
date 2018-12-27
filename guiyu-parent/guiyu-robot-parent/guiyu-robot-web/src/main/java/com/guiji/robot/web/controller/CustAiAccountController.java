@@ -168,6 +168,24 @@ public class CustAiAccountController {
 	
 	
 	/**
+	 * 查询用户所属企业下还可以使用的机器人数量
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/queryOrgAvailableAiNum", method = RequestMethod.POST)
+	public Result.ReturnData<Integer> queryOrgAvailableAiNum(
+			@RequestParam(value="userId",required=false)String qUserId,
+			@RequestHeader Long userId){
+		if(StrUtils.isEmpty(qUserId)) {
+			//如果不传查询参数，那么默认查询当前用户
+			qUserId = userId.toString();
+			int availableAiNum = iUserAiCfgService.queryOrgAvailableAiNum(qUserId);
+			return Result.ok(availableAiNum);
+		}
+		return Result.ok(0);
+	}
+	
+	/**
 	 * 查询用户机器人账户基本信息
 	 * @param userId
 	 * @return

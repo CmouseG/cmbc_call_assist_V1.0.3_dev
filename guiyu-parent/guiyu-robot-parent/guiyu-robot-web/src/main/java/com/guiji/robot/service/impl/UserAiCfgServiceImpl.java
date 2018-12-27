@@ -35,6 +35,7 @@ import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.LocalCacheUtil;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
@@ -104,6 +105,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					existUserAiCfgBaseInfo = list.get(0);
 				}
 			}
+			//校验是否有超过企业机器人配置的上限
+			this.checkOverOrgAiNum(userAiCfgBaseInfo, existUserAiCfgBaseInfo);
 			if(existUserAiCfgBaseInfo != null) {
 				//更新
 				String userId = existUserAiCfgBaseInfo.getUserId();
@@ -166,6 +169,71 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			this.saveOrUpdate(userAiCfgBaseInfo);
 		}
 		return userAiCfgBaseInfo;
+	}
+	
+	
+	/**
+	 * 查询用户所属企业下可用的机器人数量
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public int queryOrgAvailableAiNum(String userId){
+		if(StrUtils.isNotEmpty(userId)) {
+			ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userId));
+			if(orgData!=null && orgData.getBody()!=null) {
+				int orgAiNum = StrUtils.isNotEmpty(orgData.getBody().getRobot())?Integer.parseInt(orgData.getBody().getRobot()):0;
+				List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
+				int assignAiNum = 0;
+				if(ListUtil.isNotEmpty(assignList)) {
+					for(UserAiCfgBaseInfo cfg:assignList) {
+						assignAiNum = assignAiNum + (cfg.getAiTotalNum()==null?0:cfg.getAiTotalNum());
+					}
+				}
+				logger.info("企业code：{},企业名称：{},已经分配的机器人数量:{},企业配置的总数量：{}",orgData.getBody().getCode(),orgData.getBody().getName(),assignAiNum,orgAiNum);
+				int availableAiNum = orgAiNum-assignAiNum;
+				if(availableAiNum<0) availableAiNum = 0;
+				return availableAiNum;
+			}else {
+				//用户企业信息查询失败
+				throw new RobotException(AiErrorEnum.AI00060031.getErrorCode(),AiErrorEnum.AI00060031.getErrorMsg());
+			}
+		}
+		return 0;
+	}
+	
+	
+	/**
+	 * 校验本次为用户分配机器人--是否有超过用户所属企业配置的机器人数量
+	 * @param userAiCfgBaseInfo
+	 * @param existUserAiCfgBaseInfo
+	 */
+	private void checkOverOrgAiNum(UserAiCfgBaseInfo userAiCfgBaseInfo,UserAiCfgBaseInfo existUserAiCfgBaseInfo) {
+		//1、查询该用户所属企业所有已分配的机器人数量
+		ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userAiCfgBaseInfo.getUserId()));
+		if(orgData!=null && orgData.getBody()!=null) {
+			int orgAiNum = StrUtils.isNotEmpty(orgData.getBody().getRobot())?Integer.parseInt(orgData.getBody().getRobot()):0;
+			logger.info("用户：{},企业code:{},企业名称：{},企业配置的机器人上限：{}",userAiCfgBaseInfo.getUserId(),orgData.getBody().getCode(),orgData.getBody().getName(),orgAiNum);
+			List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
+			int assignAiNum = 0;
+			if(ListUtil.isNotEmpty(assignList)) {
+				for(UserAiCfgBaseInfo cfg:assignList) {
+					assignAiNum = assignAiNum + (cfg.getAiTotalNum()==null?0:cfg.getAiTotalNum());
+				}
+			}
+			if(existUserAiCfgBaseInfo!=null) {
+				//如果是修改用户机器人，那么获取变更后的数量
+				assignAiNum = assignAiNum + ((userAiCfgBaseInfo.getAiTotalNum()==null?0:userAiCfgBaseInfo.getAiTotalNum())-(existUserAiCfgBaseInfo.getAiTotalNum()==null?0:existUserAiCfgBaseInfo.getAiTotalNum()));
+			}
+			//2、查询用户所属企业配置的机器人上限
+			logger.info("机构下变更后机器人数量:{},企业配置的机器人数量:{}",assignAiNum,orgAiNum);
+			if(assignAiNum>orgAiNum) {
+				throw new RobotException(AiErrorEnum.AI00060032.getErrorCode(),"用户本次配置的机器人数量超过了企业下可用机器人数量");
+			}
+		}else {
+			//用户企业信息查询失败
+			throw new RobotException(AiErrorEnum.AI00060031.getErrorCode(),AiErrorEnum.AI00060031.getErrorMsg());
+		}
 	}
 	
 	

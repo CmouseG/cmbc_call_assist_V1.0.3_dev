@@ -172,5 +172,14 @@ public class UserService {
 		mapper.updateByPrimaryKeySelective(record);
 		return key;
 	}
+
+	public List<Object>  selectLikeUserName(UserParamVo param,Long userId){
+		SysUser loginUser = mapper.getUserById(userId);
+		if (loginUser != null) {
+			param.setOrgCode(loginUser.getOrgCode());
+		}
+		List<Object> userList=mapper.selectLikeUserName(param);
+		return userList;
+	}
 	
 }

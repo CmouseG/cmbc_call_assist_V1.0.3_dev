@@ -364,7 +364,7 @@
   
   
   <select id="getOrgByUserId" resultMap="BaseResultMap">
-  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_flag='0' and open = '1'
+  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_flag='0' and case type when 2 then OPEN = '1' else OPEN = '0' end
   </select>
   
   <select id="existChildren" resultType="boolean">

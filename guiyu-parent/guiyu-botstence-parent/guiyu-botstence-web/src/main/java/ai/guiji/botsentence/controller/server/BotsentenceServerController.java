@@ -85,10 +85,6 @@ public class BotsentenceServerController {
 	@Autowired
 	private BotSentenceTtsContentMapper botSentenceTtsContentMapper;
 
-	@Autowired
-	BotAvailableTemplateMapper botAvailableTemplateMapper;
-	@Autowired
-	IAuth iAuth;
 
 	/**
 	 * CRM开户需要同时把开户信息推送至话术平台
@@ -320,25 +316,7 @@ public class BotsentenceServerController {
 			}
 			botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 
-			//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
-			long userid = Long.valueOf(botSentenceProcess.getCrtUser());
-			logger.info("[{}]用户的话术部署成功[{}]",userid,botSentenceProcess.getTemplateId());
-			Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userid);
-			List<SysRole> listRole = result.getBody();
-			if(listRole!=null && listRole.size()>0){
-				for(SysRole sysRole:listRole){
-					if(sysRole.getId()==3){
-						BotAvailableTemplate record = new BotAvailableTemplate();
-						record.setTemplateId(botSentenceProcess.getTemplateId());
-						record.setTemplateName(botSentenceProcess.getTemplateName());
-						record.setUserId(userid);
-						record.setOrgCode(botSentenceProcess.getOrgCode());
-						botAvailableTemplateMapper.insertSelective(record);
-						logger.info("[{}]是企业管理员，部署成功后将话术[{}]分配给他",sysRole,record);
-						break;
-					}
-				}
-			}
+
 		}
 	}
 	

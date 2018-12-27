@@ -345,5 +345,35 @@
 		WHERE `status` = '0' 
 		GROUP BY model
 	</select>
+
+    <select id="getTasksByDays" resultType="java.util.Map">
+        SELECT count(id) countNum, sum(case when status='2' then 1 else 0 end) as countCompleteNum,DATE_FORMAT(create_time,'%Y-%m-%d') date
+        FROM tts_status
+        <where>
+            <if test="startTime != null">
+                create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null">
+                AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        GROUP BY date
+        ORDER BY date
+    </select>
+
+    <select id="getTasksByMonths" resultType="java.util.Map">
+        SELECT count(id) countNum, sum(case when status='2' then 1 else 0 end) as countCompleteNum,DATE_FORMAT(create_time,'%Y-%m') date
+        FROM tts_status
+        <where>
+            <if test="startTime != null">
+                create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null">
+                AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        GROUP BY date
+        ORDER BY date
+    </select>
   
 </mapper>

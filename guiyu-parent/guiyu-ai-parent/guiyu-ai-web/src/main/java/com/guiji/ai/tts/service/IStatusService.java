@@ -1,12 +1,6 @@
 package com.guiji.ai.tts.service;
 
-import com.guiji.ai.vo.RatioReqVO;
-import com.guiji.ai.vo.RatioRspVO;
-import com.guiji.ai.vo.TaskListReqVO;
-import com.guiji.ai.vo.TaskListRspVO;
-import com.guiji.ai.vo.TaskReqVO;
-import com.guiji.ai.vo.TaskRspVO;
-import com.guiji.ai.vo.TtsReqVO;
+import com.guiji.ai.vo.*;
 
 public interface IStatusService
 {
@@ -43,13 +37,12 @@ public interface IStatusService
 	/**
 	 * 根据busId修改优先处理标志
 	 * @param busId
-	 * @param status
 	 */
 	public void updateJumpFlagByBusId(String busId);
 
 	/**
 	 * 累计任务数
-	 * @param acceptTaskReqVO
+	 * @param taskReqVO
 	 */
 	public TaskRspVO getTasks(TaskReqVO taskReqVO);
 
@@ -63,5 +56,11 @@ public interface IStatusService
 	 * 失败率，成功率
 	 */
 	public RatioRspVO getRatio(RatioReqVO ratioReqVO);
+
+	/**
+	 * 累计任务数
+	 * @param taskReqVO
+	 */
+	public TaskLineRspVO getTaskLine(TaskReqVO taskReqVO);
  
 }

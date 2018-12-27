@@ -70,7 +70,7 @@ public class AiNewTransService {
 	 * 独立事务
 	 * @param ttsCallbackHis
 	 */
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+//	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public TtsCallbackHis recordTtsCallback(TtsCallbackHis ttsCallbackHis) {
 		if(ttsCallbackHis != null) {
 			if(StrUtils.isEmpty(ttsCallbackHis.getId())) {
@@ -88,11 +88,13 @@ public class AiNewTransService {
 	
 	/**
 	 * 保存或更新一个通话记录
-	 * 独立事物
+	 * 独立事物（删）
+	 * 注意：此新事务类作废（在大并发场景下不适用new新事务，可能会导致数据库连接不够或者其他原因，导致等待超时的问题
+*               大并发场景下，不适合new新事物，不适合异步，一定要注意）
 	 * @param ttsWavHis
 	 * @return
 	 */
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+//	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public RobotCallHis recordRobotCallHis(RobotCallHis robotCallHis) {
 		if(robotCallHis != null) {
 			try {

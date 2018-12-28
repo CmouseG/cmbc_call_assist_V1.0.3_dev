@@ -1228,7 +1228,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setCallData(Integer.valueOf(dateNowStr));
 		dis.setCallHour(String.valueOf(hour));
 		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
+		dis.setStatusPlan(Constant.STATUSPLAN_5_REDIS);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setFlag(flag);
 		dis.setLimitStart(0);

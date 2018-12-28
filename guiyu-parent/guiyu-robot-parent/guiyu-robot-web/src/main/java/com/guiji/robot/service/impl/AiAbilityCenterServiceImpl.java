@@ -216,7 +216,23 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		if(ListUtil.isNotEmpty(ttsVoiceReqList)) {
 			List<TtsComposeCheckRsp> list = new ArrayList<TtsComposeCheckRsp>();
 			for(TtsVoiceReq ttsVoiceReq : ttsVoiceReqList) {
-				TtsComposeCheckRsp rsp = this.fetchTtsUrls(ttsVoiceReq);
+				TtsComposeCheckRsp rsp;
+				try {
+					rsp = this.fetchTtsUrls(ttsVoiceReq);
+				} catch (RobotException e) {
+					//异常情况不处理，因为批量处理，所以一条的失败不应该影响其他
+					logger.error("TTS："+ttsVoiceReq+"合成下载失败",e);
+					rsp = new TtsComposeCheckRsp();
+					rsp.setSeqId(ttsVoiceReq.getSeqid());
+					rsp.setStatus(RobotConstants.TTS_STATUS_F);
+					rsp.setErrorMsg(e.getErrorMessage());
+				} catch (Exception e1) {
+					logger.error("TTS："+ttsVoiceReq+"合成下载失败",e1);
+					rsp = new TtsComposeCheckRsp();
+					rsp.setSeqId(ttsVoiceReq.getSeqid());
+					rsp.setStatus(RobotConstants.TTS_STATUS_F);
+					rsp.setErrorMsg("系统异常");
+				}
 				list.add(rsp);
 			}
 			return list;

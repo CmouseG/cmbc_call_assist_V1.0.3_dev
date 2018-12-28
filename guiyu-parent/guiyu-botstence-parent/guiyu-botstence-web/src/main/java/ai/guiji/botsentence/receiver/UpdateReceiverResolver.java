@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ai.guiji.botsentence.dao.BotAvailableTemplateMapper;
+import com.guiji.component.result.Result;
+import com.guiji.user.dao.entity.SysRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,10 @@ public class UpdateReceiverResolver {
 	
 	@Autowired
 	private BotPublishSentenceLogMapper botPublishSentenceLogMapper;
+	@Autowired
+	IAuth iAuth;
+	@Autowired
+	BotAvailableTemplateMapper botAvailableTemplateMapper;
 	
 	public void resolver(PublishBotstenceResultMsgVO param){
 		logger.info("resolver---start");
@@ -70,11 +77,12 @@ public class UpdateReceiverResolver {
 			iDispatchPlanOut.successSchedule4TempId(tempId);
 		}
 		if(vo.getSellbot()==1 || vo.getRobot()==1 || vo.getFreeswitch()==1){
+			logger.info("部署失败UpdateReceiverVo[{}]",vo);
 			BotSentenceProcessExample example=new BotSentenceProcessExample();
 			example.createCriteria().andTemplateIdEqualTo(tempId);
 			List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
 			BotSentenceProcess botSentenceProcess =list.get(0);
-			botSentenceProcess.setState(Constant.ERROR);//部署中
+			botSentenceProcess.setState(Constant.ERROR);//部署失败
 		    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 		    
 		    BotPublishSentenceLog record=new BotPublishSentenceLog();
@@ -87,12 +95,13 @@ public class UpdateReceiverResolver {
 		
 		if(vo.getSellbot()==0 && vo.getRobot()==0 && vo.getFreeswitch()==0){
 				logger.info("BotSentenceProcessExample----start");
+			    logger.info("部署成功UpdateReceiverVo[{}]",vo);
 				
 				BotSentenceProcessExample example=new BotSentenceProcessExample();
 				example.createCriteria().andTemplateIdEqualTo(tempId);
 				List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
 				BotSentenceProcess botSentenceProcess =list.get(0);
-				botSentenceProcess.setState(Constant.APPROVE_ONLINE);//部署中
+				botSentenceProcess.setState(Constant.APPROVE_ONLINE);//已上线
 				int version=Integer.valueOf(botSentenceProcess.getVersion())+1;
 				botSentenceProcess.setVersion(String.valueOf(version));
 			    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
@@ -113,9 +122,35 @@ public class UpdateReceiverResolver {
 //			    
 //			    //清空volice的【新增】和【修改】
 				voliceInfoExtMapper.updateVoliceFlag(botSentenceProcess.getProcessId());
+
+				//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
+			    addSentenceTouser(botSentenceProcess);
+
 				logger.info("UpdateReceiverResolver---end");
 			}
 		logger.info("resolver----end");
+	}
+
+	public void addSentenceTouser (BotSentenceProcess botSentenceProcess){
+		//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
+		long userid = Long.valueOf(botSentenceProcess.getCrtUser());
+		logger.info("[{}]用户的话术部署成功[{}]",userid,botSentenceProcess.getTemplateId());
+		Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userid);
+		List<SysRole> listRole = result.getBody();
+		if(listRole!=null && listRole.size()>0){
+			for(SysRole sysRole:listRole){
+				if(sysRole.getId()==3){
+					BotAvailableTemplate botAvailablet = new BotAvailableTemplate();
+					botAvailablet.setTemplateId(botSentenceProcess.getTemplateId());
+					botAvailablet.setTemplateName(botSentenceProcess.getTemplateName());
+					botAvailablet.setUserId(userid);
+					botAvailablet.setOrgCode(botSentenceProcess.getOrgCode());
+					botAvailableTemplateMapper.insertSelective(botAvailablet);
+					logger.info("[{}]是企业管理员，部署成功后将话术[{}]分配给他",sysRole,botAvailablet);
+					break;
+				}
+			}
+		}
 	}
 
 }

@@ -110,13 +110,11 @@ public class LineInfoController {
             @ApiImplicitParam(name = "orgCode", value = "组织机构", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getLineInfos4Allot")
-    public List<LineInfo4AllotRes> getLineInfos4Allot(@NotEmpty(message = "用户id不能为空") String customerId,
-                                                      @NotEmpty(message = "组织机构不能为空") String orgCode,
-                                                      @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
+    public List<LineInfo4AllotRes> getLineInfos4Allot(@NotEmpty(message = "用户id不能为空") String customerId) {
 
-        log.info("get request getLineInfos4Allot，customerId[{}]，userId[{}]，orgCode[{}]", customerId, userId, orgCode);
+        log.info("get request getLineInfos4Allot，customerId[{}]", customerId);
 
-        List<LineInfo4AllotRes> list = lineInfoService.getLineInfos4Allot(customerId, userId, isSuperAdmin, orgCode);
+        List<LineInfo4AllotRes> list = lineInfoService.getLineInfos4Allot(customerId);
 
         return list;
     }

@@ -19,6 +19,7 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="vaild_time" property="vaildTime" jdbcType="DATE" />
+    <result column="start_time" property="startTime" jdbcType="DATE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -81,7 +82,7 @@
   <sql id="Base_Column_List" >
     id, username, `password`, `status`, push_type, call_record_url, batch_record_url, 
     inten_label, access_key, secret_key, org_code, create_id, create_time, update_id, 
-    update_time, del_flag, vaild_time
+    update_time, del_flag, vaild_time,start_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysUserExample" >
     select
@@ -124,13 +125,13 @@
       batch_record_url, inten_label, access_key, 
       secret_key, org_code, create_id, 
       create_time, update_id, update_time, 
-      del_flag, vaild_time)
+      del_flag, vaild_time,start_time)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{pushType,jdbcType=VARCHAR}, #{callRecordUrl,jdbcType=VARCHAR}, 
       #{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR}, 
       #{secretKey,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{delFlag,jdbcType=CHAR}, #{vaildTime,jdbcType=DATE})
+      #{delFlag,jdbcType=CHAR}, #{vaildTime,jdbcType=DATE}, #{startTime,jdbcType=DATE})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
@@ -186,6 +187,9 @@
       <if test="vaildTime != null" >
         vaild_time,
       </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -238,6 +242,9 @@
       </if>
       <if test="vaildTime != null" >
         #{vaildTime,jdbcType=DATE},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=DATE},
       </if>
     </trim>
   </insert>
@@ -301,6 +308,9 @@
       <if test="record.vaildTime != null" >
         vaild_time = #{record.vaildTime,jdbcType=DATE},
       </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=DATE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -324,7 +334,8 @@
       update_id = #{record.updateId,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       del_flag = #{record.delFlag,jdbcType=CHAR},
-      vaild_time = #{record.vaildTime,jdbcType=DATE}
+      vaild_time = #{record.vaildTime,jdbcType=DATE},
+      start_time = #{record.startTime,jdbcType=DATE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -380,6 +391,9 @@
       <if test="vaildTime != null" >
         vaild_time = #{vaildTime,jdbcType=DATE},
       </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=DATE},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -400,7 +414,8 @@
       update_id = #{updateId,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       del_flag = #{delFlag,jdbcType=CHAR},
-      vaild_time = #{vaildTime,jdbcType=DATE}
+      vaild_time = #{vaildTime,jdbcType=DATE},
+      start_time = #{startTime,jdbcType=DATE}
     where id = #{id,jdbcType=BIGINT}
   </update>
   
@@ -451,7 +466,7 @@
 	</select>
 	
 	<select id="getUsersByPage" resultType="map">
-		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
+		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
 		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,e.username as createName
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
@@ -464,7 +479,7 @@
 	</select>
 	
 	<select id="getUserByName" resultType="map">
-		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
+		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
 		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
@@ -499,7 +514,7 @@
 	<select id="selectByParamVo" resultType="map">
 		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
 		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
-		e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,a.org_code as orgCode,a.inten_label as intenLabel
+		e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel
 		from sys_user a
 		LEFT JOIN sys_role_user b on a.id=b.user_id
 		LEFT JOIN sys_role c on c.id=b.role_id
@@ -519,7 +534,7 @@
 		order by a.create_time desc
 		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
 	</select>
-	
+
 	<select id="getSecretKey" resultType="string">
 		SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
 		limit 1 
@@ -533,10 +548,33 @@
 		SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as callRecordUrl,
 		a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as accessKey,
 		a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
-		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,b.`name` as orgName
+		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,a.start_time as startTime,b.`name` as orgName
 		from sys_user a
 		LEFT JOIN sys_organization b on a.org_code=b.`code`
 		where a.id=#{userId}
 	</select>
+
+  <select id="selectLikeUserName" resultType="map">
+    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
+    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
+    e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel
+    from sys_user a
+    LEFT JOIN sys_role_user b on a.id=b.user_id
+    LEFT JOIN sys_role c on c.id=b.role_id
+    LEFT JOIN sys_user_login_record d on d.user_id=a.id
+    left join sys_user e on e.id=a.create_id
+    left join sys_organization f on (case b.role_id when 4 then f.code=LEFT(a.org_code, LENGTH(a.org_code) - LOCATE('.', REVERSE(a.org_code))) else f.code= a.org_code end)
+    where a.del_flag=0
+    <if test="userName != '' ">
+      and a.username like concat('%',#{userName},'%')
+    </if>
+    <if test="roleId !='' ">
+      and c.id like concat('%',#{roleId},'%')
+    </if>
+    <if test="orgCode != null ">
+      and a.org_code like CONCAT(#{orgCode},'%')
+    </if>
+    order by a.create_time desc
+  </select>
 	
 </mapper> 

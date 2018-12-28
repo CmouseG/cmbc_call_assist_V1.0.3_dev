@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ai.guiji.botsentence.dao.*;
+import ai.guiji.botsentence.dao.entity.*;
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
+import com.guiji.user.dao.entity.SysRole;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -20,29 +25,6 @@ import com.google.gson.Gson;
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.controller.server.vo.AccountInfoVO;
 import ai.guiji.botsentence.controller.server.vo.BotSentenceTemplateIndustryVO;
-import ai.guiji.botsentence.dao.BotSentenceIndustryMapper;
-import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
-import ai.guiji.botsentence.dao.BotSentenceTemplateMapper;
-import ai.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
-import ai.guiji.botsentence.dao.BotSentenceTtsContentMapper;
-import ai.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
-import ai.guiji.botsentence.dao.UserAccountIndustryRelationMapper;
-import ai.guiji.botsentence.dao.UserAccountMapper;
-import ai.guiji.botsentence.dao.VoliceInfoMapper;
-import ai.guiji.botsentence.dao.entity.BotSentenceIndustry;
-import ai.guiji.botsentence.dao.entity.BotSentenceIndustryExample;
-import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
-import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
-import ai.guiji.botsentence.dao.entity.BotSentenceTemplate;
-import ai.guiji.botsentence.dao.entity.BotSentenceTemplateExample;
-import ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup;
-import ai.guiji.botsentence.dao.entity.BotSentenceTtsContent;
-import ai.guiji.botsentence.dao.entity.BotSentenceTtsTask;
-import ai.guiji.botsentence.dao.entity.UserAccount;
-import ai.guiji.botsentence.dao.entity.UserAccountExample;
-import ai.guiji.botsentence.dao.entity.UserAccountIndustryRelation;
-import ai.guiji.botsentence.dao.entity.UserAccountIndustryRelationExample;
-import ai.guiji.botsentence.dao.entity.VoliceInfo;
 import ai.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
 import ai.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
 import ai.guiji.botsentence.service.impl.BotSentenceTemplateServiceImpl;
@@ -102,7 +84,8 @@ public class BotsentenceServerController {
 	
 	@Autowired
 	private BotSentenceTtsContentMapper botSentenceTtsContentMapper;
-	
+
+
 	/**
 	 * CRM开户需要同时把开户信息推送至话术平台
 	 * @param
@@ -332,8 +315,9 @@ public class BotsentenceServerController {
 				}
 			}
 			botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
+
+
 		}
-		
 	}
 	
 	

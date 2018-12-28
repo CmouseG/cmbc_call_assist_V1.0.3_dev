@@ -148,7 +148,13 @@ public class CallPlanDispatchHandler {
                 log.warn("在挂断后拉取新计划出现异,插入calloutplan异常", ex);
 
                 CallOutPlan call = callOutPlanService.findByCallId(callPlan.getCallId());
-                scheduleAndSendEvent(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent(),afterCallEvent.getCallPlan());
+                boolean isNeedSchedule = false;
+                //打完的电话才需要回调，没打完的不需要回调
+                if(call.getCallState()!=null && call.getCallState()>=ECallState.hangup_ok.ordinal()){
+                    isNeedSchedule = true;
+                }
+
+                scheduleAndSendEvent(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent(),afterCallEvent.getCallPlan(),isNeedSchedule);
                 return;
             }
             try {
@@ -163,7 +169,7 @@ public class CallPlanDispatchHandler {
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
 
-                scheduleAndSendEvent(callPlan.getCallId(),callPlan.getPhoneNum(),"W",afterCallEvent.getCallPlan());
+                scheduleAndSendEvent(callPlan.getCallId(),callPlan.getPhoneNum(),"W",afterCallEvent.getCallPlan(),true);
                 return;
             }
 
@@ -180,10 +186,12 @@ public class CallPlanDispatchHandler {
      * @param intent  回调意向
      * @param callOutPlan  构建空事件callOutPlan对象
      */
-    private void scheduleAndSendEvent(String callId,String phoneNum,String intent,CallOutPlan callOutPlan){
+    private void scheduleAndSendEvent(String callId,String phoneNum,String intent,CallOutPlan callOutPlan,Boolean isNeedSchedule){
         AfterCallEvent afterCallEventAgain = new AfterCallEvent(callOutPlan, true);
         asyncEventBus.post(afterCallEventAgain);
-        dispatchService.successSchedule(callId, phoneNum, intent);
+        if(isNeedSchedule){
+            dispatchService.successSchedule(callId, phoneNum, intent);
+        }
     }
 
 

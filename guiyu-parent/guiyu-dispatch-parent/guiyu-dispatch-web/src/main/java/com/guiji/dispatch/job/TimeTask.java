@@ -247,7 +247,7 @@ public class TimeTask {
 	 * 获取可以拨打的号码
 	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
-	// @PostMapping("getSuccessPhones")
+//	 @PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -287,7 +287,7 @@ public class TimeTask {
 	}
 
 	@Scheduled(cron = "0 0/1 * * * ?")
-	// @PostMapping("putRedisByphones")
+//	 @PostMapping("putRedisByphones")
 	public void putRedisByphones() {
 		logger.info("-----------------------------putRedisByphones------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -317,7 +317,7 @@ public class TimeTask {
 					Integer limit = patchPlanPutCalldata.getQuerySize(Integer.valueOf(split[0]),
 							Integer.valueOf(split[2]));
 					if (limit > 0) {
-						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Constant.IS_FLAG_2,
+						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Integer.valueOf(split[0]),Constant.IS_FLAG_2,
 								limit);
 						if (list.size() > 0) {
 							patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
@@ -326,9 +326,11 @@ public class TimeTask {
 						for (DispatchPlan dis : list) {
 							ids.add(dis.getPlanUuid());
 						}
-//						if(ids.size() >0){
+						if(ids.size() >0){
 //							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
-//						}
+							//临时中间状态
+							dispatchMapper.updateDispatchPlanListByStatus4Redis(ids, Constant.STATUSPLAN_5_REDIS);
+						}
 					}
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁

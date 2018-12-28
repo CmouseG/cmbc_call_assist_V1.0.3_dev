@@ -727,6 +727,17 @@
 			#{item}
 		</foreach>
 		</update>
+		
+			<update id="updateDispatchPlanListByStatus4Redis" parameterType="map">
+		update dispatch_plan
+		set status_plan = #{status}
+		where plan_uuid in
+		<foreach item="item" index="index" collection="params" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		
+		</update>
 
 		<update id="updateDispatchPlanListByStatusSYNC" parameterType="map">
 			update dispatch_plan

@@ -115,9 +115,11 @@ public class CallPlanDispatchHandler {
     @Subscribe
     @AllowConcurrentEvents
     public void successSchedule(AfterCallEvent afterCallEvent) {
-        CallOutPlan callPlan = afterCallEvent.getCallPlan();
-        log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
-        dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
+        if(!afterCallEvent.getIsFist()){
+            CallOutPlan callPlan = afterCallEvent.getCallPlan();
+            log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
+            dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
+        }
     }
 
     /**

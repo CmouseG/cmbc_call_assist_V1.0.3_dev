@@ -703,7 +703,7 @@
 			#{item.lineName,jdbcType=VARCHAR},
 			#{item.robotName,jdbcType=VARCHAR},
 			#{item.batchName,jdbcType=VARCHAR},
-			#{item.flag,jdbcType=VARCHAR})
+			#{item.flag,jdbcType=VARCHAR},
 			#{item.orgCode,jdbcType=VARCHAR})
 		</foreach>
 	</insert>

@@ -318,7 +318,7 @@ public class TimeTask {
 							Integer.valueOf(split[2]));
 					if (limit > 0) {
 						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Integer.valueOf(split[0]),Constant.IS_FLAG_2,
-								limit);
+								limit,Integer.valueOf(split[1]));
 						if (list.size() > 0) {
 							patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
 						}

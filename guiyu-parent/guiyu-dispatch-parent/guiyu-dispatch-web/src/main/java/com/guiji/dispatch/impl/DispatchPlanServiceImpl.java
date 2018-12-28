@@ -1471,7 +1471,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	// }
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag, Integer limit) {
+	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag, Integer limit,Integer lineId) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -1488,6 +1488,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 		dis.setUserId(userId);
+		dis.setLine(lineId);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
 		return phones;
 	}

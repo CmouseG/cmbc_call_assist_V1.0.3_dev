@@ -156,7 +156,7 @@ public class CallPlanDispatchHandler {
                     isNeedSchedule = true;
                 }
 
-                scheduleAndSendEvent(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent(),afterCallEvent.getCallPlan(),isNeedSchedule);
+                scheduleAndSendEvent(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent(),callPlan,isNeedSchedule);
                 return;
             }
             try {
@@ -171,7 +171,7 @@ public class CallPlanDispatchHandler {
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
 
-                scheduleAndSendEvent(callPlan.getCallId(),callPlan.getPhoneNum(),"W",afterCallEvent.getCallPlan(),true);
+                scheduleAndSendEvent(callPlan.getCallId(),callPlan.getPhoneNum(),"W",callPlan,true);
                 return;
             }
 

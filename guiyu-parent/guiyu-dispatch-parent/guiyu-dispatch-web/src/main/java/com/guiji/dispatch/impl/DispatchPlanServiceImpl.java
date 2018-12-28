@@ -295,7 +295,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-
+		dispatchPlanBatch.setOrgCode(orgCode);
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
 

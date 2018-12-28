@@ -230,4 +230,11 @@
   	</foreach>
   
   </insert>
+
+
+  <insert id="addUserAvailableTemplateAuto">
+    delete from bot_user_available where user_id=#{userId} and available_id =#{availableId};
+      insert into bot_user_available(user_id,available_id)
+      values(#{userId},#{availableId});
+  </insert>
 </mapper>

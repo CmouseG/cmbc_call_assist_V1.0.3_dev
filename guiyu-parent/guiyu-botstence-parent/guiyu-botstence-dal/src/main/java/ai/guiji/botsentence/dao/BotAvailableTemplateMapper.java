@@ -31,5 +31,7 @@ public interface BotAvailableTemplateMapper {
     
     List<BotAvailableTemplate> getUserAvailableTemplate(Long userId);
     
-    public void addUserAvailableTemplate(@Param("userId")Long userId,@Param("array")String[] availableId);
+    void addUserAvailableTemplate(@Param("userId")Long userId,@Param("array")String[] availableId);
+    void addUserAvailableTemplateAuto(@Param("userId")Long userId,@Param("availableId")String availableId);
+
 }

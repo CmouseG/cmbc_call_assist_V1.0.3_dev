@@ -270,7 +270,7 @@
   	delete from bot_available_template where template_id=#{templateId} and user_id=#{userId}
   </delete>
   
-  <insert id="insertAvailableTemplate">
+  <insert id="insertAvailableTemplate" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" useGeneratedKeys="true"   keyProperty="id" >
   	INSERT into bot_available_template(template_id,template_name,user_id,org_code)
 	VALUES(#{templateId},#{templateName},#{userId},#{orgCode})
   </insert>

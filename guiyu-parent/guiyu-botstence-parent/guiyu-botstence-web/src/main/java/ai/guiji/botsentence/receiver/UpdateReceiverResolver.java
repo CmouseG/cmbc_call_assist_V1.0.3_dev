@@ -51,7 +51,7 @@ public class UpdateReceiverResolver {
 	IAuth iAuth;
 	@Autowired
 	BotAvailableTemplateMapper botAvailableTemplateMapper;
-	
+
 	public void resolver(PublishBotstenceResultMsgVO param){
 		logger.info("resolver---start");
 		String tempId=param.getTmplId();
@@ -124,29 +124,23 @@ public class UpdateReceiverResolver {
 				voliceInfoExtMapper.updateVoliceFlag(botSentenceProcess.getProcessId());
 
 				//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
-//			    addSentenceTouser(botSentenceProcess);
+			    addSentenceTouser(Long.valueOf(botSentenceProcess.getCrtUser()),String.valueOf(botAvailableTemplate.getId()));
 
 				logger.info("UpdateReceiverResolver---end");
 			}
 		logger.info("resolver----end");
 	}
 
-	public void addSentenceTouser (BotSentenceProcess botSentenceProcess){
+	public void addSentenceTouser (Long userid, String availableId){
 		//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
-		long userid = Long.valueOf(botSentenceProcess.getCrtUser());
-		logger.info("[{}]用户的话术部署成功[{}]",userid,botSentenceProcess.getTemplateId());
+		logger.info("userid[{}]进入部署成功自动分配话术方法availableId[{}]",userid,availableId);
 		Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userid);
 		List<SysRole> listRole = result.getBody();
 		if(listRole!=null && listRole.size()>0){
 			for(SysRole sysRole:listRole){
 				if(sysRole.getId()==3){
-					BotAvailableTemplate botAvailablet = new BotAvailableTemplate();
-					botAvailablet.setTemplateId(botSentenceProcess.getTemplateId());
-					botAvailablet.setTemplateName(botSentenceProcess.getTemplateName());
-					botAvailablet.setUserId(userid);
-					botAvailablet.setOrgCode(botSentenceProcess.getOrgCode());
-					botAvailableTemplateMapper.insertSelective(botAvailablet);
-					logger.info("[{}]是企业管理员，部署成功后将话术[{}]分配给他",sysRole,botAvailablet);
+					botAvailableTemplateMapper.addUserAvailableTemplateAuto(userid,availableId);
+					logger.info("[{}]是企业管理员，部署成功后将话术availableId[{}]分配给他",userid,availableId);
 					break;
 				}
 			}

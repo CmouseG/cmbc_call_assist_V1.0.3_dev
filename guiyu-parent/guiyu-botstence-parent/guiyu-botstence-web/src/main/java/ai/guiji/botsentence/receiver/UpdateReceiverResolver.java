@@ -124,7 +124,7 @@ public class UpdateReceiverResolver {
 				voliceInfoExtMapper.updateVoliceFlag(botSentenceProcess.getProcessId());
 
 				//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
-			    addSentenceTouser(botSentenceProcess);
+//			    addSentenceTouser(botSentenceProcess);
 
 				logger.info("UpdateReceiverResolver---end");
 			}

@@ -12,6 +12,8 @@ import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.DispatchPlan;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,7 +117,11 @@ public class DispatchManagerImpl implements DispatchManager {
      */
     @Override
     public void successSchedule(String callId, String phoneNo, String intent) {
-
+        log.info("======================startSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
+        if(StringUtils.isBlank(callId) || StringUtils.isBlank(intent)){
+            log.info("---startSchedule callid is null or intnet is null:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
+            return;
+        }
         //调度中心
         Result.ReturnData returnData = null;
         dispatchLogService.startServiceRequestLog(callId,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向调度中心回调结果");

@@ -8,6 +8,7 @@ public class Constant {
 	public static final Integer STATUSPLAN_2 = 2;
 	public static final Integer STATUSPLAN_3 = 3;
 	public static final Integer STATUSPLAN_4 = 4;
+	public static final Integer STATUSPLAN_5_REDIS = 5;
 	// 0未同步1已同步
 	public static final Integer STATUS_SYNC_0 = 0;
 	public static final Integer STATUS_SYNC_1 = 1;

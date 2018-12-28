@@ -70,7 +70,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
                 @Override
                 public void onErrorResult(Result.ReturnData result) {
                     //TODO: 报警
-                    log.warn("上传文件失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                    log.warn("上传文件失败，错误码是[{}][{}],request[{}]", result.getCode(), result.getMsg(),request);
                 }
             }, 100, 1, 30, 600);
         }catch (Exception ex){

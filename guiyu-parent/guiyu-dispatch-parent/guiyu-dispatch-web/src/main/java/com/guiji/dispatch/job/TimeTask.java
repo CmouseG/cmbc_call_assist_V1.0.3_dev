@@ -326,9 +326,9 @@ public class TimeTask {
 						for (DispatchPlan dis : list) {
 							ids.add(dis.getPlanUuid());
 						}
-						if(ids.size() >0){
-							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
-						}
+//						if(ids.size() >0){
+//							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+//						}
 					}
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁

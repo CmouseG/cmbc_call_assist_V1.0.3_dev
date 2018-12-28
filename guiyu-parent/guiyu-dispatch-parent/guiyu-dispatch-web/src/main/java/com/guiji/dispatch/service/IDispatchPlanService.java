@@ -152,7 +152,7 @@ public interface IDispatchPlanService {
 	 */
 	List<DispatchPlan> selectPhoneByDate();
 	
-	List<DispatchPlan> selectPhoneByDateAndFlag(String flag);
+	List<DispatchPlan> selectPhoneByDateAndFlag(String flag,Integer statusPlan);
 	
 	
 	/**

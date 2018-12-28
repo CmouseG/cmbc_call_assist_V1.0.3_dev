@@ -1217,7 +1217,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag) {
+	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag,Integer stausPlan) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -1228,7 +1228,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setCallData(Integer.valueOf(dateNowStr));
 		dis.setCallHour(String.valueOf(hour));
 		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_5_REDIS);
+//		dis.setStatusPlan(Constant.STATUSPLAN_5_REDIS);
+        dis.setStatusPlan(stausPlan);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setFlag(flag);
 		dis.setLimitStart(0);

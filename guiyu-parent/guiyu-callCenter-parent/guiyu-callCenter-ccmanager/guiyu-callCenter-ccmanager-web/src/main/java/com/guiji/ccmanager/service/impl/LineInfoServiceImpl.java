@@ -293,4 +293,11 @@ public class LineInfoServiceImpl implements LineInfoService {
         }
 
     }
+
+    @Override
+    public List<LineInfo> getLineInfoByOrgCode(String orgCode) {
+        LineInfoExample example = new LineInfoExample();
+        example.createCriteria().andOrgCodeLike(orgCode+"%");
+        return lineInfoMapper.selectByExample(example);
+    }
 }

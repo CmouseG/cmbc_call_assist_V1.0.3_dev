@@ -102,9 +102,10 @@ public class AiNewTransService {
 					//如果主键为空，那么新增一条信息
 					//查询用户机构信息
 					if(StrUtils.isNotEmpty(robotCallHis.getUserId())) {
-						if(LocalCacheUtil.isExist(robotCallHis.getUserId())) {
+						//从缓存中获取
+						SysUser sysUser = LocalCacheUtil.getT(robotCallHis.getUserId());
+						if(sysUser!=null) {
 							//缓存中有，直接取
-							SysUser sysUser = LocalCacheUtil.getT(robotCallHis.getUserId());
 							robotCallHis.setOrgCode(sysUser.getOrgCode());
 						}else{
 							//缓存中没有,重新查，并放入内存

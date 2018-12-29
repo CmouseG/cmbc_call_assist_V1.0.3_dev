@@ -13,7 +13,6 @@ import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.DispatchPlan;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

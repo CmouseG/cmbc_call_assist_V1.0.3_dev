@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,5 +141,29 @@ public class LineInfoController {
 
         return Result.ok();
     }
+
+
+    @ApiOperation(value = "开户管理，查询某个企业的线路")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orgCode", value = "企业的组织编码", dataType = "String", paramType = "query")
+    })
+    @GetMapping(value = "getLineInfoByOrgCode")
+    public Result.ReturnData<Map> getLineInfoByOrgCode(@NotEmpty(message = "组织编码不能为空") String orgCode) {
+
+        log.info("get request getLineInfoByOrgCode，orgCode[{}]", orgCode);
+
+        List<LineInfo> list = lineInfoService.getLineInfoByOrgCode(orgCode);
+        Map map = new HashMap();
+        map.put("list",list);
+        if(list!=null){
+            map.put("count",list.size());
+        }else{
+            map.put("count",0);
+        }
+        log.info("response get request getLineInfoByOrgCode，orgCode[{}]", orgCode);
+        return Result.ok(map);
+    }
+
+
 
 }

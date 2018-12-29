@@ -347,6 +347,7 @@ CREATE TABLE `call_out_plan` (
   `isdel` int(2) NOT NULL DEFAULT '0',
   `isread` int(2) NOT NULL DEFAULT '0',
    `org_code` varchar(50) DEFAULT NULL,
+   `batch_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -388,6 +389,7 @@ CREATE TABLE `call_out_plan_0` (
   `isdel` int(2) NOT NULL DEFAULT '0',
   `isread` int(2) NOT NULL DEFAULT '0',
   `org_code` varchar(50) DEFAULT NULL,
+  `batch_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -427,6 +429,7 @@ CREATE TABLE `call_out_plan_1` (
   `isdel` int(2) NOT NULL DEFAULT '0',
   `isread` int(2) NOT NULL DEFAULT '0',
   `org_code` varchar(50) DEFAULT NULL,
+  `batch_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`call_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

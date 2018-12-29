@@ -152,7 +152,7 @@ public interface IDispatchPlanService {
 	 */
 	List<DispatchPlan> selectPhoneByDate();
 	
-	List<DispatchPlan> selectPhoneByDateAndFlag(String flag);
+	List<DispatchPlan> selectPhoneByDateAndFlag(String flag,Integer statusPlan);
 	
 	
 	/**
@@ -236,7 +236,7 @@ public interface IDispatchPlanService {
 	public void test(DispatchPlan sendSMsDispatchPlan, String label);
 	
 	
-	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag,Integer limit);
+	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag,Integer limit,Integer lineId);
 	
 	public List<DispatchPlan> selectPhoneByDate4UserId(String flag,Integer limit);
 }

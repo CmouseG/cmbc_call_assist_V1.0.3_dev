@@ -364,10 +364,12 @@ public class CustAiAccountController {
 				|| StrUtils.isEmpty(userAiCfgInfo.getUserId())
 				|| StrUtils.isEmpty(userAiCfgInfo.getTemplateIds())
 				|| userAiCfgInfo.getAiNum() == null
-				|| userAiCfgInfo.getAiNum() <=0
 				) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		if(userAiCfgInfo.getAiNum()<=0) {
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),"机器人分配数量必须大于0");
 		}
 		if(userId != null) {
 			//当前登录用户

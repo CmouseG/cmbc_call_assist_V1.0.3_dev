@@ -295,7 +295,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlanBatch.setGmtCreate(DateUtil.getCurrent4Time());
 		dispatchPlanBatch.setStatusNotify(Constant.STATUS_NOTIFY_0);
 		dispatchPlanBatch.setUserId(userId.intValue());
-
+		dispatchPlanBatch.setOrgCode(orgCode);
 		// 查询用户名称
 		ReturnData<SysUser> SysUser = authService.getUserById(userId);
 
@@ -1217,7 +1217,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag) {
+	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag,Integer stausPlan) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -1228,7 +1228,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setCallData(Integer.valueOf(dateNowStr));
 		dis.setCallHour(String.valueOf(hour));
 		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
+//		dis.setStatusPlan(Constant.STATUSPLAN_5_REDIS);
+        dis.setStatusPlan(stausPlan);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setFlag(flag);
 		dis.setLimitStart(0);
@@ -1470,7 +1471,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	// }
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag, Integer limit) {
+	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag, Integer limit,Integer lineId) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -1487,6 +1488,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 		dis.setUserId(userId);
+		dis.setLine(lineId);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
 		return phones;
 	}

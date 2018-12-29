@@ -149,9 +149,9 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				//设置用户机构号
 				//查询用户机构信息
 				if(StrUtils.isNotEmpty(userAiCfgBaseInfo.getUserId())) {
-					if(LocalCacheUtil.isExist(userAiCfgBaseInfo.getUserId())) {
+					SysUser sysUser = LocalCacheUtil.getT(userAiCfgBaseInfo.getUserId());
+					if(sysUser!=null) {
 						//缓存中有，直接取
-						SysUser sysUser = LocalCacheUtil.getT(userAiCfgBaseInfo.getUserId());
 						userAiCfgBaseInfo.setOrgCode(sysUser.getOrgCode());
 					}else{
 						//缓存中没有,重新查，并放入内存

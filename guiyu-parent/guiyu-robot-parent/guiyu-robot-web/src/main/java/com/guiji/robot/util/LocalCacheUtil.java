@@ -88,13 +88,4 @@ public class LocalCacheUtil {
         }
     }
  
-    /**
-     * key是否存在
-     * @param key
-     * @return
-     */
-    public static boolean isExist(String key) {
-        return cacheMap.containsKey(key);
-    }
-    
 }

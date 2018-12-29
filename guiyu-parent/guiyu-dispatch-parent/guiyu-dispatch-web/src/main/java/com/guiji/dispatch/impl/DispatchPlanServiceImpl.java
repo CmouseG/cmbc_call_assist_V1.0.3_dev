@@ -1156,7 +1156,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.setStatusPlan(Constant.STATUSPLAN_1);
 			dis.setStatusSync(Constant.STATUS_SYNC_0);
 			dis.setFlag(Constant.IS_FLAG_0);
-			dis.setClean(Constant.IS_CLEAN_1);
+			dis.setClean(Constant.IS_CLEAN_0);
 			try {
 				dis.setGmtModified(DateUtil.getCurrent4Time());
 			} catch (Exception e) {
@@ -1172,8 +1172,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String dateNowStr = sdf.format(d);
 			DispatchPlan dis = new DispatchPlan();
-			dis.setStatusPlan(Constant.STATUSPLAN_3);
-			dis.setStatusSync(Constant.STATUS_SYNC_1);
+			dis.setStatusPlan(Constant.STATUSPLAN_4);
+			dis.setStatusSync(Constant.STATUS_SYNC_0);
 			dis.setClean(Constant.IS_CLEAN_1);
 			try {
 				dis.setGmtModified(DateUtil.getCurrent4Time());

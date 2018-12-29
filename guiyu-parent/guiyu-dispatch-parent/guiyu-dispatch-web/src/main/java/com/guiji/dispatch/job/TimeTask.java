@@ -140,7 +140,7 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info("获取当前初始化号码的请求资源结果");
 				List<DispatchPlan> selectPhoneByDateAndFlag = dispatchPlanService
-						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1);
+						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1,Constant.STATUSPLAN_1);
 
 				List<TtsVoiceReq> ttsVoiceReqList = new ArrayList<>();
 				List<ModularLogs> beforeLogs = new ArrayList<>();
@@ -263,7 +263,7 @@ public class TimeTask {
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info(" 获取可以拨打的号码..");
-				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2);
+				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2,Constant.STATUSPLAN_5_REDIS);
 				logger.info(" 获取可以拨打的号码count .." + list.size());
 				// 分组
 				Map<String, List<DispatchPlan>> collect = list.stream()
@@ -318,7 +318,7 @@ public class TimeTask {
 							Integer.valueOf(split[2]));
 					if (limit > 0) {
 						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Integer.valueOf(split[0]),Constant.IS_FLAG_2,
-								limit);
+								limit,Integer.valueOf(split[2]));
 						if (list.size() > 0) {
 							patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
 						}

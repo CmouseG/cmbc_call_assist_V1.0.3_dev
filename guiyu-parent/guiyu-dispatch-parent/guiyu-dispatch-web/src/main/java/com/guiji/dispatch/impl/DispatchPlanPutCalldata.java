@@ -18,12 +18,12 @@ public class DispatchPlanPutCalldata implements IDispatchPlanPutCalldata {
 	@Override
 	public void put(Integer userId, Integer LineId, List<DispatchPlan> data) {
 
-//		if (data.size() > 0) {
-//			for(DispatchPlan dis : data){
-				redisUtil.leftPushAll("dispatch-" + userId + "-" + LineId, data);
-//			}
-//		}
-		
+		// if (data.size() > 0) {
+		// for(DispatchPlan dis : data){
+		redisUtil.leftPushAll("dispatch-" + userId + "-" + LineId, data);
+		// }
+		// }
+
 	}
 
 	@Override
@@ -37,7 +37,9 @@ public class DispatchPlanPutCalldata implements IDispatchPlanPutCalldata {
 		List<DispatchPlan> result = new ArrayList<>();
 		for (int i = 0; i < requestCount; i++) {
 			DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("dispatch-" + userId + "-" + lineId);
-			 result.add(object);
+			if (object != null) {
+				result.add(object);
+			}
 		}
 		return result;
 	}

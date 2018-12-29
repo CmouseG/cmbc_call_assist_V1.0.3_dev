@@ -64,6 +64,8 @@ public class TimeTask {
 
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
+	
+
 
 	/**
 	 * 捞取号码初始化资源
@@ -71,7 +73,7 @@ public class TimeTask {
 	@Scheduled(cron = "0 0/1 * * * ?")
 	// @PostMapping("selectPhoneInit")
 	public void selectPhoneInit() {
-		logger.info("-----------------------------------------------------------------");
+		logger.info("-----------------------------selectPhoneInit------------------------------------");
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -84,9 +86,8 @@ public class TimeTask {
 		Lock lock = new Lock("selectPhoneInitJob.TimeTask", "selectPhoneInitJob.TimeTask");
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-				logger.info("捞取号码初始化资源..");
 				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
-				logger.info("数量size" + list.size());
+				logger.info("-------------------获取初始化号码数量size------------------------------"+ + list.size());
 				List<HsParam> sendData = new ArrayList<>();
 				for (DispatchPlan dispatchPlan : list) {
 					HsParam hsParam = new HsParam();
@@ -109,7 +110,6 @@ public class TimeTask {
 					dispatchPlanService.batchUpdateFlag(list, Constant.IS_FLAG_1);
 					logger.info("selectPhoneInit修改结束......");
 				}
-				logger.info("有一批数据调用初始化资源结果数量....." + list.size());
 				distributedLockHandler.releaseLock(lock); // 释放锁
 			}
 		} catch (Exception e) {
@@ -140,7 +140,7 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info("获取当前初始化号码的请求资源结果");
 				List<DispatchPlan> selectPhoneByDateAndFlag = dispatchPlanService
-						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1,Constant.STATUSPLAN_1);
+						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1,Constant.STATUSPLAN_1,Constant.STATUS_SYNC_0);
 
 				List<TtsVoiceReq> ttsVoiceReqList = new ArrayList<>();
 				List<ModularLogs> beforeLogs = new ArrayList<>();
@@ -262,9 +262,8 @@ public class TimeTask {
 		Lock lock = new Lock("getSuccessPhonesJob.TimeTask", "getSuccessPhonesJob.TimeTask");
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-				logger.info(" 获取可以拨打的号码..");
-				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2,Constant.STATUSPLAN_5_REDIS);
-				logger.info(" 获取可以拨打的号码count .." + list.size());
+				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2,Constant.STATUSPLAN_1,Constant.STATUS_SYNC_1);
+				logger.info(" 获取可以拨打的号码count ..." + list.size());
 				// 分组
 				Map<String, List<DispatchPlan>> collect = list.stream()
 						.collect(Collectors.groupingBy(d -> fetchGroupKey(d)));
@@ -302,13 +301,13 @@ public class TimeTask {
 		Lock lock = new Lock("putRedisByphones.TimeTask", "putRedisByphones.TimeTask");
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-				logger.info(" 获取可以拨打的号码..");
 				// 获取userIdList
 				// List<DispatchPlan> selectPhoneByDate4UserId =
 				// dispatchPlanService
 				// .selectPhoneByDate4UserId(Constant.IS_FLAG_2, 1000);
 				// System.out.println(selectPhoneByDate4UserId);
 				Map<String, String> map = (HashMap) redisUtil.hmget("dispath-userIds");
+				logger.info("-------------------当前redis-----dispath-userIds数据:---------------"+map);
 				if (map == null) {
 					return;
 				}
@@ -327,9 +326,7 @@ public class TimeTask {
 							ids.add(dis.getPlanUuid());
 						}
 						if(ids.size() >0){
-//							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
-							//临时中间状态
-							dispatchMapper.updateDispatchPlanListByStatus4Redis(ids, Constant.STATUSPLAN_5_REDIS);
+							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
 						}
 					}
 				}
@@ -463,8 +460,8 @@ public class TimeTask {
 			map.put(key, key);
 			redisUtil.hmset("dispath-userIds", map);
 			ReturnData<Boolean> startcallplan = callManagerOutApi.startCallPlan(split[0], split[1], split[2]);
-			logger.info("启动客户呼叫计划结果" + startcallplan.success);
-			logger.info("启动客户呼叫计划结果详情 " + startcallplan.msg);
+			logger.info("-------------启动客户呼叫计划结果------------------" + startcallplan.success);
+			logger.info("-------------启动客户呼叫计划结果详情---------------" + startcallplan.msg);
 			if (startcallplan.success) {
 				// 5分钟失效时间
 				redisUtil.set(key, new Date(), 300);

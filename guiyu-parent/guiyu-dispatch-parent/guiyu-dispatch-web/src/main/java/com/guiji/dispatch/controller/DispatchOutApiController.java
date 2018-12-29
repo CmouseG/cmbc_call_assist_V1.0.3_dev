@@ -58,8 +58,10 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@GetMapping(value = "out/queryAvailableSchedules")
 	public ReturnData<List<DispatchPlan>> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
 		long start = System.currentTimeMillis();
-		logger.info("返回可以拨打的任务给呼叫中心开始查询......."+System.currentTimeMillis());
+		logger.info("返回可以拨打的任务给呼叫中心开始查询时间......."+System.currentTimeMillis());
 		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
+		
+		
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService
 				.queryAvailableSchedules(userId, requestCount, lineId, dis, true);
 		List<DispatchPlan> list = new ArrayList<>();

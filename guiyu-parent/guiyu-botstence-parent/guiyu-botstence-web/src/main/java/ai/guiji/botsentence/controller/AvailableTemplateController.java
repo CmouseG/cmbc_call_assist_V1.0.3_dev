@@ -1,8 +1,11 @@
 package ai.guiji.botsentence.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +41,23 @@ public class AvailableTemplateController {
 	@RequestMapping("getAdminOrgAvailableTemplate")
 	public ServerResult getAdminOrgAvailableTemplate(@JsonParam Long userId){
 		List<BotAvailableTemplate> list=availableTemplateService.getOrgAvailableTemplate(userId);
+		return ServerResult.createBySuccess(list);
+	}
+
+
+	/**
+	 * 用户管理，根据组织机构查询企业的话术
+	 */
+	@GetMapping("getTemplateByOrgCode")
+	public ServerResult getTemplateByOrgCode(@JsonParam String orgCode){
+		List<BotAvailableTemplate> list=availableTemplateService.getTemplateByOrgCode(orgCode);
+		Map map = new HashMap();
+		map.put("list",list);
+		if(list!=null){
+			map.put("count",list.size());
+		}else{
+			map.put("count",0);
+		}
 		return ServerResult.createBySuccess(list);
 	}
 	

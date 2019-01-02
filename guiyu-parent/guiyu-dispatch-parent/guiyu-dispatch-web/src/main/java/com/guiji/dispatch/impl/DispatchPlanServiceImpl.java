@@ -87,7 +87,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private DispatchPlanBatchMapper dispatchPlanBatchMapper;
 
-
 	@Autowired
 	private IAuth authService;
 
@@ -407,124 +406,133 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		logger.info("----------------------------successSchedule-------------------------------------");
 		logger.info("----------------------------successSchedule-------------------------------------");
 		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("写入mq之前的UUID lable:" + planUuid +"--------------" + label);
-		//写入mq中
+		logger.info("写入mq之前的UUID lable:" + planUuid + "--------------" + label);
+		// 写入mq中
 		MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		dto.setPlanuuid(planUuid);
 		dto.setLabel(label);
 		successPhoneMQService.insertSuccesPhone4MQ(dto);
 		return true;
-		
-//		
-//		DispatchPlanExample ex = new DispatchPlanExample();
-//		ex.createCriteria().andPlanUuidEqualTo(planUuid);
-//		List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
-//		DispatchPlan sendSMsDispatchPlan = null;
-//		logger.info("回调完成通知查询结果:" + list.size());
-//		if (list.size() <= 0) {
-//			logger.info("回调完成通知查询结果 uuid错误！");
-//			return false;
-//		} else {
-//			sendSMsDispatchPlan = list.get(0);
-//		}
-//
-//		boolean checkRes = checkLastNum(list.get(0));
-//		if (checkRes) {
-//			// 回调批次拨打结束通知。
-//			logger.info("回调批次拨打结束通知开始 ");
-//			ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
-//			if (user.getBody() != null) {
-//				String batchRecordUrl = user.getBody().getBatchRecordUrl();
-//				if (batchRecordUrl != null && batchRecordUrl != "") {
-//					JSONObject jsonObject = new JSONObject();
-//					jsonObject.put("batch_number", list.get(0).getBatchName());
-//					jsonObject.put("operate", user.getBody().getUsername());
-//					String sendHttpPost = "";
-//					try {
-//						sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl, jsonObject.toString());
-//					} catch (Exception e) {
-//						if (insertThirdInterface(batchRecordUrl, jsonObject)) {
-//							logger.info("回调错误记录新增成功...");
-//						}
-//						logger.error("error", e);
-//					}
-//					logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
-//				}
-//			} else {
-//				logger.info("successSchedule 用户不存在");
-//			}
-//		}
-//
-//		List<String> ids = new ArrayList<>();
-//		ids.add(list.get(0).getPlanUuid());
-//		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
-//		ReturnData<SysUser> user = auth.getUserById(list.get(0).getUserId().longValue());
-//		if (user.getBody() != null) {
-//			if (user.getBody().getCallRecordUrl() != null && user.getBody().getCallRecordUrl() != "") {
-//				logger.info("通话记录通知开始");
-//				JSONObject jsonObject = new JSONObject();
-//				jsonObject.put("data", callPlanDetailRecord.getBody());
-//				boolean insertThirdInterface = insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
-//				logger.info("通话记录通知结果 :" + insertThirdInterface);
-//			}
-//		}
-//
-//		if (list.size() > 0) {
-//			DispatchPlan dispatchPlan = list.get(0);
-//			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
-//			// 0不重播非0表示重播次数
-//			// if (dispatchPlan.getRecall() > 0) {
-//			// // 获取重播条件
-//			// String recallParams = dispatchPlan.getRecallParams();
-//			// ReplayDto replayDto = JSONObject.parseObject(recallParams,
-//			// ReplayDto.class);
-//			// // 查询语音记录
-//			// ReturnData<CallOutPlan> callRecordById =
-//			// callManagerFeign.getCallRecordById(planUuid);
-//			//
-//			// if (callRecordById.getBody() != null) {
-//			// // 意图
-//			// if
-//			// (replayDto.getLabel().contains(callRecordById.getBody().getAccurateIntent()))
-//			// {
-//			// if (callRecordById.getBody().getAccurateIntent().equals("F")) {
-//			// // F类判断挂断类型
-//			// if
-//			// (replayDto.getLabelType().contains(callRecordById.getBody().getReason()))
-//			// {
-//			// // 创建
-//			// }
-//			// } else {
-//			// // 创建
-//			// }
-//			// }
-//			// }
-//			// }
-//			int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
-//			logger.info("回调完成通知修改结果" + result);
-//
-//			logger.info("---------------------发送短信------------------------");
-//			logger.info("---------------------发送短信------------------------");
-//			logger.info("---------------------发送短信------------------------");
-//			logger.info("---------------------发送短信------------------------");
-//			boolean resultmsg = SendSms(sendSMsDispatchPlan, label);
-//			logger.info("---------------------发送短信------------------------");
-//			logger.info("---------------------发送短信------------------------");
-//			logger.info("---------------------发送短信------------------------");
-//			logger.info("---------------------发送短信------------------------");
-//
-//			// 判断下一批计算是否还有相同的推送任务，如果没有则设置redis失效时间为0
-//			// List<DispatchPlan> queryAvailableSchedules =
-//			// queryAvailableSchedules(dispatchPlan.getUserId(), 1,
-//			// dispatchPlan.getLine(), new DispatchPlan(), false);
-//			// if (queryAvailableSchedules.size() <= 0) {
-//			// String key = dispatchPlan.getUserId() + "-" +
-//			// dispatchPlan.getRobot() + "-" + dispatchPlan.getLine();
-//			// redisUtil.del(key);
-//			// logger.info("当前计划没有下一批任务:" + key + "删除了redis缓存");
-//			// }
-//
-//		}
+
+		//
+		// DispatchPlanExample ex = new DispatchPlanExample();
+		// ex.createCriteria().andPlanUuidEqualTo(planUuid);
+		// List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
+		// DispatchPlan sendSMsDispatchPlan = null;
+		// logger.info("回调完成通知查询结果:" + list.size());
+		// if (list.size() <= 0) {
+		// logger.info("回调完成通知查询结果 uuid错误！");
+		// return false;
+		// } else {
+		// sendSMsDispatchPlan = list.get(0);
+		// }
+		//
+		// boolean checkRes = checkLastNum(list.get(0));
+		// if (checkRes) {
+		// // 回调批次拨打结束通知。
+		// logger.info("回调批次拨打结束通知开始 ");
+		// ReturnData<SysUser> user =
+		// auth.getUserById(list.get(0).getUserId().longValue());
+		// if (user.getBody() != null) {
+		// String batchRecordUrl = user.getBody().getBatchRecordUrl();
+		// if (batchRecordUrl != null && batchRecordUrl != "") {
+		// JSONObject jsonObject = new JSONObject();
+		// jsonObject.put("batch_number", list.get(0).getBatchName());
+		// jsonObject.put("operate", user.getBody().getUsername());
+		// String sendHttpPost = "";
+		// try {
+		// sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl,
+		// jsonObject.toString());
+		// } catch (Exception e) {
+		// if (insertThirdInterface(batchRecordUrl, jsonObject)) {
+		// logger.info("回调错误记录新增成功...");
+		// }
+		// logger.error("error", e);
+		// }
+		// logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
+		// }
+		// } else {
+		// logger.info("successSchedule 用户不存在");
+		// }
+		// }
+		//
+		// List<String> ids = new ArrayList<>();
+		// ids.add(list.get(0).getPlanUuid());
+		// ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord =
+		// callPlanDetail.getCallPlanDetailRecord(ids);
+		// ReturnData<SysUser> user =
+		// auth.getUserById(list.get(0).getUserId().longValue());
+		// if (user.getBody() != null) {
+		// if (user.getBody().getCallRecordUrl() != null &&
+		// user.getBody().getCallRecordUrl() != "") {
+		// logger.info("通话记录通知开始");
+		// JSONObject jsonObject = new JSONObject();
+		// jsonObject.put("data", callPlanDetailRecord.getBody());
+		// boolean insertThirdInterface =
+		// insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
+		// logger.info("通话记录通知结果 :" + insertThirdInterface);
+		// }
+		// }
+		//
+		// if (list.size() > 0) {
+		// DispatchPlan dispatchPlan = list.get(0);
+		// dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
+		// // 0不重播非0表示重播次数
+		// // if (dispatchPlan.getRecall() > 0) {
+		// // // 获取重播条件
+		// // String recallParams = dispatchPlan.getRecallParams();
+		// // ReplayDto replayDto = JSONObject.parseObject(recallParams,
+		// // ReplayDto.class);
+		// // // 查询语音记录
+		// // ReturnData<CallOutPlan> callRecordById =
+		// // callManagerFeign.getCallRecordById(planUuid);
+		// //
+		// // if (callRecordById.getBody() != null) {
+		// // // 意图
+		// // if
+		// //
+		// (replayDto.getLabel().contains(callRecordById.getBody().getAccurateIntent()))
+		// // {
+		// // if (callRecordById.getBody().getAccurateIntent().equals("F")) {
+		// // // F类判断挂断类型
+		// // if
+		// //
+		// (replayDto.getLabelType().contains(callRecordById.getBody().getReason()))
+		// // {
+		// // // 创建
+		// // }
+		// // } else {
+		// // // 创建
+		// // }
+		// // }
+		// // }
+		// // }
+		// int result =
+		// dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
+		// logger.info("回调完成通知修改结果" + result);
+		//
+		// logger.info("---------------------发送短信------------------------");
+		// logger.info("---------------------发送短信------------------------");
+		// logger.info("---------------------发送短信------------------------");
+		// logger.info("---------------------发送短信------------------------");
+		// boolean resultmsg = SendSms(sendSMsDispatchPlan, label);
+		// logger.info("---------------------发送短信------------------------");
+		// logger.info("---------------------发送短信------------------------");
+		// logger.info("---------------------发送短信------------------------");
+		// logger.info("---------------------发送短信------------------------");
+		//
+		// // 判断下一批计算是否还有相同的推送任务，如果没有则设置redis失效时间为0
+		// // List<DispatchPlan> queryAvailableSchedules =
+		// // queryAvailableSchedules(dispatchPlan.getUserId(), 1,
+		// // dispatchPlan.getLine(), new DispatchPlan(), false);
+		// // if (queryAvailableSchedules.size() <= 0) {
+		// // String key = dispatchPlan.getUserId() + "-" +
+		// // dispatchPlan.getRobot() + "-" + dispatchPlan.getLine();
+		// // redisUtil.del(key);
+		// // logger.info("当前计划没有下一批任务:" + key + "删除了redis缓存");
+		// // }
+		//
+		// }
 	}
 
 	/**
@@ -728,7 +736,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-			boolean isSuperAdmin, Integer selectUserId, String robotName, String orgCode) {
+			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -739,6 +747,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Criteria createCriteria = example.createCriteria();
 		if (phone != null && phone != "") {
 			createCriteria.andPhoneEqualTo(phone);
+		}
+		if (startCallData != null && startCallData != "" && endCallData != null && endCallData != "") {
+			createCriteria.andCallDataBetween(Integer.valueOf(startCallData), Integer.valueOf(endCallData));
+		}
+
+		if (selectUserId != null && selectUserId != 0) {
+			createCriteria.andUserIdEqualTo(selectUserId);
 		}
 
 		if (planStatus != null && planStatus != "") {
@@ -781,18 +796,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 
 		if (!isSuperAdmin) {
-			createCriteria.andOrgCodeLike(orgCode+"%");
+			createCriteria.andOrgCodeLike(orgCode + "%");
 		} else {
-//			// 超级用户
-//			if (selectUserId != null) {
-//				createCriteria.andUserIdEqualTo(selectUserId.intValue());
-//			}
-			if (robotName != "" && robotName != null) {
-				createCriteria.andRobotEqualTo(robotName);
-			}
+			// // 超级用户
+			// if (selectUserId != null) {
+			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
+			// }
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
-		
+
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 
 		// 转换userName
@@ -961,6 +973,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		map.put(2, "完成状态");
 		map.put(3, "暂停状态");
 		map.put(4, "停止状态");
+		// 一键停止4 一键暂停3
+		if (status.equals(Constant.STATUSPLAN_3) || status.equals(Constant.STATUSPLAN_4)) {
+			redisUtil.delVague("dispatch-" + userId);
+		}
+
 		MessageDto result = new MessageDto();
 		if (batchId != 0) {
 			DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
@@ -976,29 +993,29 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			if (selectByExample.size() > 0) {
 				resultPlan = selectByExample.get(0);
-//				boolean res = checkStatus(status, resultPlan);
-//				if (!res) {
-//					result.setResult(false);
-//					result.setMsg("当前批次号码状态处于" + map.get(resultPlan.getStatusPlan()) + "不能进行此状态操作");
-//					return result;
-//				}
+				// boolean res = checkStatus(status, resultPlan);
+				// if (!res) {
+				// result.setResult(false);
+				// result.setMsg("当前批次号码状态处于" +
+				// map.get(resultPlan.getStatusPlan()) + "不能进行此状态操作");
+				// return result;
+				// }
 				// 0未计划1计划中2计划完成3暂停计划4停止计划
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
 				Criteria createCriteria = ex1.createCriteria();
 				if (status.equals("1")) {
-					//一键恢复
+					// 一键恢复
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
-				} 
-				else if(status.equals("3")){
-					//一键暂停
+				} else if (status.equals("3")) {
+					// 一键暂停
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
-					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
-				}
-				else {
-					//一件停止 
+							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
+							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+				} else {
+					// 一件停止
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 				}
@@ -1012,23 +1029,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			Criteria createCriteria = example.createCriteria();
 			// 根据用户id来查询 恢复1 暂停 3 停止4
 			if (status.equals("1")) {
-				//一键恢复
-				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0)
-						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
+				// 一键恢复
+				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
 						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
-			} 
-			else if(status.equals("3")){
-				//一键暂停
-				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0)
-				.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2).andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
-			}
-			else {
-				//一件停止 
-				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0)
-						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+			} else if (status.equals("3")) {
+				// 一键暂停
+				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
+						.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+			} else {
+				// 一件停止
+				createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 			}
 			createCriteria.andUserIdEqualTo(userId.intValue());
-			
+
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 			List<DispatchPlan> succ = new ArrayList<>();
 			List<String> ids = new ArrayList<>();
@@ -1136,7 +1149,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
 		if (!isSuperAdmin) {
 			// createCriteria.andUserIdEqualTo(userId.intValue());
-			createCriteria.andOrgCodeLike(orgCode+"%");
+			createCriteria.andOrgCodeLike(orgCode + "%");
 		}
 		createCriteria.andStatusShowEqualTo(Constant.BATCH_STATUS_SHOW);
 		return dispatchPlanBatchMapper.selectByExample(example);
@@ -1164,7 +1177,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			DispatchPlanExample ex = new DispatchPlanExample();
 			// 如果刷新日期操作 刷新拨打时间小于当前凌晨的日期的号码
-			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr)).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 			return result > 0 ? true : false;
 		} else {
@@ -1181,7 +1195,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				logger.info("error", e);
 			}
 			DispatchPlanExample ex = new DispatchPlanExample();
-			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr)).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 			return result > 0 ? true : false;
 		}
@@ -1218,7 +1233,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag,Integer stausPlan,Integer statusSYNC) {
+	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag, Integer stausPlan, Integer statusSYNC) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -1229,7 +1244,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setCallData(Integer.valueOf(dateNowStr));
 		dis.setCallHour(String.valueOf(hour));
 		dis.setIsDel(Constant.IS_DEL_0);
-        dis.setStatusPlan(stausPlan);
+		dis.setStatusPlan(stausPlan);
 		dis.setStatusSync(statusSYNC);
 		dis.setFlag(flag);
 		dis.setLimitStart(0);
@@ -1354,7 +1369,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			SysUser body = user.getBody();
 			long dateNow = new Date().getTime();
 			long endTimeLong = body.getCreateTime().getTime();
-//			long time = body.getVaildTime().getTime();
+			// long time = body.getVaildTime().getTime();
 			// 结束时间-开始时间 = 天数
 			long day = (dateNow - endTimeLong) / (24 * 60 * 60 * 1000);
 			jsonObject.put("useDay", day);
@@ -1471,7 +1486,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	// }
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId,String flag, Integer limit,Integer lineId) {
+	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId, String flag, Integer limit, Integer lineId) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);

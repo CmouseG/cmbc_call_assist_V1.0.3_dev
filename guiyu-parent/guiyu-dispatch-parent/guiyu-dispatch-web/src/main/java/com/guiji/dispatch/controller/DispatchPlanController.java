@@ -112,9 +112,10 @@ public class DispatchPlanController {
 			@RequestParam(required = true, name = "pagesize") int pagesize, @RequestHeader Long userId,
 			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin,
 			@RequestParam(required = false, name = "selectUserId") Integer selectUserId,
-			@RequestParam(required = false, name = "robotName") String robotName) {
+			@RequestParam(required = false, name = "startCallData") String startCallData,
+			@RequestParam(required = false, name = "endCallData") String endCallData) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize, userId, isSuperAdmin, selectUserId, robotName,orgCode);
+				pagenum, pagesize, userId, isSuperAdmin, selectUserId, startCallData,endCallData,orgCode);
 	}
 
 	/**

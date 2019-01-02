@@ -127,7 +127,7 @@ public interface IDispatchPlanService {
 	 * @param pagesize
 	 * @return
 	 */
-	public Page<DispatchPlan> queryDispatchPlanByParams(String phone,String planStaus,String startTime,String endTime,Integer batchId, String replayType,int pagenum,int pagesize,Long userId,boolean isSuperAdmin,Integer selectUserId,String robotName,String orgCode);
+	public Page<DispatchPlan> queryDispatchPlanByParams(String phone,String planStaus,String startTime,String endTime,Integer batchId, String replayType,int pagenum,int pagesize,Long userId,boolean isSuperAdmin,Integer selectUserId,String startCallData,String endCallData,String orgCode);
 	
 	/**
 	 * 获取客户呼叫计划 

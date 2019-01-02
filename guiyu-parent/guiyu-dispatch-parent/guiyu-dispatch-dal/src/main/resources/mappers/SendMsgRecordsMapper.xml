@@ -3,7 +3,7 @@
 <mapper namespace="com.guiji.dispatch.dao.SendMsgRecordsMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.SendMsgRecords" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="statusCode" property="statuscode" jdbcType="VARCHAR" />
+    <result column="statusCode" property="statuscode" jdbcType="INTEGER" />
     <result column="statusMsg" property="statusmsg" jdbcType="VARCHAR" />
     <result column="requestId" property="requestid" jdbcType="VARCHAR" />
     <result column="phone" property="phone" jdbcType="VARCHAR" />
@@ -108,7 +108,7 @@
     insert into send_msg_records (id, statusCode, statusMsg, 
       requestId, phone, create_time
       )
-    values (#{id,jdbcType=BIGINT}, #{statuscode,jdbcType=VARCHAR}, #{statusmsg,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{statuscode,jdbcType=INTEGER}, #{statusmsg,jdbcType=VARCHAR}, 
       #{requestid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -139,7 +139,7 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="statuscode != null" >
-        #{statuscode,jdbcType=VARCHAR},
+        #{statuscode,jdbcType=INTEGER},
       </if>
       <if test="statusmsg != null" >
         #{statusmsg,jdbcType=VARCHAR},
@@ -168,7 +168,7 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.statuscode != null" >
-        statusCode = #{record.statuscode,jdbcType=VARCHAR},
+        statusCode = #{record.statuscode,jdbcType=INTEGER},
       </if>
       <if test="record.statusmsg != null" >
         statusMsg = #{record.statusmsg,jdbcType=VARCHAR},
@@ -190,7 +190,7 @@
   <update id="updateByExample" parameterType="map" >
     update send_msg_records
     set id = #{record.id,jdbcType=BIGINT},
-      statusCode = #{record.statuscode,jdbcType=VARCHAR},
+      statusCode = #{record.statuscode,jdbcType=INTEGER},
       statusMsg = #{record.statusmsg,jdbcType=VARCHAR},
       requestId = #{record.requestid,jdbcType=VARCHAR},
       phone = #{record.phone,jdbcType=VARCHAR},
@@ -203,7 +203,7 @@
     update send_msg_records
     <set >
       <if test="statuscode != null" >
-        statusCode = #{statuscode,jdbcType=VARCHAR},
+        statusCode = #{statuscode,jdbcType=INTEGER},
       </if>
       <if test="statusmsg != null" >
         statusMsg = #{statusmsg,jdbcType=VARCHAR},
@@ -222,7 +222,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.SendMsgRecords" >
     update send_msg_records
-    set statusCode = #{statuscode,jdbcType=VARCHAR},
+    set statusCode = #{statuscode,jdbcType=INTEGER},
       statusMsg = #{statusmsg,jdbcType=VARCHAR},
       requestId = #{requestid,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},

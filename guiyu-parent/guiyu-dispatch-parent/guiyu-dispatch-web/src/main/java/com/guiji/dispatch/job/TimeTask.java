@@ -172,14 +172,14 @@ public class TimeTask {
 							log.setModularName(Constant.MODULAR_NAME_DISPATCH);
 							log.setStatus(Constant.MODULAR_STATUS_END);
 							log.setPlanUuid(tts.getSeqId());
-							if (tts.getStatus().equals("S")) {
+							if (tts.getStatus() == 1) {
 								DispatchPlan dis = new DispatchPlan();
 								dis.setFlag(Constant.IS_FLAG_2);
 								dis.setPlanUuid(tts.getSeqId());
 								successList.add(dis);
-							} else if (tts.getStatus().equals("F")) {
+							} else{
 								log.setStatus(Constant.MODULAR_STATUS_ERROR);
-								log.setMsg("校验资源状态返回结果为F");
+								log.setMsg("校验资源状态返回结果不为0");
 							}
 							afterlogs.add(log);
 						}

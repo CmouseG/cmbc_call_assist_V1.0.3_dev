@@ -38,7 +38,7 @@ public class RobotHealthCheckResultAnalyse implements IHealthCheckResultAnalyse 
         BeanUtil.copyProperties(processInstanceVO, tmp);
         newCmdMsg.setProcessInstanceVO(tmp);
         newCmdMsg.setParameters(parameters);
-        newCmdMsg.setCommandResult(result);
+        newCmdMsg.setCommandResult(Integer.valueOf(result));
         newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
         newCmdMsg.setReqKey(reqKey);
         ImClientProtocolBO.getIntance().send(newCmdMsg,3);

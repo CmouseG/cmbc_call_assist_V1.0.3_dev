@@ -3,7 +3,6 @@ package com.guiji.robot.service;
 import java.util.List;
 
 import com.guiji.robot.dao.entity.AiCycleHis;
-import com.guiji.robot.dao.entity.RobotCallHis;
 
 /** 
 * @ClassName: IAiCycleHisService 
@@ -26,7 +25,7 @@ public interface IAiCycleHisService {
 	 * @param id
 	 * @return
 	 */
-	AiCycleHis queryById(String id);
+	AiCycleHis queryById(int id);
 	
 	
 	/**
@@ -37,10 +36,4 @@ public interface IAiCycleHisService {
 	 */
 	public List<AiCycleHis> queryByUserIdAndAiNo(String userId,String aiNo);
 	
-	/**
-	 * 根据seqId查询通话历史
-	 * @param seqId
-	 * @return
-	 */
-	public RobotCallHis queryRobotCallhisBySeqId(String seqId);
 }

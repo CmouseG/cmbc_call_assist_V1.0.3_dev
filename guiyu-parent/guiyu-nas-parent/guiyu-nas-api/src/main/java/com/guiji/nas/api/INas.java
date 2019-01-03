@@ -53,5 +53,5 @@ public interface INas {
 			@ApiImplicitParam(name="id",value="文件系统ID",required=true)
 	})
 	@PostMapping(value = "delete")
-	public ReturnData deleteFile(String id);
+	public ReturnData deleteFile(Long id);
 }

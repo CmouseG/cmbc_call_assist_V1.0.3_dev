@@ -34,10 +34,10 @@ import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
-import com.guiji.robot.util.LocalCacheUtil;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -183,7 +183,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		if(StrUtils.isNotEmpty(userId)) {
 			ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userId));
 			if(orgData!=null && orgData.getBody()!=null) {
-				int orgAiNum = StrUtils.isNotEmpty(orgData.getBody().getRobot())?Integer.parseInt(orgData.getBody().getRobot()):0;
+				int orgAiNum = orgData.getBody().getRobot()==null?0:orgData.getBody().getRobot();
 				List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
 				int assignAiNum = 0;
 				if(ListUtil.isNotEmpty(assignList)) {
@@ -213,7 +213,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		//1、查询该用户所属企业所有已分配的机器人数量
 		ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userAiCfgBaseInfo.getUserId()));
 		if(orgData!=null && orgData.getBody()!=null) {
-			int orgAiNum = StrUtils.isNotEmpty(orgData.getBody().getRobot())?Integer.parseInt(orgData.getBody().getRobot()):0;
+			int orgAiNum = orgData.getBody().getRobot()==null?0:orgData.getBody().getRobot();
 			logger.info("用户：{},企业code:{},企业名称：{},企业配置的机器人上限：{}",userAiCfgBaseInfo.getUserId(),orgData.getBody().getCode(),orgData.getBody().getName(),orgAiNum);
 			List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
 			int assignAiNum = 0;
@@ -446,7 +446,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId(), RobotConstants.LOCK_NAME_CFG+userAiCfgInfo.getUserId());
 		if (distributedLockHandler.tryLock(lock)) { // 持锁
 			try {
-				String id = userAiCfgInfo.getId();
+				Integer id = userAiCfgInfo.getId();
 				//查询用户资源配置缓存数据
 				UserResourceCache userResourceCache = aiCacheService.getUserResource(userAiCfgInfo.getUserId());
 				if(userResourceCache == null) {
@@ -454,7 +454,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					userResourceCache = new UserResourceCache();
 					userResourceCache.setUserId(userAiCfgInfo.getUserId());
 				}
-				if(StrUtils.isNotEmpty(id)) {
+				if(id != null) {
 					//Id不为空，更新
 					//更新1个配置项
 					//查询用户机器人数量
@@ -577,7 +577,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	 */
 	@Override
 	@Transactional
-	public void delUserCfg(String userId,String id) {
+	public void delUserCfg(String userId,int id) {
 		if(StrUtils.isNotEmpty(id) && StrUtils.isNotEmpty(userId)) {
 			Lock lock = new Lock(RobotConstants.LOCK_NAME_CFG+userId, RobotConstants.LOCK_NAME_CFG+userId);
 			if (distributedLockHandler.tryLock(lock)) { // 持锁
@@ -585,7 +585,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					//根据id查询用户存量缓存数据
 					UserAiCfgInfo existUserAiCfgInfo = userAiCfgInfoMapper.selectByPrimaryKey(id);
 					if(existUserAiCfgInfo != null) {
-						if(RobotConstants.USER_CFG_STATUS_S.equals(existUserAiCfgInfo.getStatus())) {
+						if(RobotConstants.USER_CFG_STATUS_S == existUserAiCfgInfo.getStatus()) {
 							//如果删除的是正常的数据，那么需要做下变更
 							//用户资源缓存
 							UserResourceCache userResourceCache = aiCacheService.getUserResource(existUserAiCfgInfo.getUserId());
@@ -653,7 +653,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			int existAiNum = 0;
 			if(ListUtil.isNotEmpty(existCfgList)) {
 				for(UserAiCfgInfo cfgInfo : existCfgList) {
-					if(RobotConstants.USER_CFG_STATUS_S.equals(cfgInfo.getStatus())) {
+					if(RobotConstants.USER_CFG_STATUS_S==cfgInfo.getStatus()) {
 						//正常状态
 						existAiNum = existAiNum + cfgInfo.getAiNum();
 					}

@@ -9,7 +9,7 @@ import java.util.Date;
 public class SysDictVO implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private int id;
 
     private String dictKey;
 
@@ -21,17 +21,17 @@ public class SysDictVO implements Serializable{
 
     private String remarks;
 
-    private String delFlag;
+    private int delFlag;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -75,12 +75,12 @@ public class SysDictVO implements Serializable{
         this.remarks = remarks == null ? null : remarks.trim();
     }
 
-    public String getDelFlag() {
+    public int getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
+    public void setDelFlag(int delFlag) {
+        this.delFlag = delFlag;
     }
 
     public Date getCreateTime() {

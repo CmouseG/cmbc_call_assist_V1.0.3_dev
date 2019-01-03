@@ -25,7 +25,7 @@ public class MenuService {
 		mapper.insertSelective(menu);
 	}
 
-	public void delete(Long id){
+	public void delete(Integer id){
 		mapper.deleteByPrimaryKey(id);
 	}
 
@@ -33,7 +33,7 @@ public class MenuService {
 		mapper.updateByPrimaryKeySelective(menu);
 	}
 
-	public SysMenu getMenuById(Long id){
+	public SysMenu getMenuById(Integer id){
 		return mapper.selectByPrimaryKey(id);
 	}
 	
@@ -63,10 +63,10 @@ public class MenuService {
 	}
 	
 	private List<SysMenu> parseTree(List<SysMenu> allMenu){
-		Map<Long,SysMenu> map=new HashMap<>();
+		Map<Integer,SysMenu> map=new HashMap<>();
 		List<SysMenu> list=new ArrayList<>();
 		allMenu.stream().forEach((item)->{
-			Long pid=item.getPid();
+			Integer pid=item.getPid();
 			if(0==pid){
 				list.add(item);
 				map.put(item.getId(), item);

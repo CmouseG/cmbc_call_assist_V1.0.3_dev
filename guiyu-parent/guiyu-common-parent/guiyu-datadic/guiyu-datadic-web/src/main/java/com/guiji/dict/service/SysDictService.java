@@ -15,7 +15,7 @@ public interface SysDictService {
 
     public Page<SysDict> queryDictPage(int pageNo, int pageSize, SysDict sysDict);
 
-    public SysDict get(Long id);
+    public SysDict get(int id);
 
-    public int delete(Long id);
+    public int delete(int id);
 }

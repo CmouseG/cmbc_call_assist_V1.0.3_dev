@@ -10,7 +10,7 @@ public interface UserAiCfgHisInfoMapper {
 
     int deleteByExample(UserAiCfgHisInfoExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(UserAiCfgHisInfo record);
 
@@ -18,7 +18,7 @@ public interface UserAiCfgHisInfoMapper {
 
     List<UserAiCfgHisInfo> selectByExample(UserAiCfgHisInfoExample example);
 
-    UserAiCfgHisInfo selectByPrimaryKey(String id);
+    UserAiCfgHisInfo selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") UserAiCfgHisInfo record, @Param("example") UserAiCfgHisInfoExample example);
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysProcess implements Serializable {
-    private Long id;
+    private Integer id;
 
     private String ip;
 
@@ -26,19 +26,19 @@ public class SysProcess implements Serializable {
 
     private Long updateId;
 
+    private Integer execStatus;
+
     private String createTimeStr;
 
     private String updateTimeStr;
 
-    private Integer execStatus;
-
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -122,6 +122,14 @@ public class SysProcess implements Serializable {
         this.updateId = updateId;
     }
 
+    public Integer getExecStatus() {
+        return execStatus;
+    }
+
+    public void setExecStatus(Integer execStatus) {
+        this.execStatus = execStatus;
+    }
+
     public String getCreateTimeStr() {
         return createTimeStr;
     }
@@ -138,14 +146,6 @@ public class SysProcess implements Serializable {
         this.updateTimeStr = updateTimeStr;
     }
 
-    public Integer getExecStatus() {
-        return execStatus;
-    }
-
-    public void setExecStatus(Integer execStatus) {
-        this.execStatus = execStatus;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -159,13 +159,13 @@ public class SysProcess implements Serializable {
         sb.append(", type=").append(type);
         sb.append(", processKey=").append(processKey);
         sb.append(", status=").append(status);
+        sb.append(", execStatus=").append(execStatus);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", createId=").append(createId);
         sb.append(", updateId=").append(updateId);
         sb.append(", createTimeStr=").append(createTimeStr);
         sb.append(", updateTimeStr=").append(updateTimeStr);
-        sb.append(", execStatus=").append(execStatus);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

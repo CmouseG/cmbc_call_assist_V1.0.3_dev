@@ -9,12 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.robot.dao.AiCycleHisMapper;
-import com.guiji.robot.dao.RobotCallHisMapper;
 import com.guiji.robot.dao.TtsWavHisMapper;
 import com.guiji.robot.dao.entity.AiCycleHis;
 import com.guiji.robot.dao.entity.AiCycleHisExample;
-import com.guiji.robot.dao.entity.RobotCallHis;
-import com.guiji.robot.dao.entity.RobotCallHisExample;
 import com.guiji.robot.service.IAiCycleHisService;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.StrUtils;
@@ -32,8 +29,6 @@ public class AiCycleHisServiceImpl implements IAiCycleHisService {
 	AiCycleHisMapper aiCycleHisMapper;
 	@Autowired
 	TtsWavHisMapper ttsWavHisMapper;
-	@Autowired
-	RobotCallHisMapper robotCallHisMapper; 
 	
 	
 	/**
@@ -63,7 +58,7 @@ public class AiCycleHisServiceImpl implements IAiCycleHisService {
 	 * @return
 	 */
 	@Override
-	public AiCycleHis queryById(String id) {
+	public AiCycleHis queryById(int id) {
 		return aiCycleHisMapper.selectByPrimaryKey(id);
 	}
 	
@@ -84,21 +79,4 @@ public class AiCycleHisServiceImpl implements IAiCycleHisService {
 		return null;
 	}
 	
-	/**
-	 * 根据seqId查询通话历史
-	 * @param seqId
-	 * @return
-	 */
-	@Override
-	public RobotCallHis queryRobotCallhisBySeqId(String seqId) {
-		if(StrUtils.isNotEmpty(seqId)) {
-			RobotCallHisExample example = new RobotCallHisExample();
-			example.createCriteria().andSeqIdEqualTo(seqId);
-			List<RobotCallHis> list = robotCallHisMapper.selectByExample(example);
-			if(ListUtil.isNotEmpty(list)) {
-				return list.get(0);
-			}
-		}
-		return null;
-	}
 }

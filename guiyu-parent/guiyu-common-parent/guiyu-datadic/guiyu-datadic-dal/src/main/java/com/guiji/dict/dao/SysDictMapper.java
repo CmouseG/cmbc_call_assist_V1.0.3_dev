@@ -10,7 +10,7 @@ public interface SysDictMapper {
 
     int deleteByExample(SysDictExample example);
 
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(SysDict record);
 
@@ -18,7 +18,7 @@ public interface SysDictMapper {
 
     List<SysDict> selectByExample(SysDictExample example);
 
-    SysDict selectByPrimaryKey(Long id);
+    SysDict selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") SysDict record, @Param("example") SysDictExample example);
 

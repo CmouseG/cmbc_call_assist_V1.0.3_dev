@@ -18,7 +18,7 @@ public class SysRole implements Serializable {
 
     private Date updateTime;
 
-    private String delFlag="0";
+    private Integer delFlag;
 
     private Integer initRole;
 
@@ -82,13 +82,12 @@ public class SysRole implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getDelFlag() {
+    public Integer getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
-    }
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;    }
 
     public Integer getInitRole() {
         return initRole;

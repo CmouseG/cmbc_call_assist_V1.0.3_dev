@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.process.server.dao.SysProcessTaskMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.process.server.dao.entity.SysProcessTask" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="process_id" property="processId" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="process_id" property="processId" jdbcType="INTEGER" />
     <result column="ip" property="ip" jdbcType="VARCHAR" />
     <result column="port" property="port" jdbcType="VARCHAR" />
     <result column="cmd_type" property="cmdType" jdbcType="INTEGER" />
     <result column="process_key" property="processKey" jdbcType="VARCHAR" />
     <result column="parameters" property="parameters" jdbcType="VARCHAR" />
-    <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="result" property="result" jdbcType="INTEGER" />
     <result column="result_content" property="resultContent" jdbcType="VARCHAR" />
     <result column="exec_status" property="execStatus" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -100,15 +100,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from sys_process_task
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_process_task
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.process.server.dao.entity.SysProcessTaskExample" >
     delete from sys_process_task
@@ -123,9 +123,9 @@
       exec_status, create_time, update_time, 
       create_by, update_by, req_key
       )
-    values (#{id,jdbcType=BIGINT}, #{processId,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{processId,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR}, 
       #{port,jdbcType=VARCHAR}, #{cmdType,jdbcType=INTEGER}, #{processKey,jdbcType=VARCHAR}, 
-      #{parameters,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{resultContent,jdbcType=VARCHAR}, 
+      #{parameters,jdbcType=VARCHAR}, #{result,jdbcType=INTEGER}, #{resultContent,jdbcType=VARCHAR}, 
       #{execStatus,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT}, #{reqKey,jdbcType=VARCHAR}
       )
@@ -181,10 +181,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="processId != null" >
-        #{processId,jdbcType=BIGINT},
+        #{processId,jdbcType=INTEGER},
       </if>
       <if test="ip != null" >
         #{ip,jdbcType=VARCHAR},
@@ -202,7 +202,7 @@
         #{parameters,jdbcType=VARCHAR},
       </if>
       <if test="result != null" >
-        #{result,jdbcType=VARCHAR},
+        #{result,jdbcType=INTEGER},
       </if>
       <if test="resultContent != null" >
         #{resultContent,jdbcType=VARCHAR},
@@ -237,10 +237,10 @@
     update sys_process_task
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.processId != null" >
-        process_id = #{record.processId,jdbcType=BIGINT},
+        process_id = #{record.processId,jdbcType=INTEGER},
       </if>
       <if test="record.ip != null" >
         ip = #{record.ip,jdbcType=VARCHAR},
@@ -258,7 +258,7 @@
         `parameters` = #{record.parameters,jdbcType=VARCHAR},
       </if>
       <if test="record.result != null" >
-        `result` = #{record.result,jdbcType=VARCHAR},
+        `result` = #{record.result,jdbcType=INTEGER},
       </if>
       <if test="record.resultContent != null" >
         result_content = #{record.resultContent,jdbcType=VARCHAR},
@@ -288,14 +288,14 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update sys_process_task
-    set id = #{record.id,jdbcType=BIGINT},
-      process_id = #{record.processId,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
+      process_id = #{record.processId,jdbcType=INTEGER},
       ip = #{record.ip,jdbcType=VARCHAR},
       port = #{record.port,jdbcType=VARCHAR},
       cmd_type = #{record.cmdType,jdbcType=INTEGER},
       process_key = #{record.processKey,jdbcType=VARCHAR},
       `parameters` = #{record.parameters,jdbcType=VARCHAR},
-      `result` = #{record.result,jdbcType=VARCHAR},
+      `result` = #{record.result,jdbcType=INTEGER},
       result_content = #{record.resultContent,jdbcType=VARCHAR},
       exec_status = #{record.execStatus,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -311,7 +311,7 @@
     update sys_process_task
     <set >
       <if test="processId != null" >
-        process_id = #{processId,jdbcType=BIGINT},
+        process_id = #{processId,jdbcType=INTEGER},
       </if>
       <if test="ip != null" >
         ip = #{ip,jdbcType=VARCHAR},
@@ -329,7 +329,7 @@
         `parameters` = #{parameters,jdbcType=VARCHAR},
       </if>
       <if test="result != null" >
-        `result` = #{result,jdbcType=VARCHAR},
+        `result` = #{result,jdbcType=INTEGER},
       </if>
       <if test="resultContent != null" >
         result_content = #{resultContent,jdbcType=VARCHAR},
@@ -353,17 +353,17 @@
         req_key = #{reqKey,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.process.server.dao.entity.SysProcessTask" >
     update sys_process_task
-    set process_id = #{processId,jdbcType=BIGINT},
+    set process_id = #{processId,jdbcType=INTEGER},
       ip = #{ip,jdbcType=VARCHAR},
       port = #{port,jdbcType=VARCHAR},
       cmd_type = #{cmdType,jdbcType=INTEGER},
       process_key = #{processKey,jdbcType=VARCHAR},
       `parameters` = #{parameters,jdbcType=VARCHAR},
-      `result` = #{result,jdbcType=VARCHAR},
+      `result` = #{result,jdbcType=INTEGER},
       result_content = #{resultContent,jdbcType=VARCHAR},
       exec_status = #{execStatus,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -371,6 +371,6 @@
       create_by = #{createBy,jdbcType=BIGINT},
       update_by = #{updateBy,jdbcType=BIGINT},
       req_key = #{reqKey,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

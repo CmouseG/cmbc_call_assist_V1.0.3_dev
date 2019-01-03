@@ -10,7 +10,7 @@ public interface UserAiCfgBaseInfoMapper {
 
     int deleteByExample(UserAiCfgBaseInfoExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(UserAiCfgBaseInfo record);
 
@@ -18,7 +18,7 @@ public interface UserAiCfgBaseInfoMapper {
 
     List<UserAiCfgBaseInfo> selectByExample(UserAiCfgBaseInfoExample example);
 
-    UserAiCfgBaseInfo selectByPrimaryKey(String id);
+    UserAiCfgBaseInfo selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") UserAiCfgBaseInfo record, @Param("example") UserAiCfgBaseInfoExample example);
 

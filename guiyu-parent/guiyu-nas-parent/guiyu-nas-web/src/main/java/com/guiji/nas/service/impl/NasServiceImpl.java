@@ -72,8 +72,8 @@ public class NasServiceImpl implements NasService {
 				skFile.setBusiType(sysFileReqVO.getBusiType()); //文件类型（业务类型）
 				skFile.setSysCode(sysFileReqVO.getSysCode()); //系统代码
 				//String loginId = "1";	//当前登录ID WebContextUtil.getLoginId() TODO
-				skFile.setCrtUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null); //创建人
-				skFile.setLstUpdateUser(sysFileReqVO.getUserId()!=null?String.valueOf(sysFileReqVO.getUserId()):null);	//最后更新人
+				skFile.setCrtUser(sysFileReqVO.getUserId()); //创建人
+				skFile.setLstUpdateUser(sysFileReqVO.getUserId());	//最后更新人
 			}
 			skFile.setFileName(fileName); //文件名称
 			if (file.getSize() <= 0) {//文件大小不能为0
@@ -85,7 +85,6 @@ public class NasServiceImpl implements NasService {
 			skFile.setSkThumbImageUrl(thumbUrl); //缩略图url
 			skFile.setCrtTime(new Date());	//创建时间
 			skFile.setLstUpdateTime(new Date()); //最后创建时间
-			skFile.setId(IdGenUtil.uuid());
 			sysFileMapper.insert(skFile);
 			SysFileRspVO rsp = new SysFileRspVO();
 			//拷贝返回信息
@@ -101,7 +100,7 @@ public class NasServiceImpl implements NasService {
 	 * 删除文件
 	 * @param id void
 	 */
-	public void deleteById(String id) {
+	public void deleteById(Long id) {
 		//先根据主键查出来
 		SysFile skFileInfo = sysFileMapper.selectByPrimaryKey(id);
 		if(skFileInfo != null) {
@@ -126,7 +125,7 @@ public class NasServiceImpl implements NasService {
 	 * @return List<SysFile>
 	 */
 	public List<SysFile> querySkFileByCondition(SysFileQueryReqVO sysFileQueryReqVO){
-		String id = sysFileQueryReqVO.getId();
+		Long id = sysFileQueryReqVO.getId();
 		String sysCode = sysFileQueryReqVO.getSysCode();
 		String busiId = sysFileQueryReqVO.getBusiId();
 		String busiType = sysFileQueryReqVO.getBusiType();

@@ -119,7 +119,7 @@ public class ProcessManageService implements IProcessManageService {
         sysProcessTmp.setIp(processInstanceVO.getIp());
         sysProcessTmp.setPort(String.valueOf(processInstanceVO.getPort()));
         List<SysProcess> sysProcessList = processService.list(sysProcessTmp);
-        Long processId = null;
+        Integer processId = null;
         if (sysProcessList != null && sysProcessList.size()>0) {
             processId = sysProcessList.get(0).getId();
         }

@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysProcessTask implements Serializable {
-    private Long id;
+    private Integer id;
 
-    private Long processId;
+    private Integer processId;
 
     private String ip;
 
@@ -18,7 +18,7 @@ public class SysProcessTask implements Serializable {
 
     private String parameters;
 
-    private String result;
+    private Integer result;
 
     private String resultContent;
 
@@ -40,19 +40,19 @@ public class SysProcessTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getProcessId() {
+    public Integer getProcessId() {
         return processId;
     }
 
-    public void setProcessId(Long processId) {
+    public void setProcessId(Integer processId) {
         this.processId = processId;
     }
 
@@ -96,12 +96,12 @@ public class SysProcessTask implements Serializable {
         this.parameters = parameters == null ? null : parameters.trim();
     }
 
-    public String getResult() {
+    public Integer getResult() {
         return result;
     }
 
-    public void setResult(String result) {
-        this.result = result == null ? null : result.trim();
+    public void setResult(Integer result) {
+        this.result = result;
     }
 
     public String getResultContent() {

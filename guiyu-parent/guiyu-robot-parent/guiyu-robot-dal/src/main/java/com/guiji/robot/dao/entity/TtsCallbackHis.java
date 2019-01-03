@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TtsCallbackHis implements Serializable {
-    private String id;
+    private Integer id;
 
     private String busiId;
 
     private String templateId;
 
-    private String status;
+    private Integer status;
 
     private String errorMsg;
 
@@ -20,12 +20,12 @@ public class TtsCallbackHis implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getBusiId() {
@@ -44,12 +44,12 @@ public class TtsCallbackHis implements Serializable {
         this.templateId = templateId == null ? null : templateId.trim();
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getErrorMsg() {

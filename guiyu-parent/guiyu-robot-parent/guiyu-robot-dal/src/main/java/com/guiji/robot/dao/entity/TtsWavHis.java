@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TtsWavHis implements Serializable {
-    private String id;
+    private Integer id;
 
     private String seqId;
 
@@ -16,11 +16,11 @@ public class TtsWavHis implements Serializable {
 
     private String ttsTxtJsonData;
 
-    private String status;
+    private Integer status;
 
     private String errorMsg;
 
-    private String errorType;
+    private Integer errorType;
 
     private Integer errorTryNum;
 
@@ -30,12 +30,12 @@ public class TtsWavHis implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getSeqId() {
@@ -78,12 +78,12 @@ public class TtsWavHis implements Serializable {
         this.ttsTxtJsonData = ttsTxtJsonData == null ? null : ttsTxtJsonData.trim();
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getErrorMsg() {
@@ -94,12 +94,12 @@ public class TtsWavHis implements Serializable {
         this.errorMsg = errorMsg == null ? null : errorMsg.trim();
     }
 
-    public String getErrorType() {
+    public Integer getErrorType() {
         return errorType;
     }
 
-    public void setErrorType(String errorType) {
-        this.errorType = errorType == null ? null : errorType.trim();
+    public void setErrorType(Integer errorType) {
+        this.errorType = errorType;
     }
 
     public Integer getErrorTryNum() {

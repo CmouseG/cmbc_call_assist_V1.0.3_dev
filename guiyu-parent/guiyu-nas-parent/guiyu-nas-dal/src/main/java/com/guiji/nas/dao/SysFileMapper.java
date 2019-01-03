@@ -10,7 +10,7 @@ public interface SysFileMapper {
 
     int deleteByExample(SysFileExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(SysFile record);
 
@@ -18,7 +18,7 @@ public interface SysFileMapper {
 
     List<SysFile> selectByExample(SysFileExample example);
 
-    SysFile selectByPrimaryKey(String id);
+    SysFile selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") SysFile record, @Param("example") SysFileExample example);
 

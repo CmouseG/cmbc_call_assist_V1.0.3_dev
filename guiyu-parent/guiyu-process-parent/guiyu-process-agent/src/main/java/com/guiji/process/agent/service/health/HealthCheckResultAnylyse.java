@@ -111,7 +111,7 @@ public class HealthCheckResultAnylyse {
     }
 
     public static void doNothing(ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
-        String result = "10";
+        Integer result = 10;
 
         ProcessInstanceVO processInstanceVOTmp = new ProcessInstanceVO();
         BeanUtil.copyProperties(processInstanceVO, processInstanceVOTmp);
@@ -121,7 +121,7 @@ public class HealthCheckResultAnylyse {
         newCmdMsg.setProcessInstanceVO(processInstanceVOTmp);
         newCmdMsg.setParameters(parameters);
         newCmdMsg.setCommandResult(result);
-        newCmdMsg.setCommandResultDesc(Result.error(result).getMsg());
+        newCmdMsg.setCommandResultDesc(Result.error("10").getMsg());
         newCmdMsg.setReqKey(reqKey);
         ImClientProtocolBO.getIntance().send(newCmdMsg,3);
     }

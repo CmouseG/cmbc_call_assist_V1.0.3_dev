@@ -14,7 +14,7 @@ public class SysFileRspVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value="ID",required=true)
-    private String id;
+    private Long id;
     @ApiModelProperty(value="文件名称",required=true)
     private String fileName;
     @ApiModelProperty(value="文件类型",example="JPG,JPEG,DOC")
@@ -32,20 +32,20 @@ public class SysFileRspVO implements Serializable {
     @ApiModelProperty(value="文件上传系统码")
     private String sysCode;
     @ApiModelProperty(value="文件创建人")
-    private String crtUser;
+    private Integer crtUser;
     @ApiModelProperty(value="文件创建时间")
     private String crtTime;
     /**
      * @return the id
      */
-    public String getId() {
+    public Long getId() {
 
         return id;
     }
     /**
      @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
     /**
@@ -155,14 +155,14 @@ public class SysFileRspVO implements Serializable {
     /**
      * @return the crtUser
      */
-    public String getCrtUser() {
+    public Integer getCrtUser() {
 
         return crtUser;
     }
     /**
      @param crtUser the crtUser to set
      */
-    public void setCrtUser(String crtUser) {
+    public void setCrtUser(Integer crtUser) {
         this.crtUser = crtUser;
     }
     /**

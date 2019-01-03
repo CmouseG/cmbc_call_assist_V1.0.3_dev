@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.robot.dao.AiCycleHisMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.AiCycleHis" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
     <result column="ai_name" property="aiName" jdbcType="VARCHAR" />
@@ -94,15 +94,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from ai_cycle_his
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from ai_cycle_his
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.AiCycleHisExample" >
     delete from ai_cycle_his
@@ -111,25 +111,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('ai_cycle_his')
-    </selectKey>
     insert into ai_cycle_his (id, user_id, ai_no, 
       ai_name, template_id, assign_date, 
       assign_time, taskback_date, taskback_time, 
       call_num, crt_time)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNo,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{aiNo,jdbcType=VARCHAR}, 
       #{aiName,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{assignDate,jdbcType=VARCHAR}, 
       #{assignTime,jdbcType=VARCHAR}, #{taskbackDate,jdbcType=VARCHAR}, #{taskbackTime,jdbcType=VARCHAR}, 
       #{callNum,jdbcType=BIGINT}, #{crtTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('ai_cycle_his')
-    </selectKey>
     insert into ai_cycle_his
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      id,
+      <if test="id != null" >
+        id,
+      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -162,7 +158,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="userId != null" >
         #{userId,jdbcType=VARCHAR},
       </if>
@@ -205,7 +203,7 @@
     update ai_cycle_his
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=VARCHAR},
@@ -244,7 +242,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update ai_cycle_his
-    set id = #{record.id,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=VARCHAR},
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       ai_name = #{record.aiName,jdbcType=VARCHAR},
@@ -293,7 +291,7 @@
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.AiCycleHis" >
     update ai_cycle_his
@@ -307,6 +305,6 @@
       taskback_time = #{taskbackTime,jdbcType=VARCHAR},
       call_num = #{callNum,jdbcType=BIGINT},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -5,11 +5,12 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="code" property="code" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="robot" property="robot" jdbcType="VARCHAR" />
-    <result column="line" property="line" jdbcType="VARCHAR" />
-    <result column="open" property="open" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="robot" property="robot" jdbcType="INTEGER" />
+    <result column="line" property="line" jdbcType="INTEGER" />
+    <result column="botstence" property="botstence" jdbcType="INTEGER" />
+    <result column="open" property="open" jdbcType="INTEGER" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
@@ -75,7 +76,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, `name`, code, `type`, robot, line, `open`, del_flag, create_id, create_time, 
+    id, `name`, code, `type`, robot, line, botstence,`open`, del_flag, create_id, create_time,
     update_id, update_time,sub_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysOrganizationExample" >
@@ -114,13 +115,13 @@
   </delete>
   <insert id="insert" parameterType="com.guiji.user.dao.entity.SysOrganization" >
     insert into sys_organization (id, `name`, code, 
-      `type`, robot, line, 
+      `type`, robot, line,botstence,
       `open`, del_flag, create_id, 
       create_time, update_id, update_time,sub_code
       )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR}, #{line,jdbcType=VARCHAR}, 
-      #{open,jdbcType=VARCHAR}, #{delFlag,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
+      #{type,jdbcType=INTEGER}, #{robot,jdbcType=INTEGER}, #{line,jdbcType=INTEGER}, #{botstence,jdbcType=INTEGER},
+      #{open,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER}, #{createId,jdbcType=BIGINT},
       #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR}
       )
   </insert>
@@ -144,6 +145,9 @@
       </if>
       <if test="line != null" >
         line,
+      </if>
+      <if test="botstence != null" >
+        botstence,
       </if>
       <if test="open != null" >
         `open`,
@@ -178,19 +182,22 @@
         #{code,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
-        #{type,jdbcType=VARCHAR},
+        #{type,jdbcType=INTEGER},
       </if>
       <if test="robot != null" >
-        #{robot,jdbcType=VARCHAR},
+        #{robot,jdbcType=INTEGER},
       </if>
       <if test="line != null" >
-        #{line,jdbcType=VARCHAR},
+        #{line,jdbcType=INTEGER},
+      </if>
+      <if test="botstence != null" >
+        #{botstence,jdbcType=INTEGER},
       </if>
       <if test="open != null" >
-        #{open,jdbcType=VARCHAR},
+        #{open,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=VARCHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
@@ -228,19 +235,22 @@
         code = #{record.code,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null" >
-        `type` = #{record.type,jdbcType=VARCHAR},
+        `type` = #{record.type,jdbcType=INTEGER},
       </if>
       <if test="record.robot != null" >
-        robot = #{record.robot,jdbcType=VARCHAR},
+        robot = #{record.robot,jdbcType=INTEGER},
       </if>
       <if test="record.line != null" >
-        line = #{record.line,jdbcType=VARCHAR},
+        line = #{record.line,jdbcType=INTEGER},
+      </if>
+      <if test="record.botstence != null" >
+        botstence = #{record.botstence,jdbcType=INTEGER},
       </if>
       <if test="record.open != null" >
-        `open` = #{record.open,jdbcType=VARCHAR},
+        `open` = #{record.open,jdbcType=INTEGER},
       </if>
       <if test="record.delFlag != null" >
-        del_flag = #{record.delFlag,jdbcType=VARCHAR},
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
       </if>
       <if test="record.createId != null" >
         create_id = #{record.createId,jdbcType=BIGINT},
@@ -267,11 +277,12 @@
     set id = #{record.id,jdbcType=BIGINT},
       `name` = #{record.name,jdbcType=VARCHAR},
       code = #{record.code,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
-      robot = #{record.robot,jdbcType=VARCHAR},
-      line = #{record.line,jdbcType=VARCHAR},
-      `open` = #{record.open,jdbcType=VARCHAR},
-      del_flag = #{record.delFlag,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=INTEGER},
+      robot = #{record.robot,jdbcType=INTEGER},
+      line = #{record.line,jdbcType=INTEGER},
+      botstence = #{record.botstence,jdbcType=INTEGER},
+      `open` = #{record.open,jdbcType=INTEGER},
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=BIGINT},
@@ -291,19 +302,22 @@
         code = #{code,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
-        `type` = #{type,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=INTEGER},
       </if>
       <if test="robot != null" >
-        robot = #{robot,jdbcType=VARCHAR},
+        robot = #{robot,jdbcType=INTEGER},
       </if>
       <if test="line != null" >
-        line = #{line,jdbcType=VARCHAR},
+        line = #{line,jdbcType=INTEGER},
+      </if>
+      <if test="botstence != null" >
+        botstence = #{botstence,jdbcType=INTEGER},
       </if>
       <if test="open != null" >
-        `open` = #{open,jdbcType=VARCHAR},
+        `open` = #{open,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=VARCHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
@@ -327,11 +341,12 @@
     update sys_organization
     set `name` = #{name,jdbcType=VARCHAR},
       code = #{code,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
-      robot = #{robot,jdbcType=VARCHAR},
-      line = #{line,jdbcType=VARCHAR},
-      `open` = #{open,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=INTEGER},
+      robot = #{robot,jdbcType=INTEGER},
+      line = #{line,jdbcType=INTEGER},
+      botstence = #{botstence,jdbcType=INTEGER},
+      `open` = #{open,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=BIGINT},
@@ -342,7 +357,7 @@
   
   <select id="selectByPage" resultType="map">
   	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line
+	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line,a.botstence
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
 	LEFT JOIN sys_user c on a.update_id=c.id
@@ -353,7 +368,7 @@
   
   <select id="selectOpenByPage" resultType="map">
   	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line
+	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,a.robot,a.line,a.botstence
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
 	LEFT JOIN sys_user c on a.update_id=c.id
@@ -374,6 +389,11 @@
   <select id="countCode" resultType="int">
   	SELECT count(1) from sys_organization
 	where code REGEXP concat('^',#{code},'.[0-9]+$')
+  </select>
+
+  <select id="countRobotByUserId" resultType="int">
+    SELECT sum(robot) from sys_organization
+    where code like CONCAT(#{code},'%')
   </select>
   
 </mapper>

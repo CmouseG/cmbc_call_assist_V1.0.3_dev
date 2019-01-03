@@ -35,7 +35,7 @@ public interface NasService {
 	 * @date:2018年6月25日 下午10:09:35 
 	 * @param id void
 	 */
-	public void deleteById(String id);
+	public void deleteById(Long id);
 	
 	/**
 	 * 根据条件查询文件信息列表

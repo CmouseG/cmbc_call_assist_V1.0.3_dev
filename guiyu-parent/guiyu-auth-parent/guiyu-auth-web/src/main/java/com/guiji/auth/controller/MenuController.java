@@ -44,7 +44,7 @@ public class MenuController {
 	}
 	
 	@RequestMapping("delete")
-	public void delete(Long id){
+	public void delete(Integer id){
 		service.delete(id);
 	}
 
@@ -59,7 +59,7 @@ public class MenuController {
 	}
 	
 	@RequestMapping("getMenuById")
-	public SysMenu getMenuById(Long id){
+	public SysMenu getMenuById(Integer id){
 		return service.getMenuById(id);
 	}
 	

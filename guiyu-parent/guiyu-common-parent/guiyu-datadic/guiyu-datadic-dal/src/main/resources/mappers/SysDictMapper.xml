@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.dict.dao.SysDictMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.dict.dao.entity.SysDict" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="dict_key" property="dictKey" jdbcType="VARCHAR" />
     <result column="dict_value" property="dictValue" jdbcType="VARCHAR" />
     <result column="dict_type" property="dictType" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="pid" property="pid" jdbcType="BIGINT" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
@@ -95,15 +95,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from sys_dict
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_dict
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.dict.dao.entity.SysDictExample" >
     delete from sys_dict
@@ -117,9 +117,9 @@
       remarks, del_flag, create_time, 
       update_time, create_id, update_id
       )
-    values (#{id,jdbcType=BIGINT}, #{dictKey,jdbcType=VARCHAR}, #{dictValue,jdbcType=VARCHAR}, 
-      #{dictType,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, 
-      #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{dictKey,jdbcType=VARCHAR}, #{dictValue,jdbcType=VARCHAR}, 
+      #{dictType,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, 
+      #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=BIGINT}, #{updateId,jdbcType=BIGINT}
       )
   </insert>
@@ -165,7 +165,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="dictKey != null" >
         #{dictKey,jdbcType=VARCHAR},
@@ -180,13 +180,13 @@
         #{description,jdbcType=VARCHAR},
       </if>
       <if test="pid != null" >
-        #{pid,jdbcType=BIGINT},
+        #{pid,jdbcType=INTEGER},
       </if>
       <if test="remarks != null" >
         #{remarks,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -212,7 +212,7 @@
     update sys_dict
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.dictKey != null" >
         dict_key = #{record.dictKey,jdbcType=VARCHAR},
@@ -227,13 +227,13 @@
         description = #{record.description,jdbcType=VARCHAR},
       </if>
       <if test="record.pid != null" >
-        pid = #{record.pid,jdbcType=BIGINT},
+        pid = #{record.pid,jdbcType=INTEGER},
       </if>
       <if test="record.remarks != null" >
         remarks = #{record.remarks,jdbcType=VARCHAR},
       </if>
       <if test="record.delFlag != null" >
-        del_flag = #{record.delFlag,jdbcType=CHAR},
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -254,14 +254,14 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update sys_dict
-    set id = #{record.id,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
       dict_key = #{record.dictKey,jdbcType=VARCHAR},
       dict_value = #{record.dictValue,jdbcType=VARCHAR},
       dict_type = #{record.dictType,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
-      pid = #{record.pid,jdbcType=BIGINT},
+      pid = #{record.pid,jdbcType=INTEGER},
       remarks = #{record.remarks,jdbcType=VARCHAR},
-      del_flag = #{record.delFlag,jdbcType=CHAR},
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       create_id = #{record.createId,jdbcType=BIGINT},
@@ -286,13 +286,13 @@
         description = #{description,jdbcType=VARCHAR},
       </if>
       <if test="pid != null" >
-        pid = #{pid,jdbcType=BIGINT},
+        pid = #{pid,jdbcType=INTEGER},
       </if>
       <if test="remarks != null" >
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -307,7 +307,7 @@
         update_id = #{updateId,jdbcType=BIGINT},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.dict.dao.entity.SysDict" >
     update sys_dict
@@ -315,13 +315,13 @@
       dict_value = #{dictValue,jdbcType=VARCHAR},
       dict_type = #{dictType,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
-      pid = #{pid,jdbcType=BIGINT},
+      pid = #{pid,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       create_id = #{createId,jdbcType=BIGINT},
       update_id = #{updateId,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

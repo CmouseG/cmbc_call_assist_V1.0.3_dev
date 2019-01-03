@@ -100,5 +100,5 @@ public interface IUserAiCfgService {
 	 * 删除用户一条资源配置信息
 	 * @param id
 	 */
-	void delUserCfg(String userId,String id);
+	void delUserCfg(String userId,int id);
 }

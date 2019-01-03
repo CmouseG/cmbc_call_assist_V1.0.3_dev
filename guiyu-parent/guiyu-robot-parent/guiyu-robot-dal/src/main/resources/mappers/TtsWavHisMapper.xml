@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.robot.dao.TtsWavHisMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.TtsWavHis" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="seq_id" property="seqId" jdbcType="VARCHAR" />
     <result column="busi_id" property="busiId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="req_params" property="reqParams" jdbcType="VARCHAR" />
     <result column="tts_txt_json_data" property="ttsTxtJsonData" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
     <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
-    <result column="error_type" property="errorType" jdbcType="CHAR" />
+    <result column="error_type" property="errorType" jdbcType="INTEGER" />
     <result column="error_try_num" property="errorTryNum" jdbcType="INTEGER" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -117,17 +117,17 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from tts_wav_his
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from tts_wav_his
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.TtsWavHisExample" >
     delete from tts_wav_his
@@ -136,27 +136,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('tts_wav_his')
-    </selectKey>
     insert into tts_wav_his (id, seq_id, busi_id, 
       template_id, req_params, tts_txt_json_data, 
       `status`, error_msg, error_type, 
       error_try_num, crt_time, tts_json_data
       )
-    values (#{id,jdbcType=VARCHAR}, #{seqId,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{seqId,jdbcType=VARCHAR}, #{busiId,jdbcType=VARCHAR}, 
       #{templateId,jdbcType=VARCHAR}, #{reqParams,jdbcType=VARCHAR}, #{ttsTxtJsonData,jdbcType=VARCHAR}, 
-      #{status,jdbcType=CHAR}, #{errorMsg,jdbcType=VARCHAR}, #{errorType,jdbcType=CHAR}, 
+      #{status,jdbcType=INTEGER}, #{errorMsg,jdbcType=VARCHAR}, #{errorType,jdbcType=INTEGER}, 
       #{errorTryNum,jdbcType=INTEGER}, #{crtTime,jdbcType=TIMESTAMP}, #{ttsJsonData,jdbcType=LONGVARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('tts_wav_his')
-    </selectKey>
     insert into tts_wav_his
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      id,
+      <if test="id != null" >
+        id,
+      </if>
       <if test="seqId != null" >
         seq_id,
       </if>
@@ -192,7 +188,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="seqId != null" >
         #{seqId,jdbcType=VARCHAR},
       </if>
@@ -209,13 +207,13 @@
         #{ttsTxtJsonData,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
-        #{status,jdbcType=CHAR},
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="errorMsg != null" >
         #{errorMsg,jdbcType=VARCHAR},
       </if>
       <if test="errorType != null" >
-        #{errorType,jdbcType=CHAR},
+        #{errorType,jdbcType=INTEGER},
       </if>
       <if test="errorTryNum != null" >
         #{errorTryNum,jdbcType=INTEGER},
@@ -238,7 +236,7 @@
     update tts_wav_his
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.seqId != null" >
         seq_id = #{record.seqId,jdbcType=VARCHAR},
@@ -256,13 +254,13 @@
         tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null" >
-        `status` = #{record.status,jdbcType=CHAR},
+        `status` = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.errorMsg != null" >
         error_msg = #{record.errorMsg,jdbcType=VARCHAR},
       </if>
       <if test="record.errorType != null" >
-        error_type = #{record.errorType,jdbcType=CHAR},
+        error_type = #{record.errorType,jdbcType=INTEGER},
       </if>
       <if test="record.errorTryNum != null" >
         error_try_num = #{record.errorTryNum,jdbcType=INTEGER},
@@ -280,15 +278,15 @@
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map" >
     update tts_wav_his
-    set id = #{record.id,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
       seq_id = #{record.seqId,jdbcType=VARCHAR},
       busi_id = #{record.busiId,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       req_params = #{record.reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=CHAR},
+      `status` = #{record.status,jdbcType=INTEGER},
       error_msg = #{record.errorMsg,jdbcType=VARCHAR},
-      error_type = #{record.errorType,jdbcType=CHAR},
+      error_type = #{record.errorType,jdbcType=INTEGER},
       error_try_num = #{record.errorTryNum,jdbcType=INTEGER},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{record.ttsJsonData,jdbcType=LONGVARCHAR}
@@ -298,15 +296,15 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update tts_wav_his
-    set id = #{record.id,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
       seq_id = #{record.seqId,jdbcType=VARCHAR},
       busi_id = #{record.busiId,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       req_params = #{record.reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{record.ttsTxtJsonData,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=CHAR},
+      `status` = #{record.status,jdbcType=INTEGER},
       error_msg = #{record.errorMsg,jdbcType=VARCHAR},
-      error_type = #{record.errorType,jdbcType=CHAR},
+      error_type = #{record.errorType,jdbcType=INTEGER},
       error_try_num = #{record.errorTryNum,jdbcType=INTEGER},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
@@ -332,13 +330,13 @@
         tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
-        `status` = #{status,jdbcType=CHAR},
+        `status` = #{status,jdbcType=INTEGER},
       </if>
       <if test="errorMsg != null" >
         error_msg = #{errorMsg,jdbcType=VARCHAR},
       </if>
       <if test="errorType != null" >
-        error_type = #{errorType,jdbcType=CHAR},
+        error_type = #{errorType,jdbcType=INTEGER},
       </if>
       <if test="errorTryNum != null" >
         error_try_num = #{errorTryNum,jdbcType=INTEGER},
@@ -350,7 +348,7 @@
         tts_json_data = #{ttsJsonData,jdbcType=LONGVARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
     update tts_wav_his
@@ -359,13 +357,13 @@
       template_id = #{templateId,jdbcType=VARCHAR},
       req_params = #{reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=CHAR},
+      `status` = #{status,jdbcType=INTEGER},
       error_msg = #{errorMsg,jdbcType=VARCHAR},
-      error_type = #{errorType,jdbcType=CHAR},
+      error_type = #{errorType,jdbcType=INTEGER},
       error_try_num = #{errorTryNum,jdbcType=INTEGER},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       tts_json_data = #{ttsJsonData,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
     update tts_wav_his
@@ -374,11 +372,11 @@
       template_id = #{templateId,jdbcType=VARCHAR},
       req_params = #{reqParams,jdbcType=VARCHAR},
       tts_txt_json_data = #{ttsTxtJsonData,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=CHAR},
+      `status` = #{status,jdbcType=INTEGER},
       error_msg = #{errorMsg,jdbcType=VARCHAR},
-      error_type = #{errorType,jdbcType=CHAR},
+      error_type = #{errorType,jdbcType=INTEGER},
       error_try_num = #{errorTryNum,jdbcType=INTEGER},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

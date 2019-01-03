@@ -422,62 +422,62 @@ public class SysUserExample {
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeEqualTo(String value) {
+        public Criteria andPushTypeEqualTo(Integer value) {
             addCriterion("push_type =", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeNotEqualTo(String value) {
+        public Criteria andPushTypeNotEqualTo(Integer value) {
             addCriterion("push_type <>", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeGreaterThan(String value) {
+        public Criteria andPushTypeGreaterThan(Integer value) {
             addCriterion("push_type >", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andPushTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("push_type >=", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeLessThan(String value) {
+        public Criteria andPushTypeLessThan(Integer value) {
             addCriterion("push_type <", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeLessThanOrEqualTo(String value) {
+        public Criteria andPushTypeLessThanOrEqualTo(Integer value) {
             addCriterion("push_type <=", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeLike(String value) {
+        public Criteria andPushTypeLike(Integer value) {
             addCriterion("push_type like", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeNotLike(String value) {
+        public Criteria andPushTypeNotLike(Integer value) {
             addCriterion("push_type not like", value, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeIn(List<String> values) {
+        public Criteria andPushTypeIn(List<Integer> values) {
             addCriterion("push_type in", values, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeNotIn(List<String> values) {
+        public Criteria andPushTypeNotIn(List<Integer> values) {
             addCriterion("push_type not in", values, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeBetween(String value1, String value2) {
+        public Criteria andPushTypeBetween(Integer value1, Integer value2) {
             addCriterion("push_type between", value1, value2, "pushType");
             return (Criteria) this;
         }
 
-        public Criteria andPushTypeNotBetween(String value1, String value2) {
+        public Criteria andPushTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("push_type not between", value1, value2, "pushType");
             return (Criteria) this;
         }
@@ -1152,62 +1152,62 @@ public class SysUserExample {
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagEqualTo(String value) {
+        public Criteria andDelFlagEqualTo(Integer value) {
             addCriterion("del_flag =", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotEqualTo(String value) {
+        public Criteria andDelFlagNotEqualTo(Integer value) {
             addCriterion("del_flag <>", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagGreaterThan(String value) {
+        public Criteria andDelFlagGreaterThan(Integer value) {
             addCriterion("del_flag >", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagGreaterThanOrEqualTo(String value) {
+        public Criteria andDelFlagGreaterThanOrEqualTo(Integer value) {
             addCriterion("del_flag >=", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagLessThan(String value) {
+        public Criteria andDelFlagLessThan(Integer value) {
             addCriterion("del_flag <", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagLessThanOrEqualTo(String value) {
+        public Criteria andDelFlagLessThanOrEqualTo(Integer value) {
             addCriterion("del_flag <=", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagLike(String value) {
+        public Criteria andDelFlagLike(Integer value) {
             addCriterion("del_flag like", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotLike(String value) {
+        public Criteria andDelFlagNotLike(Integer value) {
             addCriterion("del_flag not like", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagIn(List<String> values) {
+        public Criteria andDelFlagIn(List<Integer> values) {
             addCriterion("del_flag in", values, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotIn(List<String> values) {
+        public Criteria andDelFlagNotIn(List<Integer> values) {
             addCriterion("del_flag not in", values, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagBetween(String value1, String value2) {
+        public Criteria andDelFlagBetween(Integer value1, Integer value2) {
             addCriterion("del_flag between", value1, value2, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotBetween(String value1, String value2) {
+        public Criteria andDelFlagNotBetween(Integer value1, Integer value2) {
             addCriterion("del_flag not between", value1, value2, "delFlag");
             return (Criteria) this;
         }

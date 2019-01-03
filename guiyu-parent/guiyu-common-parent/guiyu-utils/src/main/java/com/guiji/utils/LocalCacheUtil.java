@@ -1,4 +1,4 @@
-package com.guiji.robot.util;
+package com.guiji.utils;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

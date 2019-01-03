@@ -12,7 +12,7 @@ public class SysUser implements Serializable {
 
     private Integer status;
 
-    private String pushType;
+    private Integer pushType;
 
     private String callRecordUrl;
 
@@ -34,7 +34,7 @@ public class SysUser implements Serializable {
 
     private Date updateTime;
 
-    private String delFlag="0";
+    private Integer delFlag;
 
     private Date vaildTime;
 
@@ -76,12 +76,12 @@ public class SysUser implements Serializable {
         this.status = status;
     }
 
-    public String getPushType() {
+    public Integer getPushType() {
         return pushType;
     }
 
-    public void setPushType(String pushType) {
-        this.pushType = pushType == null ? null : pushType.trim();
+    public void setPushType(Integer pushType) {
+        this.pushType = pushType;
     }
 
     public String getCallRecordUrl() {
@@ -164,12 +164,12 @@ public class SysUser implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getDelFlag() {
+    public Integer getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
     }
 
     public Date getVaildTime() {

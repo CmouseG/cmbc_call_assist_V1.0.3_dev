@@ -57,7 +57,7 @@ public class TtsJobTimer {
 	 * TTS查证服务
 	 * 处理TTS合成超过10分钟仍是处理中的数据
 	 */
-	@Scheduled(cron="0 0/10 9-20 * * ?")
+	@Scheduled(cron="0 0/10 * * * ?")
     public void ttsCheck(){
     	Lock lock = new Lock("LOCK_ROBOT_TTS_CHECK_JOB", "LOCK_ROBOT_TTS_CHECK_JOB");
     	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试
@@ -81,14 +81,15 @@ public class TtsJobTimer {
 							ReturnData<TtsRspVO> ttsRspData = iTts.getTtsResultByBusId(busiId);
 							if(ttsRspData != null && RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode()) && ttsRspData.getBody()!=null){
 								TtsRspVO ttsRspVO = ttsRspData.getBody();
-								String status = ttsRspVO.getStatus();	//TTS查证接口返回状态
+								int status = ttsRspVO.getStatus();	//TTS查证接口返回状态
+								int statusInt = 99;
 								//查证接口只处理终态，成功、失败
 								if(RobotConstants.TTS_INTERFACE_DOING.equals(status)) {
 									//将状态转为内部完成状态
-									status = RobotConstants.TTS_STATUS_S;
+									statusInt = RobotConstants.TTS_STATUS_S;
 								}else if(RobotConstants.TTS_INTERFACE_FAIL.equals(status)) {
 									//将状态转为内部失败状态
-									status = RobotConstants.TTS_STATUS_F;
+									statusInt = RobotConstants.TTS_STATUS_F;
 								}else {
 									logger.info("数据{}调研TTS接口状态{}不是终态,continue",busiId,status);
 									continue;
@@ -102,7 +103,7 @@ public class TtsJobTimer {
 									String jsonData = JSON.toJSONString(ttsRspVO.getAudios());
 									ttsCallbackHis.setTtsJsonData(jsonData);
 								}
-								ttsCallbackHis.setStatus(status);
+								ttsCallbackHis.setStatus(statusInt);
 								String errorMsg = ttsRspVO.getErrorMsg();
 								if(StrUtils.isNotEmpty(errorMsg) && errorMsg.length()>1024) {
 									//如果异常信息超长，截取下

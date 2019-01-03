@@ -31,6 +31,7 @@ import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.robot.model.UserAiCfgVO;
 import com.guiji.robot.service.IAiAbilityCenterService;
@@ -164,10 +165,30 @@ public class RobotRemoteController implements IRobotRemote{
 	
 	
 	/**
-	 * 用户语音AI响应
-	 * @param aiCallNextReq
+	 * 查询用户机器人配置基本信息
+	 * @param userId 用户id
 	 * @return
 	 */
+	@Override
+	public Result.ReturnData<UserAiCfgBaseInfoVO> queryCustBaseAccount(@RequestParam(value="userId",required=true)String userId){
+		if(StrUtils.isEmpty(userId)) {
+			//必输校验
+			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
+		}
+		//查询用户机器人配置基本信息
+		UserAiCfgBaseInfo userAiCfgBaseInfo = iUserAiCfgService.queryUserAiCfgBaseInfoByUserId(userId);
+		UserAiCfgBaseInfoVO vo = new UserAiCfgBaseInfoVO();
+		BeanUtil.copyProperties(userAiCfgBaseInfo, vo);
+		return Result.ok(vo);
+	}
+	
+	
+	/**
+	 * 查询用户机器人拆分详情
+	 * @param userId 用户id
+	 * @return
+	 */
+	@Override
 	public Result.ReturnData<UserAiCfgVO> queryCustAccount(@RequestParam(value="userId",required=true)String userId){
 		if(StrUtils.isEmpty(userId)) {
 			//必输校验

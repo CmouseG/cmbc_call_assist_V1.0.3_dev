@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 public class SysMenu implements Serializable {
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -14,11 +14,11 @@ public class SysMenu implements Serializable {
 
     private String url;
 
-    private Long pid;
+    private Integer pid;
 
     private String permission;
 
-    private Long isShow;
+    private Integer isShow;
 
     private Long createId;
 
@@ -28,25 +28,25 @@ public class SysMenu implements Serializable {
 
     private Date updateTime;
 
-    private String type;
+    private Integer type;
 
-    private String level;
+    private Integer level;
 
-    private Long appid;
+    private Integer appid;
 
     private String remarks;
 
-    private String delFlag="0";
-    
+    private Integer delFlag;
+
     private List<SysMenu> child=new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -74,11 +74,11 @@ public class SysMenu implements Serializable {
         this.url = url == null ? null : url.trim();
     }
 
-    public Long getPid() {
+    public Integer getPid() {
         return pid;
     }
 
-    public void setPid(Long pid) {
+    public void setPid(Integer pid) {
         this.pid = pid;
     }
 
@@ -90,11 +90,11 @@ public class SysMenu implements Serializable {
         this.permission = permission == null ? null : permission.trim();
     }
 
-    public Long getIsShow() {
+    public Integer getIsShow() {
         return isShow;
     }
 
-    public void setIsShow(Long isShow) {
+    public void setIsShow(Integer isShow) {
         this.isShow = isShow;
     }
 
@@ -130,27 +130,27 @@ public class SysMenu implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type == null ? null : type.trim();
+    public void setType(Integer type) {
+        this.type = type;
     }
 
-    public String getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
-        this.level = level == null ? null : level.trim();
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
-    public Long getAppid() {
+    public Integer getAppid() {
         return appid;
     }
 
-    public void setAppid(Long appid) {
+    public void setAppid(Integer appid) {
         this.appid = appid;
     }
 
@@ -162,23 +162,23 @@ public class SysMenu implements Serializable {
         this.remarks = remarks == null ? null : remarks.trim();
     }
 
-    public String getDelFlag() {
+    public Integer getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
     }
-    
-	public List<SysMenu> getChild() {
-		return child;
-	}
 
-	public void setChild(List<SysMenu> child) {
-		this.child = child;
-	}
+    public List<SysMenu> getChild() {
+        return child;
+    }
 
-	@Override
+    public void setChild(List<SysMenu> child) {
+        this.child = child;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

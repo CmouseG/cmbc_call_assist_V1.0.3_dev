@@ -44,7 +44,7 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
     }
 
     @Override
-    public boolean delete(long id) {
+    public boolean delete(Integer id) {
         int result = sysProcessTaskMapper.deleteByPrimaryKey(id);
         return result >0 ? true:false;
     }
@@ -97,17 +97,17 @@ public class SysProcessTaskServiceImpl implements ISysProcessTaskService {
     private SysProcessTaskExample getExampleByCondition(SysProcessTask sysProcessTask) {
         logger.info("查询进程操作列表，查询条件="+sysProcessTask);
         if(sysProcessTask != null) {
-            Long id = sysProcessTask.getId();	//主键ID
+            Integer id = sysProcessTask.getId();	//主键ID
             String ip = sysProcessTask.getIp();//ip
             String port = sysProcessTask.getPort();	//端口
             Integer cmdType = sysProcessTask.getCmdType();	//动作类型
             String processKey = sysProcessTask.getProcessKey();//扩展字段，资源类型为TTS存模型名称
             String parameters = sysProcessTask.getParameters();//命令参数
-            String result = sysProcessTask.getResult();//命令执行结果
+            Integer result = sysProcessTask.getResult();//命令执行结果
             String resultContent = sysProcessTask.getResultContent();//命令执行结果描述
             Integer execStatus = sysProcessTask.getExecStatus();
             String reqKey = sysProcessTask.getReqKey();
-            Long processId = sysProcessTask.getProcessId();
+            Integer processId = sysProcessTask.getProcessId();
             SysProcessTaskExample example = new SysProcessTaskExample();
             SysProcessTaskExample.Criteria criteria = example.createCriteria();
             if(id != null) {

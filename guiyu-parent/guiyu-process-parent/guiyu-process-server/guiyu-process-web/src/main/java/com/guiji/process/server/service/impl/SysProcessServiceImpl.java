@@ -83,7 +83,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
     }
 
     @Override
-    public boolean delete(long id) {
+    public boolean delete(int id) {
         int result = sysProcessMapper.deleteByPrimaryKey(id);
         return result >0 ? true:false;
     }
@@ -180,7 +180,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
     private SysProcessExample getExampleByCondition(SysProcess sysProcess) {
         logger.info("查询进程，查询条件="+sysProcess);
         if(sysProcess != null) {
-            Long id = sysProcess.getId();	//主键ID
+            Integer id = sysProcess.getId();	//主键ID
             String ip = sysProcess.getIp();//ip
             String port = sysProcess.getPort();	//端口
             String name = sysProcess.getName();	//资源名称
@@ -220,7 +220,7 @@ public class SysProcessServiceImpl implements ISysProcessService {
     private SysProcessExample getNoAgentExampleByCondition(SysProcess sysProcess) {
         logger.info("查询进程，查询条件="+sysProcess);
         if(sysProcess != null) {
-            Long id = sysProcess.getId();	//主键ID
+            Integer id = sysProcess.getId();	//主键ID
             String ip = sysProcess.getIp();//ip
             String port = sysProcess.getPort();	//端口
             String name = sysProcess.getName();	//资源名称

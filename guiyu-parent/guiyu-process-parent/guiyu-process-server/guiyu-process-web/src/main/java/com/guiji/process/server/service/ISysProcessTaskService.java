@@ -12,7 +12,7 @@ import java.util.List;
 public interface ISysProcessTaskService {
     public boolean insert(SysProcessTask sysProcessTask);
 
-    public boolean delete(long id);
+    public boolean delete(Integer id);
 
     public Page<SysProcessTask> queryProcessTaskPage(int pageNo, int pageSize, SysProcessTask sysProcessTask);
 

@@ -10,7 +10,7 @@ public interface SysProcessTaskMapper {
 
     int deleteByExample(SysProcessTaskExample example);
 
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(SysProcessTask record);
 
@@ -18,7 +18,7 @@ public interface SysProcessTaskMapper {
 
     List<SysProcessTask> selectByExample(SysProcessTaskExample example);
 
-    SysProcessTask selectByPrimaryKey(Long id);
+    SysProcessTask selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") SysProcessTask record, @Param("example") SysProcessTaskExample example);
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.process.server.dao.SysProcessMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.process.server.dao.entity.SysProcess" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="ip" property="ip" jdbcType="VARCHAR" />
     <result column="port" property="port" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
@@ -75,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time, create_id,update_id,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
+    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time, create_id, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
+    update_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessExample" >
     select
@@ -95,15 +96,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from sys_process
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_process
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.process.server.dao.entity.SysProcessExample" >
     delete from sys_process
@@ -116,7 +117,7 @@
       `name`, `type`, process_key, 
       `status`, create_time, update_time, 
       create_id, update_id)
-    values (#{id,jdbcType=BIGINT}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{processKey,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{createId,jdbcType=BIGINT}, #{updateId,jdbcType=BIGINT})
@@ -160,7 +161,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="ip != null" >
         #{ip,jdbcType=VARCHAR},
@@ -204,7 +205,7 @@
     update sys_process
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.ip != null" >
         ip = #{record.ip,jdbcType=VARCHAR},
@@ -243,7 +244,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update sys_process
-    set id = #{record.id,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
       ip = #{record.ip,jdbcType=VARCHAR},
       port = #{record.port,jdbcType=VARCHAR},
       `name` = #{record.name,jdbcType=VARCHAR},
@@ -292,7 +293,7 @@
         update_id = #{updateId,jdbcType=BIGINT},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.process.server.dao.entity.SysProcess" >
     update sys_process
@@ -306,6 +307,6 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       create_id = #{createId,jdbcType=BIGINT},
       update_id = #{updateId,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

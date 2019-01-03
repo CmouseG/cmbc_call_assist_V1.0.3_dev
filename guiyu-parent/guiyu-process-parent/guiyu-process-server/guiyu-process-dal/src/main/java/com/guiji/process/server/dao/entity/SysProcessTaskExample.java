@@ -135,52 +135,52 @@ public class SysProcessTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Long value) {
+        public Criteria andIdEqualTo(Integer value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Long value) {
+        public Criteria andIdNotEqualTo(Integer value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Long value) {
+        public Criteria andIdGreaterThan(Integer value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Long value) {
+        public Criteria andIdLessThan(Integer value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Long value) {
+        public Criteria andIdLessThanOrEqualTo(Integer value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Long> values) {
+        public Criteria andIdIn(List<Integer> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Long> values) {
+        public Criteria andIdNotIn(List<Integer> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Long value1, Long value2) {
+        public Criteria andIdBetween(Integer value1, Integer value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Long value1, Long value2) {
+        public Criteria andIdNotBetween(Integer value1, Integer value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -195,52 +195,52 @@ public class SysProcessTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdEqualTo(Long value) {
+        public Criteria andProcessIdEqualTo(Integer value) {
             addCriterion("process_id =", value, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdNotEqualTo(Long value) {
+        public Criteria andProcessIdNotEqualTo(Integer value) {
             addCriterion("process_id <>", value, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdGreaterThan(Long value) {
+        public Criteria andProcessIdGreaterThan(Integer value) {
             addCriterion("process_id >", value, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andProcessIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("process_id >=", value, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdLessThan(Long value) {
+        public Criteria andProcessIdLessThan(Integer value) {
             addCriterion("process_id <", value, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdLessThanOrEqualTo(Long value) {
+        public Criteria andProcessIdLessThanOrEqualTo(Integer value) {
             addCriterion("process_id <=", value, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdIn(List<Long> values) {
+        public Criteria andProcessIdIn(List<Integer> values) {
             addCriterion("process_id in", values, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdNotIn(List<Long> values) {
+        public Criteria andProcessIdNotIn(List<Integer> values) {
             addCriterion("process_id not in", values, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdBetween(Long value1, Long value2) {
+        public Criteria andProcessIdBetween(Integer value1, Integer value2) {
             addCriterion("process_id between", value1, value2, "processId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessIdNotBetween(Long value1, Long value2) {
+        public Criteria andProcessIdNotBetween(Integer value1, Integer value2) {
             addCriterion("process_id not between", value1, value2, "processId");
             return (Criteria) this;
         }
@@ -595,62 +595,52 @@ public class SysProcessTaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andResultEqualTo(String value) {
+        public Criteria andResultEqualTo(Integer value) {
             addCriterion("`result` =", value, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultNotEqualTo(String value) {
+        public Criteria andResultNotEqualTo(Integer value) {
             addCriterion("`result` <>", value, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultGreaterThan(String value) {
+        public Criteria andResultGreaterThan(Integer value) {
             addCriterion("`result` >", value, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultGreaterThanOrEqualTo(String value) {
+        public Criteria andResultGreaterThanOrEqualTo(Integer value) {
             addCriterion("`result` >=", value, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultLessThan(String value) {
+        public Criteria andResultLessThan(Integer value) {
             addCriterion("`result` <", value, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultLessThanOrEqualTo(String value) {
+        public Criteria andResultLessThanOrEqualTo(Integer value) {
             addCriterion("`result` <=", value, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultLike(String value) {
-            addCriterion("`result` like", value, "result");
-            return (Criteria) this;
-        }
-
-        public Criteria andResultNotLike(String value) {
-            addCriterion("`result` not like", value, "result");
-            return (Criteria) this;
-        }
-
-        public Criteria andResultIn(List<String> values) {
+        public Criteria andResultIn(List<Integer> values) {
             addCriterion("`result` in", values, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultNotIn(List<String> values) {
+        public Criteria andResultNotIn(List<Integer> values) {
             addCriterion("`result` not in", values, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultBetween(String value1, String value2) {
+        public Criteria andResultBetween(Integer value1, Integer value2) {
             addCriterion("`result` between", value1, value2, "result");
             return (Criteria) this;
         }
 
-        public Criteria andResultNotBetween(String value1, String value2) {
+        public Criteria andResultNotBetween(Integer value1, Integer value2) {
             addCriterion("`result` not between", value1, value2, "result");
             return (Criteria) this;
         }

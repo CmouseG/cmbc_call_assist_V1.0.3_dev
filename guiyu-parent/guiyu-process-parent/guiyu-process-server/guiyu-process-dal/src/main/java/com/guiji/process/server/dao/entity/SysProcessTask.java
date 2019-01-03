@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysProcessTask implements Serializable {
-    private Long id;
+    private Integer id;
 
-    private Long processId;
+    private Integer processId;
 
     private String ip;
 
@@ -18,7 +18,7 @@ public class SysProcessTask implements Serializable {
 
     private String parameters;
 
-    private String result;
+    private Integer result;
 
     private String resultContent;
 
@@ -34,25 +34,21 @@ public class SysProcessTask implements Serializable {
 
     private String reqKey;
 
-    private String createTimeStr;
-
-    private String updateTimeStr;
-
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getProcessId() {
+    public Integer getProcessId() {
         return processId;
     }
 
-    public void setProcessId(Long processId) {
+    public void setProcessId(Integer processId) {
         this.processId = processId;
     }
 
@@ -96,12 +92,12 @@ public class SysProcessTask implements Serializable {
         this.parameters = parameters == null ? null : parameters.trim();
     }
 
-    public String getResult() {
+    public Integer getResult() {
         return result;
     }
 
-    public void setResult(String result) {
-        this.result = result == null ? null : result.trim();
+    public void setResult(Integer result) {
+        this.result = result;
     }
 
     public String getResultContent() {
@@ -160,22 +156,6 @@ public class SysProcessTask implements Serializable {
         this.reqKey = reqKey == null ? null : reqKey.trim();
     }
 
-    public String getCreateTimeStr() {
-        return createTimeStr;
-    }
-
-    public void setCreateTimeStr(String createTimeStr) {
-        this.createTimeStr = createTimeStr;
-    }
-
-    public String getUpdateTimeStr() {
-        return updateTimeStr;
-    }
-
-    public void setUpdateTimeStr(String updateTimeStr) {
-        this.updateTimeStr = updateTimeStr;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -197,8 +177,6 @@ public class SysProcessTask implements Serializable {
         sb.append(", createBy=").append(createBy);
         sb.append(", updateBy=").append(updateBy);
         sb.append(", reqKey=").append(reqKey);
-        sb.append(", createTimeStr=").append(createTimeStr);
-        sb.append(", updateTimeStr=").append(updateTimeStr);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

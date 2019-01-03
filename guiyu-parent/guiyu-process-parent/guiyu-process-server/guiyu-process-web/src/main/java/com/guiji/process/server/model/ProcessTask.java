@@ -22,7 +22,7 @@ public class ProcessTask {
 
     private int retryCount;
 
-    private String result;
+    private Integer result;
 
     private Date exeTime;
 
@@ -82,11 +82,11 @@ public class ProcessTask {
         this.exeTime = exeTime;
     }
 
-    public String getResult() {
+    public Integer getResult() {
         return result;
     }
 
-    public void setResult(String result) {
+    public void setResult(Integer result) {
         this.result = result;
     }
 

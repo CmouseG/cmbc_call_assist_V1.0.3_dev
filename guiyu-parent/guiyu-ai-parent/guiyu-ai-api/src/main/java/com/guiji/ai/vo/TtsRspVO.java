@@ -18,7 +18,7 @@ public class TtsRspVO implements Serializable {
     private String busId;
 
     @ApiModelProperty(value="处理状态:0-未处理;1-处理中;2-已完成;3-处理失败",required=true)
-	private String status;
+	private Integer status;
     
     @ApiModelProperty(value="失败原因")
     private String errorMsg;
@@ -35,11 +35,11 @@ public class TtsRspVO implements Serializable {
 		this.busId = busId;
 	}
 
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 

@@ -46,8 +46,8 @@ public class TtsServiceImpl implements ITtsService
 		ExecutorService executorService = Executors.newFixedThreadPool(10);
 		// 结果集
 		Map<String, String> radioMap = new HashMap<String, String>();
-		String status = "S"; //返回状态
-		String tableStatus = AiConstants.FINISHED; //表状态
+		int status = 1; //返回状态 ，1-成功
+		int tableStatus = AiConstants.FINISHED; //表状态
 		String errMsg = null;
 
 		try
@@ -70,7 +70,7 @@ public class TtsServiceImpl implements ITtsService
 		{
 			logger.error("处理失败！", e);
 			errMsg = e.getMessage();
-			status = "F";
+			status = 0; // 0-失败
 			tableStatus = AiConstants.FAIL;
 		}
 

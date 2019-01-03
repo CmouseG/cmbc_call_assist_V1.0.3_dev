@@ -12,15 +12,11 @@ public class TtsModel implements Serializable {
 
     private String ttsPort;
 
-    private String status;
+    private Integer status;
 
     private Date createTime;
 
-    private Long createBy;
-
     private Date updateTime;
-
-    private Long updateBy;
 
     private String company;
 
@@ -58,12 +54,12 @@ public class TtsModel implements Serializable {
         this.ttsPort = ttsPort == null ? null : ttsPort.trim();
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Date getCreateTime() {
@@ -74,28 +70,12 @@ public class TtsModel implements Serializable {
         this.createTime = createTime;
     }
 
-    public Long getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Long createBy) {
-        this.createBy = createBy;
-    }
-
     public Date getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Long getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Long updateBy) {
-        this.updateBy = updateBy;
     }
 
     public String getCompany() {
@@ -118,9 +98,7 @@ public class TtsModel implements Serializable {
         sb.append(", ttsPort=").append(ttsPort);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);
-        sb.append(", createBy=").append(createBy);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", updateBy=").append(updateBy);
         sb.append(", company=").append(company);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

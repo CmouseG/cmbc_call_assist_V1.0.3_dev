@@ -194,7 +194,7 @@ public class TtsGpu extends TtsServiceProvide {
 		ttsResult.setTtsPort(port);
 		ttsResult.setContent(text); //待转换文本内容
 		ttsResult.setCreateTime(new Date());
-		ttsResult.setDelFlag("0"); //删除标识：0-正常，1-删除
+		ttsResult.setDelFlag(0); //删除标识：0-正常，1-删除
 		ttsResult.setModel(model);
 		SaveTtsResultHandler.getInstance().add(ttsResult, ttsResultMapper);
 	}

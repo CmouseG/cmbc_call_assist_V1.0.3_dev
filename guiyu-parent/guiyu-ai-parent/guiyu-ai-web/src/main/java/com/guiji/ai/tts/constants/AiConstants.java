@@ -23,10 +23,10 @@ public class AiConstants {
 	public static final String SUB = "sub";
 	
 	//status 表状态
-	public static final String UNTREATED = "0"; //未处理
-	public static final String DOING = "1"; //正在处理
-	public static final String FINISHED = "2"; // 处理完成
-	public static final String FAIL = "3"; //处理失败
+	public static final int UNTREATED = 0; //未处理
+	public static final int DOING = 1; //正在处理
+	public static final int FINISHED = 2; // 处理完成
+	public static final int FAIL = 3; //处理失败
 	
 	public static final String TASK = "AI_Task_"; //任务前缀
 	

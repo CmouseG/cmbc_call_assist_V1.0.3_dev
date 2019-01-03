@@ -37,10 +37,10 @@ public class SysDictServiceImpl implements SysDictService {
         // 校验参数
         check(sysDict);
         if(sysDict != null) {
-            Long id = sysDict.getId();	//主键ID
+            int id = sysDict.getId();	//主键ID
             if(StrUtils.isEmpty(id)) {
                 logger.info("新增字典");
-                sysDict.setDelFlag("0");
+                sysDict.setDelFlag(0);
                 sysDict.setCreateTime(new Date());
                 sysDict.setUpdateTime(new Date());
                 sysDict.setCreateId(userId);
@@ -104,12 +104,12 @@ public class SysDictServiceImpl implements SysDictService {
     }
 
     @Override
-    public SysDict get(Long id) {
+    public SysDict get(int id) {
         return sysDictMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public int delete(Long id) {
+    public int delete(int id) {
         SysDict sysDict = sysDictMapper.selectByPrimaryKey(id);
         redisUtil.del(RedisConstant.REDIS_DICT_PREFIX+sysDict.getDictType());
         return sysDictMapper.deleteByPrimaryKey(id);
@@ -118,7 +118,7 @@ public class SysDictServiceImpl implements SysDictService {
     private SysDictExample getExampleByCondition(SysDict sysDict) {
         logger.info("查询字典，查询条件="+sysDict);
         if(sysDict != null) {
-            Long id = sysDict.getId();	//主键ID
+            Integer id = sysDict.getId();	//主键ID
             String dictKey = sysDict.getDictKey();	//标签名
             String dictValue = sysDict.getDictValue();	//数据值
             String dictType = sysDict.getDictType();	//类型

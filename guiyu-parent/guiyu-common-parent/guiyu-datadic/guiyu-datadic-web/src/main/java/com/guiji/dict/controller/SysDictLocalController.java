@@ -49,14 +49,14 @@ public class SysDictLocalController {
     @SysOperaLog(operaTarget = "数据字典", operaType = "根据ID查询字典信息")
     @ApiOperation(value="获取字典信息", notes="根据ID查询字典信息")
     @RequestMapping(value = "/get", method = RequestMethod.POST)
-    public SysDict get(Long id) {
+    public SysDict get(int id) {
         return sysDictService.get(id);
     }
 
     @SysOperaLog(operaTarget = "数据字典", operaType = "删除")
     @ApiOperation(value="删除字典信息", notes="根据ID删除字典信息")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public int delete(Long id) {
+    public int delete(int id) {
         return sysDictService.delete(id);
     }
 }

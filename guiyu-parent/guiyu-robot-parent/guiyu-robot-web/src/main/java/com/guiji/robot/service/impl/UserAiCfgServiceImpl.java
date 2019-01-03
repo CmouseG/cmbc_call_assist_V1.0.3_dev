@@ -183,7 +183,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		if(StrUtils.isNotEmpty(userId)) {
 			ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userId));
 			if(orgData!=null && orgData.getBody()!=null) {
-				int orgAiNum = StrUtils.isNotEmpty(orgData.getBody().getRobot())?Integer.parseInt(orgData.getBody().getRobot()):0;
+				int orgAiNum = orgData.getBody().getRobot()==null?0:orgData.getBody().getRobot();
 				List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
 				int assignAiNum = 0;
 				if(ListUtil.isNotEmpty(assignList)) {
@@ -213,7 +213,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		//1、查询该用户所属企业所有已分配的机器人数量
 		ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userAiCfgBaseInfo.getUserId()));
 		if(orgData!=null && orgData.getBody()!=null) {
-			int orgAiNum = StrUtils.isNotEmpty(orgData.getBody().getRobot())?Integer.parseInt(orgData.getBody().getRobot()):0;
+			int orgAiNum = orgData.getBody().getRobot()==null?0:orgData.getBody().getRobot();
 			logger.info("用户：{},企业code:{},企业名称：{},企业配置的机器人上限：{}",userAiCfgBaseInfo.getUserId(),orgData.getBody().getCode(),orgData.getBody().getName(),orgAiNum);
 			List<UserAiCfgBaseInfo> assignList = this.queryUserAiCfgBaseInfoByOrgCode(orgData.getBody().getCode());
 			int assignAiNum = 0;

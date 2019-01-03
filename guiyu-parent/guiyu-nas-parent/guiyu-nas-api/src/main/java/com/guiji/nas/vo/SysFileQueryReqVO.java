@@ -14,7 +14,7 @@ public class SysFileQueryReqVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value="文件ID")
-    private String id;
+    private Long id;
     @ApiModelProperty(value="文件上传系统码",example="如：guiyu.robot")
     private String sysCode;
     @ApiModelProperty(value="上传的影像文件关联的业务ID")
@@ -24,14 +24,14 @@ public class SysFileQueryReqVO implements Serializable {
     /**
      * @return the id
      */
-    public String getId() {
+    public Long getId() {
 
         return id;
     }
     /**
      @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
     /**

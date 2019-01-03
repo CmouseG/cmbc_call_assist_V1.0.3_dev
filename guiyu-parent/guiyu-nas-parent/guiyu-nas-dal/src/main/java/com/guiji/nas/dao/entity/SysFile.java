@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysFile implements Serializable {
-    private String id;
+    private Long id;
 
     private String fileName;
 
@@ -22,22 +22,22 @@ public class SysFile implements Serializable {
 
     private String sysCode;
 
-    private String crtUser;
+    private Long crtUser;
 
     private Date crtTime;
 
-    private String lstUpdateUser;
+    private Long lstUpdateUser;
 
     private Date lstUpdateTime;
 
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFileName() {
@@ -104,12 +104,12 @@ public class SysFile implements Serializable {
         this.sysCode = sysCode == null ? null : sysCode.trim();
     }
 
-    public String getCrtUser() {
+    public Long getCrtUser() {
         return crtUser;
     }
 
-    public void setCrtUser(String crtUser) {
-        this.crtUser = crtUser == null ? null : crtUser.trim();
+    public void setCrtUser(Long crtUser) {
+        this.crtUser = crtUser;
     }
 
     public Date getCrtTime() {
@@ -120,12 +120,12 @@ public class SysFile implements Serializable {
         this.crtTime = crtTime;
     }
 
-    public String getLstUpdateUser() {
+    public Long getLstUpdateUser() {
         return lstUpdateUser;
     }
 
-    public void setLstUpdateUser(String lstUpdateUser) {
-        this.lstUpdateUser = lstUpdateUser == null ? null : lstUpdateUser.trim();
+    public void setLstUpdateUser(Long lstUpdateUser) {
+        this.lstUpdateUser = lstUpdateUser;
     }
 
     public Date getLstUpdateTime() {

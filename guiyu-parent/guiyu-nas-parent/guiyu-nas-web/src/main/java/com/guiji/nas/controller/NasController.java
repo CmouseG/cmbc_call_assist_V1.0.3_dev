@@ -120,7 +120,7 @@ public class NasController implements INas {
 
 	@Override
 	@PostMapping(value = "delete")
-	public ReturnData deleteFile(String id) {
+	public ReturnData deleteFile(Long id) {
 		nasService.deleteById(id);
 		return Result.ok();
 	}

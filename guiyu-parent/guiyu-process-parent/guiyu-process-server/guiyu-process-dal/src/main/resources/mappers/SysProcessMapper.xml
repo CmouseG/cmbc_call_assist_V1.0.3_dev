@@ -75,8 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time, create_id, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
-    update_id
+    id, ip, port, `name`, `type`, process_key, `status`, create_time, update_time, create_id,update_id,DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time_str, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time_str
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.process.server.dao.entity.SysProcessExample" >
     select

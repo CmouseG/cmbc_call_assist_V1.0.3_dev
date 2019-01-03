@@ -1,10 +1,9 @@
-package com.guiji.robot.dao.entity;
+package com.guiji.robot.model;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class UserAiCfgBaseInfo implements Serializable {
-    private Integer id;
+public class UserAiCfgBaseInfoVO {
 
     private String userId;
 
@@ -21,16 +20,6 @@ public class UserAiCfgBaseInfo implements Serializable {
     private Date updateTime;
 
     private String updateUser;
-
-    private static final long serialVersionUID = 1L;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -102,7 +91,6 @@ public class UserAiCfgBaseInfo implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
         sb.append(", userId=").append(userId);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", aiTotalNum=").append(aiTotalNum);
@@ -111,7 +99,6 @@ public class UserAiCfgBaseInfo implements Serializable {
         sb.append(", crtUser=").append(crtUser);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", updateUser=").append(updateUser);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
     }

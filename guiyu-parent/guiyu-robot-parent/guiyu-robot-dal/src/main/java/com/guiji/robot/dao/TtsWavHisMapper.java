@@ -10,7 +10,7 @@ public interface TtsWavHisMapper {
 
     int deleteByExample(TtsWavHisExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(TtsWavHis record);
 
@@ -20,7 +20,7 @@ public interface TtsWavHisMapper {
 
     List<TtsWavHis> selectByExample(TtsWavHisExample example);
 
-    TtsWavHis selectByPrimaryKey(String id);
+    TtsWavHis selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") TtsWavHis record, @Param("example") TtsWavHisExample example);
 

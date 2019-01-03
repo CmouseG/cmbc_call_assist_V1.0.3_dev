@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.robot.dao.UserAiCfgInfoMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.robot.dao.entity.UserAiCfgInfo" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="ai_num" property="aiNum" jdbcType="INTEGER" />
-    <result column="assign_level" property="assignLevel" jdbcType="CHAR" />
+    <result column="assign_level" property="assignLevel" jdbcType="INTEGER" />
     <result column="template_ids" property="templateIds" jdbcType="VARCHAR" />
     <result column="open_date" property="openDate" jdbcType="VARCHAR" />
     <result column="invalid_date" property="invalidDate" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
     <result column="invalid_policy" property="invalidPolicy" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
     <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
@@ -96,15 +96,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from user_ai_cfg_info
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user_ai_cfg_info
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfoExample" >
     delete from user_ai_cfg_info
@@ -113,27 +113,23 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfo" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('user_ai_cfg_info')
-    </selectKey>
     insert into user_ai_cfg_info (id, user_id, ai_num, 
       assign_level, template_ids, open_date, 
       invalid_date, `status`, invalid_policy, 
       crt_time, crt_user, update_time, 
       update_user)
-    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{aiNum,jdbcType=INTEGER}, 
-      #{assignLevel,jdbcType=CHAR}, #{templateIds,jdbcType=VARCHAR}, #{openDate,jdbcType=VARCHAR}, 
-      #{invalidDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{invalidPolicy,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{aiNum,jdbcType=INTEGER}, 
+      #{assignLevel,jdbcType=INTEGER}, #{templateIds,jdbcType=VARCHAR}, #{openDate,jdbcType=VARCHAR}, 
+      #{invalidDate,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{invalidPolicy,jdbcType=VARCHAR}, 
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfo" >
-    <selectKey resultType="java.lang.String" keyProperty="id" order="BEFORE" >
-      SELECT genTabId('user_ai_cfg_info')
-    </selectKey>
     insert into user_ai_cfg_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      id,
+      <if test="id != null" >
+        id,
+      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -172,7 +168,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      #{id,jdbcType=VARCHAR},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="userId != null" >
         #{userId,jdbcType=VARCHAR},
       </if>
@@ -180,7 +178,7 @@
         #{aiNum,jdbcType=INTEGER},
       </if>
       <if test="assignLevel != null" >
-        #{assignLevel,jdbcType=CHAR},
+        #{assignLevel,jdbcType=INTEGER},
       </if>
       <if test="templateIds != null" >
         #{templateIds,jdbcType=VARCHAR},
@@ -192,7 +190,7 @@
         #{invalidDate,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
-        #{status,jdbcType=VARCHAR},
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="invalidPolicy != null" >
         #{invalidPolicy,jdbcType=VARCHAR},
@@ -221,7 +219,7 @@
     update user_ai_cfg_info
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=VARCHAR},
@@ -230,7 +228,7 @@
         ai_num = #{record.aiNum,jdbcType=INTEGER},
       </if>
       <if test="record.assignLevel != null" >
-        assign_level = #{record.assignLevel,jdbcType=CHAR},
+        assign_level = #{record.assignLevel,jdbcType=INTEGER},
       </if>
       <if test="record.templateIds != null" >
         template_ids = #{record.templateIds,jdbcType=VARCHAR},
@@ -242,7 +240,7 @@
         invalid_date = #{record.invalidDate,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null" >
-        `status` = #{record.status,jdbcType=VARCHAR},
+        `status` = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.invalidPolicy != null" >
         invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
@@ -266,14 +264,14 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update user_ai_cfg_info
-    set id = #{record.id,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=VARCHAR},
       ai_num = #{record.aiNum,jdbcType=INTEGER},
-      assign_level = #{record.assignLevel,jdbcType=CHAR},
+      assign_level = #{record.assignLevel,jdbcType=INTEGER},
       template_ids = #{record.templateIds,jdbcType=VARCHAR},
       open_date = #{record.openDate,jdbcType=VARCHAR},
       invalid_date = #{record.invalidDate,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=INTEGER},
       invalid_policy = #{record.invalidPolicy,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       crt_user = #{record.crtUser,jdbcType=VARCHAR},
@@ -293,7 +291,7 @@
         ai_num = #{aiNum,jdbcType=INTEGER},
       </if>
       <if test="assignLevel != null" >
-        assign_level = #{assignLevel,jdbcType=CHAR},
+        assign_level = #{assignLevel,jdbcType=INTEGER},
       </if>
       <if test="templateIds != null" >
         template_ids = #{templateIds,jdbcType=VARCHAR},
@@ -305,7 +303,7 @@
         invalid_date = #{invalidDate,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
-        `status` = #{status,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=INTEGER},
       </if>
       <if test="invalidPolicy != null" >
         invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
@@ -323,22 +321,22 @@
         update_user = #{updateUser,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.robot.dao.entity.UserAiCfgInfo" >
     update user_ai_cfg_info
     set user_id = #{userId,jdbcType=VARCHAR},
       ai_num = #{aiNum,jdbcType=INTEGER},
-      assign_level = #{assignLevel,jdbcType=CHAR},
+      assign_level = #{assignLevel,jdbcType=INTEGER},
       template_ids = #{templateIds,jdbcType=VARCHAR},
       open_date = #{openDate,jdbcType=VARCHAR},
       invalid_date = #{invalidDate,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=INTEGER},
       invalid_policy = #{invalidPolicy,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       crt_user = #{crtUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

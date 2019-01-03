@@ -14,8 +14,8 @@ import lombok.Data;
 public class TtsComposeCheckRsp {
 	//会话id
 	private String seqId;
-	//状态(P-合成中;S-完成;F-失败;N-查无数据)
-	private String status;
+	//状态(2-合成中;1-完成;0-失败;9-查无数据)
+	private int status;
 	//失败原因
 	private String errorMsg;
 	//TTS合成的语音列表

@@ -15,8 +15,8 @@ import lombok.Data;
 public class TtsCallback {
 	@ApiModelProperty(value="业务ID",required=true)
 	private String busiId;
-	@ApiModelProperty(value="合成状态:S-成功;F-失败",required=true)
-	private String status;
+	@ApiModelProperty(value="合成状态:1-成功;0-失败",required=true)
+	private int status;
 	@ApiModelProperty(value="失败原因")
     private String errorMsg;
     @ApiModelProperty(value="文本和音频下载地址,key是文本value是音频",required=true)

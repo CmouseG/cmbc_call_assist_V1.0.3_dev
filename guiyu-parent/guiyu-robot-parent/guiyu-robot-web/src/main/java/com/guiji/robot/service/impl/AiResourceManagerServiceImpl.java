@@ -138,7 +138,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		List<UserAiCfgInfo> userAiCfgList = iUserAiCfgService.queryUserAiCfgListByUserId(userId);
 		//设置每个模板总计多少路机器人
 		for(UserAiCfgInfo cfg:userAiCfgList) {
-			if(RobotConstants.USER_CFG_STATUS_S.equals(cfg.getStatus())) {
+			if(RobotConstants.USER_CFG_STATUS_S == cfg.getStatus()) {
 				userAiCfgMap.put(cfg.getTemplateIds(), userAiCfgMap.get(cfg.getTemplateIds())==null?cfg.getAiNum():userAiCfgMap.get(cfg.getTemplateIds())+cfg.getAiNum());
 			}
 		}

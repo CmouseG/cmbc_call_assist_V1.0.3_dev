@@ -10,7 +10,7 @@ public interface TtsCallbackHisMapper {
 
     int deleteByExample(TtsCallbackHisExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(TtsCallbackHis record);
 
@@ -20,7 +20,7 @@ public interface TtsCallbackHisMapper {
 
     List<TtsCallbackHis> selectByExample(TtsCallbackHisExample example);
 
-    TtsCallbackHis selectByPrimaryKey(String id);
+    TtsCallbackHis selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") TtsCallbackHis record, @Param("example") TtsCallbackHisExample example);
 

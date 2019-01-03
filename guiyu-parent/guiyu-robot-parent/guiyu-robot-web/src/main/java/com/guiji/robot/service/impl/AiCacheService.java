@@ -60,7 +60,7 @@ public class AiCacheService {
 			int aiNum = 0;
 			if(ListUtil.isNotEmpty(list)) {
 				for(UserAiCfgInfo cfg : list) {
-					if(RobotConstants.USER_CFG_STATUS_S.equals(cfg.getStatus())) {
+					if(RobotConstants.USER_CFG_STATUS_S == cfg.getStatus()) {
 						//如果账户是正常状态
 						aiNum = aiNum + cfg.getAiNum();
 					}

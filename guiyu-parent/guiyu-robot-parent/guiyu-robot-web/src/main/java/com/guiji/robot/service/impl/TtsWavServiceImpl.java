@@ -156,7 +156,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				//如果只有一条数据，直接返回，如果有多条，那么检查是否有完成的状态，有完成的状态，返回完成的数据，表示调用了多次tts合成
 				if(list.size()>1) {
 					for(TtsWavHis ttsWav : list) {
-						if(RobotConstants.TTS_STATUS_S.equals(ttsWav.getStatus())){
+						if(RobotConstants.TTS_STATUS_S == ttsWav.getStatus()){
 							return ttsWav;
 						}
 					}
@@ -288,7 +288,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				if(StrUtils.isNotEmpty(busiId)) {
 					ttsWavHis = this.queryTtsWavByBusiId(busiId);
 					if(ttsWavHis != null) {
-						if(RobotConstants.TTS_STATUS_S.equals(ttsCallback.getStatus())) {
+						if(RobotConstants.TTS_STATUS_S == ttsCallback.getStatus()){
 							//**开始从callback回调的数据，拼接wav文件，完成TTS合成**//
 							try {
 								//获取话术模板配置文件

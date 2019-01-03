@@ -15,7 +15,7 @@ public class TaskListReqVO
 	@ApiModelProperty(value="模型名称")
 	private String model;
 	@ApiModelProperty(value="处理状态")
-	private String status;
+	private Integer status;
 	@ApiModelProperty(value="起始时间")
 	private Date startTime;
 	@ApiModelProperty(value="结束时间")

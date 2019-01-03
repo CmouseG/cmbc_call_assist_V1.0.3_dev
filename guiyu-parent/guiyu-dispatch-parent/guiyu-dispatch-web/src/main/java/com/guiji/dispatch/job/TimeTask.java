@@ -38,7 +38,6 @@ import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.RedisUtil;
 
 @Component
-// @RestController
 public class TimeTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(TimeTask.class);
@@ -64,8 +63,6 @@ public class TimeTask {
 
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
-	
-
 
 	/**
 	 * 捞取号码初始化资源
@@ -87,7 +84,7 @@ public class TimeTask {
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate();
-				logger.info("-------------------获取初始化号码数量size------------------------------"+ + list.size());
+				logger.info("-------------------获取初始化号码数量size------------------------------" + +list.size());
 				List<HsParam> sendData = new ArrayList<>();
 				for (DispatchPlan dispatchPlan : list) {
 					HsParam hsParam = new HsParam();
@@ -140,7 +137,7 @@ public class TimeTask {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
 				logger.info("获取当前初始化号码的请求资源结果");
 				List<DispatchPlan> selectPhoneByDateAndFlag = dispatchPlanService
-						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1,Constant.STATUSPLAN_1,Constant.STATUS_SYNC_0);
+						.selectPhoneByDateAndFlag(Constant.IS_FLAG_1, Constant.STATUSPLAN_1, Constant.STATUS_SYNC_0);
 
 				List<TtsVoiceReq> ttsVoiceReqList = new ArrayList<>();
 				List<ModularLogs> beforeLogs = new ArrayList<>();
@@ -175,14 +172,14 @@ public class TimeTask {
 							log.setModularName(Constant.MODULAR_NAME_DISPATCH);
 							log.setStatus(Constant.MODULAR_STATUS_END);
 							log.setPlanUuid(tts.getSeqId());
-							if (tts.getStatus().equals("S")) {
+							if (tts.getStatus() == 1) {
 								DispatchPlan dis = new DispatchPlan();
 								dis.setFlag(Constant.IS_FLAG_2);
 								dis.setPlanUuid(tts.getSeqId());
 								successList.add(dis);
-							} else if (tts.getStatus().equals("F")) {
+							} else{
 								log.setStatus(Constant.MODULAR_STATUS_ERROR);
-								log.setMsg("校验资源状态返回结果为F");
+								log.setMsg("校验资源状态返回结果不为0");
 							}
 							afterlogs.add(log);
 						}
@@ -247,7 +244,7 @@ public class TimeTask {
 	 * 获取可以拨打的号码
 	 */
 	@Scheduled(cron = "0 0/1 * * * ?")
-//	 @PostMapping("getSuccessPhones")
+	// @PostMapping("getSuccessPhones")
 	public void getSuccessPhones() {
 		logger.info("-----------------------------------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -262,7 +259,8 @@ public class TimeTask {
 		Lock lock = new Lock("getSuccessPhonesJob.TimeTask", "getSuccessPhonesJob.TimeTask");
 		try {
 			if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2,Constant.STATUSPLAN_1,Constant.STATUS_SYNC_1);
+				List<DispatchPlan> list = dispatchPlanService.selectPhoneByDateAndFlag(Constant.IS_FLAG_2,
+						Constant.STATUSPLAN_1, Constant.STATUS_SYNC_0);
 				logger.info(" 获取可以拨打的号码count ..." + list.size());
 				// 分组
 				Map<String, List<DispatchPlan>> collect = list.stream()
@@ -272,9 +270,8 @@ public class TimeTask {
 						logger.info("当前模板id正在升级中...." + entry.getKey().split("-")[1]);
 						continue;
 					}
-					// }
-					// put redis
-					checkRedisAndDate(entry.getKey(), entry.getValue());
+					// 通知呼叫计划
+					checkDateandCallStartPlan(entry.getKey());
 				}
 				distributedLockHandler.releaseLock(lock); // 释放锁
 			}
@@ -285,8 +282,8 @@ public class TimeTask {
 		}
 	}
 
-	@Scheduled(cron = "0 0/1 * * * ?")
-//	 @PostMapping("putRedisByphones")
+	// @Scheduled(cron = "0 0/1 * * * ?")
+	// @PostMapping("putRedisByphones")
 	public void putRedisByphones() {
 		logger.info("-----------------------------putRedisByphones------------------------------------");
 		logger.info("-----------------------------------------------------------------");
@@ -307,7 +304,7 @@ public class TimeTask {
 				// .selectPhoneByDate4UserId(Constant.IS_FLAG_2, 1000);
 				// System.out.println(selectPhoneByDate4UserId);
 				Map<String, String> map = (HashMap) redisUtil.hmget("dispath-userIds");
-				logger.info("-------------------当前redis-----dispath-userIds数据:---------------"+map);
+				logger.info("-------------------当前redis-----dispath-userIds数据:---------------" + map);
 				if (map == null) {
 					return;
 				}
@@ -316,8 +313,8 @@ public class TimeTask {
 					Integer limit = patchPlanPutCalldata.getQuerySize(Integer.valueOf(split[0]),
 							Integer.valueOf(split[2]));
 					if (limit > 0) {
-						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Integer.valueOf(split[0]),Constant.IS_FLAG_2,
-								limit,Integer.valueOf(split[2]));
+						List<DispatchPlan> list = dispatchPlanService.selectPhoneByDate4Redis(Integer.valueOf(split[0]),
+								Constant.IS_FLAG_2, limit, Integer.valueOf(split[2]));
 						if (list.size() > 0) {
 							patchPlanPutCalldata.put(Integer.valueOf(split[0]), Integer.valueOf(split[2]), list);
 						}
@@ -325,7 +322,7 @@ public class TimeTask {
 						for (DispatchPlan dis : list) {
 							ids.add(dis.getPlanUuid());
 						}
-						if(ids.size() >0){
+						if (ids.size() > 0) {
 							dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
 						}
 					}
@@ -445,7 +442,7 @@ public class TimeTask {
 	 * 
 	 * @param key
 	 */
-	private void checkRedisAndDate(String key, List<DispatchPlan> list) {
+	private void checkDateandCallStartPlan(String key) {
 		Object object = redisUtil.get(key);
 		// logger.info("checkRedisAndDate key result:" + object);
 		if (object != null && object != "") {
@@ -465,6 +462,8 @@ public class TimeTask {
 			if (startcallplan.success) {
 				// 5分钟失效时间
 				redisUtil.set(key, new Date(), 300);
+				// 通知成功put 数据
+				putRedisByphones();
 			}
 		}
 	}

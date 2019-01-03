@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.ai.dao.TtsModelMapper;
+import com.guiji.ai.dao.TtsModelMapperExt;
 import com.guiji.ai.dao.entity.TtsModel;
 import com.guiji.ai.dao.entity.TtsModelExample;
 import com.guiji.ai.dao.entity.TtsModelExample.Criteria;
@@ -28,6 +29,8 @@ public class ModelServiceImpl implements IModelService
 
 	@Autowired
 	TtsModelMapper modelMapper;
+	@Autowired
+	TtsModelMapperExt modelMapperExt;
 
 	@Override
 	@Transactional
@@ -90,7 +93,7 @@ public class ModelServiceImpl implements IModelService
 		//结果集 
 		List<ModelGpuNumVO> modelGpuNumVOList = new ArrayList<>();
 		
-		List<Map<String, Object>> resultList = modelMapper.selectModelGpuCount();
+		List<Map<String, Object>> resultList = modelMapperExt.selectModelGpuCount();
 		if(resultList == null || resultList.isEmpty()){
 			return null;
 		}
@@ -107,7 +110,7 @@ public class ModelServiceImpl implements IModelService
 	@Transactional
 	public void updateModelByIpPort(String ip, String port, String model)
 	{
-		modelMapper.updateModelByIpPort(ip, port, model);
+		modelMapperExt.updateModelByIpPort(ip, port, model);
 	}
 
 }

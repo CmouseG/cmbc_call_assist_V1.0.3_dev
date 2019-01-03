@@ -81,19 +81,6 @@ public interface ITts {
     public ReturnData<Boolean> jumpQueue(@PathVariable("busId") String busId);
     
     /**
-     * 累计任务数
-     * 累计接受任务（天，月）
-     * 累计完成任务（天，月）
-     * @return
-     */
-    @ApiOperation(value="累计任务")
-    @ApiImplicitParams({ 
-		@ApiImplicitParam(name = "TaskReq", value = "累计任务请求对象", required = true) 
-	})
-    @PostMapping(value = "getAcceptTasks")
-    public ReturnData<TaskRspVO> getTasks(@RequestBody TaskReqVO taskReqVO);
-    
-    /**
      * 待合成任务数（分模型）
      * @return
      */

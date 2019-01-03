@@ -6,7 +6,7 @@ import java.util.Date;
 public class SendMsgRecords implements Serializable {
     private Long id;
 
-    private String statuscode;
+    private Integer statuscode;
 
     private String statusmsg;
 
@@ -26,12 +26,12 @@ public class SendMsgRecords implements Serializable {
         this.id = id;
     }
 
-    public String getStatuscode() {
+    public Integer getStatuscode() {
         return statuscode;
     }
 
-    public void setStatuscode(String statuscode) {
-        this.statuscode = statuscode == null ? null : statuscode.trim();
+    public void setStatuscode(Integer statuscode) {
+        this.statuscode = statuscode;
     }
 
     public String getStatusmsg() {

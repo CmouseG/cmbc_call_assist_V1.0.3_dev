@@ -6,11 +6,9 @@
     <result column="model" jdbcType="VARCHAR" property="model" />
     <result column="tts_ip" jdbcType="VARCHAR" property="ttsIp" />
     <result column="tts_port" jdbcType="VARCHAR" property="ttsPort" />
-    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="company" jdbcType="VARCHAR" property="company" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -72,8 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, model, tts_ip, tts_port, `status`, create_time, create_by, update_time, update_by, 
-    company
+    id, model, tts_ip, tts_port, `status`, create_time, update_time, company
   </sql>
   <select id="selectByExample" parameterType="com.guiji.ai.dao.entity.TtsModelExample" resultMap="BaseResultMap">
     select
@@ -112,12 +109,10 @@
   <insert id="insert" parameterType="com.guiji.ai.dao.entity.TtsModel">
     insert into tts_model (id, model, tts_ip, 
       tts_port, `status`, create_time, 
-      create_by, update_time, update_by, 
-      company)
+      update_time, company)
     values (#{id,jdbcType=INTEGER}, #{model,jdbcType=VARCHAR}, #{ttsIp,jdbcType=VARCHAR}, 
-      #{ttsPort,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
-      #{company,jdbcType=VARCHAR})
+      #{ttsPort,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{company,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.ai.dao.entity.TtsModel">
     insert into tts_model
@@ -140,14 +135,8 @@
       <if test="createTime != null">
         create_time,
       </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
       <if test="updateTime != null">
         update_time,
-      </if>
-      <if test="updateBy != null">
-        update_by,
       </if>
       <if test="company != null">
         company,
@@ -167,19 +156,13 @@
         #{ttsPort,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        #{status,jdbcType=CHAR},
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=BIGINT},
-      </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null">
-        #{updateBy,jdbcType=BIGINT},
       </if>
       <if test="company != null">
         #{company,jdbcType=VARCHAR},
@@ -208,19 +191,13 @@
         tts_port = #{record.ttsPort,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=CHAR},
+        `status` = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.createBy != null">
-        create_by = #{record.createBy,jdbcType=BIGINT},
-      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.updateBy != null">
-        update_by = #{record.updateBy,jdbcType=BIGINT},
       </if>
       <if test="record.company != null">
         company = #{record.company,jdbcType=VARCHAR},
@@ -236,11 +213,9 @@
       model = #{record.model,jdbcType=VARCHAR},
       tts_ip = #{record.ttsIp,jdbcType=VARCHAR},
       tts_port = #{record.ttsPort,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=CHAR},
+      `status` = #{record.status,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      create_by = #{record.createBy,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      update_by = #{record.updateBy,jdbcType=BIGINT},
       company = #{record.company,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -259,19 +234,13 @@
         tts_port = #{ttsPort,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=CHAR},
+        `status` = #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=BIGINT},
-      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null">
-        update_by = #{updateBy,jdbcType=BIGINT},
       </if>
       <if test="company != null">
         company = #{company,jdbcType=VARCHAR},
@@ -284,25 +253,10 @@
     set model = #{model,jdbcType=VARCHAR},
       tts_ip = #{ttsIp,jdbcType=VARCHAR},
       tts_port = #{ttsPort,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=CHAR},
+      `status` = #{status,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=BIGINT},
       company = #{company,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  
-  <select id="selectModelGpuCount" resultType="java.util.HashMap">
-  	SELECT model, COUNT(*) count FROM tts_model
-	GROUP BY model
-  </select>
-  
-  <update id="updateModelByIpPort">
-  	update tts_model
-  	set model = #{model,jdbcType=VARCHAR}
-  	where tts_ip = #{ip,jdbcType=VARCHAR}
-  	and tts_port = #{port,jdbcType=VARCHAR}
-  </update>
-  
 </mapper>

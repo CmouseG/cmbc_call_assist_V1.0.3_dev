@@ -195,62 +195,52 @@ public class SendMsgRecordsExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeEqualTo(String value) {
+        public Criteria andStatuscodeEqualTo(Integer value) {
             addCriterion("statusCode =", value, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeNotEqualTo(String value) {
+        public Criteria andStatuscodeNotEqualTo(Integer value) {
             addCriterion("statusCode <>", value, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeGreaterThan(String value) {
+        public Criteria andStatuscodeGreaterThan(Integer value) {
             addCriterion("statusCode >", value, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeGreaterThanOrEqualTo(String value) {
+        public Criteria andStatuscodeGreaterThanOrEqualTo(Integer value) {
             addCriterion("statusCode >=", value, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeLessThan(String value) {
+        public Criteria andStatuscodeLessThan(Integer value) {
             addCriterion("statusCode <", value, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeLessThanOrEqualTo(String value) {
+        public Criteria andStatuscodeLessThanOrEqualTo(Integer value) {
             addCriterion("statusCode <=", value, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeLike(String value) {
-            addCriterion("statusCode like", value, "statuscode");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatuscodeNotLike(String value) {
-            addCriterion("statusCode not like", value, "statuscode");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatuscodeIn(List<String> values) {
+        public Criteria andStatuscodeIn(List<Integer> values) {
             addCriterion("statusCode in", values, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeNotIn(List<String> values) {
+        public Criteria andStatuscodeNotIn(List<Integer> values) {
             addCriterion("statusCode not in", values, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeBetween(String value1, String value2) {
+        public Criteria andStatuscodeBetween(Integer value1, Integer value2) {
             addCriterion("statusCode between", value1, value2, "statuscode");
             return (Criteria) this;
         }
 
-        public Criteria andStatuscodeNotBetween(String value1, String value2) {
+        public Criteria andStatuscodeNotBetween(Integer value1, Integer value2) {
             addCriterion("statusCode not between", value1, value2, "statuscode");
             return (Criteria) this;
         }

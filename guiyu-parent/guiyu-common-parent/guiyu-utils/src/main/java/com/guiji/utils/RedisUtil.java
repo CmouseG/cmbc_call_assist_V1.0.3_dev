@@ -91,6 +91,14 @@ public class RedisUtil {
             }
         }
     }
+    /**
+     * 模糊删除
+     * @param key
+     */
+    public void delVague(String key){
+    	Set<String> keys = redisTemplate.keys(key + "*");
+        redisTemplate.delete(keys);
+    }
 
     //============================String=============================
     /**

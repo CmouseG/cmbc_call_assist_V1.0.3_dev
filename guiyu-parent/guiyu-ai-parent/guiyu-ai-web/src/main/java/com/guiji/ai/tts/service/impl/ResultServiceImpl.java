@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.ai.dao.TtsResultMapper;
+import com.guiji.ai.dao.TtsResultMapperExt;
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.service.IResultService;
 import com.guiji.ai.tts.vo.ModelRequestNumVO;
@@ -19,6 +20,8 @@ public class ResultServiceImpl implements IResultService
 	
 	@Autowired
 	TtsResultMapper ttsResultMapper;
+	@Autowired
+	TtsResultMapperExt ttsResultMapperExt;
 
 
 	@Override
@@ -26,7 +29,7 @@ public class ResultServiceImpl implements IResultService
 	{
 		List<Map<String, String>> restltMapList = new ArrayList<>();
 		
-		restltMapList = ttsResultMapper.getTtsTransferResult(busId);
+		restltMapList = ttsResultMapperExt.getTtsTransferResult(busId);
 		
 		return restltMapList;
 	}
@@ -37,7 +40,7 @@ public class ResultServiceImpl implements IResultService
 		//结果集
 		List<ModelRequestNumVO> modelRequestList = new ArrayList<>();
 		
-		List<Map<String, Object>> resultList = ttsResultMapper.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
+		List<Map<String, Object>> resultList = ttsResultMapperExt.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
 		if(resultList == null || resultList.isEmpty()){
 			return null;
 		}

@@ -67,7 +67,7 @@ public class MessageMQListtener {
 			}
 			msgRe.setPhone(msgDto.getPhone());
 			msgRe.setRequestid(requestId);
-			msgRe.setStatuscode(statusCode);
+			msgRe.setStatuscode(Integer.valueOf(statusCode));
 			msgRe.setStatusmsg(statusMsg);
 			int insert = sendMsgMapper.insert(msgRe);
 		} catch (Exception e) {

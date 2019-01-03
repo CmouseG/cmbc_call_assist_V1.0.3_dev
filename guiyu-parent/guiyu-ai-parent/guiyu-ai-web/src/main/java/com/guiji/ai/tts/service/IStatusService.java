@@ -11,7 +11,7 @@ public interface IStatusService
      * @return
      * @throws Exception 
      */
-    public String getTransferStatusByBusId(String busId);
+    public Integer getTransferStatusByBusId(String busId);
     
     /**
      * 保存到tts_status表
@@ -25,7 +25,7 @@ public interface IStatusService
 	 * @param busId
 	 * @param status
 	 */
-	public void updateStatusByBusId(String busId, String status);
+	public void updateStatusByBusId(String busId, int status);
 
 	/**
 	 * 获取任务列表
@@ -39,12 +39,6 @@ public interface IStatusService
 	 * @param busId
 	 */
 	public void updateJumpFlagByBusId(String busId);
-
-	/**
-	 * 累计任务数
-	 * @param taskReqVO
-	 */
-	public TaskRspVO getTasks(TaskReqVO taskReqVO);
 
 	/**
 	 * 待合成任务数（分模型）

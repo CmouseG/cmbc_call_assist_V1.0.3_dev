@@ -335,62 +335,52 @@ public class TtsStatusExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatusEqualTo(String value) {
+        public Criteria andStatusEqualTo(Integer value) {
             addCriterion("`status` =", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotEqualTo(String value) {
+        public Criteria andStatusNotEqualTo(Integer value) {
             addCriterion("`status` <>", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThan(String value) {
+        public Criteria andStatusGreaterThan(Integer value) {
             addCriterion("`status` >", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThanOrEqualTo(String value) {
+        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
             addCriterion("`status` >=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThan(String value) {
+        public Criteria andStatusLessThan(Integer value) {
             addCriterion("`status` <", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThanOrEqualTo(String value) {
+        public Criteria andStatusLessThanOrEqualTo(Integer value) {
             addCriterion("`status` <=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLike(String value) {
-            addCriterion("`status` like", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotLike(String value) {
-            addCriterion("`status` not like", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIn(List<String> values) {
+        public Criteria andStatusIn(List<Integer> values) {
             addCriterion("`status` in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotIn(List<String> values) {
+        public Criteria andStatusNotIn(List<Integer> values) {
             addCriterion("`status` not in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusBetween(String value1, String value2) {
+        public Criteria andStatusBetween(Integer value1, Integer value2) {
             addCriterion("`status` between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotBetween(String value1, String value2) {
+        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("`status` not between", value1, value2, "status");
             return (Criteria) this;
         }
@@ -585,62 +575,52 @@ public class TtsStatusExample {
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagEqualTo(String value) {
+        public Criteria andJumpFlagEqualTo(Integer value) {
             addCriterion("jump_flag =", value, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagNotEqualTo(String value) {
+        public Criteria andJumpFlagNotEqualTo(Integer value) {
             addCriterion("jump_flag <>", value, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagGreaterThan(String value) {
+        public Criteria andJumpFlagGreaterThan(Integer value) {
             addCriterion("jump_flag >", value, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagGreaterThanOrEqualTo(String value) {
+        public Criteria andJumpFlagGreaterThanOrEqualTo(Integer value) {
             addCriterion("jump_flag >=", value, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagLessThan(String value) {
+        public Criteria andJumpFlagLessThan(Integer value) {
             addCriterion("jump_flag <", value, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagLessThanOrEqualTo(String value) {
+        public Criteria andJumpFlagLessThanOrEqualTo(Integer value) {
             addCriterion("jump_flag <=", value, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagLike(String value) {
-            addCriterion("jump_flag like", value, "jumpFlag");
-            return (Criteria) this;
-        }
-
-        public Criteria andJumpFlagNotLike(String value) {
-            addCriterion("jump_flag not like", value, "jumpFlag");
-            return (Criteria) this;
-        }
-
-        public Criteria andJumpFlagIn(List<String> values) {
+        public Criteria andJumpFlagIn(List<Integer> values) {
             addCriterion("jump_flag in", values, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagNotIn(List<String> values) {
+        public Criteria andJumpFlagNotIn(List<Integer> values) {
             addCriterion("jump_flag not in", values, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagBetween(String value1, String value2) {
+        public Criteria andJumpFlagBetween(Integer value1, Integer value2) {
             addCriterion("jump_flag between", value1, value2, "jumpFlag");
             return (Criteria) this;
         }
 
-        public Criteria andJumpFlagNotBetween(String value1, String value2) {
+        public Criteria andJumpFlagNotBetween(Integer value1, Integer value2) {
             addCriterion("jump_flag not between", value1, value2, "jumpFlag");
             return (Criteria) this;
         }

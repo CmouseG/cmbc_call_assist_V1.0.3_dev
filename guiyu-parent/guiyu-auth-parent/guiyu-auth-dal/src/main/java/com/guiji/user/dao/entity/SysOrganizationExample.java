@@ -405,62 +405,62 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
-        public Criteria andTypeEqualTo(String value) {
+        public Criteria andTypeEqualTo(Integer value) {
             addCriterion("`type` =", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotEqualTo(String value) {
+        public Criteria andTypeNotEqualTo(Integer value) {
             addCriterion("`type` <>", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThan(String value) {
+        public Criteria andTypeGreaterThan(Integer value) {
             addCriterion("`type` >", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("`type` >=", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThan(String value) {
+        public Criteria andTypeLessThan(Integer value) {
             addCriterion("`type` <", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThanOrEqualTo(String value) {
+        public Criteria andTypeLessThanOrEqualTo(Integer value) {
             addCriterion("`type` <=", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLike(String value) {
+        public Criteria andTypeLike(Integer value) {
             addCriterion("`type` like", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotLike(String value) {
+        public Criteria andTypeNotLike(Integer value) {
             addCriterion("`type` not like", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeIn(List<String> values) {
+        public Criteria andTypeIn(List<Integer> values) {
             addCriterion("`type` in", values, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotIn(List<String> values) {
+        public Criteria andTypeNotIn(List<Integer> values) {
             addCriterion("`type` not in", values, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeBetween(String value1, String value2) {
+        public Criteria andTypeBetween(Integer value1, Integer value2) {
             addCriterion("`type` between", value1, value2, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotBetween(String value1, String value2) {
+        public Criteria andTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("`type` not between", value1, value2, "type");
             return (Criteria) this;
         }
@@ -475,62 +475,62 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
-        public Criteria andRobotEqualTo(String value) {
+        public Criteria andRobotEqualTo(Integer value) {
             addCriterion("robot =", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotNotEqualTo(String value) {
+        public Criteria andRobotNotEqualTo(Integer value) {
             addCriterion("robot <>", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotGreaterThan(String value) {
+        public Criteria andRobotGreaterThan(Integer value) {
             addCriterion("robot >", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotGreaterThanOrEqualTo(String value) {
+        public Criteria andRobotGreaterThanOrEqualTo(Integer value) {
             addCriterion("robot >=", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotLessThan(String value) {
+        public Criteria andRobotLessThan(Integer value) {
             addCriterion("robot <", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotLessThanOrEqualTo(String value) {
+        public Criteria andRobotLessThanOrEqualTo(Integer value) {
             addCriterion("robot <=", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotLike(String value) {
+        public Criteria andRobotLike(Integer value) {
             addCriterion("robot like", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotNotLike(String value) {
+        public Criteria andRobotNotLike(Integer value) {
             addCriterion("robot not like", value, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotIn(List<String> values) {
+        public Criteria andRobotIn(List<Integer> values) {
             addCriterion("robot in", values, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotNotIn(List<String> values) {
+        public Criteria andRobotNotIn(List<Integer> values) {
             addCriterion("robot not in", values, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotBetween(String value1, String value2) {
+        public Criteria andRobotBetween(Integer value1, Integer value2) {
             addCriterion("robot between", value1, value2, "robot");
             return (Criteria) this;
         }
 
-        public Criteria andRobotNotBetween(String value1, String value2) {
+        public Criteria andRobotNotBetween(Integer value1, Integer value2) {
             addCriterion("robot not between", value1, value2, "robot");
             return (Criteria) this;
         }
@@ -545,62 +545,62 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
-        public Criteria andLineEqualTo(String value) {
+        public Criteria andLineEqualTo(Integer value) {
             addCriterion("line =", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotEqualTo(String value) {
+        public Criteria andLineNotEqualTo(Integer value) {
             addCriterion("line <>", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineGreaterThan(String value) {
+        public Criteria andLineGreaterThan(Integer value) {
             addCriterion("line >", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineGreaterThanOrEqualTo(String value) {
+        public Criteria andLineGreaterThanOrEqualTo(Integer value) {
             addCriterion("line >=", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLessThan(String value) {
+        public Criteria andLineLessThan(Integer value) {
             addCriterion("line <", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLessThanOrEqualTo(String value) {
+        public Criteria andLineLessThanOrEqualTo(Integer value) {
             addCriterion("line <=", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineLike(String value) {
+        public Criteria andLineLike(Integer value) {
             addCriterion("line like", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotLike(String value) {
+        public Criteria andLineNotLike(Integer value) {
             addCriterion("line not like", value, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineIn(List<String> values) {
+        public Criteria andLineIn(List<Integer> values) {
             addCriterion("line in", values, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotIn(List<String> values) {
+        public Criteria andLineNotIn(List<Integer> values) {
             addCriterion("line not in", values, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineBetween(String value1, String value2) {
+        public Criteria andLineBetween(Integer value1, Integer value2) {
             addCriterion("line between", value1, value2, "line");
             return (Criteria) this;
         }
 
-        public Criteria andLineNotBetween(String value1, String value2) {
+        public Criteria andLineNotBetween(Integer value1, Integer value2) {
             addCriterion("line not between", value1, value2, "line");
             return (Criteria) this;
         }
@@ -615,62 +615,62 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
-        public Criteria andOpenEqualTo(String value) {
+        public Criteria andOpenEqualTo(Integer value) {
             addCriterion("`open` =", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenNotEqualTo(String value) {
+        public Criteria andOpenNotEqualTo(Integer value) {
             addCriterion("`open` <>", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenGreaterThan(String value) {
+        public Criteria andOpenGreaterThan(Integer value) {
             addCriterion("`open` >", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenGreaterThanOrEqualTo(String value) {
+        public Criteria andOpenGreaterThanOrEqualTo(Integer value) {
             addCriterion("`open` >=", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenLessThan(String value) {
+        public Criteria andOpenLessThan(Integer value) {
             addCriterion("`open` <", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenLessThanOrEqualTo(String value) {
+        public Criteria andOpenLessThanOrEqualTo(Integer value) {
             addCriterion("`open` <=", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenLike(String value) {
+        public Criteria andOpenLike(Integer value) {
             addCriterion("`open` like", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenNotLike(String value) {
+        public Criteria andOpenNotLike(Integer value) {
             addCriterion("`open` not like", value, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenIn(List<String> values) {
+        public Criteria andOpenIn(List<Integer> values) {
             addCriterion("`open` in", values, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenNotIn(List<String> values) {
+        public Criteria andOpenNotIn(List<Integer> values) {
             addCriterion("`open` not in", values, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenBetween(String value1, String value2) {
+        public Criteria andOpenBetween(Integer value1, Integer value2) {
             addCriterion("`open` between", value1, value2, "open");
             return (Criteria) this;
         }
 
-        public Criteria andOpenNotBetween(String value1, String value2) {
+        public Criteria andOpenNotBetween(Integer value1, Integer value2) {
             addCriterion("`open` not between", value1, value2, "open");
             return (Criteria) this;
         }
@@ -685,63 +685,133 @@ public class SysOrganizationExample {
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagEqualTo(String value) {
+        public Criteria andDelFlagEqualTo(Integer value) {
             addCriterion("del_flag =", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotEqualTo(String value) {
+        public Criteria andDelFlagNotEqualTo(Integer value) {
             addCriterion("del_flag <>", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagGreaterThan(String value) {
+        public Criteria andDelFlagGreaterThan(Integer value) {
             addCriterion("del_flag >", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagGreaterThanOrEqualTo(String value) {
+        public Criteria andDelFlagGreaterThanOrEqualTo(Integer value) {
             addCriterion("del_flag >=", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagLessThan(String value) {
+        public Criteria andDelFlagLessThan(Integer value) {
             addCriterion("del_flag <", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagLessThanOrEqualTo(String value) {
+        public Criteria andDelFlagLessThanOrEqualTo(Integer value) {
             addCriterion("del_flag <=", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagLike(String value) {
+        public Criteria andDelFlagLike(Integer value) {
             addCriterion("del_flag like", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotLike(String value) {
+        public Criteria andDelFlagNotLike(Integer value) {
             addCriterion("del_flag not like", value, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagIn(List<String> values) {
+        public Criteria andDelFlagIn(List<Integer> values) {
             addCriterion("del_flag in", values, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotIn(List<String> values) {
+        public Criteria andDelFlagNotIn(List<Integer> values) {
             addCriterion("del_flag not in", values, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagBetween(String value1, String value2) {
+        public Criteria andDelFlagBetween(Integer value1, Integer value2) {
             addCriterion("del_flag between", value1, value2, "delFlag");
             return (Criteria) this;
         }
 
-        public Criteria andDelFlagNotBetween(String value1, String value2) {
+        public Criteria andDelFlagNotBetween(Integer value1, Integer value2) {
             addCriterion("del_flag not between", value1, value2, "delFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceIsNull() {
+            addCriterion("botstence is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceIsNotNull() {
+            addCriterion("botstence is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceEqualTo(Integer value) {
+            addCriterion("botstence =", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceNotEqualTo(Integer value) {
+            addCriterion("botstence <>", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceGreaterThan(Integer value) {
+            addCriterion("botstence >", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceGreaterThanOrEqualTo(Integer value) {
+            addCriterion("botstence >=", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceLessThan(Integer value) {
+            addCriterion("botstence <", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceLessThanOrEqualTo(Integer value) {
+            addCriterion("botstence <=", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceLike(Integer value) {
+            addCriterion("botstence like", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceNotLike(Integer value) {
+            addCriterion("botstence not like", value, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceIn(List<Integer> values) {
+            addCriterion("botstence in", values, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceNotIn(List<Integer> values) {
+            addCriterion("botstence not in", values, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceBetween(Integer value1, Integer value2) {
+            addCriterion("botstence between", value1, value2, "botstence");
+            return (Criteria) this;
+        }
+
+        public Criteria andBotstenceNotBetween(Integer value1, Integer value2) {
+            addCriterion("botstence not between", value1, value2, "botstence");
             return (Criteria) this;
         }
 

@@ -2,6 +2,12 @@ package com.guiji.auth.service;
 
 import java.util.List;
 
+import com.guiji.component.result.Result;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.UserAiCfgBaseInfoVO;
+import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,6 +24,10 @@ public class OrganizationService {
 
 	@Autowired
 	private SysOrganizationMapper sysOrganizationMapper;
+	@Autowired
+	private SysUserMapper sysUsermapper;
+	@Autowired
+	private IRobotRemote iRobotRemote;
 	
 	public void add(SysOrganization record){
         String subCode = this.getSubOrgCode(record.getCode());
@@ -28,7 +38,7 @@ public class OrganizationService {
 	}
 	
 	public void delte(SysOrganization record){
-		record.setDelFlag("1");
+		record.setDelFlag(1);
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 	}
 	
@@ -38,7 +48,7 @@ public class OrganizationService {
 	
 	public Page<Object> selectByPage(Page<Object> page){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0");
+		example.createCriteria().andDelFlagEqualTo(0);
 		int num=sysOrganizationMapper.countByExample(example);
 		List<Object> list=sysOrganizationMapper.selectByPage(page);
 		page.setTotal(num);
@@ -48,7 +58,7 @@ public class OrganizationService {
 	
 	public Page<Object> selectOpenByPage(Page<Object> page){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("1");
+		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(1);
 		int num=sysOrganizationMapper.countByExample(example);
 		List<Object> list=sysOrganizationMapper.selectOpenByPage(page);
 		page.setTotal(num);
@@ -56,12 +66,12 @@ public class OrganizationService {
 		return page;
 	}
 	
-	public List<SysOrganization> getOrgByType(String type){
+	public List<SysOrganization> getOrgByType(Integer type){
 		SysOrganizationExample example=new SysOrganizationExample();
 		if(StringUtils.isEmpty(type)){
-			example.createCriteria().andDelFlagEqualTo("0");
+			example.createCriteria().andDelFlagEqualTo(0);
 		}else{
-			example.createCriteria().andDelFlagEqualTo("0").andTypeEqualTo(type);
+			example.createCriteria().andDelFlagEqualTo(0).andTypeEqualTo(type);
 		}
 		return sysOrganizationMapper.selectByExample(example);
 	}
@@ -73,21 +83,21 @@ public class OrganizationService {
 	
 	public boolean checkName(String name){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo("0");
+		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo(0);
 		int num=sysOrganizationMapper.countByExample(example);
 		return num==0;
 	}
 	
 	public boolean checkName(String name,Long id){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo("0").andIdNotEqualTo(id);
+		example.createCriteria().andNameEqualTo(name).andDelFlagEqualTo(0).andIdNotEqualTo(id);
 		int num=sysOrganizationMapper.countByExample(example);
 		return num==0;
 	}
 	
 	public List<SysOrganization> getOrgNotOpen(){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0").andOpenEqualTo("0").andTypeNotEqualTo("1");
+		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0).andTypeNotEqualTo(1);
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	
@@ -97,7 +107,7 @@ public class OrganizationService {
 	
 	public SysOrganization getOrgByCode(String code){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo("0").andCodeEqualTo(code);
+		example.createCriteria().andDelFlagEqualTo(0).andCodeEqualTo(code);
 		List<SysOrganization> list=sysOrganizationMapper.selectByExample(example);
 		if(list.size()>0){
 			return list.get(0);
@@ -131,5 +141,26 @@ public class OrganizationService {
 		}
 
 		return subOrgCode;
+	}
+
+	public int countRobotByUserId(Long userId){
+		int countRobot = 0;
+		SysUser sysUser = sysUsermapper.getUserById(userId);
+		List<SysRole> sysRoleList = sysUsermapper.getRoleByUserId(userId);
+		String orgCode = null;
+		if (sysUser != null) {
+			orgCode = sysUser.getOrgCode();
+			if (sysRoleList != null && sysRoleList.size() > 0 && sysRoleList.get(0).getId() == 4) {
+				if (sysRoleList.get(0).getId() == 4) {
+					Result.ReturnData<UserAiCfgBaseInfoVO> returnData = iRobotRemote.queryCustBaseAccount(String.valueOf(userId));
+					if (returnData.success && returnData.getBody() != null) {
+						countRobot = returnData.getBody().getAiTotalNum();
+					}
+				} else {
+					countRobot = sysOrganizationMapper.countRobotByUserId(orgCode);
+				}
+			}
+		}
+		return countRobot;
 	}
 }

@@ -40,4 +40,6 @@ public interface SysOrganizationMapper {
     public int countCode(String code);
     
     public List<Object> selectOpenByPage(Page page);
+
+    int countRobotByUserId(String code);
 }

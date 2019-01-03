@@ -12,13 +12,15 @@ public class SysOrganization implements Serializable {
 
     private String subCode;
 
-    private String type;
+    private Integer type;
 
-    private String robot;
+    private Integer robot;
 
-    private String line;
-	private String open;
-    private String delFlag;
+    private Integer line;
+
+    private Integer botstence;
+	private Integer open;
+    private Integer delFlag;
 
     private Long createId;
 
@@ -58,36 +60,36 @@ public class SysOrganization implements Serializable {
         this.code = code == null ? null : code.trim();
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type == null ? null : type.trim();
+    public void setType(Integer type) {
+        this.type = type;
     }
 
-    public String getRobot() {
+    public Integer getRobot() {
         return robot;
     }
 
-    public void setRobot(String robot) {
-        this.robot = robot == null ? null : robot.trim();
+    public void setRobot(Integer robot) {
+        this.robot = robot;
     }
 
-    public String getLine() {
+    public Integer getLine() {
         return line;
     }
 
-    public void setLine(String line) {
-        this.line = line == null ? null : line.trim();
+    public void setLine(Integer line) {
+        this.line = line;
     }
 
-    public String getDelFlag() {
+    public Integer getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
     }
 
     public Long getCreateId() {
@@ -146,11 +148,19 @@ public class SysOrganization implements Serializable {
 		this.parentName = parentName;
 	}
 
-	public String getOpen() {
+    public Integer getBotstence() {
+        return botstence;
+    }
+
+    public void setBotstence(Integer botstence) {
+        this.botstence = botstence;
+    }
+
+    public Integer getOpen() {
 		return open;
 	}
 
-	public void setOpen(String open) {
+	public void setOpen(Integer open) {
 		this.open = open;
 	}
 
@@ -174,6 +184,7 @@ public class SysOrganization implements Serializable {
         sb.append(", type=").append(type);
         sb.append(", robot=").append(robot);
         sb.append(", line=").append(line);
+        sb.append(", botstence=").append(botstence);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);

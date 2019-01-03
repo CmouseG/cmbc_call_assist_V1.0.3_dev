@@ -1,20 +1,19 @@
 package com.guiji.user.dao;
 
+import com.guiji.user.dao.entity.SysMenu;
+import com.guiji.user.dao.entity.SysMenuExample;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
-import com.guiji.user.dao.entity.SysMenu;
-import com.guiji.user.dao.entity.SysMenuExample;
 import com.guiji.user.vo.MenuParamVo;
+import org.apache.ibatis.annotations.Param;
 
 public interface SysMenuMapper {
     int countByExample(SysMenuExample example);
 
     int deleteByExample(SysMenuExample example);
 
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(SysMenu record);
 
@@ -22,7 +21,7 @@ public interface SysMenuMapper {
 
     List<SysMenu> selectByExample(SysMenuExample example);
 
-    SysMenu selectByPrimaryKey(Long id);
+    SysMenu selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") SysMenu record, @Param("example") SysMenuExample example);
 
@@ -31,21 +30,21 @@ public interface SysMenuMapper {
     int updateByPrimaryKeySelective(SysMenu record);
 
     int updateByPrimaryKey(SysMenu record);
-    
+
     //
     List<SysMenu> getMenuByUserId(Long userId);
-    
+
     List<Map<String,String>> getAllPermissions();
-    
+
     List<SysMenu> getAllMenus();
-    
+
     List<Long> getSelectedMenuId(Long roleId);
-    
+
     String getPermissionsByUrl(String url);
-    
+
     public int countByParamVo(MenuParamVo param);
-    
+
     public List<Object> selectByParamVo(MenuParamVo param);
-    
+
     public List<String> getPermissions();
 }

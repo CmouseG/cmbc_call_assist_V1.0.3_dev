@@ -9,7 +9,7 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="init_role" property="initRole" jdbcType="INTEGER" />
     <result column="super_admin" property="superAdmin" jdbcType="INTEGER" />
   </resultMap>
@@ -116,7 +116,7 @@
       super_admin)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
       #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}, #{initRole,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}, #{initRole,jdbcType=INTEGER},
       #{superAdmin,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysRole" >
@@ -176,7 +176,7 @@
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="initRole != null" >
         #{initRole,jdbcType=INTEGER},
@@ -217,7 +217,7 @@
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.delFlag != null" >
-        del_flag = #{record.delFlag,jdbcType=CHAR},
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
       </if>
       <if test="record.initRole != null" >
         init_role = #{record.initRole,jdbcType=INTEGER},
@@ -239,7 +239,7 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      del_flag = #{record.delFlag,jdbcType=CHAR},
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
       init_role = #{record.initRole,jdbcType=INTEGER},
       super_admin = #{record.superAdmin,jdbcType=INTEGER}
     <if test="_parameter != null" >
@@ -268,7 +268,7 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="initRole != null" >
         init_role = #{initRole,jdbcType=INTEGER},
@@ -287,7 +287,7 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       init_role = #{initRole,jdbcType=INTEGER},
       super_admin = #{superAdmin,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

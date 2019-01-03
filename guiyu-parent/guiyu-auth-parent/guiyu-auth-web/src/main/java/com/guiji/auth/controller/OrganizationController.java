@@ -3,6 +3,7 @@ package com.guiji.auth.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.guiji.robot.api.IRobotRemote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,15 +24,14 @@ public class OrganizationController implements IOrg{
 
 	@Autowired
 	private OrganizationService organizationService;
-	
-	
+
 	@RequestMapping("add")
 	public SysOrganization add(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
 		if(!organizationService.checkName(record.getName())){
 			throw new CheckConditionException("00010009");
 		}
-		record.setOpen("0");
-		record.setDelFlag("0");
+		record.setOpen(0);
+		record.setDelFlag(0);
 		record.setCreateId(userId);
 		record.setUpdateId(userId);
 		record.setCreateTime(new Date());
@@ -78,13 +78,12 @@ public class OrganizationController implements IOrg{
 	 * @return
 	 */
 	@RequestMapping("getOrgByType")
-	public List<SysOrganization> getOrgByType(String type){
+	public List<SysOrganization> getOrgByType(Integer type){
 		return organizationService.getOrgByType(type);
 	}
 	
 	/**
 	 * 获取未开户
-	 * @param type
 	 * @return
 	 */
 	@RequestMapping("getOrgNotOpen")
@@ -105,6 +104,11 @@ public class OrganizationController implements IOrg{
 	@RequestMapping("getOrgByCode")
 	public ReturnData<SysOrganization> getOrgByCode(String code){
 		return Result.ok(organizationService.getOrgByCode(code));
+	}
+
+	@RequestMapping("countRobotByUserId")
+	public int countRobotByUserId(@RequestHeader Long userId){
+		return organizationService.countRobotByUserId(userId);
 	}
 
 }

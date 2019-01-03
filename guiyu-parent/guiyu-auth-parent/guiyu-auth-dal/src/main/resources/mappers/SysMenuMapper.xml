@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.user.dao.SysMenuMapper" >
- <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysMenu" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+  <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysMenu" >
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="url" property="url" jdbcType="VARCHAR" />
-    <result column="pid" property="pid" jdbcType="BIGINT" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
     <result column="permission" property="permission" jdbcType="VARCHAR" />
-    <result column="is_show" property="isShow" jdbcType="BIGINT" />
+    <result column="is_show" property="isShow" jdbcType="INTEGER" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="type" property="type" jdbcType="CHAR" />
-    <result column="level" property="level" jdbcType="CHAR" />
-    <result column="appid" property="appid" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="appid" property="appid" jdbcType="INTEGER" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -99,15 +99,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from sys_menu
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_menu
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.user.dao.entity.SysMenuExample" >
     delete from sys_menu
@@ -122,12 +122,12 @@
       update_id, update_time, `type`, 
       `level`, appid, remarks, 
       del_flag)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{url,jdbcType=VARCHAR}, #{pid,jdbcType=BIGINT}, #{permission,jdbcType=VARCHAR}, 
-      #{isShow,jdbcType=BIGINT}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{type,jdbcType=CHAR}, 
-      #{level,jdbcType=CHAR}, #{appid,jdbcType=BIGINT}, #{remarks,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=CHAR})
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, #{permission,jdbcType=VARCHAR}, 
+      #{isShow,jdbcType=INTEGER}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
+      #{level,jdbcType=INTEGER}, #{appid,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysMenu" >
     insert into sys_menu
@@ -183,7 +183,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
@@ -195,13 +195,13 @@
         #{url,jdbcType=VARCHAR},
       </if>
       <if test="pid != null" >
-        #{pid,jdbcType=BIGINT},
+        #{pid,jdbcType=INTEGER},
       </if>
       <if test="permission != null" >
         #{permission,jdbcType=VARCHAR},
       </if>
       <if test="isShow != null" >
-        #{isShow,jdbcType=BIGINT},
+        #{isShow,jdbcType=INTEGER},
       </if>
       <if test="createId != null" >
         #{createId,jdbcType=BIGINT},
@@ -216,19 +216,19 @@
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="type != null" >
-        #{type,jdbcType=CHAR},
+        #{type,jdbcType=INTEGER},
       </if>
       <if test="level != null" >
-        #{level,jdbcType=CHAR},
+        #{level,jdbcType=INTEGER},
       </if>
       <if test="appid != null" >
-        #{appid,jdbcType=BIGINT},
+        #{appid,jdbcType=INTEGER},
       </if>
       <if test="remarks != null" >
         #{remarks,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -242,7 +242,7 @@
     update sys_menu
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.name != null" >
         `name` = #{record.name,jdbcType=VARCHAR},
@@ -254,13 +254,13 @@
         url = #{record.url,jdbcType=VARCHAR},
       </if>
       <if test="record.pid != null" >
-        pid = #{record.pid,jdbcType=BIGINT},
+        pid = #{record.pid,jdbcType=INTEGER},
       </if>
       <if test="record.permission != null" >
         permission = #{record.permission,jdbcType=VARCHAR},
       </if>
       <if test="record.isShow != null" >
-        is_show = #{record.isShow,jdbcType=BIGINT},
+        is_show = #{record.isShow,jdbcType=INTEGER},
       </if>
       <if test="record.createId != null" >
         create_id = #{record.createId,jdbcType=BIGINT},
@@ -275,19 +275,19 @@
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.type != null" >
-        `type` = #{record.type,jdbcType=CHAR},
+        `type` = #{record.type,jdbcType=INTEGER},
       </if>
       <if test="record.level != null" >
-        `level` = #{record.level,jdbcType=CHAR},
+        `level` = #{record.level,jdbcType=INTEGER},
       </if>
       <if test="record.appid != null" >
-        appid = #{record.appid,jdbcType=BIGINT},
+        appid = #{record.appid,jdbcType=INTEGER},
       </if>
       <if test="record.remarks != null" >
         remarks = #{record.remarks,jdbcType=VARCHAR},
       </if>
       <if test="record.delFlag != null" >
-        del_flag = #{record.delFlag,jdbcType=CHAR},
+        del_flag = #{record.delFlag,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -296,22 +296,22 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update sys_menu
-    set id = #{record.id,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
       `name` = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
       url = #{record.url,jdbcType=VARCHAR},
-      pid = #{record.pid,jdbcType=BIGINT},
+      pid = #{record.pid,jdbcType=INTEGER},
       permission = #{record.permission,jdbcType=VARCHAR},
-      is_show = #{record.isShow,jdbcType=BIGINT},
+      is_show = #{record.isShow,jdbcType=INTEGER},
       create_id = #{record.createId,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      `type` = #{record.type,jdbcType=CHAR},
-      `level` = #{record.level,jdbcType=CHAR},
-      appid = #{record.appid,jdbcType=BIGINT},
+      `type` = #{record.type,jdbcType=INTEGER},
+      `level` = #{record.level,jdbcType=INTEGER},
+      appid = #{record.appid,jdbcType=INTEGER},
       remarks = #{record.remarks,jdbcType=VARCHAR},
-      del_flag = #{record.delFlag,jdbcType=CHAR}
+      del_flag = #{record.delFlag,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -329,13 +329,13 @@
         url = #{url,jdbcType=VARCHAR},
       </if>
       <if test="pid != null" >
-        pid = #{pid,jdbcType=BIGINT},
+        pid = #{pid,jdbcType=INTEGER},
       </if>
       <if test="permission != null" >
         permission = #{permission,jdbcType=VARCHAR},
       </if>
       <if test="isShow != null" >
-        is_show = #{isShow,jdbcType=BIGINT},
+        is_show = #{isShow,jdbcType=INTEGER},
       </if>
       <if test="createId != null" >
         create_id = #{createId,jdbcType=BIGINT},
@@ -350,94 +350,93 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="type != null" >
-        `type` = #{type,jdbcType=CHAR},
+        `type` = #{type,jdbcType=INTEGER},
       </if>
       <if test="level != null" >
-        `level` = #{level,jdbcType=CHAR},
+        `level` = #{level,jdbcType=INTEGER},
       </if>
       <if test="appid != null" >
-        appid = #{appid,jdbcType=BIGINT},
+        appid = #{appid,jdbcType=INTEGER},
       </if>
       <if test="remarks != null" >
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.user.dao.entity.SysMenu" >
     update sys_menu
     set `name` = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
-      pid = #{pid,jdbcType=BIGINT},
+      pid = #{pid,jdbcType=INTEGER},
       permission = #{permission,jdbcType=VARCHAR},
-      is_show = #{isShow,jdbcType=BIGINT},
+      is_show = #{isShow,jdbcType=INTEGER},
       create_id = #{createId,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      `type` = #{type,jdbcType=CHAR},
-      `level` = #{level,jdbcType=CHAR},
-      appid = #{appid,jdbcType=BIGINT},
+      `type` = #{type,jdbcType=INTEGER},
+      `level` = #{level,jdbcType=INTEGER},
+      appid = #{appid,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR}
-    where id = #{id,jdbcType=BIGINT}
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </update>
-  
-  
+
   <select id="getMenuByUserId" resultType="com.guiji.user.dao.entity.SysMenu">
-		select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
-		from sys_user a
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_menu_role c on b.role_id=c.role_id
-		LEFT JOIN sys_menu d on d.id=c.menu_id
-		where a.id=#{id} and d.del_flag=0
-		ORDER by pid
-	</select>
-	
-	<select id="getAllPermissions" resultType="map">
-		select url,permission from sys_menu
-		where del_flag=0 and permission is not null
-	</select>
-	
-	<select id="getAllMenus" resultType="com.guiji.user.dao.entity.SysMenu">
-		select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
-		from sys_menu d where d.del_flag=0 and pid is not null
-		ORDER by pid
-	</select>
-	
-	<select id="getSelectedMenuId" resultType="long">
-		select menu_id from sys_menu_role where role_id=#{roleId}
-	</select>
-	
-	<select id="getPermissionsByUrl" resultType="string">
-		SELECT permission FROM `sys_menu` where url=#{url} and type=2
-	</select>
-	
-	
-	<select id="countByParamVo" resultType="int">
-		select count(1) from sys_menu where del_flag=0 
-		<if test="menuName != '' ">
-			and name=#{menuName}	
-		</if>
-	</select>
-	
-	<select id="selectByParamVo" resultType="map">
-		SELECT a.id,a.name,a.description,a.url,a.type,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName,a.pid,a.level
-		from sys_menu a
-		LEFT JOIN sys_user b on a.create_id=b.id
-		where a.del_flag=0
-		<if test="menuName !='' ">
-			and a.name like concat('%',#{menuName},'%')
-		</if>
-		order by a.create_time desc
-		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-	</select>
-	
-	<select id="getPermissions" resultType="string">
-		SELECT url from sys_menu where del_flag=0 and type=2
-	</select>
+    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
+    from sys_user a
+    LEFT JOIN sys_role_user b on a.id=b.user_id
+    LEFT JOIN sys_menu_role c on b.role_id=c.role_id
+    LEFT JOIN sys_menu d on d.id=c.menu_id
+    where a.id=#{id} and d.del_flag=0
+    ORDER by pid
+  </select>
+
+  <select id="getAllPermissions" resultType="map">
+    select url,permission from sys_menu
+    where del_flag=0 and permission is not null
+  </select>
+
+  <select id="getAllMenus" resultType="com.guiji.user.dao.entity.SysMenu">
+    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
+    from sys_menu d where d.del_flag=0 and pid is not null
+    ORDER by pid
+  </select>
+
+  <select id="getSelectedMenuId" resultType="long">
+    select menu_id from sys_menu_role where role_id=#{roleId}
+  </select>
+
+  <select id="getPermissionsByUrl" resultType="string">
+    SELECT permission FROM `sys_menu` where url=#{url} and type=2
+  </select>
+
+
+  <select id="countByParamVo" resultType="int">
+    select count(1) from sys_menu where del_flag=0
+    <if test="menuName != '' ">
+      and name=#{menuName}
+    </if>
+  </select>
+
+  <select id="selectByParamVo" resultType="map">
+    SELECT a.id,a.name,a.description,a.url,a.type,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName,a.pid,a.level
+    from sys_menu a
+    LEFT JOIN sys_user b on a.create_id=b.id
+    where a.del_flag=0
+    <if test="menuName !='' ">
+      and a.name like concat('%',#{menuName},'%')
+    </if>
+    order by a.create_time desc
+    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+  </select>
+
+  <select id="getPermissions" resultType="string">
+    SELECT url from sys_menu where del_flag=0 and type=2
+  </select>
 </mapper>

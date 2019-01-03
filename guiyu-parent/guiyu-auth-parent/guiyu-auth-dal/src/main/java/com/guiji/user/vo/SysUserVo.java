@@ -10,7 +10,7 @@ public class SysUserVo {
 
     private Integer status;
 
-    private String pushType;
+    private Integer pushType;
 
     private String intenLabel;
 
@@ -54,11 +54,11 @@ public class SysUserVo {
 		this.status = status;
 	}
 
-	public String getPushType() {
+	public Integer getPushType() {
 		return pushType;
 	}
 
-	public void setPushType(String pushType) {
+	public void setPushType(Integer pushType) {
 		this.pushType = pushType;
 	}
 

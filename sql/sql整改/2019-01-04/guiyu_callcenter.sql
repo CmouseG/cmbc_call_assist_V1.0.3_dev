@@ -178,16 +178,7 @@ ALTER TABLE call_out_plan_0 CHANGE id id BIGINT UNSIGNED NOT NULL ;
 ALTER TABLE call_out_plan_1 CHANGE id id BIGINT UNSIGNED NOT NULL ;
 ALTER TABLE call_out_plan CHANGE id id BIGINT UNSIGNED NOT NULL ;
 
-/* 修改2个字段名 */
 
-ALTER TABLE `call_out_plan` CHANGE call_id plan_uuid VARCHAR(50);
-ALTER TABLE `call_out_plan_0` CHANGE call_id plan_uuid VARCHAR(50);
-ALTER TABLE `call_out_plan_1` CHANGE call_id plan_uuid VARCHAR(50);
-
-
-ALTER TABLE `call_out_plan` CHANGE id call_id BIGINT(20);
-ALTER TABLE `call_out_plan_0` CHANGE id call_id BIGINT(20);
-ALTER TABLE `call_out_plan_1` CHANGE id call_id BIGINT(20);
 
 
 /* 修改call_out_record */
@@ -201,6 +192,17 @@ ALTER TABLE call_out_record CHANGE id call_id BIGINT;
 DELETE FROM call_out_record WHERE call_id IS NULL;
 
 ALTER TABLE call_out_record ADD PRIMARY KEY(call_id);
+
+/* 修改2个字段名 */
+
+ALTER TABLE `call_out_plan` CHANGE call_id plan_uuid VARCHAR(50);
+ALTER TABLE `call_out_plan_0` CHANGE call_id plan_uuid VARCHAR(50);
+ALTER TABLE `call_out_plan_1` CHANGE call_id plan_uuid VARCHAR(50);
+
+
+ALTER TABLE `call_out_plan` CHANGE id call_id BIGINT(20);
+ALTER TABLE `call_out_plan_0` CHANGE id call_id BIGINT(20);
+ALTER TABLE `call_out_plan_1` CHANGE id call_id BIGINT(20);
 
 
 
@@ -323,7 +325,7 @@ ALTER TABLE `call_out_detail_1` CHANGE id call_detail_id BIGINT(20);
 
  
  ALTER TABLE call_out_detail_record ADD COLUMN call_id_tmp BIGINT(20) AFTER call_detail_id;
- UPDATE `call_out_detail_record` a INNER JOIN `call_out_plan_0` b ON a.call_id = b.`plan_uuid` SET a.call_id_tmp = b.call_id
+ UPDATE `call_out_detail_record` a INNER JOIN `call_out_plan_0` b ON a.call_id = b.`plan_uuid` SET a.call_id_tmp = b.call_id;
  ALTER TABLE call_out_detail_record DROP COLUMN call_id;
  ALTER TABLE call_out_detail_record CHANGE call_id_tmp call_id BIGINT(20);
   
@@ -407,10 +409,4 @@ ALTER TABLE call_in_plan_1 MODIFY COLUMN plan_uuid VARCHAR(32);
 ALTER TABLE `report_call_day` DROP COLUMN   customer_id;
 ALTER TABLE `report_call_hour` DROP COLUMN   customer_id;
 ALTER TABLE `report_call_today` DROP COLUMN   customer_id;
-
-
-
-
-
-
 

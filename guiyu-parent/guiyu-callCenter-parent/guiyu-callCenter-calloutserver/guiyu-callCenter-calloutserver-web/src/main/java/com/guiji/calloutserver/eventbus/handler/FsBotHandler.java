@@ -82,13 +82,13 @@ public class FsBotHandler {
         log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
+            CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(event.getUuid()));
             if (callPlan == null) {
                 log.info("未知的应答事件，事件uuid[{}]，跳过处理", event.getUuid());
                 return;
             }
 
-            AIInitRequest request = new AIInitRequest(callPlan.getCallId(), callPlan.getTempId(), callPlan.getPhoneNum(), callPlan.getCustomerId(), callPlan.getAiId());
+            AIInitRequest request = new AIInitRequest(String.valueOf(callPlan.getCallId()),callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(), String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
 
             Long startTime = new Date().getTime();
 
@@ -105,7 +105,7 @@ public class FsBotHandler {
                     callPlan.setReason(e.getMessage());
                 }
                 callOutPlanService.update(callPlan);
-                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
+                dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),"W");
                 return;
             }
 
@@ -114,7 +114,7 @@ public class FsBotHandler {
             channelHelper.playAiReponse(aiResponse, false,true);
 
             //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况
-            CallOutPlan callPlanNew = callOutPlanService.findByCallId(event.getUuid());
+            CallOutPlan callPlanNew = callOutPlanService.findByPlanUuid(event.getUuid());
             if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
@@ -123,10 +123,10 @@ public class FsBotHandler {
             callOutPlanService.update(callPlan);
 
             //插入通话记录详情
-            String detailID = IdGenUtil.uuid();
+//            String detailID = IdGenUtil.uuid();
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callPlan.getCallId());
-            callDetail.setCallDetailId(detailID);
+//            callDetail.setCallDetailId(detailID);
             callDetail.setAiDuration(Math.toIntExact(endTime - startTime));
             callDetail.setTotalDuration(callDetail.getAiDuration());
             callDetail.setBotAnswerText(aiResponse.getResponseTxt());
@@ -138,7 +138,7 @@ public class FsBotHandler {
 
             //插入录音文件信息
             CallOutDetailRecord callOutDetailRecord = new CallOutDetailRecord();
-            callOutDetailRecord.setCallDetailId(detailID);
+            callOutDetailRecord.setCallDetailId(callDetail.getCallDetailId());
             callOutDetailRecord.setCallId(callPlan.getCallId());
             callOutDetailRecord.setCallDetailId(callDetail.getCallDetailId());
             callOutDetailRecord.setBotRecordFile(aiResponse.getWavFile());
@@ -147,11 +147,11 @@ public class FsBotHandler {
 
             //启动定时器，500ms请求一次aiCallNext接口
             AiCallNextReq aiCallNextReq = new AiCallNextReq();
-            aiCallNextReq.setUserId(callPlan.getCustomerId());
+            aiCallNextReq.setUserId(String.valueOf(callPlan.getCustomerId()));
             aiCallNextReq.setTemplateId(callPlan.getTempId());
             aiCallNextReq.setAiNo(aiResponse.getAiId());
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
-            aiCallNextReq.setSeqId(callPlan.getCallId());
+            aiCallNextReq.setSeqId(callPlan.getPlanUuid());
             robotNextHelper.startAiCallNextTimer(aiCallNextReq);
         } catch (Exception ex) {
             //TODO:报警
@@ -164,7 +164,7 @@ public class FsBotHandler {
     @AllowConcurrentEvents
     public void handleCustomerAsrEvent(AsrCustomerEvent event) {
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
+            CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(event.getUuid()));
             if (callPlan == null) {
                 log.warn("收到的CustomerAsr，没有根据uuid[{}]找到对应的callPlan，跳过处理", event.getUuid());
                 return;
@@ -288,7 +288,7 @@ public class FsBotHandler {
 //        simpleEventSender.sendEvent(toAgentEvent);
     }
 
-    public void buildCallOutDetail(String callId, AsrCustomerEvent event) {
+    public void buildCallOutDetail(Long callId, AsrCustomerEvent event) {
 
         //开场白之前的asr识别不记录，识别太灵敏了，导致太多无用通话记录
         if (StringUtils.isNotBlank(event.getAsrText())) {
@@ -309,13 +309,13 @@ public class FsBotHandler {
             callDetail.setAsrDuration(Math.toIntExact(event.getAsrDuration()));
 
             callDetail.setTotalDuration(Math.toIntExact(event.getAsrDuration()));
-            String detailId = IdGenUtil.uuid();
-            callDetail.setCallDetailId(detailId);
+//            String detailId = IdGenUtil.uuid();
+//            callDetail.setCallDetailId(detailId);
             callDetail.setCallDetailType(ECallDetailType.NORMAL.ordinal());
             callOutDetailService.save(callDetail);
 
             CallOutDetailRecord calloutDetailRecord = new CallOutDetailRecord();
-            calloutDetailRecord.setCallDetailId(detailId);
+//            calloutDetailRecord.setCallDetailId(detailId);
             calloutDetailRecord.setCallId(callId);
             calloutDetailRecord.setCustomerRecordFile(event.getFileName());
 
@@ -331,7 +331,7 @@ public class FsBotHandler {
         log.info("收到Hangup事件[{}], 准备进行处理", event);
 
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(event.getUuid());
+            CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(event.getUuid()));
             if (callPlan == null) {
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;

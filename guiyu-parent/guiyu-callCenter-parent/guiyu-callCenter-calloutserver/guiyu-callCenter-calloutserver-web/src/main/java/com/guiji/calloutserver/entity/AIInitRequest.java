@@ -11,6 +11,7 @@ public class AIInitRequest {
      */
     private String uuid;
 
+    private String planUuid;
     /**
      * 通道使用的模板id
      */

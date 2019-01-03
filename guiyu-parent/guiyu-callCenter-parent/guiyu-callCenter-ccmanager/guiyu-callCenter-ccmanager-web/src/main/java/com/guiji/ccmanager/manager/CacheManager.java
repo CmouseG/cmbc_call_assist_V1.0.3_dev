@@ -31,7 +31,7 @@ public class CacheManager {
     IAuth auth;
 
     private Cache<String, String> tempCache;
-    private Cache<String, String> userCache;
+    private Cache<Integer, String> userCache;
 
     @PostConstruct
     public void init() {
@@ -59,7 +59,7 @@ public class CacheManager {
         return "";
     }
 
-    public String getUserName(String userId) {
+    public String getUserName(Integer userId) {
         String cacheName = userCache.getIfPresent(userId);
         if (cacheName != null) {
             return cacheName;

@@ -3,9 +3,9 @@ package com.guiji.callcenter.dao.entity;
 import java.io.Serializable;
 
 public class CallOutDetailRecord implements Serializable {
-    private String callDetailId;
+    private Long callDetailId;
 
-    private String callId;
+    private Long callId;
 
     private String agentRecordFile;
 
@@ -21,20 +21,20 @@ public class CallOutDetailRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getCallDetailId() {
+    public Long getCallDetailId() {
         return callDetailId;
     }
 
-    public void setCallDetailId(String callDetailId) {
-        this.callDetailId = callDetailId == null ? null : callDetailId.trim();
+    public void setCallDetailId(Long callDetailId) {
+        this.callDetailId = callDetailId;
     }
 
-    public String getCallId() {
+    public Long getCallId() {
         return callId;
     }
 
-    public void setCallId(String callId) {
-        this.callId = callId == null ? null : callId.trim();
+    public void setCallId(Long callId) {
+        this.callId = callId;
     }
 
     public String getAgentRecordFile() {

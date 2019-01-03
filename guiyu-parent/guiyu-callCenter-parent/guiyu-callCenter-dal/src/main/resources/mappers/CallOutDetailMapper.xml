@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.CallOutDetailMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallOutDetail" >
-    <id column="call_detail_id" property="callDetailId" jdbcType="VARCHAR" />
-    <result column="call_id" property="callId" jdbcType="VARCHAR" />
+    <id column="call_detail_id" property="callDetailId" jdbcType="BIGINT" />
+    <result column="call_id" property="callId" jdbcType="BIGINT" />
     <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR" />
     <result column="agent_answer_text" property="agentAnswerText" jdbcType="VARCHAR" />
     <result column="agent_answer_time" property="agentAnswerTime" jdbcType="TIMESTAMP" />
@@ -99,15 +99,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from call_out_detail
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from call_out_detail
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailExample" >
     delete from call_out_detail
@@ -115,21 +115,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail" >
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail"  useGeneratedKeys="true" keyProperty="callDetailId">
     insert into call_out_detail (call_detail_id, call_id, accurate_intent, 
       agent_answer_text, agent_answer_time, ai_duration, 
       asr_duration, bot_answer_text, bot_answer_time, 
       call_detail_type, customer_say_text, customer_say_time, 
       reason, total_duration, sharding_value
       )
-    values (#{callDetailId,jdbcType=VARCHAR}, #{callId,jdbcType=VARCHAR}, #{accurateIntent,jdbcType=VARCHAR}, 
+    values (#{callDetailId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{accurateIntent,jdbcType=VARCHAR}, 
       #{agentAnswerText,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{aiDuration,jdbcType=INTEGER}, 
       #{asrDuration,jdbcType=INTEGER}, #{botAnswerText,jdbcType=VARCHAR}, #{botAnswerTime,jdbcType=TIMESTAMP}, 
       #{callDetailType,jdbcType=INTEGER}, #{customerSayText,jdbcType=VARCHAR}, #{customerSayTime,jdbcType=TIMESTAMP}, 
       #{reason,jdbcType=VARCHAR}, #{totalDuration,jdbcType=INTEGER}, #{shardingValue,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail" >
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail"  useGeneratedKeys="true" keyProperty="callDetailId" >
     insert into call_out_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="callDetailId != null" >
@@ -180,10 +180,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callDetailId != null" >
-        #{callDetailId,jdbcType=VARCHAR},
+        #{callDetailId,jdbcType=BIGINT},
       </if>
       <if test="callId != null" >
-        #{callId,jdbcType=VARCHAR},
+        #{callId,jdbcType=BIGINT},
       </if>
       <if test="accurateIntent != null" >
         #{accurateIntent,jdbcType=VARCHAR},
@@ -236,10 +236,10 @@
     update call_out_detail
     <set >
       <if test="record.callDetailId != null" >
-        call_detail_id = #{record.callDetailId,jdbcType=VARCHAR},
+        call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
       </if>
       <if test="record.callId != null" >
-        call_id = #{record.callId,jdbcType=VARCHAR},
+        call_id = #{record.callId,jdbcType=BIGINT},
       </if>
       <if test="record.accurateIntent != null" >
         accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
@@ -287,8 +287,8 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update call_out_detail
-    set call_detail_id = #{record.callDetailId,jdbcType=VARCHAR},
-      call_id = #{record.callId,jdbcType=VARCHAR},
+    set call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      call_id = #{record.callId,jdbcType=BIGINT},
       accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
       agent_answer_text = #{record.agentAnswerText,jdbcType=VARCHAR},
       agent_answer_time = #{record.agentAnswerTime,jdbcType=TIMESTAMP},
@@ -310,7 +310,7 @@
     update call_out_detail
     <set >
       <if test="callId != null" >
-        call_id = #{callId,jdbcType=VARCHAR},
+        call_id = #{callId,jdbcType=BIGINT},
       </if>
       <if test="accurateIntent != null" >
         accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
@@ -352,11 +352,11 @@
         sharding_value = #{shardingValue,jdbcType=INTEGER},
       </if>
     </set>
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail" >
     update call_out_detail
-    set call_id = #{callId,jdbcType=VARCHAR},
+    set call_id = #{callId,jdbcType=BIGINT},
       accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
       agent_answer_text = #{agentAnswerText,jdbcType=VARCHAR},
       agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
@@ -370,6 +370,6 @@
       reason = #{reason,jdbcType=VARCHAR},
       total_duration = #{totalDuration,jdbcType=INTEGER},
       sharding_value = #{shardingValue,jdbcType=INTEGER}
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </update>
 </mapper>

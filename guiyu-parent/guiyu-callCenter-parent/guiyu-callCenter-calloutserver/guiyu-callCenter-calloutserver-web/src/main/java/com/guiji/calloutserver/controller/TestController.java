@@ -52,13 +52,13 @@ public class TestController {
         callOutPlan.setPhoneNum(number);
         callOutPlan.setTempId(temp);
         callOutPlan.setLineId(lineId);
-        callOutPlan.setCallId(UUID.randomUUID().toString());
+        callOutPlan.setPlanUuid(UUID.randomUUID().toString().replace("-",""));
         callOutPlan.setHasTts(false);
         callOutPlan.setServerid(eurekaManager.getInstanceId());
         callOutPlan.setCallState(ECallState.init.ordinal());
         callOutPlan.setCreateTime(new Date());
         callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
-        callOutPlan.setCustomerId("1");
+        callOutPlan.setCustomerId(1);
         callOutPlan.setIsdel(0);
         callOutPlan.setIsread(0);
 

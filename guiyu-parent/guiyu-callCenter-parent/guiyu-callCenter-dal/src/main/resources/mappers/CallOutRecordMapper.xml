@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.CallOutRecordMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallOutRecord" >
-    <id column="call_id" property="callId" jdbcType="VARCHAR" />
+    <id column="call_id" property="callId" jdbcType="BIGINT" />
     <result column="record_file" property="recordFile" jdbcType="VARCHAR" />
     <result column="record_url" property="recordUrl" jdbcType="VARCHAR" />
   </resultMap>
@@ -85,15 +85,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from call_out_record
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from call_out_record
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutRecordExample" >
     delete from call_out_record
@@ -104,7 +104,7 @@
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutRecord" >
     insert into call_out_record (call_id, record_file, record_url
       )
-    values (#{callId,jdbcType=VARCHAR}, #{recordFile,jdbcType=VARCHAR}, #{recordUrl,jdbcType=VARCHAR}
+    values (#{callId,jdbcType=BIGINT}, #{recordFile,jdbcType=VARCHAR}, #{recordUrl,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutRecord" >
@@ -122,7 +122,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callId != null" >
-        #{callId,jdbcType=VARCHAR},
+        #{callId,jdbcType=BIGINT},
       </if>
       <if test="recordFile != null" >
         #{recordFile,jdbcType=VARCHAR},
@@ -142,7 +142,7 @@
     update call_out_record
     <set >
       <if test="record.callId != null" >
-        call_id = #{record.callId,jdbcType=VARCHAR},
+        call_id = #{record.callId,jdbcType=BIGINT},
       </if>
       <if test="record.recordFile != null" >
         record_file = #{record.recordFile,jdbcType=VARCHAR},
@@ -157,7 +157,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update call_out_record
-    set call_id = #{record.callId,jdbcType=VARCHAR},
+    set call_id = #{record.callId,jdbcType=BIGINT},
       record_file = #{record.recordFile,jdbcType=VARCHAR},
       record_url = #{record.recordUrl,jdbcType=VARCHAR}
     <if test="_parameter != null" >
@@ -174,12 +174,12 @@
         record_url = #{recordUrl,jdbcType=VARCHAR},
       </if>
     </set>
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallOutRecord" >
     update call_out_record
     set record_file = #{recordFile,jdbcType=VARCHAR},
       record_url = #{recordUrl,jdbcType=VARCHAR}
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </update>
 </mapper>

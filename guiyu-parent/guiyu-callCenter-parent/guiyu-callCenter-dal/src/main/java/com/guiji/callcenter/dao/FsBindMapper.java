@@ -10,13 +10,21 @@ public interface FsBindMapper {
 
     int deleteByExample(FsBindExample example);
 
+    int deleteByPrimaryKey(Integer id);
+
     int insert(FsBind record);
 
     int insertSelective(FsBind record);
 
     List<FsBind> selectByExample(FsBindExample example);
 
+    FsBind selectByPrimaryKey(Integer id);
+
     int updateByExampleSelective(@Param("record") FsBind record, @Param("example") FsBindExample example);
 
     int updateByExample(@Param("record") FsBind record, @Param("example") FsBindExample example);
+
+    int updateByPrimaryKeySelective(FsBind record);
+
+    int updateByPrimaryKey(FsBind record);
 }

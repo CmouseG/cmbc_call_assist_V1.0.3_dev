@@ -12,5 +12,5 @@ public interface CallManagerOutService {
 
     public void startcallplan(String customerId, String tempId, String lineId);
 
-    public CallOutPlan getCallRecordById(String callId);
+    public CallOutPlan getCallRecordById(Long callId);
 }

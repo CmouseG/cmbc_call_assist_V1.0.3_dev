@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.ErrorMatchMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.ErrorMatch" >
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="error_type" property="errorType" jdbcType="INTEGER" />
     <result column="error_name" property="errorName" jdbcType="VARCHAR" />
     <result column="en_name" property="enName" jdbcType="VARCHAR" />
@@ -66,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    error_type, error_name, en_name, key_word
+    id, error_type, error_name, en_name, key_word
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ErrorMatchExample" >
     select
@@ -86,6 +87,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from error_match
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from error_match
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
   <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.ErrorMatchExample" >
     delete from error_match
     <if test="_parameter != null" >
@@ -93,14 +104,17 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
-    insert into error_match (error_type, error_name, en_name, 
-      key_word)
-    values (#{errorType,jdbcType=INTEGER}, #{errorName,jdbcType=VARCHAR}, #{enName,jdbcType=VARCHAR}, 
-      #{keyWord,jdbcType=VARCHAR})
+    insert into error_match (id, error_type, error_name, 
+      en_name, key_word)
+    values (#{id,jdbcType=INTEGER}, #{errorType,jdbcType=INTEGER}, #{errorName,jdbcType=VARCHAR}, 
+      #{enName,jdbcType=VARCHAR}, #{keyWord,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
     insert into error_match
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
       <if test="errorType != null" >
         error_type,
       </if>
@@ -115,6 +129,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="errorType != null" >
         #{errorType,jdbcType=INTEGER},
       </if>
@@ -138,6 +155,9 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update error_match
     <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
       <if test="record.errorType != null" >
         error_type = #{record.errorType,jdbcType=INTEGER},
       </if>
@@ -157,13 +177,40 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update error_match
-    set error_type = #{record.errorType,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=INTEGER},
+      error_type = #{record.errorType,jdbcType=INTEGER},
       error_name = #{record.errorName,jdbcType=VARCHAR},
       en_name = #{record.enName,jdbcType=VARCHAR},
       key_word = #{record.keyWord,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
+    update error_match
+    <set >
+      <if test="errorType != null" >
+        error_type = #{errorType,jdbcType=INTEGER},
+      </if>
+      <if test="errorName != null" >
+        error_name = #{errorName,jdbcType=VARCHAR},
+      </if>
+      <if test="enName != null" >
+        en_name = #{enName,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWord != null" >
+        key_word = #{keyWord,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.ErrorMatch" >
+    update error_match
+    set error_type = #{errorType,jdbcType=INTEGER},
+      error_name = #{errorName,jdbcType=VARCHAR},
+      en_name = #{enName,jdbcType=VARCHAR},
+      key_word = #{keyWord,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectDistinctErrorName" resultType="java.lang.String">
     SELECT   error_name

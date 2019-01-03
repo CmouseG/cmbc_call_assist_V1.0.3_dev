@@ -134,62 +134,52 @@ public class CallInRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallIdEqualTo(String value) {
+        public Criteria andCallIdEqualTo(Long value) {
             addCriterion("call_id =", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotEqualTo(String value) {
+        public Criteria andCallIdNotEqualTo(Long value) {
             addCriterion("call_id <>", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdGreaterThan(String value) {
+        public Criteria andCallIdGreaterThan(Long value) {
             addCriterion("call_id >", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdGreaterThanOrEqualTo(String value) {
+        public Criteria andCallIdGreaterThanOrEqualTo(Long value) {
             addCriterion("call_id >=", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLessThan(String value) {
+        public Criteria andCallIdLessThan(Long value) {
             addCriterion("call_id <", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLessThanOrEqualTo(String value) {
+        public Criteria andCallIdLessThanOrEqualTo(Long value) {
             addCriterion("call_id <=", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLike(String value) {
-            addCriterion("call_id like", value, "callId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallIdNotLike(String value) {
-            addCriterion("call_id not like", value, "callId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallIdIn(List<String> values) {
+        public Criteria andCallIdIn(List<Long> values) {
             addCriterion("call_id in", values, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotIn(List<String> values) {
+        public Criteria andCallIdNotIn(List<Long> values) {
             addCriterion("call_id not in", values, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdBetween(String value1, String value2) {
+        public Criteria andCallIdBetween(Long value1, Long value2) {
             addCriterion("call_id between", value1, value2, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotBetween(String value1, String value2) {
+        public Criteria andCallIdNotBetween(Long value1, Long value2) {
             addCriterion("call_id not between", value1, value2, "callId");
             return (Criteria) this;
         }

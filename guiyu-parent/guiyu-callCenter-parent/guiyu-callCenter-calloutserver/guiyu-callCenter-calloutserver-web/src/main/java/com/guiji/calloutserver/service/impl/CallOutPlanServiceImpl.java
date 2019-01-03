@@ -2,9 +2,12 @@ package com.guiji.calloutserver.service.impl;
 
 import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
+import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Auther: 魏驰
@@ -22,9 +25,17 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     }
 
     @Override
-    public CallOutPlan findByCallId(String callId) {
+    public CallOutPlan findByCallId(Long callId) {
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
         return callOutPlan;
+    }
+
+    @Override
+    public CallOutPlan findByPlanUuid(String planUuid) {
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andPlanUuidEqualTo(planUuid);
+        List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
+        return list.get(0);
     }
 
     @Override

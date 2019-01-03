@@ -10,7 +10,7 @@ public interface CallOutPlanMapper {
 
     int deleteByExample(CallOutPlanExample example);
 
-    int deleteByPrimaryKey(String callId);
+    int deleteByPrimaryKey(Long callId);
 
     int insert(CallOutPlan record);
 
@@ -19,7 +19,7 @@ public interface CallOutPlanMapper {
     List<CallOutPlan> selectByExample(CallOutPlanExample example);
     List<CallOutPlan> selectByExample4Encrypt(CallOutPlanExample example);
 
-    CallOutPlan selectByPrimaryKey(String callId);
+    CallOutPlan selectByPrimaryKey(Long callId);
 
     int updateByExampleSelective(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);
     int updateCallStateIntentReason(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);

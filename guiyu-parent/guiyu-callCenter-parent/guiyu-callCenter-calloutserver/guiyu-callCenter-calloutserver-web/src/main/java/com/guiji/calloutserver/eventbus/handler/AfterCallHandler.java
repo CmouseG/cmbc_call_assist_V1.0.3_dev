@@ -87,7 +87,7 @@ public class AfterCallHandler {
      */
     public void uploadMainRecord(CallOutRecord callOutRecord, Long userId) {
         log.info("开始上传主录音，callId[{}], file[{}]", callOutRecord.getCallId(), callOutRecord.getRecordFile());
-        RecordVO recordVO = fsAgentManager.uploadRecord(callOutRecord.getCallId(), callOutRecord.getRecordFile(), "mainrecord",userId);
+        RecordVO recordVO = fsAgentManager.uploadRecord(String.valueOf(callOutRecord.getCallId()), callOutRecord.getRecordFile(), "mainrecord",userId);
         log.info("上传录音返回结果为[{}]", recordVO);
         callOutRecord.setRecordUrl(recordVO.getFileUrl());
         callOutRecordService.update(callOutRecord);

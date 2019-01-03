@@ -128,7 +128,7 @@ public class CallDetailController implements ICallPlanDetail {
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(callId);
+        CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(Long.valueOf(callId));
         //修改状态为已读
         callDetailService.updateIsRead(callId);
 

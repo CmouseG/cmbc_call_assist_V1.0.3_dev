@@ -18,7 +18,7 @@ public class CallOutRecordServiceImpl implements CallOutRecordService {
     CallOutRecordMapper callOutRecordMapper;
 
     @Override
-    public CallOutRecord findByCallId(String callId) {
+    public CallOutRecord findByCallId(Long callId) {
         return callOutRecordMapper.selectByPrimaryKey(callId);
     }
 

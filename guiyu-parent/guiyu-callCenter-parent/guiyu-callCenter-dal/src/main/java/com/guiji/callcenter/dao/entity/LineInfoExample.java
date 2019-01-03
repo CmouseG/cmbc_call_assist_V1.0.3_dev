@@ -194,62 +194,52 @@ public class LineInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdEqualTo(String value) {
+        public Criteria andCustomerIdEqualTo(Integer value) {
             addCriterion("customer_id =", value, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdNotEqualTo(String value) {
+        public Criteria andCustomerIdNotEqualTo(Integer value) {
             addCriterion("customer_id <>", value, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdGreaterThan(String value) {
+        public Criteria andCustomerIdGreaterThan(Integer value) {
             addCriterion("customer_id >", value, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdGreaterThanOrEqualTo(String value) {
+        public Criteria andCustomerIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("customer_id >=", value, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdLessThan(String value) {
+        public Criteria andCustomerIdLessThan(Integer value) {
             addCriterion("customer_id <", value, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdLessThanOrEqualTo(String value) {
+        public Criteria andCustomerIdLessThanOrEqualTo(Integer value) {
             addCriterion("customer_id <=", value, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdLike(String value) {
-            addCriterion("customer_id like", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdNotLike(String value) {
-            addCriterion("customer_id not like", value, "customerId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCustomerIdIn(List<String> values) {
+        public Criteria andCustomerIdIn(List<Integer> values) {
             addCriterion("customer_id in", values, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdNotIn(List<String> values) {
+        public Criteria andCustomerIdNotIn(List<Integer> values) {
             addCriterion("customer_id not in", values, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdBetween(String value1, String value2) {
+        public Criteria andCustomerIdBetween(Integer value1, Integer value2) {
             addCriterion("customer_id between", value1, value2, "customerId");
             return (Criteria) this;
         }
 
-        public Criteria andCustomerIdNotBetween(String value1, String value2) {
+        public Criteria andCustomerIdNotBetween(Integer value1, Integer value2) {
             addCriterion("customer_id not between", value1, value2, "customerId");
             return (Criteria) this;
         }
@@ -954,62 +944,52 @@ public class LineInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByEqualTo(String value) {
+        public Criteria andCreatetByEqualTo(Integer value) {
             addCriterion("createt_by =", value, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByNotEqualTo(String value) {
+        public Criteria andCreatetByNotEqualTo(Integer value) {
             addCriterion("createt_by <>", value, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByGreaterThan(String value) {
+        public Criteria andCreatetByGreaterThan(Integer value) {
             addCriterion("createt_by >", value, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByGreaterThanOrEqualTo(String value) {
+        public Criteria andCreatetByGreaterThanOrEqualTo(Integer value) {
             addCriterion("createt_by >=", value, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByLessThan(String value) {
+        public Criteria andCreatetByLessThan(Integer value) {
             addCriterion("createt_by <", value, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByLessThanOrEqualTo(String value) {
+        public Criteria andCreatetByLessThanOrEqualTo(Integer value) {
             addCriterion("createt_by <=", value, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByLike(String value) {
-            addCriterion("createt_by like", value, "createtBy");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreatetByNotLike(String value) {
-            addCriterion("createt_by not like", value, "createtBy");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreatetByIn(List<String> values) {
+        public Criteria andCreatetByIn(List<Integer> values) {
             addCriterion("createt_by in", values, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByNotIn(List<String> values) {
+        public Criteria andCreatetByNotIn(List<Integer> values) {
             addCriterion("createt_by not in", values, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByBetween(String value1, String value2) {
+        public Criteria andCreatetByBetween(Integer value1, Integer value2) {
             addCriterion("createt_by between", value1, value2, "createtBy");
             return (Criteria) this;
         }
 
-        public Criteria andCreatetByNotBetween(String value1, String value2) {
+        public Criteria andCreatetByNotBetween(Integer value1, Integer value2) {
             addCriterion("createt_by not between", value1, value2, "createtBy");
             return (Criteria) this;
         }
@@ -1024,62 +1004,52 @@ public class LineInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByEqualTo(String value) {
+        public Criteria andUpdateByEqualTo(Integer value) {
             addCriterion("update_by =", value, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByNotEqualTo(String value) {
+        public Criteria andUpdateByNotEqualTo(Integer value) {
             addCriterion("update_by <>", value, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByGreaterThan(String value) {
+        public Criteria andUpdateByGreaterThan(Integer value) {
             addCriterion("update_by >", value, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByGreaterThanOrEqualTo(String value) {
+        public Criteria andUpdateByGreaterThanOrEqualTo(Integer value) {
             addCriterion("update_by >=", value, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByLessThan(String value) {
+        public Criteria andUpdateByLessThan(Integer value) {
             addCriterion("update_by <", value, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByLessThanOrEqualTo(String value) {
+        public Criteria andUpdateByLessThanOrEqualTo(Integer value) {
             addCriterion("update_by <=", value, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByLike(String value) {
-            addCriterion("update_by like", value, "updateBy");
-            return (Criteria) this;
-        }
-
-        public Criteria andUpdateByNotLike(String value) {
-            addCriterion("update_by not like", value, "updateBy");
-            return (Criteria) this;
-        }
-
-        public Criteria andUpdateByIn(List<String> values) {
+        public Criteria andUpdateByIn(List<Integer> values) {
             addCriterion("update_by in", values, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByNotIn(List<String> values) {
+        public Criteria andUpdateByNotIn(List<Integer> values) {
             addCriterion("update_by not in", values, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByBetween(String value1, String value2) {
+        public Criteria andUpdateByBetween(Integer value1, Integer value2) {
             addCriterion("update_by between", value1, value2, "updateBy");
             return (Criteria) this;
         }
 
-        public Criteria andUpdateByNotBetween(String value1, String value2) {
+        public Criteria andUpdateByNotBetween(Integer value1, Integer value2) {
             addCriterion("update_by not between", value1, value2, "updateBy");
             return (Criteria) this;
         }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class LineInfo implements Serializable {
     private Integer lineId;
 
-    private String customerId;
+    private Integer customerId;
 
     private String lineName;
 
@@ -27,9 +27,9 @@ public class LineInfo implements Serializable {
 
     private String remark;
 
-    private String createtBy;
+    private Integer createtBy;
 
-    private String updateBy;
+    private Integer updateBy;
 
     private String orgCode;
 
@@ -43,12 +43,12 @@ public class LineInfo implements Serializable {
         this.lineId = lineId;
     }
 
-    public String getCustomerId() {
+    public Integer getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId == null ? null : customerId.trim();
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public String getLineName() {
@@ -131,20 +131,20 @@ public class LineInfo implements Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
-    public String getCreatetBy() {
+    public Integer getCreatetBy() {
         return createtBy;
     }
 
-    public void setCreatetBy(String createtBy) {
-        this.createtBy = createtBy == null ? null : createtBy.trim();
+    public void setCreatetBy(Integer createtBy) {
+        this.createtBy = createtBy;
     }
 
-    public String getUpdateBy() {
+    public Integer getUpdateBy() {
         return updateBy;
     }
 
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy == null ? null : updateBy.trim();
+    public void setUpdateBy(Integer updateBy) {
+        this.updateBy = updateBy;
     }
 
     public String getOrgCode() {

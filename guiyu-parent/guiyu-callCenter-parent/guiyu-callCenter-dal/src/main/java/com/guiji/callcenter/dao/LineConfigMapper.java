@@ -10,13 +10,21 @@ public interface LineConfigMapper {
 
     int deleteByExample(LineConfigExample example);
 
+    int deleteByPrimaryKey(Integer id);
+
     int insert(LineConfig record);
 
     int insertSelective(LineConfig record);
 
     List<LineConfig> selectByExample(LineConfigExample example);
 
+    LineConfig selectByPrimaryKey(Integer id);
+
     int updateByExampleSelective(@Param("record") LineConfig record, @Param("example") LineConfigExample example);
 
     int updateByExample(@Param("record") LineConfig record, @Param("example") LineConfigExample example);
+
+    int updateByPrimaryKeySelective(LineConfig record);
+
+    int updateByPrimaryKey(LineConfig record);
 }

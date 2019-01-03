@@ -150,14 +150,14 @@ public class FsEventHandler {
         }
 
         String uuid = eventHeaders.get("UUID");
-        CallOutPlan callPlan = callOutPlanService.findByCallId(uuid);
+        CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(uuid));
         if (callPlan != null) {
             event.setUuid(uuid);
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();
             BeanUtils.copyProperties(event, asrCustomerEvent);
             log.info("构建好ALI_ASR事件[{}]，等待后续处理", event);
             asyncEventBus.post(asrCustomerEvent);
-            event.setUuid(callPlan.getAgentChannelUuid());
+//            event.setUuid(callPlan.getAgentChannelUuid());
         } else {
             log.warn("收到的Asr事件不属于当前系统(没有根据agentChannelUuid查到计划)，跳过处理，eventHeaders:[{}]", eventHeaders);
         }

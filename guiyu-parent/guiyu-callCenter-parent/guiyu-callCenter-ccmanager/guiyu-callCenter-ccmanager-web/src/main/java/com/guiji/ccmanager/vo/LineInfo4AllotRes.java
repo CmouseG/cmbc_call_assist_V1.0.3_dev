@@ -1,7 +1,5 @@
 package com.guiji.ccmanager.vo;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 /**
  * @Auther: 黎阳
  * @Date: 2018/12/18 0018 10:58

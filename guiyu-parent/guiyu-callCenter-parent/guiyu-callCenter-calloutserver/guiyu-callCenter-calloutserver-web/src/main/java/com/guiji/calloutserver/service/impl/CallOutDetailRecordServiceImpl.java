@@ -31,7 +31,7 @@ public class CallOutDetailRecordServiceImpl implements CallOutDetailRecordServic
         callOutDetailRecordMapper.updateByPrimaryKeySelective(callOutDetailRecord);
     }
     @Override
-    public void add(String callId, String callDetailId, String botWavFile) {
+    public void add(Long callId, Long callDetailId, String botWavFile) {
         CallOutDetailRecord record = new CallOutDetailRecord();
         record.setCallId(callId);
         record.setCallDetailId(callDetailId);
@@ -41,7 +41,7 @@ public class CallOutDetailRecordServiceImpl implements CallOutDetailRecordServic
     }
 
     @Override
-    public List<CallOutDetailRecord> findByCallId(String callId) {
+    public List<CallOutDetailRecord> findByCallId(Long callId) {
         CallOutDetailRecordExample recordExample = new CallOutDetailRecordExample();
         CallOutDetailRecordExample.Criteria criteria = recordExample.createCriteria();
         criteria.andCallIdEqualTo(callId);

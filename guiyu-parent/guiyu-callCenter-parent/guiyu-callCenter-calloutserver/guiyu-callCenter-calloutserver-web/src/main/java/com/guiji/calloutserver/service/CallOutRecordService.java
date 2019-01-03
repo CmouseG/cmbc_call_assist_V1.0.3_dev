@@ -9,7 +9,7 @@ import com.guiji.callcenter.dao.entity.CallOutRecord;
  * @Description:
  */
 public interface CallOutRecordService {
-    CallOutRecord findByCallId(String callId);
+    CallOutRecord findByCallId(Long callId);
     void save(CallOutRecord callOutRecord);
 
     void update(CallOutRecord callOutRecord);

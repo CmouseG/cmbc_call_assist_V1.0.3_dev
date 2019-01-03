@@ -70,7 +70,7 @@ public class DispatchManagerImpl implements DispatchManager {
                 List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
                 if (dispatchPlans != null && dispatchPlans.size() > 0) {
                     callOutPlans = toCallPlan(dispatchPlans);
-                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getCallId(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心拉取号码");
+                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getPlanUuid(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心拉取号码");
                 }
             }
 
@@ -96,9 +96,9 @@ public class DispatchManagerImpl implements DispatchManager {
             callOutPlan.setCallState(ECallState.init.ordinal());
             callOutPlan.setCreateTime(new Date());
             callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
-            callOutPlan.setCallId(dispatchPlan.getPlanUuid());
+            callOutPlan.setPlanUuid(dispatchPlan.getPlanUuid());
             callOutPlan.setPhoneNum(dispatchPlan.getPhone());
-            callOutPlan.setCustomerId(dispatchPlan.getUserId().toString());
+            callOutPlan.setCustomerId(dispatchPlan.getUserId());
             callOutPlan.setLineId(dispatchPlan.getLine());
             callOutPlan.setServerid(eurekaManager.getInstanceId());
             callOutPlan.setHasTts(dispatchPlan.isTts());
@@ -115,22 +115,22 @@ public class DispatchManagerImpl implements DispatchManager {
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String callId, String phoneNo, String intent) {
-        log.info("======================startSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
-        if(StringUtils.isBlank(callId) || StringUtils.isBlank(intent)){
-            log.info("---startSchedule callid is null or intnet is null:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
+    public void successSchedule(String planUuid, String phoneNo, String intent) {
+        log.info("======================startSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
+        if(StringUtils.isBlank(planUuid) || StringUtils.isBlank(intent)){
+            log.info("---startSchedule callid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
             return;
         }
         //调度中心
         Result.ReturnData returnData = null;
-        dispatchLogService.startServiceRequestLog(callId,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向调度中心回调结果");
+        dispatchLogService.startServiceRequestLog(planUuid,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向调度中心回调结果");
 
         try
         {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
                 public Result.ReturnData execute() {
-                    return iDispatchPlanOutApi.successSchedule(callId,intent);
+                    return iDispatchPlanOutApi.successSchedule(planUuid,intent);
                 }
 
                 @Override
@@ -144,8 +144,8 @@ public class DispatchManagerImpl implements DispatchManager {
             log.warn("调度中心回掉是否成功时出现异常", e);
         }
 
-        log.info("======================successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
-        dispatchLogService.endServiceRequestLog(callId,phoneNo, returnData, "结束向调度中心回调结果");
+        log.info("======================successSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
+        dispatchLogService.endServiceRequestLog(planUuid,phoneNo, returnData, "结束向调度中心回调结果");
 
 
     }

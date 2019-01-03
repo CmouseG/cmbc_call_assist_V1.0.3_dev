@@ -11,7 +11,6 @@ import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.utils.BeanUtil;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public void updateIsRead(String callId) {
         CallOutPlan callOutPlan = new CallOutPlan();
-        callOutPlan.setCallId(callId);
+        callOutPlan.setCallId(Long.valueOf(callId));
         callOutPlan.setIsread(1);
         callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
@@ -65,7 +64,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             criteria.andCallStartTimeLessThan(endDate);
         }
         if (StringUtils.isNotBlank(customerId) && !isSuperAdmin) {
-            criteria.andCustomerIdEqualTo(customerId);
+            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
         }
         if (StringUtils.isNotBlank(phoneNum)) {
             criteria.andPhoneNumEqualTo(phoneNum);
@@ -93,7 +92,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             }
         }
         if (StringUtils.isNotBlank(callId)) {
-            criteria.andCallIdEqualTo(callId);
+            criteria.andCallIdEqualTo(Long.valueOf(callId));
         }
         if (StringUtils.isNotBlank(tempId)) {
             criteria.andTempIdEqualTo(tempId);
@@ -152,7 +151,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public CallPlanDetailRecordVO getCallDetail(String callId) {
+    public CallPlanDetailRecordVO getCallDetail(Long callId) {
 
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
         callOutPlan.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
@@ -191,13 +190,20 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallPlanDetailRecordVO> getCallPlanDetailRecord(List<String> callIds) {
+    public List<CallPlanDetailRecordVO> getCallPlanDetailRecord(List<String> uuids) {
 
         CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andCallIdIn(callIds);
+        example.createCriteria().andPlanUuidIn(uuids);
         List<CallOutPlan> listPlan = callOutPlanMapper.selectByExample(example);
 
+        List<Long> callIds = new ArrayList<>();
         if (listPlan != null && listPlan.size() > 0) {
+            for(CallOutPlan callOutPlan:listPlan){
+                callIds.add(callOutPlan.getCallId());
+            }
+        }
+
+        if (callIds != null && callIds.size() > 0) {
 
             //获取CallOutRecord列表
             CallOutRecordExample recordExample = new CallOutRecordExample();
@@ -223,7 +229,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                     BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
                     if (records != null && records.size() > 0) {
                         for (CallOutDetailRecord callOutDetailRecord : records) {
-                            if (callOutDetailRecord.getCallDetailId().equals(callOutDetail.getCallDetailId())) {
+                            if (callOutDetailRecord.getCallDetailId() == callOutDetail.getCallDetailId()) {
                                 BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
                             }
                         }
@@ -239,7 +245,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                 BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
                 if (detailList != null && detailList.size() > 0) {
                     for (CallOutDetailVO callOutDetailVO : detailList) {
-                        if (callOutDetailVO.getCallId().equals(callOutPlan.getCallId())) {
+                        if (callOutDetailVO.getCallId() == callOutPlan.getCallId()) {
                             List<CallOutDetailVO> detailIn = callPlanDetailRecordVO.getDetailList();
                             if (detailIn != null) {
                                 detailIn.add(callOutDetailVO);
@@ -254,7 +260,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 if (recordList != null && recordList.size() > 0) {
                     for (CallOutRecord callOutRecord : recordList) {
-                        if (callPlanDetailRecordVO.getCallId().equals(callOutRecord.getCallId())) {
+                        if (callPlanDetailRecordVO.getCallId() == callOutRecord.getCallId()) {
                             callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
                         }
                     }
@@ -272,7 +278,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     public String getDialogue(String callId) {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
-        criteria.andCallIdEqualTo(callId);
+        criteria.andCallIdEqualTo(Long.valueOf(callId));
         example.setOrderByClause("IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
         String result = "";
@@ -290,7 +296,13 @@ public class CallDetailServiceImpl implements CallDetailService {
     public Map<String, String> getDialogues(String callIds) {
         CallOutDetailExample example = new CallOutDetailExample();
         String[] callidArr = callIds.split(",");
-        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+
+        List<Long> idList = new ArrayList();
+        for(String callId: callidArr){
+            idList.add(Long.valueOf(callId));
+        }
+
+        example.createCriteria().andCallIdIn(idList);
         example.setOrderByClause("call_id,IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
 
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
@@ -298,18 +310,18 @@ public class CallDetailServiceImpl implements CallDetailService {
         Map<String, String> map = new HashMap<String, String>();
         if (list != null && list.size() > 0) {
             for (CallOutDetail callOutDetail : list) {
-                String callId = callOutDetail.getCallId();
+                Long callId = callOutDetail.getCallId();
 
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
 
                 if (map.get(callId) == null) {
                     String result = getContext(botSay, customerSay);
-                    map.put(callId, result);
+                    map.put(String.valueOf(callId), result);
                 } else {
                     String result = map.get(callId);
                     result += getContext(botSay, customerSay);
-                    map.put(callId, result);
+                    map.put(String.valueOf(callId), result);
                 }
             }
         }
@@ -335,7 +347,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Override
     public String getRecordFileUrl(String callId) {
-        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(callId);
+        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(Long.valueOf(callId));
         if (callOutRecord != null) {
             return callOutRecord.getRecordUrl();
         }
@@ -346,8 +358,12 @@ public class CallDetailServiceImpl implements CallDetailService {
     public List<CallOutRecord> getRecords(String callIds) {
 
         String[] callidArr = callIds.split(",");
+        List<Long> idList = new ArrayList();
+        for(String callId: callidArr){
+            idList.add(Long.valueOf(callId));
+        }
         CallOutRecordExample example = new CallOutRecordExample();
-        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+        example.createCriteria().andCallIdIn(idList);
         return callOutRecordMapper.selectByExample(example);
 
     }
@@ -355,10 +371,14 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public void delRecord(String callIds) {
         String[] callidArr = callIds.split(",");
+        List<Long> idList = new ArrayList();
+        for(String callId: callidArr){
+            idList.add(Long.valueOf(callId));
+        }
         CallOutPlan callOutPlan = new CallOutPlan();
         callOutPlan.setIsdel(1);
         CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andCallIdIn(Arrays.asList(callidArr));
+        example.createCriteria().andCallIdIn(idList);
         callOutPlanMapper.updateByExampleSelective(callOutPlan, example);
     }
 
@@ -371,7 +391,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq) {
         CallOutDetail record = new CallOutDetail();
         record.setCustomerSayText(callDetailUpdateReq.getCustomerSayText());
-        record.setCallDetailId(callDetailUpdateReq.getCallDetailId());
+        record.setCallDetailId(Long.valueOf(callDetailUpdateReq.getCallDetailId()));
         callOutDetailMapper.updateByPrimaryKeySelective(record);
     }
 

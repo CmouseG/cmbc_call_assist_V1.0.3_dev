@@ -14,8 +14,6 @@ public class ReportCallHour implements Serializable {
 
     private Long duration;
 
-    private String customerId;
-
     private String tempid;
 
     private String orgCode;
@@ -62,14 +60,6 @@ public class ReportCallHour implements Serializable {
         this.duration = duration;
     }
 
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId == null ? null : customerId.trim();
-    }
-
     public String getTempid() {
         return tempid;
     }
@@ -97,7 +87,6 @@ public class ReportCallHour implements Serializable {
         sb.append(", outCount=").append(outCount);
         sb.append(", connectCount=").append(connectCount);
         sb.append(", duration=").append(duration);
-        sb.append(", customerId=").append(customerId);
         sb.append(", tempid=").append(tempid);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);

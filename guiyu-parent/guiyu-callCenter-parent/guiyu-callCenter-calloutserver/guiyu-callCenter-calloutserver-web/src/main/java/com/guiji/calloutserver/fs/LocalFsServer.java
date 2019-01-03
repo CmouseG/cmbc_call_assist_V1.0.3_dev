@@ -167,7 +167,7 @@ public class LocalFsServer implements IEslEventListener {
      * 杀掉通道
      * @param uuid
      */
-    public void hangup(String uuid){
+    public void hangup(Long uuid){
         executeAsync("uuid_kill " + uuid);
     }
 

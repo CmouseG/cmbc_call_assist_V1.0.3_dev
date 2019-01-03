@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.CallInDetailRecordMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
-    <id column="call_detail_id" property="callDetailId" jdbcType="VARCHAR" />
-    <result column="call_id" property="callId" jdbcType="VARCHAR" />
+    <id column="call_detail_id" property="callDetailId" jdbcType="BIGINT" />
+    <result column="call_id" property="callId" jdbcType="BIGINT" />
     <result column="agent_record_file" property="agentRecordFile" jdbcType="VARCHAR" />
     <result column="agent_record_url" property="agentRecordUrl" jdbcType="VARCHAR" />
     <result column="bot_record_file" property="botRecordFile" jdbcType="VARCHAR" />
@@ -91,15 +91,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from call_in_detail_record
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from call_in_detail_record
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecordExample" >
     delete from call_in_detail_record
@@ -111,7 +111,7 @@
     insert into call_in_detail_record (call_detail_id, call_id, agent_record_file, 
       agent_record_url, bot_record_file, bot_record_url, 
       customer_record_file, customer_record_url)
-    values (#{callDetailId,jdbcType=VARCHAR}, #{callId,jdbcType=VARCHAR}, #{agentRecordFile,jdbcType=VARCHAR}, 
+    values (#{callDetailId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{agentRecordFile,jdbcType=VARCHAR}, 
       #{agentRecordUrl,jdbcType=VARCHAR}, #{botRecordFile,jdbcType=VARCHAR}, #{botRecordUrl,jdbcType=VARCHAR}, 
       #{customerRecordFile,jdbcType=VARCHAR}, #{customerRecordUrl,jdbcType=VARCHAR})
   </insert>
@@ -145,10 +145,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callDetailId != null" >
-        #{callDetailId,jdbcType=VARCHAR},
+        #{callDetailId,jdbcType=BIGINT},
       </if>
       <if test="callId != null" >
-        #{callId,jdbcType=VARCHAR},
+        #{callId,jdbcType=BIGINT},
       </if>
       <if test="agentRecordFile != null" >
         #{agentRecordFile,jdbcType=VARCHAR},
@@ -180,10 +180,10 @@
     update call_in_detail_record
     <set >
       <if test="record.callDetailId != null" >
-        call_detail_id = #{record.callDetailId,jdbcType=VARCHAR},
+        call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
       </if>
       <if test="record.callId != null" >
-        call_id = #{record.callId,jdbcType=VARCHAR},
+        call_id = #{record.callId,jdbcType=BIGINT},
       </if>
       <if test="record.agentRecordFile != null" >
         agent_record_file = #{record.agentRecordFile,jdbcType=VARCHAR},
@@ -210,8 +210,8 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update call_in_detail_record
-    set call_detail_id = #{record.callDetailId,jdbcType=VARCHAR},
-      call_id = #{record.callId,jdbcType=VARCHAR},
+    set call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      call_id = #{record.callId,jdbcType=BIGINT},
       agent_record_file = #{record.agentRecordFile,jdbcType=VARCHAR},
       agent_record_url = #{record.agentRecordUrl,jdbcType=VARCHAR},
       bot_record_file = #{record.botRecordFile,jdbcType=VARCHAR},
@@ -226,7 +226,7 @@
     update call_in_detail_record
     <set >
       <if test="callId != null" >
-        call_id = #{callId,jdbcType=VARCHAR},
+        call_id = #{callId,jdbcType=BIGINT},
       </if>
       <if test="agentRecordFile != null" >
         agent_record_file = #{agentRecordFile,jdbcType=VARCHAR},
@@ -247,17 +247,17 @@
         customer_record_url = #{customerRecordUrl,jdbcType=VARCHAR},
       </if>
     </set>
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
     update call_in_detail_record
-    set call_id = #{callId,jdbcType=VARCHAR},
+    set call_id = #{callId,jdbcType=BIGINT},
       agent_record_file = #{agentRecordFile,jdbcType=VARCHAR},
       agent_record_url = #{agentRecordUrl,jdbcType=VARCHAR},
       bot_record_file = #{botRecordFile,jdbcType=VARCHAR},
       bot_record_url = #{botRecordUrl,jdbcType=VARCHAR},
       customer_record_file = #{customerRecordFile,jdbcType=VARCHAR},
       customer_record_url = #{customerRecordUrl,jdbcType=VARCHAR}
-    where call_detail_id = #{callDetailId,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </update>
 </mapper>

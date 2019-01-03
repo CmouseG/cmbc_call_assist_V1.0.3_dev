@@ -123,7 +123,7 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
 
 
     @Override
-    public CallOutPlan getCallRecordById(String callId) {
+    public CallOutPlan getCallRecordById(Long callId) {
         return callOutPlanMapper.selectByPrimaryKey(callId);
     }
 }

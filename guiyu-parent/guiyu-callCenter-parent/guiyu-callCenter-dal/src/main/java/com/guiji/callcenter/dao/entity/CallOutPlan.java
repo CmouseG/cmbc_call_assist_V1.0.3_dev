@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class CallOutPlan implements Serializable {
-    private String callId;
+    private Long callId;
+
+    private String planUuid;
 
     private String phoneNum;
 
-    private String customerId;
+    private Integer customerId;
 
     private String tempId;
 
@@ -70,12 +72,20 @@ public class CallOutPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getCallId() {
+    public Long getCallId() {
         return callId;
     }
 
-    public void setCallId(String callId) {
-        this.callId = callId == null ? null : callId.trim();
+    public void setCallId(Long callId) {
+        this.callId = callId;
+    }
+
+    public String getPlanUuid() {
+        return planUuid;
+    }
+
+    public void setPlanUuid(String planUuid) {
+        this.planUuid = planUuid == null ? null : planUuid.trim();
     }
 
     public String getPhoneNum() {
@@ -86,12 +96,12 @@ public class CallOutPlan implements Serializable {
         this.phoneNum = phoneNum == null ? null : phoneNum.trim();
     }
 
-    public String getCustomerId() {
+    public Integer getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId == null ? null : customerId.trim();
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public String getTempId() {
@@ -333,6 +343,7 @@ public class CallOutPlan implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", callId=").append(callId);
+        sb.append(", planUuid=").append(planUuid);
         sb.append(", phoneNum=").append(phoneNum);
         sb.append(", customerId=").append(customerId);
         sb.append(", tempId=").append(tempId);

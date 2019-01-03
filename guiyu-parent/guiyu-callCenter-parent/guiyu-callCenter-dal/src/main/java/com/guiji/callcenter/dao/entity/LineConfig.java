@@ -3,6 +3,8 @@ package com.guiji.callcenter.dao.entity;
 import java.io.Serializable;
 
 public class LineConfig implements Serializable {
+    private Integer id;
+
     private String lineId;
 
     private String fileType;
@@ -12,6 +14,14 @@ public class LineConfig implements Serializable {
     private String fileData;
 
     private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getLineId() {
         return lineId;
@@ -51,6 +61,7 @@ public class LineConfig implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
         sb.append(", lineId=").append(lineId);
         sb.append(", fileType=").append(fileType);
         sb.append(", fileName=").append(fileName);

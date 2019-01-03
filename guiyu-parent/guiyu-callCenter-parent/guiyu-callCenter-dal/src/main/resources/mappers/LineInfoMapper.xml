@@ -3,7 +3,7 @@
 <mapper namespace="com.guiji.callcenter.dao.LineInfoMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.LineInfo" >
     <id column="line_id" property="lineId" jdbcType="INTEGER" />
-    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="INTEGER" />
     <result column="line_name" property="lineName" jdbcType="VARCHAR" />
     <result column="sip_ip" property="sipIp" jdbcType="VARCHAR" />
     <result column="sip_port" property="sipPort" jdbcType="VARCHAR" />
@@ -14,8 +14,8 @@
     <result column="create_date" property="createDate" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="createt_by" property="createtBy" jdbcType="VARCHAR" />
-    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="createt_by" property="createtBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -114,21 +114,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo"  useGeneratedKeys="true"   keyProperty="lineId" >
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
     insert into line_info (line_id, customer_id, line_name, 
       sip_ip, sip_port, codec, 
       caller_num, callee_prefix, max_concurrent_calls, 
       create_date, update_date, remark, 
       createt_by, update_by, org_code
       )
-    values (#{lineId,jdbcType=INTEGER}, #{customerId,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR}, 
+    values (#{lineId,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{lineName,jdbcType=VARCHAR}, 
       #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=VARCHAR}, #{codec,jdbcType=VARCHAR}, 
       #{callerNum,jdbcType=VARCHAR}, #{calleePrefix,jdbcType=VARCHAR}, #{maxConcurrentCalls,jdbcType=INTEGER}, 
       #{createDate,jdbcType=VARCHAR}, #{updateDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{createtBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}
+      #{createtBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" useGeneratedKeys="true"   keyProperty="lineId" >
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
     insert into line_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="lineId != null" >
@@ -182,7 +182,7 @@
         #{lineId,jdbcType=INTEGER},
       </if>
       <if test="customerId != null" >
-        #{customerId,jdbcType=VARCHAR},
+        #{customerId,jdbcType=INTEGER},
       </if>
       <if test="lineName != null" >
         #{lineName,jdbcType=VARCHAR},
@@ -215,10 +215,10 @@
         #{remark,jdbcType=VARCHAR},
       </if>
       <if test="createtBy != null" >
-        #{createtBy,jdbcType=VARCHAR},
+        #{createtBy,jdbcType=INTEGER},
       </if>
       <if test="updateBy != null" >
-        #{updateBy,jdbcType=VARCHAR},
+        #{updateBy,jdbcType=INTEGER},
       </if>
       <if test="orgCode != null" >
         #{orgCode,jdbcType=VARCHAR},
@@ -238,7 +238,7 @@
         line_id = #{record.lineId,jdbcType=INTEGER},
       </if>
       <if test="record.customerId != null" >
-        customer_id = #{record.customerId,jdbcType=VARCHAR},
+        customer_id = #{record.customerId,jdbcType=INTEGER},
       </if>
       <if test="record.lineName != null" >
         line_name = #{record.lineName,jdbcType=VARCHAR},
@@ -271,10 +271,10 @@
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
       <if test="record.createtBy != null" >
-        createt_by = #{record.createtBy,jdbcType=VARCHAR},
+        createt_by = #{record.createtBy,jdbcType=INTEGER},
       </if>
       <if test="record.updateBy != null" >
-        update_by = #{record.updateBy,jdbcType=VARCHAR},
+        update_by = #{record.updateBy,jdbcType=INTEGER},
       </if>
       <if test="record.orgCode != null" >
         org_code = #{record.orgCode,jdbcType=VARCHAR},
@@ -287,7 +287,7 @@
   <update id="updateByExample" parameterType="map" >
     update line_info
     set line_id = #{record.lineId,jdbcType=INTEGER},
-      customer_id = #{record.customerId,jdbcType=VARCHAR},
+      customer_id = #{record.customerId,jdbcType=INTEGER},
       line_name = #{record.lineName,jdbcType=VARCHAR},
       sip_ip = #{record.sipIp,jdbcType=VARCHAR},
       sip_port = #{record.sipPort,jdbcType=VARCHAR},
@@ -298,8 +298,8 @@
       create_date = #{record.createDate,jdbcType=VARCHAR},
       update_date = #{record.updateDate,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
-      createt_by = #{record.createtBy,jdbcType=VARCHAR},
-      update_by = #{record.updateBy,jdbcType=VARCHAR},
+      createt_by = #{record.createtBy,jdbcType=INTEGER},
+      update_by = #{record.updateBy,jdbcType=INTEGER},
       org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -309,7 +309,7 @@
     update line_info
     <set >
       <if test="customerId != null" >
-        customer_id = #{customerId,jdbcType=VARCHAR},
+        customer_id = #{customerId,jdbcType=INTEGER},
       </if>
       <if test="lineName != null" >
         line_name = #{lineName,jdbcType=VARCHAR},
@@ -342,10 +342,10 @@
         remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="createtBy != null" >
-        createt_by = #{createtBy,jdbcType=VARCHAR},
+        createt_by = #{createtBy,jdbcType=INTEGER},
       </if>
       <if test="updateBy != null" >
-        update_by = #{updateBy,jdbcType=VARCHAR},
+        update_by = #{updateBy,jdbcType=INTEGER},
       </if>
       <if test="orgCode != null" >
         org_code = #{orgCode,jdbcType=VARCHAR},
@@ -355,7 +355,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.LineInfo" >
     update line_info
-    set customer_id = #{customerId,jdbcType=VARCHAR},
+    set customer_id = #{customerId,jdbcType=INTEGER},
       line_name = #{lineName,jdbcType=VARCHAR},
       sip_ip = #{sipIp,jdbcType=VARCHAR},
       sip_port = #{sipPort,jdbcType=VARCHAR},
@@ -366,8 +366,8 @@
       create_date = #{createDate,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      createt_by = #{createtBy,jdbcType=VARCHAR},
-      update_by = #{updateBy,jdbcType=VARCHAR},
+      createt_by = #{createtBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER},
       org_code = #{orgCode,jdbcType=VARCHAR}
     where line_id = #{lineId,jdbcType=INTEGER}
   </update>

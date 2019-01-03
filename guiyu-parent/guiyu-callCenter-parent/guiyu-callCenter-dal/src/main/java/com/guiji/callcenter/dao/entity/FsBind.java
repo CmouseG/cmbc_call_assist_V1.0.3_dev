@@ -3,6 +3,8 @@ package com.guiji.callcenter.dao.entity;
 import java.io.Serializable;
 
 public class FsBind implements Serializable {
+    private Integer id;
+
     private String serviceId;
 
     private String serviceName;
@@ -22,6 +24,14 @@ public class FsBind implements Serializable {
     private String createDate;
 
     private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getServiceId() {
         return serviceId;
@@ -101,6 +111,7 @@ public class FsBind implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
         sb.append(", serviceId=").append(serviceId);
         sb.append(", serviceName=").append(serviceName);
         sb.append(", fsAgentId=").append(fsAgentId);

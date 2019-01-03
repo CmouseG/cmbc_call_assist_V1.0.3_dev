@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.CallOutPlanMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallOutPlan" >
-    <id column="call_id" property="callId" jdbcType="VARCHAR" />
+    <id column="call_id" property="callId" jdbcType="BIGINT" />
+    <result column="plan_uuid" property="planUuid" jdbcType="VARCHAR" />
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
-    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
+    <result column="customer_id" property="customerId" jdbcType="INTEGER" />
     <result column="temp_id" property="tempId" jdbcType="VARCHAR" />
     <result column="line_id" property="lineId" jdbcType="INTEGER" />
     <result column="serverId" property="serverid" jdbcType="VARCHAR" />
@@ -94,11 +95,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    call_id, phone_num, customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time, 
-    agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time, 
-    hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction, 
-    accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason, 
-    isdel, isread, org_code, batch_id
+    call_id, plan_uuid, phone_num, customer_id, temp_id, line_id, serverId, agent_id, 
+    agent_answer_time, agent_channel_uuid, agent_group_id, agent_start_time, create_time, 
+    call_start_time, hangup_time, answer_time, duration, bill_sec, call_direction, call_state, 
+    hangup_direction, accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, 
+    ai_id, freason, isdel, isread, org_code, batch_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
     select
@@ -137,15 +138,15 @@
             limit #{limitStart} , #{limitEnd}
         </if>
     </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from call_out_plan
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from call_out_plan
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
     delete from call_out_plan
@@ -153,35 +154,40 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
-    insert into call_out_plan (call_id, phone_num, customer_id, 
-      temp_id, line_id, serverId, 
-      agent_id, agent_answer_time, agent_channel_uuid, 
-      agent_group_id, agent_start_time, create_time, 
-      call_start_time, hangup_time, answer_time, 
-      duration, bill_sec, call_direction, 
-      call_state, hangup_direction, accurate_intent, 
-      reason, hangup_code, originate_cmd, 
-      remarks, has_tts, ai_id, 
-      freason, isdel, isread, 
-      org_code, batch_id)
-    values (#{callId,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{customerId,jdbcType=VARCHAR}, 
-      #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{serverid,jdbcType=VARCHAR}, 
-      #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{agentChannelUuid,jdbcType=VARCHAR}, 
-      #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{callStartTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP}, #{answerTime,jdbcType=TIMESTAMP}, 
-      #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER}, #{callDirection,jdbcType=INTEGER}, 
-      #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, #{accurateIntent,jdbcType=VARCHAR}, 
-      #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, #{originateCmd,jdbcType=VARCHAR}, 
-      #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR}, 
-      #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER}, 
-      #{orgCode,jdbcType=VARCHAR}, #{batchId,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan"  useGeneratedKeys="true" keyProperty="callId">
+    insert into call_out_plan (call_id, plan_uuid, phone_num, 
+      customer_id, temp_id, line_id, 
+      serverId, agent_id, agent_answer_time, 
+      agent_channel_uuid, agent_group_id, agent_start_time, 
+      create_time, call_start_time, hangup_time, 
+      answer_time, duration, bill_sec, 
+      call_direction, call_state, hangup_direction, 
+      accurate_intent, reason, hangup_code, 
+      originate_cmd, remarks, has_tts, 
+      ai_id, freason, isdel, 
+      isread, org_code, batch_id
+      )
+    values (#{callId,jdbcType=BIGINT}, #{planUuid,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, 
+      #{customerId,jdbcType=INTEGER}, #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, 
+      #{serverid,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, 
+      #{agentChannelUuid,jdbcType=VARCHAR}, #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{callStartTime,jdbcType=TIMESTAMP}, #{hangupTime,jdbcType=TIMESTAMP}, 
+      #{answerTime,jdbcType=TIMESTAMP}, #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER}, 
+      #{callDirection,jdbcType=INTEGER}, #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, 
+      #{accurateIntent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, 
+      #{originateCmd,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, 
+      #{aiId,jdbcType=VARCHAR}, #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, 
+      #{isread,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{batchId,jdbcType=INTEGER}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" useGeneratedKeys="true" keyProperty="callId">
     insert into call_out_plan
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="callId != null" >
         call_id,
+      </if>
+      <if test="planUuid != null" >
+        plan_uuid,
       </if>
       <if test="phoneNum != null" >
         phone_num,
@@ -279,13 +285,16 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="callId != null" >
-        #{callId,jdbcType=VARCHAR},
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="planUuid != null" >
+        #{planUuid,jdbcType=VARCHAR},
       </if>
       <if test="phoneNum != null" >
         #{phoneNum,jdbcType=VARCHAR},
       </if>
       <if test="customerId != null" >
-        #{customerId,jdbcType=VARCHAR},
+        #{customerId,jdbcType=INTEGER},
       </if>
       <if test="tempId != null" >
         #{tempId,jdbcType=VARCHAR},
@@ -386,13 +395,16 @@
     update call_out_plan
     <set >
       <if test="record.callId != null" >
-        call_id = #{record.callId,jdbcType=VARCHAR},
+        call_id = #{record.callId,jdbcType=BIGINT},
+      </if>
+      <if test="record.planUuid != null" >
+        plan_uuid = #{record.planUuid,jdbcType=VARCHAR},
       </if>
       <if test="record.phoneNum != null" >
         phone_num = #{record.phoneNum,jdbcType=VARCHAR},
       </if>
       <if test="record.customerId != null" >
-        customer_id = #{record.customerId,jdbcType=VARCHAR},
+        customer_id = #{record.customerId,jdbcType=INTEGER},
       </if>
       <if test="record.tempId != null" >
         temp_id = #{record.tempId,jdbcType=VARCHAR},
@@ -500,9 +512,10 @@
     </update>
   <update id="updateByExample" parameterType="map" >
     update call_out_plan
-    set call_id = #{record.callId,jdbcType=VARCHAR},
+    set call_id = #{record.callId,jdbcType=BIGINT},
+      plan_uuid = #{record.planUuid,jdbcType=VARCHAR},
       phone_num = #{record.phoneNum,jdbcType=VARCHAR},
-      customer_id = #{record.customerId,jdbcType=VARCHAR},
+      customer_id = #{record.customerId,jdbcType=INTEGER},
       temp_id = #{record.tempId,jdbcType=VARCHAR},
       line_id = #{record.lineId,jdbcType=INTEGER},
       serverId = #{record.serverid,jdbcType=VARCHAR},
@@ -539,11 +552,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
     update call_out_plan
     <set >
+      <if test="planUuid != null" >
+        plan_uuid = #{planUuid,jdbcType=VARCHAR},
+      </if>
       <if test="phoneNum != null" >
         phone_num = #{phoneNum,jdbcType=VARCHAR},
       </if>
       <if test="customerId != null" >
-        customer_id = #{customerId,jdbcType=VARCHAR},
+        customer_id = #{customerId,jdbcType=INTEGER},
       </if>
       <if test="tempId != null" >
         temp_id = #{tempId,jdbcType=VARCHAR},
@@ -633,12 +649,13 @@
         batch_id = #{batchId,jdbcType=INTEGER},
       </if>
     </set>
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" >
     update call_out_plan
-    set phone_num = #{phoneNum,jdbcType=VARCHAR},
-      customer_id = #{customerId,jdbcType=VARCHAR},
+    set plan_uuid = #{planUuid,jdbcType=VARCHAR},
+      phone_num = #{phoneNum,jdbcType=VARCHAR},
+      customer_id = #{customerId,jdbcType=INTEGER},
       temp_id = #{tempId,jdbcType=VARCHAR},
       line_id = #{lineId,jdbcType=INTEGER},
       serverId = #{serverid,jdbcType=VARCHAR},
@@ -668,6 +685,6 @@
       isread = #{isread,jdbcType=INTEGER},
       org_code = #{orgCode,jdbcType=VARCHAR},
       batch_id = #{batchId,jdbcType=INTEGER}
-    where call_id = #{callId,jdbcType=VARCHAR}
+    where call_id = #{callId,jdbcType=BIGINT}
   </update>
 </mapper>

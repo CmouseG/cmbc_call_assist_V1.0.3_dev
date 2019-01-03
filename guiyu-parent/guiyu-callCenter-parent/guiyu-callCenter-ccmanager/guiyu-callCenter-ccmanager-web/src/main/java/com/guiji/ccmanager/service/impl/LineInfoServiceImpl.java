@@ -12,6 +12,7 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4AllotRes;
+import com.guiji.ccmanager.vo.LineInfo4Page;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.exception.GuiyuException;
@@ -21,6 +22,7 @@ import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.ServerUtil;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +62,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
         if(StringUtils.isNotBlank(customerId)){
-            criteria.andCustomerIdEqualTo(customerId);
+            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
         }
         if(StringUtils.isNotBlank(lineName)){
             criteria.andLineNameEqualTo(lineName);
@@ -68,7 +70,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         return example;
     }
 
-    public List<LineInfo> getLineInfoByCustom(String customerId, String lineName, int pageSize, int pageNo) {
+    public List<LineInfo4Page> getLineInfoByCustom(String customerId, String lineName, int pageSize, int pageNo) {
 
         LineInfoExample example = getExample(customerId,  lineName);
 
@@ -77,24 +79,27 @@ public class LineInfoServiceImpl implements LineInfoService {
         example.setLimitEnd(pageSize);
 
         List<LineInfo> list = lineInfoMapper.selectByExample(example);
-
+        List<LineInfo4Page> reslist = new ArrayList<LineInfo4Page>();
         if(list!=null && list.size()>0){
             for(LineInfo lineInfo:list){
-                String userId = lineInfo.getCreatetBy();
-                if(StringUtils.isNotBlank(userId)){
-                    lineInfo.setCreatetBy(cacheManager.getUserName(userId));
+                LineInfo4Page lineInfo4Page=new LineInfo4Page();
+                BeanUtil.copyProperties(lineInfo,lineInfo4Page);
+                Integer userId = lineInfo.getCreatetBy();
+                if(null !=userId){
+                    lineInfo4Page.setCreatetUser(cacheManager.getUserName(userId));
                 }
-                String userUpdate = lineInfo.getUpdateBy();
-                if(StringUtils.isNotBlank(userUpdate)){
-                    lineInfo.setUpdateBy(cacheManager.getUserName(userId));
+                Integer userUpdate = lineInfo.getUpdateBy();
+                if(null!=userUpdate){
+                    lineInfo4Page.setUpdateUser(cacheManager.getUserName(userId));
                 }
-                String cId = lineInfo.getCustomerId();
-                if(StringUtils.isNotBlank(cId)){
-                    lineInfo.setCustomerId( cacheManager.getUserName(cId));
+                Integer cId = lineInfo.getCustomerId();
+                if(null !=cId){
+                    lineInfo4Page.setCustomerUser( cacheManager.getUserName(cId));
                 }
+                reslist.add(lineInfo4Page);
             }
         }
-        return list;
+        return reslist;
     }
 
 
@@ -112,11 +117,11 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineInfo lineInfo = new LineInfo();
         BeanUtil.copyProperties(lineInfoVO,lineInfo);
         lineInfo.setCreateDate(DateUtil.getCurrentTime());
-        lineInfo.setCreatetBy(lineInfoVO.getCustomerId());
+        lineInfo.setCreatetBy(Integer.valueOf(lineInfoVO.getCustomerId()));
         lineInfo.setUpdateDate(DateUtil.getCurrentTime());
-        lineInfo.setUpdateBy(lineInfoVO.getCustomerId());
+        lineInfo.setUpdateBy(Integer.valueOf(lineInfoVO.getCustomerId()));
         lineInfo.setOrgCode(lineInfoVO.getOrgCode());
-        lineInfo.setCustomerId("0");
+        lineInfo.setCustomerId(0);
         lineInfoMapper.insertSelective(lineInfo);
 
         //调用fsmanager的增加线路接口
@@ -164,7 +169,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineInfo lineInfo = new LineInfo();
         BeanUtil.copyProperties(lineInfoVO,lineInfo);
         lineInfo.setUpdateDate(DateUtil.getCurrentTime());
-        lineInfo.setUpdateBy(String.valueOf(userId));
+        lineInfo.setUpdateBy(userId.intValue());
         lineInfoMapper.updateByPrimaryKeySelective(lineInfo);
 
         //调用fsmanager的更新线路接口
@@ -229,7 +234,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
         if(StringUtils.isNotBlank(customerId)){
-            criteria.andCustomerIdEqualTo(customerId);
+            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
         }
         List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
 
@@ -276,9 +281,9 @@ public class LineInfoServiceImpl implements LineInfoService {
 
         //先把该客户的都置为0
         LineInfoExample example = new LineInfoExample();
-        example.createCriteria().andCustomerIdEqualTo(customerId);
+        example.createCriteria().andCustomerIdEqualTo(Integer.valueOf(customerId));
         LineInfo record = new LineInfo();
-        record.setCustomerId("0");
+        record.setCustomerId(0);
         lineInfoMapper.updateByExampleSelective(record,example);
 
         //重新分配
@@ -286,7 +291,7 @@ public class LineInfoServiceImpl implements LineInfoService {
             String[] arr = lineIds.split(",");
             for(String lineID:arr){
                 LineInfo updateLine = new LineInfo();
-                updateLine.setCustomerId(customerId);
+                updateLine.setCustomerId(Integer.valueOf(customerId));
                 updateLine.setLineId(Integer.valueOf(lineID));
                 lineInfoMapper.updateByPrimaryKeySelective(updateLine);
             }

@@ -3,6 +3,8 @@ package com.guiji.callcenter.dao.entity;
 import java.io.Serializable;
 
 public class ErrorMatch implements Serializable {
+    private Integer id;
+
     private Integer errorType;
 
     private String errorName;
@@ -12,6 +14,14 @@ public class ErrorMatch implements Serializable {
     private String keyWord;
 
     private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getErrorType() {
         return errorType;
@@ -51,6 +61,7 @@ public class ErrorMatch implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
         sb.append(", errorType=").append(errorType);
         sb.append(", errorName=").append(errorName);
         sb.append(", enName=").append(enName);

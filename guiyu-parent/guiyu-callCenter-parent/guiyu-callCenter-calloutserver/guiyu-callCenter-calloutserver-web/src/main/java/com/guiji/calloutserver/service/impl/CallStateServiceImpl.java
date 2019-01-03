@@ -87,10 +87,10 @@ public class CallStateServiceImpl implements CallStateService {
             for (CallOutPlan callOutPlan : list) {
                 try {
                     AiHangupReq hangupReq = new AiHangupReq();
-                    hangupReq.setSeqId(callOutPlan.getCallId());
+                    hangupReq.setSeqId(String.valueOf(callOutPlan.getCallId()));
                     hangupReq.setAiNo(callOutPlan.getAiId());
                     hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
-                    hangupReq.setUserId(callOutPlan.getCustomerId());
+                    hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
                     Result.ReturnData result = robotRemote.aiHangup(hangupReq);
                     log.info("---->>回调机器人中心释放资源，返回结果result[{}],callId[{}]",result,callOutPlan.getCallId());
                 } catch (Exception e) {
@@ -98,7 +98,7 @@ public class CallStateServiceImpl implements CallStateService {
                 }
 
                 try {
-                    Result.ReturnData resultDis =iDispatchPlanOutApi.successSchedule(callOutPlan.getCallId(), callOutPlan.getAccurateIntent());
+                    Result.ReturnData resultDis =iDispatchPlanOutApi.successSchedule(callOutPlan.getPlanUuid(), callOutPlan.getAccurateIntent());
                     log.info("---->>回调dispatcher，返回结果result[{}],callId[{}]",resultDis,callOutPlan.getCallId());
                 } catch (Exception e) {
                     log.error("调用调度中心 successSchedule 出现异常:" + e);

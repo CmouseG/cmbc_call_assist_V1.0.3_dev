@@ -101,7 +101,7 @@ public class CallPlanController implements ICallPlan {
         }
 
         log.info("构建StartCallPlanEvent事件，准备发起呼叫");
-        asyncEventBus.post(new StartCallPlanEvent(customerId, tempId, currentLine));
+        asyncEventBus.post(new StartCallPlanEvent(Integer.valueOf(customerId), tempId, currentLine));
 
         return Result.ok();
     }

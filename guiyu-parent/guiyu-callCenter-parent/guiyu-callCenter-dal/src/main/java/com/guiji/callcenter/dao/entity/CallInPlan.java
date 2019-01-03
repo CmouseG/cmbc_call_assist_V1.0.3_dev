@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class CallInPlan implements Serializable {
-    private String callId;
+    private Long callId;
 
     private String phoneNum;
 
-    private String customerId;
+    private Integer customerId;
 
     private String tempId;
 
@@ -62,14 +62,16 @@ public class CallInPlan implements Serializable {
 
     private Integer isread;
 
+    private String planUuid;
+
     private static final long serialVersionUID = 1L;
 
-    public String getCallId() {
+    public Long getCallId() {
         return callId;
     }
 
-    public void setCallId(String callId) {
-        this.callId = callId == null ? null : callId.trim();
+    public void setCallId(Long callId) {
+        this.callId = callId;
     }
 
     public String getPhoneNum() {
@@ -80,12 +82,12 @@ public class CallInPlan implements Serializable {
         this.phoneNum = phoneNum == null ? null : phoneNum.trim();
     }
 
-    public String getCustomerId() {
+    public Integer getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId == null ? null : customerId.trim();
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public String getTempId() {
@@ -296,6 +298,14 @@ public class CallInPlan implements Serializable {
         this.isread = isread;
     }
 
+    public String getPlanUuid() {
+        return planUuid;
+    }
+
+    public void setPlanUuid(String planUuid) {
+        this.planUuid = planUuid == null ? null : planUuid.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -331,6 +341,7 @@ public class CallInPlan implements Serializable {
         sb.append(", aiId=").append(aiId);
         sb.append(", isdel=").append(isdel);
         sb.append(", isread=").append(isread);
+        sb.append(", planUuid=").append(planUuid);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

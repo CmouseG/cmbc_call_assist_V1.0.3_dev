@@ -3,7 +3,7 @@ package com.guiji.callcenter.dao.entity;
 import java.io.Serializable;
 
 public class CallInRecord implements Serializable {
-    private String callId;
+    private Long callId;
 
     private String recordFile;
 
@@ -11,12 +11,12 @@ public class CallInRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getCallId() {
+    public Long getCallId() {
         return callId;
     }
 
-    public void setCallId(String callId) {
-        this.callId = callId == null ? null : callId.trim();
+    public void setCallId(Long callId) {
+        this.callId = callId;
     }
 
     public String getRecordFile() {

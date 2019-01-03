@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.FsBindMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.FsBind" >
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="service_id" property="serviceId" jdbcType="VARCHAR" />
     <result column="service_name" property="serviceName" jdbcType="VARCHAR" />
     <result column="fs_agent_id" property="fsAgentId" jdbcType="VARCHAR" />
@@ -71,8 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    service_id, service_name, fs_agent_id, fs_agent_addr, fs_esl_port, fs_esl_pwd, fs_in_port, 
-    fs_out_port, create_date
+    id, service_id, service_name, fs_agent_id, fs_agent_addr, fs_esl_port, fs_esl_pwd, 
+    fs_in_port, fs_out_port, create_date
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.FsBindExample" >
     select
@@ -92,6 +93,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fs_bind
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fs_bind
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
   <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.FsBindExample" >
     delete from fs_bind
     <if test="_parameter != null" >
@@ -99,18 +110,21 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.FsBind" >
-    insert into fs_bind (service_id, service_name, fs_agent_id, 
-      fs_agent_addr, fs_esl_port, fs_esl_pwd, 
-      fs_in_port, fs_out_port, create_date
-      )
-    values (#{serviceId,jdbcType=VARCHAR}, #{serviceName,jdbcType=VARCHAR}, #{fsAgentId,jdbcType=VARCHAR}, 
-      #{fsAgentAddr,jdbcType=VARCHAR}, #{fsEslPort,jdbcType=VARCHAR}, #{fsEslPwd,jdbcType=VARCHAR}, 
-      #{fsInPort,jdbcType=VARCHAR}, #{fsOutPort,jdbcType=VARCHAR}, #{createDate,jdbcType=VARCHAR}
-      )
+    insert into fs_bind (id, service_id, service_name, 
+      fs_agent_id, fs_agent_addr, fs_esl_port, 
+      fs_esl_pwd, fs_in_port, fs_out_port, 
+      create_date)
+    values (#{id,jdbcType=INTEGER}, #{serviceId,jdbcType=VARCHAR}, #{serviceName,jdbcType=VARCHAR}, 
+      #{fsAgentId,jdbcType=VARCHAR}, #{fsAgentAddr,jdbcType=VARCHAR}, #{fsEslPort,jdbcType=VARCHAR}, 
+      #{fsEslPwd,jdbcType=VARCHAR}, #{fsInPort,jdbcType=VARCHAR}, #{fsOutPort,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.FsBind" >
     insert into fs_bind
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
       <if test="serviceId != null" >
         service_id,
       </if>
@@ -140,6 +154,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="serviceId != null" >
         #{serviceId,jdbcType=VARCHAR},
       </if>
@@ -178,6 +195,9 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update fs_bind
     <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
       <if test="record.serviceId != null" >
         service_id = #{record.serviceId,jdbcType=VARCHAR},
       </if>
@@ -212,7 +232,8 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update fs_bind
-    set service_id = #{record.serviceId,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=INTEGER},
+      service_id = #{record.serviceId,jdbcType=VARCHAR},
       service_name = #{record.serviceName,jdbcType=VARCHAR},
       fs_agent_id = #{record.fsAgentId,jdbcType=VARCHAR},
       fs_agent_addr = #{record.fsAgentAddr,jdbcType=VARCHAR},
@@ -224,5 +245,51 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.FsBind" >
+    update fs_bind
+    <set >
+      <if test="serviceId != null" >
+        service_id = #{serviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceName != null" >
+        service_name = #{serviceName,jdbcType=VARCHAR},
+      </if>
+      <if test="fsAgentId != null" >
+        fs_agent_id = #{fsAgentId,jdbcType=VARCHAR},
+      </if>
+      <if test="fsAgentAddr != null" >
+        fs_agent_addr = #{fsAgentAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="fsEslPort != null" >
+        fs_esl_port = #{fsEslPort,jdbcType=VARCHAR},
+      </if>
+      <if test="fsEslPwd != null" >
+        fs_esl_pwd = #{fsEslPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="fsInPort != null" >
+        fs_in_port = #{fsInPort,jdbcType=VARCHAR},
+      </if>
+      <if test="fsOutPort != null" >
+        fs_out_port = #{fsOutPort,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.FsBind" >
+    update fs_bind
+    set service_id = #{serviceId,jdbcType=VARCHAR},
+      service_name = #{serviceName,jdbcType=VARCHAR},
+      fs_agent_id = #{fsAgentId,jdbcType=VARCHAR},
+      fs_agent_addr = #{fsAgentAddr,jdbcType=VARCHAR},
+      fs_esl_port = #{fsEslPort,jdbcType=VARCHAR},
+      fs_esl_pwd = #{fsEslPwd,jdbcType=VARCHAR},
+      fs_in_port = #{fsInPort,jdbcType=VARCHAR},
+      fs_out_port = #{fsOutPort,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

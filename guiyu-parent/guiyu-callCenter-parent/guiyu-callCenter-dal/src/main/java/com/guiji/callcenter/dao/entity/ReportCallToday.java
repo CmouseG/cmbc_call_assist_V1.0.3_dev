@@ -15,8 +15,6 @@ public class ReportCallToday implements Serializable {
 
     private Long durationAll;
 
-    private String customerId;
-
     private String tempid;
 
     private String orgCode;
@@ -71,14 +69,6 @@ public class ReportCallToday implements Serializable {
         this.durationAll = durationAll;
     }
 
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId == null ? null : customerId.trim();
-    }
-
     public String getTempid() {
         return tempid;
     }
@@ -107,7 +97,6 @@ public class ReportCallToday implements Serializable {
         sb.append(", reason=").append(reason);
         sb.append(", callCount=").append(callCount);
         sb.append(", durationAll=").append(durationAll);
-        sb.append(", customerId=").append(customerId);
         sb.append(", tempid=").append(tempid);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);

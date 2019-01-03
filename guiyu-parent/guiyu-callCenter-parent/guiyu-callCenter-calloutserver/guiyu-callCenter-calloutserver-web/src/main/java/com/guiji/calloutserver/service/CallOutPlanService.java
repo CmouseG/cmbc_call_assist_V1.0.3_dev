@@ -8,7 +8,9 @@ import java.util.List;
 public interface CallOutPlanService {
     void add(CallOutPlan callPlan);
 
-    CallOutPlan findByCallId(String callId);
+    CallOutPlan findByCallId(Long callId);
+
+    CallOutPlan findByPlanUuid(String planUuid);
 
     void update(CallOutPlan callplan);
 }

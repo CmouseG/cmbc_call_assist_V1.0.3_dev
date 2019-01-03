@@ -10,7 +10,7 @@ public interface CallInPlanMapper {
 
     int deleteByExample(CallInPlanExample example);
 
-    int deleteByPrimaryKey(String callId);
+    int deleteByPrimaryKey(Long callId);
 
     int insert(CallInPlan record);
 
@@ -18,7 +18,7 @@ public interface CallInPlanMapper {
 
     List<CallInPlan> selectByExample(CallInPlanExample example);
 
-    CallInPlan selectByPrimaryKey(String callId);
+    CallInPlan selectByPrimaryKey(Long callId);
 
     int updateByExampleSelective(@Param("record") CallInPlan record, @Param("example") CallInPlanExample example);
 

@@ -19,7 +19,7 @@ public interface CallDetailService {
     List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
                                             String accurateIntent, String freason, String callId, String tempId, String isRead );
 
-    CallOutPlanVO getCallDetail(String callId);
+    CallOutPlanVO getCallDetail(Long callId);
 
     int callrecordCount(Date start, Date end, String customerId, String phoneNum,String durationMin,String durationMax,
                         String accurateIntent, String freason,String callId, String tempId, String isRead, Boolean isSuperAdmin);
@@ -34,7 +34,7 @@ public interface CallDetailService {
 
     void delRecord(String callId);
 
-    List<CallPlanDetailRecordVO> getCallPlanDetailRecord(List<String> callId);
+    List<CallPlanDetailRecordVO> getCallPlanDetailRecord(List<String> uuids);
 
     List<String> getFtypes();
 

@@ -118,7 +118,7 @@ public class CallPlanDispatchHandler {
         if(!afterCallEvent.getIsFist()){
             CallOutPlan callPlan = afterCallEvent.getCallPlan();
             log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
-            dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
+            dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
         }
     }
 
@@ -156,7 +156,7 @@ public class CallPlanDispatchHandler {
                     isNeedSchedule = true;
                 }
 
-                scheduleAndSendEvent(callPlan.getCallId(), callPlan.getPhoneNum(), call.getAccurateIntent(),callPlan,isNeedSchedule);
+                scheduleAndSendEvent(callPlan.getPhoneNum(), call.getAccurateIntent(),callPlan,isNeedSchedule);
                 return;
             }
             try {
@@ -171,7 +171,7 @@ public class CallPlanDispatchHandler {
                 callPlan.setReason(e.getMessage());
                 callOutPlanService.update(callPlan);
 
-                scheduleAndSendEvent(callPlan.getCallId(),callPlan.getPhoneNum(),"W",callPlan,true);
+                scheduleAndSendEvent(callPlan.getPhoneNum(),"W",callPlan,true);
                 return;
             }
 
@@ -183,16 +183,15 @@ public class CallPlanDispatchHandler {
 
     /**
      * 回调调度中心，并重新发一个事件出来
-     * @param callId  回调id
      * @param phoneNum  回调电话
      * @param intent  回调意向
      * @param callOutPlan  构建空事件callOutPlan对象
      */
-    private void scheduleAndSendEvent(String callId,String phoneNum,String intent,CallOutPlan callOutPlan,Boolean isNeedSchedule){
+    private void scheduleAndSendEvent(String phoneNum,String intent,CallOutPlan callOutPlan,Boolean isNeedSchedule){
         AfterCallEvent afterCallEventAgain = new AfterCallEvent(callOutPlan, true);
         asyncEventBus.post(afterCallEventAgain);
         if(isNeedSchedule){
-            dispatchService.successSchedule(callId, phoneNum, intent);
+            dispatchService.successSchedule(callOutPlan.getPlanUuid(), phoneNum, intent);
         }
     }
 

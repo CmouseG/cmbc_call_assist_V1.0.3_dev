@@ -59,15 +59,15 @@ public class CallResourceChecker {
 
         AiCallApplyReq aiCallApplyReq = new AiCallApplyReq();
         aiCallApplyReq.setPhoneNo(callOutPlan.getPhoneNum());
-        aiCallApplyReq.setSeqId(callOutPlan.getCallId());
+        aiCallApplyReq.setSeqId(String.valueOf(callOutPlan.getCallId()));
         aiCallApplyReq.setTemplateId(callOutPlan.getTempId());
-        aiCallApplyReq.setUserId(callOutPlan.getCustomerId());
+        aiCallApplyReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
 
         log.info("发起的ai请求为[{}]", aiCallApplyReq);
 
         Result.ReturnData<AiCallNext> returnData = null;
         final String[] msg = {"没有机器人资源"};
-        dispatchLogService.startServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallApply");
+        dispatchLogService.startServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallApply");
         try {
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -85,7 +85,7 @@ public class CallResourceChecker {
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }
-        dispatchLogService.endServiceRequestLog(callOutPlan.getCallId(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallApply");
+        dispatchLogService.endServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallApply");
         Preconditions.checkNotNull(returnData, msg[0]);
 
         log.info("sellbot资源检查通过，返回结果[{}]", returnData.getBody());

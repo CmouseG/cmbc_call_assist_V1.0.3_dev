@@ -29,6 +29,7 @@ sharding:
                 sharding-column: phone_num
                 precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingString  #精确分片算法类名称，用于=和IN。
                 range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingString  #范围分片算法类名称，用于BETWEEN，可选。
+            key-generator-column-name: id
           call_in_plan:
             actual-data-nodes: guiyu_callcenter.call_in_plan_${0..1}
             table-strategy:

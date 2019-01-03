@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4AllotRes;
+import com.guiji.ccmanager.vo.LineInfo4Page;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.model.Page;
@@ -46,7 +47,7 @@ public class LineInfoController {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value = "getLineInfos")
-    public Result.ReturnData<Page<LineInfo>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
+    public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
 
         log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
 
@@ -55,10 +56,10 @@ public class LineInfoController {
         }
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo> list = lineInfoService.getLineInfoByCustom(isSuperAdmin ? null : String.valueOf(userId), lineName, pageSizeInt, pageNoInt);
+        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(isSuperAdmin ? null : String.valueOf(userId), lineName, pageSizeInt, pageNoInt);
         int count = lineInfoService.getLineInfoByCustomCount(isSuperAdmin ? null : String.valueOf(userId), lineName);
 
-        Page<LineInfo> page = new Page<LineInfo>();
+        Page<LineInfo4Page> page = new Page<LineInfo4Page>();
         page.setPageNo(pageNoInt);
         page.setPageSize(pageSizeInt);
         page.setTotal(count);

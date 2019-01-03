@@ -57,7 +57,7 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
 
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
-        criteria.andCallIdEqualTo(callId);
+        criteria.andCallIdEqualTo(Long.valueOf(callId));
         if (isIntentNotNull) {
             criteria.andAccurateIntentIsNotNull();
         }

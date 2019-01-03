@@ -148,8 +148,8 @@ public class RobotNextHelper {
 //
 //        if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
         CallOutDetail callDetail = new CallOutDetail();
-            callDetail.setCallId(callId);
-            callDetail.setCallDetailId(IdGenUtil.uuid());
+            callDetail.setCallId(Long.valueOf(callId));
+//            callDetail.setCallDetailId(IdGenUtil.uuid());
             setDetailValues(aiResponse, callDetail, callId);
             callOutDetailService.save(callDetail);
 

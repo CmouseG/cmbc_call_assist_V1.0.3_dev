@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class StartCallPlanEvent {
-    private String customerId;
+    private Integer customerId;
     private String tempId;
     private LineCount lineCount;
 }

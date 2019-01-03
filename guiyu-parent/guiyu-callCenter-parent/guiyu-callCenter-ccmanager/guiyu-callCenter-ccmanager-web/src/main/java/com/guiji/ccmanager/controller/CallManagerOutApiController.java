@@ -107,7 +107,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
     @GetMapping(value="getCallRecordById")
     public Result.ReturnData<CallOutPlan> getCallRecordById(String callId ){
 
-        com.guiji.callcenter.dao.entity.CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(callId);
+        com.guiji.callcenter.dao.entity.CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(Long.valueOf(callId));
         if(callOutPlan!=null){
             CallOutPlan CallOutPlanApi = new CallOutPlan();
             BeanUtil.copyProperties(callOutPlan,CallOutPlanApi);

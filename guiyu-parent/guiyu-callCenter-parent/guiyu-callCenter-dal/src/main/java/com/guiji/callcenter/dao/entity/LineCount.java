@@ -3,6 +3,8 @@ package com.guiji.callcenter.dao.entity;
 import java.io.Serializable;
 
 public class LineCount implements Serializable {
+    private Integer id;
+
     private String calloutserverId;
 
     private Integer lineId;
@@ -12,6 +14,14 @@ public class LineCount implements Serializable {
     private Integer usedConcurrentCalls;
 
     private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getCalloutserverId() {
         return calloutserverId;
@@ -51,6 +61,7 @@ public class LineCount implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
         sb.append(", calloutserverId=").append(calloutserverId);
         sb.append(", lineId=").append(lineId);
         sb.append(", maxConcurrentCalls=").append(maxConcurrentCalls);

@@ -8,7 +8,6 @@
     <result column="reason" property="reason" jdbcType="VARCHAR" />
     <result column="call_count" property="callCount" jdbcType="INTEGER" />
     <result column="duration_all" property="durationAll" jdbcType="BIGINT" />
-    <result column="customer_id" property="customerId" jdbcType="VARCHAR" />
     <result column="tempid" property="tempid" jdbcType="VARCHAR" />
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
@@ -71,8 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, duration_type, intent, reason, call_count, duration_all, customer_id, tempid, 
-    org_code
+    id, duration_type, intent, reason, call_count, duration_all, tempid, org_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ReportCallTodayExample" >
     select
@@ -111,12 +109,10 @@
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ReportCallToday" >
     insert into report_call_today (id, duration_type, intent, 
       reason, call_count, duration_all, 
-      customer_id, tempid, org_code
-      )
+      tempid, org_code)
     values (#{id,jdbcType=BIGINT}, #{durationType,jdbcType=INTEGER}, #{intent,jdbcType=VARCHAR}, 
       #{reason,jdbcType=VARCHAR}, #{callCount,jdbcType=INTEGER}, #{durationAll,jdbcType=BIGINT}, 
-      #{customerId,jdbcType=VARCHAR}, #{tempid,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}
-      )
+      #{tempid,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallToday" >
     insert into report_call_today
@@ -138,9 +134,6 @@
       </if>
       <if test="durationAll != null" >
         duration_all,
-      </if>
-      <if test="customerId != null" >
-        customer_id,
       </if>
       <if test="tempid != null" >
         tempid,
@@ -167,9 +160,6 @@
       </if>
       <if test="durationAll != null" >
         #{durationAll,jdbcType=BIGINT},
-      </if>
-      <if test="customerId != null" >
-        #{customerId,jdbcType=VARCHAR},
       </if>
       <if test="tempid != null" >
         #{tempid,jdbcType=VARCHAR},
@@ -206,9 +196,6 @@
       <if test="record.durationAll != null" >
         duration_all = #{record.durationAll,jdbcType=BIGINT},
       </if>
-      <if test="record.customerId != null" >
-        customer_id = #{record.customerId,jdbcType=VARCHAR},
-      </if>
       <if test="record.tempid != null" >
         tempid = #{record.tempid,jdbcType=VARCHAR},
       </if>
@@ -228,7 +215,6 @@
       reason = #{record.reason,jdbcType=VARCHAR},
       call_count = #{record.callCount,jdbcType=INTEGER},
       duration_all = #{record.durationAll,jdbcType=BIGINT},
-      customer_id = #{record.customerId,jdbcType=VARCHAR},
       tempid = #{record.tempid,jdbcType=VARCHAR},
       org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
@@ -253,9 +239,6 @@
       <if test="durationAll != null" >
         duration_all = #{durationAll,jdbcType=BIGINT},
       </if>
-      <if test="customerId != null" >
-        customer_id = #{customerId,jdbcType=VARCHAR},
-      </if>
       <if test="tempid != null" >
         tempid = #{tempid,jdbcType=VARCHAR},
       </if>
@@ -272,7 +255,6 @@
       reason = #{reason,jdbcType=VARCHAR},
       call_count = #{callCount,jdbcType=INTEGER},
       duration_all = #{durationAll,jdbcType=BIGINT},
-      customer_id = #{customerId,jdbcType=VARCHAR},
       tempid = #{tempid,jdbcType=VARCHAR},
       org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

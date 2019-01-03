@@ -2,7 +2,7 @@ server:
   port: 18023
 spring:
   application:
-    name: guiyu-callCenter-ccmanager2
+    name: guiyu-callCenter-ccmanager
   redis:
     database: 0 # Redis数据库索引（默认为0）
     host: 192.168.1.81 # Redis服务器地址
@@ -40,8 +40,8 @@ eureka:
     lease-expiration-duration-in-seconds: 2
   client:
       service-url:
-#        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
-        defaultZone: http://192.168.1.78:18001/eureka/
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+#        defaultZone: http://192.168.1.78:18001/eureka/
 properties:
   error: error.properties
 ribbon:

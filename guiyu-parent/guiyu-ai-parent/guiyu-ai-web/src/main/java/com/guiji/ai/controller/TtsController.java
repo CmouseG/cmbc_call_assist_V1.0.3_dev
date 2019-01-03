@@ -75,11 +75,11 @@ public class TtsController implements ITts
 		TtsRspVO ttsRspVO = new TtsRspVO();
 		try
 		{
-			String status = statusService.getTransferStatusByBusId(busId);
+			int status = statusService.getTransferStatusByBusId(busId);
 			ttsRspVO.setBusId(busId);
 			ttsRspVO.setStatus(status);
 			
-			if (AiConstants.FINISHED.equals(status)) {
+			if (AiConstants.FINISHED == status) {
 				Map<String, String> radioMap = new HashMap<>();
 				List<Map<String, String>> resultMapList = resultService.getTtsTransferResultByBusId(busId);
 				for (Map<String, String> restltMap : resultMapList) {
@@ -162,29 +162,6 @@ public class TtsController implements ITts
 			logger.error("请求失败！", ex);
 			return Result.error(AiConstants.AI_REQUEST_FAIL);
 		}
-	}
-
-	/**
-     * 累计任务
-     * @return
-     */
-	@Override
-	@PostMapping(value = "getAcceptTasks")
-	public ReturnData<TaskRspVO> getTasks(@RequestBody TaskReqVO taskReqVO)
-	{
-		TaskRspVO taskRspVO = new TaskRspVO();
-		try
-		{
-			taskRspVO = statusService.getTasks(taskReqVO);
-			
-		} catch (GuiyuException e){
-			logger.error("请求失败！", e);
-			return Result.error(e.getErrorCode());
-		} catch (Exception ex){
-			logger.error("请求失败！", ex);
-			return Result.error(AiConstants.AI_REQUEST_FAIL);
-		}
-		return Result.ok(taskRspVO);
 	}
 
 	/**

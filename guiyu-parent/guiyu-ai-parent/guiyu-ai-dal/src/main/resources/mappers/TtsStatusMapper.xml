@@ -5,11 +5,11 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="bus_id" jdbcType="VARCHAR" property="busId" />
     <result column="model" jdbcType="VARCHAR" property="model" />
-    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="text_count" jdbcType="INTEGER" property="textCount" />
-    <result column="jump_flag" jdbcType="CHAR" property="jumpFlag" />
+    <result column="jump_flag" jdbcType="INTEGER" property="jumpFlag" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -111,8 +111,8 @@
       `status`, create_time, update_time, 
       text_count, jump_flag)
     values (#{id,jdbcType=INTEGER}, #{busId,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 
-      #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{textCount,jdbcType=INTEGER}, #{jumpFlag,jdbcType=CHAR})
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{textCount,jdbcType=INTEGER}, #{jumpFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.ai.dao.entity.TtsStatus">
     insert into tts_status
@@ -153,7 +153,7 @@
         #{model,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        #{status,jdbcType=CHAR},
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -165,7 +165,7 @@
         #{textCount,jdbcType=INTEGER},
       </if>
       <if test="jumpFlag != null">
-        #{jumpFlag,jdbcType=CHAR},
+        #{jumpFlag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -188,7 +188,7 @@
         model = #{record.model,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=CHAR},
+        `status` = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -200,7 +200,7 @@
         text_count = #{record.textCount,jdbcType=INTEGER},
       </if>
       <if test="record.jumpFlag != null">
-        jump_flag = #{record.jumpFlag,jdbcType=CHAR},
+        jump_flag = #{record.jumpFlag,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -212,11 +212,11 @@
     set id = #{record.id,jdbcType=INTEGER},
       bus_id = #{record.busId,jdbcType=VARCHAR},
       model = #{record.model,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=CHAR},
+      `status` = #{record.status,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       text_count = #{record.textCount,jdbcType=INTEGER},
-      jump_flag = #{record.jumpFlag,jdbcType=CHAR}
+      jump_flag = #{record.jumpFlag,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -231,7 +231,7 @@
         model = #{model,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=CHAR},
+        `status` = #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -243,7 +243,7 @@
         text_count = #{textCount,jdbcType=INTEGER},
       </if>
       <if test="jumpFlag != null">
-        jump_flag = #{jumpFlag,jdbcType=CHAR},
+        jump_flag = #{jumpFlag,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -252,128 +252,11 @@
     update tts_status
     set bus_id = #{busId,jdbcType=VARCHAR},
       model = #{model,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=CHAR},
+      `status` = #{status,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       text_count = #{textCount,jdbcType=INTEGER},
-      jump_flag = #{jumpFlag,jdbcType=CHAR}
+      jump_flag = #{jumpFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
-	<select id="getReqStatusByBusId">
-		SELECT status FROM tts_status
-		WHERE t.bus_id = #{busId,jdbcType=VARCHAR}
-	</select>
-
-	<update id="updateStatusByBusId">
-		UPDATE tts_status
-		SET status = #{status,jdbcType=CHAR}
-		WHERE bus_id = #{busId,jdbcType=VARCHAR}
-	</update>
-	
-	<update id="updateJumpFlagByBusId">
-		UPDATE tts_status
-		SET jump_flag = 'Y'
-		WHERE bus_id = #{busId,jdbcType=VARCHAR}
-	</update>
-
-	<select id="getAcceptTasksByDays" resultType="java.util.Map">
-		SELECT count(id) countNum, DATE_FORMAT(create_time,'%Y-%m-%d') date
-		FROM tts_status
-		<where>
-			<if test="startTime != null">
-				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="endTime != null">
-				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
-			</if>	
-		</where>
-		GROUP BY date
-		ORDER BY date DESC
-	</select>
-	
-	<select id="getAcceptTasksByMonths" resultType="java.util.Map">
-		SELECT count(id) countNum, DATE_FORMAT(create_time,'%Y-%m') date
-		FROM tts_status
-		<where>
-			<if test="startTime != null">
-				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="endTime != null">
-				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
-			</if>	
-		</where>
-		GROUP BY date
-		ORDER BY date DESC
-	</select>
-	
-	<select id="getCompleteTasksByDays" resultType="java.util.Map">
-		SELECT count(id) countNum, DATE_FORMAT(create_time,'%Y-%m-%d') date
-		FROM tts_status
-		<where>
-			<if test="startTime != null">
-				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="endTime != null">
-				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
-			</if>
-			AND `status` = '2'
-		</where>
-		GROUP BY date
-		ORDER BY date DESC
-	</select>
-	
-	<select id="getCompleteTasksByMonths" resultType="java.util.Map">
-		SELECT count(id) countNum, DATE_FORMAT(create_time,'%Y-%m') date
-		FROM tts_status
-		<where>
-			<if test="startTime != null">
-				create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
-			</if>
-			<if test="endTime != null">
-				AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
-			</if>
-			AND `status` = '2'
-		</where>
-		GROUP BY date
-		ORDER BY date DESC
-	</select>
-	
-	<select id="getWaitTasks" resultType="java.util.Map">
-		SELECT model, count(id) countNum 
-		FROM tts_status 
-		WHERE `status` = '0' 
-		GROUP BY model
-	</select>
-
-    <select id="getTasksByDays" resultType="java.util.Map">
-        SELECT count(id) countNum, sum(case when status='2' then 1 else 0 end) as countCompleteNum,DATE_FORMAT(create_time,'%Y-%m-%d') date
-        FROM tts_status
-        <where>
-            <if test="startTime != null">
-                create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
-            </if>
-            <if test="endTime != null">
-                AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
-            </if>
-        </where>
-        GROUP BY date
-        ORDER BY date
-    </select>
-
-    <select id="getTasksByMonths" resultType="java.util.Map">
-        SELECT count(id) countNum, sum(case when status='2' then 1 else 0 end) as countCompleteNum,DATE_FORMAT(create_time,'%Y-%m') date
-        FROM tts_status
-        <where>
-            <if test="startTime != null">
-                create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP}
-            </if>
-            <if test="endTime != null">
-                AND create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP}
-            </if>
-        </where>
-        GROUP BY date
-        ORDER BY date
-    </select>
-  
 </mapper>

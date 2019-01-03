@@ -10,7 +10,7 @@ public class TtsStatus implements Serializable {
 
     private String model;
 
-    private String status;
+    private Integer status;
 
     private Date createTime;
 
@@ -18,7 +18,7 @@ public class TtsStatus implements Serializable {
 
     private Integer textCount;
 
-    private String jumpFlag;
+    private Integer jumpFlag;
 
     private static final long serialVersionUID = 1L;
 
@@ -46,12 +46,12 @@ public class TtsStatus implements Serializable {
         this.model = model == null ? null : model.trim();
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Date getCreateTime() {
@@ -78,12 +78,12 @@ public class TtsStatus implements Serializable {
         this.textCount = textCount;
     }
 
-    public String getJumpFlag() {
+    public Integer getJumpFlag() {
         return jumpFlag;
     }
 
-    public void setJumpFlag(String jumpFlag) {
-        this.jumpFlag = jumpFlag == null ? null : jumpFlag.trim();
+    public void setJumpFlag(Integer jumpFlag) {
+        this.jumpFlag = jumpFlag;
     }
 
     @Override

@@ -20,13 +20,9 @@ public class TtsResult implements Serializable {
 
     private Date createTime;
 
-    private Long createBy;
-
     private Date updateTime;
 
-    private Long updateBy;
-
-    private String delFlag;
+    private Integer delFlag;
 
     private static final long serialVersionUID = 1L;
 
@@ -94,14 +90,6 @@ public class TtsResult implements Serializable {
         this.createTime = createTime;
     }
 
-    public Long getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Long createBy) {
-        this.createBy = createBy;
-    }
-
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -110,20 +98,12 @@ public class TtsResult implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public Long getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Long updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public String getDelFlag() {
+    public Integer getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag == null ? null : delFlag.trim();
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
     }
 
     @Override
@@ -140,9 +120,7 @@ public class TtsResult implements Serializable {
         sb.append(", model=").append(model);
         sb.append(", audioUrl=").append(audioUrl);
         sb.append(", createTime=").append(createTime);
-        sb.append(", createBy=").append(createBy);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", updateBy=").append(updateBy);
         sb.append(", delFlag=").append(delFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

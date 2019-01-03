@@ -6,15 +6,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.guiji.ai.vo.*;
-import com.guiji.utils.DateUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.ai.dao.TtsStatusMapper;
+import com.guiji.ai.dao.TtsStatusMapperExt;
 import com.guiji.ai.dao.entity.TtsStatus;
 import com.guiji.ai.dao.entity.TtsStatusExample;
 import com.guiji.ai.dao.entity.TtsStatusExample.Criteria;
@@ -22,21 +20,34 @@ import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
 import com.guiji.ai.tts.handler.SaveTtsStatusHandler;
 import com.guiji.ai.tts.service.IStatusService;
+import com.guiji.ai.vo.RatioReqVO;
+import com.guiji.ai.vo.RatioRspVO;
+import com.guiji.ai.vo.TaskLineNumVO;
+import com.guiji.ai.vo.TaskLineRspVO;
+import com.guiji.ai.vo.TaskListReqVO;
+import com.guiji.ai.vo.TaskListRspVO;
+import com.guiji.ai.vo.TaskNumVO;
+import com.guiji.ai.vo.TaskReqVO;
+import com.guiji.ai.vo.TaskRspVO;
+import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.utils.DateUtil;
 
 @Service
 public class StatusServiceImpl implements IStatusService
 {
 	@Autowired
 	TtsStatusMapper ttsStatusMapper;
+	@Autowired
+	TtsStatusMapperExt ttsStatusMapperExt;
 
 	@Override
-	public String getTransferStatusByBusId(String busId)
+	public Integer getTransferStatusByBusId(String busId)
 	{
-		String status = "";
+		Integer status = null;
 		try
 		{
-			status = ttsStatusMapper.getReqStatusByBusId(busId);
+			status = ttsStatusMapperExt.getReqStatusByBusId(busId);
 		} catch (Exception e)
 		{
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_AI_CHANGE_TTS.getErrorCode(), e);
@@ -63,9 +74,9 @@ public class StatusServiceImpl implements IStatusService
 
 	@Override
 	@Transactional
-	public void updateStatusByBusId(String busId, String status)
+	public void updateStatusByBusId(String busId, int status)
 	{
-		ttsStatusMapper.updateStatusByBusId(busId, status);
+		ttsStatusMapperExt.updateStatusByBusId(busId, status);
 
 	}
 
@@ -85,7 +96,7 @@ public class StatusServiceImpl implements IStatusService
 		if (StringUtils.isNotEmpty(taskListReqVO.getModel())){
 			criteria.andModelEqualTo(taskListReqVO.getModel());
 		}
-		if (StringUtils.isNotEmpty(taskListReqVO.getStatus())){
+		if (taskListReqVO.getStatus() != null){
 			criteria.andStatusEqualTo(taskListReqVO.getStatus());
 		}
 		if (taskListReqVO.getStartTime() != null){
@@ -111,66 +122,7 @@ public class StatusServiceImpl implements IStatusService
 	@Transactional
 	public void updateJumpFlagByBusId(String busId)
 	{
-		ttsStatusMapper.updateJumpFlagByBusId(busId);
-	}
-
-
-	/**
-	 * 累计任务
-	 * 根据returnFlag区分返回结果
-	 */
-	@Override
-	public TaskRspVO getTasks(TaskReqVO taskReqVO)
-	{
-		TaskRspVO taskRspVO = new TaskRspVO();
-		List<TaskNumVO> taskNumVOList = new ArrayList<>();
-
-		String dimension = taskReqVO.getDimension(); //维度
-		List<Map<String, Object>> mapList = new ArrayList<>();
-		if("0".equals(taskReqVO.getReturnFlag())) //累计接受任务
-		{
-			if("days".equals(dimension)) //按天统计
-			{
-				mapList = ttsStatusMapper.getAcceptTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
-			}
-			else if("months".equals(dimension)) //按月统计
-			{
-				mapList = ttsStatusMapper.getAcceptTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
-			}
-		}
-		else if("1".equals(taskReqVO.getReturnFlag())) //累计完成任务
-		{
-			if("days".equals(dimension)) //按天统计
-			{
-				mapList = ttsStatusMapper.getCompleteTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
-			}
-			else if("months".equals(dimension)) //按月统计
-			{
-				mapList = ttsStatusMapper.getCompleteTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
-			}
-		}
-
-		//处理返回结果
-		taskNumVOList = setTaskVO(mapList, dimension);
-
-		taskRspVO.setTotalNum(taskNumVOList.size());
-		taskRspVO.setTaskNumsList(taskNumVOList);
-		return taskRspVO;
-	}
-
-	//处理返回结果
-	private List<TaskNumVO> setTaskVO(List<Map<String, Object>> mapList, String dimension)
-	{
-		List<TaskNumVO> taskNumVOList = new ArrayList<>();
-		TaskNumVO taskNumVO = null;
-
-		for(Map<String, Object> map : mapList){
-			taskNumVO = new TaskNumVO();
-			taskNumVO.setCount((long) map.get("countNum"));
-			taskNumVO.setDate((String) map.get("date"));
-			taskNumVOList.add(taskNumVO);
-		}
-		return taskNumVOList;
+		ttsStatusMapperExt.updateJumpFlagByBusId(busId);
 	}
 
 	//处理返回结果
@@ -197,7 +149,7 @@ public class StatusServiceImpl implements IStatusService
 		List<TaskNumVO> taskNumVOList = new ArrayList<>();
 		List<Map<String, Object>> mapList = new ArrayList<>();
 
-		mapList = ttsStatusMapper.getWaitTasks();
+		mapList = ttsStatusMapperExt.getWaitTasks();
 		for(Map<String, Object> map : mapList){
 			TaskNumVO taskNumVO = new TaskNumVO();
 			taskNumVO.setModel((String) map.get("model"));
@@ -241,9 +193,9 @@ public class StatusServiceImpl implements IStatusService
 			criteria2.andCreateTimeLessThanOrEqualTo(endTime);
 		}
 
-		criteria1.andStatusEqualTo("2"); //2已完成
+		criteria1.andStatusEqualTo(2); //2已完成
 		int successCount = ttsStatusMapper.selectByExample(example1).size();
-		criteria2.andStatusEqualTo("3"); //3处理失败
+		criteria2.andStatusEqualTo(3); //3处理失败
 		int failCount = ttsStatusMapper.selectByExample(example2).size();
 
 		int successRatio = (int) Math.round(100.0 * successCount / (successCount + failCount));
@@ -269,11 +221,11 @@ public class StatusServiceImpl implements IStatusService
 
 		if("days".equals(dimension)) //按天统计
 		{
-			mapList = ttsStatusMapper.getTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
+			mapList = ttsStatusMapperExt.getTasksByDays(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM-dd"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM-dd"));
 		}
 		else if("months".equals(dimension)) //按月统计
 		{
-			mapList = ttsStatusMapper.getTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
+			mapList = ttsStatusMapperExt.getTasksByMonths(DateUtil.stringToDatePattern(taskReqVO.getStartTime(),"yyyy-MM"), DateUtil.stringToDatePattern(taskReqVO.getEndTime(),"yyyy-MM"));
 		}
 		//处理返回结果
 		taskNumVOTotalList = setTaskLineVO(mapList, dimension);

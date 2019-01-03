@@ -3,7 +3,7 @@ package com.guiji.ai.tts.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.guiji.ai.dao.TtsStatusMapper;
+import com.guiji.ai.dao.TtsStatusMapperExt;
 import com.guiji.ai.tts.JumpTaskQueue;
 import com.guiji.ai.tts.TtsReqQueue;
 import com.guiji.ai.tts.constants.AiConstants;
@@ -15,7 +15,7 @@ public class TranslateHandler {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TranslateHandler.class);
 
-	public void run(ITtsService ttsService, TtsStatusMapper ttsStatusMapper, RedisUtil redisUtil) 
+	public void run(ITtsService ttsService, TtsStatusMapperExt ttsStatusMapperExt, RedisUtil redisUtil) 
 	{
 		TtsReqVO ttsReqVO = null;
 		while(true)
@@ -43,7 +43,7 @@ public class TranslateHandler {
 				//删除此任务缓存
 				redisUtil.del(AiConstants.TASK + busId);
 				//修改表状态
-				ttsStatusMapper.updateStatusByBusId(busId, AiConstants.DOING);
+				ttsStatusMapperExt.updateStatusByBusId(busId, AiConstants.DOING);
 				//语言合成
 				ttsService.translate(ttsReqVO);
 				

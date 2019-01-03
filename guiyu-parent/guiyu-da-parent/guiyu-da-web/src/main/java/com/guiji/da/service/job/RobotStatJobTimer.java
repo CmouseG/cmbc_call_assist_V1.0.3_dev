@@ -38,7 +38,7 @@ public class RobotStatJobTimer {
 	/**
 	 * 每天晚上将缓存中的机器人话术流程分析数据落地到数据库
 	 */
-    @Scheduled(cron="0 10 22 * * ?")
+    @Scheduled(cron="0 0 23 * * ?")
     public void aiResourRel(){
     	Lock lock = new Lock("LOCK_ROBOT_AI_RELEASE_JOB", "LOCK_ROBOT_AI_RELEASE_JOB");
     	if (distributedLockHandler.tryLock(lock,0L)) { // 默认锁设置,超时时间设置为0ms，要么获取锁，那么获取不到，不重试

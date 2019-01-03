@@ -1,17 +1,16 @@
 package com.guiji.da.dao;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.da.dao.entity.RobotCallHis;
 import com.guiji.da.dao.entity.RobotCallHisExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface RobotCallHisMapper {
     int countByExample(RobotCallHisExample example);
 
     int deleteByExample(RobotCallHisExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(RobotCallHis record);
 
@@ -21,7 +20,7 @@ public interface RobotCallHisMapper {
 
     List<RobotCallHis> selectByExample(RobotCallHisExample example);
 
-    RobotCallHis selectByPrimaryKey(String id);
+    RobotCallHis selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") RobotCallHis record, @Param("example") RobotCallHisExample example);
 

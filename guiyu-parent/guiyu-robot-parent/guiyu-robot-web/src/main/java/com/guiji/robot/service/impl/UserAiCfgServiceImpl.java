@@ -34,10 +34,10 @@ import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
-import com.guiji.robot.util.LocalCacheUtil;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.StrUtils;
 
 /** 

@@ -1,4 +1,4 @@
-package com.guiji.da.dao.entity;
+package com.guiji.da.model;
 
 import java.io.Serializable;
 import java.util.Date;

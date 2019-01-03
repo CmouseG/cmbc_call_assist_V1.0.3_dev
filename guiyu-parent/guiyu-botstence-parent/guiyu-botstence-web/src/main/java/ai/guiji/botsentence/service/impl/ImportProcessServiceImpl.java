@@ -294,7 +294,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				template.setState("04");
 				template.setTemplateType("01");
 				template.setTemplateId(template_id);//模板编号
-				template.setIndustryId(tradeId+"");//行业
+				template.setIndustryId(tradeId);//行业
 				template.setIndustryName(trade);
 				if(StringUtils.isNotBlank(template_name)) {
 					template.setTemplateName(template_name);
@@ -347,7 +347,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				template.setState("04");
 				template.setTemplateType("01");
 				template.setTemplateId(template_id);//模板编号
-				template.setIndustryId(tradeId+"");//行业
+				template.setIndustryId(tradeId);//行业
 				template.setIndustryName(trade);
 				if(StringUtils.isNotBlank(template_name)) {
 					template.setTemplateName(template_name);

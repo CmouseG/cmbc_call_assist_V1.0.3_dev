@@ -45,22 +45,21 @@ public class AvailableTemplateController {
 	}
 
 
-	/**
-	 * 用户管理，根据组织机构查询企业的话术
-	 */
-	@GetMapping("getTemplateByOrgCode")
-	public ServerResult getTemplateByOrgCode(@JsonParam String orgCode){
-		List<BotAvailableTemplate> list=availableTemplateService.getTemplateByOrgCode(orgCode);
-		Map map = new HashMap();
-		map.put("list",list);
-		if(list!=null){
-			map.put("count",list.size());
-		}else{
-			map.put("count",0);
-		}
-		return ServerResult.createBySuccess(list);
-	}
-	
+    /**
+     * 用户管理，根据组织机构查询企业的话术
+     */
+    @GetMapping("getTemplateByOrgCode")
+    public ServerResult getTemplateByOrgCode(@JsonParam String orgCode){
+        List<BotAvailableTemplate> list=availableTemplateService.getTemplateByOrgCode(orgCode);
+        Map map = new HashMap();
+        map.put("list",list);
+        if(list!=null){
+            map.put("count",list.size());
+        }else{
+            map.put("count",0);
+        }
+        return ServerResult.createBySuccess(list);
+    }
 	/**
 	 * 用户可用话术
 	 */

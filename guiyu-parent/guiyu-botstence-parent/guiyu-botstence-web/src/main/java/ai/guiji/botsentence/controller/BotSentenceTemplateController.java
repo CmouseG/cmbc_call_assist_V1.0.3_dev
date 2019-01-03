@@ -33,11 +33,11 @@ public class BotSentenceTemplateController {
 	@Autowired
 	private IBotSentenceTemplateService botSentenceTemplateService;
 	
-	@RequestMapping(value="queryIndustryTemplate")
+/*	@RequestMapping(value="queryIndustryTemplate")
 	public ServerResult<List<BotSentenceIndustryVO>> queryIndustryTemplate(@RequestHeader Long userId){
 		List<BotSentenceIndustryVO> list = botSentenceTemplateService.queryIndustryTemplate(userId);
 		return ServerResult.createBySuccess(list);
-	}
+	}*/
 	
 	
 	@RequestMapping(value="queryIndustryTemplateOld")

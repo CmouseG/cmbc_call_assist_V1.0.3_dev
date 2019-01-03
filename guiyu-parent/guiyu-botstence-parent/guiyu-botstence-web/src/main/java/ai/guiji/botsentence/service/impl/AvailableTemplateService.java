@@ -50,8 +50,8 @@ public class AvailableTemplateService {
 	}
 
     public List<BotAvailableTemplate> getTemplateByOrgCode(String orgCode) {
-		BotAvailableTemplateExample example=new BotAvailableTemplateExample();
-		example.createCriteria().andOrgCodeLike(orgCode+"%");
-		return botAvailableTemplateMapper.selectByExample(example);
+        BotAvailableTemplateExample example=new BotAvailableTemplateExample();
+        example.createCriteria().andOrgCodeLike(orgCode+"%");
+        return botAvailableTemplateMapper.selectByExample(example);
     }
 }

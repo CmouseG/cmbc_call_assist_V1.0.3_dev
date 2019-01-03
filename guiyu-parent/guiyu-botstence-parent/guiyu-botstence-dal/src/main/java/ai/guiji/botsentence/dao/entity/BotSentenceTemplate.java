@@ -26,7 +26,7 @@ public class BotSentenceTemplate implements Serializable {
 
     private String accountNo;
 
-    private String industryId;
+    private Integer industryId;
 
     private String industryName;
 
@@ -122,12 +122,12 @@ public class BotSentenceTemplate implements Serializable {
         this.accountNo = accountNo == null ? null : accountNo.trim();
     }
 
-    public String getIndustryId() {
+    public Integer getIndustryId() {
         return industryId;
     }
 
-    public void setIndustryId(String industryId) {
-        this.industryId = industryId == null ? null : industryId.trim();
+    public void setIndustryId(Integer industryId) {
+        this.industryId = industryId;
     }
 
     public String getIndustryName() {

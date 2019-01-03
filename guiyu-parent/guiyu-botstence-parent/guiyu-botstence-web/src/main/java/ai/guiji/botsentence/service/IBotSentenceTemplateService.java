@@ -15,7 +15,7 @@ import ai.guiji.botsentence.vo.BotSentenceIndustryVO;
  */
 public interface IBotSentenceTemplateService {
 
-	public List<BotSentenceIndustryVO> queryIndustryTemplate(Long userId);
+//	public List<BotSentenceIndustryVO> queryIndustryTemplate(Long userId);
 	
 	public List<BotSentenceTemplate> queryIndustryTemplateOld(Long userId);
 	

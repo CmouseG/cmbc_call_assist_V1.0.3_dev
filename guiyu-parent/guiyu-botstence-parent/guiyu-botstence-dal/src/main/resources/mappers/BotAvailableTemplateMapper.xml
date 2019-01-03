@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="ai.guiji.botsentence.dao.BotAvailableTemplateMapper" >
   <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="template_name" property="templateName" jdbcType="VARCHAR" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
@@ -87,15 +87,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from bot_available_template
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from bot_available_template
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplateExample" >
     delete from bot_available_template
@@ -106,7 +106,7 @@
   <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     insert into bot_available_template (id, template_id, template_name, 
       user_id, org_code)
-    values (#{id,jdbcType=BIGINT}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
       #{userId,jdbcType=BIGINT}, #{orgCode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
@@ -130,7 +130,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
@@ -156,7 +156,7 @@
     update bot_available_template
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
@@ -177,7 +177,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update bot_available_template
-    set id = #{record.id,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       template_name = #{record.templateName,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=BIGINT},
@@ -202,7 +202,7 @@
         org_code = #{orgCode,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     update bot_available_template
@@ -210,31 +210,31 @@
       template_name = #{templateName,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=BIGINT},
       org_code = #{orgCode,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
-  
-    
-    
-  <select id="getUserAvailableTemplate" resultMap="BaseResultMap">
-  	SELECT b.* from bot_user_available a
-	LEFT JOIN bot_available_template b on a.available_id=b.id
-	where a.user_id=#{userId}
-  </select>
-  
-  <insert id="addUserAvailableTemplate">
-  	delete from bot_user_available where user_id=#{userId};
-  	
-  	<foreach collection="array" item="item" >
-  		insert into bot_user_available(user_id,available_id)
-  		values(#{userId},#{item});
-  	</foreach>
-  
-  </insert>
 
 
-  <insert id="addUserAvailableTemplateAuto">
-    delete from bot_user_available where user_id=#{userId} and available_id =#{availableId};
-      insert into bot_user_available(user_id,available_id)
-      values(#{userId},#{availableId});
-  </insert>
+
+    <select id="getUserAvailableTemplate" resultMap="BaseResultMap">
+        SELECT b.* from bot_user_available a
+        LEFT JOIN bot_available_template b on a.available_id=b.id
+        where a.user_id=#{userId}
+    </select>
+
+    <insert id="addUserAvailableTemplate">
+        delete from bot_user_available where user_id=#{userId};
+
+        <foreach collection="array" item="item" >
+            insert into bot_user_available(user_id,available_id)
+            values(#{userId},#{item});
+        </foreach>
+
+    </insert>
+
+
+    <insert id="addUserAvailableTemplateAuto">
+        delete from bot_user_available where user_id=#{userId} and available_id =#{availableId};
+        insert into bot_user_available(user_id,available_id)
+        values(#{userId},#{availableId});
+    </insert>
 </mapper>

@@ -13,7 +13,7 @@
     <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
     <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
     <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
-    <result column="industry_id" property="industryId" jdbcType="VARCHAR" />
+    <result column="industry_id" property="industryId" jdbcType="INTEGER" />
     <result column="industry_name" property="industryName" jdbcType="VARCHAR" />
     <result column="host" property="host" jdbcType="VARCHAR" />
   </resultMap>
@@ -126,7 +126,7 @@
     values (#{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
       #{version,jdbcType=VARCHAR}, #{templateType,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
       #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
-      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{accountNo,jdbcType=VARCHAR}, #{industryId,jdbcType=VARCHAR}, 
+      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{accountNo,jdbcType=VARCHAR}, #{industryId,jdbcType=INTEGER}, 
       #{industryName,jdbcType=VARCHAR}, #{host,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplate" >
@@ -209,7 +209,7 @@
         #{accountNo,jdbcType=VARCHAR},
       </if>
       <if test="industryId != null" >
-        #{industryId,jdbcType=VARCHAR},
+        #{industryId,jdbcType=INTEGER},
       </if>
       <if test="industryName != null" >
         #{industryName,jdbcType=VARCHAR},
@@ -262,7 +262,7 @@
         account_no = #{record.accountNo,jdbcType=VARCHAR},
       </if>
       <if test="record.industryId != null" >
-        industry_id = #{record.industryId,jdbcType=VARCHAR},
+        industry_id = #{record.industryId,jdbcType=INTEGER},
       </if>
       <if test="record.industryName != null" >
         industry_name = #{record.industryName,jdbcType=VARCHAR},
@@ -288,7 +288,7 @@
       lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
       lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
       account_no = #{record.accountNo,jdbcType=VARCHAR},
-      industry_id = #{record.industryId,jdbcType=VARCHAR},
+      industry_id = #{record.industryId,jdbcType=INTEGER},
       industry_name = #{record.industryName,jdbcType=VARCHAR},
       `host` = #{record.host,jdbcType=VARCHAR}
     <if test="_parameter != null" >
@@ -329,7 +329,7 @@
         account_no = #{accountNo,jdbcType=VARCHAR},
       </if>
       <if test="industryId != null" >
-        industry_id = #{industryId,jdbcType=VARCHAR},
+        industry_id = #{industryId,jdbcType=INTEGER},
       </if>
       <if test="industryName != null" >
         industry_name = #{industryName,jdbcType=VARCHAR},
@@ -352,7 +352,7 @@
       lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
       lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
       account_no = #{accountNo,jdbcType=VARCHAR},
-      industry_id = #{industryId,jdbcType=VARCHAR},
+      industry_id = #{industryId,jdbcType=INTEGER},
       industry_name = #{industryName,jdbcType=VARCHAR},
       `host` = #{host,jdbcType=VARCHAR}
     where process_id = #{processId,jdbcType=VARCHAR}

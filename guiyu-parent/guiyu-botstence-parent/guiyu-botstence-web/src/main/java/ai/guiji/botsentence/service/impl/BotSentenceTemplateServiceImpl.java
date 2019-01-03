@@ -28,7 +28,7 @@ public class BotSentenceTemplateServiceImpl implements IBotSentenceTemplateServi
 	@Autowired
 	private UserAccountIndustryRelationMapper relationMapper;
 	
-	@Override
+/*	@Override
 	public List<BotSentenceIndustryVO> queryIndustryTemplate(Long userId) {
 		//获取当前登录账号信息
 		
@@ -65,16 +65,8 @@ public class BotSentenceTemplateServiceImpl implements IBotSentenceTemplateServi
 			}
 		}
 		
-		//查询话术模板表个人导入的话术模板
-		/*BotSentenceTemplateExample example2 = new BotSentenceTemplateExample();
-		example2.createCriteria().andAccountNoEqualTo(userId);
-		List<BotSentenceTemplate> list = botSentenceTemplateMapper.selectByExample(example2);
-		if(null != list && list.size() > 0) {
-			results.addAll(list);
-		}*/
-		
 		return results;
-	}
+	}*/
 
 	@Override
 	public BotSentenceTemplate getBotSentenceTemplate(String templateId, String version) {

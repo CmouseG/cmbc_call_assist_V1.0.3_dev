@@ -6,17 +6,17 @@ drop table if exists user_ai_cfg_base_info;
 create table user_ai_cfg_base_info
 (
    id                   int not null auto_increment,
-   user_id              varchar(50) not null comment 'ÓÃ»§±àºÅ',
-   org_code             varchar(8) not null comment '»ú¹¹±àºÅ',
-   ai_total_num         int comment '»úÆ÷ÈËÊıÁ¿',
-   template_ids         varchar(200) comment '»°ÊõÄ£°å',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   user_id              varchar(50) not null comment 'ç”¨æˆ·ç¼–å·',
+   org_code             varchar(8) not null comment 'æœºæ„ç¼–å·',
+   ai_total_num         int comment 'æœºå™¨äººæ•°é‡',
+   template_ids         varchar(200) comment 'è¯æœ¯æ¨¡æ¿',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    crt_user             varchar(50),
    update_time          datetime,
    update_user          varchar(50),
    primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table user_ai_cfg_base_info comment 'ÓÃ»§»úÆ÷ÈËÕË»§»ù±¾ĞÅÏ¢';
+alter table user_ai_cfg_base_info comment 'ç”¨æˆ·æœºå™¨äººè´¦æˆ·åŸºæœ¬ä¿¡æ¯';
 create index user_ai_cfg_base_info_idx1 on user_ai_cfg_base_info
 (
    user_id
@@ -34,21 +34,21 @@ drop table if exists user_ai_cfg_info;
 create table user_ai_cfg_info
 (
    id                   int not null auto_increment,
-   user_id              varchar(50) not null comment 'ÓÃ»§±àºÅ',
-   ai_num               int comment '»úÆ÷ÈËÊıÁ¿',
-   assign_level         int comment 'Ô¤·ÖÅä£¬¸ß£¬µÍ',
-   template_ids         varchar(200) comment '»°ÊõÄ£°å',
-   open_date            varchar(10) comment '¿ª»§ÈÕÆÚ',
-   invalid_date         varchar(10) comment 'Ê§Ğ§ÈÕÆÚ',
-   status               int not null comment '×´Ì¬£º1-Õı³££¬0-Ê§Ğ§',
-   invalid_policy       varchar(10) comment 'Ê§Ğ§²ßÂÔ:NUM:100',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   user_id              varchar(50) not null comment 'ç”¨æˆ·ç¼–å·',
+   ai_num               int comment 'æœºå™¨äººæ•°é‡',
+   assign_level         int comment 'é¢„åˆ†é…ï¼Œé«˜ï¼Œä½',
+   template_ids         varchar(200) comment 'è¯æœ¯æ¨¡æ¿',
+   open_date            varchar(10) comment 'å¼€æˆ·æ—¥æœŸ',
+   invalid_date         varchar(10) comment 'å¤±æ•ˆæ—¥æœŸ',
+   status               int not null comment 'çŠ¶æ€ï¼š1-æ­£å¸¸ï¼Œ0-å¤±æ•ˆ',
+   invalid_policy       varchar(10) comment 'å¤±æ•ˆç­–ç•¥:NUM:100',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    crt_user             varchar(50),
    update_time          datetime,
    update_user          varchar(50),
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table user_ai_cfg_info comment 'ÓÃ»§»úÆ÷ÅäÖÃĞÅÏ¢';
+alter table user_ai_cfg_info comment 'ç”¨æˆ·æœºå™¨é…ç½®ä¿¡æ¯';
 create index user_ai_cfg_info_idx1 on user_ai_cfg_info
 (
    user_id
@@ -67,23 +67,23 @@ drop table if exists user_ai_cfg_his_info;
 create table user_ai_cfg_his_info
 (
    id                   int not null auto_increment,
-   busi_id              int not null comment 'ÒµÎñ±àºÅ',
-   user_id              varchar(50) not null comment 'ÓÃ»§±àºÅ',
-   ai_num               int comment '»úÆ÷ÈËÊıÁ¿',
-   assign_level         int comment 'Ô¤·ÖÅä£¬¸ß£¬µÍ',
-   template_id          varchar(200) comment '»°ÊõÄ£°å',
-   open_date            varchar(10) comment '¿ª»§ÈÕÆÚ',
-   invalid_date         varchar(10) comment 'Ê§Ğ§ÈÕÆÚ',
-   status               int comment '×´Ì¬£º1-Õı³££¬0-Ê§Ğ§',
-   invalid_policy       varchar(10) comment 'Ê§Ğ§²ßÂÔ:NUM:100',
-   handle_type          int comment '²Ù×÷ÀàĞÍ:1-ĞÂÔö;2-¸üĞÂ;0-É¾³ı',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   busi_id              int not null comment 'ä¸šåŠ¡ç¼–å·',
+   user_id              varchar(50) not null comment 'ç”¨æˆ·ç¼–å·',
+   ai_num               int comment 'æœºå™¨äººæ•°é‡',
+   assign_level         int comment 'é¢„åˆ†é…ï¼Œé«˜ï¼Œä½',
+   template_id          varchar(200) comment 'è¯æœ¯æ¨¡æ¿',
+   open_date            varchar(10) comment 'å¼€æˆ·æ—¥æœŸ',
+   invalid_date         varchar(10) comment 'å¤±æ•ˆæ—¥æœŸ',
+   status               int comment 'çŠ¶æ€ï¼š1-æ­£å¸¸ï¼Œ0-å¤±æ•ˆ',
+   invalid_policy       varchar(10) comment 'å¤±æ•ˆç­–ç•¥:NUM:100',
+   handle_type          int comment 'æ“ä½œç±»å‹:1-æ–°å¢;2-æ›´æ–°;0-åˆ é™¤',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    crt_user             varchar(50),
    update_time          datetime,
    update_user          varchar(50),
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table user_ai_cfg_his_info comment 'ÓÃ»§»úÆ÷ÅäÖÃ±ä¸üÀúÊ·ĞÅÏ¢';
+alter table user_ai_cfg_his_info comment 'ç”¨æˆ·æœºå™¨é…ç½®å˜æ›´å†å²ä¿¡æ¯';
 create index user_ai_cfg_his_info_idx1 on user_ai_cfg_his_info
 (
    busi_id
@@ -105,15 +105,15 @@ drop table if exists tts_callback_his;
 create table tts_callback_his
 (
    id                   int not null auto_increment,
-   busi_id              varchar(32) not null comment 'ÒµÎñid,µ÷ÓÃttsµÄÎ¨Ò»ÇëÇóid',
-   template_id          varchar(32) comment '»°ÊõÄ£°å±àºÅ',
-   tts_json_data        text comment 'TTSºÏ³ÉµÄÓïÒôJSON',
-   status               int not null comment '×´Ì¬: 1-Íê³É, 0-Ê§°Ü',
-   error_msg            varchar(1024) comment 'Ê§°ÜÈÕÖ¾',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   busi_id              varchar(32) not null comment 'ä¸šåŠ¡id,è°ƒç”¨ttsçš„å”¯ä¸€è¯·æ±‚id',
+   template_id          varchar(32) comment 'è¯æœ¯æ¨¡æ¿ç¼–å·',
+   tts_json_data        text comment 'TTSåˆæˆçš„è¯­éŸ³JSON',
+   status               int not null comment 'çŠ¶æ€: 1-å®Œæˆ, 0-å¤±è´¥',
+   error_msg            varchar(1024) comment 'å¤±è´¥æ—¥å¿—',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table tts_callback_his comment 'TTSºÏ³É»Øµ÷Êı¾İ';
+alter table tts_callback_his comment 'TTSåˆæˆå›è°ƒæ•°æ®';
 create index tts_callback_his_idx1 on tts_callback_his
 (
    busi_id
@@ -134,20 +134,20 @@ drop table if exists tts_wav_his;
 create table tts_wav_his
 (
    id                   int not null auto_increment,
-   seq_id               varchar(32) not null comment '»á»°Id',
-   busi_id              varchar(32) not null comment 'ÒµÎñid,µ÷ÓÃttsµÄÎ¨Ò»ÇëÇóid',
-   template_id          varchar(32) comment '»°ÊõÄ£°å±àºÅ',
-   req_params           varchar(1024) comment 'TTSºÏ³ÉÇëÇó²ÎÊı',
-   tts_txt_json_data    varchar(1024) comment 'ĞèÒªºÏ³ÉµÄÎÄ±¾JSON',
-   tts_json_data        text not null comment 'TTSºÏ³ÉµÄÓïÒôJSON',
-   status               int comment '×´Ì¬: 2-ºÏ³ÉÖĞ,1-Íê³É, 0-Ê§°Ü',
-   error_msg            varchar(1024) comment 'Ê§°ÜÈÕÖ¾',
-   error_type           int comment 'Ê§°ÜÀàĞÍ:1-µ÷ÓÃÊ§°Ü£¬2-TTS½Ó¿Ú»Øµ÷Ê§°Ü£¬3-TTS»Øµ÷ºó±¾µØ´¦ÀíÊ§°Ü',
-   error_try_num        int comment 'Ê§°Ü³¢ÊÔ´ÎÊı',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   seq_id               varchar(32) not null comment 'ä¼šè¯Id',
+   busi_id              varchar(32) not null comment 'ä¸šåŠ¡id,è°ƒç”¨ttsçš„å”¯ä¸€è¯·æ±‚id',
+   template_id          varchar(32) comment 'è¯æœ¯æ¨¡æ¿ç¼–å·',
+   req_params           varchar(1024) comment 'TTSåˆæˆè¯·æ±‚å‚æ•°',
+   tts_txt_json_data    varchar(1024) comment 'éœ€è¦åˆæˆçš„æ–‡æœ¬JSON',
+   tts_json_data        text not null comment 'TTSåˆæˆçš„è¯­éŸ³JSON',
+   status               int comment 'çŠ¶æ€: 2-åˆæˆä¸­,1-å®Œæˆ, 0-å¤±è´¥',
+   error_msg            varchar(1024) comment 'å¤±è´¥æ—¥å¿—',
+   error_type           int comment 'å¤±è´¥ç±»å‹:1-è°ƒç”¨å¤±è´¥ï¼Œ2-TTSæ¥å£å›è°ƒå¤±è´¥ï¼Œ3-TTSå›è°ƒåæœ¬åœ°å¤„ç†å¤±è´¥',
+   error_try_num        int comment 'å¤±è´¥å°è¯•æ¬¡æ•°',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table tts_wav_his comment 'TTSÓïÒôºÏ³ÉÊı¾İ';
+alter table tts_wav_his comment 'TTSè¯­éŸ³åˆæˆæ•°æ®';
 create index tts_wav_his_idx1 on tts_wav_his
 (
    seq_id
@@ -166,7 +166,7 @@ create index tts_wav_his_idx4 on tts_wav_his
 );
 update tts_wav_his_temp set status = (case `status` when 'P' then 2 when 'S' then 1 when 'F' then 0 end);
 update tts_wav_his_temp set error_type = (case `error_type` when 'P' then 1 when 'T' then 2 when 'L' then 3 end);
-insert into tts_wav_his(seq_id,busi_id,template_id,req_params,tts_txt_json_data,tts_json_data,status,error_msg,error_type,error_try_num,crt_time) select seq_id,busi_id,template_id,req_params,tts_txt_json_data,tts_json_data,status,error_msg,error_type,error_try_num,crt_time from tts_callback_his_temp;
+insert into tts_wav_his(seq_id,busi_id,template_id,req_params,tts_txt_json_data,tts_json_data,status,error_msg,error_type,error_try_num,crt_time) select seq_id,busi_id,template_id,req_params,tts_txt_json_data,tts_json_data,status,error_msg,error_type,error_try_num,crt_time from tts_wav_his_temp;
 
 
 drop index ai_cycle_his_idx4 on ai_cycle_his;
@@ -177,19 +177,19 @@ drop table if exists ai_cycle_his;
 create table ai_cycle_his
 (
    id                   int not null auto_increment,
-   user_id              varchar(50) not null comment 'ÓÃ»§±àºÅ',
-   ai_no                varchar(50) not null comment '»úÆ÷ÈË±àºÅ',
-   ai_name              varchar(50) comment '»úÆ÷ÈËêÇ³Æ',
-   template_id          varchar(50) comment '»°ÊõÄ£°å',
-   assign_date          varchar(10) comment '·ÖÅäÈÕÆÚ',
-   assign_time          varchar(20) comment '·ÖÅäÊ±¼ä',
-   taskback_date        varchar(10) comment 'ÊÕ»ØÈÕÆÚ',
-   taskback_time        varchar(20) comment 'ÊÕ»ØÊ±¼ä',
-   call_num             bigint comment '²¦´òÊıÁ¿',
+   user_id              varchar(50) not null comment 'ç”¨æˆ·ç¼–å·',
+   ai_no                varchar(50) not null comment 'æœºå™¨äººç¼–å·',
+   ai_name              varchar(50) comment 'æœºå™¨äººæ˜µç§°',
+   template_id          varchar(50) comment 'è¯æœ¯æ¨¡æ¿',
+   assign_date          varchar(10) comment 'åˆ†é…æ—¥æœŸ',
+   assign_time          varchar(20) comment 'åˆ†é…æ—¶é—´',
+   taskback_date        varchar(10) comment 'æ”¶å›æ—¥æœŸ',
+   taskback_time        varchar(20) comment 'æ”¶å›æ—¶é—´',
+   call_num             bigint comment 'æ‹¨æ‰“æ•°é‡',
    crt_time             datetime,
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table ai_cycle_his comment '»úÆ÷ÈËÉúÃüÖÜÆÚ¼ÇÂ¼';
+alter table ai_cycle_his comment 'æœºå™¨äººç”Ÿå‘½å‘¨æœŸè®°å½•';
 create index ai_cycle_his_idx1 on ai_cycle_his
 (
    user_id

@@ -2,6 +2,7 @@ package com.guiji.calloutserver.service;
 
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -13,6 +14,6 @@ import java.util.List;
 public interface CallOutDetailRecordService {
     void save(CallOutDetailRecord callOutDetailRecord);
     void update(CallOutDetailRecord callOutDetailRecord);
-    void add(Long callId, Long callDetailId,String botWavFile);
-    List<CallOutDetailRecord> findByCallId(Long callId);
+    void add(BigInteger callId, BigInteger callDetailId,String botWavFile);
+    List<CallOutDetailRecord> findByCallId(BigInteger callId);
 }

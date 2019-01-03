@@ -2,6 +2,8 @@ package com.guiji.callcenter.dao;
 
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.callcenter.dao.entity.CallOutRecordExample;
+
+import java.math.BigInteger;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +12,7 @@ public interface CallOutRecordMapper {
 
     int deleteByExample(CallOutRecordExample example);
 
-    int deleteByPrimaryKey(Long callId);
+    int deleteByPrimaryKey(BigInteger callId);
 
     int insert(CallOutRecord record);
 
@@ -18,7 +20,7 @@ public interface CallOutRecordMapper {
 
     List<CallOutRecord> selectByExample(CallOutRecordExample example);
 
-    CallOutRecord selectByPrimaryKey(Long callId);
+    CallOutRecord selectByPrimaryKey(BigInteger callId);
 
     int updateByExampleSelective(@Param("record") CallOutRecord record, @Param("example") CallOutRecordExample example);
 

@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -48,7 +49,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public void updateIsRead(String callId) {
         CallOutPlan callOutPlan = new CallOutPlan();
-        callOutPlan.setCallId(Long.valueOf(callId));
+        callOutPlan.setCallId(new BigInteger(callId));
         callOutPlan.setIsread(1);
         callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
@@ -92,7 +93,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             }
         }
         if (StringUtils.isNotBlank(callId)) {
-            criteria.andCallIdEqualTo(Long.valueOf(callId));
+            criteria.andCallIdEqualTo(new BigInteger(callId));
         }
         if (StringUtils.isNotBlank(tempId)) {
             criteria.andTempIdEqualTo(tempId);
@@ -151,7 +152,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public CallPlanDetailRecordVO getCallDetail(Long callId) {
+    public CallPlanDetailRecordVO getCallDetail(BigInteger callId) {
 
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
         callOutPlan.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
@@ -196,7 +197,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.createCriteria().andPlanUuidIn(uuids);
         List<CallOutPlan> listPlan = callOutPlanMapper.selectByExample(example);
 
-        List<Long> callIds = new ArrayList<>();
+        List<BigInteger> callIds = new ArrayList<>();
         if (listPlan != null && listPlan.size() > 0) {
             for(CallOutPlan callOutPlan:listPlan){
                 callIds.add(callOutPlan.getCallId());
@@ -229,7 +230,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                     BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
                     if (records != null && records.size() > 0) {
                         for (CallOutDetailRecord callOutDetailRecord : records) {
-                            if (callOutDetailRecord.getCallDetailId() == callOutDetail.getCallDetailId()) {
+                            if (callOutDetailRecord.getCallDetailId().compareTo(callOutDetail.getCallDetailId())==0) {
                                 BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
                             }
                         }
@@ -245,7 +246,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                 BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
                 if (detailList != null && detailList.size() > 0) {
                     for (CallOutDetailVO callOutDetailVO : detailList) {
-                        if (callOutDetailVO.getCallId() == callOutPlan.getCallId()) {
+                        if (callOutDetailVO.getCallId().compareTo(callOutPlan.getCallId())==0) {
                             List<CallOutDetailVO> detailIn = callPlanDetailRecordVO.getDetailList();
                             if (detailIn != null) {
                                 detailIn.add(callOutDetailVO);
@@ -260,7 +261,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 if (recordList != null && recordList.size() > 0) {
                     for (CallOutRecord callOutRecord : recordList) {
-                        if (callPlanDetailRecordVO.getCallId() == callOutRecord.getCallId()) {
+                        if (callPlanDetailRecordVO.getCallId().compareTo(callOutRecord.getCallId())==0) {
                             callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
                         }
                     }
@@ -278,7 +279,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     public String getDialogue(String callId) {
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
-        criteria.andCallIdEqualTo(Long.valueOf(callId));
+        criteria.andCallIdEqualTo(new BigInteger(callId));
         example.setOrderByClause("IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
         String result = "";
@@ -297,9 +298,9 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutDetailExample example = new CallOutDetailExample();
         String[] callidArr = callIds.split(",");
 
-        List<Long> idList = new ArrayList();
+        List<BigInteger> idList = new ArrayList();
         for(String callId: callidArr){
-            idList.add(Long.valueOf(callId));
+            idList.add(new BigInteger(callId));
         }
 
         example.createCriteria().andCallIdIn(idList);
@@ -310,7 +311,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         Map<String, String> map = new HashMap<String, String>();
         if (list != null && list.size() > 0) {
             for (CallOutDetail callOutDetail : list) {
-                Long callId = callOutDetail.getCallId();
+                BigInteger callId = callOutDetail.getCallId();
 
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
@@ -347,7 +348,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Override
     public String getRecordFileUrl(String callId) {
-        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(Long.valueOf(callId));
+        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(new BigInteger(callId));
         if (callOutRecord != null) {
             return callOutRecord.getRecordUrl();
         }
@@ -358,9 +359,9 @@ public class CallDetailServiceImpl implements CallDetailService {
     public List<CallOutRecord> getRecords(String callIds) {
 
         String[] callidArr = callIds.split(",");
-        List<Long> idList = new ArrayList();
+        List<BigInteger> idList = new ArrayList();
         for(String callId: callidArr){
-            idList.add(Long.valueOf(callId));
+            idList.add(new BigInteger(callId));
         }
         CallOutRecordExample example = new CallOutRecordExample();
         example.createCriteria().andCallIdIn(idList);
@@ -371,9 +372,9 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public void delRecord(String callIds) {
         String[] callidArr = callIds.split(",");
-        List<Long> idList = new ArrayList();
+        List<BigInteger> idList = new ArrayList();
         for(String callId: callidArr){
-            idList.add(Long.valueOf(callId));
+            idList.add(new BigInteger(callId));
         }
         CallOutPlan callOutPlan = new CallOutPlan();
         callOutPlan.setIsdel(1);
@@ -391,7 +392,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq) {
         CallOutDetail record = new CallOutDetail();
         record.setCustomerSayText(callDetailUpdateReq.getCustomerSayText());
-        record.setCallDetailId(Long.valueOf(callDetailUpdateReq.getCallDetailId()));
+        record.setCallDetailId(new BigInteger(callDetailUpdateReq.getCallDetailId()));
         callOutDetailMapper.updateByPrimaryKeySelective(record);
     }
 

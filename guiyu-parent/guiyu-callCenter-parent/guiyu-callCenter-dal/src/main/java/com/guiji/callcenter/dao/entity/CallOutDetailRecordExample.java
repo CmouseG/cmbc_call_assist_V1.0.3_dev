@@ -1,5 +1,6 @@
 package com.guiji.callcenter.dao.entity;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,52 +135,52 @@ public class CallOutDetailRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdEqualTo(Long value) {
+        public Criteria andCallDetailIdEqualTo(BigInteger value) {
             addCriterion("call_detail_id =", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdNotEqualTo(Long value) {
+        public Criteria andCallDetailIdNotEqualTo(BigInteger value) {
             addCriterion("call_detail_id <>", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdGreaterThan(Long value) {
+        public Criteria andCallDetailIdGreaterThan(BigInteger value) {
             addCriterion("call_detail_id >", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andCallDetailIdGreaterThanOrEqualTo(BigInteger value) {
             addCriterion("call_detail_id >=", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdLessThan(Long value) {
+        public Criteria andCallDetailIdLessThan(BigInteger value) {
             addCriterion("call_detail_id <", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdLessThanOrEqualTo(Long value) {
+        public Criteria andCallDetailIdLessThanOrEqualTo(BigInteger value) {
             addCriterion("call_detail_id <=", value, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdIn(List<Long> values) {
+        public Criteria andCallDetailIdIn(List<BigInteger> values) {
             addCriterion("call_detail_id in", values, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdNotIn(List<Long> values) {
+        public Criteria andCallDetailIdNotIn(List<BigInteger> values) {
             addCriterion("call_detail_id not in", values, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdBetween(Long value1, Long value2) {
+        public Criteria andCallDetailIdBetween(BigInteger value1, BigInteger value2) {
             addCriterion("call_detail_id between", value1, value2, "callDetailId");
             return (Criteria) this;
         }
 
-        public Criteria andCallDetailIdNotBetween(Long value1, Long value2) {
+        public Criteria andCallDetailIdNotBetween(BigInteger value1, BigInteger value2) {
             addCriterion("call_detail_id not between", value1, value2, "callDetailId");
             return (Criteria) this;
         }
@@ -194,52 +195,52 @@ public class CallOutDetailRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallIdEqualTo(Long value) {
+        public Criteria andCallIdEqualTo(BigInteger value) {
             addCriterion("call_id =", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotEqualTo(Long value) {
+        public Criteria andCallIdNotEqualTo(BigInteger value) {
             addCriterion("call_id <>", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdGreaterThan(Long value) {
+        public Criteria andCallIdGreaterThan(BigInteger value) {
             addCriterion("call_id >", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andCallIdGreaterThanOrEqualTo(BigInteger value) {
             addCriterion("call_id >=", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLessThan(Long value) {
+        public Criteria andCallIdLessThan(BigInteger value) {
             addCriterion("call_id <", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLessThanOrEqualTo(Long value) {
+        public Criteria andCallIdLessThanOrEqualTo(BigInteger value) {
             addCriterion("call_id <=", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdIn(List<Long> values) {
+        public Criteria andCallIdIn(List<BigInteger> values) {
             addCriterion("call_id in", values, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotIn(List<Long> values) {
+        public Criteria andCallIdNotIn(List<BigInteger> values) {
             addCriterion("call_id not in", values, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdBetween(Long value1, Long value2) {
+        public Criteria andCallIdBetween(BigInteger value1, BigInteger value2) {
             addCriterion("call_id between", value1, value2, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotBetween(Long value1, Long value2) {
+        public Criteria andCallIdNotBetween(BigInteger value1, BigInteger value2) {
             addCriterion("call_id not between", value1, value2, "callId");
             return (Criteria) this;
         }

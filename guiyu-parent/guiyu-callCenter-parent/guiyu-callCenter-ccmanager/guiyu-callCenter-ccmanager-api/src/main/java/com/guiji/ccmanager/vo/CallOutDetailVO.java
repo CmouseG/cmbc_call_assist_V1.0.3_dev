@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 
@@ -19,8 +20,8 @@ public class CallOutDetailVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long callDetailId;
-    private Long callId;
+    private BigInteger callDetailId;
+    private BigInteger callId;
     @ApiModelProperty(value = "意向")
     private String accurateIntent;
     @ApiModelProperty(value = "客户说的话")

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.Boolean;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,7 @@ public class CallDetailController implements ICallPlanDetail {
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(Long.valueOf(callId));
+        CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
         //修改状态为已读
         callDetailService.updateIsRead(callId);
 

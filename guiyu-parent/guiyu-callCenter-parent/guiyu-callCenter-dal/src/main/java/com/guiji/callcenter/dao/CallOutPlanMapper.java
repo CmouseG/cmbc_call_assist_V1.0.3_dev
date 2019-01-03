@@ -2,6 +2,8 @@ package com.guiji.callcenter.dao;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
+
+import java.math.BigInteger;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +12,7 @@ public interface CallOutPlanMapper {
 
     int deleteByExample(CallOutPlanExample example);
 
-    int deleteByPrimaryKey(Long callId);
+    int deleteByPrimaryKey(BigInteger callId);
 
     int insert(CallOutPlan record);
 
@@ -19,7 +21,7 @@ public interface CallOutPlanMapper {
     List<CallOutPlan> selectByExample(CallOutPlanExample example);
     List<CallOutPlan> selectByExample4Encrypt(CallOutPlanExample example);
 
-    CallOutPlan selectByPrimaryKey(Long callId);
+    CallOutPlan selectByPrimaryKey(BigInteger callId);
 
     int updateByExampleSelective(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);
     int updateCallStateIntentReason(@Param("record") CallOutPlan record, @Param("example") CallOutPlanExample example);

@@ -85,13 +85,13 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger" >
     select 
     <include refid="Base_Column_List" />
     from call_out_record
     where call_id = #{callId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigInteger" >
     delete from call_out_record
     where call_id = #{callId,jdbcType=BIGINT}
   </delete>

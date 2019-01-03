@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+
 /**
  * 用于管理与FreeSWITCH的ESL连接
  */
@@ -167,7 +169,7 @@ public class LocalFsServer implements IEslEventListener {
      * 杀掉通道
      * @param uuid
      */
-    public void hangup(Long uuid){
+    public void hangup(BigInteger uuid){
         executeAsync("uuid_kill " + uuid);
     }
 

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class CallOutPlanVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long callId;
+    private BigInteger callId;
     @ApiModelProperty(value = "被叫号码")
     private String phoneNum;
     @ApiModelProperty(value = "客户id")

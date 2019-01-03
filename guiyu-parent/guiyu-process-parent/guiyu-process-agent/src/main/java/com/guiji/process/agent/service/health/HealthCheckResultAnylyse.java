@@ -111,7 +111,7 @@ public class HealthCheckResultAnylyse {
     }
 
     public static void doNothing(ProcessInstanceVO processInstanceVO,ProcessTypeEnum processType,List<String> parameters,String reqKey) {
-        Integer result = 10;
+        String result = "10";
 
         ProcessInstanceVO processInstanceVOTmp = new ProcessInstanceVO();
         BeanUtil.copyProperties(processInstanceVO, processInstanceVOTmp);

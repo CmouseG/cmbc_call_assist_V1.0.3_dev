@@ -43,7 +43,7 @@ public class CmdMessageUtils {
 					builder.setStatus(cmdMessageVO.getProcessInstanceVO().getStatus().getValue());
 				}
 			}
-			builder.setCmdResult(cmdMessageVO.getCommandResult()==null?"":String.valueOf(cmdMessageVO.getCommandResult()));
+			builder.setCmdResult(cmdMessageVO.getCommandResult()==null?"":cmdMessageVO.getCommandResult());
 			builder.setCmdResultDesc(cmdMessageVO.getCommandResultDesc()==null?"":cmdMessageVO.getCommandResultDesc());
 
 		}
@@ -58,9 +58,7 @@ public class CmdMessageUtils {
 		cmdMessageVO.setParameters(Arrays.asList(message.getParameters().split(",")));
 		cmdMessageVO.setCmdType(CmdTypeEnum.valueOf(message.getCmdType()));
 		cmdMessageVO.setMsgTypeEnum(CmdMsgTypeEnum.valueOf(message.getMsgType()));
-		if (StringUtils.isNotEmpty(message.getCmdResult())) {
-			cmdMessageVO.setCommandResult(Integer.valueOf(message.getCmdResult()));
-		}
+		cmdMessageVO.setCommandResult(message.getCmdResult());
 		cmdMessageVO.setCommandResultDesc(message.getCmdResultDesc());
 
 		ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();

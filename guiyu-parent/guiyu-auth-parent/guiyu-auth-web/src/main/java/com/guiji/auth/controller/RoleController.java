@@ -30,6 +30,7 @@ public class RoleController {
 		role.setUpdateId(userId);
 		role.setCreateTime(new Date());
 		role.setUpdateTime(new Date());
+		role.setDelFlag(0);
 		service.insert(role,menuIds);
 	}
 	

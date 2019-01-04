@@ -19,6 +19,7 @@ import com.guiji.process.server.service.ISysProcessService;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,7 +175,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                         if (processTaskMap != null) {
                             for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
                                 if (cmdMessageVO.getReqKey() != null && cmdMessageVO.getReqKey().equals(entry.getKey())) {
-                                    entry.getValue().setResult(cmdMessageVO.getCommandResult());
+                                    if (StringUtils.isNotEmpty(cmdMessageVO.getCommandResult())) {
+                                        entry.getValue().setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                                    }
                                     processTaskMap.put(entry.getKey(),entry.getValue());
                                     break;
                                 }
@@ -228,7 +231,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                 }
                 //更新sys_process_task
                 SysProcessTask sysProcessTask = new SysProcessTask();
-                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                if (StringUtils.isNotEmpty(cmdMessageVO.getCommandResult())) {
+                    sysProcessTask.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                }
                 sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
                 sysProcessTask.setExecStatus(0);
                 sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
@@ -246,7 +251,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             if (processInstanceVO != null){
                 //更新sys_process_task
                 SysProcessTask sysProcessTask = new SysProcessTask();
-                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                if (StringUtils.isNotEmpty(cmdMessageVO.getCommandResult())) {
+                    sysProcessTask.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                }
                 sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
                 sysProcessTask.setExecStatus(0);
                 sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
@@ -283,7 +290,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
 
                 //更新sys_process_task
                 SysProcessTask sysProcessTask = new SysProcessTask();
-                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                if (StringUtils.isNotEmpty(cmdMessageVO.getCommandResult())) {
+                    sysProcessTask.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                }
                 sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
                 sysProcessTask.setExecStatus(0);
                 sysProcessTask.setReqKey(cmdMessageVO.getReqKey());
@@ -301,7 +310,9 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
             if (processInstanceVO != null){
                 //更新sys_process_task
                 SysProcessTask sysProcessTask = new SysProcessTask();
-                sysProcessTask.setResult(cmdMessageVO.getCommandResult());
+                if (StringUtils.isNotEmpty(cmdMessageVO.getCommandResult())) {
+                    sysProcessTask.setResult(Integer.valueOf(cmdMessageVO.getCommandResult()));
+                }
                 sysProcessTask.setResultContent(cmdMessageVO.getCommandResultDesc());
                 sysProcessTask.setExecStatus(0);
                 sysProcessTask.setReqKey(cmdMessageVO.getReqKey());

@@ -20,7 +20,7 @@ public class CmdMessageVO  implements Serializable {
 
     private ProcessInstanceVO processInstanceVO;
 
-    private Integer commandResult;
+    private String commandResult;
 
     private String commandResultDesc;
 
@@ -66,11 +66,11 @@ public class CmdMessageVO  implements Serializable {
         this.msgTypeEnum = msgTypeEnum;
     }
 
-    public Integer getCommandResult() {
+    public String getCommandResult() {
         return commandResult;
     }
 
-    public void setCommandResult(Integer commandResult) {
+    public void setCommandResult(String commandResult) {
         this.commandResult = commandResult;
     }
 

@@ -1,21 +1,24 @@
+CREATE DATABASE IF NOT EXISTS guiyu_da DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+grant all on guiyu_da.* to da@'%' identified by 'ad@1234' with grant option; 
+grant all privileges on guiyu_da.* to 'da'@'%' identified by 'da@1234' with grant option;
 use guiyu_da;
 create table robot_call_his
 (
    id                   int not null auto_increment,
-   seq_id               varchar(50) comment '»á»°id',
-   user_id              varchar(50) not null comment 'ÓÃ»§±àºÅ',
-   org_code             varchar(8) comment '»ú¹¹±àºÅ',
-   ai_no                varchar(50) comment '»úÆ÷ÈË±àºÅ',
-   phone_no             varchar(11) not null comment 'µç»°ºÅÂë',
-   assign_time          datetime comment '·ÖÅäÊ±¼ä',
-   template_id          varchar(50) comment '»°ÊõÄ£°å',
-   call_status          int comment 'Í¨»°×´Ì¬:2-Í¨»°Íê³É,1-Í¨»°ÖĞ',
-   sellbot_callback_json text comment 'sellbot»Øµ÷±¨ÎÄ',
-   crt_date             varchar(10) comment '´´½¨ÈÕÆÚ',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   seq_id               varchar(50) comment 'ä¼šè¯id',
+   user_id              varchar(50) not null comment 'ç”¨æˆ·ç¼–å·',
+   org_code             varchar(8) comment 'æœºæ„ç¼–å·',
+   ai_no                varchar(50) comment 'æœºå™¨äººç¼–å·',
+   phone_no             varchar(11) not null comment 'ç”µè¯å·ç ',
+   assign_time          datetime comment 'åˆ†é…æ—¶é—´',
+   template_id          varchar(50) comment 'è¯æœ¯æ¨¡æ¿',
+   call_status          int comment 'é€šè¯çŠ¶æ€:2-é€šè¯å®Œæˆ,1-é€šè¯ä¸­',
+   sellbot_callback_json text comment 'sellbotå›è°ƒæŠ¥æ–‡',
+   crt_date             varchar(10) comment 'åˆ›å»ºæ—¥æœŸ',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-alter table robot_call_his comment 'Í¨»°ÀúÊ·';
+alter table robot_call_his comment 'é€šè¯å†å²';
 create index robot_callback_his_idx1 on robot_call_his
 (
    seq_id
@@ -36,21 +39,21 @@ create index robot_callback_his_idx4 on robot_call_his
 create table robot_call_process_stat
 (
    id                   int not null auto_increment,
-   user_id              varchar(50) comment 'ÓÃ»§±àºÅ',
-   stat_date            varchar(10) comment 'Í³¼ÆÈÕÆÚ',
-   template_id          varchar(50) comment 'Ä£°å±àºÅ',
-   ai_answer            varchar(1024) comment 'AI»°Êõ',
-   current_domain       varchar(50) comment 'µ±Ç°Óò',
-   domain_type          varchar(3) comment 'ÓòÀàĞÍ 1-Ö÷Á÷³Ì;2-Ò»°ãÎÊÌâ;9-ÆäËû',
-   total_stat           int comment '×ÜÊıÍ³¼Æ',
-   refused_stat         varchar(100) comment '¾Ü¾øÍ³¼Æ(0-²»¾Ü¾ø,1-ÓÃ»§¾Ü¾ø;9-Î´Ó¦´ğ)',
-   hangup_stat          varchar(100) comment '¹Ò¶ÏÍ³¼Æ(0-Î´¹Ò¶Ï   1£ºÓÃ»§¹Ò¶Ï   2£ºAI¹Ò¶Ï)',
-   match_stat           varchar(100) comment 'Æ¥ÅäÍ³¼Æ',
-   org_code             varchar(8) comment '»ú¹¹ºÅ',
-   crt_time             datetime comment '´´½¨Ê±¼ä',
+   user_id              varchar(50) comment 'ç”¨æˆ·ç¼–å·',
+   stat_date            varchar(10) comment 'ç»Ÿè®¡æ—¥æœŸ',
+   template_id          varchar(50) comment 'æ¨¡æ¿ç¼–å·',
+   ai_answer            varchar(1024) comment 'AIè¯æœ¯',
+   current_domain       varchar(50) comment 'å½“å‰åŸŸ',
+   domain_type          varchar(3) comment 'åŸŸç±»å‹ 1-ä¸»æµç¨‹;2-ä¸€èˆ¬é—®é¢˜;9-å…¶ä»–',
+   total_stat           int comment 'æ€»æ•°ç»Ÿè®¡',
+   refused_stat         varchar(100) comment 'æ‹’ç»ç»Ÿè®¡(0-ä¸æ‹’ç»,1-ç”¨æˆ·æ‹’ç»;9-æœªåº”ç­”)',
+   hangup_stat          varchar(100) comment 'æŒ‚æ–­ç»Ÿè®¡(0-æœªæŒ‚æ–­   1ï¼šç”¨æˆ·æŒ‚æ–­   2ï¼šAIæŒ‚æ–­)',
+   match_stat           varchar(100) comment 'åŒ¹é…ç»Ÿè®¡',
+   org_code             varchar(8) comment 'æœºæ„å·',
+   crt_time             datetime comment 'åˆ›å»ºæ—¶é—´',
    primary key (id)
 );
-alter table robot_call_process_stat comment '»úÆ÷ÈËÍ¨»°Á÷³Ì·ÖÎö';
+alter table robot_call_process_stat comment 'æœºå™¨äººé€šè¯æµç¨‹åˆ†æ';
 create index robot_call_process_stat_idx1 on robot_call_process_stat
 (
    user_id

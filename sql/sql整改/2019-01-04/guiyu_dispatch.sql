@@ -53,7 +53,7 @@ alter table dispatch_plan_batch modify column org_code varchar(8) comment'组织
 
 
 alter table modular_logs modify column msg varchar(128) comment '日志信息';
-alter table modular_logs modify column status int; comment '处理状态0成功1失败';
+alter table modular_logs modify column status int comment '处理状态0成功1失败';
 	
 
 alter table send_msg_records modify column statusCode int not null comment '默认0';

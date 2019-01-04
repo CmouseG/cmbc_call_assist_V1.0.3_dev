@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.metadata.CallParameterMetaData;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Date;
@@ -82,7 +83,7 @@ public class FsBotHandler {
         log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(event.getUuid()));
+            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
             if (callPlan == null) {
                 log.info("未知的应答事件，事件uuid[{}]，跳过处理", event.getUuid());
                 return;
@@ -114,7 +115,7 @@ public class FsBotHandler {
             channelHelper.playAiReponse(aiResponse, false,true);
 
             //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况
-            CallOutPlan callPlanNew = callOutPlanService.findByPlanUuid(event.getUuid());
+            CallOutPlan callPlanNew = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
             if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
@@ -164,7 +165,7 @@ public class FsBotHandler {
     @AllowConcurrentEvents
     public void handleCustomerAsrEvent(AsrCustomerEvent event) {
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(event.getUuid()));
+            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
             if (callPlan == null) {
                 log.warn("收到的CustomerAsr，没有根据uuid[{}]找到对应的callPlan，跳过处理", event.getUuid());
                 return;
@@ -288,7 +289,7 @@ public class FsBotHandler {
 //        simpleEventSender.sendEvent(toAgentEvent);
     }
 
-    public void buildCallOutDetail(Long callId, AsrCustomerEvent event) {
+    public void buildCallOutDetail(BigInteger callId, AsrCustomerEvent event) {
 
         //开场白之前的asr识别不记录，识别太灵敏了，导致太多无用通话记录
         if (StringUtils.isNotBlank(event.getAsrText())) {
@@ -331,7 +332,7 @@ public class FsBotHandler {
         log.info("收到Hangup事件[{}], 准备进行处理", event);
 
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(event.getUuid()));
+            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
             if (callPlan == null) {
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;

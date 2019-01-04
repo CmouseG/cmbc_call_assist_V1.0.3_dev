@@ -283,7 +283,7 @@ public class CustAiAccountController {
 			//开始获取用户配置的机器人列表
 			Set<String> templateSet = new HashSet<String>();
 			for(UserAiCfgInfo cfg : list) {
-				if(RobotConstants.USER_CFG_STATUS_S.equals(cfg.getStatus())) {
+				if(RobotConstants.USER_CFG_STATUS_S == cfg.getStatus()) {
 					//只要正常状态数据
 					String templateIds = cfg.getTemplateIds();
 					if(StrUtils.isNotEmpty(templateIds)) {
@@ -388,7 +388,7 @@ public class CustAiAccountController {
 	 * @return
 	 */
 	@RequestMapping(value = "/delUserCfg", method = RequestMethod.POST)
-	public Result.ReturnData delUserCfg(@RequestParam(value="userId",required=true)String userId,@RequestParam(value="id",required=true)String id){
+	public Result.ReturnData delUserCfg(@RequestParam(value="userId",required=true)String userId,@RequestParam(value="id",required=true)int id){
 		if(StrUtils.isEmpty(userId) && StrUtils.isEmpty(id)) {
 			//必输校验
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());

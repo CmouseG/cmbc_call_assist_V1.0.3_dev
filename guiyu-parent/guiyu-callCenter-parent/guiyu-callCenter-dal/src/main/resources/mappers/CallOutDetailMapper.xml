@@ -99,13 +99,13 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger" >
     select 
     <include refid="Base_Column_List" />
     from call_out_detail
     where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigInteger" >
     delete from call_out_detail
     where call_detail_id = #{callDetailId,jdbcType=BIGINT}
   </delete>
@@ -116,13 +116,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutDetail"  useGeneratedKeys="true" keyProperty="callDetailId">
-    insert into call_out_detail (call_detail_id, call_id, accurate_intent, 
+    insert into call_out_detail (call_id, accurate_intent,
       agent_answer_text, agent_answer_time, ai_duration, 
       asr_duration, bot_answer_text, bot_answer_time, 
       call_detail_type, customer_say_text, customer_say_time, 
       reason, total_duration, sharding_value
       )
-    values (#{callDetailId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{accurateIntent,jdbcType=VARCHAR}, 
+    values (#{callId,jdbcType=BIGINT}, #{accurateIntent,jdbcType=VARCHAR},
       #{agentAnswerText,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{aiDuration,jdbcType=INTEGER}, 
       #{asrDuration,jdbcType=INTEGER}, #{botAnswerText,jdbcType=VARCHAR}, #{botAnswerTime,jdbcType=TIMESTAMP}, 
       #{callDetailType,jdbcType=INTEGER}, #{customerSayText,jdbcType=VARCHAR}, #{customerSayTime,jdbcType=TIMESTAMP}, 

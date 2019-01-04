@@ -7,6 +7,7 @@ import com.guiji.calloutserver.service.CallOutPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -25,18 +26,19 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     }
 
     @Override
-    public CallOutPlan findByCallId(Long callId) {
+    public CallOutPlan findByCallId(BigInteger callId) {
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
+        System.out.print(callOutPlan);
         return callOutPlan;
     }
 
-    @Override
-    public CallOutPlan findByPlanUuid(String planUuid) {
-        CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andPlanUuidEqualTo(planUuid);
-        List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
-        return list.get(0);
-    }
+//    @Override
+//    public CallOutPlan findByPlanUuid(String planUuid) {
+//        CallOutPlanExample example = new CallOutPlanExample();
+//        example.createCriteria().andPlanUuidEqualTo(planUuid);
+//        List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
+//        return list.get(0);
+//    }
 
     @Override
     public void update(CallOutPlan callplan) {

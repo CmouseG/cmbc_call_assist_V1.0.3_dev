@@ -21,6 +21,7 @@ import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.robot.model.UserAiCfgVO;
 
 import io.swagger.annotations.Api;
@@ -121,6 +122,14 @@ public interface IRobotRemote {
     })
     @PostMapping(value = "/remote/aiHangup")
 	Result.ReturnData aiHangup(@RequestBody AiHangupReq aiHangupReq);
+	
+	
+	@ApiOperation(value = "查询用户机器人配置基本信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "用户编号", required = true)
+    })
+    @PostMapping(value = "/remote/queryCustBaseAccount")
+	Result.ReturnData<UserAiCfgBaseInfoVO> queryCustBaseAccount(@RequestParam(value="userId",required=true)String userId);
 	
 	
 	@ApiOperation(value = "查询用户机器人拆分详情")

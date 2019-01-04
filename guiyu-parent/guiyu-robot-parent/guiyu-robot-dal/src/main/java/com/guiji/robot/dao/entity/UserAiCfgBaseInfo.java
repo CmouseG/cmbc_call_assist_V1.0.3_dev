@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class UserAiCfgBaseInfo implements Serializable {
-    private String id;
+    private Integer id;
 
     private String userId;
 
@@ -24,12 +24,12 @@ public class UserAiCfgBaseInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUserId() {

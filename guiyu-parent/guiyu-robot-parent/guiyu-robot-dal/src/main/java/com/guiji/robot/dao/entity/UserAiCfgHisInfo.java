@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class UserAiCfgHisInfo implements Serializable {
-    private String id;
+    private Integer id;
 
-    private String busiId;
+    private Integer busiId;
 
     private String userId;
 
     private Integer aiNum;
 
-    private String assignLevel;
+    private Integer assignLevel;
 
     private String templateId;
 
@@ -20,11 +20,11 @@ public class UserAiCfgHisInfo implements Serializable {
 
     private String invalidDate;
 
-    private String status;
+    private Integer status;
 
     private String invalidPolicy;
 
-    private String handleType;
+    private Integer handleType;
 
     private Date crtTime;
 
@@ -36,20 +36,20 @@ public class UserAiCfgHisInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getBusiId() {
+    public Integer getBusiId() {
         return busiId;
     }
 
-    public void setBusiId(String busiId) {
-        this.busiId = busiId == null ? null : busiId.trim();
+    public void setBusiId(Integer busiId) {
+        this.busiId = busiId;
     }
 
     public String getUserId() {
@@ -68,12 +68,12 @@ public class UserAiCfgHisInfo implements Serializable {
         this.aiNum = aiNum;
     }
 
-    public String getAssignLevel() {
+    public Integer getAssignLevel() {
         return assignLevel;
     }
 
-    public void setAssignLevel(String assignLevel) {
-        this.assignLevel = assignLevel == null ? null : assignLevel.trim();
+    public void setAssignLevel(Integer assignLevel) {
+        this.assignLevel = assignLevel;
     }
 
     public String getTemplateId() {
@@ -100,12 +100,12 @@ public class UserAiCfgHisInfo implements Serializable {
         this.invalidDate = invalidDate == null ? null : invalidDate.trim();
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getInvalidPolicy() {
@@ -116,12 +116,12 @@ public class UserAiCfgHisInfo implements Serializable {
         this.invalidPolicy = invalidPolicy == null ? null : invalidPolicy.trim();
     }
 
-    public String getHandleType() {
+    public Integer getHandleType() {
         return handleType;
     }
 
-    public void setHandleType(String handleType) {
-        this.handleType = handleType == null ? null : handleType.trim();
+    public void setHandleType(Integer handleType) {
+        this.handleType = handleType;
     }
 
     public Date getCrtTime() {

@@ -21,6 +21,8 @@ import com.guiji.utils.StrUtils;
 public class RobotCallHisServiceImpl implements IRobotCallHisService{
 	@Autowired
 	RobotCallHisMapper robotCallHisMapper; 
+	@Autowired
+	RobotNewTransService robotNewTransService;
 	
 	
 	
@@ -30,11 +32,8 @@ public class RobotCallHisServiceImpl implements IRobotCallHisService{
 	 * @return
 	 */
 	@Override
-	public RobotCallHis queryRobotCallById(String id) {
-		if(StrUtils.isNotEmpty(id)) {
-			return robotCallHisMapper.selectByPrimaryKey(id);
-		}
-		return null;
+	public RobotCallHis queryRobotCallById(int id) {
+		return robotCallHisMapper.selectByPrimaryKey(id);
 	}
 	
 	
@@ -55,4 +54,23 @@ public class RobotCallHisServiceImpl implements IRobotCallHisService{
 		}
 		return null;
 	}
+	
+	
+	/**
+	 * 根据会话id更新通话状态
+	 * @param seqId
+	 * @param callStatus
+	 */
+	@Override
+	public void updateCallStatus(String seqId,int callStatus) {
+		if(StrUtils.isNotEmpty(seqId)) {
+			RobotCallHis robotCallHis = this.queryRobotCallBySeqId(seqId);
+			if(robotCallHis!=null) {
+				robotCallHis.setCallStatus(callStatus);
+				robotNewTransService.recordRobotCallHis(robotCallHis);
+			}
+			
+		}
+	}
+	
 }

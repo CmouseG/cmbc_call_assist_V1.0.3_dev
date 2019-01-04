@@ -135,62 +135,52 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(String value) {
+        public Criteria andIdEqualTo(Integer value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(String value) {
+        public Criteria andIdNotEqualTo(Integer value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(String value) {
+        public Criteria andIdGreaterThan(Integer value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(String value) {
+        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(String value) {
+        public Criteria andIdLessThan(Integer value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(String value) {
+        public Criteria andIdLessThanOrEqualTo(Integer value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLike(String value) {
-            addCriterion("id like", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdNotLike(String value) {
-            addCriterion("id not like", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdIn(List<String> values) {
+        public Criteria andIdIn(List<Integer> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<String> values) {
+        public Criteria andIdNotIn(List<Integer> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(String value1, String value2) {
+        public Criteria andIdBetween(Integer value1, Integer value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(String value1, String value2) {
+        public Criteria andIdNotBetween(Integer value1, Integer value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -555,62 +545,52 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatusEqualTo(String value) {
+        public Criteria andStatusEqualTo(Integer value) {
             addCriterion("`status` =", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotEqualTo(String value) {
+        public Criteria andStatusNotEqualTo(Integer value) {
             addCriterion("`status` <>", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThan(String value) {
+        public Criteria andStatusGreaterThan(Integer value) {
             addCriterion("`status` >", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThanOrEqualTo(String value) {
+        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
             addCriterion("`status` >=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThan(String value) {
+        public Criteria andStatusLessThan(Integer value) {
             addCriterion("`status` <", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThanOrEqualTo(String value) {
+        public Criteria andStatusLessThanOrEqualTo(Integer value) {
             addCriterion("`status` <=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLike(String value) {
-            addCriterion("`status` like", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotLike(String value) {
-            addCriterion("`status` not like", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIn(List<String> values) {
+        public Criteria andStatusIn(List<Integer> values) {
             addCriterion("`status` in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotIn(List<String> values) {
+        public Criteria andStatusNotIn(List<Integer> values) {
             addCriterion("`status` not in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusBetween(String value1, String value2) {
+        public Criteria andStatusBetween(Integer value1, Integer value2) {
             addCriterion("`status` between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotBetween(String value1, String value2) {
+        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("`status` not between", value1, value2, "status");
             return (Criteria) this;
         }
@@ -695,62 +675,52 @@ public class TtsWavHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeEqualTo(String value) {
+        public Criteria andErrorTypeEqualTo(Integer value) {
             addCriterion("error_type =", value, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeNotEqualTo(String value) {
+        public Criteria andErrorTypeNotEqualTo(Integer value) {
             addCriterion("error_type <>", value, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeGreaterThan(String value) {
+        public Criteria andErrorTypeGreaterThan(Integer value) {
             addCriterion("error_type >", value, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andErrorTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("error_type >=", value, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeLessThan(String value) {
+        public Criteria andErrorTypeLessThan(Integer value) {
             addCriterion("error_type <", value, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeLessThanOrEqualTo(String value) {
+        public Criteria andErrorTypeLessThanOrEqualTo(Integer value) {
             addCriterion("error_type <=", value, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeLike(String value) {
-            addCriterion("error_type like", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeNotLike(String value) {
-            addCriterion("error_type not like", value, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorTypeIn(List<String> values) {
+        public Criteria andErrorTypeIn(List<Integer> values) {
             addCriterion("error_type in", values, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeNotIn(List<String> values) {
+        public Criteria andErrorTypeNotIn(List<Integer> values) {
             addCriterion("error_type not in", values, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeBetween(String value1, String value2) {
+        public Criteria andErrorTypeBetween(Integer value1, Integer value2) {
             addCriterion("error_type between", value1, value2, "errorType");
             return (Criteria) this;
         }
 
-        public Criteria andErrorTypeNotBetween(String value1, String value2) {
+        public Criteria andErrorTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("error_type not between", value1, value2, "errorType");
             return (Criteria) this;
         }

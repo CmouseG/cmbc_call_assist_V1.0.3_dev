@@ -135,62 +135,52 @@ public class RobotCallHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(String value) {
+        public Criteria andIdEqualTo(Integer value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(String value) {
+        public Criteria andIdNotEqualTo(Integer value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(String value) {
+        public Criteria andIdGreaterThan(Integer value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(String value) {
+        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(String value) {
+        public Criteria andIdLessThan(Integer value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(String value) {
+        public Criteria andIdLessThanOrEqualTo(Integer value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLike(String value) {
-            addCriterion("id like", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdNotLike(String value) {
-            addCriterion("id not like", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdIn(List<String> values) {
+        public Criteria andIdIn(List<Integer> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<String> values) {
+        public Criteria andIdNotIn(List<Integer> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(String value1, String value2) {
+        public Criteria andIdBetween(Integer value1, Integer value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(String value1, String value2) {
+        public Criteria andIdNotBetween(Integer value1, Integer value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -335,6 +325,76 @@ public class RobotCallHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andOrgCodeIsNull() {
+            addCriterion("org_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIsNotNull() {
+            addCriterion("org_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeEqualTo(String value) {
+            addCriterion("org_code =", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotEqualTo(String value) {
+            addCriterion("org_code <>", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeGreaterThan(String value) {
+            addCriterion("org_code >", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("org_code >=", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLessThan(String value) {
+            addCriterion("org_code <", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLessThanOrEqualTo(String value) {
+            addCriterion("org_code <=", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLike(String value) {
+            addCriterion("org_code like", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotLike(String value) {
+            addCriterion("org_code not like", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIn(List<String> values) {
+            addCriterion("org_code in", values, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotIn(List<String> values) {
+            addCriterion("org_code not in", values, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeBetween(String value1, String value2) {
+            addCriterion("org_code between", value1, value2, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotBetween(String value1, String value2) {
+            addCriterion("org_code not between", value1, value2, "orgCode");
+            return (Criteria) this;
+        }
+
         public Criteria andAiNoIsNull() {
             addCriterion("ai_no is null");
             return (Criteria) this;
@@ -402,6 +462,76 @@ public class RobotCallHisExample {
 
         public Criteria andAiNoNotBetween(String value1, String value2) {
             addCriterion("ai_no not between", value1, value2, "aiNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoIsNull() {
+            addCriterion("phone_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoIsNotNull() {
+            addCriterion("phone_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoEqualTo(String value) {
+            addCriterion("phone_no =", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoNotEqualTo(String value) {
+            addCriterion("phone_no <>", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoGreaterThan(String value) {
+            addCriterion("phone_no >", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoGreaterThanOrEqualTo(String value) {
+            addCriterion("phone_no >=", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoLessThan(String value) {
+            addCriterion("phone_no <", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoLessThanOrEqualTo(String value) {
+            addCriterion("phone_no <=", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoLike(String value) {
+            addCriterion("phone_no like", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoNotLike(String value) {
+            addCriterion("phone_no not like", value, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoIn(List<String> values) {
+            addCriterion("phone_no in", values, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoNotIn(List<String> values) {
+            addCriterion("phone_no not in", values, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoBetween(String value1, String value2) {
+            addCriterion("phone_no between", value1, value2, "phoneNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneNoNotBetween(String value1, String value2) {
+            addCriterion("phone_no not between", value1, value2, "phoneNo");
             return (Criteria) this;
         }
 
@@ -545,62 +675,52 @@ public class RobotCallHisExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusEqualTo(String value) {
+        public Criteria andCallStatusEqualTo(Integer value) {
             addCriterion("call_status =", value, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusNotEqualTo(String value) {
+        public Criteria andCallStatusNotEqualTo(Integer value) {
             addCriterion("call_status <>", value, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusGreaterThan(String value) {
+        public Criteria andCallStatusGreaterThan(Integer value) {
             addCriterion("call_status >", value, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusGreaterThanOrEqualTo(String value) {
+        public Criteria andCallStatusGreaterThanOrEqualTo(Integer value) {
             addCriterion("call_status >=", value, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusLessThan(String value) {
+        public Criteria andCallStatusLessThan(Integer value) {
             addCriterion("call_status <", value, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusLessThanOrEqualTo(String value) {
+        public Criteria andCallStatusLessThanOrEqualTo(Integer value) {
             addCriterion("call_status <=", value, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusLike(String value) {
-            addCriterion("call_status like", value, "callStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallStatusNotLike(String value) {
-            addCriterion("call_status not like", value, "callStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andCallStatusIn(List<String> values) {
+        public Criteria andCallStatusIn(List<Integer> values) {
             addCriterion("call_status in", values, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusNotIn(List<String> values) {
+        public Criteria andCallStatusNotIn(List<Integer> values) {
             addCriterion("call_status not in", values, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusBetween(String value1, String value2) {
+        public Criteria andCallStatusBetween(Integer value1, Integer value2) {
             addCriterion("call_status between", value1, value2, "callStatus");
             return (Criteria) this;
         }
 
-        public Criteria andCallStatusNotBetween(String value1, String value2) {
+        public Criteria andCallStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("call_status not between", value1, value2, "callStatus");
             return (Criteria) this;
         }
@@ -732,76 +852,6 @@ public class RobotCallHisExample {
 
         public Criteria andCrtTimeNotBetween(Date value1, Date value2) {
             addCriterion("crt_time not between", value1, value2, "crtTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeIsNull() {
-            addCriterion("org_code is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeIsNotNull() {
-            addCriterion("org_code is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeEqualTo(String value) {
-            addCriterion("org_code =", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotEqualTo(String value) {
-            addCriterion("org_code <>", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeGreaterThan(String value) {
-            addCriterion("org_code >", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeGreaterThanOrEqualTo(String value) {
-            addCriterion("org_code >=", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeLessThan(String value) {
-            addCriterion("org_code <", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeLessThanOrEqualTo(String value) {
-            addCriterion("org_code <=", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeLike(String value) {
-            addCriterion("org_code like", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotLike(String value) {
-            addCriterion("org_code not like", value, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeIn(List<String> values) {
-            addCriterion("org_code in", values, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotIn(List<String> values) {
-            addCriterion("org_code not in", values, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeBetween(String value1, String value2) {
-            addCriterion("org_code between", value1, value2, "orgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrgCodeNotBetween(String value1, String value2) {
-            addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
     }

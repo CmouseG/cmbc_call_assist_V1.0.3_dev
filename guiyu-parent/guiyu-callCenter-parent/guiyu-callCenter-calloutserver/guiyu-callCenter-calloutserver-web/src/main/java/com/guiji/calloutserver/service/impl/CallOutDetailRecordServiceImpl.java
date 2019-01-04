@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class CallOutDetailRecordServiceImpl implements CallOutDetailRecordServic
         callOutDetailRecordMapper.updateByPrimaryKeySelective(callOutDetailRecord);
     }
     @Override
-    public void add(Long callId, Long callDetailId, String botWavFile) {
+    public void add(BigInteger callId, BigInteger callDetailId, String botWavFile) {
         CallOutDetailRecord record = new CallOutDetailRecord();
         record.setCallId(callId);
         record.setCallDetailId(callDetailId);
@@ -41,7 +42,7 @@ public class CallOutDetailRecordServiceImpl implements CallOutDetailRecordServic
     }
 
     @Override
-    public List<CallOutDetailRecord> findByCallId(Long callId) {
+    public List<CallOutDetailRecord> findByCallId(BigInteger callId) {
         CallOutDetailRecordExample recordExample = new CallOutDetailRecordExample();
         CallOutDetailRecordExample.Criteria criteria = recordExample.createCriteria();
         criteria.andCallIdEqualTo(callId);

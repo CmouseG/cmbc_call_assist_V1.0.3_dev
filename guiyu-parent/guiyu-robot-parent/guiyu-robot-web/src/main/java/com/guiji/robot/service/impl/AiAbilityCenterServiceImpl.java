@@ -19,9 +19,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
+import com.guiji.da.model.RobotCallHis;
 import com.guiji.dispatch.model.Constant;
 import com.guiji.robot.constants.RobotConstants;
-import com.guiji.robot.dao.entity.RobotCallHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
@@ -192,9 +192,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			}
 		}else {
 			rsp.setStatus(ttsWavHis.getStatus());
-			if(RobotConstants.TTS_STATUS_P.equals(ttsWavHis.getStatus())) {
+			if(RobotConstants.TTS_STATUS_P == ttsWavHis.getStatus()) {
 				logger.error("会话ID:{}TTS数据合成中...",ttsVoiceReq.getSeqid());
-			}else if(RobotConstants.TTS_STATUS_F.equals(ttsWavHis.getStatus())) {
+			}else if(RobotConstants.TTS_STATUS_F == ttsWavHis.getStatus()) {
 //				logger.error("会话ID:{}TTS数据合成失败!",ttsVoiceReq.getSeqid());
 			}else {
 				//查询出合成后的数据JSON
@@ -356,6 +356,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				robotCallHis.setUserId(userId);
 				robotCallHis.setAiNo(nowAi.getAiNo());
 				robotCallHis.setSeqId(aiCallApplyReq.getSeqId());
+				robotCallHis.setPhoneNo(aiCallApplyReq.getPhoneNo());
 				robotCallHis.setTemplateId(aiCallApplyReq.getTemplateId());
 				robotCallHis.setAssignTime(new Date());
 				robotCallHis.setCallStatus(RobotConstants.CALLINT_STATUS_I);	//通话中
@@ -602,12 +603,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
 		/**2、将通话历史设置为完成 **/
-		RobotCallHis robotCallHis = iAiCycleHisService.queryRobotCallhisBySeqId(aiHangupReq.getSeqId());
-		if(robotCallHis != null) {
-			robotCallHis.setCallStatus(RobotConstants.CALLING_STATUS_S); //通话完成
-		}
-		robotNewTransService.recordRobotCallHis(robotCallHis);
-		
+		robotNewTransService.updateRobotCallStatus(aiHangupReq.getSeqId(), RobotConstants.CALLING_STATUS_S);//通话完成
 		/**3、资源校验以及准备**/
 		AiInuseCache nowAi = iAiResourceManagerService.queryUserAi(aiHangupReq.getUserId(), aiHangupReq.getAiNo());
 		if(nowAi == null) {

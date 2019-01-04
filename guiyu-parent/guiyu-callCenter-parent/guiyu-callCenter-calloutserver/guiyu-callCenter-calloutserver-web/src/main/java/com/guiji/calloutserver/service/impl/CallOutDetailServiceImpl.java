@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Random;
 
@@ -57,7 +58,7 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
 
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
-        criteria.andCallIdEqualTo(Long.valueOf(callId));
+        criteria.andCallIdEqualTo(new BigInteger(callId));
         if (isIntentNotNull) {
             criteria.andAccurateIntentIsNotNull();
         }

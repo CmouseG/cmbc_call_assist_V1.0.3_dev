@@ -10,7 +10,7 @@ public interface AiCycleHisMapper {
 
     int deleteByExample(AiCycleHisExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(AiCycleHis record);
 
@@ -18,7 +18,7 @@ public interface AiCycleHisMapper {
 
     List<AiCycleHis> selectByExample(AiCycleHisExample example);
 
-    AiCycleHis selectByPrimaryKey(String id);
+    AiCycleHis selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") AiCycleHis record, @Param("example") AiCycleHisExample example);
 

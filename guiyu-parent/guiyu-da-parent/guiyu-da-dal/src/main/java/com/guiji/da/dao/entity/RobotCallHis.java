@@ -4,36 +4,38 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class RobotCallHis implements Serializable {
-    private String id;
+    private Integer id;
 
     private String seqId;
 
     private String userId;
 
+    private String orgCode;
+
     private String aiNo;
+
+    private String phoneNo;
 
     private Date assignTime;
 
     private String templateId;
 
-    private String callStatus;
+    private Integer callStatus;
 
     private String crtDate;
 
     private Date crtTime;
 
-    private String orgCode;
-
     private String sellbotCallbackJson;
 
     private static final long serialVersionUID = 1L;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getSeqId() {
@@ -52,12 +54,28 @@ public class RobotCallHis implements Serializable {
         this.userId = userId == null ? null : userId.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public String getAiNo() {
         return aiNo;
     }
 
     public void setAiNo(String aiNo) {
         this.aiNo = aiNo == null ? null : aiNo.trim();
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo == null ? null : phoneNo.trim();
     }
 
     public Date getAssignTime() {
@@ -76,12 +94,12 @@ public class RobotCallHis implements Serializable {
         this.templateId = templateId == null ? null : templateId.trim();
     }
 
-    public String getCallStatus() {
+    public Integer getCallStatus() {
         return callStatus;
     }
 
-    public void setCallStatus(String callStatus) {
-        this.callStatus = callStatus == null ? null : callStatus.trim();
+    public void setCallStatus(Integer callStatus) {
+        this.callStatus = callStatus;
     }
 
     public String getCrtDate() {
@@ -98,14 +116,6 @@ public class RobotCallHis implements Serializable {
 
     public void setCrtTime(Date crtTime) {
         this.crtTime = crtTime;
-    }
-
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
     public String getSellbotCallbackJson() {
@@ -125,13 +135,14 @@ public class RobotCallHis implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", seqId=").append(seqId);
         sb.append(", userId=").append(userId);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", aiNo=").append(aiNo);
+        sb.append(", phoneNo=").append(phoneNo);
         sb.append(", assignTime=").append(assignTime);
         sb.append(", templateId=").append(templateId);
         sb.append(", callStatus=").append(callStatus);
         sb.append(", crtDate=").append(crtDate);
         sb.append(", crtTime=").append(crtTime);
-        sb.append(", orgCode=").append(orgCode);
         sb.append(", sellbotCallbackJson=").append(sellbotCallbackJson);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

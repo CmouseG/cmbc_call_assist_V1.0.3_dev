@@ -6,6 +6,7 @@ import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
 import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface CallDetailService {
     List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
                                             String accurateIntent, String freason, String callId, String tempId, String isRead );
 
-    CallOutPlanVO getCallDetail(Long callId);
+    CallOutPlanVO getCallDetail(BigInteger callId);
 
     int callrecordCount(Date start, Date end, String customerId, String phoneNum,String durationMin,String durationMax,
                         String accurateIntent, String freason,String callId, String tempId, String isRead, Boolean isSuperAdmin);

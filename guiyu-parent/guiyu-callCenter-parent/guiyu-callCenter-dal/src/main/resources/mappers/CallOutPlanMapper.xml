@@ -138,13 +138,13 @@
             limit #{limitStart} , #{limitEnd}
         </if>
     </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger" >
     select 
     <include refid="Base_Column_List" />
     from call_out_plan
     where call_id = #{callId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigInteger" >
     delete from call_out_plan
     where call_id = #{callId,jdbcType=BIGINT}
   </delete>
@@ -155,7 +155,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan"  useGeneratedKeys="true" keyProperty="callId">
-    insert into call_out_plan (call_id, plan_uuid, phone_num, 
+    insert into call_out_plan (plan_uuid, phone_num,
       customer_id, temp_id, line_id, 
       serverId, agent_id, agent_answer_time, 
       agent_channel_uuid, agent_group_id, agent_start_time, 
@@ -167,7 +167,7 @@
       ai_id, freason, isdel, 
       isread, org_code, batch_id
       )
-    values (#{callId,jdbcType=BIGINT}, #{planUuid,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, 
+    values ( #{planUuid,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR},
       #{customerId,jdbcType=INTEGER}, #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, 
       #{serverid,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, 
       #{agentChannelUuid,jdbcType=VARCHAR}, #{agentGroupId,jdbcType=VARCHAR}, #{agentStartTime,jdbcType=TIMESTAMP}, 

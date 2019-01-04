@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -122,7 +123,7 @@ public class AIManagerImpl implements AIManager {
 
         log.info("开始发起sellbot请求，request[{}]", aiRequest);
         try {
-            CallOutPlan callPlan = callOutPlanService.findByPlanUuid(aiRequest.getUuid());
+            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(aiRequest.getUuid()));
 
             AiFlowMsgPushReq aiFlowMsgPushReq = new AiFlowMsgPushReq();
             aiFlowMsgPushReq.setAiNo(callPlan.getAiId());

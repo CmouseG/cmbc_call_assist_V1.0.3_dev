@@ -3,6 +3,8 @@ package com.guiji.ccmanager.service;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.component.result.Result;
 
+import java.math.BigInteger;
+
 /**
  * @Auther: 黎阳
  * @Date: 2018/10/30 0030 13:45
@@ -12,5 +14,5 @@ public interface CallManagerOutService {
 
     public void startcallplan(String customerId, String tempId, String lineId);
 
-    public CallOutPlan getCallRecordById(Long callId);
+    public CallOutPlan getCallRecordById(BigInteger callId);
 }

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.concurrent.*;
 
@@ -148,7 +149,7 @@ public class RobotNextHelper {
 //
 //        if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
         CallOutDetail callDetail = new CallOutDetail();
-            callDetail.setCallId(Long.valueOf(callId));
+            callDetail.setCallId(new BigInteger(callId));
 //            callDetail.setCallDetailId(IdGenUtil.uuid());
             setDetailValues(aiResponse, callDetail, callId);
             callOutDetailService.save(callDetail);

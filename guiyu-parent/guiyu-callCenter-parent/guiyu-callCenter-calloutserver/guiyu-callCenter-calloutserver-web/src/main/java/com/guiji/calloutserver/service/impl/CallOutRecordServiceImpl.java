@@ -6,6 +6,8 @@ import com.guiji.calloutserver.service.CallOutRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+
 /**
  * @Auther: 魏驰
  * @Date: 2018/11/4 16:56
@@ -18,7 +20,7 @@ public class CallOutRecordServiceImpl implements CallOutRecordService {
     CallOutRecordMapper callOutRecordMapper;
 
     @Override
-    public CallOutRecord findByCallId(Long callId) {
+    public CallOutRecord findByCallId(BigInteger callId) {
         return callOutRecordMapper.selectByPrimaryKey(callId);
     }
 

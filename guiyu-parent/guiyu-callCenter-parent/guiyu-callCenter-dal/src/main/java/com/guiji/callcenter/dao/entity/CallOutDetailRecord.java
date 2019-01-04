@@ -1,11 +1,12 @@
 package com.guiji.callcenter.dao.entity;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 public class CallOutDetailRecord implements Serializable {
-    private Long callDetailId;
+    private BigInteger callDetailId;
 
-    private Long callId;
+    private BigInteger callId;
 
     private String agentRecordFile;
 
@@ -21,19 +22,19 @@ public class CallOutDetailRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getCallDetailId() {
+    public BigInteger getCallDetailId() {
         return callDetailId;
     }
 
-    public void setCallDetailId(Long callDetailId) {
+    public void setCallDetailId(BigInteger callDetailId) {
         this.callDetailId = callDetailId;
     }
 
-    public Long getCallId() {
+    public BigInteger getCallId() {
         return callId;
     }
 
-    public void setCallId(Long callId) {
+    public void setCallId(BigInteger callId) {
         this.callId = callId;
     }
 

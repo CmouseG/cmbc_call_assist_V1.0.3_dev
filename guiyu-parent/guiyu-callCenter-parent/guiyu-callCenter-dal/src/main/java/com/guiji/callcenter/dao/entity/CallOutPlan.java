@@ -1,10 +1,11 @@
 package com.guiji.callcenter.dao.entity;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class CallOutPlan implements Serializable {
-    private Long callId;
+    private BigInteger callId;
 
     private String planUuid;
 
@@ -72,11 +73,11 @@ public class CallOutPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getCallId() {
+    public BigInteger getCallId() {
         return callId;
     }
 
-    public void setCallId(Long callId) {
+    public void setCallId(BigInteger callId) {
         this.callId = callId;
     }
 

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
     @GetMapping(value="getCallRecordById")
     public Result.ReturnData<CallOutPlan> getCallRecordById(String callId ){
 
-        com.guiji.callcenter.dao.entity.CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(Long.valueOf(callId));
+        com.guiji.callcenter.dao.entity.CallOutPlan callOutPlan = callManagerOutService.getCallRecordById(new BigInteger(callId));
         if(callOutPlan!=null){
             CallOutPlan CallOutPlanApi = new CallOutPlan();
             BeanUtil.copyProperties(callOutPlan,CallOutPlanApi);

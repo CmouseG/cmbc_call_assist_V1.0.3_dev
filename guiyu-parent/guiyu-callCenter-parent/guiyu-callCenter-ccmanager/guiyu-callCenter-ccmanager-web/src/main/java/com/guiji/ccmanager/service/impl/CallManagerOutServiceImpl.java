@@ -23,6 +23,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -123,7 +124,7 @@ public class CallManagerOutServiceImpl implements CallManagerOutService {
 
 
     @Override
-    public CallOutPlan getCallRecordById(Long callId) {
+    public CallOutPlan getCallRecordById(BigInteger callId) {
         return callOutPlanMapper.selectByPrimaryKey(callId);
     }
 }

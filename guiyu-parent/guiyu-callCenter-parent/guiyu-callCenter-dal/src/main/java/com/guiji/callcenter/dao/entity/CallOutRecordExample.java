@@ -1,5 +1,6 @@
 package com.guiji.callcenter.dao.entity;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,52 +135,52 @@ public class CallOutRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andCallIdEqualTo(Long value) {
+        public Criteria andCallIdEqualTo(BigInteger value) {
             addCriterion("call_id =", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotEqualTo(Long value) {
+        public Criteria andCallIdNotEqualTo(BigInteger value) {
             addCriterion("call_id <>", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdGreaterThan(Long value) {
+        public Criteria andCallIdGreaterThan(BigInteger value) {
             addCriterion("call_id >", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andCallIdGreaterThanOrEqualTo(BigInteger value) {
             addCriterion("call_id >=", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLessThan(Long value) {
+        public Criteria andCallIdLessThan(BigInteger value) {
             addCriterion("call_id <", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdLessThanOrEqualTo(Long value) {
+        public Criteria andCallIdLessThanOrEqualTo(BigInteger value) {
             addCriterion("call_id <=", value, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdIn(List<Long> values) {
+        public Criteria andCallIdIn(List<BigInteger> values) {
             addCriterion("call_id in", values, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotIn(List<Long> values) {
+        public Criteria andCallIdNotIn(List<BigInteger> values) {
             addCriterion("call_id not in", values, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdBetween(Long value1, Long value2) {
+        public Criteria andCallIdBetween(BigInteger value1, BigInteger value2) {
             addCriterion("call_id between", value1, value2, "callId");
             return (Criteria) this;
         }
 
-        public Criteria andCallIdNotBetween(Long value1, Long value2) {
+        public Criteria andCallIdNotBetween(BigInteger value1, BigInteger value2) {
             addCriterion("call_id not between", value1, value2, "callId");
             return (Criteria) this;
         }

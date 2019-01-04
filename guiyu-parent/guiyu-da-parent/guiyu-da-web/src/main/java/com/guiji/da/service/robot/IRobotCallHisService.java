@@ -15,14 +15,22 @@ public interface IRobotCallHisService {
 	 * @param id
 	 * @return
 	 */
-	RobotCallHis queryRobotCallById(String id);
+	RobotCallHis queryRobotCallById(int id);
 	
 	
 	/**
-	 * 根据会话id查询童话记录
+	 * 根据会话id查询通话记录
 	 * @param seqId
 	 * @return
 	 */
 	RobotCallHis queryRobotCallBySeqId(String seqId);
+	
+	
+	/**
+	 * 根据会话id更新通话状态
+	 * @param seqId
+	 * @param callStatus
+	 */
+	void updateCallStatus(String seqId,int callStatus);
 	
 }

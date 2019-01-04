@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Map;
 
@@ -150,7 +151,7 @@ public class FsEventHandler {
         }
 
         String uuid = eventHeaders.get("UUID");
-        CallOutPlan callPlan = callOutPlanService.findByCallId(Long.valueOf(uuid));
+        CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(uuid));
         if (callPlan != null) {
             event.setUuid(uuid);
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();

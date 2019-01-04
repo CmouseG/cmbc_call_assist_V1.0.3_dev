@@ -67,7 +67,7 @@ drop table if exists user_ai_cfg_his_info;
 create table user_ai_cfg_his_info
 (
    id                   int not null auto_increment,
-   busi_id              int not null comment '业务编号',
+   busi_id              int comment '业务编号',
    user_id              varchar(50) not null comment '用户编号',
    ai_num               int comment '机器人数量',
    assign_level         int comment '预分配，高，低',

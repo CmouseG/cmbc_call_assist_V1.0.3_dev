@@ -16,7 +16,7 @@ import lombok.Data;
 @ApiModel(value="UserAiCfgDetailVO对象",description="用户机器人配置详情")
 public class UserAiCfgDetailVO {
 	@ApiModelProperty(value="编号",required=true)
-	private String id;
+	private Integer id;
 	@ApiModelProperty(value="用户编号",required=true)
     private String userId;
 	@ApiModelProperty(value="用户名称")

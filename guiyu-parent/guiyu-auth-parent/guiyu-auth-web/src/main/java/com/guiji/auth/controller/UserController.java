@@ -46,6 +46,7 @@ public class UserController implements IAuth{
 		user.setPushType(param.getPushType());
 		user.setIntenLabel(param.getIntenLabel());
 		user.setOrgCode(param.getOrgCode());
+		user.setDelFlag(0);
 		if(service.existUserName(user)){
 			throw new CheckConditionException("00010005");
 		}

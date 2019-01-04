@@ -134,7 +134,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 callOutPlan4ListSelect.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
                 callOutPlan4ListSelect.setUserName(cacheManager.getUserName(callOutPlan.getCustomerId()));
-
+                callOutPlan4ListSelect.setCallId(callOutPlan.getCallId().toString());
                 listResult.add(callOutPlan4ListSelect);
             }
         }

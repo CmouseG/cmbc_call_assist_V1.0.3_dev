@@ -152,7 +152,7 @@ public class FsBotHandler {
             aiCallNextReq.setTemplateId(callPlan.getTempId());
             aiCallNextReq.setAiNo(aiResponse.getAiId());
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
-            aiCallNextReq.setSeqId(callPlan.getPlanUuid());
+            aiCallNextReq.setSeqId(String.valueOf(callPlan.getCallId()));
             robotNextHelper.startAiCallNextTimer(aiCallNextReq);
         } catch (Exception ex) {
             //TODO:报警
@@ -316,7 +316,7 @@ public class FsBotHandler {
             callOutDetailService.save(callDetail);
 
             CallOutDetailRecord calloutDetailRecord = new CallOutDetailRecord();
-//            calloutDetailRecord.setCallDetailId(detailId);
+            calloutDetailRecord.setCallDetailId(callDetail.getCallDetailId());
             calloutDetailRecord.setCallId(callId);
             calloutDetailRecord.setCustomerRecordFile(event.getFileName());
 

@@ -150,7 +150,7 @@ public class OrganizationService {
 		String orgCode = null;
 		if (sysUser != null) {
 			orgCode = sysUser.getOrgCode();
-			if (sysRoleList != null && sysRoleList.size() > 0 && sysRoleList.get(0).getId() == 4) {
+			if (sysRoleList != null && sysRoleList.size() > 0) {
 				if (sysRoleList.get(0).getId() == 4) {
 					Result.ReturnData<UserAiCfgBaseInfoVO> returnData = iRobotRemote.queryCustBaseAccount(String.valueOf(userId));
 					if (returnData.success && returnData.getBody() != null) {

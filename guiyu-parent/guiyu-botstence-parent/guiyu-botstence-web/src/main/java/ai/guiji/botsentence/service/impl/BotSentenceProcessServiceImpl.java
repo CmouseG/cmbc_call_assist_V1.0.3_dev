@@ -141,7 +141,17 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private static final String domain_prefix = "分支";
 	private static final String branch_prefix = "special_";
 	private static final String line_prefix = "未命名";
-	
+
+	@Override
+	public List<BotSentenceProcess> getTemplateByOrgCode(String orgCode) {
+
+		BotSentenceProcessExample example = new BotSentenceProcessExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrgCodeLike(orgCode+"%");
+		criteria.andStateNotEqualTo("99");
+		return botSentenceProcessMapper.selectByExample(example);
+	}
+
 	@Override
 	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo,Long userId) {
 

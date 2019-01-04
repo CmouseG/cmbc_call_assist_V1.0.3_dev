@@ -31,6 +31,8 @@ import ai.guiji.component.model.ServerResult;
  */
 public interface IBotSentenceProcessService {
 
+	List<BotSentenceProcess> getTemplateByOrgCode(String orgCode);
+
 	/**
 	 * 根据条件查询话术模板列表
 	 * @param templateName

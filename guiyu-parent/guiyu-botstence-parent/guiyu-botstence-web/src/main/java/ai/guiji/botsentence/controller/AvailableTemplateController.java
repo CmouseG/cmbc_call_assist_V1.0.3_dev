@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
+import ai.guiji.botsentence.service.IBotSentenceProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,6 +27,8 @@ public class AvailableTemplateController {
 	
 	@Autowired
 	private AvailableTemplateService availableTemplateService;
+	@Autowired
+	IBotSentenceProcessService botSentenceProcessService;
 
 	/**
 	 * 企业可用话术
@@ -50,14 +54,7 @@ public class AvailableTemplateController {
      */
     @GetMapping("getTemplateByOrgCode")
     public ServerResult getTemplateByOrgCode(@JsonParam String orgCode){
-        List<BotAvailableTemplate> list=availableTemplateService.getTemplateByOrgCode(orgCode);
-        Map map = new HashMap();
-        map.put("list",list);
-        if(list!=null){
-            map.put("count",list.size());
-        }else{
-            map.put("count",0);
-        }
+		List<BotSentenceProcess> list=botSentenceProcessService.getTemplateByOrgCode(orgCode);
         return ServerResult.createBySuccess(list);
     }
 	/**

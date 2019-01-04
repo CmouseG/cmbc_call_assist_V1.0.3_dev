@@ -21,6 +21,7 @@ import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.RedisUtil;
 import com.guiji.utils.ServerUtil;
 import io.swagger.models.auth.In;
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +58,8 @@ public class LineInfoServiceImpl implements LineInfoService {
     CacheManager cacheManager;
     @Autowired
     private IAuth iAuth;
+    @Autowired
+    private RedisUtil redisUtil;
 
     public LineInfoExample getExample(String customerId, String lineName){
         LineInfoExample example = new LineInfoExample();
@@ -152,6 +155,13 @@ public class LineInfoServiceImpl implements LineInfoService {
             lineCount.setUsedConcurrentCalls(0);
             lineCountMapper.insert(lineCount);
         }
+        //刷新redis缓存
+        if(lineInfoVO!=null && lineInfoVO.getCustomerId()!=null){
+            List<LineInfo> lineInfos = getLineInfoByCustomerId(lineInfoVO.getCustomerId());
+            if(lineInfos!=null && lineInfos.size()>0){
+                redisUtil.set("callCenter-lineInfo-"+lineInfoVO.getCustomerId(),lineInfos);
+            }
+        }
 
     }
 
@@ -206,11 +216,20 @@ public class LineInfoServiceImpl implements LineInfoService {
                 lineCountMapper.updateByExampleSelective(lineCount,example);
             }
         }
+        //刷新redis缓存
+        if(lineInfoVO!=null && lineInfoVO.getCustomerId()!=null){
+            List<LineInfo> lineInfos = getLineInfoByCustomerId(lineInfoVO.getCustomerId());
+            if(lineInfos!=null && lineInfos.size()>0){
+                redisUtil.set("callCenter-lineInfo-"+lineInfoVO.getCustomerId(),lineInfos);
+            }
+        }
     }
 
     @Override
     @Transactional
     public void delLineInfo(String id) {
+        //查询customerid，供缓存使用
+        LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(Integer.valueOf(id));
         //本地删除数据库lineinfo记录，同时调用fsmanager的删除线路接口
         lineInfoMapper.deleteByPrimaryKey(Integer.valueOf(id));
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(id);
@@ -224,21 +243,37 @@ public class LineInfoServiceImpl implements LineInfoService {
         LineCountExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(Integer.valueOf(id));
         lineCountMapper.deleteByExample(example);
+        //刷新redis缓存
+        if(lineInfo!=null && lineInfo.getCustomerId()!=null){
+            List<LineInfo> lineInfos = getLineInfoByCustomerId(String.valueOf(lineInfo.getCustomerId()));
+            if(lineInfos!=null && lineInfos.size()>0){
+                redisUtil.set("callCenter-lineInfo-"+lineInfo.getCustomerId(),lineInfos);
+            }
+        }
     }
 
 
     @Override
     public List<LineInfo> outLineinfos(String customerId) {
 
-       // 从lineinfos表中读取相应的信息返回即可
+        if(redisUtil.get("callCenter-lineInfo-"+customerId)!=null){
+            List<LineInfo> lineInfoCache = (List<LineInfo>) redisUtil.get("callCenter-lineInfo-"+customerId);
+            return lineInfoCache;
+        }else{
+            List<LineInfo> lineInfos = getLineInfoByCustomerId(customerId);
+            if(lineInfos!=null && lineInfos.size()>0){
+                redisUtil.set("callCenter-lineInfo-"+customerId,lineInfos);
+            }
+
+            return lineInfos;
+        }
+    }
+
+    private List<LineInfo> getLineInfoByCustomerId(String customerId){
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
-        if(StringUtils.isNotBlank(customerId)){
-            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
-        }
-        List<LineInfo> lineInfos = lineInfoMapper.selectByExample(example);
-
-        return lineInfos;
+        criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+        return lineInfoMapper.selectByExample(example);
     }
 
     @Override
@@ -294,6 +329,14 @@ public class LineInfoServiceImpl implements LineInfoService {
                 updateLine.setCustomerId(Integer.valueOf(customerId));
                 updateLine.setLineId(Integer.valueOf(lineID));
                 lineInfoMapper.updateByPrimaryKeySelective(updateLine);
+            }
+        }
+
+        //刷新redis缓存
+        if(customerId!=null){
+            List<LineInfo> lineInfos = getLineInfoByCustomerId(customerId);
+            if(lineInfos!=null && lineInfos.size()>0){
+                redisUtil.set("callCenter-lineInfo-"+customerId,lineInfos);
             }
         }
 

@@ -643,6 +643,76 @@ public class ReportCallTodayExample {
             addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
+
+        public Criteria andCallDateIsNull() {
+            addCriterion("call_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateIsNotNull() {
+            addCriterion("call_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateEqualTo(String value) {
+            addCriterion("call_date =", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateNotEqualTo(String value) {
+            addCriterion("call_date <>", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateGreaterThan(String value) {
+            addCriterion("call_date >", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateGreaterThanOrEqualTo(String value) {
+            addCriterion("call_date >=", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateLessThan(String value) {
+            addCriterion("call_date <", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateLessThanOrEqualTo(String value) {
+            addCriterion("call_date <=", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateLike(String value) {
+            addCriterion("call_date like", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateNotLike(String value) {
+            addCriterion("call_date not like", value, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateIn(List<String> values) {
+            addCriterion("call_date in", values, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateNotIn(List<String> values) {
+            addCriterion("call_date not in", values, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateBetween(String value1, String value2) {
+            addCriterion("call_date between", value1, value2, "callDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCallDateNotBetween(String value1, String value2) {
+            addCriterion("call_date not between", value1, value2, "callDate");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

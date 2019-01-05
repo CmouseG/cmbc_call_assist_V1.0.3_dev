@@ -1,14 +1,21 @@
 package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.ReportCallDayMapper;
+import com.guiji.callcenter.dao.ReportCallTodayMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.ReportCallDay;
+import com.guiji.callcenter.dao.entity.ReportCallDayExample;
 import com.guiji.callcenter.dao.entity.ReportCallHour;
+import com.guiji.callcenter.dao.entity.ReportCallTodayExample;
 import com.guiji.ccmanager.service.ReportSchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,8 +28,13 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
     @Autowired
     StatisticMapper statisticMapper;
+    @Autowired
+    ReportCallTodayMapper reportCallTodayMapper;
+    @Autowired
+    ReportCallDayMapper reportCallDayMapper;
 
     @Override
+    @Transactional
     public void reportCallDayScheduler() {
 
         statisticMapper.deleteReportCallDay();
@@ -53,6 +65,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     }
 
     @Override
+    @Transactional
     public void reportCallHourScheduler() {
         statisticMapper.deleteReportCallHour();
         List<ReportCallHour>  listOut = statisticMapper.countReportCallHourOut();
@@ -72,7 +85,46 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     }
 
     @Override
+    @Transactional
     public void reportCallTodayTruncate() {
         statisticMapper.reportCallTodayTruncate();
+    }
+
+    @Override
+    public Boolean isTruncateSuccess() {
+        ReportCallTodayExample example = new ReportCallTodayExample();
+        example.createCriteria()
+                .andCallDateLessThan(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        int count = reportCallTodayMapper.countByExample(example);
+        if(count==0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public void reportCallTodayTruncateBefore() {
+        ReportCallTodayExample example = new ReportCallTodayExample();
+        example.createCriteria()
+                .andCallDateLessThan(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        reportCallTodayMapper.deleteByExample(example);
+    }
+
+    @Override
+    public boolean isDaySheduleSuccess() {
+        Calendar cal=Calendar.getInstance();
+        cal.add(Calendar.DATE,-1);
+        Date date=cal.getTime();//昨天的日期
+
+        ReportCallDayExample example = new ReportCallDayExample();
+        example.createCriteria()
+                .andCallDateEqualTo(new SimpleDateFormat("yyyy-MM-dd").format(date));
+        int count =  reportCallDayMapper.countByExample(example);
+        if(count>0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

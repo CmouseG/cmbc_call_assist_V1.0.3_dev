@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -46,15 +48,22 @@ public class StatisticReportHandler {
         String reason = callOutPlan.getReason();
         String tempId = callOutPlan.getTempId();
         String orgCode = callOutPlan.getOrgCode();
-        long duration = callOutPlan.getDuration().longValue();
-        int durationType = getDurationType(duration);
+        int durationType = 0;
+        long duration = 0l;
+        if(callOutPlan.getDuration()!=null){
+            duration = callOutPlan.getDuration().longValue();
+            durationType = getDurationType(duration);
+        }
+
+        String callDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         ReportCallTodayExample example = new ReportCallTodayExample();
         ReportCallTodayExample.Criteria criteria = example.createCriteria()
                 .andDurationTypeEqualTo(durationType)
                 .andIntentEqualTo(intent)
                 .andTempidEqualTo(tempId)
-                .andOrgCodeEqualTo(orgCode);
+                .andOrgCodeEqualTo(orgCode)
+                .andCallDateEqualTo(callDate);
 
         if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
             criteria.andReasonEqualTo(reason);
@@ -77,6 +86,7 @@ public class StatisticReportHandler {
             reportCallToday.setCallCount(1);
             reportCallToday.setOrgCode(orgCode);
             reportCallToday.setTempid(tempId);
+            reportCallToday.setCallDate(callDate);
             reportCallTodayMapper.insert(reportCallToday);
         }else{
             ReportCallToday reportCallToday = list.get(0);

@@ -36,33 +36,11 @@
             </Pattern>
         </layout>
     </appender>
-
-    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/apps/logs/guiyu_botstence/sql.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/home/apps/logs/guiyu_botstence/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{MM/dd/yyyy HH:mm:ss.SSS} %-5level ${version} [%thread]%logger{16} - %msg%n
-            </pattern>
-        </encoder>
-    </appender>
-
-
-    <logger name="ai.guiji.botsentence.dao" level="debug">
-        <appender-ref ref="SQL"/>
-    </logger>
     
-    <logger name="ai.guiji.user.dao" level="debug">
-        <appender-ref ref="SQL"/>
-    </logger>
-    
-    <logger name="org.springframework.web.servlet.mvc" level="info"/>
+    <logger name="org.springframework.web.servlet.mvc" level="warn"/>
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="SQL"/>
     </root>
 </configuration>

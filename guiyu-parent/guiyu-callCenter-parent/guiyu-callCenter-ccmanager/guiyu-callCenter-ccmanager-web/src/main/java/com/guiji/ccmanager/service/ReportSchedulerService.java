@@ -12,4 +12,10 @@ public interface ReportSchedulerService {
     void reportCallHourScheduler();
 
     void reportCallTodayTruncate();
+
+    Boolean isTruncateSuccess();
+
+    void reportCallTodayTruncateBefore();
+
+    boolean isDaySheduleSuccess();
 }

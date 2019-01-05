@@ -24,7 +24,7 @@ public class ReportScheduler {
     @Autowired
     DistributedLockHandler distributedLockHandler;
 
-    @Scheduled(cron = "0 30 0 * * ?") // 凌晨30分执行
+    @Scheduled(cron = "0 5 0 * * ?") // 凌晨5分执行
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallDayScheduler(){
 

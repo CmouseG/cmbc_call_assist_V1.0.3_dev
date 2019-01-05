@@ -76,9 +76,6 @@ public class ImConnection {
 			ChannelFuture f = b.connect(host, port);
 			f.addListener(new ConnectionListener());
 			channel = f.channel();
-			if (ImClientProtocolBO.channelGlobal != null) {
-				ImClientProtocolBO.channelGlobal.close();
-			}
 			ImClientProtocolBO.channelGlobal = channel;
 		} catch(Exception e) {
 			e.printStackTrace();

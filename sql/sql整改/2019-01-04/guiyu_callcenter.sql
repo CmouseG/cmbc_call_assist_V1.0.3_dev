@@ -410,3 +410,7 @@ ALTER TABLE `report_call_day` DROP COLUMN   customer_id;
 ALTER TABLE `report_call_hour` DROP COLUMN   customer_id;
 ALTER TABLE `report_call_today` DROP COLUMN   customer_id;
 
+ALTER TABLE `report_call_today` ADD COLUMN call_date VARCHAR(10);
+ALTER TABLE `report_call_day` MODIFY COLUMN call_date VARCHAR(10);
+UPDATE report_call_today SET call_date = DATE_FORMAT(NOW(), '%Y-%m-%d');
+

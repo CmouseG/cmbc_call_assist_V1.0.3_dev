@@ -83,7 +83,7 @@ public class TemplateServiceImpl implements TemplateService {
         sysFileReqVO.setUserId(recordReqVO.getUserId());
         sysFileReqVO.setThumbImageFlag("0");
         String uploadFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();
-       if(FileUtil.isExist(uploadFile)) {
+       if(!FileUtil.isExist(uploadFile)) {
            logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadFile);
            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
        }

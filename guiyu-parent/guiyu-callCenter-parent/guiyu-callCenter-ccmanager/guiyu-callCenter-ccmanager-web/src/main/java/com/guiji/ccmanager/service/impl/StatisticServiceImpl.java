@@ -7,6 +7,7 @@ import com.guiji.callcenter.dao.entityext.CallCountHour;
 import com.guiji.callcenter.dao.entityext.DashboardOverView;
 import com.guiji.callcenter.dao.entityext.IntentCount;
 import com.guiji.callcenter.dao.entityext.ReasonCount;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.StatisticService;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
@@ -34,6 +35,8 @@ public class StatisticServiceImpl implements StatisticService {
     StatisticMapper statisticMapper;
     @Autowired
     IAuth iAuth;
+    @Autowired
+    AuthService authService;
 
     @Override
     public List<DashboardOverView> getDashboardOverView(String orgCode, String startDate, String endDate, String tempId) {
@@ -273,8 +276,13 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin) {
-       return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId));
+    public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode) {
+
+        if(authService.isCompanyAdmin(userId)){//企业管理员
+            return statisticMapper.getLineCountAndConcurrent(null,orgCode+"%");
+        }else{
+            return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId),null);
+        }
     }
 
 }

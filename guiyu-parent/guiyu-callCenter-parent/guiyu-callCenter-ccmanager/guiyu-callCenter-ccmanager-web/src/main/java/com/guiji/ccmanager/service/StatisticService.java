@@ -28,5 +28,5 @@ public interface StatisticService {
 
     List<ErrorMatch> getErrorMaths();
 
-    Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin);
+    Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode);
 }

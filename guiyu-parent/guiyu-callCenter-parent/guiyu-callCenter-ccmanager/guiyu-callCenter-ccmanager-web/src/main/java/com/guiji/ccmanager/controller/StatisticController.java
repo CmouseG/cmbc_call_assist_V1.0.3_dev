@@ -58,8 +58,8 @@ public class StatisticController {
 
     @ApiOperation(value = "几条通话线路,总共几路并发")
     @GetMapping(value = "getLineCountAndConcurrent")
-    public Map getLineCountAndConcurrent(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin){
-        return  statisticService.getLineCountAndConcurrent(userId,isSuperAdmin);
+    public Map getLineCountAndConcurrent(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode){
+        return  statisticService.getLineCountAndConcurrent(userId,isSuperAdmin,orgCode);
     }
 
 

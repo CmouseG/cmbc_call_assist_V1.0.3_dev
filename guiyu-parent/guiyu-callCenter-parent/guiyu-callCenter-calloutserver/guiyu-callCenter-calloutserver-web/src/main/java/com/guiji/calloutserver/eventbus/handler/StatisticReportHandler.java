@@ -50,8 +50,8 @@ public class StatisticReportHandler {
         String orgCode = callOutPlan.getOrgCode();
         int durationType = 0;
         long duration = 0l;
-        if(callOutPlan.getDuration()!=null){
-            duration = callOutPlan.getDuration().longValue();
+        if(callOutPlan.getBillSec()!=null){
+            duration = callOutPlan.getBillSec().longValue();
             durationType = getDurationType(duration);
         }
 

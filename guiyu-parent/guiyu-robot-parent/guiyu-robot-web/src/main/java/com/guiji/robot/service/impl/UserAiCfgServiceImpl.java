@@ -331,6 +331,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			record.setBusiId(userAiCfgInfo.getId());
 			BeanUtil.copyProperties(userAiCfgInfo, record);
 			record.setTemplateId(userAiCfgInfo.getTemplateIds());
+			record.setId(null); //新增历史
 			userAiCfgHisInfoMapper.insert(record);
 		}
 		return userAiCfgInfo;

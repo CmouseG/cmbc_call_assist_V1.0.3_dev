@@ -414,3 +414,11 @@ ALTER TABLE `report_call_today` ADD COLUMN call_date VARCHAR(10);
 ALTER TABLE `report_call_day` MODIFY COLUMN call_date VARCHAR(10);
 UPDATE report_call_today SET call_date = DATE_FORMAT(NOW(), '%Y-%m-%d');
 
+ALTER TABLE call_out_plan_0 ALTER COLUMN bill_sec SET DEFAULT 0;
+ALTER TABLE call_out_plan_1 ALTER COLUMN bill_sec SET DEFAULT 0;
+ALTER TABLE call_out_plan ALTER COLUMN bill_sec SET DEFAULT 0;
+
+ALTER TABLE call_out_plan_0 ALTER COLUMN duration SET DEFAULT 0;
+ALTER TABLE call_out_plan_1 ALTER COLUMN duration SET DEFAULT 0;
+ALTER TABLE call_out_plan ALTER COLUMN duration SET DEFAULT 0;
+

@@ -14,52 +14,52 @@
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     org_code as orgCode,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason,
-    3 AS durationType, COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
+    3 AS durationType, COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND create_time &lt; CURRENT_DATE()
-    AND duration &gt;30
+    AND bill_sec &gt;30
     GROUP BY org_code,accurate_intent,reason,temp_id
   </select>
   <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     org_code as orgCode,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 2 AS durationType,
-    COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
+    COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND create_time &lt; CURRENT_DATE()
-    AND duration &lt;30 and duration &gt;= 10
+    AND bill_sec &lt;30 and bill_sec &gt;= 10
     GROUP BY org_code,accurate_intent,reason,temp_id
   </select>
   <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     org_code as orgCode,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 1 AS durationType,
-    COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
+    COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND create_time &lt; CURRENT_DATE()
-    AND duration &lt;10 and duration &gt;= 5
+    AND bill_sec &lt;10 and bill_sec &gt;= 5
     GROUP BY org_code,accurate_intent,reason,temp_id
   </select>
   <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
     SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
     org_code as orgCode,accurate_intent as intent,
     if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 0 AS durationType,
-    COUNT(*) AS callCount,SUM(duration) AS durationAll,temp_id as tempid
+    COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
     FROM
     call_out_plan
     WHERE
     create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
     AND create_time &lt; CURRENT_DATE()
-    AND duration &lt; 5
+    AND bill_sec &lt; 5
     GROUP BY org_code,accurate_intent,reason,temp_id
   </select>
 
@@ -83,7 +83,7 @@
 
   <select id="countReportCallHourConnect" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
     SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
-   sum(duration) as duration,count(*) as connectCount,org_code as orgCode, 0 as outCount,temp_id as tempid
+   sum(bill_sec) as duration,count(*) as connectCount,org_code as orgCode, 0 as outCount,temp_id as tempid
     FROM
     call_out_plan
   WHERE
@@ -95,7 +95,7 @@
   </select>
   <select id="countReportCallHourOut" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
     SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
-    sum(duration) as duration,count(*) as outCount,org_code as orgCode, 0 as connectCount,temp_id as tempid
+    sum(bill_sec) as duration,count(*) as outCount,org_code as orgCode, 0 as connectCount,temp_id as tempid
     FROM
     call_out_plan
     WHERE
@@ -281,7 +281,7 @@
     GROUP BY  intent
   </select>
   <select id="getConnectDataHour" resultType="com.guiji.callcenter.dao.entityext.CallCountHour">
-    SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(duration) AS duration
+    SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(bill_sec) AS duration
     FROM report_call_hour
     WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
     <if test="orgCode != null" >

@@ -59,6 +59,9 @@ public class CallPlanDispatchHandler {
         LineCount lineCount = event.getLineCount();
 
         try {
+            log.info("-------启动呼叫先sleep10秒--------");
+            Thread.sleep(10000);
+
             //调用调度中心的获取客户呼叫计划(请求数=并发数)，获取初始呼叫计划
             Integer requestNum = event.getLineCount().getMaxConcurrentCalls();
 

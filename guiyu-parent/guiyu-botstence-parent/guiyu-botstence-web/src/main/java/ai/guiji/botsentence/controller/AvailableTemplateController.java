@@ -61,8 +61,8 @@ public class AvailableTemplateController {
 	 * 用户可用话术
 	 */
 	@RequestMapping("getUserAvailableTemplate")
-	public ServerResult getUserAvailableTemplate(@RequestHeader Long userId){
-		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId);
+	public ServerResult getUserAvailableTemplate(@RequestHeader Long userId,@RequestHeader String orgCode){
+		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId,orgCode);
 		return ServerResult.createBySuccess(list);
 	}
 	
@@ -72,8 +72,8 @@ public class AvailableTemplateController {
 	 * 管理员查找用户可用话术
 	 */
 	@RequestMapping("getAdminUserAvailableTemplate")
-	public ServerResult getAdminUserAvailableTemplate(Long userId){
-		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId);
+	public ServerResult getAdminUserAvailableTemplate(Long userId,@RequestHeader String orgCode){
+		List<BotAvailableTemplate>  list=availableTemplateService.getUserAvailableTemplate(userId,orgCode);
 		return ServerResult.createBySuccess(list);
 	}
 	

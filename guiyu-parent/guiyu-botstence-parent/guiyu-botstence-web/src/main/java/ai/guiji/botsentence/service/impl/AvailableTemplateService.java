@@ -2,6 +2,7 @@ package ai.guiji.botsentence.service.impl;
 
 import java.util.List;
 
+import ai.guiji.botsentence.service.AuthService;
 import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class AvailableTemplateService {
 	
 	@Autowired
 	private BotAvailableTemplateMapper botAvailableTemplateMapper;
+	@Autowired
+	AuthService authService;
 	
 	/**
 	 * 企业可用话术
@@ -38,8 +41,17 @@ public class AvailableTemplateService {
 	 * 用户可用话术
 	 * @return 
 	 */
-	public List<BotAvailableTemplate> getUserAvailableTemplate( Long userId){
-		return botAvailableTemplateMapper.getUserAvailableTemplate(userId);
+	public List<BotAvailableTemplate> getUserAvailableTemplate( Long userId, String orgCode){
+
+		if(authService.isAgent(userId)){
+			BotAvailableTemplateExample example = new BotAvailableTemplateExample();
+			example.createCriteria()
+					.andOrgCodeLike(orgCode+"%");
+			return botAvailableTemplateMapper.selectByExample(example);
+		}else{
+			return botAvailableTemplateMapper.getUserAvailableTemplate(userId);
+		}
+
 	}
 	
 	/**

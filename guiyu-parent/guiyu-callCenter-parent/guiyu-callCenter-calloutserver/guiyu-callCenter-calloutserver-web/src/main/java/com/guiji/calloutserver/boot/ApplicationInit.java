@@ -44,7 +44,7 @@ public class ApplicationInit {
      * 2、使用申请的资源初始化LocalFsServer
      * 3、使用申请的资源初始化FsAgentManager
      */
-//    @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
         public void init() {
         try {
             FsBindVO fsBindVO = applyFsResource();

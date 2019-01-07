@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface LineInfoService {
 
-    List<LineInfo4Page> getLineInfoByCustom(String customerId, String lineName, int pageSizeInt, int pageNoInt);
+    List<LineInfo4Page> getLineInfoByCustom(Boolean isSuperAdmin,String customerId,String orgCode, String lineName, int pageSizeInt, int pageNoInt);
 
     void addLineInfo(LineInfoAddVO lineInfoVO);
 
@@ -23,7 +23,7 @@ public interface LineInfoService {
 
     void delLineInfo(String id);
 
-    int getLineInfoByCustomCount(String customerId, String lineName);
+    int getLineInfoByCustomCount(Boolean isSuperAdmin,String customerId,String orgCode, String lineName);
 
     List<LineInfo> outLineinfos(String customerId);
 

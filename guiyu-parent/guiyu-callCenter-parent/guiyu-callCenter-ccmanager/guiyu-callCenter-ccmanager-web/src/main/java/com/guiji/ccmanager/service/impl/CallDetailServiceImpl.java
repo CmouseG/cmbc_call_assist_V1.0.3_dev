@@ -5,6 +5,7 @@ import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.manager.CacheManager;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.vo.CallDetailUpdateReq;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
@@ -45,6 +46,8 @@ public class CallDetailServiceImpl implements CallDetailService {
 
     @Autowired
     CacheManager cacheManager;
+    @Autowired
+    AuthService authService;
 
     @Override
     public void updateIsRead(String callId) {
@@ -54,7 +57,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
 
-    public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId, String phoneNum, String durationMin, String durationMax,
+    public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId,String orgCode, String phoneNum, String durationMin, String durationMax,
                                          String accurateIntent, String freason, String callId, String tempId, String isRead,Boolean isSuperAdmin) {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
@@ -64,8 +67,12 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (endDate != null) {
             criteria.andCallStartTimeLessThan(endDate);
         }
-        if (StringUtils.isNotBlank(customerId) && !isSuperAdmin) {
-            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+        if(!isSuperAdmin){//不是管理员
+            if (authService.isAgent(Long.valueOf(customerId))) {//代理商
+                criteria.andOrgCodeLike(orgCode+"%");
+            } else {
+                criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+            }
         }
         if (StringUtils.isNotBlank(phoneNum)) {
             criteria.andPhoneNumEqualTo(phoneNum);
@@ -107,18 +114,19 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
+    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, String orgCode,
+                                                   int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
                                                    String accurateIntent, String freason, String callId, String tempId, String isRead) {
 
-
-        CallOutPlanExample example = getExample(startDate, endDate, customerId, phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
+        CallOutPlanExample example = getExample(startDate, endDate, customerId, orgCode, phoneNum, durationMin,
+                durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
         example.setOrderByClause("create_time desc");
 
         List<CallOutPlan> list;
-        if(isSuperAdmin){
+        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
             example.setCustomerId(customerId);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
         }else{
@@ -143,10 +151,11 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public int callrecordCount(Date startDate, Date endDate, String customerId, String phoneNum, String durationMin, String durationMax,
-                               String accurateIntent, String freason, String callId, String tempId, String isRead, Boolean isSuperAdmin) {
+    public int callrecordCount(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode, String phoneNum, String durationMin, String durationMax,
+                               String accurateIntent, String freason, String callId, String tempId, String isRead) {
 
-        CallOutPlanExample example = getExample(startDate, endDate, customerId, phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
+        CallOutPlanExample example = getExample(startDate, endDate, customerId, orgCode,
+                phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
 
         return callOutPlanMapper.countByExample(example);
     }

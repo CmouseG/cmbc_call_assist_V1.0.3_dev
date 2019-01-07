@@ -17,13 +17,14 @@ import java.util.Map;
  * @Description:
  */
 public interface CallDetailService {
-    List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
+    List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, String orgCode,
+                                            int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
                                             String accurateIntent, String freason, String callId, String tempId, String isRead );
 
     CallOutPlanVO getCallDetail(BigInteger callId);
 
-    int callrecordCount(Date start, Date end, String customerId, String phoneNum,String durationMin,String durationMax,
-                        String accurateIntent, String freason,String callId, String tempId, String isRead, Boolean isSuperAdmin);
+    int callrecordCount(Date start, Date end,Boolean isSuperAdmin, String customerId, String orgCode, String phoneNum,String durationMin,String durationMax,
+                        String accurateIntent, String freason,String callId, String tempId, String isRead);
 
     String getDialogue(String callId);
 

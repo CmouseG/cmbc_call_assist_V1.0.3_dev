@@ -74,7 +74,7 @@ public class CallDetailController implements ICallPlanDetail {
     @GetMapping(value="getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
                                                                          String durationMax, String accurateIntent, String freason, String callId, String tempId ,String isRead,
-                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin  ){
+                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode  ){
 
         log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
                         "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}], isRead[{}]",
@@ -96,8 +96,10 @@ public class CallDetailController implements ICallPlanDetail {
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
 
-        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin,String.valueOf(userId),pageSizeInt,pageNoInt, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
-        int count = callDetailService.callrecordCount(start,end,isSuperAdmin ? null : String.valueOf(userId), phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead, isSuperAdmin);
+        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin,String.valueOf(userId),orgCode, pageSizeInt,pageNoInt,
+                phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+        int count = callDetailService.callrecordCount(start,end,isSuperAdmin,String.valueOf(userId),orgCode, phoneNum, durationMin, durationMax,
+                accurateIntent,  freason, callId,  tempId, isRead);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);

@@ -10,6 +10,7 @@ import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.manager.CacheManager;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.LineInfoService;
 import com.guiji.ccmanager.vo.LineInfo4AllotRes;
 import com.guiji.ccmanager.vo.LineInfo4Page;
@@ -19,6 +20,7 @@ import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
@@ -60,22 +62,31 @@ public class LineInfoServiceImpl implements LineInfoService {
     private IAuth iAuth;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    AuthService authService;
 
-    public LineInfoExample getExample(String customerId, String lineName){
+    public LineInfoExample getExample(Boolean isSuperAdmin, String customerId, String orgCode, String lineName) {
         LineInfoExample example = new LineInfoExample();
         LineInfoExample.Criteria criteria = example.createCriteria();
-        if(StringUtils.isNotBlank(customerId)){
-            criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+        if (!isSuperAdmin) {
+            if (authService.isAgent(Long.valueOf(customerId))) {
+                criteria.andOrgCodeLike(orgCode+"%");
+            } else {
+                criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+            }
         }
-        if(StringUtils.isNotBlank(lineName)){
+        if (StringUtils.isNotBlank(lineName)) {
             criteria.andLineNameEqualTo(lineName);
         }
         return example;
     }
 
-    public List<LineInfo4Page> getLineInfoByCustom(String customerId, String lineName, int pageSize, int pageNo) {
 
-        LineInfoExample example = getExample(customerId,  lineName);
+
+
+    public List<LineInfo4Page> getLineInfoByCustom(Boolean isSuperAdmin,String customerId,String orgCode, String lineName, int pageSize, int pageNo) {
+
+        LineInfoExample example = getExample(isSuperAdmin,customerId, orgCode, lineName);
 
         int limitStart = (pageNo-1)*pageSize;
         example.setLimitStart(limitStart);
@@ -107,8 +118,8 @@ public class LineInfoServiceImpl implements LineInfoService {
 
 
     @Override
-    public int getLineInfoByCustomCount(String customerId, String lineName) {
-        LineInfoExample example = getExample( customerId,  lineName);
+    public int getLineInfoByCustomCount(Boolean isSuperAdmin,String customerId,String orgCode, String lineName) {
+        LineInfoExample example = getExample(isSuperAdmin,customerId, orgCode, lineName);
         return lineInfoMapper.countByExample(example);
     }
 

@@ -47,7 +47,8 @@ public class LineInfoController {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value = "getLineInfos")
-    public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
+    public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader String orgCode,
+                                                                      @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
 
         log.info("get request getLineInfoByCustom，lineName[{}]，pageSize[{}]，pageNo[{}]", lineName, pageSize, pageNo);
 
@@ -56,8 +57,8 @@ public class LineInfoController {
         }
         int pageSizeInt = Integer.parseInt(pageSize);
         int pageNoInt = Integer.parseInt(pageNo);
-        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(isSuperAdmin ? null : String.valueOf(userId), lineName, pageSizeInt, pageNoInt);
-        int count = lineInfoService.getLineInfoByCustomCount(isSuperAdmin ? null : String.valueOf(userId), lineName);
+        List<LineInfo4Page> list = lineInfoService.getLineInfoByCustom(isSuperAdmin, String.valueOf(userId),orgCode, lineName, pageSizeInt, pageNoInt);
+        int count = lineInfoService.getLineInfoByCustomCount(isSuperAdmin,String.valueOf(userId),orgCode, lineName);
 
         Page<LineInfo4Page> page = new Page<LineInfo4Page>();
         page.setPageNo(pageNoInt);

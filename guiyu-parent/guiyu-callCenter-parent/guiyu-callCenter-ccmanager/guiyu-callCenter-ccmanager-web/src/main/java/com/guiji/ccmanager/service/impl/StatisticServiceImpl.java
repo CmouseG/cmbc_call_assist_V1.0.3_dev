@@ -278,7 +278,7 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode) {
 
-        if(authService.isCompanyAdmin(userId)){//企业管理员
+        if(authService.isCompanyAdmin(userId) || authService.isAgent(userId) ){//企业管理员 或者是代理商
             return statisticMapper.getLineCountAndConcurrent(null,orgCode+"%");
         }else{
             return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId),null);

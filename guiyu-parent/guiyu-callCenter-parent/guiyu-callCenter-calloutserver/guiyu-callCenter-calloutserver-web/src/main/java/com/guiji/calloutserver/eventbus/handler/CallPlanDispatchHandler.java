@@ -145,6 +145,8 @@ public class CallPlanDispatchHandler {
             callPlan.setCreateTime(new Date());
             callPlan.setIsdel(0);
             callPlan.setIsread(0);
+            callPlan.setDuration(0);
+            callPlan.setBillSec(0);
             log.info("----------- getAvailableSchedules callPlan [{}] ", callPlan);
 
             try {

@@ -968,7 +968,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 */
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
-		Map<Integer, String> map = new HashMap<>();
+			Map<Integer, String> map = new HashMap<>();
 		map.put(1, "计划中状态");
 		map.put(2, "完成状态");
 		map.put(3, "暂停状态");
@@ -994,13 +994,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			if (selectByExample.size() > 0) {
 				resultPlan = selectByExample.get(0);
-				// boolean res = checkStatus(status, resultPlan);
-				// if (!res) {
-				// result.setResult(false);
-				// result.setMsg("当前批次号码状态处于" +
-				// map.get(resultPlan.getStatusPlan()) + "不能进行此状态操作");
-				// return result;
-				// }
 				// 0未计划1计划中2计划完成3暂停计划4停止计划
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
@@ -1010,6 +1003,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+					dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 				} else if (status.equals("3")) {
 					// 一键暂停
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
@@ -1059,6 +1053,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			for (List<String> list : averageAssign) {
 				if (list.size() > 0) {
 					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
+				}
+			}
+			//恢复的话需要将同步状态修改成0
+			if (status.equals("1")) {
+				for (List<String> list : averageAssign) {
+					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
 				}
 			}
 		}

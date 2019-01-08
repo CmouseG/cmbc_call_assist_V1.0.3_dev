@@ -974,7 +974,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		map.put(3, "暂停状态");
 		map.put(4, "停止状态");
 		// 一键停止4 一键暂停3
-		if (status.equals(Constant.STATUSPLAN_3) || status.equals(Constant.STATUSPLAN_4)) {
+		Integer converStatus = Integer.valueOf(status);
+		if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
 			redisUtil.delVague("dispatch-" + userId);
 		}
 

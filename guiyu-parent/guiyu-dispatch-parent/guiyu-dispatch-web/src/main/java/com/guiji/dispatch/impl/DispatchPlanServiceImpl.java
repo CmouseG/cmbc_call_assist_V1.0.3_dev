@@ -974,7 +974,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		map.put(3, "暂停状态");
 		map.put(4, "停止状态");
 		// 一键停止4 一键暂停3
-		if (status.equals(Constant.STATUSPLAN_3) || status.equals(Constant.STATUSPLAN_4)) {
+		Integer converStatus = Integer.valueOf(status);
+		if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
 			redisUtil.delVague("dispatch-" + userId);
 		}
 
@@ -1179,6 +1180,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// 如果刷新日期操作 刷新拨打时间小于当前凌晨的日期的号码
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+			dispatchPlanMapper.updateByExampleSelective(dis, ex);
+			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 			return result > 0 ? true : false;
 		} else {
@@ -1198,6 +1202,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
+			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
+			dispatchPlanMapper.updateByExampleSelective(dis, ex);
 			return result > 0 ? true : false;
 		}
 	}

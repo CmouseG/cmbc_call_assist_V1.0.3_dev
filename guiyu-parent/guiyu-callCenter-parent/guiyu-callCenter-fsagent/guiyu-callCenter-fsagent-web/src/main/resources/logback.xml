@@ -6,25 +6,13 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/apps/logs/callcenter/fsagent/log.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/home/apps/logs/callcenter/fsagent/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{MM/dd/yyyy HH:mm:ss} %-5level ${version} [%thread]%logger{16} - %msg%n
-            </pattern>
-        </encoder>
-    </appender>
-
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
-        <File>/home/apps/logs/callcenter/fsagent/error.log</File>
+        <File>./logs/error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/home/apps/logs/callcenter/fsagent/error-%d{yyyyMMdd}.log.%i
+            <fileNamePattern>./logs/error-%d{yyyyMMdd}.log.%i
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>500MB</maxFileSize>
@@ -37,11 +25,10 @@
         </layout>
     </appender>
 
-
-    <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/apps/logs/callcenter/fsagent/sql.log</file>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/log.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/home/apps/logs/callcenter/fsagent/sql.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>./logs/log.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -51,15 +38,10 @@
     </appender>
 
 
-    <logger name="com.guiji.*.dao" level="debug">
-        <appender-ref ref="SQL"/>
-    </logger>
-
     <logger name="org.springframework.web.servlet.mvc" level="info"/>
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="SQL"/>
     </root>
 </configuration>

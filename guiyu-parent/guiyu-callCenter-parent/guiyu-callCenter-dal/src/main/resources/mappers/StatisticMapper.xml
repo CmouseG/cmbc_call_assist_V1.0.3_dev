@@ -281,7 +281,7 @@
     GROUP BY  intent
   </select>
   <select id="getConnectDataHour" resultType="com.guiji.callcenter.dao.entityext.CallCountHour">
-    SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(bill_sec) AS duration
+    SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(duration) AS duration
     FROM report_call_hour
     WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
     <if test="orgCode != null" >

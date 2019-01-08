@@ -61,6 +61,14 @@ alter table sys_organization add botstence int default 0 comment '话术数量';
 alter table sys_organization change type type int not null comment '组织类型1代理商2企业';
 alter table sys_organization change del_flag del_flag int not null default 0 comment '删除标识0正常1删除';
 alter table sys_organization change open open int not null comment '0未开户1已开户';
+update sys_organization set line = 1 where id = 1;
+update sys_organization set line = 5 where id = 8;
+update sys_organization set line = 1 where id = 12;
+update sys_organization set line = 2 where id = 9;
+update sys_organization set line = 2 where id = 11;
+update sys_organization set botstence = 2 where id = 9;
+update sys_organization set botstence = 1 where id = 8;
+update sys_organization set botstence = 5 where id = 11;
 #修改表sys_process
 alter table sys_process change id id int NOT NULL AUTO_INCREMENT comment '主键';
 alter table sys_process change ip ip varchar(32) default null comment '进程ip';

@@ -177,7 +177,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
             jobList.add(jobId);
         }
         redisUtil.set("GY_PROCESS_JOB",jobList);
-        redisUtil.set(jobId,processTaskMap);
+        redisUtil.set(jobId,processTaskMap,3600);
 
         for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
             deviceManageService.cmd(entry.getValue().getProcessInstanceVO(), cmdType, parameters,userId,entry.getKey());

@@ -547,6 +547,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 							record.setCrtTime(new Date());
 							record.setBusiId(uac.getId());
 							BeanUtil.copyProperties(uac, record);
+							record.setId(null);
 							record.setHandleType(RobotConstants.HANDLE_TYPE_D); //删除
 							userAiCfgHisInfoMapper.insert(record);
 						}
@@ -613,6 +614,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 						record.setCrtTime(new Date());
 						record.setBusiId(existUserAiCfgInfo.getId());
 						BeanUtil.copyProperties(existUserAiCfgInfo, record);
+						record.setId(null);
 						record.setHandleType(RobotConstants.HANDLE_TYPE_D); //删除
 						userAiCfgHisInfoMapper.insert(record);
 					}else {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.guiji.component.result.Result;
+import com.guiji.process.api.IProcessSchedule;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.dao.entity.TtsCallbackHis;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
@@ -43,6 +44,8 @@ import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
 
+import io.swagger.annotations.ApiOperation;
+
 /** 
 * @ClassName: RobotRemoteController 
 * @Description: 机器人能力中心服务
@@ -63,6 +66,8 @@ public class RobotRemoteController implements IRobotRemote{
 	ITtsWavService iTtsWavService;
 	@Autowired
 	ControllerUtil controllerUtil;
+	@Autowired
+	IProcessSchedule iProcessSchedule; 
 	
 	/************************1、资源服务************************/
 	
@@ -235,5 +240,12 @@ public class RobotRemoteController implements IRobotRemote{
 			iTtsWavService.asynTtsCallback(ttsCallbackList);
 		}
 		return Result.ok();
+	}
+
+	/**
+	 * 查询机器人资源数量（sellbot）
+	 */
+	public Result.ReturnData<Integer> queryRobotResNum(){
+		return iProcessSchedule.sellbotCount();
 	}
 }

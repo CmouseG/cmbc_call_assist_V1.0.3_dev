@@ -139,4 +139,9 @@ public interface IRobotRemote {
     @PostMapping(value = "/remote/queryCustAccount")
 	Result.ReturnData<UserAiCfgVO> queryCustAccount(@RequestParam(value="userId",required=true)String userId);
 	
+	
+	@ApiOperation(value = "查询机器人资源数量（sellbot）")
+    @PostMapping(value = "/remote/queryRobotResNum")
+	Result.ReturnData<Integer> queryRobotResNum();
+	
 }

@@ -41,7 +41,7 @@ public class RetryTask {
 				if (processTaskMap != null) {
 					for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
 						ProcessTask processTask = entry.getValue();
-						if (processTask != null && 0 != processTask.getResult()) {
+						if (processTask != null && processTask.getResult() != null && 0 != processTask.getResult()) {
 							if (processTask.getRetryCount() < RETRY_TIME) {//retry次数超过3次则不在retry
 								long interval = System.currentTimeMillis() - processTask.getExeTime().getTime();
 								if (interval > RETRY_INTERVAL) {//retry间隔10分钟

@@ -335,7 +335,11 @@
     FROM  line_info a
     LEFT JOIN line_count b ON a.line_id = b.line_id
     <if test="customerId != null" >
-      WHERE  a.customer_id = #{customerId,jdbcType=VARCHAR}
+    WHERE  a.customer_id = #{customerId,jdbcType=VARCHAR}
     </if>
+    <if test="orgCode != null" >
+    WHERE  a.org_code like #{orgCode,jdbcType=VARCHAR}
+    </if>
+
   </select>
 </mapper>

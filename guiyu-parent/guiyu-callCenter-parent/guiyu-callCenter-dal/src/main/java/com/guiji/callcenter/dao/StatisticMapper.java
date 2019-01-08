@@ -63,5 +63,5 @@ public interface StatisticMapper {
 
     List<ErrorMatch> getErrorMaths();
 
-    Map getLineCountAndConcurrent(@Param("customerId") String customerId);
+    Map getLineCountAndConcurrent(@Param("customerId") String customerId, @Param("orgCode") String orgCode);
 }

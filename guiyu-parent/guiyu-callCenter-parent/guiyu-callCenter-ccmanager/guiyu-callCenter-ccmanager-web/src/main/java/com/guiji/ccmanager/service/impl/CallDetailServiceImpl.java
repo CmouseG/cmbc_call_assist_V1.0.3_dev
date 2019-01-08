@@ -68,7 +68,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             criteria.andCallStartTimeLessThan(endDate);
         }
         if(!isSuperAdmin){//不是管理员
-            if (authService.isAgent(Long.valueOf(customerId))) {//代理商
+            if (authService.isAgentOrCompanyAdmin(Long.valueOf(customerId)) ) {//代理商 或者企业管理员
                 criteria.andOrgCodeLike(orgCode+"%");
             } else {
                 criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));

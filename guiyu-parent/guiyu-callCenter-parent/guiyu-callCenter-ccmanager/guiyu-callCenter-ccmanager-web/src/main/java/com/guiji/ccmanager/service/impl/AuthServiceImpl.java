@@ -47,4 +47,18 @@ public class AuthServiceImpl implements AuthService {
         }
         return  false;
     }
+
+    @Override
+    public boolean isAgentOrCompanyAdmin(Long userId) {
+        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
+        List<SysRole> listRole = result.getBody();
+        if(listRole!=null && listRole.size()>0){
+            for(SysRole sysRole:listRole){
+                if(sysRole.getId()==2 || sysRole.getId()==3){
+                    return true;
+                }
+            }
+        }
+        return  false;
+    }
 }

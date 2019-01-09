@@ -969,7 +969,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 */
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
-		Map<Integer, String> map = new HashMap<>();
+			Map<Integer, String> map = new HashMap<>();
 		map.put(1, "计划中状态");
 		map.put(2, "完成状态");
 		map.put(3, "暂停状态");
@@ -1056,7 +1056,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
 				}
 			}
-			// 恢复的话需要将同步状态修改成0
 			if (status.equals("1")) {
 				for (List<String> list : averageAssign) {
 					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);

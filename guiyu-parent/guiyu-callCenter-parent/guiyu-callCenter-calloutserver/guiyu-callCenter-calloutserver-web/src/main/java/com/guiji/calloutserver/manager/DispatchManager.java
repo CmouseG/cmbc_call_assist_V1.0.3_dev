@@ -1,10 +1,5 @@
 package com.guiji.calloutserver.manager;
 
-import com.guiji.callcenter.dao.entity.CallOutPlan;
-import com.guiji.component.result.Result;
-
-import java.util.List;
-
 /**
  * @Auther: 魏驰
  * @Date: 2018/11/4 17:18
@@ -12,14 +7,12 @@ import java.util.List;
  * @Description:
  */
 public interface DispatchManager {
-    /**
-     * 拉取外呼计划
-     * @param customerId     用户id
-     * @param requestCount   请求的呼叫计划数量
-     * @param lineId         线路id
-     * @return
-     */
-    List<CallOutPlan> pullCallPlan(int customerId, Integer requestCount, Integer lineId);
 
-    void successSchedule(String planUuid, String phoneNo, String intent);
+    /**
+     * 回掉调度中心，直接推到mq
+     * @param callId
+     * @param phoneNo
+     * @param intent
+     */
+    void successSchedule(String callId, String phoneNo, String intent);
 }

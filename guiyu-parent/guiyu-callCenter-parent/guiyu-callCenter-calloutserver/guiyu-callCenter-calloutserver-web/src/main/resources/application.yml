@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: guiyu-callCenter-calloutserver
+  rabbitmq:
+    host: 192.168.1.81
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
 sharding:
   jdbc:
     datasource:

@@ -1,13 +1,13 @@
 package com.guiji.ccmanager.controller;
 
-import com.guiji.ccmanager.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.constant.Constant;
+import com.guiji.ccmanager.entity.CallOutPlan;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.service.CallManagerOutService;
 import com.guiji.ccmanager.service.LineInfoService;
-import com.guiji.common.model.Page;
+import com.guiji.ccmanager.vo.TempIsOkResult;
 import com.guiji.component.result.Result;
 import com.guiji.utils.BeanUtil;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,8 +17,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,6 +42,8 @@ public class CallManagerOutApiController implements ICallManagerOut {
 
     @Autowired
     private CallManagerOutService callManagerOutService;
+    @Autowired
+    DiscoveryClient discoveryClient;
 
     @Override
     @GetMapping(value="out/getLineInfos")
@@ -86,19 +89,6 @@ public class CallManagerOutApiController implements ICallManagerOut {
         return Result.ok(resList);
     }
 
-    @Override
-    @GetMapping(value="out/startCallPlan")
-    public Result.ReturnData<Boolean> startCallPlan(String customerId, String tempId, String lineId) {
-
-        log.info("get request startCallPlan，customerId[{}]，tempId[{}]，lineId[{}]", customerId, tempId, lineId);
-
-        if(StringUtils.isBlank(customerId) || StringUtils.isBlank(tempId) || StringUtils.isBlank(lineId) ){
-            return Result.error(Constant.ERROR_PARAM);
-        }
-
-        callManagerOutService.startcallplan(customerId,tempId,lineId);
-        return Result.ok(true);
-    }
 
     @Override
     @ApiOperation(value = "获取callId获取通话记录")
@@ -117,4 +107,11 @@ public class CallManagerOutApiController implements ICallManagerOut {
         return Result.ok();
     }
 
+    @Override
+    public Result.ReturnData<TempIsOkResult> isTempOk(@RequestBody List<String> tempIdList) {
+        log.info("收到isTempOk请求,tempIdList[{}]",tempIdList);
+        TempIsOkResult tempIsOkResult = callManagerOutService.isTempOk(tempIdList);
+        log.info("isTempOk请求, 返回结果",tempIsOkResult);
+        return Result.ok(tempIsOkResult);
+    }
 }

@@ -1,14 +1,12 @@
 package com.guiji.calloutserver.service.impl;
 
-import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.calloutserver.enm.ECallState;
-import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
+import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.service.CallStateService;
 import com.guiji.component.result.Result;
-import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.AiHangupReq;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -35,24 +32,16 @@ public class CallStateServiceImpl implements CallStateService {
     @Autowired
     IRobotRemote robotRemote;
     @Autowired
-    IDispatchPlanOut iDispatchPlanOutApi;
-    @Autowired
-    AsyncEventBus asyncEventBus;
-
-    //注册这个监听器
-    @PostConstruct
-    public void register() {
-        asyncEventBus.register(this);
-    }
+    DispatchManager dispatchService;
 
     @Async
     @Override
     synchronized public void updateCallState(Boolean isDelay, String serverid) {
 
-        log.info("---开始，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调，发空事件---", isDelay, serverid);
+        log.info("---开始，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调---", isDelay, serverid);
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
-        criteria.andCallStateBetween(ECallState.init.ordinal(), ECallState.agent_answer.ordinal());
+        criteria.andCallStateLessThanOrEqualTo(ECallState.agent_answer.ordinal());
         criteria.andServeridEqualTo(serverid);
 
         Calendar c = Calendar.getInstance();
@@ -79,12 +68,6 @@ public class CallStateServiceImpl implements CallStateService {
         if (list != null && list.size() > 0) {
 
             for (CallOutPlan callOutPlan : list) {
-                //把空事件发出来，让拨打继续
-                AfterCallEvent afterCallEventAgain = new AfterCallEvent(callOutPlan, true);
-                asyncEventBus.post(afterCallEventAgain);
-            }
-
-            for (CallOutPlan callOutPlan : list) {
                 try {
                     AiHangupReq hangupReq = new AiHangupReq();
                     hangupReq.setSeqId(String.valueOf(callOutPlan.getCallId()));
@@ -98,8 +81,8 @@ public class CallStateServiceImpl implements CallStateService {
                 }
 
                 try {
-                    Result.ReturnData resultDis =iDispatchPlanOutApi.successSchedule(callOutPlan.getPlanUuid(), callOutPlan.getAccurateIntent());
-                    log.info("---->>回调dispatcher，返回结果result[{}],callId[{}]",resultDis,callOutPlan.getCallId());
+                    dispatchService.successSchedule(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(),callOutPlan.getAccurateIntent());
+                    log.info("---->>回调dispatcher，返回结果,callId[{}]",callOutPlan.getCallId());
                 } catch (Exception e) {
                     log.error("调用调度中心 successSchedule 出现异常:" + e);
                 }
@@ -109,6 +92,6 @@ public class CallStateServiceImpl implements CallStateService {
 
         }
 
-        log.info("---结束，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调，发空事件---");
+        log.info("---结束，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调---");
     }
 }

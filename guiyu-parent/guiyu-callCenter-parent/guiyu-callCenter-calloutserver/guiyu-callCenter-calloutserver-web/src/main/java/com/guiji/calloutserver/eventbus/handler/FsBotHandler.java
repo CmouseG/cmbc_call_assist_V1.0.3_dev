@@ -9,7 +9,6 @@ import com.guiji.callcenter.dao.entity.CallOutDetail;
 import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.ErrorMatch;
-import com.guiji.calloutserver.config.FsBotConfig;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
@@ -21,14 +20,15 @@ import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.DispatchManager;
-import com.guiji.calloutserver.manager.FsManager;
-import com.guiji.calloutserver.service.*;
+import com.guiji.calloutserver.service.CallOutDetailRecordService;
+import com.guiji.calloutserver.service.CallOutDetailService;
+import com.guiji.calloutserver.service.CallOutPlanService;
+import com.guiji.calloutserver.service.ErrorMatchService;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.metadata.CallParameterMetaData;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -106,7 +106,7 @@ public class FsBotHandler {
                     callPlan.setReason(e.getMessage());
                 }
                 callOutPlanService.update(callPlan);
-                dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),"W");
+//                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                 return;
             }
 
@@ -391,7 +391,7 @@ public class FsBotHandler {
 
             //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
             log.info("构建afterCallEvent，后续流转");
-            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan, false);
+            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan);
             asyncEventBus.post(afterCallEvent);
         } catch (Exception ex) {
             log.warn("在处理AliAsr时出错异常", ex);

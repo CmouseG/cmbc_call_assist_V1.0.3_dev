@@ -8,10 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.guiji.ai.tts.constants.AiConstants;
 import com.guiji.ai.tts.constants.GuiyuAIExceptionEnum;
@@ -30,10 +28,15 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.model.ChangeModelReq;
 import com.guiji.utils.RedisUtil;
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.annotation.JobHandler;
+import com.xxl.job.core.log.XxlJobLogger;
 
-public class RedistributeHandler
+@JobHandler(value="redistributeTaskHandler")
+@Component
+public class RedistributeHandler extends IJobHandler
 {
-	private static Logger logger = LoggerFactory.getLogger(RedistributeHandler.class);
 
 	@Autowired
 	RedisUtil redisUtil;
@@ -46,36 +49,39 @@ public class RedistributeHandler
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
 
-	// 定时任务，启动时运行（每3分钟执行一次）
-	@Scheduled(fixedRate = 1000 * 60 * 3)
-	public void task() throws InterruptedException
+	/**
+	 * 定时任务-重新分配GPU
+	 */
+	@Override
+	public ReturnT<String> execute(String param) throws Exception
 	{
 		Lock lock = new Lock("LOCK_NAME", "LOCK_VALUE");
 		if (distributedLockHandler.tryLock(lock, 5 * 1000L, 100L, 3 * 60 * 1000L)) // 尝试5s,每100ms尝试一次，持锁时间为3分钟
 		{
 			try
 			{
-				logger.info("查询前10分钟内各模型请求情况...");
+				XxlJobLogger.log("查询前10分钟内各模型请求情况...");
 				List<ModelRequestNumVO> resultList = resultService.selectTenMinutesBefore(new Date()); // <A,3>，<B，5>
 				if (resultList == null || resultList.isEmpty())
 				{
-					logger.info("前10分钟内没有请求。");
-					return;
+					XxlJobLogger.log("前10分钟内没有请求。");
+					return null;
 				}
 				// 重新分配
 				distributionStrategy(resultList);
 
 			} catch (Exception e)
 			{
-				logger.error("分配失败！", e);
+				XxlJobLogger.log("分配失败！", e);
 			}
 			distributedLockHandler.releaseLock(lock); // 释放锁
 		} else
 		{
-			logger.warn("未能获取锁！！！");
+			XxlJobLogger.log("未能获取锁！！！");
 		}
+		return null;
 	}
-
+	
 	// 分配策略
 	private void distributionStrategy(List<ModelRequestNumVO> modelRequestList)
 	{
@@ -153,7 +159,7 @@ public class RedistributeHandler
 				// 比率小数点可能会造成的回收数量和分配数量不相等，故需要对回收列表进行非空判断
 				if (ttsModelGpuList.isEmpty())
 				{
-					logger.warn("GPU分配完了，没有可分配的GPU了!");
+					XxlJobLogger.log("GPU分配完了，没有可分配的GPU了!");
 					return;
 				}
 
@@ -165,7 +171,7 @@ public class RedistributeHandler
 				changeModelReq.setToModel(model);
 				changeModelReq.setIp(ip);
 				changeModelReq.setPort(Integer.parseInt(port));
-				logger.info("调进程管理接口-模型切换...");
+				XxlJobLogger.log("调进程管理接口-模型切换...");
 				ReturnData<Boolean> returnData = iProcessSchedule.changeTTS(changeModelReq);
 				if (returnData == null || !returnData.getBody())
 				{
@@ -174,7 +180,7 @@ public class RedistributeHandler
 				redisUtil.lSet(AiConstants.GUIYUTTS + fromModel + AiConstants.CHANGING, new TtsGpu(ip, port)); // 更改中
 			}
 		}
-		logger.info("GPU重新分配完成!");
+		XxlJobLogger.log("GPU重新分配完成!");
 	}
 	
 	/*
@@ -226,7 +232,6 @@ public class RedistributeHandler
 		}
 
 		return recoverGpuVOList;
-
 	}
 	
 	/*
@@ -283,7 +288,6 @@ public class RedistributeHandler
 		}
 
 		return modelChangeList;
-
 	}
 
 }

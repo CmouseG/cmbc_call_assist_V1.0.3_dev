@@ -1,4 +1,4 @@
-package com.guiji.job.executor.core.config;
+package com.guiji.job.core.config;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import org.slf4j.Logger;

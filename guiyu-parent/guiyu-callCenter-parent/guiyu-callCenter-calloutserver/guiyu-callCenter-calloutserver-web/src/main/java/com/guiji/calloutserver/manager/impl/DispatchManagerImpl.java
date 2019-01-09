@@ -1,24 +1,13 @@
 package com.guiji.calloutserver.manager.impl;
 
-import com.google.common.base.Preconditions;
-import com.guiji.callcenter.dao.entity.CallOutPlan;
-import com.guiji.calloutserver.enm.ECallDirection;
-import com.guiji.calloutserver.enm.ECallState;
-import com.guiji.calloutserver.helper.RequestHelper;
+import com.guiji.calloutserver.entity.MQSuccPhoneDto;
 import com.guiji.calloutserver.manager.DispatchManager;
-import com.guiji.calloutserver.manager.EurekaManager;
-import com.guiji.calloutserver.service.DispatchLogService;
-import com.guiji.component.result.Result;
-import com.guiji.dispatch.api.IDispatchPlanOut;
-import com.guiji.dispatch.model.DispatchPlan;
+import com.guiji.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @Auther: 魏驰
@@ -29,124 +18,23 @@ import java.util.List;
 @Slf4j
 @Service
 public class DispatchManagerImpl implements DispatchManager {
-    @Autowired
-    IDispatchPlanOut iDispatchPlanOutApi;
 
     @Autowired
-    EurekaManager eurekaManager;
-
-    @Autowired
-    DispatchLogService dispatchLogService;
-
-    /**
-     * 拉取呼叫计划
-     *
-     * @param customerId
-     * @param requestNum
-     * @param lineId
-     * @return
-     */
-    @Override
-    public List<CallOutPlan> pullCallPlan(int customerId, Integer requestNum, Integer lineId) {
-        List<CallOutPlan> callOutPlans = new ArrayList<>();
-        try {
-            Result.ReturnData disPatchResult = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                @Override
-                public Result.ReturnData execute() {
-                    log.info("============= start iDispatchPlanOutApi queryAvailableSchedules customerId[{}],requestNum[{}],lineId[{}]", customerId, requestNum, lineId);
-                    Result.ReturnData returnData = iDispatchPlanOutApi.queryAvailableSchedules(customerId, requestNum, lineId);
-                    log.info("------------- iDispatchPlanOutApi queryAvailableSchedules customerId[{}],requestNum[{}],lineId[{}],returnData[{}]", customerId, requestNum, lineId, returnData);
-                    return returnData;
-                }
-
-                @Override
-                public void onErrorResult(Result.ReturnData result) {
-                    log.warn("获取调度中心呼叫计划出现异常[{}]", result);
-                    //TODO: 报警
-                }
-            }, -1, 1, 3, 300, true);
-
-            if(disPatchResult!=null && disPatchResult.getBody()!=null){
-                List<DispatchPlan> dispatchPlans = (List<DispatchPlan>) disPatchResult.getBody();
-                if (dispatchPlans != null && dispatchPlans.size() > 0) {
-                    callOutPlans = toCallPlan(dispatchPlans);
-                    dispatchLogService.endServiceRequestLog(callOutPlans.get(0).getPlanUuid(),callOutPlans.get(0).getPhoneNum(),disPatchResult,"结束向调度中心拉取号码");
-                }
-            }
-
-        } catch (Exception ex) {
-            log.warn("请求调度中心呼叫计划出现异常", ex);
-            //TODO: 报警，请求调度中心数据异常
-        }
-
-        return callOutPlans;
-    }
-
-    /**
-     * 将调度中心返回的数据，转为CalloutPlan
-     *
-     * @param dispatchPlans
-     * @return
-     */
-    private List<CallOutPlan> toCallPlan(List<DispatchPlan> dispatchPlans) {
-        Preconditions.checkNotNull(dispatchPlans, "将调度数据转为callPlan出现异常，调度数据为空");
-        List<CallOutPlan> callOutPlans = new ArrayList<>(dispatchPlans.size());
-        for (DispatchPlan dispatchPlan : dispatchPlans) {
-            CallOutPlan callOutPlan = new CallOutPlan();
-            callOutPlan.setCallState(ECallState.init.ordinal());
-            callOutPlan.setCreateTime(new Date());
-            callOutPlan.setCallDirection(ECallDirection.OUTBOUND.ordinal());
-            callOutPlan.setPlanUuid(dispatchPlan.getPlanUuid());
-            callOutPlan.setPhoneNum(dispatchPlan.getPhone());
-            callOutPlan.setCustomerId(dispatchPlan.getUserId());
-            callOutPlan.setLineId(dispatchPlan.getLine());
-            callOutPlan.setServerid(eurekaManager.getInstanceId());
-            callOutPlan.setHasTts(dispatchPlan.isTts());
-            callOutPlan.setTempId(dispatchPlan.getRobot());
-            callOutPlan.setOrgCode(dispatchPlan.getOrgCode());
-
-            callOutPlans.add(callOutPlan);
-        }
-
-        return callOutPlans;
-    }
+    private AmqpTemplate rabbitTemplate;
 
     /**
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String planUuid, String phoneNo, String intent) {
-        log.info("======================startSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
-        if(StringUtils.isBlank(planUuid) || StringUtils.isBlank(intent)){
-            log.info("---startSchedule callid is null or intnet is null:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
+    public void successSchedule(String callId, String phoneNo, String intent) {
+        log.info("=========startSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
+        if(StringUtils.isBlank(callId) || StringUtils.isBlank(intent)){
+            log.info("---startSchedule callid is null or intnet is null:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
             return;
         }
-        //调度中心
-        Result.ReturnData returnData = null;
-        dispatchLogService.startServiceRequestLog(planUuid,phoneNo, com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向调度中心回调结果");
-
-        try
-        {
-            returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                @Override
-                public Result.ReturnData execute() {
-                    return iDispatchPlanOutApi.successSchedule(planUuid,intent);
-                }
-
-                @Override
-                public void onErrorResult(Result.ReturnData result) {
-                    //TODO: 报警
-                    log.warn("调度中心回掉是否成功出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
-                }
-            }, 1, 1, 30, 600, true);
-        } catch ( Exception e)
-        {
-            log.warn("调度中心回掉是否成功时出现异常", e);
-        }
-
-        log.info("======================successSchedule:planUuid[{}],phoneNo[{}],intent[{}]",planUuid,phoneNo,intent);
-        dispatchLogService.endServiceRequestLog(planUuid,phoneNo, returnData, "结束向调度中心回调结果");
-
-
+        MQSuccPhoneDto mqSuccPhoneDto = new MQSuccPhoneDto();
+        rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto));
+        rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));
+        log.info("========successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
     }
 }

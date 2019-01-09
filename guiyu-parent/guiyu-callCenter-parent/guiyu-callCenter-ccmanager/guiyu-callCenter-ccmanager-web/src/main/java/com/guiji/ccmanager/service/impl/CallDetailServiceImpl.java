@@ -325,11 +325,11 @@ public class CallDetailServiceImpl implements CallDetailService {
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
 
-                if (map.get(callId) == null) {
+                if (map.get(String.valueOf(callId)) == null) {
                     String result = getContext(botSay, customerSay);
                     map.put(String.valueOf(callId), result);
                 } else {
-                    String result = map.get(callId);
+                    String result = map.get(String.valueOf(callId));
                     result += getContext(botSay, customerSay);
                     map.put(String.valueOf(callId), result);
                 }

@@ -12,8 +12,4 @@ public class AfterCallEvent {
      */
     CallOutPlan callPlan;
 
-    /**
-     *是否是第一批生成的事件
-     */
-    Boolean isFist;
 }

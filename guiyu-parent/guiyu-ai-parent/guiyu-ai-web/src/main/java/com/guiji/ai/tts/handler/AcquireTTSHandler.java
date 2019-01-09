@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +15,14 @@ import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.process.api.IProcessSchedule;
 import com.guiji.utils.RedisUtil;
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.annotation.JobHandler;
+import com.xxl.job.core.log.XxlJobLogger;
 
+@JobHandler(value="acquireTtsTaskHandler")
 @Component
-public class AcquireTTSHandler {
-	private static Logger logger = LoggerFactory.getLogger(AcquireTTSHandler.class);
+public class AcquireTTSHandler extends IJobHandler{
 	
 	@Autowired
     RedisUtil redisUtil;
@@ -30,19 +32,21 @@ public class AcquireTTSHandler {
 	IProcessSchedule iProcessSchedule;
 
 	/**
-	 * 获取所有的TTS
+	 * 定时任务-获取所有的TTS
 	 */
-	public void getAllTTS() throws Exception {
+	@Override
+	public ReturnT<String> execute(String param) throws Exception
+	{
 		List<ProcessInstanceVO> processInstanceList = new ArrayList<>();
 		ReturnData<List<ProcessInstanceVO>> returnData = null;
 
-		logger.info("getting all TTS...");
+		XxlJobLogger.log("getting all TTS...");
 		try
 		{
 			returnData = iProcessSchedule.getAllTTS();
 		} catch (Exception e)
 		{
-			logger.error("Process服务异常...", e);
+			XxlJobLogger.log("Process服务异常...", e);
 		}
 
 		if (returnData != null && returnData.getBody() != null && !returnData.getBody().isEmpty())
@@ -50,10 +54,10 @@ public class AcquireTTSHandler {
 			processInstanceList = returnData.getBody();
 		} else
 		{
-			logger.info("没有TTS!");
-			return;
+			XxlJobLogger.log("没有TTS!");
+			return null;
 		}
-		logger.info("获取的TTS列表：" + processInstanceList);
+		XxlJobLogger.log("获取的TTS列表：" + processInstanceList);
 		
 		Collections.sort(processInstanceList, new Comparator<ProcessInstanceVO>() 
 		{
@@ -85,6 +89,7 @@ public class AcquireTTSHandler {
 			gpuList.add(gpu);
 		}
 		redisUtil.lSet(AiConstants.GUIYUTTS + modelName + AiConstants.AVALIABLE, gpuList);
+		return null;
 	}
 
 }

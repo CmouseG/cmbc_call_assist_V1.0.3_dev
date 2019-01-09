@@ -5,22 +5,22 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
-import com.guiji.callcenter.dao.entity.LineCount;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
-import com.guiji.calloutserver.eventbus.event.StartCallPlanEvent;
+import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
-import com.guiji.calloutserver.manager.EurekaManager;
-import com.guiji.calloutserver.service.*;
+import com.guiji.calloutserver.service.CallOutPlanService;
+import com.guiji.calloutserver.service.CallOutRecordService;
+import com.guiji.calloutserver.service.CallService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Auther: 魏驰
@@ -43,6 +43,8 @@ public class CallPlanDispatchHandler {
     DispatchManager dispatchService;
     @Autowired
     AsyncEventBus asyncEventBus;
+    @Autowired
+    CallingCountManager callingCountManager;
 
     //注册这个监听器
     @PostConstruct
@@ -50,38 +52,6 @@ public class CallPlanDispatchHandler {
         asyncEventBus.register(this);
     }
 
-    /**
-     * 启动呼叫计划
-     */
-    @Subscribe
-    public void handleStartCallOutPlanEvent(StartCallPlanEvent event) {
-        log.info("-------------------------收到启动呼叫计划事件[{}]", event);
-        LineCount lineCount = event.getLineCount();
-
-        try {
-            log.info("-------启动呼叫先sleep10秒--------");
-            Thread.sleep(10000);
-
-            //调用调度中心的获取客户呼叫计划(请求数=并发数)，获取初始呼叫计划
-            Integer requestNum = event.getLineCount().getMaxConcurrentCalls();
-
-            log.info("开始构建[{}]个空白AfterCallEvent事件，驱动后续拨打", requestNum);
-            for (int i = 1; i <= requestNum; i++) {
-                log.info("------ getAvailableSchedules:" + lineCount.getLineId() + "  ," + i);
-//                getAvailableSchedules(Integer.valueOf(event.getCustomerId()), lineCount.getLineId(), event.getTempId());
-                CallOutPlan callplan = new CallOutPlan();
-                callplan.setCustomerId(event.getCustomerId());
-                callplan.setLineId(lineCount.getLineId());
-                callplan.setTempId(event.getTempId());
-                AfterCallEvent afterCallEvent = new AfterCallEvent(callplan, true);
-                asyncEventBus.post(afterCallEvent);
-            }
-
-        } catch (Exception ex) {
-            log.warn("处理启动计划出现异常", ex);
-            //TODO: 报警
-        }
-    }
 
     /**
      * 在所有资源(模板录音、tts录音、机器人资源)齐备之后，发起外呼
@@ -111,94 +81,57 @@ public class CallPlanDispatchHandler {
         callOutRecord.setRecordFile(recordFileName);
         callOutRecordService.save(callOutRecord);
 
-        callService.makeCall(callplan, callOutRecord);
+        callingCountManager.addOneCall();
         //构建外呼命令，发起外呼
+        callService.makeCall(callplan, callOutRecord);
     }
 
     @Subscribe
     @AllowConcurrentEvents
     public void successSchedule(AfterCallEvent afterCallEvent) {
-        if(!afterCallEvent.getIsFist()){
-            CallOutPlan callPlan = afterCallEvent.getCallPlan();
-            log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
-            dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
-        }
+
+        CallOutPlan callPlan = afterCallEvent.getCallPlan();
+        log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
+        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent());
+
     }
+
 
     /**
-     * 在一通呼叫挂断后，重新拉取呼叫计划
-     * @param afterCallEvent
+     * 准备发起呼叫
      */
-    @Subscribe
-    @AllowConcurrentEvents
-    public void handleAfterCallEvent(AfterCallEvent afterCallEvent) {
-        log.info("收到AfterCallEvent[{}], 检查是否有待拨打的计划", afterCallEvent);
-        //调度中心
-        CallOutPlan calloutPlan = afterCallEvent.getCallPlan();
+    @Async
+    public void readyToMakeCall(CallOutPlan callPlan) {
+        log.info("----------- getAvailableSchedules readyToMakeCall callPlan [{}] ", callPlan);
 
-        //挂断后再请求一个呼叫数据，不让线路空闲
-        List<CallOutPlan> list = dispatchService.pullCallPlan(Integer.valueOf(calloutPlan.getCustomerId()), 1, calloutPlan.getLineId());
-        log.info("----------- getAvailableSchedules callPlan list size [{}] ", list.size());
-        if (list != null && list.size() > 0) {
-            CallOutPlan callPlan = list.get(0);
-            callPlan.setCallState(ECallState.call_prepare.ordinal());
-            callPlan.setCreateTime(new Date());
-            callPlan.setIsdel(0);
-            callPlan.setIsread(0);
-            callPlan.setDuration(0);
-            callPlan.setBillSec(0);
-            log.info("----------- getAvailableSchedules callPlan [{}] ", callPlan);
+        callPlan.setCallState(ECallState.call_prepare.ordinal());
+        callPlan.setCreateTime(new Date());
+        callPlan.setIsdel(0);
+        callPlan.setIsread(0);
+        callPlan.setBillSec(0);
+        callPlan.setDuration(0);
 
-            try {
-                callOutPlanService.add(callPlan);
-            } catch (Exception ex) {
-                log.warn("在挂断后拉取新计划出现异,插入calloutplan异常", ex);
+        callOutPlanService.add(callPlan);
 
-                CallOutPlan call = callOutPlanService.findByCallId(callPlan.getCallId());
-                boolean isNeedSchedule = false;
-                //打完的电话才需要回调，没打完的不需要回调
-                if(call.getCallState()!=null && call.getCallState()>=ECallState.hangup_ok.ordinal()){
-                    isNeedSchedule = true;
-                }
+        try {
+            log.info("开始检查机器人资源");
+            callResourceChecker.checkSellbot(callPlan);
+        } catch (NullPointerException e) {
+            //回掉给调度中心，更改通话记录
+            //没有机器人资源，会少一路并发数，直接return了
+            log.warn("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
+            callPlan.setCallState(ECallState.norobot_fail.ordinal());
+            callPlan.setAccurateIntent("W");
+            callPlan.setReason(e.getMessage());
+            callOutPlanService.update(callPlan);
 
-                scheduleAndSendEvent(callPlan.getPhoneNum(), call.getAccurateIntent(),callPlan,isNeedSchedule);
-                return;
-            }
-            try {
-                log.info("开始检查机器人资源");
-                callResourceChecker.checkSellbot(callPlan);
-            } catch (NullPointerException e) {
-                //回掉给调度中心，更改通话记录
-                //没有机器人资源，会少一路并发数，直接return了
-                log.warn("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
-                callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                callPlan.setAccurateIntent("W");
-                callPlan.setReason(e.getMessage());
-                callOutPlanService.update(callPlan);
-
-                scheduleAndSendEvent(callPlan.getPhoneNum(),"W",callPlan,true);
-                return;
-            }
-
-            asyncEventBus.post(new CallResourceReadyEvent(callPlan));
-            log.info("---------------------CallResourceReadyEvent post " + callPlan.getPhoneNum());
+            dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W");
+            return;
         }
 
-    }
+        asyncEventBus.post(new CallResourceReadyEvent(callPlan));
+        log.info("--------------CallResourceReadyEvent post " + callPlan.getCallId());
 
-    /**
-     * 回调调度中心，并重新发一个事件出来
-     * @param phoneNum  回调电话
-     * @param intent  回调意向
-     * @param callOutPlan  构建空事件callOutPlan对象
-     */
-    private void scheduleAndSendEvent(String phoneNum,String intent,CallOutPlan callOutPlan,Boolean isNeedSchedule){
-        AfterCallEvent afterCallEventAgain = new AfterCallEvent(callOutPlan, true);
-        asyncEventBus.post(afterCallEventAgain);
-        if(isNeedSchedule){
-            dispatchService.successSchedule(callOutPlan.getPlanUuid(), phoneNum, intent);
-        }
     }
-
 
 }

@@ -26,10 +26,10 @@ public class EurekaManager {
     @Autowired
     DiscoveryClient discoveryClient;
 
-    @Value("${eureka.instance.instance-id:}")
+    @Value("${eureka.instance.instance-id}")
     private String instanceId;
 
-    @Value("${spring.application.name:}")
+    @Value("${spring.application.name}")
     private String appName;
 
     /**

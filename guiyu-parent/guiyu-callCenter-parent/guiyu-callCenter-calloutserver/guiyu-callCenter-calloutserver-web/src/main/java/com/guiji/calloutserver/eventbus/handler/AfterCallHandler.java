@@ -9,13 +9,10 @@ import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
-import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutRecordService;
-import com.guiji.component.result.Result;
-import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.fsagent.entity.RecordVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,27 +49,25 @@ public class AfterCallHandler {
     public void handleAfterCall(AfterCallEvent afterCallEvent) {
         try {
             log.info("收到AfterCallEvent事件[{}]", afterCallEvent);
-            if(!afterCallEvent.getIsFist()) {
-                CallOutPlan callPlan = afterCallEvent.getCallPlan();
-                Preconditions.checkArgument(callPlan != null, "null callPlan");
 
-                //上传呼叫时长不为空的文件
-                if (callPlan.getDuration() > 0) {
-                    log.info("录音文件大于0，开始上传， callId[{}]", callPlan.getCallId());
-                    //调用fsagent上传主录音文件
-                    CallOutRecord callRecord = callOutRecordService.findByCallId(callPlan.getCallId());
-                    log.info("待上传的主录音文件为[{}]", callRecord);
-                    uploadMainRecord(callRecord,Long.valueOf(callPlan.getCustomerId()));
+            CallOutPlan callPlan = afterCallEvent.getCallPlan();
+            Preconditions.checkArgument(callPlan != null, "null callPlan");
 
-                    List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(callPlan.getCallId());
-                    log.info("待上传的分支对话录音为[{}]", callOutDetailRecords);
-                    uploadDetailsRecord(callOutDetailRecords,Long.valueOf(callPlan.getCustomerId()));
-                }else{
-                    log.warn("录音文件大小为0，上传失败，callId[{}]", callPlan.getCallId());
-                }
+            //上传呼叫时长不为空的文件
+            if (callPlan.getDuration() > 0) {
+                log.info("录音文件大于0，开始上传， callId[{}]", callPlan.getCallId());
+                //调用fsagent上传主录音文件
+                CallOutRecord callRecord = callOutRecordService.findByCallId(callPlan.getCallId());
+                log.info("待上传的主录音文件为[{}]", callRecord);
+                uploadMainRecord(callRecord,Long.valueOf(callPlan.getCustomerId()));
+
+                List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(callPlan.getCallId());
+                log.info("待上传的分支对话录音为[{}]", callOutDetailRecords);
+                uploadDetailsRecord(callOutDetailRecords,Long.valueOf(callPlan.getCustomerId()));
             }else{
-                log.info("该AfterCallEvent为空白驱动事件，忽略掉");
+                log.warn("录音文件大小为0，上传失败，callId[{}]", callPlan.getCallId());
             }
+
         } catch (Exception ex) {
             //TODO: 报警，上传录音文件失败
             log.warn("在处理呼叫结果时出现异常", ex);

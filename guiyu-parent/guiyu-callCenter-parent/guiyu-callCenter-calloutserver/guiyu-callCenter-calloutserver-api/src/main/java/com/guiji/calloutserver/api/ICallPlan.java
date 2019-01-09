@@ -1,23 +1,33 @@
 package com.guiji.calloutserver.api;
 
-
-
+import com.guiji.calloutserver.entity.DispatchPlan;
 import com.guiji.component.result.Result;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
 
 @FeignClient("guiyu-callcenter-calloutserver")
 public interface ICallPlan {
-    @ApiOperation(value = "启动客户呼叫计划")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "tempId", value = "模板id", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "lineId", value = "线路id", dataType = "Integer", paramType = "query")
-    })
-    @GetMapping("/startcallplan")
-    Result.ReturnData startCallPlan(@RequestParam("customerId") String customerId, @RequestParam("tempId") String tempId, @RequestParam("lineId") Integer lineId);
+
+    @ApiOperation(value = "开始拨打电话")
+    @PostMapping("/startMakeCall")
+    Result.ReturnData startMakeCall(@RequestBody DispatchPlan dispatchPlan);
+
+    @ApiOperation(value = "查询电话是否拨打结束")
+    @GetMapping("/queryCallState")
+    Result.ReturnData<Boolean> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid);
+
+    @ApiOperation(value = "查询当前未打完的电话数量")
+    @GetMapping("/getNotEndCallCount")
+    Result.ReturnData<Integer> getNotEndCallCount();
+
+/*    @ApiOperation(value = "模板是否准备好，呼叫中心内部使用，外部勿用")
+    @PostMapping("/isTempOk")
+    Result.ReturnData<Map<String, Boolean>> isTempOk(@RequestBody List<String> tempIdList);*/
 }

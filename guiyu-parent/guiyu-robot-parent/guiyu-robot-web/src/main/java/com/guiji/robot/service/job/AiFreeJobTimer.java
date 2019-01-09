@@ -78,7 +78,7 @@ public class AiFreeJobTimer extends IJobHandler{
 		}
 		long endTime = System.currentTimeMillis();
 		XxlJobLogger.log("定时任务，用时{}S,[检查一直被占用未释放的机器人]完成...",(endTime-beginTime)/1000);
-		return null;
+		return SUCCESS;
 	}
 	
 }

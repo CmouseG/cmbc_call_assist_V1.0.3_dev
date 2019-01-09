@@ -72,7 +72,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
                     //TODO: 报警
                     log.warn("上传文件失败，错误码是[{}][{}],request[{}]", result.getCode(), result.getMsg(),request);
                 }
-            }, 3, 1, 120, 6000);
+            }, 100, 1, 30, 600);
         }catch (Exception ex){
             log.warn("上传文件出现异常", ex);
             //TODO: 报警，上传文件异常
@@ -84,8 +84,8 @@ public class FsAgentManagerImpl implements FsAgentManager {
 
     @Override
     public Result.ReturnData<Boolean> istempexist(String tempId) {
-
-        Result.ReturnData<Boolean> returnData = null;
+        return  iTemplate.istempexist(tempId);
+       /* Result.ReturnData<Boolean> returnData = null;
         try{
             returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                 @Override
@@ -102,14 +102,14 @@ public class FsAgentManagerImpl implements FsAgentManager {
             log.warn("判断模板是否存在出现异常", ex);
         }
 
-        return returnData;
+        return returnData;*/
     }
 
     @Override
     public Map<String, Double> getwavlength(String tempId){
 
         if(wavCaches.getIfPresent(tempId)==null){
-            Result.ReturnData<List<WavLengthVO>> result = null;
+           /* Result.ReturnData<List<WavLengthVO>> result = null;
             try{
                 result = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
                     @Override
@@ -124,8 +124,8 @@ public class FsAgentManagerImpl implements FsAgentManager {
                 }, 5, 1, 2, 60,true);
             }catch (Exception ex){
                 log.warn("判断模板是否存在出现异常", ex);
-            }
-
+            }*/
+            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
             if(result!=null && result.success){
                 List<WavLengthVO> list = result.getBody();
                 if(list!=null && list.size()>0){

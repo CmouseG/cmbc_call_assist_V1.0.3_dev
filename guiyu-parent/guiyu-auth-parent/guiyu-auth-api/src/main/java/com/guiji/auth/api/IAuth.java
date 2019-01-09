@@ -28,5 +28,8 @@ public interface IAuth {
 
 	@RequestMapping("/user/getOrgByUserId")
 	public ReturnData<SysOrganization> getOrgByUserId(@RequestParam("userId") Long userId);
+
+	@RequestMapping("/user/getAllCompanyUser")
+	public ReturnData<List<SysUser>> getAllCompanyUser();
 	
 }

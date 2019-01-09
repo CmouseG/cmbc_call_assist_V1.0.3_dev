@@ -1,12 +1,10 @@
 package com.guiji.auth.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.guiji.user.dao.SysRoleMapper;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +36,15 @@ public class UserService {
 
 	@Autowired
 	private OrganizationService organizationService;
+
+	@Autowired
+	private RedisUtil redisUtil;
+
+	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
+
+	private static final String REDIS_ROLE_BY_USERID = "REDIS_ROLE_BY_USERID_";
+
+	private static final String REDIS_ORG_BY_USERID = "REDIS_ORG_BY_USERID_";
 	/**
 	 * 新增用户
 	 * @param user
@@ -61,6 +68,9 @@ public class UserService {
 		user.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(user);
 		mapper.addRole(user.getId(),roleIds);
+		redisUtil.del(REDIS_USER_BY_ID+user.getId());
+		redisUtil.del(REDIS_ROLE_BY_USERID+user.getId());
+		redisUtil.del(REDIS_ORG_BY_USERID+user.getId());
 	}
 	
 	/**
@@ -69,14 +79,22 @@ public class UserService {
 	 */
 	public void delete(Long id){
 		mapper.deleteByPrimaryKey(id);
+		redisUtil.del(REDIS_USER_BY_ID+id);
+		redisUtil.del(REDIS_ROLE_BY_USERID+id);
+		redisUtil.del(REDIS_ORG_BY_USERID+id);
 	}
-	
+
 	public Long getUserId(String username,String password){
 		return mapper.getUserId( username, password);
 	}
 	
 	public SysUser getUserById(Long id){
-		return mapper.getUserById(id);
+		SysUser sysUser = (SysUser) redisUtil.get(REDIS_USER_BY_ID+id);
+		if (sysUser == null) {
+			sysUser = mapper.getUserById(id);
+			redisUtil.set(REDIS_USER_BY_ID+id,sysUser);
+		}
+		return sysUser;
 	}
 	
 	public List<Map<String,String>> getUserByName(String userName){
@@ -84,22 +102,29 @@ public class UserService {
 	}
 	
 	public List<SysRole> getRoleByUserId(Long id){
-		return mapper.getRoleByUserId(id);
+		List<SysRole> sysRoleList = (List<SysRole>) redisUtil.get(REDIS_ROLE_BY_USERID+id);
+		if (sysRoleList == null) {
+			sysRoleList = mapper.getRoleByUserId(id);
+			redisUtil.set(REDIS_ROLE_BY_USERID+id,sysRoleList);
+		}
+		return sysRoleList;
 	}
 
 	public SysOrganization getOrgByUserId(Long userId){
-		SysOrganization sysOrganization = null;
-		SysUser sysUser = mapper.getUserById(userId);
-		List<SysRole> sysRoleList = mapper.getRoleByUserId(userId);
-		String orgCode = null;
-		if (sysUser != null) {
-			orgCode = sysUser.getOrgCode();
-			if (sysRoleList != null && sysRoleList.size() > 0 && sysRoleList.get(0).getId() == 4) {
-				orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
+		SysOrganization sysOrganization = (SysOrganization) redisUtil.get(REDIS_ORG_BY_USERID+userId);
+		if (sysOrganization == null) {
+			SysUser sysUser = mapper.getUserById(userId);
+			List<SysRole> sysRoleList = mapper.getRoleByUserId(userId);
+			String orgCode = null;
+			if (sysUser != null) {
+				orgCode = sysUser.getOrgCode();
+				if (sysRoleList != null && sysRoleList.size() > 0 && sysRoleList.get(0).getId() == 4) {
+					orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
+				}
+				sysOrganization = organizationService.getOrgByCode(orgCode);
 			}
-			sysOrganization = organizationService.getOrgByCode(orgCode);
+			redisUtil.set(REDIS_ORG_BY_USERID+userId,sysOrganization);
 		}
-
 		return sysOrganization;
 	}
 	
@@ -180,6 +205,11 @@ public class UserService {
 		}
 		List<Object> userList=mapper.selectLikeUserName(param);
 		return userList;
+	}
+
+	public List<SysUser> getAllCompanyUser(){
+		List<SysUser> sysUserList = mapper.getAllCompanyUser();
+		return sysUserList;
 	}
 	
 }

@@ -63,7 +63,7 @@ public class RetryTaskJobHandler extends IJobHandler {
 	@Autowired
 	private ProcessManageService processManageService;
 
-	private static Logger logger = LoggerFactory.getLogger(RetryTask.class);
+	private static Logger logger = LoggerFactory.getLogger(RetryTaskJobHandler.class);
 
 	@Override
 	public ReturnT<String> execute(String param) throws Exception {
@@ -77,7 +77,7 @@ public class RetryTaskJobHandler extends IJobHandler {
 				if (processTaskMap != null) {
 					for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
 						ProcessTask processTask = entry.getValue();
-						if (!"0".equals(processTask.getResult())) {
+						if (processTask != null && processTask.getResult() != null && 0 != processTask.getResult()) {
 							if (processTask.getRetryCount() < RETRY_TIME) {//retry次数超过3次则不在retry
 								long interval = System.currentTimeMillis() - processTask.getExeTime().getTime();
 								if (interval > RETRY_INTERVAL) {//retry间隔10分钟

@@ -947,6 +947,13 @@ public final class DateUtil {
 		return dateFormatter.parse(datetime);
 	}
 
+	public static Integer getCurrentHour() throws Exception {
+	    Date today = new Date();
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("HH");
+	    String time = dateFormat.format(today);
+	    return Integer.valueOf(time);
+    }
+
     public static void main(String[] args) {
 //    	System.out.println(new DateUtil().getMondayOfDate("20180702")); //本周一
 //    	System.out.println(new DateUtil().getSundayOfDate("20180702")); //本周日

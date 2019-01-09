@@ -576,5 +576,12 @@
     </if>
     order by a.create_time desc
   </select>
+
+  <select id="getAllCompanyUser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where id in (select user_id from sys_role_user where role_id in (3,4))
+  </select>
 	
 </mapper> 

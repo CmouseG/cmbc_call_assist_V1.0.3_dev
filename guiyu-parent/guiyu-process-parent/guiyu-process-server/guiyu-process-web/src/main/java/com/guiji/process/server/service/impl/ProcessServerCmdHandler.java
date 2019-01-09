@@ -196,7 +196,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                             for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
                                 if (cmdMessageVO.getReqKey() != null && cmdMessageVO.getReqKey().equals(entry.getKey())) {
                                     ProcessTask processTask = entry.getValue();
-                                    if (0 != processTask.getResult() && processTask.getRetryCount() < 3) {
+                                    if (processTask != null && processTask.getResult() != null && 0 != processTask.getResult() && processTask.getRetryCount() < 3) {
                                         sendMQ = false;
                                         break;
                                     }

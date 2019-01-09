@@ -2,20 +2,71 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>guiyu-parent</artifactId>
-        <groupId>guiji.ai</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+    <artifactId>guiyu-timerTask-parent</artifactId>
+    <groupId>guiji.task.job</groupId>
+    <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>guiyu-timerTask-parent</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>guiyu-timerTask-api</module>
-        <module>guiyu-timerTask-dal</module>
-        <module>guiyu-timerTask-web</module>
+        <module>guiyu-timerTask-core</module>
+        <module>guiyu-timerTask-admin</module>
+		<module>guiyu-timerTask-client</module>
     </modules>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		
+		<maven.test.skip>true</maven.test.skip>
+
+		<!--<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+		<javax.servlet.jsp-api.version>2.3.3</javax.servlet.jsp-api.version>-->
+		<xxl-rpc.version>1.2.1</xxl-rpc.version>
+
+		<spring-boot.version>1.5.17.RELEASE</spring-boot.version>
+		<mybatis-spring-boot-starter.version>1.3.2</mybatis-spring-boot-starter.version>
+		<mysql-connector-java.version>5.1.47</mysql-connector-java.version>
+
+		<spring.version>4.3.20.RELEASE</spring.version>
+		<slf4j-api.version>1.7.25</slf4j-api.version>
+		<freemarker.version>2.3.28</freemarker.version>
+		<junit.version>4.12</junit.version>
+
+		<commons-exec.version>1.3</commons-exec.version>
+		<commons-collections4.version>4.2</commons-collections4.version>
+		<commons-lang3.version>3.8.1</commons-lang3.version>
+		<commons-email.version>1.5</commons-email.version>
+
+		<groovy-all.version>2.5.3</groovy-all.version>
+		<quartz.version>2.3.0</quartz.version>
+
+		<jackson.version>2.9.7</jackson.version>
+		<mina.version>2.0.19</mina.version>
+		<jetty-server.version>9.2.26.v20180806</jetty-server.version>
+
+		<commons-pool2.version>2.6.0</commons-pool2.version>
+
+
+		<hessian.version>4.0.51</hessian.version>
+		
+		<protostuff.version>1.6.0</protostuff.version>
+		<objenesis.version>2.6</objenesis.version>
+		
+	</properties>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://192.168.1.187:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://192.168.1.187:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

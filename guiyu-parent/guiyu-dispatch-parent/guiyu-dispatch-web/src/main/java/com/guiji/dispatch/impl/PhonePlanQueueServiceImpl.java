@@ -57,7 +57,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
             //判断拨打队列中的拨打数量如果小于最大并发数*2时，获取锁成功后调用接口getDispatchPlan()获取1000条拨打计划并插入到redis队列中
             if (currentQueueSize < systemMaxPlan*2) {
-                logger.info("当前redis池中的拨打队列小于阈值[最大并发数的2倍]，开始拉去新一批数据入redis队列");
+                logger.debug("当前redis池中的拨打队列小于阈值[最大并发数的2倍]，开始拉去新一批数据入redis队列");
                 //2.按小时获取当前时间段有拨打计划的用户，按1000条进redis拨打队列为总数，分别计算[用户、线路]拨打数量(按用户划分后，各用户线路均分)
                 pushPlan2Queue(getDispatchPlan(DateUtil.getCurrentHour()));
             }
@@ -161,7 +161,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
      * @return
      */
     private List<UserResourceDto> getUserPlanList(List<UserResourceDto> userResourceDtoList,int totalSize,int queueSize) {
-        logger.info("用户拨打计划分配#start");
+        logger.debug("用户拨打计划分配#start");
         List<UserResourceDto> userPlanList = new ArrayList<UserResourceDto>();
         int distributedSize = 0;
         if (userResourceDtoList != null) {
@@ -178,7 +178,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
                 }
             }
         }
-        logger.info("用户拨打计划分配#end");
+        logger.debug("用户拨打计划分配#end");
         return userPlanList;
     }
 
@@ -189,7 +189,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
      * @return
      */
     private List<UserResourceDto> getUserLinePlanList(List<UserResourceDto> userPlanList,int hour) {
-        logger.info("用户线路拨打计划分配#start");
+        logger.debug("用户线路拨打计划分配#start");
         List<UserResourceDto> userLinePlanList = new ArrayList<UserResourceDto>();
         if (userPlanList != null) {
             for (int i=0;i<userPlanList.size();i++) {
@@ -213,7 +213,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
                 }
             }
         }
-        logger.info("用户线路拨打计划分配#end");
+        logger.debug("用户线路拨打计划分配#end");
         return userLinePlanList;
     }
 }

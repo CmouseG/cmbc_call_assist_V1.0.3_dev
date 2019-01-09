@@ -63,7 +63,7 @@ public class RobotStatJobTimer  extends IJobHandler{
         }
         long endTime = System.currentTimeMillis();
         XxlJobLogger.log("定时任务，用时{}S,[落地机器人模板通话分析数据]完成...",(endTime-beginTime)/1000);
-		return null;
+        return SUCCESS;
 	}
     
     

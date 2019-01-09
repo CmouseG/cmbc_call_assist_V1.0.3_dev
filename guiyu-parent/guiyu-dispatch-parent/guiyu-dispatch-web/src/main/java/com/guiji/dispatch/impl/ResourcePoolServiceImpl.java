@@ -106,9 +106,6 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                     }
                 }
                 getPhonesInterface.resetPhoneSyncStatus(planUuids);
-                //2.2将新的[用户、线路]拨打数量存入redis，释放拨打计划的redis锁，并返回
-                List<DispatchPlan> dispatchPlanList = phonePlanQueueService.getDispatchPlan(hour);
-                phonePlanQueueService.pushPlan2Queue(dispatchPlanList);
             }
         } catch (Exception e) {
             logger.info("ResourcePoolServiceImpl#distributeByUser", e);

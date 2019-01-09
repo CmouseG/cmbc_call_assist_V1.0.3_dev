@@ -1,5 +1,7 @@
 package com.guiji.dispatch.impl;
 
+import com.guiji.component.lock.DistributedLockHandler;
+import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IGetPhonesInterface;
@@ -31,9 +33,20 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
     private RedisUtil redisUtil;
     @Autowired
     private IGetPhonesInterface getPhonesInterface;
+    @Autowired
+    private DistributedLockHandler distributedLockHandler;
+
     @Override
     public void execute() throws Exception {
         while(true) {
+
+            Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
+            if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
+                Thread.sleep(20);
+                continue;
+            }
+
+
             // 从redis获取系统最大并发数
             int systemMaxPlan = redisUtil.get(REDIS_SYSTEM_MAX_PLAN) == null ? 0 : (int) redisUtil.get(REDIS_SYSTEM_MAX_PLAN);
             if (systemMaxPlan == 0) {
@@ -112,17 +125,31 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
     private List<DispatchPlan> sortPlan(List<List<DispatchPlan>> dispatchPlanList) {
         logger.info("拨打计划排序#start");
         List<DispatchPlan> dispatchPlanLists = new ArrayList<DispatchPlan>();
-        if (dispatchPlanList != null) {
-            for(List<DispatchPlan> list:dispatchPlanList) {
-                if (list != null) {
-                    for (DispatchPlan dispatchPlan : list) {
-                        dispatchPlanLists.add(dispatchPlan);
-                    }
+
+        int allCount = 0;
+        if (dispatchPlanList == null || dispatchPlanList.isEmpty()) {
+            return dispatchPlanLists;
+        }
+
+        for(List<DispatchPlan> list:dispatchPlanList) {
+            allCount = allCount + list.size();
+        }
+        // 排序算法
+        int firstIndex = dispatchPlanList.size();
+        for (int i = 0; i < allCount; i++) {
+            for (int j = 0; j < firstIndex; j++) {
+                List<DispatchPlan> tmpList = dispatchPlanList.get(j);
+                if(tmpList.size()>i) {
+                    dispatchPlanLists.add(tmpList.get(i));
                 }
             }
+
+            if(dispatchPlanLists.size() == allCount) {
+                break;
+            }
         }
+
         logger.info("拨打计划排序#end");
-        //TODO 排序算法
         return dispatchPlanLists;
     }
 

@@ -63,8 +63,8 @@ import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
 import com.guiji.dispatch.service.IDispatchPlanService;
-import com.guiji.dispatch.service.IMessageService;
-import com.guiji.dispatch.service.SuccessPhoneMQService;
+import com.guiji.dispatch.sms.IMessageService;
+import com.guiji.dispatch.test.SuccessPhoneMQService;
 import com.guiji.dispatch.util.Base64MD5Util;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
@@ -254,11 +254,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlan> queryExecuteResult(String planUuid) {
-		return null;
-	}
-
-	@Override
 	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	public boolean batchImport(String fileName, Long userId, MultipartFile file, String str, String orgCode)
 			throws Exception {
@@ -411,7 +406,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		dto.setPlanuuid(planUuid);
 		dto.setLabel(label);
-		successPhoneMQService.insertSuccesPhone4MQ(dto);
+		successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
+		// // 写入mq中
+		// MQSuccPhoneDto dto = new MQSuccPhoneDto();
+		// dto.setPlanuuid(planUuid);
+		// dto.setLabel(label);
+		// successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
+		// successPhoneMQService.insertCallBack4MQ(dto);
 		return true;
 
 		//
@@ -994,13 +995,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			if (selectByExample.size() > 0) {
 				resultPlan = selectByExample.get(0);
-				// boolean res = checkStatus(status, resultPlan);
-				// if (!res) {
-				// result.setResult(false);
-				// result.setMsg("当前批次号码状态处于" +
-				// map.get(resultPlan.getStatusPlan()) + "不能进行此状态操作");
-				// return result;
-				// }
 				// 0未计划1计划中2计划完成3暂停计划4停止计划
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
@@ -1010,6 +1004,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
+					dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
 				} else if (status.equals("3")) {
 					// 一键暂停
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
@@ -1059,6 +1054,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			for (List<String> list : averageAssign) {
 				if (list.size() > 0) {
 					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
+				}
+			}
+			// 恢复的话需要将同步状态修改成0
+			if (status.equals("1")) {
+				for (List<String> list : averageAssign) {
+					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
 				}
 			}
 		}
@@ -1533,11 +1534,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setLimitEnd(limit);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour4UserId(dis);
 		return phones;
-	}
-
-	@Override
-	public void test(DispatchPlan sendSMsDispatchPlan, String label) {
-		SendSms(sendSMsDispatchPlan, label);
 	}
 
 }

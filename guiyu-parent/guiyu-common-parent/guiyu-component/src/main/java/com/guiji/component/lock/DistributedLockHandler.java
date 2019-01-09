@@ -101,4 +101,24 @@ public class DistributedLockHandler
 		}
 	}
 
+	/**
+	 * 判断是否锁住
+	 * @param lock
+	 * @return
+	 */
+	public boolean isLockExist(Lock lock)
+	{
+		if (StringUtils.isEmpty(lock.getName()) || StringUtils.isEmpty(lock.getValue())) // 对lock进行校验
+		{
+			return false;
+		}
+
+		if (template.hasKey(lock.getName()))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 }

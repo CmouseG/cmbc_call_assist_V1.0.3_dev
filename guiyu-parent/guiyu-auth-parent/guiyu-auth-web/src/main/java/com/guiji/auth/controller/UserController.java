@@ -168,4 +168,9 @@ public class UserController implements IAuth{
 	public List<Object> selectLikeUserName(UserParamVo param,@RequestHeader Long userId){
 		return service.selectLikeUserName(param,userId);
 	}
+
+	@Override
+	public ReturnData<List<SysUser>> getAllCompanyUser() {
+		return new ReturnData<List<SysUser>>(service.getAllCompanyUser());
+	}
 }

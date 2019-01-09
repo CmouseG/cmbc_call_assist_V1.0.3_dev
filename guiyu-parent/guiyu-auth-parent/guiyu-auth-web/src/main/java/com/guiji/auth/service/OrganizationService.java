@@ -8,6 +8,7 @@ import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,7 +29,10 @@ public class OrganizationService {
 	private SysUserMapper sysUsermapper;
 	@Autowired
 	private IRobotRemote iRobotRemote;
-	
+	@Autowired
+	private RedisUtil redisUtil;
+	private static final String REDIS_ORG_BY_CODE = "REDIS_ORG_BY_CODE_";
+
 	public void add(SysOrganization record){
         String subCode = this.getSubOrgCode(record.getCode());
 		/*int num=sysOrganizationMapper.countCode(record.getCode());
@@ -40,10 +44,12 @@ public class OrganizationService {
 	public void delte(SysOrganization record){
 		record.setDelFlag(1);
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
+		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
 	}
 	
 	public void update(SysOrganization record){
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
+		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
 	}
 	
 	public Page<Object> selectByPage(Page<Object> page){
@@ -106,13 +112,17 @@ public class OrganizationService {
 	}
 	
 	public SysOrganization getOrgByCode(String code){
-		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo(0).andCodeEqualTo(code);
-		List<SysOrganization> list=sysOrganizationMapper.selectByExample(example);
-		if(list.size()>0){
-			return list.get(0);
+		SysOrganization sysOrganization = (SysOrganization) redisUtil.get(REDIS_ORG_BY_CODE+code);
+		if (sysOrganization == null) {
+			SysOrganizationExample example=new SysOrganizationExample();
+			example.createCriteria().andDelFlagEqualTo(0).andCodeEqualTo(code);
+			List<SysOrganization> list=sysOrganizationMapper.selectByExample(example);
+			if(list.size()>0){
+				sysOrganization = list.get(0);
+			}
+			redisUtil.set(REDIS_ORG_BY_CODE+code,sysOrganization);
 		}
-		return null;
+		return sysOrganization;
 	}
 
 	public String getSubOrgCode(String orgCode) {

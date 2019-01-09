@@ -31,6 +31,9 @@ public class FreeswitchHealthCheckResultAnalyse implements IHealthCheckResultAna
             result = output.substring(output.length()-1, output.length());
         }
 
+        if (!"0".equals(result) && !"1".equals(result) && !"2".equals(result) && !"3".equals(result)) {
+            result = CMD_RESULT_CODE99;
+        }
         // 发送给服务端
         CmdMessageVO newCmdMsg = new CmdMessageVO();
         ProcessInstanceVO tmp = new ProcessInstanceVO();

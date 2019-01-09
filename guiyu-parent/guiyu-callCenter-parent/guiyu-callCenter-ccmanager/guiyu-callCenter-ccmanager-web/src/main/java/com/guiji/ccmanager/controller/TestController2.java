@@ -32,9 +32,7 @@ public class TestController2 {
         dispatchPlan.setTts(false);
         dispatchPlan.setUserId(22);
 
-        List list = new ArrayList<>();
-        list.add(dispatchPlan);
-        Result.ReturnData result = iCallPlan.startMakeCall(list);
+        Result.ReturnData result = iCallPlan.startMakeCall(dispatchPlan);
 
         log.info(">>>>>end,result[{}] ",result);
     }

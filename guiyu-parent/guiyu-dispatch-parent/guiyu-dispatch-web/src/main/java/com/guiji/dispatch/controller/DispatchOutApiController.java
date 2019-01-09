@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.guiji.dispatch.service.IResourcePoolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +29,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Autowired
 	private RedisUtil redisUtil;
+
+	@Autowired
+	private IResourcePoolService resourcePoolService;
 
 	/**
 	 * 完成
@@ -104,6 +108,18 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		// result.body = set;
 		// }
 		return result;
+	}
+
+	@Override
+	public ReturnData<Boolean> initResourcePool() {
+		boolean result = resourcePoolService.initResourcePool();
+		return new ReturnData<Boolean>(result);
+	}
+
+	@Override
+	public ReturnData<Boolean> distributeByUser() {
+		boolean result = resourcePoolService.distributeByUser();
+		return new ReturnData<Boolean>(result);
 	}
 
 	@Override

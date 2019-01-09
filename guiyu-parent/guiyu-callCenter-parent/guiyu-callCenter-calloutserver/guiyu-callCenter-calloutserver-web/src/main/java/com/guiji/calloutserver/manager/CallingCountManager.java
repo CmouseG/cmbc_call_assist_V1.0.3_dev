@@ -19,4 +19,6 @@ public interface CallingCountManager {
      */
     @Async
     void removeOneCall();
+
+    int getCallCount();
 }

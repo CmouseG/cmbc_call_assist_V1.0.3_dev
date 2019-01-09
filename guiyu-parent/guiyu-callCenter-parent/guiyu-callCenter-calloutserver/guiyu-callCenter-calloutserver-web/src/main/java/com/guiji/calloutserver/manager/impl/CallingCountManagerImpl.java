@@ -37,4 +37,12 @@ public class CallingCountManagerImpl implements CallingCountManager {
         }
     }
 
+    @Override
+    public int getCallCount(){
+        if(redisUtil.get("callCenter-callCount-"+eurekaManager.getInstanceId())!=null){
+            return (int) redisUtil.get("callCenter-callCount-"+eurekaManager.getInstanceId());
+        }
+        return 0;
+    }
+
 }

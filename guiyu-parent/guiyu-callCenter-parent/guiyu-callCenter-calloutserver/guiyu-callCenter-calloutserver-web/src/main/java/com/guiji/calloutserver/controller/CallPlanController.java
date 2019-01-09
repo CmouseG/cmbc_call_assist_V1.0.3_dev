@@ -7,6 +7,7 @@ import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.DispatchPlan;
 import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
+import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
@@ -28,31 +29,35 @@ public class CallPlanController implements ICallPlan {
     @Autowired
     EurekaManager eurekaManager;
     @Autowired
-    FsAgentManager fsAgentManager;
-    @Autowired
     CallPlanDispatchHandler callPlanDispatchHandler;
     @Autowired
     CallOutPlanService callOutPlanService;
     @Value("${callCount.max}")
-    private String callCountMax;
+    String callCountMax;
     @Autowired
     TempReadyService tempReadyService;
+    @Autowired
+    CallingCountManager callingCountManager;
 
     @Override
     public Result.ReturnData startMakeCall(@RequestBody DispatchPlan dispatchPlan) {
 
         log.info("------start startMakeCall dispatchPlan[{}]",dispatchPlan);//注释掉
 
-        if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
-            CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
-            callPlanDispatchHandler.readyToMakeCall(callOutPlan);
-            log.info(">>>>>>>end startMakeCall dispatchPlan,,ok");//注释掉
-            return Result.ok();
+        if(callingCountManager.getCallCount()<Integer.valueOf(callCountMax)){
+            if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
+                CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
+                callPlanDispatchHandler.readyToMakeCall(callOutPlan);
+                log.info(">>>>>>>end startMakeCall dispatchPlan,,ok");//注释掉
+                return Result.ok();
+            }else{
+                log.info(">>>>>>>end startMakeCall,temp not ok dispatchPlan[{}]",dispatchPlan);
+                return Result.error(Constant.ERROR_TEMP_NOT_AVAILABLE);
+            }
         }else{
-            log.info(">>>>>>>end startMakeCall,temp not ok dispatchPlan[{}]",dispatchPlan);
-            return Result.error(Constant.ERROR_TEMP_NOT_AVAILABLE);
+            log.info(">>>>>>>end startMakeCall,call count too big[{}]",dispatchPlan);
+            return Result.error(Constant.ERROR_CALLCOUNT_OUTLIMIT);
         }
-
     }
 
     @Override

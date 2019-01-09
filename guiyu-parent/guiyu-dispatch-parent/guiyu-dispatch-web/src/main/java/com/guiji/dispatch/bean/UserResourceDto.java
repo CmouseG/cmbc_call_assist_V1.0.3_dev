@@ -10,6 +10,10 @@ public class UserResourceDto {
 
     private int lineId;//线路id
 
+    public UserResourceDto() {
+
+    }
+
     public UserResourceDto(String userId,int count) {
         this.userId = userId;
         this.count = count;

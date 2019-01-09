@@ -10,7 +10,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   redis:
     database: 1
-    host: 192.168.1.78
+    host: 192.168.1.81
     password: 123456
     port: 6379
     pool:
@@ -45,3 +45,15 @@ rabbit:
     fanout:                               #需要绑定交换机与队列关系
       exchange: fanoutPublishBotstence|fanoutRestoreModel  #交换机名称
       queue: fanoutPublishBotstence.SELLBOT,fanoutPublishBotstence.FREESWITCH,fanoutPublishBotstence.ROBOT|fanoutRestoreModel.TTS #队列名称
+#xxl-job admin中心配置
+xxl:
+  job:
+    admin:
+      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://192.168.1.78:18016/xxl-job-admin
+    executor:
+      ip:
+      port: 9987
+      logpath: /home/logs/guiyu-process-web
+      logretentiondays: -1
+    accessToken:

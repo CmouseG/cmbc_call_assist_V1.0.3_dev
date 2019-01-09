@@ -1,4 +1,4 @@
-package com.guiji.auth;
+package com.guiji;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

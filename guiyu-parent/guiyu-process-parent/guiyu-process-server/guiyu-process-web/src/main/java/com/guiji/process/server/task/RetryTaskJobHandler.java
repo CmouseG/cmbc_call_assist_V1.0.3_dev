@@ -63,7 +63,7 @@ public class RetryTaskJobHandler extends IJobHandler {
 	@Autowired
 	private ProcessManageService processManageService;
 
-	private static Logger logger = LoggerFactory.getLogger(RetryTask.class);
+	private static Logger logger = LoggerFactory.getLogger(RetryTaskJobHandler.class);
 
 	@Override
 	public ReturnT<String> execute(String param) throws Exception {

@@ -406,7 +406,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		dto.setPlanuuid(planUuid);
 		dto.setLabel(label);
-		successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
+		successPhoneMQService.insertSuccesPhone4MQ(dto);
 		// // 写入mq中
 		// MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		// dto.setPlanuuid(planUuid);

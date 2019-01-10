@@ -13,7 +13,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableAutoResultPack
 @EnableSwagger2
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.guiji")
 @EnableScheduling
 @EnableFeignClients(basePackages = "com.guiji")
 @MapperScan("com.guiji.*.dao")

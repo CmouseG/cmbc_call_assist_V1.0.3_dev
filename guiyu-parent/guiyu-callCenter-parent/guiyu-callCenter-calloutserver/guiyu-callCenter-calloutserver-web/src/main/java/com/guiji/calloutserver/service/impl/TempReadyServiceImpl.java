@@ -1,15 +1,14 @@
 package com.guiji.calloutserver.service.impl;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.service.TempReadyService;
 import com.guiji.component.result.Result;
+import com.guiji.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @Slf4j
@@ -18,22 +17,35 @@ public class TempReadyServiceImpl implements TempReadyService {
 
     @Autowired
     FsAgentManager fsAgentManager;
-
-    private Cache<String, Boolean> tempOkCache;
-
-    @PostConstruct
-    public void init(){
-        tempOkCache = CacheBuilder.newBuilder().build();
-    }
+    @Autowired
+    EurekaManager eurekaManager;
+    @Autowired
+    RedisUtil redisUtil;
 
     @Override
     public boolean isTempOk(String tempId) {
-        if(tempOkCache.getIfPresent(tempId)!=null){
-            return tempOkCache.getIfPresent(tempId);
+
+        String key = "callCenter-"+tempId+eurekaManager.getInstanceId();
+        Object value =  redisUtil.get(key);
+        if(value!=null){
+            return (boolean) value;
+        }else{//缓存没有取到
+
+            synchronized (this){//防止缓存击穿
+                Object object =  redisUtil.get(key);
+                if(object!=null){
+                    return (boolean) object;
+                }else{
+                    boolean isTempOk = initTemp(tempId);
+                    if(isTempOk){ //模板存在缓存一天
+                        redisUtil.set(key,isTempOk,24*60*60);
+                    }else{ //模板不存在缓存5分钟
+                        redisUtil.set(key,isTempOk,5*60);
+                    }
+                    return isTempOk;
+                }
+            }
         }
-        boolean isTempOk = initTemp(tempId);
-        tempOkCache.put(tempId,isTempOk);
-        return isTempOk;
     }
 
 

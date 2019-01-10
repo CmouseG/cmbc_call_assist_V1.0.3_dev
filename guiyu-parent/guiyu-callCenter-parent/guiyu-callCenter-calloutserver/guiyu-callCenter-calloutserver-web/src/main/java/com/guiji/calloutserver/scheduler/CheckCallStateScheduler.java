@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@EnableScheduling
+//@EnableScheduling
 public class CheckCallStateScheduler {
 
     @Autowired
@@ -26,7 +26,7 @@ public class CheckCallStateScheduler {
     @Autowired
     CallStateService callStateService;
 
-    @Scheduled(cron = "0 0/5 * * * ?") // 每5分钟运行一次
+//    @Scheduled(cron = "0 0/5 * * * ?") // 每5分钟运行一次
     public void checkCallState(){
 
         log.info("----------- start checkCallState -----------");

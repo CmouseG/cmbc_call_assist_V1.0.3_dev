@@ -13,34 +13,38 @@ import org.springframework.stereotype.Service;
 public class CallingCountManagerImpl implements CallingCountManager {
 
     @Autowired
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
     @Autowired
     EurekaManager eurekaManager;
 
     @Override
     @Async
     public void addOneCall(){
-        if(redisUtil.get("callCenter-callCount-"+eurekaManager.getInstanceId())!=null){
-            redisUtil.incr("callCenter-callCount-"+eurekaManager.getInstanceId(),1);
+        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
+        if(redisUtil.get(key)!=null){
+            redisUtil.incr(key,1);
         }else{
-            redisUtil.set("callCenter-callCount-"+eurekaManager.getInstanceId(),0);
+            redisUtil.set(key,0);
         }
     }
 
     @Override
     @Async
     public void removeOneCall(){
-        if(redisUtil.get("callCenter-callCount-"+eurekaManager.getInstanceId())!=null){
-            redisUtil.decr("callCenter-callCount-"+eurekaManager.getInstanceId(),1);
+        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
+        if(redisUtil.get(key)!=null){
+            redisUtil.decr(key,1);
         }else{
-            redisUtil.set("callCenter-callCount-"+eurekaManager.getInstanceId(),0);
+            redisUtil.set(key,0);
         }
     }
 
     @Override
     public int getCallCount(){
-        if(redisUtil.get("callCenter-callCount-"+eurekaManager.getInstanceId())!=null){
-            return (int) redisUtil.get("callCenter-callCount-"+eurekaManager.getInstanceId());
+        String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
+        Object object = redisUtil.get(key);
+        if(object!=null){
+            return (int) object;
         }
         return 0;
     }

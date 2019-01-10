@@ -42,6 +42,7 @@
     </logger>
 
     <logger name="org.springframework.web.servlet.mvc" level="info"/>
+    <logger name="com.xxl.job" level="warn"/>
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

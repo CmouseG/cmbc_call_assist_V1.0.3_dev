@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@EnableScheduling
+//@EnableScheduling
 public class ReportScheduler {
 
     @Autowired
@@ -24,7 +24,7 @@ public class ReportScheduler {
     @Autowired
     DistributedLockHandler distributedLockHandler;
 
-    @Scheduled(cron = "0 5 0 * * ?") // 凌晨5分执行
+//    @Scheduled(cron = "0 5 0 * * ?") // 凌晨5分执行
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallDayScheduler(){
 
@@ -43,7 +43,7 @@ public class ReportScheduler {
 
     }
 
-      @Scheduled(cron = "0 10 * * * ?") // 每个小时10分钟运行一次
+//      @Scheduled(cron = "0 10 * * * ?") // 每个小时10分钟运行一次
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallHourScheduler(){
 
@@ -62,7 +62,7 @@ public class ReportScheduler {
 
     }
 
-    @Scheduled(cron = "0 1 0 * * ?") //凌晨的时候清空report_call_today
+//    @Scheduled(cron = "0 1 0 * * ?") //凌晨的时候清空report_call_today
 //    @Scheduled(cron = "0/5 * * * * ?") // 测试
     public void reportCallTodayTruncate(){
 

@@ -20,17 +20,17 @@ public class TestController2 {
     ICallPlan iCallPlan;
 
     @Async
-    public void test(){
+    public void test(String tempId,int line,int userId){
         log.info("--------start-------");
         DispatchPlan dispatchPlan = new DispatchPlan();
         dispatchPlan.setBatchId(11);
-        dispatchPlan.setLine(110);
+        dispatchPlan.setLine(line);
         dispatchPlan.setOrgCode("1");
         dispatchPlan.setPhone("18600397859");
         dispatchPlan.setPlanUuid(UUID.randomUUID().toString().replace("-",""));
-        dispatchPlan.setTempId("dk_52386_en");
+        dispatchPlan.setTempId(tempId);
         dispatchPlan.setTts(false);
-        dispatchPlan.setUserId(22);
+        dispatchPlan.setUserId(userId);
 
         Result.ReturnData result = iCallPlan.startMakeCall(dispatchPlan);
 

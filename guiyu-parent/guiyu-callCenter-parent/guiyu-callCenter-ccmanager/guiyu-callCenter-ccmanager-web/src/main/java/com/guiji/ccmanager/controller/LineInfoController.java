@@ -91,7 +91,7 @@ public class LineInfoController {
             return Result.error(Constant.ERROR_PARAM);
         }
         log.info("get request updateLineInfo，lineInfoVO[{}]", lineInfoVO);
-        lineInfoVO.setCustomerId(null);
+//        lineInfoVO.setCustomerId(null);
         lineInfoService.updateLineInfo(lineInfoVO, userId);
         return Result.ok(true);
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -52,8 +53,14 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
 
     @Override
     public int getNotEndCallCount() {
+        //只统计当前1个小时内未打完的电话
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.HOUR, -1);
+
         CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andCallStateLessThan(ECallState.hangup_ok.ordinal());
+        example.createCriteria()
+                .andCallStateLessThan(ECallState.hangup_ok.ordinal())
+                .andCreateTimeGreaterThan(c.getTime());//是否要在该字段加索引，或者分区
         return callOutPlanMapper.countByExample(example);
     }
 }

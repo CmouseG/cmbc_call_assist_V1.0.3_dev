@@ -205,7 +205,7 @@ public class LineInfoServiceImpl implements LineInfoService {
         }
 
         //若并发数有更新，则从linecount表读取线路并发数分配信息，并根据重新计算的并发数进行修改保存。
-        if(lineInfoDB.getMaxConcurrentCalls()!=lineInfoVO.getMaxConcurrentCalls()){
+        /*if(lineInfoDB.getMaxConcurrentCalls()!=lineInfoVO.getMaxConcurrentCalls()){
             List<String> listServer = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
             int maxAll = lineInfoVO.getMaxConcurrentCalls();
             int count = listServer.size();
@@ -226,7 +226,7 @@ public class LineInfoServiceImpl implements LineInfoService {
                 criteria.andCalloutserverIdEqualTo(lineCount.getCalloutserverId());
                 lineCountMapper.updateByExampleSelective(lineCount,example);
             }
-        }
+        }*/
         //刷新redis缓存
         if(lineInfoVO!=null && lineInfoVO.getCustomerId()!=null){
             List<LineInfo> lineInfos = getLineInfoByCustomerId(lineInfoVO.getCustomerId());

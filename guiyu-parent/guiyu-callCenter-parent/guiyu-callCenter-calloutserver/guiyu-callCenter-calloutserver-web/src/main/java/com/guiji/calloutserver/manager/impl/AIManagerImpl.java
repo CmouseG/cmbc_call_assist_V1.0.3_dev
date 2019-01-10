@@ -166,7 +166,7 @@ public class AIManagerImpl implements AIManager {
                     //TODO: 报警
                     log.warn("释放机器人资源出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 3, 120, true);
+            }, 10, 1, 3, 120, true);
         } catch (Exception e) {
             log.warn("在释放机器人资源是出现异常, aiId:"+callOutPlan.getAiId(), e);
         }

@@ -11,7 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.guiji.calloutserver.api.ICallPlan;
+import com.guiji.calloutserver.entity.CallEndIntent;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.controller.DispatchOutApiController;
 import com.guiji.dispatch.dao.PushRecordsMapper;
 import com.guiji.dispatch.dao.entity.PushRecords;
@@ -36,6 +38,7 @@ public class GetCallCenterPhoneTask {
 	private SuccessPhoneMQService successPhoneMQService;
 
 
+	
 	@Scheduled(cron = "0 0/5 * * * ?")
 	public void callCenterPhoneStatus() {
 		PushRecordsExample pushEx = new PushRecordsExample();
@@ -44,17 +47,21 @@ public class GetCallCenterPhoneTask {
 				.andCallbackStatusEqualTo(Constant.NOCALLBACK);
 		List<PushRecords> result = pushMapper.selectByExample(pushEx);
 		logger.info("当前呼叫中心五分钟没有回调的号码数量:" + result.size());
-		
+
 		// 调用呼叫中心去询问如果正在通话就不修改当前
 		for (PushRecords records : result) {
 			// 如果一通电话已挂断,那么放到回调成功的队列中，把当前状态设置成已经回调
-			ReturnData<Boolean> callEnd = callplan.isCallEnd(records.getPlanuuid());
-			if(callEnd.success){
-				if(callEnd.body){
-//					successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
-//					successPhoneMQService.insertCallBack4MQ(dto);
+			ReturnData<CallEndIntent> callEnd = callplan.isCallEnd(records.getPlanuuid());
+			if (callEnd.success) {
+				if(callEnd.body.isEnd()){
+					//如果已经挂断
+					MQSuccPhoneDto dto = new MQSuccPhoneDto();
+					dto.setPlanuuid(records.getPlanuuid());
+					dto.setLabel(callEnd.body.getIntent());
+					successPhoneMQService.insertCallBack4MQ(dto);
+					successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
 				}
-			}else{
+			} else {
 				logger.info("调用呼叫中心isCallEnd接口失败");
 			}
 		}

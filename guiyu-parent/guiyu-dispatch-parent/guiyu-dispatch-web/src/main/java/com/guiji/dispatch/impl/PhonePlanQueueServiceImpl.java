@@ -123,7 +123,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
      * @return
      */
     private List<DispatchPlan> sortPlan(List<List<DispatchPlan>> dispatchPlanList) {
-        logger.info("拨打计划排序#start");
+        logger.debug("拨打计划排序#start");
         List<DispatchPlan> dispatchPlanLists = new ArrayList<DispatchPlan>();
 
         int allCount = 0;

@@ -37,7 +37,7 @@ public class CallBack4MQListener {
 		PushRecords re = new PushRecords();
 		//设置已经回调的状态
 		re.setCallbackStatus(Constant.CALLBACKED);
-		recordMapper.updateByExample(re, ex);
+		recordMapper.updateByExampleSelective(re, ex);
 		// 每次回调都去判断当前并发数量是否负载充分
 		pushHandler.pushHandler();
 	}

@@ -14,6 +14,9 @@ sharding:
         url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC&useSSL=false
         username: callcenter
         password: callcenter@1234
+        minIdle: 5
+        maxActive: 200
+        initialSize: 5
 #数据库连接配置
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml

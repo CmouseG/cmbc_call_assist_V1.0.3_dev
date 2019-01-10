@@ -920,9 +920,14 @@ public final class DateUtil {
     
     
     
-	public static Date getCurrent4Time() throws Exception {
+	public static Date getCurrent4Time(){
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return dateFormatter.parse(dateFormatter.format(new Date()));  
+		try {
+			return dateFormatter.parse(dateFormatter.format(new Date()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}  
+		return null;
 	}
 
 	/**
@@ -931,7 +936,7 @@ public final class DateUtil {
 	 * @return 格式化日期字符串
 	 * @throws Exception
 	 */
-	public static String formatDatetime(Date date) throws Exception {
+	public static String formatDatetime(Date date){
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return dateFormatter.format(date);
 	}
@@ -942,7 +947,7 @@ public final class DateUtil {
 	 * @return date对象
 	 * @throws Exception
 	 */
-	public static Date parseDatetime(String datetime) throws Exception {
+	public static Date parseDatetime(String datetime){
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return dateFormatter.parse(datetime);
 	}

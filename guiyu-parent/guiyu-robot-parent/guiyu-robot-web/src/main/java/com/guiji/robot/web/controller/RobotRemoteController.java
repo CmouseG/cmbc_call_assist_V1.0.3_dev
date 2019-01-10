@@ -182,9 +182,12 @@ public class RobotRemoteController implements IRobotRemote{
 		}
 		//查询用户机器人配置基本信息
 		UserAiCfgBaseInfo userAiCfgBaseInfo = iUserAiCfgService.queryUserAiCfgBaseInfoByUserId(userId);
-		UserAiCfgBaseInfoVO vo = new UserAiCfgBaseInfoVO();
-		BeanUtil.copyProperties(userAiCfgBaseInfo, vo);
-		return Result.ok(vo);
+		if(userAiCfgBaseInfo != null) {
+			UserAiCfgBaseInfoVO vo = new UserAiCfgBaseInfoVO();
+			BeanUtil.copyProperties(userAiCfgBaseInfo, vo);
+			return Result.ok(vo);
+		}
+		return Result.ok();
 	}
 	
 	

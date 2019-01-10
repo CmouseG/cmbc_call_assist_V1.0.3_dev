@@ -31,6 +31,7 @@ public class OrganizationService {
 	private IRobotRemote iRobotRemote;
 	@Autowired
 	private RedisUtil redisUtil;
+	private static final String REDIS_ORG_BY_USERID = "REDIS_ORG_BY_USERID_";
 	private static final String REDIS_ORG_BY_CODE = "REDIS_ORG_BY_CODE_";
 
 	public void add(SysOrganization record){
@@ -45,11 +46,13 @@ public class OrganizationService {
 		record.setDelFlag(1);
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
+        redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
 	public void update(SysOrganization record){
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
+		redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
 	public Page<Object> selectByPage(Page<Object> page){

@@ -28,12 +28,15 @@ public class IphonesThreadImpl implements IphonesThread {
 	@Autowired
 	private PhonesJobContext context;
 
+	// 创建一个线程池
+	ExecutorService exec = Executors.newFixedThreadPool(10);
+
 	@Override
 	public void execute() {
 		// 每次最大查询
 		Integer maxLimit = 10;
 
-		// 获取当前可以拨打的用户id group by
+		// 获取当前可以拨打的用户id
 		List<Integer> userIds = getPhones.getUsersByParams(Constant.STATUSPLAN_1, Constant.STATUS_SYNC_0,
 				Constant.IS_FLAG_0);
 		logger.info("当前可以拨打的用户{}" + userIds);
@@ -53,12 +56,21 @@ public class IphonesThreadImpl implements IphonesThread {
 					List<DispatchPlan> usersByParamsByUserId = getPhones.getUsersByParamsByUserId(userId, maxLimit,
 							Constant.STATUSPLAN_1, Constant.STATUS_SYNC_0, Constant.IS_FLAG_0);
 					logger.info("当前用户:{}可以拨打的号码数量{}", userId, usersByParamsByUserId.size());
+					if (usersByParamsByUserId.size() > 0) {
+						try {
+							exe(usersByParamsByUserId);
+						} catch (InterruptedException e) {
+							logger.info("error", e);
+						} catch (ExecutionException e) {
+							logger.info("error", e);
+						}
+					}
 				} else {
 					List<DispatchPlan> usersByParamsByUserId = getPhones.getUsersByParamsByUserId(userId, countByUserId,
 							Constant.STATUSPLAN_1, Constant.STATUS_SYNC_0, Constant.IS_FLAG_0);
 					logger.info("当前用户:{}可以拨打的号码数量{}", userId, usersByParamsByUserId.size());
 					try {
-						// exe(usersByParamsByUserId);
+						exe(usersByParamsByUserId);
 					} catch (Exception e) {
 						logger.info("error", e);
 					}
@@ -68,4 +80,32 @@ public class IphonesThreadImpl implements IphonesThread {
 		}
 	}
 
+	public void exe(List<DispatchPlan> list) throws InterruptedException, ExecutionException {
+		// 开始时间
+		long start = System.currentTimeMillis();
+
+		// 定义一个任务集合
+		List<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
+		Callable<Integer> task = null;
+		task = new Callable<Integer>() {
+			@Override
+			public Integer call() throws Exception {
+				logger.info(Thread.currentThread().getName() + "线程：" + list.size());
+				context.execute(Constant.INIT, list);
+				context.execute(Constant.CHECKRESOURCE, list);
+				context.execute(Constant.PUSHHANDLER, new ArrayList<>());
+				return 1;
+			}
+		};
+		// 这里提交的任务容器列表和返回的Future列表存在顺序对应的关系
+		tasks.add(task);
+		List<Future<Integer>> results = exec.invokeAll(tasks);
+		for (Future<Integer> future : results) {
+			logger.info(future.get() + "");
+		}
+		// 关闭线程池
+		exec.shutdown();
+		logger.info("线程任务执行结束");
+		logger.info("执行任务消耗了 ：" + (System.currentTimeMillis() - start) + "毫秒");
+	}
 }

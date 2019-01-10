@@ -30,7 +30,6 @@ public class IphonesThreadImpl implements IphonesThread {
 
 	// 创建一个线程池
 	ExecutorService exec = Executors.newFixedThreadPool(10);
-
 	@Override
 	public void execute() {
 		// 每次最大查询
@@ -83,22 +82,29 @@ public class IphonesThreadImpl implements IphonesThread {
 	public void exe(List<DispatchPlan> list) throws InterruptedException, ExecutionException {
 		// 开始时间
 		long start = System.currentTimeMillis();
+		// 每500条数据开启一条线程
+		int threadSize = 5;
+		// 总数据条数
+		int dataSize = list.size();
 
 		// 定义一个任务集合
 		List<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
 		Callable<Integer> task = null;
-		task = new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				logger.info(Thread.currentThread().getName() + "线程：" + list.size());
-				context.execute(Constant.INIT, list);
-				context.execute(Constant.CHECKRESOURCE, list);
-				context.execute(Constant.PUSHHANDLER, new ArrayList<>());
-				return 1;
-			}
-		};
-		// 这里提交的任务容器列表和返回的Future列表存在顺序对应的关系
-		tasks.add(task);
+		List<DispatchPlan> cutList = null;
+			// System.out.println("第" + (i + 1) + "组：" + cutList.toString());
+			final List<DispatchPlan> listStr = cutList;
+			task = new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					logger.info(Thread.currentThread().getName() + "线程：" + listStr.size());
+					context.execute(Constant.INIT, listStr);
+					context.execute(Constant.CHECKRESOURCE, listStr);
+					context.execute(Constant.PUSHHANDLER, new ArrayList<>());
+					return 1;
+				}
+			};
+			// 这里提交的任务容器列表和返回的Future列表存在顺序对应的关系
+			tasks.add(task);
 		List<Future<Integer>> results = exec.invokeAll(tasks);
 		for (Future<Integer> future : results) {
 			logger.info(future.get() + "");

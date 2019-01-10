@@ -949,7 +949,12 @@ public final class DateUtil {
 	 */
 	public static Date parseDatetime(String datetime){
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return dateFormatter.parse(datetime);
+		try {
+			return dateFormatter.parse(datetime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static Integer getCurrentHour() throws Exception {

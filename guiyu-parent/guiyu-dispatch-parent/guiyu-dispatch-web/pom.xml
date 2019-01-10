@@ -47,6 +47,12 @@
 	        <version>1.0-SNAPSHOT</version>
 			  <artifactId>guiyu-callCenter-ccmanager-api</artifactId>
         </dependency>
+        
+        <dependency>
+                <artifactId>guiyu-callCenter-calloutserver-api</artifactId>
+        <groupId>guiji.ai</groupId>
+        <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -54,12 +60,12 @@
             <version>5.1.34</version>
         </dependency>
 
-        <dependency>
+    <!--     <dependency>
             <groupId>guiji.task.job</groupId>
             <artifactId>guiyu-timerTask-client</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        
+         -->
     </dependencies>
     
       <build>

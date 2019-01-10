@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.FileRecordsMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.FileRecords" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="batchId" property="batchid" jdbcType="INTEGER" />
+    <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="success_count" property="successCount" jdbcType="INTEGER" />
+    <result column="failure_count" property="failureCount" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="robot" property="robot" jdbcType="VARCHAR" />
+    <result column="line_id" property="lineId" jdbcType="VARCHAR" />
+    <result column="call_data" property="callData" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="call_hour" property="callHour" jdbcType="VARCHAR" />
+    <result column="is_clean" property="isClean" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="file_path" property="filePath" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, batchId, batch_name, file_name, success_count, failure_count, create_time, user_id, 
+    org_code, robot, line_id, call_data, `status`, call_hour, is_clean, url, file_path
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.FileRecordsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from file_records
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from file_records
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from file_records
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.FileRecordsExample" >
+    delete from file_records
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.FileRecords" useGeneratedKeys="true"   keyProperty="id"  >
+    insert into file_records (id, batchId, batch_name, 
+      file_name, success_count, failure_count, 
+      create_time, user_id, org_code, 
+      robot, line_id, call_data, 
+      `status`, call_hour, is_clean, 
+      url, file_path)
+    values (#{id,jdbcType=BIGINT}, #{batchid,jdbcType=INTEGER}, #{batchName,jdbcType=VARCHAR}, 
+      #{fileName,jdbcType=VARCHAR}, #{successCount,jdbcType=INTEGER}, #{failureCount,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, 
+      #{robot,jdbcType=VARCHAR}, #{lineId,jdbcType=VARCHAR}, #{callData,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{callHour,jdbcType=VARCHAR}, #{isClean,jdbcType=INTEGER}, 
+      #{url,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.FileRecords" >
+    insert into file_records
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="batchid != null" >
+        batchId,
+      </if>
+      <if test="batchName != null" >
+        batch_name,
+      </if>
+      <if test="fileName != null" >
+        file_name,
+      </if>
+      <if test="successCount != null" >
+        success_count,
+      </if>
+      <if test="failureCount != null" >
+        failure_count,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="robot != null" >
+        robot,
+      </if>
+      <if test="lineId != null" >
+        line_id,
+      </if>
+      <if test="callData != null" >
+        call_data,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="callHour != null" >
+        call_hour,
+      </if>
+      <if test="isClean != null" >
+        is_clean,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="filePath != null" >
+        file_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="batchid != null" >
+        #{batchid,jdbcType=INTEGER},
+      </if>
+      <if test="batchName != null" >
+        #{batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="successCount != null" >
+        #{successCount,jdbcType=INTEGER},
+      </if>
+      <if test="failureCount != null" >
+        #{failureCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="robot != null" >
+        #{robot,jdbcType=VARCHAR},
+      </if>
+      <if test="lineId != null" >
+        #{lineId,jdbcType=VARCHAR},
+      </if>
+      <if test="callData != null" >
+        #{callData,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="callHour != null" >
+        #{callHour,jdbcType=VARCHAR},
+      </if>
+      <if test="isClean != null" >
+        #{isClean,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        #{filePath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.dispatch.dao.entity.FileRecordsExample" resultType="java.lang.Integer" >
+    select count(*) from file_records
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update file_records
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.batchid != null" >
+        batchId = #{record.batchid,jdbcType=INTEGER},
+      </if>
+      <if test="record.batchName != null" >
+        batch_name = #{record.batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileName != null" >
+        file_name = #{record.fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.successCount != null" >
+        success_count = #{record.successCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.failureCount != null" >
+        failure_count = #{record.failureCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.robot != null" >
+        robot = #{record.robot,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lineId != null" >
+        line_id = #{record.lineId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callData != null" >
+        call_data = #{record.callData,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        `status` = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callHour != null" >
+        call_hour = #{record.callHour,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isClean != null" >
+        is_clean = #{record.isClean,jdbcType=INTEGER},
+      </if>
+      <if test="record.url != null" >
+        url = #{record.url,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filePath != null" >
+        file_path = #{record.filePath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update file_records
+    set id = #{record.id,jdbcType=BIGINT},
+      batchId = #{record.batchid,jdbcType=INTEGER},
+      batch_name = #{record.batchName,jdbcType=VARCHAR},
+      file_name = #{record.fileName,jdbcType=VARCHAR},
+      success_count = #{record.successCount,jdbcType=INTEGER},
+      failure_count = #{record.failureCount,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      robot = #{record.robot,jdbcType=VARCHAR},
+      line_id = #{record.lineId,jdbcType=VARCHAR},
+      call_data = #{record.callData,jdbcType=VARCHAR},
+      `status` = #{record.status,jdbcType=VARCHAR},
+      call_hour = #{record.callHour,jdbcType=VARCHAR},
+      is_clean = #{record.isClean,jdbcType=INTEGER},
+      url = #{record.url,jdbcType=VARCHAR},
+      file_path = #{record.filePath,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.FileRecords" >
+    update file_records
+    <set >
+      <if test="batchid != null" >
+        batchId = #{batchid,jdbcType=INTEGER},
+      </if>
+      <if test="batchName != null" >
+        batch_name = #{batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null" >
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="successCount != null" >
+        success_count = #{successCount,jdbcType=INTEGER},
+      </if>
+      <if test="failureCount != null" >
+        failure_count = #{failureCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="robot != null" >
+        robot = #{robot,jdbcType=VARCHAR},
+      </if>
+      <if test="lineId != null" >
+        line_id = #{lineId,jdbcType=VARCHAR},
+      </if>
+      <if test="callData != null" >
+        call_data = #{callData,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="callHour != null" >
+        call_hour = #{callHour,jdbcType=VARCHAR},
+      </if>
+      <if test="isClean != null" >
+        is_clean = #{isClean,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="filePath != null" >
+        file_path = #{filePath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.FileRecords" >
+    update file_records
+    set batchId = #{batchid,jdbcType=INTEGER},
+      batch_name = #{batchName,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      success_count = #{successCount,jdbcType=INTEGER},
+      failure_count = #{failureCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=INTEGER},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      robot = #{robot,jdbcType=VARCHAR},
+      line_id = #{lineId,jdbcType=VARCHAR},
+      call_data = #{callData,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=VARCHAR},
+      call_hour = #{callHour,jdbcType=VARCHAR},
+      is_clean = #{isClean,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      file_path = #{filePath,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

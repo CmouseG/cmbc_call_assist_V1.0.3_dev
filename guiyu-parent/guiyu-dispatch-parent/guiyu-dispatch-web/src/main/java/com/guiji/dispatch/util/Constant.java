@@ -46,18 +46,22 @@ public class Constant {
 
 	public static final Integer THIRD_INTERFACE_RETRYTIMES = 9;
 
-	//任务状态
+	// 任务状态
 	public static final Integer MODULAR_STATUS_START = 0;
 	public static final Integer MODULAR_STATUS_END = 1;
 	public static final Integer MODULAR_STATUS_ERROR = 2;
 
-	//0代表任务模块
+	// 0代表任务模块
 	public static final Integer MODULAR_NAME_DISPATCH = 0;
-	
+
 	public static final Integer BATCH_STATUS_SHOW = 0;
 	public static final Integer BATCH_STATUS_NO = 1;
-	
-	
-	
+
+	public static final Integer INIT = 1;
+	public static final Integer CHECKRESOURCE = 2;
+	public static final Integer PUSHHANDLER = 3;
+
+	public static final Integer NOCALLBACK = 0;
+	public static final Integer CALLBACKED = 1;
 
 }

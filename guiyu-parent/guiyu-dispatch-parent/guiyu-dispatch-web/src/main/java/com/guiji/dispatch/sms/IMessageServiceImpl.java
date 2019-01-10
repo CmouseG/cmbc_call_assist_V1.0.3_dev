@@ -1,4 +1,4 @@
-package com.guiji.dispatch.impl;
+package com.guiji.dispatch.sms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.guiji.dispatch.bean.sendMsgDto;
 import com.guiji.dispatch.controller.ModularLogsOutController;
-import com.guiji.dispatch.service.IMessageService;
 import com.guiji.utils.JsonUtils;
 import com.netflix.discovery.provider.Serializer;
 

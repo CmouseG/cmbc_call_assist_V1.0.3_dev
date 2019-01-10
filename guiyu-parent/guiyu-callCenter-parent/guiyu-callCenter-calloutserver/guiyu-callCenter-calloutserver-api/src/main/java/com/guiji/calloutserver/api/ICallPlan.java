@@ -1,5 +1,6 @@
 package com.guiji.calloutserver.api;
 
+import com.guiji.calloutserver.entity.CallEndIntent;
 import com.guiji.calloutserver.entity.DispatchPlan;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +22,7 @@ public interface ICallPlan {
 
     @ApiOperation(value = "查询电话是否拨打结束")
     @GetMapping("/queryCallState")
-    Result.ReturnData<Boolean> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid);
+    Result.ReturnData<CallEndIntent> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid);
 
     @ApiOperation(value = "查询当前未打完的电话数量")
     @GetMapping("/getNotEndCallCount")

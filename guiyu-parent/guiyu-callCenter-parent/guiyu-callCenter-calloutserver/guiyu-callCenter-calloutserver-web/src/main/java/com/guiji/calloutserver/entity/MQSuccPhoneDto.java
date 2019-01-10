@@ -1,17 +1,14 @@
 package com.guiji.calloutserver.entity;
 
 public class MQSuccPhoneDto {
-	private String planUuid;
+	private String planuuid;
 	private String label;
-
-	public String getPlanUuid() {
-		return planUuid;
+	public String getPlanuuid() {
+		return planuuid;
 	}
-
-	public void setPlanUuid(String planUuid) {
-		this.planUuid = planUuid;
+	public void setPlanuuid(String planuuid) {
+		this.planuuid = planuuid;
 	}
-
 	public String getLabel() {
 		return label;
 	}

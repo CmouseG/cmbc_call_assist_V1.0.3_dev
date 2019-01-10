@@ -5,6 +5,7 @@ import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
+import com.guiji.calloutserver.entity.CallEndIntent;
 import com.guiji.calloutserver.entity.DispatchPlan;
 import com.guiji.calloutserver.eventbus.handler.CallPlanDispatchHandler;
 import com.guiji.calloutserver.manager.CallingCountManager;
@@ -61,15 +62,21 @@ public class CallPlanController implements ICallPlan {
     }
 
     @Override
-    public Result.ReturnData<Boolean> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid) {
+    public Result.ReturnData<CallEndIntent> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid) {
         //需要在planUuid字段上加索引
         CallOutPlan callOutPlan = callOutPlanService.findByPlanUuid(planUuid);
         if(callOutPlan!=null){
+            CallEndIntent callEndIntent = new CallEndIntent();
             if(callOutPlan.getCallState() > ECallState.agent_answer.ordinal()){
-                return Result.ok(true);
+                callEndIntent.setEnd(true);
             }else{
-                return Result.ok(false);
+                callEndIntent.setEnd(false);
             }
+            if(callOutPlan.getAccurateIntent()!=null){
+                callEndIntent.setIntent(callOutPlan.getAccurateIntent());
+            }
+            return Result.ok(callEndIntent);
+
         }
         return Result.error(Constant.ERROR_UUID_NOTFIND);
     }

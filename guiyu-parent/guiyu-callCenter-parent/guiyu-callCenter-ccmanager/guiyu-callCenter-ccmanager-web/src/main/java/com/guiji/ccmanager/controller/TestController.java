@@ -17,9 +17,10 @@ public class TestController {
     public void test(@RequestParam(value = "count", required = true) String count,
                      @RequestParam(value = "tempId", required = true) String tempId,
                      @RequestParam(value = "lineId", required = true) String lineId,
-                     @RequestParam(value = "userId", required = true) String userId) {
+                     @RequestParam(value = "userId", required = true) String userId,
+                     @RequestParam(value = "phoneNum", required = true) String phoneNum) {
         for (int i = 0; i < Integer.valueOf(count); i++) {
-            testController2.test(tempId,Integer.valueOf(lineId),Integer.valueOf(userId));
+            testController2.test(tempId,Integer.valueOf(lineId),Integer.valueOf(userId),phoneNum);
         }
     }
 

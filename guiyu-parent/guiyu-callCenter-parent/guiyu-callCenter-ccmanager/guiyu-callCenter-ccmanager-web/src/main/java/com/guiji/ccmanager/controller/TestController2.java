@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Slf4j
@@ -20,13 +21,16 @@ public class TestController2 {
     ICallPlan iCallPlan;
 
     @Async
-    public void test(String tempId,int line,int userId){
+    public void test(String tempId,int line,int userId,String phoneNum){
         log.info("--------start-------");
         DispatchPlan dispatchPlan = new DispatchPlan();
         dispatchPlan.setBatchId(11);
         dispatchPlan.setLine(line);
         dispatchPlan.setOrgCode("1");
-        dispatchPlan.setPhone("18600397859");
+        Random random = new Random();
+        phoneNum = "1515541"+ random.nextInt(9)+ random.nextInt(9)+
+                random.nextInt(9)+ random.nextInt(9);
+        dispatchPlan.setPhone(phoneNum);
         dispatchPlan.setPlanUuid(UUID.randomUUID().toString().replace("-",""));
         dispatchPlan.setTempId(tempId);
         dispatchPlan.setTts(false);

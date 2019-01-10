@@ -71,7 +71,7 @@ xxl:
       addresses: http://192.168.1.78:18016/xxl-job-admin
     executor:
       ip:
-      port: 9987
+      port: 9031
       logpath: /home/logs/guiyu-dispatch-web
       logretentiondays: -1
     accessToken:

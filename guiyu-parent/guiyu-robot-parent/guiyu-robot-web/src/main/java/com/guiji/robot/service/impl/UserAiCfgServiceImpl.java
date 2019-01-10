@@ -318,7 +318,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				//如果主键为空，那么新增一条信息
 				userAiCfgInfo.setStatus(RobotConstants.USER_CFG_STATUS_S); //正常状态
 				userAiCfgInfo.setCrtTime(new Date());
-				userAiCfgInfoMapper.insert(userAiCfgInfo);
+				int id = userAiCfgInfoMapper.insert(userAiCfgInfo);
+				userAiCfgInfo.setId(id);
 				record.setHandleType(RobotConstants.HANDLE_TYPE_A); //新增
 			}else {
 				//主键不为空，更新信息

@@ -44,18 +44,21 @@ public class AcquireTTSHandler extends IJobHandler{
 		try
 		{
 			returnData = iProcessSchedule.getAllTTS();
-		} catch (Exception e)
+		} 
+		catch (Exception e)
 		{
 			XxlJobLogger.log("Process服务异常...", e);
+			return FAIL;
 		}
 
 		if (returnData != null && returnData.getBody() != null && !returnData.getBody().isEmpty())
 		{
 			processInstanceList = returnData.getBody();
-		} else
+		} 
+		else
 		{
 			XxlJobLogger.log("没有TTS!");
-			return null;
+			return SUCCESS;
 		}
 		XxlJobLogger.log("获取的TTS列表：" + processInstanceList);
 		
@@ -89,7 +92,7 @@ public class AcquireTTSHandler extends IJobHandler{
 			gpuList.add(gpu);
 		}
 		redisUtil.lSet(AiConstants.GUIYUTTS + modelName + AiConstants.AVALIABLE, gpuList);
-		return null;
+		return SUCCESS;
 	}
 
 }

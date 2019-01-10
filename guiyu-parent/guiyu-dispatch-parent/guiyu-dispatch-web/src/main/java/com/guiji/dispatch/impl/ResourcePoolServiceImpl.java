@@ -64,7 +64,8 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         //调用用户中心接口获取当前系统所有企业管理员和企业操作员作为用户集合
         List<SysUser> sysUserList = getAllCompanyUsers();
         //调用呼叫中心获取系统线路总并发数
-        int systemMaxLine = getSystemMaxLine(sysUserList);
+//        int systemMaxLine = getSystemMaxLine(sysUserList);
+        int systemMaxLine = 60;
         redisUtil.set(REDIS_SYSTEM_MAX_LINE,systemMaxLine);
         //所有用户线路并发数求和，与系统机器人总数比较，取最小值作为系统拨打任务最大值，存入redis
         if (systemMaxRobot <= systemMaxLine) {

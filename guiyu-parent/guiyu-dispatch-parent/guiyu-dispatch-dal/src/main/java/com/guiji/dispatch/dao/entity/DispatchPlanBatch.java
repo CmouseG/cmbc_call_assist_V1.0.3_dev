@@ -21,8 +21,19 @@ public class DispatchPlanBatch implements Serializable {
     private Date gmtModified;
 
     private String orgCode;
+    
+    private String batchName;
+    
+    
+    public String getBatchName() {
+		return batchName;
+	}
 
-    private static final long serialVersionUID = 1L;
+	public void setBatchName(String batchName) {
+		this.batchName = batchName;
+	}
+
+	private static final long serialVersionUID = 1L;
 
     public Integer getId() {
         return id;

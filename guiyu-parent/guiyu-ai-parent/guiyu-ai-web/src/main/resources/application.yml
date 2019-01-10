@@ -1,23 +1,24 @@
 server:
   port: 18051
+
 spring:
   application:
     name: guiyu-ai-web
   datasource:
+    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.1.81:3306/guiyu_ai?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: ai
     password: ai@1234
-    driver-class-name: com.mysql.jdbc.Driver
   redis:
     database: 8
-    host: 192.168.1.78
-    password: 123456
+    host: 192.168.1.81
     port: 6379
+    password: 123456
     pool:
       max-active: 8
       max-wait: -1
-      min-idle: 0
       max-idle: 8
+      min-idle: 0
   rabbitmq:
     host: 192.168.1.81
     port: 5672
@@ -30,6 +31,7 @@ mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
 jdbc:
   type: mysql
+
 #注册中心配置      
 eureka:
   instance:
@@ -38,14 +40,15 @@ eureka:
   client:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
-properties:
-  error: properties/error.properties
-  threadpool: properties/threadPool.properties
 
 #网关地址
 gateway:
   host: http://guiyu-cloud-zuul:18000/
-  
+
+properties:
+  error: properties/error.properties
+  threadpool: properties/threadPool.properties
+
 filePath: /home/apps/ai/tts/wav/
 #filePath: E:\file\
 
@@ -57,7 +60,7 @@ xxl:
       addresses: http://192.168.1.78:18016/xxl-job-admin
     executor:
       ip:
-      port: 9987
+      port: 9051
       logpath: /home/logs/guiyu-ai-web
       logretentiondays: -1
     accessToken:

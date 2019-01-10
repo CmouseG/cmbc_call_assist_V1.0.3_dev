@@ -34,4 +34,12 @@ public interface IGetPhonesInterface {
  	 * @return 返回线路
  	 */
  	public List<Integer> getPhonesByCallHourAndUserId(String callhour, Integer userId);
+ 	
+ 	
+	public List<Integer> getUsersByParams(Integer statusPlan, Integer statusSync, String flag);
+
+	List<DispatchPlan> getUsersByParamsByUserId(Integer userId, Integer limit, Integer statusPlan, Integer statusSync,
+			String flag);
+
+	Integer  getCountByUserId(Integer userId,Integer statusPlan,Integer statusSync,String flag);
 }

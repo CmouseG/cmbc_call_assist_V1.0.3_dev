@@ -78,8 +78,19 @@ public class DispatchPlan implements Serializable {
 	
     private String orgCode;
 
+    private Integer fileRecordId;
+    
+    
+    
+    public Integer getFileRecordId() {
+		return fileRecordId;
+	}
 
-    public Integer getStatusShow() {
+	public void setFileRecordId(Integer fileRecordId) {
+		this.fileRecordId = fileRecordId;
+	}
+
+	public Integer getStatusShow() {
 		return statusShow;
 	}
 

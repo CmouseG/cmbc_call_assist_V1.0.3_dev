@@ -42,8 +42,10 @@ public interface DispatchPlanMapper {
 	
 	List<DispatchPlan> selectByCallHour4UserId(DispatchPlan record);
 
+	List<DispatchPlan> selectByCallHour4LineId(DispatchPlan record);
+	
 	int updateDispatchPlanListByStatusSYNC(@Param("params") List<String> list , @Param("status")Integer status);
-	
-	
+
+	int getCountByUserId(DispatchPlan record);
 	
 }

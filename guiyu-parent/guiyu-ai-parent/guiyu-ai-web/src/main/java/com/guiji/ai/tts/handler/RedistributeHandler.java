@@ -56,7 +56,7 @@ public class RedistributeHandler extends IJobHandler
 	public ReturnT<String> execute(String param) throws Exception
 	{
 		Lock lock = new Lock("LOCK_NAME", "LOCK_VALUE");
-		if (distributedLockHandler.tryLock(lock, 5 * 1000L, 100L, 3 * 60 * 1000L)) // 尝试5s,每100ms尝试一次，持锁时间为3分钟
+		if (distributedLockHandler.tryLock(lock, 5*1000L, 100L, 3*60*1000L)) // 尝试5s,每100ms尝试一次，持锁时间为3分钟
 		{
 			try
 			{
@@ -65,21 +65,28 @@ public class RedistributeHandler extends IJobHandler
 				if (resultList == null || resultList.isEmpty())
 				{
 					XxlJobLogger.log("前10分钟内没有请求。");
-					return null;
+					return SUCCESS;
 				}
 				// 重新分配
 				distributionStrategy(resultList);
 
-			} catch (Exception e)
+			} 
+			catch (Exception e)
 			{
 				XxlJobLogger.log("分配失败！", e);
+				return FAIL;
 			}
-			distributedLockHandler.releaseLock(lock); // 释放锁
-		} else
+			finally 
+			{
+				distributedLockHandler.releaseLock(lock); // 释放锁
+			}
+		} 
+		else
 		{
 			XxlJobLogger.log("未能获取锁！！！");
+			return FAIL;
 		}
-		return null;
+		return SUCCESS;
 	}
 	
 	// 分配策略
@@ -215,8 +222,8 @@ public class RedistributeHandler extends IJobHandler
 						redisUtil.lRemove(AiConstants.GUIYUTTS + model + AiConstants.AVALIABLE, 1, obj);
 					}
 				} while (recoverGpuList.size() == changeNum);
-			} else // avaliableGpuList.size() >= changeNum （空闲的GPU数量
-					// 大于等于changeNum）
+			} 
+			else // avaliableGpuList.size() >= changeNum （空闲的GPU数量大于等于changeNum）
 			{
 				// 直接从空闲中取changeNum个
 				for (int i = 0; i < changeNum; i++)

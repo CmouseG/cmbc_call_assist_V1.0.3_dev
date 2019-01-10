@@ -1,4 +1,4 @@
-package com.guiji.dispatch.controller;
+package com.guiji.dispatch.thirdinterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,12 +205,5 @@ public class InterfaceController {
 		return pattern.matcher(str).matches();
 	}
 	
-	@PostMapping("/test")
-	public void test(){
-		DispatchPlan dis = new DispatchPlan();
-		dis.setUserId(1);
-		dis.setPhone("13815443105");
-		dispatchPlanService.test(dis, "A");
-	}
 
 }

@@ -58,13 +58,13 @@ import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
+import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.dao.entity.SmsTunnel;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.sms.IMessageService;
-import com.guiji.dispatch.test.SuccessPhoneMQService;
 import com.guiji.dispatch.util.Base64MD5Util;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
@@ -406,7 +406,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		dto.setPlanuuid(planUuid);
 		dto.setLabel(label);
-		successPhoneMQService.insertSuccesPhone4MQ(dto);
+		 successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
+		 successPhoneMQService.insertCallBack4MQ(dto);
 		// // 写入mq中
 		// MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		// dto.setPlanuuid(planUuid);

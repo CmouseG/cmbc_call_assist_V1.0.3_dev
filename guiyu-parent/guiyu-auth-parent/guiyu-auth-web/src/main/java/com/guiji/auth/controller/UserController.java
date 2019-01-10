@@ -169,6 +169,7 @@ public class UserController implements IAuth{
 		return service.selectLikeUserName(param,userId);
 	}
 
+	@RequestMapping("/user/getAllCompanyUser")
 	@Override
 	public ReturnData<List<SysUser>> getAllCompanyUser() {
 		return new ReturnData<List<SysUser>>(service.getAllCompanyUser());

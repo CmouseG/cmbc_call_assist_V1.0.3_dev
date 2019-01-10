@@ -21,4 +21,19 @@ public class MQConfig {
         return new Queue("dispatch.SuccessPhoneMQ");
     }
     
+    @Bean
+    public Queue filedata() {
+        return new Queue("dispatch.filedata");
+    }
+    @Bean
+    public Queue callBackEvent() {
+        return new Queue("dispatch.CallBackEvent");
+    }
+    @Bean
+    public Queue pushPhonesRecords() {
+        return new Queue("dispatch.PushPhonesRecords");
+    }
+    
+    
+    
 }

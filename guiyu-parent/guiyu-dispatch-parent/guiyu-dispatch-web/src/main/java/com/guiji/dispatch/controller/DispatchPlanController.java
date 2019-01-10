@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
+import com.guiji.dispatch.batchimport.AsynFileService;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -30,6 +31,8 @@ public class DispatchPlanController {
 	static Logger logger = LoggerFactory.getLogger(DispatchPlanController.class);
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
+	@Autowired
+	private  AsynFileService asynFileService;
 
 	/**
 	 * 单个导入任务
@@ -78,7 +81,7 @@ public class DispatchPlanController {
 		MessageDto batchImport = new MessageDto();
 
 		try {
-			dispatchPlanService.batchImport(fileName, userId, file, dispatchPlan,orgCode);
+			asynFileService.batchPlanImport(fileName, userId, file, dispatchPlan,orgCode);
 		} catch (Exception e) {
 			batchImport.setResult(false);
 			batchImport.setMsg(e.getMessage());

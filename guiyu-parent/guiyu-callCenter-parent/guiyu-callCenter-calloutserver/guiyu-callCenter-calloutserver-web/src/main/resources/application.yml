@@ -1,5 +1,8 @@
 server:
   port: 18024
+  tomcat:
+    max-threads: 800
+    max-connections: 20000
 spring:
   application:
     name: guiyu-callCenter-calloutserver

@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Auther: 魏驰
@@ -52,6 +54,7 @@ public class CallPlanDispatchHandler {
         asyncEventBus.register(this);
     }
 
+    private ExecutorService executor = Executors.newCachedThreadPool() ;
 
     /**
      * 在所有资源(模板录音、tts录音、机器人资源)齐备之后，发起外呼
@@ -100,37 +103,45 @@ public class CallPlanDispatchHandler {
     /**
      * 准备发起呼叫
      */
-    @Async
+//    @Async
     public void readyToMakeCall(CallOutPlan callPlan) {
-        log.info("----------- getAvailableSchedules readyToMakeCall callPlan [{}] ", callPlan);
 
-        callPlan.setCallState(ECallState.call_prepare.ordinal());
-        callPlan.setCreateTime(new Date());
-        callPlan.setIsdel(0);
-        callPlan.setIsread(0);
-        callPlan.setBillSec(0);
-        callPlan.setDuration(0);
+        executor.submit(new Runnable(){
+            @Override
+            public void run() {
 
-        callOutPlanService.add(callPlan);
+                log.info("----------- getAvailableSchedules readyToMakeCall callPlan [{}] ", callPlan);
 
-        try {
-            log.info("开始检查机器人资源");
-            callResourceChecker.checkSellbot(callPlan);
-        } catch (NullPointerException e) {
-            //回掉给调度中心，更改通话记录
-            //没有机器人资源，会少一路并发数，直接return了
-            log.warn("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
-            callPlan.setCallState(ECallState.norobot_fail.ordinal());
-            callPlan.setAccurateIntent("W");
-            callPlan.setReason(e.getMessage());
-            callOutPlanService.update(callPlan);
+                callPlan.setCallState(ECallState.call_prepare.ordinal());
+                callPlan.setCreateTime(new Date());
+                callPlan.setIsdel(0);
+                callPlan.setIsread(0);
+                callPlan.setBillSec(0);
+                callPlan.setDuration(0);
 
-            dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W");
-            return;
-        }
+                callOutPlanService.add(callPlan);
 
-        asyncEventBus.post(new CallResourceReadyEvent(callPlan));
-        log.info("--------------CallResourceReadyEvent post " + callPlan.getCallId());
+                try {
+                    log.info("开始检查机器人资源");
+                    callResourceChecker.checkSellbot(callPlan);
+                } catch (NullPointerException e) {
+                    //回掉给调度中心，更改通话记录
+                    //没有机器人资源，会少一路并发数，直接return了
+                    log.warn("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
+                    callPlan.setCallState(ECallState.norobot_fail.ordinal());
+                    callPlan.setAccurateIntent("W");
+                    callPlan.setReason(e.getMessage());
+                    callOutPlanService.update(callPlan);
+
+                    dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W");
+                    return;
+                }
+
+                asyncEventBus.post(new CallResourceReadyEvent(callPlan));
+                log.info("--------------CallResourceReadyEvent post " + callPlan.getCallId());
+            }
+
+        });
 
     }
 

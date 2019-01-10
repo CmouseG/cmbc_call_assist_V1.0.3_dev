@@ -48,7 +48,9 @@ public class CallPlanController implements ICallPlan {
         if(callingCountManager.getCallCount()<Integer.valueOf(callCountMax)){
             if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
                 CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
+
                 callPlanDispatchHandler.readyToMakeCall(callOutPlan);
+
                 log.info(">>>>>>>end startMakeCall dispatchPlan,,ok");//注释掉
                 return Result.ok();
             }else{

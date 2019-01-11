@@ -32,7 +32,8 @@ public class CallingCountManagerImpl implements CallingCountManager {
     @Async
     public void removeOneCall(){
         String key = "callCenter-callCount-"+eurekaManager.getInstanceId();
-        if(redisUtil.get(key)!=null){
+        Object value = redisUtil.get(key);
+        if(value!=null && (int)value>0){
             redisUtil.decr(key,1);
         }else{
             redisUtil.set(key,0);

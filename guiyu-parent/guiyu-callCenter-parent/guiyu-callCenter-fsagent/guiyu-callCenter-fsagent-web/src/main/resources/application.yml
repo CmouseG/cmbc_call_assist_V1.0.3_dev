@@ -23,7 +23,7 @@ job:
 
 path:
     recordPath: D:/record/
-    tempPath: /home/aiwav/temp/
+    tempPath: /home/botstence_tmpl/
     ttsPath: /home/aiwav/tts/
     #tempPath: D:/aiwav/temp/
     tempRecordPath: /home/aiwav

@@ -39,11 +39,13 @@ public class CallBack4MQListener {
 		PushRecords re = new PushRecords();
 		// 设置已经回调的状态
 		re.setCallbackStatus(Constant.CALLBACKED);
-		recordMapper.updateByExampleSelective(re, ex);
-		Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-		if (currentCount > 0) {
-			currentCount = currentCount - 1;
-			redisUtil.set("REDIS_CURRENTLY_COUNT", currentCount);
+		int result = recordMapper.updateByExampleSelective(re, ex);
+		if (result > 0) {
+			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+			if (currentCount > 0) {
+				currentCount = currentCount - 1;
+				redisUtil.set("REDIS_CURRENTLY_COUNT", currentCount);
+			}
 		}
 	}
 }

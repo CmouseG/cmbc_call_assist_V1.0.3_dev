@@ -55,10 +55,10 @@ public class CallStateServiceImpl implements CallStateService {
             endTime = c.getTime();
             c.add(Calendar.MINUTE, -20);
             startTime = c.getTime();
-        }else{//启动的时候，认为服务停掉的48个小时内的数据都要检查一下
+        }else{//启动的时候，认为服务停掉的72个小时内的数据都要检查一下
             c.add(Calendar.MINUTE, -5);
             endTime = c.getTime();
-            c.add(Calendar.HOUR, -48);
+            c.add(Calendar.HOUR, -72);
             startTime = c.getTime();
         }
 

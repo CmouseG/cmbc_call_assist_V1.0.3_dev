@@ -16,9 +16,9 @@ spring:
     username: botstence
     password: botstence@1234
     driver-class-name: com.mysql.jdbc.Driver
-    minIdle: 1  
-    maxActive: 2  
-    initialSize: 1  
+    minIdle: 5
+    maxActive: 200
+    initialSize: 5
     timeBetweenEvictionRunsMillis: 3000  
     minEvictableIdleTimeMillis: 300000  
     validationQuery: SELECT 'ZTM' FROM DUAL  
@@ -27,14 +27,14 @@ spring:
     testOnReturn: false    
   redis:
     database: 0
-    host: 127.0.0.1
+    host: 192.168.1.78
     password: 123456
     port: 6379
     pool:
-      max-active: 8
+      max-active: 400
       max-wait: -1
-      min-idle: 0
-      max-idle: 8
+      min-idle: 100
+      max-idle: 300
   rabbitmq:
     host: 192.168.1.81
     prot: 5672

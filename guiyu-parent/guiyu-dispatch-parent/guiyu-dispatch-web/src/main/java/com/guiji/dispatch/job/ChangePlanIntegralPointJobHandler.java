@@ -1,5 +1,17 @@
 package com.guiji.dispatch.job;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.guiji.dispatch.service.IResourcePoolService;
+import com.guiji.dispatch.state.PhonesJobTask;
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.annotation.JobHandler;
+import com.xxl.job.core.log.XxlJobLogger;
+
 /**
  * 任务Handler示例（Bean模式）
  *
@@ -31,21 +43,22 @@ package com.guiji.dispatch.job;
  * @author zhujiayu 2019-1-8 19:43:36
  *
  */
-//@JobHandler(value="ChangePlanIntegralPointJobHandler")
-//@Component
-//public class ChangePlanIntegralPointJobHandler extends IJobHandler {
-//	private static Logger logger = LoggerFactory.getLogger(ChangePlanIntegralPointJobHandler.class);
-//
-//	@Autowired
-//	private IResourcePoolService resourcePoolService;
-//
-//	@Override
-//	public ReturnT<String> execute(String param) throws Exception {
-//		XxlJobLogger.log("XXL-JOB, ChangePlanIntegralPointJobHandler start.");
-//		//整点切换用户计划分配方法
-//		resourcePoolService.distributeByUser();
-//		XxlJobLogger.log("XXL-JOB, ChangePlanIntegralPointJobHandler end.");
-//		return SUCCESS;
-//	}
-//
-//}
+@JobHandler(value="ChangePlanIntegralPointJobHandler")
+@Component
+public class ChangePlanIntegralPointJobHandler extends IJobHandler {
+
+	private static final Logger logger = LoggerFactory.getLogger(ChangePlanIntegralPointJobHandler.class);
+
+	@Autowired
+	private IResourcePoolService resourcePoolService;
+
+	@Override
+	public ReturnT<String> execute(String param) throws Exception {
+		XxlJobLogger.log("XXL-JOB, ChangePlanIntegralPointJobHandler start.");
+		//整点切换用户计划分配方法
+		resourcePoolService.distributeByUser();
+		XxlJobLogger.log("XXL-JOB, ChangePlanIntegralPointJobHandler end.");
+		return SUCCESS;
+	}
+
+}

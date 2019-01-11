@@ -36,7 +36,13 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setFlag(Constant.IS_FLAG_2);
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
-		return dispatchMapper.selectByCallHour(dis);
+		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis);
+		List<String> ids = new ArrayList<>();
+		for(DispatchPlan plan  : selectByCallHour){
+			ids.add(plan.getPlanUuid());
+		}
+		dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+		return selectByCallHour;
 	}
 
 	@Override

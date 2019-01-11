@@ -3,14 +3,14 @@ package com.guiji.dispatch.state;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
-import com.guiji.dispatch.util.Constant;
 
-@RestController
+//@RestController
+@Component
 public class PhonesJobTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(PhonesJobTask.class);
@@ -19,7 +19,9 @@ public class PhonesJobTask {
 	DistributedLockHandler distributedLockHandler;
 	@Autowired
 	private IphonesThread phoneThread;
-	@PostMapping("execute")
+	
+	
+	@Scheduled(cron = "0 0/1 * * * ?")
 	public void execute() {
 		Lock lock = new Lock("PhonesJobTask", "PhonesJobTask");
 		try {

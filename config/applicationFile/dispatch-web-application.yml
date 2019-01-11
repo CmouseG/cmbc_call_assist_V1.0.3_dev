@@ -11,10 +11,10 @@ spring:
     password: 123456
     port: 6379  
     pool:
-      max-active: 8
-      max-wait: -1
-      min-idle: 0
-      max-idle: 8
+      max-active: 400 # 连接池最大连接数（使用负值表示没有限制
+      max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-idle: 300 # 连接池中的最大空闲连接
+      min-idle: 100 # 连接池中的最小空闲连接  
   cache:
     type: redis
     cache-names: shiro.session,shiro.time 
@@ -63,5 +63,18 @@ jdbc_password0:
      123456
 validationQuery: 
      SELECT1
+
+#xxl-job admin中心配置
+xxl:
+  job:
+    admin:
+      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://192.168.1.78:18016/xxl-job-admin
+    executor:
+      ip:
+      port: 9031
+      logpath: /home/logs/guiyu-robot-web
+      logretentiondays: -1
+    accessToken:
  
         

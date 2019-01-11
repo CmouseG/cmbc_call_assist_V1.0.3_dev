@@ -26,7 +26,7 @@ public class ThreadPlanListener implements ApplicationRunner {
 				redisUtils.set("REDIS_CURRENTLY_COUNT", 0);
 				handler.pushHandler();
 			} catch (Exception e) {
-				logger.error("PlanListener:" + e.getMessage());
+				logger.error("ThreadPlanListener:" + e.getMessage());
 			}
 		}).start();
 	}

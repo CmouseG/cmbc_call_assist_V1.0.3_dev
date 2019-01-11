@@ -2,6 +2,7 @@ package com.guiji.dispatch.config;
 
 import com.guiji.dispatch.bean.DispatchPlanReadHandler;
 import com.guiji.dispatch.state.DispatchPlanCleanHandler;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

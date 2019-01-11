@@ -115,12 +115,12 @@ public class CallPlanController implements ICallPlan {
         return Result.ok(map);
     }*/
 
-    @Override
+/*    @Override
     public Result.ReturnData<Integer> getNotEndCallCount() {
         //需要在状态字段上加索引
         int num = callOutPlanService.getNotEndCallCount();
         return Result.ok(num);
-    }
+    }*/
 
 
 }

@@ -44,8 +44,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	@Autowired
 	private DistributedLockHandler distributedLockHandler;
 
-	@Autowired
-	private RedisUtil redisUtils;
 
 	@Override
 	public void pushHandler() {
@@ -57,7 +55,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 		while (true) {
 			//当前推送记录
-			Integer currentCount = (Integer) redisUtils.get("REDIS_CURRENTLY_COUNT");
+			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
 			//最大并发
 			Integer sysMaxPlan = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
 			if (currentCount < sysMaxPlan) {
@@ -89,9 +87,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 						break;
 					}
 					// redis修改变量
-					Integer addup = (Integer) redisUtils.get("REDIS_CURRENTLY_COUNT");
+					Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
 					addup = addup + 1;
-					redisUtils.set("REDIS_CURRENTLY_COUNT", addup);
+					redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
 				}
 			}
 		}

@@ -19,7 +19,7 @@ import com.guiji.dispatch.util.Constant;
 @Service
 public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 
-	private static final Logger logger = LoggerFactory.getLogger(IPushPhonesHandlerImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PushPhonesHandlerImpl.class);
 
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;

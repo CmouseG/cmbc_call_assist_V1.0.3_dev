@@ -25,7 +25,7 @@ public class PhonesJobContext implements IPhonesJobContext {
 		} else if (stateType == Constant.CHECKRESOURCE) {
 			res.Handler(list);
 		}else if(stateType == Constant.PUSHHANDLER){
-			handler.pushHandler();
+//			handler.pushHandler();
 		}
 	}
 }

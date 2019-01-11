@@ -149,7 +149,7 @@ public class LineInfoServiceImpl implements LineInfoService {
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_ADDLINE);
         }
         //读取所有的calloutserver，将线路并发数平分到各个calloutserver，存储到linecount表中
-        List<String> listServer = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
+/*        List<String> listServer = ServerUtil.getInstances(discoveryClient,Constant.SERVER_NAME_CALLOUTSERVER);
         int maxAll = lineInfoVO.getMaxConcurrentCalls();
         int count = listServer.size();
         int maxcon = maxAll/count;
@@ -165,7 +165,7 @@ public class LineInfoServiceImpl implements LineInfoService {
             }
             lineCount.setUsedConcurrentCalls(0);
             lineCountMapper.insert(lineCount);
-        }
+        }*/
         //刷新redis缓存
         if(lineInfoVO!=null && lineInfoVO.getCustomerId()!=null){
             List<LineInfo> lineInfos = getLineInfoByCustomerId(lineInfoVO.getCustomerId());

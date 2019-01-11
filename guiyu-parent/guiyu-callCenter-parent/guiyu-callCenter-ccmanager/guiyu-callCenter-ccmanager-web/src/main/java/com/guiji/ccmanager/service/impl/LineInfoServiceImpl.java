@@ -1,10 +1,7 @@
 package com.guiji.ccmanager.service.impl;
 
 import com.guiji.auth.api.IAuth;
-import com.guiji.callcenter.dao.LineCountMapper;
 import com.guiji.callcenter.dao.LineInfoMapper;
-import com.guiji.callcenter.dao.entity.LineCount;
-import com.guiji.callcenter.dao.entity.LineCountExample;
 import com.guiji.callcenter.dao.entity.LineInfo;
 import com.guiji.callcenter.dao.entity.LineInfoExample;
 import com.guiji.ccmanager.constant.CcmanagerExceptionEnum;
@@ -20,12 +17,9 @@ import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysRole;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
-import com.guiji.utils.ServerUtil;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +46,6 @@ public class LineInfoServiceImpl implements LineInfoService {
     private LineInfoMapper lineInfoMapper;
     @Autowired
     private ILineOper lineOperApiFeign;
-    @Autowired
-    private LineCountMapper lineCountMapper;
     @Autowired
     private DiscoveryClient discoveryClient;
     @Autowired
@@ -250,10 +242,10 @@ public class LineInfoServiceImpl implements LineInfoService {
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);
         }
         //删除linecount中对应的线路并发数信息
-        LineCountExample example = new LineCountExample();
+/*        LineCountExample example = new LineCountExample();
         LineCountExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(Integer.valueOf(id));
-        lineCountMapper.deleteByExample(example);
+        lineCountMapper.deleteByExample(example);*/
         //刷新redis缓存
         if(lineInfo!=null && lineInfo.getCustomerId()!=null){
             List<LineInfo> lineInfos = getLineInfoByCustomerId(String.valueOf(lineInfo.getCustomerId()));

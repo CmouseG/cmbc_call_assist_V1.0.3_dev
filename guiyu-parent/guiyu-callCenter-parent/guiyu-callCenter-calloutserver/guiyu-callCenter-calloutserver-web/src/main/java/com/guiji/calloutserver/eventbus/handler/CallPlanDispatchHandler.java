@@ -84,7 +84,6 @@ public class CallPlanDispatchHandler {
         callOutRecord.setRecordFile(recordFileName);
         callOutRecordService.save(callOutRecord);
 
-        callingCountManager.addOneCall();
         //构建外呼命令，发起外呼
         callService.makeCall(callplan, callOutRecord);
     }
@@ -119,8 +118,16 @@ public class CallPlanDispatchHandler {
                 callPlan.setBillSec(0);
                 callPlan.setDuration(0);
 
-                callOutPlanService.add(callPlan);
-
+                try {
+                    callOutPlanService.add(callPlan);
+                    callingCountManager.addOneCall();
+                } catch (Exception ex) {
+                    log.warn("插入calloutplan异常,重复的uuid", ex);
+                    //重复的id，回调
+                    dispatchService.successSchedule(callPlan.getPlanUuid(), null, null);
+                    callingCountManager.removeOneCall();
+                    return;
+                }
                 try {
                     log.info("开始检查机器人资源");
                     callResourceChecker.checkSellbot(callPlan);
@@ -134,6 +141,7 @@ public class CallPlanDispatchHandler {
                     callOutPlanService.update(callPlan);
 
                     dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W");
+                    callingCountManager.removeOneCall();
                     return;
                 }
 

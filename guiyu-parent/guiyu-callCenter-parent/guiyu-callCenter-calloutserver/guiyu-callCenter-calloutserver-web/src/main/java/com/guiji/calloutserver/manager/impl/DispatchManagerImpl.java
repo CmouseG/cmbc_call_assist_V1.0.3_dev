@@ -34,7 +34,9 @@ public class DispatchManagerImpl implements DispatchManager {
         }
         MQSuccPhoneDto mqSuccPhoneDto = new MQSuccPhoneDto();
         mqSuccPhoneDto.setPlanuuid(callId);
-        mqSuccPhoneDto.setLabel(intent);
+        if(intent!=null){
+            mqSuccPhoneDto.setLabel(intent);
+        }
         rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto));
         rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));
         log.info("========successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);

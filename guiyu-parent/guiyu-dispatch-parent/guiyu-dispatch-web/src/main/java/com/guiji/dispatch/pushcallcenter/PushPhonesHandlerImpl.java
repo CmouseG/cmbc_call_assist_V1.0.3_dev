@@ -15,6 +15,7 @@ import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.PushRecords;
 import com.guiji.dispatch.util.Constant;
@@ -40,10 +41,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	private AmqpTemplate rabbitTemplate;
 
 	@Autowired
+	private DispatchPlanMapper disMapper;
+
+	@Autowired
 	private ICallPlan callPlanCenter;
 	@Autowired
 	private DistributedLockHandler distributedLockHandler;
-
 
 	@Override
 	public void pushHandler() {
@@ -54,14 +57,14 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		logger.info("*********************pushHandler**********************");
 
 		while (true) {
-			//当前推送记录
+			// 当前推送记录
 			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-			//最大并发
+			// 最大并发
 			Integer sysMaxPlan = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
 			if (currentCount < sysMaxPlan) {
 				Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
 				if (distributedLockHandler.isLockExist(lock)) {
-					break;
+					continue;
 				}
 				DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
 				if (object != null) {
@@ -74,17 +77,20 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 						callBean.setTempId(object.getRobot());
 						list.add(callBean);
 					} catch (IllegalAccessException e) {
+						updateStatusSync(object.getPlanUuid());
 						logger.error("error", e);
-						break;
+						continue;
 					} catch (InvocationTargetException e) {
+						updateStatusSync(object.getPlanUuid());
 						logger.error("error", e);
-						break;
+						continue;
 					}
 					logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
 					ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
 					if (!startMakeCall.success) {
+						updateStatusSync(object.getPlanUuid());
 						logger.info("启动呼叫中心任务失败");
-						break;
+						continue;
 					}
 					// redis修改变量
 					Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
@@ -92,6 +98,14 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
 				}
 			}
+		}
+	}
+
+	public void updateStatusSync(String planUUID) {
+		List<String> list = new ArrayList<>();
+		list.add(planUUID);
+		if (list.size() > 0) {
+			disMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
 		}
 	}
 

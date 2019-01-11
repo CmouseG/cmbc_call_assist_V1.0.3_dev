@@ -28,7 +28,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
     private static final String REDIS_SYSTEM_MAX_PLAN_BY = "REDIS_SYSTEM_MAX_PLAN_BY";
     private static final String REDIS_USER_MAX_ROBOT = "REDIS_USER_MAX_ROBOT";
     private static final String REDIS_USER_MAX_LINE = "REDIS_USER_MAX_LINE";
-    private static final int QUEUE_SIZE = 1000;
+    private static final int QUEUE_SIZE = 160;
     @Autowired
     private RedisUtil redisUtil;
     @Autowired

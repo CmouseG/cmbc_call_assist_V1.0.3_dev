@@ -105,7 +105,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 
 	@Override
 	public boolean resetPhoneSyncStatus(List<String> planuuidIds) {
-		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_1);
+		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_0);
 		return result > 0 ? true : false;
 	}
 

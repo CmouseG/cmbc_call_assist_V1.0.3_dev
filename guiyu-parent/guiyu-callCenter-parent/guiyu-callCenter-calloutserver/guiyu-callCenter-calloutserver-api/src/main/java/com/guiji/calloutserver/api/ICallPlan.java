@@ -24,9 +24,9 @@ public interface ICallPlan {
     @GetMapping("/queryCallState")
     Result.ReturnData<CallEndIntent> isCallEnd(@RequestParam(value = "planUuid", required = true) String planUuid);
 
-    @ApiOperation(value = "查询当前未打完的电话数量")
+/*    @ApiOperation(value = "查询当前未打完的电话数量")
     @GetMapping("/getNotEndCallCount")
-    Result.ReturnData<Integer> getNotEndCallCount();
+    Result.ReturnData<Integer> getNotEndCallCount();*/
 
 /*    @ApiOperation(value = "模板是否准备好，呼叫中心内部使用，外部勿用")
     @PostMapping("/isTempOk")

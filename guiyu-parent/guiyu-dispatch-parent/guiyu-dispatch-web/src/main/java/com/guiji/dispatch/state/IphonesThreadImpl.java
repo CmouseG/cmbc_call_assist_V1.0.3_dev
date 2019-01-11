@@ -22,7 +22,7 @@ public class IphonesThreadImpl implements IphonesThread {
 	@Override
 	public void execute() {
 		// 每次最大查询
-		Integer maxLimit = 100;
+		Integer maxLimit = 500;
 		// 获取当前可以拨打的用户id group by
 		List<Integer> userIds = getPhones.getUsersByParams(Constant.STATUSPLAN_1, Constant.STATUS_SYNC_0,
 				Constant.IS_FLAG_0);

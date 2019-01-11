@@ -48,12 +48,12 @@ public class CallStateServiceImpl implements CallStateService {
         criteria.andServeridEqualTo(serverid);
 
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, -5);
+        c.add(Calendar.MINUTE, -10);
         Date endTime = c.getTime();
-        c.add(Calendar.MINUTE, -15);
+        c.add(Calendar.MINUTE, -20);
         Date startTime = c.getTime();
         criteria.andCreateTimeGreaterThan(startTime);
-        if (isDelay) {  //启动程序的时候去检查，不用排除当前5分钟
+        if (isDelay) {  //启动程序的时候去检查，不用排除当前10分钟
             criteria.andCreateTimeLessThan(endTime);
         }
         log.info("------>>>startTime[{}],endTime[{}]", startTime, endTime);

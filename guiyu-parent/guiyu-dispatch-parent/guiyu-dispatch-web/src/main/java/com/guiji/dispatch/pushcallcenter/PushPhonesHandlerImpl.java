@@ -50,11 +50,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	@Override
 	public void pushHandler() {
-		logger.info("*********************pushHandler**********************");
-		logger.info("*********************pushHandler**********************");
-		logger.info("*********************pushHandler**********************");
-		logger.info("*********************pushHandler**********************");
-		logger.info("*********************pushHandler**********************");
 
 		while (true) {
 			// 当前推送记录
@@ -96,6 +91,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
 					addup = addup + 1;
 					redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
+				} else {
+					logger.info("redis里面没数据");
 				}
 			}
 		}

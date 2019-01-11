@@ -48,14 +48,22 @@ public class CallStateServiceImpl implements CallStateService {
         criteria.andServeridEqualTo(serverid);
 
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, -10);
-        Date endTime = c.getTime();
-        c.add(Calendar.MINUTE, -20);
-        Date startTime = c.getTime();
-        criteria.andCreateTimeGreaterThan(startTime);
-        if (isDelay) {  //启动程序的时候去检查，不用排除当前10分钟
-            criteria.andCreateTimeLessThan(endTime);
+        Date endTime = null;
+        Date startTime = null;
+        if(isDelay){
+            c.add(Calendar.MINUTE, -10);
+            endTime = c.getTime();
+            c.add(Calendar.MINUTE, -20);
+            startTime = c.getTime();
+        }else{//启动的时候，认为服务停掉的48个小时内的数据都要检查一下
+            c.add(Calendar.MINUTE, -5);
+            endTime = c.getTime();
+            c.add(Calendar.HOUR, -48);
+            startTime = c.getTime();
         }
+
+        criteria.andCreateTimeGreaterThan(startTime);
+        criteria.andCreateTimeLessThan(endTime);
         log.info("------>>>startTime[{}],endTime[{}]", startTime, endTime);
 
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);

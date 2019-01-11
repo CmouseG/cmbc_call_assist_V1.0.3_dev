@@ -12,10 +12,12 @@ import com.guiji.dispatch.dao.entity.PushRecords;
 import com.guiji.dispatch.dao.entity.PushRecordsExample;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
 import com.rabbitmq.client.Channel;
 
 /**
  * 呼叫中心回调记录
+ * 
  * @author Administrator
  *
  */
@@ -23,9 +25,9 @@ import com.rabbitmq.client.Channel;
 @RabbitListener(queues = "dispatch.CallBackEvent")
 public class CallBack4MQListener {
 	@Autowired
-	private IPushPhonesHandler pushHandler;
-	@Autowired
 	private PushRecordsMapper recordMapper;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
@@ -35,10 +37,13 @@ public class CallBack4MQListener {
 		ex.createCriteria().andPlanuuidEqualTo(mqSuccPhoneDto.getPlanuuid())
 				.andCallbackStatusEqualTo(Constant.NOCALLBACK);
 		PushRecords re = new PushRecords();
-		//设置已经回调的状态
+		// 设置已经回调的状态
 		re.setCallbackStatus(Constant.CALLBACKED);
 		recordMapper.updateByExampleSelective(re, ex);
-		// 每次回调都去判断当前并发数量是否负载充分
-		pushHandler.pushHandler();
+		Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+		if (currentCount > 0) {
+			currentCount = currentCount - 1;
+			redisUtil.set("REDIS_CURRENTLY_COUNT", currentCount);
+		}
 	}
 }

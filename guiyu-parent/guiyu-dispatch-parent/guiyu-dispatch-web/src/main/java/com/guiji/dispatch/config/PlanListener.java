@@ -1,6 +1,5 @@
 package com.guiji.dispatch.config;
 
-import com.guiji.dispatch.impl.ResourcePoolServiceImpl;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

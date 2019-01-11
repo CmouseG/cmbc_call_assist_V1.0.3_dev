@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import com.guiji.dispatch.util.Constant;
 
 @Service
 public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
+
+	private static final Logger logger = LoggerFactory.getLogger(IPushPhonesHandlerImpl.class);
 
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
@@ -37,11 +41,14 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis);
+		logger.info("getPhonesByParams  selectByCallHour size"+selectByCallHour);
 		List<String> ids = new ArrayList<>();
-		for(DispatchPlan plan  : selectByCallHour){
+		for (DispatchPlan plan : selectByCallHour) {
 			ids.add(plan.getPlanUuid());
 		}
-		dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+		if (ids.size() > 0) {
+			dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+		}
 		return selectByCallHour;
 	}
 

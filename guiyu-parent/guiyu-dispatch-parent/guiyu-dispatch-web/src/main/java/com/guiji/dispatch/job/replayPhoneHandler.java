@@ -13,9 +13,9 @@ import com.xxl.job.core.handler.annotation.JobHandler;
 
 @JobHandler(value = "replayPhoneHandler")
 @Component
-public class replayPhoneHandler extends IJobHandler {
+public class ReplayPhoneHandler extends IJobHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(replayPhoneHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReplayPhoneHandler.class);
 
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
@@ -37,7 +37,7 @@ public class replayPhoneHandler extends IJobHandler {
 		logger.info("-----------------------------------------------------------------");
 		dispatchPlanService.updateReplayDate(true);
 		dispatchPlanService.updateReplayDate(false);
-		return null;
+		return SUCCESS;
 	}
 
 }

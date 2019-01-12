@@ -68,7 +68,7 @@ xxl:
   job:
     admin:
       ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.78:18016/xxl-job-admin
+      addresses: http://192.168.1.57:18016/xxl-job-admin
     executor:
       ip:
       port: 9031
@@ -76,4 +76,3 @@ xxl:
       logretentiondays: -1
     accessToken:
  
-        

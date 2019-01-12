@@ -50,7 +50,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	@Override
 	public void pushHandler() {
-
+		Integer currentCount1 = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+		Integer sysMaxPlan1 = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
+		logger.info("----------currentCount1----------"+currentCount1);
+		logger.info("----------sysMaxPlan1----------"+sysMaxPlan1);
 		while (true) {
 			// 当前推送记录
 			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
@@ -59,6 +62,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			if (currentCount < sysMaxPlan) {
 				Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
 				if (distributedLockHandler.isLockExist(lock)) {
+					logger.info("redis锁了  redisPlanQueueLock");
 					continue;
 				}
 				DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
@@ -92,7 +96,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					addup = addup + 1;
 					redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
 				} else {
-					logger.info("redis里面没数据");
+					logger.debug("redis里面没数据");
 				}
 			}
 		}

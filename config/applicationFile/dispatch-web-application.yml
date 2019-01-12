@@ -73,7 +73,7 @@ xxl:
     executor:
       ip:
       port: 9031
-      logpath: /home/logs/guiyu-robot-web
+      logpath: /home/logs/guiyu-dispatch-web
       logretentiondays: -1
     accessToken:
  

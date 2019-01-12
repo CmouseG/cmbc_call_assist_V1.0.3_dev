@@ -1161,8 +1161,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public boolean updateReplayDate(Boolean flag) {
 		if (flag) {
-			// 0不清除的话刷新日期 1清除的话那么就是暂停状态
-			// 执行当前不清除并且刷新日期的操作
 			Date d = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String dateNowStr = sdf.format(d);
@@ -1183,9 +1181,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			dispatchPlanMapper.updateByExampleSelective(dis, ex);
-			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
-			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
+			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		} else {
 			Date d = new Date();
@@ -1193,7 +1192,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			String dateNowStr = sdf.format(d);
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(Constant.STATUSPLAN_4);
-			dis.setStatusSync(Constant.STATUS_SYNC_0);
+			dis.setStatusSync(Constant.STATUS_SYNC_1);
 			dis.setClean(Constant.IS_CLEAN_1);
 			try {
 				dis.setGmtModified(DateUtil.getCurrent4Time());
@@ -1204,9 +1203,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
-			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
-			dispatchPlanMapper.updateByExampleSelective(dis, ex);
+			dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		}
 	}

@@ -59,7 +59,10 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 			if (currentQueueSize < systemMaxPlan * 2) {
 				logger.debug("当前redis池中的拨打队列小于阈值[最大并发数的2倍]，开始拉去新一批数据入redis队列");
 				// 2.按小时获取当前时间段有拨打计划的用户，按1000条进redis拨打队列为总数，分别计算[用户、线路]拨打数量(按用户划分后，各用户线路均分)
-				pushPlan2Queue(getDispatchPlan(DateUtil.getCurrentHour()));
+				List<DispatchPlan> dispatchPlanList = getDispatchPlan(DateUtil.getCurrentHour());
+				if (dispatchPlanList.size() > 0) {
+					pushPlan2Queue(dispatchPlanList);
+				}
 			}
 			Thread.sleep(20);
 		}
@@ -97,7 +100,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 		int systemMaxPlan = redisUtil.get(REDIS_SYSTEM_MAX_PLAN) == null ? 0
 				: (int) redisUtil.get(REDIS_SYSTEM_MAX_PLAN);
 		if (systemMaxPlan != 0) {
-			QUEUE_SIZE =  systemMaxPlan * 3;
+			QUEUE_SIZE = systemMaxPlan * 3;
 		}
 		List<UserResourceDto> userPlanList = getUserPlanList(userCallPlanList, totalSize, QUEUE_SIZE);
 

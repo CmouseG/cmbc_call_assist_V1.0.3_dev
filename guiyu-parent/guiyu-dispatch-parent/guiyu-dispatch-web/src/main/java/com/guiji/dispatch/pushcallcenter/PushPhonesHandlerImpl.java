@@ -96,7 +96,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					addup = addup + 1;
 					redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
 				} else {
-					logger.debug("redis里面没数据");
+//					logger.debug("redis里面没数据");
 				}
 			}
 		}

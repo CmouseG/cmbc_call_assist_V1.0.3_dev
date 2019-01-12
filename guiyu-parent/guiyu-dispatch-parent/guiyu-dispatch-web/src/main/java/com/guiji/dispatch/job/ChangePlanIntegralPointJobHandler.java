@@ -42,7 +42,7 @@ import com.xxl.job.core.log.XxlJobLogger;
  * @author zhujiayu 2019-1-8 19:43:36
  *
  */
-@JobHandler(value="ChangePlanIntegralPointJobHandler")
+@JobHandler(value="changePlanIntegralPointJobHandler")
 @Component
 public class ChangePlanIntegralPointJobHandler extends IJobHandler {
 

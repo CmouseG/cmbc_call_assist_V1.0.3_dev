@@ -1,6 +1,7 @@
 package com.guiji.robot.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.guiji.common.model.Page;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
@@ -53,6 +54,18 @@ public interface IUserAiCfgService {
 	 * @return
 	 */
 	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(int pageNo, int pageSize,String userId);
+	
+	/**
+	 * 按用户查询用户配置的模板分配的机器人数量
+	 * 如：用户配置的总机器人50路
+	 * T1 - 10
+	 * T1,T2 - 30
+	 * T1,T3 - 10
+	 * 那么返回的是：{T1:50,T2:30,T3:10}
+	 * @param userId
+	 * @return
+	 */
+	public Map<String,Integer> queryTemplateAi(String userId);
 	
 	
 	/**

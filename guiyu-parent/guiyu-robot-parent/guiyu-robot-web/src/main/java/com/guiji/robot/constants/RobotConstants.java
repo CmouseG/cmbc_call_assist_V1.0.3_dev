@@ -52,6 +52,7 @@ public class RobotConstants {
 	
 	public static final String LOCK_NAME_CFG = "LOCK_ROBOT_USER_AI_CFG_";	//资源锁-用户机器人数量变更
 	public static final String LOCK_NAME_ASSIGN = "LOCK_ROBOT_USER_AI_ASSIGN_";	//资源锁-用户机器人分配
+	public static final String LOCK_ROBOT_AIPOOL = "LOCK_ROBOT_AIPOOL";	//资源锁-机器人池初始化
 	
 	/**
 	 * 通话状态
@@ -71,6 +72,11 @@ public class RobotConstants {
 	 */
 	public static final String HELLO_STATUS_PLAY = "play"; //播放
 	public static final String HELLO_STATUS_WAIT = "wait"; //继续不做动作
+	
+	/**
+	 * AI资源池
+	 */
+	public static final String ROBOT_POOL_AI = "ROBOT_POOL_AI";
 	
 	/**
 	 * 分配的机器人缓存

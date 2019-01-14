@@ -2,8 +2,10 @@ package com.guiji.robot.service;
 
 import java.util.List;
 
+import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.service.vo.AiInuseCache;
-import com.guiji.robot.service.vo.AiResourceApply;
+import com.guiji.robot.service.vo.AiPoolInfo;
+import com.guiji.robot.service.vo.UserResourceCache;
 
 /** 
 * @ClassName: IAiResourceManagerService 
@@ -14,16 +16,34 @@ import com.guiji.robot.service.vo.AiResourceApply;
 public interface IAiResourceManagerService {
 	
 	/**
-	 * 机器人资源分配
-	 * @param checkAiReady
+	 * 从AI资源池中获取所有机器人
 	 * @return
 	 */
-	List<AiInuseCache> aiAssign(AiResourceApply aiResourceApply);
+	public List<AiInuseCache> queryAiPoolList();
 	
+	/**
+	 * 重新加载sellbot资源
+	 */
+	public void reloadSellbotResource();
+	
+	/**
+	 * 查询机器人资源池概况
+	 * @return
+	 */
+	AiPoolInfo queryAiPoolInfo();
+	
+	/**
+	 * 从机器人资源池中分配一个机器人给本次申请
+	 * @param aiCallApplyReq
+	 * @return
+	 */
+	AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq);
 	
 	/**
 	 * 机器人资源释放还回进程资源池
-	 * @param AaiInuseCache
+	 * 1、将用户inuse缓存清理掉
+	 * 2、将机器人资源池中的机器人状态置为闲
+	 * @param aiInuse
 	 */
 	void aiRelease(AiInuseCache aiInuse);
 	
@@ -32,7 +52,7 @@ public interface IAiResourceManagerService {
 	 * 机器人资源释放还回进程资源池
 	 * @param aiList
 	 */
-	void aiBatchRelease(List<AiInuseCache> aiList);
+	void aiBatchRtnProcess(List<AiInuseCache> aiList);
 	
 
 	/**

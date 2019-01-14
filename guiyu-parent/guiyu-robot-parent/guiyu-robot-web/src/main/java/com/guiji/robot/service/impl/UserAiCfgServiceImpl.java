@@ -3,8 +3,10 @@ package com.guiji.robot.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -504,7 +506,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				if(userAiInUseLis == null || userAiInUseLis.isEmpty()) {
 					userResourceCache.setChgStatus(null);
 				}
-				aiCacheService.putUserResource(userResourceCache);
+				//资源变更，删除后，重新查询
+				aiCacheService.delUserResource(userAiCfgInfo.getUserId());
 				//落库
 				userAiCfgInfo = this.saveOrUpdate(userAiCfgInfo);
 				return userAiCfgInfo;
@@ -587,6 +590,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				try {
 					//根据id查询用户存量缓存数据
 					UserAiCfgInfo existUserAiCfgInfo = userAiCfgInfoMapper.selectByPrimaryKey(id);
+					//删除数据
+					userAiCfgInfoMapper.deleteByPrimaryKey(id);
 					if(existUserAiCfgInfo != null) {
 						if(RobotConstants.USER_CFG_STATUS_S == existUserAiCfgInfo.getStatus()) {
 							//如果删除的是正常的数据，那么需要做下变更
@@ -604,12 +609,11 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 							if(userAiInUseLis == null || userAiInUseLis.isEmpty()) {
 								userResourceCache.setChgStatus(null);
 							}
-							aiCacheService.putUserResource(userResourceCache);
+							//资源变更，删除后，重新查询
+							aiCacheService.delUserResource(existUserAiCfgInfo.getUserId());
 						}else {
 							logger.info("本次删除的是状态不正常的数据{}，不需要触发资源变更！",id);
 						}
-						//删除数据
-						userAiCfgInfoMapper.deleteByPrimaryKey(id);
 						//记录一条用户账户变更历史
 						UserAiCfgHisInfo record = new UserAiCfgHisInfo();
 						record.setCrtTime(new Date());
@@ -669,6 +673,35 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 按用户查询用户配置的模板分配的机器人数量
+	 * 如：用户配置的总机器人50路
+	 * T1 - 10
+	 * T1,T2 - 30
+	 * T1,T3 - 10
+	 * 那么返回的是：{T1:50,T2:30,T3:10}
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public Map<String,Integer> queryTemplateAi(String userId){
+		//现在用户按模板机器人数量的配置
+		Map<String,Integer> tempAiCfgMap = new HashMap<String,Integer>();
+		List<UserAiCfgInfo> userAiCfgList = this.queryUserAiCfgListByUserId(userId);
+		//设置每个模板总计多少路机器人
+		for(UserAiCfgInfo cfg:userAiCfgList) {
+			if(RobotConstants.USER_CFG_STATUS_S == cfg.getStatus()) {
+				String templates = cfg.getTemplateIds();
+				String[] tempateArray = templates.split(",");
+				for(String templateId : tempateArray) {
+					tempAiCfgMap.put(templateId, tempAiCfgMap.get(templateId)==null?cfg.getAiNum():tempAiCfgMap.get(templateId)+cfg.getAiNum());
+				}
+			}
+		}
+		return tempAiCfgMap;
 	}
 	
 	

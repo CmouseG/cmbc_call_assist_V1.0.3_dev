@@ -46,7 +46,6 @@ import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiFlowSentenceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
-import com.guiji.robot.service.vo.AiResourceApply;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.SellbotMatchReq;
 import com.guiji.robot.service.vo.SellbotRestoreReq;
@@ -54,7 +53,6 @@ import com.guiji.robot.service.vo.SellbotSayhelloReq;
 import com.guiji.robot.service.vo.UserResourceCache;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
-import com.guiji.utils.DateUtil;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -243,7 +241,6 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	
 	/**
 	 * 机器人资源申请（准备拨打电话）
-	 * 每个用户资源分配高并发时会冲突，增加并发锁
 	 * 1、资源准备
 	 * 	  1.1、检查用户资源变更锁，如果减少，那么返回准备失败结果，如果是资源增加了，那么确认下增加了多少，并重新获取并分配下资源。
 	 *    1.2、检查用户是否满负荷在跑，如果没有满负荷，那么拉起机器人满负荷运行。
@@ -268,90 +265,23 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
-		Lock lock = new Lock(RobotConstants.LOCK_NAME_ASSIGN+aiCallApplyReq.getUserId(), RobotConstants.LOCK_NAME_ASSIGN+aiCallApplyReq.getUserId());
-		if (distributedLockHandler.tryLock(lock)) {
-			try {
-				String userId = aiCallApplyReq.getUserId();
-				/**2、资源校验以及准备**/
-				UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
-				if(userResourceCache == null) {
-					//用户无机器人资源
-					throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
-				}
-				//查询用户已分配的机器人
-				List<AiInuseCache> userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
-				//如果没有分配机器人，不需要校验资源变更状态，直接分配
-				if(userAiInuseList == null || userAiInuseList.isEmpty()) {
-					//用户资源没有变化，但是如果用户现在还没有分配资源，那么重新分配机器人
-					//本次需要申请的机器人数量
-					int addAiNum = userResourceCache.getAiNum();
-					logger.info("用户{}现在还没有初始化可用资源，重新分配{}个机器人",userResourceCache.getUserId(),addAiNum);
-					if(addAiNum > 0) {
-						AiResourceApply aiResourceApply = new AiResourceApply();
-						aiResourceApply.setUserId(userId);
-						aiResourceApply.setAiNum(addAiNum);
-						iAiResourceManagerService.aiAssign(aiResourceApply);
-					}
-				}else if(StrUtils.isNotEmpty(userResourceCache.getChgStatus())){
-					//否则已经分配过机器人,那么根据资源变更状态,重新分配下
-					if(RobotConstants.USER_CHG_STATUS_A.equals(userResourceCache.getChgStatus())) {
-						//用户资源增加
-						//本次需要申请的机器人数量
-						int addAiNum = 0;
-						if(ListUtil.isNotEmpty(userAiInuseList)) {
-							//目前用户总机器人数量-已分配的机器人数量
-							addAiNum = userResourceCache.getAiNum() - userAiInuseList.size();
-						}else {
-							addAiNum = userResourceCache.getAiNum();
-						}
-						if(addAiNum >0) {
-							//本次需要分配的机器人数量>0，调用进程管理重新分配机器人
-							AiResourceApply aiResourceApply = new AiResourceApply();
-							aiResourceApply.setUserId(userId);
-							aiResourceApply.setAiNum(addAiNum);
-							iAiResourceManagerService.aiAssign(aiResourceApply);
-						}
-						//新增完成后，将用户资源状态设置为正常
-						userResourceCache.setChgStatus(null);
-						aiCacheService.putUserResource(userResourceCache);
-					}else if(RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())){
-						//用户资源减少，先将现在空闲的机器人释放掉
-						this.releaseFreeAi(userId,userAiInuseList);
-						throw new RobotException(AiErrorEnum.AI00060004.getErrorCode(),AiErrorEnum.AI00060004.getErrorMsg());
-					}
-				}
-				/**3、机器人分配 **/
-				AiInuseCache nowAi = null;  //本次要分配的机器人
-				//重新查询机器人
-				userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
-				if(ListUtil.isNotEmpty(userAiInuseList)) {
-					for(AiInuseCache aiInuseCache : userAiInuseList){
-						//检查要是空闲的机器人
-						if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
-							//检查要模板匹配
-							if(aiInuseCache.getTemplateIds().contains(aiCallApplyReq.getTemplateId())) {
-								//机器人空闲，且可以拨打该模板，那么分配开始拨打
-								nowAi = aiInuseCache;
-								break;
-							}
-						}else {
-							continue;
-						}
-					}
-				}else {
-					throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
-				}
+		try {
+			String userId = aiCallApplyReq.getUserId();
+			/**2、资源校验以及准备**/
+			UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
+			if(userResourceCache == null) {
+				//用户没有配置机器人参数
+				throw new RobotException(AiErrorEnum.AI00060003.getErrorCode(),AiErrorEnum.AI00060003.getErrorMsg());
+			}
+			/**2.1、校验是否有超过用户总机器人数量,以及是否有超过模板机器人数量*/
+			if(this.checkApplyAiNum(aiCallApplyReq, userResourceCache)) {
+				/**3、从机器人资源池中分配1个机器人**/
+				AiInuseCache nowAi = iAiResourceManagerService.aiAssign(aiCallApplyReq);
 				if(nowAi == null) {
 					//无空闲的机器人
 					throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
 				}
-				/**4、机器人设置为忙**/
-				nowAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
-				nowAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
-				nowAi.setSeqId(aiCallApplyReq.getSeqId());
-				nowAi.setCallNum(nowAi.getCallNum()+1); //拨打数量
-				iAiResourceManagerService.aiBusy(nowAi);
-				/**5、保存一通电话记录(放最后) **/
+				/**4、保存一通电话记录(放最后) **/
 				RobotCallHis robotCallHis = new RobotCallHis();
 				robotCallHis.setUserId(userId);
 				robotCallHis.setAiNo(nowAi.getAiNo());
@@ -361,29 +291,24 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				robotCallHis.setAssignTime(new Date());
 				robotCallHis.setCallStatus(RobotConstants.CALLINT_STATUS_I);	//通话中
 				robotNewTransService.recordRobotCallHis(robotCallHis);
-				/**6、记录调用中心log**/
+				/**5、记录调用中心log**/
 				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "机器人申请成功,机器人编号:"+nowAi.getAiNo());
-				/**7、返回**/
+				/**6、返回**/
 				AiCallNext aiCallNext = new AiCallNext();
 				aiCallNext.setAiNo(nowAi.getAiNo());
 				return aiCallNext;
-			} catch (RobotException e) {
-				//记录log
-				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "机器人申请失败,"+e.getErrorMessage());
-				throw e; 
-			} catch (Exception e1) {
-				//记录log
-				aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "机器人申请失败,未知异常");
-				logger.error("机器人分配异常！",e1);
-				throw new RobotException(AiErrorEnum.AI00060028.getErrorCode(),AiErrorEnum.AI00060028.getErrorMsg());
-			}finally {
-				//释放锁
-				distributedLockHandler.releaseLock(lock);
 			}
-		}else {
-			logger.warn("用户机器人配置变更未能获取锁！！！");
-			throw new RobotException(AiErrorEnum.AI00060027.getErrorCode(),AiErrorEnum.AI00060027.getErrorMsg());
+		} catch (RobotException e) {
+			//记录log
+			aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "机器人申请失败,"+e.getErrorMessage());
+			throw e; 
+		} catch (Exception e1) {
+			//记录log
+			aiAsynDealService.recordCallLog(aiCallApplyReq.getSeqId(), aiCallApplyReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "机器人申请失败,未知异常");
+			logger.error("机器人分配异常！",e1);
+			throw new RobotException(AiErrorEnum.AI00060028.getErrorCode(),AiErrorEnum.AI00060028.getErrorMsg());
 		}
+		return null;
 	}
 	
 	
@@ -418,7 +343,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//记录log
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "开始拨打电话,用户无该模板空闲的机器人!");
 			//无空闲的机器人
-			throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
+			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
 		if(!aiCallStartReq.getPhoneNo().equals(nowAi.getCallingPhone())) {
 			//机器人已经分配给其他号码
@@ -612,23 +537,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//机器人不存在
 			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
-		UserResourceCache userResourceCache = aiCacheService.getUserResource(aiHangupReq.getUserId());
-		if(userResourceCache !=null && StrUtils.isNotEmpty(userResourceCache.getChgStatus()) && RobotConstants.USER_CHG_STATUS_S.equals(userResourceCache.getChgStatus())){
-			//如果是用户资源减少，那么直接释放机器人
-			iAiResourceManagerService.aiRelease(nowAi);
-			//释放后再查下用户还有没有机器人了，如果没有了，就把用户机器人清空，并将用户资源状态重置为正常
-			List<AiInuseCache> userAiInuseList = aiCacheService.queryUserAiInUseList(aiHangupReq.getUserId());
-			if(userAiInuseList == null || userAiInuseList.isEmpty()) {
-				//用户资源变更状态，设置为正常(本次变更影响已处理完)
-				userResourceCache.setChgStatus(null);
-				aiCacheService.putUserResource(userResourceCache);
-				//将用户机器人清空
-				aiCacheService.delUserAis(aiHangupReq.getUserId());
-			}
-		}else {
-			//正常情况下，只需要把机器人设置为空闲即可。
-			iAiResourceManagerService.aiFree(nowAi);
-		}
+		//将用户机器人释放掉
+		iAiResourceManagerService.aiRelease(nowAi);
 		/**4、清空消息流缓存**/
 		aiCacheService.delAllSentenceBySeqId(aiHangupReq.getSeqId());
 		/**5、记录log **/
@@ -637,31 +547,61 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	
 	
 	/**
-	 * 将用户现在是空闲的机器人释放掉
-	 * @param userAiInuseList
+	 * 1、校验是否有超过用户总机器人数量
+	 * 2、校验是否有超过用户模板机器人数量
+	 * @param aiCallApplyReq
+	 * @param userResourceCache
+	 * @return
 	 */
-	private void releaseFreeAi(String userId,List<AiInuseCache> userAiInuseList) {
-		if(ListUtil.isNotEmpty(userAiInuseList)) {
-			for(AiInuseCache ai : userAiInuseList) {
-				if(RobotConstants.AI_STATUS_F.equals(ai.getAiStatus())) {
-					//如果是用户资源减少，那么直接释放机器人
-					iAiResourceManagerService.aiRelease(ai);
+	private boolean checkApplyAiNum(AiCallApplyReq aiCallApplyReq,UserResourceCache userResourceCache) {
+		Lock lock = new Lock(RobotConstants.LOCK_NAME_ASSIGN+aiCallApplyReq.getUserId(), RobotConstants.LOCK_NAME_ASSIGN+aiCallApplyReq.getUserId());
+		if (distributedLockHandler.tryLock(lock)) {
+			try {
+				String userId = aiCallApplyReq.getUserId();	//用户id
+				//查询用户正在使用的机器人
+				List<AiInuseCache> userAiInuseList = aiCacheService.queryUserAiInUseList(userId);
+				int aiInuseNum = userAiInuseList==null?0:userAiInuseList.size();	//正在使用的机器人数量
+				if(aiInuseNum+1>userResourceCache.getAiNum()) {
+					//用户没有空闲机器人
+					logger.error("用户{}配置的机器人总数量：{},已经达到并发上限..",userId,userResourceCache.getAiNum());
+					throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
 				}
-			}
-			//释放后再查下用户还有没有机器人了，如果没有了，就把用户机器人清空，并将用户资源状态重置为正常
-			List<AiInuseCache> newUserAiInuseList = aiCacheService.queryUserAiInUseList(userId);
-			if(newUserAiInuseList == null || newUserAiInuseList.isEmpty()) {
-				UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
-				if(userResourceCache != null) {
-					//用户资源变更状态，设置为正常(本次变更影响已处理完)
-					userResourceCache.setChgStatus(null);
-					aiCacheService.putUserResource(userResourceCache);
+				//该模板配置的机器人数量，默认0
+				int templateCfgAiNum = 0;
+				if(userResourceCache.getTempAiNumMap()!=null && userResourceCache.getTempAiNumMap().get(aiCallApplyReq.getTemplateId())!=null) {
+					//获取
+					templateCfgAiNum = userResourceCache.getTempAiNumMap().get(aiCallApplyReq.getTemplateId());
 				}
-				//将用户机器人清空
-				aiCacheService.delUserAis(userId);
+				if(templateCfgAiNum<=0) {
+					logger.error("用户{}配置的机器人没有模板编号：{},无法分配机器人..",userId,aiCallApplyReq.getTemplateId());
+					throw new RobotException(AiErrorEnum.AI00060035.getErrorCode(),AiErrorEnum.AI00060035.getErrorMsg());
+				}
+				int templateInuseAiNum = 0;
+				if(ListUtil.isNotEmpty(userAiInuseList)) {
+					for(AiInuseCache ai:userAiInuseList) {
+						if(aiCallApplyReq.getTemplateId().equals(ai.getTemplateIds())) {
+							templateInuseAiNum++;
+						}
+					}
+				}
+				if(templateInuseAiNum+1>templateCfgAiNum) {
+					logger.error("用户{}模板编号：{}配置的机器人数量超过了并发的数量,无法分配机器人..",userId,aiCallApplyReq.getTemplateId());
+					throw new RobotException(AiErrorEnum.AI00060035.getErrorCode(),AiErrorEnum.AI00060035.getErrorMsg());
+				}
+				return true;
+			} catch (RobotException e) {
+				throw e; 
+			} catch (Exception e1) {
+				logger.error("用户机器人分配数量校验异常！",e1);
+				throw new RobotException(AiErrorEnum.AI00060028.getErrorCode(),AiErrorEnum.AI00060028.getErrorMsg());
+			}finally {
+				//释放锁
+				distributedLockHandler.releaseLock(lock);
 			}
+		}else {
+			logger.warn("用户机器人资源校验变更未能获取锁！！！");
+			throw new RobotException(AiErrorEnum.AI00060027.getErrorCode(),AiErrorEnum.AI00060027.getErrorMsg());
 		}
-		logger.info("用户资源变更，释放用户{}空闲机器人",userId);
 	}
 	
 	

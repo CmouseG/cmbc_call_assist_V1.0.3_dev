@@ -23,6 +23,9 @@ public class ReplayPhoneHandler extends IJobHandler {
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
 
+	
+	
+	
 	@Override
 	public ReturnT<String> execute(String arg0) throws Exception {
 		logger.info("-----------------------------------------------------------------");

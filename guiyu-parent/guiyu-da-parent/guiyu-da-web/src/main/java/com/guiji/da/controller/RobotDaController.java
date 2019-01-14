@@ -22,7 +22,9 @@ import com.guiji.da.service.vo.RobotCallProcessStatCache;
 import com.guiji.da.service.vo.RobotCallProcessStatQueryCondition;
 import com.guiji.da.service.vo.RobotCallProcessStatVO;
 import com.guiji.da.service.vo.RobotCallProcessStatView;
+import com.guiji.da.service.vo.RotbotFdCallback;
 import com.guiji.utils.BeanUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.StrUtils;
 
 /** 
@@ -49,6 +51,29 @@ public class RobotDaController {
 	public Result.ReturnData receiveSellbotCallback(@RequestBody String sellbotJson){
 		if(StrUtils.isNotEmpty(sellbotJson)) {
 			iSellbotCallbackService.receiveSellbotCallback(sellbotJson);
+			return Result.ok();
+		}else {
+			throw new DaException(DaErrorEnum.DA00060001.getErrorCode(),DaErrorEnum.DA00060001.getErrorMsg());
+		}
+	}
+	
+	/**
+	 * 接收飞龙通话信息回调
+	 * @param sellbotJson
+	 * @return
+	 */
+	@RequestMapping(value = "/receiveFdCallback", method = RequestMethod.POST)
+	public Result.ReturnData receiveFdCallback(@RequestBody String flJson){
+		if(StrUtils.isNotEmpty(flJson)) {
+			//飞龙返回的seqid对应我们的属性是seqId转一下,intent对应da的intentLevel
+			flJson = flJson.replaceAll("seqid", "seqId");
+			flJson = flJson.replaceAll("intent", "intentLevel");
+			flJson = flJson.replaceAll("phone", "phoneNo");
+			//飞龙给过来的数据是有下划线_的，我们把这个转为驼峰式
+			flJson = BeanUtil.lineToHump(flJson);
+			RotbotFdCallback rotbotFdCallback = JsonUtils.json2Bean(flJson, RotbotFdCallback.class);
+			//开始处理回调数据
+			iSellbotCallbackService.receiveFdCallback(rotbotFdCallback);
 			return Result.ok();
 		}else {
 			throw new DaException(DaErrorEnum.DA00060001.getErrorCode(),DaErrorEnum.DA00060001.getErrorMsg());

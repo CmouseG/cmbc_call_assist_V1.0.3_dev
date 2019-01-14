@@ -36,6 +36,7 @@ import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.robot.model.UserAiCfgVO;
 import com.guiji.robot.service.IAiAbilityCenterService;
+import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.impl.AiNewTransService;
@@ -43,8 +44,6 @@ import com.guiji.robot.util.ControllerUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
-
-import io.swagger.annotations.ApiOperation;
 
 /** 
 * @ClassName: RobotRemoteController 
@@ -55,7 +54,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public class RobotRemoteController implements IRobotRemote{
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	
+	@Autowired
+	IAiResourceManagerService iAiResourceManagerService;
 	@Autowired
 	IAiAbilityCenterService iAiAbilityCenterService;
 	@Autowired
@@ -248,7 +248,18 @@ public class RobotRemoteController implements IRobotRemote{
 	/**
 	 * 查询机器人资源数量（sellbot）
 	 */
+	@Override
 	public Result.ReturnData<Integer> queryRobotResNum(){
 		return iProcessSchedule.sellbotCount();
+	}
+	
+	
+	/**
+	 * 重新加载机器人资源
+	 */
+	@Override
+	public Result.ReturnData<Integer> reloadSellbot(){
+		iAiResourceManagerService.reloadSellbotResource();
+		return Result.ok();
 	}
 }

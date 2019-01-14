@@ -64,6 +64,7 @@ import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IResourcePoolService;
 import com.guiji.dispatch.sms.IMessageService;
 import com.guiji.dispatch.util.Base64MD5Util;
 import com.guiji.dispatch.util.Constant;
@@ -117,6 +118,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	private IDispatchPlanPutCalldata planPutCalldata;
 	@Autowired
 	private SuccessPhoneMQService successPhoneMQService;
+
+	@Autowired
+	private IResourcePoolService resourcePoolService;
 
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
@@ -406,8 +410,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		dto.setPlanuuid(planUuid);
 		dto.setLabel(label);
-		 successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
-		 successPhoneMQService.insertCallBack4MQ(dto);
+		successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
+		successPhoneMQService.insertCallBack4MQ(dto);
 		// // 写入mq中
 		// MQSuccPhoneDto dto = new MQSuccPhoneDto();
 		// dto.setPlanuuid(planUuid);
@@ -930,26 +934,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	public boolean batchUpdatePlans(IdsDto[] dto) {
 		int result = 0;
 		for (IdsDto bean : dto) {
-			// DispatchPlanExample ex1 = new DispatchPlanExample();
-			// ex1.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
-			// List<DispatchPlan> selectByExample =
-			// dispatchPlanMapper.selectByExample(ex1);
-			// DispatchPlan dispatchPlan = null;
-			// if (selectByExample.size() > 0) {
-			// dispatchPlan = selectByExample.get(0);
-			// }
-			// if (bean.getStatus().equals(Constant.STATUSPLAN_1)
-			// && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_4)) {
-			// logger.info("当前状态有问题...");
-			// continue;
-			// }
-			//
-			// // 停止之后不能暂停
-			// if (bean.getStatus().equals(Constant.STATUSPLAN_4)
-			// && dispatchPlan.getStatusPlan().equals(Constant.STATUSPLAN_3)) {
-			// logger.info("当前状态有问题...");
-			// continue;
-			// }
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(bean.getStatus().intValue());
 			try {
@@ -962,6 +946,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ex.createCriteria().andPlanUuidEqualTo(bean.getPlanuuid());
 			result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		}
+		if (dto.length > 0) {
+			IdsDto bean = dto[0];
+			if (bean.getStatus().equals(Constant.STATUSPLAN_3) || bean.getStatus().equals(Constant.STATUSPLAN_4)) {
+				// 重新分配队列数据
+				resourcePoolService.distributeByUser();
+			}
+		}
 		return result > 0 ? true : false;
 	}
 
@@ -970,16 +961,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 */
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
-			Map<Integer, String> map = new HashMap<>();
+		Map<Integer, String> map = new HashMap<>();
 		map.put(1, "计划中状态");
 		map.put(2, "完成状态");
 		map.put(3, "暂停状态");
 		map.put(4, "停止状态");
-		// 一键停止4 一键暂停3
-		Integer converStatus = Integer.valueOf(status);
-		if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
-			redisUtil.delVague("dispatch-" + userId);
-		}
 
 		MessageDto result = new MessageDto();
 		if (batchId != 0) {
@@ -1018,6 +1004,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 				createCriteria.andUserIdEqualTo(userId.intValue());
 				dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex1);
+				// 一键停止4 一键暂停3
+				Integer converStatus = Integer.valueOf(status);
+				if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
+					// 重新分配队列数据
+					resourcePoolService.distributeByUser();
+				}
 			}
 
 		} else {
@@ -1056,6 +1048,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				if (list.size() > 0) {
 					dispatchPlanMapper.updateDispatchPlanListByStatus(list, status);
 				}
+			}
+			Integer converStatus = Integer.valueOf(status);
+			if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
+				// 重新分配队列数据
+				resourcePoolService.distributeByUser();
 			}
 			if (status.equals("1")) {
 				for (List<String> list : averageAssign) {
@@ -1141,6 +1138,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanuuid());
 			// result = dispatchHourMapper.deleteByExample(exHour);
 		}
+		
+		// 重新分配队列数据
+		resourcePoolService.distributeByUser();
+		
 		return result > 0 ? true : false;
 	}
 
@@ -1160,8 +1161,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public boolean updateReplayDate(Boolean flag) {
 		if (flag) {
-			// 0不清除的话刷新日期 1清除的话那么就是暂停状态
-			// 执行当前不清除并且刷新日期的操作
 			Date d = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String dateNowStr = sdf.format(d);
@@ -1182,9 +1181,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			dispatchPlanMapper.updateByExampleSelective(dis, ex);
-			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
-			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
+			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		} else {
 			Date d = new Date();
@@ -1192,7 +1192,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			String dateNowStr = sdf.format(d);
 			DispatchPlan dis = new DispatchPlan();
 			dis.setStatusPlan(Constant.STATUSPLAN_4);
-			dis.setStatusSync(Constant.STATUS_SYNC_0);
+			dis.setStatusSync(Constant.STATUS_SYNC_1);
 			dis.setClean(Constant.IS_CLEAN_1);
 			try {
 				dis.setGmtModified(DateUtil.getCurrent4Time());
@@ -1203,9 +1203,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
-			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
+			DispatchPlanExample ex1 = new DispatchPlanExample();
+			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
-			dispatchPlanMapper.updateByExampleSelective(dis, ex);
+			dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		}
 	}

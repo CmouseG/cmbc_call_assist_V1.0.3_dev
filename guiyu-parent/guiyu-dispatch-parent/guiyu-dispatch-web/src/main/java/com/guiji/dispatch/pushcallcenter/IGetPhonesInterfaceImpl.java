@@ -41,7 +41,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis);
-		logger.info("getPhonesByParams  selectByCallHour size"+selectByCallHour);
+		logger.info("getPhonesByParams  selectByCallHour size"+selectByCallHour.size());
 		List<String> ids = new ArrayList<>();
 		for (DispatchPlan plan : selectByCallHour) {
 			ids.add(plan.getPlanUuid());
@@ -105,7 +105,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 
 	@Override
 	public boolean resetPhoneSyncStatus(List<String> planuuidIds) {
-		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_1);
+		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_0);
 		return result > 0 ? true : false;
 	}
 
@@ -126,6 +126,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		for (DispatchPlan dto : selectByCallHour4UserId) {
 			userIds.add(dto.getUserId());
 		}
+//		logger.info("getUserIdsByCallHour..."+userIds.size());
 		return userIds;
 	}
 

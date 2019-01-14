@@ -144,4 +144,8 @@ public interface IRobotRemote {
     @PostMapping(value = "/remote/queryRobotResNum")
 	Result.ReturnData<Integer> queryRobotResNum();
 	
+	@ApiOperation(value = "重新加载sellbot机器人资源（sellbot）")
+    @PostMapping(value = "/remote/reloadSellbot")
+	Result.ReturnData<Integer> reloadSellbot();
+	
 }

@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.da.dao.entity.RobotCallHis;
 import com.guiji.da.exception.DaException;
 import com.guiji.da.service.robot.IRobotCallHisService;
 import com.guiji.da.service.robot.ISellbotCallbackService;
 import com.guiji.da.service.vo.RobotCallProcessStatCache;
+import com.guiji.da.service.vo.RotbotFdCallback;
 import com.guiji.da.service.vo.SellbotCallInfo;
 import com.guiji.da.service.vo.SellbotCallSentence;
 import com.guiji.da.util.UnicodeUtil;
@@ -67,6 +69,22 @@ public class SellbotCallbackServiceImpl implements ISellbotCallbackService{
 	
 	
 	/**
+	 * 接收飞龙每通电话的回调数据
+	 * 1、数据落地DB：记录通话基本信息、用户信息、通话详情信息
+	 * 2、数据落地ES
+	 * 3、实时的量化分析
+	 * @param rotbotFdCallback
+	 */
+	@Transactional
+	public void receiveFdCallback(RotbotFdCallback rotbotFdCallback) {
+		//1、数据落地
+		RobotCallHis robotCallHis = robotNewTransService.recordFdCallback(rotbotFdCallback);
+		//2、落地ES
+		//3、实时处理量化分析
+	}
+	
+	
+	/**
 	 * 查询并更新到通话记录中
 	 * @param sellbotCallInfo
 	 * @param sellbotCallInfo 回调数据
@@ -83,7 +101,6 @@ public class SellbotCallbackServiceImpl implements ISellbotCallbackService{
 				//根据会话id查询通话记录
 				RobotCallHis robotCallHis = iRobotCallHisService.queryRobotCallBySeqId(seqId);
 				if(robotCallHis != null) {
-					robotCallHis.setSellbotCallbackJson(sellbotJson);
 					//保存回调数据
 					robotNewTransService.recordRobotCallHis(robotCallHis);
 					return robotCallHis;

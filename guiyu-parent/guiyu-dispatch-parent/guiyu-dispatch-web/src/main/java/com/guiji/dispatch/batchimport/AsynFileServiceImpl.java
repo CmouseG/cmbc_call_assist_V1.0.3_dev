@@ -114,7 +114,6 @@ public class AsynFileServiceImpl implements AsynFileService {
 		fileRecords.setUserId(userId.intValue());
 		batchImportFileRecordService.save(fileRecords);
 
-		//
 		Long fileRecordId = fileRecords.getId();
 		SysFileReqVO sysFileReqVO = new SysFileReqVO();
 		sysFileReqVO.setBusiId(fileRecords.getId().toString());
@@ -125,9 +124,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		fileRecords = new FileRecords();
 		fileRecords.setId(fileRecordId);
 		fileRecords.setUrl(sysFileRsp.getSkUrl());
-		// batchImportFileRecordService.save(fileRecords);
 		batchImportFileRecordService.update(fileRecords);
-
 		return fileRecordId;
 
 	}

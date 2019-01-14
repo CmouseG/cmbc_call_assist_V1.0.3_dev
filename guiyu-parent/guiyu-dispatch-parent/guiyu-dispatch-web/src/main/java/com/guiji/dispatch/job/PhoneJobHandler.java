@@ -11,7 +11,7 @@ import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
 
-@JobHandler(value="PhoneJobHandler")
+@JobHandler(value="phoneJobHandler")
 @Component
 public class PhoneJobHandler extends IJobHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ChangePlanIntegralPointJobHandler.class);

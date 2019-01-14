@@ -69,6 +69,8 @@ public class AiCacheService {
 			userResourceCache.setUserId(userId);
 			userResourceCache.setAiNum(aiNum);
 			userResourceCache.setChgStatus(RobotConstants.USER_CHG_STATUS_A); //初始化增加
+			//设置按模板拆分的机器人数量
+			userResourceCache.setTempAiNumMap(iUserAiCfgService.queryTemplateAi(userId));
 			//放入redis
 			this.putUserResource(userResourceCache);
 			return userResourceCache;
@@ -98,6 +100,55 @@ public class AiCacheService {
 	public void delUserResource(String userId) {
 		redisUtil.hdel(RobotConstants.ROBOT_USER_RESOURCE,userId);
 	}
+	
+	
+	/**
+	 * 初始化AI资源池
+	 * @param list
+	 */
+	public void initAiPool(List<AiInuseCache> list){
+		if(ListUtil.isNotEmpty(list)) {
+			Map<String,Object> map = new HashMap<String,Object>();
+			for(AiInuseCache aiInuse : list) {
+				map.put(aiInuse.getAiNo(), aiInuse);
+			}
+			redisUtil.hmset(RobotConstants.ROBOT_POOL_AI, map);
+		}
+	}
+	
+	/**
+	 * 更新AI资源池AI数据
+	 * @param aiInuse
+	 * @return
+	 */
+	public void changeAiPool(AiInuseCache aiInuse) {
+		redisUtil.hset(RobotConstants.ROBOT_POOL_AI, aiInuse.getAiNo(), aiInuse);
+	}
+	
+	/**
+	 * 清空AI资源池缓存
+	 */
+	public void delAiPools() {
+		redisUtil.del(RobotConstants.ROBOT_POOL_AI);
+	}
+	
+	/**
+	 * 查询ai资源池中所有机器人
+	 * @return
+	 */
+	public List<AiInuseCache> queryAiPools(){
+		Map<Object,Object> allMap = redisUtil.hmget(RobotConstants.ROBOT_POOL_AI);
+		if(allMap != null && !allMap.isEmpty()) {
+			List<AiInuseCache> list = new ArrayList<AiInuseCache>();
+			for (Map.Entry<Object,Object> aiEntry : allMap.entrySet()) { 
+				AiInuseCache aiInuse = (AiInuseCache) aiEntry.getValue();
+				list.add(aiInuse);
+			}
+			return list;
+		}
+		return null;
+	}
+	
 	
 	
 	/**

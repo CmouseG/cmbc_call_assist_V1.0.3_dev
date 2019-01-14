@@ -106,7 +106,10 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                         planUuids.add(dispatchPlan.getPlanUuid());
                     }
                 }
-                getPhonesInterface.resetPhoneSyncStatus(planUuids);
+                if(planUuids.size()>0){
+                    getPhonesInterface.resetPhoneSyncStatus(planUuids);
+                }
+           
             }
         } catch (Exception e) {
             logger.info("ResourcePoolServiceImpl#distributeByUser", e);

@@ -23,7 +23,7 @@ import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
 
-@JobHandler(value = "GetCallCenterPhoneHandler")
+@JobHandler(value = "getCallCenterPhoneHandler")
 @Component
 public class GetCallCenterPhoneHandler extends IJobHandler {
 	static Logger logger = LoggerFactory.getLogger(GetCallCenterPhoneHandler.class);

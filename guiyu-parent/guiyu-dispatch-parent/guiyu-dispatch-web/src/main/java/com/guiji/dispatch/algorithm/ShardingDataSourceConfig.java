@@ -1,7 +1,5 @@
 package com.guiji.dispatch.algorithm;
 
-
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +19,6 @@ import com.guiji.dispatch.util.LoadProperties;
 import io.shardingsphere.api.config.TableRuleConfiguration;
 import io.shardingsphere.api.config.strategy.StandardShardingStrategyConfiguration;
 
-
 @Configuration
 public class ShardingDataSourceConfig {
 
@@ -33,49 +30,56 @@ public class ShardingDataSourceConfig {
 	private String jdbc_username0;
 	@Value("${jdbc_password0}")
 	private String jdbc_password0;
-	
-	
-    @Bean
-    public DataSource getShardingDataSource() throws SQLException {
-        ShardingConfiguration shardingConfiguration = new ShardingConfiguration();
-        shardingConfiguration.setDataSourceMap(createDataSourceMap());
-        shardingConfiguration.setMasterSlaveRuleConfigurations(new ArrayList<>());
-        shardingConfiguration.setTableRuleConfigurations(tableRuleConfigurations());
-        DataSource shardingDataSource = shardingConfiguration.createShardingDataSource();
-        return shardingDataSource;
-    }
 
-    public Map<String, DataSource> createDataSourceMap() {
-        DataSource dataSource = getDataSource();
-        Map<String, DataSource> map = new HashMap<>();
-        map.put("guiyu_dispatch",dataSource);
-        return map;
-    }
+	@Bean
+	public DataSource getShardingDataSource() throws SQLException {
+		ShardingConfiguration shardingConfiguration = new ShardingConfiguration();
+		shardingConfiguration.setDataSourceMap(createDataSourceMap());
+		shardingConfiguration.setMasterSlaveRuleConfigurations(new ArrayList<>());
+		shardingConfiguration.setTableRuleConfigurations(tableRuleConfigurations());
+		DataSource shardingDataSource = shardingConfiguration.createShardingDataSource();
+		return shardingDataSource;
+	}
 
-    public DataSource getDataSource(){
-        DruidDataSource dataSource = new DruidDataSource();
-//        dataSource.setUrl(LoadProperties.getProperty("jdbc_url0"));
-//        dataSource.setUsername(LoadProperties.getProperty("jdbc_username0"));
-//        dataSource.setPassword(LoadProperties.getProperty("jdbc_password0"));
-//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        
-        dataSource.setUrl(jdbc_url0);
-        dataSource.setUsername(jdbc_username0);
-        dataSource.setPassword(jdbc_password0);
-        dataSource.setDriverClassName(jdbc_driver0);
-        return dataSource;
-    }
-    
-    /**
-     * 配置表规则
-     * @return
-     */
-    private List<TableRuleConfiguration> tableRuleConfigurations(){
-    	TableRuleConfiguration result = new TableRuleConfiguration();
-    	result.setLogicTable("dispatch_plan");
-    	result.setActualDataNodes("guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1,guiyu_dispatch.dispatch_plan_2");
-    	result.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("phone",new PreciseSharding(),new RangeSharding()));
-    	return Arrays.asList(result);
-    }
+	public Map<String, DataSource> createDataSourceMap() {
+		DataSource dataSource = getDataSource();
+		Map<String, DataSource> map = new HashMap<>();
+		map.put("guiyu_dispatch", dataSource);
+		return map;
+	}
+
+	public DataSource getDataSource() {
+		DruidDataSource dataSource = new DruidDataSource();
+		// dataSource.setUrl(LoadProperties.getProperty("jdbc_url0"));
+		// dataSource.setUsername(LoadProperties.getProperty("jdbc_username0"));
+		// dataSource.setPassword(LoadProperties.getProperty("jdbc_password0"));
+		// dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+
+		dataSource.setUrl(jdbc_url0);
+		dataSource.setUsername(jdbc_username0);
+		dataSource.setPassword(jdbc_password0);
+		dataSource.setDriverClassName(jdbc_driver0);
+		
+		//修改配置
+		dataSource.setMinIdle(5);
+		dataSource.setInitialSize(5);
+		dataSource.setMaxActive(20);
+		return dataSource;
+	}
+
+	/**
+	 * 配置表规则
+	 * 
+	 * @return
+	 */
+	private List<TableRuleConfiguration> tableRuleConfigurations() {
+		TableRuleConfiguration result = new TableRuleConfiguration();
+		result.setLogicTable("dispatch_plan");
+		result.setActualDataNodes(
+				"guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1,guiyu_dispatch.dispatch_plan_2");
+		result.setTableShardingStrategyConfig(
+				new StandardShardingStrategyConfiguration("phone", new PreciseSharding(), new RangeSharding()));
+		return Arrays.asList(result);
+	}
 
 }

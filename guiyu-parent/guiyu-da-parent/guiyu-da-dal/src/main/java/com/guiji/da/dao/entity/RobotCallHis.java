@@ -18,15 +18,29 @@ public class RobotCallHis implements Serializable {
 
     private Date assignTime;
 
+    private String callDate;
+
     private String templateId;
 
     private Integer callStatus;
 
+    private Boolean isTts;
+
+    private Integer dialogcount;
+
+    private String industry;
+
+    private Integer modelId;
+
+    private String intentLevel;
+
+    private String reason;
+
+    private String callWav;
+
     private String crtDate;
 
     private Date crtTime;
-
-    private String sellbotCallbackJson;
 
     private static final long serialVersionUID = 1L;
 
@@ -86,6 +100,14 @@ public class RobotCallHis implements Serializable {
         this.assignTime = assignTime;
     }
 
+    public String getCallDate() {
+        return callDate;
+    }
+
+    public void setCallDate(String callDate) {
+        this.callDate = callDate == null ? null : callDate.trim();
+    }
+
     public String getTemplateId() {
         return templateId;
     }
@@ -100,6 +122,62 @@ public class RobotCallHis implements Serializable {
 
     public void setCallStatus(Integer callStatus) {
         this.callStatus = callStatus;
+    }
+
+    public Boolean getIsTts() {
+        return isTts;
+    }
+
+    public void setIsTts(Boolean isTts) {
+        this.isTts = isTts;
+    }
+
+    public Integer getDialogcount() {
+        return dialogcount;
+    }
+
+    public void setDialogcount(Integer dialogcount) {
+        this.dialogcount = dialogcount;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry == null ? null : industry.trim();
+    }
+
+    public Integer getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(Integer modelId) {
+        this.modelId = modelId;
+    }
+
+    public String getIntentLevel() {
+        return intentLevel;
+    }
+
+    public void setIntentLevel(String intentLevel) {
+        this.intentLevel = intentLevel == null ? null : intentLevel.trim();
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason == null ? null : reason.trim();
+    }
+
+    public String getCallWav() {
+        return callWav;
+    }
+
+    public void setCallWav(String callWav) {
+        this.callWav = callWav == null ? null : callWav.trim();
     }
 
     public String getCrtDate() {
@@ -118,14 +196,6 @@ public class RobotCallHis implements Serializable {
         this.crtTime = crtTime;
     }
 
-    public String getSellbotCallbackJson() {
-        return sellbotCallbackJson;
-    }
-
-    public void setSellbotCallbackJson(String sellbotCallbackJson) {
-        this.sellbotCallbackJson = sellbotCallbackJson == null ? null : sellbotCallbackJson.trim();
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -139,11 +209,18 @@ public class RobotCallHis implements Serializable {
         sb.append(", aiNo=").append(aiNo);
         sb.append(", phoneNo=").append(phoneNo);
         sb.append(", assignTime=").append(assignTime);
+        sb.append(", callDate=").append(callDate);
         sb.append(", templateId=").append(templateId);
         sb.append(", callStatus=").append(callStatus);
+        sb.append(", isTts=").append(isTts);
+        sb.append(", dialogcount=").append(dialogcount);
+        sb.append(", industry=").append(industry);
+        sb.append(", modelId=").append(modelId);
+        sb.append(", intentLevel=").append(intentLevel);
+        sb.append(", reason=").append(reason);
+        sb.append(", callWav=").append(callWav);
         sb.append(", crtDate=").append(crtDate);
         sb.append(", crtTime=").append(crtTime);
-        sb.append(", sellbotCallbackJson=").append(sellbotCallbackJson);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

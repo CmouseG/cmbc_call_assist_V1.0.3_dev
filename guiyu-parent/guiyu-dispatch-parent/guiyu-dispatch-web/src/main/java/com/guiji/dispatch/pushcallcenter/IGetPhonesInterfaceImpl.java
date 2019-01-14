@@ -126,7 +126,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		for (DispatchPlan dto : selectByCallHour4UserId) {
 			userIds.add(dto.getUserId());
 		}
-		logger.info("getUserIdsByCallHour..."+userIds.size());
+//		logger.info("getUserIdsByCallHour..."+userIds.size());
 		return userIds;
 	}
 

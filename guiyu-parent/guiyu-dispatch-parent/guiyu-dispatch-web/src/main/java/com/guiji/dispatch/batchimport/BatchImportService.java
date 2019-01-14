@@ -47,6 +47,7 @@ public class BatchImportService implements IBatchImportService {
 
 				dispatchPlan = doWithOneRow(row, dispatchPlanParam);
 				if (dispatchPlan == null) {
+					saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, row.getRowNum() + 1);
 					continue;
 				}
 
@@ -112,7 +113,6 @@ public class BatchImportService implements IBatchImportService {
 		if (!isNumLegal(phone)) {
 			// 非手机号 导入失败(第" + (r + 1) + "行,电话号码格式不正确
 			logger.debug("非手机号 导入失败, 第{}行,电话号码{}格式不正确", row.getRowNum() + 1, phone);
-
 			return null;
 		}
 

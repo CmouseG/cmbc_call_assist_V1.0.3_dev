@@ -7,6 +7,7 @@
     <result column="phone" property="phone" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="callback_status" property="callbackStatus" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, planuuid, phone, create_time, callback_status
+    id, planuuid, phone, create_time, callback_status, user_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.PushRecordsExample" >
     select
@@ -105,9 +106,11 @@
   </delete>
   <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.PushRecords" >
     insert into push_records (id, planuuid, phone, 
-      create_time, callback_status)
+      create_time, callback_status, user_id
+      )
     values (#{id,jdbcType=BIGINT}, #{planuuid,jdbcType=CHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{callbackStatus,jdbcType=INTEGER})
+      #{createTime,jdbcType=TIMESTAMP}, #{callbackStatus,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.PushRecords" >
     insert into push_records
@@ -127,6 +130,9 @@
       <if test="callbackStatus != null" >
         callback_status,
       </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -143,6 +149,9 @@
       </if>
       <if test="callbackStatus != null" >
         #{callbackStatus,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -170,6 +179,9 @@
       <if test="record.callbackStatus != null" >
         callback_status = #{record.callbackStatus,jdbcType=INTEGER},
       </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -181,7 +193,8 @@
       planuuid = #{record.planuuid,jdbcType=CHAR},
       phone = #{record.phone,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      callback_status = #{record.callbackStatus,jdbcType=INTEGER}
+      callback_status = #{record.callbackStatus,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -201,6 +214,9 @@
       <if test="callbackStatus != null" >
         callback_status = #{callbackStatus,jdbcType=INTEGER},
       </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -209,7 +225,8 @@
     set planuuid = #{planuuid,jdbcType=CHAR},
       phone = #{phone,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      callback_status = #{callbackStatus,jdbcType=INTEGER}
+      callback_status = #{callbackStatus,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

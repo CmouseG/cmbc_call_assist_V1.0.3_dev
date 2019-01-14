@@ -49,6 +49,9 @@ public class CallBack4MQListener {
 
 			Integer userIdCurrentCount = (Integer) redisUtil
 					.get("REDIS_USERID_CURRENTLY_COUNT_" + mqSuccPhoneDto.getUserId());
+			if(userIdCurrentCount ==null){
+				userIdCurrentCount =0;
+			}
 			if (userIdCurrentCount > 0) {
 				userIdCurrentCount = userIdCurrentCount - 1;
 				redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + mqSuccPhoneDto.getUserId(), userIdCurrentCount);

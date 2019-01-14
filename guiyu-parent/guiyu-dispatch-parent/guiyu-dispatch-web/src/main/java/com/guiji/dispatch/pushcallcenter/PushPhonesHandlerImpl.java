@@ -68,6 +68,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					continue;
 				}
 				DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
+				if (object == null) {
+					continue;
+				}
 				// 用户id
 				Integer userId = object.getUserId();
 				Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
@@ -121,6 +124,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					// 拿到对应用户的redis
 					Integer userIdCount = (Integer) redisUtil
 							.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
+					if (userIdCount == null) {
+						userIdCount = 0;
+					}
 					userIdCount = userIdCount + 1;
 					redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
 

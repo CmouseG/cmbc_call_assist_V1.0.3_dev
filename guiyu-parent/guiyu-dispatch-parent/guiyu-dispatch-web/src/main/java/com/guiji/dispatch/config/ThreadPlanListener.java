@@ -23,6 +23,7 @@ public class ThreadPlanListener implements ApplicationRunner {
 		new Thread(() -> {
 			try {
 				// 初始化当前redis计数器
+				logger.info("开始执行线程了 ThreadPlanListener");
 				redisUtils.set("REDIS_CURRENTLY_COUNT", 0);
 				redisUtils.delVague("REDIS_USERID_CURRENTLY_COUNT_");
 				handler.pushHandler();

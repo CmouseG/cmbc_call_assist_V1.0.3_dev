@@ -14,6 +14,8 @@ public class PushRecords implements Serializable {
 
     private Integer callbackStatus;
 
+    private Integer userId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -56,6 +58,14 @@ public class PushRecords implements Serializable {
         this.callbackStatus = callbackStatus;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -67,6 +77,7 @@ public class PushRecords implements Serializable {
         sb.append(", phone=").append(phone);
         sb.append(", createTime=").append(createTime);
         sb.append(", callbackStatus=").append(callbackStatus);
+        sb.append(", userId=").append(userId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -55,6 +55,8 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 					MQSuccPhoneDto dto = new MQSuccPhoneDto();
 					dto.setPlanuuid(records.getPlanuuid());
 					dto.setLabel(callEnd.body.getIntent());
+					//设置用户的id
+					dto.setUserId(records.getUserId());
 					successPhoneMQService.insertCallBack4MQ(dto);
 					successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
 				}

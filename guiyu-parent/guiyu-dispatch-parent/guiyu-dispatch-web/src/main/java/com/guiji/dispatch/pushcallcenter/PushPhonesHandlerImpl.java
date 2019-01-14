@@ -9,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.support.atomic.RedisAtomicDouble;
 import org.springframework.stereotype.Service;
 
 import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.PushRecords;
@@ -52,8 +54,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	public void pushHandler() {
 		Integer currentCount1 = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
 		Integer sysMaxPlan1 = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
-		logger.info("----------currentCount1----------"+currentCount1);
-		logger.info("----------sysMaxPlan1----------"+sysMaxPlan1);
+		logger.info("----------currentCount1----------" + currentCount1);
+		logger.info("----------sysMaxPlan1----------" + sysMaxPlan1);
 		while (true) {
 			// 当前推送记录
 			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
@@ -66,6 +68,26 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					continue;
 				}
 				DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
+				// 用户id
+				Integer userId = object.getUserId();
+				Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
+				if (redisUserIdCount != null) {
+					// REDIS_USER_MAX_ROBOT
+					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
+					if (max != null) {
+						for (UserResourceDto dto : max) {
+							if (userId.equals(dto.getUserId())) {
+								// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
+								if (redisUserIdCount >= dto.getCount()) {
+									// 还原状态
+									updateStatusSync(object.getPlanUuid());
+									continue;
+								}
+							}
+						}
+					}
+				}
+
 				if (object != null) {
 					// 记录推送记录
 					insertPush(object);
@@ -95,8 +117,15 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
 					addup = addup + 1;
 					redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
+
+					// 拿到对应用户的redis
+					Integer userIdCount = (Integer) redisUtil
+							.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
+					userIdCount = userIdCount + 1;
+					redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
+
 				} else {
-//					logger.debug("redis里面没数据");
+					// logger.debug("redis里面没数据");
 				}
 			}
 		}
@@ -119,6 +148,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		}
 		record.setPhone(dispatchPlan.getPhone());
 		record.setPlanuuid(dispatchPlan.getPlanUuid());
+		record.setUserId(dispatchPlan.getUserId());
 		record.setCallbackStatus(Constant.NOCALLBACK);
 		rabbitTemplate.convertAndSend("dispatch.PushPhonesRecords", JsonUtils.bean2Json(record));
 	}

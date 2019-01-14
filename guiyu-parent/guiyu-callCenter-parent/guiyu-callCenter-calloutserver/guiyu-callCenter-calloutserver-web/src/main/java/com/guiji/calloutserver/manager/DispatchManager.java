@@ -14,5 +14,5 @@ public interface DispatchManager {
      * @param phoneNo
      * @param intent
      */
-    void successSchedule(String callId, String phoneNo, String intent);
+    void successSchedule(String callId, String phoneNo, String intent, Integer userId);
 }

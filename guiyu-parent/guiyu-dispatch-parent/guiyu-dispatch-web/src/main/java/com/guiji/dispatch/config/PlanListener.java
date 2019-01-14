@@ -25,7 +25,21 @@ public class PlanListener implements ApplicationRunner {
         new Thread(() -> {
             try {
                 //初始化系统资源
-                resourcePoolService.initResourcePool();
+                boolean initFlag = false;
+                while (true) {
+                    try {
+                        if (!initFlag) {
+                            resourcePoolService.initResourcePool();
+                            initFlag = true;
+                        }else {
+                            break;
+                        }
+                    }catch (Exception e) {
+                        initFlag = false;
+                    }
+                    Thread.sleep(30000);
+                }
+
                 //服务启动先把队列数据回退，重新按用户分配后再开始获取队列计划
                 resourcePoolService.distributeByUser();
                 //拉去拨打计划进队列

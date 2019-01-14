@@ -79,7 +79,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
 					if (max != null) {
 						for (UserResourceDto dto : max) {
-							if (userId.equals(dto.getUserId())) {
+							if (userId.equals(Integer.valueOf(dto.getUserId()))) {
 								// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
 								if (redisUserIdCount >= dto.getCount()) {
 									// 还原状态

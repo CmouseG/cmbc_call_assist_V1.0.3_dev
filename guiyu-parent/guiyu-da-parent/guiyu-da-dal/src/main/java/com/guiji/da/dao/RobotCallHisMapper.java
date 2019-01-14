@@ -16,21 +16,15 @@ public interface RobotCallHisMapper {
 
     int insertSelective(RobotCallHis record);
 
-    List<RobotCallHis> selectByExampleWithBLOBs(RobotCallHisExample example);
-
     List<RobotCallHis> selectByExample(RobotCallHisExample example);
 
     RobotCallHis selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") RobotCallHis record, @Param("example") RobotCallHisExample example);
 
-    int updateByExampleWithBLOBs(@Param("record") RobotCallHis record, @Param("example") RobotCallHisExample example);
-
     int updateByExample(@Param("record") RobotCallHis record, @Param("example") RobotCallHisExample example);
 
     int updateByPrimaryKeySelective(RobotCallHis record);
-
-    int updateByPrimaryKeyWithBLOBs(RobotCallHis record);
 
     int updateByPrimaryKey(RobotCallHis record);
 }

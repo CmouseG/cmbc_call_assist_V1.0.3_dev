@@ -9,13 +9,18 @@
     <result column="ai_no" property="aiNo" jdbcType="VARCHAR" />
     <result column="phone_no" property="phoneNo" jdbcType="VARCHAR" />
     <result column="assign_time" property="assignTime" jdbcType="TIMESTAMP" />
+    <result column="call_date" property="callDate" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="call_status" property="callStatus" jdbcType="INTEGER" />
+    <result column="is_tts" property="isTts" jdbcType="BIT" />
+    <result column="dialogCount" property="dialogcount" jdbcType="INTEGER" />
+    <result column="industry" property="industry" jdbcType="VARCHAR" />
+    <result column="model_id" property="modelId" jdbcType="INTEGER" />
+    <result column="intent_level" property="intentLevel" jdbcType="VARCHAR" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="call_wav" property="callWav" jdbcType="VARCHAR" />
     <result column="crt_date" property="crtDate" jdbcType="VARCHAR" />
     <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.guiji.da.dao.entity.RobotCallHis" extends="BaseResultMap" >
-    <result column="sellbot_callback_json" property="sellbotCallbackJson" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -76,29 +81,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, seq_id, user_id, org_code, ai_no, phone_no, assign_time, template_id, call_status, 
+    id, seq_id, user_id, org_code, ai_no, phone_no, assign_time, call_date, template_id, 
+    call_status, is_tts, dialogCount, industry, model_id, intent_level, reason, call_wav, 
     crt_date, crt_time
   </sql>
-  <sql id="Blob_Column_List" >
-    sellbot_callback_json
-  </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.da.dao.entity.RobotCallHisExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from robot_call_his
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.da.dao.entity.RobotCallHisExample" >
     select
     <if test="distinct" >
@@ -117,11 +103,9 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from robot_call_his
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -138,14 +122,18 @@
   <insert id="insert" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
     insert into robot_call_his (id, seq_id, user_id, 
       org_code, ai_no, phone_no, 
-      assign_time, template_id, call_status, 
-      crt_date, crt_time, sellbot_callback_json
-      )
+      assign_time, call_date, template_id, 
+      call_status, is_tts, dialogCount, 
+      industry, model_id, intent_level, 
+      reason, call_wav, crt_date, 
+      crt_time)
     values (#{id,jdbcType=INTEGER}, #{seqId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
       #{orgCode,jdbcType=VARCHAR}, #{aiNo,jdbcType=VARCHAR}, #{phoneNo,jdbcType=VARCHAR}, 
-      #{assignTime,jdbcType=TIMESTAMP}, #{templateId,jdbcType=VARCHAR}, #{callStatus,jdbcType=INTEGER}, 
-      #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
-      )
+      #{assignTime,jdbcType=TIMESTAMP}, #{callDate,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{callStatus,jdbcType=INTEGER}, #{isTts,jdbcType=BIT}, #{dialogcount,jdbcType=INTEGER}, 
+      #{industry,jdbcType=VARCHAR}, #{modelId,jdbcType=INTEGER}, #{intentLevel,jdbcType=VARCHAR}, 
+      #{reason,jdbcType=VARCHAR}, #{callWav,jdbcType=VARCHAR}, #{crtDate,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
     insert into robot_call_his
@@ -171,20 +159,41 @@
       <if test="assignTime != null" >
         assign_time,
       </if>
+      <if test="callDate != null" >
+        call_date,
+      </if>
       <if test="templateId != null" >
         template_id,
       </if>
       <if test="callStatus != null" >
         call_status,
       </if>
+      <if test="isTts != null" >
+        is_tts,
+      </if>
+      <if test="dialogcount != null" >
+        dialogCount,
+      </if>
+      <if test="industry != null" >
+        industry,
+      </if>
+      <if test="modelId != null" >
+        model_id,
+      </if>
+      <if test="intentLevel != null" >
+        intent_level,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="callWav != null" >
+        call_wav,
+      </if>
       <if test="crtDate != null" >
         crt_date,
       </if>
       <if test="crtTime != null" >
         crt_time,
-      </if>
-      <if test="sellbotCallbackJson != null" >
-        sellbot_callback_json,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -209,20 +218,41 @@
       <if test="assignTime != null" >
         #{assignTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="callDate != null" >
+        #{callDate,jdbcType=VARCHAR},
+      </if>
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
       </if>
       <if test="callStatus != null" >
         #{callStatus,jdbcType=INTEGER},
       </if>
+      <if test="isTts != null" >
+        #{isTts,jdbcType=BIT},
+      </if>
+      <if test="dialogcount != null" >
+        #{dialogcount,jdbcType=INTEGER},
+      </if>
+      <if test="industry != null" >
+        #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="modelId != null" >
+        #{modelId,jdbcType=INTEGER},
+      </if>
+      <if test="intentLevel != null" >
+        #{intentLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="callWav != null" >
+        #{callWav,jdbcType=VARCHAR},
+      </if>
       <if test="crtDate != null" >
         #{crtDate,jdbcType=VARCHAR},
       </if>
       <if test="crtTime != null" >
         #{crtTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="sellbotCallbackJson != null" >
-        #{sellbotCallbackJson,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -256,11 +286,35 @@
       <if test="record.assignTime != null" >
         assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.callDate != null" >
+        call_date = #{record.callDate,jdbcType=VARCHAR},
+      </if>
       <if test="record.templateId != null" >
         template_id = #{record.templateId,jdbcType=VARCHAR},
       </if>
       <if test="record.callStatus != null" >
         call_status = #{record.callStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.isTts != null" >
+        is_tts = #{record.isTts,jdbcType=BIT},
+      </if>
+      <if test="record.dialogcount != null" >
+        dialogCount = #{record.dialogcount,jdbcType=INTEGER},
+      </if>
+      <if test="record.industry != null" >
+        industry = #{record.industry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modelId != null" >
+        model_id = #{record.modelId,jdbcType=INTEGER},
+      </if>
+      <if test="record.intentLevel != null" >
+        intent_level = #{record.intentLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reason != null" >
+        reason = #{record.reason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callWav != null" >
+        call_wav = #{record.callWav,jdbcType=VARCHAR},
       </if>
       <if test="record.crtDate != null" >
         crt_date = #{record.crtDate,jdbcType=VARCHAR},
@@ -268,28 +322,7 @@
       <if test="record.crtTime != null" >
         crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.sellbotCallbackJson != null" >
-        sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map" >
-    update robot_call_his
-    set id = #{record.id,jdbcType=INTEGER},
-      seq_id = #{record.seqId,jdbcType=VARCHAR},
-      user_id = #{record.userId,jdbcType=VARCHAR},
-      org_code = #{record.orgCode,jdbcType=VARCHAR},
-      ai_no = #{record.aiNo,jdbcType=VARCHAR},
-      phone_no = #{record.phoneNo,jdbcType=VARCHAR},
-      assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
-      template_id = #{record.templateId,jdbcType=VARCHAR},
-      call_status = #{record.callStatus,jdbcType=INTEGER},
-      crt_date = #{record.crtDate,jdbcType=VARCHAR},
-      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
-      sellbot_callback_json = #{record.sellbotCallbackJson,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -303,8 +336,16 @@
       ai_no = #{record.aiNo,jdbcType=VARCHAR},
       phone_no = #{record.phoneNo,jdbcType=VARCHAR},
       assign_time = #{record.assignTime,jdbcType=TIMESTAMP},
+      call_date = #{record.callDate,jdbcType=VARCHAR},
       template_id = #{record.templateId,jdbcType=VARCHAR},
       call_status = #{record.callStatus,jdbcType=INTEGER},
+      is_tts = #{record.isTts,jdbcType=BIT},
+      dialogCount = #{record.dialogcount,jdbcType=INTEGER},
+      industry = #{record.industry,jdbcType=VARCHAR},
+      model_id = #{record.modelId,jdbcType=INTEGER},
+      intent_level = #{record.intentLevel,jdbcType=VARCHAR},
+      reason = #{record.reason,jdbcType=VARCHAR},
+      call_wav = #{record.callWav,jdbcType=VARCHAR},
       crt_date = #{record.crtDate,jdbcType=VARCHAR},
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
@@ -332,11 +373,35 @@
       <if test="assignTime != null" >
         assign_time = #{assignTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="callDate != null" >
+        call_date = #{callDate,jdbcType=VARCHAR},
+      </if>
       <if test="templateId != null" >
         template_id = #{templateId,jdbcType=VARCHAR},
       </if>
       <if test="callStatus != null" >
         call_status = #{callStatus,jdbcType=INTEGER},
+      </if>
+      <if test="isTts != null" >
+        is_tts = #{isTts,jdbcType=BIT},
+      </if>
+      <if test="dialogcount != null" >
+        dialogCount = #{dialogcount,jdbcType=INTEGER},
+      </if>
+      <if test="industry != null" >
+        industry = #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="modelId != null" >
+        model_id = #{modelId,jdbcType=INTEGER},
+      </if>
+      <if test="intentLevel != null" >
+        intent_level = #{intentLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="callWav != null" >
+        call_wav = #{callWav,jdbcType=VARCHAR},
       </if>
       <if test="crtDate != null" >
         crt_date = #{crtDate,jdbcType=VARCHAR},
@@ -344,25 +409,7 @@
       <if test="crtTime != null" >
         crt_time = #{crtTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="sellbotCallbackJson != null" >
-        sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR},
-      </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
-    update robot_call_his
-    set seq_id = #{seqId,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=VARCHAR},
-      org_code = #{orgCode,jdbcType=VARCHAR},
-      ai_no = #{aiNo,jdbcType=VARCHAR},
-      phone_no = #{phoneNo,jdbcType=VARCHAR},
-      assign_time = #{assignTime,jdbcType=TIMESTAMP},
-      template_id = #{templateId,jdbcType=VARCHAR},
-      call_status = #{callStatus,jdbcType=INTEGER},
-      crt_date = #{crtDate,jdbcType=VARCHAR},
-      crt_time = #{crtTime,jdbcType=TIMESTAMP},
-      sellbot_callback_json = #{sellbotCallbackJson,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.da.dao.entity.RobotCallHis" >
@@ -373,8 +420,16 @@
       ai_no = #{aiNo,jdbcType=VARCHAR},
       phone_no = #{phoneNo,jdbcType=VARCHAR},
       assign_time = #{assignTime,jdbcType=TIMESTAMP},
+      call_date = #{callDate,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
       call_status = #{callStatus,jdbcType=INTEGER},
+      is_tts = #{isTts,jdbcType=BIT},
+      dialogCount = #{dialogcount,jdbcType=INTEGER},
+      industry = #{industry,jdbcType=VARCHAR},
+      model_id = #{modelId,jdbcType=INTEGER},
+      intent_level = #{intentLevel,jdbcType=VARCHAR},
+      reason = #{reason,jdbcType=VARCHAR},
+      call_wav = #{callWav,jdbcType=VARCHAR},
       crt_date = #{crtDate,jdbcType=VARCHAR},
       crt_time = #{crtTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

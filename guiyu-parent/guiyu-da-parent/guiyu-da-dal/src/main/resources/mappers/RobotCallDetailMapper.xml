@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.da.dao.RobotCallDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.da.dao.entity.RobotCallDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="seq_id" property="seqId" jdbcType="VARCHAR" />
+    <result column="scene" property="scene" jdbcType="VARCHAR" />
+    <result column="human_wav" property="humanWav" jdbcType="VARCHAR" />
+    <result column="human_say" property="humanSay" jdbcType="VARCHAR" />
+    <result column="say_time" property="sayTime" jdbcType="VARCHAR" />
+    <result column="robot_say" property="robotSay" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="robot_wav" property="robotWav" jdbcType="VARCHAR" />
+    <result column="ai_scene" property="aiScene" jdbcType="VARCHAR" />
+    <result column="ai_intent" property="aiIntent" jdbcType="VARCHAR" />
+    <result column="domain_type" property="domainType" jdbcType="INTEGER" />
+    <result column="is_refused" property="isRefused" jdbcType="INTEGER" />
+    <result column="hangup_type" property="hangupType" jdbcType="INTEGER" />
+    <result column="match_type" property="matchType" jdbcType="INTEGER" />
+    <result column="wav_id" property="wavId" jdbcType="VARCHAR" />
+    <result column="crt_date" property="crtDate" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, seq_id, scene, human_wav, human_say, say_time, robot_say, `type`, robot_wav, 
+    ai_scene, ai_intent, domain_type, is_refused, hangup_type, match_type, wav_id, crt_date, 
+    crt_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.da.dao.entity.RobotCallDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from robot_call_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from robot_call_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from robot_call_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.da.dao.entity.RobotCallDetailExample" >
+    delete from robot_call_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.da.dao.entity.RobotCallDetail" >
+    insert into robot_call_detail (id, seq_id, scene, 
+      human_wav, human_say, say_time, 
+      robot_say, `type`, robot_wav, 
+      ai_scene, ai_intent, domain_type, 
+      is_refused, hangup_type, match_type, 
+      wav_id, crt_date, crt_time, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{seqId,jdbcType=VARCHAR}, #{scene,jdbcType=VARCHAR}, 
+      #{humanWav,jdbcType=VARCHAR}, #{humanSay,jdbcType=VARCHAR}, #{sayTime,jdbcType=VARCHAR}, 
+      #{robotSay,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{robotWav,jdbcType=VARCHAR}, 
+      #{aiScene,jdbcType=VARCHAR}, #{aiIntent,jdbcType=VARCHAR}, #{domainType,jdbcType=INTEGER}, 
+      #{isRefused,jdbcType=INTEGER}, #{hangupType,jdbcType=INTEGER}, #{matchType,jdbcType=INTEGER}, 
+      #{wavId,jdbcType=VARCHAR}, #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.da.dao.entity.RobotCallDetail" >
+    insert into robot_call_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="seqId != null" >
+        seq_id,
+      </if>
+      <if test="scene != null" >
+        scene,
+      </if>
+      <if test="humanWav != null" >
+        human_wav,
+      </if>
+      <if test="humanSay != null" >
+        human_say,
+      </if>
+      <if test="sayTime != null" >
+        say_time,
+      </if>
+      <if test="robotSay != null" >
+        robot_say,
+      </if>
+      <if test="type != null" >
+        `type`,
+      </if>
+      <if test="robotWav != null" >
+        robot_wav,
+      </if>
+      <if test="aiScene != null" >
+        ai_scene,
+      </if>
+      <if test="aiIntent != null" >
+        ai_intent,
+      </if>
+      <if test="domainType != null" >
+        domain_type,
+      </if>
+      <if test="isRefused != null" >
+        is_refused,
+      </if>
+      <if test="hangupType != null" >
+        hangup_type,
+      </if>
+      <if test="matchType != null" >
+        match_type,
+      </if>
+      <if test="wavId != null" >
+        wav_id,
+      </if>
+      <if test="crtDate != null" >
+        crt_date,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="seqId != null" >
+        #{seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="scene != null" >
+        #{scene,jdbcType=VARCHAR},
+      </if>
+      <if test="humanWav != null" >
+        #{humanWav,jdbcType=VARCHAR},
+      </if>
+      <if test="humanSay != null" >
+        #{humanSay,jdbcType=VARCHAR},
+      </if>
+      <if test="sayTime != null" >
+        #{sayTime,jdbcType=VARCHAR},
+      </if>
+      <if test="robotSay != null" >
+        #{robotSay,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="robotWav != null" >
+        #{robotWav,jdbcType=VARCHAR},
+      </if>
+      <if test="aiScene != null" >
+        #{aiScene,jdbcType=VARCHAR},
+      </if>
+      <if test="aiIntent != null" >
+        #{aiIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="domainType != null" >
+        #{domainType,jdbcType=INTEGER},
+      </if>
+      <if test="isRefused != null" >
+        #{isRefused,jdbcType=INTEGER},
+      </if>
+      <if test="hangupType != null" >
+        #{hangupType,jdbcType=INTEGER},
+      </if>
+      <if test="matchType != null" >
+        #{matchType,jdbcType=INTEGER},
+      </if>
+      <if test="wavId != null" >
+        #{wavId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtDate != null" >
+        #{crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.da.dao.entity.RobotCallDetailExample" resultType="java.lang.Integer" >
+    select count(*) from robot_call_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update robot_call_detail
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.seqId != null" >
+        seq_id = #{record.seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scene != null" >
+        scene = #{record.scene,jdbcType=VARCHAR},
+      </if>
+      <if test="record.humanWav != null" >
+        human_wav = #{record.humanWav,jdbcType=VARCHAR},
+      </if>
+      <if test="record.humanSay != null" >
+        human_say = #{record.humanSay,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sayTime != null" >
+        say_time = #{record.sayTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.robotSay != null" >
+        robot_say = #{record.robotSay,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        `type` = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.robotWav != null" >
+        robot_wav = #{record.robotWav,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aiScene != null" >
+        ai_scene = #{record.aiScene,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aiIntent != null" >
+        ai_intent = #{record.aiIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.domainType != null" >
+        domain_type = #{record.domainType,jdbcType=INTEGER},
+      </if>
+      <if test="record.isRefused != null" >
+        is_refused = #{record.isRefused,jdbcType=INTEGER},
+      </if>
+      <if test="record.hangupType != null" >
+        hangup_type = #{record.hangupType,jdbcType=INTEGER},
+      </if>
+      <if test="record.matchType != null" >
+        match_type = #{record.matchType,jdbcType=INTEGER},
+      </if>
+      <if test="record.wavId != null" >
+        wav_id = #{record.wavId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtDate != null" >
+        crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update robot_call_detail
+    set id = #{record.id,jdbcType=INTEGER},
+      seq_id = #{record.seqId,jdbcType=VARCHAR},
+      scene = #{record.scene,jdbcType=VARCHAR},
+      human_wav = #{record.humanWav,jdbcType=VARCHAR},
+      human_say = #{record.humanSay,jdbcType=VARCHAR},
+      say_time = #{record.sayTime,jdbcType=VARCHAR},
+      robot_say = #{record.robotSay,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=VARCHAR},
+      robot_wav = #{record.robotWav,jdbcType=VARCHAR},
+      ai_scene = #{record.aiScene,jdbcType=VARCHAR},
+      ai_intent = #{record.aiIntent,jdbcType=VARCHAR},
+      domain_type = #{record.domainType,jdbcType=INTEGER},
+      is_refused = #{record.isRefused,jdbcType=INTEGER},
+      hangup_type = #{record.hangupType,jdbcType=INTEGER},
+      match_type = #{record.matchType,jdbcType=INTEGER},
+      wav_id = #{record.wavId,jdbcType=VARCHAR},
+      crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.da.dao.entity.RobotCallDetail" >
+    update robot_call_detail
+    <set >
+      <if test="seqId != null" >
+        seq_id = #{seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="scene != null" >
+        scene = #{scene,jdbcType=VARCHAR},
+      </if>
+      <if test="humanWav != null" >
+        human_wav = #{humanWav,jdbcType=VARCHAR},
+      </if>
+      <if test="humanSay != null" >
+        human_say = #{humanSay,jdbcType=VARCHAR},
+      </if>
+      <if test="sayTime != null" >
+        say_time = #{sayTime,jdbcType=VARCHAR},
+      </if>
+      <if test="robotSay != null" >
+        robot_say = #{robotSay,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="robotWav != null" >
+        robot_wav = #{robotWav,jdbcType=VARCHAR},
+      </if>
+      <if test="aiScene != null" >
+        ai_scene = #{aiScene,jdbcType=VARCHAR},
+      </if>
+      <if test="aiIntent != null" >
+        ai_intent = #{aiIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="domainType != null" >
+        domain_type = #{domainType,jdbcType=INTEGER},
+      </if>
+      <if test="isRefused != null" >
+        is_refused = #{isRefused,jdbcType=INTEGER},
+      </if>
+      <if test="hangupType != null" >
+        hangup_type = #{hangupType,jdbcType=INTEGER},
+      </if>
+      <if test="matchType != null" >
+        match_type = #{matchType,jdbcType=INTEGER},
+      </if>
+      <if test="wavId != null" >
+        wav_id = #{wavId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtDate != null" >
+        crt_date = #{crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.da.dao.entity.RobotCallDetail" >
+    update robot_call_detail
+    set seq_id = #{seqId,jdbcType=VARCHAR},
+      scene = #{scene,jdbcType=VARCHAR},
+      human_wav = #{humanWav,jdbcType=VARCHAR},
+      human_say = #{humanSay,jdbcType=VARCHAR},
+      say_time = #{sayTime,jdbcType=VARCHAR},
+      robot_say = #{robotSay,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      robot_wav = #{robotWav,jdbcType=VARCHAR},
+      ai_scene = #{aiScene,jdbcType=VARCHAR},
+      ai_intent = #{aiIntent,jdbcType=VARCHAR},
+      domain_type = #{domainType,jdbcType=INTEGER},
+      is_refused = #{isRefused,jdbcType=INTEGER},
+      hangup_type = #{hangupType,jdbcType=INTEGER},
+      match_type = #{matchType,jdbcType=INTEGER},
+      wav_id = #{wavId,jdbcType=VARCHAR},
+      crt_date = #{crtDate,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

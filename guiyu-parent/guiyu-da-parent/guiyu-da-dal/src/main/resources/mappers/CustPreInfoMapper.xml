@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.da.dao.CustPreInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.da.dao.entity.CustPreInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="seq_id" property="seqId" jdbcType="VARCHAR" />
+    <result column="need" property="need" jdbcType="VARCHAR" />
+    <result column="is_self" property="isSelf" jdbcType="VARCHAR" />
+    <result column="agree_connect" property="agreeConnect" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="addr" property="addr" jdbcType="VARCHAR" />
+    <result column="home" property="home" jdbcType="VARCHAR" />
+    <result column="car" property="car" jdbcType="VARCHAR" />
+    <result column="marry" property="marry" jdbcType="VARCHAR" />
+    <result column="job" property="job" jdbcType="VARCHAR" />
+    <result column="salary" property="salary" jdbcType="VARCHAR" />
+    <result column="warranty" property="warranty" jdbcType="VARCHAR" />
+    <result column="appointed_time" property="appointedTime" jdbcType="VARCHAR" />
+    <result column="crt_date" property="crtDate" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, phone, `name`, seq_id, need, is_self, agree_connect, age, gender, addr, home, 
+    car, marry, job, salary, warranty, appointed_time, crt_date, crt_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.da.dao.entity.CustPreInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from cust_pre_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from cust_pre_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cust_pre_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.da.dao.entity.CustPreInfoExample" >
+    delete from cust_pre_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.da.dao.entity.CustPreInfo" >
+    insert into cust_pre_info (id, phone, `name`, 
+      seq_id, need, is_self, 
+      agree_connect, age, gender, 
+      addr, home, car, marry, 
+      job, salary, warranty, 
+      appointed_time, crt_date, crt_time, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{seqId,jdbcType=VARCHAR}, #{need,jdbcType=VARCHAR}, #{isSelf,jdbcType=VARCHAR}, 
+      #{agreeConnect,jdbcType=VARCHAR}, #{age,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, 
+      #{addr,jdbcType=VARCHAR}, #{home,jdbcType=VARCHAR}, #{car,jdbcType=VARCHAR}, #{marry,jdbcType=VARCHAR}, 
+      #{job,jdbcType=VARCHAR}, #{salary,jdbcType=VARCHAR}, #{warranty,jdbcType=VARCHAR}, 
+      #{appointedTime,jdbcType=VARCHAR}, #{crtDate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.da.dao.entity.CustPreInfo" >
+    insert into cust_pre_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="seqId != null" >
+        seq_id,
+      </if>
+      <if test="need != null" >
+        need,
+      </if>
+      <if test="isSelf != null" >
+        is_self,
+      </if>
+      <if test="agreeConnect != null" >
+        agree_connect,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="addr != null" >
+        addr,
+      </if>
+      <if test="home != null" >
+        home,
+      </if>
+      <if test="car != null" >
+        car,
+      </if>
+      <if test="marry != null" >
+        marry,
+      </if>
+      <if test="job != null" >
+        job,
+      </if>
+      <if test="salary != null" >
+        salary,
+      </if>
+      <if test="warranty != null" >
+        warranty,
+      </if>
+      <if test="appointedTime != null" >
+        appointed_time,
+      </if>
+      <if test="crtDate != null" >
+        crt_date,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        #{seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="need != null" >
+        #{need,jdbcType=VARCHAR},
+      </if>
+      <if test="isSelf != null" >
+        #{isSelf,jdbcType=VARCHAR},
+      </if>
+      <if test="agreeConnect != null" >
+        #{agreeConnect,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="home != null" >
+        #{home,jdbcType=VARCHAR},
+      </if>
+      <if test="car != null" >
+        #{car,jdbcType=VARCHAR},
+      </if>
+      <if test="marry != null" >
+        #{marry,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null" >
+        #{salary,jdbcType=VARCHAR},
+      </if>
+      <if test="warranty != null" >
+        #{warranty,jdbcType=VARCHAR},
+      </if>
+      <if test="appointedTime != null" >
+        #{appointedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="crtDate != null" >
+        #{crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.da.dao.entity.CustPreInfoExample" resultType="java.lang.Integer" >
+    select count(*) from cust_pre_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update cust_pre_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.seqId != null" >
+        seq_id = #{record.seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.need != null" >
+        need = #{record.need,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isSelf != null" >
+        is_self = #{record.isSelf,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agreeConnect != null" >
+        agree_connect = #{record.agreeConnect,jdbcType=VARCHAR},
+      </if>
+      <if test="record.age != null" >
+        age = #{record.age,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gender != null" >
+        gender = #{record.gender,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addr != null" >
+        addr = #{record.addr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.home != null" >
+        home = #{record.home,jdbcType=VARCHAR},
+      </if>
+      <if test="record.car != null" >
+        car = #{record.car,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marry != null" >
+        marry = #{record.marry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.job != null" >
+        job = #{record.job,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salary != null" >
+        salary = #{record.salary,jdbcType=VARCHAR},
+      </if>
+      <if test="record.warranty != null" >
+        warranty = #{record.warranty,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appointedTime != null" >
+        appointed_time = #{record.appointedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtDate != null" >
+        crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update cust_pre_info
+    set id = #{record.id,jdbcType=INTEGER},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      seq_id = #{record.seqId,jdbcType=VARCHAR},
+      need = #{record.need,jdbcType=VARCHAR},
+      is_self = #{record.isSelf,jdbcType=VARCHAR},
+      agree_connect = #{record.agreeConnect,jdbcType=VARCHAR},
+      age = #{record.age,jdbcType=VARCHAR},
+      gender = #{record.gender,jdbcType=VARCHAR},
+      addr = #{record.addr,jdbcType=VARCHAR},
+      home = #{record.home,jdbcType=VARCHAR},
+      car = #{record.car,jdbcType=VARCHAR},
+      marry = #{record.marry,jdbcType=VARCHAR},
+      job = #{record.job,jdbcType=VARCHAR},
+      salary = #{record.salary,jdbcType=VARCHAR},
+      warranty = #{record.warranty,jdbcType=VARCHAR},
+      appointed_time = #{record.appointedTime,jdbcType=VARCHAR},
+      crt_date = #{record.crtDate,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.da.dao.entity.CustPreInfo" >
+    update cust_pre_info
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        seq_id = #{seqId,jdbcType=VARCHAR},
+      </if>
+      <if test="need != null" >
+        need = #{need,jdbcType=VARCHAR},
+      </if>
+      <if test="isSelf != null" >
+        is_self = #{isSelf,jdbcType=VARCHAR},
+      </if>
+      <if test="agreeConnect != null" >
+        agree_connect = #{agreeConnect,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="home != null" >
+        home = #{home,jdbcType=VARCHAR},
+      </if>
+      <if test="car != null" >
+        car = #{car,jdbcType=VARCHAR},
+      </if>
+      <if test="marry != null" >
+        marry = #{marry,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null" >
+        salary = #{salary,jdbcType=VARCHAR},
+      </if>
+      <if test="warranty != null" >
+        warranty = #{warranty,jdbcType=VARCHAR},
+      </if>
+      <if test="appointedTime != null" >
+        appointed_time = #{appointedTime,jdbcType=VARCHAR},
+      </if>
+      <if test="crtDate != null" >
+        crt_date = #{crtDate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.da.dao.entity.CustPreInfo" >
+    update cust_pre_info
+    set phone = #{phone,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      seq_id = #{seqId,jdbcType=VARCHAR},
+      need = #{need,jdbcType=VARCHAR},
+      is_self = #{isSelf,jdbcType=VARCHAR},
+      agree_connect = #{agreeConnect,jdbcType=VARCHAR},
+      age = #{age,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=VARCHAR},
+      addr = #{addr,jdbcType=VARCHAR},
+      home = #{home,jdbcType=VARCHAR},
+      car = #{car,jdbcType=VARCHAR},
+      marry = #{marry,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      salary = #{salary,jdbcType=VARCHAR},
+      warranty = #{warranty,jdbcType=VARCHAR},
+      appointed_time = #{appointedTime,jdbcType=VARCHAR},
+      crt_date = #{crtDate,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,5 +1,7 @@
 package com.guiji.da.service.robot;
 
+import com.guiji.da.service.vo.RotbotFdCallback;
+
 /** 
 * @ClassName: SellbotCallbackService 
 * @Description: 接收Sellbot通话记录回调服务
@@ -14,4 +16,10 @@ public interface ISellbotCallbackService {
 	 * @param sellbotJson
 	 */
 	void receiveSellbotCallback(String sellbotJson);
+	
+	/**
+	 * 接收飞龙每通电话的回调数据
+	 * @param rotbotFdCallback
+	 */
+	void receiveFdCallback(RotbotFdCallback rotbotFdCallback);
 }

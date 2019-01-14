@@ -34,6 +34,7 @@ public class BatchImportService implements IBatchImportService {
 	@Override
 	public void batchImport(Sheet sheet, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode) {
 		DispatchPlan dispatchPlan = new DispatchPlan();
+		Integer fileRecordId = dispatchPlanParam.getFileRecordId();
 		BeanUtil.copyProperties(dispatchPlanParam, dispatchPlan);
 
 		// 校验
@@ -44,9 +45,13 @@ public class BatchImportService implements IBatchImportService {
 				if (row == null) {
 					continue;
 				}
-
 				dispatchPlan = doWithOneRow(row, dispatchPlanParam);
 				if (dispatchPlan == null) {
+					dispatchPlan = new DispatchPlan();
+					dispatchPlan.setFileRecordId(fileRecordId);
+					dispatchPlan.setPhone(getCellValue(row, 0));
+					dispatchPlan.setParams(getCellValue(row, 1));
+					dispatchPlan.setAttach(getCellValue(row, 2));
 					saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, row.getRowNum() + 1);
 					continue;
 				}

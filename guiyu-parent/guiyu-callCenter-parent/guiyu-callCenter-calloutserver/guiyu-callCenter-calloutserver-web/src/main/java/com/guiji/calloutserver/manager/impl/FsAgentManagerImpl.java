@@ -72,6 +72,10 @@ public class FsAgentManagerImpl implements FsAgentManager {
                     //TODO: 报警
                     log.warn("上传文件失败，错误码是[{}][{}],request[{}]", result.getCode(), result.getMsg(),request);
                 }
+                @Override
+                public boolean trueBreakOnCode(String code) {
+                    return false;
+                }
             }, 10, 1, 30, 600);
         }catch (Exception ex){
             log.warn("上传文件出现异常", ex);

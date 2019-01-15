@@ -42,6 +42,10 @@ public class FsManagerImpl implements FsManager {
                     //TODO: 报警
                     log.warn("请求fs资源失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
                 }
+                @Override
+                public boolean trueBreakOnCode(String code) {
+                    return false;
+                }
             }, -1, 1, 1, 60);
         }catch (Exception ex){
             log.warn("申请fs资源出现异常", ex);
@@ -65,6 +69,10 @@ public class FsManagerImpl implements FsManager {
                 public void onErrorResult(Result.ReturnData result) {
                     //TODO: 报警
                     log.warn("释放fs资源失败，错误码是[{}][{}]", result.getCode(), result.getMsg());
+                }
+                @Override
+                public boolean trueBreakOnCode(String code) {
+                    return false;
                 }
             }, -1, 1, 1, 60);
         }catch (Exception ex){

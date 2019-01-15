@@ -71,71 +71,64 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				if (object == null) {
 					continue;
 				}
-				System.out.println();
 				// 用户id
 				Integer userId = object.getUserId();
-				Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
-				if (redisUserIdCount != null) {
-					// REDIS_USER_MAX_ROBOT
-					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
-					if (max != null) {
-						for (UserResourceDto dto : max) {
-							if (userId.equals(Integer.valueOf(dto.getUserId()))) {
-								// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
-								if (redisUserIdCount >= dto.getCount()) {
-									logger.info("用户:{}机器人数量{}已到达上线",userId,dto.getCount());
-									// 还原状态
+				List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
+				if (max != null) {
+					Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
+					if (redisUserIdCount == null) {
+						redisUserIdCount = 0;
+					}
+					for (UserResourceDto dto : max) {
+						if (userId.equals(Integer.valueOf(dto.getUserId()))) {
+							// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
+							if (redisUserIdCount >= dto.getCount()) {
+								logger.info("用户:{}机器人数量{}已到达上线", userId, dto.getCount());
+								// 还原状态
+								updateStatusSync(object.getPlanUuid());
+							} else {
+								// 记录推送记录
+								insertPush(object);
+								List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
+								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
+								try {
+									BeanUtils.copyProperties(callBean, object);
+									callBean.setTempId(object.getRobot());
+									list.add(callBean);
+								} catch (IllegalAccessException e) {
 									updateStatusSync(object.getPlanUuid());
-								}else{
-									// 记录推送记录
-									insertPush(object);
-									List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
-									com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
-									try {
-										BeanUtils.copyProperties(callBean, object);
-										callBean.setTempId(object.getRobot());
-										list.add(callBean);
-									} catch (IllegalAccessException e) {
-										updateStatusSync(object.getPlanUuid());
-										logger.error("error", e);
-										continue;
-									} catch (InvocationTargetException e) {
-										updateStatusSync(object.getPlanUuid());
-										logger.error("error", e);
-										continue;
-									}
-									logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
-									ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
-									if (!startMakeCall.success) {
-										updateStatusSync(object.getPlanUuid());
-										logger.info("启动呼叫中心任务失败");
-										continue;
-									}
-									// redis修改变量
-									Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-									addup = addup + 1;
-									redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
-
-									// 拿到对应用户的redis
-									Integer userIdCount = (Integer) redisUtil
-											.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
-									if (userIdCount == null) {
-										userIdCount = 0;
-									}
-									userIdCount = userIdCount + 1;
-									redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
-
+									logger.error("error", e);
+									continue;
+								} catch (InvocationTargetException e) {
+									updateStatusSync(object.getPlanUuid());
+									logger.error("error", e);
+									continue;
 								}
+								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
+								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
+								if (!startMakeCall.success) {
+									updateStatusSync(object.getPlanUuid());
+									logger.info("启动呼叫中心任务失败");
+									continue;
+								}
+								// redis修改变量
+								Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+								addup = addup + 1;
+								redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
+
+								// 拿到对应用户的redis
+								Integer userIdCount = (Integer) redisUtil
+										.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
+								if (userIdCount == null) {
+									userIdCount = 0;
+								}
+								userIdCount = userIdCount + 1;
+								redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
+
 							}
 						}
 					}
 				}
-
-//				if (object != null) {
-//
-//				} else {
-//					// logger.debug("redis里面没数据");
-//				}
 			}
 		}
 	}

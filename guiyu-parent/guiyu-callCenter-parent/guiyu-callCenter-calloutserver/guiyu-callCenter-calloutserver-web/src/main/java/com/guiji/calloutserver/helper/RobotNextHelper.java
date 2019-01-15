@@ -89,16 +89,18 @@ public class RobotNextHelper {
                                 aiCallNextReq.setStatus("0");
                             }
                             aiCallNextReq.setTimestamp(channel.getEndPlayTime().getTime());
+                            aiCallNextReq.setWaitCnt((int) (new Date().getTime()-channel.getEndPlayTime().getTime())/1000);
                         } else {//播音中
                             aiCallNextReq.setStatus("1");
                             aiCallNextReq.setTimestamp(channel.getStartPlayTime().getTime());
+                            aiCallNextReq.setWaitCnt(0);
                         }
-                        log.debug("-------------start  robotRemote aiCallNext callId:" + callId);
+                        log.info("-------------start  robotRemote aiCallNext aiCallNextReq[{}]",aiCallNextReq);
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
                         String status = aiCallNext.getHelloStatus();
                         if (status.equals("play")) {
-
+                            log.info("-------------end  robotRemote aiCallNext result[{}]",result);
                             //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
                             if (channelHelper.isChannelLock(callId)) {
                                 log.info("通道媒体[{}]已被锁定，跳过该次识别请求 startAiCallNextTimer", callId);
@@ -149,15 +151,15 @@ public class RobotNextHelper {
 //
 //        if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
         CallOutDetail callDetail = new CallOutDetail();
-            callDetail.setCallId(new BigInteger(callId));
+        callDetail.setCallId(new BigInteger(callId));
 //            callDetail.setCallDetailId(IdGenUtil.uuid());
-            setDetailValues(aiResponse, callDetail, callId);
-            callOutDetailService.save(callDetail);
+        setDetailValues(aiResponse, callDetail, callId);
+        callOutDetailService.save(callDetail);
 
-            CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
-            callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
-            callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
-            callOutDetailRecordService.save(callDetailRecord);
+        CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
+        callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
+        callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
+        callOutDetailRecordService.save(callDetailRecord);
 //        } else {
 //            setDetailValues(aiResponse, callDetail, callId);
 //            callOutDetailService.update(callDetail);

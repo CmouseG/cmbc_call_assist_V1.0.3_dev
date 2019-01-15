@@ -1,6 +1,5 @@
 package com.guiji.ccmanager.service.impl;
 
-import ai.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.ccmanager.constant.Constant;
@@ -192,6 +191,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
             CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
             BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
+            callPlanDetailRecordVO.setCallId(callOutPlan.getCallId().toString());
             callPlanDetailRecordVO.setDetailList(resList);
             return callPlanDetailRecordVO;
         }
@@ -270,7 +270,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 if (recordList != null && recordList.size() > 0) {
                     for (CallOutRecord callOutRecord : recordList) {
-                        if (callPlanDetailRecordVO.getCallId().compareTo(callOutRecord.getCallId())==0) {
+                        if (callPlanDetailRecordVO.getCallId().equals(callOutRecord.getCallId().toString())) {
                             callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
                         }
                     }

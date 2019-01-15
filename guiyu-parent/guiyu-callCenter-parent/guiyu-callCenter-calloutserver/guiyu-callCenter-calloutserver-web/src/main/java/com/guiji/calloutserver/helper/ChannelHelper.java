@@ -197,7 +197,7 @@ public class ChannelHelper {
                     if (!isEnd) {
                         log.info("在[{}]秒之后，将通道[{}]媒体文件清理掉，isPrologue设置为[{}]", mediaFileDuration, uuid, false);
                         channelService.updateMediaLock(uuid, false,false, null, null);
-                        afterMediaChecker.addAfterMediaCheck(uuid);
+//                        afterMediaChecker.addAfterMediaCheck(uuid);
                     } else {
                         log.info("播放结束，开始删除callMedia[{}]", uuid);
                         channelService.delete(uuid);

@@ -94,8 +94,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									updateStatusSync(object.getPlanUuid());
 									logger.info("用户:{}机器人数量{}已到达上线的uuid", userId, dto.getCount(), object.getPlanUuid());
 								} else {
-									// 记录推送记录
-									insertPush(object);
 									List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
 									com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
 									try {
@@ -104,16 +102,18 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 										list.add(callBean);
 									} catch (IllegalAccessException e) {
 										updateStatusSync(object.getPlanUuid());
-										logger.error("error", e);
+										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 										continue;
 									} catch (InvocationTargetException e) {
 										updateStatusSync(object.getPlanUuid());
-										logger.error("error", e);
+										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 										continue;
 									}
 									logger.info(
 											"通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
 									ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
+									// 记录推送记录
+									insertPush(object);
 									if (!startMakeCall.success) {
 										updateStatusSync(object.getPlanUuid());
 										logger.info("启动呼叫中心任务失败");
@@ -139,7 +139,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					}
 				}
 			} catch (Exception e) {
-				logger.info("error", e);
+				logger.info("pushHandler代码异常了", e);
 			} finally {
 				distributedLockHandler.releaseLock(pushHandlerLock); // 释放锁
 			}

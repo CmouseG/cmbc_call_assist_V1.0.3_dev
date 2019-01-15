@@ -28,6 +28,16 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
     public void save(CallOutDetail callOutDetail) {
         //设置分表字段的值
         callOutDetail.setShardingValue(new Random().nextInt(100));
+        //处理  意向标签  accurate_intent":"D*有效对话轮数:0</br>未命中关键词
+
+        String intent = callOutDetail.getAccurateIntent();
+        if(intent!=null && intent.contains("*")){
+            String subIntent = intent.substring(0,1);
+            String subReason= intent.substring(2);
+            callOutDetail.setAccurateIntent(subIntent);
+            callOutDetail.setReason(subReason);
+        }
+
         callOutDetailMapper.insertSelective(callOutDetail);
     }
 

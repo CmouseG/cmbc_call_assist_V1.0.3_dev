@@ -75,6 +75,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					if (object == null) {
 						continue;
 					}
+					logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", object);
 					// 用户id
 					Integer userId = object.getUserId();
 					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
@@ -90,8 +91,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									// logger.info("用户:{}机器人数量{}已到达上线",
 									// userId,
 									// dto.getCount());
-									// 还原状态
 									updateStatusSync(object.getPlanUuid());
+									logger.info("用户:{}机器人数量{}已到达上线的uuid", userId, dto.getCount(), object.getPlanUuid());
 								} else {
 									// 记录推送记录
 									insertPush(object);

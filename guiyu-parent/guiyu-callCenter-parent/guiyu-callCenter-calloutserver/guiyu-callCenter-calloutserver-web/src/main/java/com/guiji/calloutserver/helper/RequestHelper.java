@@ -71,6 +71,10 @@ public class RequestHelper {
                         return result;
                     }else{
                         requestApi.onErrorResult(result);
+                        if(requestApi.trueBreakOnCode(result.getCode())){
+                            isContinue = false;
+                            return null;
+                        }
                     }
                 }
             }catch (Exception e){// 出现异常 ，还会继续循环调用
@@ -103,5 +107,7 @@ public class RequestHelper {
         Result.ReturnData execute();
 
         void onErrorResult(Result.ReturnData result);
+
+        boolean trueBreakOnCode(String code);
     }
 }

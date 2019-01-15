@@ -73,6 +73,14 @@ public class AIManagerImpl implements AIManager {
             public void onErrorResult(Result.ReturnData result) {
                 log.warn("调用机器人中心aiCallStart失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
             }
+
+            @Override
+            public boolean trueBreakOnCode(String code) {
+                if(code.equals("00060001")){
+                    return true;
+                }
+                return false;
+            }
         }, 4, 1, 1, 60, true);
         dispatchLogService.endServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), returnData, "结束向机器人中心请求接口aiCallStart");
 
@@ -165,6 +173,14 @@ public class AIManagerImpl implements AIManager {
                 public void onErrorResult(Result.ReturnData result) {
                     //TODO: 报警
                     log.warn("释放机器人资源出错, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
+                }
+
+                @Override
+                public boolean trueBreakOnCode(String code) {
+                    if(code.equals("00060001") || code.equals("00060006")){
+                        return true;
+                    }
+                    return false;
                 }
             }, 20, 1, 10, 180, true);
         } catch (Exception e) {

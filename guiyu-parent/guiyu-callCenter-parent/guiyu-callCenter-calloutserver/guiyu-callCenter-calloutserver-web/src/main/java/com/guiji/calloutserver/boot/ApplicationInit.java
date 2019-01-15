@@ -78,6 +78,11 @@ public class ApplicationInit {
                     //TODO: 报警
                     log.warn("calloutserver申请freeswitch资源失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
+
+                @Override
+                public boolean trueBreakOnCode(String code) {
+                    return false;
+                }
             }, -1, 1, 1,60,true);
 
         } catch (Exception e) {

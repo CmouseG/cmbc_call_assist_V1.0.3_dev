@@ -35,10 +35,12 @@ import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.robot.model.UserAiCfgVO;
+import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.service.IAiAbilityCenterService;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.IUserAiCfgService;
+import com.guiji.robot.service.impl.AiCacheService;
 import com.guiji.robot.service.impl.AiNewTransService;
 import com.guiji.robot.util.ControllerUtil;
 import com.guiji.robot.util.ListUtil;
@@ -68,6 +70,8 @@ public class RobotRemoteController implements IRobotRemote{
 	ControllerUtil controllerUtil;
 	@Autowired
 	IProcessSchedule iProcessSchedule; 
+	@Autowired
+	AiCacheService aiCacheService;
 	
 	/************************1、资源服务************************/
 	
@@ -260,6 +264,19 @@ public class RobotRemoteController implements IRobotRemote{
 	@Override
 	public Result.ReturnData<Integer> reloadSellbot(){
 		iAiResourceManagerService.reloadSellbotResource();
+		return Result.ok();
+	}
+	
+	
+	/**
+	 * 查询用户机器人配置信息
+	 */
+	@Override
+	public Result.ReturnData<UserResourceCache> queryUserResourceCache(@RequestParam(value="userId",required=true) String userId){
+		if(StrUtils.isNotEmpty(userId)) {
+			UserResourceCache userResourceCache = aiCacheService.getUserResource(userId);
+			return Result.ok(userResourceCache);
+		}
 		return Result.ok();
 	}
 }

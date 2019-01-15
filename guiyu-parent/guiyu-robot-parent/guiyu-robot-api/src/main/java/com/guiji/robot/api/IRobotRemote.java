@@ -23,6 +23,7 @@ import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.robot.model.UserAiCfgVO;
+import com.guiji.robot.model.UserResourceCache;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -148,4 +149,8 @@ public interface IRobotRemote {
     @PostMapping(value = "/remote/reloadSellbot")
 	Result.ReturnData<Integer> reloadSellbot();
 	
+	
+	@ApiOperation(value = "查询用户机器人配置信息")
+    @PostMapping(value = "/remote/queryUserResourceCache")
+	Result.ReturnData<UserResourceCache> queryUserResourceCache(@RequestParam(value="userId",required=true) String userId);
 }

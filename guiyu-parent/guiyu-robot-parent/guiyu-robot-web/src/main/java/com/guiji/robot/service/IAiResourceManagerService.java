@@ -5,7 +5,6 @@ import java.util.List;
 import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.AiPoolInfo;
-import com.guiji.robot.service.vo.UserResourceCache;
 
 /** 
 * @ClassName: IAiResourceManagerService 

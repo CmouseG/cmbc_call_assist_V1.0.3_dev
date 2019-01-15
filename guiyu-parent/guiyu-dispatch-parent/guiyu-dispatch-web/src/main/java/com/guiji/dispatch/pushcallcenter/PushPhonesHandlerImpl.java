@@ -56,9 +56,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		Integer sysMaxPlan1 = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
 		logger.info("----------currentCount1----------" + currentCount1);
 		logger.info("----------sysMaxPlan1----------" + sysMaxPlan1);
+		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 		while (true) {
-			Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 			try {
+				// if (distributedLockHandler.tryLock(pushHandlerLock)) { //
+				// 默认锁设置
 				// 当前推送记录
 				Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
 				// 最大并发
@@ -85,7 +87,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 							if (userId.equals(Integer.valueOf(dto.getUserId()))) {
 								// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
 								if (redisUserIdCount >= dto.getCount()) {
-									// logger.info("用户:{}机器人数量{}已到达上线", userId,
+									// logger.info("用户:{}机器人数量{}已到达上线",
+									// userId,
 									// dto.getCount());
 									// 还原状态
 									updateStatusSync(object.getPlanUuid());

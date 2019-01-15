@@ -57,78 +57,87 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		logger.info("----------currentCount1----------" + currentCount1);
 		logger.info("----------sysMaxPlan1----------" + sysMaxPlan1);
 		while (true) {
-			// 当前推送记录
-			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-			// 最大并发
-			Integer sysMaxPlan = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
-			if (currentCount < sysMaxPlan) {
-				Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
-				if (distributedLockHandler.isLockExist(lock)) {
-					logger.info("redis锁了  redisPlanQueueLock");
-					continue;
-				}
-				DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
-				if (object == null) {
-					continue;
-				}
-				// 用户id
-				Integer userId = object.getUserId();
-				List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
-				if (max != null) {
-					Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
-					if (redisUserIdCount == null) {
-						redisUserIdCount = 0;
+			Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
+			try {
+				// 当前推送记录
+				Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+				// 最大并发
+				Integer sysMaxPlan = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
+				if (currentCount < sysMaxPlan) {
+					Lock redisPlanQueueLock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
+					if (distributedLockHandler.isLockExist(redisPlanQueueLock)) {
+						logger.info("redis锁了  redisPlanQueueLock");
+						continue;
 					}
-					for (UserResourceDto dto : max) {
-						if (userId.equals(Integer.valueOf(dto.getUserId()))) {
-							// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
-							if (redisUserIdCount >= dto.getCount()) {
-//								logger.info("用户:{}机器人数量{}已到达上线", userId, dto.getCount());
-								// 还原状态
-								updateStatusSync(object.getPlanUuid());
-							} else {
-								// 记录推送记录
-								insertPush(object);
-								List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
-								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
-								try {
-									BeanUtils.copyProperties(callBean, object);
-									callBean.setTempId(object.getRobot());
-									list.add(callBean);
-								} catch (IllegalAccessException e) {
+					DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
+					if (object == null) {
+						continue;
+					}
+					// 用户id
+					Integer userId = object.getUserId();
+					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
+					if (max != null) {
+						Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
+						if (redisUserIdCount == null) {
+							redisUserIdCount = 0;
+						}
+						for (UserResourceDto dto : max) {
+							if (userId.equals(Integer.valueOf(dto.getUserId()))) {
+								// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
+								if (redisUserIdCount >= dto.getCount()) {
+									// logger.info("用户:{}机器人数量{}已到达上线", userId,
+									// dto.getCount());
+									// 还原状态
 									updateStatusSync(object.getPlanUuid());
-									logger.error("error", e);
-									continue;
-								} catch (InvocationTargetException e) {
-									updateStatusSync(object.getPlanUuid());
-									logger.error("error", e);
-									continue;
-								}
-								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
-								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
-								if (!startMakeCall.success) {
-									updateStatusSync(object.getPlanUuid());
-									logger.info("启动呼叫中心任务失败");
-									continue;
-								}
-								// redis修改变量
-								Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-								addup = addup + 1;
-								redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
+								} else {
+									// 记录推送记录
+									insertPush(object);
+									List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
+									com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
+									try {
+										BeanUtils.copyProperties(callBean, object);
+										callBean.setTempId(object.getRobot());
+										list.add(callBean);
+									} catch (IllegalAccessException e) {
+										updateStatusSync(object.getPlanUuid());
+										logger.error("error", e);
+										continue;
+									} catch (InvocationTargetException e) {
+										updateStatusSync(object.getPlanUuid());
+										logger.error("error", e);
+										continue;
+									}
+									logger.info(
+											"通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
+									ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
+									if (!startMakeCall.success) {
+										updateStatusSync(object.getPlanUuid());
+										logger.info("启动呼叫中心任务失败");
+										continue;
+									}
+									// redis修改变量
+									Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+									addup = addup + 1;
+									redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
 
-								// 拿到对应用户的redis
-								Integer userIdCount = (Integer) redisUtil
-										.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
-								if (userIdCount == null) {
-									userIdCount = 0;
-								}
-								userIdCount = userIdCount + 1;
-								redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
+									// 拿到对应用户的redis
+									Integer userIdCount = (Integer) redisUtil
+											.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
+									if (userIdCount == null) {
+										userIdCount = 0;
+									}
+									userIdCount = userIdCount + 1;
+									redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
 
+								}
 							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				logger.info("error", e);
+			} finally {
+				distributedLockHandler.releaseLock(pushHandlerLock); // 释放锁
 			}
 		}
 	}

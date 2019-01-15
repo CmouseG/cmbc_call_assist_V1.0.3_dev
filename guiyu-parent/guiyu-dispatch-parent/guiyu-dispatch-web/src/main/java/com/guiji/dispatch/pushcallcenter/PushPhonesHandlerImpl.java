@@ -83,7 +83,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 						if (userId.equals(Integer.valueOf(dto.getUserId()))) {
 							// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
 							if (redisUserIdCount >= dto.getCount()) {
-								logger.info("用户:{}机器人数量{}已到达上线", userId, dto.getCount());
+//								logger.info("用户:{}机器人数量{}已到达上线", userId, dto.getCount());
 								// 还原状态
 								updateStatusSync(object.getPlanUuid());
 							} else {

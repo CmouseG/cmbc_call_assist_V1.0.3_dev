@@ -66,6 +66,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 						// 2.按小时获取当前时间段有拨打计划的用户，按1000条进redis拨打队列为总数，分别计算[用户、线路]拨打数量(按用户划分后，各用户线路均分)
 						List<DispatchPlan> dispatchPlanList = getDispatchPlan(DateUtil.getCurrentHour());
 						if (dispatchPlanList.size() > 0) {
+							logger.info("从数据库中拿出号码进行redis写入："+dispatchPlanList);
 							pushPlan2Queue(dispatchPlanList);
 						}
 					}

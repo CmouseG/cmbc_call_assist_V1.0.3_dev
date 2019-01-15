@@ -188,40 +188,56 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 */
 	@Override
 	public AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq) {
-		//获取AI机器人资源池
-		List<AiInuseCache> aiPoolList = this.queryAiPoolList();
-		if(aiPoolList == null || aiPoolList.isEmpty()) {
-			//如果缓存中没有数据，初始化下
-			aiPoolList = this.aiPoolInit();
-		}
-		AiInuseCache assignAi = null;
-		if(aiPoolList != null && !aiPoolList.isEmpty()) {
-			for(AiInuseCache aiInuseCache : aiPoolList) {
-				if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
-					//找到1个空闲的机器人
-					assignAi = aiInuseCache;
-					break;
+		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL, RobotConstants.LOCK_ROBOT_AIPOOL);
+		if (distributedLockHandler.tryLock(lock)) {
+			try {
+				//获取AI机器人资源池
+				List<AiInuseCache> aiPoolList = this.queryAiPoolList();
+				if(aiPoolList == null || aiPoolList.isEmpty()) {
+					//如果缓存中没有数据，初始化下
+					aiPoolList = this.aiPoolInit();
 				}
+				AiInuseCache assignAi = null;
+				if(aiPoolList != null && !aiPoolList.isEmpty()) {
+					for(AiInuseCache aiInuseCache : aiPoolList) {
+						if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
+							//找到1个空闲的机器人
+							assignAi = aiInuseCache;
+							break;
+						}
+					}
+				}
+				if(assignAi==null) {
+					//没有空闲机器人
+					logger.error("本地机器人资源池机器人总数{},没有空闲机器人",aiPoolList.size());
+					throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
+				}
+				//设置分配后的部分信息
+				assignAi.setUserId(aiCallApplyReq.getUserId());	//用户号
+				assignAi.setTemplateIds(aiCallApplyReq.getTemplateId());	//模板号
+				assignAi.setAiStatus(RobotConstants.AI_STATUS_B); //忙
+				assignAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
+				assignAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
+				assignAi.setSeqId(aiCallApplyReq.getSeqId());	//会话id
+				assignAi.setCallNum(assignAi.getCallNum()+1); //拨打数量
+				//将这个机器人分配给用户
+				aiCacheService.changeAiInUse(assignAi);
+				//将资源池中机器人状态更新为忙
+				aiCacheService.changeAiPool(assignAi);
+				return assignAi;
+			} catch (RobotException e) {
+				throw e; 
+			} catch (Exception e1) {
+				logger.error("从机器人资源池捞机器人异常！",e1);
+				throw new RobotException(AiErrorEnum.AI00060033.getErrorCode(),AiErrorEnum.AI00060033.getErrorMsg());
+			}finally {
+				//释放锁
+				distributedLockHandler.releaseLock(lock);
 			}
+		}else {
+			logger.warn("[从机器人资源池捞机器人]未能获取资源锁！！！");
+			throw new RobotException(AiErrorEnum.AI00060034.getErrorCode(),AiErrorEnum.AI00060034.getErrorMsg());
 		}
-		if(assignAi==null) {
-			//没有空闲机器人
-			logger.error("本地机器人资源池机器人总数{},没有空闲机器人",aiPoolList.size());
-			throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
-		}
-		//设置分配后的部分信息
-		assignAi.setUserId(aiCallApplyReq.getUserId());	//用户号
-		assignAi.setTemplateIds(aiCallApplyReq.getTemplateId());	//模板号
-		assignAi.setAiStatus(RobotConstants.AI_STATUS_B); //忙
-		assignAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
-		assignAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
-		assignAi.setSeqId(aiCallApplyReq.getSeqId());	//会话id
-		assignAi.setCallNum(assignAi.getCallNum()+1); //拨打数量
-		//将这个机器人分配给用户
-		aiCacheService.changeAiInUse(assignAi);
-		//将资源池中机器人状态更新为忙
-		aiCacheService.changeAiPool(assignAi);
-		return assignAi;
 	}
 	
 	

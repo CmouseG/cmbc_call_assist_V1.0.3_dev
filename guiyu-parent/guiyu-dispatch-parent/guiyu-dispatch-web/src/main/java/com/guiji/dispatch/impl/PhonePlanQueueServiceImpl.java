@@ -38,6 +38,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
 	@Override
 	public void execute() throws Exception {
+		Lock PhonePlanQueue = new Lock("dispatch.PhonePlanQueue", "dispatch.PhonePlanQueue");
 		while (true) {
 
 			Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
@@ -52,19 +53,28 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 			if (systemMaxPlan == 0) {
 				logger.error("从redis获取系统最大并发数失败，获取的最大并发数未0");
 			}
-			// 从redis获取当前拨打队列
-			long currentQueueSize = redisUtil.lGetListSize(REDIS_PLAN_QUEUE);
 
-			// 判断拨打队列中的拨打数量如果小于最大并发数*2时，获取锁成功后调用接口getDispatchPlan()获取1000条拨打计划并插入到redis队列中
-			if (currentQueueSize < systemMaxPlan * 2) {
-				logger.debug("当前redis池中的拨打队列小于阈值[最大并发数的2倍]，开始拉去新一批数据入redis队列");
-				// 2.按小时获取当前时间段有拨打计划的用户，按1000条进redis拨打队列为总数，分别计算[用户、线路]拨打数量(按用户划分后，各用户线路均分)
-				List<DispatchPlan> dispatchPlanList = getDispatchPlan(DateUtil.getCurrentHour());
-				if (dispatchPlanList.size() > 0) {
-					pushPlan2Queue(dispatchPlanList);
+			try {
+				if (distributedLockHandler.tryLock(PhonePlanQueue)) {
+					// 默认锁设置
+					// 从redis获取当前拨打队列
+					long currentQueueSize = redisUtil.lGetListSize(REDIS_PLAN_QUEUE);
+
+					// 判断拨打队列中的拨打数量如果小于最大并发数*2时，获取锁成功后调用接口getDispatchPlan()获取1000条拨打计划并插入到redis队列中
+					if (currentQueueSize < systemMaxPlan * 2) {
+						logger.debug("当前redis池中的拨打队列小于阈值[最大并发数的2倍]，开始拉去新一批数据入redis队列");
+						// 2.按小时获取当前时间段有拨打计划的用户，按1000条进redis拨打队列为总数，分别计算[用户、线路]拨打数量(按用户划分后，各用户线路均分)
+						List<DispatchPlan> dispatchPlanList = getDispatchPlan(DateUtil.getCurrentHour());
+						if (dispatchPlanList.size() > 0) {
+							pushPlan2Queue(dispatchPlanList);
+						}
+					}
 				}
+			} finally {
+				distributedLockHandler.releaseLock(PhonePlanQueue); // 释放锁
 			}
 			Thread.sleep(20);
+
 		}
 	}
 

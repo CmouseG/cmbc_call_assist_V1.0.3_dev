@@ -177,6 +177,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		record.setPhone(dispatchPlan.getPhone());
 		record.setPlanuuid(dispatchPlan.getPlanUuid());
 		record.setUserId(dispatchPlan.getUserId());
+		record.setLine(dispatchPlan.getLine());
+		record.setRobot(dispatchPlan.getRobot());
 		record.setCallbackStatus(Constant.NOCALLBACK);
 		rabbitTemplate.convertAndSend("dispatch.PushPhonesRecords", JsonUtils.bean2Json(record));
 	}

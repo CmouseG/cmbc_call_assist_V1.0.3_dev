@@ -504,6 +504,136 @@ public class PushRecordsExample {
             addCriterion("user_id not between", value1, value2, "userId");
             return (Criteria) this;
         }
+
+        public Criteria andLineIsNull() {
+            addCriterion("line is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineIsNotNull() {
+            addCriterion("line is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineEqualTo(Integer value) {
+            addCriterion("line =", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotEqualTo(Integer value) {
+            addCriterion("line <>", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineGreaterThan(Integer value) {
+            addCriterion("line >", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineGreaterThanOrEqualTo(Integer value) {
+            addCriterion("line >=", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineLessThan(Integer value) {
+            addCriterion("line <", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineLessThanOrEqualTo(Integer value) {
+            addCriterion("line <=", value, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineIn(List<Integer> values) {
+            addCriterion("line in", values, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotIn(List<Integer> values) {
+            addCriterion("line not in", values, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineBetween(Integer value1, Integer value2) {
+            addCriterion("line between", value1, value2, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineNotBetween(Integer value1, Integer value2) {
+            addCriterion("line not between", value1, value2, "line");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotIsNull() {
+            addCriterion("robot is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotIsNotNull() {
+            addCriterion("robot is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotEqualTo(String value) {
+            addCriterion("robot =", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotEqualTo(String value) {
+            addCriterion("robot <>", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotGreaterThan(String value) {
+            addCriterion("robot >", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotGreaterThanOrEqualTo(String value) {
+            addCriterion("robot >=", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotLessThan(String value) {
+            addCriterion("robot <", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotLessThanOrEqualTo(String value) {
+            addCriterion("robot <=", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotLike(String value) {
+            addCriterion("robot like", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotLike(String value) {
+            addCriterion("robot not like", value, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotIn(List<String> values) {
+            addCriterion("robot in", values, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotIn(List<String> values) {
+            addCriterion("robot not in", values, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotBetween(String value1, String value2) {
+            addCriterion("robot between", value1, value2, "robot");
+            return (Criteria) this;
+        }
+
+        public Criteria andRobotNotBetween(String value1, String value2) {
+            addCriterion("robot not between", value1, value2, "robot");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

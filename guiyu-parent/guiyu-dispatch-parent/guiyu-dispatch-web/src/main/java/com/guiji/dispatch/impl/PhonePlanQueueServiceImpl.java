@@ -38,9 +38,9 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	@Override
 	public void execute() throws Exception {
 		while (true) {
-			Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
+			Lock lock = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
 			if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
-				Thread.sleep(20);
+				Thread.sleep(500);
 				continue;
 			}
 
@@ -61,6 +61,10 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 						if (distributedLockHandler.tryLock(queueLock)) {
 							long currentQueueSize = redisUtil.lGetListSize(queue);
 							if (currentQueueSize < systemMaxPlan *2) {
+								if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
+									Thread.sleep(500);
+									break;
+								}
 								List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getLineId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
 								pushPlan2Queue(dispatchPlanList,queue);
 							}

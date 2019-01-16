@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.service.IPhonePlanQueueService;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -121,6 +122,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private IResourcePoolService resourcePoolService;
+	@Autowired
+	IPhonePlanQueueService phonePlanQueueService;
 
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
@@ -949,8 +952,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (dto.length > 0) {
 			IdsDto bean = dto[0];
 			if (bean.getStatus().equals(Constant.STATUSPLAN_3) || bean.getStatus().equals(Constant.STATUSPLAN_4)) {
-				// 重新分配队列数据
-				resourcePoolService.distributeByUser();
+/*				// 重新分配队列数据
+				phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));*/
 			}
 		}
 		return result > 0 ? true : false;
@@ -1008,7 +1011,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				Integer converStatus = Integer.valueOf(status);
 				if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
 					// 重新分配队列数据
-					resourcePoolService.distributeByUser();
+					phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));
 				}
 			}
 
@@ -1052,7 +1055,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			Integer converStatus = Integer.valueOf(status);
 			if (converStatus.equals(Constant.STATUSPLAN_3) || converStatus.equals(Constant.STATUSPLAN_4)) {
 				// 重新分配队列数据
-				resourcePoolService.distributeByUser();
+				phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));
 			}
 			if (status.equals("1")) {
 				for (List<String> list : averageAssign) {
@@ -1140,7 +1143,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		
 		// 重新分配队列数据
-		resourcePoolService.distributeByUser();
+		/*phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));*/
 		
 		return result > 0 ? true : false;
 	}

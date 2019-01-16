@@ -10,7 +10,9 @@ import java.util.List;
 public interface IPhonePlanQueueService {
     void execute() throws Exception;
 
-    List<DispatchPlan> getDispatchPlan(int hour);
+    boolean pushPlan2Queue(List<DispatchPlan> dispatchPlanList,String queue);
 
-    boolean pushPlan2Queue(List<DispatchPlan> dispatchPlanList);
+    boolean cleanQueue();
+
+    boolean cleanQueueByUserId(String userId);
 }

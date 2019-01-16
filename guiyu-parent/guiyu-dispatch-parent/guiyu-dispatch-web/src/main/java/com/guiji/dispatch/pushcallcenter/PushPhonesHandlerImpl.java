@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guiji.dispatch.bean.UserLineBotenceVO;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(PushPhonesHandlerImpl.class);
 
+	private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
+
+	private static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
+
+	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT";
+
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -52,10 +59,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	@Override
 	public void pushHandler() {
-		Integer currentCount1 = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-		Integer sysMaxPlan1 = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
-		logger.info("----------currentCount1----------" + currentCount1);
-		logger.info("----------sysMaxPlan1----------" + sysMaxPlan1);
+
 		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 		while (true) {
 			try {
@@ -69,39 +73,42 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					Lock redisPlanQueueLock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
 					if (distributedLockHandler.isLockExist(redisPlanQueueLock)) {
 						logger.info("redis锁了  redisPlanQueueLock");
+						Thread.sleep(500);
 						continue;
 					}
-					Object obj = (Object) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
-					if (obj == null || !(obj instanceof DispatchPlan)) {
-						continue;
-					}
-					logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", obj);
-					DispatchPlan dispatchRedis = (DispatchPlan) obj;
-					// 用户id
-					Integer userId = dispatchRedis.getUserId();
-					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
-					if (max != null) {
-						Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
-						if (redisUserIdCount == null) {
-							redisUserIdCount = 0;
-						}
-						for (UserResourceDto dto : max) {
-							if (userId.equals(Integer.valueOf(dto.getUserId()))) {
-								// 如果当前用户正在拨打数量大于改用户配置的的机器人数量。
-								if (redisUserIdCount >= dto.getCount()) {
-									// logger.info("用户:{}机器人数量{}已到达上线",
-									// userId,
-									// dto.getCount());
-									updateStatusSync(dispatchRedis.getPlanUuid());
-									logger.info("用户:{}机器人数量{}已到达上线的uuid", userId, dto.getCount(),
-											dispatchRedis.getPlanUuid());
-								} else {
-									List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
+
+					List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+					if (userLineRobotList != null) {
+						//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
+						for (UserLineBotenceVO dto : userLineRobotList) {
+							String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
+							String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
+							Lock queueLock = new Lock("dispatch.callphone.lock" + queue,"dispatch.callphone.lock" + queue);
+							try {
+								if (distributedLockHandler.tryLock(queueLock)) {
+									Integer redisUserIdCount = (Integer) redisUtil.get(queueCount);
+									if (redisUserIdCount == null) {
+										redisUserIdCount = 0;
+									}
+
+									Integer callMax = dto.getMaxRobotCount();
+
+									if(callMax <= redisUserIdCount)
+									{
+										continue;
+									}
+
+									Object obj = (Object) redisUtil.lrightPop(queue);
+									if (obj == null || !(obj instanceof DispatchPlan)) {
+										continue;
+									}
+									logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", obj);
+									DispatchPlan dispatchRedis = (DispatchPlan) obj;
+
 									com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
 									try {
 										BeanUtils.copyProperties(callBean, dispatchRedis);
 										callBean.setTempId(dispatchRedis.getRobot());
-										list.add(callBean);
 									} catch (IllegalAccessException e) {
 										updateStatusSync(dispatchRedis.getPlanUuid());
 										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
@@ -111,31 +118,23 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 										continue;
 									}
-									logger.info(
-											"通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
+									// 增加推送次数
+									addVariable(callBean, queueCount);
+									logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----"
+											+ callBean.getPhone());
 									ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
 									// 记录推送记录
 									insertPush(dispatchRedis);
 									if (!startMakeCall.success) {
 										updateStatusSync(dispatchRedis.getPlanUuid());
 										logger.info("启动呼叫中心任务失败");
+										// 减少推送次数
+										cutVariable(callBean, queueCount);
 										continue;
 									}
-									// redis修改变量
-									Integer addup = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-									addup = addup + 1;
-									redisUtil.set("REDIS_CURRENTLY_COUNT", addup);
-
-									// 拿到对应用户的redis
-									Integer userIdCount = (Integer) redisUtil
-											.get("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId());
-									if (userIdCount == null) {
-										userIdCount = 0;
-									}
-									userIdCount = userIdCount + 1;
-									redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + callBean.getUserId(), userIdCount);
-
 								}
+							} finally {
+								distributedLockHandler.releaseLock(queueLock); // 释放锁
 							}
 						}
 					}
@@ -145,6 +144,22 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			} finally {
 				distributedLockHandler.releaseLock(pushHandlerLock); // 释放锁
 			}
+		}
+	}
+
+	private void cutVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
+		Integer currentCount = (Integer) redisUtil.get(queueName);
+		if (currentCount > 0) {
+			currentCount = currentCount - 1;
+			redisUtil.set(queueName, currentCount);
+		}
+	}
+
+	private void addVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
+		Integer currentCount = (Integer) redisUtil.get(queueName);
+		if (currentCount > 0) {
+			currentCount = currentCount + 1;
+			redisUtil.set(queueName, currentCount);
 		}
 	}
 

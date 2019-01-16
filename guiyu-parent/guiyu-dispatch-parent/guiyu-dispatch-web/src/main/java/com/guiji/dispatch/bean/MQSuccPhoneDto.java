@@ -4,6 +4,8 @@ public class MQSuccPhoneDto {
 	private String planuuid;
 	private String label;
 	private Integer userId;
+	private Integer lineId;
+	private String tempId;
 	
 	public Integer getUserId() {
 		return userId;
@@ -23,7 +25,20 @@ public class MQSuccPhoneDto {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
-	
-	
+
+	public Integer getLineId() {
+		return lineId;
+	}
+
+	public void setLineId(Integer lineId) {
+		this.lineId = lineId;
+	}
+
+	public String getTempId() {
+		return tempId;
+	}
+
+	public void setTempId(String tempId) {
+		this.tempId = tempId;
+	}
 }

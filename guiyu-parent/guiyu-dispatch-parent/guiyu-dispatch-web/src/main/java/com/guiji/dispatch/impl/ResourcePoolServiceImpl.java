@@ -6,13 +6,17 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result;
+import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
+import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.dispatch.service.IResourcePoolService;
+import com.guiji.dispatch.util.AllotUserLineBotenceUtil;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
+import com.guiji.robot.model.UserResourceCache;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
@@ -38,7 +42,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private static final String REDIS_USER_MAX_ROBOT = "REDIS_USER_MAX_ROBOT";
     private static final String REDIS_USER_MAX_LINE = "REDIS_USER_MAX_LINE";
     private static final String REDIS_SYSTEM_MAX_PLAN_BY = "REDIS_SYSTEM_MAX_PLAN_BY";
-    private static final String REDIS_PLAN_QUEUE = "REDIS_PLAN_QUEUE";
+    private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 
     @Autowired
     private RedisUtil redisUtil;
@@ -52,8 +56,6 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private IGetPhonesInterface getPhonesInterface;
     @Autowired
     private IRobotRemote robotRemote;
-    @Autowired
-    private IPhonePlanQueueService phonePlanQueueService;
     @Override
     public boolean initResourcePool() {
         long start = System.currentTimeMillis();
@@ -88,36 +90,40 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     }
 
     @Override
-    public boolean distributeByUser() {
-        logger.info("根据用户分配拨打号码比例#start");
-        //1.获取redis锁，将拨打计划的redis锁住
-        Lock lock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
+    public boolean distributeByUser() throws Exception{
+        Lock lock = new Lock("planDistributeJobHandler.lock","planDistributeJobHandler.lock");
         try {
-            if (distributedLockHandler.tryLock(lock)) { // 默认锁设置
-                //2.按小时获取当前时间段有拨打计划的用户，按1000条进redis拨打队列为总数，分别计算[用户、线路]拨打数量(按用户划分后，各用户线路均分)
-                int hour = DateUtil.getCurrentHour();
-                //2.1将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
-                List<String> planUuids = new ArrayList<String>();
-                while (true) {
-                    DispatchPlan dispatchPlan = (DispatchPlan)redisUtil.lrightPop(REDIS_PLAN_QUEUE);
-                    if(dispatchPlan == null) {
-                        break;
-                    } else {
-                        planUuids.add(dispatchPlan.getPlanUuid());
+            if (distributedLockHandler.tryLock(lock)) {
+                logger.info("根据用户模板线路分配拨打号码比例#start");
+                //查询当前时间段有拨打计划的[用户|线路|模板]
+                String hour = String.valueOf(DateUtil.getCurrentHour());
+                List<PlanUserIdLineRobotDto> userLineRobotList = getPhonesInterface.selectPlanGroupByUserIdLineRobot(hour);
+                List<UserLineBotenceVO> userLineBotenceVOList = new ArrayList<UserLineBotenceVO>();
+                if (userLineRobotList != null) {
+                    for (PlanUserIdLineRobotDto dto:userLineRobotList) {
+                        UserLineBotenceVO userLineBotenceVO = new UserLineBotenceVO();
+                        userLineBotenceVO.setUserId(dto.getUserId());
+                        userLineBotenceVO.setLineId(dto.getLineId());
+                        userLineBotenceVO.setBotenceName(dto.getRobot());
+                        userLineBotenceVOList.add(userLineBotenceVO);
                     }
                 }
-                if(planUuids.size()>0){
-                    getPhonesInterface.resetPhoneSyncStatus(planUuids);
+                //查询用户各个模板配置的机器人数量
+                List<UserResourceCache> userBotstenceRobotList = getUserBotstenceRobotByUserId(getAllCompanyUsers());
+                // 从redis获取系统最大并发数
+                int systemMaxPlan = redisUtil.get(REDIS_SYSTEM_MAX_PLAN) == null ? 0
+                        : (int) redisUtil.get(REDIS_SYSTEM_MAX_PLAN);
+                if (systemMaxPlan == 0) {
+                    logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
                 }
-           
+                List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(userLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
+                redisUtil.set(REDIS_USER_ROBOT_LINE_MAX_PLAN,userLineBotenceVOS);
+                logger.info("根据用户模板线路分配拨打号码比例#end");
             }
-        } catch (Exception e) {
-            logger.info("ResourcePoolServiceImpl#distributeByUser", e);
-            return false;
-        } finally {
+        }finally {
             distributedLockHandler.releaseLock(lock);
         }
-        logger.info("根据用户分配拨打号码比例#end");
+
         return true;
     }
 
@@ -223,5 +229,28 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         }
         logger.info("查询每个用户机器人最大并发数#end");
         return userRobotList;
+    }
+
+    private List<UserResourceCache> getUserBotstenceRobotByUserId(List<SysUser> sysUserList) {
+        logger.info("查询每个用户各个模板配置的机器人最大并发数#start");
+        List<UserResourceCache> userBotstenceRobotList = new ArrayList<UserResourceCache>();
+        if (sysUserList != null && sysUserList.size() > 0) {
+            for (SysUser sysUser:sysUserList) {
+                //根据用户获取各个用户配置机器人数量，调用机器人中心接口
+                String userId = String.valueOf(sysUser.getId());
+                UserResourceCache userResourceCache = null;
+                Result.ReturnData<UserResourceCache> robotResult = robotRemote.queryUserResourceCache(userId);
+                if (robotResult.success) {
+                    if (robotResult.getBody() != null) {
+                        userResourceCache = robotResult.getBody();
+                        userBotstenceRobotList.add(userResourceCache);
+                    }
+                }else {
+                    logger.info("调用机器人中心获取每个用户各个模板配置的机器人最大并发数失败，用户id:" + sysUser.getId()+"|错误信息:" + robotResult.getMsg());
+                }
+            }
+        }
+        logger.info("查询每个用户各个模板配置的机器人最大并发数#end");
+        return userBotstenceRobotList;
     }
 }

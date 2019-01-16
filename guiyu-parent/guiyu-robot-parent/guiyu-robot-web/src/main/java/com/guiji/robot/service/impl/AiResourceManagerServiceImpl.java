@@ -12,8 +12,6 @@ import com.guiji.process.model.ProcessReleaseVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import com.guiji.component.lock.DistributedLockHandler;
@@ -56,17 +54,6 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
 	
-	
-	/**
-	 * 启动时，先初始化次
-	 */
-	@EventListener(ApplicationReadyEvent.class)
-	public void initAiPool() {
-		if(!redisUtil.hasKey(RobotConstants.ROBOT_POOL_AI)) {
-			//如果缓存中不存在，初始化下
-			this.aiPoolInit();
-		}
-	}
 	
 	/**
 	 * 初始化机器人资源池

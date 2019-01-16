@@ -2,6 +2,7 @@ package com.guiji.dispatch.dao;
 
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
+
 import java.util.List;
 import java.util.Map;
 
@@ -48,4 +49,5 @@ public interface DispatchPlanMapper {
 
 	int getCountByUserId(DispatchPlan record);
 	
+	List<DispatchPlan> selectPlanGroupByUserIdLineRobot(DispatchPlan record);
 }

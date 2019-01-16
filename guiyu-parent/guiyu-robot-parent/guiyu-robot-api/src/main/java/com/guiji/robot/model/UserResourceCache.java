@@ -1,4 +1,4 @@
-package com.guiji.robot.service.vo;
+package com.guiji.robot.model;
 
 import java.util.Map;
 

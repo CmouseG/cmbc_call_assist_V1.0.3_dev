@@ -72,5 +72,7 @@ CREATE TABLE `push_records` (
   `phone` varchar(32) NOT NULL,
   `create_time` datetime DEFAULT NULL,
   `callback_status` int(11) DEFAULT NULL COMMENT '0代表未回调，1代表已经回调',
+  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9470 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15388 DEFAULT CHARSET=utf8;
+

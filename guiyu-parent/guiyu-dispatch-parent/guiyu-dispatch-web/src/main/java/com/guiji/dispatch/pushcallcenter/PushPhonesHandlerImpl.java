@@ -71,13 +71,14 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 						logger.info("redis锁了  redisPlanQueueLock");
 						continue;
 					}
-					DispatchPlan object = (DispatchPlan) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
-					if (object == null) {
+					Object obj = (Object) redisUtil.lrightPop("REDIS_PLAN_QUEUE");
+					if (obj == null || !(obj instanceof DispatchPlan)) {
 						continue;
 					}
-					logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", object);
+					logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", obj);
+					DispatchPlan dispatchRedis = (DispatchPlan) obj;
 					// 用户id
-					Integer userId = object.getUserId();
+					Integer userId = dispatchRedis.getUserId();
 					List<UserResourceDto> max = (List<UserResourceDto>) redisUtil.get("REDIS_USER_MAX_ROBOT");
 					if (max != null) {
 						Integer redisUserIdCount = (Integer) redisUtil.get("REDIS_USERID_CURRENTLY_COUNT_" + userId);
@@ -91,31 +92,32 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									// logger.info("用户:{}机器人数量{}已到达上线",
 									// userId,
 									// dto.getCount());
-									updateStatusSync(object.getPlanUuid());
-									logger.info("用户:{}机器人数量{}已到达上线的uuid", userId, dto.getCount(), object.getPlanUuid());
+									updateStatusSync(dispatchRedis.getPlanUuid());
+									logger.info("用户:{}机器人数量{}已到达上线的uuid", userId, dto.getCount(),
+											dispatchRedis.getPlanUuid());
 								} else {
-									// 记录推送记录
-									insertPush(object);
 									List<com.guiji.calloutserver.entity.DispatchPlan> list = new ArrayList<>();
 									com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
 									try {
-										BeanUtils.copyProperties(callBean, object);
-										callBean.setTempId(object.getRobot());
+										BeanUtils.copyProperties(callBean, dispatchRedis);
+										callBean.setTempId(dispatchRedis.getRobot());
 										list.add(callBean);
 									} catch (IllegalAccessException e) {
-										updateStatusSync(object.getPlanUuid());
-										logger.error("error", e);
+										updateStatusSync(dispatchRedis.getPlanUuid());
+										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 										continue;
 									} catch (InvocationTargetException e) {
-										updateStatusSync(object.getPlanUuid());
-										logger.error("error", e);
+										updateStatusSync(dispatchRedis.getPlanUuid());
+										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 										continue;
 									}
 									logger.info(
 											"通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
 									ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
+									// 记录推送记录
+									insertPush(dispatchRedis);
 									if (!startMakeCall.success) {
-										updateStatusSync(object.getPlanUuid());
+										updateStatusSync(dispatchRedis.getPlanUuid());
 										logger.info("启动呼叫中心任务失败");
 										continue;
 									}
@@ -139,7 +141,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					}
 				}
 			} catch (Exception e) {
-				logger.info("error", e);
+				logger.info("pushHandler代码异常了", e);
 			} finally {
 				distributedLockHandler.releaseLock(pushHandlerLock); // 释放锁
 			}

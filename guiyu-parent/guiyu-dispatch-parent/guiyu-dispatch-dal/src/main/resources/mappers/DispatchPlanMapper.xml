@@ -674,6 +674,9 @@
 		<if test="userId != null">
 			and user_id = #{userId}
 		</if>
+		<if test="robot != null">
+			and robot = #{robot}
+		</if>
 		<if test="callData != null">
 			and call_data = #{callData}
 		</if>
@@ -867,6 +870,39 @@
 		</if>
 		<if test="userId != null">
 			and user_id = #{userId}
+		</if>
+	</select>
+		
+		
+	<select id="selectPlanGroupByUserIdLineRobot" resultMap="BaseResultMap"
+		parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+		select
+		user_id,line,robot
+		from dispatch_plan
+		<if test="callHour != null">
+			where find_in_set(#{callHour},call_hour)
+		</if>
+		<if test="userId != null">
+			and user_id = #{userId}
+		</if>
+		<if test="callData != null">
+			and call_data = #{callData}
+		</if>
+		<if test="isDel != null">
+			and is_del = #{isDel}
+		</if>
+		<if test="statusPlan != null">
+			and status_plan = #{statusPlan}
+		</if>
+		<if test="statusSync != null">
+			and status_sync = #{statusSync}
+		</if>
+		<if test="flag != null">
+			and flag = #{flag}
+		</if>
+		group by user_id,line,robot
+		<if test="limitStart != null and limitStart>=0">
+			limit #{limitStart} , #{limitEnd}
 		</if>
 	</select>
 </mapper>

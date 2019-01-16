@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IGetPhonesInterface;
@@ -24,8 +25,12 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
 
+	/**
+	 * 根据用户 线路 模板 时间 查询任务信息
+	 */
 	@Override
-	public List<DispatchPlan> getPhonesByParams(Integer userId, Integer lineId, String callHour, Integer limit) {
+	public List<DispatchPlan> getPhonesByParams(Integer userId, Integer lineId, String robot, String callHour,
+			Integer limit) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -38,10 +43,10 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setStatusPlan(Constant.STATUSPLAN_1);
 		dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setFlag(Constant.IS_FLAG_2);
+		dis.setRobot(robot);
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis);
-		logger.info("getPhonesByParams  selectByCallHour size"+selectByCallHour.size());
 		List<String> ids = new ArrayList<>();
 		for (DispatchPlan plan : selectByCallHour) {
 			ids.add(plan.getPlanUuid());
@@ -51,6 +56,38 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		}
 		return selectByCallHour;
 	}
+
+	/**
+	 * 根据用户 ，线路 ，机器人 拨打时间 分组查询
+	 */
+	@Override
+	public List<PlanUserIdLineRobotDto> selectPlanGroupByUserIdLineRobot(String callHour) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		DispatchPlan dis = new DispatchPlan();
+		dis.setCallHour(callHour);
+		dis.setCallData(Integer.valueOf(dateNowStr));
+		dis.setIsDel(Constant.IS_DEL_0);
+		dis.setStatusPlan(Constant.STATUSPLAN_1);
+		dis.setStatusSync(Constant.STATUS_SYNC_0);
+		dis.setFlag(Constant.IS_FLAG_2);
+		List<PlanUserIdLineRobotDto> planUserIdLineRobotDtos = new ArrayList<>();
+		List<DispatchPlan> selectPlanGroupByUserIdLineRobot = dispatchMapper.selectPlanGroupByUserIdLineRobot(dis);
+		for (DispatchPlan result : selectPlanGroupByUserIdLineRobot) {
+			PlanUserIdLineRobotDto dto = new PlanUserIdLineRobotDto();
+			dto.setUserId(result.getUserId());
+			dto.setLineId(result.getLine());
+			dto.setRobot(result.getRobot());
+			planUserIdLineRobotDtos.add(dto);
+		}
+		return planUserIdLineRobotDtos;
+	}
+
+	// --------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------
 
 	@Override
 	public List<Integer> getUsersByParams(Integer statusPlan, Integer statusSync, String flag) {
@@ -103,12 +140,21 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		return userIds;
 	}
 
+	/**
+	 * 恢复任务中心同步状态
+	 */
 	@Override
 	public boolean resetPhoneSyncStatus(List<String> planuuidIds) {
 		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_0);
 		return result > 0 ? true : false;
 	}
 
+	/**
+	 * 找出当前可以拨打的号码用户
+	 * 
+	 * @param callHour
+	 * @return userids
+	 */
 	@Override
 	public List<Integer> getUserIdsByCallHour(String callHour) {
 		DispatchPlan dis = new DispatchPlan();
@@ -126,10 +172,13 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		for (DispatchPlan dto : selectByCallHour4UserId) {
 			userIds.add(dto.getUserId());
 		}
-//		logger.info("getUserIdsByCallHour..."+userIds.size());
+		// logger.info("getUserIdsByCallHour..."+userIds.size());
 		return userIds;
 	}
 
+	/**
+	 * 根据拨打时间 用户id 查询出线路
+	 */
 	@Override
 	public List<Integer> getPhonesByCallHourAndUserId(String callhour, Integer userId) {
 		DispatchPlan dis = new DispatchPlan();

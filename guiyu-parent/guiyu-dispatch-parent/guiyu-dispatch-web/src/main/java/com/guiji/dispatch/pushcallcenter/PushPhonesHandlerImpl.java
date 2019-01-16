@@ -63,79 +63,71 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 		while (true) {
 			try {
-				// if (distributedLockHandler.tryLock(pushHandlerLock)) { //
-				// 默认锁设置
-				// 当前推送记录
-				Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
-				// 最大并发
-				Integer sysMaxPlan = (Integer) redisUtil.get("REDIS_SYSTEM_MAX_PLAN");
-				if (currentCount < sysMaxPlan) {
-					Lock redisPlanQueueLock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
-					if (distributedLockHandler.isLockExist(redisPlanQueueLock)) {
-						logger.info("redis锁了  redisPlanQueueLock");
-						Thread.sleep(500);
-						continue;
-					}
-
-					List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
-					if (userLineRobotList != null) {
-						//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
-						for (UserLineBotenceVO dto : userLineRobotList) {
-							String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
-							String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
-							Lock queueLock = new Lock("dispatch.callphone.lock" + queue,"dispatch.callphone.lock" + queue);
-							try {
-								if (distributedLockHandler.tryLock(queueLock)) {
-									Integer redisUserIdCount = (Integer) redisUtil.get(queueCount);
-									if (redisUserIdCount == null) {
-										redisUserIdCount = 0;
-									}
-
-									Integer callMax = dto.getMaxRobotCount();
-
-									if(callMax <= redisUserIdCount)
-									{
-										continue;
-									}
-
-									Object obj = (Object) redisUtil.lrightPop(queue);
-									if (obj == null || !(obj instanceof DispatchPlan)) {
-										continue;
-									}
-									logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", obj);
-									DispatchPlan dispatchRedis = (DispatchPlan) obj;
-
-									com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
-									try {
-										BeanUtils.copyProperties(callBean, dispatchRedis);
-										callBean.setTempId(dispatchRedis.getRobot());
-									} catch (IllegalAccessException e) {
-										updateStatusSync(dispatchRedis.getPlanUuid());
-										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
-										continue;
-									} catch (InvocationTargetException e) {
-										updateStatusSync(dispatchRedis.getPlanUuid());
-										logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
-										continue;
-									}
-									// 增加推送次数
-									addVariable(callBean, queueCount);
-									logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----"
-											+ callBean.getPhone());
-									ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
-									// 记录推送记录
-									insertPush(dispatchRedis);
-									if (!startMakeCall.success) {
-										updateStatusSync(dispatchRedis.getPlanUuid());
-										logger.info("启动呼叫中心任务失败");
-										// 减少推送次数
-										cutVariable(callBean, queueCount);
-										continue;
-									}
+				Lock redisPlanQueueLock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
+				if (distributedLockHandler.isLockExist(redisPlanQueueLock)) {
+					logger.info("redis锁了  redisPlanQueueLock");
+					Thread.sleep(500);
+					continue;
+				}
+				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>) redisUtil
+						.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+				if (userLineRobotList != null) {
+					// 根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
+					for (UserLineBotenceVO dto : userLineRobotList) {
+						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT + dto.getUserId() + "_" + dto.getLineId() + "_"
+								+ dto.getBotenceName();
+						String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + dto.getUserId() + "_"
+								+ dto.getLineId() + "_" + dto.getBotenceName();
+						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);
+						try {
+							if (distributedLockHandler.tryLock(queueLock)) {
+								Integer redisUserIdCount = (Integer) redisUtil.get(queueCount);
+								if (redisUserIdCount == null) {
+									redisUserIdCount = 0;
 								}
-							} finally {
-								distributedLockHandler.releaseLock(queueLock); // 释放锁
+
+								Integer callMax = dto.getMaxRobotCount();
+
+								if (callMax <= redisUserIdCount) {
+									continue;
+								}
+
+								Object obj = (Object) redisUtil.lrightPop(queue);
+								if (obj == null || !(obj instanceof DispatchPlan)) {
+									continue;
+								}
+								logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", obj);
+								DispatchPlan dispatchRedis = (DispatchPlan) obj;
+
+								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
+								try {
+									BeanUtils.copyProperties(callBean, dispatchRedis);
+									callBean.setTempId(dispatchRedis.getRobot());
+								} catch (IllegalAccessException e) {
+									updateStatusSync(dispatchRedis.getPlanUuid());
+									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
+									continue;
+								} catch (InvocationTargetException e) {
+									updateStatusSync(dispatchRedis.getPlanUuid());
+									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
+									continue;
+								}
+								// 增加推送次数
+								addVariable(callBean, queueCount);
+								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
+								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
+								// 记录推送记录
+								insertPush(dispatchRedis);
+								if (!startMakeCall.success) {
+									updateStatusSync(dispatchRedis.getPlanUuid());
+									logger.info("启动呼叫中心任务失败");
+									// 减少推送次数
+									cutVariable(callBean, queueCount);
+									continue;
+								}
 							}
+						} finally {
+							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}
 					}
 				}

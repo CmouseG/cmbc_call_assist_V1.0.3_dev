@@ -54,6 +54,8 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private IGetPhonesInterface getPhonesInterface;
     @Autowired
     private IRobotRemote robotRemote;
+    @Autowired
+    private IPhonePlanQueueService phonePlanQueueService;
     @Override
     public boolean initResourcePool() {
         long start = System.currentTimeMillis();
@@ -109,7 +111,14 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                     logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
                 }
                 List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(userLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
-                redisUtil.set(REDIS_USER_ROBOT_LINE_MAX_PLAN,userLineBotenceVOS);
+                List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>) redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+
+                if(!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis))
+                {
+                    phonePlanQueueService.cleanQueue();
+                    redisUtil.set(REDIS_USER_ROBOT_LINE_MAX_PLAN,userLineBotenceVOS);
+                }
+
                 logger.info("根据用户模板线路分配拨打号码比例#end");
             }
         }finally {
@@ -118,6 +127,40 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
         return true;
     }
+
+
+    private boolean isEquals(List<UserLineBotenceVO> userLineBotenceVOS, List<UserLineBotenceVO> userLineBotenceVOSFromRedis)
+    {
+        if(userLineBotenceVOS == userLineBotenceVOSFromRedis)
+        {
+            return true;
+        }
+
+        if(userLineBotenceVOS == null || userLineBotenceVOSFromRedis == null)
+        {
+            return false;
+        }
+
+        if(userLineBotenceVOS.size() != userLineBotenceVOSFromRedis.size())
+        {
+            return false;
+        }
+
+        List<String> tmpList = new ArrayList<>();
+        for (UserLineBotenceVO dto:userLineBotenceVOS) {
+            tmpList.add(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount());
+        }
+
+        for (UserLineBotenceVO dto:userLineBotenceVOSFromRedis) {
+            if(!tmpList.contains(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount()))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     private List<SysUser> getAllCompanyUsers() {
         List<SysUser> sysUserList = null;

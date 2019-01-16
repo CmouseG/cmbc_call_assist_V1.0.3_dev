@@ -39,8 +39,6 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private static final String REDIS_SYSTEM_MAX_PLAN = "REDIS_SYSTEM_MAX_PLAN";
     private static final String REDIS_SYSTEM_MAX_ROBOT = "REDIS_SYSTEM_MAX_ROBOT";
     private static final String REDIS_SYSTEM_MAX_LINE = "REDIS_SYSTEM_MAX_LINE";
-    private static final String REDIS_USER_MAX_ROBOT = "REDIS_USER_MAX_ROBOT";
-    private static final String REDIS_USER_MAX_LINE = "REDIS_USER_MAX_LINE";
     private static final String REDIS_SYSTEM_MAX_PLAN_BY = "REDIS_SYSTEM_MAX_PLAN_BY";
     private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 
@@ -72,15 +70,9 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         //所有用户线路并发数求和，与系统机器人总数比较，取最小值作为系统拨打任务最大值，存入redis
         if (systemMaxRobot <= systemMaxLine) {
             redisUtil.set(REDIS_SYSTEM_MAX_PLAN,systemMaxRobot);
-            //调用机器人中心接口根据用户获取各个用户配置机器人数量，并存入redis
-            List<UserResourceDto> userRobotList = getUserRobotByUserId(sysUserList);
-            redisUtil.set(REDIS_USER_MAX_ROBOT,userRobotList);
             redisUtil.set(REDIS_SYSTEM_MAX_PLAN_BY,"robot");
         } else {
             redisUtil.set(REDIS_SYSTEM_MAX_PLAN,systemMaxLine);
-            //调用呼叫中心接口根据用户获取各个用户配置线路并发数量，并存入redis
-            List<UserResourceDto> userLineList = getUserLineByUserId(sysUserList);
-            redisUtil.set(REDIS_USER_MAX_LINE,userLineList);
             redisUtil.set(REDIS_SYSTEM_MAX_PLAN_BY,"line");
         }
         long end = System.currentTimeMillis();

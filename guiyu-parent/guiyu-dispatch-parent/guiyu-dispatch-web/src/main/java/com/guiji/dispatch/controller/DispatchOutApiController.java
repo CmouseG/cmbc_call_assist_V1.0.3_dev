@@ -115,12 +115,6 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> distributeByUser() {
-		boolean result = resourcePoolService.distributeByUser();
-		return new ReturnData<Boolean>(result);
-	}
-
-	@Override
 	public ReturnData<Boolean> successSchedule4TempId(String tempId) {
 		logger.info("successSchedule4TempId  完成模板通知升级:" + tempId);
 		ReturnData<Boolean> result = new ReturnData<>();

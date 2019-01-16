@@ -96,7 +96,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
 								}
-								logger.info("从队列中 REDIS_PLAN_QUEUE 拿出号码:", obj);
 								DispatchPlan dispatchRedis = (DispatchPlan) obj;
 
 								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
@@ -141,6 +140,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	private void cutVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
 		Integer currentCount = (Integer) redisUtil.get(queueName);
+		if (currentCount == null) {
+			currentCount = 0;
+		}
 		if (currentCount > 0) {
 			currentCount = currentCount - 1;
 			redisUtil.set(queueName, currentCount);
@@ -149,10 +151,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	private void addVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
 		Integer currentCount = (Integer) redisUtil.get(queueName);
-		if (currentCount > 0) {
-			currentCount = currentCount + 1;
-			redisUtil.set(queueName, currentCount);
+		if (currentCount == null) {
+			currentCount = 0;
 		}
+		currentCount = currentCount + 1;
+		redisUtil.set(queueName, currentCount);
+
 	}
 
 	public void updateStatusSync(String planUUID) {

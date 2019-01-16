@@ -61,7 +61,7 @@ public class SuccesPhone4MQLisener {
 				// 第三方回调
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信
-				smsInterface.execute(dispatchPlan, mqSuccPhoneDto);
+				//	smsInterface.execute(dispatchPlan, mqSuccPhoneDto);
 			}
 		} catch (Exception e) {
 			logger.info("SuccesPhone4MQLisener消费数据有问题"+message);

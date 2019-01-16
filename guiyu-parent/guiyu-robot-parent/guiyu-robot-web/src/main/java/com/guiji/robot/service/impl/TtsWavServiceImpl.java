@@ -22,6 +22,8 @@ import com.guiji.ai.vo.TtsReqVO;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.guiyu.message.component.QueueSender;
+import com.guiji.robot.cfg.RobotMqConfig;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.TtsCallbackHisMapper;
 import com.guiji.robot.dao.TtsWavHisMapper;
@@ -33,6 +35,7 @@ import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsCallback;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.robot.service.ITtsWavService;
@@ -68,6 +71,8 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	AiNewTransService aiNewTransService;
 	@Autowired
 	TtsCallbackHisMapper ttsCallbackHisMapper;
+	@Autowired
+    private QueueSender queueSender;
 	@Value("${file.tmpPath:apps/tmp/}")
     private String tempFilePath;	//文件临时目录
 	@Value("${file.hushuDir:home/botstence_robot_tmpl/}")
@@ -306,6 +311,8 @@ public class TtsWavServiceImpl implements ITtsWavService{
 									ttsWavHis.setTtsJsonData(jsonStr);
 									ttsWavHis.setStatus(RobotConstants.TTS_STATUS_S); //完成
 									logger.info("会话:{}TTS合成完毕...",ttsWavHis.getSeqId());
+									//发送mq消息
+									this.sendTtsOkMqMsg(ttsWavHis);
 								}else {
 									logger.error("TTS合成失败，无合成文件,{}",ttsWavHis);
 									throw new RobotException(AiErrorEnum.AI00060019.getErrorCode(),AiErrorEnum.AI00060019.getErrorMsg());
@@ -344,6 +351,27 @@ public class TtsWavServiceImpl implements ITtsWavService{
 					logger.error("busiId不能为空..");
 				}
 			}
+		}
+	}
+	
+	
+	/**
+	 * TTS合成后，将TTS合成的消息放到MQ中
+	 */
+	private void sendTtsOkMqMsg(TtsWavHis ttsWavHis) {
+		try {
+			logger.info("tts:{}合成后push到mq中",ttsWavHis.getSeqId());
+			TtsComposeCheckRsp rsp = new TtsComposeCheckRsp();
+			rsp.setSeqId(ttsWavHis.getSeqId());
+			rsp.setStatus(ttsWavHis.getStatus());
+			//查询出合成后的数据JSON
+			String ttsJsonData = ttsWavHis.getTtsJsonData();
+			List<TtsVoice> list = JSON.parseArray(ttsJsonData, TtsVoice.class);
+			rsp.setTtsVoiceList(list);
+			queueSender.send(RobotMqConfig.QUENE_TTS_OK, JsonUtils.bean2Json(rsp));
+		} catch (Exception e) {
+			//MQ消息发送异常不影响主流程
+			logger.error("TTS合成后push mq消息发生异常");
 		}
 	}
 	

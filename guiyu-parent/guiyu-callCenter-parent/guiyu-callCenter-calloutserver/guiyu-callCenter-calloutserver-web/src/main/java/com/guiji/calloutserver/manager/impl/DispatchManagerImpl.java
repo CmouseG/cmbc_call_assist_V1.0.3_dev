@@ -26,7 +26,7 @@ public class DispatchManagerImpl implements DispatchManager {
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String callId, String phoneNo, String intent, Integer userId) {
+    public void successSchedule(String callId, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId) {
         log.info("=========startSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
         if(StringUtils.isBlank(callId) || StringUtils.isBlank(intent)){
             log.info("---startSchedule callid is null or intnet is null:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
@@ -39,6 +39,12 @@ public class DispatchManagerImpl implements DispatchManager {
         }
         if(userId!=null){
             mqSuccPhoneDto.setUserId(userId);
+        }
+        if(lineId!=null){
+            mqSuccPhoneDto.setLineId(lineId);
+        }
+        if(tempId!=null){
+            mqSuccPhoneDto.setTempId(tempId);
         }
         rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto));
         rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));

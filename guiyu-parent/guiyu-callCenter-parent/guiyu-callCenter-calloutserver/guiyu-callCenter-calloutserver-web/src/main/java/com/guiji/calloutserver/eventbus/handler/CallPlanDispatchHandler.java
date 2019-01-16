@@ -94,7 +94,7 @@ public class CallPlanDispatchHandler {
 
         CallOutPlan callPlan = afterCallEvent.getCallPlan();
         log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
-        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(), callPlan.getCustomerId());
+        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(), callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
 
     }
 
@@ -124,7 +124,7 @@ public class CallPlanDispatchHandler {
                 } catch (Exception ex) {
                     log.warn("插入calloutplan异常,重复的uuid", ex);
                     //重复的id，回调
-                    dispatchService.successSchedule(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId());
+                    dispatchService.successSchedule(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
                     callingCountManager.removeOneCall();
                     return;
                 }
@@ -140,7 +140,7 @@ public class CallPlanDispatchHandler {
                     callPlan.setReason(e.getMessage());
                     callOutPlanService.update(callPlan);
 
-                    dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId());
+                    dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
                     callingCountManager.removeOneCall();
                     return;
                 }

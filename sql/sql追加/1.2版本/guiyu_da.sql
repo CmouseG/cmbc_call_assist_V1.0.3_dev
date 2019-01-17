@@ -1,5 +1,5 @@
 use guiyu_da;
-create table robot_call_his_10190117
+create table robot_call_his_20190117
 (
    id                   int not null,
    seq_id               varchar(50) comment '会话id',

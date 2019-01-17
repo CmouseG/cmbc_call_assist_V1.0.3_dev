@@ -14,5 +14,5 @@ public interface IResourcePoolService {
      * 整点或有新用户加入时重新分配比例
      * @return
      */
-    boolean distributeByUser();
+    boolean distributeByUser() throws Exception;
 }

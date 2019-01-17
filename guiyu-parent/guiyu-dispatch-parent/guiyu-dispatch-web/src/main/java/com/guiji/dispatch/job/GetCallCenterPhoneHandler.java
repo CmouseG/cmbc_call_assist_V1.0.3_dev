@@ -57,6 +57,8 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 					dto.setLabel(callEnd.body.getIntent());
 					//设置用户的id
 					dto.setUserId(records.getUserId());
+					dto.setLineId(records.getLine());
+					dto.setTempId(records.getRobot());
 					successPhoneMQService.insertCallBack4MQ(dto);
 					successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
 				}

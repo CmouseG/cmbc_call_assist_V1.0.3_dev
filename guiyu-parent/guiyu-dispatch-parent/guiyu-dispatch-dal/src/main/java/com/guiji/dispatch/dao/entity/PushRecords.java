@@ -16,6 +16,10 @@ public class PushRecords implements Serializable {
 
     private Integer userId;
 
+    private Integer line;
+
+    private String robot;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -66,6 +70,22 @@ public class PushRecords implements Serializable {
         this.userId = userId;
     }
 
+    public Integer getLine() {
+        return line;
+    }
+
+    public void setLine(Integer line) {
+        this.line = line;
+    }
+
+    public String getRobot() {
+        return robot;
+    }
+
+    public void setRobot(String robot) {
+        this.robot = robot == null ? null : robot.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -78,6 +98,8 @@ public class PushRecords implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", callbackStatus=").append(callbackStatus);
         sb.append(", userId=").append(userId);
+        sb.append(", line=").append(line);
+        sb.append(", robot=").append(robot);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

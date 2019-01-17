@@ -29,6 +29,8 @@ public class CallBack4MQListener {
 	@Autowired
 	private RedisUtil redisUtil;
 
+	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT";
+
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		// 呼叫中心回调之后去获取最新的并发数量和呼叫中心的负载情况推送对应数量的号码
@@ -41,21 +43,14 @@ public class CallBack4MQListener {
 		re.setCallbackStatus(Constant.CALLBACKED);
 		int result = recordMapper.updateByExampleSelective(re, ex);
 		if (result > 0) {
-			Integer currentCount = (Integer) redisUtil.get("REDIS_CURRENTLY_COUNT");
+			String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT+mqSuccPhoneDto.getUserId()+"_"+mqSuccPhoneDto.getLineId()+"_"+mqSuccPhoneDto.getTempId();
+			Integer currentCount = (Integer) redisUtil.get(queueCount);
 			if (currentCount > 0) {
 				currentCount = currentCount - 1;
-				redisUtil.set("REDIS_CURRENTLY_COUNT", currentCount);
+				redisUtil.set(queueCount, currentCount);
 			}
 
-			Integer userIdCurrentCount = (Integer) redisUtil
-					.get("REDIS_USERID_CURRENTLY_COUNT_" + mqSuccPhoneDto.getUserId());
-			if(userIdCurrentCount ==null){
-				userIdCurrentCount =0;
-			}
-			if (userIdCurrentCount > 0) {
-				userIdCurrentCount = userIdCurrentCount - 1;
-				redisUtil.set("REDIS_USERID_CURRENTLY_COUNT_" + mqSuccPhoneDto.getUserId(), userIdCurrentCount);
-			}
+
 		}
 	}
 }

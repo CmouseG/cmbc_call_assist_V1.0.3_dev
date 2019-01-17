@@ -70,7 +70,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setCallData(Integer.valueOf(dateNowStr));
 		dis.setIsDel(Constant.IS_DEL_0);
 		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
+		// dis.setStatusSync(Constant.STATUS_SYNC_0);
 		dis.setFlag(Constant.IS_FLAG_2);
 		List<PlanUserIdLineRobotDto> planUserIdLineRobotDtos = new ArrayList<>();
 		List<DispatchPlan> selectPlanGroupByUserIdLineRobot = dispatchMapper.selectPlanGroupByUserIdLineRobot(dis);

@@ -86,14 +86,5 @@ public interface IDispatchPlanOut {
     @ApiOperation(value = "初始化系统拨打电话资源池")
     @GetMapping(value="out/initResourcePool")
     Result.ReturnData<Boolean> initResourcePool();
-
-    /**
-     * 按用户资源配置占比计算拨打计划
-     */
-    @ApiOperation(value = "按用户资源配置占比计算拨打计划")
-    @GetMapping(value="out/distributeByUser")
-    Result.ReturnData<Boolean> distributeByUser();
-
-
 }
 

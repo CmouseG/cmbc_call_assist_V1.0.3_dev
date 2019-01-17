@@ -40,9 +40,11 @@ public class PlanListener implements ApplicationRunner {
                     Thread.sleep(30000);
                 }
 
-                //服务启动先把队列数据回退，重新按用户分配后再开始获取队列计划
+                //服务启动先把队列数据回退
+                phonePlanQueueService.cleanQueue();
+                //重新按用户分配后再开始获取队列计划
                 resourcePoolService.distributeByUser();
-                //拉去拨打计划进队列
+                //拉取拨打计划进队列
                 phonePlanQueueService.execute();
             } catch (Exception e) {
                 logger.error("PlanListener:" + e.getMessage());

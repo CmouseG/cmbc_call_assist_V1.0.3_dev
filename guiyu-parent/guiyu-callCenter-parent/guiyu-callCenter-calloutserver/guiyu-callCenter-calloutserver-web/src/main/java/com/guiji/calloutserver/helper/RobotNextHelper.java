@@ -99,7 +99,7 @@ public class RobotNextHelper {
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
 //                        String status = aiCallNext.getHelloStatus();
-                        if (aiCallNext.getHelloStatus()!=null && aiCallNext.getHelloStatus().equals("play")) {
+                        if (aiCallNext!=null && aiCallNext.getHelloStatus()!=null && aiCallNext.getHelloStatus().equals("play")) {
                             log.info("-------------end  robotRemote aiCallNext result[{}]",result);
                             //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
                             if (channelHelper.isChannelLock(callId)) {

@@ -90,6 +90,11 @@ public class AllotUserLineBotenceUtil {
 
         int everyOneCount = 0;
         for (Map.Entry<String, List<UserLineBotenceVO>> ent : allUserBotence.entrySet()) {
+
+            if(!userDistributeMap.containsKey(ent.getKey()))
+            {
+                continue;
+            }
             everyOneCount = userDistributeMap.get(ent.getKey()) / ent.getValue().size();
 
             for (int i = 0; i < ent.getValue().size(); i++) {

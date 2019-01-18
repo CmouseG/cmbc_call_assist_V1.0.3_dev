@@ -52,7 +52,8 @@ public class RobotConstants {
 	
 	public static final String LOCK_NAME_CFG = "LOCK_ROBOT_USER_AI_CFG_";	//资源锁-用户机器人数量变更
 	public static final String LOCK_NAME_ASSIGN = "LOCK_ROBOT_USER_AI_ASSIGN_";	//资源锁-用户机器人分配
-	public static final String LOCK_ROBOT_AIPOOL = "LOCK_ROBOT_AIPOOL";	//资源锁-机器人池初始化
+	public static final String LOCK_ROBOT_AIPOOL_INIT = "LOCK_ROBOT_AIPOOL_INIT";	//资源锁-机器人池初始化
+	public static final String LOCK_ROBOT_AIPOOL_ASSIGN = "LOCK_ROBOT_AIPOOL_ASSIGN";	//资源锁-机器人池分配锁
 	
 	/**
 	 * 通话状态

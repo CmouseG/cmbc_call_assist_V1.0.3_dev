@@ -185,7 +185,7 @@ public class UserController implements IAuth {
 	public ReturnData<SysUser> getUserById4Keys(Long userId) {
 		SysUser sysUser = service.getUserById(userId);
 		if (sysUser != null) {
-			if (sysUser.getAccessKey() == null || sysUser.getSecretKey() == null  || sysUser.getAccessKey() ==""||sysUser.getSecretKey() == null) {
+			if ((sysUser.getAccessKey() == null || sysUser.getSecretKey() == null) || (sysUser.getAccessKey() ==""||sysUser.getSecretKey() == null)) {
 				String changeAccessKey = service.changeAccessKey(userId);
 				String changeSecretKey = service.changeSecretKey(userId);
 				sysUser.setAccessKey(changeAccessKey);

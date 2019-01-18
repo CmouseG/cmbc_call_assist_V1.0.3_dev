@@ -26,6 +26,7 @@ import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.vo.SysUserVo;
 import com.guiji.user.vo.UserParamVo;
+import com.guiji.utils.RedisUtil;
 
 /**
  * Created by ty on 2018/10/22.
@@ -35,6 +36,10 @@ public class UserController implements IAuth {
 
 	@Autowired
 	private UserService service;
+	@Autowired
+	private RedisUtil redisUtil;
+
+	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
 
 	@RequestMapping("/user/regist")
 	public SysUser insert(SysUserVo param, @RequestHeader Long userId) throws Exception {
@@ -180,12 +185,12 @@ public class UserController implements IAuth {
 	public ReturnData<SysUser> getUserById4Keys(Long userId) {
 		SysUser sysUser = service.getUserById(userId);
 		if (sysUser != null) {
-			if (sysUser.getAccessKey() == null || sysUser.getAccessKey() == "" || sysUser.getSecretKey() == null
-					|| sysUser.getSecretKey() == "") {
+			if (sysUser.getAccessKey() == null || sysUser.getSecretKey() == null  || sysUser.getAccessKey() ==""||sysUser.getSecretKey() == null) {
 				String changeAccessKey = service.changeAccessKey(userId);
 				String changeSecretKey = service.changeSecretKey(userId);
 				sysUser.setAccessKey(changeAccessKey);
 				sysUser.setSecretKey(changeSecretKey);
+				redisUtil.set(REDIS_USER_BY_ID + userId, sysUser);
 			}
 		}
 		return Result.ok(sysUser);

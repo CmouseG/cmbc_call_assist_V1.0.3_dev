@@ -6,15 +6,13 @@ import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
-import com.guiji.ccmanager.vo.CallDetailUpdateReq;
-import com.guiji.ccmanager.vo.CallOutDetailVO;
-import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
-import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
+import com.guiji.ccmanager.vo.*;
 import com.guiji.utils.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -47,6 +45,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     CacheManager cacheManager;
     @Autowired
     AuthService authService;
+    @Autowired
+    CallOutDetailLogMapper callOutDetailLogMapper;
 
     @Override
     public void updateIsRead(String callId) {
@@ -113,6 +113,35 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
+    public List<Map> getCallRecordList(CallRecordReq callRecordReq) {
+
+        Map map = new HashMap();
+        map.put("customerId", callRecordReq.getUserId());
+        map.put("orgCode", callRecordReq.getOrgCode());
+        map.put("limitStart", (callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
+        map.put("limitEnd", callRecordReq.getPageSize());
+        if (callRecordReq.getTime() != null)
+            map.put("time", callRecordReq.getTime()-1);
+        if (callRecordReq.getAccurateIntent() != null)
+            map.put("accurateIntent", callRecordReq.getAccurateIntent());
+        List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(map);
+        return list;
+    }
+
+    @Override
+    public int countCallRecordList(CallRecordReq callRecordReq) {
+
+        Map map = new HashMap();
+        map.put("orgCode", callRecordReq.getOrgCode());
+        if (callRecordReq.getTime() != null)
+            map.put("time", callRecordReq.getTime()-1);
+        if (callRecordReq.getAccurateIntent() != null)
+            map.put("accurateIntent", callRecordReq.getAccurateIntent());
+        int i = callOutPlanMapper.countCallRecordList(map);
+        return i;
+    }
+
+    @Override
     public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, String orgCode,
                                                    int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
                                                    String accurateIntent, String freason, String callId, String tempId, String isRead) {
@@ -163,6 +192,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     public CallPlanDetailRecordVO getCallDetail(BigInteger callId) {
 
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
+        CallOutRecord callOutRecord = callOutRecordMapper.selectByPrimaryKey(callId);
         callOutPlan.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
         if (callOutPlan != null) {
 
@@ -181,6 +211,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             for (CallOutDetail callOutDetail : details) {
                 CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
                 BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
+                callOutDetailVO.setCallDetailId(callOutDetail.getCallDetailId().toString());
                 for (CallOutDetailRecord callOutDetailRecord : records) {
                     if (callOutDetailRecord.getCallDetailId().equals(callOutDetail.getCallDetailId())) {
                         BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
@@ -191,8 +222,11 @@ public class CallDetailServiceImpl implements CallDetailService {
 
             CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
             BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
-            callPlanDetailRecordVO.setCallId(callOutPlan.getCallId().toString());
             callPlanDetailRecordVO.setDetailList(resList);
+            if(callOutRecord!=null && callOutRecord.getRecordUrl()!=null){
+                callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
+            }
+
             return callPlanDetailRecordVO;
         }
 
@@ -270,7 +304,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 if (recordList != null && recordList.size() > 0) {
                     for (CallOutRecord callOutRecord : recordList) {
-                        if (callPlanDetailRecordVO.getCallId().equals(callOutRecord.getCallId().toString())) {
+                        if (callPlanDetailRecordVO.getCallId().compareTo(callOutRecord.getCallId())==0) {
                             callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
                         }
                     }
@@ -398,12 +432,35 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq) {
+    @Transactional
+    public void updateCallDetailCustomerSayText(CallDetailUpdateReq callDetailUpdateReq,Long userId) {
+        BigInteger detailId = new BigInteger(callDetailUpdateReq.getCallDetailId());
+
+        CallOutDetail callOutDetail =  callOutDetailMapper.selectByPrimaryKey(detailId);
+        String customerSayText = callOutDetail.getCustomerSayText();
+
         CallOutDetail record = new CallOutDetail();
-        record.setCustomerSayText(callDetailUpdateReq.getCustomerSayText());
-        record.setCallDetailId(new BigInteger(callDetailUpdateReq.getCallDetailId()));
+        String customerSayTextNew = callDetailUpdateReq.getCustomerSayText();
+        record.setCustomerSayText(customerSayTextNew);
+        record.setCallDetailId(detailId);
+        record.setIsupdate(1);
         callOutDetailMapper.updateByPrimaryKeySelective(record);
+
+        CallOutDetailLog detailLog = new CallOutDetailLog();
+        detailLog.setCallDetailId(detailId);
+        detailLog.setUpdateBy(userId.intValue());
+        detailLog.setUpdateTime(new Date());
+        detailLog.setCustomerSayTextNew(customerSayTextNew);
+        if(customerSayText!=null){
+            detailLog.setCustomerSayText(customerSayText);
+        }
+        callOutDetailLogMapper.insertSelective(detailLog);
     }
 
-
+    @Override
+    public List<CallOutPlan> getCallRecordListByPhone(String phone) {
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andPhoneNumEqualTo(phone);
+        return callOutPlanMapper.selectByExample(example);
+    }
 }

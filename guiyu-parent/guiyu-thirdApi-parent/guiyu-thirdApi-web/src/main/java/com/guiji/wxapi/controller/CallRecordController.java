@@ -1,15 +1,14 @@
-package com.guiji.api.controller;
+package com.guiji.wxapi.controller;
 
-import com.guiji.api.constant.Constant;
-import com.guiji.api.entity.CallData;
-import com.guiji.api.entity.CallOutPlanVO;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
-import com.guiji.ccmanager.vo.CallRecordReq;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.wxapi.constant.Constant;
+import com.guiji.wxapi.entity.CallData;
+import com.guiji.wxapi.entity.CallOutPlanVO;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -54,7 +53,7 @@ public class CallRecordController {
         Result.ReturnData<CallPlanDetailRecordVO> result = iCallPlanDetail.getCallDetail(id);
         CallPlanDetailRecordVO callOutPlanVO = result.getBody();
         if (callOutPlanVO != null) {
-            com.guiji.api.entity.CallOutPlanVO resCallOutPlan = new com.guiji.api.entity.CallOutPlanVO();
+            CallOutPlanVO resCallOutPlan = new CallOutPlanVO();
             CallData callData = new CallData();
             if (callOutPlanVO.getCallId() != null)
                 callData.setId(callOutPlanVO.getCallId().toString());
@@ -74,9 +73,9 @@ public class CallRecordController {
 
             List<CallOutDetailVO> list = callOutPlanVO.getDetailList();
             if (list != null && list.size() > 0) {
-                List<com.guiji.api.entity.CallOutDetailVO> resList = new ArrayList<com.guiji.api.entity.CallOutDetailVO>();
+                List<com.guiji.wxapi.entity.CallOutDetailVO> resList = new ArrayList<com.guiji.wxapi.entity.CallOutDetailVO>();
                 for (CallOutDetailVO callOutDetailVO : list) {
-                    com.guiji.api.entity.CallOutDetailVO resCallOutDetailVO = new com.guiji.api.entity.CallOutDetailVO();
+                    com.guiji.wxapi.entity.CallOutDetailVO resCallOutDetailVO = new com.guiji.wxapi.entity.CallOutDetailVO();
                     resCallOutDetailVO.setCallid(callOutDetailVO.getCallId().toString());
                     resCallOutDetailVO.setId(callOutDetailVO.getCallDetailId());
                     if (callOutDetailVO.getBotAnswerText() != null)

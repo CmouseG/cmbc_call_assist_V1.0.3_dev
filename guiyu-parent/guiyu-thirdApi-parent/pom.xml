@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>guiyu-api-parent</artifactId>
+    <artifactId>guiyu-thirdApi-parent</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>guiyu-api-web</module>
+        <module>guiyu-thirdApi-web</module>
     </modules>
 
     <dependencies>

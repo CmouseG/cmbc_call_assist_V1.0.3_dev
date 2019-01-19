@@ -1,4 +1,4 @@
-package com.guiji.api.constant;
+package com.guiji.wxapi.constant;
 
 public class Constant {
     public static final String ERROR_PARAM = "0303001";

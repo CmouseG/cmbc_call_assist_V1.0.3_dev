@@ -1,4 +1,4 @@
-package com.guiji.api.entity;
+package com.guiji.wxapi.entity;
 
 import lombok.Data;
 

@@ -1,11 +1,9 @@
-package com.guiji.api.entity;
+package com.guiji.wxapi.entity;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 /**

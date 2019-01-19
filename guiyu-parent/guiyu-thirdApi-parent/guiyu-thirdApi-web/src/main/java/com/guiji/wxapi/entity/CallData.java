@@ -1,13 +1,12 @@
-package com.guiji.api.entity;
+package com.guiji.wxapi.entity;
 
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 
 @Data
-public class CallRecord implements Serializable {
+public class CallData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -18,4 +17,5 @@ public class CallRecord implements Serializable {
     private Integer calltime;
     private Date starttime;
     private String voicefile;
+
 }

@@ -46,6 +46,15 @@ public class CallManagerOutApiController implements ICallManagerOut {
     DiscoveryClient discoveryClient;
 
     @Override
+    public Result.ReturnData<String> getLineInfoById(@RequestParam("lineId") Integer lineId) {
+        LineInfo lineInfo = lineInfoService.getLineInfoById(lineId);
+        if(lineInfo!=null){
+            return Result.ok(lineInfo.getLineName());
+        }
+        return Result.ok();
+    }
+
+    @Override
     @GetMapping(value="out/getLineInfos")
     public Result.ReturnData<List<LineConcurrent>> getLineInfos(String customerId){
 

@@ -80,8 +80,8 @@ public class JwtConfig {
         }
     }
 
-    public void logout(){
-
+    public void deleteToken(String token){
+        redisTemplate.delete("JWT-SESSION-" + getJwtIdByToken(token));
     }
     /**
      * 根据Token获取wxOpenId(注意坑点 : 就算token不正确，也有可能解密出wxOpenId,同下)

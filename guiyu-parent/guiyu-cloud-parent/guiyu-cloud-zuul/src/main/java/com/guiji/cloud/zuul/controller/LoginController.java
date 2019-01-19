@@ -14,10 +14,7 @@ import com.guiji.component.result.Result;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.guiji.cloud.zuul.config.AuthUtil;
 import com.guiji.cloud.zuul.service.ZuulService;
@@ -83,10 +80,10 @@ public class LoginController implements ILogin {
     }
 
     @RequestMapping("loginOut")
-    public void loginOut () {
+    public void loginOut (@RequestHeader String Authorization) {
+        jwtConfig.deleteToken(Authorization);
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        //删除redis中存储的token
     }
 
     @GetMapping("apiLogin")

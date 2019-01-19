@@ -64,27 +64,23 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         }
         boolean flag =true;
         if (isLoginAttempt(request, response)) {
-            String tok = getAuthzHeader(request);
-            JwtToken token = new JwtToken(getAuthzHeader(request));
-            Subject subject = getSubject(request, response);
-            subject.login(token);
-//            String jwtToken = getAuthzHeader(request);
-//            try {
-//                if (!jwtConfig.verifyToken(jwtToken)){
-//                    flag =false;
-//                }
-//            }catch (Exception e){
-//                logger.error("JwtFilter.wtConfig.verifyToken Exception "+e);
-//                flag =false;
-//            }
-            Long userId = jwtConfig.getUserIdByToken(tok);
-            String orgCode = jwtConfig.getOrgCodeByToken(tok);
-            Boolean isSuperAdmin = jwtConfig.getSuperAdminByToken(tok);
-//            Long userId = token.getUserId();
-            RequestContext ctx = RequestContext.getCurrentContext();
-            ctx.addZuulRequestHeader("userId", String.valueOf(userId));
-            ctx.addZuulRequestHeader("orgCode", orgCode);
-            ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin.toString());
+           try {
+               String tok = getAuthzHeader(request);
+               JwtToken token = new JwtToken(getAuthzHeader(request));
+               Subject subject = getSubject(request, response);
+               subject.login(token);
+
+               Long userId = jwtConfig.getUserIdByToken(tok);
+               String orgCode = jwtConfig.getOrgCodeByToken(tok);
+               Boolean isSuperAdmin = jwtConfig.getSuperAdminByToken(tok);
+
+               RequestContext ctx = RequestContext.getCurrentContext();
+               ctx.addZuulRequestHeader("userId", String.valueOf(userId));
+               ctx.addZuulRequestHeader("orgCode", orgCode);
+               ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin.toString());
+           }catch (Exception e){
+               flag =false;
+           }
         }else{
             flag =false;
         }

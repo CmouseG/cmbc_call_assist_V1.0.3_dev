@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.dispatch.model.DispatchPlan;
+import com.guiji.dispatch.model.PlanCountVO;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -93,15 +94,16 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "orgCode", value = "orgCode", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/getPlanCountByUserId")
-    Result.ReturnData<Integer> getPlanCountByUserId(@RequestParam("orgCode") String orgCode);
+    Result.ReturnData<PlanCountVO> getPlanCountByUserId(@RequestParam("orgCode") String orgCode);
     
     
     @ApiOperation(value = "微信小程序一键停止拨打")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "orgCode", value = "orgCode", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "type", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/opertationStopPlanByUserId")
-    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("orgCode") String orgCode);
+    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("orgCode") String orgCode,@RequestParam("type") String type);
     
     
 }

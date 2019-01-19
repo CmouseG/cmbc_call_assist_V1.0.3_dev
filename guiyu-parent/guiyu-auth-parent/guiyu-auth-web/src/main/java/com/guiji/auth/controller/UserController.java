@@ -10,9 +10,7 @@ import java.util.Map;
 import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.exception.CheckConditionException;
@@ -133,6 +131,14 @@ public class UserController implements IAuth {
 	public void changePassword(String newPass, String oldPass, @RequestHeader Long userId)
 			throws CheckConditionException {
 		service.changePassword(newPass, oldPass, userId);
+	}
+
+	@GetMapping("/user/apiUpdatePassword")
+	public Result.ReturnData apiUpdatePassword(@RequestParam("newPass") String newPass,@RequestParam("oldPass")  String oldPass,
+										@RequestParam("userId")  Long userId) throws Exception{
+
+		service.changePassword(newPass, oldPass, userId);
+		return Result.ok();
 	}
 
 	@RequestMapping("/user/updateUserData")

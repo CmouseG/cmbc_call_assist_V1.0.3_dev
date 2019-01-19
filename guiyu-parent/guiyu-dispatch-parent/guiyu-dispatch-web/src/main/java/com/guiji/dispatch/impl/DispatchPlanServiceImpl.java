@@ -952,8 +952,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (dto.length > 0) {
 			IdsDto bean = dto[0];
 			if (bean.getStatus().equals(Constant.STATUSPLAN_3) || bean.getStatus().equals(Constant.STATUSPLAN_4)) {
-/*				// 重新分配队列数据
-				phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));*/
+				/*
+				 * // 重新分配队列数据
+				 * phonePlanQueueService.cleanQueueByUserId(String.valueOf(
+				 * userId));
+				 */
 			}
 		}
 		return result > 0 ? true : false;
@@ -1141,10 +1144,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanuuid());
 			// result = dispatchHourMapper.deleteByExample(exHour);
 		}
-		
+
 		// 重新分配队列数据
-		/*phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));*/
-		
+		/* phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId)); */
+
 		return result > 0 ? true : false;
 	}
 
@@ -1293,7 +1296,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public JSONObject queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize) {
+	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize) {
 		JSONObject jsonObject = new JSONObject();
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
@@ -1320,8 +1323,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ids.add(dis.getPlanUuid());
 		}
 		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
-		jsonObject.put("data", callPlanDetailRecord.getBody());
-		return jsonObject;
+		return callPlanDetailRecord.getBody();
 	}
 
 	@Override
@@ -1539,5 +1541,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour4UserId(dis);
 		return phones;
 	}
+
+	@Override
+	public Integer getPlanCountByUserId(Long userId) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr));
+		int countByExample = dispatchPlanMapper.countByExample(ex);
+		return countByExample;
+	}
+	
+	
 
 }

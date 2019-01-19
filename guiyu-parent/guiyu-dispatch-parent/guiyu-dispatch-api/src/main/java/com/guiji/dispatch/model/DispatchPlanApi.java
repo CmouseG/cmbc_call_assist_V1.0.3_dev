@@ -1,116 +1,50 @@
 package com.guiji.dispatch.model;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-public class DispatchPlan implements Serializable {
-	// 是否显示
-	private Integer statusShow;
+public class DispatchPlanApi {
 
-	private boolean isSuccess = true;
+	private Integer id;
 
-	private Integer limitStart;
+	private String planUuid;
 
-	private Integer limitEnd;
-	
-    private Integer id;
+	private Integer userId;
 
-    private String planUuid;
+	private Integer batchId;
 
-    private Integer userId;
+	private String phone;
 
-    private Integer batchId;
+	private String attach;
 
-    private String phone;
+	private String params;
 
-    private String attach;
+	private Integer statusPlan;
 
-    private String params;
+	private Integer statusSync;
 
-    private Integer statusPlan;
+	private Integer recall;
 
-    private Integer statusSync;
+	private String recallParams;
 
-    private Integer recall;
+	private String robot;
 
-    private String recallParams;
+	private Integer line;
 
-    private String robot;
+	private String result;
 
-    private Integer line;
+	private String callAgent;
 
-    private String result;
+	private Integer clean;
 
-    private String callAgent;
+	private Integer callData;
 
-    private Integer clean;
+	private String callHour;
 
-    private Integer callData;
+	private Date gmtCreate;
 
-    private String callHour;
+	private Date gmtModified;
 
-    private Date gmtCreate;
-
-    private Date gmtModified;
-
-    private Integer isTts;
-
-    private String username;
-
-    private Integer replayType;
-
-    private Integer isDel;
-
-    private String lineName;
-
-    private String robotName;
-
-    private String batchName;
-
-    private String flag;
-    
-    private static final long serialVersionUID = 1L;
-
-	private List<String> robotIds;
-	
-	private String userName ;
-	
-    private String orgCode;
-
-    private Integer fileRecordId;
-
-	public Integer getStatusShow() {
-		return statusShow;
-	}
-
-	public void setStatusShow(Integer statusShow) {
-		this.statusShow = statusShow;
-	}
-
-	public boolean isSuccess() {
-		return isSuccess;
-	}
-
-	public void setSuccess(boolean isSuccess) {
-		this.isSuccess = isSuccess;
-	}
-
-	public Integer getLimitStart() {
-		return limitStart;
-	}
-
-	public void setLimitStart(Integer limitStart) {
-		this.limitStart = limitStart;
-	}
-
-	public Integer getLimitEnd() {
-		return limitEnd;
-	}
-
-	public void setLimitEnd(Integer limitEnd) {
-		this.limitEnd = limitEnd;
-	}
+	private Integer isTts;
 
 	public Integer getId() {
 		return id;
@@ -280,14 +214,6 @@ public class DispatchPlan implements Serializable {
 		this.isTts = isTts;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public Integer getReplayType() {
 		return replayType;
 	}
@@ -336,22 +262,6 @@ public class DispatchPlan implements Serializable {
 		this.flag = flag;
 	}
 
-	public List<String> getRobotIds() {
-		return robotIds;
-	}
-
-	public void setRobotIds(List<String> robotIds) {
-		this.robotIds = robotIds;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public String getOrgCode() {
 		return orgCode;
 	}
@@ -360,13 +270,22 @@ public class DispatchPlan implements Serializable {
 		this.orgCode = orgCode;
 	}
 
-	public Integer getFileRecordId() {
-		return fileRecordId;
-	}
+	private Integer replayType;
 
-	public void setFileRecordId(Integer fileRecordId) {
-		this.fileRecordId = fileRecordId;
-	}
-    
-    
+	private Integer isDel;
+
+	private String lineName;
+
+	private String robotName;
+
+	private String batchName;
+
+	private String flag;
+
+	private String orgCode;
+	
+	
+	
+	
+
 }

@@ -86,5 +86,23 @@ public interface IDispatchPlanOut {
     @ApiOperation(value = "初始化系统拨打电话资源池")
     @GetMapping(value="out/initResourcePool")
     Result.ReturnData<Boolean> initResourcePool();
+    
+    
+    @ApiOperation(value = "微信小程序获取计划数")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "RobotIuserIdd", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping(value="out/getPlanCountByUserId")
+    Result.ReturnData<Integer> getPlanCountByUserId(@RequestParam("userId") Long userId);
+    
+    
+    @ApiOperation(value = "微信小程序一键停止拨打")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "RobotIuserIdd", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping(value="out/opertationStopPlanByUserId")
+    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("userId") Long userId);
+    
+    
 }
 

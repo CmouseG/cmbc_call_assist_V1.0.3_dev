@@ -116,19 +116,18 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Integer> getPlanCountByUserId(Long userId) {
-		Integer planCountByUserId = dispatchPlanService.getPlanCountByUserId(userId);
+	public ReturnData<Integer> getPlanCountByUserId(String orgCode) {
+		Integer planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode);
 		ReturnData<Integer> result = new ReturnData<>();
 		result.body = planCountByUserId;
 		return result;
 	}
 
 	@Override
-	public ReturnData<Boolean> opertationStopPlanByUserId(Long userId) {
-		MessageDto operationAllPlanByBatchId = dispatchPlanService.operationAllPlanByBatchId(0,
-				Constant.STATUSPLAN_STOP, userId);
+	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode) {
+		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode);
 		ReturnData<Boolean> result = new ReturnData<>();
-		result.body = operationAllPlanByBatchId.isResult();
+		result.body = stopPlanByorgCode;
 		return result;
 	}
 

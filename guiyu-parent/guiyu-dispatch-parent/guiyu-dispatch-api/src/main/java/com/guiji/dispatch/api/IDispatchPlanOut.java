@@ -90,18 +90,18 @@ public interface IDispatchPlanOut {
     
     @ApiOperation(value = "微信小程序获取计划数")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "RobotIuserIdd", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(name = "orgCode", value = "orgCode", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/getPlanCountByUserId")
-    Result.ReturnData<Integer> getPlanCountByUserId(@RequestParam("userId") Long userId);
+    Result.ReturnData<Integer> getPlanCountByUserId(@RequestParam("orgCode") String orgCode);
     
     
     @ApiOperation(value = "微信小程序一键停止拨打")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "RobotIuserIdd", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(name = "orgCode", value = "orgCode", dataType = "String", paramType = "query"),
     })
     @GetMapping(value="out/opertationStopPlanByUserId")
-    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("userId") Long userId);
+    Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("orgCode") String orgCode);
     
     
 }

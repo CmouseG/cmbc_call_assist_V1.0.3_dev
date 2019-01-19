@@ -239,5 +239,7 @@ public interface IDispatchPlanService {
 
 	public List<DispatchPlan> selectPhoneByDate4UserId(String flag, Integer limit);
 
-	public Integer getPlanCountByUserId(Long userId);
-}
+	public Integer getPlanCountByUserId(String orgCode);
+	
+	boolean stopPlanByorgCode(String orgCode);
+	}

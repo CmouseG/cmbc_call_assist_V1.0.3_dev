@@ -1296,7 +1296,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize) {
+	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum,
+			int pagesize) {
 		JSONObject jsonObject = new JSONObject();
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
@@ -1543,17 +1544,38 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public Integer getPlanCountByUserId(Long userId) {
+	public Integer getPlanCountByUserId(String orgCode) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr));
+				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
+				.andOrgCodeLike(orgCode + "%");
 		int countByExample = dispatchPlanMapper.countByExample(ex);
 		return countByExample;
 	}
-	
-	
+
+	@Override
+	public boolean stopPlanByorgCode(String orgCode) {
+		DispatchPlanExample example = new DispatchPlanExample();
+		Criteria createCriteria = example.createCriteria();
+		// 一件停止
+		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+		createCriteria.andOrgCodeLike(orgCode + "%");
+
+		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		List<String> ids = new ArrayList<>();
+		for (DispatchPlan dispatchPlan : selectByExample) {
+			ids.add(dispatchPlan.getPlanUuid());
+		}
+		List<List<String>> averageAssign = averageAssign(ids, 10);
+		for (List<String> list : averageAssign) {
+			if (list.size() > 0) {
+				dispatchPlanMapper.updateDispatchPlanListByStatus(list, String.valueOf(Constant.STATUSPLAN_4));
+			}
+		}
+		return false;
+	}
 
 }

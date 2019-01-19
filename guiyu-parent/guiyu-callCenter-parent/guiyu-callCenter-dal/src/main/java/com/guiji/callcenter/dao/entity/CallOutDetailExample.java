@@ -1075,6 +1075,66 @@ public class CallOutDetailExample {
             addCriterion("sharding_value not between", value1, value2, "shardingValue");
             return (Criteria) this;
         }
+
+        public Criteria andIsupdateIsNull() {
+            addCriterion("isupdate is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateIsNotNull() {
+            addCriterion("isupdate is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateEqualTo(Integer value) {
+            addCriterion("isupdate =", value, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateNotEqualTo(Integer value) {
+            addCriterion("isupdate <>", value, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateGreaterThan(Integer value) {
+            addCriterion("isupdate >", value, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateGreaterThanOrEqualTo(Integer value) {
+            addCriterion("isupdate >=", value, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateLessThan(Integer value) {
+            addCriterion("isupdate <", value, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateLessThanOrEqualTo(Integer value) {
+            addCriterion("isupdate <=", value, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateIn(List<Integer> values) {
+            addCriterion("isupdate in", values, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateNotIn(List<Integer> values) {
+            addCriterion("isupdate not in", values, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateBetween(Integer value1, Integer value2) {
+            addCriterion("isupdate between", value1, value2, "isupdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsupdateNotBetween(Integer value1, Integer value2) {
+            addCriterion("isupdate not between", value1, value2, "isupdate");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.CallOutDetailLogMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallOutDetailLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="call_detail_id" property="callDetailId" jdbcType="BIGINT" />
+    <result column="customer_say_text_new" property="customerSayTextNew" jdbcType="VARCHAR" />
+    <result column="customer_say_text" property="customerSayText" jdbcType="VARCHAR" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, call_detail_id, customer_say_text_new, customer_say_text, update_by, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from call_out_detail_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from call_out_detail_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from call_out_detail_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLogExample" >
+    delete from call_out_detail_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLog" >
+    insert into call_out_detail_log (id, call_detail_id, customer_say_text_new, 
+      customer_say_text, update_by, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{callDetailId,jdbcType=BIGINT}, #{customerSayTextNew,jdbcType=VARCHAR}, 
+      #{customerSayText,jdbcType=VARCHAR}, #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLog" >
+    insert into call_out_detail_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="callDetailId != null" >
+        call_detail_id,
+      </if>
+      <if test="customerSayTextNew != null" >
+        customer_say_text_new,
+      </if>
+      <if test="customerSayText != null" >
+        customer_say_text,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="callDetailId != null" >
+        #{callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="customerSayTextNew != null" >
+        #{customerSayTextNew,jdbcType=VARCHAR},
+      </if>
+      <if test="customerSayText != null" >
+        #{customerSayText,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLogExample" resultType="java.lang.Integer" >
+    select count(*) from call_out_detail_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update call_out_detail_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.callDetailId != null" >
+        call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.customerSayTextNew != null" >
+        customer_say_text_new = #{record.customerSayTextNew,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerSayText != null" >
+        customer_say_text = #{record.customerSayText,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateBy != null" >
+        update_by = #{record.updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update call_out_detail_log
+    set id = #{record.id,jdbcType=BIGINT},
+      call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      customer_say_text_new = #{record.customerSayTextNew,jdbcType=VARCHAR},
+      customer_say_text = #{record.customerSayText,jdbcType=VARCHAR},
+      update_by = #{record.updateBy,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLog" >
+    update call_out_detail_log
+    <set >
+      <if test="callDetailId != null" >
+        call_detail_id = #{callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="customerSayTextNew != null" >
+        customer_say_text_new = #{customerSayTextNew,jdbcType=VARCHAR},
+      </if>
+      <if test="customerSayText != null" >
+        customer_say_text = #{customerSayText,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallOutDetailLog" >
+    update call_out_detail_log
+    set call_detail_id = #{callDetailId,jdbcType=BIGINT},
+      customer_say_text_new = #{customerSayTextNew,jdbcType=VARCHAR},
+      customer_say_text = #{customerSayText,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -2,6 +2,7 @@ package com.guiji.user.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class SysOrganization implements Serializable {
     private Long id;
@@ -33,6 +34,8 @@ public class SysOrganization implements Serializable {
     private String createName;
     private String updateName;
     private String parentName;
+
+    private List<Integer> product;
 
     private static final long serialVersionUID = 1L;
 
@@ -172,6 +175,14 @@ public class SysOrganization implements Serializable {
         this.subCode = subCode;
     }
 
+    public List<Integer> getProduct() {
+        return product;
+    }
+
+    public void setProduct(List<Integer> product) {
+        this.product = product;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -191,6 +202,7 @@ public class SysOrganization implements Serializable {
         sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", subCode=").append(subCode);
+        sb.append(", product=").append(product);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -42,4 +42,10 @@ public interface SysOrganizationMapper {
     public List<Object> selectOpenByPage(Page page);
 
     int countRobotByUserId(String code);
+
+    void insertOrganizationProduct(@Param("organizationId")Long organizationId,@Param("product")List<Integer> product);
+
+    void updateOrganizationProduct(@Param("organizationId")Long organizationId,@Param("product")List<Integer> product);
+
+    List<Integer> getProductByOrganizationId(Long organizationId);
 }

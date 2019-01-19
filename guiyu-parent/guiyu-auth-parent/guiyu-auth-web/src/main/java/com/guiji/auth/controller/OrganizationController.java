@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.guiji.robot.api.IRobotRemote;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -109,6 +110,11 @@ public class OrganizationController implements IOrg{
 	@RequestMapping("countRobotByUserId")
 	public int countRobotByUserId(@RequestHeader Long userId){
 		return organizationService.countRobotByUserId(userId);
+	}
+
+	@RequestMapping("getProductByOrganizationId")
+	public List<Integer> getProductByOrganizationId(Long organizationId){
+		return organizationService.getProductByOrganizationId(organizationId);
 	}
 
 }

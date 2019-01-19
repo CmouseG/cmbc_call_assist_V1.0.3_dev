@@ -122,6 +122,9 @@ public class UserService {
 					orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
 				}
 				sysOrganization = organizationService.getOrgByCode(orgCode);
+				//根据组织查询产品系列
+
+
 			}
 			redisUtil.set(REDIS_ORG_BY_USERID+userId,sysOrganization);
 		}

@@ -40,11 +40,13 @@ public class OrganizationService {
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
+		sysOrganizationMapper.insertOrganizationProduct(record.getId(),record.getProduct());
 	}
 	
 	public void delte(SysOrganization record){
 		record.setDelFlag(1);
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
+		sysOrganizationMapper.updateOrganizationProduct(record.getId(),record.getProduct());
 		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
         redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
@@ -123,6 +125,8 @@ public class OrganizationService {
 			if(list.size()>0){
 				sysOrganization = list.get(0);
 			}
+            List<Integer> product = sysOrganizationMapper.getProductByOrganizationId(sysOrganization.getId());
+			sysOrganization.setProduct(product);
 			redisUtil.set(REDIS_ORG_BY_CODE+code,sysOrganization);
 		}
 		return sysOrganization;
@@ -175,5 +179,9 @@ public class OrganizationService {
 			}
 		}
 		return countRobot;
+	}
+
+	public List<Integer> getProductByOrganizationId(Long organizationId) {
+		return sysOrganizationMapper.getProductByOrganizationId(organizationId);
 	}
 }

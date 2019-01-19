@@ -1,5 +1,8 @@
 package com.guiji.api.controller;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,17 +11,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.auth.api.IApiLogin;
+import com.guiji.cloud.api.ILogin;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
+import com.guiji.dispatch.model.CallPlanDetailRecordVO;
+import com.guiji.dispatch.model.DispatchPlanApi;
 import com.guiji.dispatch.model.DispatchPlanList;
+import com.guiji.dispatch.model.PlanCallInfoCount;
+import com.guiji.dispatch.model.PlanResultInfo;
 
 @RestController
 public class ThirdApiController {
-	@Autowired
-	private IApiLogin apiLogin;
+
 	@Autowired
 	private IThirdApiOut thirdApi;
+	@Autowired
+	private ILogin login;
 
 	/**
 	 * 查询通话记录
@@ -28,11 +36,20 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCalldetail")
-	public JSONObject getCalldetail(@RequestParam(required = false, name = "phone") String phone,
+	public JSONObject getCalldetail(@RequestParam(required = true, name = "phone") String phone,
 			@RequestParam(required = false, name = "batch_number") String batchNumber,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
-		return thirdApi.getCalldetail(phone, batchNumber, pagenum, pagesize);
+		JSONObject jsonObject = new JSONObject();
+		if(!isInteger(phone)){
+			jsonObject.put("data", "当前手机号码不正确");
+			return jsonObject;
+		}
+		
+		ReturnData<List<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, pagenum,
+				pagesize);
+		jsonObject.put("data", calldetail.getBody());
+		return jsonObject;
 	}
 
 	/**
@@ -45,7 +62,10 @@ public class ThirdApiController {
 	 */
 	@GetMapping("/getCallInfoByBatchId")
 	public JSONObject getCallInfoByBatchId(@RequestParam(required = false, name = "batch_number") String batchNumber) {
-		return thirdApi.getcall4BatchName(batchNumber);
+		JSONObject jsonObject = new JSONObject();
+		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber);
+		jsonObject.put("data", getcall4BatchName.getBody());
+		return jsonObject;
 	}
 
 	/**
@@ -60,7 +80,8 @@ public class ThirdApiController {
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("data", thirdApi.queryDispatchPlan(batchNumber, pagenum, pagesize));
+		ReturnData<List<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, pagenum, pagesize);
+		jsonObject.put("data",queryDispatchPlan.getBody() );
 		return jsonObject;
 	}
 
@@ -75,7 +96,7 @@ public class ThirdApiController {
 	public JSONObject getToken(@RequestParam(required = true, name = "access_key") String access_key,
 			@RequestParam(required = true, name = "secret_key") String secret_key) {
 		JSONObject jsonObject = new JSONObject();
-		ReturnData<String> apiLogin2 = apiLogin.apiLogin(access_key, secret_key);
+		ReturnData<String> apiLogin2 = login.apiLogin(access_key, secret_key);
 		jsonObject.put("token", apiLogin2.getBody());
 		return jsonObject;
 	}
@@ -88,7 +109,15 @@ public class ThirdApiController {
 	 */
 	@PostMapping("/addPhones")
 	public JSONObject addPhones(@RequestBody DispatchPlanList dispatchPlanList) {
-		return thirdApi.insertDispatchPlanList(dispatchPlanList);
+		ReturnData<PlanResultInfo> insertDispatchPlanList = thirdApi.insertDispatchPlanList(dispatchPlanList);
+		JSONObject json = new JSONObject();
+		json.put("data", insertDispatchPlanList.getBody());
+		return json;
+	}
+
+	public static boolean isInteger(String str) {
+		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+		return pattern.matcher(str).matches();
 	}
 
 }

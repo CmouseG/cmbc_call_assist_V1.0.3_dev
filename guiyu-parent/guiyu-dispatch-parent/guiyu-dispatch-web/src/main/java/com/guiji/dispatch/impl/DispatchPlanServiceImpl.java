@@ -64,6 +64,7 @@ import com.guiji.dispatch.dao.entity.SmsTunnel;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
+import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IResourcePoolService;
 import com.guiji.dispatch.sms.IMessageService;
@@ -1544,7 +1545,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public Integer getPlanCountByUserId(String orgCode) {
+	public PlanCountVO getPlanCountByUserId(String orgCode) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -1552,18 +1553,34 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
 				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
 				.andOrgCodeLike(orgCode + "%");
+		// 总数
 		int countByExample = dispatchPlanMapper.countByExample(ex);
-		return countByExample;
+
+		DispatchPlanExample ex1 = new DispatchPlanExample();
+		ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
+				.andOrgCodeEqualTo(orgCode);
+		int countByExample2 = dispatchPlanMapper.countByExample(ex1);
+
+		PlanCountVO bean = new PlanCountVO();
+		bean.setMainAccountNum(countByExample2);
+		bean.setSubAccountNum(countByExample - countByExample2);
+
+		return bean;
 	}
 
 	@Override
-	public boolean stopPlanByorgCode(String orgCode) {
+	public boolean stopPlanByorgCode(String orgCode, String type) {
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
 		// 一件停止
-		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
-		createCriteria.andOrgCodeLike(orgCode + "%");
-
+		if (type.equals(Constant.TYPE_ALL)) {
+			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+			createCriteria.andOrgCodeLike(orgCode + "%");
+		} else if (type.equals(Constant.TYPE_NOALL)) {
+			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+			createCriteria.andOrgCodeEqualTo(orgCode);
+		}
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		List<String> ids = new ArrayList<>();
 		for (DispatchPlan dispatchPlan : selectByExample) {
@@ -1575,7 +1592,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				dispatchPlanMapper.updateDispatchPlanListByStatus(list, String.valueOf(Constant.STATUSPLAN_4));
 			}
 		}
-		return false;
+
+		return true;
 	}
 
 }

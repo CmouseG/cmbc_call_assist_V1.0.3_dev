@@ -13,6 +13,7 @@ import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
+import com.guiji.dispatch.model.PlanCountVO;
 
 public interface IDispatchPlanService {
 
@@ -239,7 +240,7 @@ public interface IDispatchPlanService {
 
 	public List<DispatchPlan> selectPhoneByDate4UserId(String flag, Integer limit);
 
-	public Integer getPlanCountByUserId(String orgCode);
+	public PlanCountVO getPlanCountByUserId(String orgCode);
 	
-	boolean stopPlanByorgCode(String orgCode);
+	boolean stopPlanByorgCode(String orgCode, String type);
 	}

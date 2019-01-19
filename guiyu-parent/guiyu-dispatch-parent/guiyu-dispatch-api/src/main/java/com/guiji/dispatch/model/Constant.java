@@ -17,4 +17,7 @@ public class Constant {
 	public static final String STATUSPLAN_SUCCESS = "2";
 	public static final String STATUSPLAN_PAUSE = "3";
 	public static final String STATUSPLAN_STOP ="4";
+	
+	public static final String TYPE_ALL = "1";
+	public static final String TYPE_NOALL ="0";
 }

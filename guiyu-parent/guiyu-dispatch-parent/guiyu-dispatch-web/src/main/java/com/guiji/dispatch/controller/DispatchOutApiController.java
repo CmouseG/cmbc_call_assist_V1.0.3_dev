@@ -18,6 +18,7 @@ import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.model.Constant;
 import com.guiji.dispatch.model.DispatchPlan;
+import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.utils.RedisUtil;
 
@@ -116,16 +117,16 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Integer> getPlanCountByUserId(String orgCode) {
-		Integer planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode);
-		ReturnData<Integer> result = new ReturnData<>();
+	public ReturnData<PlanCountVO> getPlanCountByUserId(String orgCode) {
+		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode);
+		ReturnData<PlanCountVO> result = new ReturnData<>();
 		result.body = planCountByUserId;
 		return result;
 	}
 
 	@Override
-	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode) {
-		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode);
+	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode,String type) {
+		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode,type);
 		ReturnData<Boolean> result = new ReturnData<>();
 		result.body = stopPlanByorgCode;
 		return result;

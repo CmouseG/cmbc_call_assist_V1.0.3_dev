@@ -1,5 +1,5 @@
 server:
-  port: 18029
+  port: 18019
 #myconfig
 spring:
   application:

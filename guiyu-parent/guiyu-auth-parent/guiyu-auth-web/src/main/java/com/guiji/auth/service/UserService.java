@@ -2,8 +2,8 @@ package com.guiji.auth.service;
 
 import java.util.*;
 
-import com.guiji.user.dao.SysRoleMapper;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUserExample;
 import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -211,5 +211,18 @@ public class UserService {
 		List<SysUser> sysUserList = mapper.getAllCompanyUser();
 		return sysUserList;
 	}
-	
+
+    public SysUser getUserByAccess(String accessKey, String secretKey) {
+
+		SysUserExample example =  new SysUserExample();
+		example.createCriteria()
+				.andAccessKeyEqualTo(accessKey)
+				.andSecretKeyEqualTo(secretKey);
+		List<SysUser> list = mapper.selectByExample(example);
+		if(list!=null && list.size()>0){
+			return list.get(0);
+		}
+		return null;
+
+    }
 }

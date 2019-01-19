@@ -1,4 +1,22 @@
 use guiyu_da;
+create table robot_call_his_20190117
+(
+   id                   int not null,
+   seq_id               varchar(50) comment '会话id',
+   user_id              varchar(50) comment '用户编号',
+   org_code             varchar(50) comment '机构号',
+   ai_no                varchar(50) comment '机器人编号',
+   assign_time          datetime comment '分配时间',
+   template_id          varchar(50) comment '话术模板',
+   call_status          varchar(3) comment '通话状态:S-通话完成,I-通话中',
+   sellbot_callback_json text comment 'sellbot回调报文',
+   crt_date             varchar(10) comment '创建日期',
+   crt_time             datetime comment '创建时间',
+   primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into robot_call_his_10190117(id,seq_id,user_id,org_code,ai_no,assign_time,template_id,call_status,sellbot_callback_json,crt_date,crt_time) select id,seq_id,user_id,org_code,ai_no,assign_time,template_id,call_status,sellbot_callback_json,crt_date,crt_time from robot_call_his;
+
 drop index robot_callback_his_idx4 on robot_call_his;
 drop index robot_callback_his_idx3 on robot_call_his;
 drop index robot_callback_his_idx2 on robot_call_his;

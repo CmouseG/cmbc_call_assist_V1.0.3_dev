@@ -7,11 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
+import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
+import com.guiji.dispatch.model.PlanCountVO;
 
 public interface IDispatchPlanService {
 
@@ -221,7 +223,7 @@ public interface IDispatchPlanService {
 	 */
 	Page<DispatchPlan> queryDispatchPlan(String batchName, int pagenum, int pagesize);
 
-	JSONObject queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize);
+	List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize);
 
 	JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, String orgCode);
 
@@ -237,4 +239,8 @@ public interface IDispatchPlanService {
 	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId, String flag, Integer limit, Integer lineId);
 
 	public List<DispatchPlan> selectPhoneByDate4UserId(String flag, Integer limit);
-}
+
+	public PlanCountVO getPlanCountByUserId(String orgCode);
+	
+	boolean stopPlanByorgCode(String orgCode, String type);
+	}

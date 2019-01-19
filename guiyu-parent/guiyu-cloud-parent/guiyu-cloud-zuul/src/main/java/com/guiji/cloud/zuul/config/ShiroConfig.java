@@ -1,14 +1,9 @@
 package com.guiji.cloud.zuul.config;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.Filter;
-
+import com.guiji.cloud.zuul.filter.JwtFilter;
+import com.guiji.cloud.zuul.filter.ZuulAuthorizationFilter;
+import com.guiji.cloud.zuul.realm.ShiroRealmConfig;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -18,27 +13,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.guiji.cloud.zuul.filter.ZuulAuthenticationFilter;
-import com.guiji.cloud.zuul.filter.ZuulAuthorizationFilter;
-import com.guiji.user.dao.SysMenuMapper;
+import javax.servlet.Filter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Configuration
 public class ShiroConfig {
 	
 	@Autowired
 	private CachingSessionDAO sessionDAO;
-	
 	@Autowired
-	private List<Realm> realms;
+    JwtConfig jwtConfig;
+//	@Autowired
+//	private List<Realm> realms;
 	
 	@Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager, PermissionResolve resolve) {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         //设置自定义拦截器
         Map<String,Filter> filters=new HashMap<>();
-        filters.put("zuulAuthc", new ZuulAuthenticationFilter());
+        filters.put("zuulAuthc", new JwtFilter(jwtConfig));
         filters.put("zuulPerms", new ZuulAuthorizationFilter(resolve));
-        
+
         shiroFilterFactoryBean.setFilters(filters);
         
         // 必须设置 SecurityManager
@@ -48,9 +45,11 @@ public class ShiroConfig {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         //开放登陆接口
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/api/5c2f31180997a", "anon");
+//        filterChainDefinitionMap.put("/wxLogin", "anon");
         filterChainDefinitionMap.put("/apiLogin", "anon");
         filterChainDefinitionMap.put("/loginOut", "anon");
-        filterChainDefinitionMap.put("/auth/menu/getMenus", "anon");
+//        filterChainDefinitionMap.put("/auth/menu/getMenus", "anon");
         filterChainDefinitionMap.put("/da/robot/receiveSellbotCallback", "anon");	//sellbot回调
         filterChainDefinitionMap.put("/da/robot/receiveFdCallback", "anon");	//飞龙回调
         filterChainDefinitionMap.put("/getUserId", "zuulAuthc");
@@ -65,23 +64,69 @@ public class ShiroConfig {
      * 注入 securityManager
      */
     @Bean
-    public SecurityManager securityManager() {
+    public SecurityManager securityManager(ShiroRealmConfig shiroRealmConfig) {
+
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 设置realm.
-        	securityManager.setRealms(realms);
+//        securityManager.setRealms(realms);
+        securityManager.setRealms(shiroRealmConfig.allRealm());
         securityManager.setSessionManager(sessionManager());
         return securityManager;
+
+
+   /*     DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealms(shiroRealmConfig.allRealm());
+        //设置realm
+        DefaultSubjectDAO subjectDAO = (DefaultSubjectDAO) securityManager.getSubjectDAO();
+        // 关闭自带session
+        DefaultSessionStorageEvaluator evaluator = (DefaultSessionStorageEvaluator) subjectDAO.getSessionStorageEvaluator();
+        evaluator.setSessionStorageEnabled(Boolean.FALSE);
+        subjectDAO.setSessionStorageEvaluator(evaluator);
+        return securityManager;*/
     }
-    
+
+
+
     public DefaultWebSessionManager sessionManager(){
-    	DefaultWebSessionManager sessionManager=new DefaultWebSessionManager();
-    	sessionManager.setSessionIdCookie(new SimpleCookie("token"));
-    	sessionManager.setSessionIdCookieEnabled(true);
-    	
-    	BaseSessionIdGenerator IdGenerator=new BaseSessionIdGenerator();
-    	sessionDAO.setSessionIdGenerator(IdGenerator);
-    	sessionManager.setSessionDAO(sessionDAO);
-    	return sessionManager;
+        DefaultWebSessionManager sessionManager=new DefaultWebSessionManager();
+//        sessionManager.setSessionIdCookie(new SimpleCookie("token"));
+//        sessionManager.setSessionIdCookieEnabled(true);
+
+        BaseSessionIdGenerator IdGenerator=new BaseSessionIdGenerator();
+        sessionDAO.setSessionIdGenerator(IdGenerator);
+        sessionManager.setSessionDAO(sessionDAO);
+        return sessionManager;
     }
+
+    /**
+     * 添加注解支持
+     */
+/*    @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true); // 强制使用cglib，防止重复代理和可能引起代理出错的问题
+        return defaultAdvisorAutoProxyCreator;
+    }*/
+
+    /**
+     * 添加注解依赖
+     */
+
+/*    @Bean
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }*/
+
+    /**
+     * 开启注解验证
+     */
+/*    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }*/
+
     
 }

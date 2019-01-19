@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.model.Constant;
 import com.guiji.dispatch.model.DispatchPlan;
+import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.utils.RedisUtil;
 
@@ -63,8 +66,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	public ReturnData<List<DispatchPlan>> queryAvailableSchedules(Integer userId, int requestCount, int lineId) {
 		long start = System.currentTimeMillis();
 		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
-		
-		
+
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> queryAvailableSchedules = dispatchPlanService
 				.queryAvailableSchedules(userId, requestCount, lineId, dis, true);
 		List<DispatchPlan> list = new ArrayList<>();
@@ -78,9 +80,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 			logger.error("error", e);
 		}
 
-//		if (list.size() > 0) {
-//			list.get(list.size() - 1).setSuccess(dis.isSuccess());
-//		}
+		// if (list.size() > 0) {
+		// list.get(list.size() - 1).setSuccess(dis.isSuccess());
+		// }
 		long end = System.currentTimeMillis();
 		logger.info("返回可以拨打的任务给呼叫中心结果数量:" + list.size());
 		if (list.size() > 0) {
@@ -96,15 +98,6 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		ReturnData<Boolean> result = new ReturnData<>();
 		boolean res = redisUtil.set(RobotId, RobotId);
 		result.body = res;
-		// if( redisUtil.get("robotId")!=null){
-		// Object object = redisUtil.get("robotId");
-		// String newStr = object + ","+RobotId;
-		// boolean set = redisUtil.set("robotId", newStr);
-		// result.body = set;
-		// }else{
-		// boolean set = redisUtil.set("robotId", RobotId);
-		// result.body = set;
-		// }
 		return result;
 	}
 
@@ -120,6 +113,22 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		ReturnData<Boolean> result = new ReturnData<>();
 		redisUtil.del(tempId);
 		result.body = true;
+		return result;
+	}
+
+	@Override
+	public ReturnData<PlanCountVO> getPlanCountByUserId(String orgCode) {
+		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode);
+		ReturnData<PlanCountVO> result = new ReturnData<>();
+		result.body = planCountByUserId;
+		return result;
+	}
+
+	@Override
+	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode,String type) {
+		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode,type);
+		ReturnData<Boolean> result = new ReturnData<>();
+		result.body = stopPlanByorgCode;
 		return result;
 	}
 

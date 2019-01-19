@@ -64,6 +64,7 @@ import com.guiji.dispatch.dao.entity.SmsTunnel;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
+import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IResourcePoolService;
 import com.guiji.dispatch.sms.IMessageService;
@@ -952,8 +953,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (dto.length > 0) {
 			IdsDto bean = dto[0];
 			if (bean.getStatus().equals(Constant.STATUSPLAN_3) || bean.getStatus().equals(Constant.STATUSPLAN_4)) {
-/*				// 重新分配队列数据
-				phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));*/
+				/*
+				 * // 重新分配队列数据
+				 * phonePlanQueueService.cleanQueueByUserId(String.valueOf(
+				 * userId));
+				 */
 			}
 		}
 		return result > 0 ? true : false;
@@ -1141,10 +1145,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// exHour.createCriteria().andDispatchIdEqualTo(bean.getPlanuuid());
 			// result = dispatchHourMapper.deleteByExample(exHour);
 		}
-		
+
 		// 重新分配队列数据
-		/*phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId));*/
-		
+		/* phonePlanQueueService.cleanQueueByUserId(String.valueOf(userId)); */
+
 		return result > 0 ? true : false;
 	}
 
@@ -1293,7 +1297,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public JSONObject queryDispatchPlanByPhoens(String phone, String batchName, int pagenum, int pagesize) {
+	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum,
+			int pagesize) {
 		JSONObject jsonObject = new JSONObject();
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
@@ -1320,8 +1325,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			ids.add(dis.getPlanUuid());
 		}
 		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
-		jsonObject.put("data", callPlanDetailRecord.getBody());
-		return jsonObject;
+		return callPlanDetailRecord.getBody();
 	}
 
 	@Override
@@ -1538,6 +1542,58 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dis.setLimitEnd(limit);
 		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour4UserId(dis);
 		return phones;
+	}
+
+	@Override
+	public PlanCountVO getPlanCountByUserId(String orgCode) {
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
+				.andOrgCodeLike(orgCode + "%");
+		// 总数
+		int countByExample = dispatchPlanMapper.countByExample(ex);
+
+		DispatchPlanExample ex1 = new DispatchPlanExample();
+		ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
+				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
+				.andOrgCodeEqualTo(orgCode);
+		int countByExample2 = dispatchPlanMapper.countByExample(ex1);
+
+		PlanCountVO bean = new PlanCountVO();
+		bean.setMainAccountNum(countByExample2);
+		bean.setSubAccountNum(countByExample - countByExample2);
+
+		return bean;
+	}
+
+	@Override
+	public boolean stopPlanByorgCode(String orgCode, String type) {
+		DispatchPlanExample example = new DispatchPlanExample();
+		Criteria createCriteria = example.createCriteria();
+		// 一件停止
+		if (type.equals(Constant.TYPE_ALL)) {
+			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+			createCriteria.andOrgCodeLike(orgCode + "%");
+		} else if (type.equals(Constant.TYPE_NOALL)) {
+			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
+			createCriteria.andOrgCodeEqualTo(orgCode);
+		}
+		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		List<String> ids = new ArrayList<>();
+		for (DispatchPlan dispatchPlan : selectByExample) {
+			ids.add(dispatchPlan.getPlanUuid());
+		}
+		List<List<String>> averageAssign = averageAssign(ids, 10);
+		for (List<String> list : averageAssign) {
+			if (list.size() > 0) {
+				dispatchPlanMapper.updateDispatchPlanListByStatus(list, String.valueOf(Constant.STATUSPLAN_4));
+			}
+		}
+
+		return true;
 	}
 
 }

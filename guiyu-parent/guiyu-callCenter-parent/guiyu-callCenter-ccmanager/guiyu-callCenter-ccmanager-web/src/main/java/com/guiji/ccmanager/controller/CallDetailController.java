@@ -1,5 +1,6 @@
 package com.guiji.ccmanager.controller;
 
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.constant.Constant;
@@ -8,8 +9,8 @@ import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
 import com.guiji.ccmanager.vo.CallDetailUpdateReq;
 import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
-import com.guiji.ccmanager.vo.CallOutPlanVO;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
+import com.guiji.ccmanager.vo.CallRecordReq;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.utils.DateUtil;
@@ -35,9 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.Boolean;
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @Auther: 黎阳
@@ -55,6 +55,55 @@ public class CallDetailController implements ICallPlanDetail {
     @Autowired
     private CallDetailService callDetailService;
 
+    @ApiOperation(value = "通过电话号码，获取通话记录列表")
+    @GetMapping(value = "getCallRecordListByPhone")
+    public Result.ReturnData<List> getCallRecordListByPhone(@RequestParam(value="phone")  String phone){
+
+        List<CallOutPlan> list = callDetailService.getCallRecordListByPhone(phone);
+        List resultList = new ArrayList();
+        if(list!=null && list.size()>0){
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd HH:mm");
+
+            for (CallOutPlan callOutPlan : list) {
+                Map map = new HashMap();
+                map.put("id", callOutPlan.getCallId().toString());
+                map.put("phone", callOutPlan.getPhoneNum());
+                map.put("label", callOutPlan.getAccurateIntent() != null ? callOutPlan.getAccurateIntent() : "");
+
+                Date callStartTime = callOutPlan.getCreateTime();
+                map.put("starttime", sdf.format(callStartTime));
+                map.put("show_time", sdf2.format(callStartTime));
+
+                resultList.add(map);
+            }
+        }
+        return Result.ok(resultList);
+    }
+
+
+    @PostMapping(value = "getCallRecordList")
+    public Result.ReturnData<Map> getCallRecordList(@RequestBody CallRecordReq callRecordReq){
+
+        Map numMap = new HashMap();
+
+        List<Map> list = callDetailService.getCallRecordList(callRecordReq);
+        int label = callDetailService.countCallRecordList(callRecordReq);
+        numMap.put(callRecordReq.getAccurateIntent(),label);
+
+        callRecordReq.setAccurateIntent(null);
+        int num = callDetailService.countCallRecordList(callRecordReq);
+
+        numMap.put("num",num);
+
+        Map resultMap = new HashMap();
+        resultMap.put("data",list);
+        resultMap.put("num",numMap);
+
+        return Result.ok(resultMap);
+    }
+
     @ApiOperation(value = "获取客户指定时间内的通话记录列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "startDate", value = "开始时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
@@ -71,10 +120,10 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value="getCallRecord")
+    @GetMapping(value = "getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
-                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId ,String isRead,
-                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode  ){
+                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId, String isRead,
+                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
 
         log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
                         "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}], isRead[{}]",
@@ -119,27 +168,29 @@ public class CallDetailController implements ICallPlanDetail {
         return callDetailService.getFtypes();
     }
 
-    @ApiOperation(value = "查看通话记录详情，前台页面使用")
+    @ApiOperation(value = "查看通话记录详情，前台页面使用,后台可使用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallDetail")
-    public Result.ReturnData<CallOutPlanVO> getCallDetail(String callId){
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId){
 
         log.info("get request getCallDetail，callId[{}]", callId);
 
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
-        CallOutPlanVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
+        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
         //修改状态为已读
-        callDetailService.updateIsRead(callId);
+        if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
+            callDetailService.updateIsRead(callId);
+        }
 
         log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
     }
 
-    @ApiOperation(value = "查看通话记录详情,供后台服务使用")
+    @ApiOperation(value = "查看通话记录详情")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
@@ -345,9 +396,10 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "customerSayText", value = "customerSayText", dataType = "String", paramType = "query", required = true)
     })
     @PostMapping(value="updateCallDetailCustomerSayText")
-    public Result.ReturnData<List<CallPlanDetailRecordVO>> updateCallDetailCustomerSayText(@RequestBody @Validated CallDetailUpdateReq callDetailUpdateReq){
+    public Result.ReturnData<List<CallPlanDetailRecordVO>> updateCallDetailCustomerSayText(@RequestBody @Validated CallDetailUpdateReq callDetailUpdateReq,
+                                                                                           @RequestHeader Long userId){
 
-        callDetailService.updateCallDetailCustomerSayText(callDetailUpdateReq);
+        callDetailService.updateCallDetailCustomerSayText(callDetailUpdateReq,userId);
         return Result.ok();
     }
 

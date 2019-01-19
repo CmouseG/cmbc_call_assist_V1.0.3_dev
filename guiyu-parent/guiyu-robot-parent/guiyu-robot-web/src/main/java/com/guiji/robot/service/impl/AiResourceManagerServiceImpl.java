@@ -60,7 +60,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 * 将机器人从进程管理中初始化到缓存机器人池中
 	 */
 	public List<AiInuseCache> aiPoolInit() {
-		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL, RobotConstants.LOCK_ROBOT_AIPOOL);
+		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL_INIT, RobotConstants.LOCK_ROBOT_AIPOOL_INIT);
 		if (distributedLockHandler.tryLock(lock)) {
 			try {
 				//调用进程管理服务申请sellbot机器人资源
@@ -175,7 +175,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 */
 	@Override
 	public AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq) {
-		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL, RobotConstants.LOCK_ROBOT_AIPOOL);
+		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN, RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN);
 		if (distributedLockHandler.tryLock(lock)) {
 			try {
 				//获取AI机器人资源池
@@ -336,12 +336,9 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		if(StrUtils.isNotEmpty(userId)) {
 			List<AiInuseCache> list = aiCacheService.queryUserAiInUseList(userId);
 			if(ListUtil.isNotEmpty(list)) {
-				Iterator<AiInuseCache> it = list.iterator();
-				while(it.hasNext()){
-					AiInuseCache ai = it.next();
-					if(!RobotConstants.AI_STATUS_B.equals(ai.getAiStatus())) {
-						it.remove();
-					}
+				for(int i=0;i<list.size();i++) {
+					list.get(i).setAiName("硅语"+(i+1)+"号"); //机器人名字
+					list.get(i).setSortId(i); //排序ID
 				}
 			}
 			return list;
@@ -373,8 +370,9 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				for(int i=0;i<(aiNum-aiInuseNum);i++) {
 					//拼装用户空闲的机器人
 					AiInuseCache aiInuseCache = new AiInuseCache();
-					aiInuseCache.setAiNo("AI"+i); //机器人编号
-					aiInuseCache.setAiName("硅语"+(i+1)+"号"); //机器人名字
+					int seqNo = aiInuseNum + i +1;	//空闲的机器人顺着忙的机器人排序下来
+					aiInuseCache.setAiNo("AI"+seqNo); //机器人编号
+					aiInuseCache.setAiName("硅语"+(seqNo)+"号"); //机器人名字
 					aiInuseCache.setSortId(i); //排序ID
 					aiInuseCache.setAiStatus(RobotConstants.AI_STATUS_F); //空闲
 					aiInuseCache.setCallNum(0);

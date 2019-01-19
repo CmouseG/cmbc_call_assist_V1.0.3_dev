@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 public class CallDetailUpdateReq {
 
-    @NotNull(message = "线路明细id不能为空")
+    @NotNull(message = "id不能为空")
     private String callDetailId;
     @NotNull(message = "用户说话内容不能为空")
     private String customerSayText;

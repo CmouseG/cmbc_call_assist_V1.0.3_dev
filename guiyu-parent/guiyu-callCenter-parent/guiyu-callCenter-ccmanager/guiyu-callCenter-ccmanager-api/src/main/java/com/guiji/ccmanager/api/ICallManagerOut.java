@@ -24,11 +24,9 @@ import java.util.List;
 public interface ICallManagerOut {
 
 
-/*
-    @ApiOperation(value = "模板是否准备好，供呼叫中心外部使用")
-    @PostMapping("out/isTempOk")
-    Result.ReturnData<TempIsOkResult> isTempOk(@RequestBody List<String> tempIdList);
-*/
+    @ApiOperation(value = "根据线路id查询线路名称")
+    @GetMapping(value="out/getLineInfoById")
+    Result.ReturnData<String>  getLineInfoById(@RequestParam("lineId") Integer lineId);
 
 
     @ApiOperation(value = "获取客户线路列表，供调度中心使用")

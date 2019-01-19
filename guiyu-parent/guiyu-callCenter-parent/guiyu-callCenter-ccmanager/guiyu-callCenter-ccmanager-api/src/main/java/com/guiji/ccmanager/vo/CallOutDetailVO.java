@@ -20,7 +20,7 @@ public class CallOutDetailVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private BigInteger callDetailId;
+    private String callDetailId;
     private BigInteger callId;
     @ApiModelProperty(value = "意向")
     private String accurateIntent;

@@ -35,6 +35,8 @@ public class CallOutDetail implements Serializable {
 
     private Integer shardingValue;
 
+    private Integer isupdate;
+
     private static final long serialVersionUID = 1L;
 
     public BigInteger getCallDetailId() {
@@ -157,6 +159,14 @@ public class CallOutDetail implements Serializable {
         this.shardingValue = shardingValue;
     }
 
+    public Integer getIsupdate() {
+        return isupdate;
+    }
+
+    public void setIsupdate(Integer isupdate) {
+        this.isupdate = isupdate;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -178,6 +188,7 @@ public class CallOutDetail implements Serializable {
         sb.append(", reason=").append(reason);
         sb.append(", totalDuration=").append(totalDuration);
         sb.append(", shardingValue=").append(shardingValue);
+        sb.append(", isupdate=").append(isupdate);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

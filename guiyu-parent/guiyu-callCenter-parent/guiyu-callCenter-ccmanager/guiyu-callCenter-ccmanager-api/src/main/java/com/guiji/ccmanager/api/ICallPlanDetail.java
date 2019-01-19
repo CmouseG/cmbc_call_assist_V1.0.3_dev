@@ -1,15 +1,16 @@
 package com.guiji.ccmanager.api;
 
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
+import com.guiji.ccmanager.vo.CallRecordReq;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: 黎阳
@@ -19,11 +20,26 @@ import java.util.List;
 @FeignClient("guiyu-callcenter-ccmanager")
 public interface ICallPlanDetail {
 
-   @ApiOperation(value = "查看通话记录详情,供后台服务使用")
-   @ApiImplicitParams({
-           @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
-   })
-   @PostMapping(value="getCallPlanDetailRecord")
-   Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds);
+    @ApiOperation(value = "查看通话记录详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+    })
+    @PostMapping(value = "getCallPlanDetailRecord")
+    Result.ReturnData<List<CallPlanDetailRecordVO>> getCallPlanDetailRecord(List<String> callIds);
 
+
+    @ApiOperation(value = "查看通话记录详情，前台页面使用,后台可使用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
+    })
+    @GetMapping(value = "getCallDetail")
+    Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId);
+
+    @ApiOperation(value = "获取通话记录列表")
+    @PostMapping(value = "getCallRecordList")
+    Result.ReturnData<Map> getCallRecordList(CallRecordReq callRecordReq);
+
+    @ApiOperation(value = "通过电话号码，获取通话记录列表")
+    @GetMapping(value = "getCallRecordListByPhone")
+    Result.ReturnData<List> getCallRecordListByPhone(@RequestParam(value="phone")  String phone);
 }

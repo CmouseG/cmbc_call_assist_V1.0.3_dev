@@ -48,11 +48,11 @@ public class AiResourRelJobTimer extends IJobHandler{
 	    		aiCacheService.delUserAis(userId);
 				XxlJobLogger.log("释放用户{}[{}]个机器人...完成",userId,aiList==null?0:aiList.size());
 			}
-			//将机器人还回进程管理
-			iAiResourceManagerService.aiBatchRtnProcess(iAiResourceManagerService.queryAiPoolList());
-			//清空缓存机器人资源池
-			aiCacheService.delAiPools();
 		}
+		//将机器人还回进程管理
+		iAiResourceManagerService.aiBatchRtnProcess(iAiResourceManagerService.queryAiPoolList());
+		//清空缓存机器人资源池
+		aiCacheService.delAiPools();
 		long endTime = System.currentTimeMillis();
 		XxlJobLogger.log("定时任务，用时{}S,[释放全量已分配机器人]完成...",(endTime-beginTime)/1000);
 		return SUCCESS;

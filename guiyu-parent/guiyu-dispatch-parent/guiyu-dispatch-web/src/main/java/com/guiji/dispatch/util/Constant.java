@@ -63,5 +63,8 @@ public class Constant {
 
 	public static final Integer NOCALLBACK = 0;
 	public static final Integer CALLBACKED = 1;
+	
+	public static final String TYPE_ALL = "1";
+	public static final String TYPE_NOALL ="0";
 
 }

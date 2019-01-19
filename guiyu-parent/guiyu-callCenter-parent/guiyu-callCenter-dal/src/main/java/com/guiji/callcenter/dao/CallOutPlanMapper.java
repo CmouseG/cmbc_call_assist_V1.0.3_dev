@@ -5,6 +5,8 @@ import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface CallOutPlanMapper {
@@ -20,6 +22,8 @@ public interface CallOutPlanMapper {
 
     List<CallOutPlan> selectByExample(CallOutPlanExample example);
     List<CallOutPlan> selectByExample4Encrypt(CallOutPlanExample example);
+    List<Map> selectCallPlanRecord4Encrypt(Map map);
+    int countCallRecordList(Map map);
 
     CallOutPlan selectByPrimaryKey(BigInteger callId);
 

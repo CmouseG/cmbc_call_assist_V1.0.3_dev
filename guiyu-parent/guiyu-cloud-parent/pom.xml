@@ -15,6 +15,7 @@
         <module>guiyu-cloud-registeration</module>
         <module>guiyu-cloud-monitor</module>
         <module>guiyu-cloud-zuul</module>
+        <module>guiyu-cloud-api</module>
     </modules>
 
     <dependencies>

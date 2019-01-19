@@ -98,8 +98,8 @@ public class RobotNextHelper {
                         log.info("-------------start  robotRemote aiCallNext aiCallNextReq[{}]",aiCallNextReq);
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
-                        String status = aiCallNext.getHelloStatus();
-                        if (status.equals("play")) {
+//                        String status = aiCallNext.getHelloStatus();
+                        if (aiCallNext!=null && aiCallNext.getHelloStatus()!=null && aiCallNext.getHelloStatus().equals("play")) {
                             log.info("-------------end  robotRemote aiCallNext result[{}]",result);
                             //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
                             if (channelHelper.isChannelLock(callId)) {
@@ -135,7 +135,7 @@ public class RobotNextHelper {
                             dealWithResponse(aiResponse);
                         }
                     } catch (Exception e) {
-                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: ",e);
+                        log.error("scheduledExecutorService.scheduleAtFixedRate has error: ", e);
                     }
                 },
                 0, 500, TimeUnit.MILLISECONDS);

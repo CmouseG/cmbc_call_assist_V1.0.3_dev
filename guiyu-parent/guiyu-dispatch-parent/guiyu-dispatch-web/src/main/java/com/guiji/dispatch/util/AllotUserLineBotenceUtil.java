@@ -18,6 +18,7 @@ public class AllotUserLineBotenceUtil {
             return result;
         }
 
+        // 如果每个都不够分配一个，则所有的都分配，最终的分配不了
         Integer canDividCount = maxRobot - userLineBotenceVOList.size();
         if (canDividCount <= 0) {
             int hasDistributeCount = 0;
@@ -25,6 +26,7 @@ public class AllotUserLineBotenceUtil {
                 if (hasDistributeCount == userLineBotenceVOList.size()) {
                     return result;
                 }
+                // 至少给一个机器人
                 item.setMaxRobotCount(1);
                 result.add(item);
 
@@ -34,14 +36,16 @@ public class AllotUserLineBotenceUtil {
         }
 
         Map<String, List<UserLineBotenceVO>> allUserBotence = getAllUserBotence(userLineBotenceVOList);
-        System.out.println(allUserBotence);
-        Map<String, Integer> allUserBotenceCfg = convertUserRes2Map(configRes);
 
+        Map<String, Integer> allUserBotenceCfg = convertUserRes2Map(configRes);
 
         int allCount = 0;
         for (Map.Entry<String, List<UserLineBotenceVO>> ent : allUserBotence.entrySet()) {
 
-            allCount = allCount + allUserBotenceCfg.get(ent.getKey());
+            if(allUserBotenceCfg.containsKey(ent.getKey()))
+            {
+                allCount = allCount + allUserBotenceCfg.get(ent.getKey());
+            }
         }
 
 
@@ -49,6 +53,12 @@ public class AllotUserLineBotenceUtil {
         int hasDividCount = 0;
         Map<String, Integer> userDistributeMap = new HashMap<>();
         for (Map.Entry<String, List<UserLineBotenceVO>> ent : allUserBotence.entrySet()) {
+
+            if(!allUserBotenceCfg.containsKey(ent.getKey()))
+            {
+                continue;
+            }
+
             userBotenceCount = canDividCount * allUserBotenceCfg.get(ent.getKey()) / allCount + ent.getValue().size();
             if ((userBotenceCount) > allUserBotenceCfg.get(ent.getKey())) {
                 userBotenceCount = allUserBotenceCfg.get(ent.getKey());
@@ -61,6 +71,11 @@ public class AllotUserLineBotenceUtil {
         // 补偿
         if (hasDividCount < maxRobot) {
             for (Map.Entry<String, Integer> ent : userDistributeMap.entrySet()) {
+                // 如果没有配置机器人，则不参与分配
+                if(!allUserBotenceCfg.containsKey(ent.getKey()))
+                {
+                    continue;
+                }
                 int cut = maxRobot - hasDividCount;
                 int tmp = ent.getValue() + cut - allUserBotenceCfg.get(ent.getKey());
                 if (tmp > 0) {
@@ -73,14 +88,18 @@ public class AllotUserLineBotenceUtil {
             }
         }
 
-        System.out.println("----------");
-
         int everyOneCount = 0;
         for (Map.Entry<String, List<UserLineBotenceVO>> ent : allUserBotence.entrySet()) {
+
+            if(!userDistributeMap.containsKey(ent.getKey()))
+            {
+                continue;
+            }
             everyOneCount = userDistributeMap.get(ent.getKey()) / ent.getValue().size();
 
             for (int i = 0; i < ent.getValue().size(); i++) {
-                ent.getValue().get(i).setMaxRobotCount(everyOneCount);
+                UserLineBotenceVO currenVO = ent.getValue().get(i);
+                currenVO.setMaxRobotCount(everyOneCount);
 
                 int cut = userDistributeMap.get(ent.getKey()) - everyOneCount * ent.getValue().size();
                 if (cut > 0 && (i == ent.getValue().size() - 1))

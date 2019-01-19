@@ -135,6 +135,9 @@ zuul:
     guiyu-sysoperalog-web:
       path: /log/**
       service-id: guiyu-sysoperalog-web
+    guiyu-api-web:
+      path: /api/**
+      service-id: guiyu-api-web
 hystrix:
   command:
     default:

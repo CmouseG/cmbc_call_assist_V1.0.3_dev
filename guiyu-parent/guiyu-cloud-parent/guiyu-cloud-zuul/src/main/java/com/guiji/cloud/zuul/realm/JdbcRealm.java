@@ -1,5 +1,6 @@
 package com.guiji.cloud.zuul.realm;
 
+import com.guiji.cloud.zuul.entity.JwtToken;
 import com.guiji.user.dao.SysUserMapper;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -29,7 +30,14 @@ public class JdbcRealm extends AuthorizingRealm{
 	    HashedCredentialsMatcher matcher=new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
 	    setCredentialsMatcher(matcher);
 	}
-	
+	/**
+	 * 注意坑点 : 必须重写此方法，不然Shiro会报错
+	 * 因为创建了 JWTToken 用于替换Shiro原生 token,所以必须在此方法中显式的进行替换，否则在进行判断时会一直失败
+	 */
+	@Override
+	public boolean supports(AuthenticationToken token) {
+		return token instanceof JwtToken;
+	}
 	
 	/**
 	 * 权限
@@ -68,6 +76,7 @@ public class JdbcRealm extends AuthorizingRealm{
 		
 		SimpleAuthenticationInfo info=new SimpleAuthenticationInfo(username, password.toCharArray(), getName());
 		return info;
+
 	}
 
 }

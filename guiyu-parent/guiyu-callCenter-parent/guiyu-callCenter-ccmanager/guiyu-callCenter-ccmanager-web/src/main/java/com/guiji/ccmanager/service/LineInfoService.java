@@ -32,4 +32,6 @@ public interface LineInfoService {
     void allotLineInfo(String customerId, String lineIds);
 
     List<LineInfo> getLineInfoByOrgCode(String orgCode);
+
+    LineInfo getLineInfoById(Integer lineId);
 }

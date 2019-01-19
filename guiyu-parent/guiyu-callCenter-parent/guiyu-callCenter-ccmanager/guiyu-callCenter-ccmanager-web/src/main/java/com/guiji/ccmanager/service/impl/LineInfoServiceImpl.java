@@ -351,4 +351,9 @@ public class LineInfoServiceImpl implements LineInfoService {
         example.createCriteria().andOrgCodeLike(orgCode+"%");
         return lineInfoMapper.selectByExample(example);
     }
+
+    @Override
+    public LineInfo getLineInfoById(Integer lineId) {
+      return  lineInfoMapper.selectByPrimaryKey(lineId);
+    }
 }

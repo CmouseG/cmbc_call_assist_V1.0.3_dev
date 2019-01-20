@@ -111,6 +111,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			//继续从进程管理申请sellbot资源
 			List<ProcessInstanceVO> instanceList = applyAiResouceFromProcess(this.AI_NUM);
 			if(ListUtil.isNotEmpty(instanceList)) {
+				logger.info("又申请到了{}个sellbot机器人",instanceList.size());
 				//如果又申请到了新的机器
 				List<AiInuseCache> aiNewPoolList = new ArrayList<AiInuseCache>();
 				for(int i=0;i<instanceList.size();i++) {
@@ -129,7 +130,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				aiAsynDealService.initAiCycleHis(aiNewPoolList);
 			}
 		}else {
-			//全量更新
+			logger.info("全量更新");
 			aiPoolInit();
 		}
 		

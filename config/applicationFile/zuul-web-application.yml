@@ -150,6 +150,9 @@ zuul:
     guiyu-callcenter-toagentserver:
       path: /toagent/**
       service-id: guiyu-callcenter-toagentserver
+    guiyu-sms-web:
+      path: /sms/**
+      service-id: guiyu-sms-web
 hystrix:
   command:
     default:

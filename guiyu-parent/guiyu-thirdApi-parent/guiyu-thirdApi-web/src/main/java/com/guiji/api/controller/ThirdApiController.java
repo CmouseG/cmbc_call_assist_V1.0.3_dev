@@ -61,7 +61,7 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCallInfoByBatchId")
-	public JSONObject getCallInfoByBatchId(@RequestParam(required = false, name = "batch_number") String batchNumber) {
+	public JSONObject getCallInfoByBatchId(@RequestParam(required = true, name = "batch_number") String batchNumber) {
 		JSONObject jsonObject = new JSONObject();
 		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber);
 		jsonObject.put("data", getcall4BatchName.getBody());

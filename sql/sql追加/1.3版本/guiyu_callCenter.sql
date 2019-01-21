@@ -1,13 +1,13 @@
 ALTER TABLE  `call_out_plan` ADD COLUMN talk_num INT(4) DEFAULT 0 COMMENT '对话轮数';
-ALTER TABLE  `call_out_plan` ADD COLUMN is_cancel INT(1)  COMMENT '是否取消呼叫';
+ALTER TABLE  `call_out_plan` ADD COLUMN is_cancel INT(1) DEFAULT 0 COMMENT '是否超时';
 ALTER TABLE  `call_out_plan` ADD COLUMN is_answer INT(1) DEFAULT 0 COMMENT '是否接听';
 
 ALTER TABLE  `call_out_plan_0` ADD COLUMN talk_num INT(4) DEFAULT 0 COMMENT '对话轮数';
-ALTER TABLE  `call_out_plan_0` ADD COLUMN is_cancel INT(1)  COMMENT '是否取消呼叫';
+ALTER TABLE  `call_out_plan_0` ADD COLUMN is_cancel INT(1) DEFAULT 0 COMMENT '是否超时';
 ALTER TABLE  `call_out_plan_0` ADD COLUMN is_answer INT(1) DEFAULT 0 COMMENT '是否接听';
 
 ALTER TABLE  `call_out_plan_1` ADD COLUMN talk_num INT(4) DEFAULT 0 COMMENT '对话轮数';
-ALTER TABLE  `call_out_plan_1` ADD COLUMN is_cancel INT(1)  COMMENT '是否取消呼叫';
+ALTER TABLE  `call_out_plan_1` ADD COLUMN is_cancel INT(1)  DEFAULT 0 COMMENT '是否超时';
 ALTER TABLE  `call_out_plan_1` ADD COLUMN is_answer INT(1) DEFAULT 0 COMMENT '是否接听';
 
 

@@ -1,7 +1,9 @@
 package com.guiji.dispatch.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -11,18 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.guiji.auth.api.IApiLogin;
 import com.guiji.auth.api.IAuth;
+import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
+import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.DispatchPlanApi;
@@ -46,13 +47,16 @@ public class ThirdApiController implements IThirdApiOut {
 
 	static Logger logger = LoggerFactory.getLogger(ThirdApiController.class);
 
-
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 	@Autowired
 	private DispatchPlanMapper dispatchPlanMapper;
 	@Autowired
 	private IAuth auth;
+	@Autowired
+	private DispatchPlanBatchMapper batchMapper;
+	@Autowired
+	private ICallManagerOut callManagerOut;
 
 	@Override
 	@GetMapping(value = "out/getCalldetail")
@@ -112,71 +116,122 @@ public class ThirdApiController implements IThirdApiOut {
 	 */
 	@Override
 	@PostMapping(value = "out/insertDispatchPlanList")
-	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList dispatchPlanList) {
-		boolean result = true;
-		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dispatchPlanList.getUserId()));
-		String userName = "";
-		if (user.getBody() != null) {
-			userName = user.getBody().getUsername();
+	public ReturnData<PlanResultInfo> insertDispatchPlanList(DispatchPlanList dispatchPlanList) {
+		// 检验基本参数
+		if (!checkBaseParams(dispatchPlanList)) {
+			PlanResultInfo info = new PlanResultInfo();
+			info.setMsg("校验参数失败,请检查参数");
+			ReturnData<PlanResultInfo> returnData = new ReturnData<>();
+			returnData.setBody(info);
+			return returnData;
 		}
+		
+		// 检查批次名字是否存在
+		if(dispatchPlanService.checkBatchId(dispatchPlanList.getBatchName())){
+			PlanResultInfo info = new PlanResultInfo();
+			info.setMsg("批次已经存在");
+			ReturnData<PlanResultInfo> returnData = new ReturnData<>();
+			returnData.setBody(info);
+			return returnData;
+		}
+
+		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dispatchPlanList.getUserId()));
+		String username = user.getBody().getUsername();
+		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
+
+		DispatchPlanBatch batch = new DispatchPlanBatch();
+		batch.setName(dispatchPlanList.getBatchName());
+		batch.setUserId(Integer.valueOf(dispatchPlanList.getUserId()));
+		batch.setStatusShow(Constant.BATCH_STATUS_SHOW);
+		batch.setGmtCreate(DateUtil.getCurrent4Time());
+		batch.setGmtModified(DateUtil.getCurrent4Time());
+		batch.setOrgCode(user.getBody().getOrgCode());
+		batchMapper.insert(batch);
 
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> succ = new ArrayList<>();
 
 		for (DispatchPlan dis : dispatchPlanList.getMobile()) {
-			if (dis.getPhone() == null || dis.getPhone() == "" || !isInteger(dis.getPhone())) {
-				result = false;
-			}
-			if (dispatchPlanList.getRobot() == null || dispatchPlanList.getRobot() == "") {
-				result = false;
-			}
-
-			if (dispatchPlanList.getLine() == null || dispatchPlanList.getLine() == "") {
-				result = false;
-			}
-
-			if (dispatchPlanList.getIsClean() == null || dispatchPlanList.getIsClean() == "") {
-				result = false;
-			}
-
-			if (dispatchPlanList.getCallDate() == null || dispatchPlanList.getCallDate() == "") {
-				result = false;
-			}
-
-			if (dispatchPlanList.getCallHour() == null || dispatchPlanList.getCallHour() == "") {
-				result = false;
-			}
-
-			if (dispatchPlanList.getBatchName() == null || dispatchPlanList.getBatchName() == "") {
-				result = false;
-			}
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
 			BeanUtils.copyProperties(dis, bean);
-			if (result) {
-				bean.setPlanUuid(IdGenUtil.uuid());
-				bean.setUserId(Integer.valueOf(dispatchPlanList.getUserId()));
-				bean.setLine(Integer.valueOf(dispatchPlanList.getLine()));
-				bean.setRobot(dispatchPlanList.getRobot());
-				bean.setClean(Integer.valueOf(dispatchPlanList.getIsClean()));
-				bean.setCallHour(dispatchPlanList.getCallHour());
-				bean.setCallData(Integer.valueOf(dispatchPlanList.getCallDate()));
-				bean.setFlag(Constant.IS_FLAG_0);
-				bean.setGmtCreate(DateUtil.getCurrent4Time());
-				bean.setGmtModified(DateUtil.getCurrent4Time());
-				bean.setUserName(userName);
-				succ.add(bean);
-			} else {
+			if (bean.getPhone() == null || bean.getPhone() == "" || !isInteger(bean.getPhone())) {
 				fails.add(bean);
+				continue;
 			}
+			bean.setPlanUuid(IdGenUtil.uuid());
+			bean.setBatchId(batch.getId());
+			bean.setUserId(Integer.valueOf(dispatchPlanList.getUserId()));
+			bean.setLine(Integer.valueOf(dispatchPlanList.getLine()));
+			bean.setRobot(dispatchPlanList.getRobot());
+			bean.setClean(Integer.valueOf(dispatchPlanList.getIsClean()));
+			bean.setCallHour(dispatchPlanList.getCallHour());
+			bean.setCallData(Integer.valueOf(dispatchPlanList.getCallDate()));
+			bean.setFlag(Constant.IS_FLAG_0);
+			bean.setGmtCreate(DateUtil.getCurrent4Time());
+			bean.setGmtModified(DateUtil.getCurrent4Time());
+			bean.setUsername(username);
+			bean.setLineName(lineName);
+			bean.setIsDel(Constant.IS_DEL_0);
+			bean.setStatusPlan(Constant.STATUSPLAN_1);
+			bean.setStatusSync(Constant.STATUS_SYNC_0);
+			bean.setOrgCode(user.getBody().getOrgCode());
+			bean.setBatchName(dispatchPlanList.getBatchName());
+			succ.add(bean);
 		}
-		boolean insertDispatchPlanList = dispatchPlanService.insertDispatchPlanList(succ);
-		logger.info("批量写入结果 ： " + insertDispatchPlanList);
+		dispatchPlanService.insertDispatchPlanList(succ);
 		PlanResultInfo info = new PlanResultInfo();
 		info.setSuccCount(succ.size());
 		info.setErrorCount(fails.size());
 		ReturnData<PlanResultInfo> returnData = new ReturnData<>();
 		returnData.setBody(info);
 		return returnData;
+	}
+
+	/**
+	 * 校验基本参数
+	 * 
+	 * @param dispatchPlanList
+	 * @return
+	 */
+	private boolean checkBaseParams(DispatchPlanList dispatchPlanList) {
+
+		if (dispatchPlanList.getRobot() == null || dispatchPlanList.getRobot() == "") {
+			return false;
+		}
+
+		if (dispatchPlanList.getLine() == null || dispatchPlanList.getLine() == "") {
+			return false;
+		}
+
+		if (dispatchPlanList.getIsClean() == null || dispatchPlanList.getIsClean() == "") {
+			return false;
+		}
+
+		if (dispatchPlanList.getCallDate() == null || dispatchPlanList.getCallDate() == "") {
+			return false;
+		}
+
+		if (dispatchPlanList.getCallHour() == null || dispatchPlanList.getCallHour() == "") {
+			return false;
+		}
+
+		if (dispatchPlanList.getBatchName() == null || dispatchPlanList.getBatchName() == "") {
+			return false;
+		}
+		// 检查用户
+		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dispatchPlanList.getUserId()));
+		// 检查线路
+		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
+		// 检查机器人
+		
+		if (user.getBody() == null) {
+			return false;
+		}
+
+		if (lineName == null) {
+			return false;
+		}
+		return true;
 	}
 
 	public static boolean isInteger(String str) {

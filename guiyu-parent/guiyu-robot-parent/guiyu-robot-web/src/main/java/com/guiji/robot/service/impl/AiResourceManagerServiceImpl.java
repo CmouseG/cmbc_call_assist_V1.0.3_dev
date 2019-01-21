@@ -41,6 +41,7 @@ import com.guiji.utils.StrUtils;
 @Service
 public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final int AI_NUM = 10000;	//这里需要获取所有机器人资源，后续需要单独提供接口，现在先用10000来获取全部
 	@Autowired
 	RedisUtil redisUtil;
 	@Autowired
@@ -63,22 +64,8 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL_INIT, RobotConstants.LOCK_ROBOT_AIPOOL_INIT);
 		if (distributedLockHandler.tryLock(lock)) {
 			try {
-				//调用进程管理服务申请sellbot机器人资源
-				ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(10000);	//这里需要获取所有机器人资源，后续需要单独提供接口，现在先用10000来获取全部
-				if(processInstanceListData == null) {
-					logger.error("调用进程管理申请资源，返回数据为空..");
-					throw new RobotException(AiErrorEnum.AI00060007.getErrorCode(),AiErrorEnum.AI00060007.getErrorMsg());
-				}else if(!RobotConstants.RSP_CODE_SUCCESS.equals(processInstanceListData.getCode())) {
-					logger.error("调用进程管理申请全部机器人资源异常...");
-					throw new RobotException(processInstanceListData.getCode(),processInstanceListData.getMsg());
-				}
-				List<ProcessInstanceVO> instanceList = processInstanceListData.getBody();
-				if(instanceList == null || instanceList.isEmpty() || instanceList.size()==0) {
-					logger.error("调用进程管理申请全部机器人异常，无空余可用机器人...");
-					throw new RobotException(AiErrorEnum.AI00060008.getErrorCode(),AiErrorEnum.AI00060008.getErrorMsg());
-				}else {
-					logger.info("初始化机器人资源池,申请到{}个机器人",instanceList.size());
-				}
+				//从进程管理申请sellbot资源
+				List<ProcessInstanceVO> instanceList = applyAiResouceFromProcess(this.AI_NUM);
 				List<AiInuseCache> aiPoolList = new ArrayList<AiInuseCache>();
 				for(int i=0;i<instanceList.size();i++) {
 					AiInuseCache aiInuse = new AiInuseCache();
@@ -112,13 +99,41 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	
 	/**
 	 * 重新加载sellbot资源
+	 * 1、如果资源池中没有sellbot,那么重新初始化
+	 * 2、如果资源池中已经有sellbot,那么增量处理
 	 */
 	@Override
 	public void reloadSellbotResource() {
-		//删除机器人资源
-		aiCacheService.delAiPools();
-		//重新加载
-		this.aiPoolInit();
+		//查询目前缓存中的机器人资源
+		List<AiInuseCache> poolAiInuseCacheList = this.queryAiPoolList();
+		if(ListUtil.isNotEmpty(poolAiInuseCacheList)) {
+			//如果资源池中已经有了机器人，那么增量增加
+			//继续从进程管理申请sellbot资源
+			List<ProcessInstanceVO> instanceList = applyAiResouceFromProcess(this.AI_NUM);
+			if(ListUtil.isNotEmpty(instanceList)) {
+				logger.info("又申请到了{}个sellbot机器人",instanceList.size());
+				//如果又申请到了新的机器
+				List<AiInuseCache> aiNewPoolList = new ArrayList<AiInuseCache>();
+				for(int i=0;i<instanceList.size();i++) {
+					AiInuseCache aiInuse = new AiInuseCache();
+					aiInuse.setAiNo(this.genAiNo(instanceList.get(i).getIp(), String.valueOf(instanceList.get(i).getPort()))); //机器人临时编号
+					aiInuse.setAiStatus(RobotConstants.AI_STATUS_F); //新申请机器人默认空闲状态
+					aiInuse.setInitDate(DateUtil.getCurrentymd()); //初始化日期
+					aiInuse.setInitTime(DateUtil.getCurrentTime()); //初始化时间
+					aiInuse.setIp(instanceList.get(i).getIp());	//机器IP
+					aiInuse.setPort(String.valueOf(instanceList.get(i).getPort()));	//机器人port
+					aiNewPoolList.add(aiInuse);
+					//逐条放资源池
+					aiCacheService.changeAiPool(aiInuse);
+				}
+				//3、异步记录历史
+				aiAsynDealService.initAiCycleHis(aiNewPoolList);
+			}
+		}else {
+			logger.info("全量更新");
+			aiPoolInit();
+		}
+		
 	}
 	
 	/**
@@ -352,6 +367,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public List<AiInuseCache> queryUserSleepUseAiList(String userId){
 		if(StrUtils.isNotEmpty(userId)) {
 			List<AiInuseCache> sleepList = new ArrayList<AiInuseCache>();
@@ -383,6 +399,32 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			return sleepList;
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 从进程管理申请机器人
+	 * @param applyAiNum
+	 * @return
+	 */
+	public List<ProcessInstanceVO> applyAiResouceFromProcess(int applyAiNum){
+		//调用进程管理服务申请sellbot机器人资源
+		ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(10000);
+		if(processInstanceListData == null) {
+			logger.error("调用进程管理申请资源，返回数据为空..");
+			throw new RobotException(AiErrorEnum.AI00060007.getErrorCode(),AiErrorEnum.AI00060007.getErrorMsg());
+		}else if(!RobotConstants.RSP_CODE_SUCCESS.equals(processInstanceListData.getCode())) {
+			logger.error("调用进程管理申请全部机器人资源异常...");
+			throw new RobotException(processInstanceListData.getCode(),processInstanceListData.getMsg());
+		}
+		List<ProcessInstanceVO> instanceList = processInstanceListData.getBody();
+		if(instanceList == null || instanceList.isEmpty() || instanceList.size()==0) {
+			logger.error("调用进程管理申请全部机器人异常，无空余可用机器人...");
+			throw new RobotException(AiErrorEnum.AI00060008.getErrorCode(),AiErrorEnum.AI00060008.getErrorMsg());
+		}else {
+			logger.info("初始化机器人资源池,申请到{}个机器人",instanceList.size());
+		}
+		return instanceList;
 	}
 	
 	

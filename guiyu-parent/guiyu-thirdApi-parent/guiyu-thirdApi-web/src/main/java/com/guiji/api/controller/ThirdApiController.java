@@ -41,13 +41,33 @@ public class ThirdApiController {
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		if(!isInteger(phone)){
+		if (!isInteger(phone)) {
 			jsonObject.put("data", "当前手机号码不正确");
 			return jsonObject;
 		}
-		
+
 		ReturnData<List<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, pagenum,
 				pagesize);
+		jsonObject.put("data", calldetail.getBody());
+		return jsonObject;
+	}
+
+	/**
+	 * 查询所有通话记录
+	 * 
+	 * @param accessToken
+	 * @param callId
+	 * @return
+	 */
+	@GetMapping("/getAllCalldetail")
+	public JSONObject getAllCalldetail(@RequestParam(required = true, name = "phone") String phone,
+			@RequestParam(required = false, name = "batch_number") String batchNumber) {
+		JSONObject jsonObject = new JSONObject();
+		if (!isInteger(phone)) {
+			jsonObject.put("data", "当前手机号码不正确");
+			return jsonObject;
+		}
+		ReturnData<List<CallPlanDetailRecordVO>> calldetail = thirdApi.getAllCalldetail(phone, batchNumber);
 		jsonObject.put("data", calldetail.getBody());
 		return jsonObject;
 	}
@@ -75,13 +95,29 @@ public class ThirdApiController {
 	 * @param pagesize
 	 * @return
 	 */
-	@GetMapping("/getphonesByBatchNumber")
+	@GetMapping("/getPhonesByBatchNumber")
 	public JSONObject getphonesByBatchNumber(@RequestParam(required = true, name = "batch_number") String batchNumber,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		ReturnData<List<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, pagenum, pagesize);
-		jsonObject.put("data",queryDispatchPlan.getBody() );
+		ReturnData<List<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, pagenum,
+				pagesize);
+		jsonObject.put("data", queryDispatchPlan.getBody());
+		return jsonObject;
+	}
+	
+	/**
+	 * 通过批次号查询该批次任务的号码列表
+	 * 
+	 * @param pagenum
+	 * @param pagesize
+	 * @return
+	 */
+	@GetMapping("/getAllPhonesByBatchNumber")
+	public JSONObject getAllPhonesByBatchNumber(@RequestParam(required = true, name = "batch_number") String batchNumber) {
+		JSONObject jsonObject = new JSONObject();
+		ReturnData<List<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryAllDispatchPlan(batchNumber);
+		jsonObject.put("data", queryDispatchPlan.getBody());
 		return jsonObject;
 	}
 

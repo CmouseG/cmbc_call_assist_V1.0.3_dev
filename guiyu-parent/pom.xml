@@ -22,6 +22,7 @@
         <module>guiyu-botstence-parent</module>
         <module>guiyu-da-parent</module>
         <module>guiyu-thirdApi-parent</module>
+        <module>guiyu-sms-parent</module>
     </modules>
     <packaging>pom</packaging>
 

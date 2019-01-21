@@ -1321,8 +1321,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		for (DispatchPlan dis : selectByExample) {
 			ids.add(dis.getPlanUuid());
 		}
-		ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
-		return callPlanDetailRecord.getBody();
+		if(ids.size()>0){
+			ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
+			return callPlanDetailRecord.getBody();
+		}else{
+			return new ArrayList<>();
+		}
+	
 	}
 
 	@Override

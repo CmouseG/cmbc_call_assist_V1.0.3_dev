@@ -8,6 +8,7 @@ import com.guiji.dispatch.dao.ThirdImportErrorMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.ThirdImportError;
+import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -33,7 +34,7 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 	private DispatchPlanMapper dispatchPlanMapper;
 
 	@Autowired
-	private ThirdImportErrorMapper thirdImportErrorMapper;
+	private IBatchImportFieRecordErrorService fileRecordErrorService;
 
 	public void excute(DispatchPlan vo) throws Exception {
 
@@ -63,14 +64,17 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 	}
 
 	private void saveErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {
-		ThirdImportError thirdError = new ThirdImportError();
-		thirdError.setCreateTime(DateUtil.getCurrent4Time());
-		thirdError.setParams(vo.getParams());
-		thirdError.setPhone(vo.getPhone());
-		thirdError.setErrorType(errorCodeEnum.getValue());
-		thirdError.setBatchName(vo.getBatchName());
-		thirdError.setBatchId(vo.getBatchId());
-		thirdImportErrorMapper.insert(thirdError);
+		FileErrorRecords records = new FileErrorRecords();
+		records.setAttach(vo.getAttach());
+		records.setCreateTime(DateUtil.getCurrent4Time());
+		records.setParams(vo.getParams());
+		records.setPhone(vo.getPhone());
+		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
+		records.setErrorType(errorCodeEnum.getValue());
+		records.setDataType(Constant.IMPORT_DATA_TYPE_PAGE);
+		records.setBatchId(vo.getBatchId());
+		records.setBatchName(vo.getBatchName());
+		fileRecordErrorService.save(records);
 	}
 
 	private Result.ReturnData<List<CheckResult>> checkParams(DispatchPlan dispatchPlan) {

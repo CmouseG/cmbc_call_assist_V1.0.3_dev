@@ -634,6 +634,196 @@ public class FileErrorRecordsExample {
             addCriterion("error_line not between", value1, value2, "errorLine");
             return (Criteria) this;
         }
+
+        public Criteria andDataTypeIsNull() {
+            addCriterion("data_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeIsNotNull() {
+            addCriterion("data_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeEqualTo(Integer value) {
+            addCriterion("data_type =", value, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeNotEqualTo(Integer value) {
+            addCriterion("data_type <>", value, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeGreaterThan(Integer value) {
+            addCriterion("data_type >", value, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("data_type >=", value, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeLessThan(Integer value) {
+            addCriterion("data_type <", value, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("data_type <=", value, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeIn(List<Integer> values) {
+            addCriterion("data_type in", values, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeNotIn(List<Integer> values) {
+            addCriterion("data_type not in", values, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeBetween(Integer value1, Integer value2) {
+            addCriterion("data_type between", value1, value2, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("data_type not between", value1, value2, "dataType");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdIsNull() {
+            addCriterion("batch_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdIsNotNull() {
+            addCriterion("batch_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdEqualTo(Integer value) {
+            addCriterion("batch_id =", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdNotEqualTo(Integer value) {
+            addCriterion("batch_id <>", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdGreaterThan(Integer value) {
+            addCriterion("batch_id >", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("batch_id >=", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdLessThan(Integer value) {
+            addCriterion("batch_id <", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdLessThanOrEqualTo(Integer value) {
+            addCriterion("batch_id <=", value, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdIn(List<Integer> values) {
+            addCriterion("batch_id in", values, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdNotIn(List<Integer> values) {
+            addCriterion("batch_id not in", values, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdBetween(Integer value1, Integer value2) {
+            addCriterion("batch_id between", value1, value2, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("batch_id not between", value1, value2, "batchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameIsNull() {
+            addCriterion("batch_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameIsNotNull() {
+            addCriterion("batch_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameEqualTo(String value) {
+            addCriterion("batch_name =", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameNotEqualTo(String value) {
+            addCriterion("batch_name <>", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameGreaterThan(String value) {
+            addCriterion("batch_name >", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameGreaterThanOrEqualTo(String value) {
+            addCriterion("batch_name >=", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameLessThan(String value) {
+            addCriterion("batch_name <", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameLessThanOrEqualTo(String value) {
+            addCriterion("batch_name <=", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameLike(String value) {
+            addCriterion("batch_name like", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameNotLike(String value) {
+            addCriterion("batch_name not like", value, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameIn(List<String> values) {
+            addCriterion("batch_name in", values, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameNotIn(List<String> values) {
+            addCriterion("batch_name not in", values, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameBetween(String value1, String value2) {
+            addCriterion("batch_name between", value1, value2, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchNameNotBetween(String value1, String value2) {
+            addCriterion("batch_name not between", value1, value2, "batchName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
@@ -26,11 +27,17 @@ import com.guiji.dispatch.batchimport.IBatchImportFieRecordErrorService;
 import com.guiji.dispatch.bean.ThirdCheckParams;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.FileErrorRecordsMapper;
 import com.guiji.dispatch.dao.ThirdImportErrorMapper;
+import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.dao.entity.FileErrorRecordsExample;
+import com.guiji.dispatch.dao.entity.FileRecordsExample;
 import com.guiji.dispatch.dao.entity.ThirdImportError;
+import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
+import com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.DispatchPlanApi;
 import com.guiji.dispatch.model.DispatchPlanList;
@@ -41,6 +48,7 @@ import com.guiji.dispatch.thirdapi.ThirdApiImportQueueHandler;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 
 import ai.guiji.botsentence.api.IBotSentenceProcess;
@@ -69,37 +77,69 @@ public class ThirdApiController implements IThirdApiOut {
 	@Autowired
 	private ICallManagerOut callManagerOut;
 	@Autowired
-	private ThirdImportErrorMapper thirdImportErrorMapper;
-	@Autowired
 	private IBotSentenceProcess Process;
 	@Autowired
 	private ThirdApiImportQueueHandler thirdApiHandler;
+	@Autowired
+	private IBatchImportFieRecordErrorService fileRecordErrorService;
+	@Autowired
+	private FileErrorRecordsMapper fileErrorRecordsMapper;
+	@Autowired
+	private ThirdInterfaceRecordsMapper thirdCallBackMapper;
 
 	@Override
 	@GetMapping(value = "out/getCalldetail")
-	public ReturnData<List<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetail(String phone,
+	public ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetail(String phone,
 			String batchNumber, int pagenum, int pagesize) {
+		Page<com.guiji.dispatch.model.CallPlanDetailRecordVO> page = new Page<>();
 		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(phone,
 				batchNumber, pagenum, pagesize);
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andPhoneEqualTo(phone).andBatchNameEqualTo(batchNumber);
+		int countByExample = dispatchPlanMapper.countByExample(ex);
 		List<com.guiji.dispatch.model.CallPlanDetailRecordVO> list = new ArrayList<>();
 		for (CallPlanDetailRecordVO vo : queryDispatchPlanByPhoens) {
 			com.guiji.dispatch.model.CallPlanDetailRecordVO record = new com.guiji.dispatch.model.CallPlanDetailRecordVO();
 			BeanUtils.copyProperties(vo, record);
 			list.add(record);
 		}
-		ReturnData<List<com.guiji.dispatch.model.CallPlanDetailRecordVO>> returndata = new ReturnData<>();
-		returndata.setBody(list);
+		page.setRecords(list);
+		page.setPageNo(pagenum);
+		page.setPageSize(pagesize);
+		page.setTotal(countByExample);
+		ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> returndata = new ReturnData<>();
+		returndata.setBody(page);
 		return returndata;
 	}
 
 	@Override
 	@GetMapping(value = "out/getcall4BatchName")
-	public ReturnData<PlanCallInfoCount> getcall4BatchName(String batchName) {
+	public ReturnData<PlanCallInfoCount> getcall4BatchName(String batchName, int pagenum, int pagesize) {
 		int countAlready = dispatchPlanService.getcall4BatchName(batchName, Constant.STATUSPLAN_1);
 		int countNo = dispatchPlanService.getcall4BatchName(batchName, Constant.STATUSPLAN_2);
 		PlanCallInfoCount info = new PlanCallInfoCount();
 		info.setSuccCount(countAlready);
 		info.setPlanCount(countNo);
+		FileErrorRecords record = new FileErrorRecords();
+		record.setBatchName(batchName);
+		record.setDataType(Constant.IMPORT_DATA_TYPE_API);
+		Page<FileErrorRecords> queryFileErrorRecordsPage = fileRecordErrorService.queryFileErrorRecordsPage(pagenum,
+				pagesize, record);
+		List<com.guiji.dispatch.model.FileErrorRecords> list = new ArrayList<>();
+		for (FileErrorRecords vo : queryFileErrorRecordsPage.getRecords()) {
+			com.guiji.dispatch.model.FileErrorRecords bean = new com.guiji.dispatch.model.FileErrorRecords();
+			BeanUtils.copyProperties(vo, bean);
+			list.add(bean);
+		}
+		Page<com.guiji.dispatch.model.FileErrorRecords> page = new Page<>();
+		page.setRecords(list);
+		page.setPageNo(queryFileErrorRecordsPage.getPageNo());
+		page.setPageSize(queryFileErrorRecordsPage.getPageSize());
+		FileErrorRecordsExample errorEx = new FileErrorRecordsExample();
+		errorEx.createCriteria().andBatchNameEqualTo(batchName);
+		int countByExample = fileErrorRecordsMapper.countByExample(errorEx);
+		page.setTotal(countByExample);
+		info.setErrorRecordsList(page);
 		ReturnData<PlanCallInfoCount> returndata = new ReturnData<>();
 		returndata.setBody(info);
 		return returndata;
@@ -107,8 +147,8 @@ public class ThirdApiController implements IThirdApiOut {
 
 	@Override
 	@GetMapping(value = "out/queryDispatchPlan")
-	public ReturnData<List<DispatchPlanApi>> queryDispatchPlan(String batchName, int pagenum, int pagesize) {
-		Page<DispatchPlan> page = new Page<>();
+	public ReturnData<Page<DispatchPlanApi>> queryDispatchPlan(String batchName, int pagenum, int pagesize) {
+		Page<DispatchPlanApi> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
 		DispatchPlanExample example = new DispatchPlanExample();
@@ -116,14 +156,17 @@ public class ThirdApiController implements IThirdApiOut {
 		example.setLimitEnd(pagesize);
 		example.createCriteria().andBatchNameEqualTo(batchName).andIsDelEqualTo(Constant.IS_DEL_0);
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> list = dispatchPlanMapper.selectByExample(example);
+		int countByExample = dispatchPlanMapper.countByExample(example);
+		page.setTotal(countByExample);
 		List<DispatchPlanApi> copyBean = new ArrayList<>();
 		for (com.guiji.dispatch.dao.entity.DispatchPlan plan : list) {
 			DispatchPlanApi bean = new DispatchPlanApi();
 			BeanUtils.copyProperties(plan, bean);
 			copyBean.add(bean);
 		}
-		ReturnData<List<DispatchPlanApi>> returnData = new ReturnData<>();
-		returnData.setBody(copyBean);
+		page.setRecords(copyBean);
+		ReturnData<Page<DispatchPlanApi>> returnData = new ReturnData<>();
+		returnData.setBody(page);
 		return returnData;
 	}
 
@@ -222,14 +265,17 @@ public class ThirdApiController implements IThirdApiOut {
 	 * @param i
 	 */
 	private void saveErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum, int i) {
-		ThirdImportError thirdError = new ThirdImportError();
-		thirdError.setCreateTime(DateUtil.getCurrent4Time());
-		thirdError.setParams(vo.getParams());
-		thirdError.setPhone(vo.getPhone());
-		thirdError.setErrorType(errorCodeEnum.getValue());
-		thirdError.setBatchName(vo.getBatchName());
-		thirdError.setBatchId(vo.getBatchId());
-		thirdImportErrorMapper.insert(thirdError);
+		FileErrorRecords records = new FileErrorRecords();
+		records.setAttach(vo.getAttach());
+		records.setCreateTime(DateUtil.getCurrent4Time());
+		records.setParams(vo.getParams());
+		records.setPhone(vo.getPhone());
+		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
+		records.setErrorType(errorCodeEnum.getValue());
+		records.setDataType(Constant.IMPORT_DATA_TYPE_API);
+		records.setBatchId(vo.getBatchId());
+		records.setBatchName(vo.getBatchName());
+		fileRecordErrorService.save(records);
 	}
 
 	/**
@@ -281,8 +327,7 @@ public class ThirdApiController implements IThirdApiOut {
 		// 检查线路
 		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
 		// 检查话术
-		ServerResult<List<BotSentenceProcess>> templateById = Process
-				.getTemplateById(dispatchPlanList.getRobot());
+		ServerResult<List<BotSentenceProcess>> templateById = Process.getTemplateById(dispatchPlanList.getRobot());
 
 		if (user.getBody() == null) {
 			checkResult.setResult(false);
@@ -315,34 +360,25 @@ public class ThirdApiController implements IThirdApiOut {
 	}
 
 	@Override
-	public ReturnData<List<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getAllCalldetail(String phone,
-			String batchNumber) {
-		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(phone,
-				batchNumber, -1, -1);
-		List<com.guiji.dispatch.model.CallPlanDetailRecordVO> list = new ArrayList<>();
-		for (CallPlanDetailRecordVO vo : queryDispatchPlanByPhoens) {
-			com.guiji.dispatch.model.CallPlanDetailRecordVO record = new com.guiji.dispatch.model.CallPlanDetailRecordVO();
-			BeanUtils.copyProperties(vo, record);
-			list.add(record);
+	public ReturnData<Boolean> reTryThirdApi(Long userId) {
+		// 查询出失败的记录
+		ThirdInterfaceRecordsExample ex = new ThirdInterfaceRecordsExample();
+		ex.createCriteria().andUserIdEqualTo(userId.intValue()).andTypeEqualTo(Constant.THIRDAPIFAILURE);
+		List<ThirdInterfaceRecords> selectByExample = thirdCallBackMapper.selectByExample(ex);
+		for (ThirdInterfaceRecords record : selectByExample) {
+			String url = record.getUrl();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("data", record.getParams());
+			try {
+				HttpClientUtil.doPostJson(url, jsonObject.toString());
+				record.setType(Constant.THIRDAPISUCCESS);
+				thirdCallBackMapper.updateByPrimaryKey(record);
+			} catch (Exception e) {
+				logger.error("reTryThirdApiError", e);
+			}
 		}
-		ReturnData<List<com.guiji.dispatch.model.CallPlanDetailRecordVO>> returndata = new ReturnData<>();
-		returndata.setBody(list);
+		ReturnData<Boolean> returndata = new ReturnData<>();
 		return returndata;
 	}
 
-	@Override
-	public ReturnData<List<DispatchPlanApi>> queryAllDispatchPlan(String batchName) {
-		DispatchPlanExample example = new DispatchPlanExample();
-		example.createCriteria().andBatchNameEqualTo(batchName).andIsDelEqualTo(Constant.IS_DEL_0);
-		List<com.guiji.dispatch.dao.entity.DispatchPlan> list = dispatchPlanMapper.selectByExample(example);
-		List<DispatchPlanApi> copyBean = new ArrayList<>();
-		for (com.guiji.dispatch.dao.entity.DispatchPlan plan : list) {
-			DispatchPlanApi bean = new DispatchPlanApi();
-			BeanUtils.copyProperties(plan, bean);
-			copyBean.add(bean);
-		}
-		ReturnData<List<DispatchPlanApi>> returnData = new ReturnData<>();
-		returnData.setBody(copyBean);
-		return returnData;
-	}
 }

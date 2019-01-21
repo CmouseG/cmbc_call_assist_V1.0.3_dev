@@ -4,6 +4,7 @@ import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -66,6 +67,9 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		records.setPhone(vo.getPhone());
 		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
+		records.setDataType(Constant.IMPORT_DATA_TYPE_PAGE);
+		records.setBatchId(vo.getBatchId());
+		records.setBatchName(vo.getBatchName());
 		fileRecordErrorService.save(records);
 	}
 

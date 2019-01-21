@@ -20,6 +20,12 @@ public class FileErrorRecords implements Serializable {
 
     private Integer errorLine;
 
+    private Integer dataType;
+
+    private Integer batchId;
+
+    private String batchName;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -86,6 +92,30 @@ public class FileErrorRecords implements Serializable {
         this.errorLine = errorLine;
     }
 
+    public Integer getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
+    }
+
+    public Integer getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(Integer batchId) {
+        this.batchId = batchId;
+    }
+
+    public String getBatchName() {
+        return batchName;
+    }
+
+    public void setBatchName(String batchName) {
+        this.batchName = batchName == null ? null : batchName.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -100,6 +130,9 @@ public class FileErrorRecords implements Serializable {
         sb.append(", fileRecordsId=").append(fileRecordsId);
         sb.append(", errorType=").append(errorType);
         sb.append(", errorLine=").append(errorLine);
+        sb.append(", dataType=").append(dataType);
+        sb.append(", batchId=").append(batchId);
+        sb.append(", batchName=").append(batchName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

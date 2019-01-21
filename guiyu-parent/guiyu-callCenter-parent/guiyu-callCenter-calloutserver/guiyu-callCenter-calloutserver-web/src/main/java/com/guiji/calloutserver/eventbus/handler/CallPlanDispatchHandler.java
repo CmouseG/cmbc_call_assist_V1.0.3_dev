@@ -117,6 +117,9 @@ public class CallPlanDispatchHandler {
                 callPlan.setIsread(0);
                 callPlan.setBillSec(0);
                 callPlan.setDuration(0);
+                callPlan.setIsAnswer(0);
+                callPlan.setIsCancel(0);//是否超时
+                callPlan.setTalkNum(0);
 
                 try {
                     callOutPlanService.add(callPlan);

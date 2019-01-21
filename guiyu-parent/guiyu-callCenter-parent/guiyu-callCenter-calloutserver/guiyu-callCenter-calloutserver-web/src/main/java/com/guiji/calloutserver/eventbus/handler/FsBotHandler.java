@@ -37,6 +37,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -115,13 +116,14 @@ public class FsBotHandler {
             Long endTime = new Date().getTime();
             channelHelper.playAiReponse(aiResponse, false,true);
 
-            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况
+            //需要重新查询一次，存在hangup事件已经结束，状态已经改变的情况  todo 情况是否还有，需要验证
             CallOutPlan callPlanNew = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
             if (callPlanNew.getCallState() == null || callPlanNew.getCallState() < ECallState.answer.ordinal()) {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
             callPlan.setAnswerTime(new Date());
             callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
+            callPlan.setIsAnswer(1);
             callOutPlanService.update(callPlan);
 
             //插入通话记录详情
@@ -344,11 +346,13 @@ public class FsBotHandler {
             String hangUp = event.getSipHangupCause();
 
             //将calloutdetail里面的意向标签更新到calloutplan里面
-            CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
-            if (callOutDetail != null) {
+            List<CallOutDetail> callOutDetailList = callOutDetailService.getLastDetail(event.getUuid());
+            if (callOutDetailList != null && callOutDetailList.size()>0) {
+                CallOutDetail callOutDetail= callOutDetailList.get(0);
                 log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
                 callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                 callPlan.setReason(callOutDetail.getReason());
+                callPlan.setTalkNum(callOutDetailList.size());
             } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
                 if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
@@ -359,15 +363,23 @@ public class FsBotHandler {
             }
             callPlan.setHangupTime(event.getHangupStamp());
             callPlan.setAnswerTime(event.getAnswerStamp());
-            callPlan.setDuration(event.getDuration());
-            callPlan.setBillSec(event.getBillSec());
+            Integer duration = event.getDuration();
+            Integer billSec = event.getBillSec();
+            if (duration != null){
+                callPlan.setDuration(duration);
+                if(duration>0 && billSec!=null && billSec ==0){
+                    callPlan.setIsCancel(1);
+                }
+            }
+            if (billSec != null) {
+                callPlan.setBillSec(billSec);
+                if(billSec > 0){
+                    callPlan.setIsAnswer(1);
+                }
+            }
 
            if (!Strings.isNullOrEmpty(hangUp)) {
                 callPlan.setHangupCode(hangUp);
-          /*      if (hangUp.equals("503")) {
-                    callPlan.setAccurateIntent("W");
-                    callPlan.setReason("503");
-                }*/
             }
 
             if (!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <= 0) {

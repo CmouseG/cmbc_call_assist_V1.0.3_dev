@@ -73,6 +73,7 @@ public class LoginController implements ILogin {
             map.put("isSuperAdmin", isSuperAdmin);
             map.put("roleId", sysRoles.get(0).getId());
             map.put("token", jwtToken);
+            map.put("username", sysUser.getUsername());
             return Result.ok(map);
         } catch (Exception e) {
             return Result.error("00010003");
@@ -120,4 +121,15 @@ public class LoginController implements ILogin {
         }
     }
 
+    @RequestMapping("refreshToken")
+    public Result.ReturnData refreshToken(@RequestHeader String Authorization) {
+        try {
+            String token = jwtConfig.verifyRefreshToken(Authorization);
+            return Result.ok(token);
+        } catch (Exception e) {
+            return Result.error("00010005");
+
+        }
     }
+
+}

@@ -4,7 +4,26 @@ server:
 spring:
   application:
     name: guiyu-callcenter-fsagent
+  rabbitmq:
+    host: 192.168.1.81
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
 
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
 #注册中心配置
 eureka:
   instance:

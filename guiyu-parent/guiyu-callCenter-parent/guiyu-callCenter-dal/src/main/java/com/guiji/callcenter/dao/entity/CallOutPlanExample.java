@@ -2255,6 +2255,186 @@ public class CallOutPlanExample {
             addCriterion("batch_id not between", value1, value2, "batchId");
             return (Criteria) this;
         }
+
+        public Criteria andTalkNumIsNull() {
+            addCriterion("talk_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumIsNotNull() {
+            addCriterion("talk_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumEqualTo(Integer value) {
+            addCriterion("talk_num =", value, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumNotEqualTo(Integer value) {
+            addCriterion("talk_num <>", value, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumGreaterThan(Integer value) {
+            addCriterion("talk_num >", value, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("talk_num >=", value, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumLessThan(Integer value) {
+            addCriterion("talk_num <", value, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumLessThanOrEqualTo(Integer value) {
+            addCriterion("talk_num <=", value, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumIn(List<Integer> values) {
+            addCriterion("talk_num in", values, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumNotIn(List<Integer> values) {
+            addCriterion("talk_num not in", values, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumBetween(Integer value1, Integer value2) {
+            addCriterion("talk_num between", value1, value2, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andTalkNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("talk_num not between", value1, value2, "talkNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelIsNull() {
+            addCriterion("is_cancel is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelIsNotNull() {
+            addCriterion("is_cancel is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelEqualTo(Integer value) {
+            addCriterion("is_cancel =", value, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelNotEqualTo(Integer value) {
+            addCriterion("is_cancel <>", value, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelGreaterThan(Integer value) {
+            addCriterion("is_cancel >", value, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_cancel >=", value, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelLessThan(Integer value) {
+            addCriterion("is_cancel <", value, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelLessThanOrEqualTo(Integer value) {
+            addCriterion("is_cancel <=", value, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelIn(List<Integer> values) {
+            addCriterion("is_cancel in", values, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelNotIn(List<Integer> values) {
+            addCriterion("is_cancel not in", values, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelBetween(Integer value1, Integer value2) {
+            addCriterion("is_cancel between", value1, value2, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsCancelNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_cancel not between", value1, value2, "isCancel");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerIsNull() {
+            addCriterion("is_answer is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerIsNotNull() {
+            addCriterion("is_answer is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerEqualTo(Integer value) {
+            addCriterion("is_answer =", value, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerNotEqualTo(Integer value) {
+            addCriterion("is_answer <>", value, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerGreaterThan(Integer value) {
+            addCriterion("is_answer >", value, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_answer >=", value, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerLessThan(Integer value) {
+            addCriterion("is_answer <", value, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerLessThanOrEqualTo(Integer value) {
+            addCriterion("is_answer <=", value, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerIn(List<Integer> values) {
+            addCriterion("is_answer in", values, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerNotIn(List<Integer> values) {
+            addCriterion("is_answer not in", values, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerBetween(Integer value1, Integer value2) {
+            addCriterion("is_answer between", value1, value2, "isAnswer");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsAnswerNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_answer not between", value1, value2, "isAnswer");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

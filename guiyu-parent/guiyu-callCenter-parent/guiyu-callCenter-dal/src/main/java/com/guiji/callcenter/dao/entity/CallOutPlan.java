@@ -71,6 +71,12 @@ public class CallOutPlan implements Serializable {
 
     private Integer batchId;
 
+    private Integer talkNum;
+
+    private Integer isCancel;
+
+    private Integer isAnswer;
+
     private static final long serialVersionUID = 1L;
 
     public BigInteger getCallId() {
@@ -337,6 +343,30 @@ public class CallOutPlan implements Serializable {
         this.batchId = batchId;
     }
 
+    public Integer getTalkNum() {
+        return talkNum;
+    }
+
+    public void setTalkNum(Integer talkNum) {
+        this.talkNum = talkNum;
+    }
+
+    public Integer getIsCancel() {
+        return isCancel;
+    }
+
+    public void setIsCancel(Integer isCancel) {
+        this.isCancel = isCancel;
+    }
+
+    public Integer getIsAnswer() {
+        return isAnswer;
+    }
+
+    public void setIsAnswer(Integer isAnswer) {
+        this.isAnswer = isAnswer;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -376,6 +406,9 @@ public class CallOutPlan implements Serializable {
         sb.append(", isread=").append(isread);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", batchId=").append(batchId);
+        sb.append(", talkNum=").append(talkNum);
+        sb.append(", isCancel=").append(isCancel);
+        sb.append(", isAnswer=").append(isAnswer);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

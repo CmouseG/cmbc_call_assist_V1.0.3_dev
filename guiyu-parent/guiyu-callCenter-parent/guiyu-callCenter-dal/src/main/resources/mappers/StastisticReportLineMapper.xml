@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.StastisticReportLineMapper" >
+
+
+  <select id="getLineMonitorReportByLineId" resultType="java.util.Map">
+
+    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,'一般' as status
+    from
+    (
+      select
+      line_id as lineId,
+      sum(answer_num) as answerNum,
+      sum(total_num) as totalNum,
+      min(rate) as low,
+      max(rate) as high,
+      max(create_time) as createTime
+      from
+      report_line_status
+      where
+      line_id = #{lineId}
+      and create_time >=#{startTime}
+      group by line_id
+    )a,report_line_status b
+    where a.lineId = b.line_id and a.createTime = b.create_time
+  </select>
+
+
+  <select id="getLineMonitorReportByUserId" resultType="java.util.Map">
+
+    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,'一般' as status
+    from
+    (
+    select
+    m.line_id as lineId,
+    sum(m.answer_num) as answerNum,
+    sum(m.total_num) as totalNum,
+    min(m.rate) as low,
+    max(m.rate) as high,
+    max(m.create_time) as createTime
+    from
+    report_line_status m,line_info n
+    where
+    m.line_id = n.line_id
+    and n.customer_id = #{userId}
+    and m.create_time >=#{startTime}
+    group by m.line_id
+    )a,report_line_status b
+    where a.lineId = b.line_id and a.createTime = b.create_time
+  </select>
+
+  <select id="getLineHangupCodeOverView" resultType="java.util.Map">
+
+    select
+    sum(answer_calls) as answeredCalls,
+    sum(total_calls) as totalCalls,
+    sum(is_cancel) as cancelledCalls,
+    sum(answer_calls)/sum(total_calls) as answerRate,
+    sum(is_cancel)/sum(total_calls) as cancelledRate,
+    sum(total_calls) - sum(answer_calls) - sum(is_cancel) as othersCalls
+    from report_line_code
+    where
+    line_id = #{lineId}
+    and create_time >=#{startTime}
+    <if test="enTime != null" >
+      and create_time &lt;= #{enTime}
+    </if>
+
+  </select>
+
+  <select id="getLineHangupCodeErrorSum" resultType="java.util.Map">
+
+    select
+    hangup_code,
+    sum(total_calls) as totalCalls
+    from report_line_code
+    where
+    line_id = #{lineId}
+    and create_time >=#{startTime}
+    <if test="enTime != null" >
+      and create_time &lt;= #{enTime}
+    </if>
+    and hangup_code is not null
+    group by hangup_code
+
+  </select>
+
+  <select id="getLineHangupCodeErrorNums" resultType="java.util.Map">
+
+    select
+    hangup_code as error,
+    group_concat(phone_num) as num
+    from report_line_code
+    where
+    line_id = #{lineId}
+    and create_time >=#{startTime}
+    <if test="enTime != null" >
+      and create_time &lt;= #{enTime}
+    </if>
+    and hangup_code is not null
+    group by hangup_code
+  </select>
+
+  <select id="getLineHangupCodeErrorNumsCancel" resultType="java.util.Map">
+    select
+    '超时' as error,
+    group_concat(phone_num) as num
+    from report_line_code
+    where
+    line_id = #{lineId}
+    and create_time >=#{startTime}
+    <if test="enTime != null" >
+      and create_time &lt;= #{enTime}
+    </if>
+    and  is_cancel = 1
+
+  </select>
+
+
+
+</mapper>

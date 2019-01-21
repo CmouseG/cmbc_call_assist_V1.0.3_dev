@@ -125,9 +125,9 @@ public class ThirdApiController implements IThirdApiOut {
 			returnData.setBody(info);
 			return returnData;
 		}
-		
+
 		// 检查批次名字是否存在
-		if(dispatchPlanService.checkBatchId(dispatchPlanList.getBatchName())){
+		if (dispatchPlanService.checkBatchId(dispatchPlanList.getBatchName())) {
 			PlanResultInfo info = new PlanResultInfo();
 			info.setMsg("批次已经存在");
 			ReturnData<PlanResultInfo> returnData = new ReturnData<>();
@@ -223,7 +223,7 @@ public class ThirdApiController implements IThirdApiOut {
 		// 检查线路
 		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
 		// 检查机器人
-		
+
 		if (user.getBody() == null) {
 			return false;
 		}
@@ -237,6 +237,38 @@ public class ThirdApiController implements IThirdApiOut {
 	public static boolean isInteger(String str) {
 		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
 		return pattern.matcher(str).matches();
+	}
+
+	@Override
+	public ReturnData<List<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getAllCalldetail(String phone,
+			String batchNumber) {
+		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(phone,
+				batchNumber, -1, -1);
+		List<com.guiji.dispatch.model.CallPlanDetailRecordVO> list = new ArrayList<>();
+		for (CallPlanDetailRecordVO vo : queryDispatchPlanByPhoens) {
+			com.guiji.dispatch.model.CallPlanDetailRecordVO record = new com.guiji.dispatch.model.CallPlanDetailRecordVO();
+			BeanUtils.copyProperties(vo, record);
+			list.add(record);
+		}
+		ReturnData<List<com.guiji.dispatch.model.CallPlanDetailRecordVO>> returndata = new ReturnData<>();
+		returndata.setBody(list);
+		return returndata;
+	}
+
+	@Override
+	public ReturnData<List<DispatchPlanApi>> queryAllDispatchPlan(String batchName) {
+		DispatchPlanExample example = new DispatchPlanExample();
+		example.createCriteria().andBatchNameEqualTo(batchName).andIsDelEqualTo(Constant.IS_DEL_0);
+		List<com.guiji.dispatch.dao.entity.DispatchPlan> list = dispatchPlanMapper.selectByExample(example);
+		List<DispatchPlanApi> copyBean = new ArrayList<>();
+		for (com.guiji.dispatch.dao.entity.DispatchPlan plan : list) {
+			DispatchPlanApi bean = new DispatchPlanApi();
+			BeanUtils.copyProperties(plan, bean);
+			copyBean.add(bean);
+		}
+		ReturnData<List<DispatchPlanApi>> returnData = new ReturnData<>();
+		returnData.setBody(copyBean);
+		return returnData;
 	}
 
 }

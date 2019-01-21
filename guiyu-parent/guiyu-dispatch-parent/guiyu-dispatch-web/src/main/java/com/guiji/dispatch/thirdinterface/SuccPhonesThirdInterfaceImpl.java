@@ -48,35 +48,22 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 		// 回调批次拨打结束通知。
 		ReturnData<SysUser> user = auth.getUserById(dis.getUserId().longValue());
 		if (user.getBody() != null) {
-			String batchRecordUrl = user.getBody().getBatchRecordUrl();
-			if (batchRecordUrl != null && batchRecordUrl != "") {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("batch_number", dis.getBatchName());
-				jsonObject.put("operate", user.getBody().getUsername());
-				String sendHttpPost = "";
-				try {
-					sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl, jsonObject.toString());
-				} catch (Exception e) {
-					if (insertThirdInterface(batchRecordUrl, jsonObject)) {
-						logger.info("回调错误记录新增成功...");
-					}
-					logger.error("error", e);
-				}
-				logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
-			}
-
 			if (user.getBody().getCallRecordUrl() != null && user.getBody().getCallRecordUrl() != "") {
-				logger.info("通话记录通知开始");
+				String callRecordUrl = user.getBody().getCallRecordUrl();
 				JSONObject jsonObject = new JSONObject();
 				List<String> ids = new ArrayList<>();
 				ids.add(dis.getPlanUuid());
 				ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail
 						.getCallPlanDetailRecord(ids);
-				logger.info("当前回调通话记录调用接口结果 " + callPlanDetailRecord.success);
-				logger.info("当前回调通话记录调用接口结果 " + callPlanDetailRecord.msg);
 				jsonObject.put("data", callPlanDetailRecord.getBody());
-				boolean insertThirdInterface = insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
-				logger.info("当前回调通话记录调用接口通话记录通知结果 :" + insertThirdInterface);
+				try {
+					HttpClientUtil.doPostJson(callRecordUrl, jsonObject.toString());
+					insertThirdInterface(callRecordUrl, jsonObject, Constant.THIRDAPISUCCESS, dis.getUserId());
+				} catch (Exception e) {
+					if (insertThirdInterface(callRecordUrl, jsonObject, Constant.THIRDAPIFAILURE, dis.getUserId())) {
+						logger.info("回调错误记录新增成功...");
+					}
+				}
 			}
 
 		} else {
@@ -91,7 +78,7 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 	 * @param jsonObject
 	 * @return
 	 */
-	private boolean insertThirdInterface(String url, JSONObject jsonObject) {
+	private boolean insertThirdInterface(String url, JSONObject jsonObject, Integer type, Integer userId) {
 		ThirdInterfaceRecords record = new ThirdInterfaceRecords();
 		try {
 			record.setCreateTime(DateUtil.getCurrent4Time());
@@ -100,8 +87,11 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 		}
 		record.setUrl(url);
 		record.setParams(jsonObject.toJSONString());
-		record.setTimes(Constant.THIRD_INTERFACE_RETRYTIMES);
-		logger.info("调用第三方接口异常，记录失败记录");
+		record.setUserId(userId);
+		record.setType(type);
+		if (type.equals(Constant.THIRDAPIFAILURE)) {
+			record.setTimes(Constant.THIRD_INTERFACE_RETRYTIMES);
+		}
 		int res = thirdInterfaceRecordsMapper.insert(record);
 		return res > 0 ? true : false;
 	}

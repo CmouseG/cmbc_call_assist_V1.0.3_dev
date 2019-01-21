@@ -14,6 +14,10 @@ public class ThirdInterfaceRecords implements Serializable {
 
     private Integer times;
 
+    private Integer userId;
+
+    private Integer type;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -56,6 +60,22 @@ public class ThirdInterfaceRecords implements Serializable {
         this.times = times;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -67,6 +87,8 @@ public class ThirdInterfaceRecords implements Serializable {
         sb.append(", url=").append(url);
         sb.append(", params=").append(params);
         sb.append(", times=").append(times);
+        sb.append(", userId=").append(userId);
+        sb.append(", type=").append(type);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

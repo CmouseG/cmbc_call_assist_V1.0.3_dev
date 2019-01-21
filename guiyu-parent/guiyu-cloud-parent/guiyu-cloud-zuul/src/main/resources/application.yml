@@ -138,6 +138,9 @@ zuul:
     guiyu-api-web:
       path: /api/**
       service-id: guiyu-api-web
+    guiyu-callcenter-toagentserver:
+      path: /toagent/**
+      service-id: guiyu-callcenter-toagentserver
 hystrix:
   command:
     default:

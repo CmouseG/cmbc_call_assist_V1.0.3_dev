@@ -45,6 +45,7 @@ public class ShiroConfig {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         //开放登陆接口
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/refreshToken", "anon");
         filterChainDefinitionMap.put("/api/5c2f31180997a", "anon");
 //        filterChainDefinitionMap.put("/wxLogin", "anon");
         filterChainDefinitionMap.put("/apiLogin", "anon");

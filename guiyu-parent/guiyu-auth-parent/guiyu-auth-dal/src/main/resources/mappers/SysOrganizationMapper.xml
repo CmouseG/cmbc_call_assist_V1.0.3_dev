@@ -113,7 +113,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysOrganization" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysOrganization" keyProperty="id" >
     insert into sys_organization (id, `name`, code, 
       `type`, robot, line,botstence,
       `open`, del_flag, create_id, 
@@ -125,7 +125,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" >
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" keyProperty="id">
     insert into sys_organization
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

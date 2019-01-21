@@ -36,10 +36,11 @@ public class LineReportController implements IReportLine {
     @Autowired
     private LineReportService lineReportService;
 
-    @GetMapping(value = "test123")
-    public List test123(){
-        return   lineReportService.statisticsReportLineCode();
-    }
+/*    @GetMapping(value = "test123")
+    public List test123() throws ParseException {
+         lineReportService.statisticsReportLineCode();
+        return null;
+    }*/
 
     @ApiOperation(value = "线路监控信息")
     @GetMapping(value = "getLineMonitorReport")

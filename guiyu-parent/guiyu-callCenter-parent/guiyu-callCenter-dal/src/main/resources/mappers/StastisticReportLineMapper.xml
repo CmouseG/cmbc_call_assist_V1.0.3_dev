@@ -188,4 +188,15 @@
       )
     </foreach>
   </insert>
+
+  <delete id="deleteReportLineCodeDaysAgo">
+    delete from report_line_code
+    WHERE
+    create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
+  </delete>
+  <delete id="deleteReportLineStatusDaysAgo">
+    delete from report_line_status
+    WHERE
+    create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
+  </delete>
 </mapper>

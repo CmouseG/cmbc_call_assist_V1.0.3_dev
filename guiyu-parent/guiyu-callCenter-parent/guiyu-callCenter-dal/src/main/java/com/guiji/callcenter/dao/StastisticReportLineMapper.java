@@ -31,4 +31,8 @@ public interface StastisticReportLineMapper {
     void insertReportLineStatusBatch(List<ReportLineStatus> list);
     void deleteReportLineCode(@Param("createTime") Date createTime);
     void deleteReportLineStatus(@Param("createTime") Date createTime);
+
+    void deleteReportLineCodeDaysAgo(@Param("days")  int days);
+
+    void deleteReportLineStatusDaysAgo(@Param("days")  int days);
 }

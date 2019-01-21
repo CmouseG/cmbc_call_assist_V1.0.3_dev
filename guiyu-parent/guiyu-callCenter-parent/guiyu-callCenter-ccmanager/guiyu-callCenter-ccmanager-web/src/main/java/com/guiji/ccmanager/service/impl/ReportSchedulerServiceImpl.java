@@ -2,6 +2,7 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.ReportCallDayMapper;
 import com.guiji.callcenter.dao.ReportCallTodayMapper;
+import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.ReportCallDay;
 import com.guiji.callcenter.dao.entity.ReportCallDayExample;
@@ -28,6 +29,8 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
     @Autowired
     StatisticMapper statisticMapper;
+    @Autowired
+    StastisticReportLineMapper stastisticReportLineMapper;
     @Autowired
     ReportCallTodayMapper reportCallTodayMapper;
     @Autowired
@@ -88,6 +91,10 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Transactional
     public void reportCallTodayTruncate() {
         statisticMapper.reportCallTodayTruncate();
+        //清空10天之前的数据 report_line_code
+        stastisticReportLineMapper.deleteReportLineCodeDaysAgo(10);
+        //清空10天之前的数据 report_line_code
+        stastisticReportLineMapper.deleteReportLineStatusDaysAgo(10);
     }
 
     @Override

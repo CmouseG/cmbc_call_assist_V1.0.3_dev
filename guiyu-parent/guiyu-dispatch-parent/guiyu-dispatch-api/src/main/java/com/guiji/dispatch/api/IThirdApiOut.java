@@ -64,9 +64,7 @@ public interface IThirdApiOut {
 
 	@ApiOperation(value = "通过批次号查询所有该批次任务的号码列表")
 	@ApiImplicitParams({
-			@ApiImplicitParam(name = "batchName", value = "批次标识", dataType = "String", paramType = "query"),
-			@ApiImplicitParam(name = "pagenum", value = "分页字段", dataType = "int", paramType = "query"),
-			@ApiImplicitParam(name = "pagesize", value = "分页字段", dataType = "int", paramType = "query") })
+			@ApiImplicitParam(name = "batchName", value = "批次标识", dataType = "String", paramType = "query")})
 	@GetMapping(value = "out/queryAllDispatchPlan")
 	ReturnData<List<DispatchPlanApi>> queryAllDispatchPlan(@RequestParam("batchName") String batchName);
 	

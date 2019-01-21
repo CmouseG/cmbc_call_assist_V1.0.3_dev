@@ -144,7 +144,7 @@
     <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map" parameterType="java.util.Map" >
         select
         CAST(a.call_id AS CHAR) as id, IF(a.customer_id=#{customerId,jdbcType=VARCHAR},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
-        a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse
+        a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse,a.talk_num
         from call_out_plan a
         left join call_out_record b on a.call_id = b.call_id
         where a.isdel =0

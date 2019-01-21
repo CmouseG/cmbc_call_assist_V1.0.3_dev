@@ -5,6 +5,12 @@ vendor
 */.DS_Store
 *.iml
 */*.iml
-target
-*/target
-*/target/*
+
+target/
+.settings/
+.prefs
+.project
+.classpath
+.gitignore
+.springBeans
+org.eclipse.wst.common.project.facet.core.xml

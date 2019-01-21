@@ -40,9 +40,9 @@ public interface IAuth {
 									 @RequestParam("oldPass")  String oldPass, @RequestParam("userId")  Long userId) throws Exception;
 
 	@RequestMapping("/user/insertCustmomService")
-	public ReturnData<SysUser> insertCustmomService(SysUserVo param, Long userId);
+	public ReturnData<SysUser> insertCustmomService( @RequestParam("param") SysUserVo param,  @RequestParam("userId") Long userId);
 
 	@RequestMapping("/user/checkUsernameIsExist")
-	public ReturnData<Boolean> checkUsernameIsExist(String username);
+	public ReturnData<Boolean> checkUsernameIsExist( @RequestParam("username") String username);
 	
 }

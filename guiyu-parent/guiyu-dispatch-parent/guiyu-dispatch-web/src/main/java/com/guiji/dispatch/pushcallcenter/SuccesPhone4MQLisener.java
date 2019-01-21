@@ -19,6 +19,8 @@ import com.guiji.dispatch.mq.ModularMqListener;
 import com.guiji.dispatch.sms.SendSmsInterface;
 import com.guiji.dispatch.thirdinterface.SuccPhonesThirdInterface;
 import com.guiji.dispatch.util.Constant;
+import com.guiji.sms.api.ISms;
+import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.JsonUtils;
 import com.rabbitmq.client.Channel;
 
@@ -39,8 +41,8 @@ public class SuccesPhone4MQLisener {
 	@Autowired
 	private SuccPhonesThirdInterface thirdInterface;
 
-	@Autowired
-	private SendSmsInterface smsInterface;
+//	@Autowired
+//	private ISms sms;
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
@@ -61,7 +63,12 @@ public class SuccesPhone4MQLisener {
 				// 第三方回调
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信
-				//	smsInterface.execute(dispatchPlan, mqSuccPhoneDto);
+				SendMReqVO vo = new SendMReqVO();
+				vo.setOrgCode(dispatchPlan.getOrgCode());
+				vo.setPhone(dispatchPlan.getPhone());
+				vo.setUserId(dispatchPlan.getUserId());
+				vo.setIntentionTag(mqSuccPhoneDto.getLabel());
+//				sms.sendMessage(vo);
 			}
 		} catch (Exception e) {
 			logger.info("SuccesPhone4MQLisener消费数据有问题"+message);

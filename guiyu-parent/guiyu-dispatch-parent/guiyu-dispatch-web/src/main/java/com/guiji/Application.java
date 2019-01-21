@@ -14,7 +14,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @MapperScan("com.guiji.dispatch.dao")
 @SpringBootApplication
 @EnableScheduling
-@EnableFeignClients(basePackages = "com.guiji")
+//@EnableFeignClients(basePackages = "com.guiji")
+@EnableFeignClients(basePackages = {"com.guiji","ai.guiji"})
 @EnableDiscoveryClient
 @EnableSwagger2
 @EnableAutoResultPack

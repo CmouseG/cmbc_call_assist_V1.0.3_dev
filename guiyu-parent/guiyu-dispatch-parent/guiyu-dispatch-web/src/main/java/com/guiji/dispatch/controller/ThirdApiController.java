@@ -21,20 +21,31 @@ import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
+import com.guiji.dispatch.batchimport.BatchImportErrorCodeEnum;
+import com.guiji.dispatch.batchimport.IBatchImportFieRecordErrorService;
+import com.guiji.dispatch.bean.ThirdCheckParams;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.ThirdImportErrorMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
+import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.dao.entity.ThirdImportError;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.DispatchPlanApi;
 import com.guiji.dispatch.model.DispatchPlanList;
 import com.guiji.dispatch.model.PlanCallInfoCount;
 import com.guiji.dispatch.model.PlanResultInfo;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.thirdapi.ThirdApiImportQueueHandler;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
+
+import ai.guiji.botsentence.api.IBotSentenceProcess;
+import ai.guiji.botsentence.api.entity.BotSentenceProcess;
+import ai.guiji.botsentence.api.entity.ServerResult;
 
 /**
  * 第三方接口
@@ -57,6 +68,12 @@ public class ThirdApiController implements IThirdApiOut {
 	private DispatchPlanBatchMapper batchMapper;
 	@Autowired
 	private ICallManagerOut callManagerOut;
+	@Autowired
+	private ThirdImportErrorMapper thirdImportErrorMapper;
+	@Autowired
+	private IBotSentenceProcess Process;
+	@Autowired
+	private ThirdApiImportQueueHandler thirdApiHandler;
 
 	@Override
 	@GetMapping(value = "out/getCalldetail")
@@ -116,11 +133,12 @@ public class ThirdApiController implements IThirdApiOut {
 	 */
 	@Override
 	@PostMapping(value = "out/insertDispatchPlanList")
-	public ReturnData<PlanResultInfo> insertDispatchPlanList(DispatchPlanList dispatchPlanList) {
+	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList dispatchPlanList) {
 		// 检验基本参数
-		if (!checkBaseParams(dispatchPlanList)) {
+		ThirdCheckParams checkBaseParams = checkBaseParams(dispatchPlanList);
+		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();
-			info.setMsg("校验参数失败,请检查参数");
+			info.setMsg(checkBaseParams.getMsg());
 			ReturnData<PlanResultInfo> returnData = new ReturnData<>();
 			returnData.setBody(info);
 			return returnData;
@@ -150,11 +168,14 @@ public class ThirdApiController implements IThirdApiOut {
 
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> succ = new ArrayList<>();
-
-		for (DispatchPlan dis : dispatchPlanList.getMobile()) {
+		List<String> phones = new ArrayList<>();
+		for (int i = 0; i < dispatchPlanList.getMobile().size(); i++) {
+			DispatchPlan dispatchPlan = dispatchPlanList.getMobile().get(i);
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
-			BeanUtils.copyProperties(dis, bean);
+			BeanUtils.copyProperties(dispatchPlan, bean);
 			if (bean.getPhone() == null || bean.getPhone() == "" || !isInteger(bean.getPhone())) {
+				// 记录错误信息
+				saveErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i);
 				fails.add(bean);
 				continue;
 			}
@@ -176,9 +197,15 @@ public class ThirdApiController implements IThirdApiOut {
 			bean.setStatusSync(Constant.STATUS_SYNC_0);
 			bean.setOrgCode(user.getBody().getOrgCode());
 			bean.setBatchName(dispatchPlanList.getBatchName());
+			if (phones.contains(bean.getPhone())) {
+				saveErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.DUPLICATE, i);
+				continue;
+			}
+			thirdApiHandler.add(bean);
 			succ.add(bean);
+			phones.add(bean.getPhone());
 		}
-		dispatchPlanService.insertDispatchPlanList(succ);
+
 		PlanResultInfo info = new PlanResultInfo();
 		info.setSuccCount(succ.size());
 		info.setErrorCount(fails.size());
@@ -188,54 +215,102 @@ public class ThirdApiController implements IThirdApiOut {
 	}
 
 	/**
+	 * 记录第三方的错误信息
+	 * 
+	 * @param vo
+	 * @param unknown
+	 * @param i
+	 */
+	private void saveErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum, int i) {
+		ThirdImportError thirdError = new ThirdImportError();
+		thirdError.setCreateTime(DateUtil.getCurrent4Time());
+		thirdError.setParams(vo.getParams());
+		thirdError.setPhone(vo.getPhone());
+		thirdError.setErrorType(errorCodeEnum.getValue());
+		thirdError.setBatchName(vo.getBatchName());
+		thirdError.setBatchId(vo.getBatchId());
+		thirdImportErrorMapper.insert(thirdError);
+	}
+
+	/**
 	 * 校验基本参数
 	 * 
 	 * @param dispatchPlanList
 	 * @return
 	 */
-	private boolean checkBaseParams(DispatchPlanList dispatchPlanList) {
+	private ThirdCheckParams checkBaseParams(DispatchPlanList dispatchPlanList) {
+		ThirdCheckParams checkResult = new ThirdCheckParams();
 
 		if (dispatchPlanList.getRobot() == null || dispatchPlanList.getRobot() == "") {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("robot参数必填,请检查");
+			return checkResult;
 		}
 
 		if (dispatchPlanList.getLine() == null || dispatchPlanList.getLine() == "") {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("line参数必填,请检查");
+			return checkResult;
 		}
 
 		if (dispatchPlanList.getIsClean() == null || dispatchPlanList.getIsClean() == "") {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("isClean参数必填,请检查");
+			return checkResult;
 		}
 
 		if (dispatchPlanList.getCallDate() == null || dispatchPlanList.getCallDate() == "") {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("callDate参数必填,请检查");
+			return checkResult;
 		}
 
 		if (dispatchPlanList.getCallHour() == null || dispatchPlanList.getCallHour() == "") {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("callHour参数必填,请检查");
+			return checkResult;
 		}
 
 		if (dispatchPlanList.getBatchName() == null || dispatchPlanList.getBatchName() == "") {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("batchName参数必填,请检查");
+			return checkResult;
 		}
 		// 检查用户
 		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dispatchPlanList.getUserId()));
 		// 检查线路
 		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
-		// 检查机器人
+		// 检查话术
+		ServerResult<List<BotSentenceProcess>> templateById = Process
+				.getTemplateById(dispatchPlanList.getRobot());
 
 		if (user.getBody() == null) {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("用户id不存在");
+			return checkResult;
 		}
 
 		if (lineName == null) {
-			return false;
+			checkResult.setResult(false);
+			checkResult.setMsg("线路id不存在");
+			return checkResult;
 		}
-		return true;
+		if (templateById == null) {
+			if (templateById.getData().size() == 0) {
+				checkResult.setResult(false);
+				checkResult.setMsg("话术模板不存在");
+				return checkResult;
+			}
+			checkResult.setResult(false);
+			checkResult.setMsg("话术模板不存在");
+			return checkResult;
+		}
+
+		return checkResult;
 	}
 
 	public static boolean isInteger(String str) {
-		Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+		Pattern pattern = Pattern.compile("^(?!11)\\d{11}$");
 		return pattern.matcher(str).matches();
 	}
 
@@ -270,5 +345,4 @@ public class ThirdApiController implements IThirdApiOut {
 		returnData.setBody(copyBean);
 		return returnData;
 	}
-
 }

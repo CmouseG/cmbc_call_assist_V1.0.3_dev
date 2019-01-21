@@ -33,7 +33,9 @@ public class MQConfig {
     public Queue pushPhonesRecords() {
         return new Queue("dispatch.PushPhonesRecords");
     }
-    
-    
+    @Bean
+    public Queue thirdApiData() {
+        return new Queue("dispatch.thirdApiData");
+    }
     
 }

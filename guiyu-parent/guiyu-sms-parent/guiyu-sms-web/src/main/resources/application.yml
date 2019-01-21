@@ -1,0 +1,69 @@
+server:
+  port: 18026
+
+spring:
+  application:
+    name: guiyu-sms-web
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_sms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: root
+    password: 123456
+  redis:
+    database: 8
+    host: 192.168.1.81
+    port: 6379
+    password: 123456
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+  rabbitmq:
+    host: 192.168.1.81
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
+    
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+#注册中心配置      
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+#网关地址
+gateway:
+  host: http://guiyu-cloud-zuul:18000/
+
+properties:
+  error: properties/error.properties
+  
+  
+rabbit:
+  general:
+    direct:
+      queue: SendMessageMQ.Sms 
+
+ 
+#xxl-job admin中心配置
+xxl:
+  job:
+    admin:
+      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://192.168.1.78:18016/xxl-job-admin
+    executor:
+      ip:
+      port: 9026
+      logpath: /home/logs/guiyu-ai-web
+      logretentiondays: -1
+    accessToken:

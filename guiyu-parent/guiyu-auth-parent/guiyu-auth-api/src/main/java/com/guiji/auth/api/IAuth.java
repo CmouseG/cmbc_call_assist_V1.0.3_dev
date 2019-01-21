@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.vo.SysUserVo;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,5 +38,11 @@ public interface IAuth {
 	@GetMapping("/user/apiUpdatePassword")
 	Result.ReturnData apiUpdatePassword(@RequestParam("newPass") String newPass,
 									 @RequestParam("oldPass")  String oldPass, @RequestParam("userId")  Long userId) throws Exception;
+
+	@RequestMapping("/user/insertCustmomService")
+	public ReturnData<SysUser> insertCustmomService( @RequestParam("param") SysUserVo param,  @RequestParam("userId") Long userId);
+
+	@RequestMapping("/user/checkUsernameIsExist")
+	public ReturnData<Boolean> checkUsernameIsExist( @RequestParam("username") String username);
 	
 }

@@ -1,5 +1,5 @@
 server:
-  port: 18093
+  port: 18091
 spring:
   application:
     name: guiyu-da-web

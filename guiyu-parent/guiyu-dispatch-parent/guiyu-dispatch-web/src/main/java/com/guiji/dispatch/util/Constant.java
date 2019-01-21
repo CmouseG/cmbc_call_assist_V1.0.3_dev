@@ -67,4 +67,8 @@ public class Constant {
 	public static final String TYPE_ALL = "1";
 	public static final String TYPE_NOALL ="0";
 
+	
+	public static final Integer THIRDAPISUCCESS = 1;
+	public static final Integer THIRDAPIFAILURE =0;
+
 }

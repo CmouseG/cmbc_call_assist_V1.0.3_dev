@@ -1297,10 +1297,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum,
 			int pagesize) {
-		JSONObject jsonObject = new JSONObject();
-		Page<DispatchPlan> page = new Page<>();
-		page.setPageNo(pagenum);
-		page.setPageSize((pagesize));
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
 		if (phone != null && phone != "") {
@@ -1310,13 +1306,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (batchName != null && batchName != "") {
 			createCriteria.andBatchNameEqualTo(batchName);
 		}
+		if (pagenum != -1 && pagesize > -1) {
+			example.setLimitStart((pagenum - 1) * pagesize);
+			example.setLimitEnd(pagesize);
+		}
+
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		int countByExample = dispatchPlanMapper.countByExample(example);
-		page.setRecords(selectByExample);
-		page.setTotal(countByExample);
 
 		List<String> ids = new ArrayList<>();
 		for (DispatchPlan dis : selectByExample) {

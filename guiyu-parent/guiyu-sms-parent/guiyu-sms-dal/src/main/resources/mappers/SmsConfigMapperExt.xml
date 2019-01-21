@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.sms.dao.SmsConfigMapperExt">
+
+	<resultMap id="BaseResultMap" type="com.guiji.sms.dao.entity.SmsConfig">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="tunnel_name" jdbcType="VARCHAR" property="tunnelName" />
+		<result column="template_id" jdbcType="VARCHAR" property="templateId" />
+		<result column="template_name" jdbcType="VARCHAR" property="templateName" />
+		<result column="intention_tag" jdbcType="VARCHAR" property="intentionTag" />
+		<result column="sms_template_id" jdbcType="INTEGER" property="smsTemplateId" />
+		<result column="sms_template_data" jdbcType="VARCHAR" property="smsTemplateData" />
+		<result column="auditing_status" jdbcType="INTEGER" property="auditingStatus" />
+		<result column="run_status" jdbcType="INTEGER" property="runStatus" />
+		<result column="company_id" jdbcType="INTEGER" property="companyId" />
+		<result column="company_name" jdbcType="VARCHAR" property="companyName" />
+		<result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="create_id" jdbcType="INTEGER" property="createId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_id" jdbcType="INTEGER" property="updateId" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsConfig">
+		<result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />
+	</resultMap>
+
+	<update id="updateRunStatusByPrimaryKey">
+		UPDATE sms_config 
+		SET run_status = 0 
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateAuditingStatusAndRunStatusByPrimaryKey">
+		UPDATE sms_config 
+		SET auditing_status = 1, run_status = 1 
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getConfigByIntentionTagAndOrgCode" resultMap="ResultMapWithBLOBs">
+		SELECT * from sms_config 
+		WHERE intention_tag = #{intentionTag,jdbcType=VARCHAR} 
+		AND org_code = #{orgCode,jdbcType=VARCHAR}
+	</select>
+
+</mapper>

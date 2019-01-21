@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.sms.dao.SmsTaskMapperExt">
+
+	<resultMap id="BaseResultMap" type="com.guiji.sms.dao.entity.SmsTask">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="task_name" jdbcType="VARCHAR" property="taskName" />
+		<result column="phone_num" jdbcType="INTEGER" property="phoneNum" />
+		<result column="send_status" jdbcType="INTEGER" property="sendStatus" />
+		<result column="send_type" jdbcType="INTEGER" property="sendType" />
+		<result column="tunnel_name" jdbcType="VARCHAR" property="tunnelName" />
+		<result column="sms_template_id" jdbcType="INTEGER" property="smsTemplateId" />
+		<result column="send_date" jdbcType="TIMESTAMP" property="sendDate" />
+		<result column="auditing_status" jdbcType="INTEGER" property="auditingStatus" />
+		<result column="run_status" jdbcType="INTEGER" property="runStatus" />
+		<result column="company_id" jdbcType="INTEGER" property="companyId" />
+		<result column="company_name" jdbcType="VARCHAR" property="companyName" />
+		<result column="create_id" jdbcType="INTEGER" property="createId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_id" jdbcType="INTEGER" property="updateId" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.guiji.sms.dao.entity.SmsTask">
+		<result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />
+	</resultMap>
+
+	<update id="updateRunStatusByPrimaryKey">
+		UPDATE sms_task
+		SET run_status = 0
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateAuditingStatusAndRunStatusByPrimaryKey">
+		UPDATE sms_task
+		SET auditing_status = 1, run_status = 1
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getTasks" resultMap="ResultMapWithBLOBs">
+		SELECT * FROM sms_task 
+		WHERE send_date = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i')
+	</select>
+
+</mapper>

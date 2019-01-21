@@ -968,12 +968,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 */
 	@Override
 	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
-		Map<Integer, String> map = new HashMap<>();
-		map.put(1, "计划中状态");
-		map.put(2, "完成状态");
-		map.put(3, "暂停状态");
-		map.put(4, "停止状态");
-
+		Date d = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String dateNowStr = sdf.format(d);
 		MessageDto result = new MessageDto();
 		if (batchId != 0) {
 			DispatchPlanBatch dispatchPlanBatch = dispatchPlanBatchMapper.selectByPrimaryKey(batchId);
@@ -985,10 +982,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			dis.createCriteria().andBatchIdEqualTo(dispatchPlanBatch.getId())
 					.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(dis);
-			DispatchPlan resultPlan = new DispatchPlan();
-
 			if (selectByExample.size() > 0) {
-				resultPlan = selectByExample.get(0);
 				// 0未计划1计划中2计划完成3暂停计划4停止计划
 				dispatchPlan.setStatusPlan(Integer.valueOf(status));
 				DispatchPlanExample ex1 = new DispatchPlanExample();
@@ -999,6 +993,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_2)
 							.andStatusPlanNotEqualTo(Constant.STATUSPLAN_4);
 					dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
+					dispatchPlan.setCallData(Integer.valueOf(dateNowStr));
 				} else if (status.equals("3")) {
 					// 一键暂停
 					createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(dispatchPlanBatch.getId())
@@ -1065,6 +1060,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				for (List<String> list : averageAssign) {
 					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
 				}
+				DispatchPlan callData = new DispatchPlan();
+				callData.setCallData(Integer.valueOf(dateNowStr));
+				dispatchPlanMapper.updateByExampleSelective(callData, example);
 			}
 		}
 		return result;

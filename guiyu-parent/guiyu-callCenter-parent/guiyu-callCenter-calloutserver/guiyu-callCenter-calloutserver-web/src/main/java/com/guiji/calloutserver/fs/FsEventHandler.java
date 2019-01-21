@@ -64,6 +64,9 @@ public class FsEventHandler {
             } else if (eventType == EslEventType.CALLCENTER_INFO) {
                 log.info("开始处理CALLCENTER_INFO事件[{}]", eslEvent);
                 postCallCenterEvent(eslEvent);
+            } else if (eventType == EslEventType.CHANNEL_PROGRESS_MEDIA || eventType == EslEventType.CHANNEL_PROGRESS) {
+                log.info("开始处理CHANNEL_PROGRESS事件[{}]", eslEvent);
+                postChannelProgressEvent(eventHeaders);
             }
             log.info("事件处理结束");
         } catch (Exception ex) {
@@ -71,7 +74,15 @@ public class FsEventHandler {
         }
     }
 
-    private void postCallCenterEvent(EslEvent eslEvent) {
+        private void postChannelProgressEvent(Map<String, String> eventHeaders) {
+            ChannelProgressEvent event = new ChannelProgressEvent();
+            event.setUuid(eventHeaders.get("Unique-ID"));
+
+            log.info("构建好ChannelProgressEvent[{}]，等待后续处理", event);
+            asyncEventBus.post(event);
+        }
+
+        private void postCallCenterEvent(EslEvent eslEvent) {
         Map<String, String> eventHeaders = eslEvent.getEventHeaders();
         String action = eventHeaders.get("CC-Action");
         if (action.equals("bridge-agent-start")) {    //座席应答事件

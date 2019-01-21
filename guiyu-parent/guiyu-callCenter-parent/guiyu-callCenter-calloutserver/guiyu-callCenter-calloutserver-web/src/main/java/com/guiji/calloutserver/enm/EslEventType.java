@@ -22,6 +22,7 @@ public enum EslEventType {
      * 通道振铃事件
      */
     CHANNEL_PROGRESS,
+    CHANNEL_PROGRESS_MEDIA,
 
     CALLCENTER_INFO;
 

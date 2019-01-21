@@ -53,7 +53,7 @@ public class ApplicationInit {
             localFsServer.init(fsBindVO);
             fsAgentManager.init(fsBindVO);
 
-            callStateService.updateCallState(false,eurekaManager.getInstanceId());
+            callStateService.updateCallState();
         } catch (Exception e) {
             log.warn("初始化calloutserver出现异常", e);
             //TODO: 报警

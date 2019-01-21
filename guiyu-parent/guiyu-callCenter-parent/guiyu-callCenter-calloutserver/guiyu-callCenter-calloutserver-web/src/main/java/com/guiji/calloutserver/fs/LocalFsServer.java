@@ -110,6 +110,8 @@ public class LocalFsServer implements IEslEventListener {
         eslClient.setEventSubscriptions( "plain", "all" );
         eslClient.addEventFilter("Event-Name","CHANNEL_ANSWER");
         eslClient.addEventFilter("Event-Name","CHANNEL_HANGUP_COMPLETE");
+        eslClient.addEventFilter("Event-Name","CHANNEL_PROGRESS");
+        eslClient.addEventFilter("Event-Name","CHANNEL_PROGRESS_MEDIA");
         eslClient.addEventFilter("Event-Subclass","EV_ALIASR");
         eslClient.addEventFilter("Event-Subclass","callcenter::info");
 

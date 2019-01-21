@@ -20,7 +20,7 @@ public class DispatcherController {
     IDispatchPlanOut dispatchPlanOut;
 
     @ApiOperation(value = "获取计划数")
-    @GetMapping("5c2f306a2393c")
+    @GetMapping("getCallPlanCount")
     public Result.ReturnData<PlanCountVO> getCallCount(@RequestHeader String orgCode) {
 
         return dispatchPlanOut.getPlanCountByUserId(orgCode);
@@ -29,7 +29,7 @@ public class DispatcherController {
 
 
     @ApiOperation(value = "一键停止拨打,type： 1包括，0 不包括")
-    @GetMapping("5c2f30ceb5cde")
+    @GetMapping("stopCallPlan")
     public Result.ReturnData<Boolean> stopCallPlan(@RequestHeader("orgCode") String orgCode,
                                                    @RequestParam("type") @NotEmpty(message = "type不能为空") String type) {
 

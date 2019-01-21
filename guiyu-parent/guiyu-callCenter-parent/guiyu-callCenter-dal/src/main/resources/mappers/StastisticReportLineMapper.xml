@@ -5,7 +5,7 @@
 
   <select id="getLineMonitorReportByLineId" resultType="java.util.Map">
 
-    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,'一般' as status
+    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,'一般' as status,c.sip_ip,c.sip_port
     from
     (
       select
@@ -21,14 +21,14 @@
       line_id = #{lineId}
       and create_time >=#{startTime}
       group by line_id
-    )a,report_line_status b
-    where a.lineId = b.line_id and a.createTime = b.create_time
+    )a,report_line_status b,line_info c
+    where a.lineId = b.line_id and a.createTime = b.create_time and a.lineId = c.line_id
   </select>
 
 
   <select id="getLineMonitorReportByUserId" resultType="java.util.Map">
 
-    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,'一般' as status
+    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,'一般' as status,c.sip_ip,c.sip_port
     from
     (
     select
@@ -45,8 +45,8 @@
     and n.customer_id = #{userId}
     and m.create_time >=#{startTime}
     group by m.line_id
-    )a,report_line_status b
-    where a.lineId = b.line_id and a.createTime = b.create_time
+    )a,report_line_status b,line_info c
+    where a.lineId = b.line_id and a.createTime = b.create_time and a.lineId = c.line_id
   </select>
 
   <select id="getLineHangupCodeOverView" resultType="java.util.Map">

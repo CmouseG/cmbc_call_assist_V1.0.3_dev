@@ -46,7 +46,7 @@ public class LineReportController implements IReportLine {
     public Result.ReturnData getLineMonitorReport(String lineId, String dimension,
                                                   String orgCode,  Long userId) {
 
-        if(StringUtils.isNotBlank(dimension)){
+        if(StringUtils.isBlank(dimension)){
             dimension = "now";
         }
         Date start = null;

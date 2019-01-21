@@ -39,32 +39,19 @@ public class CallStateServiceImpl implements CallStateService {
 
     @Async
     @Override
-    synchronized public void updateCallState(Boolean isDelay, String serverid) {
+    synchronized public void updateCallState() {
 
-        log.info("---开始，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调---", isDelay, serverid);
+        log.info("---开始，将状态没有回调的通话记录,修改状态,回调---");
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         criteria.andCallStateLessThanOrEqualTo(ECallState.agent_answer.ordinal());
-        criteria.andServeridEqualTo(serverid);
 
         Calendar c = Calendar.getInstance();
-        Date endTime = null;
-        Date startTime = null;
-        if(isDelay){
-            c.add(Calendar.MINUTE, -10);
-            endTime = c.getTime();
-            c.add(Calendar.MINUTE, -20);
-            startTime = c.getTime();
-        }else{//启动的时候，认为服务停掉的72个小时内的数据都要检查一下
-            c.add(Calendar.MINUTE, -5);
-            endTime = c.getTime();
-            c.add(Calendar.HOUR, -72);
-            startTime = c.getTime();
-        }
+        c.add(Calendar.MINUTE, -6);
+        Date endTime  = c.getTime();
 
-        criteria.andCreateTimeGreaterThan(startTime);
         criteria.andCreateTimeLessThan(endTime);
-        log.info("------>>>startTime[{}],endTime[{}]", startTime, endTime);
+        log.info("------>>>endTime[{}]", endTime);
 
         List<CallOutPlan> list = callOutPlanMapper.selectByExample(example);
 
@@ -105,6 +92,6 @@ public class CallStateServiceImpl implements CallStateService {
 
         }
 
-        log.info("---结束，将状态没有回调的通话记录isDelay[{}]，serverid[{}]修改状态,回调---");
+        log.info("---结束，将状态没有回调的通话记录修改状态,回调---");
     }
 }

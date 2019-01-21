@@ -10,5 +10,5 @@ import org.springframework.scheduling.annotation.Async;
 public interface CallStateService {
 
     @Async
-    void updateCallState(Boolean isDelay, String serverid);
+    void updateCallState();
 }

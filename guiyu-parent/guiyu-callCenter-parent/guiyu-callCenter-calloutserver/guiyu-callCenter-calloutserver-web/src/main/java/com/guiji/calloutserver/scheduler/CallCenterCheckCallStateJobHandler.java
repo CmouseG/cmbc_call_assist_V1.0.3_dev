@@ -14,14 +14,12 @@ import org.springframework.stereotype.Component;
 public class CallCenterCheckCallStateJobHandler extends IJobHandler {
 
 	@Autowired
-	EurekaManager eurekaManager;
-	@Autowired
 	CallStateService callStateService;
 
 	@Override
 	public ReturnT<String> execute(String param) {
 		XxlJobLogger.log("呼叫中心，5分钟检查一个callplan状态，CallCenterCheckCallStateJobHandler开始");
-		callStateService.updateCallState(true,eurekaManager.getInstanceId());
+		callStateService.updateCallState();
 		XxlJobLogger.log("呼叫中心，5分钟检查一个callplan状态，CallCenterCheckCallStateJobHandler结束");
 		return SUCCESS;
 	}

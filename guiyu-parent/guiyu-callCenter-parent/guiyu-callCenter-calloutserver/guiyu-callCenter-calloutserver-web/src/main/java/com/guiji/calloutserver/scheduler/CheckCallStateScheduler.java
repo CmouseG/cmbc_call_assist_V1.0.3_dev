@@ -22,8 +22,6 @@ import org.springframework.stereotype.Component;
 public class CheckCallStateScheduler {
 
     @Autowired
-    EurekaManager eurekaManager;
-    @Autowired
     CallStateService callStateService;
 
 //    @Scheduled(cron = "0 0/5 * * * ?") // 每5分钟运行一次
@@ -31,7 +29,7 @@ public class CheckCallStateScheduler {
 
         log.info("----------- start checkCallState -----------");
 
-        callStateService.updateCallState(true,eurekaManager.getInstanceId());
+        callStateService.updateCallState();
 
         log.info("----------- end checkCallState -----------");
 

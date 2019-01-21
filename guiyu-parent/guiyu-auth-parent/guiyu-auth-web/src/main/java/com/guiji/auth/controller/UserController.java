@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.auth.service.OrganizationService;
 import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -36,6 +37,8 @@ public class UserController implements IAuth {
 	private UserService service;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private OrganizationService organizationService;
 
 	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
 
@@ -200,6 +203,30 @@ public class UserController implements IAuth {
 			}
 		}
 		return Result.ok(sysUser);
+	}
+
+	@RequestMapping("/user/insertCustmomService")
+	public ReturnData<SysUser> insertCustmomService(SysUserVo param,Long userId){
+		SysUser user=new SysUser();
+		user.setId(param.getId());
+		user.setUsername(param.getUsername());
+		user.setPassword(param.getPassword());
+		user.setStatus(1);//正常状态
+		user.setPushType(1);//平台
+		SysOrganization org = service.getOrgByUserId(userId);
+		if (org != null && !org.getCode().isEmpty()) {
+			String orgCode = organizationService.getSubOrgCode(org.getCode());
+			user.setOrgCode(orgCode);
+		}
+		user.setDelFlag(0);
+		if(service.existUserName(user)){
+			return Result.error("00010005");
+		}
+		user.setPassword(AuthUtil.encrypt(user.getPassword()));
+		user.setCreateId(userId);
+		user.setUpdateId(userId);
+		service.insert(user,5L);//客服角色
+		return Result.ok(user);
 	}
 
 }

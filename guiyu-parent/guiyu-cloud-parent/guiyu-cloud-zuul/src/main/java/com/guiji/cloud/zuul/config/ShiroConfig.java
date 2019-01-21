@@ -46,8 +46,8 @@ public class ShiroConfig {
         //开放登陆接口
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/refreshToken", "anon");
-        filterChainDefinitionMap.put("/api/5c2f31180997a", "anon");
-//        filterChainDefinitionMap.put("/wxLogin", "anon");
+        filterChainDefinitionMap.put("/api/getCallDetailById", "anon");
+        filterChainDefinitionMap.put("/api/getLineHangupDetail", "anon");
         filterChainDefinitionMap.put("/apiLogin", "anon");
         filterChainDefinitionMap.put("/loginOut", "anon");
 //        filterChainDefinitionMap.put("/auth/menu/getMenus", "anon");

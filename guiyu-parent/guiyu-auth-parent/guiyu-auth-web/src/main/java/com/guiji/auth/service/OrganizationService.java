@@ -46,13 +46,13 @@ public class OrganizationService {
 	public void delte(SysOrganization record){
 		record.setDelFlag(1);
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
-		sysOrganizationMapper.updateOrganizationProduct(record.getId(),record.getProduct());
 		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
         redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}
 	
 	public void update(SysOrganization record){
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
+		sysOrganizationMapper.updateOrganizationProduct(record.getId(),record.getProduct());
 		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
 		redisUtil.delVague(REDIS_ORG_BY_USERID);
 	}

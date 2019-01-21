@@ -33,7 +33,7 @@ public class CallRecordController {
     private final Logger logger = LoggerFactory.getLogger(CallRecordController.class);
 
     @ApiOperation(value = "获取通话记录标签")
-    @GetMapping("5c2f31a9754c7")
+    @GetMapping("getCallLabel")
     public Result.ReturnData<String[]> getCallIntent(@RequestHeader Long userId) {
         String[] arr = {"A","B","C","D","E","F","W"};
         try{
@@ -49,7 +49,7 @@ public class CallRecordController {
     }
 
     @ApiOperation(value = "获取单条通话记录详情")
-    @GetMapping("5c2f31180997a")
+    @GetMapping("getCallDetailById")
     public Result.ReturnData<CallOutPlanVO> getCallDetail(String id) {
         Result.ReturnData<CallPlanDetailRecordVO> result = iCallPlanDetail.getCallDetail(id);
         CallPlanDetailRecordVO callOutPlanVO = result.getBody();
@@ -96,7 +96,7 @@ public class CallRecordController {
 
 
     @ApiOperation(value = "获取通话记录列表")
-    @GetMapping("5c2f31ee71a53")
+    @GetMapping("getCallRecordList")
     public Result.ReturnData<Map> getCallRecordList(String size, String page, String time, String label,
                                                     @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
 
@@ -125,7 +125,7 @@ public class CallRecordController {
     }
 
     @ApiOperation(value = "号码搜索")
-    @GetMapping("5c2f323a64042")
+    @GetMapping("getCallRecordListByPhone")
     public Result.ReturnData<List> getCallRecordListByPhone(String phone){
 
         if(StringUtils.isBlank(phone)){

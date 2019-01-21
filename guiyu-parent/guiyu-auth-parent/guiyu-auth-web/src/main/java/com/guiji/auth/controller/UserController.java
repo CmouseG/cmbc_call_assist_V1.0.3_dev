@@ -229,4 +229,15 @@ public class UserController implements IAuth {
 		return Result.ok(user);
 	}
 
+	@RequestMapping("/user/checkUsernameIsExist")
+	public ReturnData<Boolean> checkUsernameIsExist(String username){
+		SysUser user=new SysUser();
+		user.setUsername(username);
+		if(service.existUserName(user)){
+			return Result.ok(true);
+		} else {
+			return Result.ok(false);
+		}
+	}
+
 }

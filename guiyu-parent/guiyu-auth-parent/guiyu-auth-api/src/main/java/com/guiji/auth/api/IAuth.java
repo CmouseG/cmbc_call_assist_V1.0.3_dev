@@ -41,5 +41,8 @@ public interface IAuth {
 
 	@RequestMapping("/user/insertCustmomService")
 	public ReturnData<SysUser> insertCustmomService(SysUserVo param, Long userId);
+
+	@RequestMapping("/user/checkUsernameIsExist")
+	public ReturnData<Boolean> checkUsernameIsExist(String username);
 	
 }

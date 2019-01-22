@@ -123,7 +123,7 @@ public class TaskServiceImpl implements TaskService
 				//组装发送请求
 				TaskReq taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 
 						taskReqVO.getTunnelName(), taskReqVO.getSmsTemplateId(), taskReqVO.getSmsContent());
-				taskReq.setSendTime(taskReq.getSendTime());
+				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
 				sendSmsService.sendMessages(taskReq); // 发送
@@ -159,8 +159,7 @@ public class TaskServiceImpl implements TaskService
 	 */
 	private void setParams(TaskReqVO taskReqVO, SmsTask smsTask, Long userId) throws Exception
 	{
-		if(taskReqVO.getId() != null) // 新增id为空，修改id不为空
-		{
+		if(taskReqVO.getId() != null) { // 新增id为空，修改id不为空
 			smsTask.setId(taskReqVO.getId());
 		}
 		smsTask.setTaskName(taskReqVO.getTaskName());
@@ -168,7 +167,11 @@ public class TaskServiceImpl implements TaskService
 		smsTask.setTunnelName(taskReqVO.getTunnelName());
 		smsTask.setSmsTemplateId(taskReqVO.getSmsTemplateId());
 		smsTask.setSmsContent(taskReqVO.getSmsContent());
-		smsTask.setSendDate(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(taskReqVO.getSendDate()));	
+		if(taskReqVO.getSendDate() != null){
+			smsTask.setSendDate(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(taskReqVO.getSendDate()));
+		} else{
+			smsTask.setSendDate(new Date());
+		}
 		if(taskReqVO.getSmsTemplateId() != null) //短信模版
 		{ 
 			smsTask.setAuditingStatus(1); // 审核状态：1-已审核

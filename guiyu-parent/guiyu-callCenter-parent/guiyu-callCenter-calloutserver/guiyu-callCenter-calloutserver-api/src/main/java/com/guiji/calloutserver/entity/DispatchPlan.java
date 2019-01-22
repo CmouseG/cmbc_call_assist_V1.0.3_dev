@@ -20,6 +20,8 @@ public class DispatchPlan implements Serializable {
 
     private String orgCode;
 
+    private String agentGroupId;
+
     private static final long serialVersionUID = 1L;
 
     public String getPlanUuid() {
@@ -86,6 +88,14 @@ public class DispatchPlan implements Serializable {
         this.orgCode = orgCode;
     }
 
+    public String getAgentGroupId() {
+        return agentGroupId;
+    }
+
+    public void setAgentGroupId(String agentGroupId) {
+        this.agentGroupId = agentGroupId;
+    }
+
     @Override
     public String toString() {
         return "DispatchPlan{" +
@@ -97,6 +107,7 @@ public class DispatchPlan implements Serializable {
                 ", line=" + line +
                 ", isTts=" + isTts +
                 ", orgCode='" + orgCode + '\'' +
+                ", agentGroupId='" + agentGroupId + '\'' +
                 '}';
     }
 }

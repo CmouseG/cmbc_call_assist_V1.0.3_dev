@@ -2,6 +2,7 @@ package com.guiji.auth.controller;
 
 import com.guiji.auth.api.IApiLogin;
 import com.guiji.auth.service.UserService;
+import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,9 @@ public class ApiLoginController implements IApiLogin {
 
     @Override
     @GetMapping("getUserByAccess")
-    public SysUser getUserByAccess(@RequestParam("accessKey")String accessKey, @RequestParam("secretKey")String secretKey) {
+    public Result.ReturnData<SysUser> getUserByAccess(@RequestParam("accessKey")String accessKey, @RequestParam("secretKey")String secretKey) {
 
         SysUser sysUser =  service.getUserByAccess(accessKey, secretKey);
-        return sysUser;
+        return Result.ok(sysUser);
     }
 }

@@ -92,7 +92,14 @@ public class LoginController implements ILogin {
 
         try {
             boolean isSuperAdmin = false;
-            SysUser sysUser =iApiLogin.getUserByAccess(accessKey,secretKey);
+            Result.ReturnData<SysUser> result =iApiLogin.getUserByAccess(accessKey,secretKey);
+            if(result==null || !result.success){
+                return Result.error("00010003");
+            }
+            SysUser sysUser = result.getBody();
+            if(sysUser==null || sysUser.getId()==null){
+                return Result.error("00010003");
+            }
             Long userId = sysUser.getId();
             List<SysRole> sysRoles = zuulService.getRoleByUserId(userId);
             if (sysRoles != null) {

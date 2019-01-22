@@ -46,7 +46,7 @@ public class LineInfoController implements IFsLine {
                     //TODO: 报警
                     log.warn("申请freeswitch资源失败, 错误码为[{}]，错误信息[{}]", result.getCode(), result.getMsg());
                 }
-            }, -1, 1, 1,60);
+            }, -1, 1, 1,60,true);
         } catch (Exception e) {
             log.warn("在初始化fsline时出现异常", e);
         }

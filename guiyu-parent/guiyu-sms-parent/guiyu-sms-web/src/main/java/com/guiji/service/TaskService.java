@@ -41,4 +41,9 @@ public interface TaskService
 	 * 获取定时任务
 	 */
 	List<SmsTask> getTimeTaskList();
+
+	/**
+	 * 更新发送状态
+	 */
+	void updateSendStatusById(Integer sendStatus, Integer id);
 }

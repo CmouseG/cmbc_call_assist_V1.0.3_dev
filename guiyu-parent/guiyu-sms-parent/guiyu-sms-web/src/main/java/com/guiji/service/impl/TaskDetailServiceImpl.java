@@ -4,9 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
 import com.guiji.model.TaskReq;
 import com.guiji.service.TaskDetailService;
 import com.guiji.sms.dao.SmsTaskDetailMapper;
@@ -15,10 +19,18 @@ import com.guiji.sms.dao.entity.SmsTaskDetailExample;
 import com.guiji.sms.dao.entity.SmsTaskDetailExample.Criteria;
 import com.guiji.sms.vo.TaskDetailListReqVO;
 import com.guiji.sms.vo.TaskDetailListRspVO;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.RedisUtil;
 
 @Service
 public class TaskDetailServiceImpl implements TaskDetailService
 {
+	private static final Logger logger = LoggerFactory.getLogger(TaskDetailServiceImpl.class);
+	
+	@Autowired
+	IAuth auth;
+	@Autowired
+	RedisUtil redisUtil;
 	@Autowired
 	SmsTaskDetailMapper taskDetailMapper;
 
@@ -82,11 +94,32 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		}else{
 			detail.setSendStatus(1); // 发送状态：1-发送失败
 		}
-		detail.setCompanyName("");
+		detail.setCompanyName(taskReq.getCompanyName());
 		detail.setTunnelName(taskReq.getTunnelName());
 		detail.setSendTime(taskReq.getSendTime());
-		detail.setUserName("");
+		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
 		taskDetailMapper.insertSelective(detail);
 	}
+	
+	public String getUserName(String userId) {
+        String cacheName = (String) redisUtil.get(userId);
+        if (cacheName != null) {
+            return cacheName;
+        } else {
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                    	redisUtil.set(userId, userName);
+                        return userName;
+                    }
+                }
+            } catch (Exception e) {
+            	logger.error(" auth.getUserName error :" + e);
+            }
+        }
+        return "";
+    }
 
 }

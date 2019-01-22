@@ -2,6 +2,8 @@ package com.guiji.sms.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.guiji.sms.dao.entity.SmsTask;
 
 public interface SmsTaskMapperExt 
@@ -20,4 +22,9 @@ public interface SmsTaskMapperExt
 	 * 获取定时任务
 	 */
 	List<SmsTask> getTasks();
+
+	/**
+	 * 更新发送状态
+	 */
+	void updateSendStatusById(@Param("sendStatus") Integer sendStatus, @Param("id")Integer id);
 }

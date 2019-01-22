@@ -11,6 +11,8 @@
     <result column="error_type" property="errorType" jdbcType="INTEGER" />
     <result column="error_line" property="errorLine" jdbcType="INTEGER" />
     <result column="data_type" property="dataType" jdbcType="INTEGER" />
+    <result column="batch_id" property="batchId" jdbcType="INTEGER" />
+    <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,7 +74,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, phone, attach, params, create_time, file_records_id, error_type, error_line, 
-    data_type
+    data_type, batch_id, batch_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecordsExample" >
     select
@@ -111,12 +113,12 @@
   <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
     insert into file_error_records (id, phone, attach, 
       params, create_time, file_records_id, 
-      error_type, error_line, data_type
-      )
+      error_type, error_line, data_type, 
+      batch_id, batch_name)
     values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
       #{params,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{fileRecordsId,jdbcType=BIGINT}, 
-      #{errorType,jdbcType=INTEGER}, #{errorLine,jdbcType=INTEGER}, #{dataType,jdbcType=INTEGER}
-      )
+      #{errorType,jdbcType=INTEGER}, #{errorLine,jdbcType=INTEGER}, #{dataType,jdbcType=INTEGER}, 
+      #{batchId,jdbcType=INTEGER}, #{batchName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
     insert into file_error_records
@@ -148,6 +150,12 @@
       <if test="dataType != null" >
         data_type,
       </if>
+      <if test="batchId != null" >
+        batch_id,
+      </if>
+      <if test="batchName != null" >
+        batch_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -176,6 +184,12 @@
       </if>
       <if test="dataType != null" >
         #{dataType,jdbcType=INTEGER},
+      </if>
+      <if test="batchId != null" >
+        #{batchId,jdbcType=INTEGER},
+      </if>
+      <if test="batchName != null" >
+        #{batchName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -215,6 +229,12 @@
       <if test="record.dataType != null" >
         data_type = #{record.dataType,jdbcType=INTEGER},
       </if>
+      <if test="record.batchId != null" >
+        batch_id = #{record.batchId,jdbcType=INTEGER},
+      </if>
+      <if test="record.batchName != null" >
+        batch_name = #{record.batchName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -230,7 +250,9 @@
       file_records_id = #{record.fileRecordsId,jdbcType=BIGINT},
       error_type = #{record.errorType,jdbcType=INTEGER},
       error_line = #{record.errorLine,jdbcType=INTEGER},
-      data_type = #{record.dataType,jdbcType=INTEGER}
+      data_type = #{record.dataType,jdbcType=INTEGER},
+      batch_id = #{record.batchId,jdbcType=INTEGER},
+      batch_name = #{record.batchName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -262,6 +284,12 @@
       <if test="dataType != null" >
         data_type = #{dataType,jdbcType=INTEGER},
       </if>
+      <if test="batchId != null" >
+        batch_id = #{batchId,jdbcType=INTEGER},
+      </if>
+      <if test="batchName != null" >
+        batch_name = #{batchName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -274,7 +302,9 @@
       file_records_id = #{fileRecordsId,jdbcType=BIGINT},
       error_type = #{errorType,jdbcType=INTEGER},
       error_line = #{errorLine,jdbcType=INTEGER},
-      data_type = #{dataType,jdbcType=INTEGER}
+      data_type = #{dataType,jdbcType=INTEGER},
+      batch_id = #{batchId,jdbcType=INTEGER},
+      batch_name = #{batchName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

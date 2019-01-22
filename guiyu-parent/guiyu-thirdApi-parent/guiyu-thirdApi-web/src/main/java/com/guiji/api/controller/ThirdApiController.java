@@ -1,6 +1,5 @@
 package com.guiji.api.controller;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.cloud.api.ILogin;
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
 import com.guiji.dispatch.model.CallPlanDetailRecordVO;
@@ -37,7 +37,7 @@ public class ThirdApiController {
 	 */
 	@GetMapping("/getCalldetail")
 	public JSONObject getCalldetail(@RequestParam(required = true, name = "phone") String phone,
-			@RequestParam(required = false, name = "batch_number") String batchNumber,
+			@RequestParam(required = true, name = "batch_number") String batchNumber,
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		JSONObject jsonObject = new JSONObject();
@@ -45,29 +45,16 @@ public class ThirdApiController {
 			jsonObject.put("data", "当前手机号码不正确");
 			return jsonObject;
 		}
-
-		ReturnData<List<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, pagenum,
-				pagesize);
-		jsonObject.put("data", calldetail.getBody());
-		return jsonObject;
-	}
-
-	/**
-	 * 查询所有通话记录
-	 * 
-	 * @param accessToken
-	 * @param callId
-	 * @return
-	 */
-	@GetMapping("/getAllCalldetail")
-	public JSONObject getAllCalldetail(@RequestParam(required = true, name = "phone") String phone,
-			@RequestParam(required = false, name = "batch_number") String batchNumber) {
-		JSONObject jsonObject = new JSONObject();
-		if (!isInteger(phone)) {
-			jsonObject.put("data", "当前手机号码不正确");
+		if (pagesize > 100) {
+			jsonObject.put("data", "当前pagesize分页过大");
 			return jsonObject;
 		}
-		ReturnData<List<CallPlanDetailRecordVO>> calldetail = thirdApi.getAllCalldetail(phone, batchNumber);
+		if (pagenum <= 0) {
+			jsonObject.put("data", "当前pagenum必须大于0");
+			return jsonObject;
+		}
+		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, pagenum,
+				pagesize);
 		jsonObject.put("data", calldetail.getBody());
 		return jsonObject;
 	}
@@ -81,9 +68,19 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCallInfoByBatchId")
-	public JSONObject getCallInfoByBatchId(@RequestParam(required = true, name = "batch_number") String batchNumber) {
+	public JSONObject getCallInfoByBatchId(@RequestParam(required = true, name = "batch_number") String batchNumber,
+			@RequestParam(required = true, name = "pagenum") int pagenum,
+			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber);
+		if (pagesize > 100) {
+			jsonObject.put("data", "当前pagesize分页过大");
+			return jsonObject;
+		}
+		if (pagenum <= 0) {
+			jsonObject.put("data", "当前pagenum必须大于0");
+			return jsonObject;
+		}
+		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber, pagenum, pagesize);
 		jsonObject.put("data", getcall4BatchName.getBody());
 		return jsonObject;
 	}
@@ -100,23 +97,16 @@ public class ThirdApiController {
 			@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		ReturnData<List<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, pagenum,
+		if (pagesize > 100) {
+			jsonObject.put("data", "当前pagesize分页过大");
+			return jsonObject;
+		}
+		if (pagenum <= 0) {
+			jsonObject.put("data", "当前pagenum必须大于0");
+			return jsonObject;
+		}
+		ReturnData<Page<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, pagenum,
 				pagesize);
-		jsonObject.put("data", queryDispatchPlan.getBody());
-		return jsonObject;
-	}
-	
-	/**
-	 * 通过批次号查询该批次任务的号码列表
-	 * 
-	 * @param pagenum
-	 * @param pagesize
-	 * @return
-	 */
-	@GetMapping("/getAllPhonesByBatchNumber")
-	public JSONObject getAllPhonesByBatchNumber(@RequestParam(required = true, name = "batch_number") String batchNumber) {
-		JSONObject jsonObject = new JSONObject();
-		ReturnData<List<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryAllDispatchPlan(batchNumber);
 		jsonObject.put("data", queryDispatchPlan.getBody());
 		return jsonObject;
 	}
@@ -134,6 +124,21 @@ public class ThirdApiController {
 		JSONObject jsonObject = new JSONObject();
 		ReturnData<String> apiLogin2 = login.apiLogin(access_key, secret_key);
 		jsonObject.put("token", apiLogin2.getBody());
+		return jsonObject;
+	}
+
+	/**
+	 * 第三方回调重试机制
+	 * 
+	 * @param access_key
+	 * @param secret_key
+	 * @return
+	 */
+	@GetMapping("/reTryThirdApi")
+	public JSONObject reTryThirdApi(@RequestParam(required = true, name = "user_id") Integer userId) {
+		JSONObject jsonObject = new JSONObject();
+		ReturnData<Boolean> reTryThirdApi = thirdApi.reTryThirdApi(Long.valueOf(userId));
+		jsonObject.put("data", reTryThirdApi.getBody());
 		return jsonObject;
 	}
 

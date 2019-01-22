@@ -41,8 +41,8 @@ public class SuccesPhone4MQLisener {
 	@Autowired
 	private SuccPhonesThirdInterface thirdInterface;
 
-//	@Autowired
-//	private ISms sms;
+	@Autowired
+	private ISms sms;
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
@@ -68,7 +68,7 @@ public class SuccesPhone4MQLisener {
 				vo.setPhone(dispatchPlan.getPhone());
 				vo.setUserId(dispatchPlan.getUserId());
 				vo.setIntentionTag(mqSuccPhoneDto.getLabel());
-//				sms.sendMessage(vo);
+				sms.sendMessage(vo);
 			}
 		} catch (Exception e) {
 			logger.info("SuccesPhone4MQLisener消费数据有问题"+message);

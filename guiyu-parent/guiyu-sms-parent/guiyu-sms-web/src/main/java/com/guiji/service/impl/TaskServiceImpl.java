@@ -124,6 +124,8 @@ public class TaskServiceImpl implements TaskService
 				TaskReq taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 
 						taskReqVO.getTunnelName(), taskReqVO.getSmsTemplateId(), taskReqVO.getSmsContent());
 				taskReq.setSendTime(taskReq.getSendTime());
+				taskReq.setCompanyName(smsTask.getCompanyName());
+				taskReq.setUserId(userId);
 				sendSmsService.sendMessages(taskReq); // 发送
 				smsTask.setSendStatus(2); // 2-已结束
 			}
@@ -193,6 +195,15 @@ public class TaskServiceImpl implements TaskService
 	public List<SmsTask> getTimeTaskList()
 	{
 		return taskMapperExt.getTasks();
+	}
+
+	/**
+	 * 更新发送状态
+	 */
+	@Override
+	public void updateSendStatusById(Integer sendStatus, Integer id)
+	{
+		taskMapperExt.updateSendStatusById(sendStatus, id);
 	}
 
 }

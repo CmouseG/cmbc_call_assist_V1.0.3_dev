@@ -64,6 +64,6 @@ xxl:
     executor:
       ip:
       port: 9017
-      logpath: /home/logs/guiyu-ai-web
+      logpath: /home/logs/guiyu-sms-web
       logretentiondays: -1
     accessToken:

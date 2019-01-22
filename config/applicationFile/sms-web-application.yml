@@ -7,8 +7,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.1.81:3306/guiyu_sms?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
-    username: root
-    password: 123456
+    username: sms
+    password: sms@1234
   redis:
     database: 8
     host: 192.168.1.81
@@ -64,6 +64,6 @@ xxl:
     executor:
       ip:
       port: 9017
-      logpath: /home/logs/guiyu-ai-web
+      logpath: /home/logs/guiyu-sms-web
       logretentiondays: -1
     accessToken:

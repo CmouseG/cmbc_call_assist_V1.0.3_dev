@@ -145,19 +145,21 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			currentCount = 0;
 		}
 		if (currentCount > 0) {
-			currentCount = currentCount - 1;
-			redisUtil.set(queueName, currentCount);
+//			currentCount = currentCount - 1;
+//			redisUtil.set(queueName, currentCount);
+			//递减1
+			redisUtil.decr(queueName, 1);
 		}
 	}
 
 	private void addVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
-		Integer currentCount = (Integer) redisUtil.get(queueName);
-		if (currentCount == null) {
-			currentCount = 0;
-		}
-		currentCount = currentCount + 1;
-		redisUtil.set(queueName, currentCount);
-
+//		Integer currentCount = (Integer) redisUtil.get(queueName);
+//		if (currentCount == null) {
+//			currentCount = 0;
+//		}
+//		currentCount = currentCount + 1;
+//		redisUtil.set(queueName, currentCount);
+		redisUtil.incr(queueName, 1);
 	}
 
 	public void updateStatusSync(String planUUID) {

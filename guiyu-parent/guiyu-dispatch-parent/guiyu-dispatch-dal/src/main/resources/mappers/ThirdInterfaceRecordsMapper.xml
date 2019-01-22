@@ -2,11 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.ThirdInterfaceRecords" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="DATE" />
     <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="params" property="params" jdbcType="VARCHAR" />
     <result column="times" property="times" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, create_time, url, params, times
+    id, create_time, url, params, times, user_id, `type`
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample" >
     select
@@ -87,15 +89,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from third_interface_records
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from third_interface_records
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample" >
     delete from third_interface_records
@@ -105,9 +107,11 @@
   </delete>
   <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.ThirdInterfaceRecords" >
     insert into third_interface_records (id, create_time, url, 
-      params, times)
-    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=DATE}, #{url,jdbcType=VARCHAR}, 
-      #{params,jdbcType=VARCHAR}, #{times,jdbcType=INTEGER})
+      params, times, user_id, 
+      `type`)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=DATE}, #{url,jdbcType=VARCHAR}, 
+      #{params,jdbcType=VARCHAR}, #{times,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.ThirdInterfaceRecords" >
     insert into third_interface_records
@@ -127,10 +131,16 @@
       <if test="times != null" >
         times,
       </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="type != null" >
+        `type`,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=BIGINT},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=DATE},
@@ -144,6 +154,12 @@
       <if test="times != null" >
         #{times,jdbcType=INTEGER},
       </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample" resultType="java.lang.Integer" >
@@ -156,7 +172,7 @@
     update third_interface_records
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=DATE},
@@ -170,6 +186,12 @@
       <if test="record.times != null" >
         times = #{record.times,jdbcType=INTEGER},
       </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null" >
+        `type` = #{record.type,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -177,11 +199,13 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update third_interface_records
-    set id = #{record.id,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=DATE},
       url = #{record.url,jdbcType=VARCHAR},
       params = #{record.params,jdbcType=VARCHAR},
-      times = #{record.times,jdbcType=INTEGER}
+      times = #{record.times,jdbcType=INTEGER},
+      user_id = #{record.userId,jdbcType=INTEGER},
+      `type` = #{record.type,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -201,15 +225,23 @@
       <if test="times != null" >
         times = #{times,jdbcType=INTEGER},
       </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.ThirdInterfaceRecords" >
     update third_interface_records
     set create_time = #{createTime,jdbcType=DATE},
       url = #{url,jdbcType=VARCHAR},
       params = #{params,jdbcType=VARCHAR},
-      times = #{times,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
+      times = #{times,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

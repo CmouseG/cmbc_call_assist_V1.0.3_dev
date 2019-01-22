@@ -46,8 +46,9 @@ public class CallBack4MQListener {
 			String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT+mqSuccPhoneDto.getUserId()+"_"+mqSuccPhoneDto.getLineId()+"_"+mqSuccPhoneDto.getTempId();
 			Integer currentCount = (Integer) redisUtil.get(queueCount);
 			if (currentCount > 0) {
-				currentCount = currentCount - 1;
-				redisUtil.set(queueCount, currentCount);
+//				currentCount = currentCount - 1;
+//				redisUtil.set(queueCount, currentCount);
+				redisUtil.decr(queueCount, 1);
 			}
 
 

@@ -17,7 +17,7 @@ public interface IReportLine {
     @ApiOperation(value = "线路监控信息")
     @GetMapping(value = "getLineMonitorReport")
     Result.ReturnData getLineMonitorReport(@RequestParam(value="lineId") String lineId,@RequestParam(value="dimension") String dimension,
-                                                  @RequestParam(value="orgCode")  String orgCode, @RequestParam(value="userId") Long userId) throws InvocationTargetException, IllegalAccessException;
+                                                  @RequestParam(value="orgCode")  String orgCode, @RequestParam(value="userId") Long userId);
 
 
     @ApiOperation(value = "线路错误信息")

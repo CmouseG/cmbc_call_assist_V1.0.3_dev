@@ -143,19 +143,23 @@
     </select>
     <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map" parameterType="java.util.Map" >
         select
-        CAST(a.call_id AS CHAR) as id, IF(a.customer_id=#{customerId,jdbcType=VARCHAR},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
+        CAST(a.call_id AS CHAR) as id, IF(a.customer_id=#{secretId},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
         a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse,a.talk_num
         from call_out_plan a
         left join call_out_record b on a.call_id = b.call_id
         where a.isdel =0
+        and a.call_state >=7
         <if test="accurateIntent != null" >
             and a.accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
         </if>
         <if test="time != null" >
-            and a.create_time  >=  DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+            and a.call_start_time  >=  DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
         </if>
         <if test="orgCode != null" >
             and a.org_code like CONCAT(#{orgCode},'%')
+        </if>
+        <if test="customerId != null" >
+            and a.customer_id = #{customerId}
         </if>
         order by a.create_time desc
         limit #{limitStart} , #{limitEnd}
@@ -164,14 +168,18 @@
         select count(*)
         from call_out_plan
         where isdel =0
+        and call_state >=7
         <if test="accurateIntent != null" >
             and accurate_intent = #{accurateIntent,jdbcType=VARCHAR}
         </if>
         <if test="time != null" >
-            and create_time  >=  DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
+            and call_start_time  >=  DATE_SUB(CURDATE(),INTERVAL #{time} DAY)
         </if>
         <if test="orgCode != null" >
             and org_code like CONCAT(#{orgCode},'%')
+        </if>
+        <if test="customerId != null" >
+            and customer_id = #{customerId}
         </if>
 
     </select>

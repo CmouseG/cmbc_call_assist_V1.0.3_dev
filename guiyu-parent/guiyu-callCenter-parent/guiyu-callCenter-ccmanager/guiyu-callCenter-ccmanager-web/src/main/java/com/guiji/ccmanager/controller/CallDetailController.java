@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
 import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.constant.Constant;
+import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
@@ -54,6 +55,8 @@ public class CallDetailController implements ICallPlanDetail {
 
     @Autowired
     private CallDetailService callDetailService;
+    @Autowired
+    AuthService authService;
 
     @ApiOperation(value = "通过电话号码，获取通话记录列表")
     @GetMapping(value = "getCallRecordListByPhone")
@@ -85,6 +88,15 @@ public class CallDetailController implements ICallPlanDetail {
 
     @PostMapping(value = "getCallRecordList")
     public Result.ReturnData<Map> getCallRecordList(@RequestBody CallRecordReq callRecordReq){
+
+
+        if(!callRecordReq.getSuperAdmin()){//不是管理员
+            if (authService.isAgentOrCompanyAdmin(Long.valueOf(callRecordReq.getUserId())) ) {//代理商 或者企业管理员
+                callRecordReq.setUserId(null);
+            } else {
+                callRecordReq.setOrgCode(null);
+            }
+        }
 
         Map numMap = new HashMap();
 

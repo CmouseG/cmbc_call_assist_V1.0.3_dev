@@ -10,7 +10,7 @@ public interface ThirdInterfaceRecordsMapper {
 
     int deleteByExample(ThirdInterfaceRecordsExample example);
 
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(Integer id);
 
     int insert(ThirdInterfaceRecords record);
 
@@ -18,7 +18,7 @@ public interface ThirdInterfaceRecordsMapper {
 
     List<ThirdInterfaceRecords> selectByExample(ThirdInterfaceRecordsExample example);
 
-    ThirdInterfaceRecords selectByPrimaryKey(Long id);
+    ThirdInterfaceRecords selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") ThirdInterfaceRecords record, @Param("example") ThirdInterfaceRecordsExample example);
 

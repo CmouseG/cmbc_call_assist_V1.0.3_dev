@@ -144,9 +144,9 @@ zuul:
     guiyu-sysoperalog-web:
       path: /log/**
       service-id: guiyu-sysoperalog-web
-    guiyu-thirdapi-web:
+    guiyu-thirdApi-web:
       path: /api/**
-      service-id: guiyu-thirdapi-web
+      service-id: guiyu-thirdApi-web
     guiyu-callcenter-toagentserver:
       path: /toagent/**
       service-id: guiyu-callcenter-toagentserver

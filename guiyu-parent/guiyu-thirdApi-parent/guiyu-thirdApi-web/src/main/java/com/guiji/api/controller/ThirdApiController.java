@@ -123,7 +123,10 @@ public class ThirdApiController {
 			@RequestParam(required = true, name = "secret_key") String secret_key) {
 		JSONObject jsonObject = new JSONObject();
 		ReturnData<String> apiLogin2 = login.apiLogin(access_key, secret_key);
-		jsonObject.put("token", apiLogin2.getBody());
+		if (!apiLogin2.success) {
+			jsonObject.put("msg", apiLogin2.getMsg());
+		} else
+			jsonObject.put("token", apiLogin2.getBody());
 		return jsonObject;
 	}
 

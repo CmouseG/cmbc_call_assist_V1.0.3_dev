@@ -10,9 +10,11 @@ import com.netflix.zuul.context.RequestContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -122,5 +124,17 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         }
         return errorMsg;
     }
+
+    @Override
+    protected boolean sendChallenge(ServletRequest request, ServletResponse response) {
+        logger.debug("Authentication required: sending 401 Authentication challenge response.");
+
+        HttpServletResponse httpResponse = WebUtils.toHttp(response);
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        String authcHeader = getAuthcScheme() + " realm=\"" + getApplicationName() + "\"";
+        httpResponse.setHeader(AUTHENTICATE_HEADER, authcHeader);
+        return false;
+    }
+
 }
 

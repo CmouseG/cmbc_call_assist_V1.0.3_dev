@@ -15,6 +15,8 @@ public class TaskReq
 	private Integer smsTemplateId;
 	private String smsContent;
 	private Date sendTime;
+	private long userId;
+	private String companyName;
 	
 	public TaskReq(String taskName,Integer sendType,List<String> phoneList,String tunnelName,Integer smsTemplateId,String smsContent)
 	{

@@ -41,5 +41,10 @@
 		SELECT * FROM sms_task 
 		WHERE send_date = DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i')
 	</select>
+	
+	<update id="updateSendStatusById">
+		UPDATE sms_task SET send_status = #{sendStatus,jdbcType=INTEGER}
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
 
 </mapper>

@@ -2,8 +2,6 @@ package com.guiji.sms.vo;
 
 import java.util.List;
 
-import com.guiji.sms.dao.entity.SmsTunnel;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,5 +13,5 @@ public class TunnelListRspVO
 	@ApiModelProperty(value="总条数")
 	private int totalCount;
 	@ApiModelProperty(value="通道列表")
-	private List<SmsTunnel> smsTunnelList;
+	private List<SmsTunnelVO> smsTunnelVOList;
 }

@@ -1,5 +1,6 @@
 package com.guiji.auth.api;
 
+import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IApiLogin {
 	
 	@GetMapping("getUserByAccess")
-	SysUser getUserByAccess(@RequestParam("accessKey")String accessKey, @RequestParam("secretKey")String secretKey);
+	Result.ReturnData<SysUser> getUserByAccess(@RequestParam("accessKey")String accessKey, @RequestParam("secretKey")String secretKey);
 	
 }

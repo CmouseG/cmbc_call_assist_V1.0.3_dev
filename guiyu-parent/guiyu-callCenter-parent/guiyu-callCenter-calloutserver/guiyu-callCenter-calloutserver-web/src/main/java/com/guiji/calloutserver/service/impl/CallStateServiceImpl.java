@@ -44,7 +44,8 @@ public class CallStateServiceImpl implements CallStateService {
         log.info("---开始，将状态没有回调的通话记录,修改状态,回调---");
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
-        criteria.andCallStateLessThanOrEqualTo(ECallState.agent_answer.ordinal());
+        //转人工对话可能会比较长，不包括转人工的状态
+        criteria.andCallStateLessThanOrEqualTo(ECallState.answer.ordinal());
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MINUTE, -6);

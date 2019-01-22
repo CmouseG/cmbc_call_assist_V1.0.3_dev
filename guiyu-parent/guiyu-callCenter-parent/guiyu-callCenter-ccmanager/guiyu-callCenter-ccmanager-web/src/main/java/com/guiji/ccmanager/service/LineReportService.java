@@ -2,7 +2,9 @@ package com.guiji.ccmanager.service;
 
 
 import com.guiji.callcenter.dao.entity.ReportLineCode;
+import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +16,7 @@ public interface LineReportService {
 
     void statisticsReportLineCode() throws ParseException;
 
-    List<Map> getLineMonitorReport(Integer lineId, Long userId, Date startTime);
+    List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime);
 
     Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime);
 }

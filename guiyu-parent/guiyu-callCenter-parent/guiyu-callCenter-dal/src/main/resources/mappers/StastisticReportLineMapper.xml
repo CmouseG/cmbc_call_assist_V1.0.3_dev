@@ -3,54 +3,52 @@
 <mapper namespace="com.guiji.callcenter.dao.StastisticReportLineMapper" >
 
 
-  <select id="getLineMonitorReportByLineId" resultType="java.util.Map">
+  <select id="getLineMonitorReportByLineId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
 
-    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,b.rate,a.history,
-    '一般' as status,c.sip_ip,c.sip_port
-    from
+    SELECT a.lineId,IFNULL(a.answerNum,0) AS answerNum,IFNULL(a.totalNum,0) AS totalNum,
+    IFNULL(a.low,0) AS low,IFNULL(a.high,0) AS high,IFNULL(a.history,0) AS history,
+    IFNULL(b.rate,0) AS rate
+    FROM
     (
-      select
-      line_id as lineId,
-      sum(answer_num) as answerNum,
-      sum(total_num) as totalNum,
-      min(rate) as low,
-      max(rate) as high,
-      avg(rate) as history,
-      max(create_time) as createTime
-      from
-      report_line_status
-      where
-      line_id = #{lineId}
-      and create_time >=#{startTime}
-      group by line_id
-    )a,report_line_status b,line_info c
-    where a.lineId = b.line_id and a.createTime = b.create_time and a.lineId = c.line_id
+    SELECT
+    m.line_id AS lineId,
+    SUM(m.answer_num) AS answerNum,
+    SUM(m.total_num) AS totalNum,
+    MIN(m.rate) AS low,
+    MAX(m.rate) AS high,
+    AVG(m.rate) AS history,
+    MAX(m.create_time) AS createTime
+    FROM report_line_status m
+    WHERE m.create_time >=#{startTime}
+    AND m.line_id = #{lineId}
+    )a LEFT JOIN report_line_status b ON a.lineId = b.line_id AND a.createTime = b.create_time
   </select>
 
 
-  <select id="getLineMonitorReportByUserId" resultType="java.util.Map">
+  <select id="getLineMonitorReportByUserId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
 
-    select a.lineId,a.answerNum,a.totalNum,a.low,a.high,a.history,
-    b.rate,'一般' as status,c.sip_ip,c.sip_port
-    from
+    SELECT a.lineId,IFNULL(a.answerNum,0) AS answerNum,IFNULL(a.totalNum,0) AS totalNum,
+    IFNULL(a.low,0) AS low,IFNULL(a.high,0) AS high,IFNULL(a.history,0) AS history,
+    IFNULL(b.rate,0) AS rate
+    FROM
     (
-    select
-    m.line_id as lineId,
-    sum(m.answer_num) as answerNum,
-    sum(m.total_num) as totalNum,
-    min(m.rate) as low,
-    max(m.rate) as high,
-    avg(m.rate) as history,
-    max(m.create_time) as createTime
-    from
-    report_line_status m,line_info n
-    where
-    m.line_id = n.line_id
-    and n.customer_id = #{userId}
-    and m.create_time >=#{startTime}
-    group by m.line_id
-    )a,report_line_status b,line_info c
-    where a.lineId = b.line_id and a.createTime = b.create_time and a.lineId = c.line_id
+    SELECT
+    m.line_id AS lineId,
+    SUM(m.answer_num) AS answerNum,
+    SUM(m.total_num) AS totalNum,
+    MIN(m.rate) AS low,
+    MAX(m.rate) AS high,
+    AVG(m.rate) AS history,
+    MAX(m.create_time) AS createTime
+    FROM report_line_status m
+    WHERE m.create_time >=#{startTime}
+    AND m.line_id IN
+    <foreach collection="lineIdList" item="id" index="index" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+    GROUP BY m.line_id
+    )a LEFT JOIN report_line_status b ON a.lineId = b.line_id AND a.createTime = b.create_time
+
   </select>
 
   <select id="getLineHangupCodeOverView" resultType="java.util.Map">

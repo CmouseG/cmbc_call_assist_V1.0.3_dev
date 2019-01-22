@@ -4,13 +4,16 @@ import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.ReportLineStatusMapper;
 import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.entity.*;
+import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.ccmanager.service.LineReportService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +30,6 @@ public class LineReportServiceImpl implements LineReportService {
     ReportLineStatusMapper reportLineStatusMapper;
     @Autowired
     LineInfoMapper lineInfoMapper;
-
 
     @Override
     @Transactional
@@ -85,12 +87,86 @@ public class LineReportServiceImpl implements LineReportService {
     }
 
 
-    public List<Map> getLineMonitorReport(Integer lineId, Long userId, Date startTime) {
+    public List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime) {
 
         if (lineId != null) {
-            return stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime);
+
+            LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(lineId);
+            LineMonitorRreport resultLineMonitorRreport = new LineMonitorRreport();
+            resultLineMonitorRreport.setLineId(lineInfo.getLineId());
+            resultLineMonitorRreport.setSip_ip(lineInfo.getSipIp());
+            resultLineMonitorRreport.setSip_port(lineInfo.getSipPort());
+            resultLineMonitorRreport.setAnswerNum(0);
+            resultLineMonitorRreport.setTotalNum(0);
+            resultLineMonitorRreport.setHigh(0f);
+            resultLineMonitorRreport.setLow(0f);
+            resultLineMonitorRreport.setRate(0f);
+            resultLineMonitorRreport.setHistory(0f);
+
+            List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime);
+            if (reportList != null && reportList.size() > 0) {
+                LineMonitorRreport report = reportList.get(0);
+                resultLineMonitorRreport.setAnswerNum(report.getAnswerNum());
+                resultLineMonitorRreport.setTotalNum(report.getTotalNum());
+                resultLineMonitorRreport.setHigh(report.getHigh());
+                resultLineMonitorRreport.setLow(report.getLow());
+                resultLineMonitorRreport.setRate(report.getRate());
+                resultLineMonitorRreport.setHistory(report.getHistory());
+
+            }
+            List<LineMonitorRreport> resultList = new ArrayList<>();
+            resultList.add(resultLineMonitorRreport);
+
+            return resultList;
         } else {
-            return stastisticReportLineMapper.getLineMonitorReportByUserId(userId, startTime);
+            // shardingjdbc 不支持一步到位
+            //查询所有的线路
+            LineInfoExample example = new LineInfoExample();
+            example.createCriteria().andCustomerIdEqualTo(userId.intValue());
+            List<LineInfo> lineList = lineInfoMapper.selectByExample(example);
+            if (lineList != null && lineList.size() > 0) {
+
+                List<Integer> lineIdList = new ArrayList();
+                for (LineInfo lineInfo : lineList) {
+                    lineIdList.add(lineInfo.getLineId());
+                }
+
+                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(lineIdList, startTime);
+
+                List<LineMonitorRreport> resultList = new ArrayList<>();
+
+                for (LineInfo lineInfo : lineList) {
+                    LineMonitorRreport lineMonitorRreport = new LineMonitorRreport();
+                    lineMonitorRreport.setLineId(lineInfo.getLineId());
+                    lineMonitorRreport.setSip_ip(lineInfo.getSipIp());
+                    lineMonitorRreport.setSip_port(lineInfo.getSipPort());
+                    lineMonitorRreport.setAnswerNum(0);
+                    lineMonitorRreport.setTotalNum(0);
+                    lineMonitorRreport.setHigh(0f);
+                    lineMonitorRreport.setLow(0f);
+                    lineMonitorRreport.setRate(0f);
+                    lineMonitorRreport.setHistory(0f);
+
+                    if (reportList != null && reportList.size() > 0) {
+                        for (LineMonitorRreport report : reportList) {
+                            if (report.getLineId().intValue() == lineInfo.getLineId().intValue()) {
+                                lineMonitorRreport.setAnswerNum(report.getAnswerNum());
+                                lineMonitorRreport.setTotalNum(report.getTotalNum());
+                                lineMonitorRreport.setHigh(report.getHigh());
+                                lineMonitorRreport.setLow(report.getLow());
+                                lineMonitorRreport.setRate(report.getRate());
+                                lineMonitorRreport.setHistory(report.getHistory());
+                            }
+                        }
+                    }
+                    resultList.add(lineMonitorRreport);
+                }
+                return resultList;
+
+            }
+
+
+            return null;
         }
     }
 

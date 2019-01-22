@@ -1,8 +1,11 @@
 package com.guiji.ccmanager.controller;
 
+import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.ccmanager.api.IReportLine;
+import com.guiji.ccmanager.entity.LineMonitorRreportVO;
 import com.guiji.ccmanager.service.LineReportService;
 import com.guiji.component.result.Result;
+import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,13 +21,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Validated
@@ -45,7 +46,7 @@ public class LineReportController implements IReportLine {
     @ApiOperation(value = "线路监控信息")
     @GetMapping(value = "getLineMonitorReport")
     public Result.ReturnData getLineMonitorReport(String lineId, String dimension,
-                                                  String orgCode,  Long userId) {
+                                                  String orgCode,  Long userId){
 
         if(StringUtils.isBlank(dimension)){
             dimension = "now";
@@ -65,9 +66,32 @@ public class LineReportController implements IReportLine {
             start  = c.getTime();
         }
 
-        List<Map> list = lineReportService.getLineMonitorReport(StringUtils.isNotBlank(lineId) ? Integer.valueOf(lineId) : null,userId,start);
+        List<LineMonitorRreport> list = lineReportService.getLineMonitorReport(StringUtils.isNotBlank(lineId) ? Integer.valueOf(lineId) : null, userId, start);
+        List<LineMonitorRreportVO> listVO = new ArrayList();
+        if (list != null && list.size() > 0) {
+            for (LineMonitorRreport lineMonitorRreport : list) {
+                LineMonitorRreportVO lineMonitorRreportVO = new LineMonitorRreportVO();
+                BeanUtil.copyProperties(lineMonitorRreport, lineMonitorRreportVO);
 
-        return Result.ok(list);
+                float history = lineMonitorRreport.getHistory();
+                float rate = lineMonitorRreport.getRate();
+                String status;
+                if (rate >= history * 1.15) {
+                    status = "良好";
+                } else if (rate < history * 1.15 && rate >= history * 0.75) {
+                    status = "一般";
+                } else if (lineMonitorRreport.getTotalNum() == 0) {
+                    status = "一般";
+                } else {
+                    status = "预警";
+                }
+
+                lineMonitorRreportVO.setStatus(status);
+                listVO.add(lineMonitorRreportVO);
+            }
+        }
+
+        return Result.ok(listVO);
     }
 
 

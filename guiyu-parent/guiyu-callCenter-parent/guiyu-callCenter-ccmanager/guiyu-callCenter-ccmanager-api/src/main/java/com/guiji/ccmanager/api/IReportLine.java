@@ -8,6 +8,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
 @FeignClient("guiyu-callcenter-ccmanager")
@@ -16,7 +17,7 @@ public interface IReportLine {
     @ApiOperation(value = "线路监控信息")
     @GetMapping(value = "getLineMonitorReport")
     Result.ReturnData getLineMonitorReport(@RequestParam(value="lineId") String lineId,@RequestParam(value="dimension") String dimension,
-                                                  @RequestParam(value="orgCode")  String orgCode, @RequestParam(value="userId") Long userId);
+                                                  @RequestParam(value="orgCode")  String orgCode, @RequestParam(value="userId") Long userId) throws InvocationTargetException, IllegalAccessException;
 
 
     @ApiOperation(value = "线路错误信息")

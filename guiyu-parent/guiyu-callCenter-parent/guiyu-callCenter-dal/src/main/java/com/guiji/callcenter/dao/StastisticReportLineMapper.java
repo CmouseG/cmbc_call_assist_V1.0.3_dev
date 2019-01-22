@@ -3,6 +3,7 @@ package com.guiji.callcenter.dao;
 import com.guiji.callcenter.dao.entity.ReportCallDay;
 import com.guiji.callcenter.dao.entity.ReportLineCode;
 import com.guiji.callcenter.dao.entity.ReportLineStatus;
+import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
@@ -15,9 +16,9 @@ public interface StastisticReportLineMapper {
 
     void insertReportLineCodeBatch(List<ReportLineCode> list);
 
-    List<Map> getLineMonitorReportByLineId(@Param("lineId") Integer lineId, @Param("startTime")  Date startTime);
+    List<LineMonitorRreport> getLineMonitorReportByLineId(@Param("lineId") Integer lineId, @Param("startTime")  Date startTime);
 
-    List<Map> getLineMonitorReportByUserId(@Param("userId") Long userId,@Param("startTime")  Date startTime);
+    List<LineMonitorRreport> getLineMonitorReportByUserId(@Param("lineIdList") List lineIdList,@Param("startTime")  Date startTime);
 
     List<Map> getLineHangupCodeOverView(@Param("lineId") Integer lineId,@Param("startTime") Date startTime,@Param("enTime") Date enTime);
 

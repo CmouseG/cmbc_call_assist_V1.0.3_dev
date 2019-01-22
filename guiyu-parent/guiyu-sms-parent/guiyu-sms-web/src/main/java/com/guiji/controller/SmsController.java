@@ -60,7 +60,6 @@ public class SmsController implements ISms
 	/**
 	 * 获取短信平台列表
 	 */
-	@Override
 	@PostMapping(value = "getPlatformList")
 	public ReturnData<PlatformListRspVO> getPlatformList(@RequestBody PlatformListReqVO platformListReq)
 	{
@@ -80,7 +79,6 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信平台
 	 */
-	@Override
 	@PostMapping(value = "addPlatform")
 	public ReturnData<String> addPlatform(@RequestBody PlatformReqVO platformReq, @RequestHeader Long userId)
 	{
@@ -99,7 +97,6 @@ public class SmsController implements ISms
 	/**
 	 *获取短信通道列表
 	 */
-	@Override
 	@PostMapping(value = "getTunnelList")
 	public ReturnData<TunnelListRspVO> getTunnelList(@RequestBody TunnelListReqVO tunnelListReq)
 	{
@@ -119,7 +116,6 @@ public class SmsController implements ISms
 	/**
 	 * 获取短信平台名称列表及参数
 	 */
-	@Override
 	@GetMapping(value = "getPlatformNameListWithParams")
 	public ReturnData<List<PlatformRspVO>> getPlatformNameListWithParams()
 	{
@@ -139,7 +135,6 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信通道
 	 */
-	@Override
 	@PostMapping(value = "addTunnel")
 	public ReturnData<String> addTunnel(@RequestBody TunnelReqVO tunnelReq, @RequestHeader Long userId)
 	{
@@ -158,7 +153,6 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信通道
 	 */
-	@Override
 	@GetMapping(value = "delTunnel")
 	public ReturnData<String> delTunnel(Integer id)
 	{
@@ -177,7 +171,6 @@ public class SmsController implements ISms
 	/**
 	 * 获取短信配置列表
 	 */
-	@Override
 	@PostMapping(value = "getConfigList")
 	public ReturnData<ConfigListRspVO> getConfigList(@RequestBody ConfigListReqVO configListReq)
 	{
@@ -197,7 +190,6 @@ public class SmsController implements ISms
 	/**
 	 * 获取短信通道名称列表
 	 */
-	@Override
 	@GetMapping(value = "getTunnelNameList")
 	public ReturnData<List<String>> getTunnelNameList()
 	{
@@ -217,7 +209,6 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信配置
 	 */
-	@Override
 	@PostMapping(value = "addConfig")
 	public ReturnData<String> addConfig(@RequestBody ConfigReqVO configReq, @RequestHeader Long userId)
 	{
@@ -236,7 +227,6 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信配置
 	 */
-	@Override
 	@GetMapping(value = "delConfig")
 	public ReturnData<String> delConfig(Integer id)
 	{
@@ -255,7 +245,6 @@ public class SmsController implements ISms
 	/**
 	 * 编辑短信配置
 	 */
-	@Override
 	@PostMapping(value = "updateConfig")
 	public ReturnData<String> updateConfig(@RequestBody ConfigReqVO configReq, @RequestHeader Long userId)
 	{
@@ -274,13 +263,12 @@ public class SmsController implements ISms
 	/**
 	 * 短信配置一键停止
 	 */
-	@Override
 	@GetMapping(value = "stopConfig")
 	public ReturnData<String> stopConfig(Integer id)
 	{
 		try
 		{
-			logger.info("一键停止...");
+			logger.info("短信配置一键停止...");
 			configService.stopConfig(id);
 			
 		} catch (Exception e){
@@ -293,13 +281,12 @@ public class SmsController implements ISms
 	/**
 	 * 短信配置审核
 	 */
-	@Override
 	@GetMapping(value = "auditingConfig")
 	public ReturnData<String> auditingConfig(Integer id)
 	{
 		try
 		{
-			logger.info("一键停止...");
+			logger.info("短信配置审核...");
 			configService.auditingConfig(id);
 			
 		} catch (Exception e){
@@ -312,14 +299,13 @@ public class SmsController implements ISms
 	/**
 	 * 获取短信任务列表
 	 */
-	@Override
 	@PostMapping(value = "getTaskList")
 	public ReturnData<TaskListRspVO> getTaskList(@RequestBody TaskListReqVO taskListReq)
 	{
 		TaskListRspVO taskListRsp = new TaskListRspVO();
 		try
 		{
-			logger.info("获取任务列表...");
+			logger.info("获取短信任务列表...");
 			taskListRsp = taskService.getTaskList(taskListReq);
 			
 		} catch (Exception e){
@@ -332,13 +318,12 @@ public class SmsController implements ISms
 	/**
 	 * 短信任务一键停止
 	 */
-	@Override
 	@GetMapping(value = "stopTask")
 	public ReturnData<String> stopTask(Integer id)
 	{
 		try
 		{
-			logger.info("一键停止...");
+			logger.info("短信任务一键停止...");
 			taskService.stopTask(id);
 			
 		} catch (Exception e){
@@ -351,7 +336,6 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信任务
 	 */
-	@Override
 	@GetMapping(value = "delTask")
 	public ReturnData<String> delTask(Integer id)
 	{
@@ -370,13 +354,12 @@ public class SmsController implements ISms
 	/**
 	 * 审核短信任务
 	 */
-	@Override
 	@GetMapping(value = "auditingTask")
 	public ReturnData<String> auditingTask(Integer id)
 	{
 		try
 		{
-			logger.info("删除短信任务...");
+			logger.info("审核短信任务...");
 			taskService.auditingTask(id);
 			
 		} catch (Exception e){
@@ -389,7 +372,6 @@ public class SmsController implements ISms
 	/**
 	 * 获取短信任务详情列表
 	 */
-	@Override
 	@PostMapping(value = "getTaskDetailList")
 	public ReturnData<TaskDetailListRspVO> getTaskDetailList(@RequestBody TaskDetailListReqVO taskDetailListReq)
 	{
@@ -409,7 +391,6 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信任务详情
 	 */
-	@Override
 	@GetMapping(value = "delTaskDetail")
 	public ReturnData<String> delTaskDetail(Integer id)
 	{
@@ -428,7 +409,6 @@ public class SmsController implements ISms
 	/**
 	 * 新增/编辑短信任务
 	 */
-	@Override
 	@PostMapping(value = "addOrUpdateTask")
 	public ReturnData<String> addOrUpdateTask(TaskReqVO taskReqVO, @RequestHeader Long userId)
 	{

@@ -102,6 +102,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								try {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
 									callBean.setTempId(dispatchRedis.getRobot());
+									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 								} catch (IllegalAccessException e) {
 									updateStatusSync(dispatchRedis.getPlanUuid());
 									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);

@@ -46,7 +46,7 @@ public class SavePlatformAndTunnelHandler implements ApplicationRunner
 		List<SmsTunnel> tunnelList = tunnelMapper.selectByExampleWithBLOBs(example2);
 		for(SmsTunnel tunnel : tunnelList)
 		{
-			redisUtil.set(tunnel.getPlatformName() + "-" + tunnel.getTunnelName(), tunnel);
+			redisUtil.set(tunnel.getTunnelName(), tunnel);
 		}
 	}
 

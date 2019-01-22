@@ -287,6 +287,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             for (CallOutPlan callOutPlan : listPlan) {
                 CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
                 BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
+                callPlanDetailRecordVO.setCallId(callOutPlan.getCallId().toString());
                 if (detailList != null && detailList.size() > 0) {
                     for (CallOutDetailVO callOutDetailVO : detailList) {
                         if (callOutDetailVO.getCallId().compareTo(callOutPlan.getCallId())==0) {
@@ -304,7 +305,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 if (recordList != null && recordList.size() > 0) {
                     for (CallOutRecord callOutRecord : recordList) {
-                        if (callPlanDetailRecordVO.getCallId().compareTo(callOutRecord.getCallId())==0) {
+                        if (callPlanDetailRecordVO.getCallId().equals(callOutRecord.getCallId().toString())) {
                             callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());
                         }
                     }

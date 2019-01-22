@@ -71,4 +71,11 @@ public class Constant {
 	public static final Integer THIRDAPISUCCESS = 1;
 	public static final Integer THIRDAPIFAILURE =0;
 
+	
+	public static final Integer IMPORT_DATA_TYPE_PAGE=0;
+	public static final Integer IMPORT_DATA_TYPE_API=1;
+	
+	
+
+	
 }

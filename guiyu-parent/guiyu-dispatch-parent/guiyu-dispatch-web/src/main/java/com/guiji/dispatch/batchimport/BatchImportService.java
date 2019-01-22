@@ -95,6 +95,9 @@ public class BatchImportService implements IBatchImportService {
 		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
 		records.setErrorLine(errorLine);
+		records.setDataType(Constant.IMPORT_DATA_TYPE_PAGE);
+		records.setBatchId(vo.getBatchId());
+		records.setBatchName(vo.getBatchName());
 		fileRecordErrorService.save(records);
 	}
 
@@ -110,6 +113,9 @@ public class BatchImportService implements IBatchImportService {
 		records.setPhone(vo.getPhone());
 		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
+		records.setDataType(Constant.IMPORT_DATA_TYPE_PAGE);
+		records.setBatchId(vo.getBatchId());
+		records.setBatchName(vo.getBatchName());
 		fileRecordErrorService.save(records);
 	}
 

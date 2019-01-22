@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FileErrorRecordsExample {
+public class ThirdImportErrorExample {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -15,7 +15,7 @@ public class FileErrorRecordsExample {
 
     protected Integer limitEnd;
 
-    public FileErrorRecordsExample() {
+    public ThirdImportErrorExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -255,146 +255,6 @@ public class FileErrorRecordsExample {
             return (Criteria) this;
         }
 
-        public Criteria andAttachIsNull() {
-            addCriterion("attach is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachIsNotNull() {
-            addCriterion("attach is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachEqualTo(String value) {
-            addCriterion("attach =", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachNotEqualTo(String value) {
-            addCriterion("attach <>", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachGreaterThan(String value) {
-            addCriterion("attach >", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachGreaterThanOrEqualTo(String value) {
-            addCriterion("attach >=", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachLessThan(String value) {
-            addCriterion("attach <", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachLessThanOrEqualTo(String value) {
-            addCriterion("attach <=", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachLike(String value) {
-            addCriterion("attach like", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachNotLike(String value) {
-            addCriterion("attach not like", value, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachIn(List<String> values) {
-            addCriterion("attach in", values, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachNotIn(List<String> values) {
-            addCriterion("attach not in", values, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachBetween(String value1, String value2) {
-            addCriterion("attach between", value1, value2, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andAttachNotBetween(String value1, String value2) {
-            addCriterion("attach not between", value1, value2, "attach");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsIsNull() {
-            addCriterion("params is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsIsNotNull() {
-            addCriterion("params is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsEqualTo(String value) {
-            addCriterion("params =", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsNotEqualTo(String value) {
-            addCriterion("params <>", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsGreaterThan(String value) {
-            addCriterion("params >", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsGreaterThanOrEqualTo(String value) {
-            addCriterion("params >=", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsLessThan(String value) {
-            addCriterion("params <", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsLessThanOrEqualTo(String value) {
-            addCriterion("params <=", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsLike(String value) {
-            addCriterion("params like", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsNotLike(String value) {
-            addCriterion("params not like", value, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsIn(List<String> values) {
-            addCriterion("params in", values, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsNotIn(List<String> values) {
-            addCriterion("params not in", values, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsBetween(String value1, String value2) {
-            addCriterion("params between", value1, value2, "params");
-            return (Criteria) this;
-        }
-
-        public Criteria andParamsNotBetween(String value1, String value2) {
-            addCriterion("params not between", value1, value2, "params");
-            return (Criteria) this;
-        }
-
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -455,66 +315,6 @@ public class FileErrorRecordsExample {
             return (Criteria) this;
         }
 
-        public Criteria andFileRecordsIdIsNull() {
-            addCriterion("file_records_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdIsNotNull() {
-            addCriterion("file_records_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdEqualTo(Long value) {
-            addCriterion("file_records_id =", value, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdNotEqualTo(Long value) {
-            addCriterion("file_records_id <>", value, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdGreaterThan(Long value) {
-            addCriterion("file_records_id >", value, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("file_records_id >=", value, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdLessThan(Long value) {
-            addCriterion("file_records_id <", value, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdLessThanOrEqualTo(Long value) {
-            addCriterion("file_records_id <=", value, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdIn(List<Long> values) {
-            addCriterion("file_records_id in", values, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdNotIn(List<Long> values) {
-            addCriterion("file_records_id not in", values, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdBetween(Long value1, Long value2) {
-            addCriterion("file_records_id between", value1, value2, "fileRecordsId");
-            return (Criteria) this;
-        }
-
-        public Criteria andFileRecordsIdNotBetween(Long value1, Long value2) {
-            addCriterion("file_records_id not between", value1, value2, "fileRecordsId");
-            return (Criteria) this;
-        }
-
         public Criteria andErrorTypeIsNull() {
             addCriterion("error_type is null");
             return (Criteria) this;
@@ -572,126 +372,6 @@ public class FileErrorRecordsExample {
 
         public Criteria andErrorTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("error_type not between", value1, value2, "errorType");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineIsNull() {
-            addCriterion("error_line is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineIsNotNull() {
-            addCriterion("error_line is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineEqualTo(Integer value) {
-            addCriterion("error_line =", value, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineNotEqualTo(Integer value) {
-            addCriterion("error_line <>", value, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineGreaterThan(Integer value) {
-            addCriterion("error_line >", value, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineGreaterThanOrEqualTo(Integer value) {
-            addCriterion("error_line >=", value, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineLessThan(Integer value) {
-            addCriterion("error_line <", value, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineLessThanOrEqualTo(Integer value) {
-            addCriterion("error_line <=", value, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineIn(List<Integer> values) {
-            addCriterion("error_line in", values, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineNotIn(List<Integer> values) {
-            addCriterion("error_line not in", values, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineBetween(Integer value1, Integer value2) {
-            addCriterion("error_line between", value1, value2, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andErrorLineNotBetween(Integer value1, Integer value2) {
-            addCriterion("error_line not between", value1, value2, "errorLine");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeIsNull() {
-            addCriterion("data_type is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeIsNotNull() {
-            addCriterion("data_type is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeEqualTo(Integer value) {
-            addCriterion("data_type =", value, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeNotEqualTo(Integer value) {
-            addCriterion("data_type <>", value, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeGreaterThan(Integer value) {
-            addCriterion("data_type >", value, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("data_type >=", value, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeLessThan(Integer value) {
-            addCriterion("data_type <", value, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("data_type <=", value, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeIn(List<Integer> values) {
-            addCriterion("data_type in", values, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeNotIn(List<Integer> values) {
-            addCriterion("data_type not in", values, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeBetween(Integer value1, Integer value2) {
-            addCriterion("data_type between", value1, value2, "dataType");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("data_type not between", value1, value2, "dataType");
             return (Criteria) this;
         }
 
@@ -822,6 +502,76 @@ public class FileErrorRecordsExample {
 
         public Criteria andBatchNameNotBetween(String value1, String value2) {
             addCriterion("batch_name not between", value1, value2, "batchName");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsIsNull() {
+            addCriterion("params is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsIsNotNull() {
+            addCriterion("params is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsEqualTo(String value) {
+            addCriterion("params =", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotEqualTo(String value) {
+            addCriterion("params <>", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsGreaterThan(String value) {
+            addCriterion("params >", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsGreaterThanOrEqualTo(String value) {
+            addCriterion("params >=", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsLessThan(String value) {
+            addCriterion("params <", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsLessThanOrEqualTo(String value) {
+            addCriterion("params <=", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsLike(String value) {
+            addCriterion("params like", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotLike(String value) {
+            addCriterion("params not like", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsIn(List<String> values) {
+            addCriterion("params in", values, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotIn(List<String> values) {
+            addCriterion("params not in", values, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsBetween(String value1, String value2) {
+            addCriterion("params between", value1, value2, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotBetween(String value1, String value2) {
+            addCriterion("params not between", value1, value2, "params");
             return (Criteria) this;
         }
     }

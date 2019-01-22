@@ -1,5 +1,5 @@
 server:
-  port: 18026
+  port: 18017
 
 spring:
   application:
@@ -63,7 +63,7 @@ xxl:
       addresses: http://192.168.1.78:18016/xxl-job-admin
     executor:
       ip:
-      port: 9026
+      port: 9017
       logpath: /home/logs/guiyu-ai-web
       logretentiondays: -1
     accessToken:

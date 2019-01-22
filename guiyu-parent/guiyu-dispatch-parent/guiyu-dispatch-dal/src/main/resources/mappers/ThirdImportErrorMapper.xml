@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.dispatch.dao.FileErrorRecordsMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.FileErrorRecords" >
+<mapper namespace="com.guiji.dispatch.dao.ThirdImportErrorMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.ThirdImportError" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="phone" property="phone" jdbcType="VARCHAR" />
-    <result column="attach" property="attach" jdbcType="VARCHAR" />
-    <result column="params" property="params" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="file_records_id" property="fileRecordsId" jdbcType="BIGINT" />
     <result column="error_type" property="errorType" jdbcType="INTEGER" />
-    <result column="error_line" property="errorLine" jdbcType="INTEGER" />
-    <result column="data_type" property="dataType" jdbcType="INTEGER" />
+    <result column="batch_id" property="batchId" jdbcType="INTEGER" />
+    <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
+    <result column="params" property="params" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,17 +69,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, phone, attach, params, create_time, file_records_id, error_type, error_line, 
-    data_type
+    id, phone, create_time, error_type, batch_id, batch_name, params
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecordsExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.ThirdImportErrorExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from file_error_records
+    from third_import_error
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -95,31 +92,29 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from file_error_records
+    from third_import_error
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from file_error_records
+    delete from third_import_error
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecordsExample" >
-    delete from file_error_records
+  <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.ThirdImportErrorExample" >
+    delete from third_import_error
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
-    insert into file_error_records (id, phone, attach, 
-      params, create_time, file_records_id, 
-      error_type, error_line, data_type
-      )
-    values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR}, 
-      #{params,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{fileRecordsId,jdbcType=BIGINT}, 
-      #{errorType,jdbcType=INTEGER}, #{errorLine,jdbcType=INTEGER}, #{dataType,jdbcType=INTEGER}
-      )
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.ThirdImportError" >
+    insert into third_import_error (id, phone, create_time, 
+      error_type, batch_id, batch_name, 
+      params)
+    values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{errorType,jdbcType=INTEGER}, #{batchId,jdbcType=INTEGER}, #{batchName,jdbcType=VARCHAR}, 
+      #{params,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
-    insert into file_error_records
+  <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.ThirdImportError" >
+    insert into third_import_error
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -127,26 +122,20 @@
       <if test="phone != null" >
         phone,
       </if>
-      <if test="attach != null" >
-        attach,
-      </if>
-      <if test="params != null" >
-        params,
-      </if>
       <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="fileRecordsId != null" >
-        file_records_id,
       </if>
       <if test="errorType != null" >
         error_type,
       </if>
-      <if test="errorLine != null" >
-        error_line,
+      <if test="batchId != null" >
+        batch_id,
       </if>
-      <if test="dataType != null" >
-        data_type,
+      <if test="batchName != null" >
+        batch_name,
+      </if>
+      <if test="params != null" >
+        params,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -156,37 +145,31 @@
       <if test="phone != null" >
         #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="attach != null" >
-        #{attach,jdbcType=VARCHAR},
-      </if>
-      <if test="params != null" >
-        #{params,jdbcType=VARCHAR},
-      </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="fileRecordsId != null" >
-        #{fileRecordsId,jdbcType=BIGINT},
       </if>
       <if test="errorType != null" >
         #{errorType,jdbcType=INTEGER},
       </if>
-      <if test="errorLine != null" >
-        #{errorLine,jdbcType=INTEGER},
+      <if test="batchId != null" >
+        #{batchId,jdbcType=INTEGER},
       </if>
-      <if test="dataType != null" >
-        #{dataType,jdbcType=INTEGER},
+      <if test="batchName != null" >
+        #{batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="params != null" >
+        #{params,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecordsExample" resultType="java.lang.Integer" >
-    select count(*) from file_error_records
+  <select id="countByExample" parameterType="com.guiji.dispatch.dao.entity.ThirdImportErrorExample" resultType="java.lang.Integer" >
+    select count(*) from third_import_error
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update file_error_records
+    update third_import_error
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=BIGINT},
@@ -194,26 +177,20 @@
       <if test="record.phone != null" >
         phone = #{record.phone,jdbcType=VARCHAR},
       </if>
-      <if test="record.attach != null" >
-        attach = #{record.attach,jdbcType=VARCHAR},
-      </if>
-      <if test="record.params != null" >
-        params = #{record.params,jdbcType=VARCHAR},
-      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.fileRecordsId != null" >
-        file_records_id = #{record.fileRecordsId,jdbcType=BIGINT},
       </if>
       <if test="record.errorType != null" >
         error_type = #{record.errorType,jdbcType=INTEGER},
       </if>
-      <if test="record.errorLine != null" >
-        error_line = #{record.errorLine,jdbcType=INTEGER},
+      <if test="record.batchId != null" >
+        batch_id = #{record.batchId,jdbcType=INTEGER},
       </if>
-      <if test="record.dataType != null" >
-        data_type = #{record.dataType,jdbcType=INTEGER},
+      <if test="record.batchName != null" >
+        batch_name = #{record.batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.params != null" >
+        params = #{record.params,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -221,60 +198,50 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update file_error_records
+    update third_import_error
     set id = #{record.id,jdbcType=BIGINT},
       phone = #{record.phone,jdbcType=VARCHAR},
-      attach = #{record.attach,jdbcType=VARCHAR},
-      params = #{record.params,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      file_records_id = #{record.fileRecordsId,jdbcType=BIGINT},
       error_type = #{record.errorType,jdbcType=INTEGER},
-      error_line = #{record.errorLine,jdbcType=INTEGER},
-      data_type = #{record.dataType,jdbcType=INTEGER}
+      batch_id = #{record.batchId,jdbcType=INTEGER},
+      batch_name = #{record.batchName,jdbcType=VARCHAR},
+      params = #{record.params,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
-    update file_error_records
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.ThirdImportError" >
+    update third_import_error
     <set >
       <if test="phone != null" >
         phone = #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="attach != null" >
-        attach = #{attach,jdbcType=VARCHAR},
-      </if>
-      <if test="params != null" >
-        params = #{params,jdbcType=VARCHAR},
-      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="fileRecordsId != null" >
-        file_records_id = #{fileRecordsId,jdbcType=BIGINT},
       </if>
       <if test="errorType != null" >
         error_type = #{errorType,jdbcType=INTEGER},
       </if>
-      <if test="errorLine != null" >
-        error_line = #{errorLine,jdbcType=INTEGER},
+      <if test="batchId != null" >
+        batch_id = #{batchId,jdbcType=INTEGER},
       </if>
-      <if test="dataType != null" >
-        data_type = #{dataType,jdbcType=INTEGER},
+      <if test="batchName != null" >
+        batch_name = #{batchName,jdbcType=VARCHAR},
+      </if>
+      <if test="params != null" >
+        params = #{params,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.FileErrorRecords" >
-    update file_error_records
+  <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.ThirdImportError" >
+    update third_import_error
     set phone = #{phone,jdbcType=VARCHAR},
-      attach = #{attach,jdbcType=VARCHAR},
-      params = #{params,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      file_records_id = #{fileRecordsId,jdbcType=BIGINT},
       error_type = #{errorType,jdbcType=INTEGER},
-      error_line = #{errorLine,jdbcType=INTEGER},
-      data_type = #{dataType,jdbcType=INTEGER}
+      batch_id = #{batchId,jdbcType=INTEGER},
+      batch_name = #{batchName,jdbcType=VARCHAR},
+      params = #{params,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

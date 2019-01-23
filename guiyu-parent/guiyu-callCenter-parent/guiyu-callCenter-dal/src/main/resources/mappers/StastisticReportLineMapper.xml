@@ -142,9 +142,9 @@
     FROM
     call_out_plan
     WHERE
-    <!--create_time >= #{startTime}-->
-    <!--AND create_time &lt;  #{enTime}-->
-    <!--AND-->
+    create_time >= #{startTime}
+    AND create_time &lt;  #{enTime}
+    AND
     call_state>6
 
     GROUP BY hangup_code,line_id,is_cancel

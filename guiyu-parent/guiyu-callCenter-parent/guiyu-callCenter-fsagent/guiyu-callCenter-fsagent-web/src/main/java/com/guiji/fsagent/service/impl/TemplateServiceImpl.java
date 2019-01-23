@@ -115,7 +115,11 @@ public class TemplateServiceImpl implements TemplateService {
             WavLengthVO wavLengthVO =new WavLengthVO();
             String filename = f.getName();
             wavLengthVO.setFileName(filename);
-            wavLengthVO.setLength(FileUtil.getWavDuration(tempPath+"/"+filename));
+            if(FileUtil.getWavDuration(tempPath+"/"+filename)!=null){
+                wavLengthVO.setLength(FileUtil.getWavDuration(tempPath+"/"+filename));
+            }else{
+                wavLengthVO.setLength(0);
+            }
             list.add(wavLengthVO);
         }
         return list;

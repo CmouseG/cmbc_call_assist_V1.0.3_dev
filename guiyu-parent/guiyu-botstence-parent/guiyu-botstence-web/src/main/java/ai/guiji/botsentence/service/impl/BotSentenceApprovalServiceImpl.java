@@ -74,7 +74,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	private IDispatchPlanOut iDispatchPlanOut;
 	
 	@Override
-	public List<BotSentenceProcess> getListApprovaling(int pageSize, int pageNo, String templateName, String accountNo) {
+	public List<BotSentenceProcess> getListApprovaling(int pageSize, int pageNo, String templateName, String accountNo, String orgCode) {
 		
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
@@ -94,7 +94,9 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 			criteria.andAccountNoEqualTo(accountNo);
 			criteria2.andAccountNoEqualTo(accountNo);
 		}
-		
+		criteria.andOrgCodeLike(orgCode+"%");
+		criteria2.andOrgCodeLike(orgCode+"%");
+
 		//计算分页
 		int limitStart = (pageNo-1)*pageSize;
 		int limitEnd = pageSize;
@@ -108,7 +110,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	}
 
 	@Override
-	public int countApprovaling(String templateName) {
+	public int countApprovaling(String templateName, String orgCode) {
 		
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
@@ -124,7 +126,9 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 		states.add(Constant.DEPLOYING);
 		criteria.andStateIn(states);
 		criteria2.andStateIn(states);
-		
+
+		criteria.andOrgCodeLike(orgCode+"%");
+		criteria2.andOrgCodeLike(orgCode+"%");
 		example.or(criteria2);
 		
 		return botSentenceProcessMapper.countByExample(example);

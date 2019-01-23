@@ -11,6 +11,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
+import com.guiji.user.dao.entity.SysUser;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,20 +72,24 @@ public class BotSentenceApprovalController {
 	
 	@Autowired
 	private VoliceServiceImpl voliceServiceImpl;
-	
+	@Autowired
+	IAuth iAuth;
 	/**
 	 *  获取待审核话术列表
 	 */
 	@RequestMapping(value="getListApproving")
 	public ServerResult<Page<BotSentenceProcessVO>> getListApproving(@JsonParam int pageSize,
 			@JsonParam int pageNo, @JsonParam String templateName, @JsonParam String accountNo,@RequestHeader Long userId) {
-		
+
+		Result.ReturnData<SysUser> data=iAuth.getUserById(userId);
+		String orgCode=data.getBody().getOrgCode();
+
 		Page<BotSentenceProcessVO> page = new Page<BotSentenceProcessVO>();
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
-		List<BotSentenceProcess> list = botSentenceApprovalService.getListApprovaling(pageSize, pageNo, templateName, accountNo);
+		List<BotSentenceProcess> list = botSentenceApprovalService.getListApprovaling(pageSize, pageNo, templateName, accountNo, orgCode);
 		
-		int totalNum = botSentenceApprovalService.countApprovaling(templateName);
+		int totalNum = botSentenceApprovalService.countApprovaling(templateName, orgCode);
 		if(null != list) {
 			
 			List<BotSentenceProcessVO> results = new ArrayList<>();

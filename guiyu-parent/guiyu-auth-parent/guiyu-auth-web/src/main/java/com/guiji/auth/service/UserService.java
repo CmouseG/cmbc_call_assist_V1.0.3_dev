@@ -118,7 +118,7 @@ public class UserService {
 			String orgCode = null;
 			if (sysUser != null) {
 				orgCode = sysUser.getOrgCode();
-				if (sysRoleList != null && sysRoleList.size() > 0 && sysRoleList.get(0).getId() == 4 && sysRoleList.get(0).getId() == 5) {
+				if (sysRoleList != null && sysRoleList.size() > 0 && (sysRoleList.get(0).getId() == 4 || sysRoleList.get(0).getId() == 5)) {
 					orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
 				}
 				sysOrganization = organizationService.getOrgByCode(orgCode);

@@ -47,6 +47,8 @@ public class Ytx
 		json.put("appid", ytxParams.getAppid());
 		json.put("mobile", ytxParams.getMobile());
 		json.put("templateId", ytxParams.getTemplateId());
+		json.put("spuid", "000646");
+		json.put("sppwd", "257693");
 
 		String result = doPost(url, json.toJSONString(), authorization); // 发送请求
 

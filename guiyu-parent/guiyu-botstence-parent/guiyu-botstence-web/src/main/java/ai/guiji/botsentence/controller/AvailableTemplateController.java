@@ -40,7 +40,10 @@ public class AvailableTemplateController {
 	}
 	
 	/**
-	 * 企业可用话术
+	 * 用户管理
+	 * 查询所有的话术，不管勾上没勾上 ，都查出来，用于分配
+	 * bot_available_template表
+	 *
 	 */
 	@RequestMapping("getAdminOrgAvailableTemplate")
 	public ServerResult getAdminOrgAvailableTemplate(@JsonParam Long userId){
@@ -69,7 +72,13 @@ public class AvailableTemplateController {
 	
 	
 	/**
-	 * 管理员查找用户可用话术
+	 *
+	 * 用户管理，已经分配给给他的话术，勾上去的话术
+	 * 查询bot_user_available和bot_available_template2个表
+	 *
+	 * SELECT b.* from bot_user_available a
+	 *         LEFT JOIN bot_available_template b on a.available_id=b.id
+	 *         where a.user_id=#{userId}
 	 */
 	@RequestMapping("getAdminUserAvailableTemplate")
 	public ServerResult getAdminUserAvailableTemplate(Long userId,@RequestHeader String orgCode){
@@ -79,6 +88,8 @@ public class AvailableTemplateController {
 	
 	/**
 	 * 用户添加可用话术
+	 *
+	 * 用户管理里面分配话术，勾上话术之后点击确定
 	 */
 	@RequestMapping("addUserAvailableTemplate")
 	public ServerResult addUserAvailableTemplate(Long userId,String availableIds){

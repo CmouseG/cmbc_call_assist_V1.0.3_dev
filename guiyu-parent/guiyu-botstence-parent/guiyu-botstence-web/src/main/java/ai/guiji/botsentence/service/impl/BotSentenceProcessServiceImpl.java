@@ -791,10 +791,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		botSentenceProcessMapper.updateByPrimaryKey(process);
 		logger.info("提交审核成功...");
 		
-		BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
+/*		BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
 	    botAvailableTemplate.setTemplateId(process.getTemplateId());
 	    botAvailableTemplate.setUserId(Long.valueOf(process.getCrtUser()));
-	    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
+	    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);*/
 	}
 	
 	@Autowired

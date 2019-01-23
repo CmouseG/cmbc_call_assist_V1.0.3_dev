@@ -184,8 +184,8 @@ public class LineReportServiceImpl implements LineReportService {
                     errorSumMap.put(map.get("hangup_code"),map.get("totalCalls"));
                 }
 
-                List<Map> errorNumsMapList = stastisticReportLineMapper.getLineHangupCodeErrorNums(lineId, startTime, enTime);
-                List<Map> errorNumsMapListCancel = stastisticReportLineMapper.getLineHangupCodeErrorNumsCancel(lineId, startTime, enTime);
+                List<Map> errorNumsMapList = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNums(lineId, startTime, enTime));
+                List<Map> errorNumsMapListCancel = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNumsCancel(lineId, startTime, enTime));
                 if(errorNumsMapList!=null && errorNumsMapListCancel != null && errorNumsMapListCancel.size()>0){
                     errorNumsMapList.addAll(errorNumsMapListCancel);
                 }
@@ -201,4 +201,30 @@ public class LineReportServiceImpl implements LineReportService {
 
         return null;
     }
+
+
+    /**
+     * 将列表中的电话号码，截取9个，最多显示9个
+     * @param numsMapLis
+     * @return
+     */
+    private List<Map> subPhoneNum(List<Map> numsMapLis){
+
+        if(numsMapLis == null || numsMapLis.size() ==0){
+            return numsMapLis;
+        }
+        List<Map> resultList = new ArrayList<>();
+        for (Map map : numsMapLis) {
+            String phoneNums = (String) map.get("num");
+            String[] arr = phoneNums.split(",");
+            if (arr.length > 9) {
+                String num = arr[0] + "," + arr[1] + "," + arr[2] + "," + arr[3] + "," + arr[4] + "," + arr[5] + "," + arr[6] + "," + arr[7] + "," + arr[8];
+                map.put("num", num);
+            }
+            resultList.add(map);
+        }
+        return resultList;
+    }
+
+
 }

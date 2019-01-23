@@ -30,6 +30,7 @@ public class CallRecordController {
     IAuth iAuth;
     @Autowired
     ICallPlanDetail iCallPlanDetail;
+
     private final Logger logger = LoggerFactory.getLogger(CallRecordController.class);
 
     @ApiOperation(value = "获取通话记录标签")
@@ -119,6 +120,8 @@ public class CallRecordController {
         callRecordReq.setPageSize(Integer.valueOf(size));
         callRecordReq.setSuperAdmin(isSuperAdmin);
         callRecordReq.setUserId(userId);
+        callRecordReq.setSecretId(userId);
+
         Result.ReturnData<Map> result = iCallPlanDetail.getCallRecordList(callRecordReq);
 
         return result;

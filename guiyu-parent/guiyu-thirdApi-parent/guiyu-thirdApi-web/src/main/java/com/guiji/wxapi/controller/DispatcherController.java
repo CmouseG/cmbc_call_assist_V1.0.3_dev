@@ -3,6 +3,7 @@ package com.guiji.wxapi.controller;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,16 @@ public class DispatcherController {
 
     @Autowired
     IDispatchPlanOut dispatchPlanOut;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "获取计划数")
     @GetMapping("getCallPlanCount")
     public Result.ReturnData<PlanCountVO> getCallCount(@RequestHeader String orgCode) {
 
+        if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
+            return Result.error("0303010");
+        }
         return dispatchPlanOut.getPlanCountByUserId(orgCode);
 
     }
@@ -33,7 +39,15 @@ public class DispatcherController {
     public Result.ReturnData<Boolean> stopCallPlan(@RequestHeader("orgCode") String orgCode,
                                                    @RequestParam("type") @NotEmpty(message = "type不能为空") String type) {
 
-        return dispatchPlanOut.opertationStopPlanByUserId(orgCode,type);
+        if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
+            return Result.error("0303010");
+        }
+
+        Result.ReturnData<Boolean>  result = dispatchPlanOut.opertationStopPlanByUserId(orgCode,type);
+        if(result.success && result.getBody()){
+            redisUtil.set("thirdapi-stopCallPlan"+orgCode,"600",600);
+        }
+        return result;
     }
 
 

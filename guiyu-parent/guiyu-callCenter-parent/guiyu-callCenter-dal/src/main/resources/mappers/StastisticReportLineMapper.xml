@@ -106,7 +106,7 @@
   <select id="getLineHangupCodeErrorNumsCancel" resultType="java.util.Map">
     select
     '超时' as error,
-    group_concat(phone_num) as num
+    ifnull(group_concat(phone_num),'') as num
     from report_line_code
     where
     line_id = #{lineId}
@@ -136,15 +136,15 @@
     SUM(is_cancel) AS isCancel,
     COUNT(call_id) AS totalCalls,
     <!--ADDDATE(min(create_time),INTERVAL -MINUTE(min(create_time)) % 5 MINUTE) AS createTime,-->
-    GROUP_CONCAT(phone_num) AS phoneNum,
+    SUBSTRING(GROUP_CONCAT(phone_num),1,119) AS phoneNum,
     SUM(is_answer) AS answerCalls
 
     FROM
     call_out_plan
     WHERE
-    <!--create_time >= #{startTime}-->
-    <!--AND create_time &lt;  #{enTime}-->
-    <!--AND-->
+    create_time >= #{startTime}
+    AND create_time &lt;  #{enTime}
+    AND
     call_state>6
 
     GROUP BY hangup_code,line_id,is_cancel

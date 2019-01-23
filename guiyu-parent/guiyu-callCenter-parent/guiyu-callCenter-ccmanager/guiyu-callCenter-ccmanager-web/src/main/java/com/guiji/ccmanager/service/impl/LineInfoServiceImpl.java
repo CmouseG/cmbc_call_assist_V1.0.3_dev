@@ -301,7 +301,7 @@ public class LineInfoServiceImpl implements LineInfoService {
                 LineInfo4AllotRes lineInfo4AllotRes = new LineInfo4AllotRes();
                 lineInfo4AllotRes.setLineId(lineInfo.getLineId());
                 lineInfo4AllotRes.setLineName(lineInfo.getLineName());
-                if(lineInfo.getCustomerId()!=null && lineInfo.getCustomerId().equals(customerId)){
+                if(lineInfo.getCustomerId()!=null && lineInfo.getCustomerId().toString().equals(customerId)){
                     lineInfo4AllotRes.setAlloted(true);
                 }else{
                     lineInfo4AllotRes.setAlloted(false);

@@ -116,12 +116,16 @@ public class CallDetailServiceImpl implements CallDetailService {
     public List<Map> getCallRecordList(CallRecordReq callRecordReq) {
 
         Map map = new HashMap();
-        map.put("customerId", callRecordReq.getUserId());
-        map.put("orgCode", callRecordReq.getOrgCode());
+        if (callRecordReq.getUserId() != null)
+            map.put("customerId", callRecordReq.getUserId());
+        if (callRecordReq.getSecretId() != null)
+            map.put("secretId", callRecordReq.getSecretId());
+        if (callRecordReq.getOrgCode() != null)
+            map.put("orgCode", callRecordReq.getOrgCode());
         map.put("limitStart", (callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
         map.put("limitEnd", callRecordReq.getPageSize());
         if (callRecordReq.getTime() != null)
-            map.put("time", callRecordReq.getTime()-1);
+            map.put("time", callRecordReq.getTime() - 1);
         if (callRecordReq.getAccurateIntent() != null)
             map.put("accurateIntent", callRecordReq.getAccurateIntent());
         List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(map);
@@ -132,7 +136,10 @@ public class CallDetailServiceImpl implements CallDetailService {
     public int countCallRecordList(CallRecordReq callRecordReq) {
 
         Map map = new HashMap();
-        map.put("orgCode", callRecordReq.getOrgCode());
+        if (callRecordReq.getUserId() != null)
+            map.put("customerId", callRecordReq.getUserId());
+        if (callRecordReq.getOrgCode() != null)
+            map.put("orgCode", callRecordReq.getOrgCode());
         if (callRecordReq.getTime() != null)
             map.put("time", callRecordReq.getTime()-1);
         if (callRecordReq.getAccurateIntent() != null)

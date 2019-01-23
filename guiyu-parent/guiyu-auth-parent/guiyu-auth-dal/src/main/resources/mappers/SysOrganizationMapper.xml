@@ -394,7 +394,7 @@
   </select>
 
   <select id="countRobotByUserId" resultType="int">
-    SELECT sum(robot) from sys_organization
+    SELECT ifnull(sum(robot),0) from sys_organization
     where code like CONCAT(#{code},'%')
   </select>
 

@@ -218,12 +218,13 @@ public class CallDetailController implements ICallPlanDetail {
     }
 
     @ApiOperation(value = "下载通话记录")
-    @GetMapping(value="downloadDialogue")
-    public void downloadDialogue(String callId,HttpServletResponse resp) throws UnsupportedEncodingException {
+    @PostMapping(value="downloadDialogue")
+    public void downloadDialogue(@RequestBody Map map,HttpServletResponse resp) throws UnsupportedEncodingException {
         String fileName = "通话记录.xls";
         HttpDownload.setHeader(resp, fileName);
 
         //生成文件
+        String callId = (String) map.get("callId");
         String context = callDetailService.getDialogue(callId);
 
         OutputStream out=null;
@@ -268,10 +269,14 @@ public class CallDetailController implements ICallPlanDetail {
 
 
     @ApiOperation(value = "下载通话记录Excel压缩包,callIds以逗号分隔")
-    @GetMapping(value="downloadDialogueZip")
-    public String downloadDialogueZip(String callIds,HttpServletResponse resp) throws UnsupportedEncodingException {
+    @PostMapping(value="downloadDialogueZip")
+    public String downloadDialogueZip(@RequestBody Map reqMap,HttpServletResponse resp) throws UnsupportedEncodingException {
 
         log.info("---------------start downloadDialogueZip----------");
+        if(reqMap.get("callIds")==null){
+            return "Missing Parameters";
+        }
+        String callIds = (String) reqMap.get("callIds");
         if(StringUtils.isBlank(callIds)){
             return "Missing Parameters";
         }
@@ -337,9 +342,13 @@ public class CallDetailController implements ICallPlanDetail {
 
 
     @ApiOperation(value = "下载通话记录压缩包,callIds以逗号分隔")
-    @GetMapping(value="downloadRecordZip")
-    public String downloadRecordZip(String callIds, HttpServletResponse resp) throws UnsupportedEncodingException {
+    @PostMapping(value="downloadRecordZip")
+    public String downloadRecordZip(@RequestBody Map reqMap, HttpServletResponse resp) throws UnsupportedEncodingException {
         log.info("---------------start downloadRecordZip----------");
+        if(reqMap.get("callIds")==null){
+            return "Missing Parameters";
+        }
+        String callIds = (String) reqMap.get("callIds");
         if(StringUtils.isBlank(callIds)){
             return "Missing Parameters";
         }

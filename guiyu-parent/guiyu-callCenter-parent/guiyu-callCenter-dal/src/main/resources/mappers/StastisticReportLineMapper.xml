@@ -106,7 +106,7 @@
   <select id="getLineHangupCodeErrorNumsCancel" resultType="java.util.Map">
     select
     '超时' as error,
-    group_concat(phone_num) as num
+    ifnull(group_concat(phone_num),'') as num
     from report_line_code
     where
     line_id = #{lineId}

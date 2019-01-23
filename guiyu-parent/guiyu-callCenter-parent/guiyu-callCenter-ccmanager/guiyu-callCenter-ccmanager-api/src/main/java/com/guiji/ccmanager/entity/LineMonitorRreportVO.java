@@ -16,6 +16,7 @@ public class LineMonitorRreportVO implements Serializable {
     private String status;
     private String sip_ip;
     private String sip_port;
+    private String lineName;
 
     public Integer getLineId() {
         return lineId;
@@ -95,5 +96,13 @@ public class LineMonitorRreportVO implements Serializable {
 
     public void setSip_port(String sip_port) {
         this.sip_port = sip_port;
+    }
+
+    public String getLineName() {
+        return lineName;
+    }
+
+    public void setLineName(String lineName) {
+        this.lineName = lineName;
     }
 }

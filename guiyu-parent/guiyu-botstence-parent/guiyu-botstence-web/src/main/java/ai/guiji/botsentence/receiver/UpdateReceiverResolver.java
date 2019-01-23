@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ai.guiji.botsentence.dao.BotAvailableTemplateMapper;
+import ai.guiji.botsentence.dao.entity.*;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysRole;
 import org.slf4j.Logger;
@@ -23,10 +24,6 @@ import com.guiji.user.dao.entity.SysUser;
 import ai.guiji.botsentence.constant.Constant;
 import ai.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import ai.guiji.botsentence.dao.BotSentenceProcessMapper;
-import ai.guiji.botsentence.dao.entity.BotAvailableTemplate;
-import ai.guiji.botsentence.dao.entity.BotPublishSentenceLog;
-import ai.guiji.botsentence.dao.entity.BotSentenceProcess;
-import ai.guiji.botsentence.dao.entity.BotSentenceProcessExample;
 import ai.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
 
 @Component
@@ -111,20 +108,25 @@ public class UpdateReceiverResolver {
 			    record.setStatus("2");
 			    botPublishSentenceLogMapper.updateByPrimaryKeySelective(record);
 			    
-			    //添加可用话术
-			    BotAvailableTemplate botAvailableTemplate=new BotAvailableTemplate();
-			    botAvailableTemplate.setTemplateId(tempId);
-			    botAvailableTemplate.setTemplateName(botSentenceProcess.getTemplateName());
-			    botAvailableTemplate.setUserId(Long.valueOf(botSentenceProcess.getCrtUser()));
-			    botAvailableTemplate.setOrgCode(botSentenceProcess.getOrgCode());;
-			    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
-			    botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);
-//			    
+			    //添加可用话术,如果原来表bot_available_template里没有该模板的记录，才插入
+			BotAvailableTemplateExample botAvailableTemplateExample = new BotAvailableTemplateExample();
+			botAvailableTemplateExample.createCriteria().andTemplateIdEqualTo(tempId);
+			List<BotAvailableTemplate> listBotAvailableTemplate = botAvailableTemplateMapper.selectByExample(botAvailableTemplateExample);
+			if (listBotAvailableTemplate == null || listBotAvailableTemplate.size() == 0) {
+				BotAvailableTemplate botAvailableTemplate = new BotAvailableTemplate();
+				botAvailableTemplate.setTemplateId(tempId);
+				botAvailableTemplate.setTemplateName(botSentenceProcess.getTemplateName());
+				botAvailableTemplate.setUserId(Long.valueOf(botSentenceProcess.getCrtUser()));
+				botAvailableTemplate.setOrgCode(botSentenceProcess.getOrgCode());
+//			    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
+				botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);
+			}
+//
 //			    //清空volice的【新增】和【修改】
 				voliceInfoExtMapper.updateVoliceFlag(botSentenceProcess.getProcessId());
 
 				//企业管理员创建的话术，部署成功后，将话术这个模板配置给这个企业管理员
-			    addSentenceTouser(Long.valueOf(botSentenceProcess.getCrtUser()),String.valueOf(botAvailableTemplate.getId()));
+//			    addSentenceTouser(Long.valueOf(botSentenceProcess.getCrtUser()),String.valueOf(botAvailableTemplate.getId()));
 
 				logger.info("UpdateReceiverResolver---end");
 			}

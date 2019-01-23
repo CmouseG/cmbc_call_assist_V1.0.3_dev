@@ -206,11 +206,13 @@ public class UserController implements IAuth {
 	}
 
 	@RequestMapping("/user/insertCustmomService")
-	public ReturnData<SysUser> insertCustmomService(SysUserVo param,Long userId){
+	public ReturnData<SysUser> insertCustmomService(String username,String password,Long userId){
 		SysUser user=new SysUser();
-		user.setId(param.getId());
-		user.setUsername(param.getUsername());
-		user.setPassword(param.getPassword());
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+			return Result.error("00010016");
+		}
+		user.setUsername(username);
+		user.setPassword(password);
 		user.setStatus(1);//正常状态
 		user.setPushType(1);//平台
 		SysOrganization org = service.getOrgByUserId(userId);

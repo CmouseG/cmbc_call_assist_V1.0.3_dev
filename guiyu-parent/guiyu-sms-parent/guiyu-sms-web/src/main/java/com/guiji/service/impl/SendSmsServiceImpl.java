@@ -1,6 +1,7 @@
 package com.guiji.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +12,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
 import com.guiji.platfrom.yunxun.Ytx;
-import com.guiji.platfrom.yunxun.YtxParams;
 import com.guiji.service.RecordService;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskDetailService;
 import com.guiji.sms.dao.entity.SmsPlatform;
+import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.sms.dao.entity.SmsTunnel;
 import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.JsonUtils;
@@ -48,7 +49,7 @@ public class SendSmsServiceImpl implements SendSmsService
 	 * 群发短信
 	 */
 	@Override
-	public void sendMessages(TaskReq taskReq)
+	public void preSendMsg(TaskReq taskReq) throws Exception
 	{
 		// 获取通道
 		SmsTunnel tunnel = (SmsTunnel) redisUtil.get(taskReq.getTunnelName());
@@ -56,23 +57,19 @@ public class SendSmsServiceImpl implements SendSmsService
 		SmsPlatform platform = (SmsPlatform) redisUtil.get(tunnel.getPlatformName());
 		// 根据内部标识选择平台
 		String identification = platform.getIdentification();
-
+		// 获取通道参数
+		Map params = JsonUtils.json2Bean(tunnel.getPlatformConfig(), Map.class);
+		
+		List<SmsRecord> records = null;
 		// 云讯平台
 		if ("ytx".equals(identification))
 		{
 			logger.info("通过云讯发送短信...");
-			YtxParams ytxParams = JsonUtils.json2Bean(tunnel.getPlatformConfig(), YtxParams.class);
-			ytxParams.setTemplateId(taskReq.getSmsTemplateId());
-			//对各号码循环发送
-			List<String> phoneList = taskReq.getPhoneList();
-			for(String phone : phoneList)
-			{
-				ytxParams.setMobile(phone);
-				JSONObject returnData = new Ytx().sendMessageByYunXun(ytxParams); //发送短信
-				recordService.saveYtxRecord(returnData,platform.getPlatformName(),phone); //保存发送记录
-				taskDetailService.saveTaskDetail(returnData.getString("statusCode"), taskReq, phone); //保存短信任务发送详情
-			}
+			records = new Ytx().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsTemplateId());
 		}
+		
+		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录
+		taskDetailService.saveTaskDetail(records, taskReq); //保存短信任务发送详情
 		
 	}
 

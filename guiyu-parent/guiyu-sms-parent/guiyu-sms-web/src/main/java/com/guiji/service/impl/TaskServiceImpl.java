@@ -114,7 +114,7 @@ public class TaskServiceImpl implements TaskService
 		}
 		smsTask.setPhoneNum(phoneList.size());
 		
-		if(taskReqVO.getSendType() == 1) //手动发送=立即发送
+		if(taskReqVO.getSendType() == 0) //手动发送=立即发送
 		{
 			if(smsTask.getAuditingStatus() == 0){
 				result = "短信内容未审核，暂不能发送！";
@@ -126,7 +126,7 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				sendSmsService.sendMessages(taskReq); // 发送
+				sendSmsService.preSendMsg(taskReq); // 发送
 				smsTask.setSendStatus(2); // 2-已结束
 			}
 		} 

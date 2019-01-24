@@ -14,9 +14,9 @@ public interface IBotSentenceApprovalService {
 	 * 根据条件查询话术模板列表
 	 * @param state
 	 */
-	public List<BotSentenceProcess> getListApprovaling(int pageSize, int pageNo, String templateName, String accountNo);
+	public List<BotSentenceProcess> getListApprovaling(int pageSize, int pageNo, String templateName, String accountNo, String orgCode);
 
-	public int countApprovaling(String templateName);
+	public int countApprovaling(String templateName, String orgCode);
 
 	
 	/**

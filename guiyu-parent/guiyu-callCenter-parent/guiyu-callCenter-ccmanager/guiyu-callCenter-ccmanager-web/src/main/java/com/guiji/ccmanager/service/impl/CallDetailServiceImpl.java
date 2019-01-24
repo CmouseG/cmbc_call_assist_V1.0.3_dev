@@ -229,6 +229,7 @@ public class CallDetailServiceImpl implements CallDetailService {
 
             CallPlanDetailRecordVO callPlanDetailRecordVO = new CallPlanDetailRecordVO();
             BeanUtil.copyProperties(callOutPlan, callPlanDetailRecordVO);
+            callPlanDetailRecordVO.setCallId(callOutPlan.getCallId().toString());
             callPlanDetailRecordVO.setDetailList(resList);
             if(callOutRecord!=null && callOutRecord.getRecordUrl()!=null){
                 callPlanDetailRecordVO.setRecordUrl(callOutRecord.getRecordUrl());

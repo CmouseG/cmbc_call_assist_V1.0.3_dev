@@ -5,41 +5,29 @@
 
   <select id="getLineMonitorReportByLineId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
 
-    SELECT a.lineId,IFNULL(a.answerNum,0) AS answerNum,IFNULL(a.totalNum,0) AS totalNum,
-    IFNULL(a.low,0) AS low,IFNULL(a.high,0) AS high,IFNULL(a.history,0) AS history,
-    IFNULL(b.rate,0) AS rate
-    FROM
-    (
     SELECT
     m.line_id AS lineId,
-    SUM(m.answer_num) AS answerNum,
-    SUM(m.total_num) AS totalNum,
-    MIN(m.rate) AS low,
-    MAX(m.rate) AS high,
-    AVG(m.rate) AS history,
-    MAX(m.create_time) AS createTime
+    IFNULL(SUM(m.answer_num),0) AS answerNum,
+    IFNULL(SUM(m.total_num),0) AS totalNum,
+    IFNULL(MIN(m.rate),0) AS low,
+    IFNULL(MAX(m.rate),0) AS high,
+    IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
     FROM report_line_status m
     WHERE m.create_time >=#{startTime}
     AND m.line_id = #{lineId}
-    )a LEFT JOIN report_line_status b ON a.lineId = b.line_id AND a.createTime = b.create_time
+    GROUP BY m.line_id
   </select>
 
 
   <select id="getLineMonitorReportByUserId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
 
-    SELECT a.lineId,IFNULL(a.answerNum,0) AS answerNum,IFNULL(a.totalNum,0) AS totalNum,
-    IFNULL(a.low,0) AS low,IFNULL(a.high,0) AS high,IFNULL(a.history,0) AS history,
-    IFNULL(b.rate,0) AS rate
-    FROM
-    (
     SELECT
     m.line_id AS lineId,
-    SUM(m.answer_num) AS answerNum,
-    SUM(m.total_num) AS totalNum,
-    MIN(m.rate) AS low,
-    MAX(m.rate) AS high,
-    AVG(m.rate) AS history,
-    MAX(m.create_time) AS createTime
+    IFNULL(SUM(m.answer_num),0) AS answerNum,
+    IFNULL(SUM(m.total_num),0) AS totalNum,
+    IFNULL(MIN(m.rate),0) AS low,
+    IFNULL(MAX(m.rate),0) AS high,
+    IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
     FROM report_line_status m
     WHERE m.create_time >=#{startTime}
     AND m.line_id IN
@@ -47,7 +35,6 @@
       #{id}
     </foreach>
     GROUP BY m.line_id
-    )a LEFT JOIN report_line_status b ON a.lineId = b.line_id AND a.createTime = b.create_time
 
   </select>
 

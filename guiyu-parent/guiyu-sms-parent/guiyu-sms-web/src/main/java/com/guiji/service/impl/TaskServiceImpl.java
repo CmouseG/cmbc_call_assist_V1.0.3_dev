@@ -63,7 +63,7 @@ public class TaskServiceImpl implements TaskService
 		if(StringUtils.isNotEmpty(taskListReq.getTaskName())){
 			criteria.andTaskNameLike(taskListReq.getTaskName()); //任务名称
 		}
-		if(taskListReq.getSendDate() != null){
+		if(StringUtils.isNotEmpty(taskListReq.getSendDate())){
 			criteria.andSendDateEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(taskListReq.getSendDate())); //发送时间
 		}
 		taskListRsp.setTotalCount(taskMapper.selectByExampleWithBLOBs(example).size()); //总条数

@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.ccmanager.api.IReportLine;
 import com.guiji.ccmanager.entity.LineMonitorRreportVO;
 import com.guiji.ccmanager.service.LineReportService;
+import com.guiji.ccmanager.utils.DateUtils;
 import com.guiji.component.result.Result;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
@@ -53,18 +54,13 @@ public class LineReportController implements IReportLine {
         }
         Date start = null;
         if(dimension.equals("now")){
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.HOUR, -2);
-            start  = c.getTime();
-        }else  if(dimension.equals("day")){
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.HOUR, -24);
-            start  = c.getTime();
-        }else  if(dimension.equals("week")){
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.HOUR, -168);
-            start  = c.getTime();
+            start  = DateUtils.getHoursAgoDate(2);
+        }else  if(dimension.equals("day")){ //今天0点到现在
+            start = DateUtils.getDayBegin();
+        }else  if(dimension.equals("week")){  //从周一到现在
+            start = DateUtils.getBeginDayOfWeek();
         }
+        log.info("=============="+start);
 
         List<LineMonitorRreport> list = lineReportService.getLineMonitorReport(StringUtils.isNotBlank(lineId) ? Integer.valueOf(lineId) : null, userId, start);
         List<LineMonitorRreportVO> listVO = new ArrayList();
@@ -74,18 +70,21 @@ public class LineReportController implements IReportLine {
                 BeanUtil.copyProperties(lineMonitorRreport, lineMonitorRreportVO);
 
                 float history = lineMonitorRreport.getHistory();
+                float low = (float)(history*0.85);
+                float high =(float) (history*1.15);
                 float rate = lineMonitorRreport.getRate();
                 String status;
-                if (rate >= history * 1.15) {
+                if (rate >= high) {
                     status = "良好";
-                } else if (rate < history * 1.15 && rate >= history * 0.75) {
+                } else if (rate < high && rate >= low) {
                     status = "一般";
                 } else if (lineMonitorRreport.getTotalNum() == 0) {
                     status = "一般";
                 } else {
                     status = "预警";
                 }
-
+                lineMonitorRreportVO.setHigh(high);
+                lineMonitorRreportVO.setHigh(low);
                 lineMonitorRreportVO.setStatus(status);
                 listVO.add(lineMonitorRreportVO);
             }

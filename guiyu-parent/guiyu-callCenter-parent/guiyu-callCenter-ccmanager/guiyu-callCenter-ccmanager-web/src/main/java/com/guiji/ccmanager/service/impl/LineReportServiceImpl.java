@@ -6,6 +6,7 @@ import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.ccmanager.service.LineReportService;
+import com.guiji.ccmanager.utils.DateUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +95,7 @@ public class LineReportServiceImpl implements LineReportService {
             LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(lineId);
             LineMonitorRreport resultLineMonitorRreport = new LineMonitorRreport();
             resultLineMonitorRreport.setLineId(lineInfo.getLineId());
+            resultLineMonitorRreport.setLineName(lineInfo.getLineName());
             resultLineMonitorRreport.setSip_ip(lineInfo.getSipIp());
             resultLineMonitorRreport.setSip_port(lineInfo.getSipPort());
             resultLineMonitorRreport.setAnswerNum(0);
@@ -104,15 +106,17 @@ public class LineReportServiceImpl implements LineReportService {
             resultLineMonitorRreport.setHistory(0f);
 
             List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime);
+            //统计半年的数据
+            List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, DateUtils.getHalfYearDate());
             if (reportList != null && reportList.size() > 0) {
                 LineMonitorRreport report = reportList.get(0);
                 resultLineMonitorRreport.setAnswerNum(report.getAnswerNum());
                 resultLineMonitorRreport.setTotalNum(report.getTotalNum());
-                resultLineMonitorRreport.setHigh(report.getHigh());
-                resultLineMonitorRreport.setLow(report.getLow());
                 resultLineMonitorRreport.setRate(report.getRate());
-                resultLineMonitorRreport.setHistory(report.getHistory());
-
+            }
+            if (halfYearList != null && halfYearList.size() > 0) {
+                LineMonitorRreport report = halfYearList.get(0);
+                resultLineMonitorRreport.setHistory(report.getRate());
             }
             List<LineMonitorRreport> resultList = new ArrayList<>();
             resultList.add(resultLineMonitorRreport);
@@ -132,12 +136,14 @@ public class LineReportServiceImpl implements LineReportService {
                 }
 
                 List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(lineIdList, startTime);
+                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(lineIdList, DateUtils.getHalfYearDate());
 
                 List<LineMonitorRreport> resultList = new ArrayList<>();
 
                 for (LineInfo lineInfo : lineList) {
                     LineMonitorRreport lineMonitorRreport = new LineMonitorRreport();
                     lineMonitorRreport.setLineId(lineInfo.getLineId());
+                    lineMonitorRreport.setLineName(lineInfo.getLineName());
                     lineMonitorRreport.setSip_ip(lineInfo.getSipIp());
                     lineMonitorRreport.setSip_port(lineInfo.getSipPort());
                     lineMonitorRreport.setAnswerNum(0);
@@ -152,10 +158,14 @@ public class LineReportServiceImpl implements LineReportService {
                             if (report.getLineId().intValue() == lineInfo.getLineId().intValue()) {
                                 lineMonitorRreport.setAnswerNum(report.getAnswerNum());
                                 lineMonitorRreport.setTotalNum(report.getTotalNum());
-                                lineMonitorRreport.setHigh(report.getHigh());
-                                lineMonitorRreport.setLow(report.getLow());
                                 lineMonitorRreport.setRate(report.getRate());
-                                lineMonitorRreport.setHistory(report.getHistory());
+                            }
+                        }
+                    }
+                    if (halfYearList != null && halfYearList.size() > 0) {
+                        for (LineMonitorRreport halfReport : halfYearList) {
+                            if (halfReport.getLineId().intValue() == lineInfo.getLineId().intValue()) {
+                                lineMonitorRreport.setHistory(halfReport.getRate());
                             }
                         }
                     }

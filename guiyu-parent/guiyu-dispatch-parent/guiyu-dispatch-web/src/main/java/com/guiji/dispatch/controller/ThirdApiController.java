@@ -125,22 +125,24 @@ public class ThirdApiController implements IThirdApiOut {
 		record.setDataType(Constant.IMPORT_DATA_TYPE_API);
 		Page<FileErrorRecords> queryFileErrorRecordsPage = fileRecordErrorService.queryFileErrorRecordsPage(pagenum,
 				pagesize, record);
-		List<com.guiji.dispatch.model.FileErrorRecords> list = new ArrayList<>();
-		for (FileErrorRecords vo : queryFileErrorRecordsPage.getRecords()) {
-			com.guiji.dispatch.model.FileErrorRecords bean = new com.guiji.dispatch.model.FileErrorRecords();
-			BeanUtils.copyProperties(vo, bean);
-			list.add(bean);
-		}
-		Page<com.guiji.dispatch.model.FileErrorRecords> page = new Page<>();
-		page.setRecords(list);
-		page.setPageNo(queryFileErrorRecordsPage.getPageNo());
-		page.setPageSize(queryFileErrorRecordsPage.getPageSize());
-		FileErrorRecordsExample errorEx = new FileErrorRecordsExample();
-		errorEx.createCriteria().andBatchNameEqualTo(batchName);
-		int countByExample = fileErrorRecordsMapper.countByExample(errorEx);
-		page.setTotal(countByExample);
-		info.setErrorRecordsList(page);
 		ReturnData<PlanCallInfoCount> returndata = new ReturnData<>();
+		if(queryFileErrorRecordsPage.getRecords() !=null){
+			List<com.guiji.dispatch.model.FileErrorRecords> list = new ArrayList<>();
+			for (FileErrorRecords vo : queryFileErrorRecordsPage.getRecords()) {
+				com.guiji.dispatch.model.FileErrorRecords bean = new com.guiji.dispatch.model.FileErrorRecords();
+				BeanUtils.copyProperties(vo, bean);
+				list.add(bean);
+			}
+			Page<com.guiji.dispatch.model.FileErrorRecords> page = new Page<>();
+			page.setRecords(list);
+			page.setPageNo(queryFileErrorRecordsPage.getPageNo());
+			page.setPageSize(queryFileErrorRecordsPage.getPageSize());
+			FileErrorRecordsExample errorEx = new FileErrorRecordsExample();
+			errorEx.createCriteria().andBatchNameEqualTo(batchName);
+			int countByExample = fileErrorRecordsMapper.countByExample(errorEx);
+			page.setTotal(countByExample);
+			info.setErrorRecordsList(page);
+		}
 		returndata.setBody(info);
 		return returndata;
 	}
@@ -178,6 +180,7 @@ public class ThirdApiController implements IThirdApiOut {
 	@PostMapping(value = "out/insertDispatchPlanList")
 	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList dispatchPlanList) {
 		// 检验基本参数
+		logger.info("dispatchPlanList________________-----"+dispatchPlanList);
 		ThirdCheckParams checkBaseParams = checkBaseParams(dispatchPlanList);
 		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();

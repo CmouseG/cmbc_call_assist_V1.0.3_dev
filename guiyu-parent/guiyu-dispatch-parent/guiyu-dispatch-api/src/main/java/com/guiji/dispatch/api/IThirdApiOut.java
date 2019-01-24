@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.fastjson.JSONObject;
@@ -61,7 +62,7 @@ public interface IThirdApiOut {
 	@ApiOperation(value = "添加任务号码")
 	@ApiImplicitParams({})
 	@PostMapping(value = "out/insertDispatchPlanList")
-	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestParam("list") DispatchPlanList list);
+	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList list);
 	
 	
 	@ApiOperation(value = "通过用户触发重新回调机制")

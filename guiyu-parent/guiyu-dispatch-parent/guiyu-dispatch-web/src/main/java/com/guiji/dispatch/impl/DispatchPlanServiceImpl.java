@@ -1553,14 +1553,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		String dateNowStr = sdf.format(d);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
 				.andOrgCodeLike(orgCode + "%");
 		// 总数
 		int countByExample = dispatchPlanMapper.countByExample(ex);
 
 		DispatchPlanExample ex1 = new DispatchPlanExample();
 		ex1.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-				.andFlagEqualTo(Constant.IS_FLAG_2).andCallDataEqualTo(Integer.valueOf(dateNowStr))
 				.andOrgCodeEqualTo(orgCode);
 		int countByExample2 = dispatchPlanMapper.countByExample(ex1);
 
@@ -1573,6 +1571,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean stopPlanByorgCode(String orgCode, String type) {
+		logger.info("orgCode{},type{}",orgCode,type);
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
 		// 一件停止

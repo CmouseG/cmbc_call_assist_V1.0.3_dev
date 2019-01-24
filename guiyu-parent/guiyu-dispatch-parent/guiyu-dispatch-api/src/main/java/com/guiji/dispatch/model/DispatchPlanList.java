@@ -1,8 +1,9 @@
 package com.guiji.dispatch.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class DispatchPlanList {
+public class DispatchPlanList implements Serializable{
 	private String batchName;
 	private String robot;
 	private String line;
@@ -11,7 +12,7 @@ public class DispatchPlanList {
 	private String callDate;
 	private String userId;
 	private List<DispatchPlan> mobile;
-
+    private static final long serialVersionUID = 1L;
 	
 	public String getUserId() {
 		return userId;

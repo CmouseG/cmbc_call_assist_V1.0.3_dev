@@ -1,5 +1,6 @@
 package com.guiji.api.controller;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.cloud.api.ILogin;
 import com.guiji.common.model.Page;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
 import com.guiji.dispatch.model.CallPlanDetailRecordVO;
@@ -36,27 +38,55 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCalldetail")
-	public JSONObject getCalldetail(@RequestParam(required = true, name = "phone") String phone,
-			@RequestParam(required = true, name = "batch_number") String batchNumber,
-			@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize) {
+	public Result.ReturnData getCalldetail(@RequestParam(required = false, name = "phone") String phone,
+			@RequestParam(required = false, name = "batch_number") String batchNumber,
+			@RequestParam(required = false, name = "pagenum") String pagenum,
+			@RequestParam(required = false, name = "pagesize") String pagesize) {
 		JSONObject jsonObject = new JSONObject();
+		
+		if(phone ==null || phone == ""){
+			return Result.error("0303020");
+		}
+		
+		if(batchNumber ==null || batchNumber == ""){
+			return Result.error("0303021");
+		}
+		if(pagenum ==null || pagenum == ""){
+			return Result.error("0303022");
+		}
+		
+		if(pagesize ==null || pagesize == ""){
+			return Result.error("0303023");
+		}
+		
+		if(batchNumber ==null || batchNumber == ""){
+			return Result.error("0303021");
+		}
+		
+		if (!isInteger(pagenum)) {
+			return Result.error("0303024");
+		}
+		
+		if (!isInteger(pagesize)) {
+			return Result.error("0303025");
+		}
 		if (!isInteger(phone)) {
-			jsonObject.put("data", "当前手机号码不正确");
-			return jsonObject;
+			return Result.error("0303011");
 		}
-		if (pagesize > 100) {
-			jsonObject.put("data", "当前pagesize分页过大");
-			return jsonObject;
+		if (Integer.valueOf(pagesize) > 1000) {
+			return Result.error("0303012");
 		}
-		if (pagenum <= 0) {
-			jsonObject.put("data", "当前pagenum必须大于0");
-			return jsonObject;
+		if (Integer.valueOf(pagesize) <= 0) {
+			pagesize = "1";
 		}
-		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, pagenum,
-				pagesize);
+		
+		if(phone.length()!=11){
+			return Result.error("0303028");
+		}
+		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, Integer.valueOf(pagenum),
+				Integer.valueOf(pagesize));
 		jsonObject.put("data", calldetail.getBody());
-		return jsonObject;
+		return Result.ok(jsonObject);
 	}
 
 	/**
@@ -68,21 +98,40 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCallInfoByBatchId")
-	public JSONObject getCallInfoByBatchId(@RequestParam(required = true, name = "batch_number") String batchNumber,
-			@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize) {
+	public Result.ReturnData getCallInfoByBatchId(
+			@RequestParam(required = false, name = "batch_number") String batchNumber,
+			@RequestParam(required = false, name = "pagenum") String pagenum,
+			@RequestParam(required = false, name = "pagesize") String pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		if (pagesize > 100) {
-			jsonObject.put("data", "当前pagesize分页过大");
-			return jsonObject;
+		
+		if(pagenum ==null || pagenum == ""){
+			return Result.error("0303022");
 		}
-		if (pagenum <= 0) {
-			jsonObject.put("data", "当前pagenum必须大于0");
-			return jsonObject;
+		
+		if(pagesize ==null || pagesize == ""){
+			return Result.error("0303023");
 		}
-		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber, pagenum, pagesize);
+		
+		if (!isInteger(pagenum)) {
+			return Result.error("0303024");
+		}
+		
+		if (!isInteger(pagesize)) {
+			return Result.error("0303025");
+		}
+		
+		if(batchNumber==null || batchNumber ==""){
+			return Result.error("0303021");
+		}
+		if (Integer.valueOf(pagesize) > 1000) {
+			return Result.error("0303012");
+		}
+		if (Integer.valueOf(pagesize) <= 0) {
+			pagesize = "1";
+		}
+		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber, Integer.valueOf(pagenum),  Integer.valueOf(pagesize));
 		jsonObject.put("data", getcall4BatchName.getBody());
-		return jsonObject;
+		return Result.ok(jsonObject);
 	}
 
 	/**
@@ -93,22 +142,41 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getPhonesByBatchNumber")
-	public JSONObject getphonesByBatchNumber(@RequestParam(required = true, name = "batch_number") String batchNumber,
-			@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize) {
+	public Result.ReturnData getphonesByBatchNumber(
+			@RequestParam(required = false, name = "batch_number") String batchNumber,
+			@RequestParam(required = false, name = "pagenum") String pagenum,
+			@RequestParam(required = false, name = "pagesize") String pagesize) {
 		JSONObject jsonObject = new JSONObject();
-		if (pagesize > 100) {
-			jsonObject.put("data", "当前pagesize分页过大");
-			return jsonObject;
+		
+		if(pagenum ==null || pagenum == ""){
+			return Result.error("0303022");
 		}
-		if (pagenum <= 0) {
-			jsonObject.put("data", "当前pagenum必须大于0");
-			return jsonObject;
+		
+		if(pagesize ==null || pagesize == ""){
+			return Result.error("0303023");
 		}
-		ReturnData<Page<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, pagenum,
-				pagesize);
+		
+		if(batchNumber==null || batchNumber ==""){
+			return Result.error("0303021");
+		}
+		if (!isInteger(pagenum)) {
+			return Result.error("0303024");
+		}
+		
+		if (!isInteger(pagesize)) {
+			return Result.error("0303025");
+		}
+		
+		if (Integer.valueOf(pagesize) > 1000) {
+			return Result.error("0303012");
+		}
+		if (Integer.valueOf(pagesize) <= 0) {
+			pagesize = "1";
+		}
+		ReturnData<Page<DispatchPlanApi>> queryDispatchPlan = thirdApi.queryDispatchPlan(batchNumber, Integer.valueOf(pagenum),
+				Integer.valueOf(pagesize));
 		jsonObject.put("data", queryDispatchPlan.getBody());
-		return jsonObject;
+		return Result.ok(jsonObject);
 	}
 
 	/**
@@ -119,15 +187,17 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getToken")
-	public JSONObject getToken(@RequestParam(required = true, name = "access_key") String access_key,
-			@RequestParam(required = true, name = "secret_key") String secret_key) {
-		JSONObject jsonObject = new JSONObject();
-		ReturnData<String> apiLogin2 = login.apiLogin(access_key, secret_key);
-		if (!apiLogin2.success) {
-			jsonObject.put("msg", apiLogin2.getMsg());
-		} else
-			jsonObject.put("token", apiLogin2.getBody());
-		return jsonObject;
+	public Result.ReturnData getToken(@RequestParam(required = false, name = "access_key") String access_key,
+			@RequestParam(required = false, name = "secret_key") String secret_key) {
+		if(access_key==null || access_key ==""){
+			return Result.error("0303021");
+		}
+		
+		if(secret_key==null || secret_key ==""){
+			return Result.error("0303027");
+		}
+		
+		return login.apiLogin(access_key, secret_key);
 	}
 
 	/**
@@ -138,11 +208,14 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/reTryThirdApi")
-	public JSONObject reTryThirdApi(@RequestParam(required = true, name = "user_id") Integer userId) {
+	public Result.ReturnData reTryThirdApi(@RequestParam(required = false, name = "user_id") String userId) {
 		JSONObject jsonObject = new JSONObject();
+		if (!isNumeric(userId)) {
+			return Result.error("0303014");
+		}
 		ReturnData<Boolean> reTryThirdApi = thirdApi.reTryThirdApi(Long.valueOf(userId));
 		jsonObject.put("data", reTryThirdApi.getBody());
-		return jsonObject;
+		return Result.ok(jsonObject);
 	}
 
 	/**
@@ -150,13 +223,39 @@ public class ThirdApiController {
 	 * 
 	 * @param dispatchPlanList
 	 * @return
-	 */
+	 */	
 	@PostMapping("/addPhones")
-	public JSONObject addPhones(@RequestBody DispatchPlanList dispatchPlanList) {
-		ReturnData<PlanResultInfo> insertDispatchPlanList = thirdApi.insertDispatchPlanList(dispatchPlanList);
+	public Result.ReturnData addPhones(@RequestBody DispatchPlanList dispatchPlanList) {
 		JSONObject json = new JSONObject();
+		if (!isNumeric(dispatchPlanList.getLine())) {
+			return Result.error("0303015");
+		} else if (!isNumeric(dispatchPlanList.getIsClean())) {
+			return Result.error("0303016");
+		} else if (!isNumeric(dispatchPlanList.getCallHour())) {
+			return Result.error("0303017");
+		} else if (!isNumeric(dispatchPlanList.getCallDate())) {
+			return Result.error("0303018");
+		} else if (!isNumeric(dispatchPlanList.getUserId())) {
+			return Result.error("0303019");
+		}
+		ReturnData<PlanResultInfo> insertDispatchPlanList = thirdApi.insertDispatchPlanList(dispatchPlanList);
 		json.put("data", insertDispatchPlanList.getBody());
-		return json;
+		return Result.ok(json);
+	}
+
+	/**
+	 * 判断是否为数字
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public boolean isNumeric(String str) {
+		Pattern pattern = Pattern.compile("[0-9]*");
+		Matcher isNum = pattern.matcher(str);
+		if (!isNum.matches()) {
+			return false;
+		}
+		return true;
 	}
 
 	public static boolean isInteger(String str) {

@@ -12,7 +12,7 @@ public class TaskReqVO
 {
 	@ApiModelProperty(value="id")
 	private Integer id;
-	@ApiModelProperty(value="发送方式: 0-定时发送；1-手动发送")
+	@ApiModelProperty(value="发送方式: 0-手动发送；1-定时发送")
 	private Integer sendType;
 	@ApiModelProperty(value="任务名称")
 	private String taskName;

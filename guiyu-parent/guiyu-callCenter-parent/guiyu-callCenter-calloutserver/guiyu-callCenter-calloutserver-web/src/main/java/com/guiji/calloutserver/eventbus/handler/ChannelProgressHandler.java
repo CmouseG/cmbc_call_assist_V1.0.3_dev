@@ -65,6 +65,9 @@ public class ChannelProgressHandler {
 
                     callOutPlan2Minutes.setCallState(ECallState.hangup_fail.ordinal());
                     callOutPlan2Minutes.setReason("系统通信异常");
+                    if (callOutPlan2Minutes.getAccurateIntent() == null){
+                        callOutPlan2Minutes.setAccurateIntent("W");
+                    }
                     callOutPlanService.update(callOutPlan2Minutes);
 
                     //释放ai资源

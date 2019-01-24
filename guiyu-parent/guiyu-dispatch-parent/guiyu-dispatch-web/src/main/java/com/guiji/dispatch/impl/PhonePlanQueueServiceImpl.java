@@ -70,7 +70,9 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 									pushPlan2Queue(dispatchPlanList,queue);
 								}
 							}
-						} finally {
+						} catch (Exception e) {
+                            logger.error("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
+                        } finally{
 							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}
 					}
@@ -111,7 +113,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 					}
 				} catch (Exception e) {
 					logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
-					return false;
+					continue;
 				} finally {
 					distributedLockHandler.releaseLock(queueLock);
 				}
@@ -146,7 +148,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 					}
 				} catch (Exception e) {
 					logger.info("PhonePlanQueueServiceImpl#cleanQueue", e);
-					return false;
+					continue;
 				} finally {
 					distributedLockHandler.releaseLock(queueLock);
 				}

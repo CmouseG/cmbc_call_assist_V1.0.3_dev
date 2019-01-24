@@ -177,7 +177,6 @@ public class ThirdApiController implements IThirdApiOut {
 	 * @return
 	 */
 	@Override
-	@PostMapping(value = "out/insertDispatchPlanList")
 	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList dispatchPlanList) {
 		// 检验基本参数
 		logger.info("dispatchPlanList________________-----"+dispatchPlanList);

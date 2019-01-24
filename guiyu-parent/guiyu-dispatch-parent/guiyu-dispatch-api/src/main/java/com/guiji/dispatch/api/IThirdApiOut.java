@@ -60,9 +60,8 @@ public interface IThirdApiOut {
 			@RequestParam("pagenum") int pagenum, @RequestParam("pagesize") int pagesize);
 
 	@ApiOperation(value = "添加任务号码")
-	@ApiImplicitParams({})
 	@PostMapping(value = "out/insertDispatchPlanList")
-	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList list);
+	ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList list);
 	
 	
 	@ApiOperation(value = "通过用户触发重新回调机制")

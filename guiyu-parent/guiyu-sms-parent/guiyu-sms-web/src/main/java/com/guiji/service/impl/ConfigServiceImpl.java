@@ -56,7 +56,7 @@ public class ConfigServiceImpl implements ConfigService
 		List<SmsConfig> configList = configMapper.selectByExampleWithBLOBs(example); // 分页返回的记录
 		for(SmsConfig config : configList)
 		{
-			SmsConfigVO configVO = setVoPrrams(config);
+			SmsConfigVO configVO = setVoParams(config);
 			configVOList.add(configVO);
 		}
 		configListRsp.setSmsConfigVOList(configVOList);
@@ -64,11 +64,12 @@ public class ConfigServiceImpl implements ConfigService
 		return configListRsp;
 	}
 
-	private SmsConfigVO setVoPrrams(SmsConfig config)
+	private SmsConfigVO setVoParams(SmsConfig config)
 	{
 		SmsConfigVO configVO = new SmsConfigVO();
 		configVO.setId(config.getId());
 		configVO.setTunnelName(config.getTunnelName());
+		configVO.setTemplateId(config.getTemplateId());
 		configVO.setTemplateName(config.getTemplateName());
 		configVO.setIntentionTag(config.getIntentionTag());
 		configVO.setSmsTemplateId(config.getSmsTemplateId());

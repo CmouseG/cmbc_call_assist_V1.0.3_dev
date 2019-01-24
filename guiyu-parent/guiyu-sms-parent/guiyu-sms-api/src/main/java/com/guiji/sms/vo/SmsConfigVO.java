@@ -10,6 +10,8 @@ public class SmsConfigVO
 	private Integer id;
 
     private String tunnelName;
+    
+    private String templateId;
 
     private String templateName;
 

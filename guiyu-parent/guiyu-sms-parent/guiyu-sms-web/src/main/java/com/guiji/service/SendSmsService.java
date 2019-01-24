@@ -13,6 +13,6 @@ public interface SendSmsService
 	/**
 	 * 群发短信
 	 */
-	public void sendMessages(TaskReq taskReq);
+	public void preSendMsg(TaskReq taskReq) throws Exception;
 	
 }

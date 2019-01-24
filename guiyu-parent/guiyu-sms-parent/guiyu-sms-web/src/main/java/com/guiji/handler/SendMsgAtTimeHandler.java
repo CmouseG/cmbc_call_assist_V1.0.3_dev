@@ -56,7 +56,7 @@ public class SendMsgAtTimeHandler extends IJobHandler
 			taskReq.setCompanyName(task.getCompanyName());
 			taskReq.setUserId(task.getCreateId());
 			taskService.updateSendStatusById(1,task.getId()); //进行中
-			sendSmsService.sendMessages(taskReq); //群发短信
+			sendSmsService.preSendMsg(taskReq); //群发短信
 			taskService.updateSendStatusById(2,task.getId()); //已结束
 		}
 		return SUCCESS;

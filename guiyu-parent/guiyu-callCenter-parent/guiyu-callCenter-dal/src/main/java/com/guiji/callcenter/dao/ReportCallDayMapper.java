@@ -27,4 +27,7 @@ public interface ReportCallDayMapper {
     int updateByPrimaryKeySelective(ReportCallDay record);
 
     int updateByPrimaryKey(ReportCallDay record);
+
+    List<String> getAllLabelFromDate(@Param("orgCode") String orgCode,@Param("callDate") String callDate);
+    List<String> getAllLabelFromToday(@Param("orgCode") String orgCode);
 }

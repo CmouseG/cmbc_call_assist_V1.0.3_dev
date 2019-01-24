@@ -2,11 +2,11 @@ package com.guiji.wxapi.controller;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallPlanDetail;
+import com.guiji.ccmanager.api.ILabel;
 import com.guiji.ccmanager.vo.CallOutDetailVO;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.ccmanager.vo.CallRecordReq;
 import com.guiji.component.result.Result;
-import com.guiji.user.dao.entity.SysUser;
 import com.guiji.wxapi.constant.Constant;
 import com.guiji.wxapi.entity.CallData;
 import com.guiji.wxapi.entity.CallOutPlanVO;
@@ -30,23 +30,15 @@ public class CallRecordController {
     IAuth iAuth;
     @Autowired
     ICallPlanDetail iCallPlanDetail;
+    @Autowired
+    ILabel iLabel;
 
     private final Logger logger = LoggerFactory.getLogger(CallRecordController.class);
 
     @ApiOperation(value = "获取通话记录标签")
     @GetMapping("getCallLabel")
-    public Result.ReturnData<String[]> getCallIntent(@RequestHeader Long userId) {
-        String[] arr = {"A","B","C","D","E","F","W"};
-        try{
-            Result.ReturnData<SysUser> result =  iAuth.getUserById(userId);
-            String intent = result.getBody().getIntenLabel();
-            if(StringUtils.isNotBlank(intent)){
-                arr = intent.split(",");
-            }
-        }catch (Exception e){
-            logger.error("iAuth.getUserById userId[{}] has error :"+e,userId);
-        }
-        return Result.ok(arr);
+    public Result.ReturnData<List<String>> getCallIntent(@RequestHeader Long userId, @RequestHeader String orgCode) {
+        return iLabel.getAllLabelOneMonth(orgCode,userId);
     }
 
     @ApiOperation(value = "获取单条通话记录详情")

@@ -276,4 +276,21 @@
       org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="getAllLabelFromDate" resultType="java.lang.String">
+    select intent
+    from report_call_day
+    where org_code = #{orgCode}
+    and intent is not null
+    and call_date >= #{callDate}
+    group by intent
+  </select>
+  <select id="getAllLabelFromToday" resultType="java.lang.String">
+    select intent
+    from report_call_today
+    where org_code = #{orgCode}
+    and intent is not null
+    group by intent
+
+  </select>
 </mapper>

@@ -38,41 +38,45 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	@Override
 	public void execute() throws Exception {
 		while (true) {
-			Lock lock = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
-			if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
-				Thread.sleep(500);
-				continue;
-			}
+			try {
+				Lock lock = new Lock("planDistributeJobHandler.lock", "planDistributeJobHandler.lock");
+				if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
+					Thread.sleep(500);
+					continue;
+				}
 
-			// 从redis获取系统最大并发数
-			int systemMaxPlan = redisUtil.get(REDIS_SYSTEM_MAX_PLAN) == null ? 0
-					: (int) redisUtil.get(REDIS_SYSTEM_MAX_PLAN);
-			if (systemMaxPlan == 0) {
-				logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
-			}
-			String hour = String.valueOf(DateUtil.getCurrentHour());
-			List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
-			if (userLineRobotList != null) {
-				//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
-				for (UserLineBotenceVO dto : userLineRobotList) {
-					String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
-					Lock queueLock = new Lock("dispatch.lock" + queue,"dispatch.lock" + queue);
-					try {
-						if (distributedLockHandler.tryLock(queueLock)) {
-							long currentQueueSize = redisUtil.lGetListSize(queue);
-							if (currentQueueSize < systemMaxPlan *2) {
-								if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
-									Thread.sleep(500);
-									break;
+				// 从redis获取系统最大并发数
+				int systemMaxPlan = redisUtil.get(REDIS_SYSTEM_MAX_PLAN) == null ? 0
+						: (int) redisUtil.get(REDIS_SYSTEM_MAX_PLAN);
+				if (systemMaxPlan == 0) {
+					logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
+				}
+				String hour = String.valueOf(DateUtil.getCurrentHour());
+				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+				if (userLineRobotList != null) {
+					//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
+					for (UserLineBotenceVO dto : userLineRobotList) {
+						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
+						Lock queueLock = new Lock("dispatch.lock" + queue,"dispatch.lock" + queue);
+						try {
+							if (distributedLockHandler.tryLock(queueLock)) {
+								long currentQueueSize = redisUtil.lGetListSize(queue);
+								if (currentQueueSize < systemMaxPlan *2) {
+									if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
+										Thread.sleep(500);
+										break;
+									}
+									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getLineId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
+									pushPlan2Queue(dispatchPlanList,queue);
 								}
-								List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getLineId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
-								pushPlan2Queue(dispatchPlanList,queue);
 							}
+						} finally {
+							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}
-					} finally {
-						distributedLockHandler.releaseLock(queueLock); // 释放锁
 					}
 				}
+			} catch (Exception e) {
+				logger.error("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
 			}
 		}
 	}

@@ -6,6 +6,8 @@ import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DispatcherController {
 
+    private final Logger logger = LoggerFactory.getLogger(DispatcherController.class);
     @Autowired
     IDispatchPlanOut dispatchPlanOut;
     @Autowired
@@ -25,7 +28,7 @@ public class DispatcherController {
     @ApiOperation(value = "获取计划数")
     @GetMapping("getCallPlanCount")
     public Result.ReturnData<PlanCountVO> getCallCount(@RequestHeader String orgCode) {
-
+        logger.info("================getCallCount,orgCode[{}]",orgCode);
         if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
             return Result.error("0303010");
         }
@@ -38,6 +41,8 @@ public class DispatcherController {
     @GetMapping("stopCallPlan")
     public Result.ReturnData<Boolean> stopCallPlan(@RequestHeader("orgCode") String orgCode,
                                                    @RequestParam("type") @NotEmpty(message = "type不能为空") String type) {
+
+        logger.info("================stopCallPlan,orgCode[{}],type[{}]",orgCode,type);
 
         if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
             return Result.error("0303010");

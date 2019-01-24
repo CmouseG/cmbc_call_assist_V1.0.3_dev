@@ -1,7 +1,6 @@
 package com.guiji.service.impl;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.guiji.auth.api.IAuth;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.entity.SmsConstants;
 import com.guiji.entity.SmsExceptionEnum;
 import com.guiji.model.TaskReq;
 import com.guiji.service.SendSmsService;
@@ -97,28 +97,29 @@ public class TaskServiceImpl implements TaskService
 	 * 新增/编辑短信任务
 	 */
 	@Override
-	public String addOrUpdateTask(TaskReqVO taskReqVO, Long userId) throws Exception
+	public void addOrUpdateTask(TaskReqVO taskReqVO, Long userId) throws Exception
 	{
-		String result = "SUCCESS";
 		SmsTask smsTask = new SmsTask();
 		setParams(taskReqVO, smsTask, userId); //设置字段值
 		
 		// 解析excel文件
-		List<String> phoneList = new ArrayList<>();
-		try
-		{
-			phoneList = ParseFileUtil.parseExcelFile(taskReqVO.getFile());
-		} catch (Exception e){
-			logger.error("解析文件失败", e);
-			throw new GuiyuException(SmsExceptionEnum.ParseFile_Error);
+		List<String> phoneList = null;
+		if(taskReqVO.getFile() != null) {
+			try {
+				phoneList = ParseFileUtil.parseExcelFile(taskReqVO.getFile());
+			} catch (Exception e){
+				logger.error("解析文件失败", e);
+				throw new GuiyuException(SmsExceptionEnum.ParseFile_Error);
+			}
+		} else {
+			phoneList = (List<String>) redisUtil.get(taskReqVO.getTaskName());
 		}
 		smsTask.setPhoneNum(phoneList.size());
 		
-		if(taskReqVO.getSendType() == 1) //手动发送=立即发送
+		if(taskReqVO.getSendType() == SmsConstants.HandSend) //手动发送
 		{
-			if(smsTask.getAuditingStatus() == 0){
-				result = "短信内容未审核，暂不能发送！";
-				logger.info(result);
+			if(smsTask.getAuditingStatus() == SmsConstants.UnAuditing) {
+				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
 			} else {
 				//组装发送请求
 				TaskReq taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 
@@ -126,14 +127,12 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				sendSmsService.sendMessages(taskReq); // 发送
-				smsTask.setSendStatus(2); // 2-已结束
+				sendSmsService.preSendMsg(taskReq); // 发送
+				smsTask.setSendStatus(SmsConstants.end); // 2-已结束
 			}
-		} 
-		else
-		{
-			smsTask.setSendStatus(0); // 0-未开始
-			redisUtil.lSet(taskReqVO.getTaskName(), phoneList); //未发送名单存入Redis
+		} else { //定时发送
+			smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
+			redisUtil.set(taskReqVO.getTaskName(), phoneList); //未发送名单存入Redis
 		}
 		
 		if(taskReqVO.getId() == null){
@@ -141,8 +140,6 @@ public class TaskServiceImpl implements TaskService
 		}else{
 			taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
 		}
-		
-		return result;
 	}
 	
 	/**

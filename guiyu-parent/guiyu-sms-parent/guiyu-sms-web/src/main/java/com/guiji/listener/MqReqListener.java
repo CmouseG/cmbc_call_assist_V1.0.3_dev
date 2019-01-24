@@ -1,5 +1,7 @@
 package com.guiji.listener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +15,21 @@ import com.guiji.utils.JsonUtils;
 @RabbitListener(queues = "SendMessageMQ.Sms")
 public class MqReqListener
 {
+	private static final Logger logger = LoggerFactory.getLogger(MqReqListener.class);
+	
 	@Autowired
 	ReqHandler reqHandler;
 	
 	@RabbitHandler
-	public void process(String message) 
+	public void process(String message)
 	{
-		SendMReqVO sendMReq = JsonUtils.json2Bean(message, SendMReqVO.class);
-		reqHandler.handleReq(sendMReq);
+		try
+		{
+			SendMReqVO sendMReq = JsonUtils.json2Bean(message, SendMReqVO.class);
+			reqHandler.handleReq(sendMReq);
+			
+		} catch (Exception e){
+			logger.error("处理失败!", e);
+		}
 	}
 }

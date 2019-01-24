@@ -121,6 +121,7 @@ public class ConfigServiceImpl implements ConfigService
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
 		smsConfig.setCompanyId(sysOrganization.body.getId().intValue());
 		smsConfig.setCompanyName(sysOrganization.body.getName());
+		smsConfig.setOrgCode(sysOrganization.body.getCode());
 		smsConfig.setCreateId(userId.intValue());
 		smsConfig.setCreateTime(new Date());
 		smsConfig.setUpdateId(userId.intValue());

@@ -2,6 +2,7 @@ package com.guiji.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import com.guiji.component.result.Result;
 import com.guiji.model.TaskReq;
 import com.guiji.service.TaskDetailService;
 import com.guiji.sms.dao.SmsTaskDetailMapper;
+import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.sms.dao.entity.SmsTaskDetail;
 import com.guiji.sms.dao.entity.SmsTaskDetailExample;
 import com.guiji.sms.dao.entity.SmsTaskDetailExample.Criteria;
@@ -82,23 +84,26 @@ public class TaskDetailServiceImpl implements TaskDetailService
 	 * 保存短信任务详情
 	 */
 	@Override
-	public void saveTaskDetail(String statusCode, TaskReq taskReq, String phone)
+	public void saveTaskDetail(List<SmsRecord> records, TaskReq taskReq)
 	{
 		SmsTaskDetail detail = new SmsTaskDetail();
 		//组装字段
 		detail.setTaskName(taskReq.getTaskName());
-		detail.setPhone(phone);
 		detail.setSendType(taskReq.getSendType());
-		if("0".equals(statusCode)){
-			detail.setSendStatus(0); // 发送状态：0-发送成功
-		}else{
-			detail.setSendStatus(1); // 发送状态：1-发送失败
-		}
 		detail.setCompanyName(taskReq.getCompanyName());
 		detail.setTunnelName(taskReq.getTunnelName());
 		detail.setSendTime(taskReq.getSendTime());
 		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
-		taskDetailMapper.insertSelective(detail);
+		for(SmsRecord record : records)
+		{
+			detail.setPhone(record.getPhone());
+			if(record.getSendStatus() == 0){
+				detail.setSendStatus(0); // 发送状态：0-发送失败
+			}else{
+				detail.setSendStatus(1); // 发送状态：1-发送成功
+			}
+			taskDetailMapper.insertSelective(detail);
+		}
 	}
 	
 	public String getUserName(String userId) {
@@ -121,5 +126,4 @@ public class TaskDetailServiceImpl implements TaskDetailService
         }
         return "";
     }
-
 }

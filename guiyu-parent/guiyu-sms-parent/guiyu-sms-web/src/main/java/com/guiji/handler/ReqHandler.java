@@ -1,17 +1,18 @@
 package com.guiji.handler;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSONObject;
 import com.guiji.platfrom.yunxun.Ytx;
-import com.guiji.platfrom.yunxun.YtxParams;
 import com.guiji.service.ConfigService;
 import com.guiji.service.RecordService;
 import com.guiji.sms.dao.entity.SmsConfig;
 import com.guiji.sms.dao.entity.SmsPlatform;
+import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.sms.dao.entity.SmsTunnel;
 import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.JsonUtils;
@@ -31,8 +32,9 @@ public class ReqHandler
 	
 	/**
 	 * 处理短信请求
+	 * @throws Exception 
 	 */
-	public void handleReq(SendMReqVO sendMReq)
+	public void handleReq(SendMReqVO sendMReq) throws Exception
 	{
 		//获取配置
 		SmsConfig config = configService.getConfigByIntentionTagAndOrgCode(sendMReq.getIntentionTag(), sendMReq.getOrgCode());
@@ -62,14 +64,17 @@ public class ReqHandler
 		//根据内部标识选择平台
 		String identification = platform.getIdentification();
 		
+		// 获取通道参数
+		Map params = JsonUtils.json2Bean(tunnel.getPlatformConfig(), Map.class);
+		
+		SmsRecord record = null;
 		// 云讯平台
 		if("ytx".equals(identification))
 		{
-			YtxParams ytxParams = JsonUtils.json2Bean(tunnel.getPlatformConfig(), YtxParams.class);
-			ytxParams.setTemplateId(config.getSmsTemplateId());
-			ytxParams.setMobile(sendMReq.getPhone());
-			JSONObject returnData = new Ytx().sendMessageByYunXun(ytxParams); //发送短信
-			recordService.saveYtxRecord(returnData,platform.getPlatformName(),sendMReq.getPhone()); //保存发送记录
+			logger.info("通过云讯发送短信...");
+			record = new Ytx().sendMessage(params, sendMReq.getPhone(), config.getSmsTemplateId());
 		}
+		
+		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录
 	}
 }

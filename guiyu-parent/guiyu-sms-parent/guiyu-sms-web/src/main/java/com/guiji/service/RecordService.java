@@ -1,11 +1,18 @@
 package com.guiji.service;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.List;
+
+import com.guiji.sms.dao.entity.SmsRecord;
 
 public interface RecordService
 {
 	/*
-	 * 保存云讯记录
+	 * 保存记录
 	 */
-	void saveYtxRecord(JSONObject returnData, String platformName, String phone);
+	void saveRecord(List<SmsRecord> records, String platform);
+	
+	/*
+	 * 保存记录
+	 */
+	void saveRecord(SmsRecord record, String platform);
 }

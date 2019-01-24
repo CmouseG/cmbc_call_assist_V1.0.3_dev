@@ -26,15 +26,4 @@ public class ListUtil
 		}
 		return sb.toString();
 	}
-	
-	public static List<String> convertObjectToPhone(List<Object> objectList)
-	{
-		List<String> phoneList = new ArrayList<>();
-		for(Object obj : objectList)
-		{
-			String phone = (String) obj;
-			phoneList.add(phone);
-		}
-		return phoneList;
-	}
 }

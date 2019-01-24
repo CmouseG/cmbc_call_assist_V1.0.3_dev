@@ -87,6 +87,7 @@ public class TunnelServiceImpl implements TunnelService
 	{
 		SmsTunnel smsTunnel = setParams(tunnelReq,userId);
 		tunnelMapper.insertSelective(smsTunnel);
+		redisUtil.set(smsTunnel.getTunnelName(), smsTunnel);
 	}
 	
 	/**

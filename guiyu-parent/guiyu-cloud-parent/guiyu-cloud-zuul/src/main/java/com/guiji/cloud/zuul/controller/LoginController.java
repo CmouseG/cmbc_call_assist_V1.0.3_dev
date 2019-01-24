@@ -11,6 +11,7 @@ import com.guiji.cloud.zuul.config.JwtConfig;
 import com.guiji.cloud.zuul.entity.JwtToken;
 import com.guiji.cloud.zuul.entity.WxAccount;
 import com.guiji.component.result.Result;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,11 @@ public class LoginController implements ILogin {
     public Result.ReturnData apiLogin (@RequestParam("accessKey") String accessKey,@RequestParam("secretKey") String secretKey){
 
         try {
+
+            if(StringUtils.isBlank(accessKey) || StringUtils.isBlank(secretKey)){
+                return Result.error("00010006");
+            }
+
             boolean isSuperAdmin = false;
             Result.ReturnData<SysUser> result =iApiLogin.getUserByAccess(accessKey,secretKey);
             if(result==null || !result.success){

@@ -30,7 +30,7 @@ public interface TaskService
 	 * @param userId 
 	 * @throws Exception 
 	 */
-	String addOrUpdateTask(TaskReqVO taskReq, Long userId) throws Exception;
+	void addOrUpdateTask(TaskReqVO taskReq, Long userId) throws Exception;
 
 	/**
 	 * 审核短信任务

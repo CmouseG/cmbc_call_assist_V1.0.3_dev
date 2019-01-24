@@ -48,16 +48,17 @@ public class SendMsgAtTimeHandler extends IJobHandler
 				XxlJobLogger.log("短信任务已停止，暂不发送！");
 				continue;
 			}
-			List<Object> phoneList = redisUtil.lGet(task.getTaskName(), 0, -1);
+			List<String> phoneList = (List<String>) redisUtil.get(task.getTaskName());
 			//组装发送请求
 			TaskReq taskReq = new TaskReq(task.getTaskName(), task.getSendType(), 
-					ListUtil.convertObjectToPhone(phoneList), task.getTunnelName(), task.getSmsTemplateId(), task.getSmsContent());
+					phoneList, task.getTunnelName(), task.getSmsTemplateId(), task.getSmsContent());
 			taskReq.setSendTime(task.getSendDate());
 			taskReq.setCompanyName(task.getCompanyName());
 			taskReq.setUserId(task.getCreateId());
 			taskService.updateSendStatusById(1,task.getId()); //进行中
-			sendSmsService.sendMessages(taskReq); //群发短信
+			sendSmsService.preSendMsg(taskReq); //群发短信
 			taskService.updateSendStatusById(2,task.getId()); //已结束
+			redisUtil.del(task.getTaskName());
 		}
 		return SUCCESS;
 	}

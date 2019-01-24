@@ -85,6 +85,7 @@ public class PlatformServiceImpl implements PlatformService
 	{
 		SmsPlatform platform = setParams(platformReq,userId);
 		platformMapper.insertSelective(platform);
+		redisUtil.set(platform.getPlatformName(), platform);
 	}
 	
 	/**

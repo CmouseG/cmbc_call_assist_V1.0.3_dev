@@ -3,7 +3,6 @@ package com.guiji.wxapi.controller;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.model.PlanCountVO;
-import com.guiji.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
@@ -22,16 +21,16 @@ public class DispatcherController {
     private final Logger logger = LoggerFactory.getLogger(DispatcherController.class);
     @Autowired
     IDispatchPlanOut dispatchPlanOut;
-    @Autowired
-    private RedisUtil redisUtil;
+   /*  @Autowired
+    private RedisUtil redisUtil;*/
 
     @ApiOperation(value = "获取计划数")
     @GetMapping("getCallPlanCount")
     public Result.ReturnData<PlanCountVO> getCallCount(@RequestHeader String orgCode) {
         logger.info("================getCallCount,orgCode[{}]",orgCode);
-        if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
+/*        if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
             return Result.error("0303010");
-        }
+        }*/
         return dispatchPlanOut.getPlanCountByUserId(orgCode);
 
     }
@@ -44,14 +43,14 @@ public class DispatcherController {
 
         logger.info("================stopCallPlan,orgCode[{}],type[{}]",orgCode,type);
 
-        if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
+   /*     if(redisUtil.hasKey("thirdapi-stopCallPlan"+orgCode)){
             return Result.error("0303010");
-        }
+        }*/
 
         Result.ReturnData<Boolean>  result = dispatchPlanOut.opertationStopPlanByUserId(orgCode,type);
-        if(result.success && result.getBody()){
+/*        if(result.success && result.getBody()){
             redisUtil.set("thirdapi-stopCallPlan"+orgCode,"600",600);
-        }
+        }*/
         return result;
     }
 

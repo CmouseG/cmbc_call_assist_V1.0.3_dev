@@ -97,7 +97,7 @@ public class TaskServiceImpl implements TaskService
 	}
 
 	/**
-	 * 新增/编辑短信任务
+	 * 新增短信任务
 	 */
 	@Override
 	public void addTask(TaskReqVO taskReqVO, Long userId) throws Exception

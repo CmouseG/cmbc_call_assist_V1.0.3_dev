@@ -407,7 +407,7 @@ public class SmsController implements ISms
 	}
 	
 	/**
-	 * 新增/编辑短信任务
+	 * 新增短信任务
 	 */
 	@PostMapping(value = "addTask")
 	public ReturnData<String> addTask(TaskReqVO taskReqVO, @RequestHeader Long userId)

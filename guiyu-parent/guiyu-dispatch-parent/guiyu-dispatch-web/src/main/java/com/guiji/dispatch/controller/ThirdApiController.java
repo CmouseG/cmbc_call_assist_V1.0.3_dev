@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
@@ -177,10 +178,11 @@ public class ThirdApiController implements IThirdApiOut {
 	 * @return
 	 */
 	@Override
-	public ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList dispatchPlanList) {
+	@PostMapping(value = "out/insertDispatchPlanList")
+	public ReturnData<PlanResultInfo> insertDispatchPlanList(String jsonList) {
+		DispatchPlanList parseObject = JSONObject.parseObject(jsonList,DispatchPlanList.class);
 		// 检验基本参数
-		logger.info("dispatchPlanList________________-----"+dispatchPlanList);
-		ThirdCheckParams checkBaseParams = checkBaseParams(dispatchPlanList);
+		ThirdCheckParams checkBaseParams = checkBaseParams(parseObject);
 		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();
 			info.setMsg(checkBaseParams.getMsg());
@@ -190,7 +192,7 @@ public class ThirdApiController implements IThirdApiOut {
 		}
 
 		// 检查批次名字是否存在
-		if (dispatchPlanService.checkBatchId(dispatchPlanList.getBatchName())) {
+		if (dispatchPlanService.checkBatchId(parseObject.getBatchName())) {
 			PlanResultInfo info = new PlanResultInfo();
 			info.setMsg("批次已经存在");
 			ReturnData<PlanResultInfo> returnData = new ReturnData<>();
@@ -198,13 +200,14 @@ public class ThirdApiController implements IThirdApiOut {
 			return returnData;
 		}
 
-		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dispatchPlanList.getUserId()));
+		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(parseObject.getUserId()));
 		String username = user.getBody().getUsername();
-		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
+		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(parseObject.getLine())).getBody();
+		ServerResult<List<BotSentenceProcess>> templateById = Process.getTemplateById(parseObject.getRobot());
 
 		DispatchPlanBatch batch = new DispatchPlanBatch();
-		batch.setName(dispatchPlanList.getBatchName());
-		batch.setUserId(Integer.valueOf(dispatchPlanList.getUserId()));
+		batch.setName(parseObject.getBatchName());
+		batch.setUserId(Integer.valueOf(parseObject.getUserId()));
 		batch.setStatusShow(Constant.BATCH_STATUS_SHOW);
 		batch.setGmtCreate(DateUtil.getCurrent4Time());
 		batch.setGmtModified(DateUtil.getCurrent4Time());
@@ -214,8 +217,8 @@ public class ThirdApiController implements IThirdApiOut {
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> succ = new ArrayList<>();
 		List<String> phones = new ArrayList<>();
-		for (int i = 0; i < dispatchPlanList.getMobile().size(); i++) {
-			DispatchPlan dispatchPlan = dispatchPlanList.getMobile().get(i);
+		for (int i = 0; i < parseObject.getMobile().size(); i++) {
+			DispatchPlan dispatchPlan = parseObject.getMobile().get(i);
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
 			BeanUtils.copyProperties(dispatchPlan, bean);
 			if (bean.getPhone() == null || bean.getPhone() == "" || !isInteger(bean.getPhone())) {
@@ -226,12 +229,12 @@ public class ThirdApiController implements IThirdApiOut {
 			}
 			bean.setPlanUuid(IdGenUtil.uuid());
 			bean.setBatchId(batch.getId());
-			bean.setUserId(Integer.valueOf(dispatchPlanList.getUserId()));
-			bean.setLine(Integer.valueOf(dispatchPlanList.getLine()));
-			bean.setRobot(dispatchPlanList.getRobot());
-			bean.setClean(Integer.valueOf(dispatchPlanList.getIsClean()));
-			bean.setCallHour(dispatchPlanList.getCallHour());
-			bean.setCallData(Integer.valueOf(dispatchPlanList.getCallDate()));
+			bean.setUserId(Integer.valueOf(parseObject.getUserId()));
+			bean.setLine(Integer.valueOf(parseObject.getLine()));
+			bean.setRobot(parseObject.getRobot());
+			bean.setClean(Integer.valueOf(parseObject.getIsClean()));
+			bean.setCallHour(parseObject.getCallHour());
+			bean.setCallData(Integer.valueOf(parseObject.getCallDate()));
 			bean.setFlag(Constant.IS_FLAG_0);
 			bean.setGmtCreate(DateUtil.getCurrent4Time());
 			bean.setGmtModified(DateUtil.getCurrent4Time());
@@ -241,7 +244,8 @@ public class ThirdApiController implements IThirdApiOut {
 			bean.setStatusPlan(Constant.STATUSPLAN_1);
 			bean.setStatusSync(Constant.STATUS_SYNC_0);
 			bean.setOrgCode(user.getBody().getOrgCode());
-			bean.setBatchName(dispatchPlanList.getBatchName());
+			bean.setBatchName(parseObject.getBatchName());
+			bean.setRobotName(templateById.getData().get(0).getTemplateName());
 			if (phones.contains(bean.getPhone())) {
 				saveErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.DUPLICATE, i);
 				continue;
@@ -342,16 +346,11 @@ public class ThirdApiController implements IThirdApiOut {
 			checkResult.setMsg("线路id不存在");
 			return checkResult;
 		}
-		if (templateById == null) {
 			if (templateById.getData().size() == 0) {
 				checkResult.setResult(false);
 				checkResult.setMsg("话术模板不存在");
 				return checkResult;
 			}
-			checkResult.setResult(false);
-			checkResult.setMsg("话术模板不存在");
-			return checkResult;
-		}
 
 		return checkResult;
 	}

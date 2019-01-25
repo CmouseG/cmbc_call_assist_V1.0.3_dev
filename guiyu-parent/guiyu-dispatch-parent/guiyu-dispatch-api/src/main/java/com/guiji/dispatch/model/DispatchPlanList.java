@@ -14,6 +14,15 @@ public class DispatchPlanList implements Serializable{
 	private List<DispatchPlan> mobile;
     private static final long serialVersionUID = 1L;
 	
+	public List<DispatchPlan> getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(List<DispatchPlan> mobile) {
+		this.mobile = mobile;
+	}
+
+
 	public String getUserId() {
 		return userId;
 	}
@@ -70,12 +79,12 @@ public class DispatchPlanList implements Serializable{
 		this.callDate = callDate;
 	}
 
-	public List<DispatchPlan> getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(List<DispatchPlan> mobile) {
-		this.mobile = mobile;
-	}
+//	public List<DispatchPlan> getMobile() {
+//		return mobile;
+//	}
+//
+//	public void setMobile(List<DispatchPlan> mobile) {
+//		this.mobile = mobile;
+//	}
 
 }

@@ -61,7 +61,7 @@ public interface IThirdApiOut {
 
 	@ApiOperation(value = "添加任务号码")
 	@PostMapping(value = "out/insertDispatchPlanList")
-	ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestBody DispatchPlanList list);
+	ReturnData<PlanResultInfo> insertDispatchPlanList(@RequestParam("jsonList") String jsonList);
 	
 	
 	@ApiOperation(value = "通过用户触发重新回调机制")

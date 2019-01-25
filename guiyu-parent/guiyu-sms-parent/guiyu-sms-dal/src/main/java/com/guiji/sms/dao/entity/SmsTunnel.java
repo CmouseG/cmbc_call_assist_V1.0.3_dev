@@ -22,6 +22,8 @@ public class SmsTunnel implements Serializable {
 
     private Date updateTime;
 
+    private String orgCode;
+
     private String platformConfig;
 
     private static final long serialVersionUID = 1L;
@@ -98,6 +100,14 @@ public class SmsTunnel implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public String getPlatformConfig() {
         return platformConfig;
     }
@@ -121,6 +131,7 @@ public class SmsTunnel implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", platformConfig=").append(platformConfig);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

@@ -14,12 +14,12 @@
 		<result column="run_status" jdbcType="INTEGER" property="runStatus" />
 		<result column="company_id" jdbcType="INTEGER" property="companyId" />
 		<result column="company_name" jdbcType="VARCHAR" property="companyName" />
-		<result column="org_code" jdbcType="VARCHAR" property="orgCode" />
 		<result column="user_id" jdbcType="INTEGER" property="userId" />
 		<result column="create_id" jdbcType="INTEGER" property="createId" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="update_id" jdbcType="INTEGER" property="updateId" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="org_code" jdbcType="VARCHAR" property="orgCode" />
 	</resultMap>
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsConfig">
 		<result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />

@@ -10,7 +10,7 @@ public interface ConfigService
 	/**
 	 * 获取短信配置列表
 	 */
-	ConfigListRspVO getConfigList(ConfigListReqVO configListReq);
+	ConfigListRspVO getConfigList(ConfigListReqVO configListReq, Long userId);
 
 	/**
 	 * 新增短信配置

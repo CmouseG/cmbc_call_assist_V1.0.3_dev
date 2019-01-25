@@ -11,6 +11,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_id" jdbcType="INTEGER" property="updateId" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsTunnel">
     <result column="platform_config" jdbcType="LONGVARCHAR" property="platformConfig" />
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, platform_name, tunnel_name, company_id, company_name, create_id, create_time, 
-    update_id, update_time
+    update_id, update_time, org_code
   </sql>
   <sql id="Blob_Column_List">
     platform_config
@@ -137,11 +138,11 @@
     insert into sms_tunnel (id, platform_name, tunnel_name, 
       company_id, company_name, create_id, 
       create_time, update_id, update_time, 
-      platform_config)
+      org_code, platform_config)
     values (#{id,jdbcType=INTEGER}, #{platformName,jdbcType=VARCHAR}, #{tunnelName,jdbcType=VARCHAR}, 
       #{companyId,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{platformConfig,jdbcType=LONGVARCHAR})
+      #{orgCode,jdbcType=VARCHAR}, #{platformConfig,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTunnel">
     insert into sms_tunnel
@@ -172,6 +173,9 @@
       </if>
       <if test="updateTime != null">
         update_time,
+      </if>
+      <if test="orgCode != null">
+        org_code,
       </if>
       <if test="platformConfig != null">
         platform_config,
@@ -204,6 +208,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
       </if>
       <if test="platformConfig != null">
         #{platformConfig,jdbcType=LONGVARCHAR},
@@ -246,6 +253,9 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.orgCode != null">
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="record.platformConfig != null">
         platform_config = #{record.platformConfig,jdbcType=LONGVARCHAR},
       </if>
@@ -265,6 +275,7 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
       platform_config = #{record.platformConfig,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -280,7 +291,8 @@
       create_id = #{record.createId,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -312,6 +324,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="orgCode != null">
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="platformConfig != null">
         platform_config = #{platformConfig,jdbcType=LONGVARCHAR},
       </if>
@@ -328,6 +343,7 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR},
       platform_config = #{platformConfig,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -340,7 +356,8 @@
       create_id = #{createId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

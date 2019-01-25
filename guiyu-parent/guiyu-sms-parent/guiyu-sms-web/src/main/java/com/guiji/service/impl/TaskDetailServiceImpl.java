@@ -53,8 +53,11 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		if(StringUtils.isNotEmpty(taskDetailListReq.getCompanyName())){
 			criteria.andCompanyNameEqualTo(taskDetailListReq.getCompanyName());
 		}
-		if(StringUtils.isNotEmpty(taskDetailListReq.getSendTime())){
-			criteria.andSendTimeEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(taskDetailListReq.getSendTime()));
+		if(StringUtils.isNotEmpty(taskDetailListReq.getStartDate())){
+			criteria.andSendTimeGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse(taskDetailListReq.getStartDate()));
+		}
+		if(StringUtils.isNotEmpty(taskDetailListReq.getEndDate())){
+			criteria.andSendTimeLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse(taskDetailListReq.getEndDate()));
 		}
 		if(taskDetailListReq.getSendType() != null){
 			criteria.andSendTypeEqualTo(taskDetailListReq.getSendType());

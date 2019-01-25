@@ -16,10 +16,12 @@ public class TaskDetailListReqVO
 	private String taskName;
 	@ApiModelProperty(value="公司名称")
 	private String companyName;
-	@ApiModelProperty(value="发送时间")
-	private String sendTime;
 	@ApiModelProperty(value="发送方式")
 	private Integer sendType;
 	@ApiModelProperty(value="任务状态")
 	private Integer sendStatus;
+	@ApiModelProperty(value="起始时间")
+	private String startDate;
+	@ApiModelProperty(value="结束时间")
+	private String endDate;
 }

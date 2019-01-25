@@ -1,10 +1,8 @@
 package com.guiji.api.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,6 @@ import com.guiji.dispatch.model.DispatchPlanList;
 import com.guiji.dispatch.model.PlanCallInfoCount;
 import com.guiji.dispatch.model.PlanResultInfo;
 
-import ch.qos.logback.core.joran.util.beans.BeanUtil;
 
 @RestController
 public class ThirdApiController {
@@ -218,6 +215,13 @@ public class ThirdApiController {
 	@GetMapping("/reTryThirdApi")
 	public Result.ReturnData reTryThirdApi(@RequestParam(required = false, name = "user_id") String userId) {
 		JSONObject jsonObject = new JSONObject();
+		if(userId==null || userId ==""){
+			return Result.error("0303029");
+		}
+		if(userId.length()>5){
+			return Result.error("0303030");
+		}
+		
 		if (!isNumeric(userId)) {
 			return Result.error("0303014");
 		}

@@ -75,6 +75,7 @@ CREATE TABLE `sms_task` (
   `send_date` datetime DEFAULT NULL COMMENT '发送日期',
   `auditing_status` int(1) DEFAULT NULL COMMENT '审核状态：0-待审核；1-已审核',
   `run_status` int(1) DEFAULT NULL COMMENT '运行状态：0-一键停止；1-正常运行',
+  `file_name` varchar(128) DEFAULT NULL COMMENT '上传文件名称',
   `company_id` int(11) DEFAULT NULL COMMENT '公司id',
   `company_name` varchar(128) DEFAULT NULL COMMENT '公司名称',
   `create_id` int(11) DEFAULT NULL COMMENT '创建人',

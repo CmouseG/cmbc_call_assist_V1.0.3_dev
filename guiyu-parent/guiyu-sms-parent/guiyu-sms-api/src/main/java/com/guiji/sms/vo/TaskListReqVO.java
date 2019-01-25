@@ -16,6 +16,8 @@ public class TaskListReqVO
 	private Integer status; 
 	@ApiModelProperty(value="任务名称")
 	private String taskName; 
-	@ApiModelProperty(value="发送时间")
-	private String sendDate; 
+	@ApiModelProperty(value="起始时间")
+	private String startDate;
+	@ApiModelProperty(value="结束时间")
+	private String endDate;
 }

@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
-import com.guiji.platfrom.yunxun.Ytx;
+import com.guiji.platfrom.Welink;
+import com.guiji.platfrom.Ytx;
 import com.guiji.service.RecordService;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskDetailService;
@@ -61,16 +62,18 @@ public class SendSmsServiceImpl implements SendSmsService
 		Map params = JsonUtils.json2Bean(tunnel.getPlatformConfig(), Map.class);
 		
 		List<SmsRecord> records = null;
-		// 云讯平台
+		
 		if ("ytx".equals(identification))
 		{
-			logger.info("通过云讯发送短信...");
+			logger.info("通过<云讯>发送短信...");
 			records = new Ytx().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsTemplateId());
+		}else if("wl".equals(identification)){
+			logger.info("通过<微网通联>发送短信...");
+			records = new Welink().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		}
 		
 		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录
-		taskDetailService.saveTaskDetail(records, taskReq); //保存短信任务发送详情
-		
+		taskDetailService.saveTaskDetail(records, taskReq); //保存短信任务发送详情	
 	}
 
 }

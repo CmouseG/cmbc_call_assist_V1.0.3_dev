@@ -24,6 +24,8 @@ public class SmsTask implements Serializable {
 
     private Integer runStatus;
 
+    private String fileName;
+
     private Integer companyId;
 
     private String companyName;
@@ -120,6 +122,14 @@ public class SmsTask implements Serializable {
         this.runStatus = runStatus;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName == null ? null : fileName.trim();
+    }
+
     public Integer getCompanyId() {
         return companyId;
     }
@@ -192,6 +202,7 @@ public class SmsTask implements Serializable {
         sb.append(", sendDate=").append(sendDate);
         sb.append(", auditingStatus=").append(auditingStatus);
         sb.append(", runStatus=").append(runStatus);
+        sb.append(", fileName=").append(fileName);
         sb.append(", companyId=").append(companyId);
         sb.append(", companyName=").append(companyName);
         sb.append(", createId=").append(createId);

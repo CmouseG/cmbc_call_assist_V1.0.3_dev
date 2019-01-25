@@ -30,7 +30,7 @@ public interface TaskService
 	 * @param userId 
 	 * @throws Exception 
 	 */
-	void addOrUpdateTask(TaskReqVO taskReq, Long userId) throws Exception;
+	void addTask(TaskReqVO taskReq, Long userId) throws Exception;
 
 	/**
 	 * 审核短信任务
@@ -46,4 +46,9 @@ public interface TaskService
 	 * 更新发送状态
 	 */
 	void updateSendStatusById(Integer sendStatus, Integer id);
+
+	/**
+	 * 编辑短信任务
+	 */
+	void updateTask(TaskReqVO taskReqVO, Long userId) throws Exception;
 }

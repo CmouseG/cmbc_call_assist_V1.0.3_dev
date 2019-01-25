@@ -77,9 +77,9 @@ public class Welink implements ISendMsg
 		String result = doPost(json.toJSONString()); // 发送请求
 		JSONObject returnData = JSONObject.parseObject(result);
 		// 返回参数
-		String state = (String) returnData.get("State");
-		String msgState = (String) returnData.get("MsgState");
-		String msgID = (String) returnData.get("MsgID");
+		String state = returnData.getString("State");
+		String msgState = returnData.getString("MsgState");
+		String msgID = returnData.getString("MsgID");
 
 		if ("0".equals(state))
 		{

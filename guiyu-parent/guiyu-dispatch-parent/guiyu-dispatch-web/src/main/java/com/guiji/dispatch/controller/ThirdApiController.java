@@ -181,7 +181,7 @@ public class ThirdApiController implements IThirdApiOut {
 	@PostMapping(value = "out/insertDispatchPlanList")
 	public ReturnData<PlanResultInfo> insertDispatchPlanList(String jsonList) {
 		DispatchPlanList parseObject = JSONObject.parseObject(jsonList, DispatchPlanList.class);
-//		// 检验基本参数
+		// // 检验基本参数
 		ThirdCheckParams checkBaseParams = checkBaseParams(parseObject);
 		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();
@@ -245,13 +245,14 @@ public class ThirdApiController implements IThirdApiOut {
 			bean.setStatusSync(Constant.STATUS_SYNC_0);
 			bean.setOrgCode(user.getBody().getOrgCode());
 			bean.setBatchName(parseObject.getBatchName());
+			bean.setIsTts(Constant.IS_TTS_0);
 			bean.setRobotName(templateById.getData().get(0).getTemplateName());
 			if (phones.contains(bean.getPhone())) {
 				saveErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.DUPLICATE, i);
 				continue;
 			}
 			thirdApiHandler.add(bean);
-			logger.info(" thirdApiHandler bean "+bean);
+			logger.info(" thirdApiHandler bean " + bean);
 			succ.add(bean);
 			phones.add(bean.getPhone());
 		}

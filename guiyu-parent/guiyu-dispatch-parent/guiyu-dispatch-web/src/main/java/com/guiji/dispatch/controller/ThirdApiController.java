@@ -127,7 +127,7 @@ public class ThirdApiController implements IThirdApiOut {
 		Page<FileErrorRecords> queryFileErrorRecordsPage = fileRecordErrorService.queryFileErrorRecordsPage(pagenum,
 				pagesize, record);
 		ReturnData<PlanCallInfoCount> returndata = new ReturnData<>();
-		if(queryFileErrorRecordsPage.getRecords() !=null){
+		if (queryFileErrorRecordsPage.getRecords() != null) {
 			List<com.guiji.dispatch.model.FileErrorRecords> list = new ArrayList<>();
 			for (FileErrorRecords vo : queryFileErrorRecordsPage.getRecords()) {
 				com.guiji.dispatch.model.FileErrorRecords bean = new com.guiji.dispatch.model.FileErrorRecords();
@@ -180,8 +180,8 @@ public class ThirdApiController implements IThirdApiOut {
 	@Override
 	@PostMapping(value = "out/insertDispatchPlanList")
 	public ReturnData<PlanResultInfo> insertDispatchPlanList(String jsonList) {
-		DispatchPlanList parseObject = JSONObject.parseObject(jsonList,DispatchPlanList.class);
-		// 检验基本参数
+		DispatchPlanList parseObject = JSONObject.parseObject(jsonList, DispatchPlanList.class);
+//		// 检验基本参数
 		ThirdCheckParams checkBaseParams = checkBaseParams(parseObject);
 		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();
@@ -251,6 +251,7 @@ public class ThirdApiController implements IThirdApiOut {
 				continue;
 			}
 			thirdApiHandler.add(bean);
+			logger.info(" thirdApiHandler bean "+bean);
 			succ.add(bean);
 			phones.add(bean.getPhone());
 		}
@@ -276,7 +277,7 @@ public class ThirdApiController implements IThirdApiOut {
 		records.setCreateTime(DateUtil.getCurrent4Time());
 		records.setParams(vo.getParams());
 		records.setPhone(vo.getPhone());
-		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
+		// records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
 		records.setDataType(Constant.IMPORT_DATA_TYPE_API);
 		records.setBatchId(vo.getBatchId());
@@ -346,11 +347,11 @@ public class ThirdApiController implements IThirdApiOut {
 			checkResult.setMsg("线路id不存在");
 			return checkResult;
 		}
-			if (templateById.getData().size() == 0) {
-				checkResult.setResult(false);
-				checkResult.setMsg("话术模板不存在");
-				return checkResult;
-			}
+		if (templateById.getData().size() == 0) {
+			checkResult.setResult(false);
+			checkResult.setMsg("话术模板不存在");
+			return checkResult;
+		}
 
 		return checkResult;
 	}

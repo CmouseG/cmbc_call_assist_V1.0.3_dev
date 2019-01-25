@@ -37,44 +37,48 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
 
 	public void excute(DispatchPlan vo) throws Exception {
-
+		logger.info("ThirdApiImportRecordHandlerImpl: "+ vo);
 		if (vo == null) {
 			return;
 		}
 
 		// 检查校验参数
 		Result.ReturnData<List<CheckResult>> checkParams = checkParams(vo);
+		logger.info("checkparam : " + checkParams);
 		if (checkParams.success) {
 			if (checkParams.getBody() != null) {
 				List<CheckResult> body = checkParams.getBody();
 				CheckResult checkResult = body.get(0);
 				if (!checkResult.isPass()) {
 					saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
-					logger.debug("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
+					logger.info("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}
 			}
 		} else {
+			logger.info("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
-			logger.debug("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
+			logger.info("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
-
-		dispatchPlanMapper.insert(vo);
+		int insert = dispatchPlanMapper.insert(vo);
+		logger.info("dispatchPlanMapper.insert" + insert);
 	}
 
 	private void saveErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {
+		logger.info("saveErrorRecords start");
 		FileErrorRecords records = new FileErrorRecords();
 		records.setAttach(vo.getAttach());
 		records.setCreateTime(DateUtil.getCurrent4Time());
 		records.setParams(vo.getParams());
 		records.setPhone(vo.getPhone());
-		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
+//		records.setFileRecordsId(Long.valueOf(vo.getFileRecordId()));
 		records.setErrorType(errorCodeEnum.getValue());
-		records.setDataType(Constant.IMPORT_DATA_TYPE_PAGE);
+		records.setDataType(Constant.IMPORT_DATA_TYPE_API);
 		records.setBatchId(vo.getBatchId());
 		records.setBatchName(vo.getBatchName());
 		fileRecordErrorService.save(records);
+		logger.info("saveErrorRecords end");
 	}
 
 	private Result.ReturnData<List<CheckResult>> checkParams(DispatchPlan dispatchPlan) {

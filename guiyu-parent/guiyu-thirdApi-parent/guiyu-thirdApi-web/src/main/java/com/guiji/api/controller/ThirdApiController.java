@@ -1,8 +1,12 @@
 package com.guiji.api.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +26,12 @@ import com.guiji.dispatch.model.DispatchPlanList;
 import com.guiji.dispatch.model.PlanCallInfoCount;
 import com.guiji.dispatch.model.PlanResultInfo;
 
+import ch.qos.logback.core.joran.util.beans.BeanUtil;
+
 @RestController
 public class ThirdApiController {
+
+	static Logger logger = LoggerFactory.getLogger(ThirdApiController.class);
 
 	@Autowired
 	private IThirdApiOut thirdApi;
@@ -225,20 +233,24 @@ public class ThirdApiController {
 	 * @return
 	 */	
 	@PostMapping("/addPhones")
-	public Result.ReturnData addPhones(@RequestBody DispatchPlanList dispatchPlanList) {
+	public Result.ReturnData addPhones(@RequestBody DispatchPlanList dispatchThirdDto) {
+		
 		JSONObject json = new JSONObject();
-		if (!isNumeric(dispatchPlanList.getLine())) {
+		if (!isNumeric(dispatchThirdDto.getLine())) {
 			return Result.error("0303015");
-		} else if (!isNumeric(dispatchPlanList.getIsClean())) {
+		} else if (!isNumeric(dispatchThirdDto.getIsClean())) {
 			return Result.error("0303016");
-		} else if (!isNumeric(dispatchPlanList.getCallHour())) {
+		} else if (!isNumeric(dispatchThirdDto.getCallHour())) {
 			return Result.error("0303017");
-		} else if (!isNumeric(dispatchPlanList.getCallDate())) {
+		} else if (!isNumeric(dispatchThirdDto.getCallDate())) {
 			return Result.error("0303018");
-		} else if (!isNumeric(dispatchPlanList.getUserId())) {
+		} else if (!isNumeric(dispatchThirdDto.getUserId())) {
 			return Result.error("0303019");
 		}
-		ReturnData<PlanResultInfo> insertDispatchPlanList = thirdApi.insertDispatchPlanList(dispatchPlanList);
+		
+		
+		String jsonString = JSONObject.toJSONString(dispatchThirdDto);
+		ReturnData<PlanResultInfo> insertDispatchPlanList = thirdApi.insertDispatchPlanList(jsonString);
 		json.put("data", insertDispatchPlanList.getBody());
 		return Result.ok(json);
 	}

@@ -409,13 +409,31 @@ public class SmsController implements ISms
 	/**
 	 * 新增/编辑短信任务
 	 */
-	@PostMapping(value = "addOrUpdateTask")
-	public ReturnData<String> addOrUpdateTask(TaskReqVO taskReqVO, @RequestHeader Long userId)
+	@PostMapping(value = "addTask")
+	public ReturnData<String> addTask(TaskReqVO taskReqVO, @RequestHeader Long userId)
 	{
 		try
 		{
 			logger.info("新增/编辑短信任务...");
-			taskService.addOrUpdateTask(taskReqVO, userId);
+			taskService.addTask(taskReqVO, userId);
+			
+		} catch (Exception e){
+			logger.error("请求失败！", e);
+			return Result.error(SmsConstants.Error_Request);
+		}
+		return Result.ok("SUCCESS");
+	}
+	
+	/**
+	 * 编辑短信任务
+	 */
+	@PostMapping(value = "updateTask")
+	public ReturnData<String> updateTask(TaskReqVO taskReqVO, @RequestHeader Long userId)
+	{
+		try
+		{
+			logger.info("新增/编辑短信任务...");
+			taskService.updateTask(taskReqVO, userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);

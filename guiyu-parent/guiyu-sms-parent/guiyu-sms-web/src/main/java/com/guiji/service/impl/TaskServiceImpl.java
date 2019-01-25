@@ -63,8 +63,11 @@ public class TaskServiceImpl implements TaskService
 		if(StringUtils.isNotEmpty(taskListReq.getTaskName())){
 			criteria.andTaskNameLike(taskListReq.getTaskName()); //任务名称
 		}
-		if(StringUtils.isNotEmpty(taskListReq.getSendDate())){
-			criteria.andSendDateEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(taskListReq.getSendDate())); //发送时间
+		if(StringUtils.isNotEmpty(taskListReq.getStartDate())){
+			criteria.andSendDateGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse(taskListReq.getStartDate()));
+		}
+		if(StringUtils.isNotEmpty(taskListReq.getEndDate())){
+			criteria.andSendDateLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse(taskListReq.getEndDate()));
 		}
 		taskListRsp.setTotalCount(taskMapper.selectByExampleWithBLOBs(example).size()); //总条数
 		
@@ -97,24 +100,21 @@ public class TaskServiceImpl implements TaskService
 	 * 新增/编辑短信任务
 	 */
 	@Override
-	public void addOrUpdateTask(TaskReqVO taskReqVO, Long userId) throws Exception
+	public void addTask(TaskReqVO taskReqVO, Long userId) throws Exception
 	{
 		SmsTask smsTask = new SmsTask();
 		setParams(taskReqVO, smsTask, userId); //设置字段值
 		
 		// 解析excel文件
 		List<String> phoneList = null;
-		if(taskReqVO.getFile() != null) {
-			try {
-				phoneList = ParseFileUtil.parseExcelFile(taskReqVO.getFile());
-			} catch (Exception e){
-				logger.error("解析文件失败", e);
-				throw new GuiyuException(SmsExceptionEnum.ParseFile_Error);
-			}
-		} else {
-			phoneList = (List<String>) redisUtil.get(taskReqVO.getTaskName());
+		try{
+			phoneList = ParseFileUtil.parseExcelFile(taskReqVO.getFile());
+		} catch (Exception e) {
+			logger.error("解析文件失败", e);
+			throw new GuiyuException(SmsExceptionEnum.ParseFile_Error);
 		}
 		smsTask.setPhoneNum(phoneList.size());
+		smsTask.setFileName(taskReqVO.getFile().getName());
 		
 		if(taskReqVO.getSendType() == SmsConstants.HandSend) //手动发送
 		{
@@ -132,33 +132,45 @@ public class TaskServiceImpl implements TaskService
 			}
 		} else { //定时发送
 			smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
-			redisUtil.set(taskReqVO.getTaskName(), phoneList); //未发送名单存入Redis
+			redisUtil.set(taskReqVO.getFile().getName(), phoneList); //未发送名单存入Redis
 		}
-		
-		if(taskReqVO.getId() == null){
-			taskMapper.insertSelective(smsTask); //新增
-		}else{
-			taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
-		}
+		taskMapper.insertSelective(smsTask); //新增
 	}
 	
 	/**
-	 * 审核短信任务
+	 * 编辑短信任务
 	 */
 	@Override
-	public void auditingTask(Integer id)
+	public void updateTask(TaskReqVO taskReqVO, Long userId) throws Exception
 	{
-		taskMapperExt.updateAuditingStatusAndRunStatusByPrimaryKey(id);
+		SmsTask smsTask = taskMapper.selectByPrimaryKey(taskReqVO.getId());
+		setParams(taskReqVO, smsTask, userId);
+		
+		if(taskReqVO.getSendType() == SmsConstants.HandSend) //手动发送
+		{
+			if(smsTask.getAuditingStatus() == SmsConstants.UnAuditing) {
+				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
+			} else {
+				List<String> phoneList = (List<String>) redisUtil.get(smsTask.getFileName());
+				//组装发送请求
+				TaskReq taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 
+						taskReqVO.getTunnelName(), taskReqVO.getSmsTemplateId(), taskReqVO.getSmsContent());
+				taskReq.setSendTime(new Date());
+				taskReq.setCompanyName(smsTask.getCompanyName());
+				taskReq.setUserId(userId);
+				sendSmsService.preSendMsg(taskReq); // 发送
+				smsTask.setSendStatus(SmsConstants.end); // 2-已结束
+				redisUtil.del(smsTask.getFileName());
+			}
+		}
+		taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
 	}
-
+	
 	/**
 	 * 设置字段值
 	 */
 	private void setParams(TaskReqVO taskReqVO, SmsTask smsTask, Long userId) throws Exception
 	{
-		if(taskReqVO.getId() != null) { // 新增id为空，修改id不为空
-			smsTask.setId(taskReqVO.getId());
-		}
 		smsTask.setTaskName(taskReqVO.getTaskName());
 		smsTask.setSendType(taskReqVO.getSendType());
 		smsTask.setTunnelName(taskReqVO.getTunnelName());
@@ -169,23 +181,31 @@ public class TaskServiceImpl implements TaskService
 		} else{
 			smsTask.setSendDate(new Date());
 		}
-		if(taskReqVO.getSmsTemplateId() != null) //短信模版
-		{ 
-			smsTask.setAuditingStatus(1); // 审核状态：1-已审核
-			smsTask.setRunStatus(1); // 运行状态：1-正常运行
-		}
-		else //自定义短信
-		{ 
-			smsTask.setAuditingStatus(0); // 0-待审核
-			smsTask.setRunStatus(0); // 运行状态：0-停止
+		if(taskReqVO.getSmsTemplateId() != null) { //短信模版
+			smsTask.setAuditingStatus(1);
+			smsTask.setRunStatus(1);
+		} else { //自定义短信 
+			smsTask.setAuditingStatus(0);
+			smsTask.setRunStatus(0);
 		}
 		ReturnData<SysOrganization> sysOrganization = iAuth.getOrgByUserId(userId);
 		smsTask.setCompanyId(sysOrganization.body.getId().intValue());
 		smsTask.setCompanyName(sysOrganization.body.getName());
-		smsTask.setCreateId(userId.intValue());
-		smsTask.setCreateTime(new Date());
+		if(taskReqVO.getId() == null) {
+			smsTask.setCreateId(userId.intValue());
+			smsTask.setCreateTime(new Date());
+		}
 		smsTask.setUpdateId(userId.intValue());
 		smsTask.setUpdateTime(new Date());
+	}
+	
+	/**
+	 * 审核短信任务
+	 */
+	@Override
+	public void auditingTask(Integer id)
+	{
+		taskMapperExt.updateAuditingStatusAndRunStatusByPrimaryKey(id);
 	}
 
 	/**

@@ -12,6 +12,7 @@
     <result column="send_date" jdbcType="TIMESTAMP" property="sendDate" />
     <result column="auditing_status" jdbcType="INTEGER" property="auditingStatus" />
     <result column="run_status" jdbcType="INTEGER" property="runStatus" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
     <result column="company_id" jdbcType="INTEGER" property="companyId" />
     <result column="company_name" jdbcType="VARCHAR" property="companyName" />
     <result column="create_id" jdbcType="INTEGER" property="createId" />
@@ -82,8 +83,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, task_name, phone_num, send_status, send_type, tunnel_name, sms_template_id, send_date, 
-    auditing_status, run_status, company_id, company_name, create_id, create_time, update_id, 
-    update_time
+    auditing_status, run_status, file_name, company_id, company_name, create_id, create_time, 
+    update_id, update_time
   </sql>
   <sql id="Blob_Column_List">
     sms_content
@@ -145,15 +146,17 @@
     insert into sms_task (id, task_name, phone_num, 
       send_status, send_type, tunnel_name, 
       sms_template_id, send_date, auditing_status, 
-      run_status, company_id, company_name, 
-      create_id, create_time, update_id, 
-      update_time, sms_content)
+      run_status, file_name, company_id, 
+      company_name, create_id, create_time, 
+      update_id, update_time, sms_content
+      )
     values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{phoneNum,jdbcType=INTEGER}, 
       #{sendStatus,jdbcType=INTEGER}, #{sendType,jdbcType=INTEGER}, #{tunnelName,jdbcType=VARCHAR}, 
       #{smsTemplateId,jdbcType=INTEGER}, #{sendDate,jdbcType=TIMESTAMP}, #{auditingStatus,jdbcType=INTEGER}, 
-      #{runStatus,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
-      #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{smsContent,jdbcType=LONGVARCHAR})
+      #{runStatus,jdbcType=INTEGER}, #{fileName,jdbcType=VARCHAR}, #{companyId,jdbcType=INTEGER}, 
+      #{companyName,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{smsContent,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTask">
     insert into sms_task
@@ -187,6 +190,9 @@
       </if>
       <if test="runStatus != null">
         run_status,
+      </if>
+      <if test="fileName != null">
+        file_name,
       </if>
       <if test="companyId != null">
         company_id,
@@ -240,6 +246,9 @@
       </if>
       <if test="runStatus != null">
         #{runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=INTEGER},
@@ -303,6 +312,9 @@
       <if test="record.runStatus != null">
         run_status = #{record.runStatus,jdbcType=INTEGER},
       </if>
+      <if test="record.fileName != null">
+        file_name = #{record.fileName,jdbcType=VARCHAR},
+      </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=INTEGER},
       </if>
@@ -341,6 +353,7 @@
       send_date = #{record.sendDate,jdbcType=TIMESTAMP},
       auditing_status = #{record.auditingStatus,jdbcType=INTEGER},
       run_status = #{record.runStatus,jdbcType=INTEGER},
+      file_name = #{record.fileName,jdbcType=VARCHAR},
       company_id = #{record.companyId,jdbcType=INTEGER},
       company_name = #{record.companyName,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=INTEGER},
@@ -364,6 +377,7 @@
       send_date = #{record.sendDate,jdbcType=TIMESTAMP},
       auditing_status = #{record.auditingStatus,jdbcType=INTEGER},
       run_status = #{record.runStatus,jdbcType=INTEGER},
+      file_name = #{record.fileName,jdbcType=VARCHAR},
       company_id = #{record.companyId,jdbcType=INTEGER},
       company_name = #{record.companyName,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=INTEGER},
@@ -404,6 +418,9 @@
       <if test="runStatus != null">
         run_status = #{runStatus,jdbcType=INTEGER},
       </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=INTEGER},
       </if>
@@ -439,6 +456,7 @@
       send_date = #{sendDate,jdbcType=TIMESTAMP},
       auditing_status = #{auditingStatus,jdbcType=INTEGER},
       run_status = #{runStatus,jdbcType=INTEGER},
+      file_name = #{fileName,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=INTEGER},
       company_name = #{companyName,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=INTEGER},
@@ -459,6 +477,7 @@
       send_date = #{sendDate,jdbcType=TIMESTAMP},
       auditing_status = #{auditingStatus,jdbcType=INTEGER},
       run_status = #{runStatus,jdbcType=INTEGER},
+      file_name = #{fileName,jdbcType=VARCHAR},
       company_id = #{companyId,jdbcType=INTEGER},
       company_name = #{companyName,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=INTEGER},

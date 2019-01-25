@@ -53,6 +53,10 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 					saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
 					logger.info("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
+				}else{
+					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>.开始执行了");
+					int insert = dispatchPlanMapper.insert(vo);
+					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>结束了" + insert);
 				}
 			}
 		} else {
@@ -61,8 +65,7 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 			logger.info("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
-		int insert = dispatchPlanMapper.insert(vo);
-		logger.info("dispatchPlanMapper.insert" + insert);
+
 	}
 
 	private void saveErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {

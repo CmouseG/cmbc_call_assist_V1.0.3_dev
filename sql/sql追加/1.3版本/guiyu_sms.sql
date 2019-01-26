@@ -14,6 +14,7 @@ CREATE TABLE `sms_platform` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_id` int(11) DEFAULT NULL COMMENT '更新人',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `org_code` varchar(16) DEFAULT NULL COMMENT '组织代码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -28,6 +29,7 @@ CREATE TABLE `sms_tunnel` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_id` int(11) DEFAULT NULL COMMENT '更新人',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `org_code` varchar(16) DEFAULT NULL COMMENT '组织代码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -44,12 +46,12 @@ CREATE TABLE `sms_config` (
   `run_status` int(1) DEFAULT NULL COMMENT '运行状态：0-停止；1-启动',
   `company_id` int(11) DEFAULT NULL COMMENT '公司id',
   `company_name` varchar(128) DEFAULT NULL COMMENT '公司名称',
-  `org_code` varchar(8) DEFAULT NULL COMMENT '组织代码',
   `user_id` int(11) DEFAULT NULL COMMENT '用户id',
   `create_id` int(11) DEFAULT NULL COMMENT '创建人',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_id` int(11) DEFAULT NULL COMMENT '更新人',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `org_code` varchar(8) DEFAULT NULL COMMENT '组织代码',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -82,6 +84,7 @@ CREATE TABLE `sms_task` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_id` int(11) DEFAULT NULL COMMENT '更新人',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `org_code` varchar(16) DEFAULT NULL COMMENT '组织代码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -95,6 +98,7 @@ CREATE TABLE `sms_task_detail` (
   `tunnel_name` varchar(128) DEFAULT NULL COMMENT '平台通道',
   `send_time` datetime DEFAULT NULL COMMENT '发送时间',
   `user_name` varchar(32) DEFAULT NULL COMMENT '操作者',
+  `org_code` varchar(16) DEFAULT NULL COMMENT '组织代码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

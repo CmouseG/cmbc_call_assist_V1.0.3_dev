@@ -19,6 +19,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_id" jdbcType="INTEGER" property="updateId" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsTask">
     <result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />
@@ -84,7 +85,7 @@
   <sql id="Base_Column_List">
     id, task_name, phone_num, send_status, send_type, tunnel_name, sms_template_id, send_date, 
     auditing_status, run_status, file_name, company_id, company_name, create_id, create_time, 
-    update_id, update_time
+    update_id, update_time, org_code
   </sql>
   <sql id="Blob_Column_List">
     sms_content
@@ -142,23 +143,23 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.sms.dao.entity.SmsTask">
+  <insert id="insert" parameterType="com.guiji.sms.dao.entity.SmsTask" useGeneratedKeys="true" keyProperty="id">
     insert into sms_task (id, task_name, phone_num, 
       send_status, send_type, tunnel_name, 
       sms_template_id, send_date, auditing_status, 
       run_status, file_name, company_id, 
       company_name, create_id, create_time, 
-      update_id, update_time, sms_content
-      )
+      update_id, update_time, org_code, 
+      sms_content)
     values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{phoneNum,jdbcType=INTEGER}, 
       #{sendStatus,jdbcType=INTEGER}, #{sendType,jdbcType=INTEGER}, #{tunnelName,jdbcType=VARCHAR}, 
       #{smsTemplateId,jdbcType=INTEGER}, #{sendDate,jdbcType=TIMESTAMP}, #{auditingStatus,jdbcType=INTEGER}, 
       #{runStatus,jdbcType=INTEGER}, #{fileName,jdbcType=VARCHAR}, #{companyId,jdbcType=INTEGER}, 
       #{companyName,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{smsContent,jdbcType=LONGVARCHAR}
-      )
+      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{orgCode,jdbcType=VARCHAR}, 
+      #{smsContent,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTask">
+  <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTask" useGeneratedKeys="true" keyProperty="id">
     insert into sms_task
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -211,6 +212,9 @@
       </if>
       <if test="updateTime != null">
         update_time,
+      </if>
+      <if test="orgCode != null">
+        org_code,
       </if>
       <if test="smsContent != null">
         sms_content,
@@ -267,6 +271,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
       </if>
       <if test="smsContent != null">
         #{smsContent,jdbcType=LONGVARCHAR},
@@ -333,6 +340,9 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.orgCode != null">
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="record.smsContent != null">
         sms_content = #{record.smsContent,jdbcType=LONGVARCHAR},
       </if>
@@ -360,6 +370,7 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
       sms_content = #{record.smsContent,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -383,7 +394,8 @@
       create_id = #{record.createId,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -439,6 +451,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="orgCode != null">
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
       <if test="smsContent != null">
         sms_content = #{smsContent,jdbcType=LONGVARCHAR},
       </if>
@@ -463,6 +478,7 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR},
       sms_content = #{smsContent,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -483,7 +499,8 @@
       create_id = #{createId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

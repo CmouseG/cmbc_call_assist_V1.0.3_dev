@@ -47,7 +47,7 @@ public class ThirdApiImportMQListener {
 			try {
 				this.handler.excute(vo);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.info(">>>>>>>>>>>>>>>>>>>>>>ThirdApiImportMQListener报错了",e);
 			}
 		}
 	}

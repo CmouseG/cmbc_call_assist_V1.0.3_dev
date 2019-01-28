@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration name="callcenter.conf" description="CallCenter">
+    <settings>
+                
+    </settings>
+    <agents>
+        <agent name="a" type="callback" contact="${verto_contact(a)}" status="Available" max-no-answer="30" wrap-up-time="10" reject-delay-time="10" busy-delay-time="60"/>
+    </agents>
+    <queues>
+        <queue name="support">
+            <param name="strategy" value="longest-idle-agent"/>
+            <param name="moh-sound" value="$${hold_music}"/>
+            <param name="time-base-score" value="system"/>
+            <param name="max-wait-time" value="0"/>
+            <param name="max-wait-time-with-no-agent" value="0"/>
+            <param name="max-wait-time-with-no-agent-time-reached" value="5"/>
+            <param name="tier-rules-apply" value="false"/>
+            <param name="tier-rule-wait-second" value="300"/>
+            <param name="tier-rule-wait-multiply-level" value="true"/>
+            <param name="tier-rule-no-agent-no-wait" value="false"/>
+            <param name="discard-abandoned-after" value="60"/>
+            <param name="abandoned-resume-allowed" value="false"/>
+        </queue>     
+    </queues>
+    <tiers>
+        <tier agent="a" queue="support" level="1" position="1"/>
+    </tiers>
+</configuration>

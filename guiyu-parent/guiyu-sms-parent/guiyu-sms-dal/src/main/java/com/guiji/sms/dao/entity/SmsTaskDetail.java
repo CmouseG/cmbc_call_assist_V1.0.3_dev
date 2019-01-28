@@ -22,6 +22,8 @@ public class SmsTaskDetail implements Serializable {
 
     private String userName;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -96,6 +98,14 @@ public class SmsTaskDetail implements Serializable {
         this.userName = userName == null ? null : userName.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -111,6 +121,7 @@ public class SmsTaskDetail implements Serializable {
         sb.append(", tunnelName=").append(tunnelName);
         sb.append(", sendTime=").append(sendTime);
         sb.append(", userName=").append(userName);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

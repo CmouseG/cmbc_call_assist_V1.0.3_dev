@@ -1,0 +1,30 @@
+<include>
+	<extension name="access_to_zrg_Extension">
+		<!-- 9-out-123456778-300001  -->
+		<condition field="destination_number" expression="^9-([^-]{2,5})-([^-]{3,40})-(.*)$">
+			<action application="log" data="info:callDirection >>>>>>>>>>first:$1"/>
+			<action application="log" data="info:callId >>>>>>>>>>second:$2"/>
+			<action application="log" data="info:queueId >>>>>>>>>>third:$3"/>
+
+			<action application="set" data="ai_call_direction=$1"/>
+			<action application="set" data="ai_seq_id=$2"/>
+			<action application="set" data="ai_queue_id=$3"/>
+
+			<action application="answer"/>
+
+			<action application="set" data="recording_follow_transfer=true"/>
+			<action application="record_session" data="$${recordings_dir}/${uuid}.wav"/>
+			<action application="start_asr" data="LTAInHHRM9fM0PHK tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA aleg"/>
+			<action application="park"/>
+		</condition>
+	</extension>
+
+	<extension name="to_agentgroup_Extension">
+		<condition field="destination_number" expression="^ag_(\d{11,15})_(.*)$">
+			<action application="set" data="effective_caller_id_number=$1"/>
+			<action application="export" data="nolocal:execute_on_answer=start_asr LTAInHHRM9fM0PHK tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA aleg"/>
+			<action application="set" data="cc_export_vars=nolocal:execute_on_answer"/>
+			<action application="callcenter" data="$2"/>
+		</condition>
+	</extension>
+</include>

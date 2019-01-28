@@ -62,7 +62,7 @@ public class RobotNextHelper {
         scheduleConcurrentHashMap = new ConcurrentHashMap<>();
     }
 
-    public void startAiCallNextTimer(AiCallNextReq aiCallNextReq) {
+    public void startAiCallNextTimer(AiCallNextReq aiCallNextReq, String agentGroupId) {
         log.debug("开始启动AiNextTimer[{}],500毫秒执行一次", aiCallNextReq);
         String callId = aiCallNextReq.getSeqId();
         Channel channelInit = channelService.findByUuid(callId);
@@ -132,7 +132,7 @@ public class RobotNextHelper {
                             Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename);
                             Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
                             aiResponse.setWavDuration(wavDruation);
-                            dealWithResponse(aiResponse);
+                            dealWithResponse(aiResponse,agentGroupId);
                         }
                     } catch (Exception e) {
                         log.error("scheduledExecutorService.scheduleAtFixedRate has error: ", e);
@@ -145,7 +145,7 @@ public class RobotNextHelper {
     }
 
 
-    public void dealWithResponse(AIResponse aiResponse) {
+    public void dealWithResponse(AIResponse aiResponse,String agentGroupId) {
         String callId = aiResponse.getCallId();
 //        CallOutDetail callDetail = callOutDetailService.getLastDetailCustomer(callId);
 //
@@ -153,7 +153,7 @@ public class RobotNextHelper {
         CallOutDetail callDetail = new CallOutDetail();
         callDetail.setCallId(new BigInteger(callId));
 //            callDetail.setCallDetailId(IdGenUtil.uuid());
-        setDetailValues(aiResponse, callDetail, callId);
+        setDetailValues(aiResponse, callDetail, callId, agentGroupId);
         callOutDetailService.save(callDetail);
 
         CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
@@ -173,7 +173,7 @@ public class RobotNextHelper {
     }
 
 
-    public void setDetailValues(AIResponse aiResponse, CallOutDetail callDetail, String callId) {
+    public void setDetailValues(AIResponse aiResponse, CallOutDetail callDetail, String callId, String agentGroupId) {
         log.info("此时为非转人工状态下的客户识别结果，继续下一步处理");
         if (aiResponse.getAiResponseType() == EAIResponseType.NORMAL) {       //机器人正常放音
             log.info("sellbot结果为正常放音");
@@ -182,7 +182,7 @@ public class RobotNextHelper {
         } else if (aiResponse.getAiResponseType() == EAIResponseType.TO_AGENT) {      //转人工
             log.info("sellbot的结果为转人工");
             callDetail.setCallDetailType(ECallDetailType.TOAGENT_INIT.ordinal());
-            fsBotHandler.playToAgent(aiResponse);
+            fsBotHandler.playToAgent(aiResponse,agentGroupId);
         } else if (aiResponse.getAiResponseType() == EAIResponseType.END) {           //sellbot提示结束，则在播放完毕后挂机
             log.info("sellbot的结果为通话结束");
             callDetail.setCallDetailType(ECallDetailType.END.ordinal());

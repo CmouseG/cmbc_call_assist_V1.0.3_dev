@@ -117,4 +117,14 @@ public class OrganizationController implements IOrg{
 		return organizationService.getProductByOrganizationId(organizationId);
 	}
 
+	@RequestMapping("getIndustryByOrganizationId")
+	public List<String> getIndustryByOrganizationId(Long organizationId){
+		return organizationService.getIndustryByOrganizationId(organizationId);
+	}
+
+	@RequestMapping("getIndustryByOrgCode")
+	public ReturnData<List<String>> getIndustryByOrgCode(String orgCode){
+		return Result.ok(organizationService.getIndustryByOrgCode(orgCode));
+	}
+
 }

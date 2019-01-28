@@ -38,6 +38,12 @@ public class FileRecords implements Serializable {
 
     private String filePath;
 
+    private String lineName;
+
+    private String robotName;
+
+    private String userName;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -176,6 +182,30 @@ public class FileRecords implements Serializable {
         this.filePath = filePath == null ? null : filePath.trim();
     }
 
+    public String getLineName() {
+        return lineName;
+    }
+
+    public void setLineName(String lineName) {
+        this.lineName = lineName == null ? null : lineName.trim();
+    }
+
+    public String getRobotName() {
+        return robotName;
+    }
+
+    public void setRobotName(String robotName) {
+        this.robotName = robotName == null ? null : robotName.trim();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -199,6 +229,9 @@ public class FileRecords implements Serializable {
         sb.append(", isClean=").append(isClean);
         sb.append(", url=").append(url);
         sb.append(", filePath=").append(filePath);
+        sb.append(", lineName=").append(lineName);
+        sb.append(", robotName=").append(robotName);
+        sb.append(", userName=").append(userName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

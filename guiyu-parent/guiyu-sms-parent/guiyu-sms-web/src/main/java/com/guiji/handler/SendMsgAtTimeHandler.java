@@ -9,7 +9,6 @@ import com.guiji.model.TaskReq;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskService;
 import com.guiji.sms.dao.entity.SmsTask;
-import com.guiji.utils.ListUtil;
 import com.guiji.utils.RedisUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
@@ -48,7 +47,7 @@ public class SendMsgAtTimeHandler extends IJobHandler
 				XxlJobLogger.log("短信任务已停止，暂不发送！");
 				continue;
 			}
-			List<String> phoneList = (List<String>) redisUtil.get(task.getTaskName());
+			List<String> phoneList = (List<String>) redisUtil.get(task.getId().toString());
 			//组装发送请求
 			TaskReq taskReq = new TaskReq(task.getTaskName(), task.getSendType(), 
 					phoneList, task.getTunnelName(), task.getSmsTemplateId(), task.getSmsContent());
@@ -56,9 +55,14 @@ public class SendMsgAtTimeHandler extends IJobHandler
 			taskReq.setCompanyName(task.getCompanyName());
 			taskReq.setUserId(task.getCreateId());
 			taskService.updateSendStatusById(1,task.getId()); //进行中
-			sendSmsService.preSendMsg(taskReq); //群发短信
-			taskService.updateSendStatusById(2,task.getId()); //已结束
-			redisUtil.del(task.getTaskName());
+			try
+			{	
+				sendSmsService.preSendMsg(taskReq); //群发短信
+				taskService.updateSendStatusById(2,task.getId()); //已结束
+			} catch (Exception e) {
+				taskService.updateSendStatusById(3,task.getId()); //发送失败
+			}
+			redisUtil.del(task.getId().toString());
 		}
 		return SUCCESS;
 	}

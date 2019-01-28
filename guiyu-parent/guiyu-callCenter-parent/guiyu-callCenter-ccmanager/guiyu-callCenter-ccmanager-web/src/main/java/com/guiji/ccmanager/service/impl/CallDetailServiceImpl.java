@@ -206,7 +206,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             CallOutDetailExample example = new CallOutDetailExample();
             CallOutDetailExample.Criteria criteria = example.createCriteria();
             criteria.andCallIdEqualTo(callId);
-            example.setOrderByClause("IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
+            example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time)");
             List<CallOutDetail> details = callOutDetailMapper.selectByExample(example);
 
             CallOutDetailRecordExample exampleRecord = new CallOutDetailRecordExample();
@@ -279,6 +279,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                 for (CallOutDetail callOutDetail : details) {
                     CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
                     BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
+                    callOutDetailVO.setCallDetailId(callOutDetail.getCallDetailId().toString());
                     if (records != null && records.size() > 0) {
                         for (CallOutDetailRecord callOutDetailRecord : records) {
                             if (callOutDetailRecord.getCallDetailId().compareTo(callOutDetail.getCallDetailId())==0) {

@@ -195,7 +195,7 @@ public class ThirdApiController {
 	public Result.ReturnData getToken(@RequestParam(required = false, name = "access_key") String access_key,
 			@RequestParam(required = false, name = "secret_key") String secret_key) {
 		if(access_key==null || access_key ==""){
-			return Result.error("0303021");
+			return Result.error("0303026");
 		}
 		
 		if(secret_key==null || secret_key ==""){

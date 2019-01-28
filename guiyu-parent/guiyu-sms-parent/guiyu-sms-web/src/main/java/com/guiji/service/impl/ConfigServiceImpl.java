@@ -43,12 +43,14 @@ public class ConfigServiceImpl implements ConfigService
 	 * 获取短信配置列表
 	 */
 	@Override
-	public ConfigListRspVO getConfigList(ConfigListReqVO configListReq)
+	public ConfigListRspVO getConfigList(ConfigListReqVO configListReq, Long userId)
 	{
 		ConfigListRspVO configListRsp = new ConfigListRspVO();
 		List<SmsConfigVO> configVOList = new ArrayList<>();
 
 		SmsConfigExample example = new SmsConfigExample();
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
+		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		configListRsp.setTotalCount(configMapper.selectByExampleWithBLOBs(example).size()); // 总条数
 
 		example.setLimitStart((configListReq.getPageNum() - 1) * configListReq.getPageSize());
@@ -122,11 +124,11 @@ public class ConfigServiceImpl implements ConfigService
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
 		smsConfig.setCompanyId(sysOrganization.body.getId().intValue());
 		smsConfig.setCompanyName(sysOrganization.body.getName());
-		smsConfig.setOrgCode(sysOrganization.body.getCode());
 		smsConfig.setCreateId(userId.intValue());
 		smsConfig.setCreateTime(new Date());
 		smsConfig.setUpdateId(userId.intValue());
 		smsConfig.setUpdateTime(new Date());
+		smsConfig.setOrgCode(sysOrganization.body.getCode());
 		return smsConfig;
 	}
 
@@ -173,7 +175,11 @@ public class ConfigServiceImpl implements ConfigService
 	@Override
 	public SmsConfig getConfigByIntentionTagAndOrgCode(String intentionTag, String orgCode)
 	{
-		return configMapperExt.getConfigByIntentionTagAndOrgCode(intentionTag, orgCode);
+		SmsConfigExample example = new SmsConfigExample();
+		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%")
+								.andOrgCodeLike(orgCode+"%")
+								.andRunStatusEqualTo(1);
+		return configMapper.selectByExampleWithBLOBs(example).get(0);
 	}
 	
 	public String getUserName(String userId) {

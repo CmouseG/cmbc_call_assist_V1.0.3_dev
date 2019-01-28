@@ -1,16 +1,24 @@
 package com.guiji.dispatch.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.dao.entity.BlackList;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
 
 public interface IBlackListService {
-	
-	boolean save(BlackList blackList);
-	
-	boolean update(BlackList blackList);
-	
-	public Page<BlackList> queryBlackListByParams(int pagenum,int pagesize);
+
+	boolean save(BlackList blackList, Long userId, String orgCode);
+
+	boolean update(BlackList blackList, Long userId);
 
 	boolean delete(String phone);
-	
+
+	void batchPlanImport(String fileName, Long userId, MultipartFile file, String orgCode) throws Exception;
+
+	boolean checkPhoneInBlackList(String phone);
+
+	boolean setBlackPhoneStatus(DispatchPlan dispatchPlan);
+
+	Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode);
 }

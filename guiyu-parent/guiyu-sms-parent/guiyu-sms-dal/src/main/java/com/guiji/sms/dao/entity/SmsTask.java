@@ -38,6 +38,8 @@ public class SmsTask implements Serializable {
 
     private Date updateTime;
 
+    private String orgCode;
+
     private String smsContent;
 
     private static final long serialVersionUID = 1L;
@@ -178,6 +180,14 @@ public class SmsTask implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public String getSmsContent() {
         return smsContent;
     }
@@ -209,6 +219,7 @@ public class SmsTask implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", smsContent=").append(smsContent);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

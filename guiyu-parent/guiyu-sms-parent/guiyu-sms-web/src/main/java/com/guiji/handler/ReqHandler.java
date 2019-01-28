@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
 import com.guiji.service.ConfigService;
@@ -73,25 +74,25 @@ public class ReqHandler
 				sendMReq.getOrgCode());
 		if (config == null){
 			logger.info("没有短信配置，不发送短信");
-			return null;
+			throw new GuiyuException("没有短信配置，不发送短信");
 		} else if (config.getAuditingStatus() == 0){
 			logger.info("短信内容未审核，暂不能发送短信");
-			return null;
+			throw new GuiyuException("短信内容未审核，暂不能发送短信");
 		} else if (config.getRunStatus() == 0){
-			logger.info("已停止，不再发送短信");
-			return null;
+			logger.info("停止状态，不再发送短信");
+			throw new GuiyuException("停止状态，不再发送短信");
 		}
 		// 获取通道
 		SmsTunnel tunnel = (SmsTunnel) redisUtil.get(config.getTunnelName());
 		if (tunnel == null){
 			logger.info("没有短信通道，不发送短信");
-			return null;
+			throw new GuiyuException("没有短信通道，不发送短信");
 		}
 		// 获取平台
 		SmsPlatform platform = (SmsPlatform) redisUtil.get(tunnel.getPlatformName());
 		if (platform == null){
 			logger.info("没有短信平台，不发送短信");
-			return null;
+			throw new GuiyuException("没有短信平台，不发送短信");
 		}
 		
 		resultMap.put("platform", platform);

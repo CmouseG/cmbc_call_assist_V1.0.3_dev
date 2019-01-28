@@ -26,6 +26,7 @@ public class MqReqListener
 		try
 		{
 			SendMReqVO sendMReq = JsonUtils.json2Bean(message, SendMReqVO.class);
+			logger.info(sendMReq.toString());
 			reqHandler.handleReq(sendMReq);
 			
 		} catch (Exception e){

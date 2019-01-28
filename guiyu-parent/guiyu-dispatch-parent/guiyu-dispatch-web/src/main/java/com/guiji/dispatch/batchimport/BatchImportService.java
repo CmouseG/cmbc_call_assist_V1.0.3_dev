@@ -1,9 +1,12 @@
 package com.guiji.dispatch.batchimport;
 
+import com.guiji.dispatch.dao.FileRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.dao.entity.FileRecords;
 import com.guiji.dispatch.impl.DispatchPlanServiceImpl;
+import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.util.Constant;
 
 import com.guiji.utils.BeanUtil;
@@ -30,15 +33,19 @@ public class BatchImportService implements IBatchImportService {
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
 	@Autowired
 	private IBatchImportQueueHandlerService BatchImportQueueHandler;
+	@Autowired
+	private FileRecordsMapper fileRecordsMapper;
+	@Autowired
+	private IBlackListService blackService;
 
 	@Override
 	public void batchImport(Sheet sheet, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode) {
 		DispatchPlan dispatchPlan = new DispatchPlan();
 		Integer fileRecordId = dispatchPlanParam.getFileRecordId();
 		BeanUtil.copyProperties(dispatchPlanParam, dispatchPlan);
-
 		// 校验
 		List<String> phones = new ArrayList<>();
+		int count = 0;
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			try {
 				Row row = sheet.getRow(r);
@@ -58,8 +65,9 @@ public class BatchImportService implements IBatchImportService {
 
 				if (phones.contains(dispatchPlan.getPhone())) {
 					// 当前号码存在重复的数据
+					phones.add(dispatchPlan.getPhone());
 					saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.DUPLICATE, row.getRowNum() + 1);
-					logger.debug("导入失败, 第{}行,电话号码{}存在重复的数据", row.getRowNum() + 1, dispatchPlan.getPhone());
+					logger.info("导入失败, 第{}行,电话号码{}存在重复的数据", row.getRowNum() + 1, dispatchPlan.getPhone());
 					continue;
 				}
 
@@ -67,19 +75,28 @@ public class BatchImportService implements IBatchImportService {
 				dispatchPlan.setUserId(userId.intValue());
 				dispatchPlan.setOrgCode(orgCode);
 
+				// 校验黑名单逻辑
+				if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone())) {
+					count = count + 1;
+					blackService.setBlackPhoneStatus(dispatchPlan);
+					phones.add(dispatchPlan.getPhone());
+					continue;
+				}
+
 				// 放入队列
 				BatchImportQueueHandler.add(dispatchPlan);
+				count = count + 1;
 				phones.add(dispatchPlan.getPhone());
-				// BatchImportQueueHandler instance =
-				// BatchImportQueueHandler.getInstance();
-				// instance.add(dispatchPlan);
-
 			} catch (Exception e) {
 				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN);
 				logger.debug("导入失败, 第{}行发生异常", r + 1, e);
 			}
 		}
-
+		// 更新导入记录
+		FileRecords fileRecord = new FileRecords();
+		fileRecord.setSuccessCount(count);
+		fileRecord.setId(Long.valueOf(dispatchPlanParam.getFileRecordId().intValue()));
+		fileRecordsMapper.updateByPrimaryKeySelective(fileRecord);
 	}
 
 	private void saveFileErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum, Integer errorLine) {
@@ -164,8 +181,9 @@ public class BatchImportService implements IBatchImportService {
 	 * 18+除1和4的任意数 17+除9的任意数 147
 	 */
 	private boolean isNumLegal(String str) {
-//		String regExp = "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
-		String regExp= "^(?!11)\\d{11}$";
+		// String regExp =
+		// "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+		String regExp = "^(?!11)\\d{11}$";
 		Pattern p = Pattern.compile(regExp);
 		Matcher m = p.matcher(str);
 		return m.matches();

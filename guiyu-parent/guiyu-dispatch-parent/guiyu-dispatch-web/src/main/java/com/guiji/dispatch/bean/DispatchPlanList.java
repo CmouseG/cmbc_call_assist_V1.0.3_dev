@@ -12,11 +12,7 @@ public class DispatchPlanList {
 	private String isClean;
 	private String callHour;
 	private String callDate;
-	
 	private List<DispatchPlan> mobile;
-	
-	
-	
 
 	public String getLine() {
 		return line;

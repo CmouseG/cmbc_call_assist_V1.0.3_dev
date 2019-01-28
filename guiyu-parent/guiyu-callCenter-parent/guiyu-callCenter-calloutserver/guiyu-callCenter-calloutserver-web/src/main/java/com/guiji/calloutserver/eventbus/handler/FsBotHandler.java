@@ -25,6 +25,7 @@ import com.guiji.calloutserver.service.CallOutDetailRecordService;
 import com.guiji.calloutserver.service.CallOutDetailService;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.ErrorMatchService;
+import com.guiji.calloutserver.util.DateUtil;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -156,7 +157,7 @@ public class FsBotHandler {
             aiCallNextReq.setAiNo(aiResponse.getAiId());
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
             aiCallNextReq.setSeqId(String.valueOf(callPlan.getCallId()));
-            robotNextHelper.startAiCallNextTimer(aiCallNextReq);
+            robotNextHelper.startAiCallNextTimer(aiCallNextReq,callPlan.getAgentGroupId());
         } catch (Exception ex) {
             //TODO:报警
             log.warn("在处理ChannelAnswer时出错异常", ex);
@@ -276,20 +277,24 @@ public class FsBotHandler {
      *
      * @param sellbotResponse
      */
-    public void playToAgent(AIResponse sellbotResponse) {
-//        //获取转人工的队列号
-//        Template template = templateRepository.findByTempId(callPlan.getTempId());
-//        callPlan.setAgentGroupId(template.getAgentGroupId());
-//        callPlan.setAgentStartTime(DateUtil.getCurrentDateTime());
-//        callPlan.setCallState(CallState.to_agent);
-//        callPlanRepository.add(callPlan);
-//
-//        //播放完提示音后，将当前呼叫转到座席组
-//        channelHelper.playAndTransferToAgentGroup(callPlan, sellbotResponse.getChannelMedia(), template.getAgentGroupId());
-//
-//        //构建事件抛出
-//        ToAgentEvent toAgentEvent = new ToAgentEvent(callPlan);
-//        simpleEventSender.sendEvent(toAgentEvent);
+    public void playToAgent(AIResponse sellbotResponse,String agentGroupId) {
+        //获取转人工的队列号
+        CallOutPlan callPlan = new CallOutPlan();
+        callPlan.setCallId(new BigInteger(sellbotResponse.getCallId()));
+        callPlan.setAgentStartTime(new Date());
+        callPlan.setCallState(ECallState.to_agent.ordinal());
+        callOutPlanService.update(callPlan);
+
+        //播放完提示音后，将当前呼叫转到座席组
+        channelHelper.playAndTransferToAgentGroup(sellbotResponse.getCallId(), sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
+
+        log.info("在开始转人工后，释放ai资源");
+        CallOutPlan realCallPlan = callOutPlanService.findByCallId(new BigInteger(sellbotResponse.getCallId()));
+        aiManager.releaseAi(realCallPlan);
+
+        //构建事件抛出
+        ToAgentEvent toAgentEvent = new ToAgentEvent(callPlan);
+        asyncEventBus.post(toAgentEvent);
     }
 
     public void buildCallOutDetail(BigInteger callId, AsrCustomerEvent event) {

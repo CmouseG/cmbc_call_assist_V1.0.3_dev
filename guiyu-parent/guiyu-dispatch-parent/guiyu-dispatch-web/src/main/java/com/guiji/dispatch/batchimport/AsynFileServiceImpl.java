@@ -11,12 +11,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.eclipse.jetty.server.UserIdentity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
@@ -28,6 +30,10 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.NasUtil;
+
+import ai.guiji.botsentence.api.IBotSentenceProcess;
+import ai.guiji.botsentence.api.entity.BotSentenceProcess;
+import ai.guiji.botsentence.api.entity.ServerResult;
 
 @Service
 public class AsynFileServiceImpl implements AsynFileService {
@@ -43,6 +49,11 @@ public class AsynFileServiceImpl implements AsynFileService {
 
 	@Autowired
 	private IBatchImportService batchImportService;
+
+	@Autowired
+	private ICallManagerOut callManagerOut;
+	@Autowired
+	private IBotSentenceProcess Process;
 
 	@Override
 	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String str, String orgCode)
@@ -99,6 +110,13 @@ public class AsynFileServiceImpl implements AsynFileService {
 
 	private Long saveFileRecord(String fileName, DispatchPlanBatch dispatchPlanBatch, DispatchPlan dispatchPlan,
 			Long userId, String orgCode, MultipartFile file) throws Exception {
+		// 用户
+		ReturnData<SysUser> user = authService.getUserById(userId);
+		// 线路
+		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlan.getLine())).getBody();
+//		// 话术
+		ServerResult<List<BotSentenceProcess>> templateById = Process.getTemplateById(dispatchPlan.getRobot());
+
 		FileRecords fileRecords = new FileRecords();
 		fileRecords.setBatchid(dispatchPlanBatch.getId());
 		fileRecords.setBatchName(dispatchPlan.getBatchName());
@@ -112,6 +130,11 @@ public class AsynFileServiceImpl implements AsynFileService {
 		fileRecords.setOrgCode(orgCode);
 		fileRecords.setRobot(dispatchPlan.getRobot());
 		fileRecords.setUserId(userId.intValue());
+		fileRecords.setUserName(user.getBody().getUsername());
+		fileRecords.setLineName(lineName);
+		BotSentenceProcess botSentenceProcess = templateById.getData().get(0);
+		fileRecords.setRobotName(botSentenceProcess.getTemplateName());
+		fileRecords.setStatus(Constant.FILE_SHOW);
 		batchImportFileRecordService.save(fileRecords);
 
 		Long fileRecordId = fileRecords.getId();

@@ -11,6 +11,7 @@
     <result column="tunnel_name" jdbcType="VARCHAR" property="tunnelName" />
     <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -72,7 +73,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, task_name, phone, send_type, send_status, company_name, tunnel_name, send_time, 
-    user_name
+    user_name, org_code
   </sql>
   <select id="selectByExample" parameterType="com.guiji.sms.dao.entity.SmsTaskDetailExample" resultMap="BaseResultMap">
     select
@@ -111,12 +112,12 @@
   <insert id="insert" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
     insert into sms_task_detail (id, task_name, phone, 
       send_type, send_status, company_name, 
-      tunnel_name, send_time, user_name
-      )
+      tunnel_name, send_time, user_name, 
+      org_code)
     values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
       #{sendType,jdbcType=INTEGER}, #{sendStatus,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
-      #{tunnelName,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR}
-      )
+      #{tunnelName,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR}, 
+      #{orgCode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
     insert into sms_task_detail
@@ -148,6 +149,9 @@
       <if test="userName != null">
         user_name,
       </if>
+      <if test="orgCode != null">
+        org_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -176,6 +180,9 @@
       </if>
       <if test="userName != null">
         #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -215,6 +222,9 @@
       <if test="record.userName != null">
         user_name = #{record.userName,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgCode != null">
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -230,7 +240,8 @@
       company_name = #{record.companyName,jdbcType=VARCHAR},
       tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
       send_time = #{record.sendTime,jdbcType=TIMESTAMP},
-      user_name = #{record.userName,jdbcType=VARCHAR}
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -262,6 +273,9 @@
       <if test="userName != null">
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="orgCode != null">
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -274,7 +288,8 @@
       company_name = #{companyName,jdbcType=VARCHAR},
       tunnel_name = #{tunnelName,jdbcType=VARCHAR},
       send_time = #{sendTime,jdbcType=TIMESTAMP},
-      user_name = #{userName,jdbcType=VARCHAR}
+      user_name = #{userName,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

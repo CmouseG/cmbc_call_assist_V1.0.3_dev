@@ -20,22 +20,20 @@
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
 		<result column="update_id" jdbcType="INTEGER" property="updateId" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="org_code" jdbcType="VARCHAR" property="orgCode" />
 	</resultMap>
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsTask">
 		<result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />
 	</resultMap>
 
 	<update id="updateRunStatusByPrimaryKey">
-		UPDATE sms_task
-		SET run_status = 0
-		WHERE id =
-		#{id,jdbcType=INTEGER}
+		UPDATE sms_task  SET run_status = 0 
+		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 
 	<update id="updateAuditingStatusAndRunStatusByPrimaryKey">
-		UPDATE sms_task
-		SET auditing_status = 1, run_status =
-		1
+		UPDATE sms_task 
+		SET auditing_status = 1, run_status = 1 
 		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 
@@ -45,8 +43,8 @@
 	</select>
 
 	<update id="updateSendStatusById">
-		UPDATE sms_task SET send_status =
-		#{sendStatus,jdbcType=INTEGER}
+		UPDATE sms_task 
+		SET send_status = #{sendStatus,jdbcType=INTEGER} 
 		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 

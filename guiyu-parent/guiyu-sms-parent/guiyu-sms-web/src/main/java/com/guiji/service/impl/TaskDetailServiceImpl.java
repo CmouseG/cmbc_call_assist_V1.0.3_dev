@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.model.TaskReq;
 import com.guiji.service.TaskDetailService;
 import com.guiji.sms.dao.SmsTaskDetailMapper;
@@ -21,6 +22,7 @@ import com.guiji.sms.dao.entity.SmsTaskDetailExample;
 import com.guiji.sms.dao.entity.SmsTaskDetailExample.Criteria;
 import com.guiji.sms.vo.TaskDetailListReqVO;
 import com.guiji.sms.vo.TaskDetailListRspVO;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
 
@@ -41,12 +43,14 @@ public class TaskDetailServiceImpl implements TaskDetailService
 	 * @throws ParseException 
 	 */
 	@Override
-	public TaskDetailListRspVO getTaskDetailList(TaskDetailListReqVO taskDetailListReq) throws ParseException
+	public TaskDetailListRspVO getTaskDetailList(TaskDetailListReqVO taskDetailListReq, Long userId) throws ParseException
 	{
 		TaskDetailListRspVO taskDetailListRsp = new TaskDetailListRspVO();
 		
 		SmsTaskDetailExample example = new SmsTaskDetailExample();
 		Criteria criteria = example.createCriteria();
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
+		criteria.andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		if(StringUtils.isNotEmpty(taskDetailListReq.getTaskName())){
 			criteria.andTaskNameEqualTo(taskDetailListReq.getTaskName());
 		}
@@ -54,10 +58,12 @@ public class TaskDetailServiceImpl implements TaskDetailService
 			criteria.andCompanyNameEqualTo(taskDetailListReq.getCompanyName());
 		}
 		if(StringUtils.isNotEmpty(taskDetailListReq.getStartDate())){
-			criteria.andSendTimeGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse(taskDetailListReq.getStartDate()));
+			criteria.andSendTimeGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+													.parse(taskDetailListReq.getStartDate()+" 00:00:00"));
 		}
 		if(StringUtils.isNotEmpty(taskDetailListReq.getEndDate())){
-			criteria.andSendTimeLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd").parse(taskDetailListReq.getEndDate()));
+			criteria.andSendTimeLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+													.parse(taskDetailListReq.getEndDate()+" 23:59:59"));
 		}
 		if(taskDetailListReq.getSendType() != null){
 			criteria.andSendTypeEqualTo(taskDetailListReq.getSendType());
@@ -97,6 +103,8 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		detail.setTunnelName(taskReq.getTunnelName());
 		detail.setSendTime(taskReq.getSendTime());
 		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(taskReq.getUserId());
+		detail.setOrgCode(sysOrganization.body.getCode());
 		for(SmsRecord record : records)
 		{
 			detail.setPhone(record.getPhone());

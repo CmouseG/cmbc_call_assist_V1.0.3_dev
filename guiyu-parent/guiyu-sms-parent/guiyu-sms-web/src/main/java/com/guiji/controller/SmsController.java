@@ -61,13 +61,13 @@ public class SmsController implements ISms
 	 * 获取短信平台列表
 	 */
 	@PostMapping(value = "getPlatformList")
-	public ReturnData<PlatformListRspVO> getPlatformList(@RequestBody PlatformListReqVO platformListReq)
+	public ReturnData<PlatformListRspVO> getPlatformList(@RequestBody PlatformListReqVO platformListReq, @RequestHeader Long userId)
 	{
 		PlatformListRspVO platformListRsp = new PlatformListRspVO();
 		try
 		{
 			logger.info("获取短信平台列表...");
-			platformListRsp = platformService.getPlatformList(platformListReq);
+			platformListRsp = platformService.getPlatformList(platformListReq, userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);
@@ -98,13 +98,13 @@ public class SmsController implements ISms
 	 *获取短信通道列表
 	 */
 	@PostMapping(value = "getTunnelList")
-	public ReturnData<TunnelListRspVO> getTunnelList(@RequestBody TunnelListReqVO tunnelListReq)
+	public ReturnData<TunnelListRspVO> getTunnelList(@RequestBody TunnelListReqVO tunnelListReq, @RequestHeader Long userId)
 	{
 		TunnelListRspVO tunnelListRsp = new TunnelListRspVO();
 		try
 		{
 			logger.info("获取短信通道列表...");
-			tunnelListRsp = tunnelService.getTunnelList(tunnelListReq);
+			tunnelListRsp = tunnelService.getTunnelList(tunnelListReq, userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);
@@ -172,13 +172,13 @@ public class SmsController implements ISms
 	 * 获取短信配置列表
 	 */
 	@PostMapping(value = "getConfigList")
-	public ReturnData<ConfigListRspVO> getConfigList(@RequestBody ConfigListReqVO configListReq)
+	public ReturnData<ConfigListRspVO> getConfigList(@RequestBody ConfigListReqVO configListReq, @RequestHeader Long userId)
 	{
 		ConfigListRspVO configListRsp = new ConfigListRspVO();
 		try
 		{
 			logger.info("获取短信配置列表...");
-			configListRsp = configService.getConfigList(configListReq);
+			configListRsp = configService.getConfigList(configListReq, userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);
@@ -300,13 +300,13 @@ public class SmsController implements ISms
 	 * 获取短信任务列表
 	 */
 	@PostMapping(value = "getTaskList")
-	public ReturnData<TaskListRspVO> getTaskList(@RequestBody TaskListReqVO taskListReq)
+	public ReturnData<TaskListRspVO> getTaskList(@RequestBody TaskListReqVO taskListReq, @RequestHeader Long userId)
 	{
 		TaskListRspVO taskListRsp = new TaskListRspVO();
 		try
 		{
 			logger.info("获取短信任务列表...");
-			taskListRsp = taskService.getTaskList(taskListReq);
+			taskListRsp = taskService.getTaskList(taskListReq, userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);
@@ -373,13 +373,13 @@ public class SmsController implements ISms
 	 * 获取短信任务详情列表
 	 */
 	@PostMapping(value = "getTaskDetailList")
-	public ReturnData<TaskDetailListRspVO> getTaskDetailList(@RequestBody TaskDetailListReqVO taskDetailListReq)
+	public ReturnData<TaskDetailListRspVO> getTaskDetailList(@RequestBody TaskDetailListReqVO taskDetailListReq, @RequestHeader Long userId)
 	{
 		TaskDetailListRspVO taskDetailListRsp = new TaskDetailListRspVO();
 		try
 		{
 			logger.info("获取短信任务详情列表...");
-			taskDetailListRsp = taskDetailService.getTaskDetailList(taskDetailListReq);
+			taskDetailListRsp = taskDetailService.getTaskDetailList(taskDetailListReq, userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);
@@ -414,7 +414,7 @@ public class SmsController implements ISms
 	{
 		try
 		{
-			logger.info("新增/编辑短信任务...");
+			logger.info("新增短信任务...");
 			taskService.addTask(taskReqVO, userId);
 			
 		} catch (Exception e){
@@ -432,7 +432,7 @@ public class SmsController implements ISms
 	{
 		try
 		{
-			logger.info("新增/编辑短信任务...");
+			logger.info("编辑短信任务...");
 			taskService.updateTask(taskReqVO, userId);
 			
 		} catch (Exception e){

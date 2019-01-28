@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceTtsBackupMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceTtsBackupMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
     <id column="backup_id" property="backupId" jdbcType="VARCHAR" />
     <result column="process_id" property="processId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
@@ -12,6 +12,8 @@
     <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
     <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
     <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="times" property="times" jdbcType="INTEGER" />
+    <result column="wav_name" property="wavName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -73,9 +75,9 @@
   </sql>
   <sql id="Base_Column_List" >
     backup_id, process_id, template_id, volice_id, content, url, crt_time, crt_user, 
-    lst_update_time, lst_update_user
+    lst_update_time, lst_update_user, times, wav_name
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample" >
     select
     <if test="distinct" >
       distinct
@@ -103,26 +105,28 @@
     delete from bot_sentence_tts_backup
     where backup_id = #{backupId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample" >
     delete from bot_sentence_tts_backup
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
     <selectKey resultType="java.lang.String" keyProperty="backupId" order="BEFORE" >
       SELECT genTabId('bot_sentence_tts_backup')
     </selectKey>
     insert into bot_sentence_tts_backup (backup_id, process_id, template_id, 
       volice_id, content, url, 
       crt_time, crt_user, lst_update_time, 
-      lst_update_user)
+      lst_update_user, times, wav_name
+      )
     values (#{backupId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{voliceId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
-      #{lstUpdateUser,jdbcType=VARCHAR})
+      #{lstUpdateUser,jdbcType=VARCHAR}, #{times,jdbcType=INTEGER}, #{wavName,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
     <selectKey resultType="java.lang.String" keyProperty="backupId" order="BEFORE" >
       SELECT genTabId('bot_sentence_tts_backup')
     </selectKey>
@@ -156,6 +160,12 @@
       <if test="lstUpdateUser != null" >
         lst_update_user,
       </if>
+      <if test="times != null" >
+        times,
+      </if>
+      <if test="wavName != null" >
+        wav_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{backupId,jdbcType=VARCHAR},
@@ -186,9 +196,15 @@
       <if test="lstUpdateUser != null" >
         #{lstUpdateUser,jdbcType=VARCHAR},
       </if>
+      <if test="times != null" >
+        #{times,jdbcType=INTEGER},
+      </if>
+      <if test="wavName != null" >
+        #{wavName,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_tts_backup
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -227,6 +243,12 @@
       <if test="record.lstUpdateUser != null" >
         lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
       </if>
+      <if test="record.times != null" >
+        times = #{record.times,jdbcType=INTEGER},
+      </if>
+      <if test="record.wavName != null" >
+        wav_name = #{record.wavName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -243,12 +265,14 @@
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       crt_user = #{record.crtUser,jdbcType=VARCHAR},
       lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
-      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR}
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      times = #{record.times,jdbcType=INTEGER},
+      wav_name = #{record.wavName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
     update bot_sentence_tts_backup
     <set >
       <if test="processId != null" >
@@ -278,10 +302,16 @@
       <if test="lstUpdateUser != null" >
         lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
       </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=INTEGER},
+      </if>
+      <if test="wavName != null" >
+        wav_name = #{wavName,jdbcType=VARCHAR},
+      </if>
     </set>
     where backup_id = #{backupId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsBackup" >
     update bot_sentence_tts_backup
     set process_id = #{processId,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
@@ -291,7 +321,9 @@
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       crt_user = #{crtUser,jdbcType=VARCHAR},
       lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
-      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR}
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      times = #{times,jdbcType=INTEGER},
+      wav_name = #{wavName,jdbcType=VARCHAR}
     where backup_id = #{backupId,jdbcType=VARCHAR}
   </update>
 </mapper>

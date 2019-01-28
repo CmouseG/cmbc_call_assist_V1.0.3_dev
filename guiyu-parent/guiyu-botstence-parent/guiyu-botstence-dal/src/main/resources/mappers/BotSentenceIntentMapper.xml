@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceIntentMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceIntent" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceIntentMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceIntent" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="industry" property="industry" jdbcType="VARCHAR" />
@@ -14,8 +14,9 @@
     <result column="for_select" property="forSelect" jdbcType="INTEGER" />
     <result column="domain_name" property="domainName" jdbcType="VARCHAR" />
     <result column="old_id" property="oldId" jdbcType="BIGINT" />
+    <result column="refrence_id" property="refrenceId" jdbcType="BIGINT" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.dao.entity.BotSentenceIntent" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.guiji.botsentence.dao.entity.BotSentenceIntent" extends="BaseResultMap" >
     <result column="keywords" property="keywords" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -78,12 +79,12 @@
   </sql>
   <sql id="Base_Column_List" >
     id, `name`, industry, template_id, process_id, crt_time, crt_user, lst_update_time, 
-    lst_update_user, for_select, domain_name, old_id
+    lst_update_user, for_select, domain_name, old_id, refrence_id
   </sql>
   <sql id="Blob_Column_List" >
     keywords
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntentExample" >
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntentExample" >
     select
     <if test="distinct" >
       distinct
@@ -100,7 +101,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntentExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntentExample" >
     select
     <if test="distinct" >
       distinct
@@ -130,25 +131,25 @@
     delete from bot_sentence_intent
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntentExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntentExample" >
     delete from bot_sentence_intent
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntent" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntent"  useGeneratedKeys="true" keyProperty="id">
     insert into bot_sentence_intent (id, `name`, industry, 
       template_id, process_id, crt_time, 
       crt_user, lst_update_time, lst_update_user, 
       for_select, domain_name, old_id, 
-      keywords)
+      refrence_id, keywords)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
       #{templateId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
       #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
       #{forSelect,jdbcType=INTEGER}, #{domainName,jdbcType=VARCHAR}, #{oldId,jdbcType=BIGINT}, 
-      #{keywords,jdbcType=LONGVARCHAR})
+      #{refrenceId,jdbcType=BIGINT}, #{keywords,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntent" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntent"  useGeneratedKeys="true" keyProperty="id">
     insert into bot_sentence_intent
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -186,6 +187,9 @@
       </if>
       <if test="oldId != null" >
         old_id,
+      </if>
+      <if test="refrenceId != null" >
+        refrence_id,
       </if>
       <if test="keywords != null" >
         keywords,
@@ -228,12 +232,15 @@
       <if test="oldId != null" >
         #{oldId,jdbcType=BIGINT},
       </if>
+      <if test="refrenceId != null" >
+        #{refrenceId,jdbcType=BIGINT},
+      </if>
       <if test="keywords != null" >
         #{keywords,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntentExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntentExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_intent
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -278,6 +285,9 @@
       <if test="record.oldId != null" >
         old_id = #{record.oldId,jdbcType=BIGINT},
       </if>
+      <if test="record.refrenceId != null" >
+        refrence_id = #{record.refrenceId,jdbcType=BIGINT},
+      </if>
       <if test="record.keywords != null" >
         keywords = #{record.keywords,jdbcType=LONGVARCHAR},
       </if>
@@ -300,6 +310,7 @@
       for_select = #{record.forSelect,jdbcType=INTEGER},
       domain_name = #{record.domainName,jdbcType=VARCHAR},
       old_id = #{record.oldId,jdbcType=BIGINT},
+      refrence_id = #{record.refrenceId,jdbcType=BIGINT},
       keywords = #{record.keywords,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -318,12 +329,13 @@
       lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
       for_select = #{record.forSelect,jdbcType=INTEGER},
       domain_name = #{record.domainName,jdbcType=VARCHAR},
-      old_id = #{record.oldId,jdbcType=BIGINT}
+      old_id = #{record.oldId,jdbcType=BIGINT},
+      refrence_id = #{record.refrenceId,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntent" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntent" >
     update bot_sentence_intent
     <set >
       <if test="name != null" >
@@ -359,13 +371,16 @@
       <if test="oldId != null" >
         old_id = #{oldId,jdbcType=BIGINT},
       </if>
+      <if test="refrenceId != null" >
+        refrence_id = #{refrenceId,jdbcType=BIGINT},
+      </if>
       <if test="keywords != null" >
         keywords = #{keywords,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntent" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntent" >
     update bot_sentence_intent
     set `name` = #{name,jdbcType=VARCHAR},
       industry = #{industry,jdbcType=VARCHAR},
@@ -378,10 +393,11 @@
       for_select = #{forSelect,jdbcType=INTEGER},
       domain_name = #{domainName,jdbcType=VARCHAR},
       old_id = #{oldId,jdbcType=BIGINT},
+      refrence_id = #{refrenceId,jdbcType=BIGINT},
       keywords = #{keywords,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceIntent" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceIntent" >
     update bot_sentence_intent
     set `name` = #{name,jdbcType=VARCHAR},
       industry = #{industry,jdbcType=VARCHAR},
@@ -393,7 +409,8 @@
       lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
       for_select = #{forSelect,jdbcType=INTEGER},
       domain_name = #{domainName,jdbcType=VARCHAR},
-      old_id = #{oldId,jdbcType=BIGINT}
+      old_id = #{oldId,jdbcType=BIGINT},
+      refrence_id = #{refrenceId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

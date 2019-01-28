@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.ext.BotSentenceProcessExtMapper" >
+<mapper namespace="com.guiji.botsentence.dao.ext.BotSentenceProcessExtMapper" >
   
   <insert id="batchInsert" parameterType="java.util.List" >
     insert into bot_sentence_process (process_id, template_id, template_name, 
@@ -35,7 +35,7 @@
 
 
 
-<insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+<insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
     <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
       SELECT genTabId('bot_sentence_process')
     </selectKey>
@@ -53,7 +53,7 @@
       #{approveNotes,jdbcType=VARCHAR})
   </insert>
 
-  <select id="getTemplateBySelf" resultType="ai.guiji.botsentence.dao.entity.BotSentenceProcess">
+  <select id="getTemplateBySelf" resultType="com.guiji.botsentence.dao.entity.BotSentenceProcess">
   	select a.process_id as processId,a.template_id as templateId,a.template_name as templateName,a.template_type as templateType,
 	a.version,a.industry,a.account_no as accountNo,a.old_process_id as oldProcessId,a.crt_time as crtTime,a.crt_user as crtUser,
 	a.lst_update_time as lstUpdateTime,a.lst_update_user as lstUpdateUser,a.state,a.approve_time as approveTime,
@@ -63,7 +63,7 @@
   	where a.account_no=#{accountNo}
   </select>
   
-  <select id="getTemplateById" resultType="ai.guiji.botsentence.dao.entity.BotSentenceProcess">
+  <select id="getTemplateById" resultType="com.guiji.botsentence.dao.entity.BotSentenceProcess">
   	select a.process_id as processId,a.template_id as templateId,a.template_name as templateName,a.template_type as templateType,
 	a.version,a.industry,a.account_no as accountNo,a.old_process_id as oldProcessId,a.crt_time as crtTime,a.crt_user as crtUser,
 	a.lst_update_time as lstUpdateTime,a.lst_update_user as lstUpdateUser,a.state,a.approve_time as approveTime,

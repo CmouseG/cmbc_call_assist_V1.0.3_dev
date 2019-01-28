@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceGradeRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceGradeRule" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="rule_no" property="ruleNo" jdbcType="VARCHAR" />
+    <result column="intent_name" property="intentName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="value1" property="value1" jdbcType="VARCHAR" />
+    <result column="value2" property="value2" jdbcType="VARCHAR" />
+    <result column="value3" property="value3" jdbcType="VARCHAR" />
+    <result column="value4" property="value4" jdbcType="VARCHAR" />
+    <result column="value5" property="value5" jdbcType="VARCHAR" />
+    <result column="show_seq" property="showSeq" jdbcType="INTEGER" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, process_id, template_id, rule_no, intent_name, `type`, value1, value2, value3, 
+    value4, value5, show_seq, crt_time, crt_user, lst_update_time, lst_update_user, remark
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_grade_rule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_grade_rule
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bot_sentence_grade_rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample" >
+    delete from bot_sentence_grade_rule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRule" >
+    insert into bot_sentence_grade_rule (id, process_id, template_id, 
+      rule_no, intent_name, `type`, 
+      value1, value2, value3, 
+      value4, value5, show_seq, 
+      crt_time, crt_user, lst_update_time, 
+      lst_update_user, remark)
+    values (#{id,jdbcType=INTEGER}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{ruleNo,jdbcType=VARCHAR}, #{intentName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{value1,jdbcType=VARCHAR}, #{value2,jdbcType=VARCHAR}, #{value3,jdbcType=VARCHAR}, 
+      #{value4,jdbcType=VARCHAR}, #{value5,jdbcType=VARCHAR}, #{showSeq,jdbcType=INTEGER}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
+      #{lstUpdateUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRule" >
+    insert into bot_sentence_grade_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="ruleNo != null" >
+        rule_no,
+      </if>
+      <if test="intentName != null" >
+        intent_name,
+      </if>
+      <if test="type != null" >
+        `type`,
+      </if>
+      <if test="value1 != null" >
+        value1,
+      </if>
+      <if test="value2 != null" >
+        value2,
+      </if>
+      <if test="value3 != null" >
+        value3,
+      </if>
+      <if test="value4 != null" >
+        value4,
+      </if>
+      <if test="value5 != null" >
+        value5,
+      </if>
+      <if test="showSeq != null" >
+        show_seq,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleNo != null" >
+        #{ruleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="intentName != null" >
+        #{intentName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="value1 != null" >
+        #{value1,jdbcType=VARCHAR},
+      </if>
+      <if test="value2 != null" >
+        #{value2,jdbcType=VARCHAR},
+      </if>
+      <if test="value3 != null" >
+        #{value3,jdbcType=VARCHAR},
+      </if>
+      <if test="value4 != null" >
+        #{value4,jdbcType=VARCHAR},
+      </if>
+      <if test="value5 != null" >
+        #{value5,jdbcType=VARCHAR},
+      </if>
+      <if test="showSeq != null" >
+        #{showSeq,jdbcType=INTEGER},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRuleExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_grade_rule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_grade_rule
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ruleNo != null" >
+        rule_no = #{record.ruleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.intentName != null" >
+        intent_name = #{record.intentName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        `type` = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.value1 != null" >
+        value1 = #{record.value1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.value2 != null" >
+        value2 = #{record.value2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.value3 != null" >
+        value3 = #{record.value3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.value4 != null" >
+        value4 = #{record.value4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.value5 != null" >
+        value5 = #{record.value5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showSeq != null" >
+        show_seq = #{record.showSeq,jdbcType=INTEGER},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_grade_rule
+    set id = #{record.id,jdbcType=INTEGER},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      rule_no = #{record.ruleNo,jdbcType=VARCHAR},
+      intent_name = #{record.intentName,jdbcType=VARCHAR},
+      `type` = #{record.type,jdbcType=VARCHAR},
+      value1 = #{record.value1,jdbcType=VARCHAR},
+      value2 = #{record.value2,jdbcType=VARCHAR},
+      value3 = #{record.value3,jdbcType=VARCHAR},
+      value4 = #{record.value4,jdbcType=VARCHAR},
+      value5 = #{record.value5,jdbcType=VARCHAR},
+      show_seq = #{record.showSeq,jdbcType=INTEGER},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRule" >
+    update bot_sentence_grade_rule
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleNo != null" >
+        rule_no = #{ruleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="intentName != null" >
+        intent_name = #{intentName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="value1 != null" >
+        value1 = #{value1,jdbcType=VARCHAR},
+      </if>
+      <if test="value2 != null" >
+        value2 = #{value2,jdbcType=VARCHAR},
+      </if>
+      <if test="value3 != null" >
+        value3 = #{value3,jdbcType=VARCHAR},
+      </if>
+      <if test="value4 != null" >
+        value4 = #{value4,jdbcType=VARCHAR},
+      </if>
+      <if test="value5 != null" >
+        value5 = #{value5,jdbcType=VARCHAR},
+      </if>
+      <if test="showSeq != null" >
+        show_seq = #{showSeq,jdbcType=INTEGER},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeRule" >
+    update bot_sentence_grade_rule
+    set process_id = #{processId,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      rule_no = #{ruleNo,jdbcType=VARCHAR},
+      intent_name = #{intentName,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      value1 = #{value1,jdbcType=VARCHAR},
+      value2 = #{value2,jdbcType=VARCHAR},
+      value3 = #{value3,jdbcType=VARCHAR},
+      value4 = #{value4,jdbcType=VARCHAR},
+      value5 = #{value5,jdbcType=VARCHAR},
+      show_seq = #{showSeq,jdbcType=INTEGER},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper" >
+<mapper namespace="com.guiji.botsentence.dao.ext.BusinessAnswerTaskExtMapper" >
 
- 	<select id="queryBusinessAnswerTaskExtById" resultType="ai.guiji.botsentence.dao.entity.BusinessAnswerTaskExt">
- 		select branch_id as branchId, user_ask as userAsk,CAST(substring(branch_name,9) AS SIGNED) as no, 
-		response as voliceId,intents as intentId
+ 	<select id="queryBusinessAnswerTaskExtById" resultType="com.guiji.botsentence.dao.entity.BusinessAnswerTaskExt">
+ 		select branch_id as branchId, branch_name as branchName, user_ask as userAsk,CAST(substring(branch_name,9) AS SIGNED) as no, 
+		response as voliceId,intents as intentId, agent_intent as agentIntent, next as next, need_agent as needAgent,
+		weight as weight, rule as rule, end as end
 		from bot_sentence_branch where process_id=#{processId} and branch_name like 'special_%' and 
-		intents is not null and response is not null and response != '[]' and domain='一般问题'
+		intents is not null and domain='一般问题'
 		order by no
  	</select>
  	

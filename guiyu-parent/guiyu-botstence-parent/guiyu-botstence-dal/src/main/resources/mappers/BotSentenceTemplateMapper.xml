@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceTemplateMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceTemplate" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceTemplate" >
     <id column="process_id" property="processId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="template_name" property="templateName" jdbcType="VARCHAR" />
@@ -13,7 +13,7 @@
     <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
     <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
     <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
-    <result column="industry_id" property="industryId" jdbcType="INTEGER" />
+    <result column="industry_id" property="industryId" jdbcType="VARCHAR" />
     <result column="industry_name" property="industryName" jdbcType="VARCHAR" />
     <result column="host" property="host" jdbcType="VARCHAR" />
   </resultMap>
@@ -80,7 +80,7 @@
     crt_time, lst_update_user, lst_update_time, account_no, industry_id, industry_name, 
     `host`
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplateExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplateExample" >
     select
     <if test="distinct" >
       distinct
@@ -108,13 +108,13 @@
     delete from bot_sentence_template
     where process_id = #{processId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplateExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplateExample" >
     delete from bot_sentence_template
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplate" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplate" >
     <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
       SELECT genTabId('bot_sentence_template')
     </selectKey>
@@ -126,10 +126,10 @@
     values (#{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
       #{version,jdbcType=VARCHAR}, #{templateType,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
       #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
-      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{accountNo,jdbcType=VARCHAR}, #{industryId,jdbcType=INTEGER}, 
+      #{lstUpdateTime,jdbcType=TIMESTAMP}, #{accountNo,jdbcType=VARCHAR}, #{industryId,jdbcType=VARCHAR}, 
       #{industryName,jdbcType=VARCHAR}, #{host,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplate" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplate" >
     <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
       SELECT genTabId('bot_sentence_template')
     </selectKey>
@@ -209,7 +209,7 @@
         #{accountNo,jdbcType=VARCHAR},
       </if>
       <if test="industryId != null" >
-        #{industryId,jdbcType=INTEGER},
+        #{industryId,jdbcType=VARCHAR},
       </if>
       <if test="industryName != null" >
         #{industryName,jdbcType=VARCHAR},
@@ -219,7 +219,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplateExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplateExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_template
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -262,7 +262,7 @@
         account_no = #{record.accountNo,jdbcType=VARCHAR},
       </if>
       <if test="record.industryId != null" >
-        industry_id = #{record.industryId,jdbcType=INTEGER},
+        industry_id = #{record.industryId,jdbcType=VARCHAR},
       </if>
       <if test="record.industryName != null" >
         industry_name = #{record.industryName,jdbcType=VARCHAR},
@@ -288,14 +288,14 @@
       lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
       lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
       account_no = #{record.accountNo,jdbcType=VARCHAR},
-      industry_id = #{record.industryId,jdbcType=INTEGER},
+      industry_id = #{record.industryId,jdbcType=VARCHAR},
       industry_name = #{record.industryName,jdbcType=VARCHAR},
       `host` = #{record.host,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplate" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplate" >
     update bot_sentence_template
     <set >
       <if test="templateId != null" >
@@ -329,7 +329,7 @@
         account_no = #{accountNo,jdbcType=VARCHAR},
       </if>
       <if test="industryId != null" >
-        industry_id = #{industryId,jdbcType=INTEGER},
+        industry_id = #{industryId,jdbcType=VARCHAR},
       </if>
       <if test="industryName != null" >
         industry_name = #{industryName,jdbcType=VARCHAR},
@@ -340,7 +340,7 @@
     </set>
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTemplate" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTemplate" >
     update bot_sentence_template
     set template_id = #{templateId,jdbcType=VARCHAR},
       template_name = #{templateName,jdbcType=VARCHAR},
@@ -352,7 +352,7 @@
       lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
       lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
       account_no = #{accountNo,jdbcType=VARCHAR},
-      industry_id = #{industryId,jdbcType=INTEGER},
+      industry_id = #{industryId,jdbcType=VARCHAR},
       industry_name = #{industryName,jdbcType=VARCHAR},
       `host` = #{host,jdbcType=VARCHAR}
     where process_id = #{processId,jdbcType=VARCHAR}

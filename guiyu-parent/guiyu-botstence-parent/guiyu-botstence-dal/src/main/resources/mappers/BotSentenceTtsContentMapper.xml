@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceTtsContentMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceTtsContentMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
     <id column="content_id" property="contentId" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="url" property="url" jdbcType="VARCHAR" />
@@ -70,7 +70,7 @@
   <sql id="Base_Column_List" >
     content_id, content, url, crt_time, crt_user, sound_type
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContentExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContentExample" >
     select
     <if test="distinct" >
       distinct
@@ -98,13 +98,13 @@
     delete from bot_sentence_tts_content
     where content_id = #{contentId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContentExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContentExample" >
     delete from bot_sentence_tts_content
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
     insert into bot_sentence_tts_content (content_id, content, url, 
       crt_time, crt_user, sound_type
       )
@@ -112,7 +112,7 @@
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{soundType,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
     insert into bot_sentence_tts_content
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="contentId != null" >
@@ -155,7 +155,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContentExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContentExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_tts_content
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -199,7 +199,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
     update bot_sentence_tts_content
     <set >
       <if test="content != null" >
@@ -220,7 +220,7 @@
     </set>
     where content_id = #{contentId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsContent" >
     update bot_sentence_tts_content
     set content = #{content,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},

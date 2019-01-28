@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceAdditionMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceAdditionMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceAddition" >
     <id column="process_id" property="processId" jdbcType="VARCHAR" />
     <result column="template_json" property="templateJson" jdbcType="VARCHAR" />
     <result column="weights_txt" property="weightsTxt" jdbcType="VARCHAR" />
     <result column="options_json" property="optionsJson" jdbcType="VARCHAR" />
     <result column="stopwords_txt" property="stopwordsTxt" jdbcType="VARCHAR" />
     <!-- <result column="userdict_txt" property="userdictTxt" jdbcType="VARCHAR" /> -->
-    <result property="userdictTxt" column="userdict_txt" typeHandler="ai.guiji.botsentence.util.MyBlobTypeHandler" />
+    <result property="userdictTxt" column="userdict_txt" typeHandler="com.guiji.botsentence.util.MyBlobTypeHandler" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.dao.entity.BotSentenceAddition" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.guiji.botsentence.dao.entity.BotSentenceAddition" extends="BaseResultMap" >
     <!-- <result column="sim_txt" property="simTxt" jdbcType="LONGVARCHAR" /> -->
-    <result property="simTxt" column="sim_txt" typeHandler="ai.guiji.botsentence.util.MyBlobTypeHandler" />
+    <result property="simTxt" column="sim_txt" typeHandler="com.guiji.botsentence.util.MyBlobTypeHandler" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -78,7 +78,7 @@
   <sql id="Blob_Column_List" >
     sim_txt
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
     select
     <if test="distinct" >
       distinct
@@ -95,7 +95,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
     select
     <if test="distinct" >
       distinct
@@ -125,13 +125,13 @@
     delete from bot_sentence_addition
     where process_id = #{processId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAdditionExample" >
     delete from bot_sentence_addition
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAddition" >
     insert into bot_sentence_addition (process_id, template_json, weights_txt, 
       options_json, stopwords_txt, userdict_txt, 
       sim_txt)
@@ -139,7 +139,7 @@
       #{optionsJson,jdbcType=VARCHAR}, #{stopwordsTxt,jdbcType=VARCHAR}, #{userdictTxt,jdbcType=VARCHAR}, 
       #{simTxt,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAddition" >
     insert into bot_sentence_addition
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="processId != null" >
@@ -188,7 +188,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAdditionExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAdditionExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_addition
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -248,7 +248,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAddition" >
     update bot_sentence_addition
     <set >
       <if test="templateJson != null" >
@@ -272,7 +272,7 @@
     </set>
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAddition" >
     update bot_sentence_addition
     set template_json = #{templateJson,jdbcType=VARCHAR},
       weights_txt = #{weightsTxt,jdbcType=VARCHAR},
@@ -282,7 +282,7 @@
       sim_txt = #{simTxt,jdbcType=LONGVARCHAR}
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceAddition" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceAddition" >
     update bot_sentence_addition
     set template_json = #{templateJson,jdbcType=VARCHAR},
       weights_txt = #{weightsTxt,jdbcType=VARCHAR},

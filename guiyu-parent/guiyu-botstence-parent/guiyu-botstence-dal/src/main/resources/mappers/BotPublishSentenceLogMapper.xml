@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotPublishSentenceLogMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
+<mapper namespace="com.guiji.botsentence.dao.BotPublishSentenceLogMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="temp_name" property="tempName" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
@@ -72,7 +72,7 @@
   <sql id="Base_Column_List" >
     id, temp_name, template_id, process_id, create_id, create_time, `status`, create_name
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" >
     select
     <if test="distinct" >
       distinct
@@ -100,13 +100,13 @@
     delete from bot_publish_sentence_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" >
     delete from bot_publish_sentence_log
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     insert into bot_publish_sentence_log (id, temp_name, template_id, 
       process_id, create_id, create_time, 
       `status`, create_name)
@@ -114,7 +114,7 @@
       #{processId,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{status,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     insert into bot_publish_sentence_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -169,7 +169,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLogExample" resultType="java.lang.Integer" >
     select count(*) from bot_publish_sentence_log
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -221,7 +221,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     update bot_publish_sentence_log
     <set >
       <if test="tempName != null" >
@@ -248,7 +248,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotPublishSentenceLog" >
     update bot_publish_sentence_log
     set temp_name = #{tempName,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
@@ -270,7 +270,7 @@
   	delete from bot_available_template where template_id=#{templateId} and user_id=#{userId}
   </delete>
   
-  <insert id="insertAvailableTemplate" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" useGeneratedKeys="true"   keyProperty="id" >
+  <insert id="insertAvailableTemplate" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplate" useGeneratedKeys="true"   keyProperty="id" >
   	INSERT into bot_available_template(template_id,template_name,user_id,org_code)
 	VALUES(#{templateId},#{templateName},#{userId},#{orgCode})
   </insert>

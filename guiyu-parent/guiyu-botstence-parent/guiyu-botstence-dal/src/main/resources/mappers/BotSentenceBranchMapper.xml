@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceBranchMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceBranchMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceBranch" >
     <id column="branch_id" property="branchId" jdbcType="VARCHAR" />
     <result column="branch_name" property="branchName" jdbcType="VARCHAR" />
     <result column="seq" property="seq" jdbcType="BIGINT" />
@@ -22,8 +22,12 @@
     <result column="is_show" property="isShow" jdbcType="VARCHAR" />
     <result column="respname" property="respname" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="agent_intent" property="agentIntent" jdbcType="VARCHAR" />
+    <result column="need_agent" property="needAgent" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="VARCHAR" />
+    <result column="rule" property="rule" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="ai.guiji.botsentence.dao.entity.BotSentenceBranch" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.guiji.botsentence.dao.entity.BotSentenceBranch" extends="BaseResultMap" >
     <result column="key_words" property="keyWords" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -87,12 +91,13 @@
   <sql id="Base_Column_List" >
     branch_id, branch_name, seq, process_id, template_id, response, `NEXT`, intents, 
     `END`, `domain`, is_special_limit_free, user_ask, crt_time, crt_user, lst_update_time, 
-    lst_update_user, line_name, is_show, respname, `type`
+    lst_update_user, line_name, is_show, respname, `type`, agent_intent, need_agent, 
+    weight, `rule`
   </sql>
   <sql id="Blob_Column_List" >
     key_words
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
     select
     <if test="distinct" >
       distinct
@@ -109,7 +114,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
     select
     <if test="distinct" >
       distinct
@@ -139,13 +144,13 @@
     delete from bot_sentence_branch
     where branch_id = #{branchId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranchExample" >
     delete from bot_sentence_branch
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranch" >
     <selectKey resultType="java.lang.String" keyProperty="branchId" order="BEFORE" >
       SELECT genTabId('bot_sentence_branch')
     </selectKey>
@@ -155,18 +160,20 @@
       `domain`, is_special_limit_free, user_ask, 
       crt_time, crt_user, lst_update_time, 
       lst_update_user, line_name, is_show, 
-      respname, `type`, key_words
-      )
+      respname, `type`, agent_intent, 
+      need_agent, weight, `rule`, 
+      key_words)
     values (#{branchId,jdbcType=VARCHAR}, #{branchName,jdbcType=VARCHAR}, #{seq,jdbcType=BIGINT}, 
       #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{response,jdbcType=VARCHAR}, 
       #{next,jdbcType=VARCHAR}, #{intents,jdbcType=VARCHAR}, #{end,jdbcType=VARCHAR}, 
       #{domain,jdbcType=VARCHAR}, #{isSpecialLimitFree,jdbcType=VARCHAR}, #{userAsk,jdbcType=VARCHAR}, 
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
       #{lstUpdateUser,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR}, #{isShow,jdbcType=VARCHAR}, 
-      #{respname,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{keyWords,jdbcType=LONGVARCHAR}
-      )
+      #{respname,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{agentIntent,jdbcType=VARCHAR}, 
+      #{needAgent,jdbcType=VARCHAR}, #{weight,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}, 
+      #{keyWords,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranch" >
     <selectKey resultType="java.lang.String" keyProperty="branchId" order="BEFORE" >
       SELECT genTabId('bot_sentence_branch')
     </selectKey>
@@ -229,6 +236,18 @@
       </if>
       <if test="type != null" >
         `type`,
+      </if>
+      <if test="agentIntent != null" >
+        agent_intent,
+      </if>
+      <if test="needAgent != null" >
+        need_agent,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="rule != null" >
+        `rule`,
       </if>
       <if test="keyWords != null" >
         key_words,
@@ -293,12 +312,24 @@
       <if test="type != null" >
         #{type,jdbcType=VARCHAR},
       </if>
+      <if test="agentIntent != null" >
+        #{agentIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="needAgent != null" >
+        #{needAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="rule != null" >
+        #{rule,jdbcType=VARCHAR},
+      </if>
       <if test="keyWords != null" >
         #{keyWords,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranchExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranchExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_branch
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -367,6 +398,18 @@
       <if test="record.type != null" >
         `type` = #{record.type,jdbcType=VARCHAR},
       </if>
+      <if test="record.agentIntent != null" >
+        agent_intent = #{record.agentIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.needAgent != null" >
+        need_agent = #{record.needAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weight != null" >
+        weight = #{record.weight,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rule != null" >
+        `rule` = #{record.rule,jdbcType=VARCHAR},
+      </if>
       <if test="record.keyWords != null" >
         key_words = #{record.keyWords,jdbcType=LONGVARCHAR},
       </if>
@@ -397,6 +440,10 @@
       is_show = #{record.isShow,jdbcType=VARCHAR},
       respname = #{record.respname,jdbcType=VARCHAR},
       `type` = #{record.type,jdbcType=VARCHAR},
+      agent_intent = #{record.agentIntent,jdbcType=VARCHAR},
+      need_agent = #{record.needAgent,jdbcType=VARCHAR},
+      weight = #{record.weight,jdbcType=VARCHAR},
+      `rule` = #{record.rule,jdbcType=VARCHAR},
       key_words = #{record.keyWords,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -423,12 +470,16 @@
       line_name = #{record.lineName,jdbcType=VARCHAR},
       is_show = #{record.isShow,jdbcType=VARCHAR},
       respname = #{record.respname,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR}
+      `type` = #{record.type,jdbcType=VARCHAR},
+      agent_intent = #{record.agentIntent,jdbcType=VARCHAR},
+      need_agent = #{record.needAgent,jdbcType=VARCHAR},
+      weight = #{record.weight,jdbcType=VARCHAR},
+      `rule` = #{record.rule,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranch" >
     update bot_sentence_branch
     <set >
       <if test="branchName != null" >
@@ -488,13 +539,25 @@
       <if test="type != null" >
         `type` = #{type,jdbcType=VARCHAR},
       </if>
+      <if test="agentIntent != null" >
+        agent_intent = #{agentIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="needAgent != null" >
+        need_agent = #{needAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="rule != null" >
+        `rule` = #{rule,jdbcType=VARCHAR},
+      </if>
       <if test="keyWords != null" >
         key_words = #{keyWords,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where branch_id = #{branchId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranch" >
     update bot_sentence_branch
     set branch_name = #{branchName,jdbcType=VARCHAR},
       seq = #{seq,jdbcType=BIGINT},
@@ -515,10 +578,14 @@
       is_show = #{isShow,jdbcType=VARCHAR},
       respname = #{respname,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=VARCHAR},
+      agent_intent = #{agentIntent,jdbcType=VARCHAR},
+      need_agent = #{needAgent,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=VARCHAR},
+      `rule` = #{rule,jdbcType=VARCHAR},
       key_words = #{keyWords,jdbcType=LONGVARCHAR}
     where branch_id = #{branchId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceBranch" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceBranch" >
     update bot_sentence_branch
     set branch_name = #{branchName,jdbcType=VARCHAR},
       seq = #{seq,jdbcType=BIGINT},
@@ -538,7 +605,11 @@
       line_name = #{lineName,jdbcType=VARCHAR},
       is_show = #{isShow,jdbcType=VARCHAR},
       respname = #{respname,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR}
+      `type` = #{type,jdbcType=VARCHAR},
+      agent_intent = #{agentIntent,jdbcType=VARCHAR},
+      need_agent = #{needAgent,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=VARCHAR},
+      `rule` = #{rule,jdbcType=VARCHAR}
     where branch_id = #{branchId,jdbcType=VARCHAR}
   </update>
 </mapper>

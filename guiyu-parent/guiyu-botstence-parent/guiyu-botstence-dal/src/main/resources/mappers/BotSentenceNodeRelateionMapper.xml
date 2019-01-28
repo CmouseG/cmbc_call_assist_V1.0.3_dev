@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceNodeRelateionMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceNodeRelateionMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
     <id column="node_relateion_id" property="nodeRelateionId" jdbcType="VARCHAR" />
     <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
     <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
@@ -75,7 +75,7 @@
     node_relateion_id, node_id, node_name, child_node_id, child_node_name, process_id, 
     crt_time, crt_user, lst_update_time, lst_update_user
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" >
     select
     <if test="distinct" >
       distinct
@@ -103,13 +103,13 @@
     delete from bot_sentence_node_relateion
     where node_relateion_id = #{nodeRelateionId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" >
     delete from bot_sentence_node_relateion
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
     <selectKey resultType="java.lang.String" keyProperty="nodeRelateionId" order="BEFORE" >
       SELECT genTabId('bot_sentence_node_relateion')
     </selectKey>
@@ -122,7 +122,7 @@
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
       #{lstUpdateUser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
     <selectKey resultType="java.lang.String" keyProperty="nodeRelateionId" order="BEFORE" >
       SELECT genTabId('bot_sentence_node_relateion')
     </selectKey>
@@ -188,7 +188,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateionExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_node_relateion
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -248,7 +248,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
     update bot_sentence_node_relateion
     <set >
       <if test="nodeId != null" >
@@ -281,7 +281,7 @@
     </set>
     where node_relateion_id = #{nodeRelateionId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeRelateion" >
     update bot_sentence_node_relateion
     set node_id = #{nodeId,jdbcType=VARCHAR},
       node_name = #{nodeName,jdbcType=VARCHAR},

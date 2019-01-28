@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.botsentence.dao.ext.BotSentenceTradeExtMapper" >
+  
+  <select id="queryParentIdList" resultType="String">
+ 		select distinct parent_id from bot_sentence_trade where industry_id in(
+			select industry_id from user_account_trade_relation where account_no=#{accountNo}
+		)
+ 	</select>
+  
+</mapper>

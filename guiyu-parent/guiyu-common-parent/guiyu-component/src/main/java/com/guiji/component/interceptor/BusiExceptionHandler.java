@@ -40,7 +40,7 @@ public class BusiExceptionHandler implements HandlerExceptionResolver{
          FastJsonJsonView view = new FastJsonJsonView(); 
          if(exception != null) {
         	 Map<String, Object> attributes = new HashMap<String, Object>();
-        	 if(exception instanceof GuiyuException) {
+    		 if(exception instanceof GuiyuException) {
         		 //系统异常
         		 GuiyuException commonException = (GuiyuException) exception;
         		 attributes.put("code", StrUtils.isNotEmpty(commonException.getErrorCode()) ? commonException.getErrorCode() : UNKNOW_ERROR_CODE);  
@@ -51,7 +51,7 @@ public class BusiExceptionHandler implements HandlerExceptionResolver{
         		 attributes.put("code", UNKNOW_ERROR_CODE);  	//未知异常码
                  attributes.put("msg", StrUtils.isNotEmpty(exception.getMessage()) ? exception.getMessage() : UNKNOW_ERROR_MSG); 	//未知异常原因
                  attributes.put("success", false);
-        	 }
+        	 } 
         	 view.setAttributesMap(attributes);  
              mv.setView(view); 
              logger.error("异常:" + exception.getMessage(), exception);  

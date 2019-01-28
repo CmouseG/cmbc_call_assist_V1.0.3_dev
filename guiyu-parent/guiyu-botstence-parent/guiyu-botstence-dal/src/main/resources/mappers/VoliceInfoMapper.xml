@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.VoliceInfoMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.VoliceInfo" >
+<mapper namespace="com.guiji.botsentence.dao.VoliceInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.VoliceInfo" >
     <id column="volice_id" property="voliceId" jdbcType="BIGINT" />
     <result column="volice_url" property="voliceUrl" jdbcType="VARCHAR" />
     <result column="process_id" property="processId" jdbcType="VARCHAR" />
@@ -18,6 +18,8 @@
     <result column="flag" property="flag" jdbcType="VARCHAR" />
     <result column="old_id" property="oldId" jdbcType="BIGINT" />
     <result column="need_tts" property="needTts" jdbcType="BIT" />
+    <result column="times" property="times" jdbcType="INTEGER" />
+    <result column="wav_name" property="wavName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -79,9 +81,10 @@
   </sql>
   <sql id="Base_Column_List" >
     volice_id, volice_url, process_id, template_id, domain_name, `type`, num, content, 
-    crt_time, crt_user, lst_update_time, lst_update_user, `name`, flag, old_id, need_tts
+    crt_time, crt_user, lst_update_time, lst_update_user, `name`, flag, old_id, need_tts, 
+    times, wav_name
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfoExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.VoliceInfoExample" >
     select
     <if test="distinct" >
       distinct
@@ -109,27 +112,27 @@
     delete from volice_info
     where volice_id = #{voliceId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfoExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.VoliceInfoExample" >
     delete from volice_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfo" useGeneratedKeys="true" keyProperty="voliceId">
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.VoliceInfo" useGeneratedKeys="true" keyProperty="voliceId">
     insert into volice_info (volice_id, volice_url, process_id, 
       template_id, domain_name, `type`, 
       num, content, crt_time, 
       crt_user, lst_update_time, lst_update_user, 
-      `name`, flag, old_id, need_tts
-      )
+      `name`, flag, old_id, need_tts, 
+      times, wav_name)
     values (#{voliceId,jdbcType=BIGINT}, #{voliceUrl,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, 
       #{templateId,jdbcType=VARCHAR}, #{domainName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{num,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
       #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{oldId,jdbcType=BIGINT}, #{needTts,jdbcType=BIT}
-      )
+      #{name,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{oldId,jdbcType=BIGINT}, #{needTts,jdbcType=BIT}, 
+      #{times,jdbcType=INTEGER}, #{wavName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfo" useGeneratedKeys="true" keyProperty="voliceId">
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.VoliceInfo" useGeneratedKeys="true" keyProperty="voliceId">
     insert into volice_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="voliceId != null" >
@@ -179,6 +182,12 @@
       </if>
       <if test="needTts != null" >
         need_tts,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+      <if test="wavName != null" >
+        wav_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -230,9 +239,15 @@
       <if test="needTts != null" >
         #{needTts,jdbcType=BIT},
       </if>
+      <if test="times != null" >
+        #{times,jdbcType=INTEGER},
+      </if>
+      <if test="wavName != null" >
+        #{wavName,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfoExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.VoliceInfoExample" resultType="java.lang.Integer" >
     select count(*) from volice_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -289,6 +304,12 @@
       <if test="record.needTts != null" >
         need_tts = #{record.needTts,jdbcType=BIT},
       </if>
+      <if test="record.times != null" >
+        times = #{record.times,jdbcType=INTEGER},
+      </if>
+      <if test="record.wavName != null" >
+        wav_name = #{record.wavName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -311,12 +332,14 @@
       `name` = #{record.name,jdbcType=VARCHAR},
       flag = #{record.flag,jdbcType=VARCHAR},
       old_id = #{record.oldId,jdbcType=BIGINT},
-      need_tts = #{record.needTts,jdbcType=BIT}
+      need_tts = #{record.needTts,jdbcType=BIT},
+      times = #{record.times,jdbcType=INTEGER},
+      wav_name = #{record.wavName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfo" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.VoliceInfo" >
     update volice_info
     <set >
       <if test="voliceUrl != null" >
@@ -364,10 +387,16 @@
       <if test="needTts != null" >
         need_tts = #{needTts,jdbcType=BIT},
       </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=INTEGER},
+      </if>
+      <if test="wavName != null" >
+        wav_name = #{wavName,jdbcType=VARCHAR},
+      </if>
     </set>
     where volice_id = #{voliceId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.VoliceInfo" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.VoliceInfo" >
     update volice_info
     set volice_url = #{voliceUrl,jdbcType=VARCHAR},
       process_id = #{processId,jdbcType=VARCHAR},
@@ -383,7 +412,9 @@
       `name` = #{name,jdbcType=VARCHAR},
       flag = #{flag,jdbcType=VARCHAR},
       old_id = #{oldId,jdbcType=BIGINT},
-      need_tts = #{needTts,jdbcType=BIT}
+      need_tts = #{needTts,jdbcType=BIT},
+      times = #{times,jdbcType=INTEGER},
+      wav_name = #{wavName,jdbcType=VARCHAR}
     where volice_id = #{voliceId,jdbcType=BIGINT}
   </update>
 </mapper>

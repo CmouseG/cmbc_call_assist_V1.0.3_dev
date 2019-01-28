@@ -25,7 +25,7 @@ public class ResultReturnValueHandler extends  RequestResponseBodyMethodProcesso
 	protected <T> void writeWithMessageConverters(T value, MethodParameter returnType, NativeWebRequest webRequest)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 		Object result=value;
-		if(!(value instanceof Result.ReturnData)){
+		if(!(value instanceof Result.ReturnData) && !(value instanceof ServerResult)){
 			result= Result.ok(value);
 		}
 		super.writeWithMessageConverters(result, returnType, webRequest);
@@ -36,7 +36,7 @@ public class ResultReturnValueHandler extends  RequestResponseBodyMethodProcesso
 			ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 		Object result=value;
-		if(!(value instanceof Result.ReturnData)){
+		if(!(value instanceof Result.ReturnData) && !(value instanceof ServerResult)){
 			result= Result.ok(value);
 		}
 		super.writeWithMessageConverters(result, returnType, inputMessage, outputMessage);

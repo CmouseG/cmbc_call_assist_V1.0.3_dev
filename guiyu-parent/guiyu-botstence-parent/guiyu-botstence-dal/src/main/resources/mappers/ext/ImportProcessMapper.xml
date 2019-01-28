@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.ext.ImportProcessMapper" >
+<mapper namespace="com.guiji.botsentence.dao.ext.ImportProcessMapper" >
  
  
   <select id="getProcessId" resultType="java.lang.String" >
        SELECT genTabId('bot_sentence_process')
   </select>
 
- <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+ <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
  
     insert into bot_sentence_process
     <trim prefix="(" suffix=")" suffixOverrides="," >

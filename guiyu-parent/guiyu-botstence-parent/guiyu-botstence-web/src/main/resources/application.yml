@@ -95,3 +95,86 @@ logging:
     org:
       springframework:
         web: info
+
+properties:
+  error: properties/error.properties
+
+
+
+offline: false
+local.wav.dir: /usr/local/botsentence/html/static/wavs/
+local.wav.dir.pre: /usr/local/botsentence/html
+sellbot.mechine: 
+  mechineList: 
+    - ip: 192.168.1.86
+      username: root
+      password: 123456
+      path: /home/sellbot/dist/app
+
+selftest.sellbot:
+#  serverUrl: 47.96.106.248
+#  serverStartPort: 15005
+#  serverPortCount: 5
+#  innerUrl: 172.16.167.187
+#  port: 18032
+  serverUrl: 192.168.1.81
+  innerUrl: 192.168.1.81
+  serverStartPort: 15000
+  serverPortCount: 32
+  username: root
+  password: 123456
+  path: /home/sellbot/dist/app
+  port: 22
+#  serverUrl: 192.168.1.209
+#  serverStartPort: 15001
+#  serverPortCount: 10
+
+
+
+#七牛云配置
+qn: 
+  enable: true
+  accessKey: 8nRNpj2TQ-7CagTHycDSikETfq-1apf-u3fQe8wx
+  secretKey: RZlH2vWVY-P_Gius2fRlHlC8BqMJ1WVOiUYtTCki
+  bucket: xiangce
+  path: https://yuyin.guiji.ai/
+  
+#sftp部署
+sftp: 
+  enable: true
+  username: talk-temp
+  password: 123456
+  host: 47.99.106.54
+  port: 18032
+  path: /var/version/talk/
+  requestPath: http://47.99.106.54:8888/talk/
+  
+#存放模板配置文件路径
+template.dir: /home/botsentence/template
+export.dir: /home/botsentence/template_new
+create.file.tmp: /home/botsentence/fileTemp
+template.copyfiles.dir: /home/botsentence/template/copyfiles
+local.upload.dir: /home/botsentence/template_encode/
+upload.cfgs.dir: /home/botsentence/cfgs
+standard.head.dir: /home/botsentence/cfgs/standard_head.wav
+check.agent.dir: /usr/local/botsentence
+
+autoDeploy.path: http://47.99.106.54:12000/add/task
+autoDeploy.token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0dHMiLCJpYXQiOjE1MzMwMzgxMTksInB1YmxpY19pZCI6IjE2OGYxNjUwLWIyMTUtNDgyZS05M2E1LWZmODYzMDU0YTVmOCIsImV4cCI6MTg0ODM5OTkxOX0.TIZVlNp5MGA0jL72Htvg_BB9Ltca_zzHaRV81CkyIE4
+
+
+#上传tts模板replace.json的路径 
+tts.sftp.username: root
+tts.sftp.password: 50xfswsscqdb!
+tts.sftp.host: 47.96.79.114
+tts.sftp.port: 22
+tts.sftp.path: /root/cfgs/
+
+#TTS合成接口
+all_tts: false
+tts.api.url: http://47.96.79.114:10000/poc/wav
+
+#硅基快配置小程序
+wechat.appid: wx6b74c97d21bf735c
+wechat.secret: 00078045f8a8483beb734f8cc90b47f8
+

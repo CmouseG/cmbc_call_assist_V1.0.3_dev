@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceGradeDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceGradeDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="show_info" property="showInfo" jdbcType="VARCHAR" />
+    <result column="domain_type" property="domainType" jdbcType="VARCHAR" />
+    <result column="domain_name" property="domainName" jdbcType="VARCHAR" />
+    <result column="refuse_type" property="refuseType" jdbcType="VARCHAR" />
+    <result column="refuse_times" property="refuseTimes" jdbcType="VARCHAR" />
+    <result column="dialog_times_type" property="dialogTimesType" jdbcType="VARCHAR" />
+    <result column="dialog_times" property="dialogTimes" jdbcType="VARCHAR" />
+    <result column="dialog_duration_type" property="dialogDurationType" jdbcType="VARCHAR" />
+    <result column="dialog_duration" property="dialogDuration" jdbcType="VARCHAR" />
+    <result column="ask_type" property="askType" jdbcType="VARCHAR" />
+    <result column="ask_name" property="askName" jdbcType="VARCHAR" />
+    <result column="ask_times" property="askTimes" jdbcType="VARCHAR" />
+    <result column="evaluate" property="evaluate" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="grade_order" property="gradeOrder" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, process_id, template_id, `name`, show_info, domain_type, domain_name, refuse_type, 
+    refuse_times, dialog_times_type, dialog_times, dialog_duration_type, dialog_duration, 
+    ask_type, ask_name, ask_times, evaluate, crt_time, crt_user, lst_update_time, lst_update_user, 
+    grade_order
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_grade_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_grade_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bot_sentence_grade_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetailExample" >
+    delete from bot_sentence_grade_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetail" >
+    insert into bot_sentence_grade_detail (id, process_id, template_id, 
+      `name`, show_info, domain_type, 
+      domain_name, refuse_type, refuse_times, 
+      dialog_times_type, dialog_times, dialog_duration_type, 
+      dialog_duration, ask_type, ask_name, 
+      ask_times, evaluate, crt_time, 
+      crt_user, lst_update_time, lst_update_user, 
+      grade_order)
+    values (#{id,jdbcType=INTEGER}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{showInfo,jdbcType=VARCHAR}, #{domainType,jdbcType=VARCHAR}, 
+      #{domainName,jdbcType=VARCHAR}, #{refuseType,jdbcType=VARCHAR}, #{refuseTimes,jdbcType=VARCHAR}, 
+      #{dialogTimesType,jdbcType=VARCHAR}, #{dialogTimes,jdbcType=VARCHAR}, #{dialogDurationType,jdbcType=VARCHAR}, 
+      #{dialogDuration,jdbcType=VARCHAR}, #{askType,jdbcType=VARCHAR}, #{askName,jdbcType=VARCHAR}, 
+      #{askTimes,jdbcType=VARCHAR}, #{evaluate,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
+      #{gradeOrder,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetail" >
+    insert into bot_sentence_grade_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="name != null" >
+        `name`,
+      </if>
+      <if test="showInfo != null" >
+        show_info,
+      </if>
+      <if test="domainType != null" >
+        domain_type,
+      </if>
+      <if test="domainName != null" >
+        domain_name,
+      </if>
+      <if test="refuseType != null" >
+        refuse_type,
+      </if>
+      <if test="refuseTimes != null" >
+        refuse_times,
+      </if>
+      <if test="dialogTimesType != null" >
+        dialog_times_type,
+      </if>
+      <if test="dialogTimes != null" >
+        dialog_times,
+      </if>
+      <if test="dialogDurationType != null" >
+        dialog_duration_type,
+      </if>
+      <if test="dialogDuration != null" >
+        dialog_duration,
+      </if>
+      <if test="askType != null" >
+        ask_type,
+      </if>
+      <if test="askName != null" >
+        ask_name,
+      </if>
+      <if test="askTimes != null" >
+        ask_times,
+      </if>
+      <if test="evaluate != null" >
+        evaluate,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+      <if test="gradeOrder != null" >
+        grade_order,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="showInfo != null" >
+        #{showInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="domainType != null" >
+        #{domainType,jdbcType=VARCHAR},
+      </if>
+      <if test="domainName != null" >
+        #{domainName,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseType != null" >
+        #{refuseType,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseTimes != null" >
+        #{refuseTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogTimesType != null" >
+        #{dialogTimesType,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogTimes != null" >
+        #{dialogTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogDurationType != null" >
+        #{dialogDurationType,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogDuration != null" >
+        #{dialogDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="askType != null" >
+        #{askType,jdbcType=VARCHAR},
+      </if>
+      <if test="askName != null" >
+        #{askName,jdbcType=VARCHAR},
+      </if>
+      <if test="askTimes != null" >
+        #{askTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluate != null" >
+        #{evaluate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="gradeOrder != null" >
+        #{gradeOrder,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetailExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_grade_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_grade_detail
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null" >
+        `name` = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showInfo != null" >
+        show_info = #{record.showInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.domainType != null" >
+        domain_type = #{record.domainType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.domainName != null" >
+        domain_name = #{record.domainName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refuseType != null" >
+        refuse_type = #{record.refuseType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refuseTimes != null" >
+        refuse_times = #{record.refuseTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dialogTimesType != null" >
+        dialog_times_type = #{record.dialogTimesType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dialogTimes != null" >
+        dialog_times = #{record.dialogTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dialogDurationType != null" >
+        dialog_duration_type = #{record.dialogDurationType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dialogDuration != null" >
+        dialog_duration = #{record.dialogDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="record.askType != null" >
+        ask_type = #{record.askType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.askName != null" >
+        ask_name = #{record.askName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.askTimes != null" >
+        ask_times = #{record.askTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.evaluate != null" >
+        evaluate = #{record.evaluate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gradeOrder != null" >
+        grade_order = #{record.gradeOrder,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_grade_detail
+    set id = #{record.id,jdbcType=INTEGER},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      `name` = #{record.name,jdbcType=VARCHAR},
+      show_info = #{record.showInfo,jdbcType=VARCHAR},
+      domain_type = #{record.domainType,jdbcType=VARCHAR},
+      domain_name = #{record.domainName,jdbcType=VARCHAR},
+      refuse_type = #{record.refuseType,jdbcType=VARCHAR},
+      refuse_times = #{record.refuseTimes,jdbcType=VARCHAR},
+      dialog_times_type = #{record.dialogTimesType,jdbcType=VARCHAR},
+      dialog_times = #{record.dialogTimes,jdbcType=VARCHAR},
+      dialog_duration_type = #{record.dialogDurationType,jdbcType=VARCHAR},
+      dialog_duration = #{record.dialogDuration,jdbcType=VARCHAR},
+      ask_type = #{record.askType,jdbcType=VARCHAR},
+      ask_name = #{record.askName,jdbcType=VARCHAR},
+      ask_times = #{record.askTimes,jdbcType=VARCHAR},
+      evaluate = #{record.evaluate,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      grade_order = #{record.gradeOrder,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetail" >
+    update bot_sentence_grade_detail
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="showInfo != null" >
+        show_info = #{showInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="domainType != null" >
+        domain_type = #{domainType,jdbcType=VARCHAR},
+      </if>
+      <if test="domainName != null" >
+        domain_name = #{domainName,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseType != null" >
+        refuse_type = #{refuseType,jdbcType=VARCHAR},
+      </if>
+      <if test="refuseTimes != null" >
+        refuse_times = #{refuseTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogTimesType != null" >
+        dialog_times_type = #{dialogTimesType,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogTimes != null" >
+        dialog_times = #{dialogTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogDurationType != null" >
+        dialog_duration_type = #{dialogDurationType,jdbcType=VARCHAR},
+      </if>
+      <if test="dialogDuration != null" >
+        dialog_duration = #{dialogDuration,jdbcType=VARCHAR},
+      </if>
+      <if test="askType != null" >
+        ask_type = #{askType,jdbcType=VARCHAR},
+      </if>
+      <if test="askName != null" >
+        ask_name = #{askName,jdbcType=VARCHAR},
+      </if>
+      <if test="askTimes != null" >
+        ask_times = #{askTimes,jdbcType=VARCHAR},
+      </if>
+      <if test="evaluate != null" >
+        evaluate = #{evaluate,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="gradeOrder != null" >
+        grade_order = #{gradeOrder,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceGradeDetail" >
+    update bot_sentence_grade_detail
+    set process_id = #{processId,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      show_info = #{showInfo,jdbcType=VARCHAR},
+      domain_type = #{domainType,jdbcType=VARCHAR},
+      domain_name = #{domainName,jdbcType=VARCHAR},
+      refuse_type = #{refuseType,jdbcType=VARCHAR},
+      refuse_times = #{refuseTimes,jdbcType=VARCHAR},
+      dialog_times_type = #{dialogTimesType,jdbcType=VARCHAR},
+      dialog_times = #{dialogTimes,jdbcType=VARCHAR},
+      dialog_duration_type = #{dialogDurationType,jdbcType=VARCHAR},
+      dialog_duration = #{dialogDuration,jdbcType=VARCHAR},
+      ask_type = #{askType,jdbcType=VARCHAR},
+      ask_name = #{askName,jdbcType=VARCHAR},
+      ask_times = #{askTimes,jdbcType=VARCHAR},
+      evaluate = #{evaluate,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      grade_order = #{gradeOrder,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

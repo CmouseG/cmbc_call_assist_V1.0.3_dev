@@ -1,0 +1,808 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceOptionsMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceOptions" >
+    <id column="options_id" property="optionsId" jdbcType="VARCHAR" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="check_sim" property="checkSim" jdbcType="BIT" />
+    <result column="cur_domain_prior" property="curDomainPrior" jdbcType="BIT" />
+    <result column="use_not_match_logic" property="useNotMatchLogic" jdbcType="BIT" />
+    <result column="not_match_solution" property="notMatchSolution" jdbcType="VARCHAR" />
+    <result column="use_endfiles_list" property="useEndfilesList" jdbcType="BIT" />
+    <result column="trade" property="trade" jdbcType="VARCHAR" />
+    <result column="tempname" property="tempname" jdbcType="VARCHAR" />
+    <result column="non_interruptable_start" property="nonInterruptableStart" jdbcType="BIT" />
+    <result column="non_interruptable" property="nonInterruptable" jdbcType="VARCHAR" />
+    <result column="silence_wait_start" property="silenceWaitStart" jdbcType="BIT" />
+    <result column="silence_wait_secs" property="silenceWaitSecs" jdbcType="INTEGER" />
+    <result column="silence_wait_time" property="silenceWaitTime" jdbcType="INTEGER" />
+    <result column="silence_as_empty" property="silenceAsEmpty" jdbcType="BIT" />
+    <result column="user_define_match_order" property="userDefineMatchOrder" jdbcType="BIT" />
+    <result column="grub_start" property="grubStart" jdbcType="BIT" />
+    <result column="positive_interruptable" property="positiveInterruptable" jdbcType="BIT" />
+    <result column="interruptable_domain_start" property="interruptableDomainStart" jdbcType="BIT" />
+    <result column="global_interruptable_domains_start" property="globalInterruptableDomainsStart" jdbcType="BIT" />
+    <result column="global_interruptable_domains" property="globalInterruptableDomains" jdbcType="VARCHAR" />
+    <result column="ignore_but_domains_start" property="ignoreButDomainsStart" jdbcType="BIT" />
+    <result column="ignore_user_sentence_start" property="ignoreUserSentenceStart" jdbcType="BIT" />
+    <result column="ignore_but_negative_start" property="ignoreButNegativeStart" jdbcType="BIT" />
+    <result column="asr_engine" property="asrEngine" jdbcType="VARCHAR" />
+    <result column="multi_keyword_all" property="multiKeywordAll" jdbcType="BIT" />
+    <result column="not_match_less4_to_start" property="notMatchLess4ToStart" jdbcType="BIT" />
+    <result column="not_match_less_num" property="notMatchLessNum" jdbcType="INTEGER" />
+    <result column="not_match_to_start" property="notMatchToStart" jdbcType="BIT" />
+    <result column="no_words_to_start" property="noWordsToStart" jdbcType="BIT" />
+    <result column="interruption_config_start" property="interruptionConfigStart" jdbcType="BIT" />
+    <result column="interrupt_words_num" property="interruptWordsNum" jdbcType="INTEGER" />
+    <result column="interrupt_min_interval" property="interruptMinInterval" jdbcType="INTEGER" />
+    <result column="voice" property="voice" jdbcType="VARCHAR" />
+    <result column="special_limit_start" property="specialLimitStart" jdbcType="BIT" />
+    <result column="special_limit" property="specialLimit" jdbcType="INTEGER" />
+    <result column="survey_start" property="surveyStart" jdbcType="BIT" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    options_id, process_id, template_id, check_sim, cur_domain_prior, use_not_match_logic, 
+    not_match_solution, use_endfiles_list, trade, tempname, non_interruptable_start, 
+    non_interruptable, silence_wait_start, silence_wait_secs, silence_wait_time, silence_as_empty, 
+    user_define_match_order, grub_start, positive_interruptable, interruptable_domain_start, 
+    global_interruptable_domains_start, global_interruptable_domains, ignore_but_domains_start, 
+    ignore_user_sentence_start, ignore_but_negative_start, asr_engine, multi_keyword_all, 
+    not_match_less4_to_start, not_match_less_num, not_match_to_start, no_words_to_start, 
+    interruption_config_start, interrupt_words_num, interrupt_min_interval, voice, special_limit_start, 
+    special_limit, survey_start, crt_time, crt_user, lst_update_time, lst_update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_options
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bot_sentence_options
+    where options_id = #{optionsId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bot_sentence_options
+    where options_id = #{optionsId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsExample" >
+    delete from bot_sentence_options
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptions" >
+    <selectKey resultType="java.lang.String" keyProperty="optionsId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_options')
+    </selectKey>
+    insert into bot_sentence_options (options_id, process_id, template_id, 
+      check_sim, cur_domain_prior, use_not_match_logic, 
+      not_match_solution, use_endfiles_list, trade, 
+      tempname, non_interruptable_start, non_interruptable, 
+      silence_wait_start, silence_wait_secs, silence_wait_time, 
+      silence_as_empty, user_define_match_order, grub_start, 
+      positive_interruptable, interruptable_domain_start, 
+      global_interruptable_domains_start, global_interruptable_domains, 
+      ignore_but_domains_start, ignore_user_sentence_start, 
+      ignore_but_negative_start, asr_engine, multi_keyword_all, 
+      not_match_less4_to_start, not_match_less_num, not_match_to_start, 
+      no_words_to_start, interruption_config_start, interrupt_words_num, 
+      interrupt_min_interval, voice, special_limit_start, 
+      special_limit, survey_start, crt_time, 
+      crt_user, lst_update_time, lst_update_user
+      )
+    values (#{optionsId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{checkSim,jdbcType=BIT}, #{curDomainPrior,jdbcType=BIT}, #{useNotMatchLogic,jdbcType=BIT}, 
+      #{notMatchSolution,jdbcType=VARCHAR}, #{useEndfilesList,jdbcType=BIT}, #{trade,jdbcType=VARCHAR}, 
+      #{tempname,jdbcType=VARCHAR}, #{nonInterruptableStart,jdbcType=BIT}, #{nonInterruptable,jdbcType=VARCHAR}, 
+      #{silenceWaitStart,jdbcType=BIT}, #{silenceWaitSecs,jdbcType=INTEGER}, #{silenceWaitTime,jdbcType=INTEGER}, 
+      #{silenceAsEmpty,jdbcType=BIT}, #{userDefineMatchOrder,jdbcType=BIT}, #{grubStart,jdbcType=BIT}, 
+      #{positiveInterruptable,jdbcType=BIT}, #{interruptableDomainStart,jdbcType=BIT}, 
+      #{globalInterruptableDomainsStart,jdbcType=BIT}, #{globalInterruptableDomains,jdbcType=VARCHAR}, 
+      #{ignoreButDomainsStart,jdbcType=BIT}, #{ignoreUserSentenceStart,jdbcType=BIT}, 
+      #{ignoreButNegativeStart,jdbcType=BIT}, #{asrEngine,jdbcType=VARCHAR}, #{multiKeywordAll,jdbcType=BIT}, 
+      #{notMatchLess4ToStart,jdbcType=BIT}, #{notMatchLessNum,jdbcType=INTEGER}, #{notMatchToStart,jdbcType=BIT}, 
+      #{noWordsToStart,jdbcType=BIT}, #{interruptionConfigStart,jdbcType=BIT}, #{interruptWordsNum,jdbcType=INTEGER}, 
+      #{interruptMinInterval,jdbcType=INTEGER}, #{voice,jdbcType=VARCHAR}, #{specialLimitStart,jdbcType=BIT}, 
+      #{specialLimit,jdbcType=INTEGER}, #{surveyStart,jdbcType=BIT}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptions" >
+    <selectKey resultType="java.lang.String" keyProperty="optionsId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_options')
+    </selectKey>
+    insert into bot_sentence_options
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      options_id,
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="checkSim != null" >
+        check_sim,
+      </if>
+      <if test="curDomainPrior != null" >
+        cur_domain_prior,
+      </if>
+      <if test="useNotMatchLogic != null" >
+        use_not_match_logic,
+      </if>
+      <if test="notMatchSolution != null" >
+        not_match_solution,
+      </if>
+      <if test="useEndfilesList != null" >
+        use_endfiles_list,
+      </if>
+      <if test="trade != null" >
+        trade,
+      </if>
+      <if test="tempname != null" >
+        tempname,
+      </if>
+      <if test="nonInterruptableStart != null" >
+        non_interruptable_start,
+      </if>
+      <if test="nonInterruptable != null" >
+        non_interruptable,
+      </if>
+      <if test="silenceWaitStart != null" >
+        silence_wait_start,
+      </if>
+      <if test="silenceWaitSecs != null" >
+        silence_wait_secs,
+      </if>
+      <if test="silenceWaitTime != null" >
+        silence_wait_time,
+      </if>
+      <if test="silenceAsEmpty != null" >
+        silence_as_empty,
+      </if>
+      <if test="userDefineMatchOrder != null" >
+        user_define_match_order,
+      </if>
+      <if test="grubStart != null" >
+        grub_start,
+      </if>
+      <if test="positiveInterruptable != null" >
+        positive_interruptable,
+      </if>
+      <if test="interruptableDomainStart != null" >
+        interruptable_domain_start,
+      </if>
+      <if test="globalInterruptableDomainsStart != null" >
+        global_interruptable_domains_start,
+      </if>
+      <if test="globalInterruptableDomains != null" >
+        global_interruptable_domains,
+      </if>
+      <if test="ignoreButDomainsStart != null" >
+        ignore_but_domains_start,
+      </if>
+      <if test="ignoreUserSentenceStart != null" >
+        ignore_user_sentence_start,
+      </if>
+      <if test="ignoreButNegativeStart != null" >
+        ignore_but_negative_start,
+      </if>
+      <if test="asrEngine != null" >
+        asr_engine,
+      </if>
+      <if test="multiKeywordAll != null" >
+        multi_keyword_all,
+      </if>
+      <if test="notMatchLess4ToStart != null" >
+        not_match_less4_to_start,
+      </if>
+      <if test="notMatchLessNum != null" >
+        not_match_less_num,
+      </if>
+      <if test="notMatchToStart != null" >
+        not_match_to_start,
+      </if>
+      <if test="noWordsToStart != null" >
+        no_words_to_start,
+      </if>
+      <if test="interruptionConfigStart != null" >
+        interruption_config_start,
+      </if>
+      <if test="interruptWordsNum != null" >
+        interrupt_words_num,
+      </if>
+      <if test="interruptMinInterval != null" >
+        interrupt_min_interval,
+      </if>
+      <if test="voice != null" >
+        voice,
+      </if>
+      <if test="specialLimitStart != null" >
+        special_limit_start,
+      </if>
+      <if test="specialLimit != null" >
+        special_limit,
+      </if>
+      <if test="surveyStart != null" >
+        survey_start,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{optionsId,jdbcType=VARCHAR},
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkSim != null" >
+        #{checkSim,jdbcType=BIT},
+      </if>
+      <if test="curDomainPrior != null" >
+        #{curDomainPrior,jdbcType=BIT},
+      </if>
+      <if test="useNotMatchLogic != null" >
+        #{useNotMatchLogic,jdbcType=BIT},
+      </if>
+      <if test="notMatchSolution != null" >
+        #{notMatchSolution,jdbcType=VARCHAR},
+      </if>
+      <if test="useEndfilesList != null" >
+        #{useEndfilesList,jdbcType=BIT},
+      </if>
+      <if test="trade != null" >
+        #{trade,jdbcType=VARCHAR},
+      </if>
+      <if test="tempname != null" >
+        #{tempname,jdbcType=VARCHAR},
+      </if>
+      <if test="nonInterruptableStart != null" >
+        #{nonInterruptableStart,jdbcType=BIT},
+      </if>
+      <if test="nonInterruptable != null" >
+        #{nonInterruptable,jdbcType=VARCHAR},
+      </if>
+      <if test="silenceWaitStart != null" >
+        #{silenceWaitStart,jdbcType=BIT},
+      </if>
+      <if test="silenceWaitSecs != null" >
+        #{silenceWaitSecs,jdbcType=INTEGER},
+      </if>
+      <if test="silenceWaitTime != null" >
+        #{silenceWaitTime,jdbcType=INTEGER},
+      </if>
+      <if test="silenceAsEmpty != null" >
+        #{silenceAsEmpty,jdbcType=BIT},
+      </if>
+      <if test="userDefineMatchOrder != null" >
+        #{userDefineMatchOrder,jdbcType=BIT},
+      </if>
+      <if test="grubStart != null" >
+        #{grubStart,jdbcType=BIT},
+      </if>
+      <if test="positiveInterruptable != null" >
+        #{positiveInterruptable,jdbcType=BIT},
+      </if>
+      <if test="interruptableDomainStart != null" >
+        #{interruptableDomainStart,jdbcType=BIT},
+      </if>
+      <if test="globalInterruptableDomainsStart != null" >
+        #{globalInterruptableDomainsStart,jdbcType=BIT},
+      </if>
+      <if test="globalInterruptableDomains != null" >
+        #{globalInterruptableDomains,jdbcType=VARCHAR},
+      </if>
+      <if test="ignoreButDomainsStart != null" >
+        #{ignoreButDomainsStart,jdbcType=BIT},
+      </if>
+      <if test="ignoreUserSentenceStart != null" >
+        #{ignoreUserSentenceStart,jdbcType=BIT},
+      </if>
+      <if test="ignoreButNegativeStart != null" >
+        #{ignoreButNegativeStart,jdbcType=BIT},
+      </if>
+      <if test="asrEngine != null" >
+        #{asrEngine,jdbcType=VARCHAR},
+      </if>
+      <if test="multiKeywordAll != null" >
+        #{multiKeywordAll,jdbcType=BIT},
+      </if>
+      <if test="notMatchLess4ToStart != null" >
+        #{notMatchLess4ToStart,jdbcType=BIT},
+      </if>
+      <if test="notMatchLessNum != null" >
+        #{notMatchLessNum,jdbcType=INTEGER},
+      </if>
+      <if test="notMatchToStart != null" >
+        #{notMatchToStart,jdbcType=BIT},
+      </if>
+      <if test="noWordsToStart != null" >
+        #{noWordsToStart,jdbcType=BIT},
+      </if>
+      <if test="interruptionConfigStart != null" >
+        #{interruptionConfigStart,jdbcType=BIT},
+      </if>
+      <if test="interruptWordsNum != null" >
+        #{interruptWordsNum,jdbcType=INTEGER},
+      </if>
+      <if test="interruptMinInterval != null" >
+        #{interruptMinInterval,jdbcType=INTEGER},
+      </if>
+      <if test="voice != null" >
+        #{voice,jdbcType=VARCHAR},
+      </if>
+      <if test="specialLimitStart != null" >
+        #{specialLimitStart,jdbcType=BIT},
+      </if>
+      <if test="specialLimit != null" >
+        #{specialLimit,jdbcType=INTEGER},
+      </if>
+      <if test="surveyStart != null" >
+        #{surveyStart,jdbcType=BIT},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_options
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_options
+    <set >
+      <if test="record.optionsId != null" >
+        options_id = #{record.optionsId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkSim != null" >
+        check_sim = #{record.checkSim,jdbcType=BIT},
+      </if>
+      <if test="record.curDomainPrior != null" >
+        cur_domain_prior = #{record.curDomainPrior,jdbcType=BIT},
+      </if>
+      <if test="record.useNotMatchLogic != null" >
+        use_not_match_logic = #{record.useNotMatchLogic,jdbcType=BIT},
+      </if>
+      <if test="record.notMatchSolution != null" >
+        not_match_solution = #{record.notMatchSolution,jdbcType=VARCHAR},
+      </if>
+      <if test="record.useEndfilesList != null" >
+        use_endfiles_list = #{record.useEndfilesList,jdbcType=BIT},
+      </if>
+      <if test="record.trade != null" >
+        trade = #{record.trade,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tempname != null" >
+        tempname = #{record.tempname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nonInterruptableStart != null" >
+        non_interruptable_start = #{record.nonInterruptableStart,jdbcType=BIT},
+      </if>
+      <if test="record.nonInterruptable != null" >
+        non_interruptable = #{record.nonInterruptable,jdbcType=VARCHAR},
+      </if>
+      <if test="record.silenceWaitStart != null" >
+        silence_wait_start = #{record.silenceWaitStart,jdbcType=BIT},
+      </if>
+      <if test="record.silenceWaitSecs != null" >
+        silence_wait_secs = #{record.silenceWaitSecs,jdbcType=INTEGER},
+      </if>
+      <if test="record.silenceWaitTime != null" >
+        silence_wait_time = #{record.silenceWaitTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.silenceAsEmpty != null" >
+        silence_as_empty = #{record.silenceAsEmpty,jdbcType=BIT},
+      </if>
+      <if test="record.userDefineMatchOrder != null" >
+        user_define_match_order = #{record.userDefineMatchOrder,jdbcType=BIT},
+      </if>
+      <if test="record.grubStart != null" >
+        grub_start = #{record.grubStart,jdbcType=BIT},
+      </if>
+      <if test="record.positiveInterruptable != null" >
+        positive_interruptable = #{record.positiveInterruptable,jdbcType=BIT},
+      </if>
+      <if test="record.interruptableDomainStart != null" >
+        interruptable_domain_start = #{record.interruptableDomainStart,jdbcType=BIT},
+      </if>
+      <if test="record.globalInterruptableDomainsStart != null" >
+        global_interruptable_domains_start = #{record.globalInterruptableDomainsStart,jdbcType=BIT},
+      </if>
+      <if test="record.globalInterruptableDomains != null" >
+        global_interruptable_domains = #{record.globalInterruptableDomains,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ignoreButDomainsStart != null" >
+        ignore_but_domains_start = #{record.ignoreButDomainsStart,jdbcType=BIT},
+      </if>
+      <if test="record.ignoreUserSentenceStart != null" >
+        ignore_user_sentence_start = #{record.ignoreUserSentenceStart,jdbcType=BIT},
+      </if>
+      <if test="record.ignoreButNegativeStart != null" >
+        ignore_but_negative_start = #{record.ignoreButNegativeStart,jdbcType=BIT},
+      </if>
+      <if test="record.asrEngine != null" >
+        asr_engine = #{record.asrEngine,jdbcType=VARCHAR},
+      </if>
+      <if test="record.multiKeywordAll != null" >
+        multi_keyword_all = #{record.multiKeywordAll,jdbcType=BIT},
+      </if>
+      <if test="record.notMatchLess4ToStart != null" >
+        not_match_less4_to_start = #{record.notMatchLess4ToStart,jdbcType=BIT},
+      </if>
+      <if test="record.notMatchLessNum != null" >
+        not_match_less_num = #{record.notMatchLessNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.notMatchToStart != null" >
+        not_match_to_start = #{record.notMatchToStart,jdbcType=BIT},
+      </if>
+      <if test="record.noWordsToStart != null" >
+        no_words_to_start = #{record.noWordsToStart,jdbcType=BIT},
+      </if>
+      <if test="record.interruptionConfigStart != null" >
+        interruption_config_start = #{record.interruptionConfigStart,jdbcType=BIT},
+      </if>
+      <if test="record.interruptWordsNum != null" >
+        interrupt_words_num = #{record.interruptWordsNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.interruptMinInterval != null" >
+        interrupt_min_interval = #{record.interruptMinInterval,jdbcType=INTEGER},
+      </if>
+      <if test="record.voice != null" >
+        voice = #{record.voice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.specialLimitStart != null" >
+        special_limit_start = #{record.specialLimitStart,jdbcType=BIT},
+      </if>
+      <if test="record.specialLimit != null" >
+        special_limit = #{record.specialLimit,jdbcType=INTEGER},
+      </if>
+      <if test="record.surveyStart != null" >
+        survey_start = #{record.surveyStart,jdbcType=BIT},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_options
+    set options_id = #{record.optionsId,jdbcType=VARCHAR},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      check_sim = #{record.checkSim,jdbcType=BIT},
+      cur_domain_prior = #{record.curDomainPrior,jdbcType=BIT},
+      use_not_match_logic = #{record.useNotMatchLogic,jdbcType=BIT},
+      not_match_solution = #{record.notMatchSolution,jdbcType=VARCHAR},
+      use_endfiles_list = #{record.useEndfilesList,jdbcType=BIT},
+      trade = #{record.trade,jdbcType=VARCHAR},
+      tempname = #{record.tempname,jdbcType=VARCHAR},
+      non_interruptable_start = #{record.nonInterruptableStart,jdbcType=BIT},
+      non_interruptable = #{record.nonInterruptable,jdbcType=VARCHAR},
+      silence_wait_start = #{record.silenceWaitStart,jdbcType=BIT},
+      silence_wait_secs = #{record.silenceWaitSecs,jdbcType=INTEGER},
+      silence_wait_time = #{record.silenceWaitTime,jdbcType=INTEGER},
+      silence_as_empty = #{record.silenceAsEmpty,jdbcType=BIT},
+      user_define_match_order = #{record.userDefineMatchOrder,jdbcType=BIT},
+      grub_start = #{record.grubStart,jdbcType=BIT},
+      positive_interruptable = #{record.positiveInterruptable,jdbcType=BIT},
+      interruptable_domain_start = #{record.interruptableDomainStart,jdbcType=BIT},
+      global_interruptable_domains_start = #{record.globalInterruptableDomainsStart,jdbcType=BIT},
+      global_interruptable_domains = #{record.globalInterruptableDomains,jdbcType=VARCHAR},
+      ignore_but_domains_start = #{record.ignoreButDomainsStart,jdbcType=BIT},
+      ignore_user_sentence_start = #{record.ignoreUserSentenceStart,jdbcType=BIT},
+      ignore_but_negative_start = #{record.ignoreButNegativeStart,jdbcType=BIT},
+      asr_engine = #{record.asrEngine,jdbcType=VARCHAR},
+      multi_keyword_all = #{record.multiKeywordAll,jdbcType=BIT},
+      not_match_less4_to_start = #{record.notMatchLess4ToStart,jdbcType=BIT},
+      not_match_less_num = #{record.notMatchLessNum,jdbcType=INTEGER},
+      not_match_to_start = #{record.notMatchToStart,jdbcType=BIT},
+      no_words_to_start = #{record.noWordsToStart,jdbcType=BIT},
+      interruption_config_start = #{record.interruptionConfigStart,jdbcType=BIT},
+      interrupt_words_num = #{record.interruptWordsNum,jdbcType=INTEGER},
+      interrupt_min_interval = #{record.interruptMinInterval,jdbcType=INTEGER},
+      voice = #{record.voice,jdbcType=VARCHAR},
+      special_limit_start = #{record.specialLimitStart,jdbcType=BIT},
+      special_limit = #{record.specialLimit,jdbcType=INTEGER},
+      survey_start = #{record.surveyStart,jdbcType=BIT},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptions" >
+    update bot_sentence_options
+    <set >
+      <if test="processId != null" >
+        process_id = #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        template_id = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkSim != null" >
+        check_sim = #{checkSim,jdbcType=BIT},
+      </if>
+      <if test="curDomainPrior != null" >
+        cur_domain_prior = #{curDomainPrior,jdbcType=BIT},
+      </if>
+      <if test="useNotMatchLogic != null" >
+        use_not_match_logic = #{useNotMatchLogic,jdbcType=BIT},
+      </if>
+      <if test="notMatchSolution != null" >
+        not_match_solution = #{notMatchSolution,jdbcType=VARCHAR},
+      </if>
+      <if test="useEndfilesList != null" >
+        use_endfiles_list = #{useEndfilesList,jdbcType=BIT},
+      </if>
+      <if test="trade != null" >
+        trade = #{trade,jdbcType=VARCHAR},
+      </if>
+      <if test="tempname != null" >
+        tempname = #{tempname,jdbcType=VARCHAR},
+      </if>
+      <if test="nonInterruptableStart != null" >
+        non_interruptable_start = #{nonInterruptableStart,jdbcType=BIT},
+      </if>
+      <if test="nonInterruptable != null" >
+        non_interruptable = #{nonInterruptable,jdbcType=VARCHAR},
+      </if>
+      <if test="silenceWaitStart != null" >
+        silence_wait_start = #{silenceWaitStart,jdbcType=BIT},
+      </if>
+      <if test="silenceWaitSecs != null" >
+        silence_wait_secs = #{silenceWaitSecs,jdbcType=INTEGER},
+      </if>
+      <if test="silenceWaitTime != null" >
+        silence_wait_time = #{silenceWaitTime,jdbcType=INTEGER},
+      </if>
+      <if test="silenceAsEmpty != null" >
+        silence_as_empty = #{silenceAsEmpty,jdbcType=BIT},
+      </if>
+      <if test="userDefineMatchOrder != null" >
+        user_define_match_order = #{userDefineMatchOrder,jdbcType=BIT},
+      </if>
+      <if test="grubStart != null" >
+        grub_start = #{grubStart,jdbcType=BIT},
+      </if>
+      <if test="positiveInterruptable != null" >
+        positive_interruptable = #{positiveInterruptable,jdbcType=BIT},
+      </if>
+      <if test="interruptableDomainStart != null" >
+        interruptable_domain_start = #{interruptableDomainStart,jdbcType=BIT},
+      </if>
+      <if test="globalInterruptableDomainsStart != null" >
+        global_interruptable_domains_start = #{globalInterruptableDomainsStart,jdbcType=BIT},
+      </if>
+      <if test="globalInterruptableDomains != null" >
+        global_interruptable_domains = #{globalInterruptableDomains,jdbcType=VARCHAR},
+      </if>
+      <if test="ignoreButDomainsStart != null" >
+        ignore_but_domains_start = #{ignoreButDomainsStart,jdbcType=BIT},
+      </if>
+      <if test="ignoreUserSentenceStart != null" >
+        ignore_user_sentence_start = #{ignoreUserSentenceStart,jdbcType=BIT},
+      </if>
+      <if test="ignoreButNegativeStart != null" >
+        ignore_but_negative_start = #{ignoreButNegativeStart,jdbcType=BIT},
+      </if>
+      <if test="asrEngine != null" >
+        asr_engine = #{asrEngine,jdbcType=VARCHAR},
+      </if>
+      <if test="multiKeywordAll != null" >
+        multi_keyword_all = #{multiKeywordAll,jdbcType=BIT},
+      </if>
+      <if test="notMatchLess4ToStart != null" >
+        not_match_less4_to_start = #{notMatchLess4ToStart,jdbcType=BIT},
+      </if>
+      <if test="notMatchLessNum != null" >
+        not_match_less_num = #{notMatchLessNum,jdbcType=INTEGER},
+      </if>
+      <if test="notMatchToStart != null" >
+        not_match_to_start = #{notMatchToStart,jdbcType=BIT},
+      </if>
+      <if test="noWordsToStart != null" >
+        no_words_to_start = #{noWordsToStart,jdbcType=BIT},
+      </if>
+      <if test="interruptionConfigStart != null" >
+        interruption_config_start = #{interruptionConfigStart,jdbcType=BIT},
+      </if>
+      <if test="interruptWordsNum != null" >
+        interrupt_words_num = #{interruptWordsNum,jdbcType=INTEGER},
+      </if>
+      <if test="interruptMinInterval != null" >
+        interrupt_min_interval = #{interruptMinInterval,jdbcType=INTEGER},
+      </if>
+      <if test="voice != null" >
+        voice = #{voice,jdbcType=VARCHAR},
+      </if>
+      <if test="specialLimitStart != null" >
+        special_limit_start = #{specialLimitStart,jdbcType=BIT},
+      </if>
+      <if test="specialLimit != null" >
+        special_limit = #{specialLimit,jdbcType=INTEGER},
+      </if>
+      <if test="surveyStart != null" >
+        survey_start = #{surveyStart,jdbcType=BIT},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where options_id = #{optionsId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptions" >
+    update bot_sentence_options
+    set process_id = #{processId,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=VARCHAR},
+      check_sim = #{checkSim,jdbcType=BIT},
+      cur_domain_prior = #{curDomainPrior,jdbcType=BIT},
+      use_not_match_logic = #{useNotMatchLogic,jdbcType=BIT},
+      not_match_solution = #{notMatchSolution,jdbcType=VARCHAR},
+      use_endfiles_list = #{useEndfilesList,jdbcType=BIT},
+      trade = #{trade,jdbcType=VARCHAR},
+      tempname = #{tempname,jdbcType=VARCHAR},
+      non_interruptable_start = #{nonInterruptableStart,jdbcType=BIT},
+      non_interruptable = #{nonInterruptable,jdbcType=VARCHAR},
+      silence_wait_start = #{silenceWaitStart,jdbcType=BIT},
+      silence_wait_secs = #{silenceWaitSecs,jdbcType=INTEGER},
+      silence_wait_time = #{silenceWaitTime,jdbcType=INTEGER},
+      silence_as_empty = #{silenceAsEmpty,jdbcType=BIT},
+      user_define_match_order = #{userDefineMatchOrder,jdbcType=BIT},
+      grub_start = #{grubStart,jdbcType=BIT},
+      positive_interruptable = #{positiveInterruptable,jdbcType=BIT},
+      interruptable_domain_start = #{interruptableDomainStart,jdbcType=BIT},
+      global_interruptable_domains_start = #{globalInterruptableDomainsStart,jdbcType=BIT},
+      global_interruptable_domains = #{globalInterruptableDomains,jdbcType=VARCHAR},
+      ignore_but_domains_start = #{ignoreButDomainsStart,jdbcType=BIT},
+      ignore_user_sentence_start = #{ignoreUserSentenceStart,jdbcType=BIT},
+      ignore_but_negative_start = #{ignoreButNegativeStart,jdbcType=BIT},
+      asr_engine = #{asrEngine,jdbcType=VARCHAR},
+      multi_keyword_all = #{multiKeywordAll,jdbcType=BIT},
+      not_match_less4_to_start = #{notMatchLess4ToStart,jdbcType=BIT},
+      not_match_less_num = #{notMatchLessNum,jdbcType=INTEGER},
+      not_match_to_start = #{notMatchToStart,jdbcType=BIT},
+      no_words_to_start = #{noWordsToStart,jdbcType=BIT},
+      interruption_config_start = #{interruptionConfigStart,jdbcType=BIT},
+      interrupt_words_num = #{interruptWordsNum,jdbcType=INTEGER},
+      interrupt_min_interval = #{interruptMinInterval,jdbcType=INTEGER},
+      voice = #{voice,jdbcType=VARCHAR},
+      special_limit_start = #{specialLimitStart,jdbcType=BIT},
+      special_limit = #{specialLimit,jdbcType=INTEGER},
+      survey_start = #{surveyStart,jdbcType=BIT},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR}
+    where options_id = #{optionsId,jdbcType=VARCHAR}
+  </update>
+</mapper>

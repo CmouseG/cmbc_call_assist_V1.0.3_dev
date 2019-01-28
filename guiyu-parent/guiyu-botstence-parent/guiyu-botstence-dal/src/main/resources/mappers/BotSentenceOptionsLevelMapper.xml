@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceOptionsLevelMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceOptionsLevel" >
+    <result column="options_level_id" property="optionsLevelId" jdbcType="VARCHAR" />
+    <result column="process_id" property="processId" jdbcType="VARCHAR" />
+    <result column="template_id" property="templateId" jdbcType="VARCHAR" />
+    <result column="domain" property="domain" jdbcType="VARCHAR" />
+    <result column="level1" property="level1" jdbcType="VARCHAR" />
+    <result column="level2" property="level2" jdbcType="VARCHAR" />
+    <result column="level3" property="level3" jdbcType="VARCHAR" />
+    <result column="level4" property="level4" jdbcType="VARCHAR" />
+    <result column="level5" property="level5" jdbcType="VARCHAR" />
+    <result column="level6" property="level6" jdbcType="VARCHAR" />
+    <result column="level7" property="level7" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    options_level_id, process_id, template_id, `domain`, level1, level2, level3, level4, 
+    level5, level6, level7, crt_time, crt_user, lst_update_time, lst_update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsLevelExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from bot_sentence_options_level
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsLevelExample" >
+    delete from bot_sentence_options_level
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsLevel" >
+    <selectKey resultType="java.lang.String" keyProperty="optionsLevelId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_options_level')
+    </selectKey>
+    insert into bot_sentence_options_level (options_level_id, process_id, template_id, 
+      `domain`, level1, level2, 
+      level3, level4, level5, 
+      level6, level7, crt_time, 
+      crt_user, lst_update_time, lst_update_user
+      )
+    values (#{optionsLevelId,jdbcType=VARCHAR}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
+      #{domain,jdbcType=VARCHAR}, #{level1,jdbcType=VARCHAR}, #{level2,jdbcType=VARCHAR}, 
+      #{level3,jdbcType=VARCHAR}, #{level4,jdbcType=VARCHAR}, #{level5,jdbcType=VARCHAR}, 
+      #{level6,jdbcType=VARCHAR}, #{level7,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsLevel" >
+    <selectKey resultType="java.lang.String" keyProperty="optionsLevelId" order="BEFORE" >
+      SELECT genTabId('bot_sentence_options_level')
+    </selectKey>
+    insert into bot_sentence_options_level
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      options_level_id,
+      <if test="processId != null" >
+        process_id,
+      </if>
+      <if test="templateId != null" >
+        template_id,
+      </if>
+      <if test="domain != null" >
+        `domain`,
+      </if>
+      <if test="level1 != null" >
+        level1,
+      </if>
+      <if test="level2 != null" >
+        level2,
+      </if>
+      <if test="level3 != null" >
+        level3,
+      </if>
+      <if test="level4 != null" >
+        level4,
+      </if>
+      <if test="level5 != null" >
+        level5,
+      </if>
+      <if test="level6 != null" >
+        level6,
+      </if>
+      <if test="level7 != null" >
+        level7,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="lstUpdateTime != null" >
+        lst_update_time,
+      </if>
+      <if test="lstUpdateUser != null" >
+        lst_update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{optionsLevelId,jdbcType=VARCHAR},
+      <if test="processId != null" >
+        #{processId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="domain != null" >
+        #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="level1 != null" >
+        #{level1,jdbcType=VARCHAR},
+      </if>
+      <if test="level2 != null" >
+        #{level2,jdbcType=VARCHAR},
+      </if>
+      <if test="level3 != null" >
+        #{level3,jdbcType=VARCHAR},
+      </if>
+      <if test="level4 != null" >
+        #{level4,jdbcType=VARCHAR},
+      </if>
+      <if test="level5 != null" >
+        #{level5,jdbcType=VARCHAR},
+      </if>
+      <if test="level6 != null" >
+        #{level6,jdbcType=VARCHAR},
+      </if>
+      <if test="level7 != null" >
+        #{level7,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lstUpdateTime != null" >
+        #{lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lstUpdateUser != null" >
+        #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceOptionsLevelExample" resultType="java.lang.Integer" >
+    select count(*) from bot_sentence_options_level
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bot_sentence_options_level
+    <set >
+      <if test="record.optionsLevelId != null" >
+        options_level_id = #{record.optionsLevelId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.processId != null" >
+        process_id = #{record.processId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        template_id = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.domain != null" >
+        `domain` = #{record.domain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level1 != null" >
+        level1 = #{record.level1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level2 != null" >
+        level2 = #{record.level2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level3 != null" >
+        level3 = #{record.level3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level4 != null" >
+        level4 = #{record.level4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level5 != null" >
+        level5 = #{record.level5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level6 != null" >
+        level6 = #{record.level6,jdbcType=VARCHAR},
+      </if>
+      <if test="record.level7 != null" >
+        level7 = #{record.level7,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lstUpdateTime != null" >
+        lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lstUpdateUser != null" >
+        lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bot_sentence_options_level
+    set options_level_id = #{record.optionsLevelId,jdbcType=VARCHAR},
+      process_id = #{record.processId,jdbcType=VARCHAR},
+      template_id = #{record.templateId,jdbcType=VARCHAR},
+      `domain` = #{record.domain,jdbcType=VARCHAR},
+      level1 = #{record.level1,jdbcType=VARCHAR},
+      level2 = #{record.level2,jdbcType=VARCHAR},
+      level3 = #{record.level3,jdbcType=VARCHAR},
+      level4 = #{record.level4,jdbcType=VARCHAR},
+      level5 = #{record.level5,jdbcType=VARCHAR},
+      level6 = #{record.level6,jdbcType=VARCHAR},
+      level7 = #{record.level7,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

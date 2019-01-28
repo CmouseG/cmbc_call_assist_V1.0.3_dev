@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceProcessMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceProcessMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
     <id column="process_id" property="processId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="template_name" property="templateName" jdbcType="VARCHAR" />
@@ -22,6 +22,8 @@
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
     <result column="org_name" property="orgName" jdbcType="VARCHAR" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="industry_id" property="industryId" jdbcType="VARCHAR" />
+    <result column="test_state" property="testState" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -84,9 +86,10 @@
   <sql id="Base_Column_List" >
     process_id, template_id, template_name, template_type, version, industry, account_no, 
     old_process_id, crt_time, crt_user, lst_update_time, lst_update_user, `state`, approve_time, 
-    approve_user, approve_notes, sound_type, org_code, org_name, user_name
+    approve_user, approve_notes, sound_type, org_code, org_name, user_name, industry_id, 
+    test_state
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
     select
     <if test="distinct" >
       distinct
@@ -114,13 +117,13 @@
     delete from bot_sentence_process
     where process_id = #{processId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcessExample" >
     delete from bot_sentence_process
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
     <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
       SELECT genTabId('bot_sentence_process')
     </selectKey>
@@ -130,24 +133,24 @@
       crt_user, lst_update_time, lst_update_user, 
       `state`, approve_time, approve_user, 
       approve_notes, sound_type, org_code, 
-      org_name, user_name)
+      org_name, user_name, industry_id, 
+      test_state)
     values (#{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
       #{templateType,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
       #{accountNo,jdbcType=VARCHAR}, #{oldProcessId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
       #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
       #{state,jdbcType=VARCHAR}, #{approveTime,jdbcType=TIMESTAMP}, #{approveUser,jdbcType=VARCHAR}, 
       #{approveNotes,jdbcType=VARCHAR}, #{soundType,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
-      #{orgName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR})
+      #{orgName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{industryId,jdbcType=VARCHAR}, 
+      #{testState,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
     <selectKey resultType="java.lang.String" keyProperty="processId" order="BEFORE" >
       SELECT genTabId('bot_sentence_process')
     </selectKey>
     insert into bot_sentence_process
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="processId != null" >
-        process_id,
-      </if>
+      process_id,
       <if test="templateId != null" >
         template_id,
       </if>
@@ -205,11 +208,15 @@
       <if test="userName != null" >
         user_name,
       </if>
+      <if test="industryId != null" >
+        industry_id,
+      </if>
+      <if test="testState != null" >
+        test_state,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="processId != null" >
-        #{processId,jdbcType=VARCHAR},
-      </if>
+      #{processId,jdbcType=VARCHAR},
       <if test="templateId != null" >
         #{templateId,jdbcType=VARCHAR},
       </if>
@@ -267,9 +274,15 @@
       <if test="userName != null" >
         #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="industryId != null" >
+        #{industryId,jdbcType=VARCHAR},
+      </if>
+      <if test="testState != null" >
+        #{testState,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcessExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcessExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_process
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -338,6 +351,12 @@
       <if test="record.userName != null" >
         user_name = #{record.userName,jdbcType=VARCHAR},
       </if>
+      <if test="record.industryId != null" >
+        industry_id = #{record.industryId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.testState != null" >
+        test_state = #{record.testState,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -364,12 +383,14 @@
       sound_type = #{record.soundType,jdbcType=VARCHAR},
       org_code = #{record.orgCode,jdbcType=VARCHAR},
       org_name = #{record.orgName,jdbcType=VARCHAR},
-      user_name = #{record.userName,jdbcType=VARCHAR}
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      industry_id = #{record.industryId,jdbcType=VARCHAR},
+      test_state = #{record.testState,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
     update bot_sentence_process
     <set >
       <if test="templateId != null" >
@@ -429,10 +450,16 @@
       <if test="userName != null" >
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="industryId != null" >
+        industry_id = #{industryId,jdbcType=VARCHAR},
+      </if>
+      <if test="testState != null" >
+        test_state = #{testState,jdbcType=VARCHAR},
+      </if>
     </set>
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceProcess" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceProcess" >
     update bot_sentence_process
     set template_id = #{templateId,jdbcType=VARCHAR},
       template_name = #{templateName,jdbcType=VARCHAR},
@@ -452,8 +479,9 @@
       sound_type = #{soundType,jdbcType=VARCHAR},
       org_code = #{orgCode,jdbcType=VARCHAR},
       org_name = #{orgName,jdbcType=VARCHAR},
-      user_name = #{userName,jdbcType=VARCHAR}
+      user_name = #{userName,jdbcType=VARCHAR},
+      industry_id = #{industryId,jdbcType=VARCHAR},
+      test_state = #{testState,jdbcType=VARCHAR}
     where process_id = #{processId,jdbcType=VARCHAR}
   </update>
-
 </mapper>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceTtsParamMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceTtsParamMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
     <id column="param_id" property="paramId" jdbcType="VARCHAR" />
     <result column="process_id" property="processId" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
@@ -75,7 +75,7 @@
     param_id, process_id, template_id, param_key, param_type, volice_id, crt_time, crt_user, 
     lst_update_time, lst_update_user
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" >
     select
     <if test="distinct" >
       distinct
@@ -103,13 +103,13 @@
     delete from bot_sentence_tts_param
     where param_id = #{paramId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" >
     delete from bot_sentence_tts_param
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
     <selectKey resultType="java.lang.String" keyProperty="paramId" order="BEFORE" >
       SELECT genTabId('bot_sentence_tts_param')
     </selectKey>
@@ -122,7 +122,7 @@
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
       #{lstUpdateUser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
     <selectKey resultType="java.lang.String" keyProperty="paramId" order="BEFORE" >
       SELECT genTabId('bot_sentence_tts_param')
     </selectKey>
@@ -188,7 +188,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParamExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_tts_param
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -248,7 +248,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
     update bot_sentence_tts_param
     <set >
       <if test="processId != null" >
@@ -281,7 +281,7 @@
     </set>
     where param_id = #{paramId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsParam" >
     update bot_sentence_tts_param
     set process_id = #{processId,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},

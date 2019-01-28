@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.botsentence.dao.ext.BotSentenceGradeRuleExtMapper" >
+  <select id="queryDistinctProcessId" resultType="String">
+		select 
+			distinct rule_no 
+		from bot_sentence_grade_rule 
+		where 
+			process_id=#{processId};
+	</select>
+
+	<select id="queryMaxRuleNo" resultType="String">
+		select 
+			max(rule_no) as ruleNo
+		from bot_sentence_grade_rule
+		where 
+			process_id=#{processId};
+	</select>
+	
+	<select id="queryDistinctIntentNameProcessId" resultType="String">
+		select 
+			distinct intent_name 
+		from bot_sentence_grade_rule 
+		where 
+			process_id=#{processId};
+	</select>
+	
+	<select id="queryDistinctRuleNoByProcessIdAndIntentName" resultType="String">
+		select 
+			distinct rule_no 
+		from bot_sentence_grade_rule 
+		where 
+			process_id=#{processId} and intent_name=#{intentName};
+	</select>
+	
+	<update id="updateIntentNameByRemark" parameterType="String">
+		update bot_sentence_grade_rule set remark=#{remark} where process_id=#{processId} and intent_name=#{intentName}
+	</update>
+</mapper>

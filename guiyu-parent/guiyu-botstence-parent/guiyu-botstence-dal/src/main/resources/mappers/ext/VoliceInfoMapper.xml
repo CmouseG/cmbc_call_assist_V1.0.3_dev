@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.ext.VoliceInfoExtMapper" >
+<mapper namespace="com.guiji.botsentence.dao.ext.VoliceInfoExtMapper" >
 
- 	<select id="queryVoliceInfoList" resultType="ai.guiji.botsentence.dao.entity.VoliceInfoExt">
+ 	<select id="queryVoliceInfoList" resultType="com.guiji.botsentence.dao.entity.VoliceInfoExt">
  		select volice_id as voliceId,content,volice_url as voliceUrl from volice_info
  		where process_id=#{processId}
  	</select>
  	
  	
- 	<select id="queryVoliceInfoListByIds" resultType="ai.guiji.botsentence.dao.entity.VoliceInfoExt">
+ 	<select id="queryVoliceInfoListByIds" resultType="com.guiji.botsentence.dao.entity.VoliceInfoExt">
  		select volice_id as voliceId,content,volice_url as voliceUrl from volice_info
 		where volice_id in
 		<foreach collection="voliceIds" item="item" open="(" separator="," close=")">
@@ -17,11 +17,11 @@
  	</select>
  	
  	<update id="updateVoliceUrlById">
- 		UPDATE volice_info set volice_url=#{url} where volice_id=#{voliceId} 
+ 		UPDATE volice_info set volice_url=#{url}, times=#{times} where volice_id=#{voliceId} 
  	</update>
  	
  	<update id="updateVoliceUrlAndNameById">
- 		UPDATE volice_info set volice_url=#{url}, flag=#{name} where volice_id=#{voliceId} 
+ 		UPDATE volice_info set volice_url=#{url}, flag=#{flag}, times=#{times} where volice_id=#{voliceId} 
  	</update>
  	
  	<select id="queryAllVoliceId" resultType="string">
@@ -42,7 +42,7 @@
       template_id, domain_name, `type`, 
       num, content, crt_time, 
       crt_user, lst_update_time, lst_update_user, 
-      `name`)
+      `name`, times)
     values 
      <foreach collection="list" item="item" index="index" separator="," >
         (
@@ -57,7 +57,8 @@
         #{item.crtUser},
         #{item.lstUpdateTime},
         #{item.lstUpdateUser},
-        #{item.name}
+        #{item.name},
+        #{item.times}
         )
     </foreach>
 
@@ -74,4 +75,41 @@
  		where volice_id=#{voliceId}
  	</select>
  	
+ 	
+ 	<update id="deleteAllVoliceUrl">
+ 		UPDATE volice_info set volice_url=null where process_id=#{processId} 
+ 	</update>
+ 	
+ 	
+ 	
+ 	<select id="countUnFinishNum" resultType="int">
+ 		SELECT
+    		COUNT(*)
+		FROM
+    	volice_info
+		WHERE
+	    (
+	        process_id = #{processId}
+	    AND volice_url IS NULL
+	    AND domain_name NOT IN ('不清楚','不知道','等待','用户不清楚','自由介绍')
+	    AND
+	    (need_tts is null or  need_tts = false)
+	    )
+ 	</select>
+ 	
+ 	
+ 	<select id="countFinishNum" resultType="int">
+ 		SELECT
+    		COUNT(*)
+		FROM
+    	volice_info
+		WHERE
+	    (
+	        process_id = #{processId}
+	    AND volice_url IS NOT NULL
+	    AND domain_name NOT IN ('不清楚','不知道','等待','用户不清楚','自由介绍')
+	    AND
+	    (need_tts is null or  need_tts = false)
+	    )
+ 	</select>
 </mapper>

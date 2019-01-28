@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceNodeTaskMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceNodeTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
     <id column="node_id" property="nodeId" jdbcType="VARCHAR" />
     <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
     <result column="process_id" property="processId" jdbcType="VARCHAR" />
@@ -82,7 +82,7 @@
     volice_url, is_interrupt, is_main_flow, key_words, crt_time, crt_user, lst_update_time, 
     lst_update_user
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTaskExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTaskExample" >
     select
     <if test="distinct" >
       distinct
@@ -110,13 +110,13 @@
     delete from bot_sentence_node_task
     where node_id = #{nodeId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTaskExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTaskExample" >
     delete from bot_sentence_node_task
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
     <selectKey resultType="java.lang.String" keyProperty="nodeId" order="BEFORE" >
       SELECT genTabId('bot_sentence_node_task')
     </selectKey>
@@ -133,7 +133,7 @@
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
       #{lstUpdateUser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
     <selectKey resultType="java.lang.String" keyProperty="nodeId" order="BEFORE" >
       SELECT genTabId('bot_sentence_node_task')
     </selectKey>
@@ -235,7 +235,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTaskExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTaskExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_node_task
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -319,7 +319,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
     update bot_sentence_node_task
     <set >
       <if test="nodeName != null" >
@@ -370,7 +370,7 @@
     </set>
     where node_id = #{nodeId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodeTask" >
     update bot_sentence_node_task
     set node_name = #{nodeName,jdbcType=VARCHAR},
       process_id = #{processId,jdbcType=VARCHAR},

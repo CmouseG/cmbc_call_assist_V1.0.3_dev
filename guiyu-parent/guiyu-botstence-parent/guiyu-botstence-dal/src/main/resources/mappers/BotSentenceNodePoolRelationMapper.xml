@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceNodePoolRelationMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceNodePoolRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
     <id column="pool_relation_id" property="poolRelationId" jdbcType="VARCHAR" />
     <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
     <result column="botsentence_id" property="botsentenceId" jdbcType="VARCHAR" />
@@ -73,7 +73,7 @@
     pool_relation_id, node_id, botsentence_id, process_id, crt_time, crt_user, lst_update_time, 
     lst_update_user
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelationExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelationExample" >
     select
     <if test="distinct" >
       distinct
@@ -101,13 +101,13 @@
     delete from bot_sentence_node_pool_relation
     where pool_relation_id = #{poolRelationId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelationExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelationExample" >
     delete from bot_sentence_node_pool_relation
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
     <selectKey resultType="java.lang.String" keyProperty="poolRelationId" order="BEFORE" >
       SELECT genTabId('bot_sentence_node_pool_relation')
     </selectKey>
@@ -118,7 +118,7 @@
       #{processId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, 
       #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
     <selectKey resultType="java.lang.String" keyProperty="poolRelationId" order="BEFORE" >
       SELECT genTabId('bot_sentence_node_pool_relation')
     </selectKey>
@@ -172,7 +172,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelationExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelationExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_node_pool_relation
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -224,7 +224,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
     update bot_sentence_node_pool_relation
     <set >
       <if test="nodeId != null" >
@@ -251,7 +251,7 @@
     </set>
     where pool_relation_id = #{poolRelationId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceNodePoolRelation" >
     update bot_sentence_node_pool_relation
     set node_id = #{nodeId,jdbcType=VARCHAR},
       botsentence_id = #{botsentenceId,jdbcType=VARCHAR},

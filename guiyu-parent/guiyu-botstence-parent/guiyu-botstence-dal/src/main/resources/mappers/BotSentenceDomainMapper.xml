@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotSentenceDomainMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotSentenceDomain" >
+<mapper namespace="com.guiji.botsentence.dao.BotSentenceDomainMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotSentenceDomain" >
     <id column="domain_id" property="domainId" jdbcType="VARCHAR" />
     <result column="domain_name" property="domainName" jdbcType="VARCHAR" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
@@ -20,6 +20,13 @@
     <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
     <result column="position_x" property="positionX" jdbcType="INTEGER" />
     <result column="position_y" property="positionY" jdbcType="INTEGER" />
+    <result column="ignore_user_sentence" property="ignoreUserSentence" jdbcType="BIT" />
+    <result column="ignore_but_negative" property="ignoreButNegative" jdbcType="BIT" />
+    <result column="match_order" property="matchOrder" jdbcType="VARCHAR" />
+    <result column="not_match_less4_to" property="notMatchLess4To" jdbcType="VARCHAR" />
+    <result column="not_match_to" property="notMatchTo" jdbcType="VARCHAR" />
+    <result column="no_words_to" property="noWordsTo" jdbcType="VARCHAR" />
+    <result column="is_special_limit_free" property="isSpecialLimitFree" jdbcType="BIT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -82,9 +89,10 @@
   <sql id="Base_Column_List" >
     domain_id, domain_name, template_id, process_id, com_domain, category, ignore_but_domains, 
     is_interrupt, is_main_flow, crt_time, crt_user, lst_update_time, lst_update_user, 
-    `type`, parent, parent_id, position_x, position_y
+    `type`, parent, parent_id, position_x, position_y, ignore_user_sentence, ignore_but_negative, 
+    match_order, not_match_less4_to, not_match_to, no_words_to, is_special_limit_free
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomainExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomainExample" >
     select
     <if test="distinct" >
       distinct
@@ -112,13 +120,13 @@
     delete from bot_sentence_domain
     where domain_id = #{domainId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomainExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomainExample" >
     delete from bot_sentence_domain
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomain" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomain" >
     <selectKey resultType="java.lang.String" keyProperty="domainId" order="BEFORE" >
       SELECT genTabId('bot_sentence_domain')
     </selectKey>
@@ -127,17 +135,21 @@
       ignore_but_domains, is_interrupt, is_main_flow, 
       crt_time, crt_user, lst_update_time, 
       lst_update_user, `type`, parent, 
-      parent_id, position_x, position_y
-      )
+      parent_id, position_x, position_y, 
+      ignore_user_sentence, ignore_but_negative, match_order, 
+      not_match_less4_to, not_match_to, no_words_to, 
+      is_special_limit_free)
     values (#{domainId,jdbcType=VARCHAR}, #{domainName,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{processId,jdbcType=VARCHAR}, #{comDomain,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
       #{ignoreButDomains,jdbcType=VARCHAR}, #{isInterrupt,jdbcType=VARCHAR}, #{isMainFlow,jdbcType=VARCHAR}, 
       #{crtTime,jdbcType=TIMESTAMP}, #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, 
       #{lstUpdateUser,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{parent,jdbcType=VARCHAR}, 
-      #{parentId,jdbcType=VARCHAR}, #{positionX,jdbcType=INTEGER}, #{positionY,jdbcType=INTEGER}
-      )
+      #{parentId,jdbcType=VARCHAR}, #{positionX,jdbcType=INTEGER}, #{positionY,jdbcType=INTEGER}, 
+      #{ignoreUserSentence,jdbcType=BIT}, #{ignoreButNegative,jdbcType=BIT}, #{matchOrder,jdbcType=VARCHAR}, 
+      #{notMatchLess4To,jdbcType=VARCHAR}, #{notMatchTo,jdbcType=VARCHAR}, #{noWordsTo,jdbcType=VARCHAR}, 
+      #{isSpecialLimitFree,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomain" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomain" >
     <selectKey resultType="java.lang.String" keyProperty="domainId" order="BEFORE" >
       SELECT genTabId('bot_sentence_domain')
     </selectKey>
@@ -195,6 +207,27 @@
       <if test="positionY != null" >
         position_y,
       </if>
+      <if test="ignoreUserSentence != null" >
+        ignore_user_sentence,
+      </if>
+      <if test="ignoreButNegative != null" >
+        ignore_but_negative,
+      </if>
+      <if test="matchOrder != null" >
+        match_order,
+      </if>
+      <if test="notMatchLess4To != null" >
+        not_match_less4_to,
+      </if>
+      <if test="notMatchTo != null" >
+        not_match_to,
+      </if>
+      <if test="noWordsTo != null" >
+        no_words_to,
+      </if>
+      <if test="isSpecialLimitFree != null" >
+        is_special_limit_free,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{domainId,jdbcType=VARCHAR},
@@ -249,9 +282,30 @@
       <if test="positionY != null" >
         #{positionY,jdbcType=INTEGER},
       </if>
+      <if test="ignoreUserSentence != null" >
+        #{ignoreUserSentence,jdbcType=BIT},
+      </if>
+      <if test="ignoreButNegative != null" >
+        #{ignoreButNegative,jdbcType=BIT},
+      </if>
+      <if test="matchOrder != null" >
+        #{matchOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="notMatchLess4To != null" >
+        #{notMatchLess4To,jdbcType=VARCHAR},
+      </if>
+      <if test="notMatchTo != null" >
+        #{notMatchTo,jdbcType=VARCHAR},
+      </if>
+      <if test="noWordsTo != null" >
+        #{noWordsTo,jdbcType=VARCHAR},
+      </if>
+      <if test="isSpecialLimitFree != null" >
+        #{isSpecialLimitFree,jdbcType=BIT},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomainExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomainExample" resultType="java.lang.Integer" >
     select count(*) from bot_sentence_domain
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -314,6 +368,27 @@
       <if test="record.positionY != null" >
         position_y = #{record.positionY,jdbcType=INTEGER},
       </if>
+      <if test="record.ignoreUserSentence != null" >
+        ignore_user_sentence = #{record.ignoreUserSentence,jdbcType=BIT},
+      </if>
+      <if test="record.ignoreButNegative != null" >
+        ignore_but_negative = #{record.ignoreButNegative,jdbcType=BIT},
+      </if>
+      <if test="record.matchOrder != null" >
+        match_order = #{record.matchOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="record.notMatchLess4To != null" >
+        not_match_less4_to = #{record.notMatchLess4To,jdbcType=VARCHAR},
+      </if>
+      <if test="record.notMatchTo != null" >
+        not_match_to = #{record.notMatchTo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.noWordsTo != null" >
+        no_words_to = #{record.noWordsTo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isSpecialLimitFree != null" >
+        is_special_limit_free = #{record.isSpecialLimitFree,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -338,12 +413,19 @@
       parent = #{record.parent,jdbcType=VARCHAR},
       parent_id = #{record.parentId,jdbcType=VARCHAR},
       position_x = #{record.positionX,jdbcType=INTEGER},
-      position_y = #{record.positionY,jdbcType=INTEGER}
+      position_y = #{record.positionY,jdbcType=INTEGER},
+      ignore_user_sentence = #{record.ignoreUserSentence,jdbcType=BIT},
+      ignore_but_negative = #{record.ignoreButNegative,jdbcType=BIT},
+      match_order = #{record.matchOrder,jdbcType=VARCHAR},
+      not_match_less4_to = #{record.notMatchLess4To,jdbcType=VARCHAR},
+      not_match_to = #{record.notMatchTo,jdbcType=VARCHAR},
+      no_words_to = #{record.noWordsTo,jdbcType=VARCHAR},
+      is_special_limit_free = #{record.isSpecialLimitFree,jdbcType=BIT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomain" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomain" >
     update bot_sentence_domain
     <set >
       <if test="domainName != null" >
@@ -397,10 +479,31 @@
       <if test="positionY != null" >
         position_y = #{positionY,jdbcType=INTEGER},
       </if>
+      <if test="ignoreUserSentence != null" >
+        ignore_user_sentence = #{ignoreUserSentence,jdbcType=BIT},
+      </if>
+      <if test="ignoreButNegative != null" >
+        ignore_but_negative = #{ignoreButNegative,jdbcType=BIT},
+      </if>
+      <if test="matchOrder != null" >
+        match_order = #{matchOrder,jdbcType=VARCHAR},
+      </if>
+      <if test="notMatchLess4To != null" >
+        not_match_less4_to = #{notMatchLess4To,jdbcType=VARCHAR},
+      </if>
+      <if test="notMatchTo != null" >
+        not_match_to = #{notMatchTo,jdbcType=VARCHAR},
+      </if>
+      <if test="noWordsTo != null" >
+        no_words_to = #{noWordsTo,jdbcType=VARCHAR},
+      </if>
+      <if test="isSpecialLimitFree != null" >
+        is_special_limit_free = #{isSpecialLimitFree,jdbcType=BIT},
+      </if>
     </set>
     where domain_id = #{domainId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotSentenceDomain" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotSentenceDomain" >
     update bot_sentence_domain
     set domain_name = #{domainName,jdbcType=VARCHAR},
       template_id = #{templateId,jdbcType=VARCHAR},
@@ -418,7 +521,14 @@
       parent = #{parent,jdbcType=VARCHAR},
       parent_id = #{parentId,jdbcType=VARCHAR},
       position_x = #{positionX,jdbcType=INTEGER},
-      position_y = #{positionY,jdbcType=INTEGER}
+      position_y = #{positionY,jdbcType=INTEGER},
+      ignore_user_sentence = #{ignoreUserSentence,jdbcType=BIT},
+      ignore_but_negative = #{ignoreButNegative,jdbcType=BIT},
+      match_order = #{matchOrder,jdbcType=VARCHAR},
+      not_match_less4_to = #{notMatchLess4To,jdbcType=VARCHAR},
+      not_match_to = #{notMatchTo,jdbcType=VARCHAR},
+      no_words_to = #{noWordsTo,jdbcType=VARCHAR},
+      is_special_limit_free = #{isSpecialLimitFree,jdbcType=BIT}
     where domain_id = #{domainId,jdbcType=VARCHAR}
   </update>
 </mapper>

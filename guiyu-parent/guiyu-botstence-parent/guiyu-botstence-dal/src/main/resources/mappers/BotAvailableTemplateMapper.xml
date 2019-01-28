@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="ai.guiji.botsentence.dao.BotAvailableTemplateMapper" >
-  <resultMap id="BaseResultMap" type="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
+<mapper namespace="com.guiji.botsentence.dao.BotAvailableTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="template_id" property="templateId" jdbcType="VARCHAR" />
     <result column="template_name" property="templateName" jdbcType="VARCHAR" />
@@ -69,7 +69,7 @@
   <sql id="Base_Column_List" >
     id, template_id, template_name, user_id, org_code
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplateExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplateExample" >
     select
     <if test="distinct" >
       distinct
@@ -97,19 +97,19 @@
     delete from bot_available_template
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplateExample" >
+  <delete id="deleteByExample" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplateExample" >
     delete from bot_available_template
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     insert into bot_available_template (id, template_id, template_name, 
       user_id, org_code)
     values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, 
       #{userId,jdbcType=BIGINT}, #{orgCode,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     insert into bot_available_template
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -146,7 +146,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplateExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplateExample" resultType="java.lang.Integer" >
     select count(*) from bot_available_template
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -186,7 +186,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     update bot_available_template
     <set >
       <if test="templateId != null" >
@@ -204,7 +204,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="ai.guiji.botsentence.dao.entity.BotAvailableTemplate" >
+  <update id="updateByPrimaryKey" parameterType="com.guiji.botsentence.dao.entity.BotAvailableTemplate" >
     update bot_available_template
     set template_id = #{templateId,jdbcType=VARCHAR},
       template_name = #{templateName,jdbcType=VARCHAR},

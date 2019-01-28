@@ -1,0 +1,54 @@
+server:
+  port: 18025
+
+spring:
+  application:
+    name: guiyu-callcenter-toagentserver
+sharding:
+  jdbc:
+    datasource:
+      names: guiyu_callcenter
+      guiyu_callcenter:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC&useSSL=false
+        username: callcenter
+        password: callcenter@1234
+        minIdle: 5
+        maxActive: 200
+        initialSize: 5
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+fs:
+   homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+   serverEslTimeout : 2
+   reconnectSleepTime : 1000
+   wssUrl: verto.gallery.btows.com
+
+fsbot:
+     homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+     recordingsDir: ${fs.homeDir}/recordings/
+     recordingsDirZip: ${fs.homeDir}/recordings/zip/
+     noAuth: true
+
+
+aliasr:
+       accessId: LTAIqRMF6ucN0gwp
+       accessSecret: mvGam0vMuMu82NQFNbdrp4NLsz30y8
+
+properties:
+    error: properties/error.properties
+

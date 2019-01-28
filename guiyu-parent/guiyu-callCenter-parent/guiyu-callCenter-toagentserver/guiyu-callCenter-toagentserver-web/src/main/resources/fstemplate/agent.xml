@@ -1,0 +1,1 @@
+<agent name="1008" type="callback" contact="${verto_contact(10088)}" status="Available" max-no-answer="30" wrap-up-time="10" reject-delay-time="10" busy-delay-time="60"/>

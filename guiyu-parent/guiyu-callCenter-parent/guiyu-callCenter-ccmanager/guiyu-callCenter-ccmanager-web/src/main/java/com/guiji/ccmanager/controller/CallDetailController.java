@@ -309,11 +309,11 @@ public class CallDetailController implements ICallPlanDetail {
 
                 generateExcel(context, fout);
             }
-       } catch (IOException e) {
-           log.error("downloadDialogueZip IOException :"+e);
-       }  catch (WriteException e) {
-           log.error("downloadDialogueZip WriteException :"+e);
-       }finally {
+        } catch (IOException e) {
+            log.error("downloadDialogueZip IOException :"+e);
+        }  catch (WriteException e) {
+            log.error("downloadDialogueZip WriteException :"+e);
+        }finally {
             if(fout!=null){
                 try {
                     fout.close();
@@ -321,7 +321,7 @@ public class CallDetailController implements ICallPlanDetail {
                     log.error("downloadDialogueZip fout.close error:"+e);
                 }
             }
-       }
+        }
 
         String fileName = "通话记录.zip";
         HttpDownload.setHeader(resp, fileName);
@@ -393,7 +393,7 @@ public class CallDetailController implements ICallPlanDetail {
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
         }
-       String url = callDetailService.getRecordFileUrl(callId);
+        String url = callDetailService.getRecordFileUrl(callId);
         return Result.ok(url);
     }
 

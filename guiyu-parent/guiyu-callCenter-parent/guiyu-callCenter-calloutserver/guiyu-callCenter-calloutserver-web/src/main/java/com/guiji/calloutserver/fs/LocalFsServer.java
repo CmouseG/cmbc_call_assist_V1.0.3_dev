@@ -187,11 +187,12 @@ public class LocalFsServer implements IEslEventListener {
      * @param uuid
      * @param agentGroupId
      */
-    public void transferToAgentGroup(String uuid, String customerNum, String agentGroupId){
-        String command = String.format("uuid_transfer %s ag_%s_%s",
-                uuid,
-                customerNum,
-                agentGroupId);
+    public void transferToAgentGroup(String uuid, String agentFs, String agentGroupId){
+        //uuid_transfer cb5f0f74-8fd0-4929-abf8-a1478f30e4cc 'bridge:sofia/external/9-out-294926373783339008-30006@192.168.1.78:50600' inline
+        String command = String.format("uuid_transfer %s 'bridge:sofia/external/9-out-%s-%s@%s' inline",
+                uuid,uuid,
+                agentGroupId,
+                agentFs);
         String response = getFsClient().sendAsyncApiCommand(command, "");
         logger.info("FreeSWITCH异步命令[{}]返回结果为[{}]", command, response);
     }

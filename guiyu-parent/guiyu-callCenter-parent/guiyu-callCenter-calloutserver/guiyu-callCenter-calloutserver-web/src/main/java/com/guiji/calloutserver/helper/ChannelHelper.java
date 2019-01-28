@@ -9,6 +9,7 @@ import com.guiji.calloutserver.eventbus.event.ChannelHangupEvent;
 import com.guiji.calloutserver.eventbus.handler.AfterMediaChecker;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.config.AiConfig;
+import com.guiji.calloutserver.manager.ToAgentManager;
 import com.guiji.calloutserver.service.ChannelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class ChannelHelper {
 
     @Autowired
     RobotNextHelper robotNextHelper;
-
+    @Autowired
+    ToAgentManager toAgentManager;
 
     @Autowired
     LocalFsServer localFsServer;
@@ -82,25 +84,23 @@ public class ChannelHelper {
     /**
      *
      * 在播放完媒体后，将当前呼叫转到座席组
-     * @param callPlan
      * @param mediaFile
      * @param mediaFileDuration
-     * @param agentGroup
+     * @param agentGroupId
      */
-/*    public void playAndTransferToAgentGroup(CallOutPlan callPlan, String mediaFile, Double mediaFileDuration, String agentGroup){
+    public void playAndTransferToAgentGroup(String uuid, String mediaFile, Double mediaFileDuration, String agentGroupId){
         log.info("需要锁定通道媒体文件[{}]的播放，锁定时间为[{}]", mediaFile, mediaFileDuration);
 
-        String uuid = callPlan.getCallId();
-
+        String toAgentFs = toAgentManager.findToAgentFsAdder();
         //转人工播放时间加0.5秒，防止声音未播放完，就转人工
-        setChannel(uuid, mediaFileDuration + 0.5, false, () -> localFsServer.transferToAgentGroup(uuid, callPlan.getPhoneNum(), agentGroup));
+        setChannel(uuid, mediaFileDuration + 0.5, false, () -> localFsServer.transferToAgentGroup(uuid, toAgentFs, agentGroupId));
 
         Channel channel = channelService.findByUuid(uuid);
 
         localFsServer.playToChannel(uuid, mediaFile);
         channel.setMediaFileName(mediaFile);
         channelService.save(channel);
-    }*/
+    }
 
     /**
      * 播放机器人说话，并在说完话之后挂断
@@ -209,6 +209,31 @@ public class ChannelHelper {
     }
 
     /**
+     * 锁定通道指定时长, 单位为秒
+     * @param uuid
+     * @param lockTimeLen  单位为秒
+     */
+    private void setChannel(String uuid, Double lockTimeLen, boolean isEnd, AfterLockHandle handler){
+        channelService.updateMediaLock(uuid, true);
+
+        log.debug("使用定时服务约定执行时间，timeLen[{}],isEnd[{}]", lockTimeLen, isEnd);
+        ScheduledFuture<?> schedule = scheduledExecutorService.schedule(() -> {
+                    if (!isEnd) {
+                        log.debug("通道[{}]锁定时间[{}]已完成，解除锁定", uuid, lockTimeLen);
+                        channelService.updateMediaLock(uuid, false);
+                    } else {
+                        log.debug("播放结束，开始删除callMedia");
+                        channelService.delete(uuid);
+                    }
+
+                    if (handler != null) {
+                        handler.handle();
+                    }
+                },
+                lockTimeLen.longValue(), TimeUnit.SECONDS);
+    }
+
+    /**
      * 停止计时器
      * @param uuid
      */
@@ -237,6 +262,10 @@ public class ChannelHelper {
         log.info("停止通道[{}]的各种计时器", uuid);
         stopTimer(uuid);
         robotNextHelper.stopAiCallNextTimer(uuid);
+    }
+
+    interface AfterLockHandle{
+        void handle();
     }
 
 }

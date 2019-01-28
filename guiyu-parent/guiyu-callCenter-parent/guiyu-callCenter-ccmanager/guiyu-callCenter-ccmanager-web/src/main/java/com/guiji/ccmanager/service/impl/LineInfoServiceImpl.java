@@ -354,6 +354,6 @@ public class LineInfoServiceImpl implements LineInfoService {
 
     @Override
     public LineInfo getLineInfoById(Integer lineId) {
-      return  lineInfoMapper.selectByPrimaryKey(lineId);
+        return  lineInfoMapper.selectByPrimaryKey(lineId);
     }
 }

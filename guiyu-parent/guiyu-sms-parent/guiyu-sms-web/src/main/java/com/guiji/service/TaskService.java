@@ -13,7 +13,7 @@ public interface TaskService
 	 * 获取短信任务列表
 	 * @throws Exception 
 	 */
-	TaskListRspVO getTaskList(TaskListReqVO taskListReq) throws Exception;
+	TaskListRspVO getTaskList(TaskListReqVO taskListReq, Long userId) throws Exception;
 
 	/**
 	 * 短信任务一键停止

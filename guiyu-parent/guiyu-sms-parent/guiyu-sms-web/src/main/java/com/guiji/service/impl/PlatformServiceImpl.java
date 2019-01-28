@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.service.PlatformService;
 import com.guiji.sms.dao.SmsPlatformMapper;
 import com.guiji.sms.dao.entity.SmsPlatform;
@@ -22,6 +23,7 @@ import com.guiji.sms.vo.PlatformListRspVO;
 import com.guiji.sms.vo.PlatformReqVO;
 import com.guiji.sms.vo.PlatformRspVO;
 import com.guiji.sms.vo.SmsPlatformVO;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
 
@@ -41,12 +43,15 @@ public class PlatformServiceImpl implements PlatformService
 	 * 获取短信平台列表
 	 */
 	@Override
-	public PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq)
+	public PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq, Long userId)
 	{
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
+		
 		PlatformListRspVO platformListRsp = new PlatformListRspVO();
 		List<SmsPlatformVO> platformVOList = new ArrayList<>();
 
 		SmsPlatformExample example = new SmsPlatformExample();
+		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		platformListRsp.setTotalCount(platformMapper.selectByExample(example).size()); // 总条数
 
 		example.setLimitStart((platformListReq.getPageNum() - 1) * platformListReq.getPageSize());
@@ -97,10 +102,12 @@ public class PlatformServiceImpl implements PlatformService
 		platform.setPlatformName(platformReq.getPlatformName());
 		platform.setPlatformParams(platformReq.getParams());
 		platform.setIdentification(platformReq.getIdentification());
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
 		platform.setCreateId(userId.intValue());
 		platform.setCreateTime(new Date());
 		platform.setUpdateId(userId.intValue());
 		platform.setUpdateTime(new Date());
+		platform.setOrgCode(sysOrganization.body.getCode());
 		return platform;
 	}
 

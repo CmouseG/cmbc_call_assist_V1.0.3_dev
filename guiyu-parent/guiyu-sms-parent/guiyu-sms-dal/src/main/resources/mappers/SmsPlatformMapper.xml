@@ -10,6 +10,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_id" jdbcType="INTEGER" property="updateId" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -71,7 +72,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, platform_name, platform_params, identification, create_id, create_time, update_id, 
-    update_time
+    update_time, org_code
   </sql>
   <select id="selectByExample" parameterType="com.guiji.sms.dao.entity.SmsPlatformExample" resultMap="BaseResultMap">
     select
@@ -110,10 +111,12 @@
   <insert id="insert" parameterType="com.guiji.sms.dao.entity.SmsPlatform">
     insert into sms_platform (id, platform_name, platform_params, 
       identification, create_id, create_time, 
-      update_id, update_time)
+      update_id, update_time, org_code
+      )
     values (#{id,jdbcType=INTEGER}, #{platformName,jdbcType=VARCHAR}, #{platformParams,jdbcType=VARCHAR}, 
       #{identification,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP})
+      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{orgCode,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsPlatform">
     insert into sms_platform
@@ -142,6 +145,9 @@
       <if test="updateTime != null">
         update_time,
       </if>
+      <if test="orgCode != null">
+        org_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -167,6 +173,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -203,6 +212,9 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.orgCode != null">
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -217,7 +229,8 @@
       create_id = #{record.createId,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_id = #{record.updateId,jdbcType=INTEGER},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -246,6 +259,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="orgCode != null">
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -257,7 +273,8 @@
       create_id = #{createId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

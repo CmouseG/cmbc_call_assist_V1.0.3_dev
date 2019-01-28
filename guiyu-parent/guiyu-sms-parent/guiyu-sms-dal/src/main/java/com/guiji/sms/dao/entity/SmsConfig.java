@@ -26,8 +26,6 @@ public class SmsConfig implements Serializable {
 
     private String companyName;
 
-    private String orgCode;
-
     private Integer userId;
 
     private Integer createId;
@@ -37,6 +35,8 @@ public class SmsConfig implements Serializable {
     private Integer updateId;
 
     private Date updateTime;
+
+    private String orgCode;
 
     private String smsContent;
 
@@ -130,14 +130,6 @@ public class SmsConfig implements Serializable {
         this.companyName = companyName == null ? null : companyName.trim();
     }
 
-    public String getOrgCode() {
-        return orgCode;
-    }
-
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode == null ? null : orgCode.trim();
-    }
-
     public Integer getUserId() {
         return userId;
     }
@@ -178,6 +170,14 @@ public class SmsConfig implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     public String getSmsContent() {
         return smsContent;
     }
@@ -203,12 +203,12 @@ public class SmsConfig implements Serializable {
         sb.append(", runStatus=").append(runStatus);
         sb.append(", companyId=").append(companyId);
         sb.append(", companyName=").append(companyName);
-        sb.append(", orgCode=").append(orgCode);
         sb.append(", userId=").append(userId);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", smsContent=").append(smsContent);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

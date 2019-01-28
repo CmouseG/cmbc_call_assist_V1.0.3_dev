@@ -14,15 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUuidDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.FileErrorRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.dao.entity.FileErrorRecordsExample;
 import com.guiji.dispatch.dao.entity.FileRecords;
 import com.guiji.dispatch.service.FileInterface;
 import com.guiji.dispatch.util.HttpDownload;
@@ -41,16 +45,50 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 public class FileController {
+
 	@Autowired
 	private FileInterface file;
 	@Autowired
+	private FileErrorRecordsMapper errorMapper;
+	@Autowired
 	private DispatchPlanMapper dispatchMapper;
-	
-	
+
 	@GetMapping(value = "queryFileRecords")
-	public Page<FileRecords> queryFileInterface(int pagenum, int pagesize) {
-		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize);
+	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
+			@RequestParam(required = true, name = "pagesize") int pagesize,
+			@RequestParam(required = false, name = "batchName") String batchName,
+			@RequestParam(required = false, name = "startTime") String startTime,
+			@RequestParam(required = false, name = "endTime") String endTime) {
+		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
+				endTime);
 		return queryFileInterface;
+	}
+
+	@PostMapping(value = "deleteFileRecordsById")
+	public boolean deleteFileRecordsById(@RequestParam(required = true, name = "id") Integer id) {
+		return file.deleteFileRecordsById(id);
+	}
+
+	@GetMapping(value = "errorCountById")
+	public JSONObject errorCountById(@RequestParam(required = true, name = "ids") String id) {
+		JSONObject jsonObject = new JSONObject();
+		Map<String, Integer> map = new HashMap<>();
+		if (id.contains(",")) {
+			String[] split = id.split(",");
+			for (String ids : split) {
+				FileErrorRecordsExample ex = new FileErrorRecordsExample();
+				ex.createCriteria().andFileRecordsIdEqualTo(Long.valueOf(ids));
+				int count = errorMapper.countByExample(ex);
+				map.put(ids, count);
+			}
+		} else if (id != null && id != "") {
+			FileErrorRecordsExample ex = new FileErrorRecordsExample();
+			ex.createCriteria().andFileRecordsIdEqualTo(Long.valueOf(id));
+			int count = errorMapper.countByExample(ex);
+			map.put(id, count);
+		}
+		jsonObject.put("data", map);
+		return jsonObject;
 	}
 
 	@PostMapping(value = "downloadChooseNum")
@@ -62,7 +100,7 @@ public class FileController {
 		}
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidIn(ids);
-		
+
 		List<DispatchPlan> selectByExample = dispatchMapper.selectByExample(ex);
 
 		String fileName = "任务导出结果详情.xls";
@@ -86,7 +124,8 @@ public class FileController {
 		return null;
 	}
 
-	private void generateExcel4Dispatch(List<DispatchPlan> selectByExample, OutputStream out) throws RowsExceededException, WriteException, IOException {
+	private void generateExcel4Dispatch(List<DispatchPlan> selectByExample, OutputStream out)
+			throws RowsExceededException, WriteException, IOException {
 		WritableWorkbook wb = Workbook.createWorkbook(out);
 		WritableSheet sheet = wb.createSheet("sheet1", 0);
 		WritableCellFormat format = new WritableCellFormat();
@@ -130,7 +169,7 @@ public class FileController {
 	}
 
 	@GetMapping(value = "downloadErrorRecords")
-	public Result.ReturnData<Object> downloadErrorRecords(String fileRecordId, HttpServletResponse resp)
+	public Result.ReturnData<Object> downloadErrorRecords(@RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
 		List<FileErrorRecords> queryErrorRecords = file.queryErrorRecords(fileRecordId);
 		String fileName = "错误详情结果.xls";

@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
+import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -243,4 +244,7 @@ public interface IDispatchPlanService {
 	public PlanCountVO getPlanCountByUserId(String orgCode);
 	
 	boolean stopPlanByorgCode(String orgCode, String type);
+	
+	public boolean batchInsertDisplanPlan( BatchDispatchPlanList plans,  Long userId,
+			 String orgCode);
 	}

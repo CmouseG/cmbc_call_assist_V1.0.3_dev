@@ -19,6 +19,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.batchimport.AsynFileService;
+import com.guiji.dispatch.bean.BatchDispatchPlanList;
+import com.guiji.dispatch.bean.DispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -163,25 +165,26 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("batchInsertDisplanPlan")
-	public boolean batchInsertDisplanPlan(@RequestBody DispatchPlan[] dispatchPlans, @RequestHeader Long userId,
+	public boolean batchInsertDisplanPlan(@RequestBody BatchDispatchPlanList plans, @RequestHeader Long userId,
 			@RequestHeader String orgCode) {
-		boolean result = false;
-		// 对号码进行去重
-		Map<String, DispatchPlan> succList = new HashMap<>();
-
-		for (int i = 0; i < dispatchPlans.length; i++) {
-			if (!succList.containsKey(dispatchPlans[i].getPhone())) {
-				succList.put(dispatchPlans[i].getPhone(), dispatchPlans[i]);
-			}
-		}
-		for (Entry<String, DispatchPlan> entry : succList.entrySet()) {
-			try {
-				dispatchPlanService.addSchedule(entry.getValue(), userId,orgCode);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-			}
-		}
-		return result;
+		
+		return dispatchPlanService.batchInsertDisplanPlan(plans, userId, orgCode);
+		
+//		// 对号码进行去重
+//		Map<String, DispatchPlan> succList = new HashMap<>();
+//
+//		for (int i = 0; i < dispatchPlans.length; i++) {
+//			if (!succList.containsKey(dispatchPlans[i].getPhone())) {
+//				succList.put(dispatchPlans[i].getPhone(), dispatchPlans[i]);
+//			}
+//		}
+//		for (Entry<String, DispatchPlan> entry : succList.entrySet()) {
+//			try {
+//				dispatchPlanService.addSchedule(entry.getValue(), userId,orgCode);
+//			} catch (Exception e) {
+//				logger.error(e.getMessage());
+//			}
+//		}
 	}
 
 	@PostMapping("checkBatchName")

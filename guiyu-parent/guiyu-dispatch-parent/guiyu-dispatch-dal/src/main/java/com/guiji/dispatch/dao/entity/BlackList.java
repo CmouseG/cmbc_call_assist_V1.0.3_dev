@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class BlackList implements Serializable {
-    private Long id;
+    private Integer id;
 
     private String phone;
 
@@ -16,13 +16,25 @@ public class BlackList implements Serializable {
 
     private String type;
 
+    private Integer userId;
+
+    private Integer updateUserId;
+
+    private String orgCode;
+
+    private String createUserName;
+
+    private String updateUserName;
+
+    private Integer status;
+
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -66,6 +78,54 @@ public class BlackList implements Serializable {
         this.type = type == null ? null : type.trim();
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getUpdateUserId() {
+        return updateUserId;
+    }
+
+    public void setUpdateUserId(Integer updateUserId) {
+        this.updateUserId = updateUserId;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName == null ? null : createUserName.trim();
+    }
+
+    public String getUpdateUserName() {
+        return updateUserName;
+    }
+
+    public void setUpdateUserName(String updateUserName) {
+        this.updateUserName = updateUserName == null ? null : updateUserName.trim();
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -78,6 +138,12 @@ public class BlackList implements Serializable {
         sb.append(", gmtCreate=").append(gmtCreate);
         sb.append(", gmtModified=").append(gmtModified);
         sb.append(", type=").append(type);
+        sb.append(", userId=").append(userId);
+        sb.append(", updateUserId=").append(updateUserId);
+        sb.append(", orgCode=").append(orgCode);
+        sb.append(", createUserName=").append(createUserName);
+        sb.append(", updateUserName=").append(updateUserName);
+        sb.append(", status=").append(status);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -58,6 +58,8 @@ public class SuccesPhone4MQLisener {
 			} else {
 				DispatchPlan dispatchPlan = list.get(0);
 				dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
+				// 增加意向标签
+				dispatchPlan.setResult(mqSuccPhoneDto.getLabel());
 				int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
 				logger.info("当前队列任务回调修改结果" + result);
 				// 第三方回调
@@ -71,7 +73,7 @@ public class SuccesPhone4MQLisener {
 				sms.sendMessage(vo);
 			}
 		} catch (Exception e) {
-			logger.info("SuccesPhone4MQLisener消费数据有问题"+message);
+			logger.info("SuccesPhone4MQLisener消费数据有问题" + message);
 			try {
 				channel.basicAck(message2.getMessageProperties().getDeliveryTag(), false);
 			} catch (IOException e1) {

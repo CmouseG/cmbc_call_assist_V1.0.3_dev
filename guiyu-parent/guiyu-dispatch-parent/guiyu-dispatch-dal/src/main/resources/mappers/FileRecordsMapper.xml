@@ -19,6 +19,9 @@
     <result column="is_clean" property="isClean" jdbcType="INTEGER" />
     <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="file_path" property="filePath" jdbcType="VARCHAR" />
+    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
+    <result column="robot_name" property="robotName" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -80,7 +83,8 @@
   </sql>
   <sql id="Base_Column_List" >
     id, batchId, batch_name, file_name, success_count, failure_count, create_time, user_id, 
-    org_code, robot, line_id, call_data, `status`, call_hour, is_clean, url, file_path
+    org_code, robot, line_id, call_data, `status`, call_hour, is_clean, url, file_path, 
+    line_name, robot_name, user_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.FileRecordsExample" >
     select
@@ -116,19 +120,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.FileRecords" useGeneratedKeys="true"   keyProperty="id"  >
+  <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.FileRecords" useGeneratedKeys="true"   keyProperty="id">
     insert into file_records (id, batchId, batch_name, 
       file_name, success_count, failure_count, 
       create_time, user_id, org_code, 
       robot, line_id, call_data, 
       `status`, call_hour, is_clean, 
-      url, file_path)
+      url, file_path, line_name, 
+      robot_name, user_name)
     values (#{id,jdbcType=BIGINT}, #{batchid,jdbcType=INTEGER}, #{batchName,jdbcType=VARCHAR}, 
       #{fileName,jdbcType=VARCHAR}, #{successCount,jdbcType=INTEGER}, #{failureCount,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, 
       #{robot,jdbcType=VARCHAR}, #{lineId,jdbcType=VARCHAR}, #{callData,jdbcType=VARCHAR}, 
       #{status,jdbcType=VARCHAR}, #{callHour,jdbcType=VARCHAR}, #{isClean,jdbcType=INTEGER}, 
-      #{url,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR})
+      #{url,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR}, 
+      #{robotName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.FileRecords" >
     insert into file_records
@@ -184,6 +190,15 @@
       <if test="filePath != null" >
         file_path,
       </if>
+      <if test="lineName != null" >
+        line_name,
+      </if>
+      <if test="robotName != null" >
+        robot_name,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -236,6 +251,15 @@
       </if>
       <if test="filePath != null" >
         #{filePath,jdbcType=VARCHAR},
+      </if>
+      <if test="lineName != null" >
+        #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="robotName != null" >
+        #{robotName,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -299,6 +323,15 @@
       <if test="record.filePath != null" >
         file_path = #{record.filePath,jdbcType=VARCHAR},
       </if>
+      <if test="record.lineName != null" >
+        line_name = #{record.lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.robotName != null" >
+        robot_name = #{record.robotName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userName != null" >
+        user_name = #{record.userName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -322,7 +355,10 @@
       call_hour = #{record.callHour,jdbcType=VARCHAR},
       is_clean = #{record.isClean,jdbcType=INTEGER},
       url = #{record.url,jdbcType=VARCHAR},
-      file_path = #{record.filePath,jdbcType=VARCHAR}
+      file_path = #{record.filePath,jdbcType=VARCHAR},
+      line_name = #{record.lineName,jdbcType=VARCHAR},
+      robot_name = #{record.robotName,jdbcType=VARCHAR},
+      user_name = #{record.userName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -378,6 +414,15 @@
       <if test="filePath != null" >
         file_path = #{filePath,jdbcType=VARCHAR},
       </if>
+      <if test="lineName != null" >
+        line_name = #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="robotName != null" >
+        robot_name = #{robotName,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -398,7 +443,10 @@
       call_hour = #{callHour,jdbcType=VARCHAR},
       is_clean = #{isClean,jdbcType=INTEGER},
       url = #{url,jdbcType=VARCHAR},
-      file_path = #{filePath,jdbcType=VARCHAR}
+      file_path = #{filePath,jdbcType=VARCHAR},
+      line_name = #{lineName,jdbcType=VARCHAR},
+      robot_name = #{robotName,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

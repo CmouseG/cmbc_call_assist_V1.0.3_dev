@@ -9,14 +9,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.guiji.dispatch.service.IPhonePlanQueueService;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -32,6 +29,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +42,7 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.bean.MessageDto;
@@ -53,20 +52,20 @@ import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.SmsTunnelMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.UserSmsConfigMapper;
-import com.guiji.dispatch.dao.entity.BlackList;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
-import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.dao.entity.SmsTunnel;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
 import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
+import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IDispatchPlanService;
-import com.guiji.dispatch.service.IResourcePoolService;
+import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.dispatch.sms.IMessageService;
 import com.guiji.dispatch.util.Base64MD5Util;
 import com.guiji.dispatch.util.Constant;
@@ -122,13 +121,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	private SuccessPhoneMQService successPhoneMQService;
 
 	@Autowired
-	private IResourcePoolService resourcePoolService;
+	private IBlackListService blackService;
 	@Autowired
 	IPhonePlanQueueService phonePlanQueueService;
 
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
-		boolean result = checkBalckList(dispatchPlan);
+		boolean checkPhoneInBlackList = blackService.checkPhoneInBlackList(dispatchPlan.getPhone());
 		MessageDto dto = new MessageDto();
 		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		// 检查参数
@@ -168,11 +167,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		// dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		dispatchPlan.setUserId(userId.intValue());
-		if (result) {
+		if (checkPhoneInBlackList) {
 			// 当前黑名单
 			logger.info("当前号码添加处于黑名单状态:" + dispatchPlan.getPhone());
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_1);
+			dispatchPlan.setResult("X");
 		} else {
 			dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
 			dispatchPlan.setStatusSync(Constant.STATUS_SYNC_0);
@@ -416,12 +416,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dto.setLabel(label);
 		successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
 		successPhoneMQService.insertCallBack4MQ(dto);
-		// // 写入mq中
-		// MQSuccPhoneDto dto = new MQSuccPhoneDto();
-		// dto.setPlanuuid(planUuid);
-		// dto.setLabel(label);
-		// successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
-		// successPhoneMQService.insertCallBack4MQ(dto);
 		return true;
 
 		//
@@ -1058,7 +1052,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			if (status.equals("1")) {
 				for (List<String> list : averageAssign) {
-					if(list.size()>0){
+					if (list.size() > 0) {
 						dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
 					}
 				}
@@ -1323,13 +1317,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		for (DispatchPlan dis : selectByExample) {
 			ids.add(dis.getPlanUuid());
 		}
-		if(ids.size()>0){
+		if (ids.size() > 0) {
 			ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
 			return callPlanDetailRecord.getBody();
-		}else{
+		} else {
 			return new ArrayList<>();
 		}
-	
+
 	}
 
 	@Override
@@ -1463,46 +1457,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return result > 0 ? true : false;
 	}
 
-	public boolean checkBalckList(DispatchPlan dispatchPlan) {
-		if (redisUtil.get("blackList") != null) {
-			Map<String, BlackList> base = (Map) redisUtil.get("blackList");
-			if (base.containsKey(dispatchPlan.getPhone())) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		return false;
-	}
-
-	// public static void main(String[] args) throws ParseException {
-	// String test = "{\"statusCode\": \"0\",\"statusMsg\":
-	// \"提交成功\",\"requestId\": \"20181235962383254861905920103\"}";
-	//
-	// JSONObject parseObject = JSONObject.parseObject(test);
-	// Object object = parseObject.get("statusCode");
-	// System.out.println(object);
-	//
-	// String date = getCurrent4Time();
-	// // author
-	// String str = "f94481a09e1c4c4d9a40887a71dc299d" + "|" + date;
-	// String encodedString =
-	// Base64.getEncoder().encodeToString(str.getBytes());
-	//
-	// // String authorization = Base64MD5Util.decodeData();
-	// System.out.println(encodedString);
-	// // MD5加密（账户Id + 账户授权令牌 +时间戳)
-	// String sign = Base64MD5Util
-	// .encryption("f94481a09e1c4c4d9a40887a71dc299d" +
-	// "c9e869e1fb8c49188f5efb19f9725f57" + date);
-	// String upperCase = sign.toUpperCase();
-	//
-	// UserSmsConfig conf = new UserSmsConfig();
-	//
-	// String sss = "{\"action\": \"templateSms\",\"mobile\":
-	// \"13911281234\",\"appid\":
-	// \"ce4063be6e334f0387fa6d987e16a87c\",\"templateId\": \"1\"}";
-	// System.out.println(sss.length());
+	// public boolean checkBalckList(DispatchPlan dispatchPlan) {
+	// if (redisUtil.get("blackList") != null) {
+	// Map<String, BlackList> base = (Map) redisUtil.get("blackList");
+	// if (base.containsKey(dispatchPlan.getPhone())) {
+	// return true;
+	// } else {
+	// return false;
+	// }
+	// }
+	// return false;
 	// }
 
 	@Override
@@ -1573,7 +1537,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean stopPlanByorgCode(String orgCode, String type) {
-		logger.info("orgCode{},type{}",orgCode,type);
+		logger.info("orgCode{},type{}", orgCode, type);
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
 		// 一件停止
@@ -1596,6 +1560,55 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 
+		return true;
+	}
+
+	@Override
+	public boolean batchInsertDisplanPlan(BatchDispatchPlanList plans, Long userId, String orgCode) {
+		DispatchPlanBatch batch = new DispatchPlanBatch();
+		batch.setName(plans.getBatchName());
+		batch.setUserId(userId.intValue());
+		batch.setStatusShow(Constant.BATCH_STATUS_SHOW);
+		batch.setGmtCreate(DateUtil.getCurrent4Time());
+		batch.setGmtModified(DateUtil.getCurrent4Time());
+		batch.setOrgCode(orgCode);
+		dispatchPlanBatchMapper.insert(batch);
+		for (int i = 0; i < plans.getMobile().size(); i++) {
+			DispatchPlan dispatchPlan = plans.getMobile().get(i);
+			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
+			BeanUtils.copyProperties(dispatchPlan, bean);
+			bean.setPlanUuid(IdGenUtil.uuid());
+			bean.setBatchId(batch.getId());
+			bean.setUserId(userId.intValue());
+			bean.setLine(Integer.valueOf(plans.getLine()));
+			bean.setRobot(plans.getRobot());
+			bean.setClean(Integer.valueOf(plans.getIsClean()));
+			bean.setCallHour(plans.getCallHour());
+			bean.setCallData(Integer.valueOf(plans.getCallDate()));
+			bean.setFlag(Constant.IS_FLAG_0);
+			bean.setGmtCreate(DateUtil.getCurrent4Time());
+			bean.setGmtModified(DateUtil.getCurrent4Time());
+			// 查询用户名称
+			ReturnData<SysUser> SysUser = authService.getUserById(userId);
+			if (SysUser != null) {
+				bean.setUsername(SysUser.getBody().getUsername());
+			}
+			bean.setIsDel(Constant.IS_DEL_0);
+			bean.setStatusPlan(Constant.STATUSPLAN_1);
+			bean.setStatusSync(Constant.STATUS_SYNC_0);
+			bean.setOrgCode(orgCode);
+			bean.setBatchName(plans.getBatchName());
+			bean.setIsTts(Constant.IS_TTS_0);
+			bean.setReplayType(Constant.REPLAY_TYPE_0);
+			bean.setLineName(plans.getLineName());
+			bean.setRobotName(plans.getRobotName());
+			// 校验黑名单逻辑
+			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone())) {
+				blackService.setBlackPhoneStatus(bean);
+				continue;
+			}
+			dispatchPlanMapper.insert(bean);
+		}
 		return true;
 	}
 

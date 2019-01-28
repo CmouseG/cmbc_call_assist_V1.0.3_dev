@@ -76,6 +76,13 @@ public class Constant {
 	public static final Integer IMPORT_DATA_TYPE_API=1;
 	
 	
+	public static final Integer BLACKSTATUSOK=0;
+	public static final Integer BLACKSTATUSNO=1;
+	
+	
+	public static final String FILE_SHOW = "0";
+	public static final String FILE_NO ="1";
+
 
 	
 }

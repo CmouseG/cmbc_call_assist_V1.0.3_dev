@@ -5,13 +5,15 @@ import java.util.List;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 
 
-public class DispatchPlanList {
+public class BatchDispatchPlanList {
 	private String batchName;
 	private String robot;
 	private String line;
 	private String isClean;
 	private String callHour;
 	private String callDate;
+	private String robotName;
+	private String lineName;
 	private List<DispatchPlan> mobile;
 
 	public String getLine() {
@@ -32,6 +34,23 @@ public class DispatchPlanList {
 
 	public String getRobot() {
 		return robot;
+	}
+
+	
+	public String getRobotName() {
+		return robotName;
+	}
+
+	public void setRobotName(String robotName) {
+		this.robotName = robotName;
+	}
+
+	public String getLineName() {
+		return lineName;
+	}
+
+	public void setLineName(String lineName) {
+		this.lineName = lineName;
 	}
 
 	public void setRobot(String robot) {

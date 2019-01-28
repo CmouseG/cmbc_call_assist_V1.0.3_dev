@@ -127,6 +127,7 @@ public class TaskServiceImpl implements TaskService
 		{
 			if(smsTask.getAuditingStatus() == SmsConstants.UnAuditing) {
 				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
+				redisUtil.set(smsTask.getFileName(), phoneList); //未发送名单存入Redis
 			} else {
 				//组装发送请求
 				TaskReq taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 

@@ -176,7 +176,7 @@ public class ConfigServiceImpl implements ConfigService
 	public SmsConfig getConfigByIntentionTagAndOrgCode(String intentionTag, String orgCode)
 	{
 		SmsConfigExample example = new SmsConfigExample();
-		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%").andOrgCodeEqualTo(orgCode);
+		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%").andOrgCodeLike(orgCode+"%");
 		return configMapper.selectByExampleWithBLOBs(example).get(0);
 	}
 	

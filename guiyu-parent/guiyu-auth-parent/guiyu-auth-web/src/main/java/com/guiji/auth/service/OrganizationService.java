@@ -40,7 +40,8 @@ public class OrganizationService {
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
-		sysOrganizationMapper.insertOrganizationProduct(record.getId(),record.getProduct());
+		sysOrganizationMapper.insertOrganizationProduct(record.getId(),record.getCreateId(),record.getProduct());
+		sysOrganizationMapper.insertOrganizationIndustry(record.getId(),record.getCode(),record.getCreateId(),record.getIndustryIds());
 	}
 	
 	public void delte(SysOrganization record){
@@ -53,7 +54,11 @@ public class OrganizationService {
 	public void update(SysOrganization record){
 		sysOrganizationMapper.updateByPrimaryKeySelective(record);
 		if (record != null && record.getProduct() != null && !record.getProduct().isEmpty()) {
-			sysOrganizationMapper.updateOrganizationProduct(record.getId(),record.getProduct());
+			sysOrganizationMapper.updateOrganizationProduct(record.getId(),record.getUpdateId(),record.getProduct());
+		}
+
+		if (record != null && record.getIndustryIds() != null && !record.getIndustryIds().isEmpty()) {
+			sysOrganizationMapper.updateOrganizationIndustry(record.getId(),record.getCode(),record.getUpdateId(),record.getIndustryIds());
 		}
 		redisUtil.del(REDIS_ORG_BY_CODE+record.getCode());
 		redisUtil.delVague(REDIS_ORG_BY_USERID);
@@ -185,5 +190,13 @@ public class OrganizationService {
 
 	public List<Integer> getProductByOrganizationId(Long organizationId) {
 		return sysOrganizationMapper.getProductByOrganizationId(organizationId);
+	}
+
+	public List<String> getIndustryByOrganizationId(Long organizationId) {
+		return sysOrganizationMapper.getIndustryByOrganizationId(organizationId);
+	}
+
+	public List<String> getIndustryByOrgCode(String orgCode) {
+		return sysOrganizationMapper.getIndustryByOrgCode(orgCode);
 	}
 }

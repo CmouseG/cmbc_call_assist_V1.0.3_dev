@@ -43,9 +43,17 @@ public interface SysOrganizationMapper {
 
     int countRobotByUserId(String code);
 
-    void insertOrganizationProduct(@Param("organizationId")Long organizationId,@Param("product")List<Integer> product);
+    void insertOrganizationProduct(@Param("organizationId")Long organizationId,@Param("userId")Long userId,@Param("product")List<Integer> product);
 
-    void updateOrganizationProduct(@Param("organizationId")Long organizationId,@Param("product")List<Integer> product);
+    void updateOrganizationProduct(@Param("organizationId")Long organizationId,@Param("userId")Long userId,@Param("product")List<Integer> product);
 
     List<Integer> getProductByOrganizationId(Long organizationId);
+
+    void insertOrganizationIndustry(@Param("organizationId")Long organizationId,@Param("orgCode")String orgCode,@Param("userId")Long userId,@Param("industryIds")List<String> industryIds);
+
+    void updateOrganizationIndustry(@Param("organizationId")Long organizationId,@Param("orgCode")String orgCode,@Param("userId")Long userId,@Param("industryIds")List<String> industryIds);
+
+    List<String> getIndustryByOrganizationId(Long organizationId);
+
+    List<String> getIndustryByOrgCode(String orgCode);
 }

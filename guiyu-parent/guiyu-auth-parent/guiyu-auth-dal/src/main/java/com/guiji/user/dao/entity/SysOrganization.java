@@ -37,6 +37,8 @@ public class SysOrganization implements Serializable {
 
     private List<Integer> product;
 
+    private List<String> industryIds;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -183,6 +185,14 @@ public class SysOrganization implements Serializable {
         this.product = product;
     }
 
+    public List<String> getIndustryIds() {
+        return industryIds;
+    }
+
+    public void setIndustryIds(List<String> industryIds) {
+        this.industryIds = industryIds;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -203,6 +213,7 @@ public class SysOrganization implements Serializable {
         sb.append(", updateTime=").append(updateTime);
         sb.append(", subCode=").append(subCode);
         sb.append(", product=").append(product);
+        sb.append(", industryIds=").append(industryIds);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

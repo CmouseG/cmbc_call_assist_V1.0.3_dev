@@ -119,8 +119,8 @@ public class ThirdApiController implements IThirdApiOut {
 		int countAlready = dispatchPlanService.getcall4BatchName(batchName, Constant.STATUSPLAN_1);
 		int countNo = dispatchPlanService.getcall4BatchName(batchName, Constant.STATUSPLAN_2);
 		PlanCallInfoCount info = new PlanCallInfoCount();
-		info.setSuccCount(countAlready);
-		info.setPlanCount(countNo);
+		info.setSuccCount(countNo);
+		info.setPlanCount(countAlready);
 		FileErrorRecords record = new FileErrorRecords();
 		record.setBatchName(batchName);
 		record.setDataType(Constant.IMPORT_DATA_TYPE_API);

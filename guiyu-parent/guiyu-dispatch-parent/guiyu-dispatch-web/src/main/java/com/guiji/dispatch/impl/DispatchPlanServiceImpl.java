@@ -1058,7 +1058,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			if (status.equals("1")) {
 				for (List<String> list : averageAssign) {
-					dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
+					if(list.size()>0){
+						dispatchPlanMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
+					}
 				}
 				DispatchPlan callData = new DispatchPlan();
 				callData.setCallData(Integer.valueOf(dateNowStr));

@@ -118,9 +118,12 @@ public class TaskServiceImpl implements TaskService
 			throw new GuiyuException(SmsExceptionEnum.ParseFile_Error);
 		}
 		smsTask.setPhoneNum(phoneList.size());
-		smsTask.setFileName(taskReqVO.getFile().getName());
+		smsTask.setFileName(taskReqVO.getFile().getOriginalFilename());
 		
-		if(taskReqVO.getSendType() == SmsConstants.HandSend) //手动发送
+		/*
+		 * 手动发送=立即发送
+		 */
+		if(taskReqVO.getSendType() == SmsConstants.HandSend)
 		{
 			if(smsTask.getAuditingStatus() == SmsConstants.UnAuditing) {
 				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
@@ -131,12 +134,21 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				sendSmsService.preSendMsg(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.end); // 2-已结束
+				try
+				{
+					sendSmsService.preSendMsg(taskReq); // 发送
+					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
+				} catch (Exception e){
+					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
+				}
 			}
-		} else { //定时发送
+		} 
+		/*
+		 * 定时发送
+		 */
+		else {
 			smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
-			redisUtil.set(taskReqVO.getFile().getName(), phoneList); //未发送名单存入Redis
+			redisUtil.set(smsTask.getFileName(), phoneList); //未发送名单存入Redis
 		}
 		taskMapper.insertSelective(smsTask); //新增
 	}
@@ -162,8 +174,13 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				sendSmsService.preSendMsg(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.end); // 2-已结束
+				try
+				{
+					sendSmsService.preSendMsg(taskReq); // 发送
+					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
+				} catch (Exception e){
+					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
+				}
 				redisUtil.del(smsTask.getFileName());
 			}
 		}
@@ -182,8 +199,8 @@ public class TaskServiceImpl implements TaskService
 		smsTask.setSmsContent(taskReqVO.getSmsContent());
 		if(taskReqVO.getSendDate() != null){
 			smsTask.setSendDate(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(taskReqVO.getSendDate()));
-		} else{
-			smsTask.setSendDate(new Date());
+		}else{
+			smsTask.setSendDate(null);
 		}
 		if(taskReqVO.getSmsTemplateId() != null) { //短信模版
 			smsTask.setAuditingStatus(1);
@@ -211,6 +228,28 @@ public class TaskServiceImpl implements TaskService
 	public void auditingTask(Integer id)
 	{
 		taskMapperExt.updateAuditingStatusAndRunStatusByPrimaryKey(id);
+		SmsTask smsTask = taskMapper.selectByPrimaryKey(id);
+		if (smsTask.getSendType() == SmsConstants.HandSend) // 手动发送
+		{
+			smsTask.setSendDate(new Date());
+			List<String> phoneList = (List<String>) redisUtil.get(smsTask.getFileName());
+			// 组装发送请求
+			TaskReq taskReq = new TaskReq(smsTask.getTaskName(), smsTask.getSendType(), phoneList,
+					smsTask.getTunnelName(), smsTask.getSmsTemplateId(), smsTask.getSmsContent());
+			taskReq.setSendTime(new Date());
+			taskReq.setCompanyName(smsTask.getCompanyName());
+			taskReq.setUserId(smsTask.getCreateId());
+			try
+			{
+				sendSmsService.preSendMsg(taskReq); // 发送
+				smsTask.setSendStatus(SmsConstants.End); // 2-已结束
+			} catch (Exception e){
+				smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
+			}
+			redisUtil.del(smsTask.getFileName());
+		}
+		taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
+		
 	}
 
 	/**

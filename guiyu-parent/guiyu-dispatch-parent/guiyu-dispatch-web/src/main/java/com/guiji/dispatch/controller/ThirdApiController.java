@@ -250,6 +250,7 @@ public class ThirdApiController implements IThirdApiOut {
 			bean.setOrgCode(user.getBody().getOrgCode());
 			bean.setBatchName(parseObject.getBatchName());
 			bean.setIsTts(Constant.IS_TTS_0);
+			bean.setReplayType(Constant.REPLAY_TYPE_0);
 			bean.setRobotName(templateById.getData().get(0).getTemplateName());
 			if (phones.contains(bean.getPhone())) {
 				dispatchPlan.setBatchId(batch.getId());

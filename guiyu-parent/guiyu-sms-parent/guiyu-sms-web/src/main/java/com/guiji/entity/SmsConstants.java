@@ -12,7 +12,8 @@ public class SmsConstants
 	// 发送状态
 	public static final int UnStart = 0; // 0-未开始
 	public static final int Begining = 1; // 1-进行中
-	public static final int end = 2; // 2-已结束
+	public static final int End = 2; // 2-已结束
+	public static final int Fail = 3; // 3-发送失败
 	
 	// 未审核
 	public static final int UnAuditing = 0; // 未审核

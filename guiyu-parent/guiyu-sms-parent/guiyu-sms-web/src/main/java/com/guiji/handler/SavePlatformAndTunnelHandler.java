@@ -16,8 +16,7 @@ import com.guiji.sms.dao.entity.SmsTunnelExample;
 import com.guiji.utils.RedisUtil;
 
 /**
- * 将通道存入Redis
- * @author Sundoongbo
+ * 将平台和通道存入Redis
  *
  */
 @Component

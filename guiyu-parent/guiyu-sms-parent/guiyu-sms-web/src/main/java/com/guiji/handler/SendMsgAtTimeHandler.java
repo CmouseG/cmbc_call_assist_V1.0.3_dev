@@ -9,7 +9,6 @@ import com.guiji.model.TaskReq;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskService;
 import com.guiji.sms.dao.entity.SmsTask;
-import com.guiji.utils.ListUtil;
 import com.guiji.utils.RedisUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
@@ -56,8 +55,13 @@ public class SendMsgAtTimeHandler extends IJobHandler
 			taskReq.setCompanyName(task.getCompanyName());
 			taskReq.setUserId(task.getCreateId());
 			taskService.updateSendStatusById(1,task.getId()); //进行中
-			sendSmsService.preSendMsg(taskReq); //群发短信
-			taskService.updateSendStatusById(2,task.getId()); //已结束
+			try
+			{	
+				sendSmsService.preSendMsg(taskReq); //群发短信
+				taskService.updateSendStatusById(2,task.getId()); //已结束
+			} catch (Exception e) {
+				taskService.updateSendStatusById(3,task.getId()); //发送失败
+			}
 			redisUtil.del(task.getTaskName());
 		}
 		return SUCCESS;

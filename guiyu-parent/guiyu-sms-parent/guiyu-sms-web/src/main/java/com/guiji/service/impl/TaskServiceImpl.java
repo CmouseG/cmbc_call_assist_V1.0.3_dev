@@ -120,7 +120,10 @@ public class TaskServiceImpl implements TaskService
 		smsTask.setPhoneNum(phoneList.size());
 		smsTask.setFileName(taskReqVO.getFile().getName());
 		
-		if(taskReqVO.getSendType() == SmsConstants.HandSend) //手动发送
+		/*
+		 * 手动发送=立即发送
+		 */
+		if(taskReqVO.getSendType() == SmsConstants.HandSend)
 		{
 			if(smsTask.getAuditingStatus() == SmsConstants.UnAuditing) {
 				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
@@ -131,10 +134,19 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				sendSmsService.preSendMsg(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.end); // 2-已结束
+				try
+				{
+					sendSmsService.preSendMsg(taskReq); // 发送
+					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
+				} catch (Exception e){
+					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
+				}
 			}
-		} else { //定时发送
+		} 
+		/*
+		 * 定时发送
+		 */
+		else {
 			smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
 			redisUtil.set(taskReqVO.getFile().getName(), phoneList); //未发送名单存入Redis
 		}
@@ -162,8 +174,13 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				sendSmsService.preSendMsg(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.end); // 2-已结束
+				try
+				{
+					sendSmsService.preSendMsg(taskReq); // 发送
+					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
+				} catch (Exception e){
+					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
+				}
 				redisUtil.del(smsTask.getFileName());
 			}
 		}

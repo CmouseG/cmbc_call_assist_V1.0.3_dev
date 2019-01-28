@@ -27,16 +27,13 @@
 	</resultMap>
 
 	<update id="updateRunStatusByPrimaryKey">
-		UPDATE sms_task
-		SET run_status = 0
-		WHERE id =
-		#{id,jdbcType=INTEGER}
+		UPDATE sms_task  SET run_status = 0 
+		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 
 	<update id="updateAuditingStatusAndRunStatusByPrimaryKey">
-		UPDATE sms_task
-		SET auditing_status = 1, run_status =
-		1
+		UPDATE sms_task 
+		SET auditing_status = 1, run_status = 1 
 		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 
@@ -46,8 +43,8 @@
 	</select>
 
 	<update id="updateSendStatusById">
-		UPDATE sms_task SET send_status =
-		#{sendStatus,jdbcType=INTEGER}
+		UPDATE sms_task 
+		SET send_status = #{sendStatus,jdbcType=INTEGER} 
 		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 

@@ -181,7 +181,7 @@ public class ThirdApiController implements IThirdApiOut {
 	@PostMapping(value = "out/insertDispatchPlanList")
 	public ReturnData<PlanResultInfo> insertDispatchPlanList(String jsonList) {
 		DispatchPlanList parseObject = JSONObject.parseObject(jsonList, DispatchPlanList.class);
-//		// 检验基本参数
+		// // 检验基本参数
 		ThirdCheckParams checkBaseParams = checkBaseParams(parseObject);
 		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();
@@ -217,14 +217,18 @@ public class ThirdApiController implements IThirdApiOut {
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> succ = new ArrayList<>();
 		List<String> phones = new ArrayList<>();
+		boolean errorMsg = false;
 		for (int i = 0; i < parseObject.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = parseObject.getMobile().get(i);
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
 			BeanUtils.copyProperties(dispatchPlan, bean);
 			if (bean.getPhone() == null || bean.getPhone() == "" || !isInteger(bean.getPhone())) {
 				// 记录错误信息
+				dispatchPlan.setBatchId(batch.getId());
+				dispatchPlan.setBatchName(parseObject.getBatchName());
 				saveErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i);
 				fails.add(bean);
+				errorMsg = true;
 				continue;
 			}
 			bean.setPlanUuid(IdGenUtil.uuid());
@@ -245,13 +249,18 @@ public class ThirdApiController implements IThirdApiOut {
 			bean.setStatusSync(Constant.STATUS_SYNC_0);
 			bean.setOrgCode(user.getBody().getOrgCode());
 			bean.setBatchName(parseObject.getBatchName());
+			bean.setIsTts(Constant.IS_TTS_0);
 			bean.setRobotName(templateById.getData().get(0).getTemplateName());
 			if (phones.contains(bean.getPhone())) {
+				dispatchPlan.setBatchId(batch.getId());
+				dispatchPlan.setBatchName(parseObject.getBatchName());
 				saveErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.DUPLICATE, i);
+				fails.add(bean);
+				errorMsg = true;
 				continue;
 			}
 			thirdApiHandler.add(bean);
-			logger.info(" thirdApiHandler bean "+bean);
+			logger.info(" thirdApiHandler bean " + bean);
 			succ.add(bean);
 			phones.add(bean.getPhone());
 		}
@@ -259,8 +268,17 @@ public class ThirdApiController implements IThirdApiOut {
 		PlanResultInfo info = new PlanResultInfo();
 		info.setSuccCount(succ.size());
 		info.setErrorCount(fails.size());
+
+		if (succ.size() <= 0 && fails.size() >= 0) {
+			// 删除批次
+			batchMapper.deleteByPrimaryKey(batch.getId());
+		}
+
 		ReturnData<PlanResultInfo> returnData = new ReturnData<>();
 		returnData.setBody(info);
+		if(errorMsg){
+			returnData.setMsg("存在重复号码或者号码格式不正确，请检查");
+		}
 		return returnData;
 	}
 

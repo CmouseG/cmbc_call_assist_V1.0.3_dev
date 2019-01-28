@@ -414,7 +414,7 @@ public class SmsController implements ISms
 	{
 		try
 		{
-			logger.info("新增/编辑短信任务...");
+			logger.info("新增短信任务...");
 			taskService.addTask(taskReqVO, userId);
 			
 		} catch (Exception e){
@@ -432,7 +432,7 @@ public class SmsController implements ISms
 	{
 		try
 		{
-			logger.info("新增/编辑短信任务...");
+			logger.info("编辑短信任务...");
 			taskService.updateTask(taskReqVO, userId);
 			
 		} catch (Exception e){

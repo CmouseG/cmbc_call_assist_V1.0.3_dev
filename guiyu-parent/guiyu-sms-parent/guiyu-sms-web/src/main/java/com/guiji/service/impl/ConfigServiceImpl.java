@@ -175,7 +175,9 @@ public class ConfigServiceImpl implements ConfigService
 	@Override
 	public SmsConfig getConfigByIntentionTagAndOrgCode(String intentionTag, String orgCode)
 	{
-		return configMapperExt.getConfigByIntentionTagAndOrgCode(intentionTag, orgCode);
+		SmsConfigExample example = new SmsConfigExample();
+		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%").andOrgCodeEqualTo(orgCode);
+		return configMapper.selectByExampleWithBLOBs(example).get(0);
 	}
 	
 	public String getUserName(String userId) {

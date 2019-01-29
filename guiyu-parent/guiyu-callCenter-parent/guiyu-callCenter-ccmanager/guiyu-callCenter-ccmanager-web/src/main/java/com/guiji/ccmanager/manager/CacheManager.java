@@ -1,8 +1,8 @@
 package com.guiji.ccmanager.manager;
 
-import ai.guiji.botsentence.api.IBotSentenceProcess;
-import ai.guiji.botsentence.api.entity.BotSentenceProcess;
-import ai.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.guiji.auth.api.IAuth;

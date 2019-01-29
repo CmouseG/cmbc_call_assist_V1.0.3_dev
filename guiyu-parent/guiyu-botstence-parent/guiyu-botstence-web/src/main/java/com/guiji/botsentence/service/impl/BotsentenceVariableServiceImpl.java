@@ -28,6 +28,7 @@ import com.guiji.botsentence.dao.BotSentenceOptionsLevelMapper;
 import com.guiji.botsentence.dao.BotSentenceOptionsMapper;
 import com.guiji.botsentence.dao.BotSentenceSurveyIntentMapper;
 import com.guiji.botsentence.dao.BotSentenceSurveyMapper;
+import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceBranch;
 import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
@@ -45,6 +46,7 @@ import com.guiji.botsentence.dao.entity.BotSentenceSurvey;
 import com.guiji.botsentence.dao.entity.BotSentenceSurveyExample;
 import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntent;
 import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntentExample;
+import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExample;
 import com.guiji.botsentence.dao.ext.BotSentenceDomainExtMapper;
@@ -114,6 +116,9 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	
 	@Autowired
 	private FileGenerateServiceImpl fileGenerateService;
+	
+	@Autowired
+	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
 	
 	@Override
 	@Transactional
@@ -1343,5 +1348,42 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		.replace("[\"\"]", "[]").replace("[\"\"", "[\"").replace("\"\"]", "\"]").replace("]\"]", "]]").replace("[\"[\"", "[[\"");
 	
 		return refuseJson;
+	}
+
+	@Override
+	public String generateCommonJson(String processId) {
+		LinkedHashMap<String, Object> commonMap = new LinkedHashMap<>();
+		
+		BotSentenceProcess process = botSentenceProcessService.queryBotsentenceProcessInfo(processId);
+		
+		commonMap.put("templateName", process.getTemplateName());
+		commonMap.put("templateId", process.getTemplateId());
+		commonMap.put("trade", process.getIndustry());
+		commonMap.put("tts", false);
+		commonMap.put("agent", false);
+		
+		//判断是否需要TTS
+		BotSentenceTtsTaskExample ttsParamExample = new BotSentenceTtsTaskExample();
+		ttsParamExample.createCriteria().andProcessIdEqualTo(processId);
+		int num = botSentenceTtsTaskMapper.countByExample(ttsParamExample);
+		if(num > 0) {
+			commonMap.put("tts", true);
+		}
+		//判断是否需要转人工
+		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+		branchExample.createCriteria().andProcessIdEqualTo(processId).andNeedAgentEqualTo(Constant.NEED_AGENT_YES);
+		int agentNum = botSentenceBranchMapper.countByExample(branchExample);
+		if(agentNum > 0) {
+			commonMap.put("agent", true);
+		}
+		
+		String jsonString = null;
+		try {
+			jsonString = BotSentenceUtil.formatJavaToJson(commonMap, LinkedHashMap.class);
+		} catch (Exception e) {
+			logger.error("转换通用信息common.json异常...", e);
+			throw new CommonException("转换通用信息common.json异常...");
+		}
+		return jsonString;
 	}
 }

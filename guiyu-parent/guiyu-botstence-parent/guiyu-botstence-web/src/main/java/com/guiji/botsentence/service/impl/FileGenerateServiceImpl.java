@@ -705,6 +705,17 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			logger.error("generate rule_投诉关键词.json has exception:", e);
 			return null;
 		}
+		
+		//生成通用信息common.json
+		String commonJson = botsentenceVariableService.generateCommonJson(processId);
+		String commonPath = templateCfgsDir+ FILE_SEPARATOR + "common.json";
+		try {
+			FileUtil.writeFile(commonPath, commonJson);
+		} catch (IOException e) {
+			logger.error("generate common.json has exception:", e);
+			return null;
+		}
+		
 
 		// 下载音频文件
 		RestTemplate restTemplate = new RestTemplate();

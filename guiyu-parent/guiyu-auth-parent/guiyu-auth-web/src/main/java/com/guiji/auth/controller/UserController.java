@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUserExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -240,6 +241,21 @@ public class UserController implements IAuth {
 		} else {
 			return Result.ok(false);
 		}
+	}
+
+	@RequestMapping("/user/getAllUserByOrgCode")
+	public ReturnData<List<SysUser>> getAllUserByOrgCode(@RequestParam("orgCode") String orgCode) {
+		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCode(orgCode));
+	}
+
+	@RequestMapping("/user/updateUserExt")
+	public void updateUserExt(SysUserExt sysUserExt) {
+		service.updateUserExt(sysUserExt);
+	}
+
+	@RequestMapping("/user/getUserExtByUserId")
+	public ReturnData<SysUserExt> getUserExtByUserId(Long userId) {
+		return Result.ok(service.getUserExtByUserId(userId));
 	}
 
 }

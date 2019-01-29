@@ -583,5 +583,23 @@
     from sys_user
     where id in (select user_id from sys_role_user where role_id in (3,4))
   </select>
-	
-</mapper> 
+
+  <select id="getAllUserByOrgCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where org_code like CONCAT(#{orgCode},'%')
+  </select>
+
+  <insert id="addUserExt">
+    delete from sys_user_ext where user_id=#{userId};
+    insert into sys_user_ext(user_id,create_time,update_time)
+    values (#{userId},now(),now());
+  </insert>
+
+  <select id="getSysUserExtByUserId" resultType="com.guiji.user.dao.entity.SysUserExt">
+    select a.id,a.user_id as userId,a.name,a.email,a.mobile,a.remarks,a.api_url as apiUrl,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.wechat,a.wechat_openid as wechatOpenid,a.wechat_status as wechatStatus
+    from sys_user_ext a
+    where a.user_id=#{userId}
+  </select>
+</mapper>

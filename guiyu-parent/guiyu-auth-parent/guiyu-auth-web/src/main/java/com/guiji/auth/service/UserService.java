@@ -2,8 +2,8 @@ package com.guiji.auth.service;
 
 import java.util.*;
 
-import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysUserExample;
+import com.guiji.user.dao.SysUserExtMapper;
+import com.guiji.user.dao.entity.*;
 import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,6 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgVO;
 import com.guiji.user.dao.SysUserMapper;
-import com.guiji.user.dao.entity.SysRole;
-import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.vo.UserParamVo;
 
 
@@ -36,6 +34,9 @@ public class UserService {
 
 	@Autowired
 	private OrganizationService organizationService;
+
+	@Autowired
+	private SysUserExtMapper sysUserExtMapper;
 
 	@Autowired
 	private RedisUtil redisUtil;
@@ -58,6 +59,7 @@ public class UserService {
         user.setUpdateTime(new Date());
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
+		mapper.addUserExt(user.getId());
 	}
 	
 	/**
@@ -228,4 +230,18 @@ public class UserService {
 		return null;
 
     }
+
+	public List<SysUser> getAllUserByOrgCode(String orgCode){
+		List<SysUser> sysUserList = mapper.getAllUserByOrgCode(orgCode);
+		return sysUserList;
+	}
+
+	public void updateUserExt(SysUserExt sysUserExt) {
+		sysUserExt.setUpdateTime(new Date());
+		sysUserExtMapper.updateByPrimaryKeySelective(sysUserExt);
+	}
+
+	public SysUserExt getUserExtByUserId(Long id){
+		return mapper.getSysUserExtByUserId(id);
+	}
 }

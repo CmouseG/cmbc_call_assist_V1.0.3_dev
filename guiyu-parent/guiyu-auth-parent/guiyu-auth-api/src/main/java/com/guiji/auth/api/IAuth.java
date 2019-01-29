@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.user.vo.SysUserVo;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,5 +45,11 @@ public interface IAuth {
 
 	@RequestMapping("/user/checkUsernameIsExist")
 	public ReturnData<Boolean> checkUsernameIsExist( @RequestParam("username") String username);
+
+	@RequestMapping("/user/getAllUserByOrgCode")
+	public ReturnData<List<SysUser>> getAllUserByOrgCode(@RequestParam("orgCode") String orgCode);
+
+	@RequestMapping("/user/getUserExtByUserId")
+	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId);
 	
 }

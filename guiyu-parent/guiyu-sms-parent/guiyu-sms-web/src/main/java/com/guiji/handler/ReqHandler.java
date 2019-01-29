@@ -70,8 +70,7 @@ public class ReqHandler
 	{
 		Map<String, Object> resultMap = new HashMap<>();
 		// 获取配置
-		SmsConfig config = configService.getConfigByIntentionTagAndOrgCode(sendMReq.getIntentionTag(),
-				sendMReq.getOrgCode());
+		SmsConfig config = configService.getConfigToSend(sendMReq.getIntentionTag(),sendMReq.getOrgCode(),sendMReq.getTemplateId());
 		if (config == null){
 			logger.info("没有短信配置，不发送短信");
 			throw new GuiyuException("没有短信配置，不发送短信");

@@ -191,13 +191,13 @@ public class SmsController implements ISms
 	 * 获取短信通道名称列表
 	 */
 	@GetMapping(value = "getTunnelNameList")
-	public ReturnData<List<String>> getTunnelNameList()
+	public ReturnData<List<String>> getTunnelNameList(@RequestHeader Long userId)
 	{
 		List<String> tunnelNameList = new ArrayList<>();
 		try
 		{
 			logger.info("获取短信通道名称列表...");
-			tunnelNameList = tunnelService.getTunnelNameList();
+			tunnelNameList = tunnelService.getTunnelNameList(userId);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);

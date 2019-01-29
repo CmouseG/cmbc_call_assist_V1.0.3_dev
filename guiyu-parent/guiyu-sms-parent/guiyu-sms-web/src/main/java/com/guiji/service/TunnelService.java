@@ -27,6 +27,6 @@ public interface TunnelService
 	/**
 	 * 获取短信通道名称列表
 	 */
-	List<String> getTunnelNameList();
+	List<String> getTunnelNameList(Long userId);
 
 }

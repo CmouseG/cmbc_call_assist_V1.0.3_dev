@@ -173,12 +173,13 @@ public class ConfigServiceImpl implements ConfigService
 	 * 根据意向标签和用户获取配置
 	 */
 	@Override
-	public SmsConfig getConfigByIntentionTagAndOrgCode(String intentionTag, String orgCode)
+	public SmsConfig getConfigToSend(String intentionTag, String orgCode, String templateId)
 	{
 		SmsConfigExample example = new SmsConfigExample();
 		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%")
 								.andOrgCodeLike(orgCode+"%")
-								.andRunStatusEqualTo(1);
+								.andRunStatusEqualTo(1)
+								.andTemplateIdEqualTo(templateId);
 		return configMapper.selectByExampleWithBLOBs(example).get(0);
 	}
 	

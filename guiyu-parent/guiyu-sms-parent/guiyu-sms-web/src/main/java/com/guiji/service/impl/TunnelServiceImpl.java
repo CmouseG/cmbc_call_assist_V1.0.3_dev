@@ -125,16 +125,16 @@ public class TunnelServiceImpl implements TunnelService
 	 * 获取短信通道名称列表
 	 */
 	@Override
-	public List<String> getTunnelNameList()
+	public List<String> getTunnelNameList(Long userId)
 	{
 		List<String> tunnelNameList = new ArrayList<>();
-		
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
 		SmsTunnelExample example = new SmsTunnelExample();
+		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		List<SmsTunnel> tunnelList = tunnelMapper.selectByExample(example);
 		for(SmsTunnel tunnel : tunnelList){
 			tunnelNameList.add(tunnel.getTunnelName());
 		}
-		
 		return tunnelNameList;
 	}
 	

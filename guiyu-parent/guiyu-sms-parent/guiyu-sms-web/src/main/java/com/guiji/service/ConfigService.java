@@ -42,6 +42,6 @@ public interface ConfigService
 	/**
 	 * 根据意向标签和用户获取配置
 	 */
-	SmsConfig getConfigByIntentionTagAndOrgCode(String intentionTag, String orgCode);
+	SmsConfig getConfigToSend(String intentionTag, String orgCode, String templateId);
 
 }

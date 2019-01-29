@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(value="TaskListRspVO对象",description="新增短信配置返回对象")
+@ApiModel(value="TaskListRspVO对象",description="新增短信任务返回对象")
 public class TaskListRspVO
 {
 	@ApiModelProperty(value="总条数")

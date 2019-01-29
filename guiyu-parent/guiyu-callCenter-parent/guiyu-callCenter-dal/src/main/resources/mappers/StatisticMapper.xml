@@ -331,7 +331,7 @@
     group by error_name,en_name
   </select>
   <select id="getLineCountAndConcurrent" resultType="java.util.HashMap">
-    SELECT COUNT(a.line_id) AS lineCount, IF(SUM(b.max_concurrent_calls) IS NULL,0,SUM(b.max_concurrent_calls)) AS lineConcurrent
+    SELECT COUNT(a.line_id) AS lineCount, IF(SUM(a.max_concurrent_calls) IS NULL,0,SUM(a.max_concurrent_calls)) AS lineConcurrent
     FROM  line_info a
     <if test="customerId != null" >
     WHERE  a.customer_id = #{customerId,jdbcType=VARCHAR}

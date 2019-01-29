@@ -51,7 +51,7 @@ INSERT INTO sys_organization_industry (
   update_id,
   update_time
 FROM
-	sys_organization where id != 25;
+	sys_organization;
 set intNumber=intNumber+1;
 end if;
 until isDone end repeat;

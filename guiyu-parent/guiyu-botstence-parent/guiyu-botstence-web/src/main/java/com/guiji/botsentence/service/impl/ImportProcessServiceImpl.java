@@ -621,7 +621,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		BotSentenceAddition botSentenceAddition = new BotSentenceAddition();
 		botSentenceAddition.setProcessId(processId);
 		//botSentenceAddition.setOptionsJson(options_json);
-		//botSentenceAddition.setSimTxt(sim_txt);
+		botSentenceAddition.setSimTxt(sim_txt);
 		botSentenceAddition.setStopwordsTxt(stopwords_txt);
 		//botSentenceAddition.setTemplateJson(template_json);
 		botSentenceAddition.setUserdictTxt(userdict_txt);

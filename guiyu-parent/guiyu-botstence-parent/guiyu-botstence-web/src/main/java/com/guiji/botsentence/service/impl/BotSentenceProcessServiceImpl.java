@@ -615,7 +615,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			BotSentenceAddition temp = new BotSentenceAddition();
 			BeanUtil.copyProperties(addition, temp);
 			temp.setProcessId(process.getProcessId());
-			temp.setSimTxt(null);
+			temp.setSimTxt("");
 			botSentenceAdditionMapper.insert(temp);
 		}
 		

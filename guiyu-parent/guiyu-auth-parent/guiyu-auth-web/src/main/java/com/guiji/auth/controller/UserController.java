@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUserExt;
@@ -246,6 +247,11 @@ public class UserController implements IAuth {
 	@RequestMapping("/user/getAllUserByOrgCode")
 	public ReturnData<List<SysUser>> getAllUserByOrgCode(@RequestParam("orgCode") String orgCode) {
 		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCode(orgCode));
+	}
+
+	@RequestMapping("/user/getAllUserRoleByOrgCode")
+	public ReturnData<List<SysUserRoleVo>> getAllUserRoleByOrgCode(@RequestParam("orgCode") String orgCode) {
+		return new ReturnData<List<SysUserRoleVo>>(service.getAllUserRoleByOrgCode(orgCode));
 	}
 
 	@RequestMapping("/user/updateUserExt")

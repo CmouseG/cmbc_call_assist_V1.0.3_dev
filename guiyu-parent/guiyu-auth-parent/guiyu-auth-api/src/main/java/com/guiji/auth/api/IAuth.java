@@ -2,6 +2,7 @@ package com.guiji.auth.api;
 
 import java.util.List;
 
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUserExt;
@@ -48,6 +49,9 @@ public interface IAuth {
 
 	@RequestMapping("/user/getAllUserByOrgCode")
 	public ReturnData<List<SysUser>> getAllUserByOrgCode(@RequestParam("orgCode") String orgCode);
+
+	@RequestMapping("/user/getAllUserRoleByOrgCode")
+	public ReturnData<List<SysUserRoleVo>> getAllUserRoleByOrgCode(@RequestParam("orgCode") String orgCode);
 
 	@RequestMapping("/user/getUserExtByUserId")
 	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId);

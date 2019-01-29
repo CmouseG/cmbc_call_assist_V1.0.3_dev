@@ -2,6 +2,7 @@ package com.guiji.auth.service;
 
 import java.util.*;
 
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.entity.*;
 import com.guiji.utils.RedisUtil;
@@ -234,6 +235,26 @@ public class UserService {
 	public List<SysUser> getAllUserByOrgCode(String orgCode){
 		List<SysUser> sysUserList = mapper.getAllUserByOrgCode(orgCode);
 		return sysUserList;
+	}
+
+	public List<SysUserRoleVo> getAllUserRoleByOrgCode(String orgCode){
+		List<SysUserRoleVo> sysUserRoleVoList = new ArrayList<SysUserRoleVo>();
+		List<SysUser> sysUserList = mapper.getAllUserByOrgCode(orgCode);
+		if (sysUserList != null) {
+			for (SysUser sysUser : sysUserList) {
+				SysUserRoleVo sysUserRoleVo = new SysUserRoleVo();
+				sysUserRoleVo.setSysUser(sysUser);
+				if (sysUser.getId() != null) {
+					List<SysRole> sysRoleList = getRoleByUserId(sysUser.getId());
+					if (sysRoleList != null && !sysRoleList.isEmpty()) {
+						sysUserRoleVo.setSysRoleList(sysRoleList);
+					}
+				}
+				sysUserRoleVoList.add(sysUserRoleVo);
+			}
+		}
+
+		return sysUserRoleVoList;
 	}
 
 	public void updateUserExt(SysUserExt sysUserExt) {

@@ -319,10 +319,9 @@ public class CustAiAccountController {
 					for(AiTemplateVO vo : rtnList) {
 						String templateId = vo.getTemplateId();
 						HsReplace hsReplace = aiCacheService.queyHsReplace(templateId);
-						if(hsReplace!=null && hsReplace.isTemplate_tts_flag()) {
-							vo.setTtsFlag(true);
-						}else {
-							vo.setTtsFlag(false);
+						if(hsReplace!=null) {
+							vo.setTtsFlag(hsReplace.isTemplate_tts_flag());	//是否需要tts
+							vo.setAgentFlag(hsReplace.isAgent()); //是否转人工
 						}
 					}
 				}

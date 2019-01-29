@@ -25,6 +25,7 @@ import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.ReadTxtUtil;
 import com.guiji.robot.util.SystemUtil;
+import com.guiji.utils.BeanUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
@@ -258,31 +259,19 @@ public class AiCacheService {
 			Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_TEMPLATE_RESOURCE, templateId);
 			if(cacheObj == null) {
 				//重新查询
-				//获取话术模板json文件
-				String replaceFilePath = this.getHsJsonPath(templateId);
-				if(!new File(replaceFilePath).exists()) {
-					logger.info("话术模板{},replace.json文件{}不存在，不需要tts合成",templateId,replaceFilePath);
-					//如果replace.json不存在，那么本话术模板不需要合成TTS
-					HsReplace hsReplace = new HsReplace();
-					hsReplace.setTemplate_tts_flag(false);
+				//查询common.json
+				HsReplace commonHsReplace = queryCommonJsonObj(templateId);
+				//查询replace.json
+				HsReplace replaceHsReplace = queryReplaceJsonObj(templateId);
+				BeanUtil.copyProperties(commonHsReplace, replaceHsReplace);
+				if(replaceHsReplace != null) {
 					//提交到redis
 					Map<String,Object> map = new HashMap<String,Object>();
-					map.put(templateId, hsReplace);
+					map.put(templateId, replaceHsReplace);
 					redisUtil.hmset(RobotConstants.ROBOT_TEMPLATE_RESOURCE, map);
-					return hsReplace;
-				}
-				//读取本地话术模板文件
-				String json = ReadTxtUtil.readTxtFile(replaceFilePath);
-				//读取json文件获取数据
-				HsReplace hsReplace = JsonUtils.json2Bean(json, HsReplace.class);
-				if(hsReplace != null) {
-					//提交到redis
-					Map<String,Object> map = new HashMap<String,Object>();
-					map.put(templateId, hsReplace);
-					redisUtil.hmset(RobotConstants.ROBOT_TEMPLATE_RESOURCE, map);
-					return hsReplace;
+					return replaceHsReplace;
 				}else {
-					logger.error("读取本地话术模板replace.json文件失败，文件路径：{}",replaceFilePath);
+					logger.error("读取本地话术模板common.json和replace.json文件失败，文件路径：{}",replaceHsReplace);
 					throw new RobotException(AiErrorEnum.AI00060016.getErrorCode(),AiErrorEnum.AI00060016.getErrorMsg());
 				}
 			}else {
@@ -367,6 +356,49 @@ public class AiCacheService {
 	
 	
 	/**
+	 * 获取replace.json对象
+	 * @param templateId
+	 * @return
+	 */
+	private HsReplace queryCommonJsonObj(String templateId) {
+		//获取话术模板json文件
+		String replaceFilePath = this.getHsCommonJsonPath(templateId);
+		if(!new File(replaceFilePath).exists()) {
+			logger.info("话术模板{},common.json文件{}不存在，不需要tts合成",templateId,replaceFilePath);
+			HsReplace hsReplace = new HsReplace();
+			return new HsReplace();
+		}
+		//读取本地话术模板文件
+		String json = ReadTxtUtil.readTxtFile(replaceFilePath);
+		//读取json文件获取数据
+		HsReplace hsReplace = JsonUtils.json2Bean(json, HsReplace.class);
+		return hsReplace;
+	}
+	
+	/**
+	 * 获取replace.json对象
+	 * @param templateId
+	 * @return
+	 */
+	private HsReplace queryReplaceJsonObj(String templateId) {
+		//获取话术模板json文件
+		String replaceFilePath = this.getHsJsonPath(templateId);
+		if(!new File(replaceFilePath).exists()) {
+			logger.info("话术模板{},replace.json文件{}不存在，不需要tts合成",templateId,replaceFilePath);
+			//如果replace.json不存在，那么本话术模板不需要合成TTS
+			HsReplace hsReplace = new HsReplace();
+			hsReplace.setTemplate_tts_flag(false);
+			return hsReplace;
+		}
+		//读取本地话术模板文件
+		String json = ReadTxtUtil.readTxtFile(replaceFilePath);
+		//读取json文件获取数据
+		HsReplace hsReplace = JsonUtils.json2Bean(json, HsReplace.class);
+		return hsReplace;
+	}
+	
+	
+	/**
 	 * 获取话术模板replace.json文件路径
 	 * @param hushuDirPath
 	 * @param ttsVoiceReq
@@ -380,5 +412,22 @@ public class AiCacheService {
 			throw new RobotException(AiErrorEnum.AI00060026.getErrorCode(),AiErrorEnum.AI00060026.getErrorMsg());
 		}
 		return hushuDirPath + "replace.json";
+	}
+	
+	
+	/**
+	 * 获取话术模板common.json文件路径
+	 * @param hushuDirPath
+	 * @param ttsVoiceReq
+	 * @return
+	 */
+	private String getHsCommonJsonPath(String templateId) {
+		String hushuDirPath = SystemUtil.getRootPath()+hushuDir + "/" + templateId + "/" + templateId + "/"; //话术模板存放目录
+		if(!new File(hushuDirPath).exists()) {
+			//话术模板检查
+			logger.error("话术模板{}在路径{}不存在。。。",templateId,hushuDirPath);
+			throw new RobotException(AiErrorEnum.AI00060026.getErrorCode(),AiErrorEnum.AI00060026.getErrorMsg());
+		}
+		return hushuDirPath + "common.json";
 	}
 }

@@ -16,4 +16,6 @@ public class AiTemplateVO {
 	private String templateName;
 	//是否需要TTS
 	private boolean ttsFlag;
+	//是否需要转人工
+	private boolean agentFlag;
 }

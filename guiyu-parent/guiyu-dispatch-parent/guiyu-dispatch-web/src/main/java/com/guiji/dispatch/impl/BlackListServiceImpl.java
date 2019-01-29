@@ -200,7 +200,7 @@ public class BlackListServiceImpl implements IBlackListService {
 	@Override
 	public boolean checkPhoneInBlackList(String phone) {
 		BlackListExample ex = new BlackListExample();
-		ex.createCriteria().andPhoneEqualTo(phone);
+		ex.createCriteria().andPhoneEqualTo(phone).andStatusEqualTo(Constant.BLACKSTATUSOK);
 		int countByExample = blackListMapper.countByExample(ex);
 		return countByExample > 0 ? true : false;
 	}

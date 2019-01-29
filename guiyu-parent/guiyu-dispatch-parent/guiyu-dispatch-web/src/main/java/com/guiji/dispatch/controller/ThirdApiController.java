@@ -52,9 +52,9 @@ import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
 import com.guiji.utils.IdGenUtil;
 
-import ai.guiji.botsentence.api.IBotSentenceProcess;
-import ai.guiji.botsentence.api.entity.BotSentenceProcess;
-import ai.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 
 /**
  * 第三方接口

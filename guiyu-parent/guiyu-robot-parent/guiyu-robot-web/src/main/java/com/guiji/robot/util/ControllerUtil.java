@@ -15,9 +15,9 @@ import com.guiji.robot.model.UserAiCfgDetailVO;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
-import ai.guiji.botsentence.api.IBotSentenceProcess;
-import ai.guiji.botsentence.api.entity.BotSentenceProcess;
-import ai.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 
 /** 
 * @ClassName: ControllerUtil 

@@ -57,7 +57,7 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 						.getCallPlanDetailRecord(ids);
 				jsonObject.put("data", callPlanDetailRecord.getBody());
 				try {
-					HttpClientUtil.doPostJson(callRecordUrl, jsonObject.toString());
+					String doPostJson = HttpClientUtil.doPostJson(callRecordUrl, jsonObject.toString());
 					insertThirdInterface(callRecordUrl, jsonObject, Constant.THIRDAPISUCCESS, dis.getUserId());
 				} catch (Exception e) {
 					if (insertThirdInterface(callRecordUrl, jsonObject, Constant.THIRDAPIFAILURE, dis.getUserId())) {

@@ -70,6 +70,7 @@ public class SuccesPhone4MQLisener {
 				vo.setPhone(dispatchPlan.getPhone());
 				vo.setUserId(dispatchPlan.getUserId());
 				vo.setIntentionTag(mqSuccPhoneDto.getLabel());
+				vo.setTemplateId(dispatchPlan.getRobot());
 				sms.sendMessage(vo);
 			}
 		} catch (Exception e) {

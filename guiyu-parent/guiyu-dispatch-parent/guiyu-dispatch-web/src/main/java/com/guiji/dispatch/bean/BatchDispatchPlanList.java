@@ -9,7 +9,7 @@ public class BatchDispatchPlanList {
 	private String batchName;
 	private String robot;
 	private String line;
-	private String isClean;
+	private String clean;
 	private String callHour;
 	private String callDate;
 	private String robotName;
@@ -57,12 +57,13 @@ public class BatchDispatchPlanList {
 		this.robot = robot;
 	}
 
-	public String getIsClean() {
-		return isClean;
+
+	public String getClean() {
+		return clean;
 	}
 
-	public void setIsClean(String isClean) {
-		this.isClean = isClean;
+	public void setClean(String clean) {
+		this.clean = clean;
 	}
 
 	public String getCallHour() {

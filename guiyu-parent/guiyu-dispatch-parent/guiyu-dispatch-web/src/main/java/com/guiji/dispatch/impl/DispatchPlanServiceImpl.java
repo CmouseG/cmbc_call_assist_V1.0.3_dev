@@ -1582,7 +1582,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setUserId(userId.intValue());
 			bean.setLine(Integer.valueOf(plans.getLine()));
 			bean.setRobot(plans.getRobot());
-			bean.setClean(Integer.valueOf(plans.getIsClean()));
+			bean.setClean(Integer.valueOf(plans.getClean()));
 			bean.setCallHour(plans.getCallHour());
 			bean.setCallData(Integer.valueOf(plans.getCallDate()));
 			bean.setFlag(Constant.IS_FLAG_0);

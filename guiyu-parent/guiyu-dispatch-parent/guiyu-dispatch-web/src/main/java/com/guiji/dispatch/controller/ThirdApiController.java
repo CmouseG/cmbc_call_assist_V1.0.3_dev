@@ -388,6 +388,10 @@ public class ThirdApiController implements IThirdApiOut {
 		List<ThirdInterfaceRecords> selectByExample = thirdCallBackMapper.selectByExample(ex);
 		for (ThirdInterfaceRecords record : selectByExample) {
 			String url = record.getUrl();
+			if(url==null || url.equals("")){
+				logger.info("当前reTryThirdApi url为null");
+				continue;
+			}
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("data", record.getParams());
 			try {

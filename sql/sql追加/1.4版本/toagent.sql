@@ -1,3 +1,4 @@
+use guiyu_callcenter;
 CREATE TABLE `agent` (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `crm_login_id` varchar(50) DEFAULT NULL,

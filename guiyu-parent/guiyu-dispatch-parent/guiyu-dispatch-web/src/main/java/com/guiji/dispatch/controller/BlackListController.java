@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.BlackList;
+import com.guiji.dispatch.dao.entity.BlackListRecords;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.util.Log;
 
@@ -78,9 +79,22 @@ public class BlackListController {
 			batchImport.setMsg(e.getMessage());
 		}
 		return batchImport;
-
 	}
 	
+	
+	@PostMapping("selectBlackListRecords")
+	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
+			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode){
+		return blackListService.queryBlackListRecords(pagenum, pagesize,orgCode);
+	}
+
+	
+	
+//	@PostMapping("deleteBlackListRecordsById")
+//	public Page<BlackListRecords> deleteBlackListRecordsById(	@RequestParam(required = false, name = "userName")  String userName,@RequestParam(required = true, name = "pagenum") int pagenum,
+//			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode){
+//		return blackListService.queryBlackListRecords(pagenum, pagesize,userName,orgCode);
+//	}
 
 
 }

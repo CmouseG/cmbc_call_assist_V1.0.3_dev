@@ -38,4 +38,9 @@ public class MQConfig {
         return new Queue("dispatch.thirdApiData");
     }
     
+    @Bean
+    public Queue blackListData() {
+        return new Queue("dispatch.blackListData");
+    }
+    
 }

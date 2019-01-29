@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.dao.entity.BlackList;
+import com.guiji.dispatch.dao.entity.BlackListRecords;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 
 public interface IBlackListService {
@@ -21,4 +22,6 @@ public interface IBlackListService {
 	boolean setBlackPhoneStatus(DispatchPlan dispatchPlan);
 
 	Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode);
+	
+	Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, String orgCode);
 }

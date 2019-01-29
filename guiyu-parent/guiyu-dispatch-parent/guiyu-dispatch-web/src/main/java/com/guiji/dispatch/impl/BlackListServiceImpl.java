@@ -21,13 +21,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.guiji.auth.api.IAuth;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.blacklistmq.BlackListImportQueueHandler;
 import com.guiji.dispatch.dao.BlackListMapper;
+import com.guiji.dispatch.dao.BlackListRecordsMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.BlackList;
 import com.guiji.dispatch.dao.entity.BlackListExample;
 import com.guiji.dispatch.dao.entity.BlackListExample.Criteria;
+import com.guiji.dispatch.dao.entity.BlackListRecords;
+import com.guiji.dispatch.dao.entity.BlackListRecordsExample;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
@@ -44,6 +47,11 @@ public class BlackListServiceImpl implements IBlackListService {
 
 	@Autowired
 	private IAuth auth;
+
+	@Autowired
+	private BlackListImportQueueHandler blackListMQ;
+	@Autowired
+	private BlackListRecordsMapper blackRecordsMapper;
 
 	@Override
 	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String orgCode) throws Exception {
@@ -65,34 +73,27 @@ public class BlackListServiceImpl implements IBlackListService {
 		if (sheet == null) {
 			throw new Exception("模板文件不正确。");
 		}
-		List<BlackList> list = new ArrayList<>();
+		// 重复校验
+		List phones = new ArrayList<>();
 		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			if (row == null) {
 				continue;
 			}
-			// 重复校验
-			List phones = new ArrayList<>();
-			String phone;
+			String phone = "";
 			if (isNull(row.getCell(0))) {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
-				if (phone == null || phone == "") {
-					throw new Exception("导入失败(第" + (r + 1) + "行,号码内容有问题，请检查文件");
-				}
-				if (!isNumeric(phone)) {
-					throw new Exception("导入失败(第" + (r + 1) + "行,号码格式有问题，请检查文件");
-				} else if (phone.length() != 11) {
-					throw new Exception("导入失败(第" + (r + 1) + "行,号码格式有问题，请检查文件");
+				if (phone == null || phone == "" || !isNumeric(phone) || phone.length() != 11) {
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId);
 				}
 				if (phones.contains(phone)) {
-					throw new Exception("导入失败(第" + (r + 1) + "行,号码有重复，请检查文件");
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_DUPLICATE, userId);
 				}
-				phones.add(phone);
-			} else {
-				throw new Exception("导入失败(第" + (r + 1) + "行,电话未填写)");
 			}
-
+			if (phone == "") {
+				continue;
+			}
 			String remark = "";
 			if (isNull(row.getCell(1))) {
 				row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
@@ -107,14 +108,27 @@ public class BlackListServiceImpl implements IBlackListService {
 			blackListDto.setUpdateUserId(userId.intValue());
 			blackListDto.setOrgCode(orgCode);
 			blackListDto.setStatus(Constant.BLACKSTATUSOK);
+			blackListDto.setOrgCode(orgCode);
 			ReturnData<SysUser> userById = auth.getUserById(userId);
 			if (userById.success && userById.getBody() != null) {
 				blackListDto.setCreateUserName(userById.getBody().getUsername());
 				blackListDto.setUpdateUserName(userById.getBody().getUsername());
 			}
-			list.add(blackListDto);
+			// 写入mq中
+			blackListMQ.add(blackListDto);
+			phones.add(phone);
 		}
-		blackListMapper.BatchinsertBlackList(list);
+	}
+
+	private void saveErrorRecords(String phone, Integer blackListImportUnidentified, Long userId) {
+		BlackListRecords record = new BlackListRecords();
+		record.setCreateTime(DateUtil.getCurrent4Time());
+		record.setPhone(phone);
+		record.setType(blackListImportUnidentified);
+		record.setUserId(userId.intValue());
+		ReturnData<SysUser> userById = auth.getUserById(userId);
+		record.setUserName(userById.getBody().getUsername());
+		blackRecordsMapper.insert(record);
 	}
 
 	@Override
@@ -213,6 +227,27 @@ public class BlackListServiceImpl implements IBlackListService {
 		dispatchPlan.setResult("X");
 		int insert = dispatchMapper.insert(dispatchPlan);
 		return insert > 0 ? true : false;
+	}
+
+	@Override
+	public Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, String orgCode) {
+		Page<BlackListRecords> page = new Page<>();
+		page.setPageNo(pagenum);
+		page.setPageSize((pagesize));
+		BlackListRecordsExample example = new BlackListRecordsExample();
+		example.setLimitStart((pagenum - 1) * pagesize);
+		example.setLimitEnd(pagesize);
+		example.setOrderByClause("`gmt_create` DESC");
+		com.guiji.dispatch.dao.entity.BlackListRecordsExample.Criteria andOrgCodeEqualTo = example.createCriteria()
+				.andOrgCodeEqualTo(orgCode);
+//		if (userName != null && !userName.equals("")) {
+//			andOrgCodeEqualTo.andUserNameEqualTo(userName);
+//		}
+		List<BlackListRecords> result = blackRecordsMapper.selectByExample(example);
+		int countByExample = blackRecordsMapper.countByExample(example);
+		page.setRecords(result);
+		page.setTotal(countByExample);
+		return page;
 	}
 
 }

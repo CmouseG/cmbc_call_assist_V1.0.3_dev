@@ -31,9 +31,9 @@ import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.NasUtil;
 
-import ai.guiji.botsentence.api.IBotSentenceProcess;
-import ai.guiji.botsentence.api.entity.BotSentenceProcess;
-import ai.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 
 @Service
 public class AsynFileServiceImpl implements AsynFileService {

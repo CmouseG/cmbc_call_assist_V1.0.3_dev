@@ -110,11 +110,13 @@ public class WeChatAppletController {
 	
 	
 	@RequestMapping(value="queryBotSentenceProcessListByAccountNo")
-	public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@JsonParam String accountNo) {
-		if(StringUtils.isBlank(accountNo)) {
+	public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@RequestHeader String userId) {
+		if(StringUtils.isBlank(userId)) {
 			throw new CommonException("用户账号为空");
 		}
-		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessListByAccountNo(accountNo);
+		
+		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(100, 1, null, userId, userId);
+		//List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessListByAccountNo(accountNo);
 		List<BotSentenceProcessVO> results = new ArrayList<>();
 		if(null != list) {
 			for(BotSentenceProcess temp : list) {

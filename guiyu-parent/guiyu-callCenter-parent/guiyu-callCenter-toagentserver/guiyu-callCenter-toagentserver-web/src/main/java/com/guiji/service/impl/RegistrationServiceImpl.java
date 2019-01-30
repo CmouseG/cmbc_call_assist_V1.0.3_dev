@@ -136,6 +136,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             registration.setCreator(agent.getUserId());
             registration.setUpdateTime(date);
             registration.setUpdateUser(agent.getUserId());
+            registration.setPlanUuid(request.getRecordId());
             registrationMapper.insert(registration);
         }
 

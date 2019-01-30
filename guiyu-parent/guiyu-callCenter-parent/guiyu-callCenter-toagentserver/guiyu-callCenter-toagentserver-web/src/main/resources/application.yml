@@ -50,5 +50,5 @@ aliasr:
        accessSecret: mvGam0vMuMu82NQFNbdrp4NLsz30y8
 
 properties:
-    error: properties/error.properties
+    error: error.properties
 

@@ -103,7 +103,16 @@ public class AgentResource {
     public Result.ReturnData updateAgent(@PathVariable String userId, @RequestBody AgentRequest request, HttpSession session){
         log.info("收到更新座席请求userId:[{}],AgentRequest:[{}]", userId,request.toString());
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        agentService.updateAgent(userId,request, agent);
+        try {
+            agentService.updateAgent(userId,request, agent);
+        } catch (Exception e) {
+            log.warn("更新座席出现异常", e);
+            if(e.getMessage().equals("0307011")){
+                return Result.error("0307011");
+            }else if(e.getMessage().equals("0307006")){
+                return Result.error("0307006");
+            }
+        }
         return Result.ok();
     }
 
@@ -128,7 +137,15 @@ public class AgentResource {
     public Result.ReturnData agentState(@RequestBody AgentRequest request, HttpSession session){
         log.info("收到设置坐席状态请求AgentRequest:[{}]", request.toString());
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        agentService.agentState(request, agent);
+        try {
+            agentService.agentState(request, agent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.warn("设置坐席状态出现异常", e);
+            if(e.getMessage().equals("0307005")){
+                return Result.error("0307005");
+            }
+        }
         return Result.ok();
     }
 

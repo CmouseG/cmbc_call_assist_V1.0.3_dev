@@ -273,7 +273,10 @@ public class CallCenterConfig {
     }
 
     public boolean addTier(Tier tier){
-        Preconditions.checkState(!isTierExist(tier), "tier already exist in config");
+        if(isTierExist(tier)){
+            log.info("队列绑定已经存在，跳过处理");
+            return true;
+        }
 
         reloadConfig();
 

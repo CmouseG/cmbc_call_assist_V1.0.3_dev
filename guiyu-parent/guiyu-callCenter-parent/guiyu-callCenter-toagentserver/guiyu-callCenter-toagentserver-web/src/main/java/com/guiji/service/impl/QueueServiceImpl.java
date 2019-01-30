@@ -64,13 +64,15 @@ public class QueueServiceImpl implements QueueService {
     LineInfoMapper lineInfoMapper;
 
     @Override
-    public boolean addQueue(QueueInfo queueInfo, Agent agent) {
+    public boolean addQueue(QueueInfo queueInfo, Agent agent) throws Exception{
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(agent.getOrgCode()).andQueueNameEqualTo(queueInfo.getQueueName());
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
         if (queueList != null&&queueList.size()>0) {
             log.info("不能创建同名坐席[{}]",queueInfo.getQueueName());
-            throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+          //  throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+            throw new Exception("0307007");
+
         }
         Date date = new Date();
         Queue queue = new Queue();
@@ -127,13 +129,14 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
-    public void updateQueue(String queueId, QueueInfo queueInfo,Agent agent){
+    public void updateQueue(String queueId, QueueInfo queueInfo,Agent agent)throws Exception{
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(agent.getOrgCode()).andQueueNameEqualTo(queueInfo.getQueueName()).andQueueIdNotEqualTo(Long.parseLong(queueId));
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
         if (queueList != null&&queueList.size()>0) {
             log.info("不能修改为同名坐席[{}]",queueInfo.getQueueName());
-            throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+            //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+            throw new Exception("0307007");
         }
 
         Queue queue = queueMapper.selectByPrimaryKey(Long.parseLong(queueId));

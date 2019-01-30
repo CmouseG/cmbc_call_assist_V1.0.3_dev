@@ -19,11 +19,11 @@ import java.util.List;
 public interface AgentService {
     boolean createAgent(AgentRequest request,Agent create,Long crmUserid);
 
-    boolean updateAgent(String userId, AgentRequest request, Agent agent);
+    boolean updateAgent(String userId, AgentRequest request, Agent agent)throws Exception;
 
     boolean deleteAgent(String userId);
 
-    boolean agentState(AgentRequest request, Agent agent);
+    boolean agentState(AgentRequest request, Agent agent)throws Exception;
 
     QueryAgent getAgent(String userId);
 

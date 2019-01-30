@@ -204,7 +204,7 @@ public class AgentServiceImpl implements AgentService {
 
 
     @Override
-    public boolean updateAgent(String userId, AgentRequest request, Agent create) {
+    public boolean updateAgent(String userId, AgentRequest request, Agent create) throws Exception{
         Agent agent = agentMapper.selectByPrimaryKey(Long.parseLong(userId));//根据坐席ID查询用户信息
         if (create.getUserRole() == EUserRole.AGENT.ordinal()) {
             if (!create.getUserId().toString().equals(userId)) {//是坐席请求，改的又不是自己直接返回错误
@@ -251,11 +251,13 @@ public class AgentServiceImpl implements AgentService {
                 agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
             } else if (agent.getAnswerType() == EAnswerType.MOBILE.ordinal()) {
                 if (StringUtils.isBlank(agent.getMobile())) {
-                    throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_ANSWERTYPE_NONEMOBILE);
+                   // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_ANSWERTYPE_NONEMOBILE);
+                    throw new Exception("0307006");
                 }
                 Queue queue = queueMapper.selectByPrimaryKey(request.getQueueId());
                 if(queue.getLineId()==null){
-                    throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_NO_LINE);
+                    //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_NO_LINE);
+                    throw new Exception("0307011");
                 }
                 FsLineVO fsLineVO = fsLineManager.getFsLine();
                 String[] ip = fsLineVO.getFsIp().split(":");
@@ -339,11 +341,12 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public boolean agentState(AgentRequest request, Agent user) {
+    public boolean agentState(AgentRequest request, Agent user) throws Exception{
         Agent agent = agentMapper.selectByPrimaryKey(request.getUserId());//根据坐席ID查询用户信息
         if (user.getUserRole() == EUserRole.AGENT.ordinal()) {
             if (!user.getUserId().toString().equals(request.getUserId())) {//是坐席请求，改的又不是自己直接返回错误
-                throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
+                //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
+                throw new Exception("0307005");
             }
         }
         AgentInfo agentInfo = new AgentInfo();

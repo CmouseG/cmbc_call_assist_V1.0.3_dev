@@ -63,7 +63,7 @@
         <table tableName="${tableName}" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
             <property name="useActualColumnNames" value="false" />
             <!-- 如果需要自动生成主键则放开下面注释 -->
-            <!-- <generatedKey column="${generatedKey}" sqlStatement="${sqlStatement}" identity="false"/> -->
+            <generatedKey column="${generatedKey}" sqlStatement="${sqlStatement}" identity="true"/>
         </table>
     </context>
 </generatorConfiguration>

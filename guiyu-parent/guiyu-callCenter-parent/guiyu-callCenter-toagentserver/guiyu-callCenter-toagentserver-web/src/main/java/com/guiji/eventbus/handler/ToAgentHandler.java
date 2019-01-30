@@ -66,14 +66,14 @@ public class ToAgentHandler {
                 VChatMsg chatMsg;
                 if(!Strings.isNullOrEmpty(callDetail.getBotAnswerText())){
                     //发送机器人说话内容
-                    chatMsg = VChatMsg.customerInstance();
+                    chatMsg = VChatMsg.aiInstance();
                     chatMsg.setAsrtext(callDetail.getBotAnswerText());
                     chatMsg.setCallernum(callPlan.getPhoneNum());
                     chatMsg.setAsrtime(DateUtil.toString(callDetail.getBotAnswerTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                     fsManager.vchat(event.getAgentId(), chatMsg.toBase64());
                 }else if(!Strings.isNullOrEmpty(callDetail.getCustomerSayText())){
                     //发送客户说话内容
-                    chatMsg = VChatMsg.aiInstance();
+                    chatMsg = VChatMsg.customerInstance();
                     chatMsg.setAsrtext(callDetail.getCustomerSayText());
                     chatMsg.setCallernum(callPlan.getPhoneNum());
                     chatMsg.setAsrtime(DateUtil.toString(callDetail.getCustomerSayTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));

@@ -237,7 +237,7 @@ public class BlackListServiceImpl implements IBlackListService {
 		BlackListRecordsExample example = new BlackListRecordsExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
-		example.setOrderByClause("`gmt_create` DESC");
+		example.setOrderByClause("`create_time` DESC");
 		com.guiji.dispatch.dao.entity.BlackListRecordsExample.Criteria andOrgCodeEqualTo = example.createCriteria()
 				.andOrgCodeEqualTo(orgCode);
 //		if (userName != null && !userName.equals("")) {

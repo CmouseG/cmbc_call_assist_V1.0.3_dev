@@ -116,9 +116,10 @@ public class TunnelServiceImpl implements TunnelService
 	 * 删除短信通道
 	 */
 	@Override
-	public void delTunnel(Integer id)
+	public void delTunnel(Integer id, String tunnelName)
 	{
 		tunnelMapper.deleteByPrimaryKey(id);
+		redisUtil.del(tunnelName);
 	}
 
 	/**

@@ -93,6 +93,24 @@ public class SmsController implements ISms
 		}
 		return Result.ok("SUCCESS");
 	}
+	
+	/**
+	 * 删除短信平台
+	 */
+	@PostMapping(value = "delPlatform")
+	public ReturnData<String> delPlatform(Integer id, String platName)
+	{
+		try
+		{
+			logger.info("删除短信平台...");
+			platformService.delPlatform(id, platName);
+			
+		} catch (Exception e){
+			logger.error("请求失败！", e);
+			return Result.error(SmsConstants.Error_Request);
+		}
+		return Result.ok("SUCCESS");
+	}
 
 	/**
 	 *获取短信通道列表
@@ -154,12 +172,12 @@ public class SmsController implements ISms
 	 * 删除短信通道
 	 */
 	@GetMapping(value = "delTunnel")
-	public ReturnData<String> delTunnel(Integer id)
+	public ReturnData<String> delTunnel(Integer id, String tunnelName)
 	{
 		try
 		{
 			logger.info("删除短信通道...");
-			tunnelService.delTunnel(id);
+			tunnelService.delTunnel(id, tunnelName);
 			
 		} catch (Exception e){
 			logger.error("请求失败！", e);

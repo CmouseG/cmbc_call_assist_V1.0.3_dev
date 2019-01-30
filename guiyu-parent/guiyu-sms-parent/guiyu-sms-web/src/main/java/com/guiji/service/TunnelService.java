@@ -22,7 +22,7 @@ public interface TunnelService
 	/**
 	 * 删除短信通道
 	 */
-	void delTunnel(Integer id);
+	void delTunnel(Integer id, String tunnelName);
 	
 	/**
 	 * 获取短信通道名称列表

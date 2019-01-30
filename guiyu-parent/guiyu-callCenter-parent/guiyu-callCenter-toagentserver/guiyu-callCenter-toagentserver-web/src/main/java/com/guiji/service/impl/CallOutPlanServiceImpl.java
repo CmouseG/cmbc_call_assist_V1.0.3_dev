@@ -3,6 +3,7 @@ package com.guiji.service.impl;
 import com.guiji.callcenter.dao.AgentMapper;
 import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.TierMapper;
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.config.FsBotConfig;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -58,15 +61,22 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     }
 
     @Override
-    public QueryQueueCalls queueCalls(String queueId) {
+    public QueryQueueCalls queueCalls(String queueId,Agent agent) {
+        Date date = DateUtil.initDateByDay();
         CallOutPlanExample callOutPlanExample = new CallOutPlanExample();
-        callOutPlanExample.createCriteria().andAgentGroupIdEqualTo(queueId);
+        callOutPlanExample.createCriteria().andAgentGroupIdEqualTo(queueId).andAgentAnswerTimeGreaterThan(date);
         List<CallOutPlan> list =callOutPlanMapper.selectByExample(callOutPlanExample);
         QueryQueueCalls queryQueueCalls = new QueryQueueCalls();
         if(list.size()>0){
             queryQueueCalls.setAnsweredCount(list.size());
             queryQueueCalls.setWaitCount(fsManager.getWaitCount(queueId));
             queryQueueCalls.setQueueId(queueId);
+        }
+        if(agent!=null){
+            CallOutPlanExample callOutPlanExample1 = new CallOutPlanExample();
+            callOutPlanExample1.createCriteria().andAgentIdEqualTo(agent.getUserId()+"").andAgentAnswerTimeGreaterThan(date);
+            List<CallOutPlan> listAgent = callOutPlanMapper.selectByExample(callOutPlanExample1);
+            queryQueueCalls.setAgentAnsweredCount(listAgent.size());
         }
         return queryQueueCalls;
     }

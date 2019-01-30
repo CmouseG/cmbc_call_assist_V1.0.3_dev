@@ -11,7 +11,7 @@ import java.math.BigInteger;
  * @Description:
  */
 public interface CallOutRecordService {
-    CallOutRecord findByCallId(BigInteger callId);
+    CallOutRecord findByRecordId(String recordId);
     void save(CallOutRecord callOutRecord);
 
     void update(CallOutRecord callOutRecord);

@@ -253,8 +253,11 @@ public class AgentServiceImpl implements AgentService {
                 if (StringUtils.isBlank(agent.getMobile())) {
                     throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_ANSWERTYPE_NONEMOBILE);
                 }
-                FsLineVO fsLineVO = fsLineManager.getFsLine();
                 Queue queue = queueMapper.selectByPrimaryKey(request.getQueueId());
+                if(queue.getLineId()==null){
+                    throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_NO_LINE);
+                }
+                FsLineVO fsLineVO = fsLineManager.getFsLine();
                 String[] ip = fsLineVO.getFsIp().split(":");
                 String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",queue.getLineId(),request.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
                 agentInfo.setContact(contact);
@@ -339,7 +342,7 @@ public class AgentServiceImpl implements AgentService {
     public boolean agentState(AgentRequest request, Agent user) {
         Agent agent = agentMapper.selectByPrimaryKey(request.getUserId());//根据坐席ID查询用户信息
         if (user.getUserRole() == EUserRole.AGENT.ordinal()) {
-            if (!user.equals(agent)) {//是坐席请求，改的又不是自己直接返回错误
+            if (!user.getUserId().toString().equals(request.getUserId())) {//是坐席请求，改的又不是自己直接返回错误
                 throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
             }
         }

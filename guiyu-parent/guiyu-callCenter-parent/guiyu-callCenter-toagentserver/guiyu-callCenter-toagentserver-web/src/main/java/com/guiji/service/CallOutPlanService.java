@@ -1,5 +1,6 @@
 package com.guiji.service;
 
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.entity.CallPlan;
 import com.guiji.web.request.UpdateLabelRequest;
@@ -19,7 +20,7 @@ public interface CallOutPlanService {
 
     CallOutPlan findByCallId(String recordId);
 
-    QueryQueueCalls queueCalls(String queueId);
+    QueryQueueCalls queueCalls(String queueId,Agent agent);
 
     void updateLabel(UpdateLabelRequest request);
 

@@ -17,4 +17,6 @@ public class ErrorConstant {
     public static String FS_CONNECT_FAIL = "0307004";
 
     public static String ERROR_CODE_PARAM = "0307010";
+
+    public static String ERROR_NO_RECORD_BY_RECORDID = "0307012";
 }

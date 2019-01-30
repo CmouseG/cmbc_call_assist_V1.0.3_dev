@@ -10,6 +10,8 @@ public class RegistrationRequest {
     private String customerAddr;
     private String remark;
 
+    private String recordId;
+
     //private Long userId;
 
 }

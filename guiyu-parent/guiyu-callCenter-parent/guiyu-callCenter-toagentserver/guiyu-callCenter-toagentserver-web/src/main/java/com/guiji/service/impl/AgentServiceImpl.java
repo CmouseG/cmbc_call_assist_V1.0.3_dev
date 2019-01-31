@@ -455,10 +455,14 @@ public class AgentServiceImpl implements AgentService {
             if (agent.getUserState() == 0) {
                 queryAgent.setAgentState(EUserState.OFFLINE);
             } else {
-                if (fsManager.getVertoStatus(agent.getUserId() + "")) {
-                    queryAgent.setAgentState(EUserState.ONLINE);
+                if (agent.getAnswerType() == 0) {
+                    if (fsManager.getVertoStatus(agent.getUserId() + "")) {
+                        queryAgent.setAgentState(EUserState.ONLINE);
+                    } else {
+                        queryAgent.setAgentState(EUserState.OFFLINE);
+                    }
                 } else {
-                    queryAgent.setAgentState(EUserState.OFFLINE);
+                    queryAgent.setAgentState(EUserState.ONLINE);
                 }
             }
             if (agent.getAnswerType() == 0) {

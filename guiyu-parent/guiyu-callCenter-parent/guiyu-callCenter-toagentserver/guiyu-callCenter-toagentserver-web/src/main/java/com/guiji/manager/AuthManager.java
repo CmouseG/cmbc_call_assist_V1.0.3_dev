@@ -85,11 +85,12 @@ public class AuthManager {
      * @param userId
      * @return
      */
-    public CrmUserVO getUser(String userId){
+    public CrmUserVO getUser(String userId)throws Exception{
         CrmUserVO crmUserVO = new CrmUserVO();
         Result.ReturnData<SysUser> result = iAuth.getUserById(Long.parseLong(userId));
         if(result==null||result.getBody()==null){
-            throw new GuiyuException(ToagentserverException.EXCP_TOAGENT__NONE_CRMUSER);
+            //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT__NONE_CRMUSER);
+            throw new Exception("0307008");
         }
         SysUser sysUser = result.getBody();
         crmUserVO.setUserId(sysUser.getId());
@@ -100,7 +101,8 @@ public class AuthManager {
 
         Result.ReturnData<List<SysRole>> listReturnData = iAuth.getRoleByUserId(Long.parseLong(userId));
        if(listReturnData==null||listReturnData.getBody()==null){
-           throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_AGENTANDADMIN);
+         //  throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_AGENTANDADMIN);
+           throw new Exception("0307009");
        }
         List<SysRole> roleList =  listReturnData.getBody();
         for (SysRole sysRole:roleList) {
@@ -109,7 +111,8 @@ public class AuthManager {
             }
         }
         if(crmUserVO.getUserRole()==null){
-            throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_AGENTANDADMIN);
+           // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_AGENTANDADMIN);
+            throw new Exception("0307009");
         }
        return crmUserVO;
     }

@@ -337,29 +337,57 @@ public class CallDetailServiceImpl implements CallDetailService {
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
         String result = "";
         if (list != null && list.size() > 0) {
-            for (CallOutDetail callOutDetail : list) {
+            for (CallOutDetail callOutDetail: list) {
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
-                result += getContext(botSay, customerSay);
+                String agentSay = callOutDetail.getAgentAnswerText();
+                result += getContext(botSay, customerSay, agentSay);
             }
         }
         return result;
     }
 
     @Override
-    public Map<String, String> getDialogues(String callIds) {
-        CallOutDetailExample example = new CallOutDetailExample();
-        String[] callidArr = callIds.split(",");
+    public List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin) {
 
-        List<BigInteger> idList = new ArrayList();
-        for(String callId: callidArr){
-            idList.add(new BigInteger(callId));
+        String customerId = String.valueOf(userID);
+        List<CallOutPlan> list;
+        CallOutPlanExample example = new CallOutPlanExample();
+        example.createCriteria().andCallIdIn(idList);
+        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
+            example.setCustomerId(customerId);
+            list = callOutPlanMapper.selectByExample4Encrypt(example);
+        }else{
+            list = callOutPlanMapper.selectByExample(example);
         }
 
+        List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
+
+        if (list != null && list.size() > 0) {
+            for (CallOutPlan callOutPlan : list) {
+                CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
+                BeanUtil.copyProperties(callOutPlan, callOutPlan4ListSelect);
+
+                callOutPlan4ListSelect.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
+                callOutPlan4ListSelect.setUserName(cacheManager.getUserName(callOutPlan.getCustomerId()));
+                callOutPlan4ListSelect.setCallId(callOutPlan.getCallId().toString());
+                listResult.add(callOutPlan4ListSelect);
+            }
+        }
+
+        return listResult;
+    }
+
+    @Override
+    public Map<String, String> getDialogues(List<BigInteger> idList) {
+        CallOutDetailExample example = new CallOutDetailExample();
+
         example.createCriteria().andCallIdIn(idList);
-        example.setOrderByClause("call_id,IF(ISNULL(bot_answer_time),customer_say_time,bot_answer_time)");
+        example.setOrderByClause("IF(ISNULL(bot_answer_time),IF(ISNULL(agent_answer_time),customer_say_time,agent_answer_time),bot_answer_time)");
 
         List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
+
+
 
         Map<String, String> map = new HashMap<String, String>();
         if (list != null && list.size() > 0) {
@@ -368,13 +396,14 @@ public class CallDetailServiceImpl implements CallDetailService {
 
                 String botSay = callOutDetail.getBotAnswerText();
                 String customerSay = callOutDetail.getCustomerSayText();
+                String agentSay = callOutDetail.getAgentAnswerText();
 
                 if (map.get(String.valueOf(callId)) == null) {
-                    String result = getContext(botSay, customerSay);
+                    String result = getContext(botSay, customerSay, agentSay);
                     map.put(String.valueOf(callId), result);
                 } else {
                     String result = map.get(String.valueOf(callId));
-                    result += getContext(botSay, customerSay);
+                    result += getContext(botSay, customerSay, agentSay);
                     map.put(String.valueOf(callId), result);
                 }
             }
@@ -382,19 +411,15 @@ public class CallDetailServiceImpl implements CallDetailService {
         return map;
     }
 
-    private String getContext(String botSay, String customerSay) {
-        if (customerSay == null) {
-            customerSay = "";
-        }
-        if (botSay == null) {
-            botSay = "";
-        }
-        if (StringUtils.isBlank(botSay)) {
+    private String getContext(String botSay, String customerSay, String agentSay) {
+        if (StringUtils.isNotBlank(customerSay)) {
             return "客户：" + customerSay + "\r\n";
-        } else if (StringUtils.isBlank(customerSay)) {
+        } else if (StringUtils.isNotBlank(botSay)) {
             return "机器人：" + botSay + "\r\n";
-        } else {
-            return "机器人：" + botSay + "\r\n客户：" + customerSay + "\r\n";
+        }else if (StringUtils.isNotBlank(agentSay)) {
+            return "坐席：" + agentSay + "\r\n";
+        }else{
+            return "";
         }
     }
 

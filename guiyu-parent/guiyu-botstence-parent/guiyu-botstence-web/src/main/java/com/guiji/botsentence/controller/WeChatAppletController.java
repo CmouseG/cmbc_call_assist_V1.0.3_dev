@@ -21,9 +21,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,13 +41,17 @@ import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExt;
 import com.guiji.botsentence.dao.ext.VoliceInfoExtMapper;
 import com.guiji.botsentence.service.IBotSentenceLogService;
+import com.guiji.botsentence.service.ISelfTestService;
 import com.guiji.botsentence.service.IVoliceService;
 import com.guiji.botsentence.service.IWeChatAppletService;
+import com.guiji.botsentence.service.impl.BotSentenceApprovalServiceImpl;
 import com.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
 import com.guiji.botsentence.service.impl.VoliceServiceImpl;
 import com.guiji.botsentence.util.AudioConvertUtil;
 import com.guiji.botsentence.util.BotSentenceUtil;
 import com.guiji.botsentence.vo.BotSentenceProcessVO;
+import com.guiji.botsentence.vo.ResponseSelfTestVO;
+import com.guiji.botsentence.vo.SelfTestVO;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
@@ -80,6 +87,12 @@ public class WeChatAppletController {
 	@Autowired
 	private IBotSentenceLogService botSentenceLogService;
 	
+	@Autowired
+    ISelfTestService selfTestService;
+    
+    @Autowired
+    BotSentenceApprovalServiceImpl botSentenceApprovalService;
+	
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 	
 	@Value("${create.file.tmp}")
@@ -110,7 +123,7 @@ public class WeChatAppletController {
 	
 	
 	@RequestMapping(value="queryBotSentenceProcessListByAccountNo")
-	public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@RequestHeader String userId) {
+	public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@RequestParam("userId") String userId) {
 		if(StringUtils.isBlank(userId)) {
 			throw new CommonException("用户账号为空");
 		}
@@ -169,7 +182,7 @@ public class WeChatAppletController {
 	}
 
 	@RequestMapping(value="queryBotSentenceProcessByProcessId")
-	public ServerResult<BotSentenceProcessVO> queryBotSentenceProcessByProcessId(@JsonParam String processId) {
+	public ServerResult<BotSentenceProcessVO> queryBotSentenceProcessByProcessId(@RequestParam("processId") String processId) {
 		BotSentenceProcessVO vo = new BotSentenceProcessVO();
 		BotSentenceProcess process = botSentenceProcessService.queryBotsentenceProcessInfo(processId);
 		BeanUtil.copyProperties(process, vo);
@@ -331,6 +344,13 @@ public class WeChatAppletController {
 	}
 	
 	
+	@RequestMapping(value="queryVoliceListSimple")
+	public ServerResult<List<VoliceInfoExt>> queryVoliceListSimple(@JsonParam String processId) {
+		List<VoliceInfoExt> list = service.queryVoliceListSimple(processId);
+		return ServerResult.createBySuccess(list);
+	}
+	
+	
 	/**
 	 * 查询下一页，上一页
 	 * @param accountNo
@@ -344,4 +364,71 @@ public class WeChatAppletController {
 		
 		return null;
 	}
+	
+	
+	@RequestMapping(value="deleteAllVolice")
+	public ServerResult<String> deleteAllVolice(@JsonParam String processId) {
+		if(StringUtils.isBlank(processId)) {
+			return ServerResult.createByErrorMessage("请求参数不完整!");
+		}
+		service.deleteAllVolice(processId);
+		return ServerResult.createBySuccess();
+	}
+	
+	
+	 @PostMapping("/selftest")
+	    public ServerResult<ResponseSelfTestVO> selfTest(@RequestBody SelfTestVO request, String userId){
+		 logger.info("收到自测请求[{}]", request);
+	        if(StringUtils.isNotBlank(request.getTempId())) {
+	        	request.setTempId(request.getTempId().replace("_en", ""));
+	        }else {
+	        	return ServerResult.createByErrorMessage("话术模板为空!");
+	        }
+	        
+	        if(StringUtils.isBlank(request.getProcessId())) {
+	        	return ServerResult.createByErrorMessage("话术流程编号为空!");
+	        }
+	        ServerResult serverResult = null;
+	        
+	        //判断当前模板是否需要重新部署
+	        BotSentenceProcess process = botSentenceProcessService.queryBotsentenceProcessInfo(request.getProcessId());
+	        if(Constant.TEST_STATE_ONLINE.equals(process.getTestState())) {
+	        	logger.info("当前话术模板已部署测试环境，可直接进行测试...");
+	        }else {
+	        	logger.info("当前话术模板做过修改，需要重新部署...");
+	        	botSentenceApprovalService.deployTestSellbotByScp(request.getProcessId(), userId);
+	        }
+	        try{
+	            ResponseSelfTestVO result = selfTestService.makeTest(request, userId);
+	            logger.info("测试返回结果为[{}]", result);
+	            serverResult = ServerResult.createBySuccess(result);
+	        }catch (Exception ex){
+	        	logger.warn("自测产生异常", ex);
+	        	logger.info("释放机器人..." + request.getUuid());
+	            selfTestService.endTest(request.getUuid());
+	            serverResult = ServerResult.createByErrorMessage(ex.getMessage());
+	        }
+
+	        logger.info("自测返回结果[{}]", serverResult);
+	        return serverResult;
+	    }
+
+	    @PostMapping("/endtest")
+	    public ServerResult<String> endTest(@RequestBody SelfTestVO request){
+	    	logger.info("收到关闭自测请求[{}]", request);
+	        ServerResult serverResult = null;
+	        try{
+	            selfTestService.endTest(request.getUuid());
+	            serverResult = ServerResult.createBySuccess();
+	        }catch (Exception ex){
+	        	logger.warn("结束自测产生异常", ex);
+	            serverResult = ServerResult.createByErrorMessage(ex.getMessage());
+	        }
+
+	        logger.info("结束自测返回结果[{}]", serverResult);
+	        return serverResult.createBySuccess("结束测试...");
+	    }
+	
+	
+	
 }

@@ -262,8 +262,8 @@ public class BotSentenceProcessController {
 	 * @return
 	 */
 	@RequestMapping(value="deleteDomain")
-	public ServerResult<FlowInfoVO> deleteDomain(@JsonParam String processId, @JsonParam String domainId) {
-		botSentenceProcessService.deleteDomain(processId, domainId);
+	public ServerResult<FlowInfoVO> deleteDomain(@JsonParam String processId, @JsonParam String domainId, @RequestHeader String userId) {
+		botSentenceProcessService.deleteDomain(processId, domainId, userId);
 		FlowInfoVO flow = botSentenceProcessService.initFlowInfo(processId);
 		return ServerResult.createBySuccess(flow);
 	}
@@ -275,8 +275,8 @@ public class BotSentenceProcessController {
 	 * @return
 	 */
 	@RequestMapping(value="deleteBranch")
-	public ServerResult<FlowInfoVO> deleteBranch(@JsonParam String processId, @JsonParam String branchId) {
-		botSentenceProcessService.deleteBranch(processId, branchId);
+	public ServerResult<FlowInfoVO> deleteBranch(@JsonParam String processId, @JsonParam String branchId , @RequestHeader String userId) {
+		botSentenceProcessService.deleteBranch(processId, branchId, userId);
 		FlowInfoVO flow = botSentenceProcessService.initFlowInfo(processId);
 		return ServerResult.createBySuccess(flow);
 	}

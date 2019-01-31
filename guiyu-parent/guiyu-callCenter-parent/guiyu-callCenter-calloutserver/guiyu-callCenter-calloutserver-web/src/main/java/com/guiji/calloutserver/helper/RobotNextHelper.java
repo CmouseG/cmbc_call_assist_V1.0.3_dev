@@ -208,7 +208,7 @@ public class RobotNextHelper {
         if (scheduleConcurrentHashMap.containsKey(uuid)) {
             try {
                 log.info("stop send aiCallNext timer task，uuid[{}]", uuid);
-                scheduleConcurrentHashMap.get(uuid).cancel(true);
+                scheduleConcurrentHashMap.get(uuid).cancel(false);
                 scheduleConcurrentHashMap.remove(uuid);
             } catch (Exception ex) {
                 log.error("stop send aiCallNext timer task has error:", ex);

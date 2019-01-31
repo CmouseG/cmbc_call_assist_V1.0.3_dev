@@ -2,6 +2,7 @@ package com.guiji.botsentence.api;
 
 import java.util.List;
 
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import com.guiji.component.result.ServerResult;
  * @author 张朋
  *
  */
+@FeignClient("guiyu-botstence-web")
 public interface IBotSentenceWechatService {
 
 	@RequestMapping(value="updateAccount")

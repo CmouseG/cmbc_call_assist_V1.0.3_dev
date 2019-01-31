@@ -44,17 +44,17 @@ public class CallServiceImpl implements CallService {
 
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
-                            "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
-                            ", record_session:/recordings/%s" +
-                            ", park' inline",
-                    callplan.getCallId(),
-                    callplan.getLineId(),
-                    callplan.getPhoneNum(),
-                    ip,
-                    fsLine.getFsInPort(),
-                    aliAsrConfig.getAccessId(),
-                    aliAsrConfig.getAccessSecret(),
-                    callRecord.getRecordFile());
+                        "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
+                        ", set:execute_on_answer=record_session /recordings/%s" +
+                        ", park' inline",
+                callplan.getCallId(),
+                callplan.getLineId(),
+                callplan.getPhoneNum(),
+                ip,
+                fsLine.getFsInPort(),
+                aliAsrConfig.getAccessId(),
+                aliAsrConfig.getAccessSecret(),
+                callRecord.getRecordFile());
 
         log.info("开始执行呼叫命令[{}]", cmd);
         fsManager.executeAsync(cmd);

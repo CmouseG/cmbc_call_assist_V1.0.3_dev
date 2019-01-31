@@ -216,7 +216,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			criteria.andTemplateNameLike("%" + templateName + "%");
 		}
 		criteria.andOrgCodeLike(orgCode+"%");
-		criteria.andAccountNoEqualTo(String.valueOf(userId));
+		//criteria.andAccountNoEqualTo(String.valueOf(userId));
 		
 		criteria.andStateNotEqualTo("99");
 		return botSentenceProcessMapper.countByExample(example);

@@ -97,7 +97,7 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信平台
 	 */
-	@PostMapping(value = "delPlatform")
+	@GetMapping(value = "delPlatform")
 	public ReturnData<String> delPlatform(Integer id, String platName)
 	{
 		try

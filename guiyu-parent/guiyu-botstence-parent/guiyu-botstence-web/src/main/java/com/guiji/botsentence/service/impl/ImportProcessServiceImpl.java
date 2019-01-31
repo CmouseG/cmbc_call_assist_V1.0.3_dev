@@ -526,53 +526,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					return false;
 				}
 			} else if (file.getName().equals("stat.json")) {/*// 处理stat.json，插入到label表
-				try {
-					String statContent = FileUtil.readToString(file);
-					JSONObject statJSONObject = JSON.parseObject(statContent);
-					for (Entry<String, Object> entry : statJSONObject.entrySet()) {
-						String labelName = entry.getKey();
-						if (labelName.equals("A") || labelName.equals("B") || labelName.equals("C")
-								|| labelName.equals("D") || labelName.equals("E")) {
-							JSONObject jSONObject = (JSONObject) entry.getValue();
-							ImportLabelVO importLabelVO = JSON.parseObject(jSONObject.toJSONString(),
-									ImportLabelVO.class);
-
-							BotSentenceLabel botSentenceLabel = new BotSentenceLabel();
-							botSentenceLabel.setBusyCount(importLabelVO.getBusy_count());
-							botSentenceLabel.setConversationCount(importLabelVO.getConversation_count());
-							botSentenceLabel.setDenyCount(importLabelVO.getDeny_count());
-							botSentenceLabel.setKeywords(importLabelVO.getKeywords());
-							botSentenceLabel.setLabelName(labelName);
-							botSentenceLabel.setProcessId(processId);
-							botSentenceLabel.setSpecialCount(importLabelVO.getSpecial_count());
-							botSentenceLabel.setUsedTimeS(importLabelVO.getUsed_time_s());
-
-							if (labelName.equals("A")) {
-								botSentenceLabel.setScoreLow(50d);
-								botSentenceLabel.setScoreUp(100d);
-							} else if (labelName.equals("B")) {
-								botSentenceLabel.setScoreLow(30d);
-								botSentenceLabel.setScoreUp(49d);
-							} else if (labelName.equals("C")) {
-								botSentenceLabel.setScoreLow(10d);
-								botSentenceLabel.setScoreUp(29d);
-							} else if (labelName.equals("D")) {
-								botSentenceLabel.setScoreLow(0d);
-								botSentenceLabel.setScoreUp(9d);
-							} else if (labelName.equals("E")) {
-								botSentenceLabel.setScoreLow(0d);
-								botSentenceLabel.setScoreUp(0d);
-							}
-							botSentenceLabel.setCrtTime(date);
-							botSentenceLabel.setCrtUser("systemImport");
-							botSentenceLabelMapper.insertSelective(botSentenceLabel);
-						}
-
-					}
-				} catch (IOException e) {
-					logger.error("read stat.json IOException:" + e);
-					return false;
-				}
+				
 			*/} else if (file.getName().equals("template.json")) {
 				try {
 					template_json = FileUtil.readToString(file);
@@ -628,10 +582,6 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		//botSentenceAddition.setWeightsTxt(weights_txt);
 		botSentenceAdditionMapper.insertSelective(botSentenceAddition);
 
-		
-		//处理关键词
-		botSentenceKeyWordsService.initSimTxtKeywords(sim_txt, paramVO.getIndustryId());
-		logger.info("关键词处理完成 ");
 		
 		// 处理domain
 		List<BotSentenceDomain> domainList = new ArrayList<BotSentenceDomain>();
@@ -720,42 +670,6 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			processDomains(domainMap.get(key), key,
 					processId, voliceMap, date,domainList,branchList,responseMap,template_id, userId, mavMap, mainDomainList, mainBranchList, mavDurationMap);
 		}
-		
-		
-		/*for (File file : listFile) {
-			String fileName = file.getName();
-			if (fileName.equals("new_domain_cfg")) {
-				File[] domainFiles = file.listFiles();
-				for (File domainFile : domainFiles) {
-					String domainFileName = domainFile.getName();
-					// <*后的id,*前面的内容>
-					Map<String, String> responseMap = new HashMap<String, String>();
-					if (domainFileName.endsWith(".json")) {
-						try {
-							processDomains(FileUtil.readToString(domainFile), domainFileName.replace(".json", ""),
-									processId, voliceMap, date,domainList,branchList,responseMap,template_id, userId, mavMap);
-						} catch (IOException e) {
-							logger.error("read new_domain_cfg: json file IOException:" + e);
-							return false;
-						}
-					}
-				}
-			}
-		}*/
-		
-		
-		/*String domainName = "开场白";
-		BotSentenceDomain startExplainDomain = null;
-		for(BotSentenceDomain temp : domainList) {
-			if("解释开场白".equals(temp.getDomainName())) {
-				startExplainDomain = temp;
-			}
-		}
-		
-		
-		while(StringUtils.isNotBlank(domainName)) {
-			domainName = setMainFlow(domainName, domainList, startExplainDomain);
-		}*/
 		
 		List<String> mainDomainNameList = new ArrayList<>();
 		BotSentenceDomain startDomain = null;
@@ -865,6 +779,19 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			
 			
 			botSentenceBranchMapper.insertSelective(botSentenceBranch);
+		}
+		
+		
+		//导入基础模板，则处理关键词库问题
+		if(!"02".equals(paramVO.getTemplateType())) {
+			//处理关键词
+			botSentenceKeyWordsService.initSimTxtKeywords(sim_txt, paramVO.getIndustryId());
+			logger.info("关键词处理完成 ");
+			
+			
+			//处理当前模板的关键词库
+			botSentenceKeyWordsService.initTemplateKeywords(sim_txt, processId);
+			logger.info("处理自定义词库完成...");
 		}
 		
 		logger.info("------>>end import data,processId:" + processId);

@@ -295,6 +295,8 @@ public class FsBotHandler {
         CallOutPlan realCallPlan = callOutPlanService.findByCallId(new BigInteger(sellbotResponse.getCallId()));
         aiManager.releaseAi(realCallPlan);
 
+        //停止定时任务
+        robotNextHelper.stopAiCallNextTimer(callPlan.getCallId().toString());
         //构建事件抛出
         ToAgentEvent toAgentEvent = new ToAgentEvent(callPlan);
         asyncEventBus.post(toAgentEvent);

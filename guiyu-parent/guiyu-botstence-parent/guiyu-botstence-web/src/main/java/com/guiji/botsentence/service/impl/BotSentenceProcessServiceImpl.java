@@ -216,7 +216,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			criteria.andTemplateNameLike("%" + templateName + "%");
 		}
 		criteria.andOrgCodeLike(orgCode+"%");
-		criteria.andAccountNoEqualTo(String.valueOf(userId));
+		//criteria.andAccountNoEqualTo(String.valueOf(userId));
 		
 		criteria.andStateNotEqualTo("99");
 		return botSentenceProcessMapper.countByExample(example);
@@ -3159,7 +3159,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 
 	@Override
 	@Transactional
-	public void deleteDomain(String processId, String domainId) {
+	public void deleteDomain(String processId, String domainId, String userId) {
 		List<String> domainNames = new ArrayList<>();
 		
 		//删除domain本身
@@ -3228,11 +3228,13 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			botSentenceSurveyIntentMapper.deleteByExample(surveyIntentExample);
 		}
 		botSentenceDomainMapper.deleteByPrimaryKey(domainId);
+		
+		this.updateProcessState(processId, userId);
 	}
 
 	@Override
 	@Transactional
-	public void deleteBranch(String processId, String branchId) {
+	public void deleteBranch(String processId, String branchId, String userId) {
 		//删除branch本身
 		//BotSentenceBranch branch = botSentenceBranchMapper.selectByPrimaryKey(branchId);
 		botSentenceBranchMapper.deleteByPrimaryKey(branchId);
@@ -3250,6 +3252,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				botSentenceDomainMapper.updateByPrimaryKey(domain);
 			}
 		}*/
+		
+		this.updateProcessState(processId, userId);
 	}
 
 	

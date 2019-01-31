@@ -786,10 +786,9 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 	
 	@Override
 	public void initTemplateKeywords(String simTxt, String processId) {
-		//获取相似词库关键词
-		//BotSentenceAddition addition = botSentenceAdditionMapper.selectByPrimaryKey(processId);
-		
+
 		Map<String, List<String>> simKeywordMap = new HashMap<>();
+		
 		List<List<String>> simList = BotSentenceUtil.getSimtxtKeywordsList(simTxt);
 		if(null != simList && simList.size() > 0) {
 			for(List<String> simLine : simList) {
@@ -800,7 +799,9 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 				}
 			}
 		}
-		//获取当前行业的词库
+		
+		
+		//获取当前模板的词库
 		BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
 		intentExample.createCriteria().andProcessIdEqualTo(processId);
 		List<BotSentenceIntent> intentList = botSentenceIntentMapper.selectByExampleWithBLOBs(intentExample);
@@ -813,7 +814,14 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
                 String twokeywords = keywordList.get(1);
                 
                 List<String> oneKeywordList = BotSentenceUtil.StringToList(onekeywords);
-                List<String> newKeywordList = BotSentenceUtil.StringToList(onekeywords);
+                
+                List<String> newKeywordList = new ArrayList<>();
+                for(String keyword : oneKeywordList) {
+                	if(!newKeywordList.contains(keyword)) {
+                		newKeywordList.add(keyword);
+                	}
+                }
+                
                 for(String keyword : oneKeywordList) {
                 	keyword = keyword.replace("\"", "");
                 	if(simKeywordMap.containsKey(keyword)) {
@@ -821,13 +829,15 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 						List<String> simKeywordList = simKeywordMap.get(keyword);
 						if(null != simKeywordList && simKeywordList.size() > 0) {
 							for(String simKeyword : simKeywordList) {
-								if(!newKeywordList.contains(simKeyword)) {
-									newKeywordList.add(simKeyword);
+								if(!newKeywordList.contains("\"" + simKeyword + "\"")) {
+									newKeywordList.add("\"" + simKeyword + "\"");
 								}
 							}
 						}
 					}
                 }
+                
+                Collections.reverse(newKeywordList);
                 
                 String keywordsJson = BotSentenceUtil.generateKeywords(BotSentenceUtil.listToString(newKeywordList));
                 if(StringUtils.isNotBlank(keywordsJson)) {
@@ -847,5 +857,6 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 				}
 			}
 		}
+	
 	}
 }

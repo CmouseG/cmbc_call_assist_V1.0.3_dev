@@ -785,8 +785,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		//导入基础模板，则处理关键词库问题
 		if(!"02".equals(paramVO.getTemplateType())) {
 			//处理关键词
-			botSentenceKeyWordsService.initSimTxtKeywords(sim_txt, paramVO.getIndustryId());
-			logger.info("关键词处理完成 ");
+			/*botSentenceKeyWordsService.initSimTxtKeywords(sim_txt, paramVO.getIndustryId());
+			logger.info("关键词处理完成 ");*/
 			
 			
 			//处理当前模板的关键词库

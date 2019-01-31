@@ -47,4 +47,6 @@ public interface BotSentenceKeyWordsService {
     public void initKeywords();
     
     public void initSimTxtKeywords(String simTxt, String industryId);
+    
+    public void initTemplateKeywords(String simTxt, String processId);
 }

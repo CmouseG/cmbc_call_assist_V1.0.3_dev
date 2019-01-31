@@ -47,6 +47,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     AuthService authService;
     @Autowired
     CallOutDetailLogMapper callOutDetailLogMapper;
+    @Autowired
+    AgentMapper agentMapper;
 
     @Override
     public void updateIsRead(String callId) {
@@ -67,9 +69,17 @@ public class CallDetailServiceImpl implements CallDetailService {
             criteria.andCallStartTimeLessThan(endDate);
         }
         if(!isSuperAdmin){//不是管理员
-            if (authService.isAgentOrCompanyAdmin(Long.valueOf(customerId)) ) {//代理商 或者企业管理员
+            long userId = Long.valueOf(customerId);
+            if (authService.isAgentOrCompanyAdmin(userId) ) {//代理商 或者企业管理员
                 criteria.andOrgCodeLike(orgCode+"%");
-            } else {
+            } else if(authService.isSeat(userId)){//客服
+                String userName = authService.getUserName(userId);
+                AgentExample agentExample = new AgentExample();
+                agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
+                List<Agent> listAgent = agentMapper.selectByExample(agentExample);
+                Long agentId = listAgent.get(0).getUserId();
+                criteria.andAgentIdEqualTo(String.valueOf(agentId));
+            }else {
                 criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
             }
         }
@@ -160,8 +170,9 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.setLimitEnd(pageSize);
         example.setOrderByClause("create_time desc");
 
+        Long userId = Long.valueOf(customerId);
         List<CallOutPlan> list;
-        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
+        if(isSuperAdmin || authService.isSeatOrAgent(userId)){
             example.setCustomerId(customerId);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
         }else{

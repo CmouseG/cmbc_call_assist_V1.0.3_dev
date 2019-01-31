@@ -4,6 +4,7 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,40 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         return  false;
+    }
+
+    @Override
+    public boolean isSeat(Long userId) {
+        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
+        List<SysRole> listRole = result.getBody();
+        if(listRole!=null && listRole.size()>0){
+            for(SysRole sysRole:listRole){
+                if(sysRole.getId()==5){
+                    return true;
+                }
+            }
+        }
+        return  false;
+    }
+
+    @Override
+    public boolean isSeatOrAgent(Long userId) {
+        Result.ReturnData<List<SysRole>> result =  iAuth.getRoleByUserId(userId);
+        List<SysRole> listRole = result.getBody();
+        if(listRole!=null && listRole.size()>0){
+            for(SysRole sysRole:listRole){
+                if(sysRole.getId()==5 || sysRole.getId()==2){
+                    return true;
+                }
+            }
+        }
+        return  false;
+    }
+
+    @Override
+    public String getUserName(Long userId) {
+
+        Result.ReturnData<SysUser> returnData = iAuth.getUserById(userId);
+        return returnData.getBody().getUsername();
     }
 }

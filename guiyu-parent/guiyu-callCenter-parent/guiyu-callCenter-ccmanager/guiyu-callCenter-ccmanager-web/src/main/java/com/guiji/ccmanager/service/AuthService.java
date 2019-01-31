@@ -22,4 +22,25 @@ public interface AuthService {
      * @return
      */
     boolean isAgentOrCompanyAdmin(Long userId);
+
+    /**
+     * 坐席，企业客服
+     * @param userId
+     * @return
+     */
+    boolean isSeat(Long userId);
+
+    /**
+     *  企业客服或者是代理商
+     * @param userId
+     * @return
+     */
+    boolean isSeatOrAgent(Long userId);
+
+    /**
+     * 获取用户名
+     * @param userId
+     * @return
+     */
+    String getUserName(Long userId);
 }

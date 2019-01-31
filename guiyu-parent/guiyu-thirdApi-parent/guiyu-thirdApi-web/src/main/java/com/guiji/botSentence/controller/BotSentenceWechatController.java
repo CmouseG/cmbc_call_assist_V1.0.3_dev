@@ -8,7 +8,6 @@ import com.guiji.botsentence.api.entity.SelfTestVO;
 import com.guiji.botsentence.api.entity.VoliceInfoExt;
 import com.guiji.component.result.ServerResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,22 +19,13 @@ public class BotSentenceWechatController {
     @Autowired
     IBotSentenceWechatService botSentenceWechatService;
 
-
-    @RequestMapping(value = "updateAccount")
-    public ServerResult<String> updateAccount(@RequestParam("accountNo") String accountNo,
-                                              @RequestParam("password") String password) {
-        return botSentenceWechatService.updateAccount(accountNo, password);
-    }
-
-
     @RequestMapping(value = "queryBotSentenceProcessListByAccountNo")
-    public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@RequestParam("accountNo") String accountNo) {
-        return botSentenceWechatService.queryBotSentenceProcessListByAccountNo(accountNo);
+    public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@RequestHeader String userId) {
+        return botSentenceWechatService.queryBotSentenceProcessListByAccountNo(userId);
     }
 
 
     @RequestMapping(value = "uploadOneVolice")
-    @Transactional
     public ServerResult<VoliceInfoExt> uploadOneVolice(MultipartFile multipartFile, @RequestParam("processId") String processId,
                                                        @RequestParam("voliceId") String voliceId, @RequestParam("type") String type,
                                                        @RequestHeader String userId) {
@@ -43,15 +33,28 @@ public class BotSentenceWechatController {
                 voliceId, type, userId);
     }
 
-    @PostMapping("/selftest")
-    public ServerResult<ResponseSelfTestVO> selfTest(@RequestParam("request") SelfTestVO request, @RequestHeader String userId) {
+    @RequestMapping("selftest")
+    public ServerResult<ResponseSelfTestVO> selfTest(@RequestBody SelfTestVO request, @RequestHeader String userId) {
         return botSentenceWechatService.selfTest(request, userId);
     }
 
-    @PostMapping("/endtest")
-    public ServerResult<String> endTest(@RequestParam("request") SelfTestVO request) {
+    @RequestMapping("endtest")
+    public ServerResult<String> endTest(@RequestBody SelfTestVO request) {
         return botSentenceWechatService.endTest(request);
     }
 
+    @RequestMapping(value="queryVoliceListSimple")
+	public ServerResult<List<VoliceInfoExt>> queryVoliceListSimple(@RequestParam("processId") String processId) {
+		return botSentenceWechatService.queryVoliceListSimple(processId);
+	}
 
+    @RequestMapping(value="deleteAllVolice")
+   	public ServerResult<String> deleteAllVolice(@RequestParam("processId") String processId) {
+   		return botSentenceWechatService.deleteAllVolice(processId);
+   	}
+    
+    @RequestMapping(value="queryBotSentenceProcessByProcessId")
+	public ServerResult<BotSentenceProcessVO> queryBotSentenceProcessByProcessId(@RequestParam("processId") String processId){
+    	return botSentenceWechatService.queryBotSentenceProcessByProcessId(processId);
+    }
 }

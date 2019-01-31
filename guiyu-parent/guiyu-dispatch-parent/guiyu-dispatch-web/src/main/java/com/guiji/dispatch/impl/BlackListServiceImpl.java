@@ -85,10 +85,10 @@ public class BlackListServiceImpl implements IBlackListService {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
 				if (phone == null || phone == "" || !isNumeric(phone) || phone.length() != 11) {
-					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId);
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId,orgCode);
 				}
 				if (phones.contains(phone)) {
-					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_DUPLICATE, userId);
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_DUPLICATE, userId,orgCode);
 				}
 			}
 			if (phone == "") {
@@ -120,12 +120,13 @@ public class BlackListServiceImpl implements IBlackListService {
 		}
 	}
 
-	private void saveErrorRecords(String phone, Integer blackListImportUnidentified, Long userId) {
+	private void saveErrorRecords(String phone, Integer blackListImportUnidentified, Long userId,String orgCode) {
 		BlackListRecords record = new BlackListRecords();
 		record.setCreateTime(DateUtil.getCurrent4Time());
 		record.setPhone(phone);
 		record.setType(blackListImportUnidentified);
 		record.setUserId(userId.intValue());
+		record.setOrgCode(orgCode);
 		ReturnData<SysUser> userById = auth.getUserById(userId);
 		record.setUserName(userById.getBody().getUsername());
 		blackRecordsMapper.insert(record);

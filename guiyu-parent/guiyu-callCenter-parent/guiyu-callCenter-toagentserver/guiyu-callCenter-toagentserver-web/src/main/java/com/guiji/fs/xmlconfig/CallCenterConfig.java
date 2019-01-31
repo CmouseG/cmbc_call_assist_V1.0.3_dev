@@ -58,7 +58,7 @@ public class CallCenterConfig {
         BeanUtils.copyProperties(templateAgent, xa);
         xa.setName(agent.getAgentId());
         xa.setContact(getAgentContact(agent));
-
+        xa.setMax_no_answer("999999");
         callCenterConfig.getAgents().getAgent().add(xa);
         flushConfig();
         return true;
@@ -501,6 +501,7 @@ public class CallCenterConfig {
             BeanUtils.copyProperties(templateAgent, xa);
             xa.setName(agent.getAgentId());
             xa.setContact(getAgentContact(agent));
+            xa.setMax_no_answer("999999");
             callCenterConfig.getAgents().getAgent().add(xa);
         }
         for (Queue queue:queueList) {

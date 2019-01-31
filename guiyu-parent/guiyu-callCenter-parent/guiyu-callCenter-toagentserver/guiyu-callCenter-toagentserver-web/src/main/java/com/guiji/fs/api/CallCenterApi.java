@@ -115,11 +115,11 @@ public class CallCenterApi {
         String cmd1 = String.format("callcenter_config agent add %s callback", agent.getAgentId());
         String cmd2 = String.format("callcenter_config agent set contact %s %s}", agent.getAgentId(), agent.getContact());
         String cmd3 = String.format("callcenter_config agent set status %s Available", agent.getAgentId());
-
+        String cmd4 = String.format("callcenter_config agent set max_no_answer %s 999999", agent.getAgentId());
         freeSWITCH.execute(cmd1);
         freeSWITCH.execute(cmd2);
         freeSWITCH.execute(cmd3);
-
+        freeSWITCH.execute(cmd4);
         return true;
     }
 

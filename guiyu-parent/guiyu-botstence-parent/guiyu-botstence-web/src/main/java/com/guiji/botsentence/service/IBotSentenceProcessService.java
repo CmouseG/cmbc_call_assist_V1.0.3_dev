@@ -83,11 +83,11 @@ public interface IBotSentenceProcessService {
 	
 	public void deleteRefuseBranch(String processId, String domainName, String voliceId);
 	
-	public void deleteDomain(String processId, String domainId);
+	public void deleteDomain(String processId, String domainId, String userId);
 	
 	public String deleteDomainSimple(String domainId);
 	
-	public void deleteBranch(String processId, String branchId);
+	public void deleteBranch(String processId, String branchId, String userId);
 	
 	public void updateProcessState(String processId, String userId);
 	

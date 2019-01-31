@@ -49,6 +49,17 @@ public class BotSentenceProcessVO implements Serializable {
     private String host;//域名
     
     private String machineCode;//机器码
+    
+    private String volicedRate;//录音百分比
+    
+    private int finish;
+	private int unfinish; 
+	
+	private String testState;
+	
+	private String orgCode;
+    private String orgName;
+    private String userName;
 
     private static final long serialVersionUID = 1L;
 
@@ -259,6 +270,62 @@ public class BotSentenceProcessVO implements Serializable {
 
 	public void setMachineCode(String machineCode) {
 		this.machineCode = machineCode;
+	}
+
+	public String getVolicedRate() {
+		return volicedRate;
+	}
+
+	public void setVolicedRate(String volicedRate) {
+		this.volicedRate = volicedRate;
+	}
+
+	public int getFinish() {
+		return finish;
+	}
+
+	public void setFinish(int finish) {
+		this.finish = finish;
+	}
+
+	public int getUnfinish() {
+		return unfinish;
+	}
+
+	public void setUnfinish(int unfinish) {
+		this.unfinish = unfinish;
+	}
+
+	public String getTestState() {
+		return testState;
+	}
+
+	public void setTestState(String testState) {
+		this.testState = testState;
+	}
+
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
     

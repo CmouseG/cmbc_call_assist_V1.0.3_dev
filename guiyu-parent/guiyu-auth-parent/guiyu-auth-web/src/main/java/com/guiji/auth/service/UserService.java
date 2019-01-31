@@ -3,6 +3,7 @@ package com.guiji.auth.service;
 import java.util.*;
 
 import com.guiji.auth.model.SysUserRoleVo;
+import com.guiji.notice.api.INoticeSetting;
 import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.entity.*;
 import com.guiji.utils.RedisUtil;
@@ -40,6 +41,9 @@ public class UserService {
 	private SysUserExtMapper sysUserExtMapper;
 
 	@Autowired
+	private INoticeSetting noticeSetting;
+
+	@Autowired
 	private RedisUtil redisUtil;
 
 	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
@@ -61,6 +65,7 @@ public class UserService {
 		mapper.insert(user);
 		mapper.insertUserRole(user.getId(),roleId);
 		mapper.addUserExt(user.getId());
+		noticeSetting.addNoticeSettingReceiver(user.getId());
 	}
 	
 	/**
@@ -264,5 +269,24 @@ public class UserService {
 
 	public SysUserExt getUserExtByUserId(Long id){
 		return mapper.getSysUserExtByUserId(id);
+	}
+
+	public void userBindWechat(Long userId,String weChat,String weChatOpenId) {
+		SysUserExt sysUserExt = new SysUserExt();
+		sysUserExt.setUserId(userId);
+		sysUserExt.setWechat(weChat);
+		sysUserExt.setWechatOpenid(weChatOpenId);
+		sysUserExt.setWechatStatus(1);//已绑定
+		sysUserExt.setUpdateTime(new Date());
+		sysUserExtMapper.updateByUserId(sysUserExt);
+		noticeSetting.addWeixinNoticeSettingReceiver(userId);
+	}
+
+	public void userUnBindWechat(Long userId) {
+		SysUserExt sysUserExt = new SysUserExt();
+		sysUserExt.setUserId(userId);
+		sysUserExt.setWechatStatus(0);//未绑定
+		sysUserExt.setUpdateTime(new Date());
+		sysUserExtMapper.updateByUserId(sysUserExt);
 	}
 }

@@ -1,5 +1,6 @@
 package com.guiji.auth.controller;
 
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -7,10 +8,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.guiji.auth.model.SysUserRoleVo;
+import com.guiji.auth.model.UserIdVo;
 import com.guiji.auth.service.OrganizationService;
+import com.guiji.auth.util.RandomValidateCodeUtil;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUserExt;
+import com.guiji.utils.JsonUtils;
+import com.guiji.wechat.api.WeChatApi;
+import com.guiji.wechat.vo.QRCodeReqVO;
+import com.guiji.wechat.vo.QRCodeRpsVO;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +40,15 @@ import com.guiji.user.vo.SysUserVo;
 import com.guiji.user.vo.UserParamVo;
 import com.guiji.utils.RedisUtil;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * Created by ty on 2018/10/22.
  */
 @RestController
 public class UserController implements IAuth {
+	static Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	private UserService service;
@@ -41,6 +56,8 @@ public class UserController implements IAuth {
 	private RedisUtil redisUtil;
 	@Autowired
 	private OrganizationService organizationService;
+	@Autowired
+	private WeChatApi weChatApi;
 
 	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
 
@@ -233,6 +250,7 @@ public class UserController implements IAuth {
 		return Result.ok(user);
 	}
 
+
 	@RequestMapping("/user/checkUsernameIsExist")
 	public ReturnData<Boolean> checkUsernameIsExist(String username){
 		SysUser user=new SysUser();
@@ -263,5 +281,45 @@ public class UserController implements IAuth {
 	public ReturnData<SysUserExt> getUserExtByUserId(Long userId) {
 		return Result.ok(service.getUserExtByUserId(userId));
 	}
+
+	/**
+	 * 生成验证码
+	 */
+	@RequestMapping(value = "/user/getQRCode")
+	public void getQRCode(Long userId, HttpServletResponse response) {
+		QRCodeReqVO request = new QRCodeReqVO();
+		UserIdVo userIdVo = new UserIdVo();
+		userIdVo.setUserId(userId);
+		request.setCallbackParameter(JsonUtils.bean2Json(userIdVo));
+		Result.ReturnData<QRCodeRpsVO> result = weChatApi.getQRCode(request);
+		byte[] bytes = null;
+		OutputStream os = null;
+		if (result.success) {
+			if (result.getBody() != null) {
+				QRCodeRpsVO qrCodeRpsVO = (QRCodeRpsVO)result.getBody();
+				bytes = qrCodeRpsVO.getQrCodeBytes();
+			}
+		} else {
+			logger.error("生成二维码失败:" + result.getMsg());
+		}
+		try {
+			response.setContentType("image/png");
+			os = response.getOutputStream();
+			os.write(bytes);
+			os.flush();
+		}catch (Exception e) {
+			logger.error("生成二维码失败:" + e.getMessage());
+		}finally {
+			IOUtils.closeQuietly(os);
+		}
+
+	}
+
+	@RequestMapping("/user/userUnBindWechat")
+	public void userUnBindWechat(Long userId) {
+		service.userUnBindWechat(userId);
+	}
+
+
 
 }

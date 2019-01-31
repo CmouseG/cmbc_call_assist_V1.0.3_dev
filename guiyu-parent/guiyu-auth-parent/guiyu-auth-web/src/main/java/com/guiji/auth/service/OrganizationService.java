@@ -3,6 +3,7 @@ package com.guiji.auth.service;
 import java.util.List;
 
 import com.guiji.component.result.Result;
+import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.user.dao.SysUserMapper;
@@ -30,6 +31,8 @@ public class OrganizationService {
 	@Autowired
 	private IRobotRemote iRobotRemote;
 	@Autowired
+	private INoticeSetting noticeSetting;
+	@Autowired
 	private RedisUtil redisUtil;
 	private static final String REDIS_ORG_BY_USERID = "REDIS_ORG_BY_USERID_";
 	private static final String REDIS_ORG_BY_CODE = "REDIS_ORG_BY_CODE_";
@@ -42,6 +45,7 @@ public class OrganizationService {
 		sysOrganizationMapper.insert(record);
 		sysOrganizationMapper.insertOrganizationProduct(record.getId(),record.getCreateId(),record.getProduct());
 		sysOrganizationMapper.insertOrganizationIndustry(record.getId(),record.getCode(),record.getCreateId(),record.getIndustryIds());
+		noticeSetting.addNoticeSetting(record.getCode());
 	}
 	
 	public void delte(SysOrganization record){
@@ -199,4 +203,9 @@ public class OrganizationService {
 	public List<String> getIndustryByOrgCode(String orgCode) {
 		return sysOrganizationMapper.getIndustryByOrgCode(orgCode);
 	}
+
+	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
+		return sysOrganizationMapper.getOrgByOrgCodeOrgName(orgCode,orgName);
+	}
+
 }

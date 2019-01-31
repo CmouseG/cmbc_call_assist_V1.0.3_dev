@@ -26,5 +26,7 @@ public interface SysUserExtMapper {
 
     int updateByPrimaryKeySelective(SysUserExt record);
 
+    int updateByUserId(SysUserExt record);
+
     int updateByPrimaryKey(SysUserExt record);
 }

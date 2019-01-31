@@ -127,4 +127,10 @@ public class OrganizationController implements IOrg{
 		return Result.ok(organizationService.getIndustryByOrgCode(orgCode));
 	}
 
+	@RequestMapping("getOrgByOrgCodeOrgName")
+	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
+		return organizationService.getOrgByOrgCodeOrgName(orgCode,orgName);
+	}
+
+
 }

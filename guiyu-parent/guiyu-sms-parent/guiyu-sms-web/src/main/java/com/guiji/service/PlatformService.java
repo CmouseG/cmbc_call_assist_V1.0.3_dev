@@ -24,6 +24,9 @@ public interface PlatformService
 	 * 获取短信平台名称列表及参数
 	 */
 	List<PlatformRspVO> getPlatformNameListWithParams();
-	
 
+	/**
+	 * 删除短信平台
+	 */
+	void delPlatform(Integer id, String platName);
 }

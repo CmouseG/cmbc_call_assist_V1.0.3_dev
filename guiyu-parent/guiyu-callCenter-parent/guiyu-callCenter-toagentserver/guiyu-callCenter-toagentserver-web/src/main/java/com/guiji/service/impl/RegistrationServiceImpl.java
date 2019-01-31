@@ -67,6 +67,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 Agent creater = agentMapper.selectByPrimaryKey(registration.getCreator());//根据creator查询用户信息
                 queryRegistration.setUserId(registration.getCreator());
                 queryRegistration.setUserName(creater.getUserName());
+                queryRegistration.setUpdateTime(DateUtil.getStrDate(registration.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 queryRegistrationList.add(queryRegistration);
             }
         } else { //如果是普通坐席，根据creator去查询
@@ -119,13 +120,26 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public void addRegistration(RegistrationRequest request,Agent agent) {
         Date date = new Date();
-        Registration registration =new Registration();
-        BeanUtils.copyProperties(request,registration);
-        registration.setCreateTime(date);
-        registration.setCreator(agent.getUserId());
-        registration.setUpdateTime(date);
-        registration.setUpdateUser(agent.getUserId());
-        registrationMapper.insert(registration);
+        RegistrationExample registrationExample = new RegistrationExample();
+        registrationExample.createCriteria().andPlanUuidEqualTo(request.getRecordId());
+        List<Registration> list = registrationMapper.selectByExample(registrationExample);
+        if(list!=null&&list.size()>0){
+            Registration registration =list.get(0);
+            BeanUtils.copyProperties(request,registration);
+            registration.setUpdateTime(date);
+            registration.setUpdateUser(agent.getUserId());
+            registrationMapper.updateByPrimaryKey(registration);
+        }else{
+            Registration registration =new Registration();
+            BeanUtils.copyProperties(request,registration);
+            registration.setCreateTime(date);
+            registration.setCreator(agent.getUserId());
+            registration.setUpdateTime(date);
+            registration.setUpdateUser(agent.getUserId());
+            registration.setPlanUuid(request.getRecordId());
+            registrationMapper.insert(registration);
+        }
+
     }
 
     @Override

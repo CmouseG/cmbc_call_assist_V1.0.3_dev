@@ -15,14 +15,12 @@ import java.util.List;
  * @Description:
  */
 public interface QueueService {
-    boolean addQueue(QueueInfo QueueInfo, Agent agent);
+    boolean addQueue(QueueInfo QueueInfo, Agent agent) throws Exception;
     boolean deleteQueue(String queueId);
-    void updateQueue(String queueId, QueueInfo QueueInfo, Agent agent);
+    void updateQueue(String queueId, QueueInfo QueueInfo, Agent agent)throws Exception;
 
     Paging queryQueues(Agent agent, String queueName, Integer page, Integer size);
     QueryQueue getQueue(String queueId);
-
-    //boolean isInWorkTime(Long queueId);
 
     Queue findByQueueId(Long queueId);
 

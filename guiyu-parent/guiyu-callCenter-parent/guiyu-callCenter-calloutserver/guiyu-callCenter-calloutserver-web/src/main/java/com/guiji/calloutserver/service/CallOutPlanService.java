@@ -13,4 +13,6 @@ public interface CallOutPlanService {
     void update(CallOutPlan callplan);
 
     int getNotEndCallCount();
+
+    void updateNotOverWriteIntent(CallOutPlan callPlan);
 }

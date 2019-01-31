@@ -63,4 +63,9 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
                 .andCreateTimeGreaterThan(c.getTime());//是否要在该字段加索引，或者分区
         return callOutPlanMapper.countByExample(example);
     }
+
+    @Override
+    public void updateNotOverWriteIntent(CallOutPlan callPlan) {
+        callOutPlanMapper.updateNotOverWriteIntent(callPlan);
+    }
 }

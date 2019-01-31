@@ -2,6 +2,7 @@ package com.guiji.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.guiji.callcenter.dao.AgentMapper;
+import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.QueueMapper;
 import com.guiji.callcenter.dao.TierMapper;
 import com.guiji.callcenter.dao.entity.*;
@@ -14,7 +15,6 @@ import com.guiji.config.ToagentserverException;
 import com.guiji.entity.EAnswerType;
 import com.guiji.entity.EUserRole;
 import com.guiji.fs.FsManager;
-import com.guiji.fs.pojo.AgentStatus;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsLineManager;
@@ -60,14 +60,19 @@ public class QueueServiceImpl implements QueueService {
     EurekaManager eurekaManager;
     @Autowired
     FsLineManager fsLineManager;
+    @Autowired
+    LineInfoMapper lineInfoMapper;
 
     @Override
-    public boolean addQueue(QueueInfo queueInfo, Agent agent) {
+    public boolean addQueue(QueueInfo queueInfo, Agent agent) throws Exception{
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(agent.getOrgCode()).andQueueNameEqualTo(queueInfo.getQueueName());
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
         if (queueList != null&&queueList.size()>0) {
-            throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+            log.info("不能创建同名坐席[{}]",queueInfo.getQueueName());
+          //  throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+            throw new Exception("0307007");
+
         }
         Date date = new Date();
         Queue queue = new Queue();
@@ -124,13 +129,22 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
-    public void updateQueue(String queueId, QueueInfo queueInfo,Agent agent){
+    public void updateQueue(String queueId, QueueInfo queueInfo,Agent agent)throws Exception{
+        QueueExample queueExample = new QueueExample();
+        queueExample.createCriteria().andOrgCodeEqualTo(agent.getOrgCode()).andQueueNameEqualTo(queueInfo.getQueueName()).andQueueIdNotEqualTo(Long.parseLong(queueId));
+        List<Queue> queueList = queueMapper.selectByExample(queueExample);
+        if (queueList != null&&queueList.size()>0) {
+            log.info("不能修改为同名坐席[{}]",queueInfo.getQueueName());
+            //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_ISIN);
+            throw new Exception("0307007");
+        }
+
         Queue queue = queueMapper.selectByPrimaryKey(Long.parseLong(queueId));
         Date date = new Date();
         queue.setQueueName(queueInfo.getQueueName());
         queue.setUpdateTime(date);
         queue.setUpdateUser(agent.getUserId());
-        if(queue.getLineId()!=queueInfo.getLineId()){
+        if(queue.getLineId()==null||queue.getLineId()!=queueInfo.getLineId()){
             FsLineVO fsLineVO = fsLineManager.getFsLine();
             queue.setLineId(queueInfo.getLineId());
             TierExample tierExample = new TierExample();
@@ -141,18 +155,6 @@ public class QueueServiceImpl implements QueueService {
                if(user.getAnswerType()== EAnswerType.MOBILE.ordinal()){
                    AgentInfo agentInfo = new AgentInfo();
                    agentInfo.setAgentId(agent.getUserId() + "");
-
-//                   if (request.getAgentState() != null) {
-//                       switch (request.getAgentState()) {
-//                           case OFFLINE:
-//                               agentInfo.setStatus(AgentStatus.Logged_Out);
-//                               break;
-//                           case ONLINE:
-//                               agentInfo.setStatus(AgentStatus.Available);
-//                               break;
-//                       }
-//                   }
-                  // {effective_caller_id_name=143}sofia/external/18652003060@192.168.1.78:53601
                   String[] ip = fsLineVO.getFsIp().split(":");
                   String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",queueInfo.getLineId(),user.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
                    agentInfo.setContact(contact);
@@ -189,6 +191,13 @@ public class QueueServiceImpl implements QueueService {
                 BeanUtils.copyProperties(queue, queryQueue);
                 queryQueue.setUserName(agent.getUserName());
                 queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
+                if (queryQueue.getLineId() != null) {
+                    LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
+                    queryQueue.setLineName(lineInfo.getLineName());
+                }
+                TierExample tierExample = new TierExample();
+                tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+                queryQueue.setAgentCount(tierMapper.countByExample(tierExample));
                 list.add(queryQueue);
             }
             paging.setPageNo(page);
@@ -206,6 +215,13 @@ public class QueueServiceImpl implements QueueService {
             BeanUtils.copyProperties(queue, queryQueue);
             queryQueue.setUserName(agent.getUserName());
             queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
+            if (queryQueue.getLineId() != null) {
+                LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
+                queryQueue.setLineName(lineInfo.getLineName());
+            }
+            TierExample tierExample1 = new TierExample();
+            tierExample1.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+            queryQueue.setAgentCount(tierMapper.countByExample(tierExample1));
             list.add(queryQueue);
             paging.setPageNo(1);
             paging.setPageSize(size);
@@ -225,35 +241,11 @@ public class QueueServiceImpl implements QueueService {
         Agent agent = agentMapper.selectByPrimaryKey(queue.getUpdateUser());
         queryQueue.setUserName(agent.getUserName());
         queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
+        TierExample tierExample = new TierExample();
+        tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+        queryQueue.setAgentCount(tierMapper.countByExample(tierExample));
         return queryQueue;
     }
-
-//    @Override
-//    public boolean isInWorkTime(Long queueId) {
-//        Queue queue = queueMapper.selectByPrimaryKey(queueId);
-//        Preconditions.checkNotNull(queue, "not exist queueId:" + queueId);
-//        Integer currrentDay = LocalDate.now().getDayOfWeek().getValue();
-//        String workDay = queue.getWeekday();
-//        if(workDay ==null || !workDay.contains(currrentDay.toString())){
-//            log.info("当前是非工作日，工作日[{}]", workDay);
-//            return false;
-//        }
-//
-//        LocalTime currentTime = LocalTime.now();
-//        LocalTime amStart = LocalTime.parse(queue.getAmStart());
-//        LocalTime amEnd = LocalTime.parse(queue.getAmEnd());
-//        LocalTime pmStart = LocalTime.parse(queue.getPmStart());
-//        LocalTime pmEnd = LocalTime.parse(queue.getPmEnd());
-//
-//        if((currentTime.isAfter(amStart) && currentTime.isBefore(amEnd))
-//            || (currentTime.isAfter(pmStart) && currentTime.isBefore(pmEnd))){
-//            log.info("当前是工作时间");
-//            return true;
-//        }else{
-//            log.info("当前是非工作时间，工作时间：[{}]->[{}]  [{}]->[{}]", amStart, amEnd, pmStart, pmEnd);
-//            return false;
-//        }
-//    }
 
     @Override
     public Queue findByQueueId(Long queueId) {

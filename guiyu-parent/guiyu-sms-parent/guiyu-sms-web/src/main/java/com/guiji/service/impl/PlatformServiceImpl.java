@@ -151,4 +151,14 @@ public class PlatformServiceImpl implements PlatformService
         }
         return "";
     }
+
+	/**
+	 * 删除短信平台
+	 */
+	@Override
+	public void delPlatform(Integer id, String platName)
+	{
+		platformMapper.deleteByPrimaryKey(id);
+		redisUtil.del(platName);
+	}
 }

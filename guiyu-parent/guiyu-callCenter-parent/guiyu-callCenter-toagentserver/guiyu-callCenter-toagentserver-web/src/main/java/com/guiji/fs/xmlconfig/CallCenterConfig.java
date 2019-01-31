@@ -58,7 +58,7 @@ public class CallCenterConfig {
         BeanUtils.copyProperties(templateAgent, xa);
         xa.setName(agent.getAgentId());
         xa.setContact(getAgentContact(agent));
-
+        xa.setMax_no_answer("999999");
         callCenterConfig.getAgents().getAgent().add(xa);
         flushConfig();
         return true;
@@ -273,7 +273,10 @@ public class CallCenterConfig {
     }
 
     public boolean addTier(Tier tier){
-        Preconditions.checkState(!isTierExist(tier), "tier already exist in config");
+        if(isTierExist(tier)){
+            log.info("队列绑定已经存在，跳过处理");
+            return true;
+        }
 
         reloadConfig();
 
@@ -498,6 +501,7 @@ public class CallCenterConfig {
             BeanUtils.copyProperties(templateAgent, xa);
             xa.setName(agent.getAgentId());
             xa.setContact(getAgentContact(agent));
+            xa.setMax_no_answer("999999");
             callCenterConfig.getAgents().getAgent().add(xa);
         }
         for (Queue queue:queueList) {

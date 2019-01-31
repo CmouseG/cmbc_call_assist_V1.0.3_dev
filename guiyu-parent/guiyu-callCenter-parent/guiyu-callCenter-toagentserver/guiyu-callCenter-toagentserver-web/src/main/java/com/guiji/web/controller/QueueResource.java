@@ -33,7 +33,14 @@ public class QueueResource {
     public Result.ReturnData addQueue(@RequestBody QueueInfo QueueInfo, HttpSession session) {
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
         log.info("收到创建队列请求QueueInfo:[{}]", QueueInfo.toString());
-        queueService.addQueue(QueueInfo, agent);
+        try {
+            queueService.addQueue(QueueInfo, agent);
+        } catch (Exception e) {
+            log.warn("创建队列出现异常", e);
+            if(e.getMessage().equals("0307007")){
+                return Result.error("0307007");
+            }
+        }
         return Result.ok();
     }
 
@@ -48,7 +55,14 @@ public class QueueResource {
     public Result.ReturnData updateQueue(@PathVariable String queueId, @RequestBody QueueInfo request, HttpSession session) {
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
         log.info("收到更新队列请求queueId:[{}],QueueInfo:[{}]", queueId,request.toString());
-        queueService.updateQueue(queueId, request, agent);
+        try {
+            queueService.updateQueue(queueId, request, agent);
+        } catch (Exception e) {
+            log.warn("更新队列出现异常", e);
+            if(e.getMessage().equals("0307007")){
+                return Result.error("0307007");
+            }
+        }
         return Result.ok();
     }
 

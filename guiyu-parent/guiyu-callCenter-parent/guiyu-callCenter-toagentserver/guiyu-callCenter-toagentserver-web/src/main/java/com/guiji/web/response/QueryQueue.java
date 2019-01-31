@@ -9,5 +9,7 @@ public class QueryQueue {
     private String userName;
     private String updateTime;
     private Integer lineId;
+    private String lineName;
+    private Integer agentCount;
 
 }

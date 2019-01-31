@@ -7,4 +7,5 @@ public class QueryQueueCalls {
     private String queueId;
     private Integer waitCount;
     private Integer answeredCount;
+    private Integer agentAnsweredCount;
 }

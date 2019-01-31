@@ -5,10 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
-import com.guiji.callcenter.dao.entity.CallOutDetail;
-import com.guiji.callcenter.dao.entity.CallOutDetailRecord;
-import com.guiji.callcenter.dao.entity.CallOutPlan;
-import com.guiji.callcenter.dao.entity.ErrorMatch;
+import com.guiji.callcenter.dao.entity.*;
 import com.guiji.calloutserver.enm.ECallDetailType;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIInitRequest;
@@ -21,10 +18,7 @@ import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
-import com.guiji.calloutserver.service.CallOutDetailRecordService;
-import com.guiji.calloutserver.service.CallOutDetailService;
-import com.guiji.calloutserver.service.CallOutPlanService;
-import com.guiji.calloutserver.service.ErrorMatchService;
+import com.guiji.calloutserver.service.*;
 import com.guiji.calloutserver.util.DateUtil;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
@@ -72,6 +66,8 @@ public class FsBotHandler {
 
     @Autowired
     LocalFsServer localFsServer;
+    @Autowired
+    CallOutRecordService callOutRecordService;
 
     //注册这个监听器
     @PostConstruct
@@ -169,7 +165,8 @@ public class FsBotHandler {
     @AllowConcurrentEvents
     public void handleCustomerAsrEvent(AsrCustomerEvent event) {
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
+//            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
+            CallOutPlan callPlan = event.getCallPlan();
             if (callPlan == null) {
                 log.warn("收到的CustomerAsr，没有根据uuid[{}]找到对应的callPlan，跳过处理", event.getUuid());
                 return;
@@ -205,7 +202,8 @@ public class FsBotHandler {
             //判断通道状态，如果还未接听，则进行F类判断
             if (callPlan.getCallState() == ECallState.init.ordinal() ||
                     callPlan.getCallState() == ECallState.call_prepare.ordinal() ||
-                    callPlan.getCallState() == ECallState.make_call.ordinal()) {
+                    callPlan.getCallState() == ECallState.make_call.ordinal() ||
+                    callPlan.getCallState() == ECallState.progress.ordinal()) {
                 log.warn("通道[{}]还未接听，需要对收到的asr进行F类识别", event.getUuid());
                 //进行F类识别
                 doWithErrorResponse(callPlan, event);
@@ -254,6 +252,11 @@ public class FsBotHandler {
             callPlan.setReason(errorMatch.getErrorName());
             callOutPlanService.update(callPlan);
 
+            //保存录音文件信息
+            CallOutRecord callOutRecord = new CallOutRecord();
+            callOutRecord.setCallId(callPlan.getCallId());
+            callOutRecord.setRecordFile(event.getFileName());
+            callOutRecordService.update(callOutRecord);
             //判断是否已经做过F类判断，如果做过，则直接挂断该通话
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
@@ -393,7 +396,7 @@ public class FsBotHandler {
                 callPlan.setCallState(ECallState.hangup_ok.ordinal());
             }
 
-            callOutPlanService.update(callPlan);
+            callOutPlanService.updateNotOverWriteIntent(callPlan);
 
             //报表统计事件
             log.info("构建StatisticReportEvent，报表流转");

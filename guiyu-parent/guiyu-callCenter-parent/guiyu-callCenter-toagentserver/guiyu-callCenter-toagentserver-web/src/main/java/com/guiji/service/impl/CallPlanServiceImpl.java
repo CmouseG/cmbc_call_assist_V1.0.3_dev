@@ -72,7 +72,7 @@ public class CallPlanServiceImpl implements CallPlanService {
     public QueryQueueCalls queueCalls(String queueId, ECallDirection callDirection) {
         log.debug("开始queueCalls，queueId[{}], callDirection[{}]", queueId, callDirection);
         if(callDirection == ECallDirection.OUTBOUND){
-            return callOutPlanService.queueCalls(queueId);
+            return callOutPlanService.queueCalls(queueId,null);
         }else if(callDirection == ECallDirection.INBOUND){
             return callInPlanService.queueCalls(queueId);
         }else{

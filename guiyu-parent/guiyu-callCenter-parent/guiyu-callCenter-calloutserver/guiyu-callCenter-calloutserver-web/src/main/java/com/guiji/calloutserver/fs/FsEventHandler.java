@@ -167,6 +167,7 @@ public class FsEventHandler {
             event.setUuid(uuid);
             AsrCustomerEvent asrCustomerEvent = new AsrCustomerEvent();
             BeanUtils.copyProperties(event, asrCustomerEvent);
+            asrCustomerEvent.setCallPlan(callPlan);
             log.info("构建好ALI_ASR事件[{}]，等待后续处理", event);
             asyncEventBus.post(asrCustomerEvent);
 //            event.setUuid(callPlan.getAgentChannelUuid());

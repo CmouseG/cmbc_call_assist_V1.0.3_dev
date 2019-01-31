@@ -35,4 +35,6 @@ public interface CallOutPlanMapper {
     int updateByPrimaryKeySelective(CallOutPlan record);
 
     int updateByPrimaryKey(CallOutPlan record);
+
+    void updateNotOverWriteIntent(CallOutPlan callPlan);
 }

@@ -29,7 +29,7 @@ public interface CallDetailService {
 
     String getDialogue(String callId);
 
-    Map<String, String> getDialogues(String callIds);
+    Map<String, String> getDialogues(List<BigInteger> callIds);
 
     String getRecordFileUrl(String callId);
 
@@ -50,4 +50,6 @@ public interface CallDetailService {
     int countCallRecordList(CallRecordReq callRecordReq);
 
     List<CallOutPlan> getCallRecordListByPhone(String phone);
+
+    List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> callIds, Long userId, Boolean isSuperAdmin);
 }

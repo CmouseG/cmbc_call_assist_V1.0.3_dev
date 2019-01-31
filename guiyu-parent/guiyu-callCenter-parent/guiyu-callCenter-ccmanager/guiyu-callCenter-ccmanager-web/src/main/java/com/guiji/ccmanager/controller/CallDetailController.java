@@ -6,6 +6,7 @@ import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
+import com.guiji.ccmanager.utils.DateUtils;
 import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
 import com.guiji.ccmanager.vo.CallDetailUpdateReq;
@@ -20,8 +21,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import jxl.Workbook;
+import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
+import jxl.format.VerticalAlignment;
 import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.Boolean;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -270,7 +274,8 @@ public class CallDetailController implements ICallPlanDetail {
 
     @ApiOperation(value = "下载通话记录Excel压缩包,callIds以逗号分隔")
     @PostMapping(value="downloadDialogueZip")
-    public String downloadDialogueZip(@RequestBody Map reqMap,HttpServletResponse resp) throws UnsupportedEncodingException {
+    public String downloadDialogueZip(@RequestBody Map reqMap,HttpServletResponse resp,@RequestHeader Long userId,
+                                      @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) throws UnsupportedEncodingException {
 
         log.info("---------------start downloadDialogueZip----------");
         if(reqMap.get("callIds")==null){
@@ -281,63 +286,93 @@ public class CallDetailController implements ICallPlanDetail {
             return "Missing Parameters";
         }
 
-        //生成文件
-        Map<String,String> map = callDetailService.getDialogues(callIds);
+        String[] callidArr = callIds.split(",");
 
-        if(map==null || map.size()==0){
+        List<BigInteger> idList = new ArrayList();
+        for(String callId: callidArr){
+            idList.add(new BigInteger(callId));
+        }
+        //生成文件
+        Map<String,String> map = callDetailService.getDialogues(idList);
+        List<CallOutPlan4ListSelect> listPlan = callDetailService.getCallPlanList(idList,userId,isSuperAdmin);
+
+        if(listPlan==null || listPlan.size()==0){
             return "无通话记录";
         }
 
-        String batchId = IdGenUtil.uuid();
-        String savePath = downloadPath+File.separator+batchId;
-        File parentFile = new File(savePath);
-        if(!parentFile.exists()){
-            parentFile.mkdirs();
-        }
-
-        FileOutputStream fout = null;
-        try {
-            for(Map.Entry<String,String> en : map.entrySet()){
-                String callId = en.getKey();
-                String context = en.getValue();
-
-                File file = new File(savePath+File.separator+callId+".xls");
-                if(!file.exists()){
-                    file.createNewFile();
-                }
-                fout=new FileOutputStream(file,true);
-
-                generateExcel(context, fout);
-            }
-        } catch (IOException e) {
-            log.error("downloadDialogueZip IOException :"+e);
-        }  catch (WriteException e) {
-            log.error("downloadDialogueZip WriteException :"+e);
-        }finally {
-            if(fout!=null){
-                try {
-                    fout.close();
-                } catch (IOException e) {
-                    log.error("downloadDialogueZip fout.close error:"+e);
-                }
-            }
-        }
-
-        String fileName = "通话记录.zip";
+        String fileName = "通话记录.xls";
         HttpDownload.setHeader(resp, fileName);
 
         OutputStream out=null;
         try {
             out=resp.getOutputStream();
-            //压缩
-            ZipUtil.zip(parentFile, out);
-            FileUtils.deleteDirectory(parentFile);
-        } catch (IOException e) {
-            log.error("downloadDialogueZip IOException error: "+e);
-        }
-        log.info("---------------end downloadDialogueZip----------");
-        return null;
+            generateExcelList(out, listPlan, map);
 
+        } catch (IOException e) {
+            log.error("downloadDialogue IOException :"+e);
+        } catch (RowsExceededException e) {
+            log.error("downloadDialogue RowsExceededException :"+e);
+        } catch (WriteException e) {
+            log.error("downloadDialogue WriteException :"+e);
+        } finally{
+            if(out!=null){
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("out.close error:"+e);
+                }
+            }
+        }
+        return  null;
+    }
+
+    public void generateExcelList(OutputStream out, List<CallOutPlan4ListSelect> listPlan ,Map<String,String> map) throws IOException, WriteException {
+        WritableWorkbook wb = Workbook.createWorkbook(out);
+
+        WritableSheet sheet =  wb.createSheet("sheet1",0);
+        WritableCellFormat format = new WritableCellFormat();
+        format.setBorder(Border.ALL,BorderLineStyle.THIN);
+        format.setWrap(true);
+        format.setVerticalAlignment(VerticalAlignment.CENTRE);
+
+        sheet.setColumnView(0, 15);
+        sheet.setColumnView(1, 15);
+        sheet.setColumnView(2, 20);
+        sheet.setColumnView(3, 20);
+        sheet.setColumnView(4, 20);
+        sheet.setColumnView(5, 20);
+        sheet.setColumnView(6, 20);
+        sheet.setColumnView(7, 10);
+        sheet.setColumnView(8, 10);
+        sheet.setColumnView(9, 100);
+        sheet.addCell(new Label(0, 0 , "被叫电话",format));
+        sheet.addCell(new Label(1, 0 , "意向标签",format));
+        sheet.addCell(new Label(2, 0 , "意向备注",format));
+        sheet.addCell(new Label(3, 0 , "话术名称",format));
+        sheet.addCell(new Label(4, 0 , "拨打时间",format));
+        sheet.addCell(new Label(5, 0 , "接听时间",format));
+        sheet.addCell(new Label(6, 0 , "挂断时间",format));
+        sheet.addCell(new Label(7, 0 , "所属者",format));
+        sheet.addCell(new Label(8, 0 , "拨打时长",format));
+        sheet.addCell(new Label(9, 0 , "通话记录",format));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for(int i=1;i<=listPlan.size();i++){
+            CallOutPlan4ListSelect callPlan = listPlan.get(i-1);
+            sheet.addCell(new Label(0, i , callPlan.getPhoneNum(),format));
+            sheet.addCell(new Label(1, i , callPlan.getAccurateIntent(),format));
+            sheet.addCell(new Label(2, i , callPlan.getReason(),format));
+            sheet.addCell(new Label(3, i , callPlan.getTempId(),format));
+            sheet.addCell(new Label(4, i , callPlan.getCallStartTime()!=null? sdf.format(callPlan.getCallStartTime()) : "",format));
+            sheet.addCell(new Label(5, i , callPlan.getCallStartTime()!=null? sdf.format(callPlan.getAnswerTime()) : "",format));
+            sheet.addCell(new Label(6, i , callPlan.getCallStartTime()!=null? sdf.format(callPlan.getHangupTime()) : "",format));
+            sheet.addCell(new Label(7, i , callPlan.getUserName(),format));
+            sheet.addCell(new Label(8, i , callPlan.getDuration()!=null? DateUtils.secondToTime(callPlan.getDuration()): "",format));
+            sheet.addCell(new Label(9, i , map.get(callPlan.getCallId()),format));
+        }
+
+        wb.write();
+        wb.close();
     }
 
 

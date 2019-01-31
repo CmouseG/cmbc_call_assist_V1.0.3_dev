@@ -26,64 +26,64 @@ public class ServerResult<T> implements Serializable{
 	//默认构造函数
 	private ServerResult(){}
 	
-    private ServerResult(String rspCode){
-        this.code = rspCode;
+    private ServerResult(String code){
+        this.code = code;
     }
-    private ServerResult(String rspCode,T data){
-        this.code = rspCode;
+    private ServerResult(String code,T data){
+        this.code = code;
         this.data = data;
     }
-    private ServerResult(String rspCode,String rspMsg,T data){
-        this.code = rspCode;
-        this.msg = rspMsg;
+    private ServerResult(String code,String msg,T data){
+        this.code = code;
+        this.msg = msg;
         this.data = data;
     }
 
-    private ServerResult(String rspCode,String rspMsg){
-        this.code = rspCode;
-        this.msg = rspMsg;
+    private ServerResult(String code,String msg){
+        this.code = code;
+        this.msg = msg;
     }
 
-    public String getRspCode(){
+    public String getCode(){
         return code;
     }
     public T getData(){
         return data;
     }
-    public String getRspMsg(){
+    public String getMsg(){
         return msg;
     }
 
     public static <T> ServerResult<T> createBySuccess(){
-        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getRspCode());
+        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getCode());
     }
 
-    public static <T> ServerResult<T> createBySuccessMessage(String rspMsg){
-        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getRspCode(),rspMsg);
+    public static <T> ServerResult<T> createBySuccessMessage(String msg){
+        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getCode(),msg);
     }
 
     public static <T> ServerResult<T> createBySuccess(T data){
-        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getRspCode(),data);
+        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getCode(),data);
     }
 
-    public static <T> ServerResult<T> createBySuccess(String rspMsg,T data){
-        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getRspCode(),rspMsg,data);
+    public static <T> ServerResult<T> createBySuccess(String msg,T data){
+        return new ServerResult<T>(ResponseCodeEnum.SUCCESS.getCode(), msg, data);
     }
 
     public static <T> ServerResult<T> createByError(){
-        return new ServerResult<T>(ResponseCodeEnum.ERROR.getRspCode(),ResponseCodeEnum.ERROR.getRspMsg());
+        return new ServerResult<T>(ResponseCodeEnum.ERROR.getCode(),ResponseCodeEnum.ERROR.getMsg());
     }
 
     public static <T> ServerResult<T> createByErrorMessage(String errorMessage){
-        return new ServerResult<T>(ResponseCodeEnum.ERROR.getRspCode(),errorMessage);
+        return new ServerResult<T>(ResponseCodeEnum.ERROR.getCode(),errorMessage);
     }
 
     public static <T> ServerResult<T> createByErrorCodeMessage(String errorCode,String errorMessage){
         return new ServerResult<T>(errorCode,errorMessage);
     }
     
-    public static <T> ServerResult<T> create(String rspCode,String rspMsg,T data){
-        return new ServerResult<T>(rspCode,rspMsg,data);
+    public static <T> ServerResult<T> create(String code,String msg,T data){
+        return new ServerResult<T>(code,msg,data);
     }
     
     /* (non-Javadoc) 
@@ -91,7 +91,7 @@ public class ServerResult<T> implements Serializable{
 	 */
 	@Override
 	public String toString() {
-		return "ServerResult [rspCode=" + code + ", rspMsg=" + msg + ", data=" + data + "]";
+		return "ServerResult [code=" + code + ", msg=" + msg + ", data=" + data + "]";
 	}
 
 
@@ -109,14 +109,14 @@ public class ServerResult<T> implements Serializable{
         private String code;  
         //返回信息
         private String msg;  
-        private ResponseCodeEnum(String rspCode, String rspMsg) {
-            this.code = rspCode;  
-            this.msg = rspMsg;  
+        private ResponseCodeEnum(String code, String msg) {
+            this.code = code;  
+            this.msg = msg;  
         }  
         //根据枚举的code获取msg的方法  
-        public static String getMsgByCode(String rspCode){  
-            for(ResponseCodeEnum responseEnum : ResponseCodeEnum.values()) {  
-                if(responseEnum.getRspCode().equals(rspCode)){  
+        public static String getMsgByCode(String code){  
+            for(ResponseCodeEnum responseEnum : ResponseCodeEnum.values()) {
+                if(responseEnum.getCode().equals(code)){  
                     return responseEnum.msg;  
                 }  
             }  
@@ -125,26 +125,26 @@ public class ServerResult<T> implements Serializable{
     	/**
     	 * @return the rspCode
     	 */
-    	public String getRspCode() {
+    	public String getCode() {
     		return code;
     	}
     	/**
     	 * @param rspCode the rspCode to set
     	 */
-    	public void setRspCode(String rspCode) {
-    		this.code = rspCode;
+    	public void setCode(String code) {
+    		this.code = code;
     	}
     	/**
     	 * @return the rspMsg
     	 */
-    	public String getRspMsg() {
+    	public String getMsg() {
     		return msg;
     	}
     	/**
     	 * @param rspMsg the rspMsg to set
     	 */
-    	public void setRspMsg(String rspMsg) {
-    		this.msg = rspMsg;
+    	public void setMsg(String msg) {
+    		this.msg = msg;
     	} 
     }
 }

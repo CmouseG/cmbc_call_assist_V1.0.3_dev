@@ -64,8 +64,19 @@ public class TokenAuthInterceptor extends HandlerInterceptorAdapter {
                     outputResult(response, apiResp);
                     return false;
                 }
-
-                CrmUserVO crmUserVO = authManager.getUser(userId);
+                CrmUserVO crmUserVO = null;
+                try {
+                    crmUserVO = authManager.getUser(userId);
+                } catch (Exception e) {
+                    apiResp.setResult(false);
+                    if(e.getMessage().equals("0307008")){
+                        apiResp.setMsg("This user does not exist in CRM");
+                    }else if(e.getMessage().equals("0307009")){
+                        apiResp.setMsg("Non-administrator role or not agent");
+                    }
+                    outputResult(response, apiResp);
+                    return false;
+                }
                 Agent user = agentService.initUser(crmUserVO);
                 request.getSession().setAttribute(CustomSessionVar.LOGIN_USER, user);
                 request.getSession().setAttribute(CustomSessionVar.CRM_USERID, userId);

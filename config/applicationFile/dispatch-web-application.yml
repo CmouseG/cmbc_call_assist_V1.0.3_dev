@@ -3,6 +3,11 @@ server:
 spring:
   application:
     name: guiyu-dispatch-web
+http:
+  encoding:
+    charset: UTF-8
+    force: true
+    enabled: true
   # REDIS (RedisProperties)
   redis:
     database: 0

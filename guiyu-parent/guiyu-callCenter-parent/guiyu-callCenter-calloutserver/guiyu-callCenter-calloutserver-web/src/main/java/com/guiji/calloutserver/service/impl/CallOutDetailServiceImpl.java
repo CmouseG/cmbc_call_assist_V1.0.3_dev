@@ -37,8 +37,6 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
                 String subReason = intent.substring(2);
                 callOutDetail.setAccurateIntent(subIntent);
                 callOutDetail.setReason(subReason);
-            } else if (intent.equals("?")) {
-                callOutDetail.setAccurateIntent(null);
             }
         }
 

@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 /**
  * 调度中心任务调度接口
  *
@@ -105,6 +106,13 @@ public interface IDispatchPlanOut {
     @GetMapping(value="out/opertationStopPlanByUserId")
     Result.ReturnData<Boolean> opertationStopPlanByUserId(@RequestParam("orgCode") String orgCode,@RequestParam("type") String type);
     
-    
+	@ApiOperation(value = "修改意向标签")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "planuuid", value = "planuuid", dataType = "String", paramType = "query"),
+		@ApiImplicitParam(name = "label", value = "label", dataType = "String", paramType = "query") })
+	@GetMapping(value = "out/updateLabelByUUID")
+	ReturnData<Boolean>  updateLabelByUUID(@RequestParam("planuuid") String planuuid,@RequestParam("label") String label);
+
+
 }
 

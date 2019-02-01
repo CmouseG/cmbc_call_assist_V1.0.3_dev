@@ -1,6 +1,7 @@
 package com.guiji.service;
 
 import com.guiji.callcenter.dao.entity.Agent;
+import com.guiji.entity.EUserState;
 import com.guiji.web.request.AgentRequest;
 import com.guiji.web.request.CrmUserVO;
 import com.guiji.web.response.Paging;
@@ -17,7 +18,7 @@ import java.util.List;
  * @Description:
  */
 public interface AgentService {
-    boolean createAgent(AgentRequest request,Agent create,Long crmUserid);
+    boolean createAgent(AgentRequest request,Agent create,Long crmUserid)throws Exception;
 
     boolean updateAgent(String userId, AgentRequest request, Agent agent)throws Exception;
 
@@ -57,5 +58,8 @@ public interface AgentService {
     void initCallcenter();
 
     Agent initUser(CrmUserVO crmUserVO);
+
+
+    boolean agentStateByVerto(EUserState eUserState, Agent agent);
 
 }

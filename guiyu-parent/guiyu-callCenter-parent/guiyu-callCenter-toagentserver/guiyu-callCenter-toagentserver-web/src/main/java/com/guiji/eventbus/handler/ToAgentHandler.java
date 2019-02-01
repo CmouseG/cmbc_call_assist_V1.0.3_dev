@@ -1,6 +1,7 @@
 package com.guiji.eventbus.handler;
 
 import com.google.common.base.Strings;
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.AgentAnswerEvent;
@@ -51,9 +52,10 @@ public class ToAgentHandler {
     @AllowConcurrentEvents
     public void handleVertoDisconnect(VertoDisconnectEvent event){
         log.info("收到座席verto断开事件[{}]", event);
-
-        //TODO: 添加座席断开事件
-        //agentService.update();
+        Agent agent = event.getAgent();
+        if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
+            agentService.agentStateByVerto(EUserState.OFFLINE,agent);
+        }
     }
 
     @Subscribe

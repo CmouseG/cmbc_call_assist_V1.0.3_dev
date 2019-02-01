@@ -184,6 +184,15 @@ public class DateUtil {
 //        System.out.println("currdate: " + getCurrentDateByFormat(ff));
 //        System.out.println(timeStampToDate(1726272727L));
         System.out.println(initDateByDay());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date zero = calendar.getTime();
+        System.out.println(zero);
+
     }
 
     public static String getUserYears(String yearIng){
@@ -292,10 +301,11 @@ public class DateUtil {
     public static Date initDateByDay() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        return calendar.getTime();
+        Date zero = calendar.getTime();
+        return zero;
     }
 
 }

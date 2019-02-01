@@ -89,7 +89,13 @@ public class AgentResource {
             return Result.error("0307002");
         }
 
-        agentService.createAgent(request,agent,Long.parseLong(crmUserid));
+        try {
+            agentService.createAgent(request,agent,Long.parseLong(crmUserid));
+        } catch (Exception e) {
+            if(e.getMessage().equals("0307002")) {
+                return Result.error("0307002");
+            }
+        }
         return Result.ok();
     }
 
@@ -111,6 +117,8 @@ public class AgentResource {
                 return Result.error("0307011");
             }else if(e.getMessage().equals("0307006")){
                 return Result.error("0307006");
+            }else if(e.getMessage().equals("0307005")){
+                return Result.error("0307005");
             }
         }
         return Result.ok();

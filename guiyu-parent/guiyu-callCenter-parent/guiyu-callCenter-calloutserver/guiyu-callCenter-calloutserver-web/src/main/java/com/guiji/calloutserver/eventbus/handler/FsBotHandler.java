@@ -356,14 +356,13 @@ public class FsBotHandler {
             String hangUp = event.getSipHangupCause();
 
             //将calloutdetail里面的意向标签更新到calloutplan里面
-            List<CallOutDetail> callOutDetailList = callOutDetailService.getLastDetail(event.getUuid());
-            if (callOutDetailList != null && callOutDetailList.size()>0) {
-                CallOutDetail callOutDetail= callOutDetailList.get(0);
+            CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
+            callPlan.setTalkNum(callOutDetailService.getTalkNum(new BigInteger(event.getUuid())));
+            if (callOutDetail != null) {
                 log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
                 callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                 callPlan.setReason(callOutDetail.getReason());
-                callPlan.setTalkNum(callOutDetailList.size());
-            } else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
+            }else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
                 if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
                     if(callPlan.getReason()==null && hangUp!=null){

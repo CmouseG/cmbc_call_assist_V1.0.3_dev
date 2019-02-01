@@ -143,7 +143,7 @@ public class BlackListServiceImpl implements IBlackListService {
 
 	private boolean checkPhoneInDB(BlackList blackListDto) {
 		BlackListExample ex = new BlackListExample();
-		ex.createCriteria().andPhoneEqualTo(blackListDto.getPhone()).andStatusEqualTo(0);
+		ex.createCriteria().andPhoneEqualTo(blackListDto.getPhone()).andStatusEqualTo(0).andOrgCodeLike(blackListDto.getOrgCode()+"%");
 		int countByExample = blackListMapper.countByExample(ex);
 		if (countByExample > 0) {
 			return true;
@@ -180,6 +180,9 @@ public class BlackListServiceImpl implements IBlackListService {
 		if (userById.success && userById.getBody() != null) {
 			blackList.setCreateUserName(userById.getBody().getUsername());
 			blackList.setUpdateUserName(userById.getBody().getUsername());
+		}
+		if(checkPhoneInDB(blackList)){
+			return false;
 		}
 		int result = blackListMapper.insert(blackList);
 		return result > 0 ? true : false;

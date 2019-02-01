@@ -438,4 +438,20 @@ public class BotsentenceServerController {
 		return ServerResult.createBySuccess(list);
 	}
 	
+	
+	@RequestMapping(value="queryTradeByTradeId")
+	public ServerResult<BotSentenceTrade> queryTradeByTradeId(@JsonParam String tradeId) {
+		if(StringUtils.isBlank(tradeId)) {
+			return ServerResult.createByErrorMessage("行业编号为空");
+		}
+		BotSentenceTradeExample example = new BotSentenceTradeExample();
+		example.createCriteria().andIndustryIdEqualTo(tradeId);
+		List<BotSentenceTrade> list  = botSentenceTradeMapper.selectByExample(example);
+		if(null != list && list.size() > 0) {
+			return ServerResult.createBySuccess(list.get(0));
+		}else {
+			return ServerResult.createByErrorMessage("该行业不存在");
+		}
+	}
+	
 }

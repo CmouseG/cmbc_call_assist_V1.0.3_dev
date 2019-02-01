@@ -127,7 +127,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
-		boolean checkPhoneInBlackList = blackService.checkPhoneInBlackList(dispatchPlan.getPhone());
+		boolean checkPhoneInBlackList = blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode);
 		MessageDto dto = new MessageDto();
 		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
 		// 检查参数
@@ -1603,7 +1603,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setLineName(plans.getLineName());
 			bean.setRobotName(plans.getRobotName());
 			// 校验黑名单逻辑
-			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone())) {
+			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode)) {
 				blackService.setBlackPhoneStatus(bean);
 				continue;
 			}

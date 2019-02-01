@@ -126,6 +126,12 @@ public class FileController {
 
 	private void generateExcel4Dispatch(List<DispatchPlan> selectByExample, OutputStream out)
 			throws RowsExceededException, WriteException, IOException {
+		
+		Map<String,String> map = new HashMap<>();
+		map.put("1", "计划中");
+		map.put("2", "已完成");
+		map.put("3", "已暂停");
+		map.put("4", "已停止");
 		WritableWorkbook wb = Workbook.createWorkbook(out);
 		WritableSheet sheet = wb.createSheet("sheet1", 0);
 		WritableCellFormat format = new WritableCellFormat();
@@ -150,7 +156,7 @@ public class FileController {
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
 			k++;
-			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getStatusPlan())));
+			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;

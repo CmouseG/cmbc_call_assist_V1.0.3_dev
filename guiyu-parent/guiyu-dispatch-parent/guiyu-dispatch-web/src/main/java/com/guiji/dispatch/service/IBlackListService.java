@@ -17,7 +17,7 @@ public interface IBlackListService {
 
 	void batchPlanImport(String fileName, Long userId, MultipartFile file, String orgCode) throws Exception;
 
-	boolean checkPhoneInBlackList(String phone);
+	public boolean checkPhoneInBlackList(String phone,String orgCode);
 
 	boolean setBlackPhoneStatus(DispatchPlan dispatchPlan);
 

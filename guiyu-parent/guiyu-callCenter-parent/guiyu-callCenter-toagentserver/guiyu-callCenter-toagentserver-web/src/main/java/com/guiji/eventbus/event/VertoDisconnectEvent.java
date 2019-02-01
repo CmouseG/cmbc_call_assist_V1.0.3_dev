@@ -1,5 +1,6 @@
 package com.guiji.eventbus.event;
 
+import com.guiji.callcenter.dao.entity.Agent;
 import lombok.Data;
 
 /**
@@ -10,5 +11,5 @@ import lombok.Data;
  */
 @Data
 public class VertoDisconnectEvent {
-    private String vertoId;
+    private Agent agent;
 }

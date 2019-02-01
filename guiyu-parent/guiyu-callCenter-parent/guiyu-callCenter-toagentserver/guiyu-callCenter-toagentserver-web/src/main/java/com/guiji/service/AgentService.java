@@ -52,6 +52,8 @@ public interface AgentService {
 
     List<Agent> findByOrgCode(String orgCode);
 
+    Agent findById(String agentId);
+
     void initCallcenter();
 
     Agent initUser(CrmUserVO crmUserVO);

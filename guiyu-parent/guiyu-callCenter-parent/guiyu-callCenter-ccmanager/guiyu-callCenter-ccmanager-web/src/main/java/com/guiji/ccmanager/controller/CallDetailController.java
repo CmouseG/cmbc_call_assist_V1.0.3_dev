@@ -364,8 +364,8 @@ public class CallDetailController implements ICallPlanDetail {
             sheet.addCell(new Label(2, i , callPlan.getReason(),format));
             sheet.addCell(new Label(3, i , callPlan.getTempId(),format));
             sheet.addCell(new Label(4, i , callPlan.getCallStartTime()!=null? sdf.format(callPlan.getCallStartTime()) : "",format));
-            sheet.addCell(new Label(5, i , callPlan.getCallStartTime()!=null? sdf.format(callPlan.getAnswerTime()) : "",format));
-            sheet.addCell(new Label(6, i , callPlan.getCallStartTime()!=null? sdf.format(callPlan.getHangupTime()) : "",format));
+            sheet.addCell(new Label(5, i , callPlan.getAnswerTime()!=null? sdf.format(callPlan.getAnswerTime()) : "",format));
+            sheet.addCell(new Label(6, i , callPlan.getHangupTime()!=null? sdf.format(callPlan.getHangupTime()) : "",format));
             sheet.addCell(new Label(7, i , callPlan.getUserName(),format));
             sheet.addCell(new Label(8, i , callPlan.getDuration()!=null? DateUtils.secondToTime(callPlan.getDuration()): "",format));
             sheet.addCell(new Label(9, i , map.get(callPlan.getCallId()),format));

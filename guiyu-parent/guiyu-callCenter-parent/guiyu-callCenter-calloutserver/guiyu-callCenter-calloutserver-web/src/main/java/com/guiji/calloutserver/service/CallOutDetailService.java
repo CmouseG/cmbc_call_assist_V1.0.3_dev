@@ -2,7 +2,7 @@ package com.guiji.calloutserver.service;
 
 import com.guiji.callcenter.dao.entity.CallOutDetail;
 
-import java.util.List;
+import java.math.BigInteger;
 
 /**
  * @Auther: 魏驰
@@ -15,6 +15,7 @@ public interface CallOutDetailService {
     void update(CallOutDetail callOutDetail);
     void save(CallOutDetail calloutdetail, String recordFile);
 
-    List<CallOutDetail> getLastDetail(String callId);
+    CallOutDetail getLastDetail(String callId);
 
+    Integer getTalkNum(BigInteger bigInteger);
 }

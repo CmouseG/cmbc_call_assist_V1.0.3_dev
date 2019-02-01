@@ -31,11 +31,15 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
         //处理  意向标签  accurate_intent":"D*有效对话轮数:0</br>未命中关键词
 
         String intent = callOutDetail.getAccurateIntent();
-        if(intent!=null && intent.contains("*")){
-            String subIntent = intent.substring(0,1);
-            String subReason= intent.substring(2);
-            callOutDetail.setAccurateIntent(subIntent);
-            callOutDetail.setReason(subReason);
+        if (intent != null) {
+            if (intent.contains("*")) {
+                String subIntent = intent.substring(0, 1);
+                String subReason = intent.substring(2);
+                callOutDetail.setAccurateIntent(subIntent);
+                callOutDetail.setReason(subReason);
+            } else if (intent.equals("?")) {
+                callOutDetail.setAccurateIntent(null);
+            }
         }
 
         callOutDetailMapper.insertSelective(callOutDetail);
@@ -52,16 +56,28 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
 
     }
     @Override
-    public List<CallOutDetail> getLastDetail(String callId) {
+    public CallOutDetail getLastDetail(String callId) {
 
         CallOutDetailExample example = new CallOutDetailExample();
         CallOutDetailExample.Criteria criteria = example.createCriteria();
         criteria.andCallIdEqualTo(new BigInteger(callId));
         criteria.andAccurateIntentIsNotNull();
         example.setOrderByClause("bot_answer_time desc");
-//        example.setLimitStart(0);
-//        example.setLimitEnd(1);
-        return callOutDetailMapper.selectByExample(example);
+        example.setLimitStart(0);
+        example.setLimitEnd(1);
+        List<CallOutDetail> list = callOutDetailMapper.selectByExample(example);
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
     }
 
+    @Override
+    public Integer getTalkNum(BigInteger callId) {
+        CallOutDetailExample example = new CallOutDetailExample();
+        CallOutDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andCallIdEqualTo(callId);
+        criteria.andBotAnswerTimeIsNotNull();
+        return callOutDetailMapper.countByExample(example);
+    }
 }

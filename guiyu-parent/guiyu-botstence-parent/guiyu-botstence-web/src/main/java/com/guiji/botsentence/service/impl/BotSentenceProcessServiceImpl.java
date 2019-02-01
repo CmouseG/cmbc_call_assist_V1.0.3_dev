@@ -81,6 +81,7 @@ import com.guiji.component.client.util.Pinyin4jUtil;
 import com.guiji.component.client.util.SystemUtil;
 import com.guiji.common.exception.CommonException;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
@@ -4289,8 +4290,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		List<String> industryIdList = new ArrayList<>();
 		List<String> parentIndustryIdList = new ArrayList<>();
 		
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
+		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		ReturnData<SysOrganization> org = iAuth.getOrgByUserId(new Long(userId));
+		String orgCode=org.getBody().getCode();
 		ReturnData<List<String>> returnData= orgService.getIndustryByOrgCode(orgCode);
 		industryIdList = returnData.getBody();
 		/*UserAccountTradeRelationExample example1 = new UserAccountTradeRelationExample();

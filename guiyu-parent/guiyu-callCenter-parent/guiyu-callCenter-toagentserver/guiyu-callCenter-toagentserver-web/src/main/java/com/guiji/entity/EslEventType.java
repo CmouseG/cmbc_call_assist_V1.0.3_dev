@@ -23,7 +23,9 @@ public enum EslEventType {
      */
     CHANNEL_PROGRESS,
 
-    CALLCENTER_INFO;
+    CALLCENTER_INFO,
+
+    VERTO_DISCONNECT;
 
     public static EslEventType getByValue(String value){
         EslEventType event = null;
@@ -34,6 +36,8 @@ public enum EslEventType {
         if(event == null){
             if(value.equals("callcenter::info")){
                 event = EslEventType.CALLCENTER_INFO;
+            }else if(value.equals("verto::client_disconnect")){
+                event = EslEventType.VERTO_DISCONNECT;
             }
         }
 

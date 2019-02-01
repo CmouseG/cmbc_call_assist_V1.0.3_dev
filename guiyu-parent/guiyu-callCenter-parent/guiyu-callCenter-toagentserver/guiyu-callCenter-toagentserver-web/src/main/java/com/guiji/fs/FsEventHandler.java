@@ -63,10 +63,19 @@ public class FsEventHandler {
             } else if (eventType == EslEventType.CALLCENTER_INFO) {
                 log.info("zrg_开始处理CALLCENTER_INFO事件[{}]", eslEvent);
                 postCallCenterEvent(eslEvent);
+            } else if(eventType == EslEventType.VERTO_DISCONNECT){
+                log.info("zrg_开始处理verto_disconnect事件");
+                postVertoDisconnect(eslEvent);
             }
         } catch (Exception ex) {
             log.warn("处理事件出现异常", ex);
         }
+    }
+
+    private void postVertoDisconnect(EslEvent eslEvent) {
+        Map<String, String> eventHeaders = eslEvent.getEventHeaders();
+
+        VertoDisconnectEvent event = new VertoDisconnectEvent();
     }
 
     private void postCallCenterEvent(EslEvent eslEvent) {

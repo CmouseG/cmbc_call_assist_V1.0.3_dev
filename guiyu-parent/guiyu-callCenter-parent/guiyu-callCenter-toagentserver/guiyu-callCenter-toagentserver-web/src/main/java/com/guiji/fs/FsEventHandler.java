@@ -1,10 +1,12 @@
 package com.guiji.fs;
 
 import com.guiji.cache.CallCache;
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.config.FsBotConfig;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
+import com.guiji.service.AgentService;
 import com.guiji.service.CallPlanService;
 import com.guiji.util.CommonUtil;
 import com.guiji.util.DateUtil;
@@ -28,6 +30,9 @@ public class FsEventHandler {
 
     @Autowired
     FsBotConfig fsBotConfig;
+
+    @Autowired
+    AgentService agentService;
 
     @Autowired
     CallCache callCache;
@@ -76,6 +81,24 @@ public class FsEventHandler {
         Map<String, String> eventHeaders = eslEvent.getEventHeaders();
 
         VertoDisconnectEvent event = new VertoDisconnectEvent();
+        String loginInfo = eventHeaders.get("verto_login");
+        if(!Strings.isNullOrEmpty(loginInfo)){
+            String agentId = loginInfo;
+            int index = loginInfo.indexOf("@");
+            if(index>0){
+                agentId = loginInfo.substring(0, index);
+            }
+
+            log.info("收到的verto断开事件中，agentId为[{}]", agentId);
+            Agent agent = agentService.findById(agentId);
+            if(agent == null){
+                log.info("无法根据agentId[{}]找到座席，忽略该事件", agentId);
+                return;
+            }
+
+            event.setAgent(agent);
+            simpleEventSender.sendEvent(event);
+        }
     }
 
     private void postCallCenterEvent(EslEvent eslEvent) {

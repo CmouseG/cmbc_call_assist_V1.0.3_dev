@@ -702,4 +702,8 @@ public class AgentServiceImpl implements AgentService {
         return agentMapper.selectByExample(example);
     }
 
+    @Override
+    public Agent findById(String agentId) {
+        return agentMapper.selectByPrimaryKey(Long.valueOf(agentId));
+    }
 }

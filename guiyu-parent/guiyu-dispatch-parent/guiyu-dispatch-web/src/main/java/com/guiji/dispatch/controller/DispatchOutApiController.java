@@ -1,10 +1,8 @@
 package com.guiji.dispatch.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import com.guiji.dispatch.service.IResourcePoolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -15,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
-import com.guiji.dispatch.bean.MessageDto;
-import com.guiji.dispatch.model.Constant;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IResourcePoolService;
 import com.guiji.utils.RedisUtil;
 
 @RestController
@@ -35,6 +34,9 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Autowired
 	private IResourcePoolService resourcePoolService;
+
+	@Autowired
+	private DispatchPlanMapper mapper;
 
 	/**
 	 * 完成
@@ -125,10 +127,22 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode,String type) {
-		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode,type);
+	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode, String type) {
+		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode, type);
 		ReturnData<Boolean> result = new ReturnData<>();
 		result.body = stopPlanByorgCode;
+		return result;
+	}
+
+	@Override
+	public ReturnData<Boolean> updateLabelByUUID(String planuuid, String label) {
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andPlanUuidEqualTo(planuuid);
+		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
+		dis.setResult(label);
+		int count = mapper.updateByExampleSelective(dis, ex);
+		ReturnData<Boolean> result = new ReturnData<>();
+		result.body = count > 0 ? true : false;
 		return result;
 	}
 

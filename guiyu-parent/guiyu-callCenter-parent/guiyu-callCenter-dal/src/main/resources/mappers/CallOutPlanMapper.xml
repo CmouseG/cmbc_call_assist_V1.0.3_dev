@@ -636,13 +636,13 @@
             hangup_direction = #{hangupDirection,jdbcType=INTEGER},
         </if>
         <if test="accurateIntent != null" >
-            <if test="accurateIntent == 'W'" >
+            <if test="accurateIntent == 'W'.toString()" >
                 accurate_intent = IF( accurate_intent IS NULL ,#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
                 <if test="reason != null" >
                     reason = IF( reason IS NULL ,#{reason,jdbcType=VARCHAR}, reason),
                 </if>
             </if>
-            <if test="accurateIntent != 'W'" >
+            <if test="accurateIntent != 'W'.toString()" >
                 accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
                 <if test="reason != null" >
                     reason = #{reason,jdbcType=VARCHAR},

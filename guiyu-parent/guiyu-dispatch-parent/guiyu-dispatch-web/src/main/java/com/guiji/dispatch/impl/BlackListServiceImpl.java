@@ -184,6 +184,11 @@ public class BlackListServiceImpl implements IBlackListService {
 		if(checkPhoneInDB(blackList)){
 			return false;
 		}
+		if(!isNumLegal(blackList.getPhone())){
+			return false;
+		}
+		
+		
 		int result = blackListMapper.insert(blackList);
 		return result > 0 ? true : false;
 	}

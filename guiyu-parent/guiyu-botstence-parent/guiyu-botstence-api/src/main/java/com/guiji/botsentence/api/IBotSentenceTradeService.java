@@ -20,4 +20,10 @@ public interface IBotSentenceTradeService {
 	@RequestMapping(value = "/botsentenceServer/queryAllTradeList")
 	public ServerResult<List<BotSentenceTemplateTradeVO>> queryAllTradeList();
 	
+	/**
+	 * 根据行业ID查询行业名称
+	 * @return
+	 */
+	@RequestMapping(value = "/botsentenceServer/queryTradeByTradeId")
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeByTradeId(String tradeId);
 }

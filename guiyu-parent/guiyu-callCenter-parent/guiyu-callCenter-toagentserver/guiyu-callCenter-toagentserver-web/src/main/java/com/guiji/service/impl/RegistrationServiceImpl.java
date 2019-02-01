@@ -58,6 +58,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             testPage2.enablePaging();
             RegistrationExample registrationExample = new RegistrationExample();
             registrationExample.createCriteria().andCreatorIn(listUser);
+            registrationExample.setOrderByClause("update_time DESC");
             List<Registration> registrationList = registrationMapper.selectByExample(registrationExample);
             pageInfo = new PageInfo<>(registrationList);
             List<Registration> list = pageInfo.getList();
@@ -77,6 +78,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             testPage.enablePaging();
             RegistrationExample registrationExample = new RegistrationExample();
             registrationExample.createCriteria().andCreatorEqualTo(agent.getUserId());
+            registrationExample.setOrderByClause("update_time DESC");
             List<Registration> registrationList = registrationMapper.selectByExample(registrationExample);
 
            pageInfo = new PageInfo<>(registrationList);
@@ -118,17 +120,18 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public void addRegistration(RegistrationRequest request,Agent agent) {
+    public void addRegistration(RegistrationRequest request,Agent agent) throws Exception{
         Date date = new Date();
         RegistrationExample registrationExample = new RegistrationExample();
         registrationExample.createCriteria().andPlanUuidEqualTo(request.getRecordId());
         List<Registration> list = registrationMapper.selectByExample(registrationExample);
         if(list!=null&&list.size()>0){
-            Registration registration =list.get(0);
-            BeanUtils.copyProperties(request,registration);
-            registration.setUpdateTime(date);
-            registration.setUpdateUser(agent.getUserId());
-            registrationMapper.updateByPrimaryKey(registration);
+            throw new Exception("0307013");
+//            Registration registration =list.get(0);
+//            BeanUtils.copyProperties(request,registration);
+//            registration.setUpdateTime(date);
+//            registration.setUpdateUser(agent.getUserId());
+//            registrationMapper.updateByPrimaryKey(registration);
         }else{
             Registration registration =new Registration();
             BeanUtils.copyProperties(request,registration);

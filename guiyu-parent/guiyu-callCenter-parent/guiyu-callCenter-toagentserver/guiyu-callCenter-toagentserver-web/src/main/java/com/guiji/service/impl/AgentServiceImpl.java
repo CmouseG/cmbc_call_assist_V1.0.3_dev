@@ -453,6 +453,7 @@ public class AgentServiceImpl implements AgentService {
             testPage.setPageNum(page);
             testPage.setPageSize(size);
             testPage.enablePaging();
+            example.setOrderByClause("update_time DESC");
             list = agentMapper.selectByExample(example);
         } else {//如果未普通坐席，只查询自己
             list.add(user);

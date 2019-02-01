@@ -183,6 +183,7 @@ public class QueueServiceImpl implements QueueService {
             }else{
                 queueExample.createCriteria().andCreatorEqualTo(agent.getUserId()).andQueueNameLike(queueName);
             }
+            queueExample.setOrderByClause("update_time DESC");
             List<Queue> queueListDb = queueMapper.selectByExample(queueExample);
             PageInfo<Queue> pageInfo = new PageInfo<>(queueListDb);
             List<Queue> queueList = pageInfo.getList();

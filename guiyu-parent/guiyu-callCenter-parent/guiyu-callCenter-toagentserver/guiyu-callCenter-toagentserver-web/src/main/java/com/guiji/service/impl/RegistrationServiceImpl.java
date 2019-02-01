@@ -58,6 +58,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             testPage2.enablePaging();
             RegistrationExample registrationExample = new RegistrationExample();
             registrationExample.createCriteria().andCreatorIn(listUser);
+            registrationExample.setOrderByClause("update_time DESC");
             List<Registration> registrationList = registrationMapper.selectByExample(registrationExample);
             pageInfo = new PageInfo<>(registrationList);
             List<Registration> list = pageInfo.getList();
@@ -77,6 +78,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             testPage.enablePaging();
             RegistrationExample registrationExample = new RegistrationExample();
             registrationExample.createCriteria().andCreatorEqualTo(agent.getUserId());
+            registrationExample.setOrderByClause("update_time DESC");
             List<Registration> registrationList = registrationMapper.selectByExample(registrationExample);
 
            pageInfo = new PageInfo<>(registrationList);

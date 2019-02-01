@@ -25,7 +25,9 @@ public enum EslEventType {
 
     CALLCENTER_INFO,
 
-    VERTO_DISCONNECT;
+    VERTO_DISCONNECT,
+
+    VERTO_LOGIN;
 
     public static EslEventType getByValue(String value){
         EslEventType event = null;
@@ -38,6 +40,8 @@ public enum EslEventType {
                 event = EslEventType.CALLCENTER_INFO;
             }else if(value.equals("verto::client_disconnect")){
                 event = EslEventType.VERTO_DISCONNECT;
+            }else if(value.equals("verto::login")){
+                event = EslEventType.VERTO_LOGIN;
             }
         }
 

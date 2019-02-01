@@ -71,17 +71,43 @@ public class FsEventHandler {
             } else if(eventType == EslEventType.VERTO_DISCONNECT){
                 log.info("zrg_开始处理verto_disconnect事件");
                 postVertoDisconnect(eslEvent);
+            } else if(eventType == EslEventType.VERTO_LOGIN){
+                log.info("zrg_收到verto登录事件[{}]", eslEvent);
+                postVertoLogin(eslEvent);
             }
         } catch (Exception ex) {
             log.warn("处理事件出现异常", ex);
         }
     }
 
+    private void postVertoLogin(EslEvent eslEvent) {
+        String vertoLoginId = eslEvent.getEventHeaders().get("verto_login");
+        Agent agent = getVertoAgent(vertoLoginId);
+        if(agent == null){
+            log.info("vertoLogin无法根据agentId[{}]找到座席，忽略该事件", vertoLoginId);
+            return;
+        }
+
+        VertoLoginEvent event = new VertoLoginEvent();
+        event.setAgent(agent);
+        simpleEventSender.sendEvent(event);
+    }
+
     private void postVertoDisconnect(EslEvent eslEvent) {
-        Map<String, String> eventHeaders = eslEvent.getEventHeaders();
+        String vertoLoginId = eslEvent.getEventHeaders().get("verto_login");
+        Agent agent = getVertoAgent(vertoLoginId);
+        if(agent == null){
+            log.info("无法根据agentId[{}]找到座席，忽略该事件", vertoLoginId);
+            return;
+        }
 
         VertoDisconnectEvent event = new VertoDisconnectEvent();
-        String loginInfo = eventHeaders.get("verto_login");
+        event.setAgent(agent);
+        simpleEventSender.sendEvent(event);
+    }
+
+    private Agent getVertoAgent(String loginInfo){
+        Agent agent =null;
         if(!Strings.isNullOrEmpty(loginInfo)){
             String agentId = loginInfo;
             int index = loginInfo.indexOf("@");
@@ -89,17 +115,13 @@ public class FsEventHandler {
                 agentId = loginInfo.substring(0, index);
             }
 
-            log.info("收到的verto断开事件中，agentId为[{}]", agentId);
-            Agent agent = agentService.findById(agentId);
-            if(agent == null){
-                log.info("无法根据agentId[{}]找到座席，忽略该事件", agentId);
-                return;
-            }
-
-            event.setAgent(agent);
-            simpleEventSender.sendEvent(event);
+            log.info("收到的verto事件中，agentId为[{}]", agentId);
+            agent = agentService.findById(agentId);
         }
+
+        return agent;
     }
+
 
     private void postCallCenterEvent(EslEvent eslEvent) {
         Map<String, String> eventHeaders = eslEvent.getEventHeaders();

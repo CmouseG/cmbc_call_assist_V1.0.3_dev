@@ -4,10 +4,7 @@ import com.google.common.base.Strings;
 import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
-import com.guiji.eventbus.event.AgentAnswerEvent;
-import com.guiji.eventbus.event.AsrAgentEvent;
-import com.guiji.eventbus.event.AsrCustomerEvent;
-import com.guiji.eventbus.event.VertoDisconnectEvent;
+import com.guiji.eventbus.event.*;
 import com.guiji.fs.FsManager;
 import com.guiji.service.AgentService;
 import com.guiji.service.CallDetailService;
@@ -19,6 +16,7 @@ import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.management.resources.agent;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
@@ -47,6 +45,16 @@ public class ToAgentHandler {
         simpleEventSender.register(this);
     }
 
+    @Subscribe
+    @AllowConcurrentEvents
+    public void handleVertoLogin(VertoLoginEvent vertoLoginEvent){
+        log.info("收到verto登录事件[{}]", vertoLoginEvent);
+        Agent agent = vertoLoginEvent.getAgent();
+        if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
+            log.info("verto登录之后，将[{}]状态设置为在线", agent.getUserId());
+            agentService.agentStateByVerto(EUserState.ONLINE,agent);
+        }
+    }
 
     @Subscribe
     @AllowConcurrentEvents
@@ -54,6 +62,7 @@ public class ToAgentHandler {
         log.info("收到座席verto断开事件[{}]", event);
         Agent agent = event.getAgent();
         if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
+            log.info("verto断开之后，将[{}]状态设置为离线", agent.getUserId());
             agentService.agentStateByVerto(EUserState.OFFLINE,agent);
         }
     }

@@ -119,7 +119,9 @@ public class FsBotHandler {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
             callPlan.setAnswerTime(new Date());
-            callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
+            if(aiResponse.getAccurateIntent()!=null && !aiResponse.getAccurateIntent().equals("?")){
+                callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
+            }
             callPlan.setIsAnswer(1);
             callOutPlanService.update(callPlan);
 

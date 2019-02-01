@@ -636,11 +636,20 @@
             hangup_direction = #{hangupDirection,jdbcType=INTEGER},
         </if>
         <if test="accurateIntent != null" >
-            accurate_intent = IF( accurate_intent IS NULL ,#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
+            <if test="accurateIntent == W" >
+                accurate_intent = IF( accurate_intent IS NULL ,#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
+                <if test="reason != null" >
+                    reason = IF( reason IS NULL ,#{reason,jdbcType=VARCHAR}, reason),
+                </if>
+            </if>
+            <if test="accurateIntent != W" >
+                accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
+                <if test="reason != null" >
+                    reason = #{reason,jdbcType=VARCHAR},
+                </if>
+            </if>
         </if>
-        <if test="reason != null" >
-            reason = IF( reason IS NULL ,#{reason,jdbcType=VARCHAR}, reason),
-        </if>
+
         <if test="hangupCode != null" >
             hangup_code = #{hangupCode,jdbcType=VARCHAR},
         </if>

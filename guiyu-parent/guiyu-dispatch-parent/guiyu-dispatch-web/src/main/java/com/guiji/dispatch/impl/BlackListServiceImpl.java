@@ -84,15 +84,22 @@ public class BlackListServiceImpl implements IBlackListService {
 			if (isNull(row.getCell(0))) {
 				row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
 				phone = row.getCell(0).getStringCellValue();
-				if (phone == null || phone == "" || !isNumeric(phone) || phone.length() != 11) {
-					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId,orgCode);
+				if (phone == null || phone == "") {
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
+					continue;
+				}
+				if (!isNumLegal(phone)) {
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
+					continue;
+				}
+				if (phone.length() != 11) {
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_UNIDENTIFIED, userId, orgCode);
+					continue;
 				}
 				if (phones.contains(phone)) {
-					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_DUPLICATE, userId,orgCode);
+					saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_DUPLICATE, userId, orgCode);
+					continue;
 				}
-			}
-			if (phone == "") {
-				continue;
 			}
 			String remark = "";
 			if (isNull(row.getCell(1))) {
@@ -114,13 +121,38 @@ public class BlackListServiceImpl implements IBlackListService {
 				blackListDto.setCreateUserName(userById.getBody().getUsername());
 				blackListDto.setUpdateUserName(userById.getBody().getUsername());
 			}
+			// 判断当前数据库中是否存在当前号码
+			if (checkPhoneInDB(blackListDto)) {
+				saveErrorRecords(phone, Constant.BLACK_LIST_IMPORT_INDB, userId, orgCode);
+				continue;
+			}
 			// 写入mq中
 			blackListMQ.add(blackListDto);
 			phones.add(phone);
 		}
 	}
 
-	private void saveErrorRecords(String phone, Integer blackListImportUnidentified, Long userId,String orgCode) {
+	private boolean isNumLegal(String str) {
+		// String regExp =
+		// "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+		String regExp = "^(?!11)\\d{11}$";
+		Pattern p = Pattern.compile(regExp);
+		Matcher m = p.matcher(str);
+		return m.matches();
+	}
+
+	private boolean checkPhoneInDB(BlackList blackListDto) {
+		BlackListExample ex = new BlackListExample();
+		ex.createCriteria().andPhoneEqualTo(blackListDto.getPhone()).andStatusEqualTo(0);
+		int countByExample = blackListMapper.countByExample(ex);
+		if (countByExample > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void saveErrorRecords(String phone, Integer blackListImportUnidentified, Long userId, String orgCode) {
 		BlackListRecords record = new BlackListRecords();
 		record.setCreateTime(DateUtil.getCurrent4Time());
 		record.setPhone(phone);
@@ -241,9 +273,9 @@ public class BlackListServiceImpl implements IBlackListService {
 		example.setOrderByClause("`create_time` DESC");
 		com.guiji.dispatch.dao.entity.BlackListRecordsExample.Criteria andOrgCodeEqualTo = example.createCriteria()
 				.andOrgCodeEqualTo(orgCode);
-//		if (userName != null && !userName.equals("")) {
-//			andOrgCodeEqualTo.andUserNameEqualTo(userName);
-//		}
+		// if (userName != null && !userName.equals("")) {
+		// andOrgCodeEqualTo.andUserNameEqualTo(userName);
+		// }
 		List<BlackListRecords> result = blackRecordsMapper.selectByExample(example);
 		int countByExample = blackRecordsMapper.countByExample(example);
 		page.setRecords(result);

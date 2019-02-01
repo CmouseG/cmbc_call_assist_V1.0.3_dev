@@ -786,10 +786,9 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 	
 	@Override
 	public void initTemplateKeywords(String simTxt, String processId) {
-		//获取相似词库关键词
-		//BotSentenceAddition addition = botSentenceAdditionMapper.selectByPrimaryKey(processId);
-		
+
 		Map<String, List<String>> simKeywordMap = new HashMap<>();
+		
 		List<List<String>> simList = BotSentenceUtil.getSimtxtKeywordsList(simTxt);
 		if(null != simList && simList.size() > 0) {
 			for(List<String> simLine : simList) {
@@ -799,51 +798,61 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
 					}
 				}
 			}
-		}
-		//获取当前行业的词库
-		BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
-		intentExample.createCriteria().andProcessIdEqualTo(processId);
-		List<BotSentenceIntent> intentList = botSentenceIntentMapper.selectByExampleWithBLOBs(intentExample);
-		for(BotSentenceIntent intent : intentList) {
-			boolean needUpdate = false;
-			//得到保存之前的关键词
-			if(StringUtils.isNotBlank(intent.getKeywords())) {
-				List<String> keywordList = BotSentenceUtil.getKeywords(intent.getKeywords());
-                String onekeywords = keywordList.get(0);
-                String twokeywords = keywordList.get(1);
-                
-                List<String> oneKeywordList = BotSentenceUtil.StringToList(onekeywords);
-                List<String> newKeywordList = BotSentenceUtil.StringToList(onekeywords);
-                for(String keyword : oneKeywordList) {
-                	keyword = keyword.replace("\"", "");
-                	if(simKeywordMap.containsKey(keyword)) {
-						needUpdate = true;
-						List<String> simKeywordList = simKeywordMap.get(keyword);
-						if(null != simKeywordList && simKeywordList.size() > 0) {
-							for(String simKeyword : simKeywordList) {
-								if(!newKeywordList.contains(simKeyword)) {
-									newKeywordList.add(simKeyword);
+			
+			//获取当前模板的词库
+			BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
+			intentExample.createCriteria().andProcessIdEqualTo(processId);
+			List<BotSentenceIntent> intentList = botSentenceIntentMapper.selectByExampleWithBLOBs(intentExample);
+			for(BotSentenceIntent intent : intentList) {
+				boolean needUpdate = false;
+				//得到保存之前的关键词
+				if(StringUtils.isNotBlank(intent.getKeywords())) {
+					List<String> keywordList = BotSentenceUtil.getKeywords(intent.getKeywords());
+	                String onekeywords = keywordList.get(0);
+	                String twokeywords = keywordList.get(1);
+	                
+	                List<String> oneKeywordList = BotSentenceUtil.StringToList(onekeywords);
+	                
+	                List<String> newKeywordList = new ArrayList<>();
+	                for(String keyword : oneKeywordList) {
+	                	if(!newKeywordList.contains(keyword)) {
+	                		newKeywordList.add(keyword);
+	                	}
+	                }
+	                
+	                for(String keyword : oneKeywordList) {
+	                	keyword = keyword.replace("\"", "");
+	                	if(simKeywordMap.containsKey(keyword)) {
+							needUpdate = true;
+							List<String> simKeywordList = simKeywordMap.get(keyword);
+							if(null != simKeywordList && simKeywordList.size() > 0) {
+								for(String simKeyword : simKeywordList) {
+									if(!newKeywordList.contains("\"" + simKeyword + "\"")) {
+										newKeywordList.add("\"" + simKeyword + "\"");
+									}
 								}
 							}
 						}
+	                }
+	                
+	                Collections.reverse(newKeywordList);
+	                
+	                String keywordsJson = BotSentenceUtil.generateKeywords(BotSentenceUtil.listToString(newKeywordList));
+	                if(StringUtils.isNotBlank(keywordsJson)) {
+	                	keywordsJson = keywordsJson.substring(1, keywordsJson.length() - 1);
+	                }else {
+	                	keywordsJson = "";
+	                }
+	                
+	                if(needUpdate) {
+	                    if(null != keywordList && keywordList.size() > 0 && org.apache.commons.lang.StringUtils.isNotBlank(twokeywords)) {
+	            			intent.setKeywords("[" + keywordsJson + "," + keywordList.get(1).replace("\n", "") + "]");
+	            		}else {
+	            			intent.setKeywords("[" + keywordsJson + "]");
+	            		}
+	                    
+	                    botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
 					}
-                }
-                
-                String keywordsJson = BotSentenceUtil.generateKeywords(BotSentenceUtil.listToString(newKeywordList));
-                if(StringUtils.isNotBlank(keywordsJson)) {
-                	keywordsJson = keywordsJson.substring(1, keywordsJson.length() - 1);
-                }else {
-                	keywordsJson = "";
-                }
-                
-                if(needUpdate) {
-                    if(null != keywordList && keywordList.size() > 0 && org.apache.commons.lang.StringUtils.isNotBlank(twokeywords)) {
-            			intent.setKeywords("[" + keywordsJson + "," + keywordList.get(1).replace("\n", "") + "]");
-            		}else {
-            			intent.setKeywords("[" + keywordsJson + "]");
-            		}
-                    
-                    botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
 				}
 			}
 		}

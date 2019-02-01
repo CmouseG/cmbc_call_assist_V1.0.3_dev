@@ -1,10 +1,12 @@
 package com.guiji.fs;
 
 import com.guiji.cache.CallCache;
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.config.FsBotConfig;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
+import com.guiji.service.AgentService;
 import com.guiji.service.CallPlanService;
 import com.guiji.util.CommonUtil;
 import com.guiji.util.DateUtil;
@@ -28,6 +30,9 @@ public class FsEventHandler {
 
     @Autowired
     FsBotConfig fsBotConfig;
+
+    @Autowired
+    AgentService agentService;
 
     @Autowired
     CallCache callCache;
@@ -63,9 +68,36 @@ public class FsEventHandler {
             } else if (eventType == EslEventType.CALLCENTER_INFO) {
                 log.info("zrg_开始处理CALLCENTER_INFO事件[{}]", eslEvent);
                 postCallCenterEvent(eslEvent);
+            } else if(eventType == EslEventType.VERTO_DISCONNECT){
+                log.info("zrg_开始处理verto_disconnect事件");
+                postVertoDisconnect(eslEvent);
             }
         } catch (Exception ex) {
             log.warn("处理事件出现异常", ex);
+        }
+    }
+
+    private void postVertoDisconnect(EslEvent eslEvent) {
+        Map<String, String> eventHeaders = eslEvent.getEventHeaders();
+
+        VertoDisconnectEvent event = new VertoDisconnectEvent();
+        String loginInfo = eventHeaders.get("verto_login");
+        if(!Strings.isNullOrEmpty(loginInfo)){
+            String agentId = loginInfo;
+            int index = loginInfo.indexOf("@");
+            if(index>0){
+                agentId = loginInfo.substring(0, index);
+            }
+
+            log.info("收到的verto断开事件中，agentId为[{}]", agentId);
+            Agent agent = agentService.findById(agentId);
+            if(agent == null){
+                log.info("无法根据agentId[{}]找到座席，忽略该事件", agentId);
+                return;
+            }
+
+            event.setAgent(agent);
+            simpleEventSender.sendEvent(event);
         }
     }
 

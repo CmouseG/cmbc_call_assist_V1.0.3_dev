@@ -72,6 +72,7 @@ public class FsEslClient implements IEslEventListener{
         eslClient.addEventFilter("Event-Name","CHANNEL_HANGUP_COMPLETE");
         eslClient.addEventFilter("Event-Subclass","EV_ALIASR");
         eslClient.addEventFilter("Event-Subclass","callcenter::info");
+        eslClient.addEventFilter("Event-Subclass","verto::client_disconnect");
 
         eslClient.addEventListener(this);
         logger.info("初始化eslClient完毕");

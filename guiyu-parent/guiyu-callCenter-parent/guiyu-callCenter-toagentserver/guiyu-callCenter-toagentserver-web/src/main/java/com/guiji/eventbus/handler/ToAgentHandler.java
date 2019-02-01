@@ -1,12 +1,15 @@
 package com.guiji.eventbus.handler;
 
 import com.google.common.base.Strings;
+import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.AgentAnswerEvent;
 import com.guiji.eventbus.event.AsrAgentEvent;
 import com.guiji.eventbus.event.AsrCustomerEvent;
+import com.guiji.eventbus.event.VertoDisconnectEvent;
 import com.guiji.fs.FsManager;
+import com.guiji.service.AgentService;
 import com.guiji.service.CallDetailService;
 import com.guiji.service.CallPlanService;
 import com.guiji.util.DateUtil;
@@ -36,9 +39,23 @@ public class ToAgentHandler {
     @Autowired
     SimpleEventSender simpleEventSender;
 
+    @Autowired
+    AgentService agentService;
+
     @PostConstruct
     public void init(){
         simpleEventSender.register(this);
+    }
+
+
+    @Subscribe
+    @AllowConcurrentEvents
+    public void handleVertoDisconnect(VertoDisconnectEvent event){
+        log.info("收到座席verto断开事件[{}]", event);
+        Agent agent = event.getAgent();
+        if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
+            agentService.agentStateByVerto(EUserState.OFFLINE,agent);
+        }
     }
 
     @Subscribe

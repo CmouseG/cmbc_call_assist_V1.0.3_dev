@@ -76,7 +76,7 @@ public class BatchImportService implements IBatchImportService {
 				dispatchPlan.setOrgCode(orgCode);
 
 				// 校验黑名单逻辑
-				if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone())) {
+				if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode)) {
 					count = count + 1;
 					blackService.setBlackPhoneStatus(dispatchPlan);
 					phones.add(dispatchPlan.getPhone());

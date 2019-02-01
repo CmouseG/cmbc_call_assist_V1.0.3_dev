@@ -96,8 +96,16 @@ public class AgentServiceImpl implements AgentService {
     FsLineManager fsLineManager;
 
     @Override
-    public boolean createAgent(AgentRequest request, Agent create,Long crmUserid) {
+    public boolean createAgent(AgentRequest request, Agent create,Long crmUserid) throws Exception {
         log.info("开始创建坐席，请求[{}], crmUserId[{}]", request, crmUserid);
+
+        AgentExample example = new AgentExample();
+        example.createCriteria().andCrmLoginIdEqualTo(request.getCrmLoginId());
+        List<Agent> agentList = agentMapper.selectByExample(example);
+        if(agentList.size()>0){
+            throw new Exception("0307002");
+        }
+
         //4、创建用户和坐席, 并存入数据库
         Date date = new Date();
         Agent user = new Agent();
@@ -208,7 +216,8 @@ public class AgentServiceImpl implements AgentService {
         Agent agent = agentMapper.selectByPrimaryKey(Long.parseLong(userId));//根据坐席ID查询用户信息
         if (create.getUserRole() == EUserRole.AGENT.ordinal()) {
             if (!create.getUserId().toString().equals(userId)) {//是坐席请求，改的又不是自己直接返回错误
-                throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
+               // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
+                 throw new Exception("0307005");
             }
         }
         Date date = new Date();
@@ -696,10 +705,33 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
+    public boolean agentStateByVerto(EUserState eUserState,Agent agent) {
+        AgentInfo agentInfo = new AgentInfo();
+        agentInfo.setAgentId(agent.getUserId() + "");
+        if(eUserState==EUserState.OFFLINE){
+            agentInfo.setStatus(AgentStatus.Logged_Out);
+            agent.setUserState(EUserState.OFFLINE.ordinal());
+        }else{
+            agentInfo.setStatus(AgentStatus.Available);
+            agent.setUserState(EUserState.ONLINE.ordinal());
+        }
+        fsManager.updateAgentState(agentInfo);
+        agentMapper.updateByPrimaryKey(agent);
+        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+        fsManager.syncCallcenter(fileUrl,null);
+        return true;
+    }
+
+    @Override
     public List<Agent> findByOrgCode(String orgCode) {
         AgentExample example = new AgentExample();
         example.createCriteria().andOrgCodeEqualTo(orgCode);
         return agentMapper.selectByExample(example);
     }
 
+    @Override
+    public Agent findById(String agentId) {
+        return agentMapper.selectByPrimaryKey(Long.valueOf(agentId));
+    }
 }

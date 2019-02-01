@@ -19,7 +19,7 @@ public interface RegistrationService {
 
     void updateRegistration(String regId, RegistrationRequest request, Agent agent);
 
-    void addRegistration(RegistrationRequest request, Agent agent);
+    void addRegistration(RegistrationRequest request, Agent agent) throws Exception;
 
     void getExportRegistrations(String regIds, Long userId, HttpServletResponse response);
 }

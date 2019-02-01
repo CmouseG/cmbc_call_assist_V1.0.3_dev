@@ -62,7 +62,14 @@ public class RegistrationResource {
     public Result.ReturnData addRegistration(@RequestBody RegistrationRequest request, HttpSession session) {
         log.info("收到新增登记信息请求:[{}]", request.toString());
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        registrationService.addRegistration(request, agent);
+        try {
+            registrationService.addRegistration(request, agent);
+        } catch (Exception e) {
+            log.warn("新增登记信息出现异常", e);
+            if(e.getMessage().equals("0307013")){
+                return Result.error("0307013");
+            }
+        }
         return Result.ok();
     }
 

@@ -29,4 +29,6 @@ public class ErrorConstant {
     public static String EXCP_TOAGENT_NOT_AGENTANDADMIN ="0307009";
     public static String EXCP_TOAGENT_QUEUE_NO_LINE ="0307011";
 
+    public static String EXCP_TOAGENT_REGISTRATION_IS_IN="0307013";
+
 }

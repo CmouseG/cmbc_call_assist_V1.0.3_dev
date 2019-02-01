@@ -7,6 +7,7 @@ import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutPlanExample;
 import com.guiji.config.FsBotConfig;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.entity.CallState;
 import com.guiji.entity.ECallDirection;
 import com.guiji.fs.FsManager;
@@ -41,6 +42,8 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
     PhoneService phoneService;
     @Autowired
     FsBotConfig fsBotConfig;
+    @Autowired
+    IDispatchPlanOut iDispatchPlanOut;
 
     @Override
     public void insert(CallOutPlan callOutPlan){
@@ -89,6 +92,8 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
         CallOutPlan callOutPlan =list.get(0);
         callOutPlan.setAccurateIntent(request.getLabel());
         callOutPlanMapper.updateByPrimaryKey(callOutPlan);
+        //同步修改的意向标签到Dispatch
+        iDispatchPlanOut.updateLabelByUUID(request.getCallRecordId(),request.getLabel());
     }
 
     @Override

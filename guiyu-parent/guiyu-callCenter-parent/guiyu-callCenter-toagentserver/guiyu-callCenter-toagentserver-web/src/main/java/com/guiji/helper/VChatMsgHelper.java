@@ -22,7 +22,7 @@ public class VChatMsgHelper {
      */
     public static String buildPhoneInfoMsg(QueryRecordInDetail queryRecordInDetail){
         VMsg vMsg = new VMsg("phoneinfo", queryRecordInDetail);
-        String str = CommonUtil.beanToJson(queryRecordInDetail);
+        String str = CommonUtil.beanToJson(vMsg);
         return Base64Utils.encodeToString(str.getBytes(Charset.forName("UTF-8")));
     }
 

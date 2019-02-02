@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.notice.dao.NoticeMailInfoExtMapper" >
+
+
+  <select id="queryMailList" resultType="java.util.Map" >
+    select
+      b.notice_type, b.mail_content as content,IFNULL(STR_TO_DATE(a.receive_time,'%Y-%m-%d %H:%i:%s'),'') AS receive_time,
+    a.is_read,a.id
+    from
+    notice_mail_info a,notice_info b
+    where a.receiver_id = #{userId}
+    and a.info_id = b.id
+    and a.is_del =0
+    <if test="isRead != null" >
+      and a.is_read = #{isRead}
+    </if>
+    <if test="noticeType != null" >
+    and b.notice_type = #{noticeType}
+    </if>
+
+    limit #{limitStart},#{pageSize}
+  </select>
+
+  <select id="countMailList" resultType="java.lang.Integer" >
+    select count(a.id)
+    from
+    notice_mail_info a,notice_info b
+    where a.receiver_id = #{userId}
+    and a.info_id = b.id
+    and a.is_del =0
+    <if test="isRead != null" >
+      and a.is_read = #{isRead}
+    </if>
+    <if test="noticeType != null" >
+      and b.notice_type = #{noticeType}
+    </if>
+  </select>
+
+  <select id="selectMailInfo" resultType="java.util.Map" >
+    select
+    b.notice_type, b.mail_content as content,
+    a.receive_time,a.is_read,a.id
+    from
+    notice_mail_info a,notice_info b
+    where a.id = #{id}
+    and a.info_id = b.id
+    and a.is_del =0
+  </select>
+
+</mapper>

@@ -101,6 +101,9 @@ public class AgentResource {
             if(e.getMessage().equals("0307002")) {
                 return Result.error("0307002");
             }
+            if(e.getMessage().equals("0307015")) {
+                return Result.error("0307015");
+            }
         }
         return Result.ok();
     }

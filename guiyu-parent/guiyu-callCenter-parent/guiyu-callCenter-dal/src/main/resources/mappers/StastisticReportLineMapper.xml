@@ -3,185 +3,185 @@
 <mapper namespace="com.guiji.callcenter.dao.StastisticReportLineMapper" >
 
 
-<select id="getLineMonitorReportByLineId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
+    <select id="getLineMonitorReportByLineId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
 
-    SELECT
-    m.line_id AS lineId,
-    IFNULL(SUM(m.answer_num),0) AS answerNum,
-    IFNULL(SUM(m.total_num),0) AS totalNum,
-    IFNULL(MIN(m.rate),0) AS low,
-    IFNULL(MAX(m.rate),0) AS high,
-    IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
-    FROM report_line_status m
-    WHERE m.create_time >=#{startTime}
-    AND m.line_id = #{lineId}
-    GROUP BY m.line_id
-</select>
+        SELECT
+        m.line_id AS lineId,
+        IFNULL(SUM(m.answer_num),0) AS answerNum,
+        IFNULL(SUM(m.total_num),0) AS totalNum,
+        IFNULL(MIN(m.rate),0) AS low,
+        IFNULL(MAX(m.rate),0) AS high,
+        IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
+        FROM report_line_status m
+        WHERE m.create_time >=#{startTime}
+        AND m.line_id = #{lineId}
+        GROUP BY m.line_id
+    </select>
 
 
-<select id="getLineMonitorReportByUserId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
+    <select id="getLineMonitorReportByUserId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
 
-    SELECT
-    m.line_id AS lineId,
-    IFNULL(SUM(m.answer_num),0) AS answerNum,
-    IFNULL(SUM(m.total_num),0) AS totalNum,
-    IFNULL(MIN(m.rate),0) AS low,
-    IFNULL(MAX(m.rate),0) AS high,
-    IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
-    FROM report_line_status m
-    WHERE m.create_time >=#{startTime}
-    AND m.line_id IN
-    <foreach collection="lineIdList" item="id" index="index" open="(" close=")" separator=",">
-        #{id}
-    </foreach>
-    GROUP BY m.line_id
+        SELECT
+        m.line_id AS lineId,
+        IFNULL(SUM(m.answer_num),0) AS answerNum,
+        IFNULL(SUM(m.total_num),0) AS totalNum,
+        IFNULL(MIN(m.rate),0) AS low,
+        IFNULL(MAX(m.rate),0) AS high,
+        IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
+        FROM report_line_status m
+        WHERE m.create_time >=#{startTime}
+        AND m.line_id IN
+        <foreach collection="lineIdList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        GROUP BY m.line_id
 
-</select>
+    </select>
 
-<select id="getLineHangupCodeOverView" resultType="java.util.Map">
+    <select id="getLineHangupCodeOverView" resultType="java.util.Map">
 
-    select
-    sum(answer_calls) as answeredCalls,
-    sum(total_calls) as totalCalls,
-    sum(is_cancel) as cancelledCalls,
-    sum(answer_calls)/sum(total_calls) as answerRate,
-    sum(is_cancel)/sum(total_calls) as cancelledRate,
-    sum(total_calls) - sum(answer_calls) - sum(is_cancel) as othersCalls
-    from report_line_code
-    where
-    line_id = #{lineId}
-    and create_time >=#{startTime}
-    <if test="enTime != null" >
-        and create_time &lt;= #{enTime}
-    </if>
+        select
+        sum(answer_calls) as answeredCalls,
+        sum(total_calls) as totalCalls,
+        sum(is_cancel) as cancelledCalls,
+        sum(answer_calls)/sum(total_calls) as answerRate,
+        sum(is_cancel)/sum(total_calls) as cancelledRate,
+        sum(total_calls) - sum(answer_calls) - sum(is_cancel) as othersCalls
+        from report_line_code
+        where
+        line_id = #{lineId}
+        and create_time >=#{startTime}
+        <if test="enTime != null" >
+            and create_time &lt;= #{enTime}
+        </if>
 
-</select>
+    </select>
 
-<select id="getLineHangupCodeErrorSum" resultType="java.util.Map">
+    <select id="getLineHangupCodeErrorSum" resultType="java.util.Map">
 
-    select
-    hangup_code,
-    sum(total_calls) as totalCalls
-    from report_line_code
-    where
-    line_id = #{lineId}
-    and create_time >=#{startTime}
-    <if test="enTime != null" >
-        and create_time &lt;= #{enTime}
-    </if>
-    and hangup_code is not null
-    group by hangup_code
+        select
+        hangup_code,
+        sum(total_calls) as totalCalls
+        from report_line_code
+        where
+        line_id = #{lineId}
+        and create_time >=#{startTime}
+        <if test="enTime != null" >
+            and create_time &lt;= #{enTime}
+        </if>
+        and hangup_code is not null
+        group by hangup_code
 
-</select>
+    </select>
 
-<select id="getLineHangupCodeErrorNums" resultType="java.util.Map">
+    <select id="getLineHangupCodeErrorNums" resultType="java.util.Map">
 
-    select
-    hangup_code as error,
-    group_concat(phone_num) as num
-    from report_line_code
-    where
-    line_id = #{lineId}
-    and create_time >=#{startTime}
-    <if test="enTime != null" >
-        and create_time &lt;= #{enTime}
-    </if>
-    and hangup_code is not null
-    group by hangup_code
-</select>
+        select
+        hangup_code as error,
+        group_concat(phone_num) as num
+        from report_line_code
+        where
+        line_id = #{lineId}
+        and create_time >=#{startTime}
+        <if test="enTime != null" >
+            and create_time &lt;= #{enTime}
+        </if>
+        and hangup_code is not null
+        group by hangup_code
+    </select>
 
-<select id="getLineHangupCodeErrorNumsCancel" resultType="java.util.Map">
-    select
-    '超时' as error,
-    ifnull(group_concat(phone_num),'') as num
-    from report_line_code
-    where
-    line_id = #{lineId}
-    and create_time >=#{startTime}
-    <if test="enTime != null" >
-        and create_time &lt;= #{enTime}
-    </if>
-    and  is_cancel = 1
+    <select id="getLineHangupCodeErrorNumsCancel" resultType="java.util.Map">
+        select
+        '超时' as error,
+        ifnull(group_concat(phone_num),'') as num
+        from report_line_code
+        where
+        line_id = #{lineId}
+        and create_time >=#{startTime}
+        <if test="enTime != null" >
+            and create_time &lt;= #{enTime}
+        </if>
+        and  is_cancel = 1
 
-</select>
+    </select>
 
-<delete id="deleteReportLineCode">
-    delete from report_line_code
-    WHERE
-    create_time = #{createTime}
-</delete>
-<delete id="deleteReportLineStatus">
-    delete from report_line_status
-    WHERE
-    create_time = #{createTime}
-</delete>
+    <delete id="deleteReportLineCode">
+        delete from report_line_code
+        WHERE
+        create_time = #{createTime}
+    </delete>
+    <delete id="deleteReportLineStatus">
+        delete from report_line_status
+        WHERE
+        create_time = #{createTime}
+    </delete>
 
-<select id="selectLineHangupCodeReport" resultType="com.guiji.callcenter.dao.entity.ReportLineCode">
-    SELECT
-    hangup_code AS hangupCode,
-    line_id AS lineId,
-    SUM(is_cancel) AS isCancel,
-    COUNT(call_id) AS totalCalls,
-    <!--ADDDATE(min(create_time),INTERVAL -MINUTE(min(create_time)) % 5 MINUTE) AS createTime,-->
-    SUBSTRING(GROUP_CONCAT(phone_num),1,119) AS phoneNum,
-    SUM(is_answer) AS answerCalls
+    <select id="selectLineHangupCodeReport" resultType="com.guiji.callcenter.dao.entity.ReportLineCode">
+        SELECT
+        hangup_code AS hangupCode,
+        line_id AS lineId,
+        SUM(is_cancel) AS isCancel,
+        COUNT(call_id) AS totalCalls,
+        <!--ADDDATE(min(create_time),INTERVAL -MINUTE(min(create_time)) % 5 MINUTE) AS createTime,-->
+        SUBSTRING(GROUP_CONCAT(phone_num),1,119) AS phoneNum,
+        SUM(is_answer) AS answerCalls
 
-    FROM
-    call_out_plan
-    WHERE
-    create_time >= #{startTime}
-    AND create_time &lt;  #{enTime}
-    AND
-    call_state>6
+        FROM
+        call_out_plan
+        WHERE
+        create_time >= #{startTime}
+        AND create_time &lt;  #{enTime}
+        AND
+        call_state>6
 
-    GROUP BY hangup_code,line_id,is_cancel
-</select>
+        GROUP BY hangup_code,line_id,is_cancel
+    </select>
 
-<insert id="insertReportLineCodeBatch" parameterType="java.util.List">
-    INSERT INTO  report_line_code (
-    create_time,line_id,hangup_code,is_cancel,total_calls,answer_calls,phone_num)
-    values
-    <foreach collection="list" item="item" index="index" separator=",">
-        (#{item.createTime}, #{item.lineId}, #{item.hangupCode},
-        #{item.isCancel}, #{item.totalCalls}, #{item.answerCalls},
-        #{item.phoneNum}
-        )
-    </foreach>
-</insert>
+    <insert id="insertReportLineCodeBatch" parameterType="java.util.List">
+        INSERT INTO  report_line_code (
+        create_time,line_id,hangup_code,is_cancel,total_calls,answer_calls,phone_num)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.createTime}, #{item.lineId}, #{item.hangupCode},
+            #{item.isCancel}, #{item.totalCalls}, #{item.answerCalls},
+            #{item.phoneNum}
+            )
+        </foreach>
+    </insert>
 
-<select id="selectReportLineStatusFromCode" resultType="com.guiji.callcenter.dao.entity.ReportLineStatus">
-    SELECT
-    line_id as lineId,
-    sum(total_calls) as totalNum,
-    sum(answer_calls) as answerNum,
-    sum(answer_calls)/sum(total_calls) as rate,
-    create_time as createTime
-    FROM
-    report_line_code
-    WHERE
-    create_time = #{createTime}
-    GROUP BY line_id
-</select>
+    <select id="selectReportLineStatusFromCode" resultType="com.guiji.callcenter.dao.entity.ReportLineStatus">
+        SELECT
+        line_id as lineId,
+        sum(total_calls) as totalNum,
+        sum(answer_calls) as answerNum,
+        sum(answer_calls)/sum(total_calls) as rate,
+        create_time as createTime
+        FROM
+        report_line_code
+        WHERE
+        create_time = #{createTime}
+        GROUP BY line_id
+    </select>
 
-<insert id="insertReportLineStatusBatch" parameterType="java.util.List">
-    INSERT INTO  report_line_status (
-    line_id,answer_num,total_num,rate,create_time)
-    values
-    <foreach collection="list" item="item" index="index" separator=",">
-        (#{item.lineId}, #{item.answerNum}, #{item.totalNum},
-        #{item.rate}, #{item.createTime}
-        )
-    </foreach>
-</insert>
+    <insert id="insertReportLineStatusBatch" parameterType="java.util.List">
+        INSERT INTO  report_line_status (
+        line_id,answer_num,total_num,rate,create_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.lineId}, #{item.answerNum}, #{item.totalNum},
+            #{item.rate}, #{item.createTime}
+            )
+        </foreach>
+    </insert>
 
-<delete id="deleteReportLineCodeDaysAgo">
-    delete from report_line_code
-    WHERE
-    create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
-</delete>
-<delete id="deleteReportLineStatusDaysAgo">
-    delete from report_line_status
-    WHERE
-    create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
-</delete>
+    <delete id="deleteReportLineCodeDaysAgo">
+        delete from report_line_code
+        WHERE
+        create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
+    </delete>
+    <delete id="deleteReportLineStatusDaysAgo">
+        delete from report_line_status
+        WHERE
+        create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
+    </delete>
 </mapper>

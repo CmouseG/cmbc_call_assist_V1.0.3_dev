@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.notice.dao.NoticeSettingExtMapper" >
+
+
+  <insert id="insertNoticeSettingBatch" parameterType="java.util.List">
+    INSERT INTO notice_setting (
+    org_code,
+    notice_over_type,
+    notice_type,
+    is_send_mail,
+    is_send_weixin,
+    is_send_email,
+    is_send_sms,
+    receivers,
+    create_time)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.orgCode},
+      #{item.noticeOverType},
+      #{item.noticeType},
+      #{item.isSendMail},
+      #{item.isSendWeixin},
+      #{item.isSendEmail},
+      #{item.isSendSms},
+      #{item.receivers},
+      #{item.createTime}
+      )
+    </foreach>
+  </insert>
+  <update id="addNoticeSettingReceiver">
+  UPDATE  notice_setting SET receivers = CONCAT(receivers,',',#{userId})
+  WHERE org_code =  #{orgCode}
+  </update>
+
+</mapper>

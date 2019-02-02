@@ -33,7 +33,7 @@ public class CallServiceImpl implements CallService {
      * 调用底层FreeSWITCH接口，发起外呼
      */
     @Override
-    public void makeCall(CallOutPlan callplan, CallOutRecord callRecord) {
+    public void makeCall(CallOutPlan callplan, String recordFile) {
         //获取线路服务器
         FsLineVO fsLine = fsLineManager.getFsLine();
 
@@ -54,7 +54,7 @@ public class CallServiceImpl implements CallService {
                 fsLine.getFsInPort(),
                 aliAsrConfig.getAccessId(),
                 aliAsrConfig.getAccessSecret(),
-                callRecord.getRecordFile());
+                    recordFile);
 
         log.info("开始执行呼叫命令[{}]", cmd);
         fsManager.executeAsync(cmd);

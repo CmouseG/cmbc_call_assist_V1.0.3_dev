@@ -68,8 +68,6 @@ public class ImportProcessController {
 	
 	@RequestMapping(value="importProcess")
 	public ServerResult importProcess(MultipartFile multipartFile, BotSentenceProcessVO paramVO, @RequestHeader String userId) throws Exception{
-		paramVO.setIndustryId("010101");
-		
 		String fileName = multipartFile.getOriginalFilename();
 		String suffix =  fileName.substring(fileName.lastIndexOf(".") + 1);
 		if(!"zip".equals(suffix)) {

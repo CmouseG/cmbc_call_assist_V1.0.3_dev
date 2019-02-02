@@ -37,6 +37,16 @@ public class VChatMsg {
     }
 
     /**
+     * 机器人对话结束消息，用于前端将机器人对话与座席对话分隔开
+     * @return
+     */
+    public static VChatMsg aiEndInstance(){
+        VChatMsg chatMsg = new VChatMsg();
+        chatMsg.setMsgtype("ai_end");
+        return chatMsg;
+    }
+
+    /**
      * 构建强制登出消息
      * @return
      */

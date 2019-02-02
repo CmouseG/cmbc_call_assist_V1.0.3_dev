@@ -47,8 +47,10 @@ import com.guiji.botsentence.util.HttpRequestUtils;
 import com.guiji.botsentence.vo.RequestCrmVO;
 import com.guiji.botsentence.vo.ResponseCrmVO;
 import com.guiji.common.exception.CommonException;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.BeanUtil;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.ServerResult;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.SysUserMapper;
@@ -442,10 +444,10 @@ public class BotsentenceServerController {
 	
 	
 	@RequestMapping(value="queryTradeByTradeId")
-	public com.guiji.botsentence.api.entity.ServerResult<BotSentenceTradeVO> queryTradeByTradeId(@RequestParam("tradeId") String tradeId) {
+	public Result.ReturnData<BotSentenceTradeVO> queryTradeByTradeId(@RequestParam("tradeId") String tradeId) {
 		logger.info("根据行业编号{}查询行业信息...", tradeId);
 		if(StringUtils.isBlank(tradeId)) {
-			return com.guiji.botsentence.api.entity.ServerResult.createByErrorMessage("行业编号为空");
+			throw new GuiyuException("行业编号为空");
 		}
 		BotSentenceTradeExample example = new BotSentenceTradeExample();
 		example.createCriteria().andIndustryIdEqualTo(tradeId);
@@ -453,9 +455,9 @@ public class BotsentenceServerController {
 		if(null != list && list.size() > 0) {
 			BotSentenceTradeVO vo = new BotSentenceTradeVO();
 			BeanUtil.copyProperties(list.get(0), vo);
-			return com.guiji.botsentence.api.entity.ServerResult.createBySuccess(vo);
+			return Result.ok(vo);
 		}else {
-			return com.guiji.botsentence.api.entity.ServerResult.createByErrorMessage("该行业不存在");
+			throw new GuiyuException("该行业不存在");
 		}
 	}
 	

@@ -2,8 +2,10 @@ package com.guiji.botsentence.api;
 
 import java.util.List;
 
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
+import com.guiji.botsentence.api.entity.BotSentenceTradeVO;
 import com.guiji.botsentence.api.entity.ServerResult;
 
 /**
@@ -11,6 +13,7 @@ import com.guiji.botsentence.api.entity.ServerResult;
  * @author 张朋
  *
  */
+@FeignClient("guiyu-botstence-web")
 public interface IBotSentenceTradeService {
 
 	/**
@@ -25,5 +28,5 @@ public interface IBotSentenceTradeService {
 	 * @return
 	 */
 	@RequestMapping(value = "/botsentenceServer/queryTradeByTradeId")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeByTradeId(String tradeId);
+	public ServerResult<List<BotSentenceTradeVO>> queryTradeByTradeId(String tradeId);
 }

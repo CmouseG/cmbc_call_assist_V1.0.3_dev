@@ -61,6 +61,9 @@ public class RegistrationResource {
     @RequestMapping(path = "/registrations", method = RequestMethod.POST)
     public Result.ReturnData addRegistration(@RequestBody RegistrationRequest request, HttpSession session) {
         log.info("收到新增登记信息请求:[{}]", request.toString());
+        if(StringUtils.isBlank(request.getRecordId())){
+            return Result.error("0307010");
+        }
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
         try {
             registrationService.addRegistration(request, agent);

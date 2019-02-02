@@ -64,7 +64,7 @@ public class AuthManager {
                 public boolean trueBreakOnCode(String code) {
                     return false;
                 }
-            }, -1, 1, 1, 60, true);
+            }, 3, 1, 1, 60, true);
 
             if(response.success){
                 log.info("同步用户[{}]成功，返回id为[{}]", userName, response.getBody().getId());

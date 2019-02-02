@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+import com.guiji.botsentence.api.entity.BotSentenceTradeVO;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateIndustryVO;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateTradeVO;
@@ -440,7 +441,7 @@ public class BotsentenceServerController {
 	
 	
 	@RequestMapping(value="queryTradeByTradeId")
-	public ServerResult<BotSentenceTrade> queryTradeByTradeId(@JsonParam String tradeId) {
+	public ServerResult<BotSentenceTradeVO> queryTradeByTradeId(@JsonParam String tradeId) {
 		if(StringUtils.isBlank(tradeId)) {
 			return ServerResult.createByErrorMessage("行业编号为空");
 		}
@@ -448,7 +449,9 @@ public class BotsentenceServerController {
 		example.createCriteria().andIndustryIdEqualTo(tradeId);
 		List<BotSentenceTrade> list  = botSentenceTradeMapper.selectByExample(example);
 		if(null != list && list.size() > 0) {
-			return ServerResult.createBySuccess(list.get(0));
+			BotSentenceTradeVO vo = new BotSentenceTradeVO();
+			BeanUtil.copyProperties(list.get(0), vo);
+			return ServerResult.createBySuccess(vo);
 		}else {
 			return ServerResult.createByErrorMessage("该行业不存在");
 		}

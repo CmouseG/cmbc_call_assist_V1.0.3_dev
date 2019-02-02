@@ -176,25 +176,12 @@ public class AgentResource {
     @RequestMapping(path = "/prelogin", method = RequestMethod.GET)
     public Result.ReturnData vertoStatus(HttpSession session){
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        log.info("根据token获取指定的坐席是否已经登录过请求token:[{}]", agent.getUserId());
+        log.info("收到座席[{}]的预登陆接口", agent.getUserId());
 
         //检查该座席是否已登录
         boolean result = agentService.isAgentLogin(agent);
+        log.info("该座席[{}]登录状态为[{}]，允许登录", agent.getUserId(), result);
 
-        //如果座席未登录，则直接返回false，允许登录
-        if(!result){
-            log.info("该座席[{}]未处于登录状态，允许登录", agent.getUserId());
-            return Result.ok();
-        }
-
-        //如果座席已登录，未处于通话中，则向前者发送通知，，让其自行断开，并返回false，允许登录
-        if(!agentService.isAgentBusy(agent.getUserId().toString())){
-            agentService.alertToLogout(agent);
-            try { Thread.sleep(500); } catch (InterruptedException e) {}
-            return Result.ok();
-        }else{
-            //如果座席已登录，正处于通话中，则向后者发送通知"该座席账号正处于通话中，请稍后"，返回true，不允许登录
-            return Result.error(ErrorConstant.AGENT_IS_BUSY);
-        }
+        return Result.ok();
     }
 }

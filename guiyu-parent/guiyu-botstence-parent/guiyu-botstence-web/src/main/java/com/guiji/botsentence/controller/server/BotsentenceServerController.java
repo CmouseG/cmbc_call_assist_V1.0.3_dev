@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -441,9 +442,10 @@ public class BotsentenceServerController {
 	
 	
 	@RequestMapping(value="queryTradeByTradeId")
-	public ServerResult<BotSentenceTradeVO> queryTradeByTradeId(@JsonParam String tradeId) {
+	public com.guiji.botsentence.api.entity.ServerResult<BotSentenceTradeVO> queryTradeByTradeId(@RequestParam("tradeId") String tradeId) {
+		logger.info("根据行业编号{}查询行业信息...", tradeId);
 		if(StringUtils.isBlank(tradeId)) {
-			return ServerResult.createByErrorMessage("行业编号为空");
+			return com.guiji.botsentence.api.entity.ServerResult.createByErrorMessage("行业编号为空");
 		}
 		BotSentenceTradeExample example = new BotSentenceTradeExample();
 		example.createCriteria().andIndustryIdEqualTo(tradeId);
@@ -451,9 +453,9 @@ public class BotsentenceServerController {
 		if(null != list && list.size() > 0) {
 			BotSentenceTradeVO vo = new BotSentenceTradeVO();
 			BeanUtil.copyProperties(list.get(0), vo);
-			return ServerResult.createBySuccess(vo);
+			return com.guiji.botsentence.api.entity.ServerResult.createBySuccess(vo);
 		}else {
-			return ServerResult.createByErrorMessage("该行业不存在");
+			return com.guiji.botsentence.api.entity.ServerResult.createByErrorMessage("该行业不存在");
 		}
 	}
 	

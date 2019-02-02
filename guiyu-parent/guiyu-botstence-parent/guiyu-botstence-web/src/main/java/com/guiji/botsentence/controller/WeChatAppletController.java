@@ -367,7 +367,7 @@ public class WeChatAppletController {
 	
 	
 	@RequestMapping(value="deleteAllVolice")
-	public ServerResult<String> deleteAllVolice(@JsonParam String processId) {
+	public ServerResult<String> deleteAllVolice(@RequestParam("processId") String processId) {
 		if(StringUtils.isBlank(processId)) {
 			return ServerResult.createByErrorMessage("请求参数不完整!");
 		}

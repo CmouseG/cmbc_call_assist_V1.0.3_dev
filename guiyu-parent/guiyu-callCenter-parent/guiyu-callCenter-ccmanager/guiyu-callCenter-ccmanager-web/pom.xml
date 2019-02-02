@@ -23,7 +23,11 @@
             <groupId>guiji.ai</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <artifactId>guiyu-notice-api</artifactId>
+            <groupId>guiji.ai</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>guiyu-callCenter-fsmanager-api</artifactId>
             <groupId>guiji.ai</groupId>

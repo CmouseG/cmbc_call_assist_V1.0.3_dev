@@ -9,6 +9,8 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.ReportCallToday;
 import com.guiji.callcenter.dao.entity.ReportCallTodayExample;
 import com.guiji.calloutserver.eventbus.event.StatisticReportEvent;
+import com.guiji.calloutserver.service.CallLineResultService;
+import com.guiji.calloutserver.service.SendNoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class StatisticReportHandler {
 
     @Autowired
     StatisticMapper statisticMapper;
+    @Autowired
+    SendNoticeService sendNoticeService;
 
     //注册这个监听器
     @PostConstruct
@@ -43,8 +47,12 @@ public class StatisticReportHandler {
     public void handleAfterCall(StatisticReportEvent statisticReportEvent) {
 
         CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();
-
         String intent = callOutPlan.getAccurateIntent();
+
+        if(StringUtils.isNotEmpty(intent)){
+            sendNoticeService.sendNotice(callOutPlan.getCustomerId(),callOutPlan.getPhoneNum(),intent);
+        }
+
         String reason = callOutPlan.getReason();
         String tempId = callOutPlan.getTempId();
         String orgCode = callOutPlan.getOrgCode();

@@ -1,6 +1,7 @@
 package com.guiji.calloutserver.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class DispatchPlan implements Serializable {
 
@@ -14,7 +15,7 @@ public class DispatchPlan implements Serializable {
 
     private String tempId;
 
-    private Integer line;
+    private List<Integer> lineList;
 
     private boolean isTts;
 
@@ -64,12 +65,12 @@ public class DispatchPlan implements Serializable {
         this.tempId = tempId;
     }
 
-    public Integer getLine() {
-        return line;
+    public List<Integer> getLineList() {
+        return lineList;
     }
 
-    public void setLine(Integer line) {
-        this.line = line;
+    public void setLineList(List<Integer> lineList) {
+        this.lineList = lineList;
     }
 
     public boolean isTts() {
@@ -104,7 +105,7 @@ public class DispatchPlan implements Serializable {
                 ", batchId=" + batchId +
                 ", phone='" + phone + '\'' +
                 ", tempId='" + tempId + '\'' +
-                ", line=" + line +
+                ", lineList=" + lineList +
                 ", isTts=" + isTts +
                 ", orgCode='" + orgCode + '\'' +
                 ", agentGroupId='" + agentGroupId + '\'' +

@@ -165,7 +165,7 @@ public class FsBotHandler {
             aiCallNextReq.setAiNo(aiResponse.getAiId());
             aiCallNextReq.setPhoneNo(callPlan.getPhoneNum());
             aiCallNextReq.setSeqId(String.valueOf(callPlan.getCallId()));
-            robotNextHelper.startAiCallNextTimer(aiCallNextReq);
+            robotNextHelper.startAiCallNextTimer(aiCallNextReq,callPlan.getAgentGroupId());
         } catch (Exception ex) {
             //TODO:报警
             log.warn("在处理ChannelAnswer时出错异常", ex);

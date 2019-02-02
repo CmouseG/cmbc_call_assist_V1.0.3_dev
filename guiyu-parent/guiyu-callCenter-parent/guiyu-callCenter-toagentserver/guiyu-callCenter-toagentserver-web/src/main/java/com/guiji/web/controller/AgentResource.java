@@ -5,12 +5,14 @@ import com.guiji.callcenter.dao.entity.Queue;
 import com.guiji.component.result.Result;
 import com.guiji.config.ErrorConstant;
 import com.guiji.entity.CustomSessionVar;
+import com.guiji.entity.EAnswerType;
 import com.guiji.manager.AuthManager;
 import com.guiji.service.AgentService;
 import com.guiji.service.QueueService;
 import com.guiji.web.request.AgentRequest;
 import com.guiji.web.response.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,12 +85,16 @@ public class AgentResource {
         Queue queue = queueService.findByQueueId(request.getQueueId());
         if(queue == null){
             return Result.error("0307001");
+        }else if(queue!=null&&queue.getLineId() == null){
+            return Result.error("0307011");
         }
 
         if(authManager.isUserNameExist(request.getCrmLoginId())){
             return Result.error("0307002");
         }
-
+        if (request.getAnswerType() == EAnswerType.MOBILE && StringUtils.isBlank(request.getMobile())) {
+            return Result.error("0307014");
+        }
         try {
             agentService.createAgent(request,agent,Long.parseLong(crmUserid));
         } catch (Exception e) {

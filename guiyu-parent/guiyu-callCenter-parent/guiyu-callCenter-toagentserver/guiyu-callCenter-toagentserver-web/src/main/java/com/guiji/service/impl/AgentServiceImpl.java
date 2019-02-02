@@ -12,7 +12,6 @@ import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.config.FsBotConfig;
 import com.guiji.config.FsConfig;
-import com.guiji.config.ToagentserverException;
 import com.guiji.entity.*;
 import com.guiji.fs.FreeSWITCH;
 import com.guiji.fs.FsManager;
@@ -96,16 +95,14 @@ public class AgentServiceImpl implements AgentService {
     FsLineManager fsLineManager;
 
     @Override
-    public boolean createAgent(AgentRequest request, Agent create,Long crmUserid) throws Exception {
+    public boolean createAgent(AgentRequest request, Agent create, Long crmUserid) throws Exception {
         log.info("开始创建坐席，请求[{}], crmUserId[{}]", request, crmUserid);
-
         AgentExample example = new AgentExample();
         example.createCriteria().andCrmLoginIdEqualTo(request.getCrmLoginId());
         List<Agent> agentList = agentMapper.selectByExample(example);
-        if(agentList.size()>0){
+        if (agentList.size() > 0) {
             throw new Exception("0307002");
         }
-
         //4、创建用户和坐席, 并存入数据库
         Date date = new Date();
         Agent user = new Agent();
@@ -114,18 +111,18 @@ public class AgentServiceImpl implements AgentService {
         user.setMobile(request.getMobile());
         user.setUserPwd(request.getAgentPwd());
 
-       //第二步创建freeswitch用户,创建freeswitch坐席
+        //第二步创建freeswitch用户,创建freeswitch坐席
         AgentInfo agentInfo = new AgentInfo();
 
         if (request.getAgentState() != null) {
-            if(request.getAgentState()==EUserState.OFFLINE){
+            if (request.getAgentState() == EUserState.OFFLINE) {
                 agentInfo.setStatus(AgentStatus.Logged_Out);
                 user.setUserState(EUserState.OFFLINE.ordinal());
-            }else if(request.getAgentState()==EUserState.ONLINE){
+            } else if (request.getAgentState() == EUserState.ONLINE) {
                 agentInfo.setStatus(AgentStatus.Available);
                 user.setUserState(EUserState.ONLINE.ordinal());
             }
-        }else{
+        } else {
             agentInfo.setStatus(AgentStatus.Logged_Out);
             user.setUserState(EUserState.OFFLINE.ordinal());
         }
@@ -138,37 +135,21 @@ public class AgentServiceImpl implements AgentService {
         user.setCrmLoginId(request.getCrmLoginId());
         agentMapper.insert(user);
 
-        if (request.getAnswerType() != null) {
-            if (request.getAnswerType() == EAnswerType.WEB) {
-                agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
-            } else if (request.getAnswerType() == EAnswerType.MOBILE) {
-                if (StringUtils.isBlank(request.getMobile())) {
-                    agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
-                }
-                if(request.getQueueId()==null){
-                    agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
-                }else{
-                    Queue queue = queueMapper.selectByPrimaryKey(request.getQueueId());
-                    if(queue!=null){
-                        FsLineVO fsLineVO = fsLineManager.getFsLine();
-                        String[] ip = fsLineVO.getFsIp().split(":");
-                        String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",queue.getLineId(),user.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
-                        agentInfo.setContact(contact);
-                        user.setAnswerType(EAnswerType.MOBILE.ordinal());
-                        agentMapper.updateByPrimaryKey(user);
-                    }else{
-                        agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
-                    }
-                }
-            }
-        }else{
+        if (request.getAnswerType() == EAnswerType.WEB) {
             agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
+        } else if (request.getAnswerType() == EAnswerType.MOBILE) {
+            Queue queue = queueMapper.selectByPrimaryKey(request.getQueueId());
+            FsLineVO fsLineVO = fsLineManager.getFsLine();
+            String[] ip = fsLineVO.getFsIp().split(":");
+            String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", queue.getLineId(), user.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
+            agentInfo.setContact(contact);
+            user.setAnswerType(EAnswerType.MOBILE.ordinal());
+            agentMapper.updateByPrimaryKey(user);
         }
         agentInfo.setAgentId(user.getUserId() + "");
-        //agentInfo.setPassword(user.getUserId() + "");
         fsManager.addAgent(agentInfo);
         //同步fs用户到freeswitch()
-        fsManager.syncUser(agentMapper.selectMinUserId()+"",user.getUserId() + "");
+        fsManager.syncUser(agentMapper.selectMinUserId() + "", user.getUserId() + "");
         //第三步callcenter绑定
         TierInfo tierInfo = new TierInfo();
         tierInfo.setAgentId(user.getUserId() + "");
@@ -187,12 +168,12 @@ public class AgentServiceImpl implements AgentService {
         tierMapper.insert(tier);
 
         //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(create.getUserId(), fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        if(!fsBotConfig.isNoAuth()){
+        String fileUrl = uploadConfig(create.getUserId(), fsBotConfig.getHomeDir() + "/callcenter.conf.xml");
+        if (!fsBotConfig.isNoAuth()) {
             log.info("开始将用户同步到auth模块，用户名[{}],crmUserId[{}]", user.getUserName(), crmUserid);
-            authManager.syncUser(user.getCrmLoginId(), user.getUserPwd(),crmUserid);
+            authManager.syncUser(user.getCrmLoginId(), user.getUserPwd(), crmUserid);
         }
-        fsManager.syncCallcenter(fileUrl,null);
+        fsManager.syncCallcenter(fileUrl, null);
         return true;
     }
 

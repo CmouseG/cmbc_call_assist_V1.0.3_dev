@@ -103,6 +103,16 @@ public class AgentServiceImpl implements AgentService {
         if (agentList.size() > 0) {
             throw new Exception("0307002");
         }
+
+        if (!fsBotConfig.isNoAuth()) {
+            log.info("开始将用户同步到auth模块，用户名[{}],crmUserId[{}]", request.getAgentName(), crmUserid);
+            Long syncrs = authManager.syncUser(request.getCrmLoginId(), request.getAgentPwd(), crmUserid);
+            if(syncrs==null){
+                throw new Exception("0307015");
+            }
+        }
+
+
         //4、创建用户和坐席, 并存入数据库
         Date date = new Date();
         Agent user = new Agent();
@@ -169,10 +179,7 @@ public class AgentServiceImpl implements AgentService {
 
         //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(create.getUserId(), fsBotConfig.getHomeDir() + "/callcenter.conf.xml");
-        if (!fsBotConfig.isNoAuth()) {
-            log.info("开始将用户同步到auth模块，用户名[{}],crmUserId[{}]", user.getUserName(), crmUserid);
-            authManager.syncUser(user.getCrmLoginId(), user.getUserPwd(), crmUserid);
-        }
+
         fsManager.syncCallcenter(fileUrl, null);
         return true;
     }

@@ -91,9 +91,11 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Transactional
     public void reportCallTodayTruncate() {
         statisticMapper.reportCallTodayTruncate();
-        //清空365天之前的数据 report_line_code
+        //清空30天之前的数据 call_line_result
+        stastisticReportLineMapper.deleteCallLineResultDaysAgo(30);
+        //清空一年之前的数据 report_line_code
         stastisticReportLineMapper.deleteReportLineCodeDaysAgo(365);
-        //清空365天之前的数据 report_line_code
+        //清空一年之前的数据 report_line_status
         stastisticReportLineMapper.deleteReportLineStatusDaysAgo(365);
     }
 

@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
 import com.guiji.botsentence.api.entity.BotSentenceTradeVO;
 import com.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.component.result.Result;
 
 /**
  * 行业相关服务类
@@ -28,5 +31,5 @@ public interface IBotSentenceTradeService {
 	 * @return
 	 */
 	@RequestMapping(value = "/botsentenceServer/queryTradeByTradeId")
-	public ServerResult<List<BotSentenceTradeVO>> queryTradeByTradeId(String tradeId);
+	public Result.ReturnData<BotSentenceTradeVO> queryTradeByTradeId(@RequestParam("tradeId")String tradeId);
 }

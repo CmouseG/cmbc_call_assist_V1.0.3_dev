@@ -56,4 +56,6 @@ public interface SysOrganizationMapper {
     List<String> getIndustryByOrganizationId(Long organizationId);
 
     List<String> getIndustryByOrgCode(String orgCode);
+
+    public List<SysOrganization> getOrgByOrgCodeOrgName(@Param("orgCode")String orgCode,@Param("orgName")String orgName);
 }

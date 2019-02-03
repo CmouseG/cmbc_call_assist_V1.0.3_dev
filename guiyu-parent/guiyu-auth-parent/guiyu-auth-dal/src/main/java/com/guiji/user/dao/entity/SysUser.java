@@ -42,6 +42,8 @@ public class SysUser implements Serializable {
     
     private String orgName;
 
+    private int isDesensitization;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -196,6 +198,15 @@ public class SysUser implements Serializable {
         this.startTime = startTime;
     }
 
+    public int getIsDesensitization() {
+        return isDesensitization;
+    }
+
+    public void setIsDesensitization(int isDesensitization) {
+        this.isDesensitization = isDesensitization;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -220,6 +231,7 @@ public class SysUser implements Serializable {
         sb.append(", delFlag=").append(delFlag);
         sb.append(", vaildTime=").append(vaildTime);
         sb.append(", startTime=").append(startTime);
+        sb.append(", isDesensitization=").append(isDesensitization);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

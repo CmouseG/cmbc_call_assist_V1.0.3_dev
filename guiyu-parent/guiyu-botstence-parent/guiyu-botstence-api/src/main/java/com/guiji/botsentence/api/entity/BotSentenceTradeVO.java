@@ -1,7 +1,11 @@
 package com.guiji.botsentence.api.entity;
 
-public class BotSentenceTradeVO{
-    private Long id;
+import java.io.Serializable;
+
+public class BotSentenceTradeVO implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	private Long id;
 
     private String industryId;
 

@@ -15,7 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients(basePackages = {"com.guiji","ai.guiji"})
 @EnableAutoResultPack
 @EnableAsync
-@MapperScan("com.guiji.*.dao")
+//@MapperScan("com.guiji.*.dao")
 public class CcManagerApplication{
     public static void main(String[] args) {
         SpringApplication.run(CcManagerApplication.class, args);

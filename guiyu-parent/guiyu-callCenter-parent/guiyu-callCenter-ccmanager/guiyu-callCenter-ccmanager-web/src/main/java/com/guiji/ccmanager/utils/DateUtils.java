@@ -63,6 +63,16 @@ public class DateUtils {
     }
 
     /**
+     * 获取多少天前的日期
+     * @return
+     */
+    public static Date getDaysAgo(int days){
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.HOUR, -24*days);
+        return c.getTime();
+    }
+
+    /**
      * 获取几个小时之前的日期
      * @return
      */

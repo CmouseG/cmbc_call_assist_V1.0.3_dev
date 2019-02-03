@@ -19,7 +19,7 @@ import java.util.Properties;
 @EnableSwagger2
 @EnableDiscoveryClient
 @EnableFeignClients
-@MapperScan("com.guiji.*.dao")
+//@MapperScan("com.guiji.*.dao")
 @EnableAutoResultPack
 @SpringBootApplication(scanBasePackages = "com.guiji")
 public class CCServerApplication {

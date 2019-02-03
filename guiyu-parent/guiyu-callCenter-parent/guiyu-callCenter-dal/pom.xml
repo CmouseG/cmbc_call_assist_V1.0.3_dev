@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>io.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+            <artifactId>sharding-jdbc-core</artifactId>
             <version>3.0.0.M4</version>
         </dependency>
         <dependency>

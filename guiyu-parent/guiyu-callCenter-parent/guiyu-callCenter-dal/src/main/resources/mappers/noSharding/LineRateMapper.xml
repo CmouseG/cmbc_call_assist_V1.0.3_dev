@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.daoNoSharing.LineRateMapper" >
+
+
+  <select id="getLineRateFromResult" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+    SELECT
+    line_id as lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount
+    FROM call_line_result
+    WHERE line_id = #{lineId}
+    AND create_time >=#{startTime}
+    AND create_time &lt;=#{endTime}
+  </select>
+
+  <select id="getLineRateAllFromResult" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+    SELECT
+    line_id AS lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount
+    FROM call_line_result
+    WHERE  create_time >=#{startTime}
+    AND create_time &lt;=#{endTime}
+    GROUP BY line_id
+  </select>
+
+
+  <select id="getLineRateFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+    SELECT
+    line_id as lineId,
+    SUM(all_count) AS allCount,
+    SUM(success_count) AS successCount
+    FROM call_line_day_report
+    WHERE line_id = #{lineId}
+    AND day_time >=#{startTime}
+    AND day_time &lt;=#{endTime}
+  </select>
+
+  <select id="getLineRateAllFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+
+    SELECT lineId,  SUM(allCount) AS allCount, SUM(successCount) AS successCount
+    FROM(
+    SELECT
+    line_id AS lineId,
+    SUM(all_count) AS allCount,
+    SUM(success_count) AS successCount
+    FROM call_line_day_report
+    WHERE  day_time >=#{startTime}
+    AND day_time &lt;=#{endTime}
+    GROUP BY line_id
+
+    UNION ALL
+
+    SELECT
+    line_id AS lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount
+    FROM call_line_result
+    WHERE  create_time >=#{startTime}
+    AND create_time &lt;=#{endTime}
+    GROUP BY line_id
+    ) a GROUP BY lineId
+  </select>
+
+</mapper>

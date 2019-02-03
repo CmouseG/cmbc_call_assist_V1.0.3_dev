@@ -14,7 +14,8 @@ public interface LineRateMapper {
     List<LineRateResponse> getLineRateAllFromResult(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
     List<LineRateResponse> getLineRateFromDayReport(@Param("lineId") Integer lineId, @Param("startTime") Date startTime,
-                                                    @Param("endTime") Date endTime);
+                                                    @Param("endTime") Date endTime, @Param("middleTime") Date middleTime);
 
-    List<LineRateResponse> getLineRateAllFromDayReport(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+    List<LineRateResponse> getLineRateAllFromDayReport(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
+                                                       @Param("middleTime") Date middleTime);
 }

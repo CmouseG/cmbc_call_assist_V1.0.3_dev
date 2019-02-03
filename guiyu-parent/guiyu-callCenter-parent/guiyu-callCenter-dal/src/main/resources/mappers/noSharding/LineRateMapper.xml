@@ -6,8 +6,7 @@
   <select id="getLineRateFromResult" resultType="com.guiji.ccmanager.entity.LineRateResponse">
     SELECT
     line_id as lineId,
-    COUNT(*) AS allCount,
-    SUM(successed) AS successCount
+    ROUND( IF(COUNT(*)!=0,SUM(successed)/COUNT(*),0) ,4) AS rate
     FROM call_line_result
     WHERE line_id = #{lineId}
     AND create_time >=#{startTime}
@@ -17,8 +16,7 @@
   <select id="getLineRateAllFromResult" resultType="com.guiji.ccmanager.entity.LineRateResponse">
     SELECT
     line_id AS lineId,
-    COUNT(*) AS allCount,
-    SUM(successed) AS successCount
+    ROUND( IF(COUNT(*)!=0,SUM(successed)/COUNT(*),0) ,4) AS rate
     FROM call_line_result
     WHERE  create_time >=#{startTime}
     AND create_time &lt;=#{endTime}
@@ -27,19 +25,8 @@
 
 
   <select id="getLineRateFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
-    SELECT
-    line_id as lineId,
-    SUM(all_count) AS allCount,
-    SUM(success_count) AS successCount
-    FROM call_line_day_report
-    WHERE line_id = #{lineId}
-    AND day_time >=#{startTime}
-    AND day_time &lt;=#{endTime}
-  </select>
-
-  <select id="getLineRateAllFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
-
-    SELECT lineId,  SUM(allCount) AS allCount, SUM(successCount) AS successCount
+    SELECT lineId,
+    ROUND( IF(SUM(allCount)!=0,SUM(successCount)/SUM(allCount),0) ,4) AS rate
     FROM(
     SELECT
     line_id AS lineId,
@@ -47,7 +34,34 @@
     SUM(success_count) AS successCount
     FROM call_line_day_report
     WHERE  day_time >=#{startTime}
-    AND day_time &lt;=#{endTime}
+    AND day_time &lt;=#{middleTime}
+    AND line_id = #{lineId}
+
+    UNION ALL
+
+    SELECT
+    line_id AS lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount
+    FROM call_line_result
+    WHERE  create_time >=#{middleTime}
+    AND create_time &lt;=#{endTime}
+    AND line_id = #{lineId}
+    ) a GROUP BY lineId
+  </select>
+
+  <select id="getLineRateAllFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+
+    SELECT lineId,
+    ROUND( IF(SUM(allCount)!=0,SUM(successCount)/SUM(allCount),0) ,4) AS rate
+    FROM(
+    SELECT
+    line_id AS lineId,
+    SUM(all_count) AS allCount,
+    SUM(success_count) AS successCount
+    FROM call_line_day_report
+    WHERE  day_time >=#{startTime}
+    AND day_time &lt;=#{middleTime}
     GROUP BY line_id
 
     UNION ALL
@@ -57,7 +71,7 @@
     COUNT(*) AS allCount,
     SUM(successed) AS successCount
     FROM call_line_result
-    WHERE  create_time >=#{startTime}
+    WHERE  create_time >=#{middleTime}
     AND create_time &lt;=#{endTime}
     GROUP BY line_id
     ) a GROUP BY lineId

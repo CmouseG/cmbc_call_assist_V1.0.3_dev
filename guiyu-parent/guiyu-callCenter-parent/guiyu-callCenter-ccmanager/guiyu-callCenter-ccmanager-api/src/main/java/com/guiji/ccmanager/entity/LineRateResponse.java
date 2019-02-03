@@ -5,9 +5,6 @@ public class LineRateResponse {
     private Integer lineId;
     private Float rate;
 
-    private Integer allCount;
-    private Integer successCount;
-
     public Integer getLineId() {
         return lineId;
     }
@@ -24,19 +21,5 @@ public class LineRateResponse {
         this.rate = rate;
     }
 
-    public Integer getAllCount() {
-        return allCount;
-    }
 
-    public void setAllCount(Integer allCount) {
-        this.allCount = allCount;
-    }
-
-    public Integer getSuccessCount() {
-        return successCount;
-    }
-
-    public void setSuccessCount(Integer successCount) {
-        this.successCount = successCount;
-    }
 }

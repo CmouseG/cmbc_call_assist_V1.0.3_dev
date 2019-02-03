@@ -4,7 +4,6 @@ import com.guiji.ccmanager.api.ILineRate;
 import com.guiji.ccmanager.entity.LineRateResponse;
 import com.guiji.ccmanager.service.LineRateService;
 import com.guiji.component.result.Result;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 /**

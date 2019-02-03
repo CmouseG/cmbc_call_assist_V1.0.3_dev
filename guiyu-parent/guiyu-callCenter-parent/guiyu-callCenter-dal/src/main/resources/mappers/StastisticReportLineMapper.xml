@@ -184,4 +184,9 @@
         WHERE
         create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
     </delete>
+    <delete id="deleteCallLineResultDaysAgo">
+        delete from  call_line_result
+        WHERE
+        create_time &lt; DATE_ADD(NOW(),INTERVAL - #{days} DAY)
+    </delete>
 </mapper>

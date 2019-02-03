@@ -18,4 +18,6 @@ public interface ReportSchedulerService {
     void reportCallTodayTruncateBefore();
 
     boolean isDaySheduleSuccess();
+
+    void reportCallLineDayReportScheduler();
 }

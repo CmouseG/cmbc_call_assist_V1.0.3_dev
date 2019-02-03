@@ -77,4 +77,39 @@
     ) a GROUP BY lineId
   </select>
 
+
+  <select id="countDayReport" resultType="com.guiji.callcenter.dao.entity.CallLineDayReport">
+    SELECT
+    line_id as lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount,
+    #{endTime} as dayTime
+    FROM
+    call_line_result
+    WHERE
+    create_time &lt; #{endTime}
+    AND create_time >= DATE_SUB(#{endTime},INTERVAL 1 DAY)
+    GROUP BY
+    line_id
+  </select>
+
+
+  <insert id="insertCallLineDayReportBatch" parameterType="java.util.List">
+    INSERT INTO  call_line_day_report (
+    day_time,
+    line_id,
+    success_count,
+    all_count
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.dayTime} ,
+      #{item.lineId} ,
+      #{item.successCount} ,
+      #{item.allCount}
+      )
+    </foreach>
+  </insert>
+
+
 </mapper>

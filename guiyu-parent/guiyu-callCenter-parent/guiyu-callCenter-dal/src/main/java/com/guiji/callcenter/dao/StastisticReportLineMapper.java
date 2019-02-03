@@ -36,4 +36,6 @@ public interface StastisticReportLineMapper {
     void deleteReportLineCodeDaysAgo(@Param("days")  int days);
 
     void deleteReportLineStatusDaysAgo(@Param("days")  int days);
+
+    void deleteCallLineResultDaysAgo(@Param("days")  int days);
 }

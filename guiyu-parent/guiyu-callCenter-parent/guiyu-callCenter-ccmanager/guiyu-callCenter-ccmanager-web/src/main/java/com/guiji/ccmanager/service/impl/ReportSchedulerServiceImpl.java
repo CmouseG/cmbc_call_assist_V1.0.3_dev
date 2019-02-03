@@ -4,11 +4,10 @@ import com.guiji.callcenter.dao.ReportCallDayMapper;
 import com.guiji.callcenter.dao.ReportCallTodayMapper;
 import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
-import com.guiji.callcenter.dao.entity.ReportCallDay;
-import com.guiji.callcenter.dao.entity.ReportCallDayExample;
-import com.guiji.callcenter.dao.entity.ReportCallHour;
-import com.guiji.callcenter.dao.entity.ReportCallTodayExample;
+import com.guiji.callcenter.dao.entity.*;
+import com.guiji.callcenter.daoNoSharing.LineRateMapper;
 import com.guiji.ccmanager.service.ReportSchedulerService;
+import com.guiji.ccmanager.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +34,8 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     ReportCallTodayMapper reportCallTodayMapper;
     @Autowired
     ReportCallDayMapper reportCallDayMapper;
+    @Autowired
+    LineRateMapper lineRateMapper;
 
     @Override
     @Transactional
@@ -135,5 +136,13 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public void reportCallLineDayReportScheduler() {
+
+        Date endTime =  DateUtils.getDayBegin();
+        List<CallLineDayReport> list =  lineRateMapper.countDayReport(endTime);
+        lineRateMapper.insertCallLineDayReportBatch(list);
     }
 }

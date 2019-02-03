@@ -1,5 +1,6 @@
 package com.guiji.callcenter.daoNoSharing;
 
+import com.guiji.callcenter.dao.entity.CallLineDayReport;
 import com.guiji.ccmanager.entity.LineRateResponse;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,4 +19,8 @@ public interface LineRateMapper {
 
     List<LineRateResponse> getLineRateAllFromDayReport(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
                                                        @Param("middleTime") Date middleTime);
+
+    List<CallLineDayReport> countDayReport(@Param("endTime") Date endTime);
+
+    void insertCallLineDayReportBatch(List<CallLineDayReport> list);
 }

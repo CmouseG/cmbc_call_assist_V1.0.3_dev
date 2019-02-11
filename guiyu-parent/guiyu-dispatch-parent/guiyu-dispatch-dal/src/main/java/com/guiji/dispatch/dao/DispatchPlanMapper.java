@@ -9,27 +9,27 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 public interface DispatchPlanMapper {
-	int countByExample(DispatchPlanExample example);
+    int countByExample(DispatchPlanExample example);
 
-	int deleteByExample(DispatchPlanExample example);
+    int deleteByExample(DispatchPlanExample example);
 
-	int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer id);
 
-	int insert(DispatchPlan record);
+    int insert(DispatchPlan record);
 
-	int insertSelective(DispatchPlan record);
+    int insertSelective(DispatchPlan record);
 
-	List<DispatchPlan> selectByExample(DispatchPlanExample example);
+    List<DispatchPlan> selectByExample(DispatchPlanExample example);
 
-	DispatchPlan selectByPrimaryKey(Integer id);
+    DispatchPlan selectByPrimaryKey(Integer id);
 
-	int updateByExampleSelective(@Param("record") DispatchPlan record, @Param("example") DispatchPlanExample example);
+    int updateByExampleSelective(@Param("record") DispatchPlan record, @Param("example") DispatchPlanExample example);
 
-	int updateByExample(@Param("record") DispatchPlan record, @Param("example") DispatchPlanExample example);
+    int updateByExample(@Param("record") DispatchPlan record, @Param("example") DispatchPlanExample example);
 
-	int updateByPrimaryKeySelective(DispatchPlan record);
+    int updateByPrimaryKeySelective(DispatchPlan record);
 
-	int updateByPrimaryKey(DispatchPlan record);
+    int updateByPrimaryKey(DispatchPlan record);
 
 	List<DispatchPlan> selectByCallHour(DispatchPlan record);
 
@@ -50,4 +50,6 @@ public interface DispatchPlanMapper {
 	int getCountByUserId(DispatchPlan record);
 	
 	List<DispatchPlan> selectPlanGroupByUserIdLineRobot(DispatchPlan record);
+	
+	List<DispatchPlan> selectPlanGroupByUserId(DispatchPlan record);
 }

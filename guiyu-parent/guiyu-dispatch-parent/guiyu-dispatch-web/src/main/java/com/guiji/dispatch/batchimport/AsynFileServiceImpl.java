@@ -23,6 +23,7 @@ import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.FileRecords;
@@ -113,7 +114,16 @@ public class AsynFileServiceImpl implements AsynFileService {
 		// 用户
 		ReturnData<SysUser> user = authService.getUserById(userId);
 		// 线路
-		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlan.getLine())).getBody();
+		System.out.println();
+		String lineName="";
+		for(DispatchLines lines : dispatchPlan.getLines()){
+			lineName = lineName +""+ lines.getLineName()+",";
+		}
+		
+		String substring = lineName.substring(0, lineName.length()-1);
+		
+		
+//		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlan.getLine())).getBody();
 //		// 话术
 		ServerResult<List<BotSentenceProcess>> templateById = Process.getTemplateById(dispatchPlan.getRobot());
 
@@ -131,7 +141,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		fileRecords.setRobot(dispatchPlan.getRobot());
 		fileRecords.setUserId(userId.intValue());
 		fileRecords.setUserName(user.getBody().getUsername());
-		fileRecords.setLineName(lineName);
+		fileRecords.setLineName(substring);
 		BotSentenceProcess botSentenceProcess = templateById.getData().get(0);
 		fileRecords.setRobotName(botSentenceProcess.getTemplateName());
 		fileRecords.setStatus(Constant.FILE_SHOW);

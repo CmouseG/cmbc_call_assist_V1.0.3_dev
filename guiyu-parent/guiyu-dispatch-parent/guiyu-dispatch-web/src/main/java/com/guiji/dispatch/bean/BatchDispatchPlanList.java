@@ -2,13 +2,14 @@ package com.guiji.dispatch.bean;
 
 import java.util.List;
 
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 
 
 public class BatchDispatchPlanList {
 	private String batchName;
 	private String robot;
-	private String line;
+	private List<DispatchLines> lines;
 	private String clean;
 	private String callHour;
 	private String callDate;
@@ -16,12 +17,13 @@ public class BatchDispatchPlanList {
 	private String lineName;
 	private List<DispatchPlan> mobile;
 
-	public String getLine() {
-		return line;
+
+	public List<DispatchLines> getLines() {
+		return lines;
 	}
 
-	public void setLine(String line) {
-		this.line = line;
+	public void setLines(List<DispatchLines> lines) {
+		this.lines = lines;
 	}
 
 	public String getBatchName() {

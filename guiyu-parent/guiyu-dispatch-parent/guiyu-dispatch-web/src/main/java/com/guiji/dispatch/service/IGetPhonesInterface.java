@@ -14,7 +14,7 @@ public interface IGetPhonesInterface {
 	 * @param limit
 	 * @return List<DispatchPlan>
 	 */
-	public List<DispatchPlan> getPhonesByParams(Integer userId, Integer lineId, String robot, String callHour,
+	public List<DispatchPlan> getPhonesByParams(Integer userId,  String robot, String callHour,
 			Integer limit);
 
 	/**
@@ -23,7 +23,7 @@ public interface IGetPhonesInterface {
 	 */
 	public boolean resetPhoneSyncStatus(List<String> planuuidIds);
 
-	public List<PlanUserIdLineRobotDto> selectPlanGroupByUserIdLineRobot(String callHour);
+	public List<PlanUserIdLineRobotDto> selectPlanGroupByUserIdRobot(String callHour);
 
 	/**
 	 * 找出当前可以拨打的号码用户

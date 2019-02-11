@@ -112,7 +112,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.notice.dao.entity.NoticeInfo" >
+  <insert id="insert" parameterType="com.guiji.notice.dao.entity.NoticeInfo"  useGeneratedKeys="true" keyProperty="id">
     insert into notice_info (id, org_code, notice_type, 
       mail_content, sms_content, email_content, 
       email_subject, weixin_template_id, weixin_url, 
@@ -124,7 +124,7 @@
       #{weixinAppId,jdbcType=VARCHAR}, #{weixinPagePath,jdbcType=VARCHAR}, #{weixinData,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.notice.dao.entity.NoticeInfo" >
+  <insert id="insertSelective" parameterType="com.guiji.notice.dao.entity.NoticeInfo" useGeneratedKeys="true" keyProperty="id">
     insert into notice_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

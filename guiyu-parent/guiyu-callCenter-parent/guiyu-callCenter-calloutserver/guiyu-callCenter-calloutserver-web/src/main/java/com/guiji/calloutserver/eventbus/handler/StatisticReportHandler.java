@@ -10,6 +10,7 @@ import com.guiji.callcenter.dao.entity.ReportCallToday;
 import com.guiji.callcenter.dao.entity.ReportCallTodayExample;
 import com.guiji.calloutserver.eventbus.event.StatisticReportEvent;
 import com.guiji.calloutserver.service.CallLineResultService;
+import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.SendNoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +37,10 @@ public class StatisticReportHandler {
     StatisticMapper statisticMapper;
     @Autowired
     SendNoticeService sendNoticeService;
+    @Autowired
+    ChargeHandler chargeHandler;
+    @Autowired
+    CallOutPlanService callOutPlanService;
 
     //注册这个监听器
     @PostConstruct
@@ -45,12 +51,14 @@ public class StatisticReportHandler {
     @Subscribe
     @AllowConcurrentEvents
     public void handleAfterCall(StatisticReportEvent statisticReportEvent) {
-
-        CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();
+        // todo 可优化，对数据库操作太多
+        BigInteger callId = statisticReportEvent.getCallPlan().getCallId();
+        CallOutPlan callOutPlan = callOutPlanService.findByCallId(callId);
+        chargeHandler.handleAfterCall(callOutPlan);
         String intent = callOutPlan.getAccurateIntent();
 
         if(StringUtils.isNotEmpty(intent)){
-            sendNoticeService.sendNotice(callOutPlan.getCustomerId(),callOutPlan.getPhoneNum(),intent);
+            sendNoticeService.sendNotice(callOutPlan);
         }
 
         String reason = callOutPlan.getReason();

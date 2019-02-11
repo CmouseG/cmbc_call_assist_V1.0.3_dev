@@ -1,9 +1,10 @@
 package com.guiji.calloutserver.service;
 
+import com.guiji.callcenter.dao.entity.CallOutPlan;
 import org.springframework.scheduling.annotation.Async;
 
 public interface SendNoticeService {
 
     @Async
-    void sendNotice(Integer userId, String phone, String intent);
+    void sendNotice(CallOutPlan callOutPlan);
 }

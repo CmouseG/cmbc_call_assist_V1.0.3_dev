@@ -10,6 +10,7 @@ import com.guiji.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +25,7 @@ public class ChargeHandler {
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
-    @Autowired
+/*    @Autowired
     AsyncEventBus asyncEventBus;
 
     //注册这个监听器
@@ -35,10 +36,11 @@ public class ChargeHandler {
 
     @Subscribe
     @AllowConcurrentEvents
+    @Async
     public void handleAfterCall(StatisticReportEvent statisticReportEvent) {
 
-        CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();
-
+        CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();*/
+    public void handleAfterCall(CallOutPlan callOutPlan) {
         ChargeCallPlan chargeCallPlan = new ChargeCallPlan();
         chargeCallPlan.setUserId(callOutPlan.getCustomerId());
         chargeCallPlan.setBillSec(callOutPlan.getBillSec());

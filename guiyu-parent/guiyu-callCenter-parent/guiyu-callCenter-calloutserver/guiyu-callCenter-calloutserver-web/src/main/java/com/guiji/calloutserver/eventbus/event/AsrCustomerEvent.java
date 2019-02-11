@@ -6,8 +6,15 @@ import lombok.Data;
 /**
  * ASR识别事件
  */
-@Data
 public class AsrCustomerEvent extends AsrBaseEvent{
 
     private CallOutPlan callPlan;
+
+    public CallOutPlan getCallPlan() {
+        return callPlan;
+    }
+
+    public void setCallPlan(CallOutPlan callPlan) {
+        this.callPlan = callPlan;
+    }
 }

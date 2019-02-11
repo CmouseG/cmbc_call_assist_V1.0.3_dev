@@ -15,6 +15,8 @@ import com.guiji.notice.service.SendEmailService;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.utils.BeanUtil;
+import com.guiji.wechat.api.WeChatApi;
+import com.guiji.wechat.vo.SendMsgReqVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ public class NoticeSendServiceImpl implements NoticeSendService {
     IAuth auth;
     @Autowired
     SendEmailService sendEmailService;
+    @Autowired
+    WeChatApi weChatApi;
 
     @Override
     public void sendMessage(MessageSend messageSend) {
@@ -119,14 +123,19 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 boolean isSendWeixin = noticeSetting.getIsSendWeixin();
                 if(isSendWeixin){
                     for(String userIdString:receiverArr){
-               /*         long userId = Long.valueOf(userIdString);
+                        long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
                         String openId = returnData.getBody().getWechatOpenid();
                         SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
-                        BeanUtil.copyProperties(messageSend,sendMsgReqVO);
+
+                        sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
+                        sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
+                        sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
+                        sendMsgReqVO.setData(messageSend.getWeixinData());
+                        sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
                         sendMsgReqVO.setOpenID(openId);
                         sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
-                        weChatApi.send(sendMsgReqVO);*/
+                        weChatApi.send(sendMsgReqVO);
                     }
                 }
             }

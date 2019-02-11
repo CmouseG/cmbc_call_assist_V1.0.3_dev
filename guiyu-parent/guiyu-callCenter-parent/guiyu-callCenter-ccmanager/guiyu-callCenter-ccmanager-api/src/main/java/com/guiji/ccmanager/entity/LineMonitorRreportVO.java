@@ -17,6 +17,7 @@ public class LineMonitorRreportVO implements Serializable {
     private String sip_ip;
     private String sip_port;
     private String lineName;
+    private String orgCode;
 
     public Integer getLineId() {
         return lineId;
@@ -104,5 +105,13 @@ public class LineMonitorRreportVO implements Serializable {
 
     public void setLineName(String lineName) {
         this.lineName = lineName;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
     }
 }

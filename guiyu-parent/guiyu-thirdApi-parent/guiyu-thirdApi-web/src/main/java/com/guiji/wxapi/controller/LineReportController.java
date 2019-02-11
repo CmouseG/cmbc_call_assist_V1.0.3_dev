@@ -34,9 +34,9 @@ public class LineReportController {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getLineHangupDetail")
-    public Result.ReturnData getLineHangupDetail( String lineId, String startDate,String endDate) throws ParseException {
+    public Result.ReturnData getLineHangupDetail( String lineId, String startDate,String endDate, String orgCode) throws ParseException {
 
-        return iReportLine.getLineHangupDetail(lineId,startDate,endDate);
+        return iReportLine.getLineHangupDetail(lineId,startDate,endDate,orgCode);
     }
 
 

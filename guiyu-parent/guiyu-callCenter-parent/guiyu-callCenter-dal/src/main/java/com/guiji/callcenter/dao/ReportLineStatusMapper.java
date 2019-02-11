@@ -2,8 +2,6 @@ package com.guiji.callcenter.dao;
 
 import com.guiji.callcenter.dao.entity.ReportLineStatus;
 import com.guiji.callcenter.dao.entity.ReportLineStatusExample;
-
-import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,5 +27,4 @@ public interface ReportLineStatusMapper {
     int updateByPrimaryKeySelective(ReportLineStatus record);
 
     int updateByPrimaryKey(ReportLineStatus record);
-
 }

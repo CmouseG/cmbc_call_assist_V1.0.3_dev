@@ -16,6 +16,8 @@ public class ReportLineStatus implements Serializable {
 
     private Date createTime;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -66,6 +68,14 @@ public class ReportLineStatus implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -78,6 +88,7 @@ public class ReportLineStatus implements Serializable {
         sb.append(", totalNum=").append(totalNum);
         sb.append(", rate=").append(rate);
         sb.append(", createTime=").append(createTime);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -12,8 +12,6 @@ public class NoticeSetting implements Serializable {
 
     private Integer noticeType;
 
-    private String noticeIntent;
-
     private Boolean isSendMail;
 
     private Boolean isSendWeixin;
@@ -64,14 +62,6 @@ public class NoticeSetting implements Serializable {
 
     public void setNoticeType(Integer noticeType) {
         this.noticeType = noticeType;
-    }
-
-    public String getNoticeIntent() {
-        return noticeIntent;
-    }
-
-    public void setNoticeIntent(String noticeIntent) {
-        this.noticeIntent = noticeIntent == null ? null : noticeIntent.trim();
     }
 
     public Boolean getIsSendMail() {
@@ -156,7 +146,6 @@ public class NoticeSetting implements Serializable {
         sb.append(", orgCode=").append(orgCode);
         sb.append(", noticeOverType=").append(noticeOverType);
         sb.append(", noticeType=").append(noticeType);
-        sb.append(", noticeIntent=").append(noticeIntent);
         sb.append(", isSendMail=").append(isSendMail);
         sb.append(", isSendWeixin=").append(isSendWeixin);
         sb.append(", isSendEmail=").append(isSendEmail);

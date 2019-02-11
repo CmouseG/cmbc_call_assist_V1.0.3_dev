@@ -6,7 +6,6 @@
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
     <result column="notice_over_type" property="noticeOverType" jdbcType="INTEGER" />
     <result column="notice_type" property="noticeType" jdbcType="INTEGER" />
-    <result column="notice_intent" property="noticeIntent" jdbcType="VARCHAR" />
     <result column="is_send_mail" property="isSendMail" jdbcType="BIT" />
     <result column="is_send_weixin" property="isSendWeixin" jdbcType="BIT" />
     <result column="is_send_email" property="isSendEmail" jdbcType="BIT" />
@@ -76,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, org_code, notice_over_type, notice_type, notice_intent, is_send_mail, is_send_weixin, 
-    is_send_email, is_send_sms, receivers, update_user, update_time, createa_user, create_time
+    id, org_code, notice_over_type, notice_type, is_send_mail, is_send_weixin, is_send_email, 
+    is_send_sms, receivers, update_user, update_time, createa_user, create_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.notice.dao.entity.NoticeSettingExample" >
     select
@@ -115,15 +114,15 @@
   </delete>
   <insert id="insert" parameterType="com.guiji.notice.dao.entity.NoticeSetting" >
     insert into notice_setting (id, org_code, notice_over_type, 
-      notice_type, notice_intent, is_send_mail, 
-      is_send_weixin, is_send_email, is_send_sms, 
-      receivers, update_user, update_time, 
-      createa_user, create_time)
+      notice_type, is_send_mail, is_send_weixin, 
+      is_send_email, is_send_sms, receivers, 
+      update_user, update_time, createa_user, 
+      create_time)
     values (#{id,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{noticeOverType,jdbcType=INTEGER}, 
-      #{noticeType,jdbcType=INTEGER}, #{noticeIntent,jdbcType=VARCHAR}, #{isSendMail,jdbcType=BIT}, 
-      #{isSendWeixin,jdbcType=BIT}, #{isSendEmail,jdbcType=BIT}, #{isSendSms,jdbcType=BIT}, 
-      #{receivers,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createaUser,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+      #{noticeType,jdbcType=INTEGER}, #{isSendMail,jdbcType=BIT}, #{isSendWeixin,jdbcType=BIT}, 
+      #{isSendEmail,jdbcType=BIT}, #{isSendSms,jdbcType=BIT}, #{receivers,jdbcType=VARCHAR}, 
+      #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createaUser,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.notice.dao.entity.NoticeSetting" >
     insert into notice_setting
@@ -139,9 +138,6 @@
       </if>
       <if test="noticeType != null" >
         notice_type,
-      </if>
-      <if test="noticeIntent != null" >
-        notice_intent,
       </if>
       <if test="isSendMail != null" >
         is_send_mail,
@@ -183,9 +179,6 @@
       </if>
       <if test="noticeType != null" >
         #{noticeType,jdbcType=INTEGER},
-      </if>
-      <if test="noticeIntent != null" >
-        #{noticeIntent,jdbcType=VARCHAR},
       </if>
       <if test="isSendMail != null" >
         #{isSendMail,jdbcType=BIT},
@@ -237,9 +230,6 @@
       <if test="record.noticeType != null" >
         notice_type = #{record.noticeType,jdbcType=INTEGER},
       </if>
-      <if test="record.noticeIntent != null" >
-        notice_intent = #{record.noticeIntent,jdbcType=VARCHAR},
-      </if>
       <if test="record.isSendMail != null" >
         is_send_mail = #{record.isSendMail,jdbcType=BIT},
       </if>
@@ -278,7 +268,6 @@
       org_code = #{record.orgCode,jdbcType=VARCHAR},
       notice_over_type = #{record.noticeOverType,jdbcType=INTEGER},
       notice_type = #{record.noticeType,jdbcType=INTEGER},
-      notice_intent = #{record.noticeIntent,jdbcType=VARCHAR},
       is_send_mail = #{record.isSendMail,jdbcType=BIT},
       is_send_weixin = #{record.isSendWeixin,jdbcType=BIT},
       is_send_email = #{record.isSendEmail,jdbcType=BIT},
@@ -303,9 +292,6 @@
       </if>
       <if test="noticeType != null" >
         notice_type = #{noticeType,jdbcType=INTEGER},
-      </if>
-      <if test="noticeIntent != null" >
-        notice_intent = #{noticeIntent,jdbcType=VARCHAR},
       </if>
       <if test="isSendMail != null" >
         is_send_mail = #{isSendMail,jdbcType=BIT},
@@ -342,7 +328,6 @@
     set org_code = #{orgCode,jdbcType=VARCHAR},
       notice_over_type = #{noticeOverType,jdbcType=INTEGER},
       notice_type = #{noticeType,jdbcType=INTEGER},
-      notice_intent = #{noticeIntent,jdbcType=VARCHAR},
       is_send_mail = #{isSendMail,jdbcType=BIT},
       is_send_weixin = #{isSendWeixin,jdbcType=BIT},
       is_send_email = #{isSendEmail,jdbcType=BIT},

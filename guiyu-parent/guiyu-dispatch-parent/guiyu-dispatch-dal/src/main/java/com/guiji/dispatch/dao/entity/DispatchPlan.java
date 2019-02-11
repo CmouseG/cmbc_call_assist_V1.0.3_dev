@@ -80,9 +80,39 @@ public class DispatchPlan implements Serializable {
 
     private Integer fileRecordId;
     
+    List<DispatchLines> lines;
+    
+    private String cityName;
+
+    private String cityCode;
     
     
-    public Integer getFileRecordId() {
+    
+    public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getCityCode() {
+		return cityCode;
+	}
+
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+
+	public List<DispatchLines> getLines() {
+		return lines;
+	}
+
+	public void setLines(List<DispatchLines> lines) {
+		this.lines = lines;
+	}
+
+	public Integer getFileRecordId() {
 		return fileRecordId;
 	}
 
@@ -104,7 +134,7 @@ public class DispatchPlan implements Serializable {
 
 	public void setSuccess(boolean isSuccess) {
 		this.isSuccess = isSuccess;
-	}
+	} 
 
 	public Integer getLimitStart() {
 		return limitStart;

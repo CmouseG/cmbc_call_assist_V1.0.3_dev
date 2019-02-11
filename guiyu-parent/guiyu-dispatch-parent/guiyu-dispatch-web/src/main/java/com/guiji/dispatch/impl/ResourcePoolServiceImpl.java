@@ -64,19 +64,18 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         int systemMaxRobot = getSystemMaxRobot();
         redisUtil.set(REDIS_SYSTEM_MAX_ROBOT,systemMaxRobot);
         //调用用户中心接口获取当前系统所有企业管理员和企业操作员作为用户集合
-        List<SysUser> sysUserList = getAllCompanyUsers();
+//        List<SysUser> sysUserList = getAllCompanyUsers();
         //调用呼叫中心获取系统线路总并发数
-        int systemMaxLine = getSystemMaxLine(sysUserList);
-//        int systemMaxLine = 60;
-        redisUtil.set(REDIS_SYSTEM_MAX_LINE,systemMaxLine);
+//        int systemMaxLine = getSystemMaxLine(sysUserList);
+//        redisUtil.set(REDIS_SYSTEM_MAX_LINE,systemMaxLine);
         //所有用户线路并发数求和，与系统机器人总数比较，取最小值作为系统拨打任务最大值，存入redis
-        if (systemMaxRobot <= systemMaxLine) {
-            redisUtil.set(REDIS_SYSTEM_MAX_PLAN,systemMaxRobot);
-            redisUtil.set(REDIS_SYSTEM_MAX_PLAN_BY,"robot");
-        } else {
-            redisUtil.set(REDIS_SYSTEM_MAX_PLAN,systemMaxLine);
-            redisUtil.set(REDIS_SYSTEM_MAX_PLAN_BY,"line");
-        }
+//        if (systemMaxRobot <= systemMaxLine) {
+		redisUtil.set(REDIS_SYSTEM_MAX_PLAN, systemMaxRobot);
+		redisUtil.set(REDIS_SYSTEM_MAX_PLAN_BY, "robot");
+//        } else {
+//            redisUtil.set(REDIS_SYSTEM_MAX_PLAN,systemMaxLine);
+//            redisUtil.set(REDIS_SYSTEM_MAX_PLAN_BY,"line");
+//        }
         long end = System.currentTimeMillis();
         long usedTime = end - start;
         logger.info("初始化系统资源池#end,耗时:" + usedTime);
@@ -91,13 +90,14 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 logger.info("根据用户模板线路分配拨打号码比例#start");
                 //查询当前时间段有拨打计划的[用户|线路|模板]
                 String hour = String.valueOf(DateUtil.getCurrentHour());
-                List<PlanUserIdLineRobotDto> userLineRobotList = getPhonesInterface.selectPlanGroupByUserIdLineRobot(hour);
+               //mod by xujin
+                List<PlanUserIdLineRobotDto> userLineRobotList = getPhonesInterface.selectPlanGroupByUserIdRobot(hour);
                 List<UserLineBotenceVO> userLineBotenceVOList = new ArrayList<UserLineBotenceVO>();
                 if (userLineRobotList != null) {
                     for (PlanUserIdLineRobotDto dto:userLineRobotList) {
                         UserLineBotenceVO userLineBotenceVO = new UserLineBotenceVO();
                         userLineBotenceVO.setUserId(dto.getUserId());
-                        userLineBotenceVO.setLineId(dto.getLineId());
+//                        userLineBotenceVO.setLineId(dto.getLineId());
                         userLineBotenceVO.setBotenceName(dto.getRobot());
                         userLineBotenceVOList.add(userLineBotenceVO);
                     }
@@ -148,11 +148,13 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
 
         List<String> tmpList = new ArrayList<>();
         for (UserLineBotenceVO dto:userLineBotenceVOS) {
-            tmpList.add(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount());
+//            tmpList.add(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount());
+        	tmpList.add(dto.getUserId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount());
         }
 
         for (UserLineBotenceVO dto:userLineBotenceVOSFromRedis) {
-            if(!tmpList.contains(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount()))
+//            if(!tmpList.contains(dto.getUserId() +"-"+ dto.getLineId() +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount()))
+        	 if(!tmpList.contains(dto.getUserId()  +"-"+ dto.getBotenceName() +"-"+ dto.getMaxRobotCount()))
             {
                 return false;
             }

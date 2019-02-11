@@ -73,13 +73,25 @@ public class ShardingDataSourceConfig {
 	 * @return
 	 */
 	private List<TableRuleConfiguration> tableRuleConfigurations() {
+		List<TableRuleConfiguration> list = new ArrayList<>();
+		
 		TableRuleConfiguration result = new TableRuleConfiguration();
 		result.setLogicTable("dispatch_plan");
 		result.setActualDataNodes(
 				"guiyu_dispatch.dispatch_plan_0,guiyu_dispatch.dispatch_plan_1,guiyu_dispatch.dispatch_plan_2");
 		result.setTableShardingStrategyConfig(
 				new StandardShardingStrategyConfiguration("phone", new PreciseSharding(), new RangeSharding()));
-		return Arrays.asList(result);
+		
+		
+		TableRuleConfiguration result1 = new TableRuleConfiguration();
+		result1.setLogicTable("dispatch_lines");
+		result1.setActualDataNodes(
+				"guiyu_dispatch.dispatch_lines_0,guiyu_dispatch.dispatch_lines_1,guiyu_dispatch.dispatch_lines_2");
+		result1.setTableShardingStrategyConfig(
+				new StandardShardingStrategyConfiguration("line_id", new PreciseShardingLines(), new RangeSharding()));
+		list.add(result);
+//		list.add(result1);
+		return list;
 	}
 
 }

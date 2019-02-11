@@ -1,17 +1,10 @@
 package com.guiji.dispatch.batchimport;
 
-import com.guiji.dispatch.dao.FileRecordsMapper;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.guiji.dispatch.dao.entity.FileErrorRecords;
-import com.guiji.dispatch.dao.entity.FileRecords;
-import com.guiji.dispatch.impl.DispatchPlanServiceImpl;
-import com.guiji.dispatch.service.IBlackListService;
-import com.guiji.dispatch.util.Constant;
-
-import com.guiji.utils.BeanUtil;
-import com.guiji.utils.DateUtil;
-import com.guiji.utils.IdGenUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -20,9 +13,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.guiji.dispatch.dao.FileRecordsMapper;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.dao.entity.FileRecords;
+import com.guiji.dispatch.impl.DispatchPlanServiceImpl;
+import com.guiji.dispatch.service.IBlackListService;
+import com.guiji.dispatch.service.IPhoneRegionService;
+import com.guiji.dispatch.util.Constant;
+import com.guiji.utils.BeanUtil;
+import com.guiji.utils.DateUtil;
+import com.guiji.utils.IdGenUtil;
 
 @Service
 public class BatchImportService implements IBatchImportService {
@@ -37,6 +38,8 @@ public class BatchImportService implements IBatchImportService {
 	private FileRecordsMapper fileRecordsMapper;
 	@Autowired
 	private IBlackListService blackService;
+	@Autowired
+	private IPhoneRegionService phoneRegionService;
 
 	@Override
 	public void batchImport(Sheet sheet, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode) {
@@ -74,6 +77,9 @@ public class BatchImportService implements IBatchImportService {
 				dispatchPlan.setBatchId(batchId);
 				dispatchPlan.setUserId(userId.intValue());
 				dispatchPlan.setOrgCode(orgCode);
+				//查询号码归属地
+				String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
+				dispatchPlan.setCityName(cityName);
 
 				// 校验黑名单逻辑
 				if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode)) {

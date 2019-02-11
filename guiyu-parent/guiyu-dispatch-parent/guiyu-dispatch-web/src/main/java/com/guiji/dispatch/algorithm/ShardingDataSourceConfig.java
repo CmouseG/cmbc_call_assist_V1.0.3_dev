@@ -90,7 +90,8 @@ public class ShardingDataSourceConfig {
 		result1.setTableShardingStrategyConfig(
 				new StandardShardingStrategyConfiguration("line_id", new PreciseShardingLines(), new RangeSharding()));
 		list.add(result);
-//		list.add(result1);
+		
+		list.add(result1);
 		return list;
 	}
 

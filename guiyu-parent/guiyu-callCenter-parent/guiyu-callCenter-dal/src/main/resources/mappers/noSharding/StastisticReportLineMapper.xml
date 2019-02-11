@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.callcenter.dao.StastisticReportLineMapper" >
+<mapper namespace="com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper" >
 
 
     <select id="getLineMonitorReportByLineId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
@@ -9,33 +9,32 @@
         m.line_id AS lineId,
         IFNULL(SUM(m.answer_num),0) AS answerNum,
         IFNULL(SUM(m.total_num),0) AS totalNum,
-        IFNULL(MIN(m.rate),0) AS low,
-        IFNULL(MAX(m.rate),0) AS high,
+        0 AS low,0 AS high,
         IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
         FROM report_line_status m
         WHERE m.create_time >=#{startTime}
         AND m.line_id = #{lineId}
+        AND m.org_code = #{orgCode}
         GROUP BY m.line_id
     </select>
 
 
     <select id="getLineMonitorReportByUserId" resultType="com.guiji.callcenter.dao.entityext.LineMonitorRreport">
-
-        SELECT
-        m.line_id AS lineId,
-        IFNULL(SUM(m.answer_num),0) AS answerNum,
-        IFNULL(SUM(m.total_num),0) AS totalNum,
-        IFNULL(MIN(m.rate),0) AS low,
-        IFNULL(MAX(m.rate),0) AS high,
-        IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
-        FROM report_line_status m
-        WHERE m.create_time >=#{startTime}
-        AND m.line_id IN
-        <foreach collection="lineIdList" item="id" index="index" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
-        GROUP BY m.line_id
-
+        SELECT a.*,
+        b.line_name AS lineName,b.sip_ip,b.sip_port
+        FROM
+        (  SELECT
+            m.line_id AS lineId,
+            IFNULL(SUM(m.answer_num),0) AS answerNum,
+            IFNULL(SUM(m.total_num),0) AS totalNum,
+            0 AS low,0 AS high,
+            IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
+            FROM report_line_status m
+            WHERE m.create_time >=#{startTime}
+            AND m.org_code LIKE #{orgCode}
+            GROUP BY m.line_id
+        )a,line_info b
+        WHERE a.lineId = b.line_id
     </select>
 
     <select id="getLineHangupCodeOverView" resultType="java.util.Map">
@@ -50,6 +49,7 @@
         from report_line_code
         where
         line_id = #{lineId}
+        and org_code LIKE #{orgCode}
         and create_time >=#{startTime}
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}
@@ -65,6 +65,7 @@
         from report_line_code
         where
         line_id = #{lineId}
+        and org_code LIKE #{orgCode}
         and create_time >=#{startTime}
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}
@@ -97,6 +98,7 @@
         from report_line_code
         where
         line_id = #{lineId}
+        and org_code LIKE #{orgCode}
         and create_time >=#{startTime}
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}

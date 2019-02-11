@@ -2,20 +2,17 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.ReportLineStatusMapper;
-import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
+import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
 import com.guiji.ccmanager.service.LineReportService;
 import com.guiji.ccmanager.utils.DateUtils;
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -88,7 +85,7 @@ public class LineReportServiceImpl implements LineReportService {
     }
 
 
-    public List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime) {
+    public List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime, String orgCode) {
 
         if (lineId != null) {
 
@@ -105,9 +102,9 @@ public class LineReportServiceImpl implements LineReportService {
             resultLineMonitorRreport.setRate(0f);
             resultLineMonitorRreport.setHistory(0f);
 
-            List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime);
+            List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime, orgCode);
             //统计半年的数据
-            List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, DateUtils.getHalfYearDate());
+            List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, DateUtils.getHalfYearDate(), orgCode);
             if (reportList != null && reportList.size() > 0) {
                 LineMonitorRreport report = reportList.get(0);
                 resultLineMonitorRreport.setAnswerNum(report.getAnswerNum());
@@ -123,79 +120,45 @@ public class LineReportServiceImpl implements LineReportService {
 
             return resultList;
         } else {
-            // shardingjdbc 不支持一步到位
-            //查询所有的线路
-            LineInfoExample example = new LineInfoExample();
-            example.createCriteria().andCustomerIdEqualTo(userId.intValue());
-            List<LineInfo> lineList = lineInfoMapper.selectByExample(example);
-            if (lineList != null && lineList.size() > 0) {
 
-                List<Integer> lineIdList = new ArrayList();
-                for (LineInfo lineInfo : lineList) {
-                    lineIdList.add(lineInfo.getLineId());
-                }
-
-                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(lineIdList, startTime);
-                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(lineIdList, DateUtils.getHalfYearDate());
-
-                List<LineMonitorRreport> resultList = new ArrayList<>();
-
-                for (LineInfo lineInfo : lineList) {
-                    LineMonitorRreport lineMonitorRreport = new LineMonitorRreport();
-                    lineMonitorRreport.setLineId(lineInfo.getLineId());
-                    lineMonitorRreport.setLineName(lineInfo.getLineName());
-                    lineMonitorRreport.setSip_ip(lineInfo.getSipIp());
-                    lineMonitorRreport.setSip_port(lineInfo.getSipPort());
-                    lineMonitorRreport.setAnswerNum(0);
-                    lineMonitorRreport.setTotalNum(0);
-                    lineMonitorRreport.setHigh(0f);
-                    lineMonitorRreport.setLow(0f);
-                    lineMonitorRreport.setRate(0f);
-                    lineMonitorRreport.setHistory(0f);
+                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode+"%", startTime);
+                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode+"%", DateUtils.getHalfYearDate());
 
                     if (reportList != null && reportList.size() > 0) {
-                        for (LineMonitorRreport report : reportList) {
-                            if (report.getLineId().intValue() == lineInfo.getLineId().intValue()) {
-                                lineMonitorRreport.setAnswerNum(report.getAnswerNum());
-                                lineMonitorRreport.setTotalNum(report.getTotalNum());
-                                lineMonitorRreport.setRate(report.getRate());
+                        for (LineMonitorRreport lineMonitorRreport : reportList) {
+
+                            if (halfYearList != null && halfYearList.size() > 0) {
+                                for (LineMonitorRreport halfReport : halfYearList) {
+                                    if (halfReport.getLineId().intValue() == lineMonitorRreport.getLineId().intValue()) {
+                                        lineMonitorRreport.setHistory(halfReport.getRate());
+                                    }
+                                }
                             }
                         }
                     }
-                    if (halfYearList != null && halfYearList.size() > 0) {
-                        for (LineMonitorRreport halfReport : halfYearList) {
-                            if (halfReport.getLineId().intValue() == lineInfo.getLineId().intValue()) {
-                                lineMonitorRreport.setHistory(halfReport.getRate());
-                            }
-                        }
-                    }
-                    resultList.add(lineMonitorRreport);
-                }
-                return resultList;
 
-            }
+            return reportList;
 
-
-            return null;
         }
+
     }
 
     @Override
-    public Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime) {
-
-        List<Map> overViewMapList = stastisticReportLineMapper.getLineHangupCodeOverView(lineId, startTime, enTime);
+    public Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime, String orgCode) {
+        orgCode +="%";
+        List<Map> overViewMapList = stastisticReportLineMapper.getLineHangupCodeOverView(lineId, startTime, enTime, orgCode);
         if (overViewMapList != null && overViewMapList.size() > 0) {
             Map overViewMap = overViewMapList.get(0);
 
-            List<Map> errorSumMapList = stastisticReportLineMapper.getLineHangupCodeErrorSum(lineId, startTime, enTime);
+            List<Map> errorSumMapList = stastisticReportLineMapper.getLineHangupCodeErrorSum(lineId, startTime, enTime, orgCode);
             if(errorSumMapList!=null && errorSumMapList.size()>0){
                 Map errorSumMap = new HashMap();
                 for(Map map :errorSumMapList){
                     errorSumMap.put(map.get("hangup_code"),map.get("totalCalls"));
                 }
 
-                List<Map> errorNumsMapList = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNums(lineId, startTime, enTime));
-                List<Map> errorNumsMapListCancel = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNumsCancel(lineId, startTime, enTime));
+                List<Map> errorNumsMapList = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNums(lineId, startTime, enTime, orgCode));
+                List<Map> errorNumsMapListCancel = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNumsCancel(lineId, startTime, enTime, orgCode));
                 if(errorNumsMapList!=null && errorNumsMapListCancel != null && errorNumsMapListCancel.size()>0){
                     errorNumsMapList.addAll(errorNumsMapListCancel);
                 }

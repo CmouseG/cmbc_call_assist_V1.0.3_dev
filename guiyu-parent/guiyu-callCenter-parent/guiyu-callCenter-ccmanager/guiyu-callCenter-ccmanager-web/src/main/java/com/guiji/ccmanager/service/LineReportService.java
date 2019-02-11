@@ -16,7 +16,7 @@ public interface LineReportService {
 
     void statisticsReportLineCode() throws ParseException;
 
-    List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime);
+    List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime, String orgCode);
 
-    Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime);
+    Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime, String orgCode);
 }

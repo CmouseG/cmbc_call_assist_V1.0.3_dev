@@ -2,10 +2,10 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.ReportCallDayMapper;
 import com.guiji.callcenter.dao.ReportCallTodayMapper;
-import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.daoNoSharing.LineRateMapper;
+import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
 import com.guiji.ccmanager.service.ReportSchedulerService;
 import com.guiji.ccmanager.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;

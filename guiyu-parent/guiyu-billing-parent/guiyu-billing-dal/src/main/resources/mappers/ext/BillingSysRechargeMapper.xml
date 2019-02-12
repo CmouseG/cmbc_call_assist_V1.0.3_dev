@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.ext.BillingSysRechargeMapper">
+
+
+  <select id="queryCompanyRechargeTotal" resultType="com.guiji.billing.vo.SysRechargeTotalVo">
+    SELECT
+      r.id                 ,
+      r.charging_id        ,
+      r.account_id         ,
+      r.type               ,
+      r.fee_mode           ,
+      r.amount      AS recharge_amount,
+      r.src_amount         ,
+      r.to_amount          ,
+      r.create_time AS oper_time,
+      r.oper_user_name AS oper_user_name,
+      a.org_code,
+      a.company_name
+    FROM billing_acct_charging_record r
+      LEFT JOIN billing_user_acct a
+        ON r.account_id = a.account_id
+    WHERE r.del_flag = 0
+      <if test="type != null">
+        AND r.type = #{type}
+      </if>
+      <if test="feeMode != null">
+        AND r.fee_mode = #{feeMode}
+      </if>
+      <if test="companyName != null">
+        AND a.company_name LIKE CONCAT('%', #{companyName}, '%')
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+      </if>
+      ORDER BY r.create_time DESC
+      <if test="page != null and page.isPage ">
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+  <select id="queryCompanyRechargeCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(*)
+    FROM billing_acct_charging_record r
+      LEFT JOIN billing_user_acct a
+        ON r.account_id = a.account_id
+    WHERE r.del_flag = 0
+      <if test="type != null">
+        AND r.type = #{type}
+      </if>
+      <if test="feeMode != null">
+        AND r.fee_mode = #{feeMode}
+      </if>
+      <if test="companyName != null">
+        AND a.company_name LIKE CONCAT('%', #{companyName}, '%')
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+      </if>
+  </select>
+
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.ext.BillingCompanyTotalMapper">
+
+  <select id="totalCompanyChargingByMonth" resultType="com.guiji.billing.vo.TotalChargingItemVo">
+    SELECT
+      opt_time AS total_date,
+      charging_item_id,
+      charging_item_name,
+      COUNT(id) AS call_count,
+      SUM(oper_duration_m) AS duration,
+      SUM(amount) AS total_amout
+    FROM
+    (
+      SELECT t.charging_item_id, t.charging_item_name,
+        r.id, r.oper_duration_m, r.amount ,
+        DATE_FORMAT(r.create_time, '%Y-%m') AS opt_time
+      FROM billing_acct_charging_record r, billing_acct_charging_term t
+      WHERE r.user_charging_id = t.user_charging_id
+        <if test="operUserId != null">
+          AND r.oper_user_id = #{operUserId}
+        </if>
+    ) rt
+    WHERE 1=1
+    <if test="beginMonth != null and endMonth != null">
+      AND opt_time BETWEEN #{beginMonth} AND #{endMonth}
+    </if>
+    GROUP BY opt_time , charging_item_id, charging_item_name
+    ORDER BY opt_time DESC
+    <if test="page != null and page.isPage ">
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="totalChargingCountByMonth" resultType="java.lang.Integer">
+    SELECT
+      COUNT(*)
+    FROM
+    (
+      SELECT
+        opt_time AS total_date,
+        charging_item_id
+      FROM
+      (
+        SELECT t.charging_item_id, t.charging_item_name,
+          r.id, r.oper_duration_m, r.amount ,
+          DATE_FORMAT(r.create_time, '%Y-%m') AS opt_time
+        FROM billing_acct_charging_record r, billing_acct_charging_term t
+        WHERE r.user_charging_id = t.user_charging_id
+          <if test="operUserId != null">
+            AND r.oper_user_id = #{operUserId}
+          </if>
+      ) rt
+      WHERE 1 = 1
+      <if test="beginMonth != null and endMonth != null">
+        AND opt_time BETWEEN #{beginMonth} AND #{endMonth}
+      </if>
+      GROUP BY opt_time , charging_item_id
+    ) a
+  </select>
+
+
+  <select id="totalCompanyChargingByDate" resultType="com.guiji.billing.vo.TotalChargingItemVo">
+    SELECT
+      opt_time AS total_date,
+      charging_item_id,
+      charging_item_name,
+      COUNT(id) AS call_count,
+      SUM(oper_duration_m) AS duration,
+      SUM(amount) AS total_amout
+    FROM
+    (
+      SELECT t.charging_item_id, t.charging_item_name,
+          r.id, r.oper_duration_m, r.amount ,
+          DATE_FORMAT(r.create_time, '%Y-%m-%d') AS opt_time
+        FROM billing_acct_charging_record r, billing_acct_charging_term t
+        WHERE r.user_charging_id = t.user_charging_id
+          <if test="operUserId != null">
+            AND r.oper_user_id = #{operUserId}
+          </if>
+    ) rt
+    WHERE 1 = 1
+    <if test="beginDate != null and endDate != null">
+      AND opt_time BETWEEN #{beginDate} AND #{endDate}
+    </if>
+    GROUP BY opt_time , charging_item_id, charging_item_name
+    ORDER BY opt_time DESC
+    <if test="page != null and page.isPage ">
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="totalChargingCountByDate" resultType="java.lang.Integer">
+    SELECT
+      COUNT(*)
+    FROM
+    (
+      SELECT
+      opt_time AS total_date,
+      charging_item_id
+      FROM
+      (
+        SELECT t.charging_item_id, t.charging_item_name,
+          r.id, r.oper_duration_m, r.amount ,
+          DATE_FORMAT(r.create_time, '%Y-%m-%d') AS opt_time
+        FROM billing_acct_charging_record r, billing_acct_charging_term t
+        WHERE r.user_charging_id = t.user_charging_id
+          <if test="operUserId != null">
+            AND r.oper_user_id = #{operUserId}
+          </if>
+      ) rt
+      WHERE 1 = 1
+      <if test="beginDate != null and endDate != null">
+        AND opt_time BETWEEN #{beginDate} AND #{endDate}
+      </if>
+      GROUP BY opt_time , charging_item_id
+    ) a
+  </select>
+
+
+  <select id="totalChargingItemList" resultType="com.guiji.billing.vo.TotalChargingItemDetailVo">
+    SELECT
+      r.phone,
+      r.oper_begin_time AS begin_time,
+      r.oper_end_time AS end_time,
+      r.oper_duration_str,
+      r.amount
+    FROM billing_acct_charging_record r, billing_acct_charging_term t
+    WHERE r.user_charging_id = t.user_charging_id
+      <if test="chargingItemId != null">
+        AND t.charging_item_id = #{chargingItemId}
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+      </if>
+      ORDER BY r.create_time DESC
+      <if test="page != null and page.isPage ">
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+
+  <select id="totalChargingItemCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(*)
+    FROM billing_acct_charging_record r, billing_acct_charging_term t
+    WHERE r.user_charging_id = t.user_charging_id
+    <if test="chargingItemId != null">
+      AND t.charging_item_id = #{chargingItemId}
+    </if>
+    <if test="beginDate != null and endDate != null">
+      AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+    </if>
+  </select>
+
+</mapper>

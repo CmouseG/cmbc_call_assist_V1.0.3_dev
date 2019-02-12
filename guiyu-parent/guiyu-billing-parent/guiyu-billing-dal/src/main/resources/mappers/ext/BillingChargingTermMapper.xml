@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.ext.BillingChargingTermMapper">
+
+    <select id="queryChargingTermList" resultType="com.guiji.billing.entity.BillingChargingTermBean">
+        SELECT
+            id               ,
+            charging_item_id ,
+            type             ,
+            name             ,
+            charging_type    ,
+            status           ,
+            create_time      ,
+            update_time      ,
+            del_flag
+        FROM billing_charging_term
+        WHERE del_flag = 0
+        <if test="chargingTerm != null">
+            <if test="chargingTerm.chargingItemId != null">
+                AND charging_item_id = #{chargingTerm.chargingItemId}
+            </if>
+            <if test="chargingTerm.type != null">
+                AND type = #{chargingTerm.type}
+            </if>
+            <if test="chargingTerm.name != null">
+                AND name LIKE CONCAT('%', #{chargingTerm.name},'%')
+            </if>
+            <if test="chargingTerm.chargingType != null">
+                AND charging_type = #{chargingTerm.chargingType}
+            </if>
+            <if test="chargingTerm.status != null">
+                AND status = #{chargingTerm.status}
+            </if>
+        </if>
+        ORDER BY create_time DESC
+        <if test="page != null and page.isPage ">
+            <!--<if test="page.orderBy != null " >
+                order by ${page.orderBy}	${page.sort}
+            </if>-->
+            <if test="page.indexStart != null " >
+                limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+            </if>
+        </if>
+    </select>
+
+    <select id="queryChargingTermCount" resultType="java.lang.Integer">
+        SELECT
+          COUNT(id)
+        FROM billing_charging_term
+        WHERE del_flag = 0
+        <if test="chargingTerm != null">
+            <if test="chargingTerm.chargingItemId != null">
+                AND charging_item_id = #{chargingTerm.chargingItemId}
+            </if>
+            <if test="chargingTerm.type != null">
+                AND type = #{chargingTerm.type}
+            </if>
+            <if test="chargingTerm.name != null">
+                AND name LIKE CONCAT('%', #{chargingTerm.name},'%')
+            </if>
+            <if test="chargingTerm.chargingType != null">
+                AND charging_type = #{chargingTerm.chargingType}
+            </if>
+            <if test="chargingTerm.status != null">
+                AND status = #{chargingTerm.status}
+            </if>
+        </if>
+
+    </select>
+
+    <insert id="addChargingTerm" parameterType="com.guiji.billing.entity.BillingChargingTermBean"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO billing_charging_term
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="chargingItemId != null">
+                charging_item_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="chargingType != null">
+                charging_type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="chargingItemId != null">
+                #{chargingItemId,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="chargingType != null">
+                #{chargingType,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updChargingTerm" parameterType="com.guiji.billing.entity.BillingChargingTermBean">
+        update billing_charging_term
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="chargingType != null">
+                charging_type = #{chargingType,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+        </set>
+        WHERE charging_item_id = #{chargingItemId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="delChargingTerm">
+        UPDATE billing_charging_term
+        SET del_flag = 1,
+            update_time = #{updateTime}
+        WHERE charging_item_id = #{chargingItemId}
+    </delete>
+
+
+    <update id="updChargingTermStatus">
+        UPDATE billing_charging_term
+        SET status = #{status},
+            update_time = #{updateTime}
+        WHERE charging_item_id = #{chargingItemId}
+    </update>
+
+</mapper>

@@ -226,7 +226,9 @@ public class CallDetailServiceImpl implements CallDetailService {
             List<CallOutDetailRecord> records = callOutDetailRecordMapper.selectByExample(exampleRecord);
 
             List<CallOutDetailVO> resList = new ArrayList<CallOutDetailVO>();
-            for (CallOutDetail callOutDetail : details) {
+//            for (CallOutDetail callOutDetail : details) {
+            for (int i=0; i<details.size(); i++) { //加上无声音的判断
+                CallOutDetail callOutDetail = details.get(i);
                 CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
                 BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
                 callOutDetailVO.setCallDetailId(callOutDetail.getCallDetailId().toString());
@@ -235,6 +237,27 @@ public class CallDetailServiceImpl implements CallDetailService {
                         BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
                     }
                 }
+
+                if(callOutDetail.getBotAnswerTime()!=null && i>0){
+                    CallOutDetail callOutDetailBefore = details.get(i-1);
+                    if(callOutDetailBefore.getBotAnswerTime()!=null){//出现连续2个机器人说话，中间插入一个无声音
+                        CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                        callOutDetailVOInsert.setCustomerSayText("无声音");
+                        callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
+                        resList.add(callOutDetailVOInsert);
+                    }
+                }
+
+                if(callOutDetail.getAgentAnswerTime()!=null && i>0){
+                    CallOutDetail callOutDetailBefore = details.get(i-1);
+                    if(callOutDetailBefore.getAgentAnswerTime()!=null){//出现连续2个坐席说话，中间插入一个无声音
+                        CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                        callOutDetailVOInsert.setCustomerSayText("无声音");
+                        callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
+                        resList.add(callOutDetailVOInsert);
+                    }
+                }
+
                 resList.add(callOutDetailVO);
             }
 

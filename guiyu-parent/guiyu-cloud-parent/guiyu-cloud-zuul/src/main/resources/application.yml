@@ -153,6 +153,9 @@ zuul:
     guiyu-sms-web:
       path: /sms/**
       service-id: guiyu-sms-web
+    guiyu-notice-web:
+      path: /notice/**
+      service-id: guiyu-notice-web
 hystrix:
   command:
     default:

@@ -156,6 +156,9 @@ zuul:
     guiyu-notice-web:
       path: /notice/**
       service-id: guiyu-notice-web
+    guiyu-billing-web:
+      path: /billing/**
+      service-id: guiyu-billing-web
 hystrix:
   command:
     default:

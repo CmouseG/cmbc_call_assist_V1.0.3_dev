@@ -86,7 +86,7 @@ public class ShardingDataSourceConfig {
 		TableRuleConfiguration result1 = new TableRuleConfiguration();
 		result1.setLogicTable("dispatch_lines");
 		result1.setActualDataNodes(
-				"guiyu_dispatch.dispatch_lines_0,guiyu_dispatch.dispatch_lines_1,guiyu_dispatch.dispatch_lines_2");
+				"guiyu_dispatch.dispatch_lines_0,guiyu_dispatch.dispatch_lines_1,guiyu_dispatch.dispatch_lines_2,guiyu_dispatch.dispatch_lines_3,guiyu_dispatch.dispatch_lines_4");
 		result1.setTableShardingStrategyConfig(
 				new StandardShardingStrategyConfiguration("line_id", new PreciseShardingLines(), new RangeSharding()));
 		list.add(result);

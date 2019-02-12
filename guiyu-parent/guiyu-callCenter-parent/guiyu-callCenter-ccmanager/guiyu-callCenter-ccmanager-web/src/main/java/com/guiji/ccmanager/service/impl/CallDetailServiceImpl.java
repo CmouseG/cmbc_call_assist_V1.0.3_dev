@@ -365,6 +365,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         List<CallOutPlan> list;
         CallOutPlanExample example = new CallOutPlanExample();
         example.createCriteria().andCallIdIn(idList);
+        example.setOrderByClause("create_time desc");
         if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
             example.setCustomerId(customerId);
             list = callOutPlanMapper.selectByExample4Encrypt(example);

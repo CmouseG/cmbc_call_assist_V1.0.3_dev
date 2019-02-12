@@ -1,29 +1,9 @@
 server:
-  port: 15001
+  port: 18025
 
 spring:
   application:
-    name: guiyu-callcenter-fsmanager
-  rabbitmq:
-    host: 192.168.1.81
-    port: 5672
-    virtual-host: /
-    username: guiyu
-    password: 123456
-  zipkin:
-    rabbitmq:
-      queue: zipkin
-  sleuth:
-    sampler:
-      percentage: 0.5
-
-endpoints:
-  health:
-    sensitive: false
-    enabled: true
-management:
-  security:
-    enabled: false
+    name: guiyu-callcenter-toagentserver
 jdbc_driver0: com.mysql.jdbc.Driver
 jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0: callcenter
@@ -44,10 +24,23 @@ eureka:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 
-gateway:
-  username: user
-  password: pwd
+fs:
+   homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+   serverEslTimeout : 2
+   reconnectSleepTime : 1000
+   wssUrl: verto.gallery.btows.com
+
+fsbot:
+     homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+     recordingsDir: ${fs.homeDir}/recordings/
+     recordingsDirZip: ${fs.homeDir}/recordings/zip/
+     noAuth: true
+
+
+aliasr:
+       accessId: LTAIqRMF6ucN0gwp
+       accessSecret: mvGam0vMuMu82NQFNbdrp4NLsz30y8
 
 properties:
-  error: properties/error.properties
+    error: error.properties
 

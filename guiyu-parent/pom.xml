@@ -24,6 +24,7 @@
         <module>guiyu-thirdApi-parent</module>
         <module>guiyu-sms-parent</module>
         <module>guiyu-billing-parent</module>
+        <module>guiyu-commlinemarket-parent</module>
     </modules>
     <packaging>pom</packaging>
 

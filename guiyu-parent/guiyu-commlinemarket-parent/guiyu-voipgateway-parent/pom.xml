@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>guiji.ai</groupId>
+    <artifactId>guiyu-commlinemarket-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>guiyu-voipgateway-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>网关管理</name>
+  <modules>
+  	<module>guiyu-voipgateway-api</module>
+  	<module>guiyu-voipgateway-dal</module>
+  	<module>guiyu-voipgateway-web</module>
+  </modules>
+</project>

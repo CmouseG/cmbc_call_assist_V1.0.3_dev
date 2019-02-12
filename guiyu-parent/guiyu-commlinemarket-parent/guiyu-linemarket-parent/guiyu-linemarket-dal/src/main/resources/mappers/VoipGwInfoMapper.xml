@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.clm.dao.VoipGwInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.clm.dao.entity.VoipGwInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gw_name" property="gwName" jdbcType="VARCHAR" />
+    <result column="gw_brand" property="gwBrand" jdbcType="VARCHAR" />
+    <result column="gw_version" property="gwVersion" jdbcType="VARCHAR" />
+    <result column="company_Id" property="companyId" jdbcType="INTEGER" />
+    <result column="dev_id" property="devId" jdbcType="INTEGER" />
+    <result column="port_num" property="portNum" jdbcType="INTEGER" />
+    <result column="sip_ip" property="sipIp" jdbcType="VARCHAR" />
+    <result column="sip_port" property="sipPort" jdbcType="INTEGER" />
+    <result column="start_sip_account" property="startSipAccount" jdbcType="INTEGER" />
+    <result column="start_sip_pwd" property="startSipPwd" jdbcType="INTEGER" />
+    <result column="sip_account_step" property="sipAccountStep" jdbcType="INTEGER" />
+    <result column="sip_pwd_step" property="sipPwdStep" jdbcType="INTEGER" />
+    <result column="univalent" property="univalent" jdbcType="DECIMAL" />
+    <result column="reg_type" property="regType" jdbcType="INTEGER" />
+    <result column="gw_reg_status" property="gwRegStatus" jdbcType="INTEGER" />
+    <result column="gw_ip" property="gwIp" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, gw_name, gw_brand, gw_version, company_Id, dev_id, port_num, sip_ip, sip_port, 
+    start_sip_account, start_sip_pwd, sip_account_step, sip_pwd_step, univalent, reg_type, 
+    gw_reg_status, gw_ip, user_id, org_code, crt_user, crt_time, update_time, update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.VoipGwInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from voip_gw_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from voip_gw_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from voip_gw_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.clm.dao.entity.VoipGwInfoExample" >
+    delete from voip_gw_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.clm.dao.entity.VoipGwInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into voip_gw_info (gw_name, gw_brand, gw_version, 
+      company_Id, dev_id, port_num, 
+      sip_ip, sip_port, start_sip_account, 
+      start_sip_pwd, sip_account_step, sip_pwd_step, 
+      univalent, reg_type, gw_reg_status, 
+      gw_ip, user_id, org_code, 
+      crt_user, crt_time, update_time, 
+      update_user)
+    values (#{gwName,jdbcType=VARCHAR}, #{gwBrand,jdbcType=VARCHAR}, #{gwVersion,jdbcType=VARCHAR}, 
+      #{companyId,jdbcType=INTEGER}, #{devId,jdbcType=INTEGER}, #{portNum,jdbcType=INTEGER}, 
+      #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, #{startSipAccount,jdbcType=INTEGER}, 
+      #{startSipPwd,jdbcType=INTEGER}, #{sipAccountStep,jdbcType=INTEGER}, #{sipPwdStep,jdbcType=INTEGER}, 
+      #{univalent,jdbcType=DECIMAL}, #{regType,jdbcType=INTEGER}, #{gwRegStatus,jdbcType=INTEGER}, 
+      #{gwIp,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
+      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.VoipGwInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into voip_gw_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gwName != null" >
+        gw_name,
+      </if>
+      <if test="gwBrand != null" >
+        gw_brand,
+      </if>
+      <if test="gwVersion != null" >
+        gw_version,
+      </if>
+      <if test="companyId != null" >
+        company_Id,
+      </if>
+      <if test="devId != null" >
+        dev_id,
+      </if>
+      <if test="portNum != null" >
+        port_num,
+      </if>
+      <if test="sipIp != null" >
+        sip_ip,
+      </if>
+      <if test="sipPort != null" >
+        sip_port,
+      </if>
+      <if test="startSipAccount != null" >
+        start_sip_account,
+      </if>
+      <if test="startSipPwd != null" >
+        start_sip_pwd,
+      </if>
+      <if test="sipAccountStep != null" >
+        sip_account_step,
+      </if>
+      <if test="sipPwdStep != null" >
+        sip_pwd_step,
+      </if>
+      <if test="univalent != null" >
+        univalent,
+      </if>
+      <if test="regType != null" >
+        reg_type,
+      </if>
+      <if test="gwRegStatus != null" >
+        gw_reg_status,
+      </if>
+      <if test="gwIp != null" >
+        gw_ip,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gwName != null" >
+        #{gwName,jdbcType=VARCHAR},
+      </if>
+      <if test="gwBrand != null" >
+        #{gwBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="gwVersion != null" >
+        #{gwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="devId != null" >
+        #{devId,jdbcType=INTEGER},
+      </if>
+      <if test="portNum != null" >
+        #{portNum,jdbcType=INTEGER},
+      </if>
+      <if test="sipIp != null" >
+        #{sipIp,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPort != null" >
+        #{sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="startSipAccount != null" >
+        #{startSipAccount,jdbcType=INTEGER},
+      </if>
+      <if test="startSipPwd != null" >
+        #{startSipPwd,jdbcType=INTEGER},
+      </if>
+      <if test="sipAccountStep != null" >
+        #{sipAccountStep,jdbcType=INTEGER},
+      </if>
+      <if test="sipPwdStep != null" >
+        #{sipPwdStep,jdbcType=INTEGER},
+      </if>
+      <if test="univalent != null" >
+        #{univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="regType != null" >
+        #{regType,jdbcType=INTEGER},
+      </if>
+      <if test="gwRegStatus != null" >
+        #{gwRegStatus,jdbcType=INTEGER},
+      </if>
+      <if test="gwIp != null" >
+        #{gwIp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.clm.dao.entity.VoipGwInfoExample" resultType="java.lang.Integer" >
+    select count(*) from voip_gw_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update voip_gw_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.gwName != null" >
+        gw_name = #{record.gwName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gwBrand != null" >
+        gw_brand = #{record.gwBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gwVersion != null" >
+        gw_version = #{record.gwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.companyId != null" >
+        company_Id = #{record.companyId,jdbcType=INTEGER},
+      </if>
+      <if test="record.devId != null" >
+        dev_id = #{record.devId,jdbcType=INTEGER},
+      </if>
+      <if test="record.portNum != null" >
+        port_num = #{record.portNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.sipIp != null" >
+        sip_ip = #{record.sipIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sipPort != null" >
+        sip_port = #{record.sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="record.startSipAccount != null" >
+        start_sip_account = #{record.startSipAccount,jdbcType=INTEGER},
+      </if>
+      <if test="record.startSipPwd != null" >
+        start_sip_pwd = #{record.startSipPwd,jdbcType=INTEGER},
+      </if>
+      <if test="record.sipAccountStep != null" >
+        sip_account_step = #{record.sipAccountStep,jdbcType=INTEGER},
+      </if>
+      <if test="record.sipPwdStep != null" >
+        sip_pwd_step = #{record.sipPwdStep,jdbcType=INTEGER},
+      </if>
+      <if test="record.univalent != null" >
+        univalent = #{record.univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="record.regType != null" >
+        reg_type = #{record.regType,jdbcType=INTEGER},
+      </if>
+      <if test="record.gwRegStatus != null" >
+        gw_reg_status = #{record.gwRegStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.gwIp != null" >
+        gw_ip = #{record.gwIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update voip_gw_info
+    set id = #{record.id,jdbcType=INTEGER},
+      gw_name = #{record.gwName,jdbcType=VARCHAR},
+      gw_brand = #{record.gwBrand,jdbcType=VARCHAR},
+      gw_version = #{record.gwVersion,jdbcType=VARCHAR},
+      company_Id = #{record.companyId,jdbcType=INTEGER},
+      dev_id = #{record.devId,jdbcType=INTEGER},
+      port_num = #{record.portNum,jdbcType=INTEGER},
+      sip_ip = #{record.sipIp,jdbcType=VARCHAR},
+      sip_port = #{record.sipPort,jdbcType=INTEGER},
+      start_sip_account = #{record.startSipAccount,jdbcType=INTEGER},
+      start_sip_pwd = #{record.startSipPwd,jdbcType=INTEGER},
+      sip_account_step = #{record.sipAccountStep,jdbcType=INTEGER},
+      sip_pwd_step = #{record.sipPwdStep,jdbcType=INTEGER},
+      univalent = #{record.univalent,jdbcType=DECIMAL},
+      reg_type = #{record.regType,jdbcType=INTEGER},
+      gw_reg_status = #{record.gwRegStatus,jdbcType=INTEGER},
+      gw_ip = #{record.gwIp,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.clm.dao.entity.VoipGwInfo" >
+    update voip_gw_info
+    <set >
+      <if test="gwName != null" >
+        gw_name = #{gwName,jdbcType=VARCHAR},
+      </if>
+      <if test="gwBrand != null" >
+        gw_brand = #{gwBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="gwVersion != null" >
+        gw_version = #{gwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        company_Id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="devId != null" >
+        dev_id = #{devId,jdbcType=INTEGER},
+      </if>
+      <if test="portNum != null" >
+        port_num = #{portNum,jdbcType=INTEGER},
+      </if>
+      <if test="sipIp != null" >
+        sip_ip = #{sipIp,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPort != null" >
+        sip_port = #{sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="startSipAccount != null" >
+        start_sip_account = #{startSipAccount,jdbcType=INTEGER},
+      </if>
+      <if test="startSipPwd != null" >
+        start_sip_pwd = #{startSipPwd,jdbcType=INTEGER},
+      </if>
+      <if test="sipAccountStep != null" >
+        sip_account_step = #{sipAccountStep,jdbcType=INTEGER},
+      </if>
+      <if test="sipPwdStep != null" >
+        sip_pwd_step = #{sipPwdStep,jdbcType=INTEGER},
+      </if>
+      <if test="univalent != null" >
+        univalent = #{univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="regType != null" >
+        reg_type = #{regType,jdbcType=INTEGER},
+      </if>
+      <if test="gwRegStatus != null" >
+        gw_reg_status = #{gwRegStatus,jdbcType=INTEGER},
+      </if>
+      <if test="gwIp != null" >
+        gw_ip = #{gwIp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.clm.dao.entity.VoipGwInfo" >
+    update voip_gw_info
+    set gw_name = #{gwName,jdbcType=VARCHAR},
+      gw_brand = #{gwBrand,jdbcType=VARCHAR},
+      gw_version = #{gwVersion,jdbcType=VARCHAR},
+      company_Id = #{companyId,jdbcType=INTEGER},
+      dev_id = #{devId,jdbcType=INTEGER},
+      port_num = #{portNum,jdbcType=INTEGER},
+      sip_ip = #{sipIp,jdbcType=VARCHAR},
+      sip_port = #{sipPort,jdbcType=INTEGER},
+      start_sip_account = #{startSipAccount,jdbcType=INTEGER},
+      start_sip_pwd = #{startSipPwd,jdbcType=INTEGER},
+      sip_account_step = #{sipAccountStep,jdbcType=INTEGER},
+      sip_pwd_step = #{sipPwdStep,jdbcType=INTEGER},
+      univalent = #{univalent,jdbcType=DECIMAL},
+      reg_type = #{regType,jdbcType=INTEGER},
+      gw_reg_status = #{gwRegStatus,jdbcType=INTEGER},
+      gw_ip = #{gwIp,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

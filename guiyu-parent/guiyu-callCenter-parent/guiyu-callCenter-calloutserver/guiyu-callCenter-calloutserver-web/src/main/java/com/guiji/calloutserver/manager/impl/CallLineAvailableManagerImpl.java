@@ -3,6 +3,7 @@ package com.guiji.calloutserver.manager.impl;
 import com.guiji.calloutserver.manager.CallLineAvailableManager;
 import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class CallLineAvailableManagerImpl implements CallLineAvailableManager {
     private RedisUtil redisUtil;
 
     @Override
+    @Async
     public void lineAreAvailable(String callId) {
 
         //暂存2个小时  2*60*60

@@ -99,6 +99,8 @@ public class FsBotHandler {
                 log.info("未知的应答事件，事件uuid[{}]，跳过处理", event.getUuid());
                 return;
             }
+            //防止没有收到channel_progress事件，将状态改为线路已通
+            callLineAvailableManager.lineAreAvailable(uuid);
 
             AIInitRequest request = new AIInitRequest(String.valueOf(callPlan.getCallId()),callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(), String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
 

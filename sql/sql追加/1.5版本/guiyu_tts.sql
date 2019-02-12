@@ -1,3 +1,11 @@
+CREATE DATABASE IF NOT EXISTS guiyu_tts DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+
+use guiyu_tts;
+
+grant all on guiyu_tts.* to tts@'%' identified by 'tts@1234' with grant option; 
+grant all privileges on guiyu_tts.* to 'tts'@'%' identified by 'tts@1234' with grant option;
+
+DROP TABLE IF EXISTS `sys_file`;
 CREATE TABLE `sys_file` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `file_name` varchar(255) DEFAULT NULL COMMENT '文件名',
@@ -15,6 +23,7 @@ CREATE TABLE `sys_file` (
   PRIMARY KEY (`id`) COMMENT '主键'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `tts_model`;
 CREATE TABLE `tts_model` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `model` varchar(20) NOT NULL COMMENT '模型',
@@ -27,6 +36,7 @@ CREATE TABLE `tts_model` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `tts_result`;
 CREATE TABLE `tts_result` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `bus_id` varchar(64) DEFAULT NULL COMMENT '业务id',
@@ -41,6 +51,7 @@ CREATE TABLE `tts_result` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `tts_status`;
 CREATE TABLE `tts_status` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
   `bus_id` varchar(64) DEFAULT NULL COMMENT '业务id',

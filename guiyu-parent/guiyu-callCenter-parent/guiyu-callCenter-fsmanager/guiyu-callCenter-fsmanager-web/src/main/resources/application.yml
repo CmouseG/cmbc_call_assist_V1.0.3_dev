@@ -24,19 +24,6 @@ endpoints:
 management:
   security:
     enabled: false
-#sharding:
-#  jdbc:
-#    datasource:
-#      names: guiyu_callcenter
-#      guiyu_callcenter:
-#        type: com.alibaba.druid.pool.DruidDataSource
-#        driver-class-name: com.mysql.jdbc.Driver
-#        url: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC&useSSL=false
-#        username: callcenter
-#        password: callcenter@1234
-#        minIdle: 5
-#        maxActive: 200
-#        initialSize: 5
 jdbc_driver0: com.mysql.jdbc.Driver
 jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0: callcenter

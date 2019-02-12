@@ -87,7 +87,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         noticeMailInfo.setIsRead(false);
                         noticeMailInfo.setIsdel(false);
                         noticeMailInfoMapper.insert(noticeMailInfo);
-                        logger.info("--------发送站内信 noticeMailInfo[{}]",noticeMailInfo);
+                        logger.info("send mail---> noticeMailInfo[{}],messageSend[{}]",noticeMailInfo,messageSend);
                     }
                 }
 
@@ -111,8 +111,8 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         String email = returnData.getBody().getEmail();
                         if(email!=null){
                             try {
-                                logger.info("--------发送邮件 userId[{}]",userIdString);
                                 sendEmailService.sendEmail(email,messageSend.getEmailSubject(),messageSend.getEmailContent());
+                                logger.info("send email---> email[{}],messageSend[{}]",email,messageSend);
                             } catch (Exception e) {
                                 logger.error("-----sendEmail,has eror messageSend[{}]",messageSend,e);
                             }
@@ -136,6 +136,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         sendMsgReqVO.setOpenID(openId);
                         sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
                         weChatApi.send(sendMsgReqVO);
+                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,messageSend);
                     }
                 }
             }

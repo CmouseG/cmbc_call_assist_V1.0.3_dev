@@ -25,10 +25,12 @@ public class NoticeSendController implements INoticeSend {
 
         if (messageSend != null && messageSend.getNoticeType() != null) {
             noticeSendService.sendMessage(messageSend);
+            logger.info("==========end sendMessage userId[{}]",messageSend.getUserId());
             return Result.ok();
         } else {
             return Result.error(Constant.ERROR_PARAM);
         }
+
     }
 
 }

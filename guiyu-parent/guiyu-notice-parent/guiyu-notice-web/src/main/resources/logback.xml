@@ -37,9 +37,23 @@
         </encoder>
     </appender>
 
+    <appender name="SEND" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/home/apps/logs/notice/send.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/apps/logs/notice/send.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{MM/dd/yyyy HH:mm:ss} %-5level ${version} [%thread]%logger{16} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
 
     <logger name="org.springframework.web.servlet.mvc" level="info"/>
     <logger name="com.xxl.job" level="warn"/>
+    <logger name="com.guiji.notice.service.impl.NoticeSendServiceImpl" level="info">
+        <appender-ref ref="SEND"/>
+    </logger>
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>

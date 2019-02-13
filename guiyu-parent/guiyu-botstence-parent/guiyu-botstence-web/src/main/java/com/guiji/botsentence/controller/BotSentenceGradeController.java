@@ -71,17 +71,10 @@ public class BotSentenceGradeController {
 	
 	@RequestMapping(value="queryBotSentenceGradeRuleListByRuleNo")
 	public ServerResult<List<BotSentenceGradeRule>> queryBotSentenceGradeRuleListByRuleNo(@JsonParam String processId, @JsonParam String ruleNo) {
-		String str = botsentenceVariableService.generateSelectJson("20190111PRO00000463397", null);
-		System.out.println(str);
-		
-		
-		
 		BotSentenceGradeRuleExample example = new BotSentenceGradeRuleExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andRuleNoEqualTo(ruleNo);
 		example.setOrderByClause(" show_seq");
 		List<BotSentenceGradeRule> list = botSentenceGradeRuleMapper.selectByExample(example);
-		//String str = botSentenceGradeService.generateGradeEvaluate(processId, "AA");
-		//System.out.println(str);
 		return ServerResult.createBySuccess(list);
 	}
 	

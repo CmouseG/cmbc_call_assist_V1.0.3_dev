@@ -391,8 +391,9 @@ public class FsBotHandler {
                 //重置callOutPlan的一些状态,line_id,call_start_time,call_state
                 Integer lineId = lineListManager.popNewLine(uuid);
                 callPlan.setLineId(lineId);
-                callPlan.setCallStartTime(new Date());
-                callPlan.setCreateTime(new Date());
+                Date date = new Date();
+                callPlan.setCallStartTime(date);
+                callPlan.setCreateTime(date);
                 callPlan.setCallState(ECallState.make_call.ordinal());
                 callOutPlanService.update(callPlan);
 

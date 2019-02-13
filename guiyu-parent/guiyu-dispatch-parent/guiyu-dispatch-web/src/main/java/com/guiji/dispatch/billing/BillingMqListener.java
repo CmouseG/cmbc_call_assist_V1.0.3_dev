@@ -1,5 +1,6 @@
 package com.guiji.dispatch.billing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -33,6 +34,9 @@ public class BillingMqListener {
 		ArrearageNotifyDto msgDto = JsonUtils.json2Bean(message, ArrearageNotifyDto.class);
 		if (msgDto.getIsArrearage().equals(0)) {
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
+			if(userIdList ==null){
+				userIdList = new ArrayList<>();
+			}
 			if (userIdList.size() != 0) {
 				for (int i = 0; i < userIdList.size(); i++) {
 					if (msgDto.getUserIdList().contains(userIdList.get(i))) {
@@ -45,6 +49,9 @@ public class BillingMqListener {
 		} else if (msgDto.getIsArrearage().equals(-1)) {
 			// 如果是欠费判断当前redis里面是否存在 不存在的话添加
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
+			if(userIdList ==null){
+				userIdList = new ArrayList<>();
+			}
 			for (String str : msgDto.getUserIdList()) {
 				if (!userIdList.contains(str)) {
 					userIdList.add(str);

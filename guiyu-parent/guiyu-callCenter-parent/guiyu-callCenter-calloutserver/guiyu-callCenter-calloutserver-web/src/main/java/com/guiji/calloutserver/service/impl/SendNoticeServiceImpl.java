@@ -83,10 +83,10 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         String countWKey = "callCenter_W_count_lineId_"+linId+"_orgCode_"+orgCode;
         if(intent.equals("W")){
             Object countWValue = redisUtil.get(countWKey);
-            if(countWKey!=null ){
+            if(countWValue!=null ){
                 redisUtil.incr(countWKey,1);
                 if((int) countWValue>=99){
-                    log.info("产生线路报错,linId[{}],count[{}],orgCode[{]]",linId,countWKey,orgCode);
+                    log.info("产生线路报错,linId[{}],count[{}],orgCode[{]]",linId,countWValue,orgCode);
                     sendWNotice(Long.valueOf(userId));
                     redisUtil.set(countWKey,0);
                 }

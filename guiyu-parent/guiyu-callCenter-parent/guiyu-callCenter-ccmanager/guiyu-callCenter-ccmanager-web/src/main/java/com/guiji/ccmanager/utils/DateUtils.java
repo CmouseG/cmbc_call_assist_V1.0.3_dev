@@ -11,7 +11,7 @@ public class DateUtils {
      * 获取当天的开始时间
      */
     public static java.util.Date getDayBegin() {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

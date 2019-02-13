@@ -153,6 +153,9 @@ zuul:
     guiyu-sms-web:
       path: /sms/**
       service-id: guiyu-sms-web
+    guiyu-linemarket-web:
+      path: /linemarket/**
+      service-id: guiyu-linemarket-web
     guiyu-notice-web:
       path: /notice/**
       service-id: guiyu-notice-web

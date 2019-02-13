@@ -1,11 +1,13 @@
 
+/*创建数据库*/
 
-
-CREATE DATABASE IF NOT EXISTS `guiyu_notice`  ;
+CREATE DATABASE IF NOT EXISTS guiyu_notice DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+GRANT ALL ON guiyu_notice.* TO notice@'%' IDENTIFIED BY 'notice@1234' WITH GRANT OPTION; 
+GRANT ALL PRIVILEGES ON guiyu_notice.* TO 'notice'@'%' IDENTIFIED BY 'notice@1234' WITH GRANT OPTION;
 
 USE `guiyu_notice`;
 
-/*Table structure for table `notice_info` */
+/* 建表 */
 
 DROP TABLE IF EXISTS `notice_info`;
 
@@ -26,7 +28,7 @@ CREATE TABLE `notice_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
-/*Table structure for table `notice_mail_info` */
+
 
 DROP TABLE IF EXISTS `notice_mail_info`;
 
@@ -42,7 +44,7 @@ CREATE TABLE `notice_mail_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
-/*Table structure for table `notice_setting` */
+
 
 DROP TABLE IF EXISTS `notice_setting`;
 
@@ -61,3 +63,50 @@ CREATE TABLE `notice_setting` (
   `createa_user` int(11) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) 
+  
+  
+  /* 数据初始化 */
+  
+  INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,0 AS notice_over_type,1 AS notice_type,0 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,0 AS notice_over_type,2 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,0 AS notice_over_type,3 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,0 AS notice_over_type,4 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,1 AS notice_over_type,5 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,2 AS notice_over_type,6 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,2 AS notice_over_type,7 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+INSERT  INTO guiyu_notice.`notice_setting`(`org_code`,`notice_over_type`,`notice_type`,`is_send_mail`,`is_send_weixin`,`is_send_email`,`is_send_sms`,`create_time`) 
+SELECT  `code`,2 AS notice_over_type,8 AS notice_type,1 AS is_send_mail,0 AS is_send_weixin,0 AS is_send_email,0 AS is_send_sms,'2019-02-19 00:00:00' AS create_time 
+FROM guiyu_base.sys_organization;
+
+
+UPDATE guiyu_notice.`notice_setting` m 
+INNER JOIN (
+SELECT GROUP_CONCAT(b.id) AS receivers ,b.org_code
+FROM guiyu_base.`sys_role_user` a,guiyu_base.`sys_user` b
+WHERE a.role_id =3 AND a.del_flag = 0
+AND a.user_id = b.id
+GROUP BY b.`org_code`
+) n
+ON m.`org_code` = n.org_code
+SET m.receivers = n.receivers;
+  
+  
+  
+  
+  
+  
+  

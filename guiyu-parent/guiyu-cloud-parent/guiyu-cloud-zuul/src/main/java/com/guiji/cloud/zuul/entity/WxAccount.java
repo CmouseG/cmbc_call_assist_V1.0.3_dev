@@ -10,6 +10,7 @@ public class WxAccount {
     private Boolean isSuperAdmin;
     private String orgCode;
     private Date lastTime;
+    private Integer isDesensitization;
 
     public Integer getId() {
         return id;
@@ -49,5 +50,13 @@ public class WxAccount {
 
     public void setLastTime(Date lastTime) {
         this.lastTime = lastTime;
+    }
+
+    public Integer getIsDesensitization() {
+        return isDesensitization;
+    }
+
+    public void setIsDesensitization(Integer isDesensitization) {
+        this.isDesensitization = isDesensitization;
     }
 }

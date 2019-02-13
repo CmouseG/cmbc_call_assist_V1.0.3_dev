@@ -758,7 +758,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode) {
+			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode,
+			Integer  isDesensitization) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -844,15 +845,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		
 
-		// 如果是超级用户可以查看全部数据
-		if (isSuperAdmin) {
+		// isDesensitization 
+		if (isDesensitization.equals(0)) {
 			for (DispatchPlan dis : selectByExample) {
 				if (dis.getPhone().length() <= 7) {
 					continue;
 				}
-				if (userId == dis.getUserId().longValue()) {
-					continue;
-				}
+//				if (userId == dis.getUserId().longValue()) {
+//					continue;
+//				}
 				String phoneNumber = dis.getPhone().substring(0, 3) + "****"
 						+ dis.getPhone().substring(7, dis.getPhone().length());
 				dis.setPhone(phoneNumber);

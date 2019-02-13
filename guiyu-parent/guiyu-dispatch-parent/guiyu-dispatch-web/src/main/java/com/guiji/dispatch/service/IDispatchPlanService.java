@@ -132,7 +132,8 @@ public interface IDispatchPlanService {
 	 */
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStaus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode);
+			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode
+			,Integer isDesensitization);
 
 
 	/**

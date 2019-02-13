@@ -94,13 +94,13 @@ public class CallDetailController implements ICallPlanDetail {
     public Result.ReturnData<Map> getCallRecordList(@RequestBody CallRecordReq callRecordReq){
 
 
-        if(!callRecordReq.getSuperAdmin()){//不是管理员
+/*        if(!callRecordReq.getSuperAdmin()){//不是管理员
             if (authService.isAgentOrCompanyAdmin(Long.valueOf(callRecordReq.getUserId())) ) {//代理商 或者企业管理员
                 callRecordReq.setUserId(null);
             } else {
                 callRecordReq.setOrgCode(null);
             }
-        }
+        }*/
 
         Map numMap = new HashMap();
 
@@ -139,7 +139,7 @@ public class CallDetailController implements ICallPlanDetail {
     @GetMapping(value = "getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
                                                                          String durationMax, String accurateIntent, String freason, String callId, String tempId, String isRead,
-                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
+                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
 
         log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
                         "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}], isRead[{}]",
@@ -162,7 +162,7 @@ public class CallDetailController implements ICallPlanDetail {
         int pageNoInt = Integer.parseInt(pageNo);
 
         List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin,String.valueOf(userId),orgCode, pageSizeInt,pageNoInt,
-                phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+                phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead, isDesensitization);
         int count = callDetailService.callrecordCount(start,end,isSuperAdmin,String.valueOf(userId),orgCode, phoneNum, durationMin, durationMax,
                 accurateIntent,  freason, callId,  tempId, isRead);
 
@@ -275,7 +275,7 @@ public class CallDetailController implements ICallPlanDetail {
     @ApiOperation(value = "下载通话记录Excel压缩包,callIds以逗号分隔")
     @PostMapping(value="downloadDialogueZip")
     public String downloadDialogueZip(@RequestBody Map reqMap,HttpServletResponse resp,@RequestHeader Long userId,
-                                      @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) throws UnsupportedEncodingException {
+                                      @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) throws UnsupportedEncodingException {
 
         log.info("---------------start downloadDialogueZip----------");
         if(reqMap.get("callIds")==null){
@@ -294,7 +294,7 @@ public class CallDetailController implements ICallPlanDetail {
         }
         //生成文件
         Map<String,String> map = callDetailService.getDialogues(idList);
-        List<CallOutPlan4ListSelect> listPlan = callDetailService.getCallPlanList(idList,userId,isSuperAdmin);
+        List<CallOutPlan4ListSelect> listPlan = callDetailService.getCallPlanList(idList,userId,isSuperAdmin,isDesensitization);
 
         if(listPlan==null || listPlan.size()==0){
             return "无通话记录";

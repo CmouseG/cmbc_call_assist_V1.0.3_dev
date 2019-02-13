@@ -90,7 +90,7 @@ public class CallRecordController {
 
     @ApiOperation(value = "获取通话记录列表")
     @GetMapping("getCallRecordList")
-    public Result.ReturnData<Map> getCallRecordList(String size, String page, String time, String label,
+    public Result.ReturnData<Map> getCallRecordList(String size, String page, String time, String label, @RequestHeader Integer isDesensitization,
                                                     @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
 
         if(StringUtils.isBlank(label)){
@@ -112,7 +112,7 @@ public class CallRecordController {
         callRecordReq.setPageSize(Integer.valueOf(size));
         callRecordReq.setSuperAdmin(isSuperAdmin);
         callRecordReq.setUserId(userId);
-        callRecordReq.setSecretId(userId);
+        callRecordReq.setIsDesensitization(isDesensitization);
 
         Result.ReturnData<Map> result = iCallPlanDetail.getCallRecordList(callRecordReq);
 

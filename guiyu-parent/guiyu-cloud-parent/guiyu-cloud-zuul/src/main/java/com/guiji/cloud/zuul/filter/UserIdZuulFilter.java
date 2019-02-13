@@ -1,23 +1,15 @@
 package com.guiji.cloud.zuul.filter;
 
-import com.guiji.cloud.zuul.exception.ZuulErrorEnum;
-import com.guiji.cloud.zuul.exception.ZuulException;
-import com.guiji.common.exception.GuiyuException;
-import org.apache.commons.lang3.StringUtils;
+import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import com.guiji.cloud.zuul.util.IpUtil;
-import com.guiji.cloud.zuul.white.WhiteIPUtil;
-import com.netflix.zuul.ZuulFilter;
-import com.netflix.zuul.context.RequestContext;
 
 //@Component
-public class UserIdZuulFilter extends ZuulFilter{
+public class UserIdZuulFilter extends ZuulFilter {
 	Logger logger = LoggerFactory.getLogger(UserIdZuulFilter.class);
 
 	@Override
@@ -42,12 +34,15 @@ public class UserIdZuulFilter extends ZuulFilter{
 		System.out.println("****************"+session.getId());
 		System.out.println("****************"+userIdObj);
 		Object isSuperAdminObj = SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin");
+		Object isDesensitizationObj = SecurityUtils.getSubject().getSession().getAttribute("isDesensitization");
 		try {
 			String userId=userIdObj.toString();
 			String isSuperAdmin = isSuperAdminObj.toString();
+			String isDesensitization = isDesensitizationObj.toString();
 			ctx.addZuulRequestHeader("userId", userId);
 			ctx.addZuulRequestHeader("orgCode", orgCode.toString());
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
+			ctx.addZuulRequestHeader("isDesensitization", isDesensitization);
 		} catch (NullPointerException e) {
 			logger.error("userIdZuulFilter:" + e.getMessage());
 			//处理下一些特殊不需要user的场景

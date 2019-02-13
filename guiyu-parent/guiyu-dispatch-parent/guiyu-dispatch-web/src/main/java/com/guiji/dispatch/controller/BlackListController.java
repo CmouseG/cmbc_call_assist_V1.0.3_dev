@@ -61,8 +61,9 @@ public class BlackListController {
 	 */
 	@PostMapping("selectBlackList")
 	public Page<BlackList> selectBlackList(	@RequestParam(required = false, name = "phone")  String phone,@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode){
-		return blackListService.queryBlackListByParams(pagenum, pagesize,phone,orgCode);
+			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode,
+			@RequestHeader Integer isDesensitization,@RequestHeader Long userId){
+		return blackListService.queryBlackListByParams(pagenum, pagesize,phone,orgCode,isDesensitization,userId);
 	}
 	
 	

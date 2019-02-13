@@ -124,7 +124,7 @@
     </select>
     <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
         select
-        call_id, IF(customer_id=#{customerId,jdbcType=VARCHAR},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
+        call_id, IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
         customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time,
         agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
@@ -143,7 +143,7 @@
     </select>
     <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map" parameterType="java.util.Map" >
         select
-        CAST(a.call_id AS CHAR) as id, IF(a.customer_id=#{secretId},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
+        CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
         a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse,a.talk_num
         from call_out_plan a
         left join call_out_record b on a.call_id = b.call_id
@@ -158,9 +158,9 @@
         <if test="orgCode != null" >
             and a.org_code like CONCAT(#{orgCode},'%')
         </if>
-        <if test="customerId != null" >
-            and a.customer_id = #{customerId}
-        </if>
+<!--        <if test="customerId != null" >
+        and a.customer_id = #{customerId}
+    </if>-->
         order by a.create_time desc
         limit #{limitStart} , #{limitEnd}
     </select>
@@ -178,9 +178,9 @@
         <if test="orgCode != null" >
             and org_code like CONCAT(#{orgCode},'%')
         </if>
-        <if test="customerId != null" >
+<!--        <if test="customerId != null" >
             and customer_id = #{customerId}
-        </if>
+        </if>-->
 
     </select>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigInteger" >

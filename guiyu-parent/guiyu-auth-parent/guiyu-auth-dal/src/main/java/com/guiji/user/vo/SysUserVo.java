@@ -22,6 +22,8 @@ public class SysUserVo {
     
     private Long roleId;
 
+	private int isDesensitization;
+
 	public Long getId() {
 		return id;
 	}
@@ -101,5 +103,12 @@ public class SysUserVo {
 	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
-    
+
+	public int getIsDesensitization() {
+		return isDesensitization;
+	}
+
+	public void setIsDesensitization(int isDesensitization) {
+		this.isDesensitization = isDesensitization;
+	}
 }

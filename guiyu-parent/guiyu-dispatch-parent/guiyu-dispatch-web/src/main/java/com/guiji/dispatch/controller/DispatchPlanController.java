@@ -1,9 +1,6 @@
 package com.guiji.dispatch.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,6 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.batchimport.AsynFileService;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
-import com.guiji.dispatch.bean.DispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -76,12 +72,11 @@ public class DispatchPlanController {
 	 */
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
-	public MessageDto batchImport(@RequestParam("file") MultipartFile file, @RequestHeader Long userId,
-			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan, @RequestHeader String orgCode) {
+	public MessageDto batchImport( @RequestParam("file") MultipartFile file, @RequestHeader Long userId,
+			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan, @RequestHeader String orgCode,
+			@RequestParam(required = true, name = "fileName") String fileName) {
 		logger.info("batchImport start");
-		String fileName = file.getOriginalFilename();
 		MessageDto batchImport = new MessageDto();
-
 		try {
 			asynFileService.batchPlanImport(fileName, userId, file, dispatchPlan, orgCode);
 		} catch (Exception e) {

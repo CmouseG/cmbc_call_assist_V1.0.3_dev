@@ -110,6 +110,7 @@ public class UserController implements IAuth {
 		user.setPushType(param.getPushType());
 		user.setIntenLabel(param.getIntenLabel());
 		user.setOrgCode(param.getOrgCode());
+		user.setIsDesensitization(param.getIsDesensitization());
 		if (!StringUtils.isEmpty(param.getStartTime())) {
 			user.setStartTime(parseStringDate(param.getStartTime()));
 		}

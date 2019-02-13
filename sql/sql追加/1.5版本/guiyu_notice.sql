@@ -1,4 +1,3 @@
-
 /*创建数据库*/
 
 CREATE DATABASE IF NOT EXISTS guiyu_notice DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
@@ -12,57 +11,58 @@ USE `guiyu_notice`;
 DROP TABLE IF EXISTS `notice_info`;
 
 CREATE TABLE `notice_info` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `org_code` varchar(8) DEFAULT NULL COMMENT '企业编码',
-  `notice_type` int(2) DEFAULT NULL,
-  `mail_content` varchar(1024) DEFAULT NULL,
-  `sms_content` varchar(1024) DEFAULT NULL,
-  `email_content` varchar(1024) DEFAULT NULL,
-  `email_subject` varchar(255) DEFAULT NULL,
-  `weixin_template_id` varchar(255) DEFAULT NULL,
-  `weixin_url` varchar(255) DEFAULT NULL,
-  `weixin_app_id` varchar(255) DEFAULT NULL,
-  `weixin_page_path` varchar(255) DEFAULT NULL,
-  `weixin_data` varchar(2048) DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL,
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `org_code` VARCHAR(8) DEFAULT NULL COMMENT '企业编码',
+  `notice_type` INT(2) DEFAULT NULL,
+  `mail_content` VARCHAR(1024) DEFAULT NULL,
+  `sms_content` VARCHAR(1024) DEFAULT NULL,
+  `email_content` VARCHAR(1024) DEFAULT NULL,
+  `email_subject` VARCHAR(255) DEFAULT NULL,
+  `weixin_template_id` VARCHAR(255) DEFAULT NULL,
+  `weixin_url` VARCHAR(255) DEFAULT NULL,
+  `weixin_app_id` VARCHAR(255) DEFAULT NULL,
+  `weixin_page_path` VARCHAR(255) DEFAULT NULL,
+  `weixin_data` VARCHAR(2048) DEFAULT NULL,
+  `create_time` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=INNODB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 
 
 DROP TABLE IF EXISTS `notice_mail_info`;
 
 CREATE TABLE `notice_mail_info` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `info_id` int(11) DEFAULT NULL,
-  `receiver_id` int(11) DEFAULT NULL,
-  `is_read` tinyint(1) DEFAULT '0',
-  `receive_time` datetime DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL,
-  `read_time` datetime DEFAULT NULL,
-  `is_del` tinyint(1) DEFAULT '0',
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `info_id` INT(11) DEFAULT NULL,
+  `receiver_id` INT(11) DEFAULT NULL,
+  `is_read` TINYINT(1) DEFAULT '0',
+  `receive_time` DATETIME DEFAULT NULL,
+  `create_time` DATETIME DEFAULT NULL,
+  `read_time` DATETIME DEFAULT NULL,
+  `is_del` TINYINT(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=INNODB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 
 
 DROP TABLE IF EXISTS `notice_setting`;
 
 CREATE TABLE `notice_setting` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `org_code` varchar(8) DEFAULT NULL COMMENT '企业编码',
-  `notice_over_type` int(1) DEFAULT NULL,
-  `notice_type` int(2) DEFAULT NULL,
-  `is_send_mail` tinyint(1) DEFAULT '0',
-  `is_send_weixin` tinyint(1) DEFAULT '0',
-  `is_send_email` tinyint(1) DEFAULT '0',
-  `is_send_sms` tinyint(1) DEFAULT '0',
-  `receivers` varchar(255) DEFAULT NULL,
-  `update_user` int(11) DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL,
-  `createa_user` int(11) DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) 
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `org_code` VARCHAR(8) DEFAULT NULL COMMENT '企业编码',
+  `notice_over_type` INT(1) DEFAULT NULL,
+  `notice_type` INT(2) DEFAULT NULL,
+  `is_send_mail` TINYINT(1) DEFAULT '0',
+  `is_send_weixin` TINYINT(1) DEFAULT '0',
+  `is_send_email` TINYINT(1) DEFAULT '0',
+  `is_send_sms` TINYINT(1) DEFAULT '0',
+  `receivers` VARCHAR(255) DEFAULT NULL,
+  `update_user` INT(11) DEFAULT NULL,
+  `update_time` DATETIME DEFAULT NULL,
+  `createa_user` INT(11) DEFAULT NULL,
+  `create_time` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`)
+  ) ENGINE=INNODB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
   
   
   /* 数据初始化 */
@@ -103,10 +103,3 @@ GROUP BY b.`org_code`
 ) n
 ON m.`org_code` = n.org_code
 SET m.receivers = n.receivers;
-  
-  
-  
-  
-  
-  
-  

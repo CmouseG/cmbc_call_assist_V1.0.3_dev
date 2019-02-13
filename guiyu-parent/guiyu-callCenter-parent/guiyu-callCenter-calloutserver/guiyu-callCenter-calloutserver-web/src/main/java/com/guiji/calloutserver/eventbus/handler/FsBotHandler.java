@@ -392,6 +392,7 @@ public class FsBotHandler {
                 Integer lineId = lineListManager.popNewLine(uuid);
                 callPlan.setLineId(lineId);
                 callPlan.setCallStartTime(new Date());
+                callPlan.setCreateTime(new Date());
                 callPlan.setCallState(ECallState.make_call.ordinal());
                 callOutPlanService.update(callPlan);
 

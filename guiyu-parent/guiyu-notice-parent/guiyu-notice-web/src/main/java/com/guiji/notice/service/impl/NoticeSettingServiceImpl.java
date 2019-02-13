@@ -22,6 +22,7 @@ import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +79,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
     }
 
     @Override
+    @Transactional
     public void addNoticeSetting(String orgCode) {
         Date date = new Date();
         List list = new ArrayList<>();
@@ -87,7 +89,11 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             noticeSetting.setIsSendEmail(false);
             noticeSetting.setIsSendSms(false);
             noticeSetting.setIsSendWeixin(false);
-            noticeSetting.setIsSendMail(true);
+            if(e.getValue()==1){ //意向客户不选中站内信
+                noticeSetting.setIsSendMail(false);
+            }else{
+                noticeSetting.setIsSendMail(true);
+            }
             noticeSetting.setNoticeOverType(e.getParent());
             noticeSetting.setNoticeType(e.getValue());
             noticeSetting.setOrgCode(orgCode);
@@ -101,6 +107,10 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             list.add(noticeSetting);
         }
 
+        //先删除，再插入
+        NoticeSettingExample example = new NoticeSettingExample();
+        example.createCriteria().andOrgCodeEqualTo(orgCode);
+        noticeSettingMapper.deleteByExample(example);
         noticeSettingExtMapper.insertNoticeSettingBatch(list);
     }
 

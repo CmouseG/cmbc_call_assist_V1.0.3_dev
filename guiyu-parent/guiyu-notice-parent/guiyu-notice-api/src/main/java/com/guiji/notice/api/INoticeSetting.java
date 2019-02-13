@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("guiyu-notice-web")
 public interface INoticeSetting {
 
-    @ApiOperation(value = "在新增一个组织机构的时候调用,初始化企业的消息设置")
+    @ApiOperation(value = "在新增一个组织机构(或者是开户)的时候调用,初始化企业的消息设置")
     @GetMapping(value="addNoticeSetting")
     Result.ReturnData addNoticeSetting(@RequestParam("orgCode") String orgCode);
 

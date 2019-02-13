@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.ext.BillingTotalAnalysisMapper">
+
+  <insert id="addAcctCharging" parameterType="com.guiji.billing.entity.BillingAcctChargingTotal"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO billing_acct_charging_total
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="callDuration != null">
+        call_duration,
+      </if>
+      <if test="consumeAmount != null">
+        consume_amount,
+      </if>
+      <if test="totalDate != null">
+        total_date,
+      </if>
+      <if test="totalMonth != null">
+        total_month,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="statTime != null">
+        stat_time,
+      </if>
+      <if test="statStatus != null">
+        stat_status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="callDuration != null">
+        #{callDuration,jdbcType=BIGINT},
+      </if>
+      <if test="consumeAmount != null">
+        #{consumeAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="totalDate != null">
+        #{totalDate,jdbcType=VARCHAR},
+      </if>
+      <if test="totalMonth != null">
+        #{totalMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=VARCHAR},
+      </if>
+      <if test="statTime != null">
+        #{statTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statStatus != null">
+        #{statStatus,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="totalAcctChargingByDay" resultType="com.guiji.billing.entity.BillingAcctChargingTotal">
+    SELECT
+      id             ,
+      account_id     ,
+      type           ,
+      call_duration  ,
+      consume_amount ,
+      total_date     ,
+      total_month    ,
+      call_time      ,
+      stat_time      ,
+      stat_status    ,
+      create_time    ,
+      update_time    ,
+      del_flag
+    FROM billing_acct_charging_total
+    WHERE del_flag = 0
+      <if test="total != null">
+        <if test="total.type != null">
+          AND type= #{total.type}
+        </if>
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND total_date BETWEEN #{beginDate} AND #{endDate}
+      </if>
+      ORDER BY create_time DESC
+      <if test="page != null and page.isPage ">
+        <!--<if test="page.orderBy != null " >
+            order by ${page.orderBy}	${page.sort}
+        </if>-->
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+  <select id="totalAcctChargingByDayCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_acct_charging_total
+    WHERE del_flag = 0
+      <if test="total != null">
+        <if test="total.type != null">
+          AND type= #{total.type}
+        </if>
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND total_date BETWEEN #{beginDate} AND #{endDate}
+      </if>
+  </select>
+
+  <select id="totalAcctChargingByMonth" resultType="com.guiji.billing.entity.BillingAcctChargingTotal">
+    SELECT
+      id             ,
+      account_id     ,
+      type           ,
+      call_duration  ,
+      consume_amount ,
+      total_date     ,
+      total_month    ,
+      call_time      ,
+      stat_time      ,
+      stat_status    ,
+      create_time    ,
+      update_time    ,
+      del_flag
+    FROM billing_acct_charging_total
+    WHERE del_flag = 0
+      <if test="total != null">
+        <if test="total.type != null">
+          AND type= #{total.type}
+        </if>
+      </if>
+      <if test="beginMonth != null and endMonth != null">
+        AND total_month BETWEEN #{beginMonth} AND #{endMonth}
+      </if>
+      <if test="page != null and page.isPage ">
+        <!--<if test="page.orderBy != null " >
+            order by ${page.orderBy}	${page.sort}
+        </if>-->
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+  <select id="totalAcctChargingByMonthCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_acct_charging_total
+    WHERE del_flag = 0
+      <if test="total != null">
+        <if test="total.type != null">
+          AND type= #{total.type}
+        </if>
+      </if>
+      <if test="beginMonth != null and endMonth != null">
+        AND total_month BETWEEN #{beginMonth} AND #{endMonth}
+      </if>
+  </select>
+
+<!--统计费用  begin-->
+  <select id="totalChargingByDate" resultType="com.guiji.billing.vo.BillingTotalChargingConsumerVo">
+    SELECT
+      recharge_amount,
+      consume_amount ,
+      total_date     AS total_time
+    FROM billing_total_charging
+    WHERE del_flag = 0
+      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
+      <if test="beginDate != null and endDate != null">
+        AND total_date BETWEEN #{beginDate} AND #{endDate}
+      </if>
+      ORDER BY create_time DESC
+      <if test="page != null and page.isPage ">
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+
+  <select id="totalChargingCountByDate" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_total_charging
+    WHERE del_flag = 0
+      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
+      <if test="beginDate != null and endDate != null">
+        AND total_date BETWEEN #{beginDate} AND #{endDate}
+      </if>
+  </select>
+
+
+  <select id="totalChargingByMonth" resultType="com.guiji.billing.vo.BillingTotalChargingConsumerVo">
+    SELECT
+      recharge_amount,
+      consume_amount ,
+      total_month     AS total_time
+    FROM billing_total_charging
+    WHERE del_flag = 0
+      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
+      <if test="beginMonth != null and endMonth != null">
+        AND total_month BETWEEN #{beginMonth} AND #{endMonth}
+      </if>
+      ORDER BY create_time DESC
+      <if test="page != null and page.isPage ">
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+  <select id="totalChargingCountByMonth" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_total_charging
+    WHERE del_flag = 0
+      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
+      <if test="beginMonth != null and endMonth != null">
+        AND total_month BETWEEN #{beginMonth} AND #{endMonth}
+      </if>
+  </select>
+
+<!--统计费用  end-->
+
+<!--对账-->
+  <select id="queryAcctReconciliation" resultType="com.guiji.billing.entity.BillingAcctReconciliation">
+    SELECT
+      id             ,
+      account_id     ,
+      type           ,
+      call_duration  ,
+      consume_amount ,
+      total_date     ,
+      total_month    ,
+      call_time      ,
+      stat_time      ,
+      stat_status    ,
+      create_time    ,
+      update_time    ,
+      del_flag
+    FROM billing_acct_reconciliation
+    WHERE del_flag = 0
+      <if test="acctRec.accountId != null">
+        AND account_id= #{acctRec.accountId}
+      </if>
+      <if test="page != null and page.isPage ">
+        <!--<if test="page.orderBy != null " >
+            order by ${page.orderBy}	${page.sort}
+        </if>-->
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+  <select id="queryAcctReconcCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_acct_reconciliation
+    WHERE del_flag = 0
+    <if test="acctRec.accountId != null">
+      AND account_id= #{acctRec.accountId}
+    </if>
+  </select>
+
+</mapper>

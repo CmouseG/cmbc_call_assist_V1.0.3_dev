@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.user.dao.SysUserMapper" >
-   <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysUser" >
+  <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysUser" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
@@ -20,6 +20,7 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="vaild_time" property="vaildTime" jdbcType="DATE" />
     <result column="start_time" property="startTime" jdbcType="DATE" />
+    <result column="is_desensitization" property="isDesensitization" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -80,9 +81,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, username, `password`, `status`, push_type, call_record_url, batch_record_url, 
-    inten_label, access_key, secret_key, org_code, create_id, create_time, update_id, 
-    update_time, del_flag, vaild_time,start_time
+    id, username, `password`, `status`, push_type, call_record_url, batch_record_url,
+    inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,
+    update_time, del_flag, vaild_time,start_time,is_desensitization
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysUserExample" >
     select
@@ -103,7 +104,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from sys_user
     where id = #{id,jdbcType=BIGINT}
@@ -119,19 +120,19 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
-  
-    insert into sys_user (id, username, `password`, 
-      `status`, push_type, call_record_url, 
-      batch_record_url, inten_label, access_key, 
-      secret_key, org_code, create_id, 
-      create_time, update_id, update_time, 
-      del_flag, vaild_time,start_time)
-    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{pushType,jdbcType=INTEGER}, #{callRecordUrl,jdbcType=VARCHAR},
-      #{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR}, 
-      #{secretKey,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{delFlag,jdbcType=INTEGER}, #{vaildTime,jdbcType=DATE}, #{startTime,jdbcType=DATE})
+
+    insert into sys_user (id, username, `password`,
+    `status`, push_type, call_record_url,
+    batch_record_url, inten_label, access_key,
+    secret_key, org_code, create_id,
+    create_time, update_id, update_time,
+    del_flag, vaild_time,start_time,is_desensitization)
+    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+    #{status,jdbcType=INTEGER}, #{pushType,jdbcType=INTEGER}, #{callRecordUrl,jdbcType=VARCHAR},
+    #{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR},
+    #{secretKey,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT},
+    #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
+    #{delFlag,jdbcType=INTEGER}, #{vaildTime,jdbcType=DATE}, #{startTime,jdbcType=DATE},#{isDesensitization,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
     insert into sys_user
@@ -190,6 +191,9 @@
       <if test="startTime != null" >
         start_time,
       </if>
+      <if test="isDesensitization != null" >
+        is_desensitization,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -245,6 +249,9 @@
       </if>
       <if test="startTime != null" >
         #{startTime,jdbcType=DATE},
+      </if>
+      <if test="isDesensitization != null" >
+        #{isDesensitization,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -311,6 +318,9 @@
       <if test="record.startTime != null" >
         start_time = #{record.startTime,jdbcType=DATE},
       </if>
+      <if test="record.isDesensitization != null" >
+        `is_desensitization` = #{record.isDesensitization,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -319,23 +329,24 @@
   <update id="updateByExample" parameterType="map" >
     update sys_user
     set id = #{record.id,jdbcType=BIGINT},
-      username = #{record.username,jdbcType=VARCHAR},
-      `password` = #{record.password,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=INTEGER},
-      push_type = #{record.pushType,jdbcType=INTEGER},
-      call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
-      batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
-      inten_label = #{record.intenLabel,jdbcType=VARCHAR},
-      access_key = #{record.accessKey,jdbcType=VARCHAR},
-      secret_key = #{record.secretKey,jdbcType=VARCHAR},
-      org_code = #{record.orgCode,jdbcType=VARCHAR},
-      create_id = #{record.createId,jdbcType=BIGINT},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_id = #{record.updateId,jdbcType=BIGINT},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      del_flag = #{record.delFlag,jdbcType=INTEGER},
-      vaild_time = #{record.vaildTime,jdbcType=DATE},
-      start_time = #{record.startTime,jdbcType=DATE}
+    username = #{record.username,jdbcType=VARCHAR},
+    `password` = #{record.password,jdbcType=VARCHAR},
+    `status` = #{record.status,jdbcType=INTEGER},
+    push_type = #{record.pushType,jdbcType=INTEGER},
+    call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
+    batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
+    inten_label = #{record.intenLabel,jdbcType=VARCHAR},
+    access_key = #{record.accessKey,jdbcType=VARCHAR},
+    secret_key = #{record.secretKey,jdbcType=VARCHAR},
+    org_code = #{record.orgCode,jdbcType=VARCHAR},
+    create_id = #{record.createId,jdbcType=BIGINT},
+    create_time = #{record.createTime,jdbcType=TIMESTAMP},
+    update_id = #{record.updateId,jdbcType=BIGINT},
+    update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+    del_flag = #{record.delFlag,jdbcType=INTEGER},
+    vaild_time = #{record.vaildTime,jdbcType=DATE},
+    start_time = #{record.startTime,jdbcType=DATE},
+    `is_desensitization` = #{record.isDesensitization,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -394,170 +405,174 @@
       <if test="startTime != null" >
         start_time = #{startTime,jdbcType=DATE},
       </if>
+      <if test="isDesensitization != null" >
+        `is_desensitization` = #{isDesensitization,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.user.dao.entity.SysUser" >
     update sys_user
     set username = #{username,jdbcType=VARCHAR},
-      `password` = #{password,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=INTEGER},
-      push_type = #{pushType,jdbcType=INTEGER},
-      call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
-      batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
-      inten_label = #{intenLabel,jdbcType=VARCHAR},
-      access_key = #{accessKey,jdbcType=VARCHAR},
-      secret_key = #{secretKey,jdbcType=VARCHAR},
-      org_code = #{orgCode,jdbcType=VARCHAR},
-      create_id = #{createId,jdbcType=BIGINT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_id = #{updateId,jdbcType=BIGINT},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      del_flag = #{delFlag,jdbcType=INTEGER},
-      vaild_time = #{vaildTime,jdbcType=DATE},
-      start_time = #{startTime,jdbcType=DATE}
+    `password` = #{password,jdbcType=VARCHAR},
+    `status` = #{status,jdbcType=INTEGER},
+    push_type = #{pushType,jdbcType=INTEGER},
+    call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
+    batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
+    inten_label = #{intenLabel,jdbcType=VARCHAR},
+    access_key = #{accessKey,jdbcType=VARCHAR},
+    secret_key = #{secretKey,jdbcType=VARCHAR},
+    org_code = #{orgCode,jdbcType=VARCHAR},
+    create_id = #{createId,jdbcType=BIGINT},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    update_id = #{updateId,jdbcType=BIGINT},
+    update_time = #{updateTime,jdbcType=TIMESTAMP},
+    del_flag = #{delFlag,jdbcType=INTEGER},
+    vaild_time = #{vaildTime,jdbcType=DATE},
+    start_time = #{startTime,jdbcType=DATE}，
+    `is_desensitization` = #{isDesensitization,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  
-  <insert id="addRole">
-		delete from sys_role_user where user_id=#{userId};
-		insert into sys_role_user(user_id,role_id,create_time) 
-		values (#{userId},#{roleIds},now());
-	</insert>
-	
-	<select id="getPassword" resultType="string">
-		select password from sys_user where username=#{userName} and status=1 and del_flag=0
-	</select>
-	
-	<select id="getPermissions" resultType="string">
-		select DISTINCT d.permission from sys_user a 
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_menu_role c on b.role_id =c.role_id
-		LEFT JOIN sys_menu d on d.id=c.menu_id
-		where a.username=#{userName} and d.permission is not null
-	</select>
-	
-	<select id="getUserId" resultType="long">
-		select id from sys_user where username=#{username} and password=#{password}
-	</select>
-	
-	
-	<!-- <select id="getUserByName" resultType="com.guiji.user.dao.entity.SysUser">
-		select id,username,`password`,`status` from sys_user where username=#{username}
-	</select> -->
-	
-	<select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
-		select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin 
-		from sys_role a
-		LEFT JOIN sys_role_user b on a.id=b.role_id
-		LEFT JOIN sys_user c on c.id=b.user_id
-		where c.id=#{id}
-	</select>
-	
-	<select id="getPermByRoleId" resultType="string">
-		select a.permission from sys_menu a
-		LEFT JOIN sys_menu_role b on a.id=b.menu_id
-		LEFT JOIN sys_role c on c.id=b.role_id
-		where c.id=#{roleId}
-	</select>
-	
-	<select id="count" resultType="int">
-		select count(1) from sys_user where del_flag=0
-	</select>
-	
-	<select id="getUsersByPage" resultType="map">
-		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,e.username as createName
-		from sys_user a
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_role c on c.id=b.role_id
-		LEFT JOIN sys_user_login_record d on d.user_id=a.id
-		left join sys_user e on e.id=a.create_id
-		where a.del_flag=0
-		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-		order by a.create_time desc
-	</select>
-	
-	<select id="getUserByName" resultType="map">
-		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime
-		from sys_user a
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_role c on c.id=b.role_id
-		LEFT JOIN sys_user_login_record d on d.user_id=a.id
-		where a.del_flag=0 and a.username=#{username}
-		
-	</select>
-	
-	<insert id="insertUserRole">
-		insert into sys_role_user(user_id,role_id,create_time,update_time)
-		values(#{userId},#{roleId},now(),now())
-	</insert>
-	
-	<select id="existUserName" resultType="boolean">
-		select count(1)!=0 from sys_user where username=#{username} 
-		<if test="id != null ">
-			and id!=#{id}
-		</if>
-	</select>
-	
-	<select id="countByParamVo" resultType="int">
-		select count(1) from sys_user where del_flag=0 
-		<if test="userName != '' ">
-			and username=#{userName}	
-		</if>
-        <if test="orgCode != null ">
-            and org_code like CONCAT(#{orgCode},'%')
-        </if>
-	</select>
-	
-	<select id="selectByParamVo" resultType="map">
-		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
-		e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel
-		from sys_user a
-		LEFT JOIN sys_role_user b on a.id=b.user_id
-		LEFT JOIN sys_role c on c.id=b.role_id
-		LEFT JOIN sys_user_login_record d on d.user_id=a.id
-		left join sys_user e on e.id=a.create_id
-		left join sys_organization f on (case b.role_id when 4 then f.code=LEFT(a.org_code, LENGTH(a.org_code) - LOCATE('.', REVERSE(a.org_code))) else f.code= a.org_code end)
-		where a.del_flag=0
-		<if test="userName != '' ">
-			and a.username=#{userName}	
-		</if>
-		<if test="roleId !='' ">
-			and c.id like concat('%',#{roleId},'%')
-		</if>
-        <if test="orgCode != null ">
-            and a.org_code like CONCAT(#{orgCode},'%')
-        </if>
-		order by a.create_time desc
-		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-	</select>
 
-	<select id="getSecretKey" resultType="string">
-		SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
-		limit 1 
-	</select>
-	
-	<select id="checkSecretKey" resultType="boolean">
-		SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
-	</select>
-	
-	<select id="getUserById" resultType="com.guiji.user.dao.entity.SysUser">
-		SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as callRecordUrl,
-		a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as accessKey,
-		a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
-		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,a.start_time as startTime,b.`name` as orgName
-		from sys_user a
-		LEFT JOIN sys_organization b on a.org_code=b.`code`
-		where a.id=#{userId}
-	</select>
+  <insert id="addRole">
+    delete from sys_role_user where user_id=#{userId};
+    insert into sys_role_user(user_id,role_id,create_time)
+    values (#{userId},#{roleIds},now());
+  </insert>
+
+  <select id="getPassword" resultType="string">
+    select password from sys_user where username=#{userName} and status=1 and del_flag=0
+  </select>
+
+  <select id="getPermissions" resultType="string">
+    select DISTINCT d.permission from sys_user a
+    LEFT JOIN sys_role_user b on a.id=b.user_id
+    LEFT JOIN sys_menu_role c on b.role_id =c.role_id
+    LEFT JOIN sys_menu d on d.id=c.menu_id
+    where a.username=#{userName} and d.permission is not null
+  </select>
+
+  <select id="getUserId" resultType="long">
+    select id from sys_user where username=#{username} and password=#{password}
+  </select>
+
+
+  <!-- <select id="getUserByName" resultType="com.guiji.user.dao.entity.SysUser">
+      select id,username,`password`,`status` from sys_user where username=#{username}
+  </select> -->
+
+  <select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
+    select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin
+    from sys_role a
+    LEFT JOIN sys_role_user b on a.id=b.role_id
+    LEFT JOIN sys_user c on c.id=b.user_id
+    where c.id=#{id}
+  </select>
+
+  <select id="getPermByRoleId" resultType="string">
+    select a.permission from sys_menu a
+    LEFT JOIN sys_menu_role b on a.id=b.menu_id
+    LEFT JOIN sys_role c on c.id=b.role_id
+    where c.id=#{roleId}
+  </select>
+
+  <select id="count" resultType="int">
+    select count(1) from sys_user where del_flag=0
+  </select>
+
+  <select id="getUsersByPage" resultType="map">
+    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
+    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,e.username as createName,a.is_desensitization as isDesensitization
+    from sys_user a
+    LEFT JOIN sys_role_user b on a.id=b.user_id
+    LEFT JOIN sys_role c on c.id=b.role_id
+    LEFT JOIN sys_user_login_record d on d.user_id=a.id
+    left join sys_user e on e.id=a.create_id
+    where a.del_flag=0
+    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+    order by a.create_time desc
+  </select>
+
+  <select id="getUserByName" resultType="map">
+    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
+    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,a.is_desensitization as isDesensitization
+    from sys_user a
+    LEFT JOIN sys_role_user b on a.id=b.user_id
+    LEFT JOIN sys_role c on c.id=b.role_id
+    LEFT JOIN sys_user_login_record d on d.user_id=a.id
+    where a.del_flag=0 and a.username=#{username}
+
+  </select>
+
+  <insert id="insertUserRole">
+    insert into sys_role_user(user_id,role_id,create_time,update_time)
+    values(#{userId},#{roleId},now(),now())
+  </insert>
+
+  <select id="existUserName" resultType="boolean">
+    select count(1)!=0 from sys_user where username=#{username}
+    <if test="id != null ">
+      and id!=#{id}
+    </if>
+  </select>
+
+  <select id="countByParamVo" resultType="int">
+    select count(1) from sys_user where del_flag=0
+    <if test="userName != '' ">
+      and username=#{userName}
+    </if>
+    <if test="orgCode != null ">
+      and org_code like CONCAT(#{orgCode},'%')
+    </if>
+  </select>
+
+  <select id="selectByParamVo" resultType="map">
+    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,a.is_desensitization as isDesensitization,
+    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
+    e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel
+    from sys_user a
+    LEFT JOIN sys_role_user b on a.id=b.user_id
+    LEFT JOIN sys_role c on c.id=b.role_id
+    LEFT JOIN sys_user_login_record d on d.user_id=a.id
+    left join sys_user e on e.id=a.create_id
+    left join sys_organization f on (case b.role_id when 4 then f.code=LEFT(a.org_code, LENGTH(a.org_code) - LOCATE('.', REVERSE(a.org_code))) else f.code= a.org_code end)
+    where a.del_flag=0
+    <if test="userName != '' ">
+      and a.username=#{userName}
+    </if>
+    <if test="roleId !='' ">
+      and c.id like concat('%',#{roleId},'%')
+    </if>
+    <if test="orgCode != null ">
+      and a.org_code like CONCAT(#{orgCode},'%')
+    </if>
+    order by a.create_time desc
+    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+  </select>
+
+  <select id="getSecretKey" resultType="string">
+    SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
+    limit 1
+  </select>
+
+  <select id="checkSecretKey" resultType="boolean">
+    SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
+  </select>
+
+  <select id="getUserById" resultType="com.guiji.user.dao.entity.SysUser">
+    SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as callRecordUrl,
+    a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as accessKey,
+    a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
+    a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,a.start_time as startTime,b.`name` as orgName,a.is_desensitization as isDesensitization
+    from sys_user a
+    LEFT JOIN sys_organization b on a.org_code=b.`code`
+    where a.id=#{userId}
+  </select>
 
   <select id="selectLikeUserName" resultType="map">
     select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
     DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
-    e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel
+    e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel,a.is_desensitization as isDesensitization
     from sys_user a
     LEFT JOIN sys_role_user b on a.id=b.user_id
     LEFT JOIN sys_role c on c.id=b.role_id
@@ -581,7 +596,25 @@
     select
     <include refid="Base_Column_List" />
     from sys_user
-    where id in (select user_id from sys_role_user where role_id in (3,4))
+    where id in (select user_id from sys_role_user where role_id in (3,4,5))
   </select>
-	
-</mapper> 
+
+  <select id="getAllUserByOrgCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where org_code like CONCAT(#{orgCode},'%')
+  </select>
+
+  <insert id="addUserExt">
+    delete from sys_user_ext where user_id=#{userId};
+    insert into sys_user_ext(user_id,create_time,update_time)
+    values (#{userId},now(),now());
+  </insert>
+
+  <select id="getSysUserExtByUserId" resultType="com.guiji.user.dao.entity.SysUserExt">
+    select a.id,a.user_id as userId,a.name,a.email,a.mobile,a.remarks,a.api_url as apiUrl,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.wechat,a.wechat_openid as wechatOpenid,a.wechat_status as wechatStatus
+    from sys_user_ext a
+    where a.user_id=#{userId}
+  </select>
+</mapper>

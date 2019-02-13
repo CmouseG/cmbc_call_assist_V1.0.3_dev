@@ -6,17 +6,19 @@ import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
 import com.guiji.fs.FsManager;
+import com.guiji.helper.VChatMsgHelper;
 import com.guiji.service.AgentService;
 import com.guiji.service.CallDetailService;
 import com.guiji.service.CallPlanService;
+import com.guiji.service.PhoneService;
 import com.guiji.util.DateUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
+import com.guiji.web.response.QueryRecordInDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.management.resources.agent;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
@@ -39,6 +41,9 @@ public class ToAgentHandler {
 
     @Autowired
     AgentService agentService;
+
+    @Autowired
+    PhoneService phoneService;
 
     @PostConstruct
     public void init(){
@@ -106,9 +111,39 @@ public class ToAgentHandler {
                     fsManager.vchat(event.getAgentId(), chatMsg.toBase64());
                 }
             }
+
+            //在机器人对话消息结束后，发送结束消息
+            if(callDetailList.size()>0){
+                fsManager.vchat(event.getAgentId(), VChatMsg.aiEndInstance().toBase64());
+            }
+
+            //发送通话基本信息给verto终端
+            sendPhoneInfo(event, callPlan);
         }catch (Exception ex){
             log.warn("处理AgentAnswerEvent事件出现异常", ex);
         }
+    }
+
+    /**
+     * 发送通话基本信息给verto终端
+     * @param event
+     * @param callPlan
+     */
+    private void sendPhoneInfo(AgentAnswerEvent event, CallPlan callPlan) {
+        log.info("开始给verto终端[{}]发送通话信息", event.getAgentId());
+        QueryRecordInDetail queryRecordInDetail = new QueryRecordInDetail();
+        queryRecordInDetail.setPhone(callPlan.getPhoneNum());
+        queryRecordInDetail.setLabel(callPlan.getAccurateIntent());
+        queryRecordInDetail.setArea(phoneService.findLocationByPhone(callPlan.getPhoneNum()));
+        queryRecordInDetail.setBillSec(callPlan.getBillSec());
+
+        String answerTime = DateUtil.toString(callPlan.getAnswerTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
+        queryRecordInDetail.setAnswerTime(answerTime);
+
+        queryRecordInDetail.setCallrecordId(callPlan.getPlanUuid());
+
+        log.info("构建好的phoneinfo为[{}], 准备发送给座席[{}]", queryRecordInDetail, event.getAgentId());
+        fsManager.vchat(event.getAgentId(), VChatMsgHelper.buildPhoneInfoMsg(queryRecordInDetail));
     }
 
 

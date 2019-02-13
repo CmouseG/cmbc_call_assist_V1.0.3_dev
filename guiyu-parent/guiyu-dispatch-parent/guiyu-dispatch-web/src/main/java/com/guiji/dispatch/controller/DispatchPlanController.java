@@ -1,9 +1,6 @@
 package com.guiji.dispatch.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,6 @@ import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.dispatch.batchimport.AsynFileService;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
-import com.guiji.dispatch.bean.DispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -34,7 +30,7 @@ public class DispatchPlanController {
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 	@Autowired
-	private  AsynFileService asynFileService;
+	private AsynFileService asynFileService;
 
 	/**
 	 * 单个导入任务
@@ -48,7 +44,7 @@ public class DispatchPlanController {
 			@RequestHeader String orgCode) {
 		MessageDto dto = new MessageDto();
 		try {
-			dto = dispatchPlanService.addSchedule(dispatchPlan, userId,orgCode);
+			dto = dispatchPlanService.addSchedule(dispatchPlan, userId, orgCode);
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
@@ -64,7 +60,7 @@ public class DispatchPlanController {
 	@Log(info = "查询批量信息")
 	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
 			@RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
-		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin,orgCode);
+		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin, orgCode);
 	}
 
 	/**
@@ -76,14 +72,13 @@ public class DispatchPlanController {
 	 */
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
-	public MessageDto batchImport(@RequestParam("file") MultipartFile file, @RequestHeader Long userId,
-			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan, @RequestHeader String orgCode) {
+	public MessageDto batchImport( @RequestParam("file") MultipartFile file, @RequestHeader Long userId,
+			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan, @RequestHeader String orgCode,
+			@RequestParam(required = true, name = "fileName") String fileName) {
 		logger.info("batchImport start");
-		String fileName = file.getOriginalFilename();
 		MessageDto batchImport = new MessageDto();
-
 		try {
-			asynFileService.batchPlanImport(fileName, userId, file, dispatchPlan,orgCode);
+			asynFileService.batchPlanImport(fileName, userId, file, dispatchPlan, orgCode);
 		} catch (Exception e) {
 			batchImport.setResult(false);
 			batchImport.setMsg(e.getMessage());
@@ -118,9 +113,10 @@ public class DispatchPlanController {
 			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin,
 			@RequestParam(required = false, name = "selectUserId") Integer selectUserId,
 			@RequestParam(required = false, name = "startCallData") String startCallData,
-			@RequestParam(required = false, name = "endCallData") String endCallData) {
+			@RequestParam(required = false, name = "endCallData") String endCallData,
+			@RequestHeader Integer isDesensitization) {
 		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize, userId, isSuperAdmin, selectUserId, startCallData,endCallData,orgCode);
+				pagenum, pagesize, userId, isSuperAdmin, selectUserId, startCallData, endCallData, orgCode,isDesensitization);
 	}
 
 	/**
@@ -167,24 +163,24 @@ public class DispatchPlanController {
 	@PostMapping("batchInsertDisplanPlan")
 	public boolean batchInsertDisplanPlan(@RequestBody BatchDispatchPlanList plans, @RequestHeader Long userId,
 			@RequestHeader String orgCode) {
-		
+
 		return dispatchPlanService.batchInsertDisplanPlan(plans, userId, orgCode);
-		
-//		// 对号码进行去重
-//		Map<String, DispatchPlan> succList = new HashMap<>();
-//
-//		for (int i = 0; i < dispatchPlans.length; i++) {
-//			if (!succList.containsKey(dispatchPlans[i].getPhone())) {
-//				succList.put(dispatchPlans[i].getPhone(), dispatchPlans[i]);
-//			}
-//		}
-//		for (Entry<String, DispatchPlan> entry : succList.entrySet()) {
-//			try {
-//				dispatchPlanService.addSchedule(entry.getValue(), userId,orgCode);
-//			} catch (Exception e) {
-//				logger.error(e.getMessage());
-//			}
-//		}
+
+		// // 对号码进行去重
+		// Map<String, DispatchPlan> succList = new HashMap<>();
+		//
+		// for (int i = 0; i < dispatchPlans.length; i++) {
+		// if (!succList.containsKey(dispatchPlans[i].getPhone())) {
+		// succList.put(dispatchPlans[i].getPhone(), dispatchPlans[i]);
+		// }
+		// }
+		// for (Entry<String, DispatchPlan> entry : succList.entrySet()) {
+		// try {
+		// dispatchPlanService.addSchedule(entry.getValue(), userId,orgCode);
+		// } catch (Exception e) {
+		// logger.error(e.getMessage());
+		// }
+		// }
 	}
 
 	@PostMapping("checkBatchName")
@@ -212,8 +208,9 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("getServiceStatistics")
-	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,@RequestHeader String orgCode) {
-		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin,orgCode);
+	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
+			@RequestHeader String orgCode) {
+		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin, orgCode);
 	}
 
 	/**
@@ -225,9 +222,9 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("getData")
 	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
-			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,@RequestHeader String orgCode,
-			@RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin,orgCode);
+			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
+			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin) {
+		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin, orgCode);
 	}
 
 }

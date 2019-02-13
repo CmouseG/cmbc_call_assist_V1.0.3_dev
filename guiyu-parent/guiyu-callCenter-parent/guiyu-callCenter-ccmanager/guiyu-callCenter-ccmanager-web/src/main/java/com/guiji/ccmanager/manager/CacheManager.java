@@ -1,11 +1,12 @@
 package com.guiji.ccmanager.manager;
 
-import com.guiji.botsentence.api.IBotSentenceProcess;
-import com.guiji.botsentence.api.entity.BotSentenceProcess;
-import com.guiji.botsentence.api.entity.ServerResult;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.guiji.auth.api.IAuth;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysUser;
 import lombok.extern.slf4j.Slf4j;

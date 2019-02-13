@@ -11,7 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableSwagger2
 @EnableFeignClients
-@MapperScan("com.guiji.*.dao")
+//@MapperScan("com.guiji.*.dao")
 @EnableAutoResultPack
 @SpringBootApplication(scanBasePackages = "com.guiji")
 public class FsmanagerApplication {

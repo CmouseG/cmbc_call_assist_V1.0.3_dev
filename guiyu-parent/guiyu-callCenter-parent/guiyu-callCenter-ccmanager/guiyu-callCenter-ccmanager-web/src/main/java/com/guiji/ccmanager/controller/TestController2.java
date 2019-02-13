@@ -25,7 +25,6 @@ public class TestController2 {
         log.info("--------start-------");
         DispatchPlan dispatchPlan = new DispatchPlan();
         dispatchPlan.setBatchId(11);
-        dispatchPlan.setLine(line);
         dispatchPlan.setOrgCode("1");
         Random random = new Random();
         phoneNum = "1515541"+ random.nextInt(9)+ random.nextInt(9)+

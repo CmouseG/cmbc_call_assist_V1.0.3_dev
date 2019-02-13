@@ -1332,6 +1332,69 @@ public class SysUserExample {
             addCriterionForJDBCDate("start_time not between", value1, value2, "startTime");
             return (Criteria) this;
         }
+
+        public Criteria andIsDesensitizationIsNull() {
+            addCriterion("`is_desensitization` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationIsNotNull() {
+            addCriterion("`is_desensitization` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationEqualTo(Integer value) {
+            addCriterion("`is_desensitization` =", value, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationNotEqualTo(Integer value) {
+            addCriterion("`is_desensitization` <>", value, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationGreaterThan(Integer value) {
+            addCriterion("`is_desensitization` >", value, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`is_desensitization` >=", value, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationLessThan(Integer value) {
+            addCriterion("`is_desensitization` <", value, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationLessThanOrEqualTo(Integer value) {
+            addCriterion("`is_desensitization` <=", value, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationIn(List<Integer> values) {
+            addCriterion("`is_desensitization` in", values, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationNotIn(List<Integer> values) {
+            addCriterion("`is_desensitization` not in", values, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationBetween(Integer value1, Integer value2) {
+            addCriterion("`is_desensitization` between", value1, value2, "isDesensitization");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsDesensitizationNotBetween(Integer value1, Integer value2) {
+            addCriterion("`is_desensitization` not between", value1, value2, "isDesensitization");
+            return (Criteria) this;
+        }
+
+
+
     }
 
     public static class Criteria extends GeneratedCriteria {

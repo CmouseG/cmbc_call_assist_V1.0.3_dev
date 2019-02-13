@@ -52,6 +52,7 @@ import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.SmsTunnelMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.UserSmsConfigMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatchExample;
@@ -61,11 +62,13 @@ import com.guiji.dispatch.dao.entity.SmsTunnel;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.UserSmsConfig;
 import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
+import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
+import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.sms.IMessageService;
 import com.guiji.dispatch.util.Base64MD5Util;
 import com.guiji.dispatch.util.Constant;
@@ -125,6 +128,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	IPhonePlanQueueService phonePlanQueueService;
 
+	
+	@Autowired
+	private ILinesService lineService;
+	@Autowired
+	private IPhoneRegionService phoneRegionService;
+	
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
 		boolean checkPhoneInBlackList = blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode);
@@ -185,7 +194,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
 		dispatchPlan.setOrgCode(orgCode);
-
+		//加入线路
+		for(DispatchLines lines : dispatchPlan.getLines()){
+			lines.setCreateTime(DateUtil.getCurrent4Time());
+			lines.setPlanuuid(dispatchPlan.getPlanUuid());
+			lineService.insertLines(lines);
+		}
+		
+		//查询号码归属地
+		String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
+		dispatchPlan.setCityName(cityName);
 		dispatchPlanMapper.insert(dispatchPlan);
 		return dto;
 	}
@@ -740,7 +758,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime,
 			String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId,
-			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode) {
+			boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode,
+			Integer  isDesensitization) {
 		Page<DispatchPlan> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -818,16 +837,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				dis.setUserName(user.getBody().getUsername());
 			}
 		}
+//		 查询
+		
+		for(DispatchPlan dis : selectByExample){
+			List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(dis.getPlanUuid());
+			dis.setLines(queryLinesByPlanUUID);
+		}
+		
 
-		// 如果是超级用户可以查看全部数据
-		if (isSuperAdmin) {
+		// isDesensitization 
+		if (isDesensitization.equals(0)) {
 			for (DispatchPlan dis : selectByExample) {
 				if (dis.getPhone().length() <= 7) {
 					continue;
 				}
-				if (userId == dis.getUserId().longValue()) {
-					continue;
-				}
+//				if (userId == dis.getUserId().longValue()) {
+//					continue;
+//				}
 				String phoneNumber = dis.getPhone().substring(0, 3) + "****"
 						+ dis.getPhone().substring(7, dis.getPhone().length());
 				dis.setPhone(phoneNumber);
@@ -1580,7 +1606,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setPlanUuid(IdGenUtil.uuid());
 			bean.setBatchId(batch.getId());
 			bean.setUserId(userId.intValue());
-			bean.setLine(Integer.valueOf(plans.getLine()));
+//			bean.setLine(Integer.valueOf(plans.getLine()));
 			bean.setRobot(plans.getRobot());
 			bean.setClean(Integer.valueOf(plans.getClean()));
 			bean.setCallHour(plans.getCallHour());
@@ -1607,6 +1633,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				blackService.setBlackPhoneStatus(bean);
 				continue;
 			}
+			
+			for(DispatchLines lines : plans.getLines()){
+				lines.setCreateTime(DateUtil.getCurrent4Time());
+				lines.setPlanuuid(bean.getPlanUuid());
+				lineService.insertLines(lines);
+			}
+			
+			//查询号码归属地
+			String cityName = phoneRegionService.queryPhoneRegion(bean.getPhone());
+			bean.setCityName(cityName);
+			
+			
 			dispatchPlanMapper.insert(bean);
 		}
 		return true;

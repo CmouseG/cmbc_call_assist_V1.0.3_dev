@@ -2,8 +2,10 @@ package com.guiji.dispatch.batchimport;
 
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
+import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
@@ -31,6 +33,9 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 
 	@Autowired
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
+	
+	@Autowired
+	private ILinesService lineService;
 
 	public void excute(DispatchPlan vo) throws Exception {
 
@@ -56,6 +61,12 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			return;
 		}
 
+		//加入线路
+		for(DispatchLines lines : vo.getLines()){
+			lines.setCreateTime(DateUtil.getCurrent4Time());
+			lines.setPlanuuid(vo.getPlanUuid());
+			lineService.insertLines(lines);
+		}
 		dispatchPlanMapper.insert(vo);
 	}
 

@@ -49,7 +49,7 @@ public class CallPlanController implements ICallPlan {
             if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
                 CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
 
-                callPlanDispatchHandler.readyToMakeCall(callOutPlan);
+                callPlanDispatchHandler.readyToMakeCall(callOutPlan,dispatchPlan.getLineList());
 
                 log.info(">>>>>>>end startMakeCall dispatchPlan,,ok");//注释掉
                 return Result.ok();
@@ -95,7 +95,7 @@ public class CallPlanController implements ICallPlan {
         callOutPlan.setPlanUuid(dispatchPlan.getPlanUuid());
         callOutPlan.setPhoneNum(dispatchPlan.getPhone());
         callOutPlan.setCustomerId(dispatchPlan.getUserId());
-        callOutPlan.setLineId(dispatchPlan.getLine());
+        callOutPlan.setLineId(dispatchPlan.getLineList().get(0));
         callOutPlan.setServerid(eurekaManager.getInstanceId());
         callOutPlan.setHasTts(dispatchPlan.isTts());
         callOutPlan.setTempId(dispatchPlan.getTempId());

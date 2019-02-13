@@ -113,6 +113,22 @@ public interface IDispatchPlanOut {
 	@GetMapping(value = "out/updateLabelByUUID")
 	ReturnData<Boolean>  updateLabelByUUID(@RequestParam("planuuid") String planuuid,@RequestParam("label") String label);
 
-
+    
+    @ApiOperation(value = "根据用户判断当前线路是否使用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "lineId", value = "lineId", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "userId", value = "userId", dataType = "Integer", paramType = "query"),
+    })
+    @GetMapping(value="out/lineIsUsedByUserId")
+    Result.ReturnData<Boolean> lineIsUsedByUserId(@RequestParam("lineId") Integer lineId,@RequestParam("userId") Integer userId);
+    
+    
+    @ApiOperation(value = "判断当前线路是否使用")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "lineId", value = "lineId", dataType = "Integer", paramType = "query"),
+    })
+    @GetMapping(value="out/lineIsUsed")
+    Result.ReturnData<Boolean> lineIsUsed(@RequestParam("lineId") Integer lineId);
+    
 }
 

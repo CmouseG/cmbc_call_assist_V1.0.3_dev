@@ -1,0 +1,1623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.BillingAcctChargingTermMapper">
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="charging_item_name" jdbcType="VARCHAR" property="chargingItemName" />
+    <result column="charging_type" jdbcType="INTEGER" property="chargingType" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit_price" jdbcType="INTEGER" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, user_id, account_id, charging_item_id, charging_item_name, 
+    charging_type, target_key, target_name, price, unit_price, is_deducted, status, create_time, 
+    update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term (id, user_charging_id, user_id, 
+      account_id, charging_item_id, charging_item_name, 
+      charging_type, target_key, target_name, 
+      price, unit_price, is_deducted, 
+      status, create_time, update_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{accountId,jdbcType=VARCHAR}, #{chargingItemId,jdbcType=VARCHAR}, #{chargingItemName,jdbcType=VARCHAR}, 
+      #{chargingType,jdbcType=INTEGER}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{unitPrice,jdbcType=INTEGER}, #{isDeducted,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name,
+      </if>
+      <if test="chargingType != null">
+        charging_type,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        charging_type = #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      charging_type = #{chargingType,jdbcType=INTEGER},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=INTEGER},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="charging_item_name" jdbcType="VARCHAR" property="chargingItemName" />
+    <result column="charging_type" jdbcType="INTEGER" property="chargingType" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit_price" jdbcType="INTEGER" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, user_id, account_id, charging_item_id, charging_item_name, 
+    charging_type, target_key, target_name, price, unit_price, is_deducted, status, create_time, 
+    update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term (id, user_charging_id, user_id, 
+      account_id, charging_item_id, charging_item_name, 
+      charging_type, target_key, target_name, 
+      price, unit_price, is_deducted, 
+      status, create_time, update_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{accountId,jdbcType=VARCHAR}, #{chargingItemId,jdbcType=VARCHAR}, #{chargingItemName,jdbcType=VARCHAR}, 
+      #{chargingType,jdbcType=INTEGER}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{unitPrice,jdbcType=INTEGER}, #{isDeducted,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name,
+      </if>
+      <if test="chargingType != null">
+        charging_type,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        charging_type = #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      charging_type = #{chargingType,jdbcType=INTEGER},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=INTEGER},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="charging_item_name" jdbcType="VARCHAR" property="chargingItemName" />
+    <result column="charging_type" jdbcType="INTEGER" property="chargingType" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit_price" jdbcType="INTEGER" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, user_id, account_id, charging_item_id, charging_item_name, 
+    charging_type, target_key, target_name, price, unit_price, is_deducted, status, create_time, 
+    update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term (id, user_charging_id, user_id, 
+      account_id, charging_item_id, charging_item_name, 
+      charging_type, target_key, target_name, 
+      price, unit_price, is_deducted, 
+      status, create_time, update_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{accountId,jdbcType=VARCHAR}, #{chargingItemId,jdbcType=VARCHAR}, #{chargingItemName,jdbcType=VARCHAR}, 
+      #{chargingType,jdbcType=INTEGER}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{unitPrice,jdbcType=INTEGER}, #{isDeducted,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name,
+      </if>
+      <if test="chargingType != null">
+        charging_type,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        charging_type = #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      charging_type = #{chargingType,jdbcType=INTEGER},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=INTEGER},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="charging_item_name" jdbcType="VARCHAR" property="chargingItemName" />
+    <result column="charging_type" jdbcType="INTEGER" property="chargingType" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit_price" jdbcType="INTEGER" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, user_id, account_id, charging_item_id, charging_item_name, 
+    charging_type, target_key, target_name, price, unit_price, is_deducted, status, create_time, 
+    update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term (id, user_charging_id, user_id, 
+      account_id, charging_item_id, charging_item_name, 
+      charging_type, target_key, target_name, 
+      price, unit_price, is_deducted, 
+      status, create_time, update_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{accountId,jdbcType=VARCHAR}, #{chargingItemId,jdbcType=VARCHAR}, #{chargingItemName,jdbcType=VARCHAR}, 
+      #{chargingType,jdbcType=INTEGER}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{unitPrice,jdbcType=INTEGER}, #{isDeducted,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name,
+      </if>
+      <if test="chargingType != null">
+        charging_type,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        charging_type = #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      charging_type = #{chargingType,jdbcType=INTEGER},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=INTEGER},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="charging_item_name" jdbcType="VARCHAR" property="chargingItemName" />
+    <result column="charging_type" jdbcType="INTEGER" property="chargingType" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit_price" jdbcType="INTEGER" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, user_id, account_id, charging_item_id, charging_item_name, 
+    charging_type, target_key, target_name, price, unit_price, is_deducted, status, create_time, 
+    update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging_term
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term (id, user_charging_id, user_id, 
+      account_id, charging_item_id, charging_item_name, 
+      charging_type, target_key, target_name, 
+      price, unit_price, is_deducted, 
+      status, create_time, update_time, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{accountId,jdbcType=VARCHAR}, #{chargingItemId,jdbcType=VARCHAR}, #{chargingItemName,jdbcType=VARCHAR}, 
+      #{chargingType,jdbcType=INTEGER}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{unitPrice,jdbcType=INTEGER}, #{isDeducted,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging_term
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name,
+      </if>
+      <if test="chargingType != null">
+        charging_type,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        charging_type = #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging_term
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      charging_type = #{chargingType,jdbcType=INTEGER},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      unit_price = #{unitPrice,jdbcType=INTEGER},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, account_id, charging_item_id, target_key, target_name, unit_price, 
+    is_deducted, status, create_time, update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging (id, user_charging_id, account_id, 
+      charging_item_id, target_key, target_name, 
+      unit_price, is_deducted, status, 
+      create_time, update_time, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, 
+      #{chargingItemId,jdbcType=VARCHAR}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{isDeducted,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_charging_id" jdbcType="VARCHAR" property="userChargingId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_charging_id, account_id, charging_item_id, target_key, target_name, unit_price, 
+    is_deducted, status, create_time, update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging (id, user_charging_id, account_id, 
+      charging_item_id, target_key, target_name, 
+      unit_price, is_deducted, status, 
+      create_time, update_time, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{userChargingId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, 
+      #{chargingItemId,jdbcType=VARCHAR}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{isDeducted,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging
+    set user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.guiji.billing.entity.BillingAcctChargingTerm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="my_charging_id" jdbcType="VARCHAR" property="myChargingId" />
+    <result column="charging_item_id" jdbcType="VARCHAR" property="chargingItemId" />
+    <result column="target_key" jdbcType="VARCHAR" property="targetKey" />
+    <result column="target_name" jdbcType="VARCHAR" property="targetName" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="is_deducted" jdbcType="INTEGER" property="isDeducted" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, account_id, my_charging_id, charging_item_id, target_key, target_name, unit_price, 
+    is_deducted, status, create_time, update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from billing_acct_charging
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from billing_acct_charging
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging (id, account_id, my_charging_id, 
+      charging_item_id, target_key, target_name, 
+      unit_price, is_deducted, status, 
+      create_time, update_time, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{accountId,jdbcType=VARCHAR}, #{myChargingId,jdbcType=VARCHAR}, 
+      #{chargingItemId,jdbcType=VARCHAR}, #{targetKey,jdbcType=VARCHAR}, #{targetName,jdbcType=VARCHAR}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{isDeducted,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    insert into billing_acct_charging
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="myChargingId != null">
+        my_charging_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="myChargingId != null">
+        #{myChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging
+    <set>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="myChargingId != null">
+        my_charging_id = #{myChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    update billing_acct_charging
+    set account_id = #{accountId,jdbcType=VARCHAR},
+      my_charging_id = #{myChargingId,jdbcType=VARCHAR},
+      charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      target_key = #{targetKey,jdbcType=VARCHAR},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      is_deducted = #{isDeducted,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

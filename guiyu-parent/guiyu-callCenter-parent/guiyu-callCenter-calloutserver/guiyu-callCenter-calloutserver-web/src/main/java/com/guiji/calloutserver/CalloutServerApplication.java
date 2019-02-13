@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(scanBasePackages = "com.guiji")
 @EnableScheduling
 @EnableFeignClients(basePackages = "com.guiji")
-@MapperScan("com.guiji.*.dao")
+//@MapperScan("com.guiji.*.dao")
 @EnableAsync
 public class CalloutServerApplication {
 

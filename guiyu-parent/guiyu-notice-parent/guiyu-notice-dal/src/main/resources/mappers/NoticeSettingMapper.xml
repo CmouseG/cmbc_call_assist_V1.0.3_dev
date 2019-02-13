@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.notice.dao.NoticeSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.notice.dao.entity.NoticeSetting" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="notice_over_type" property="noticeOverType" jdbcType="INTEGER" />
+    <result column="notice_type" property="noticeType" jdbcType="INTEGER" />
+    <result column="is_send_mail" property="isSendMail" jdbcType="BIT" />
+    <result column="is_send_weixin" property="isSendWeixin" jdbcType="BIT" />
+    <result column="is_send_email" property="isSendEmail" jdbcType="BIT" />
+    <result column="is_send_sms" property="isSendSms" jdbcType="BIT" />
+    <result column="receivers" property="receivers" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="createa_user" property="createaUser" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, org_code, notice_over_type, notice_type, is_send_mail, is_send_weixin, is_send_email, 
+    is_send_sms, receivers, update_user, update_time, createa_user, create_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.notice.dao.entity.NoticeSettingExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from notice_setting
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from notice_setting
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from notice_setting
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.notice.dao.entity.NoticeSettingExample" >
+    delete from notice_setting
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.notice.dao.entity.NoticeSetting" >
+    insert into notice_setting (id, org_code, notice_over_type, 
+      notice_type, is_send_mail, is_send_weixin, 
+      is_send_email, is_send_sms, receivers, 
+      update_user, update_time, createa_user, 
+      create_time)
+    values (#{id,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{noticeOverType,jdbcType=INTEGER}, 
+      #{noticeType,jdbcType=INTEGER}, #{isSendMail,jdbcType=BIT}, #{isSendWeixin,jdbcType=BIT}, 
+      #{isSendEmail,jdbcType=BIT}, #{isSendSms,jdbcType=BIT}, #{receivers,jdbcType=VARCHAR}, 
+      #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createaUser,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.notice.dao.entity.NoticeSetting" >
+    insert into notice_setting
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="noticeOverType != null" >
+        notice_over_type,
+      </if>
+      <if test="noticeType != null" >
+        notice_type,
+      </if>
+      <if test="isSendMail != null" >
+        is_send_mail,
+      </if>
+      <if test="isSendWeixin != null" >
+        is_send_weixin,
+      </if>
+      <if test="isSendEmail != null" >
+        is_send_email,
+      </if>
+      <if test="isSendSms != null" >
+        is_send_sms,
+      </if>
+      <if test="receivers != null" >
+        receivers,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="createaUser != null" >
+        createa_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeOverType != null" >
+        #{noticeOverType,jdbcType=INTEGER},
+      </if>
+      <if test="noticeType != null" >
+        #{noticeType,jdbcType=INTEGER},
+      </if>
+      <if test="isSendMail != null" >
+        #{isSendMail,jdbcType=BIT},
+      </if>
+      <if test="isSendWeixin != null" >
+        #{isSendWeixin,jdbcType=BIT},
+      </if>
+      <if test="isSendEmail != null" >
+        #{isSendEmail,jdbcType=BIT},
+      </if>
+      <if test="isSendSms != null" >
+        #{isSendSms,jdbcType=BIT},
+      </if>
+      <if test="receivers != null" >
+        #{receivers,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createaUser != null" >
+        #{createaUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.notice.dao.entity.NoticeSettingExample" resultType="java.lang.Integer" >
+    select count(*) from notice_setting
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update notice_setting
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.noticeOverType != null" >
+        notice_over_type = #{record.noticeOverType,jdbcType=INTEGER},
+      </if>
+      <if test="record.noticeType != null" >
+        notice_type = #{record.noticeType,jdbcType=INTEGER},
+      </if>
+      <if test="record.isSendMail != null" >
+        is_send_mail = #{record.isSendMail,jdbcType=BIT},
+      </if>
+      <if test="record.isSendWeixin != null" >
+        is_send_weixin = #{record.isSendWeixin,jdbcType=BIT},
+      </if>
+      <if test="record.isSendEmail != null" >
+        is_send_email = #{record.isSendEmail,jdbcType=BIT},
+      </if>
+      <if test="record.isSendSms != null" >
+        is_send_sms = #{record.isSendSms,jdbcType=BIT},
+      </if>
+      <if test="record.receivers != null" >
+        receivers = #{record.receivers,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createaUser != null" >
+        createa_user = #{record.createaUser,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update notice_setting
+    set id = #{record.id,jdbcType=INTEGER},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      notice_over_type = #{record.noticeOverType,jdbcType=INTEGER},
+      notice_type = #{record.noticeType,jdbcType=INTEGER},
+      is_send_mail = #{record.isSendMail,jdbcType=BIT},
+      is_send_weixin = #{record.isSendWeixin,jdbcType=BIT},
+      is_send_email = #{record.isSendEmail,jdbcType=BIT},
+      is_send_sms = #{record.isSendSms,jdbcType=BIT},
+      receivers = #{record.receivers,jdbcType=VARCHAR},
+      update_user = #{record.updateUser,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      createa_user = #{record.createaUser,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.notice.dao.entity.NoticeSetting" >
+    update notice_setting
+    <set >
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeOverType != null" >
+        notice_over_type = #{noticeOverType,jdbcType=INTEGER},
+      </if>
+      <if test="noticeType != null" >
+        notice_type = #{noticeType,jdbcType=INTEGER},
+      </if>
+      <if test="isSendMail != null" >
+        is_send_mail = #{isSendMail,jdbcType=BIT},
+      </if>
+      <if test="isSendWeixin != null" >
+        is_send_weixin = #{isSendWeixin,jdbcType=BIT},
+      </if>
+      <if test="isSendEmail != null" >
+        is_send_email = #{isSendEmail,jdbcType=BIT},
+      </if>
+      <if test="isSendSms != null" >
+        is_send_sms = #{isSendSms,jdbcType=BIT},
+      </if>
+      <if test="receivers != null" >
+        receivers = #{receivers,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createaUser != null" >
+        createa_user = #{createaUser,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.notice.dao.entity.NoticeSetting" >
+    update notice_setting
+    set org_code = #{orgCode,jdbcType=VARCHAR},
+      notice_over_type = #{noticeOverType,jdbcType=INTEGER},
+      notice_type = #{noticeType,jdbcType=INTEGER},
+      is_send_mail = #{isSendMail,jdbcType=BIT},
+      is_send_weixin = #{isSendWeixin,jdbcType=BIT},
+      is_send_email = #{isSendEmail,jdbcType=BIT},
+      is_send_sms = #{isSendSms,jdbcType=BIT},
+      receivers = #{receivers,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      createa_user = #{createaUser,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

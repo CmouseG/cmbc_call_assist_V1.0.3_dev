@@ -472,7 +472,8 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 			if(org.apache.commons.lang.StringUtils.isNotBlank(record.getVoliceId())) {
 				//更新音频信息
 				voliceInfo=voliceInfoMapper.selectByPrimaryKey(new Long(record.getVoliceId()));
-				if(!voliceInfo.getContent().equals(record.getContent()) && !"【新增】".equals(voliceInfo.getFlag())) {
+				//if(!voliceInfo.getContent().equals(record.getContent()) && !"【新增】".equals(voliceInfo.getFlag())) {
+				if(!"【新增】".equals(voliceInfo.getFlag())) {
 					voliceInfo.setFlag("【修改】");
 				}
 				voliceInfo.setContent(record.getContent().replace("\n", "").trim());

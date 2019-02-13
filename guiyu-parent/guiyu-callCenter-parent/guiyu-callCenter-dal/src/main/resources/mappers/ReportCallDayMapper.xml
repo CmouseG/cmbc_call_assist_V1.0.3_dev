@@ -1,296 +1,296 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.callcenter.dao.ReportCallDayMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.ReportCallDay" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="call_date" property="callDate" jdbcType="VARCHAR" />
-    <result column="duration_type" property="durationType" jdbcType="INTEGER" />
-    <result column="intent" property="intent" jdbcType="VARCHAR" />
-    <result column="reason" property="reason" jdbcType="VARCHAR" />
-    <result column="call_count" property="callCount" jdbcType="INTEGER" />
-    <result column="duration_all" property="durationAll" jdbcType="BIGINT" />
-    <result column="tempid" property="tempid" jdbcType="VARCHAR" />
-    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.ReportCallDay" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="call_date" property="callDate" jdbcType="VARCHAR" />
+        <result column="duration_type" property="durationType" jdbcType="INTEGER" />
+        <result column="intent" property="intent" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="call_count" property="callCount" jdbcType="INTEGER" />
+        <result column="duration_all" property="durationAll" jdbcType="BIGINT" />
+        <result column="tempid" property="tempid" jdbcType="VARCHAR" />
+        <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
+        </where>
+    </sql>
+    <sql id="Base_Column_List" >
+        id, call_date, duration_type, intent, reason, call_count, duration_all, tempid, org_code
+    </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" >
+        select
+        <if test="distinct" >
+            distinct
         </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List" >
-    id, call_date, duration_type, intent, reason, call_count, duration_all, tempid, org_code
-  </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from report_call_day
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0" >
-      limit #{limitStart} , #{limitEnd}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from report_call_day
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from report_call_day
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" >
-    delete from report_call_day
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
-    insert into report_call_day (id, call_date, duration_type, 
-      intent, reason, call_count, 
-      duration_all, tempid, org_code
-      )
-    values (#{id,jdbcType=BIGINT}, #{callDate,jdbcType=VARCHAR}, #{durationType,jdbcType=INTEGER}, 
-      #{intent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{callCount,jdbcType=INTEGER}, 
-      #{durationAll,jdbcType=BIGINT}, #{tempid,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
-    insert into report_call_day
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="callDate != null" >
-        call_date,
-      </if>
-      <if test="durationType != null" >
-        duration_type,
-      </if>
-      <if test="intent != null" >
-        intent,
-      </if>
-      <if test="reason != null" >
-        reason,
-      </if>
-      <if test="callCount != null" >
-        call_count,
-      </if>
-      <if test="durationAll != null" >
-        duration_all,
-      </if>
-      <if test="tempid != null" >
-        tempid,
-      </if>
-      <if test="orgCode != null" >
-        org_code,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="callDate != null" >
-        #{callDate,jdbcType=VARCHAR},
-      </if>
-      <if test="durationType != null" >
-        #{durationType,jdbcType=INTEGER},
-      </if>
-      <if test="intent != null" >
-        #{intent,jdbcType=VARCHAR},
-      </if>
-      <if test="reason != null" >
-        #{reason,jdbcType=VARCHAR},
-      </if>
-      <if test="callCount != null" >
-        #{callCount,jdbcType=INTEGER},
-      </if>
-      <if test="durationAll != null" >
-        #{durationAll,jdbcType=BIGINT},
-      </if>
-      <if test="tempid != null" >
-        #{tempid,jdbcType=VARCHAR},
-      </if>
-      <if test="orgCode != null" >
-        #{orgCode,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" resultType="java.lang.Integer" >
-    select count(*) from report_call_day
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update report_call_day
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.callDate != null" >
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from report_call_day
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart != null and limitStart>=0" >
+            limit #{limitStart} , #{limitEnd}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from report_call_day
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+        delete from report_call_day
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" >
+        delete from report_call_day
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
+        insert into report_call_day (id, call_date, duration_type,
+        intent, reason, call_count,
+        duration_all, tempid, org_code
+        )
+        values (#{id,jdbcType=BIGINT}, #{callDate,jdbcType=VARCHAR}, #{durationType,jdbcType=INTEGER},
+        #{intent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{callCount,jdbcType=INTEGER},
+        #{durationAll,jdbcType=BIGINT}, #{tempid,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
+        insert into report_call_day
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="callDate != null" >
+                call_date,
+            </if>
+            <if test="durationType != null" >
+                duration_type,
+            </if>
+            <if test="intent != null" >
+                intent,
+            </if>
+            <if test="reason != null" >
+                reason,
+            </if>
+            <if test="callCount != null" >
+                call_count,
+            </if>
+            <if test="durationAll != null" >
+                duration_all,
+            </if>
+            <if test="tempid != null" >
+                tempid,
+            </if>
+            <if test="orgCode != null" >
+                org_code,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="callDate != null" >
+                #{callDate,jdbcType=VARCHAR},
+            </if>
+            <if test="durationType != null" >
+                #{durationType,jdbcType=INTEGER},
+            </if>
+            <if test="intent != null" >
+                #{intent,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null" >
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="callCount != null" >
+                #{callCount,jdbcType=INTEGER},
+            </if>
+            <if test="durationAll != null" >
+                #{durationAll,jdbcType=BIGINT},
+            </if>
+            <if test="tempid != null" >
+                #{tempid,jdbcType=VARCHAR},
+            </if>
+            <if test="orgCode != null" >
+                #{orgCode,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.ReportCallDayExample" resultType="java.lang.Integer" >
+        select count(*) from report_call_day
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map" >
+        update report_call_day
+        <set >
+            <if test="record.id != null" >
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.callDate != null" >
+                call_date = #{record.callDate,jdbcType=VARCHAR},
+            </if>
+            <if test="record.durationType != null" >
+                duration_type = #{record.durationType,jdbcType=INTEGER},
+            </if>
+            <if test="record.intent != null" >
+                intent = #{record.intent,jdbcType=VARCHAR},
+            </if>
+            <if test="record.reason != null" >
+                reason = #{record.reason,jdbcType=VARCHAR},
+            </if>
+            <if test="record.callCount != null" >
+                call_count = #{record.callCount,jdbcType=INTEGER},
+            </if>
+            <if test="record.durationAll != null" >
+                duration_all = #{record.durationAll,jdbcType=BIGINT},
+            </if>
+            <if test="record.tempid != null" >
+                tempid = #{record.tempid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.orgCode != null" >
+                org_code = #{record.orgCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map" >
+        update report_call_day
+        set id = #{record.id,jdbcType=BIGINT},
         call_date = #{record.callDate,jdbcType=VARCHAR},
-      </if>
-      <if test="record.durationType != null" >
         duration_type = #{record.durationType,jdbcType=INTEGER},
-      </if>
-      <if test="record.intent != null" >
         intent = #{record.intent,jdbcType=VARCHAR},
-      </if>
-      <if test="record.reason != null" >
         reason = #{record.reason,jdbcType=VARCHAR},
-      </if>
-      <if test="record.callCount != null" >
         call_count = #{record.callCount,jdbcType=INTEGER},
-      </if>
-      <if test="record.durationAll != null" >
         duration_all = #{record.durationAll,jdbcType=BIGINT},
-      </if>
-      <if test="record.tempid != null" >
         tempid = #{record.tempid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.orgCode != null" >
-        org_code = #{record.orgCode,jdbcType=VARCHAR},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update report_call_day
-    set id = #{record.id,jdbcType=BIGINT},
-      call_date = #{record.callDate,jdbcType=VARCHAR},
-      duration_type = #{record.durationType,jdbcType=INTEGER},
-      intent = #{record.intent,jdbcType=VARCHAR},
-      reason = #{record.reason,jdbcType=VARCHAR},
-      call_count = #{record.callCount,jdbcType=INTEGER},
-      duration_all = #{record.durationAll,jdbcType=BIGINT},
-      tempid = #{record.tempid,jdbcType=VARCHAR},
-      org_code = #{record.orgCode,jdbcType=VARCHAR}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
-    update report_call_day
-    <set >
-      <if test="callDate != null" >
-        call_date = #{callDate,jdbcType=VARCHAR},
-      </if>
-      <if test="durationType != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
+        update report_call_day
+        <set >
+            <if test="callDate != null" >
+                call_date = #{callDate,jdbcType=VARCHAR},
+            </if>
+            <if test="durationType != null" >
+                duration_type = #{durationType,jdbcType=INTEGER},
+            </if>
+            <if test="intent != null" >
+                intent = #{intent,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null" >
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="callCount != null" >
+                call_count = #{callCount,jdbcType=INTEGER},
+            </if>
+            <if test="durationAll != null" >
+                duration_all = #{durationAll,jdbcType=BIGINT},
+            </if>
+            <if test="tempid != null" >
+                tempid = #{tempid,jdbcType=VARCHAR},
+            </if>
+            <if test="orgCode != null" >
+                org_code = #{orgCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
+        update report_call_day
+        set call_date = #{callDate,jdbcType=VARCHAR},
         duration_type = #{durationType,jdbcType=INTEGER},
-      </if>
-      <if test="intent != null" >
         intent = #{intent,jdbcType=VARCHAR},
-      </if>
-      <if test="reason != null" >
         reason = #{reason,jdbcType=VARCHAR},
-      </if>
-      <if test="callCount != null" >
         call_count = #{callCount,jdbcType=INTEGER},
-      </if>
-      <if test="durationAll != null" >
         duration_all = #{durationAll,jdbcType=BIGINT},
-      </if>
-      <if test="tempid != null" >
         tempid = #{tempid,jdbcType=VARCHAR},
-      </if>
-      <if test="orgCode != null" >
-        org_code = #{orgCode,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.ReportCallDay" >
-    update report_call_day
-    set call_date = #{callDate,jdbcType=VARCHAR},
-      duration_type = #{durationType,jdbcType=INTEGER},
-      intent = #{intent,jdbcType=VARCHAR},
-      reason = #{reason,jdbcType=VARCHAR},
-      call_count = #{callCount,jdbcType=INTEGER},
-      duration_all = #{durationAll,jdbcType=BIGINT},
-      tempid = #{tempid,jdbcType=VARCHAR},
-      org_code = #{orgCode,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+        org_code = #{orgCode,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
-<select id="getAllLabelFromDate" resultType="java.lang.String">
-    select intent
-    from report_call_day
-    where org_code = #{orgCode}
-    and intent is not null
-    and call_date >= #{callDate}
-    group by intent
-</select>
-<select id="getAllLabelFromToday" resultType="java.lang.String">
-    select intent
-    from report_call_today
-    where org_code = #{orgCode}
-    and intent is not null
-    group by intent
+    <select id="getAllLabelFromDate" resultType="java.lang.String">
+        select intent
+        from report_call_day
+        where org_code = #{orgCode}
+        and intent is not null
+        and call_date >= #{callDate}
+        group by intent
+    </select>
+    <select id="getAllLabelFromToday" resultType="java.lang.String">
+        select intent
+        from report_call_today
+        where org_code = #{orgCode}
+        and intent is not null
+        group by intent
 
-</select>
+    </select>
 </mapper>

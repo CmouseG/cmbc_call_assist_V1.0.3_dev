@@ -128,8 +128,8 @@ public class CallDetailServiceImpl implements CallDetailService {
         Map map = new HashMap();
         if (callRecordReq.getUserId() != null)
             map.put("customerId", callRecordReq.getUserId());
-        if (callRecordReq.getSecretId() != null)
-            map.put("secretId", callRecordReq.getSecretId());
+        if (callRecordReq.getIsDesensitization() != null)
+            map.put("isDesensitization", callRecordReq.getIsDesensitization());
         if (callRecordReq.getOrgCode() != null)
             map.put("orgCode", callRecordReq.getOrgCode());
         map.put("limitStart", (callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
@@ -161,7 +161,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, String orgCode,
                                                    int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
-                                                   String accurateIntent, String freason, String callId, String tempId, String isRead) {
+                                                   String accurateIntent, String freason, String callId, String tempId, String isRead, Integer isDesensitization) {
 
         CallOutPlanExample example = getExample(startDate, endDate, customerId, orgCode, phoneNum, durationMin,
                 durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
@@ -173,7 +173,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         Long userId = Long.valueOf(customerId);
         List<CallOutPlan> list;
         if(isSuperAdmin || authService.isSeatOrAgent(userId)){
-            example.setCustomerId(customerId);
+            example.setIsDesensitization(isDesensitization);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
         }else{
             list = callOutPlanMapper.selectByExample(example);
@@ -226,7 +226,9 @@ public class CallDetailServiceImpl implements CallDetailService {
             List<CallOutDetailRecord> records = callOutDetailRecordMapper.selectByExample(exampleRecord);
 
             List<CallOutDetailVO> resList = new ArrayList<CallOutDetailVO>();
-            for (CallOutDetail callOutDetail : details) {
+//            for (CallOutDetail callOutDetail : details) {
+            for (int i=0; i<details.size(); i++) { //加上无声音的判断
+                CallOutDetail callOutDetail = details.get(i);
                 CallOutDetailVO callOutDetailVO = new CallOutDetailVO();
                 BeanUtil.copyProperties(callOutDetail, callOutDetailVO);
                 callOutDetailVO.setCallDetailId(callOutDetail.getCallDetailId().toString());
@@ -235,6 +237,27 @@ public class CallDetailServiceImpl implements CallDetailService {
                         BeanUtil.copyProperties(callOutDetailRecord, callOutDetailVO);
                     }
                 }
+
+                if(callOutDetail.getBotAnswerTime()!=null && i>0){
+                    CallOutDetail callOutDetailBefore = details.get(i-1);
+                    if(callOutDetailBefore.getBotAnswerTime()!=null){//出现连续2个机器人说话，中间插入一个无声音
+                        CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                        callOutDetailVOInsert.setCustomerSayText("无声音");
+                        callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
+                        resList.add(callOutDetailVOInsert);
+                    }
+                }
+
+                if(callOutDetail.getAgentAnswerTime()!=null && i>0){
+                    CallOutDetail callOutDetailBefore = details.get(i-1);
+                    if(callOutDetailBefore.getAgentAnswerTime()!=null){//出现连续2个坐席说话，中间插入一个无声音
+                        CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
+                        callOutDetailVOInsert.setCustomerSayText("无声音");
+                        callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
+                        resList.add(callOutDetailVOInsert);
+                    }
+                }
+
                 resList.add(callOutDetailVO);
             }
 
@@ -359,14 +382,15 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin) {
+    public List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin, Integer isDesensitization) {
 
         String customerId = String.valueOf(userID);
         List<CallOutPlan> list;
         CallOutPlanExample example = new CallOutPlanExample();
         example.createCriteria().andCallIdIn(idList);
+        example.setOrderByClause("create_time desc");
         if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
-            example.setCustomerId(customerId);
+            example.setIsDesensitization(isDesensitization);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
         }else{
             list = callOutPlanMapper.selectByExample(example);

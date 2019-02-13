@@ -1207,17 +1207,38 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		list.add("号码过滤");
 		list.add("自由介绍");
 		list.add("用户不清楚");
-		list.add("结束_在忙");
+		//list.add("结束_在忙");
 		list.add("一般问题");
 		list.add("拒绝");
 		list.add("投诉");
 		list.add("agent");
 		
+		Map<String, String> selectMap = new HashMap<String, String>();
+		
+		BotSentenceIntentExample example1 = new BotSentenceIntentExample();
+		example1.createCriteria().andProcessIdEqualTo(processId).andDomainNameEqualTo("在忙").andForSelectEqualTo(0);
+		List<BotSentenceIntent> intentList1 = botSentenceIntentMapper.selectByExampleWithBLOBs(example1);
+		for (BotSentenceIntent botSentenceIntent : intentList1) {
+			String keys = "";
+			String domainName = "结束_在忙";//botSentenceIntent.getDomainName();
+			
+			keys = botSentenceIntent.getKeywords();
+			
+			if(StringUtils.isNotBlank(keys) && keys.length() > 2) {
+				keys = keys.substring(1, keys.length() - 1);//去掉前后的[]号
+				if(selectMap.containsKey(domainName)) {
+					String existKeywords = selectMap.get(domainName);
+					keys = existKeywords + "," + keys;
+				}
+				selectMap.put(domainName, keys);
+			}
+		}
+		
+		
 		BotSentenceIntentExample example = new BotSentenceIntentExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andDomainNameIn(list).andForSelectEqualTo(0);
 		List<BotSentenceIntent> intentList = botSentenceIntentMapper.selectByExampleWithBLOBs(example);
 		
-		Map<String, String> selectMap = new HashMap<String, String>();
 		for (BotSentenceIntent botSentenceIntent : intentList) {
 			String keys = "";
 			String domainName = botSentenceIntent.getDomainName();

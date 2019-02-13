@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.dispatch.dao.DispatchLinesMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
+import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IResourcePoolService;
+import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.RedisUtil;
 
 @RestController
@@ -37,7 +41,10 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Autowired
 	private DispatchPlanMapper mapper;
-
+	@Autowired
+	private ILinesService lineService;
+	@Autowired
+	private DispatchPlanMapper dispatchMapper;
 	/**
 	 * 完成
 	 *
@@ -145,5 +152,43 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		result.body = count > 0 ? true : false;
 		return result;
 	}
+
+	@Override
+	public ReturnData<Boolean> lineIsUsedByUserId(Integer lineId, Integer userId) {
+		ReturnData<Boolean> res = new ReturnData<>();
+		// 查询当前任务中心
+		DispatchPlanExample planEx = new DispatchPlanExample();
+		planEx.createCriteria().andUserIdEqualTo(userId)
+				.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING));
+		List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
+		for (com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2) {
+			List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(dis.getPlanUuid());
+			if (queryLinesByPlanUUID.size() > 0) {
+				res.body = true;
+				return res;
+			}
+		}
+		res.body = false;
+		return res;
+	}
+
+	@Override
+	public ReturnData<Boolean> lineIsUsed(Integer lineId) {
+		ReturnData<Boolean> res = new ReturnData<>();
+		DispatchPlanExample planEx = new DispatchPlanExample();
+		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING));
+		List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
+		for(com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2){
+			List<DispatchLines> queryLinesByPlanUUIDAndLineId = lineService.queryLinesByPlanUUIDAndLineId(dis.getPlanUuid(),lineId);
+			if(queryLinesByPlanUUIDAndLineId.size()>0){
+				res.body = true;
+				return res;
+			}
+		}
+		res.body = false;
+		return res;
+	}
+	
+	
 
 }

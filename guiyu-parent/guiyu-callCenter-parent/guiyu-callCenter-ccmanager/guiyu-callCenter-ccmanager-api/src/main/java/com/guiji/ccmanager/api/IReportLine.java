@@ -27,5 +27,5 @@ public interface IReportLine {
     })
     @GetMapping(value = "getLineHangupDetail")
     Result.ReturnData getLineHangupDetail(@RequestParam(value="lineId") String lineId,@RequestParam(value="startTime") String startTime,
-                                                 @RequestParam(value="enTime") String enTime) throws ParseException;
+                                                 @RequestParam(value="enTime") String enTime, @RequestParam(value="orgCode")  String orgCode) throws ParseException;
 }

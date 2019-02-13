@@ -6,11 +6,14 @@ import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
 import io.swagger.models.auth.In;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,8 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	private IGetPhonesInterface getPhonesInterface;
 	@Autowired
 	private DistributedLockHandler distributedLockHandler;
+	@Autowired
+	private ILinesService lineService;
 
 	@Override
 	public void execute() throws Exception {
@@ -56,7 +61,9 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				if (userLineRobotList != null) {
 					//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
 					for (UserLineBotenceVO dto : userLineRobotList) {
-						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
+						//mod by xujin
+//						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
+						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.lock" + queue,"dispatch.lock" + queue);
 						try {
 							if (distributedLockHandler.tryLock(queueLock)) {
@@ -66,8 +73,18 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										Thread.sleep(500);
 										break;
 									}
-									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getLineId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
-									pushPlan2Queue(dispatchPlanList,queue);
+									// mod by xujin
+									List<DispatchPlan> bakList = new ArrayList<>();
+									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
+									bakList.addAll(dispatchPlanList);
+									//进去队列之前，根据优line优先级进行排序
+									List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
+									if(sortLine.size()>0){
+										pushPlan2Queue(sortLine,queue);
+									}else if (bakList.size()>0 && sortLine.size()<=0){
+										logger.info("当前排序异常,请检查>>>>>>>>>>>>>>>>>>>>>>>>>>");
+										pushPlan2Queue(bakList,queue);
+									}
 								}
 							}
 						} catch (Exception e) {

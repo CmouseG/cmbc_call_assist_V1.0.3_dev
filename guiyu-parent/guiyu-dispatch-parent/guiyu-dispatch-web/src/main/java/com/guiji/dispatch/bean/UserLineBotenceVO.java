@@ -11,7 +11,7 @@ public class UserLineBotenceVO  implements Serializable {
 
     private Integer userId;
 
-    private Integer lineId;
+//    private Integer lineId;
 
     private String botenceName;
 

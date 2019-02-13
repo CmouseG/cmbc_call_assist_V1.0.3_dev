@@ -11,6 +11,7 @@ import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
+import com.guiji.calloutserver.manager.LineListManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.CallOutRecordService;
 import com.guiji.calloutserver.service.CallService;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,6 +49,8 @@ public class CallPlanDispatchHandler {
     AsyncEventBus asyncEventBus;
     @Autowired
     CallingCountManager callingCountManager;
+    @Autowired
+    LineListManager lineListManager;
 
     //注册这个监听器
     @PostConstruct
@@ -85,7 +89,7 @@ public class CallPlanDispatchHandler {
         callOutRecordService.save(callOutRecord);
 
         //构建外呼命令，发起外呼
-        callService.makeCall(callplan, callOutRecord);
+        callService.makeCall(callplan, recordFileName);
     }
 
     @Subscribe
@@ -103,7 +107,7 @@ public class CallPlanDispatchHandler {
      * 准备发起呼叫
      */
 //    @Async
-    public void readyToMakeCall(CallOutPlan callPlan) {
+    public void readyToMakeCall(CallOutPlan callPlan, List<Integer> lineList) {
 
         executor.submit(new Runnable(){
             @Override
@@ -150,6 +154,9 @@ public class CallPlanDispatchHandler {
 
                 asyncEventBus.post(new CallResourceReadyEvent(callPlan));
                 log.info("--------------CallResourceReadyEvent post " + callPlan.getCallId());
+
+                //将lineList 存储到到redis中
+                lineListManager.addLineList(callPlan.getCallId().toString(),lineList);
             }
 
         });

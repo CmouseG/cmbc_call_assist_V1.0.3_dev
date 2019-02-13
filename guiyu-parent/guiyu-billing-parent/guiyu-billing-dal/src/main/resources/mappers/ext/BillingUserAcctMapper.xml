@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.ext.BillingUserAcctMapper">
+
+  <select id="queryUserAcctList" resultType="com.guiji.billing.entity.BillingUserAcctBean">
+    SELECT
+      id                ,
+      account_id        ,
+      company_id        ,
+      company_name      ,
+      org_code          ,
+      amount            ,
+      available_balance ,
+      freezing_amount   ,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_user_acct
+    WHERE del_flag = 0
+    <if test="userAcct">
+      <if test="userAcct.accountId != null">
+        AND account_id = #{userAcct.accountId}
+      </if>
+      <if test="userAcct.companyId != null">
+        AND company_id= #{userAcct.companyId}
+      </if>
+      <if test="userAcct.companyName != null">
+        AND company_name LIKE CONCAT('%', #{userAcct.companyName},'%')
+      </if>
+      <if test="userAcct.orgCode != null">
+        AND org_code = #{userAcct.orgCode}
+      </if>
+    </if>
+    ORDER BY create_time DESC
+    <if test="page != null and page.isPage ">
+      <!--<if test="page.orderBy != null " >
+          order by ${page.orderBy}	${page.sort}
+      </if>-->
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryUserAcctCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_user_acct
+    WHERE del_flag = 0
+    <if test="userAcct">
+      <if test="userAcct.accountId != null">
+        AND account_id = #{userAcct.accountId}
+      </if>
+      <if test="userAcct.companyId != null">
+        AND company_id= #{userAcct.companyId}
+      </if>
+      <if test="userAcct.companyName != null">
+        AND company_name LIKE CONCAT('%', #{userAcct.companyName},'%')
+      </if>
+      <if test="userAcct.orgCode != null">
+        AND org_code = #{userAcct.orgCode}
+      </if>
+    </if>
+  </select>
+
+
+  <select id="queryUserAcct" resultType="com.guiji.billing.entity.BillingUserAcctBean">
+    SELECT
+      id                ,
+      account_id        ,
+      company_id        ,
+      company_name      ,
+      org_code          ,
+      amount            ,
+      available_balance ,
+      freezing_amount   ,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_user_acct
+    WHERE account_id = #{accountId}
+  </select>
+
+
+  <select id="queryUserAcctByOrgCode" resultType="com.guiji.billing.entity.BillingUserAcctBean">
+    SELECT
+      id                ,
+      account_id        ,
+      company_id        ,
+      company_name      ,
+      org_code          ,
+      amount            ,
+      available_balance ,
+      freezing_amount   ,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_user_acct
+    WHERE org_code = #{orgCode}
+  </select>
+
+  <insert id="addUserAcct" parameterType="com.guiji.billing.entity.BillingUserAcctBean"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO billing_user_acct
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="orgCode != null">
+        org_code,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="availableBalance != null">
+        available_balance,
+      </if>
+      <if test="freezingAmount != null">
+        freezing_amount,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=VARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null">
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="availableBalance != null">
+        #{availableBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="freezingAmount != null">
+        #{freezingAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+
+  <select id="queryArrearageAcctList" resultType="com.guiji.billing.entity.BillingUserAcctBean">
+    SELECT
+      id                ,
+      account_id        ,
+      company_id        ,
+      company_name      ,
+      org_code          ,
+      amount            ,
+      available_balance ,
+      freezing_amount   ,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_user_acct
+    WHERE del_flag = 0
+    AND available_balance <![CDATA[ < ]]>  0
+  </select>
+
+  <!--下减企业账户余额-->
+  <update id="subAcctBalanceAmount">
+    UPDATE billing_user_acct
+    <set>
+      amount = amount - #{amount},
+      available_balance = available_balance - #{amount},
+      update_time = #{updateTime}
+    </set>
+    WHERE account_id = #{accountId}
+  </update>
+
+  <!--加企业账户余额-->
+  <update id="addAcctBalanceAmount">
+    UPDATE billing_user_acct
+    <set>
+      amount = amount + #{amount},
+      available_balance = available_balance + #{amount},
+      update_time = #{updateTime}
+    </set>
+    WHERE account_id = #{accountId}
+  </update>
+
+  <!--充值  begin-->
+
+  <update id="recharge">
+    UPDATE billing_user_acct
+    <set>
+      amount = amount + #{rechargeAmount},
+      available_balance = available_balance + #{rechargeAmount},
+      update_time = #{updateTime}
+    </set>
+    WHERE account_id = #{accountId}
+  </update>
+
+  <select id="queryUserRechargeTotal" resultType="com.guiji.billing.vo.UserRechargeTotalVo">
+    SELECT
+      id                 ,
+      charging_id        ,
+      account_id         ,
+      type               ,
+      fee_mode           ,
+      amount      AS recharge_amount,
+      src_amount         ,
+      to_amount          ,
+      create_time AS oper_time,
+      oper_user_name AS oper_user_name
+    FROM billing_acct_charging_record
+    WHERE del_flag = 0
+      <if test="accountId != null">
+        AND account_id = #{accountId}
+      </if>
+      <if test="type != null">
+        AND type = #{type}
+      </if>
+      <if test="feeMode != null">
+        AND fee_mode = #{feeMode}
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND create_time BETWEEN #{beginDate} AND #{endDate}
+      </if>
+      ORDER BY create_time DESC
+      <if test="page != null and page.isPage ">
+        <!--<if test="page.orderBy != null " >
+            order by ${page.orderBy}	${page.sort}
+        </if>-->
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+  </select>
+
+  <select id="queryUserRechargeCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_acct_charging_record
+    WHERE del_flag = 0
+        <if test="accountId != null">
+          AND account_id = #{accountId}
+        </if>
+        <if test="type != null">
+          AND type = #{type}
+        </if>
+        <if test="beginDate != null and endDate != null">
+          AND create_time BETWEEN #{beginDate} AND #{endDate}
+        </if>
+  </select>
+
+  <!--我的计费项    begin-->
+  <select id="queryAcctChargingTermList" resultType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    SELECT
+      id                 ,
+      user_charging_id   ,
+      user_id            ,
+      account_id         ,
+      charging_item_id   ,
+      charging_item_name ,
+      charging_type      ,
+      target_key         ,
+      target_name        ,
+      price              ,
+      unit_price         ,
+      is_deducted        ,
+      status             ,
+      create_time        ,
+      update_time        ,
+      del_flag
+    FROM billing_acct_charging_term
+    WHERE del_flag = 0
+    <if test="acctCharging">
+      <if test="acctCharging.userChargingId != null">
+        AND user_charging_id = #{acctCharging.userChargingId}
+      </if>
+      <if test="acctCharging.accountId != null">
+        AND account_id= #{acctCharging.accountId}
+      </if>
+      <if test="acctCharging.userId != null">
+        AND user_id= #{acctCharging.userId}
+      </if>
+      <if test="acctCharging.chargingItemId != null">
+        AND charging_item_id = #{acctCharging.chargingItemId}
+      </if>
+      <if test="acctCharging.status != null">
+        AND status = #{acctCharging.status}
+      </if>
+    </if>
+    ORDER BY create_time DESC
+    <if test="page != null and page.isPage ">
+      <!--<if test="page.orderBy != null " >
+          order by ${page.orderBy}	${page.sort}
+      </if>-->
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryAcctChargingTermCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_acct_charging_term
+    WHERE del_flag = 0
+    <if test="acctCharging">
+      <if test="acctCharging.userChargingId != null">
+        AND user_charging_id = #{acctCharging.userChargingId}
+      </if>
+      <if test="acctCharging.accountId != null">
+        AND account_id= #{acctCharging.accountId}
+      </if>
+      <if test="acctCharging.userId != null">
+        AND user_id= #{acctCharging.userId}
+      </if>
+      <if test="acctCharging.chargingItemId != null">
+        AND charging_item_id = #{acctCharging.chargingItemId}
+      </if>
+      <if test="acctCharging.status != null">
+        AND status = #{acctCharging.status}
+      </if>
+    </if>
+  </select>
+
+
+  <select id="queryAcctChargingTerm" resultType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    SELECT
+      id                 ,
+      user_charging_id   ,
+      user_id            ,
+      account_id         ,
+      charging_item_id   ,
+      charging_item_name ,
+      charging_type      ,
+      target_key         ,
+      target_name        ,
+      price              ,
+      unit_price         ,
+      is_deducted        ,
+      status             ,
+      create_time        ,
+      update_time        ,
+      del_flag
+    FROM billing_acct_charging_term
+    WHERE del_flag = 0
+      AND account_id = #{accountId}
+      AND user_id = #{userId}
+      AND charging_item_id = #{chargingItemId}
+  </select>
+
+  <insert id="addAcctChargingTerm" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO billing_acct_charging_term
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id,
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name,
+      </if>
+      <if test="chargingType != null">
+        charging_type,
+      </if>
+      <if test="targetKey != null">
+        target_key,
+      </if>
+      <if test="targetName != null">
+        target_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="unitPrice != null">
+        unit_price,
+      </if>
+      <if test="isDeducted != null">
+        is_deducted,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updAcctChargingTerm" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm">
+    UPDATE billing_acct_charging_term
+    <set>
+      <if test="userChargingId != null">
+        user_charging_id = #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemId != null">
+        charging_item_id = #{chargingItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingItemName != null">
+        charging_item_name = #{chargingItemName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargingType != null">
+        charging_type = #{chargingType,jdbcType=INTEGER},
+      </if>
+      <if test="targetKey != null">
+        target_key = #{targetKey,jdbcType=VARCHAR},
+      </if>
+      <if test="targetName != null">
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDeducted != null">
+        is_deducted = #{isDeducted,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    WHERE user_charging_id = #{userChargingId}
+  </update>
+
+  <update id="delAcctChargingTerm">
+    UPDATE billing_acct_charging_term
+      SET del_flag = 1
+    WHERE user_charging_id = #{userChargingId}
+  </update>
+  <!--我的计费项    end-->
+
+<!--计费    begin-->
+  <select id="queryAcctChargingRecordList" resultType="com.guiji.billing.entity.BillingAcctChargingRecord">
+    SELECT
+      id                ,
+      charging_id       ,
+      account_id        ,
+      oper_user_id      ,
+      oper_user_name    ,
+      oper_user_org_code,
+      oper_time         ,
+      oper_status       ,
+      oper_details      ,
+      type              ,
+      user_charging_id  ,
+      amount            ,
+      src_amount        ,
+      to_amount         ,
+      evidence          ,
+      planuuid          ,
+      phone             ,
+      attachment_snapshot_url,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_acct_charging_record
+    WHERE del_flag = 0
+    <if test="acctChargingRecord != null">
+      <if test="acctChargingRecord.accountId != null">
+        AND account_id = #{acctChargingRecord.accountId}
+      </if>
+      <if test="acctChargingRecord.userChargingId != null">
+        AND user_charging_id = #{acctChargingRecord.userChargingId}
+      </if>
+      <if test="acctChargingRecord.type != null">
+        AND type = #{acctChargingRecord.type}
+      </if>
+    </if>
+    ORDER BY create_time DESC
+    <if test="page != null and page.isPage ">
+      <!--<if test="page.orderBy != null " >
+          order by ${page.orderBy}	${page.sort}
+      </if>-->
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryAcctChargingRecordCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM billing_acct_charging_record
+    WHERE del_flag = 0
+    <if test="acctChargingRecord != null">
+      <if test="acctChargingRecord.accountId != null">
+        AND account_id = #{acctChargingRecord.accountId}
+      </if>
+      <if test="acctChargingRecord.userChargingId != null">
+        AND user_charging_id = #{acctChargingRecord.userChargingId}
+      </if>
+      <if test="acctChargingRecord.type != null">
+        AND type = #{acctChargingRecord.type}
+      </if>
+    </if>
+  </select>
+
+  <insert id="addAcctChargingRecord" parameterType="com.guiji.billing.entity.BillingAcctChargingRecord"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO billing_acct_charging_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="chargingId != null">
+        charging_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="operUserId != null">
+        oper_user_id,
+      </if>
+      <if test="operUserName != null">
+        oper_user_name,
+      </if>
+      <if test="operUserOrgCode != null">
+        oper_user_org_code,
+      </if>
+      <if test="operBeginTime != null">
+        oper_begin_time,
+      </if>
+      <if test="operEndTime != null">
+        oper_end_time,
+      </if>
+      <if test="operDuration != null">
+        oper_duration,
+      </if>
+      <if test="operDurationM != null">
+        oper_duration_m,
+      </if>
+      <if test="operDurationStr != null">
+        oper_duration_str,
+      </if>
+      <if test="operStatus != null">
+        oper_status,
+      </if>
+      <if test="operDetails != null">
+        oper_details,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="feeMode != null">
+        fee_mode,
+      </if>
+      <if test="userChargingId != null">
+        user_charging_id,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="srcAmount != null">
+        src_amount,
+      </if>
+      <if test="toAmount != null">
+        to_amount,
+      </if>
+      <if test="evidence != null">
+        evidence,
+      </if>
+      <if test="planuuid != null">
+        planuuid,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="attachmentSnapshotUrl != null">
+        attachment_snapshot_url,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="chargingId != null">
+        #{chargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserId != null">
+        #{operUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserName != null">
+        #{operUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserOrgCode != null">
+        #{operUserOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operBeginTime != null">
+        #{operBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operEndTime != null">
+        #{operEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operDuration != null">
+        #{operDuration,jdbcType=BIGINT},
+      </if>
+      <if test="operDurationM != null">
+        #{operDurationM,jdbcType=BIGINT},
+      </if>
+      <if test="operDurationStr != null">
+        #{operDurationStr,jdbcType=VARCHAR},
+      </if>
+      <if test="operStatus != null">
+        #{operStatus,jdbcType=INTEGER},
+      </if>
+      <if test="operDetails != null">
+        #{operDetails,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="feeMode != null">
+        #{feeMode,jdbcType=INTEGER},
+      </if>
+      <if test="userChargingId != null">
+        #{userChargingId,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="srcAmount != null">
+        #{srcAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="toAmount != null">
+        #{toAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="evidence != null">
+        #{evidence,jdbcType=VARCHAR},
+      </if>
+      <if test="planuuid != null">
+        #{planuuid,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentSnapshotUrl != null">
+        #{attachmentSnapshotUrl},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="queryChargingRecordById" resultType="com.guiji.billing.entity.BillingAcctChargingRecord">
+    SELECT
+      id                ,
+      charging_id       ,
+      account_id        ,
+      oper_user_id      ,
+      oper_user_name    ,
+      oper_user_org_code,
+      oper_time         ,
+      oper_status       ,
+      oper_details      ,
+      type              ,
+      user_charging_id  ,
+      amount            ,
+      src_amount        ,
+      to_amount         ,
+      evidence          ,
+      planuuid          ,
+      phone             ,
+      attachment_snapshot_url,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_acct_charging_record
+    WHERE del_flag = 0
+      AND charging_id = #{chargingId}
+  </select>
+
+  <update id="updRechargeSnapshot">
+    UPDATE billing_acct_charging_record
+    <set>
+      attachment_snapshot_url = #{attachmentSnapshotUrl},
+      update_time = #{updateTime}
+    </set>
+    WHERE charging_id = #{chargingId}
+  </update>
+
+<!--计费    end-->
+
+<!--用户账户推送设置    begin-->
+  <select id="queryUserAcctSetList" resultType="com.guiji.billing.entity.BillingUserAcctSetBean">
+    SELECT
+      id          ,
+      acct_set_id ,
+      account_id  ,
+      set_key     ,
+      set_value   ,
+      create_time ,
+      update_time ,
+      del_flag
+    FROM billing_acct_set
+    WHERE del_flag = 0
+    <if test="userAcctSet != null">
+      <if test="userAcctSet.accountId != null">
+        AND account_id = #{userAcctSet.accountId}
+      </if>
+      <if test="userAcctSet.setKey != null">
+        AND set_key = #{userAcctSet.setKey}
+      </if>
+    </if>
+    ORDER BY create_time DESC
+    <if test="page != null and page.isPage ">
+      <!--<if test="page.orderBy != null " >
+          order by ${page.orderBy}	${page.sort}
+      </if>-->
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryUserAcctSetCount" resultType="java.lang.Integer">
+    SELECT
+      id          ,
+      acct_set_id ,
+      account_id  ,
+      set_key     ,
+      set_value   ,
+      create_time ,
+      update_time ,
+      del_flag
+    FROM billing_acct_set
+    WHERE del_flag = 0
+    <if test="userAcctSet != null">
+      <if test="userAcctSet.accountId != null">
+        AND account_id = #{userAcctSet.accountId}
+      </if>
+      <if test="userAcctSet.setKey != null">
+        AND set_key = #{userAcctSet.setKey}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryUserAcctSet" resultType="com.guiji.billing.entity.BillingUserAcctSetBean">
+    SELECT
+      id          ,
+      acct_set_id ,
+      account_id  ,
+      set_key     ,
+      set_value   ,
+      create_time ,
+      update_time ,
+      del_flag
+    FROM billing_acct_set
+    WHERE del_flag = 0
+      AND account_id = #{accountId}
+      AND set_key = #{setKey}
+  </select>
+
+  <insert id="addUserAcctSet" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO billing_acct_set
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="acctSetId != null">
+        acct_set_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="setKey != null">
+        set_key,
+      </if>
+      <if test="setValue != null">
+        set_value,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="acctSetId != null">
+        #{acctSetId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="setKey != null">
+        #{setKey,jdbcType=VARCHAR},
+      </if>
+      <if test="setValue != null">
+        #{setValue,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updUserAcctSet">
+    UPDATE billing_acct_set
+    <set>
+      <!--<if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="setKey != null">
+        set_key = #{setKey,jdbcType=VARCHAR},
+      </if>-->
+      <if test="setValue != null">
+        set_value = #{setValue,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    WHERE account_id = #{accountId}
+      AND set_key = #{setKey}
+  </update>
+
+  <update id="">
+    UPDATE billing_acct_set
+    SET del_flag = 1,
+        update_time = #{updateTime}
+    WHERE acct_set_id = #{acctSetId}
+  </update>
+<!--用户账户推送设置    end-->
+</mapper>

@@ -215,7 +215,7 @@ public class BlackListServiceImpl implements IBlackListService {
 	}
 
 	@Override
-	public Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode) {
+	public Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId) {
 		Page<BlackList> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -229,6 +229,19 @@ public class BlackListServiceImpl implements IBlackListService {
 			andStatusEqualTo.andPhoneEqualTo(phone);
 		}
 		List<BlackList> result = blackListMapper.selectByExample(example);
+		if (isDesensitization.equals(0)) {
+			for (BlackList black : result) {
+				if (black.getPhone().length() <= 7) {
+					continue;
+				}
+//				if (userId == black.getUserId().longValue()) {
+//					continue;
+//				}
+				String phoneNumber = black.getPhone().substring(0, 3) + "****"
+						+ black.getPhone().substring(7, black.getPhone().length());
+				black.setPhone(phoneNumber);
+			}
+		}
 		int countByExample = blackListMapper.countByExample(example);
 		page.setRecords(result);
 		page.setTotal(countByExample);

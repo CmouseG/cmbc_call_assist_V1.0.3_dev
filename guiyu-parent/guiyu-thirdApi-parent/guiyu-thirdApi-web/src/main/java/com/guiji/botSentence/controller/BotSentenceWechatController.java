@@ -1,11 +1,14 @@
 package com.guiji.botSentence.controller;
 
 
+import com.guiji.botsentence.api.IBotSentenceTradeService;
 import com.guiji.botsentence.api.IBotSentenceWechatService;
 import com.guiji.botsentence.api.entity.BotSentenceProcessVO;
+import com.guiji.botsentence.api.entity.BotSentenceTradeVO;
 import com.guiji.botsentence.api.entity.ResponseSelfTestVO;
 import com.guiji.botsentence.api.entity.SelfTestVO;
 import com.guiji.botsentence.api.entity.VoliceInfoExt;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.ServerResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,9 @@ public class BotSentenceWechatController {
 
     @Autowired
     IBotSentenceWechatService botSentenceWechatService;
+    @Autowired
+    IBotSentenceTradeService botSentenceTradeService;
+    
 
     @RequestMapping(value = "queryBotSentenceProcessListByAccountNo")
     public ServerResult<List<BotSentenceProcessVO>> queryBotSentenceProcessListByAccountNo(@RequestHeader String userId) {

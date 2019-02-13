@@ -10,5 +10,5 @@ import com.guiji.callcenter.dao.entity.CallOutRecord;
  * @Description:
  */
 public interface CallService {
-    public void makeCall(CallOutPlan callplan, CallOutRecord callRecord);
+    public void makeCall(CallOutPlan callplan, String recordFile);
 }

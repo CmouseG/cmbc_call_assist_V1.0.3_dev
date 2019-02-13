@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.guiji.user.dao.entity.SysUserExt;
 import org.apache.ibatis.annotations.Param;
 
 import com.guiji.common.model.Page;
@@ -73,4 +74,10 @@ public interface SysUserMapper {
     public List<Object> selectLikeUserName(UserParamVo param);
 
     public List<SysUser> getAllCompanyUser();
+
+    public List<SysUser> getAllUserByOrgCode(String orgCode);
+
+    void addUserExt(@Param("userId")Long userId);
+
+    SysUserExt getSysUserExtByUserId(Long id);
 }

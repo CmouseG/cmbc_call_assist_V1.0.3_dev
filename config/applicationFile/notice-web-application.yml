@@ -1,0 +1,76 @@
+server:
+  port: 18015
+spring:
+  application:
+    name: guiyu-notice-web
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.1.81:3306/guiyu_notice?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    minIdle: 5
+    maxActive: 200
+    initialSize: 5
+    timeBetweenEvictionRunsMillis: 3000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 'ZTM' FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+  rabbitmq:
+    host: 192.168.1.81
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
+properties:
+  error: properties/error.properties
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+      instance:
+          status-page-url: http://localhost:18000/eureka//swagger-ui.html
+##网关地址
+gateway:
+   host: http://guiyu-cloud-zuul:18000/
+
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true
+email:
+  sendAccount: 821927329@qq.com  #发件人的邮箱地址
+  sendPassword: xxxxxxxxxx   #发件人的授权码
+  smtpHost: smtp.qq.com  #smtp服务器地址

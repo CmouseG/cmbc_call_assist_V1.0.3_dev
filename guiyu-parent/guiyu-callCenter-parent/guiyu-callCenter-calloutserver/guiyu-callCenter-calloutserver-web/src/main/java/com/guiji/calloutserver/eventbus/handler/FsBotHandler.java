@@ -15,11 +15,8 @@ import com.guiji.calloutserver.eventbus.event.*;
 import com.guiji.calloutserver.fs.LocalFsServer;
 import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
-import com.guiji.calloutserver.manager.AIManager;
-import com.guiji.calloutserver.manager.CallingCountManager;
-import com.guiji.calloutserver.manager.DispatchManager;
+import com.guiji.calloutserver.manager.*;
 import com.guiji.calloutserver.service.*;
-import com.guiji.calloutserver.util.DateUtil;
 import com.guiji.robot.model.AiCallNextReq;
 import com.guiji.utils.IdGenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +65,14 @@ public class FsBotHandler {
     LocalFsServer localFsServer;
     @Autowired
     CallOutRecordService callOutRecordService;
+    @Autowired
+    CallLineAvailableManager callLineAvailableManager;
+    @Autowired
+    CallService callService;
+    @Autowired
+    LineListManager lineListManager;
+    @Autowired
+    CallLineResultService callLineResultService;
 
     //注册这个监听器
     @PostConstruct
@@ -82,11 +87,20 @@ public class FsBotHandler {
         log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
         //[ChannelAnswerEvent(uuid=4e293cdf-94a6-442d-9787-87c8e19fefbc, callerNum=0000000000, calledNum=18651372376, accessNum=null)], 准备进行处理
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
+            String uuid = event.getUuid();
+            BigInteger bigIntegerId = null;
+            try{
+                bigIntegerId = new BigInteger(uuid);
+            }catch (Exception e){
+                return;
+            }
+            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId);
             if (callPlan == null) {
                 log.info("未知的应答事件，事件uuid[{}]，跳过处理", event.getUuid());
                 return;
             }
+            //防止没有收到channel_progress事件，将状态改为线路已通
+            callLineAvailableManager.lineAreAvailable(uuid);
 
             AIInitRequest request = new AIInitRequest(String.valueOf(callPlan.getCallId()),callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(), String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
 
@@ -167,10 +181,10 @@ public class FsBotHandler {
         try {
 //            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
             CallOutPlan callPlan = event.getCallPlan();
-            if (callPlan == null) {
-                log.warn("收到的CustomerAsr，没有根据uuid[{}]找到对应的callPlan，跳过处理", event.getUuid());
-                return;
-            }
+//            if (callPlan == null) {
+//                log.warn("收到的CustomerAsr，没有根据uuid[{}]找到对应的callPlan，跳过处理", event.getUuid());
+//                return;
+//            }
 
             if (callPlan.getCallState() == ECallState.agent_answer.ordinal()) {
                 handleAfterAgentAsr(callPlan, event);
@@ -257,6 +271,7 @@ public class FsBotHandler {
             callOutRecord.setCallId(callPlan.getCallId());
             callOutRecord.setRecordFile(event.getFileName());
             callOutRecordService.update(callOutRecord);
+
             //判断是否已经做过F类判断，如果做过，则直接挂断该通话
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
@@ -345,7 +360,14 @@ public class FsBotHandler {
         log.info("收到Hangup事件[{}], 准备进行处理", event);
 
         try {
-            CallOutPlan callPlan = callOutPlanService.findByCallId(new BigInteger(event.getUuid()));
+            String uuid = event.getUuid();
+            BigInteger bigIntegerId = null;
+            try{
+                bigIntegerId = new BigInteger(uuid);
+            }catch (Exception e){
+                return;
+            }
+            CallOutPlan callPlan = callOutPlanService.findByCallId(bigIntegerId);
             if (callPlan == null) {
                 log.warn("处理ChannelHangupEvent失败，因为未根据uuid[{}]找到对应的callPlan", event.getUuid());
                 return;
@@ -353,75 +375,103 @@ public class FsBotHandler {
                 log.info("根据挂断事件找到CallOutPlan[{}]", callPlan.getCallId());
             }
 
-            String hangUp = event.getSipHangupCause();
+            boolean goEndProcess = false;
+            //如果通了，则走原来的流程...
+            if (callLineAvailableManager.isAvailable(uuid)) {
+                log.info("线路是可用的，callId[{}],lineId[{}]",uuid,callPlan.getLineId());
+                callLineResultService.addLineResult(callPlan, true);
+                goEndProcess = true;
+            } else if (lineListManager.isEnd(uuid)) {//最后一条线路了，则走原来的流程...
+                log.info("最后一条线路了，callId[{}],lineId[{}]",uuid,callPlan.getLineId());
+                callLineResultService.addLineResult(callPlan, false);
+                goEndProcess = true;
+            } else { //这次没有打通，还有线路，继续打下一条线路
+                callLineResultService.addLineResult(callPlan, false);
 
-            //将calloutdetail里面的意向标签更新到calloutplan里面
-            CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
-            callPlan.setTalkNum(callOutDetailService.getTalkNum(new BigInteger(event.getUuid())));
-            if (callOutDetail != null) {
-                log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
-                callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
-                callPlan.setReason(callOutDetail.getReason());
-            }else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
-                if(callPlan.getAccurateIntent()==null){
-                    callPlan.setAccurateIntent("W");
-                    if(callPlan.getReason()==null && hangUp!=null){
-                        callPlan.setReason(hangUp);
+                //重置callOutPlan的一些状态,line_id,call_start_time,call_state
+                Integer lineId = lineListManager.popNewLine(uuid);
+                callPlan.setLineId(lineId);
+                Date date = new Date();
+                callPlan.setCallStartTime(date);
+                callPlan.setCreateTime(date);
+                callPlan.setCallState(ECallState.make_call.ordinal());
+                callOutPlanService.update(callPlan);
+
+                log.info("选择新的线路重新发起呼叫 callPlan[{}]", callPlan);
+                callService.makeCall(callPlan, uuid + ".wav");
+            }
+
+            if(goEndProcess){
+
+                String hangUp = event.getSipHangupCause();
+
+                //将calloutdetail里面的意向标签更新到calloutplan里面
+                CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
+                callPlan.setTalkNum(callOutDetailService.getTalkNum(new BigInteger(event.getUuid())));
+                if (callOutDetail != null) {
+                    log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
+                    callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
+                    callPlan.setReason(callOutDetail.getReason());
+                }else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
+                    if(callPlan.getAccurateIntent()==null){
+                        callPlan.setAccurateIntent("W");
+                        if(callPlan.getReason()==null && hangUp!=null){
+                            callPlan.setReason(hangUp);
+                        }
                     }
                 }
-            }
-            callPlan.setHangupTime(event.getHangupStamp());
-            callPlan.setAnswerTime(event.getAnswerStamp());
-            Integer duration = event.getDuration();
-            Integer billSec = event.getBillSec();
-            if (duration != null){
-                callPlan.setDuration(duration);
-                if(duration>0 && billSec!=null && billSec ==0){
-                    callPlan.setIsCancel(1);
+                callPlan.setHangupTime(event.getHangupStamp());
+                callPlan.setAnswerTime(event.getAnswerStamp());
+                Integer duration = event.getDuration();
+                Integer billSec = event.getBillSec();
+                if (duration != null){
+                    callPlan.setDuration(duration);
+                    if(duration>0 && billSec!=null && billSec ==0){
+                        callPlan.setIsCancel(1);
+                    }
                 }
-            }
-            if (billSec != null) {
-                callPlan.setBillSec(billSec);
-                if(billSec > 0){
-                    callPlan.setIsAnswer(1);
+                if (billSec != null) {
+                    callPlan.setBillSec(billSec);
+                    if(billSec > 0){
+                        callPlan.setIsAnswer(1);
+                    }
                 }
+
+               if (!Strings.isNullOrEmpty(hangUp)) {
+                    callPlan.setHangupCode(hangUp);
+                }
+
+                if (!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <= 0) {
+                    callPlan.setCallState(ECallState.hangup_fail.ordinal());
+                } else {
+                    callPlan.setCallState(ECallState.hangup_ok.ordinal());
+                }
+
+                callOutPlanService.updateNotOverWriteIntent(callPlan);
+
+                //报表统计事件
+                log.info("构建StatisticReportEvent，报表流转");
+                StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
+                asyncEventBus.post(statisticReportEvent);
+
+                //释放实时通道相关资源
+                log.info("开始释放Channel资源,uuid[{}]", event.getUuid());
+                channelHelper.hangup(event.getUuid());
+
+                //释放ai资源
+                log.info("开始释放ai资源,callplanId[{}], aiId[{}]", callPlan.getCallId(), callPlan.getAiId());
+                aiManager.releaseAi(callPlan);
+
+                //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
+                log.info("构建afterCallEvent，上传录音，回调调度中心");
+                AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan);
+                asyncEventBus.post(afterCallEvent);
+
+                //计数减一
+                callingCountManager.removeOneCall();
             }
-
-           if (!Strings.isNullOrEmpty(hangUp)) {
-                callPlan.setHangupCode(hangUp);
-            }
-
-            if (!Strings.isNullOrEmpty(event.getSipHangupCause()) && event.getBillSec() <= 0) {
-                callPlan.setCallState(ECallState.hangup_fail.ordinal());
-            } else {
-                callPlan.setCallState(ECallState.hangup_ok.ordinal());
-            }
-
-            callOutPlanService.updateNotOverWriteIntent(callPlan);
-
-            //报表统计事件
-            log.info("构建StatisticReportEvent，报表流转");
-            StatisticReportEvent statisticReportEvent = new StatisticReportEvent(callPlan);
-            asyncEventBus.post(statisticReportEvent);
-
-            //释放实时通道相关资源
-            log.info("开始释放Channel资源,uuid[{}]", event.getUuid());
-            channelHelper.hangup(event.getUuid());
-
-            //构建事件，进行后续流转, 上传七牛云，推送呼叫结果
-            log.info("构建afterCallEvent，上传录音，回调调度中心");
-            AfterCallEvent afterCallEvent = new AfterCallEvent(callPlan);
-            asyncEventBus.post(afterCallEvent);
-
-            //计数减一
-            callingCountManager.removeOneCall();
-
-            //释放ai资源
-            log.info("开始释放ai资源,callplanId[{}], aiId[{}]", callPlan.getCallId(), callPlan.getAiId());
-            aiManager.releaseAi(callPlan);
-
         } catch (Exception ex) {
-            log.warn("在处理AliAsr时出错异常", ex);
+            log.warn("在处理Hangup时出错异常", ex);
         }
     }
 }

@@ -1,27 +1,25 @@
 package com.guiji.cloud.zuul.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.guiji.auth.api.IApiLogin;
 import com.guiji.cloud.api.ILogin;
+import com.guiji.cloud.zuul.config.AuthUtil;
 import com.guiji.cloud.zuul.config.JwtConfig;
 import com.guiji.cloud.zuul.entity.JwtToken;
 import com.guiji.cloud.zuul.entity.WxAccount;
+import com.guiji.cloud.zuul.service.ZuulService;
 import com.guiji.component.result.Result;
-import org.apache.commons.lang.StringUtils;
+import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.guiji.cloud.zuul.config.AuthUtil;
-import com.guiji.cloud.zuul.service.ZuulService;
-import com.guiji.user.dao.SysUserMapper;
-import com.guiji.user.dao.entity.SysRole;
-import com.guiji.user.dao.entity.SysUser;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -46,7 +44,7 @@ public class LoginController implements ILogin {
      * @return
      */
     @GetMapping("login")
-    public Result.ReturnData login(@RequestParam("username") String username,@RequestParam("password") String password) {
+    public Result.ReturnData login(@RequestParam("username") String username, @RequestParam("password") String password) {
 
         try {
             boolean isSuperAdmin = false;
@@ -66,7 +64,7 @@ public class LoginController implements ILogin {
             wxAccount.setUserId(userId);
             wxAccount.setOrgCode(sysUser.getOrgCode());
             wxAccount.setSuperAdmin(isSuperAdmin);
-
+            wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
             wxAccount.setLastTime(new Date());
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
             JwtToken token = new JwtToken(jwtToken);
@@ -75,6 +73,7 @@ public class LoginController implements ILogin {
             map.put("roleId", sysRoles.get(0).getId());
             map.put("token", jwtToken);
             map.put("username", sysUser.getUsername());
+            map.put("isDesensitization", sysUser.getIsDesensitization());
             return Result.ok(map);
         } catch (Exception e) {
             return Result.error("00010003");
@@ -89,14 +88,9 @@ public class LoginController implements ILogin {
     }
 
     @GetMapping("apiLogin")
-    public Result.ReturnData apiLogin (@RequestParam("accessKey") String accessKey,@RequestParam("secretKey") String secretKey){
+    public Result.ReturnData apiLogin (@RequestParam("accessKey") String accessKey, @RequestParam("secretKey") String secretKey){
 
         try {
-
-            if(StringUtils.isBlank(accessKey) || StringUtils.isBlank(secretKey)){
-                return Result.error("00010006");
-            }
-
             boolean isSuperAdmin = false;
             Result.ReturnData<SysUser> result =iApiLogin.getUserByAccess(accessKey,secretKey);
             if(result==null || !result.success){
@@ -121,7 +115,7 @@ public class LoginController implements ILogin {
             wxAccount.setUserId(userId);
             wxAccount.setOrgCode(sysUser.getOrgCode());
             wxAccount.setSuperAdmin(isSuperAdmin);
-
+            wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
             wxAccount.setLastTime(new Date());
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
 

@@ -17,8 +17,8 @@ import com.guiji.calloutserver.api.ICallPlan;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result.ReturnData;
-import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.PushRecords;
 import com.guiji.dispatch.util.Constant;
@@ -74,10 +74,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				if (userLineRobotList != null) {
 					// 根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
 					for (UserLineBotenceVO dto : userLineRobotList) {
-						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT + dto.getUserId() + "_" + dto.getLineId() + "_"
-								+ dto.getBotenceName();
+						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT + dto.getUserId() + "_" + dto.getBotenceName();
 						String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + dto.getUserId() + "_"
-								+ dto.getLineId() + "_" + dto.getBotenceName();
+								+ dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);
 						try {
 							if (distributedLockHandler.tryLock(queueLock)) {
@@ -103,6 +102,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
 									callBean.setTempId(dispatchRedis.getRobot());
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
+									List<Integer> lines = new ArrayList<>();
+									for (DispatchLines line : dispatchRedis.getLines()) {
+										lines.add(line.getLineId());
+									}
+									callBean.setLineList(lines);
 								} catch (IllegalAccessException e) {
 									updateStatusSync(dispatchRedis.getPlanUuid());
 									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
@@ -112,9 +116,18 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 									continue;
 								}
+
+								List<String> userIdList = (List<String>) redisUtil.get("USER_BILLING_DATA");
+								if(userIdList!=null){
+									if (userIdList.contains(String.valueOf(callBean.getUserId()))) {
+										logger.info("startMakeCall>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + callBean.getUserId());
+										continue;
+									}
+								}
 								// 增加推送次数
 								addVariable(callBean, queueCount);
-								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone());
+								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone()
+										+ "---------" + callBean.getLineList());
 								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
 								// 记录推送记录
 								insertPush(dispatchRedis);
@@ -145,20 +158,20 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			currentCount = 0;
 		}
 		if (currentCount > 0) {
-//			currentCount = currentCount - 1;
-//			redisUtil.set(queueName, currentCount);
-			//递减1
+			// currentCount = currentCount - 1;
+			// redisUtil.set(queueName, currentCount);
+			// 递减1
 			redisUtil.decr(queueName, 1);
 		}
 	}
 
 	private void addVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
-//		Integer currentCount = (Integer) redisUtil.get(queueName);
-//		if (currentCount == null) {
-//			currentCount = 0;
-//		}
-//		currentCount = currentCount + 1;
-//		redisUtil.set(queueName, currentCount);
+		// Integer currentCount = (Integer) redisUtil.get(queueName);
+		// if (currentCount == null) {
+		// currentCount = 0;
+		// }
+		// currentCount = currentCount + 1;
+		// redisUtil.set(queueName, currentCount);
 		redisUtil.incr(queueName, 1);
 	}
 

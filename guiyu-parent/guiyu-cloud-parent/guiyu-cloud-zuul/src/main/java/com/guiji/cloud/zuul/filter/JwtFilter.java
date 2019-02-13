@@ -14,7 +14,6 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -75,11 +74,13 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                Long userId = jwtConfig.getUserIdByToken(tok);
                String orgCode = jwtConfig.getOrgCodeByToken(tok);
                Boolean isSuperAdmin = jwtConfig.getSuperAdminByToken(tok);
+               Integer isDesensitization = jwtConfig.getIsDesensitizationByToken(tok);
 
                RequestContext ctx = RequestContext.getCurrentContext();
                ctx.addZuulRequestHeader("userId", String.valueOf(userId));
                ctx.addZuulRequestHeader("orgCode", orgCode);
                ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin.toString());
+               ctx.addZuulRequestHeader("isDesensitization", isDesensitization.toString());
            }catch (Exception e){
                flag =false;
            }
@@ -118,7 +119,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     private String getErrorMsg() throws ClassNotFoundException{
         if(errorMsg==null){
-            Result.ReturnData<Object> obj=Result.error("00010001");
+            Result.ReturnData<Object> obj= Result.error("00010001");
             Gson gson=new Gson();
             errorMsg=gson.toJson(obj);
         }

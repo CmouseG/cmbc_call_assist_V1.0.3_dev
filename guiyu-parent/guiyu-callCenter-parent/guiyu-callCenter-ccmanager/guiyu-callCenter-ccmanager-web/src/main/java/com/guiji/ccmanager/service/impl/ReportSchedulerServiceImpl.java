@@ -2,13 +2,12 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.ReportCallDayMapper;
 import com.guiji.callcenter.dao.ReportCallTodayMapper;
-import com.guiji.callcenter.dao.StastisticReportLineMapper;
 import com.guiji.callcenter.dao.StatisticMapper;
-import com.guiji.callcenter.dao.entity.ReportCallDay;
-import com.guiji.callcenter.dao.entity.ReportCallDayExample;
-import com.guiji.callcenter.dao.entity.ReportCallHour;
-import com.guiji.callcenter.dao.entity.ReportCallTodayExample;
+import com.guiji.callcenter.dao.entity.*;
+import com.guiji.callcenter.daoNoSharing.LineRateMapper;
+import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
 import com.guiji.ccmanager.service.ReportSchedulerService;
+import com.guiji.ccmanager.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +34,8 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     ReportCallTodayMapper reportCallTodayMapper;
     @Autowired
     ReportCallDayMapper reportCallDayMapper;
+    @Autowired
+    LineRateMapper lineRateMapper;
 
     @Override
     @Transactional
@@ -91,9 +92,11 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Transactional
     public void reportCallTodayTruncate() {
         statisticMapper.reportCallTodayTruncate();
-        //清空365天之前的数据 report_line_code
+        //清空30天之前的数据 call_line_result
+        stastisticReportLineMapper.deleteCallLineResultDaysAgo(30);
+        //清空一年之前的数据 report_line_code
         stastisticReportLineMapper.deleteReportLineCodeDaysAgo(365);
-        //清空365天之前的数据 report_line_code
+        //清空一年之前的数据 report_line_status
         stastisticReportLineMapper.deleteReportLineStatusDaysAgo(365);
     }
 
@@ -132,6 +135,16 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
             return true;
         }else{
             return false;
+        }
+    }
+
+    @Override
+    public void reportCallLineDayReportScheduler() {
+
+        Date endTime =  DateUtils.getDayBegin();
+        List<CallLineDayReport> list =  lineRateMapper.countDayReport(endTime);
+        if(list !=null &&  list.size()>0){
+            lineRateMapper.insertCallLineDayReportBatch(list);
         }
     }
 }

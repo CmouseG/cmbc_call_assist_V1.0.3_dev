@@ -20,6 +20,8 @@ public class ReportLineCode implements Serializable {
 
     private String phoneNum;
 
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -86,6 +88,14 @@ public class ReportLineCode implements Serializable {
         this.phoneNum = phoneNum == null ? null : phoneNum.trim();
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -100,6 +110,7 @@ public class ReportLineCode implements Serializable {
         sb.append(", totalCalls=").append(totalCalls);
         sb.append(", answerCalls=").append(answerCalls);
         sb.append(", phoneNum=").append(phoneNum);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

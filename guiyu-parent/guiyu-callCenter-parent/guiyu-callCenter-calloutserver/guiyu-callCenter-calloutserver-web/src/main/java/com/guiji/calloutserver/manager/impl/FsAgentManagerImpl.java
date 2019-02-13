@@ -74,6 +74,9 @@ public class FsAgentManagerImpl implements FsAgentManager {
                 }
                 @Override
                 public boolean trueBreakOnCode(String code) {
+                    if(code.equals("0300006") || code.equals("0300001") || code.equals("0300009")){
+                        return true;
+                    }
                     return false;
                 }
             }, 10, 1, 30, 600);

@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.clm.dao.SipLineBaseInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.clm.dao.entity.SipLineBaseInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
+    <result column="line_id" property="lineId" jdbcType="INTEGER" />
+    <result column="supplier" property="supplier" jdbcType="VARCHAR" />
+    <result column="sip_ip" property="sipIp" jdbcType="VARCHAR" />
+    <result column="sip_port" property="sipPort" jdbcType="INTEGER" />
+    <result column="sip_domain" property="sipDomain" jdbcType="VARCHAR" />
+    <result column="sip_account" property="sipAccount" jdbcType="VARCHAR" />
+    <result column="sip_psd" property="sipPsd" jdbcType="VARCHAR" />
+    <result column="codec" property="codec" jdbcType="VARCHAR" />
+    <result column="reg_flag" property="regFlag" jdbcType="BIT" />
+    <result column="caller_num" property="callerNum" jdbcType="VARCHAR" />
+    <result column="destination_prefix" property="destinationPrefix" jdbcType="VARCHAR" />
+    <result column="max_concurrent_calls" property="maxConcurrentCalls" jdbcType="INTEGER" />
+    <result column="use_concurrent_calls" property="useConcurrentCalls" jdbcType="INTEGER" />
+    <result column="call_direc" property="callDirec" jdbcType="INTEGER" />
+    <result column="begin_date" property="beginDate" jdbcType="VARCHAR" />
+    <result column="end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="time_begin" property="timeBegin" jdbcType="VARCHAR" />
+    <result column="time_end" property="timeEnd" jdbcType="VARCHAR" />
+    <result column="overt_area" property="overtArea" jdbcType="VARCHAR" />
+    <result column="industrys" property="industrys" jdbcType="VARCHAR" />
+    <result column="areas" property="areas" jdbcType="VARCHAR" />
+    <result column="except_areas" property="exceptAreas" jdbcType="VARCHAR" />
+    <result column="contract_univalent" property="contractUnivalent" jdbcType="DECIMAL" />
+    <result column="univalent" property="univalent" jdbcType="DECIMAL" />
+    <result column="line_fee_type" property="lineFeeType" jdbcType="INTEGER" />
+    <result column="belong_user" property="belongUser" jdbcType="VARCHAR" />
+    <result column="belong_org_code" property="belongOrgCode" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="sip_share_id" property="sipShareId" jdbcType="INTEGER" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, line_name, line_id, supplier, sip_ip, sip_port, sip_domain, sip_account, sip_psd, 
+    codec, reg_flag, caller_num, destination_prefix, max_concurrent_calls, use_concurrent_calls, 
+    call_direc, begin_date, end_date, time_begin, time_end, overt_area, industrys, areas, 
+    except_areas, contract_univalent, univalent, line_fee_type, belong_user, belong_org_code, 
+    remark, sip_share_id, org_code, crt_user, crt_time, update_time, update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from sip_line_base_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sip_line_base_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sip_line_base_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfoExample" >
+    delete from sip_line_base_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into sip_line_base_info (line_name, line_id, supplier, 
+      sip_ip, sip_port, sip_domain, 
+      sip_account, sip_psd, codec, 
+      reg_flag, caller_num, destination_prefix, 
+      max_concurrent_calls, use_concurrent_calls, 
+      call_direc, begin_date, end_date, 
+      time_begin, time_end, overt_area, 
+      industrys, areas, except_areas, 
+      contract_univalent, univalent, line_fee_type, 
+      belong_user, belong_org_code, remark, 
+      sip_share_id, org_code, crt_user, 
+      crt_time, update_time, update_user
+      )
+    values (#{lineName,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{supplier,jdbcType=VARCHAR}, 
+      #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, #{sipDomain,jdbcType=VARCHAR}, 
+      #{sipAccount,jdbcType=VARCHAR}, #{sipPsd,jdbcType=VARCHAR}, #{codec,jdbcType=VARCHAR}, 
+      #{regFlag,jdbcType=BIT}, #{callerNum,jdbcType=VARCHAR}, #{destinationPrefix,jdbcType=VARCHAR}, 
+      #{maxConcurrentCalls,jdbcType=INTEGER}, #{useConcurrentCalls,jdbcType=INTEGER}, 
+      #{callDirec,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR}, 
+      #{timeBegin,jdbcType=VARCHAR}, #{timeEnd,jdbcType=VARCHAR}, #{overtArea,jdbcType=VARCHAR}, 
+      #{industrys,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, #{exceptAreas,jdbcType=VARCHAR}, 
+      #{contractUnivalent,jdbcType=DECIMAL}, #{univalent,jdbcType=DECIMAL}, #{lineFeeType,jdbcType=INTEGER}, 
+      #{belongUser,jdbcType=VARCHAR}, #{belongOrgCode,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{sipShareId,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into sip_line_base_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="lineName != null" >
+        line_name,
+      </if>
+      <if test="lineId != null" >
+        line_id,
+      </if>
+      <if test="supplier != null" >
+        supplier,
+      </if>
+      <if test="sipIp != null" >
+        sip_ip,
+      </if>
+      <if test="sipPort != null" >
+        sip_port,
+      </if>
+      <if test="sipDomain != null" >
+        sip_domain,
+      </if>
+      <if test="sipAccount != null" >
+        sip_account,
+      </if>
+      <if test="sipPsd != null" >
+        sip_psd,
+      </if>
+      <if test="codec != null" >
+        codec,
+      </if>
+      <if test="regFlag != null" >
+        reg_flag,
+      </if>
+      <if test="callerNum != null" >
+        caller_num,
+      </if>
+      <if test="destinationPrefix != null" >
+        destination_prefix,
+      </if>
+      <if test="maxConcurrentCalls != null" >
+        max_concurrent_calls,
+      </if>
+      <if test="useConcurrentCalls != null" >
+        use_concurrent_calls,
+      </if>
+      <if test="callDirec != null" >
+        call_direc,
+      </if>
+      <if test="beginDate != null" >
+        begin_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="timeBegin != null" >
+        time_begin,
+      </if>
+      <if test="timeEnd != null" >
+        time_end,
+      </if>
+      <if test="overtArea != null" >
+        overt_area,
+      </if>
+      <if test="industrys != null" >
+        industrys,
+      </if>
+      <if test="areas != null" >
+        areas,
+      </if>
+      <if test="exceptAreas != null" >
+        except_areas,
+      </if>
+      <if test="contractUnivalent != null" >
+        contract_univalent,
+      </if>
+      <if test="univalent != null" >
+        univalent,
+      </if>
+      <if test="lineFeeType != null" >
+        line_fee_type,
+      </if>
+      <if test="belongUser != null" >
+        belong_user,
+      </if>
+      <if test="belongOrgCode != null" >
+        belong_org_code,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="sipShareId != null" >
+        sip_share_id,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="lineName != null" >
+        #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="lineId != null" >
+        #{lineId,jdbcType=INTEGER},
+      </if>
+      <if test="supplier != null" >
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="sipIp != null" >
+        #{sipIp,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPort != null" >
+        #{sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="sipDomain != null" >
+        #{sipDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="sipAccount != null" >
+        #{sipAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPsd != null" >
+        #{sipPsd,jdbcType=VARCHAR},
+      </if>
+      <if test="codec != null" >
+        #{codec,jdbcType=VARCHAR},
+      </if>
+      <if test="regFlag != null" >
+        #{regFlag,jdbcType=BIT},
+      </if>
+      <if test="callerNum != null" >
+        #{callerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPrefix != null" >
+        #{destinationPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="maxConcurrentCalls != null" >
+        #{maxConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="useConcurrentCalls != null" >
+        #{useConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="callDirec != null" >
+        #{callDirec,jdbcType=INTEGER},
+      </if>
+      <if test="beginDate != null" >
+        #{beginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="timeBegin != null" >
+        #{timeBegin,jdbcType=VARCHAR},
+      </if>
+      <if test="timeEnd != null" >
+        #{timeEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="overtArea != null" >
+        #{overtArea,jdbcType=VARCHAR},
+      </if>
+      <if test="industrys != null" >
+        #{industrys,jdbcType=VARCHAR},
+      </if>
+      <if test="areas != null" >
+        #{areas,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptAreas != null" >
+        #{exceptAreas,jdbcType=VARCHAR},
+      </if>
+      <if test="contractUnivalent != null" >
+        #{contractUnivalent,jdbcType=DECIMAL},
+      </if>
+      <if test="univalent != null" >
+        #{univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="lineFeeType != null" >
+        #{lineFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="belongUser != null" >
+        #{belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="belongOrgCode != null" >
+        #{belongOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="sipShareId != null" >
+        #{sipShareId,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfoExample" resultType="java.lang.Integer" >
+    select count(*) from sip_line_base_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sip_line_base_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.lineName != null" >
+        line_name = #{record.lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lineId != null" >
+        line_id = #{record.lineId,jdbcType=INTEGER},
+      </if>
+      <if test="record.supplier != null" >
+        supplier = #{record.supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sipIp != null" >
+        sip_ip = #{record.sipIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sipPort != null" >
+        sip_port = #{record.sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="record.sipDomain != null" >
+        sip_domain = #{record.sipDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sipAccount != null" >
+        sip_account = #{record.sipAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sipPsd != null" >
+        sip_psd = #{record.sipPsd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.codec != null" >
+        codec = #{record.codec,jdbcType=VARCHAR},
+      </if>
+      <if test="record.regFlag != null" >
+        reg_flag = #{record.regFlag,jdbcType=BIT},
+      </if>
+      <if test="record.callerNum != null" >
+        caller_num = #{record.callerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.destinationPrefix != null" >
+        destination_prefix = #{record.destinationPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="record.maxConcurrentCalls != null" >
+        max_concurrent_calls = #{record.maxConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="record.useConcurrentCalls != null" >
+        use_concurrent_calls = #{record.useConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="record.callDirec != null" >
+        call_direc = #{record.callDirec,jdbcType=INTEGER},
+      </if>
+      <if test="record.beginDate != null" >
+        begin_date = #{record.beginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endDate != null" >
+        end_date = #{record.endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.timeBegin != null" >
+        time_begin = #{record.timeBegin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.timeEnd != null" >
+        time_end = #{record.timeEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.overtArea != null" >
+        overt_area = #{record.overtArea,jdbcType=VARCHAR},
+      </if>
+      <if test="record.industrys != null" >
+        industrys = #{record.industrys,jdbcType=VARCHAR},
+      </if>
+      <if test="record.areas != null" >
+        areas = #{record.areas,jdbcType=VARCHAR},
+      </if>
+      <if test="record.exceptAreas != null" >
+        except_areas = #{record.exceptAreas,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contractUnivalent != null" >
+        contract_univalent = #{record.contractUnivalent,jdbcType=DECIMAL},
+      </if>
+      <if test="record.univalent != null" >
+        univalent = #{record.univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="record.lineFeeType != null" >
+        line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="record.belongUser != null" >
+        belong_user = #{record.belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.belongOrgCode != null" >
+        belong_org_code = #{record.belongOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sipShareId != null" >
+        sip_share_id = #{record.sipShareId,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sip_line_base_info
+    set id = #{record.id,jdbcType=INTEGER},
+      line_name = #{record.lineName,jdbcType=VARCHAR},
+      line_id = #{record.lineId,jdbcType=INTEGER},
+      supplier = #{record.supplier,jdbcType=VARCHAR},
+      sip_ip = #{record.sipIp,jdbcType=VARCHAR},
+      sip_port = #{record.sipPort,jdbcType=INTEGER},
+      sip_domain = #{record.sipDomain,jdbcType=VARCHAR},
+      sip_account = #{record.sipAccount,jdbcType=VARCHAR},
+      sip_psd = #{record.sipPsd,jdbcType=VARCHAR},
+      codec = #{record.codec,jdbcType=VARCHAR},
+      reg_flag = #{record.regFlag,jdbcType=BIT},
+      caller_num = #{record.callerNum,jdbcType=VARCHAR},
+      destination_prefix = #{record.destinationPrefix,jdbcType=VARCHAR},
+      max_concurrent_calls = #{record.maxConcurrentCalls,jdbcType=INTEGER},
+      use_concurrent_calls = #{record.useConcurrentCalls,jdbcType=INTEGER},
+      call_direc = #{record.callDirec,jdbcType=INTEGER},
+      begin_date = #{record.beginDate,jdbcType=VARCHAR},
+      end_date = #{record.endDate,jdbcType=VARCHAR},
+      time_begin = #{record.timeBegin,jdbcType=VARCHAR},
+      time_end = #{record.timeEnd,jdbcType=VARCHAR},
+      overt_area = #{record.overtArea,jdbcType=VARCHAR},
+      industrys = #{record.industrys,jdbcType=VARCHAR},
+      areas = #{record.areas,jdbcType=VARCHAR},
+      except_areas = #{record.exceptAreas,jdbcType=VARCHAR},
+      contract_univalent = #{record.contractUnivalent,jdbcType=DECIMAL},
+      univalent = #{record.univalent,jdbcType=DECIMAL},
+      line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
+      belong_user = #{record.belongUser,jdbcType=VARCHAR},
+      belong_org_code = #{record.belongOrgCode,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      sip_share_id = #{record.sipShareId,jdbcType=INTEGER},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" >
+    update sip_line_base_info
+    <set >
+      <if test="lineName != null" >
+        line_name = #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="lineId != null" >
+        line_id = #{lineId,jdbcType=INTEGER},
+      </if>
+      <if test="supplier != null" >
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="sipIp != null" >
+        sip_ip = #{sipIp,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPort != null" >
+        sip_port = #{sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="sipDomain != null" >
+        sip_domain = #{sipDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="sipAccount != null" >
+        sip_account = #{sipAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="sipPsd != null" >
+        sip_psd = #{sipPsd,jdbcType=VARCHAR},
+      </if>
+      <if test="codec != null" >
+        codec = #{codec,jdbcType=VARCHAR},
+      </if>
+      <if test="regFlag != null" >
+        reg_flag = #{regFlag,jdbcType=BIT},
+      </if>
+      <if test="callerNum != null" >
+        caller_num = #{callerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPrefix != null" >
+        destination_prefix = #{destinationPrefix,jdbcType=VARCHAR},
+      </if>
+      <if test="maxConcurrentCalls != null" >
+        max_concurrent_calls = #{maxConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="useConcurrentCalls != null" >
+        use_concurrent_calls = #{useConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="callDirec != null" >
+        call_direc = #{callDirec,jdbcType=INTEGER},
+      </if>
+      <if test="beginDate != null" >
+        begin_date = #{beginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="timeBegin != null" >
+        time_begin = #{timeBegin,jdbcType=VARCHAR},
+      </if>
+      <if test="timeEnd != null" >
+        time_end = #{timeEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="overtArea != null" >
+        overt_area = #{overtArea,jdbcType=VARCHAR},
+      </if>
+      <if test="industrys != null" >
+        industrys = #{industrys,jdbcType=VARCHAR},
+      </if>
+      <if test="areas != null" >
+        areas = #{areas,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptAreas != null" >
+        except_areas = #{exceptAreas,jdbcType=VARCHAR},
+      </if>
+      <if test="contractUnivalent != null" >
+        contract_univalent = #{contractUnivalent,jdbcType=DECIMAL},
+      </if>
+      <if test="univalent != null" >
+        univalent = #{univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="lineFeeType != null" >
+        line_fee_type = #{lineFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="belongUser != null" >
+        belong_user = #{belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="belongOrgCode != null" >
+        belong_org_code = #{belongOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="sipShareId != null" >
+        sip_share_id = #{sipShareId,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" >
+    update sip_line_base_info
+    set line_name = #{lineName,jdbcType=VARCHAR},
+      line_id = #{lineId,jdbcType=INTEGER},
+      supplier = #{supplier,jdbcType=VARCHAR},
+      sip_ip = #{sipIp,jdbcType=VARCHAR},
+      sip_port = #{sipPort,jdbcType=INTEGER},
+      sip_domain = #{sipDomain,jdbcType=VARCHAR},
+      sip_account = #{sipAccount,jdbcType=VARCHAR},
+      sip_psd = #{sipPsd,jdbcType=VARCHAR},
+      codec = #{codec,jdbcType=VARCHAR},
+      reg_flag = #{regFlag,jdbcType=BIT},
+      caller_num = #{callerNum,jdbcType=VARCHAR},
+      destination_prefix = #{destinationPrefix,jdbcType=VARCHAR},
+      max_concurrent_calls = #{maxConcurrentCalls,jdbcType=INTEGER},
+      use_concurrent_calls = #{useConcurrentCalls,jdbcType=INTEGER},
+      call_direc = #{callDirec,jdbcType=INTEGER},
+      begin_date = #{beginDate,jdbcType=VARCHAR},
+      end_date = #{endDate,jdbcType=VARCHAR},
+      time_begin = #{timeBegin,jdbcType=VARCHAR},
+      time_end = #{timeEnd,jdbcType=VARCHAR},
+      overt_area = #{overtArea,jdbcType=VARCHAR},
+      industrys = #{industrys,jdbcType=VARCHAR},
+      areas = #{areas,jdbcType=VARCHAR},
+      except_areas = #{exceptAreas,jdbcType=VARCHAR},
+      contract_univalent = #{contractUnivalent,jdbcType=DECIMAL},
+      univalent = #{univalent,jdbcType=DECIMAL},
+      line_fee_type = #{lineFeeType,jdbcType=INTEGER},
+      belong_user = #{belongUser,jdbcType=VARCHAR},
+      belong_org_code = #{belongOrgCode,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      sip_share_id = #{sipShareId,jdbcType=INTEGER},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.clm.dao.SipLineApplyMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.clm.dao.entity.SipLineApply" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sip_line_id" property="sipLineId" jdbcType="INTEGER" />
+    <result column="agent_line_id" property="agentLineId" jdbcType="INTEGER" />
+    <result column="up_sip_line_id" property="upSipLineId" jdbcType="INTEGER" />
+    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
+    <result column="supplier" property="supplier" jdbcType="VARCHAR" />
+    <result column="overt_area" property="overtArea" jdbcType="VARCHAR" />
+    <result column="call_direc" property="callDirec" jdbcType="INTEGER" />
+    <result column="max_concurrent_calls" property="maxConcurrentCalls" jdbcType="INTEGER" />
+    <result column="templates" property="templates" jdbcType="VARCHAR" />
+    <result column="begin_date" property="beginDate" jdbcType="VARCHAR" />
+    <result column="end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="belong_user" property="belongUser" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="univalent" property="univalent" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="apply_user" property="applyUser" jdbcType="VARCHAR" />
+    <result column="apply_org_code" property="applyOrgCode" jdbcType="VARCHAR" />
+    <result column="apply_date" property="applyDate" jdbcType="VARCHAR" />
+    <result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="apply_type" property="applyType" jdbcType="INTEGER" />
+    <result column="apply_status" property="applyStatus" jdbcType="INTEGER" />
+    <result column="approve_user" property="approveUser" jdbcType="VARCHAR" />
+    <result column="approve_date" property="approveDate" jdbcType="VARCHAR" />
+    <result column="approve_time" property="approveTime" jdbcType="TIMESTAMP" />
+    <result column="approve_remark" property="approveRemark" jdbcType="VARCHAR" />
+    <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
+    <result column="crt_time" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, sip_line_id, agent_line_id, up_sip_line_id, line_name, supplier, overt_area, 
+    call_direc, max_concurrent_calls, templates, begin_date, end_date, belong_user, org_code, 
+    univalent, remark, apply_user, apply_org_code, apply_date, apply_time, apply_type, 
+    apply_status, approve_user, approve_date, approve_time, approve_remark, crt_user, 
+    crt_time, update_time, update_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.SipLineApplyExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from sip_line_apply
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sip_line_apply
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sip_line_apply
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.clm.dao.entity.SipLineApplyExample" >
+    delete from sip_line_apply
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineApply" useGeneratedKeys="true" keyProperty="id" >
+    insert into sip_line_apply (sip_line_id, agent_line_id, up_sip_line_id, 
+      line_name, supplier, overt_area, 
+      call_direc, max_concurrent_calls, templates, 
+      begin_date, end_date, belong_user, 
+      org_code, univalent, remark, 
+      apply_user, apply_org_code, apply_date, 
+      apply_time, apply_type, apply_status, 
+      approve_user, approve_date, approve_time, 
+      approve_remark, crt_user, crt_time, 
+      update_time, update_user)
+    values (#{sipLineId,jdbcType=INTEGER}, #{agentLineId,jdbcType=INTEGER}, #{upSipLineId,jdbcType=INTEGER}, 
+      #{lineName,jdbcType=VARCHAR}, #{supplier,jdbcType=VARCHAR}, #{overtArea,jdbcType=VARCHAR}, 
+      #{callDirec,jdbcType=INTEGER}, #{maxConcurrentCalls,jdbcType=INTEGER}, #{templates,jdbcType=VARCHAR}, 
+      #{beginDate,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR}, #{belongUser,jdbcType=VARCHAR}, 
+      #{orgCode,jdbcType=VARCHAR}, #{univalent,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR}, 
+      #{applyUser,jdbcType=VARCHAR}, #{applyOrgCode,jdbcType=VARCHAR}, #{applyDate,jdbcType=VARCHAR}, 
+      #{applyTime,jdbcType=TIMESTAMP}, #{applyType,jdbcType=INTEGER}, #{applyStatus,jdbcType=INTEGER}, 
+      #{approveUser,jdbcType=VARCHAR}, #{approveDate,jdbcType=VARCHAR}, #{approveTime,jdbcType=TIMESTAMP}, 
+      #{approveRemark,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineApply" useGeneratedKeys="true" keyProperty="id" >
+    insert into sip_line_apply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sipLineId != null" >
+        sip_line_id,
+      </if>
+      <if test="agentLineId != null" >
+        agent_line_id,
+      </if>
+      <if test="upSipLineId != null" >
+        up_sip_line_id,
+      </if>
+      <if test="lineName != null" >
+        line_name,
+      </if>
+      <if test="supplier != null" >
+        supplier,
+      </if>
+      <if test="overtArea != null" >
+        overt_area,
+      </if>
+      <if test="callDirec != null" >
+        call_direc,
+      </if>
+      <if test="maxConcurrentCalls != null" >
+        max_concurrent_calls,
+      </if>
+      <if test="templates != null" >
+        templates,
+      </if>
+      <if test="beginDate != null" >
+        begin_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="belongUser != null" >
+        belong_user,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
+      <if test="univalent != null" >
+        univalent,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="applyUser != null" >
+        apply_user,
+      </if>
+      <if test="applyOrgCode != null" >
+        apply_org_code,
+      </if>
+      <if test="applyDate != null" >
+        apply_date,
+      </if>
+      <if test="applyTime != null" >
+        apply_time,
+      </if>
+      <if test="applyType != null" >
+        apply_type,
+      </if>
+      <if test="applyStatus != null" >
+        apply_status,
+      </if>
+      <if test="approveUser != null" >
+        approve_user,
+      </if>
+      <if test="approveDate != null" >
+        approve_date,
+      </if>
+      <if test="approveTime != null" >
+        approve_time,
+      </if>
+      <if test="approveRemark != null" >
+        approve_remark,
+      </if>
+      <if test="crtUser != null" >
+        crt_user,
+      </if>
+      <if test="crtTime != null" >
+        crt_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sipLineId != null" >
+        #{sipLineId,jdbcType=INTEGER},
+      </if>
+      <if test="agentLineId != null" >
+        #{agentLineId,jdbcType=INTEGER},
+      </if>
+      <if test="upSipLineId != null" >
+        #{upSipLineId,jdbcType=INTEGER},
+      </if>
+      <if test="lineName != null" >
+        #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="overtArea != null" >
+        #{overtArea,jdbcType=VARCHAR},
+      </if>
+      <if test="callDirec != null" >
+        #{callDirec,jdbcType=INTEGER},
+      </if>
+      <if test="maxConcurrentCalls != null" >
+        #{maxConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="templates != null" >
+        #{templates,jdbcType=VARCHAR},
+      </if>
+      <if test="beginDate != null" >
+        #{beginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="belongUser != null" >
+        #{belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="univalent != null" >
+        #{univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="applyUser != null" >
+        #{applyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="applyOrgCode != null" >
+        #{applyOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="applyDate != null" >
+        #{applyDate,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null" >
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="applyType != null" >
+        #{applyType,jdbcType=INTEGER},
+      </if>
+      <if test="applyStatus != null" >
+        #{applyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="approveUser != null" >
+        #{approveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="approveDate != null" >
+        #{approveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveRemark != null" >
+        #{approveRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.clm.dao.entity.SipLineApplyExample" resultType="java.lang.Integer" >
+    select count(*) from sip_line_apply
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sip_line_apply
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.sipLineId != null" >
+        sip_line_id = #{record.sipLineId,jdbcType=INTEGER},
+      </if>
+      <if test="record.agentLineId != null" >
+        agent_line_id = #{record.agentLineId,jdbcType=INTEGER},
+      </if>
+      <if test="record.upSipLineId != null" >
+        up_sip_line_id = #{record.upSipLineId,jdbcType=INTEGER},
+      </if>
+      <if test="record.lineName != null" >
+        line_name = #{record.lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplier != null" >
+        supplier = #{record.supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="record.overtArea != null" >
+        overt_area = #{record.overtArea,jdbcType=VARCHAR},
+      </if>
+      <if test="record.callDirec != null" >
+        call_direc = #{record.callDirec,jdbcType=INTEGER},
+      </if>
+      <if test="record.maxConcurrentCalls != null" >
+        max_concurrent_calls = #{record.maxConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="record.templates != null" >
+        templates = #{record.templates,jdbcType=VARCHAR},
+      </if>
+      <if test="record.beginDate != null" >
+        begin_date = #{record.beginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endDate != null" >
+        end_date = #{record.endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.belongUser != null" >
+        belong_user = #{record.belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.univalent != null" >
+        univalent = #{record.univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyUser != null" >
+        apply_user = #{record.applyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyOrgCode != null" >
+        apply_org_code = #{record.applyOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyDate != null" >
+        apply_date = #{record.applyDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyTime != null" >
+        apply_time = #{record.applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.applyType != null" >
+        apply_type = #{record.applyType,jdbcType=INTEGER},
+      </if>
+      <if test="record.applyStatus != null" >
+        apply_status = #{record.applyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.approveUser != null" >
+        approve_user = #{record.approveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.approveDate != null" >
+        approve_date = #{record.approveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.approveTime != null" >
+        approve_time = #{record.approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.approveRemark != null" >
+        approve_remark = #{record.approveRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtUser != null" >
+        crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtTime != null" >
+        crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sip_line_apply
+    set id = #{record.id,jdbcType=INTEGER},
+      sip_line_id = #{record.sipLineId,jdbcType=INTEGER},
+      agent_line_id = #{record.agentLineId,jdbcType=INTEGER},
+      up_sip_line_id = #{record.upSipLineId,jdbcType=INTEGER},
+      line_name = #{record.lineName,jdbcType=VARCHAR},
+      supplier = #{record.supplier,jdbcType=VARCHAR},
+      overt_area = #{record.overtArea,jdbcType=VARCHAR},
+      call_direc = #{record.callDirec,jdbcType=INTEGER},
+      max_concurrent_calls = #{record.maxConcurrentCalls,jdbcType=INTEGER},
+      templates = #{record.templates,jdbcType=VARCHAR},
+      begin_date = #{record.beginDate,jdbcType=VARCHAR},
+      end_date = #{record.endDate,jdbcType=VARCHAR},
+      belong_user = #{record.belongUser,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      univalent = #{record.univalent,jdbcType=DECIMAL},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      apply_user = #{record.applyUser,jdbcType=VARCHAR},
+      apply_org_code = #{record.applyOrgCode,jdbcType=VARCHAR},
+      apply_date = #{record.applyDate,jdbcType=VARCHAR},
+      apply_time = #{record.applyTime,jdbcType=TIMESTAMP},
+      apply_type = #{record.applyType,jdbcType=INTEGER},
+      apply_status = #{record.applyStatus,jdbcType=INTEGER},
+      approve_user = #{record.approveUser,jdbcType=VARCHAR},
+      approve_date = #{record.approveDate,jdbcType=VARCHAR},
+      approve_time = #{record.approveTime,jdbcType=TIMESTAMP},
+      approve_remark = #{record.approveRemark,jdbcType=VARCHAR},
+      crt_user = #{record.crtUser,jdbcType=VARCHAR},
+      crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.clm.dao.entity.SipLineApply" >
+    update sip_line_apply
+    <set >
+      <if test="sipLineId != null" >
+        sip_line_id = #{sipLineId,jdbcType=INTEGER},
+      </if>
+      <if test="agentLineId != null" >
+        agent_line_id = #{agentLineId,jdbcType=INTEGER},
+      </if>
+      <if test="upSipLineId != null" >
+        up_sip_line_id = #{upSipLineId,jdbcType=INTEGER},
+      </if>
+      <if test="lineName != null" >
+        line_name = #{lineName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null" >
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="overtArea != null" >
+        overt_area = #{overtArea,jdbcType=VARCHAR},
+      </if>
+      <if test="callDirec != null" >
+        call_direc = #{callDirec,jdbcType=INTEGER},
+      </if>
+      <if test="maxConcurrentCalls != null" >
+        max_concurrent_calls = #{maxConcurrentCalls,jdbcType=INTEGER},
+      </if>
+      <if test="templates != null" >
+        templates = #{templates,jdbcType=VARCHAR},
+      </if>
+      <if test="beginDate != null" >
+        begin_date = #{beginDate,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="belongUser != null" >
+        belong_user = #{belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="univalent != null" >
+        univalent = #{univalent,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="applyUser != null" >
+        apply_user = #{applyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="applyOrgCode != null" >
+        apply_org_code = #{applyOrgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="applyDate != null" >
+        apply_date = #{applyDate,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null" >
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="applyType != null" >
+        apply_type = #{applyType,jdbcType=INTEGER},
+      </if>
+      <if test="applyStatus != null" >
+        apply_status = #{applyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="approveUser != null" >
+        approve_user = #{approveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="approveDate != null" >
+        approve_date = #{approveDate,jdbcType=VARCHAR},
+      </if>
+      <if test="approveTime != null" >
+        approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveRemark != null" >
+        approve_remark = #{approveRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUser != null" >
+        crt_user = #{crtUser,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.clm.dao.entity.SipLineApply" >
+    update sip_line_apply
+    set sip_line_id = #{sipLineId,jdbcType=INTEGER},
+      agent_line_id = #{agentLineId,jdbcType=INTEGER},
+      up_sip_line_id = #{upSipLineId,jdbcType=INTEGER},
+      line_name = #{lineName,jdbcType=VARCHAR},
+      supplier = #{supplier,jdbcType=VARCHAR},
+      overt_area = #{overtArea,jdbcType=VARCHAR},
+      call_direc = #{callDirec,jdbcType=INTEGER},
+      max_concurrent_calls = #{maxConcurrentCalls,jdbcType=INTEGER},
+      templates = #{templates,jdbcType=VARCHAR},
+      begin_date = #{beginDate,jdbcType=VARCHAR},
+      end_date = #{endDate,jdbcType=VARCHAR},
+      belong_user = #{belongUser,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      univalent = #{univalent,jdbcType=DECIMAL},
+      remark = #{remark,jdbcType=VARCHAR},
+      apply_user = #{applyUser,jdbcType=VARCHAR},
+      apply_org_code = #{applyOrgCode,jdbcType=VARCHAR},
+      apply_date = #{applyDate,jdbcType=VARCHAR},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      apply_type = #{applyType,jdbcType=INTEGER},
+      apply_status = #{applyStatus,jdbcType=INTEGER},
+      approve_user = #{approveUser,jdbcType=VARCHAR},
+      approve_date = #{approveDate,jdbcType=VARCHAR},
+      approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      approve_remark = #{approveRemark,jdbcType=VARCHAR},
+      crt_user = #{crtUser,jdbcType=VARCHAR},
+      crt_time = #{crtTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

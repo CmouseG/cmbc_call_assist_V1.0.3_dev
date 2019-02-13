@@ -143,6 +143,8 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
         Date endTime =  DateUtils.getDayBegin();
         List<CallLineDayReport> list =  lineRateMapper.countDayReport(endTime);
-        lineRateMapper.insertCallLineDayReportBatch(list);
+        if(list !=null &&  list.size()>0){
+            lineRateMapper.insertCallLineDayReportBatch(list);
+        }
     }
 }

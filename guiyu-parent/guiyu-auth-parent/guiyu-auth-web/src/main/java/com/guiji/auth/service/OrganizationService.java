@@ -98,7 +98,6 @@ public class OrganizationService {
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	
-	@RequestMapping("getOrgByUserId")
 	public List<SysOrganization> getOrgByUserId(Long userId){
 		return sysOrganizationMapper.getOrgByUserId(userId);
 	}

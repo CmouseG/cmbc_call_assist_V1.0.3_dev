@@ -16,7 +16,7 @@ public class CallOutPlanExample {
 
     protected Integer limitEnd;
 
-    protected String customerId;
+    protected Integer isDesensitization;
 
     public CallOutPlanExample() {
         oredCriteria = new ArrayList<Criteria>();
@@ -87,12 +87,12 @@ public class CallOutPlanExample {
         return limitEnd;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public Integer getIsDesensitization() {
+        return isDesensitization;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setIsDesensitization(Integer isDesensitization) {
+        this.isDesensitization = isDesensitization;
     }
 
     protected abstract static class GeneratedCriteria {

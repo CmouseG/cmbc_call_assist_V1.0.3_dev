@@ -20,7 +20,7 @@ import java.util.Map;
 public interface CallDetailService {
     List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode,
                                             int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
-                                            String accurateIntent, String freason, String callId, String tempId, String isRead);
+                                            String accurateIntent, String freason, String callId, String tempId, String isRead, Integer isDesensitization);
 
     CallPlanDetailRecordVO getCallDetail(BigInteger callId);
 
@@ -51,5 +51,5 @@ public interface CallDetailService {
 
     List<CallOutPlan> getCallRecordListByPhone(String phone);
 
-    List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> callIds, Long userId, Boolean isSuperAdmin);
+    List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> callIds, Long userId, Boolean isSuperAdmin, Integer isDesensitization);
 }

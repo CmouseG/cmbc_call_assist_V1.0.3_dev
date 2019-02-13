@@ -128,8 +128,8 @@ public class CallDetailServiceImpl implements CallDetailService {
         Map map = new HashMap();
         if (callRecordReq.getUserId() != null)
             map.put("customerId", callRecordReq.getUserId());
-        if (callRecordReq.getSecretId() != null)
-            map.put("secretId", callRecordReq.getSecretId());
+        if (callRecordReq.getIsDesensitization() != null)
+            map.put("isDesensitization", callRecordReq.getIsDesensitization());
         if (callRecordReq.getOrgCode() != null)
             map.put("orgCode", callRecordReq.getOrgCode());
         map.put("limitStart", (callRecordReq.getPageNo() - 1) * callRecordReq.getPageSize());
@@ -161,7 +161,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     @Override
     public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, String orgCode,
                                                    int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
-                                                   String accurateIntent, String freason, String callId, String tempId, String isRead) {
+                                                   String accurateIntent, String freason, String callId, String tempId, String isRead, Integer isDesensitization) {
 
         CallOutPlanExample example = getExample(startDate, endDate, customerId, orgCode, phoneNum, durationMin,
                 durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
@@ -173,7 +173,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         Long userId = Long.valueOf(customerId);
         List<CallOutPlan> list;
         if(isSuperAdmin || authService.isSeatOrAgent(userId)){
-            example.setCustomerId(customerId);
+            example.setIsDesensitization(isDesensitization);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
         }else{
             list = callOutPlanMapper.selectByExample(example);
@@ -382,7 +382,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin) {
+    public List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin, Integer isDesensitization) {
 
         String customerId = String.valueOf(userID);
         List<CallOutPlan> list;
@@ -390,7 +390,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.createCriteria().andCallIdIn(idList);
         example.setOrderByClause("create_time desc");
         if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
-            example.setCustomerId(customerId);
+            example.setIsDesensitization(isDesensitization);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
         }else{
             list = callOutPlanMapper.selectByExample(example);

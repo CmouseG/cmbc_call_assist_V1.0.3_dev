@@ -9,7 +9,7 @@ public class CallRecordReq  implements Serializable {
     private Integer time;
     private String accurateIntent;
     private Long userId;
-    private Long secretId;  //用于确定是否对电话号码进行加密
+    private Integer isDesensitization;  //用于确定是否对电话号码进行加密
     private Boolean isSuperAdmin;
     private String orgCode;
 
@@ -72,12 +72,12 @@ public class CallRecordReq  implements Serializable {
         this.orgCode = orgCode;
     }
 
-    public Long getSecretId() {
-        return secretId;
+    public Integer getIsDesensitization() {
+        return isDesensitization;
     }
 
-    public void setSecretId(Long secretId) {
-        this.secretId = secretId;
+    public void setIsDesensitization(Integer isDesensitization) {
+        this.isDesensitization = isDesensitization;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class CallRecordReq  implements Serializable {
                 ", time=" + time +
                 ", accurateIntent='" + accurateIntent + '\'' +
                 ", userId=" + userId +
-                ", secretId=" + secretId +
+                ", secretId=" + isDesensitization +
                 ", isSuperAdmin=" + isSuperAdmin +
                 ", orgCode='" + orgCode + '\'' +
                 '}';

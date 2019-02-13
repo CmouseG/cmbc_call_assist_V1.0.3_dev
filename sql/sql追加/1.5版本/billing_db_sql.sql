@@ -4,15 +4,11 @@ MySQL - 5.7.22-log : Database - guiyu_billing
 *********************************************************************
 */
 
-/*!40101 SET NAMES utf8 */;
+CREATE DATABASE IF NOT EXISTS guiyu_billing  DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-/*!40101 SET SQL_MODE=''*/;
+CREATE USER  'billing'@'%'  IDENTIFIED BY  'billing@1234';
 
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`guiyu_billing` /*!40100 DEFAULT CHARACTER SET utf8 */;
+GRANT ALL ON guiyu_billing.* TO billing@'%' IDENTIFIED BY 'billing@1234';
 
 USE `guiyu_billing`;
 

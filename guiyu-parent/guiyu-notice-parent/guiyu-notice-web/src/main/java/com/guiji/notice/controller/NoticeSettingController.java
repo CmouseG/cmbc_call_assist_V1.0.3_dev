@@ -115,7 +115,7 @@ public class NoticeSettingController implements INoticeSetting {
 
     @ApiOperation(value = "提醒设置，编辑消息接收者,确定提交调用该方法。用户Id以逗号连接")
     @GetMapping(value = "setReceivers")
-    public Result.ReturnData setReceivers(@NotEmpty(message="消息接受者id不能为空") @Pattern(regexp = "^\\d+(,\\d+)*$", message = "消息接受者id格式错误")  String receiverIds,
+    public Result.ReturnData setReceivers(@NotNull(message="消息接受者id不能为空") @Pattern(regexp = "^(\\d+(,\\d+)*)*$", message = "消息接受者id格式错误")  String receiverIds,
                                           @NotEmpty(message="id不能为空") String id) {
         noticeSettingService.setReceivers(receiverIds,Integer.valueOf(id));
 

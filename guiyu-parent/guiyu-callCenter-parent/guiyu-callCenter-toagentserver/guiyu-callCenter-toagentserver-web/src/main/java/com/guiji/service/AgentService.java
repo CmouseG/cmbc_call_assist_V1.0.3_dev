@@ -38,6 +38,8 @@ public interface AgentService {
 
     boolean isAgentLogin(Agent agent);
 
+    boolean agentVertoState(Agent agent);
+
     /**
      * 座席是否处于通话状态
      * @param agentId

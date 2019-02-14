@@ -576,6 +576,11 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
+    public boolean agentVertoState(Agent agent) {
+        return fsManager.getVertoStatus(agent.getUserId() + "");
+    }
+
+    @Override
     public boolean isAgentBusy(String agentId) {
         CallPlan callPlan = callPlanService.findByAgentId(agentId);
         return callPlan!=null && callPlan.getCallId()!=null;

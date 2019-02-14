@@ -22,6 +22,9 @@ insert into sys_user_ext(user_id,create_time,update_time) select id,create_time,
 
 ALTER TABLE sys_user ADD is_desensitization int default 0 comment '号码是否脱敏0需要脱敏1不需要脱敏';
 
+#前端增加md5加密密码，所有账号密码重置为123456,各用户自行修改密码
+update sys_user set password = '9970f16668b0ce09b694293b5164ae2b211fb9a23e9026bb4d0d1aef370f192120dd5f5a8e78c06d57fa036de0975c09b528ea7dc49262aee10c3247e62964fa';
+
 INSERT INTO `guiyu_base`.`sys_dict` ( `dict_key`, `dict_value`, `dict_type`, `description`, `pid`, `remarks`, `del_flag`, `create_time`, `update_time`, `create_id`, `update_id`) 
 VALUES ('1', '意向客户', 'noticeType', '消息类型，意向客户', NULL, NULL, '0', '2019-01-29 17:32:01', '2019-01-29 17:32:01', '1', '1');
 

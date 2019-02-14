@@ -127,5 +127,26 @@ public class SendMsgReqVO implements Serializable {
             this.value = value;
             this.color = color;
         }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "value=" + value +
+                    ", color='" + color + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "SendMsgReqVO{" +
+                "userId='" + userId + '\'' +
+                ", openID='" + openID + '\'' +
+                ", templateId='" + templateId + '\'' +
+                ", url='" + url + '\'' +
+                ", appId='" + appId + '\'' +
+                ", pagePath='" + pagePath + '\'' +
+                ", data=" + data.toString() +
+                '}';
     }
 }

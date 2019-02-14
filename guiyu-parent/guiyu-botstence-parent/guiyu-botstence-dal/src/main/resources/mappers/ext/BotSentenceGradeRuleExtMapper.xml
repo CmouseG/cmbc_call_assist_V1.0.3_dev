@@ -10,11 +10,11 @@
 	</select>
 
 	<select id="queryMaxRuleNo" resultType="String">
-		select 
-			max(rule_no) as ruleNo
-		from bot_sentence_grade_rule
+		SELECT 
+			ifnull(max(CAST(rule_no AS SIGNED INTEGER)),0) as ruleNo  
+		from bot_sentence_grade_rule 
 		where 
-			process_id=#{processId};
+			process_id=#{processId};	
 	</select>
 	
 	<select id="queryDistinctIntentNameProcessId" resultType="String">

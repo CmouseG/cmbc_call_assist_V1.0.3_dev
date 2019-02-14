@@ -56,7 +56,7 @@ public class NoticeSettingController implements INoticeSetting {
                 String receivers = noticeSetting.getReceivers();
 
                 List<User> userList = new ArrayList<>();
-                if(receivers!=null){
+                if(StringUtils.isNotBlank(receivers)){
                     String[] receiverArr = receivers.split(",");
                     for(String userIdStr:receiverArr){
                         Long userId = Long.valueOf(userIdStr);

@@ -256,10 +256,10 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
         }
 
         List<SettingIntent> resultList = new ArrayList<>();
-        Result.ReturnData<SysUser> result = auth.getUserById(userId);
-        String intentLabel = result.getBody().getIntenLabel();
-        if (StringUtils.isNotBlank(intentLabel)) {
-            String[] allIntentArr = intentLabel.split(",");
+//        Result.ReturnData<SysUser> result = auth.getUserById(userId);
+//        String intentLabel = result.getBody().getIntenLabel();
+//        if (StringUtils.isNotBlank(intentLabel)) {
+            String[] allIntentArr = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",};
             for (String intent : allIntentArr) {
                 SettingIntent settingIntent = new SettingIntent();
                 settingIntent.setIntent(intent);
@@ -271,7 +271,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
                 resultList.add(settingIntent);
             }
 
-        }
+//        }
         return resultList;
 
     }

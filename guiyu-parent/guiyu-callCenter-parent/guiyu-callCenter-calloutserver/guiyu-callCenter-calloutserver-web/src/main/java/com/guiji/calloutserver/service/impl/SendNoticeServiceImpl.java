@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,12 @@ public class SendNoticeServiceImpl implements SendNoticeService {
     CallOutPlanService callOutPlanService;
     @Value("${weixin.templateId}")
     String weixinTemplateId;
+    @Value("${weixin.appid}")
+    String weixinAppid;
+    @Value("${weixin.pagePath.callReordUrl}")
+    String weixinCallReordUrl;
+    @Value("${weixin.pagePath.reordListUrl}")
+    String weixinReordListUrl;
 
     @Async
     @Override
@@ -57,7 +64,7 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         if(!StringUtils.isNullOrEmpty(noticeLabels)){
             if(noticeLabels.contains(intent)){
                 log.info("产生意向客户,userId[{}],intent[{}]",userId,intent);
-                sendIntentionalCustomer(Long.valueOf(userId), phone, intent);
+                sendIntentionalCustomer(Long.valueOf(userId), phone, intent, callOutPlan.getCallId());
             }
         }
 
@@ -97,13 +104,12 @@ public class SendNoticeServiceImpl implements SendNoticeService {
             redisUtil.set(countWKey,0);
         }
 
-
     }
 
     /**
      * 意向客户，发送消息
      */
-    private void sendIntentionalCustomer(long userId,String phone, String intent){
+    private void sendIntentionalCustomer(long userId, String phone, String intent, BigInteger callId){
         MessageSend messageSend = new MessageSend();
         messageSend.setNoticeType(NoticeType.intentional_customer);
         messageSend.setUserId(userId);
@@ -116,6 +122,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setSmsContent("客户号码："+phone+"，点击查看详细通话记录，及时进行客户跟进");
         //微信
         messageSend.setWeixinTemplateId(weixinTemplateId);
+        messageSend.setWeixinPagePath(weixinCallReordUrl+callId.toString());
+        messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
         map.put("userName",new SendMsgReqVO.Item("客户号码："+phone+"，点击查看详细通话记录，及时进行客户跟进",null));
         messageSend.setWeixinData(map);
@@ -137,6 +145,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setSmsContent("您的外呼任务出现连续100通电话未接通，请点击查看");
         //微信
         messageSend.setWeixinTemplateId(weixinTemplateId);
+        messageSend.setWeixinPagePath(weixinReordListUrl);
+        messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
         map.put("userName",new SendMsgReqVO.Item("您的外呼任务出现连续100通电话未接通，请点击查看",null));
         messageSend.setWeixinData(map);
@@ -159,6 +169,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setSmsContent("您的外呼任务出现连续100通电话线路报错的问题，请点击查看具体报错信息，并联系您的线路提供商");
         //微信
         messageSend.setWeixinTemplateId(weixinTemplateId);
+        messageSend.setWeixinPagePath(weixinReordListUrl);
+        messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
         map.put("userName",new SendMsgReqVO.Item("您的外呼任务出现连续100通电话线路报错的问题，请点击查看具体报错信息，并联系您的线路提供商",null));
         messageSend.setWeixinData(map);

@@ -115,7 +115,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+  <insert id="insert" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsTask" keyProperty="id" useGeneratedKeys="true">
     insert into bot_sentence_tts_task (id, process_id, busi_id, 
       busi_type, content, volice_url, 
       `status`, crt_time, crt_user, 
@@ -129,7 +129,7 @@
       #{seq,jdbcType=VARCHAR}, #{isParam,jdbcType=VARCHAR}, #{times,jdbcType=INTEGER}, 
       #{wavName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsTask" >
+  <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceTtsTask" keyProperty="id" useGeneratedKeys="true">
     insert into bot_sentence_tts_task
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

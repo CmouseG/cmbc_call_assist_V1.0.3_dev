@@ -40,6 +40,7 @@ public class ChargeHandler {
     public void handleAfterCall(StatisticReportEvent statisticReportEvent) {
 
         CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();*/
+    @Async
     public void handleAfterCall(CallOutPlan callOutPlan) {
         ChargeCallPlan chargeCallPlan = new ChargeCallPlan();
         chargeCallPlan.setUserId(callOutPlan.getCustomerId());

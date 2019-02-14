@@ -131,4 +131,6 @@ public interface IBotSentenceProcessService {
 	
 	public List<Object> getAvailableTemplateBySelf(String accountNo);
 	
+	public BotSentenceProcess getBotsentenceProcessByTemplateId(String templateId);
+	
 }

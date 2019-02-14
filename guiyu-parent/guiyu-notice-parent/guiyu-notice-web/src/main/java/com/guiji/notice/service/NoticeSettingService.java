@@ -24,7 +24,7 @@ public interface NoticeSettingService {
 
     void addWeixinNoticeSettingReceiver(String orgCode, Long userId);
 
-    List<SettingIntent> queryNoticeIntent(Long userId, Integer id);
+    List<SettingIntent> queryNoticeIntent(Long userId);
 
-    void updateNoticeIntent(String labels, Integer integer);
+    void updateNoticeIntent(String labels, Long userId);
 }

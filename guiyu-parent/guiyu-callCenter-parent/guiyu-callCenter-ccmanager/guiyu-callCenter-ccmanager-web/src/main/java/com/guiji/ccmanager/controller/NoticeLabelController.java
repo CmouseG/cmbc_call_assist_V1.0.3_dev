@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ public class NoticeLabelController implements INoticeLabel {
     @Override
     @ApiOperation(value = "查询意向标签")
     @GetMapping(value = "queryNoticeIntent")
-    public Result.ReturnData<String> queryNoticeIntent(@NotEmpty(message="参数不能为空") String orgCode) {
+    public Result.ReturnData<String> queryNoticeIntent(@NotEmpty(message="参数不能为空") @RequestParam("orgCode") String orgCode) {
 
         String label = noticeLabelService.queryNoticeIntent(orgCode);
         return Result.ok(label);
@@ -37,7 +38,8 @@ public class NoticeLabelController implements INoticeLabel {
     @Override
     @ApiOperation(value = "修改意向标签,勾选的标签以逗号拼接传递到labels字段")
     @GetMapping(value = "updateNoticeIntent")
-    public Result.ReturnData updateNoticeIntent(@NotEmpty(message="参数不能为空") String orgCode,@NotNull(message="标签不能不传")  String labels) {
+    public Result.ReturnData updateNoticeIntent(@NotEmpty(message="参数不能为空") @RequestParam("orgCode") String orgCode,
+                                                @NotNull(message="标签不能不传")  @RequestParam("labels") String labels) {
 
         logger.info("----get updateNoticeIntent request labels[{}],orgCode[{}]",labels,orgCode);
         noticeLabelService.updateNoticeIntent(labels,orgCode);

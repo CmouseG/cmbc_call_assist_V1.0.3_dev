@@ -143,18 +143,18 @@ public class NoticeSettingController implements INoticeSetting {
 
     @ApiOperation(value = "查询意向标签")
     @GetMapping(value = "queryNoticeIntent")
-    public Result.ReturnData queryNoticeIntent(@RequestHeader Long userId,@NotEmpty(message="参数不能为空") String id) {
+    public Result.ReturnData queryNoticeIntent(@RequestHeader Long userId) {
 
-        List<SettingIntent> list = noticeSettingService.queryNoticeIntent(userId,Integer.valueOf(id));
+        List<SettingIntent> list = noticeSettingService.queryNoticeIntent(userId);
         return Result.ok(list);
     }
 
     @ApiOperation(value = "修改意向标签,勾选的标签以逗号拼接传递到labels字段")
     @GetMapping(value = "updateNoticeIntent")
-    public Result.ReturnData updateNoticeIntent(@NotEmpty(message="参数不能为空") String id,@NotNull(message="标签不能不传") String labels) {
+    public Result.ReturnData updateNoticeIntent(@RequestHeader Long userId,@NotNull(message="标签不能不传") String labels) {
 
-        logger.info("----get updateNoticeIntent request labels[{}],id[{}]",labels,id);
-        noticeSettingService.updateNoticeIntent(labels,Integer.valueOf(id));
+        logger.info("----get updateNoticeIntent request labels[{}],userId[{}]",labels,userId);
+        noticeSettingService.updateNoticeIntent(labels,userId);
         return Result.ok();
     }
 }

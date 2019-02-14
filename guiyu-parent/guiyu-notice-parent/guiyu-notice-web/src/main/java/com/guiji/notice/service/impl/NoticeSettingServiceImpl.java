@@ -250,7 +250,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
         String noticeIntent = resultDate.getBody();
 
         List<String> settingIntentList = new ArrayList<>();
-        if (noticeIntent != null) {
+        if (StringUtils.isNotBlank(noticeIntent)) {
             String[] settingIntentArr = noticeIntent.split(",");
             settingIntentList = Arrays.asList(settingIntentArr);
         }

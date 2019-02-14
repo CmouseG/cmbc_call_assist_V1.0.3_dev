@@ -9,7 +9,7 @@ spring:
     url: jdbc:mysql:none
   redis:
     database: 9
-    host: 192.168.1.81
+    host: 192.168.1.57
     port: 6379
     password: 123456
     pool:
@@ -18,8 +18,8 @@ spring:
       max-idle: 8
       min-idle: 0
   rabbitmq:
-    host: 192.168.1.81
-    port: 5672
+    host: 192.168.1.57
+    port: 15672
     virtual-host: /
     username: guiyu
     password: 123456

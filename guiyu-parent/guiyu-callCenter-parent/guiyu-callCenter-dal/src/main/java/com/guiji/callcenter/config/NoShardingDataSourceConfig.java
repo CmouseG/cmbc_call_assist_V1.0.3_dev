@@ -45,7 +45,7 @@ public class NoShardingDataSourceConfig {
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource);
 		//扫描mapper.xml文件
-		sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mappers/noSharding/*.xml"));
+		sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mappers/noSharding/*.xml"));
 		return sqlSessionFactoryBean.getObject();
 	}
 

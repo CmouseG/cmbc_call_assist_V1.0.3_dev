@@ -13,6 +13,7 @@ import com.guiji.vo.ArrearageNotifyVo;
 
 /**
  * 系统启动的时候查询当前欠费的用户
+ * 
  * @author Administrator
  *
  */
@@ -23,12 +24,31 @@ public class QueryUserBilling implements ApplicationRunner {
 	private RedisUtil redisUtils;
 	@Autowired
 	private IAcctUser accountUser;
+
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		logger.info("系统启动查询前费用用户>>>>>>>>>>>>>>>>");
-		ArrearageNotifyVo queryArrearageUserList = accountUser.queryArrearageUserList();
-		redisUtils.set("USER_BILLING_DATA",queryArrearageUserList.getUserIdList());
+		new Thread(() -> {
+			try {
+				boolean initFlag = false;
+				while (true) {
+					try {
+						if (!initFlag) {
+							ArrearageNotifyVo queryArrearageUserList = accountUser.queryArrearageUserList();
+							redisUtils.set("USER_BILLING_DATA", queryArrearageUserList.getUserIdList());
+							initFlag = true;
+						} else {
+							break;
+						}
+					} catch (Exception e) {
+						initFlag = false;
+					}
+					Thread.sleep(30000);
+				}
+			} catch (Exception e) {
+				logger.error("QueryUserBilling:" + e.getMessage());
+			}
+		}).start();
 	}
-
 
 }

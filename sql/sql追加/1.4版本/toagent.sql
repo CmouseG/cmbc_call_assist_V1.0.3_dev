@@ -39,6 +39,7 @@ CREATE TABLE `registration` (
   `remark` varchar(255) DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `update_user` bigint(20) DEFAULT NULL,
+  `plan_uuid` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`reg_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

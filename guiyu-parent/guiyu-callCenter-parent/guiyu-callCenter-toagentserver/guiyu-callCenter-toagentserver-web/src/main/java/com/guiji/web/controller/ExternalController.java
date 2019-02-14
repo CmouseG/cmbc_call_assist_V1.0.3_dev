@@ -89,7 +89,7 @@ public class ExternalController implements IAgentGroup{
             agentSumResponse.setTotalCount(agentList.size());
             int onlineCount = 0;
             for (Agent agent : agentList) {
-                if(agentService.isAgentLogin(agent)){
+                if(!agentService.agentVertoState(agent)){
                     onlineCount++;
                 }
             }

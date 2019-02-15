@@ -17,10 +17,12 @@
       r.oper_user_name AS oper_user_name,
       a.org_code,
       a.company_name
-    FROM billing_acct_charging_record r
-      LEFT JOIN billing_user_acct a
-        ON r.account_id = a.account_id
+    FROM billing_acct_charging_record r,billing_user_acct a
     WHERE r.del_flag = 0
+      AND r.account_id = a.account_id
+      <if test="orgCode != null and orgCode != ''">
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
+      </if>
       <if test="type != null">
         AND r.type = #{type}
       </if>
@@ -44,10 +46,12 @@
   <select id="queryCompanyRechargeCount" resultType="java.lang.Integer">
     SELECT
       COUNT(*)
-    FROM billing_acct_charging_record r
-      LEFT JOIN billing_user_acct a
-        ON r.account_id = a.account_id
+    FROM billing_acct_charging_record r, billing_user_acct a
     WHERE r.del_flag = 0
+      AND r.account_id = a.account_id
+      <if test="orgCode != null and orgCode != ''">
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
+      </if>
       <if test="type != null">
         AND r.type = #{type}
       </if>

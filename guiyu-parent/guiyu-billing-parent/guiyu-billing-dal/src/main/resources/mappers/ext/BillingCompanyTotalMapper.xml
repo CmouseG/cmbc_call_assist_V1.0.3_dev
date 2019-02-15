@@ -15,8 +15,12 @@
       SELECT t.charging_item_id, t.charging_item_name,
         r.id, r.oper_duration_m, r.amount ,
         DATE_FORMAT(r.create_time, '%Y-%m') AS opt_time
-      FROM billing_acct_charging_record r, billing_acct_charging_term t
-      WHERE r.user_charging_id = t.user_charging_id
+      FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
+      WHERE r.account_id = c.account_id
+        AND r.user_charging_id = t.user_charging_id
+        <if test="orgCode != null">
+          AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+        </if>
         <if test="operUserId != null">
           AND r.oper_user_id = #{operUserId}
         </if>
@@ -47,8 +51,12 @@
         SELECT t.charging_item_id, t.charging_item_name,
           r.id, r.oper_duration_m, r.amount ,
           DATE_FORMAT(r.create_time, '%Y-%m') AS opt_time
-        FROM billing_acct_charging_record r, billing_acct_charging_term t
-        WHERE r.user_charging_id = t.user_charging_id
+        FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
+        WHERE r.account_id = c.account_id
+          AND r.user_charging_id = t.user_charging_id
+          <if test="orgCode != null">
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+          </if>
           <if test="operUserId != null">
             AND r.oper_user_id = #{operUserId}
           </if>
@@ -62,7 +70,7 @@
   </select>
 
 
-  <select id="totalCompanyChargingByDate" resultType="com.guiji.billing.vo.TotalChargingItemVo">
+  <select id="" resultType="com.guiji.billing.vo.TotalChargingItemVo">
     SELECT
       opt_time AS total_date,
       charging_item_id,
@@ -75,8 +83,12 @@
       SELECT t.charging_item_id, t.charging_item_name,
           r.id, r.oper_duration_m, r.amount ,
           DATE_FORMAT(r.create_time, '%Y-%m-%d') AS opt_time
-        FROM billing_acct_charging_record r, billing_acct_charging_term t
-        WHERE r.user_charging_id = t.user_charging_id
+        FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
+        WHERE r.account_id = c.account_id
+          AND r.user_charging_id = t.user_charging_id
+          <if test="orgCode != null">
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+          </if>
           <if test="operUserId != null">
             AND r.oper_user_id = #{operUserId}
           </if>
@@ -107,8 +119,12 @@
         SELECT t.charging_item_id, t.charging_item_name,
           r.id, r.oper_duration_m, r.amount ,
           DATE_FORMAT(r.create_time, '%Y-%m-%d') AS opt_time
-        FROM billing_acct_charging_record r, billing_acct_charging_term t
-        WHERE r.user_charging_id = t.user_charging_id
+        FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
+        WHERE r.account_id = c.account_id
+          AND r.user_charging_id = t.user_charging_id
+          <if test="orgCode != null">
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+          </if>
           <if test="operUserId != null">
             AND r.oper_user_id = #{operUserId}
           </if>

@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 计费项(计费项现由外部系统通知同步)
+ * 计费项(计费项现由外部系统通知同步,此controller暂不使用)
  */
 @RestController
-@RequestMapping(value = "/billing/ChargingTeram")
+@RequestMapping(value = "/billing/chargingTeram")
 public class BillingChargingTermController {
 
     private Logger logger = LoggerFactory.getLogger(BillingChargingTermController.class);
@@ -96,4 +96,5 @@ public class BillingChargingTermController {
                 AcctChargingStatusEnum.OFF.getStatus());
         return bool;
     }
+
 }

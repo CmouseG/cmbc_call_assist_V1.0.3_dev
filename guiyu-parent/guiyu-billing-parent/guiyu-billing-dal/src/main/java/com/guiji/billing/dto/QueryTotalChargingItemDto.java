@@ -4,6 +4,9 @@ import com.guiji.billing.sys.PageDto;
 
 public class QueryTotalChargingItemDto extends PageDto {
 
+    /**
+     * 操作员ID
+     */
     private String operUserId;
 
     /**

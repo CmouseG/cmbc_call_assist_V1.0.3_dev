@@ -1,10 +1,13 @@
 package com.guiji.ai.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +20,8 @@ import com.guiji.ai.vo.SynPostReqVO;
 import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.TtsCallback;
 
 /**
  * 语音合成
@@ -26,8 +31,12 @@ public class AiController implements IAi
 {
 	private static Logger logger = LoggerFactory.getLogger(AiController.class);
 
+	@Value("${notifyUrl}")
+	private String notifyUrl;
 	@Autowired
 	IAiService ai;
+	@Autowired
+	IRobotRemote robotRemote;
 	
 	@Override
 	@PostMapping(value = "synPost")
@@ -49,6 +58,7 @@ public class AiController implements IAi
 	{
 		try
 		{
+			postVO.setNotifyUrl(notifyUrl);
 			String model = postVO.getModel();
 			String result = ai.getPlat(model).asynPost(postVO);
 			return Result.ok(result);
@@ -60,10 +70,19 @@ public class AiController implements IAi
 	
 	@Override
 	@PostMapping(value = "callback")
-	public ReturnData<TtsRspVO> callback(@RequestBody TtsRspVO ttsRsp)
+	public void callback(@RequestBody TtsRspVO ttsRsp)
 	{
-		logger.info(ttsRsp.toString());
-		return Result.ok(ttsRsp);
+		logger.info("tts回调结果：" + ttsRsp.toString());
+		// 回调机器人接口，返回数据
+		TtsCallback ttsCallback = new TtsCallback();
+		ttsCallback.setBusiId(ttsRsp.getBusId());
+		ttsCallback.setStatus(ttsRsp.getStatus());
+		ttsCallback.setErrorMsg(ttsRsp.getStatusMsg());
+		ttsCallback.setAudios(ttsRsp.getAudios());
+
+		List<TtsCallback> resultList = new ArrayList<TtsCallback>();
+		resultList.add(ttsCallback);
+		robotRemote.ttsCallback(resultList);
 	}
 
 	@Override

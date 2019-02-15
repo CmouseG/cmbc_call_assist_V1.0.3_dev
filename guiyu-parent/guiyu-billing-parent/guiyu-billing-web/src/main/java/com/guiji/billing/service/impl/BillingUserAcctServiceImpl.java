@@ -96,12 +96,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     @Override
     public BillingUserAcctBean queryUserAcctById(String accountId) {
-        if(!StringUtils.isEmpty(accountId)) {
-            return billingUserAcctMapper.queryUserAcct(accountId);
-        }else{
-            throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
-                    SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
-        }
+        return !StringUtils.isEmpty(accountId)?billingUserAcctMapper.queryUserAcct(accountId):null;
     }
 
     /**
@@ -111,12 +106,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     @Override
     public BillingUserAcctBean queryUserAcctByOrgCode(String orgCode) {
-        if(!StringUtils.isEmpty(orgCode)) {
-            return billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
-        }else{
-            throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
-                    SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
-        }
+        return !StringUtils.isEmpty(orgCode)?billingUserAcctMapper.queryUserAcctByOrgCode(orgCode):null;
     }
 
     /**

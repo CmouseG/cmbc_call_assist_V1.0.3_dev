@@ -11,10 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,10 +27,15 @@ public class BillingTotalAnalysisController {
     @Autowired
     private BillingTotalAnalysisService billingTotalAnalysisService;
 
-    //按日统计查询
+    //按日统计查询(系统侧使用)
     @ApiOperation(value="汇总报表按日", notes="汇总报表按日")
     @RequestMapping(value = "/totalChargingByDate", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResultPage<BillingTotalChargingConsumerVo> totalAcctChargingByDay(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto){
+    public ResultPage<BillingTotalChargingConsumerVo> totalAcctChargingByDay(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto,
+                                                                             @RequestHeader String orgCode){
+        if(null == queryAcctChargingTotalDto){
+            queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
+        }
+        queryAcctChargingTotalDto.setOrgCode(orgCode);
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByDate(queryAcctChargingTotalDto, page);
         page.setList(list);
@@ -41,10 +43,15 @@ public class BillingTotalAnalysisController {
         return page;
     }
 
-    //按月统计查询
+    //按月统计查询(系统侧使用)
     @ApiOperation(value="汇总报表按月", notes="汇总报表按月")
     @RequestMapping(value = "/totalChargingByMonth", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResultPage<BillingTotalChargingConsumerVo> totalChargingByMonth(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto){
+    public ResultPage<BillingTotalChargingConsumerVo> totalChargingByMonth(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto,
+                                                                           @RequestHeader String orgCode){
+        if(null == queryAcctChargingTotalDto){
+            queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
+        }
+        queryAcctChargingTotalDto.setOrgCode(orgCode);
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByMonth(queryAcctChargingTotalDto, page);
         page.setList(list);

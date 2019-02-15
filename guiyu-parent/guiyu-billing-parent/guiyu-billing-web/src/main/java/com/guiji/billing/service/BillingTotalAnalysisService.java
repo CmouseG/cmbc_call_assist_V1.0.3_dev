@@ -44,4 +44,9 @@ public interface BillingTotalAnalysisService {
 
     //查询对账记录数量
     int queryAcctReconcCount(QueryAcctRecDto queryAcctRecDto);
+
+    /************************************************/
+
+    //存储过程，统计每日计费数据
+    void procTotalChargingByDate();
 }

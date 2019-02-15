@@ -367,6 +367,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
         if(null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getAccountId())) {
             String accountId = queryRechargeDto.getAccountId();
+            String orgCode = queryRechargeDto.getOrgCode();
             Date beginDate = queryRechargeDto.getBeginDate();
             Date endDate = queryRechargeDto.getEndDate();
             if(null != beginDate && null == endDate){
@@ -374,7 +375,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             }else if(null == beginDate && null != endDate){
                 beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
             }
-            return billingUserAcctMapper.queryUserRechargeTotal(accountId, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
+            return billingUserAcctMapper.queryUserRechargeTotal(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
                     beginDate, endDate, page);
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
@@ -391,6 +392,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
         if(null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getAccountId())) {
             String accountId = queryRechargeDto.getAccountId();
+            String orgCode = queryRechargeDto.getOrgCode();
             Date beginDate = queryRechargeDto.getBeginDate();
             Date endDate = queryRechargeDto.getEndDate();
             if(null != beginDate && null == endDate){
@@ -398,7 +400,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             }else if(null == beginDate && null != endDate){
                 beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_DATE, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
             }
-            return billingUserAcctMapper.queryUserRechargeCount(accountId, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
+            return billingUserAcctMapper.queryUserRechargeCount(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
                     beginDate, endDate);
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -386,6 +387,7 @@ public class BotSentenceProcessController {
 	 * @return
 	 */
 	@RequestMapping(value="generateTTS")
+	@Async
 	public ServerResult<FlowInfoVO> generateTTS(@JsonParam String processId, @RequestHeader String userId){
 		//@JsonParam GenerateTTSVO param, 
 		botSentenceProcessService.generateTTS(null, processId, userId);

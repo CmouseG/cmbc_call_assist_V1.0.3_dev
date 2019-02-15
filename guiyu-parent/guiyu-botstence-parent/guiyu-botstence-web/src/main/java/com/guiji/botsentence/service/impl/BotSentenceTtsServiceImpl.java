@@ -93,8 +93,8 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	@Value("${tts.api.url}")
 	private String ttsApiUrl;
 	
-	@Autowired
-	private BotsentenceServerController botsentenceServerController;
+	//@Autowired
+	//private BotsentenceServerController botsentenceServerController;
 	
 	/**
 	 * 保存TTS变量及变量类型
@@ -535,12 +535,13 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	    	logger.info("返回参数: " + result.toString());
 			if("0".equals(result.getCode())) {
 				logger.info("推送tts数据成功...");
-				String url = "aaabbb";//result.getBody();
+				String url = result.getBody();
 				if(StringUtils.isNotBlank(url)) {
-					
+					botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), url);
+				}else {
+					logger.error("返回URL为空");
+					throw new CommonException("返回URL为空，请联系管理员!");
 				}
-				botsentenceServerController.generateTTSCallback(taskId.toString(), url);
-				
 			}else {
 				logger.error("推送tts数据异常，请联系管理员!");
 				throw new CommonException("推送tts数据异常，请联系管理员!");

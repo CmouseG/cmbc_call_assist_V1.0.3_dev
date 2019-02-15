@@ -83,7 +83,6 @@ ribbon:
   ConnectTimeout: 30000
 #支持的最大拨打数量
 callCount.max: 400
-weixin.templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE
 #xxl-job admin中心配置
 xxl:
   job:
@@ -96,3 +95,9 @@ xxl:
       logpath: /home/logs/guiyu-callCenter-calloutserver-web
       logretentiondays: -1
     accessToken:
+weixin:
+  appid: wx017a03051262ec17  #跳转到的小程序appid
+  templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
+  pagePath:
+    callReordUrl: pages/detail/detail?id= #小程序通话详情页面
+    reordListUrl: pages/list/list #小程序通话记录列表页面

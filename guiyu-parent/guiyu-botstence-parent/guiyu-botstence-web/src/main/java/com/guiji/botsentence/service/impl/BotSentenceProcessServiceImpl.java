@@ -4571,4 +4571,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public void test() {
 		
 	}
+
+	@Override
+	public BotSentenceProcess getBotsentenceProcessByTemplateId(String templateId) {
+		BotSentenceProcessExample example = new BotSentenceProcessExample();
+		example.createCriteria().andTemplateIdEqualTo(templateId);
+		List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
+		if(null != list && list.size() > 0) {
+			return list.get(0);
+		}
+		return null;
+	}
 }

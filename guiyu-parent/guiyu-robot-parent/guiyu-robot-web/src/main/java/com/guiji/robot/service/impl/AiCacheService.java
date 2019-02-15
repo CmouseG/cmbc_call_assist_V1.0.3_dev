@@ -25,7 +25,6 @@ import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.ReadTxtUtil;
 import com.guiji.robot.util.SystemUtil;
-import com.guiji.utils.BeanUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
@@ -263,7 +262,10 @@ public class AiCacheService {
 				HsReplace commonHsReplace = queryCommonJsonObj(templateId);
 				//查询replace.json
 				HsReplace replaceHsReplace = queryReplaceJsonObj(templateId);
-				BeanUtil.copyProperties(commonHsReplace, replaceHsReplace);
+				replaceHsReplace.setTemplateName(commonHsReplace.getTemplateName());
+				replaceHsReplace.setAgent(commonHsReplace.isAgent());
+				replaceHsReplace.setTemplateId(commonHsReplace.getTemplateId());
+				replaceHsReplace.setTrade(commonHsReplace.getTrade());
 				if(replaceHsReplace != null) {
 					//提交到redis
 					Map<String,Object> map = new HashMap<String,Object>();

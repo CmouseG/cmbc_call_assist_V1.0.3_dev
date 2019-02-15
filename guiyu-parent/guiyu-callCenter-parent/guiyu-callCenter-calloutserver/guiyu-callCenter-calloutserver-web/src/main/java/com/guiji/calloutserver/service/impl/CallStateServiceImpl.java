@@ -48,7 +48,7 @@ public class CallStateServiceImpl implements CallStateService {
         criteria.andCallStateLessThanOrEqualTo(ECallState.answer.ordinal());
 
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.MINUTE, -6);
+        c.add(Calendar.MINUTE, -7);
         Date endTime  = c.getTime();
 
         criteria.andCreateTimeLessThan(endTime);

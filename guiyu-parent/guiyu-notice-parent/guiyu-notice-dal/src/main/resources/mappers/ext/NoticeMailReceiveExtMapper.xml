@@ -18,7 +18,7 @@
     <if test="noticeType != null" >
     and b.notice_type = #{noticeType}
     </if>
-
+    order by a.create_time desc
     limit #{limitStart},#{pageSize}
   </select>
 

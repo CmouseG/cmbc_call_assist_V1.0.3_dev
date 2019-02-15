@@ -172,12 +172,12 @@ public class CallDetailServiceImpl implements CallDetailService {
 
         Long userId = Long.valueOf(customerId);
         List<CallOutPlan> list;
-        if(isSuperAdmin || authService.isSeatOrAgent(userId)){
+//        if(isSuperAdmin || authService.isSeatOrAgent(userId)){
             example.setIsDesensitization(isDesensitization);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
-        }else{
-            list = callOutPlanMapper.selectByExample(example);
-        }
+//        }else{
+//            list = callOutPlanMapper.selectByExample(example);
+//        }
 
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 
@@ -389,12 +389,12 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutPlanExample example = new CallOutPlanExample();
         example.createCriteria().andCallIdIn(idList);
         example.setOrderByClause("create_time desc");
-        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
+//        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
             example.setIsDesensitization(isDesensitization);
             list = callOutPlanMapper.selectByExample4Encrypt(example);
-        }else{
-            list = callOutPlanMapper.selectByExample(example);
-        }
+//        }else{
+//            list = callOutPlanMapper.selectByExample(example);
+//        }
 
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 

@@ -22,6 +22,7 @@ import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +79,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
     }
 
     @Override
+    @Transactional
     public void addNoticeSetting(String orgCode) {
         Date date = new Date();
         List list = new ArrayList<>();
@@ -87,7 +89,11 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             noticeSetting.setIsSendEmail(false);
             noticeSetting.setIsSendSms(false);
             noticeSetting.setIsSendWeixin(false);
-            noticeSetting.setIsSendMail(true);
+            if(e.getValue()==1){ //意向客户不选中站内信
+                noticeSetting.setIsSendMail(false);
+            }else{
+                noticeSetting.setIsSendMail(true);
+            }
             noticeSetting.setNoticeOverType(e.getParent());
             noticeSetting.setNoticeType(e.getValue());
             noticeSetting.setOrgCode(orgCode);
@@ -101,10 +107,15 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
             list.add(noticeSetting);
         }
 
+        //先删除，再插入
+        NoticeSettingExample example = new NoticeSettingExample();
+        example.createCriteria().andOrgCodeEqualTo(orgCode);
+        noticeSettingMapper.deleteByExample(example);
         noticeSettingExtMapper.insertNoticeSettingBatch(list);
     }
 
     @Override
+    @Transactional
     public void restoreDefaultSettings(String orgCode) {
 
         NoticeSetting noticeSetting = new NoticeSetting();
@@ -122,9 +133,16 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
         noticeSetting.setUpdateTime(date);
 
         NoticeSettingExample example = new NoticeSettingExample();
-        example.createCriteria().andOrgCodeEqualTo(orgCode);
+        example.createCriteria().andOrgCodeEqualTo(orgCode)
+                .andNoticeTypeNotEqualTo(NoticeType.intentional_customer.getValue());
         noticeSettingMapper.updateByExampleSelective(noticeSetting, example);
 
+
+        NoticeSettingExample noticeSettingExample = new NoticeSettingExample();
+        noticeSettingExample.createCriteria().andOrgCodeEqualTo(orgCode)
+                .andNoticeTypeEqualTo(NoticeType.intentional_customer.getValue());
+        noticeSetting.setIsSendMail(false);
+        noticeSettingMapper.updateByExampleSelective(noticeSetting, noticeSettingExample);
     }
 
     @Override
@@ -223,25 +241,25 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
     }
 
     @Override
-    public List<SettingIntent> queryNoticeIntent(Long userId, Integer id) {
+    public List<SettingIntent> queryNoticeIntent(Long userId) {
 
-        NoticeSetting noticeSetting = noticeSettingMapper.selectByPrimaryKey(id);
+        Result.ReturnData<SysOrganization> orgReturn = auth.getOrgByUserId(userId);
+        String orgCode = orgReturn.getBody().getCode();
 
-        String orgCode = noticeSetting.getOrgCode();
         Result.ReturnData<String> resultDate = iNoticeLabel.queryNoticeIntent(orgCode);
         String noticeIntent = resultDate.getBody();
 
         List<String> settingIntentList = new ArrayList<>();
-        if (noticeIntent != null) {
+        if (StringUtils.isNotBlank(noticeIntent)) {
             String[] settingIntentArr = noticeIntent.split(",");
             settingIntentList = Arrays.asList(settingIntentArr);
         }
 
         List<SettingIntent> resultList = new ArrayList<>();
-        Result.ReturnData<SysUser> result = auth.getUserById(userId);
-        String intentLabel = result.getBody().getIntenLabel();
-        if (StringUtils.isNotBlank(intentLabel)) {
-            String[] allIntentArr = intentLabel.split(",");
+//        Result.ReturnData<SysUser> result = auth.getUserById(userId);
+//        String intentLabel = result.getBody().getIntenLabel();
+//        if (StringUtils.isNotBlank(intentLabel)) {
+            String[] allIntentArr = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",};
             for (String intent : allIntentArr) {
                 SettingIntent settingIntent = new SettingIntent();
                 settingIntent.setIntent(intent);
@@ -253,16 +271,17 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
                 resultList.add(settingIntent);
             }
 
-        }
+//        }
         return resultList;
 
     }
 
     @Override
-    public void updateNoticeIntent(String labels, Integer id) {
+    public void updateNoticeIntent(String labels, Long userId) {
 
-        NoticeSetting noticeSetting = noticeSettingMapper.selectByPrimaryKey(id);
-        String orgCode = noticeSetting.getOrgCode();
+        Result.ReturnData<SysOrganization> orgReturn = auth.getOrgByUserId(userId);
+        String orgCode = orgReturn.getBody().getCode();
+
         iNoticeLabel.updateNoticeIntent(orgCode,labels);
 
     }

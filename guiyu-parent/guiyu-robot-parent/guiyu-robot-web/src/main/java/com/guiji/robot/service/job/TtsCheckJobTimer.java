@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.guiji.ai.api.ITts;
+import com.guiji.ai.api.IAi;
 import com.guiji.ai.vo.TtsRspVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.constants.RobotConstants;
@@ -44,7 +44,7 @@ public class TtsCheckJobTimer extends IJobHandler{
 	@Autowired
 	AiNewTransService aiNewTransService;
 	@Autowired
-	ITts iTts;
+	IAi iAi;
 	
 	/**
 	 * TTS查证服务
@@ -68,7 +68,7 @@ public class TtsCheckJobTimer extends IJobHandler{
 				String busiId = ttsWavHis.getBusiId();
 				if(StrUtils.isNotEmpty(busiId)) {
 					//业务编号不为空，开始到AI服务进行TTS查证
-					ReturnData<TtsRspVO> ttsRspData = iTts.getTtsResultByBusId(busiId);
+					ReturnData<TtsRspVO> ttsRspData = iAi.getResult(busiId);
 					if(ttsRspData != null && RobotConstants.RSP_CODE_SUCCESS.equals(ttsRspData.getCode()) && ttsRspData.getBody()!=null){
 						TtsRspVO ttsRspVO = ttsRspData.getBody();
 						int status = ttsRspVO.getStatus();	//TTS查证接口返回状态
@@ -94,7 +94,7 @@ public class TtsCheckJobTimer extends IJobHandler{
 							ttsCallbackHis.setTtsJsonData(jsonData);
 						}
 						ttsCallbackHis.setStatus(statusInt);
-						String errorMsg = ttsRspVO.getErrorMsg();
+						String errorMsg = ttsRspVO.getStatusMsg();
 						if(StrUtils.isNotEmpty(errorMsg) && errorMsg.length()>1024) {
 							//如果异常信息超长，截取下
 							errorMsg = errorMsg.substring(0, 1024);

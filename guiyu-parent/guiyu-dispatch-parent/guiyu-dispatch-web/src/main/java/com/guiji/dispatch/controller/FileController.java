@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,11 +24,13 @@ import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUuidDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.FileErrorRecordsMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.FileErrorRecordsExample;
 import com.guiji.dispatch.dao.entity.FileRecords;
+import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.service.FileInterface;
 import com.guiji.dispatch.util.HttpDownload;
 
@@ -52,7 +55,8 @@ public class FileController {
 	private FileErrorRecordsMapper errorMapper;
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
-
+	@Autowired
+	private ILinesService lineServiceImpl;
 	@GetMapping(value = "queryFileRecords")
 	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,
@@ -92,7 +96,8 @@ public class FileController {
 	}
 
 	@PostMapping(value = "downloadChooseNum")
-	public Result.ReturnData<Object> downloadChooseNum(@RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
+	public Result.ReturnData<Object> downloadChooseNum(@RequestHeader Integer isDesensitization,
+			@RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
 		List<String> ids = new ArrayList<>();
 		for (int i = 0; i < dtos.length; i++) {
@@ -102,14 +107,13 @@ public class FileController {
 		ex.createCriteria().andPlanUuidIn(ids);
 
 		List<DispatchPlan> selectByExample = dispatchMapper.selectByExample(ex);
-
 		String fileName = "任务导出结果详情.xls";
 		HttpDownload.setHeader(resp, fileName);
 
 		OutputStream out = null;
 		try {
 			out = resp.getOutputStream();
-			generateExcel4Dispatch(selectByExample, out);
+			generateExcel4Dispatch(selectByExample, out,isDesensitization);
 		} catch (IOException e) {
 			log.error("downloadDialogue IOException :" + e);
 		} finally {
@@ -124,10 +128,10 @@ public class FileController {
 		return null;
 	}
 
-	private void generateExcel4Dispatch(List<DispatchPlan> selectByExample, OutputStream out)
+	private void generateExcel4Dispatch(List<DispatchPlan> selectByExample, OutputStream out, Integer isDesensitization)
 			throws RowsExceededException, WriteException, IOException {
-		
-		Map<String,String> map = new HashMap<>();
+
+		Map<String, String> map = new HashMap<>();
 		map.put("1", "计划中");
 		map.put("2", "已完成");
 		map.put("3", "已暂停");
@@ -151,16 +155,30 @@ public class FileController {
 		sheet.addCell(new Label(7, 0, "所属用户"));
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DispatchPlan dispatchPlan = selectByExample.get(i);
+			//查询线路
+			List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuid());
 			int k = 0;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
 			k++;
-			sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
-			k++;
+			if(isDesensitization.equals(0)){
+				String phoneNumber = dispatchPlan.getPhone().substring(0, 3) + "****"
+						+ dispatchPlan.getPhone().substring(7, dispatchPlan.getPhone().length());
+				sheet.addCell(new Label(k, i + 1,phoneNumber));
+				k++;
+			}else{
+				sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
+				k++;
+			}
 			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;
-			sheet.addCell(new Label(k, i + 1, dispatchPlan.getLineName()));
+			String lineName="";
+			for(DispatchLines lines : queryLinesByPlanUUID){
+				lineName = lineName +""+ lines.getLineName()+",";
+			}
+			String lineNames = lineName.substring(0, lineName.length()-1);
+			sheet.addCell(new Label(k, i + 1, lineNames));
 			k++;
 			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallData())));
 			k++;
@@ -175,7 +193,8 @@ public class FileController {
 	}
 
 	@GetMapping(value = "downloadErrorRecords")
-	public Result.ReturnData<Object> downloadErrorRecords(@RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
+	public Result.ReturnData<Object> downloadErrorRecords(@RequestHeader Integer isDesensitization,
+			@RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
 		List<FileErrorRecords> queryErrorRecords = file.queryErrorRecords(fileRecordId);
 		String fileName = "错误详情结果.xls";
@@ -184,7 +203,7 @@ public class FileController {
 		OutputStream out = null;
 		try {
 			out = resp.getOutputStream();
-			generateExcel(queryErrorRecords, out);
+			generateExcel(queryErrorRecords, out, isDesensitization);
 		} catch (IOException e) {
 			log.error("downloadDialogue IOException :" + e);
 		} finally {
@@ -199,7 +218,7 @@ public class FileController {
 		return null;
 	}
 
-	private void generateExcel(List<FileErrorRecords> queryErrorRecords, OutputStream out)
+	private void generateExcel(List<FileErrorRecords> queryErrorRecords, OutputStream out, Integer isDesensitization)
 			throws WriteException, IOException {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		map.put(1, "机器人校验失败");

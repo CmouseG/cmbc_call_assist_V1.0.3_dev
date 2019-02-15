@@ -93,7 +93,7 @@ public class WeChatController implements WeChatApi {
                 .queryParam(WeChatConstant.PARAM_ACCESS_TOKEN, accessToken);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         HttpEntity<String> entity = new HttpEntity<>(buildTemplateJsonStr(sendMsgReqVO), headers);
 
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().toUri(), entity, String.class);

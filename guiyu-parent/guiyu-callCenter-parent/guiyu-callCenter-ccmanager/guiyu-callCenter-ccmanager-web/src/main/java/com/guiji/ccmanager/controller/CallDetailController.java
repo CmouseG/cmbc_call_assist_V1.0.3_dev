@@ -344,7 +344,8 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.setColumnView(6, 20);
         sheet.setColumnView(7, 10);
         sheet.setColumnView(8, 10);
-        sheet.setColumnView(9, 100);
+        sheet.setColumnView(9, 10);
+        sheet.setColumnView(10, 100);
         sheet.addCell(new Label(0, 0 , "被叫电话",format));
         sheet.addCell(new Label(1, 0 , "意向标签",format));
         sheet.addCell(new Label(2, 0 , "意向备注",format));
@@ -354,7 +355,8 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.addCell(new Label(6, 0 , "挂断时间",format));
         sheet.addCell(new Label(7, 0 , "所属者",format));
         sheet.addCell(new Label(8, 0 , "拨打时长",format));
-        sheet.addCell(new Label(9, 0 , "通话记录",format));
+        sheet.addCell(new Label(9, 0 , "接听时长",format));
+        sheet.addCell(new Label(10, 0 , "通话记录",format));
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(int i=1;i<=listPlan.size();i++){
@@ -368,7 +370,8 @@ public class CallDetailController implements ICallPlanDetail {
             sheet.addCell(new Label(6, i , callPlan.getHangupTime()!=null? sdf.format(callPlan.getHangupTime()) : "",format));
             sheet.addCell(new Label(7, i , callPlan.getUserName(),format));
             sheet.addCell(new Label(8, i , callPlan.getDuration()!=null? DateUtils.secondToTime(callPlan.getDuration()): "",format));
-            sheet.addCell(new Label(9, i , map.get(callPlan.getCallId()),format));
+            sheet.addCell(new Label(9, i , callPlan.getBillSec()!=null? DateUtils.secondToTime(callPlan.getBillSec()): "",format));
+            sheet.addCell(new Label(10, i , map.get(callPlan.getCallId()),format));
         }
 
         wb.write();

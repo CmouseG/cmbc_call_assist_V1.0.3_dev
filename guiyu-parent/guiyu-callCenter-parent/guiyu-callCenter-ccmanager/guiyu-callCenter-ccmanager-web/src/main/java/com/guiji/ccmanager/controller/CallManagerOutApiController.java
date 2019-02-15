@@ -54,7 +54,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
         return Result.ok();
     }
 
-    @Override
+/*    @Override
     @GetMapping(value="out/getLineInfos")
     public Result.ReturnData<List<LineConcurrent>> getLineInfos(String customerId){
 
@@ -67,7 +67,7 @@ public class CallManagerOutApiController implements ICallManagerOut {
         List<LineConcurrent> resList = getLineConcurrent(lineInfos);
         log.info("response success getLineInfos，customerId[{}]", customerId);
         return Result.ok(resList);
-    }
+    }*/
 
     private List<LineConcurrent> getLineConcurrent(List<LineInfo> lineInfos){
         List<LineConcurrent> resList = new ArrayList<LineConcurrent>();

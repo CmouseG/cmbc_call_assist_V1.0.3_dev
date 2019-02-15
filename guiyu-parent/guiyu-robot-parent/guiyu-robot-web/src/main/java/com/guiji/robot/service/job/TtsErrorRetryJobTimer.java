@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.guiji.ai.api.ITts;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.TtsWavHisMapper;
 import com.guiji.robot.dao.entity.TtsCallbackHis;
@@ -40,8 +39,6 @@ public class TtsErrorRetryJobTimer extends IJobHandler{
 	ITtsWavService iTtsWavService;
 	@Autowired
 	AiNewTransService aiNewTransService;
-	@Autowired
-	ITts iTts;
 	
 	/**
 	 * TTS异常重试机制

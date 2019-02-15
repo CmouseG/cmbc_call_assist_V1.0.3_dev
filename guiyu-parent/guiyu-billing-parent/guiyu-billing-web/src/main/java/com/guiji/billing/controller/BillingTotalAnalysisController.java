@@ -31,11 +31,11 @@ public class BillingTotalAnalysisController {
     @ApiOperation(value="汇总报表按日", notes="汇总报表按日")
     @RequestMapping(value = "/totalChargingByDate", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultPage<BillingTotalChargingConsumerVo> totalAcctChargingByDay(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto,
-                                                                             @RequestHeader String orgCode){
+                                                                             @RequestHeader String userId){
         if(null == queryAcctChargingTotalDto){
             queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
         }
-        queryAcctChargingTotalDto.setOrgCode(orgCode);
+        queryAcctChargingTotalDto.setUserId(userId);
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByDate(queryAcctChargingTotalDto, page);
         page.setList(list);

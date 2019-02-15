@@ -38,13 +38,15 @@ public class QueryRechargeDto extends PageDto {
     /**
      * 开始日期
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+ //   @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date beginDate;
 
     /**
      * 结束日期
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+ //   @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
 
     public String getAccountId() {

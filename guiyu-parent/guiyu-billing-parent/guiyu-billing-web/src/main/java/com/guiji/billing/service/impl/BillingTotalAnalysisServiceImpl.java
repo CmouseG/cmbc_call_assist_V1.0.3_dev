@@ -1,5 +1,6 @@
 package com.guiji.billing.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.billing.dao.mapper.ext.BillingChargingTermMapper;
 import com.guiji.billing.dao.mapper.ext.BillingTotalAnalysisMapper;
 import com.guiji.billing.dto.QueryAcctChargingTotalDto;
@@ -9,7 +10,9 @@ import com.guiji.billing.entity.BillingAcctReconciliation;
 import com.guiji.billing.service.BillingTotalAnalysisService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
+import com.guiji.billing.utils.ResHandler;
 import com.guiji.billing.vo.BillingTotalChargingConsumerVo;
+import com.guiji.user.dao.entity.SysOrganization;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,9 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
 
     @Autowired
     private BillingTotalAnalysisMapper billingTotalAnalysisMapper;
+
+    @Autowired
+    private IAuth iAuth;
 
     /**
      * 按日查询费用统计
@@ -131,7 +137,12 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
      */
     @Override
     public List<BillingTotalChargingConsumerVo> totalChargingByDate(QueryAcctChargingTotalDto queryAcctChargingTotalDto, ResultPage<BillingTotalChargingConsumerVo> page) {
-        String orgCode = queryAcctChargingTotalDto.getOrgCode();
+        //获取用户ID
+        String userId = null != queryAcctChargingTotalDto.getUserId()?queryAcctChargingTotalDto.getUserId():"1";
+        //获取企业组织
+        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        //获取企业组织编码
+        String orgCode = null != org?org.getCode():"1";
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
@@ -144,7 +155,12 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
 
     @Override
     public int totalChargingCountByDate(QueryAcctChargingTotalDto queryAcctChargingTotalDto) {
-        String orgCode = queryAcctChargingTotalDto.getOrgCode();
+        //获取用户ID
+        String userId = null != queryAcctChargingTotalDto.getUserId()?queryAcctChargingTotalDto.getUserId():"1";
+        //获取企业组织
+        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        //获取企业组织编码
+        String orgCode = null != org?org.getCode():"1";
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){

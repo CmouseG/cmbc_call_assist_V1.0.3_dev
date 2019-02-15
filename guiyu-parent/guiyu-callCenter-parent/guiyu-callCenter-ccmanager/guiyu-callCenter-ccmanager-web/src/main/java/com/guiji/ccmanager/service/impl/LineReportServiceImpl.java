@@ -2,6 +2,7 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.LineInfoMapper;
 import com.guiji.callcenter.dao.ReportLineStatusMapper;
+import com.guiji.callcenter.dao.StastisticReportLineShardingMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
@@ -24,6 +25,8 @@ public class LineReportServiceImpl implements LineReportService {
 
     @Autowired
     StastisticReportLineMapper stastisticReportLineMapper;
+    @Autowired
+    StastisticReportLineShardingMapper stastisticReportLineShardingMapper;
     @Autowired
     ReportLineStatusMapper reportLineStatusMapper;
     @Autowired
@@ -50,7 +53,7 @@ public class LineReportServiceImpl implements LineReportService {
 
         //先删除，防止重跑
         stastisticReportLineMapper.deleteReportLineCode(endTime);
-        List<ReportLineCode> list = stastisticReportLineMapper.selectLineHangupCodeReport(startTime,endTime);
+        List<ReportLineCode> list = stastisticReportLineShardingMapper.selectLineHangupCodeReport(startTime,endTime);
 
         if(list!=null && list.size()>0){
 

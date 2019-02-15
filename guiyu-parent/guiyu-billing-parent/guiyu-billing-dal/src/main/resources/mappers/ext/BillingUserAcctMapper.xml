@@ -223,31 +223,35 @@
 
   <select id="queryUserRechargeTotal" resultType="com.guiji.billing.vo.UserRechargeTotalVo">
     SELECT
-      id                 ,
-      charging_id        ,
-      account_id         ,
-      type               ,
-      fee_mode           ,
-      amount      AS recharge_amount,
-      src_amount         ,
-      to_amount          ,
-      create_time AS oper_time,
-      oper_user_name AS oper_user_name
-    FROM billing_acct_charging_record
-    WHERE del_flag = 0
+      r.id                 ,
+      r.charging_id        ,
+      r.account_id         ,
+      r.type               ,
+      r.fee_mode           ,
+      r.amount      AS recharge_amount,
+      r.src_amount         ,
+      r.to_amount          ,
+      r.create_time AS oper_time,
+      r.oper_user_name AS oper_user_name
+    FROM billing_acct_charging_record r, billing_user_acct c
+    WHERE r.del_flag = 0
+      AND r.account_id = c.account_id
+      <if test="orgCode != null and orgCode != ''">
+        AND (c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%'))
+      </if>
       <if test="accountId != null">
-        AND account_id = #{accountId}
+        AND r.account_id = #{accountId}
       </if>
       <if test="type != null">
-        AND type = #{type}
+        AND r.type = #{type}
       </if>
       <if test="feeMode != null">
-        AND fee_mode = #{feeMode}
+        AND r.fee_mode = #{feeMode}
       </if>
       <if test="beginDate != null and endDate != null">
-        AND create_time BETWEEN #{beginDate} AND #{endDate}
+        AND r.create_time BETWEEN #{beginDate} AND #{endDate}
       </if>
-      ORDER BY create_time DESC
+      ORDER BY r.create_time DESC
       <if test="page != null and page.isPage ">
         <!--<if test="page.orderBy != null " >
             order by ${page.orderBy}	${page.sort}
@@ -260,18 +264,25 @@
 
   <select id="queryUserRechargeCount" resultType="java.lang.Integer">
     SELECT
-      COUNT(id)
-    FROM billing_acct_charging_record
-    WHERE del_flag = 0
-        <if test="accountId != null">
-          AND account_id = #{accountId}
-        </if>
-        <if test="type != null">
-          AND type = #{type}
-        </if>
-        <if test="beginDate != null and endDate != null">
-          AND create_time BETWEEN #{beginDate} AND #{endDate}
-        </if>
+      COUNT(*)
+    FROM billing_acct_charging_record r, billing_user_acct c
+    WHERE r.del_flag = 0
+      AND r.account_id = c.account_id
+      <if test="orgCode != null and orgCode != ''">
+        AND (c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%'))
+      </if>
+      <if test="accountId != null">
+        AND r.account_id = #{accountId}
+      </if>
+      <if test="type != null">
+        AND r.type = #{type}
+      </if>
+      <if test="feeMode != null">
+        AND r.fee_mode = #{feeMode}
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND r.create_time BETWEEN #{beginDate} AND #{endDate}
+      </if>
   </select>
 
   <!--我的计费项    begin-->

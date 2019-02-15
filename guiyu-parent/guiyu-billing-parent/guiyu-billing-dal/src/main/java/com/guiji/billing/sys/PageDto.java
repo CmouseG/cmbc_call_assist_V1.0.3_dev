@@ -9,7 +9,7 @@ import java.util.List;
  * 
  * @author pc-6
  */
-public class PageDto implements Serializable {
+public class PageDto extends BaseDto {
 
 
 	/**

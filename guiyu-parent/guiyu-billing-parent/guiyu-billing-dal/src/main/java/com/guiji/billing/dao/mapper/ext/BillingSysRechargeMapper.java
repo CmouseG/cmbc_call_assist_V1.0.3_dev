@@ -18,13 +18,13 @@ import java.util.List;
 public interface BillingSysRechargeMapper {
 
     //查询充值记录
-    List<SysRechargeTotalVo> queryCompanyRechargeTotal(@Param("companyName") String companyName,
+    List<SysRechargeTotalVo> queryCompanyRechargeTotal(@Param("companyName") String companyName, @Param("orgCode") String orgCode,
                                                    @Param("type") Integer type, @Param("feeMode") Integer feeMode,
                                                    @Param("beginDate") Date beginDate, @Param("endDate") Date endDate,
                                                    @Param("page") ResultPage<SysRechargeTotalVo> page);
 
     //查询充值记录数量
-    int queryCompanyRechargeCount(@Param("companyName") String companyName,
+    int queryCompanyRechargeCount(@Param("companyName") String companyName, @Param("orgCode") String orgCode,
                                @Param("type") Integer type, @Param("feeMode") Integer feeMode,
                                @Param("beginDate") Date beginDate, @Param("endDate") Date endDate);
 

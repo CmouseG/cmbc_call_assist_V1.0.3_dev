@@ -8,10 +8,7 @@ import com.guiji.billing.vo.UserRechargeTotalVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +25,12 @@ public class BillingSysRechargeController {
     //查询公司账户充值记录(系统侧使用)
     @ApiOperation(value="查询公司账户充值记录", notes="查询公司账户充值记录")
     @RequestMapping(value = "/queryCompanyRechargeTotal", method = {RequestMethod.POST})
-    public ResultPage<SysRechargeTotalVo> queryCompanyRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto){
+    public ResultPage<SysRechargeTotalVo> queryCompanyRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto,
+                                                                    @RequestHeader String orgCode){
+        if(null == queryRechargeDto){
+            queryRechargeDto = new QueryRechargeDto();
+        }
+        queryRechargeDto.setOrgCode(orgCode);
         ResultPage<SysRechargeTotalVo> page = new ResultPage<SysRechargeTotalVo>(queryRechargeDto);
         List<SysRechargeTotalVo> list = billingSysRechargeService.queryCompanyRechargeTotal(queryRechargeDto, page);
         page.setList(list);

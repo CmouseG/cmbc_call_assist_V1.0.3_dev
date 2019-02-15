@@ -37,7 +37,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
         }else if(null == beginDate && null != endDate){
             beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
-        return billingSysRechargeMapper.queryCompanyRechargeTotal(queryRechargeDto.getCompanyName(),
+        return billingSysRechargeMapper.queryCompanyRechargeTotal(queryRechargeDto.getCompanyName(), queryRechargeDto.getOrgCode(),
                 ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(), beginDate, endDate, page);
     }
 
@@ -55,7 +55,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
         }else if(null == beginDate && null != endDate){
             beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
-        return billingSysRechargeMapper.queryCompanyRechargeCount(queryRechargeDto.getCompanyName(),
+        return billingSysRechargeMapper.queryCompanyRechargeCount(queryRechargeDto.getCompanyName(), queryRechargeDto.getOrgCode(),
                 ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(), beginDate, endDate);
     }
 }

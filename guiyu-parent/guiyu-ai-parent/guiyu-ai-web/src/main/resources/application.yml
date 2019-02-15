@@ -78,5 +78,5 @@ xxl:
 
 ttsUrl: http://192.168.1.124:18061/ 
 filePath: /home/apps/ai/wav/
-notifyUrl: http://192.168.1.74:18000/api/ai/callback
+notifyUrl: http://192.168.1.81:18000/api/ai/callback
 

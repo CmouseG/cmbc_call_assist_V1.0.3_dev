@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface StastisticReportLineMapper {
 
-    List<ReportLineCode> selectLineHangupCodeReport(@Param("startTime") Date startTime, @Param("enTime") Date enTime);
+//    List<ReportLineCode> selectLineHangupCodeReport(@Param("startTime") Date startTime, @Param("enTime") Date enTime);
 
     void insertReportLineCodeBatch(List<ReportLineCode> list);
 

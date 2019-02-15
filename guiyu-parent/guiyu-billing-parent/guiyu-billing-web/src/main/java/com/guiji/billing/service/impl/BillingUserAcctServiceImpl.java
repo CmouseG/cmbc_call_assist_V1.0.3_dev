@@ -710,21 +710,23 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public boolean updUserAcctSet(UserAcctSetDto userAcctSetDto) {
         if(null != userAcctSetDto
-             //   && !StringUtils.isEmpty(userAcctSetDto.getAcctSetId())
                 && !StringUtils.isEmpty(userAcctSetDto.getAccountId()) && !StringUtils.isEmpty(userAcctSetDto.getSetKey())) {
-        /*    String acctSetId = userAcctSetDto.getAcctSetId();
+            boolean bool = false;
             String accountId = userAcctSetDto.getAccountId();
             String setKey = userAcctSetDto.getSetKey();
             BillingUserAcctSetBean acctSetExist = billingUserAcctMapper.queryUserAcctSet(accountId, setKey);
-            if(null != acctSetExist && !acctSetId.equals(acctSetExist.getAcctSetId())){
-                throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
-                        "账户配置信息KEY已经存在!");
-            }*/
-
             BillingUserAcctSetBean userAcctSet = new BillingUserAcctSetBean();
-            BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
-            userAcctSet.setUpdateTime(new Date());
-            boolean bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcctSet(userAcctSet));
+            if(null != acctSetExist){//已存在，则修改
+                BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
+                userAcctSet.setUpdateTime(new Date());
+                bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcctSet(userAcctSet));
+            }else{//不存在，则新增
+                BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
+                userAcctSet.setAcctSetId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
+                userAcctSet.setCreateTime(new Date());
+                userAcctSet.setDelFlag(SysDelEnum.NORMAL.getState());
+                bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcctSet(userAcctSet));
+            }
             return bool;
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),

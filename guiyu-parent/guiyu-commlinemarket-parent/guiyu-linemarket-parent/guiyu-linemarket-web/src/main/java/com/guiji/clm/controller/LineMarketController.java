@@ -351,6 +351,12 @@ public class LineMarketController {
 				//线路拥有者
 				Integer sipLineId = sipLineApply.getSipLineId();
 				SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
+				if(sipLineBaseInfo==null) {
+					List<SipLineBaseInfo> baseList = sipLineInfoService.queryByBaseSipId(sipLineApply.getAgentLineId()); 
+					if(baseList!=null) {
+						sipLineBaseInfo = baseList.get(0);
+					}
+				}
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				voList.add(vo);
 			}

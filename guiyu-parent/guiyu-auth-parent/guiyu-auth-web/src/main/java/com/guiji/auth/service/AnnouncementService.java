@@ -5,9 +5,13 @@ import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
+import com.guiji.notice.api.INoticeSend;
+import com.guiji.notice.enm.NoticeType;
+import com.guiji.notice.entity.MessageSend;
 import com.guiji.user.dao.SysAnnouncementMapper;
 import com.guiji.user.dao.entity.SysAnnouncement;
 import com.guiji.user.dao.entity.SysAnnouncementExample;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.NasUtil;
 import com.guiji.utils.StrUtils;
@@ -35,6 +39,10 @@ public class AnnouncementService {
     private final Logger logger = LoggerFactory.getLogger(AnnouncementService.class);
     @Autowired
     private SysAnnouncementMapper mapper;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private INoticeSend noticeSend;
 
     @Transactional
     public SysAnnouncement insert(SysAnnouncement sysAnnouncement, Long userId){
@@ -47,6 +55,21 @@ public class AnnouncementService {
         sysAnnouncement.setUpdateId(userId.intValue());
         mapper.insert(sysAnnouncement);
         logger.info("新增公告成功#end");
+        //发送站内信通知,当前发布人所在组织的所有账号都接收站内通知
+        SysUser sysUser = userService.getUserById(userId);
+        if (sysUser != null) {
+            List<SysUser> allUsers =  userService.getAllUserByOrgCode(sysUser.getOrgCode());
+            if (allUsers != null) {
+                for (SysUser user : allUsers) {
+                    MessageSend messageSend = new MessageSend();
+                    messageSend.setUserId(user.getId());
+                    messageSend.setNoticeType(NoticeType.announcement);
+                    messageSend.setMailContent(sysAnnouncement.getTitle());//站内信
+                    messageSend.setSmsContent(sysAnnouncement.getTitle());//短信
+                    noticeSend.sendMessage(messageSend);
+                }
+            }
+        }
         return sysAnnouncement;
     }
 

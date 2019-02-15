@@ -13,7 +13,6 @@ import org.apache.http.util.EntityUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.util.IOUtils;
 import com.guiji.ai.entity.GuiyuAIExceptionEnum;
-import com.guiji.ai.vo.HttpVO;
 import com.guiji.common.exception.GuiyuException;
 
 /**
@@ -51,25 +50,30 @@ public class HttpClientUtil
 	/**
 	 * post请求
 	 */
-	public static HttpVO post(String url, Object objParams) 
+	public static String post(String url, Object objParams) 
 	{
-		HttpVO httpVo = new HttpVO();
+		String result = null;
+		CloseableHttpClient httpClient = null;
+		CloseableHttpResponse response = null;
 		try
 		{
-			CloseableHttpClient httpClient = HttpClients.createDefault();
+			httpClient = HttpClients.createDefault();
 			HttpPost httpPost = new HttpPost(url);
 			setPostParams(httpPost, objParams);
-			CloseableHttpResponse response = httpClient.execute(httpPost);
+			response = httpClient.execute(httpPost);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				httpVo.setHttpEntity(response.getEntity());
+				HttpEntity entity = response.getEntity();
+				result = EntityUtils.toString(entity, "utf-8");
+				EntityUtils.consume(entity);
 			}
-			httpVo.setHttpResponse(response);
-			httpVo.setHttpClient(httpClient);
 		} 
 		catch (Exception e) {
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_Request_TTS);
+		} finally {
+			IOUtils.close(response);
+			IOUtils.close(httpClient);
 		}
-		return httpVo;
+		return result;
 	}
 	
 	/**

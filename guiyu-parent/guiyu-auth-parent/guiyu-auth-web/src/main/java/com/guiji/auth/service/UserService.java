@@ -3,6 +3,8 @@ package com.guiji.auth.service;
 import java.util.*;
 
 import com.guiji.auth.model.SysUserRoleVo;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.entity.*;
@@ -45,6 +47,9 @@ public class UserService {
 
 	@Autowired
 	private RedisUtil redisUtil;
+
+	@Autowired
+	private LineMarketRemote lineMarketRemote;
 
 	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
 
@@ -182,7 +187,8 @@ public class UserService {
 		Map<String,Object> result=new HashMap<>();
 		SysUser user=mapper.selectByPrimaryKey(userId);
 		ReturnData<UserAiCfgVO> custAccount=iRobotRemote.queryCustAccount(String.valueOf(userId));
-		ReturnData<List<LineConcurrent>> callData=iCallManagerOut.getLineInfos(String.valueOf(userId));
+		//ReturnData<List<LineConcurrent>> callData=iCallManagerOut.getLineInfos(String.valueOf(userId));
+		ReturnData<List<SipLineVO>> callData= lineMarketRemote.queryUserSipLineList(String.valueOf(userId));
 		result.put("user", user);
 		result.put("robot", custAccount.getBody());
 		result.put("call", callData.getBody());

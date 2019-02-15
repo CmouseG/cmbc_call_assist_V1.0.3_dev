@@ -365,22 +365,22 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     @Override
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
-        if(null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getAccountId())) {
-            String accountId = queryRechargeDto.getAccountId();
-            String orgCode = queryRechargeDto.getOrgCode();
-            Date beginDate = queryRechargeDto.getBeginDate();
-            Date endDate = queryRechargeDto.getEndDate();
-            if(null != beginDate && null == endDate){
-                endDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_DATE, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
-            }else if(null == beginDate && null != endDate){
-                beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
-            }
-            return billingUserAcctMapper.queryUserRechargeTotal(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
-                    beginDate, endDate, page);
-        }else{
-            throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
-                    SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+        String accountId = queryRechargeDto.getAccountId();
+        //获取用户ID
+        String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
+        //获取企业组织
+        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        //获取企业组织编码
+        String orgCode = null != org?org.getCode():"1";
+        Date beginDate = queryRechargeDto.getBeginDate();
+        Date endDate = queryRechargeDto.getEndDate();
+        if(null != beginDate && null == endDate){
+            endDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
+        }else if(null == beginDate && null != endDate){
+            beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
+        return billingUserAcctMapper.queryUserRechargeTotal(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
+                beginDate, endDate, page);
     }
 
     /**
@@ -390,22 +390,22 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     @Override
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
-        if(null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getAccountId())) {
-            String accountId = queryRechargeDto.getAccountId();
-            String orgCode = queryRechargeDto.getOrgCode();
-            Date beginDate = queryRechargeDto.getBeginDate();
-            Date endDate = queryRechargeDto.getEndDate();
-            if(null != beginDate && null == endDate){
-                endDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
-            }else if(null == beginDate && null != endDate){
-                beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_DATE, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
-            }
-            return billingUserAcctMapper.queryUserRechargeCount(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
-                    beginDate, endDate);
-        }else{
-            throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
-                    SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+        String accountId = queryRechargeDto.getAccountId();
+        //获取用户ID
+        String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
+        //获取企业组织
+        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        //获取企业组织编码
+        String orgCode = null != org?org.getCode():"1";
+        Date beginDate = queryRechargeDto.getBeginDate();
+        Date endDate = queryRechargeDto.getEndDate();
+        if(null != beginDate && null == endDate){
+            endDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
+        }else if(null == beginDate && null != endDate){
+            beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_END_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
+        return billingUserAcctMapper.queryUserRechargeCount(accountId, orgCode, ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(),
+                beginDate, endDate);
     }
 
     /**
@@ -712,21 +712,24 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public boolean updUserAcctSet(UserAcctSetDto userAcctSetDto) {
         if(null != userAcctSetDto
-             //   && !StringUtils.isEmpty(userAcctSetDto.getAcctSetId())
                 && !StringUtils.isEmpty(userAcctSetDto.getAccountId()) && !StringUtils.isEmpty(userAcctSetDto.getSetKey())) {
-        /*    String acctSetId = userAcctSetDto.getAcctSetId();
+            boolean bool = false;
+            //查询推送设置
             String accountId = userAcctSetDto.getAccountId();
             String setKey = userAcctSetDto.getSetKey();
             BillingUserAcctSetBean acctSetExist = billingUserAcctMapper.queryUserAcctSet(accountId, setKey);
-            if(null != acctSetExist && !acctSetId.equals(acctSetExist.getAcctSetId())){
-                throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
-                        "账户配置信息KEY已经存在!");
-            }*/
-
             BillingUserAcctSetBean userAcctSet = new BillingUserAcctSetBean();
-            BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
-            userAcctSet.setUpdateTime(new Date());
-            boolean bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcctSet(userAcctSet));
+            if(null != acctSetExist){//已存在，修改
+                BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
+                userAcctSet.setUpdateTime(new Date());
+                bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcctSet(userAcctSet));
+            }else{//不存在，新增
+                BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
+                userAcctSet.setAcctSetId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
+                userAcctSet.setCreateTime(new Date());
+                userAcctSet.setDelFlag(SysDelEnum.NORMAL.getState());
+                bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcctSet(userAcctSet));
+            }
             return bool;
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),

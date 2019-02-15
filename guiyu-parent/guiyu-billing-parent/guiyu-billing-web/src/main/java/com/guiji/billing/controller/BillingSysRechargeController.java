@@ -26,11 +26,11 @@ public class BillingSysRechargeController {
     @ApiOperation(value="查询公司账户充值记录", notes="查询公司账户充值记录")
     @RequestMapping(value = "/queryCompanyRechargeTotal", method = {RequestMethod.POST})
     public ResultPage<SysRechargeTotalVo> queryCompanyRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto,
-                                                                    @RequestHeader String orgCode){
+                                                                    @RequestHeader String userId){
         if(null == queryRechargeDto){
             queryRechargeDto = new QueryRechargeDto();
         }
-        queryRechargeDto.setOrgCode(orgCode);
+        queryRechargeDto.setUserId(userId);
         ResultPage<SysRechargeTotalVo> page = new ResultPage<SysRechargeTotalVo>(queryRechargeDto);
         List<SysRechargeTotalVo> list = billingSysRechargeService.queryCompanyRechargeTotal(queryRechargeDto, page);
         page.setList(list);

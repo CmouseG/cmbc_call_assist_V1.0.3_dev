@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
-import com.guiji.ai.api.ITts;
-import com.guiji.ai.vo.TtsReqVO;
+import com.guiji.ai.api.IAi;
+import com.guiji.ai.vo.AsynPostReqVO;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
@@ -62,7 +62,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	@Autowired
 	TtsWavHisMapper ttsWavHisMapper;
 	@Autowired
-	ITts iTts;
+	IAi iAi;
 	@Autowired
 	AiAsynDealService aiAsynDealService;
 	@Autowired
@@ -416,13 +416,13 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			ttsWavHis.setTtsTxtJsonData(jsonTxtStr);
 			ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
 			//开始拼装调用
-			TtsReqVO ttsReqVO = new TtsReqVO();
+			AsynPostReqVO ttsReqVO = new AsynPostReqVO();
 			ttsReqVO.setBusId(busiId);	//唯一key
 			ttsReqVO.setModel(hsReplace.getUse_speaker_flag());
 			ttsReqVO.setContents(contents);
 			//调用TTS工具
 			logger.info("开始调用TTS工具，请求参数:{}...",ttsReqVO);
-			ReturnData<String> ttsRspData = iTts.translate(ttsReqVO);
+			ReturnData<String> ttsRspData = iAi.asynPost(ttsReqVO);
 			logger.info("完成TTS工具调用,返回参数:{}",ttsRspData);
 			if(ttsRspData == null) {
 				logger.error("调用TTS接口发生异常,返回数据为空！");

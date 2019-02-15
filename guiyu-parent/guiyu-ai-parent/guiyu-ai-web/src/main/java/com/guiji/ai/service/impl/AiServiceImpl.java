@@ -57,7 +57,7 @@ public class AiServiceImpl implements IAiService
 	@Override
 	public TtsRspVO getResultByBusId(String busId)
 	{
-		String result = HttpClientUtil.get(ttsUrl+"/getResultByBusId?busId="+busId);
+		String result = HttpClientUtil.get(ttsUrl+"getResultByBusId?busId="+busId);
 		JSONObject returnData = JSONObject.parseObject(result);
 		return JsonUtil.json2Bean(returnData.getString("body"), TtsRspVO.class);
 	}

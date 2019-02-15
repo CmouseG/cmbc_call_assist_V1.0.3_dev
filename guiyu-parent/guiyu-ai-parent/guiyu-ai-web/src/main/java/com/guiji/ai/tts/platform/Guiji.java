@@ -30,7 +30,7 @@ public class Guiji implements TtsService
 	public File synPost(SynPostReqVO postVO) throws Exception
 	{
 		File file = null;
-		HttpVO httpVo = HttpClientUtil.post(ttsUrl+"/synPost", postVO);
+		HttpVO httpVo = HttpClientUtil.post(ttsUrl+"synPost", postVO);
 		file = FileUtil.writeToFile(httpVo.getHttpEntity(),filePath);
 		closeHttp(httpVo);
 		return file;
@@ -42,7 +42,7 @@ public class Guiji implements TtsService
 	@Override
 	public String asynPost(AsynPostReqVO ttsReq) throws Exception
 	{
-		HttpVO httpVo = HttpClientUtil.post(ttsUrl+"/asynPost", ttsReq);
+		HttpVO httpVo = HttpClientUtil.post(ttsUrl+"asynPost", ttsReq);
 		String result = EntityUtils.toString(httpVo.getHttpEntity(), "utf-8");
 		closeHttp(httpVo);
 		return result;

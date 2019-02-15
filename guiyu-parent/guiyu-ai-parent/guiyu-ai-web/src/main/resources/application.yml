@@ -63,9 +63,6 @@ properties:
   error: properties/error.properties
   threadpool: properties/threadPool.properties
 
-filePath: /home/apps/ai/tts/wav/
-#filePath: E:\file\
-
 #xxl-job admin中心配置
 xxl:
   job:
@@ -77,4 +74,8 @@ xxl:
       port: 9051
       logpath: /home/logs/guiyu-ai-web
       logretentiondays: -1
-    accessToken:
+    accessToken: 
+
+ttsUrl: http://192.168.1.124:18061/
+filePath: /home/apps/ai/wav/
+

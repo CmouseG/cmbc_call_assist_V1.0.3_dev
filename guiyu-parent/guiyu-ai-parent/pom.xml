@@ -13,8 +13,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>guiyu-ai-api</module>
-        <module>guiyu-ai-dal</module>
         <module>guiyu-ai-web</module>
+        <module>guiyu-ai-dal</module>
     </modules>
 
 

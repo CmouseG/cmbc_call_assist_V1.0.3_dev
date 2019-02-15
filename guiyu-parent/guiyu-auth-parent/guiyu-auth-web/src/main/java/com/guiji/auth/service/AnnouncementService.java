@@ -64,7 +64,8 @@ public class AnnouncementService {
                     MessageSend messageSend = new MessageSend();
                     messageSend.setUserId(user.getId());
                     messageSend.setNoticeType(NoticeType.announcement);
-                    messageSend.setMailContent(sysAnnouncement.getTitle());
+                    messageSend.setMailContent(sysAnnouncement.getTitle());//站内信
+                    messageSend.setSmsContent(sysAnnouncement.getTitle());//短信
                     noticeSend.sendMessage(messageSend);
                 }
             }

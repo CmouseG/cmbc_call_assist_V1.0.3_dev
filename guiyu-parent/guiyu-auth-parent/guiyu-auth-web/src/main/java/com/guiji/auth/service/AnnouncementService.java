@@ -64,7 +64,7 @@ public class AnnouncementService {
                     MessageSend messageSend = new MessageSend();
                     messageSend.setUserId(user.getId());
                     messageSend.setNoticeType(NoticeType.announcement);
-                    messageSend.setMailContent(sysAnnouncement.getContent());
+                    messageSend.setMailContent(sysAnnouncement.getTitle());
                     noticeSend.sendMessage(messageSend);
                 }
             }

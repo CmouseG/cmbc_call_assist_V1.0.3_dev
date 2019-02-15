@@ -16,15 +16,21 @@ public interface SmsTaskDetailMapper {
 
     int insertSelective(SmsTaskDetail record);
 
+    List<SmsTaskDetail> selectByExampleWithBLOBs(SmsTaskDetailExample example);
+
     List<SmsTaskDetail> selectByExample(SmsTaskDetailExample example);
 
     SmsTaskDetail selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") SmsTaskDetail record, @Param("example") SmsTaskDetailExample example);
 
+    int updateByExampleWithBLOBs(@Param("record") SmsTaskDetail record, @Param("example") SmsTaskDetailExample example);
+
     int updateByExample(@Param("record") SmsTaskDetail record, @Param("example") SmsTaskDetailExample example);
 
     int updateByPrimaryKeySelective(SmsTaskDetail record);
+
+    int updateByPrimaryKeyWithBLOBs(SmsTaskDetail record);
 
     int updateByPrimaryKey(SmsTaskDetail record);
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class SendMReqVO
 {
+	private String planuuid;
 	private String intentionTag; //意向标签
 	private String phone; // 手机号码
 	private Integer userId; //用户 

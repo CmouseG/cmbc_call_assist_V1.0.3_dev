@@ -296,6 +296,10 @@ public class LineMarketController {
 					//盲区
 					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
 				}
+				//线路拥有者(查询原线路的归属企业)
+				Integer sipLineId = sipLineExclusive.getSipLineId();
+				SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
+				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				voList.add(vo);
 			}
 			return voList;
@@ -345,7 +349,9 @@ public class LineMarketController {
 					}
 				}
 				//线路拥有者
-				vo.setLineOwner(sipLineManager.getLineOwner(dataLocalCacheUtil.queryOrgByCode(sipLineApply.getOrgCode())));
+				Integer sipLineId = sipLineApply.getSipLineId();
+				SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
+				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				voList.add(vo);
 			}
 			return voList;

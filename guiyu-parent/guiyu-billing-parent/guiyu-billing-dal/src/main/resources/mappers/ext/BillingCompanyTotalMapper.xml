@@ -70,7 +70,7 @@
   </select>
 
 
-  <select id="" resultType="com.guiji.billing.vo.TotalChargingItemVo">
+  <select id="totalCompanyChargingByDate" resultType="com.guiji.billing.vo.TotalChargingItemVo">
     SELECT
       opt_time AS total_date,
       charging_item_id,

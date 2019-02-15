@@ -18,4 +18,6 @@ public class SipLineExclusiveVO extends SipLineExclusive{
 	private String areasName;
 	//盲区名称
 	private String exceptAreasName;
+	//线路归属
+	private String lineOwner;
 }

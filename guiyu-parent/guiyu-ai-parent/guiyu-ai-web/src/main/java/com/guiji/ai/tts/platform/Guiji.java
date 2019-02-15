@@ -1,5 +1,6 @@
 package com.guiji.ai.tts.platform;
 
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.ai.tts.TtsService;
 import com.guiji.ai.util.HttpClientUtil;
 import com.guiji.ai.vo.AsynPostReqVO;
@@ -9,7 +10,7 @@ public class Guiji implements TtsService
 {
 	private String ttsUrl;
 	
-	public Guiji(String ttsUrl, String filePath)
+	public Guiji(String ttsUrl)
 	{
 		this.ttsUrl = ttsUrl;
 	}
@@ -21,7 +22,7 @@ public class Guiji implements TtsService
 	public String synPost(SynPostReqVO postVO) throws Exception
 	{
 		String result = HttpClientUtil.post(ttsUrl+"synPost", postVO);
-		return result;
+		return JSONObject.parseObject(result).getString("body");
 	}
 
 	/**
@@ -31,6 +32,6 @@ public class Guiji implements TtsService
 	public String asynPost(AsynPostReqVO ttsReq) throws Exception
 	{
 		String result = HttpClientUtil.post(ttsUrl+"asynPost", ttsReq);
-		return result;
+		return JSONObject.parseObject(result).getString("body");
 	}
 }

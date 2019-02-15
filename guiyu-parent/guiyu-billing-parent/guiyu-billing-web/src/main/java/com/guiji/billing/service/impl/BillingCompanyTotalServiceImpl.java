@@ -1,11 +1,14 @@
 package com.guiji.billing.service.impl;
 
+import com.guiji.auth.api.IAuth;
 import com.guiji.billing.dao.mapper.ext.BillingCompanyTotalMapper;
 import com.guiji.billing.dto.QueryTotalChargingItemDto;
 import com.guiji.billing.service.BillingCompanyTotalService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
+import com.guiji.billing.utils.ResHandler;
 import com.guiji.billing.vo.TotalChargingItemVo;
+import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,9 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     @Autowired
     private BillingCompanyTotalMapper billingCompanyTotalMapper;
 
+    @Autowired
+    private IAuth iAuth;
+
     /**
      * 统计公司企业日期、线路数据
      * @param queryTotalChargingItemDto
@@ -28,6 +34,12 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
      */
     @Override
     public List<TotalChargingItemVo> totalCompanyChargingItem(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemVo> page) {
+        //获取用户ID
+        String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
+        //获取企业组织
+        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        //获取企业组织编码
+        String orgCode = null != org?org.getCode():"1";
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
@@ -52,6 +64,12 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
      */
     @Override
     public int totalCompanyChargingCount(QueryTotalChargingItemDto queryTotalChargingItemDto) {
+        //获取用户ID
+        String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
+        //获取企业组织
+        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        //获取企业组织编码
+        String orgCode = null != org?org.getCode():"1";
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),

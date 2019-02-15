@@ -76,7 +76,6 @@ xxl:
       logretentiondays: -1
     accessToken: 
 
-ttsUrl: http://192.168.1.124:18061/ 
-filePath: /home/apps/ai/wav/
+ttsUrl: http://localhost:18061/ 
 notifyUrl: http://192.168.1.78:18000/api/ai/callback
 

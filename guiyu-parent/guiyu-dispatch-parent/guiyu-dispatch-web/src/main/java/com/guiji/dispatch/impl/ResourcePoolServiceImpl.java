@@ -177,29 +177,29 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         return sysUserList;
     }
 
-    private int getSystemMaxLine(List<SysUser> sysUserList) {
-        logger.info("查询系统线路最大并发数#start");
-        int systemMaxLine = 0;
-        if (sysUserList != null && sysUserList.size() > 0) {
-            for (SysUser sysUser:sysUserList) {
-                //根据用户获取各个用户配置线路并发数量，调用呼叫中心接口
-                List<LineConcurrent> lineList = null;
-                Result.ReturnData<List<LineConcurrent>> lineResult = callManagerOut.getLineInfos(String.valueOf(sysUser.getId()));
-                if (lineResult.success) {
-                    if (lineResult.getBody() != null) {
-                        lineList = lineResult.getBody();
-                        for (LineConcurrent line : lineList) {
-                            systemMaxLine = systemMaxLine + line.getConcurrent();
-                        }
-                    }
-                } else {
-                    logger.info("调用呼叫中心获取用户线路信息失败，用户id:" + sysUser.getId());
-                }
-            }
-        }
-        logger.info("查询系统线路最大并发数#end");
-        return systemMaxLine;
-    }
+//    private int getSystemMaxLine(List<SysUser> sysUserList) {
+//        logger.info("查询系统线路最大并发数#start");
+//        int systemMaxLine = 0;
+//        if (sysUserList != null && sysUserList.size() > 0) {
+//            for (SysUser sysUser:sysUserList) {
+//                //根据用户获取各个用户配置线路并发数量，调用呼叫中心接口
+//                List<LineConcurrent> lineList = null;
+//                Result.ReturnData<List<LineConcurrent>> lineResult = callManagerOut.getLineInfos(String.valueOf(sysUser.getId()));
+//                if (lineResult.success) {
+//                    if (lineResult.getBody() != null) {
+//                        lineList = lineResult.getBody();
+//                        for (LineConcurrent line : lineList) {
+//                            systemMaxLine = systemMaxLine + line.getConcurrent();
+//                        }
+//                    }
+//                } else {
+//                    logger.info("调用呼叫中心获取用户线路信息失败，用户id:" + sysUser.getId());
+//                }
+//            }
+//        }
+//        logger.info("查询系统线路最大并发数#end");
+//        return systemMaxLine;
+//    }
 
     private Integer getSystemMaxRobot() {
         Integer systemMaxRobot = 0;
@@ -214,32 +214,32 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         return systemMaxRobot;
     }
 
-    private List<UserResourceDto> getUserLineByUserId(List<SysUser> sysUserList) {
-        logger.info("查询每个用户线路最大并发数#start");
-        List<UserResourceDto> userLineList = new ArrayList<UserResourceDto>();
-        if (sysUserList != null && sysUserList.size() > 0) {
-            for (SysUser sysUser:sysUserList) {
-                //根据用户获取各个用户配置线路并发数量，调用呼叫中心接口
-                List<LineConcurrent> lineList = null;
-                String userId = String.valueOf(sysUser.getId());
-                int maxLineConcurrency = 0;
-                Result.ReturnData<List<LineConcurrent>> lineResult = callManagerOut.getLineInfos(userId);
-                if (lineResult.success) {
-                    if (lineResult.getBody() != null) {
-                        lineList = lineResult.getBody();
-                        for (LineConcurrent line : lineList) {
-                            maxLineConcurrency = maxLineConcurrency + line.getConcurrent();
-                        }
-                    }
-                }else {
-                    logger.info("调用呼叫中心获取用户线路并发数失败，用户id:" + sysUser.getId()+"|错误信息:" + lineResult.getMsg());
-                }
-                userLineList.add(new UserResourceDto(userId,maxLineConcurrency));
-            }
-        }
-        logger.info("查询每个用户线路最大并发数#end");
-        return userLineList;
-    }
+//    private List<UserResourceDto> getUserLineByUserId(List<SysUser> sysUserList) {
+//        logger.info("查询每个用户线路最大并发数#start");
+//        List<UserResourceDto> userLineList = new ArrayList<UserResourceDto>();
+//        if (sysUserList != null && sysUserList.size() > 0) {
+//            for (SysUser sysUser:sysUserList) {
+//                //根据用户获取各个用户配置线路并发数量，调用呼叫中心接口
+//                List<LineConcurrent> lineList = null;
+//                String userId = String.valueOf(sysUser.getId());
+//                int maxLineConcurrency = 0;
+//                Result.ReturnData<List<LineConcurrent>> lineResult = callManagerOut.getLineInfos(userId);
+//                if (lineResult.success) {
+//                    if (lineResult.getBody() != null) {
+//                        lineList = lineResult.getBody();
+//                        for (LineConcurrent line : lineList) {
+//                            maxLineConcurrency = maxLineConcurrency + line.getConcurrent();
+//                        }
+//                    }
+//                }else {
+//                    logger.info("调用呼叫中心获取用户线路并发数失败，用户id:" + sysUser.getId()+"|错误信息:" + lineResult.getMsg());
+//                }
+//                userLineList.add(new UserResourceDto(userId,maxLineConcurrency));
+//            }
+//        }
+//        logger.info("查询每个用户线路最大并发数#end");
+//        return userLineList;
+//    }
 
     private List<UserResourceDto> getUserRobotByUserId(List<SysUser> sysUserList) {
         logger.info("查询每个用户机器人最大并发数#start");

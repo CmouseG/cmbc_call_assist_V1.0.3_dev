@@ -42,8 +42,10 @@ public class AiController implements IAi
 	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) {
 		try
 		{
+			logger.info("语音合成（同步）...");
 			String model = postVO.getModel();
 			String audioUrl = ai.getPlat(model).synPost(postVO);
+			logger.info("audioUrl = " + audioUrl);
 			return Result.ok(audioUrl);
 		} catch (Exception e) {
 			logger.error("请求失败！", e);

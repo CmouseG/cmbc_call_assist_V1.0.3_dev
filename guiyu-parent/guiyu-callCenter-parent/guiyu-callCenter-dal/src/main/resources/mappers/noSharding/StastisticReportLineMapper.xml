@@ -118,28 +118,6 @@
         create_time = #{createTime}
     </delete>
 
-    <select id="selectLineHangupCodeReport" resultType="com.guiji.callcenter.dao.entity.ReportLineCode">
-        SELECT
-        hangup_code AS hangupCode,
-        line_id AS lineId,
-        org_code AS orgCode,
-        SUM(is_cancel) AS isCancel,
-        COUNT(call_id) AS totalCalls,
-        <!--ADDDATE(min(create_time),INTERVAL -MINUTE(min(create_time)) % 5 MINUTE) AS createTime,-->
-        SUBSTRING(GROUP_CONCAT(phone_num),1,119) AS phoneNum,
-        SUM(is_answer) AS answerCalls
-
-        FROM
-        call_out_plan
-        WHERE
-        create_time >= #{startTime}
-        AND create_time &lt;  #{enTime}
-        AND
-        call_state>6
-
-        GROUP BY hangup_code,line_id,is_cancel,org_code
-    </select>
-
     <insert id="insertReportLineCodeBatch" parameterType="java.util.List">
         INSERT INTO  report_line_code (
         create_time,line_id,hangup_code,is_cancel,total_calls,answer_calls,phone_num,org_code)

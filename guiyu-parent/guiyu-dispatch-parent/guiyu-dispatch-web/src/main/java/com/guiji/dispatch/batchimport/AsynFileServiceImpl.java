@@ -114,7 +114,6 @@ public class AsynFileServiceImpl implements AsynFileService {
 		// 用户
 		ReturnData<SysUser> user = authService.getUserById(userId);
 		// 线路
-		System.out.println();
 		String lineName="";
 		for(DispatchLines lines : dispatchPlan.getLines()){
 			lineName = lineName +""+ lines.getLineName()+",";

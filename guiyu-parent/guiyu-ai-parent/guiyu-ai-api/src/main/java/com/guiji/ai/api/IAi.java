@@ -1,7 +1,5 @@
 package com.guiji.ai.api;
 
-import java.io.File;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +20,7 @@ public interface IAi {
      * 语音合成（同步）
      */
 	@PostMapping(value = "synPost")
-	public ReturnData<File> synPost(@RequestBody SynPostReqVO postVO);
+	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO);
 	
 	/**
      * 语音合成（异步）

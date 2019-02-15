@@ -18,6 +18,7 @@ import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.SipLineShare;
 import com.guiji.clm.enm.SipLineApplyStatusEnum;
 import com.guiji.clm.enm.SipLineApplyTypeEnum;
+import com.guiji.clm.enm.SipLineFeeTypeEnum;
 import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.enm.SipLineTypeEnum;
 import com.guiji.clm.exception.ClmErrorEnum;
@@ -413,6 +414,7 @@ public class SipLineManager {
 				sipLineExclusive.setLineType(SipLineTypeEnum.AGENT.getCode()); //线路类型：代理
 //				sipLineExclusive.setUserId(sipLineApplyExist.getApplyUser()); //线路归属人（审批后线路分配给企业，不需要到人，因为申请人是企业管理员）
 				sipLineExclusive.setBelongOrgCode(sipLineApplyExist.getApplyOrgCode()); //线路归属人企业
+				sipLineExclusive.setLineFeeType(sipLineBaseInfo.getLineFeeType()); //线路计费类型
 				sipLineExclusive.setCrtUser(sipLineApplyExist.getApplyUser()); //创建人
 				sipLineExclusive.setUpdateUser(sipLineApplyExist.getApplyUser());	//最后更新人
 			}else if(SipLineApplyTypeEnum.LINE_MERGE.getCode()==applyType) {
@@ -553,7 +555,7 @@ public class SipLineManager {
 		//行业名称
 		String tradeName = tempTradeData.getBody().getIndustryName();
 		//线路归属
-		String lineOwner = this.getLineOwner(dataLocalCacheUtil.queryOrgByCode(orgCode));
+		String lineOwner = this.getLineOwner(sipLineBaseInfo);
 		//外显归属地
 		String overtArea = AreaDictUtil.getAreaName(sipLineBaseInfo.getOvertArea());
 		if(overtArea.indexOf("省")>0) {
@@ -562,6 +564,34 @@ public class SipLineManager {
 			overtArea = overtArea.substring(0, overtArea.indexOf("市"));
 		}
 		return lineOwner+tradeName+"线路-"+overtArea;
+	}
+	
+	/**
+	 * 根据共享线路企业信息，获取线路拥有者类型
+	 * @param org
+	 * @return
+	 */
+	public String getLineOwner(SipLineBaseInfo sipLineBaseInfo) {
+		SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getOrgCode());
+		if(org!=null) {
+			if(sipLineBaseInfo.getLineFeeType()!=null && SipLineFeeTypeEnum.UNDO_FEE.getCode()==sipLineBaseInfo.getLineFeeType()) {
+				//如果管理员选择线路时自备线路了，那么直接返回自备线路
+				return "自备";
+			}
+			if(org.getType()!=null ) {
+				if(1==org.getType()) {
+					if("1".equals(org.getCode())) {
+						//总部
+						return "自营";
+					}else {
+						return "代理商";
+					}
+				}else if(2==org.getType()) {
+					return "自备";
+				}
+			}
+		}
+		return "自营";
 	}
 	
 	/**
@@ -580,7 +610,7 @@ public class SipLineManager {
 						return "代理商";
 					}
 				}else if(2==org.getType()) {
-					return "企业";
+					return "自备";
 				}
 			}
 		}

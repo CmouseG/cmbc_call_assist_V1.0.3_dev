@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.VoipGwPort;
+import com.guiji.clm.enm.SipLineFeeTypeEnum;
 import com.guiji.clm.vo.FeeItem;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.utils.JsonUtils;
@@ -34,7 +35,10 @@ public class FeeService {
 	 * @param sipLineExclusive	SIP线路信息
 	 */
 	public void sipFee(FeeOptEnum feeOptEnum,SipLineExclusive sipLineExclusive) {
-		if(sipLineExclusive!=null && StrUtils.isNotEmpty(sipLineExclusive.getBelongUser()) && sipLineExclusive.getUnivalent()!=null) {
+		if(sipLineExclusive!=null 
+				&& StrUtils.isNotEmpty(sipLineExclusive.getBelongUser()) 
+				&& sipLineExclusive.getUnivalent()!=null 
+				&& (sipLineExclusive.getLineFeeType()!=null&&SipLineFeeTypeEnum.DO_FEE.getCode()==sipLineExclusive.getLineFeeType())) {
 			//sip线路转为计费项
 			FeeItem feeItem = this.sip2Fee(sipLineExclusive);
 			switch (feeOptEnum){

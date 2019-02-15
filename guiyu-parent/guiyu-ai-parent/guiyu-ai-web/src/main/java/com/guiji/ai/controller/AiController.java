@@ -40,12 +40,12 @@ public class AiController implements IAi
 	
 	@Override
 	@PostMapping(value = "synPost")
-	public ReturnData<File> synPost(@RequestBody SynPostReqVO postVO) {
+	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) {
 		try
 		{
 			String model = postVO.getModel();
-			File file = ai.getPlat(model).synPost(postVO);
-			return Result.ok(file);
+			String audioUrl = ai.getPlat(model).synPost(postVO);
+			return Result.ok(audioUrl);
 		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return null;

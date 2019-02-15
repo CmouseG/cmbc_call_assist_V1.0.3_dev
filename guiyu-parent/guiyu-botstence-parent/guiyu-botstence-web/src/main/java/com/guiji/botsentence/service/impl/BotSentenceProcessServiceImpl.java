@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
@@ -80,6 +81,7 @@ import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.Pinyin4jUtil;
 import com.guiji.component.client.util.SystemUtil;
 import com.guiji.common.exception.CommonException;
+import com.guiji.component.result.ServerResult;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
@@ -4581,5 +4583,51 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			return list.get(0);
 		}
 		return null;
+	}
+	
+	
+
+	@Override
+	public void generateTTSCallback(String id, String url) {
+		logger.info("接收TTS合成回调参数: " + id);
+		logger.info("接收TTS合成回调参数: " + url);
+		if(StringUtils.isNotBlank(id) && StringUtils.isNotBlank(url)) {
+			BotSentenceTtsTask ttsTask = botSentenceTtsTaskMapper.selectByPrimaryKey(new Long(id));
+			if(null != ttsTask) {
+				ttsTask.setVoliceUrl(url);
+				ttsTask.setStatus(Constant.TTS_FINISH);
+				botSentenceTtsTaskMapper.updateByPrimaryKey(ttsTask);
+				
+				if("01".equals(ttsTask.getBusiType()) || "03".equals(ttsTask.getBusiType())) {
+					//更新volice url
+					VoliceInfo volice = voliceServiceImpl.getVoliceInfo(new Long(ttsTask.getBusiId()));
+					if(!url.equals(volice.getVoliceUrl())) {
+						//判断是否合成录音，如果是合成录音，则不更新URL
+						if(botSentenceTtsService.validateContainParam(volice.getContent())){
+							logger.info("当前录音需要TTS合成，不需要更新录音 URL");
+							volice.setVoliceUrl(null);
+						}else {
+							volice.setVoliceUrl(url);
+							volice.setLstUpdateTime(new Date(System.currentTimeMillis()));
+							volice.setLstUpdateUser("tts");
+							volice.setNeedTts(false);
+						}
+						voliceInfoMapper.updateByPrimaryKeySelective(volice);
+						logger.info("更新TTS合成URL成功...");
+					}
+				}else if("02".equals(ttsTask.getBusiType())) {
+					//更新backup url
+					BotSentenceTtsBackup backup = botSentenceTtsBackupMapper.selectByPrimaryKey(ttsTask.getBusiId());
+					if(!url.equals(backup.getUrl())) {
+						backup.setUrl(url);
+						backup.setLstUpdateTime(new Date(System.currentTimeMillis()));
+						backup.setLstUpdateUser("tts");
+						botSentenceTtsBackupMapper.updateByPrimaryKeySelective(backup);
+						logger.info("更新备用文案TTS合成URL成功...");
+					}
+				}
+				
+			}
+		}
 	}
 }

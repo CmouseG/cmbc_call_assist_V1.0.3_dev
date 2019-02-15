@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
 import com.guiji.platfrom.Welink;

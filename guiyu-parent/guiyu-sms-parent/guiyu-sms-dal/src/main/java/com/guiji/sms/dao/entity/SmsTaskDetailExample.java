@@ -185,6 +185,76 @@ public class SmsTaskDetailExample {
             return (Criteria) this;
         }
 
+        public Criteria andPlanuuidIsNull() {
+            addCriterion("planuuid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidIsNotNull() {
+            addCriterion("planuuid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidEqualTo(String value) {
+            addCriterion("planuuid =", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidNotEqualTo(String value) {
+            addCriterion("planuuid <>", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidGreaterThan(String value) {
+            addCriterion("planuuid >", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidGreaterThanOrEqualTo(String value) {
+            addCriterion("planuuid >=", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidLessThan(String value) {
+            addCriterion("planuuid <", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidLessThanOrEqualTo(String value) {
+            addCriterion("planuuid <=", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidLike(String value) {
+            addCriterion("planuuid like", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidNotLike(String value) {
+            addCriterion("planuuid not like", value, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidIn(List<String> values) {
+            addCriterion("planuuid in", values, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidNotIn(List<String> values) {
+            addCriterion("planuuid not in", values, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidBetween(String value1, String value2) {
+            addCriterion("planuuid between", value1, value2, "planuuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPlanuuidNotBetween(String value1, String value2) {
+            addCriterion("planuuid not between", value1, value2, "planuuid");
+            return (Criteria) this;
+        }
+
         public Criteria andTaskNameIsNull() {
             addCriterion("task_name is null");
             return (Criteria) this;

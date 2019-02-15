@@ -3,6 +3,7 @@
 <mapper namespace="com.guiji.sms.dao.SmsTaskDetailMapper">
   <resultMap id="BaseResultMap" type="com.guiji.sms.dao.entity.SmsTaskDetail">
     <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="planuuid" jdbcType="VARCHAR" property="planuuid" />
     <result column="task_name" jdbcType="VARCHAR" property="taskName" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="send_type" jdbcType="INTEGER" property="sendType" />
@@ -12,6 +13,9 @@
     <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.guiji.sms.dao.entity.SmsTaskDetail">
+    <result column="sms_content" jdbcType="LONGVARCHAR" property="smsContent" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -72,9 +76,29 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, task_name, phone, send_type, send_status, company_name, tunnel_name, send_time, 
-    user_name, org_code
+    id, planuuid, task_name, phone, send_type, send_status, company_name, tunnel_name, 
+    send_time, user_name, org_code
   </sql>
+  <sql id="Blob_Column_List">
+    sms_content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.guiji.sms.dao.entity.SmsTaskDetailExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sms_task_detail
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByExample" parameterType="com.guiji.sms.dao.entity.SmsTaskDetailExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -93,9 +117,11 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
     from sms_task_detail
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -110,20 +136,25 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
-    insert into sms_task_detail (id, task_name, phone, 
-      send_type, send_status, company_name, 
-      tunnel_name, send_time, user_name, 
-      org_code)
-    values (#{id,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{sendType,jdbcType=INTEGER}, #{sendStatus,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
-      #{tunnelName,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR}, 
-      #{orgCode,jdbcType=VARCHAR})
+    insert into sms_task_detail (id, planuuid, task_name, 
+      phone, send_type, send_status, 
+      company_name, tunnel_name, send_time, 
+      user_name, org_code, sms_content
+      )
+    values (#{id,jdbcType=INTEGER}, #{planuuid,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{sendType,jdbcType=INTEGER}, #{sendStatus,jdbcType=INTEGER}, 
+      #{companyName,jdbcType=VARCHAR}, #{tunnelName,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, 
+      #{userName,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{smsContent,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
     insert into sms_task_detail
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
+      </if>
+      <if test="planuuid != null">
+        planuuid,
       </if>
       <if test="taskName != null">
         task_name,
@@ -152,10 +183,16 @@
       <if test="orgCode != null">
         org_code,
       </if>
+      <if test="smsContent != null">
+        sms_content,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
         #{id,jdbcType=INTEGER},
+      </if>
+      <if test="planuuid != null">
+        #{planuuid,jdbcType=VARCHAR},
       </if>
       <if test="taskName != null">
         #{taskName,jdbcType=VARCHAR},
@@ -184,6 +221,9 @@
       <if test="orgCode != null">
         #{orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="smsContent != null">
+        #{smsContent,jdbcType=LONGVARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.guiji.sms.dao.entity.SmsTaskDetailExample" resultType="java.lang.Long">
@@ -197,6 +237,9 @@
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.planuuid != null">
+        planuuid = #{record.planuuid,jdbcType=VARCHAR},
       </if>
       <if test="record.taskName != null">
         task_name = #{record.taskName,jdbcType=VARCHAR},
@@ -225,7 +268,28 @@
       <if test="record.orgCode != null">
         org_code = #{record.orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.smsContent != null">
+        sms_content = #{record.smsContent,jdbcType=LONGVARCHAR},
+      </if>
     </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update sms_task_detail
+    set id = #{record.id,jdbcType=INTEGER},
+      planuuid = #{record.planuuid,jdbcType=VARCHAR},
+      task_name = #{record.taskName,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      send_type = #{record.sendType,jdbcType=INTEGER},
+      send_status = #{record.sendStatus,jdbcType=INTEGER},
+      company_name = #{record.companyName,jdbcType=VARCHAR},
+      tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
+      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      sms_content = #{record.smsContent,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -233,6 +297,7 @@
   <update id="updateByExample" parameterType="map">
     update sms_task_detail
     set id = #{record.id,jdbcType=INTEGER},
+      planuuid = #{record.planuuid,jdbcType=VARCHAR},
       task_name = #{record.taskName,jdbcType=VARCHAR},
       phone = #{record.phone,jdbcType=VARCHAR},
       send_type = #{record.sendType,jdbcType=INTEGER},
@@ -249,6 +314,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
     update sms_task_detail
     <set>
+      <if test="planuuid != null">
+        planuuid = #{planuuid,jdbcType=VARCHAR},
+      </if>
       <if test="taskName != null">
         task_name = #{taskName,jdbcType=VARCHAR},
       </if>
@@ -276,12 +344,31 @@
       <if test="orgCode != null">
         org_code = #{orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="smsContent != null">
+        sms_content = #{smsContent,jdbcType=LONGVARCHAR},
+      </if>
     </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
+    update sms_task_detail
+    set planuuid = #{planuuid,jdbcType=VARCHAR},
+      task_name = #{taskName,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      send_type = #{sendType,jdbcType=INTEGER},
+      send_status = #{sendStatus,jdbcType=INTEGER},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      tunnel_name = #{tunnelName,jdbcType=VARCHAR},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      user_name = #{userName,jdbcType=VARCHAR},
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      sms_content = #{smsContent,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
     update sms_task_detail
-    set task_name = #{taskName,jdbcType=VARCHAR},
+    set planuuid = #{planuuid,jdbcType=VARCHAR},
+      task_name = #{taskName,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       send_type = #{sendType,jdbcType=INTEGER},
       send_status = #{sendStatus,jdbcType=INTEGER},

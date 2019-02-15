@@ -6,6 +6,8 @@ import java.util.Date;
 public class SmsTaskDetail implements Serializable {
     private Integer id;
 
+    private String planuuid;
+
     private String taskName;
 
     private String phone;
@@ -24,6 +26,8 @@ public class SmsTaskDetail implements Serializable {
 
     private String orgCode;
 
+    private String smsContent;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -32,6 +36,14 @@ public class SmsTaskDetail implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getPlanuuid() {
+        return planuuid;
+    }
+
+    public void setPlanuuid(String planuuid) {
+        this.planuuid = planuuid == null ? null : planuuid.trim();
     }
 
     public String getTaskName() {
@@ -106,6 +118,14 @@ public class SmsTaskDetail implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public String getSmsContent() {
+        return smsContent;
+    }
+
+    public void setSmsContent(String smsContent) {
+        this.smsContent = smsContent == null ? null : smsContent.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -113,6 +133,7 @@ public class SmsTaskDetail implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", planuuid=").append(planuuid);
         sb.append(", taskName=").append(taskName);
         sb.append(", phone=").append(phone);
         sb.append(", sendType=").append(sendType);
@@ -122,6 +143,7 @@ public class SmsTaskDetail implements Serializable {
         sb.append(", sendTime=").append(sendTime);
         sb.append(", userName=").append(userName);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", smsContent=").append(smsContent);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

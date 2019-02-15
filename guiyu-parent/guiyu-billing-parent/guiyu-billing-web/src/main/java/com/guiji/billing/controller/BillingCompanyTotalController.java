@@ -24,11 +24,11 @@ public class BillingCompanyTotalController {
     @ApiOperation(value="话费分析", notes="话费分析")
     @RequestMapping(value = "/totalCompanyChargingItem", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultPage<TotalChargingItemVo> totalCompanyChargingItem(@RequestBody QueryTotalChargingItemDto queryTotalChargingItemDto,
-                                                                    @RequestHeader String orgCode){
+                                                                    @RequestHeader String userId){
         if(null == queryTotalChargingItemDto){
             queryTotalChargingItemDto = new QueryTotalChargingItemDto();
         }
-        queryTotalChargingItemDto.setOrgCode(orgCode);
+        queryTotalChargingItemDto.setUserId(userId);
         ResultPage<TotalChargingItemVo> page = new ResultPage<TotalChargingItemVo>(queryTotalChargingItemDto);
         List<TotalChargingItemVo> list = billingCompanyTotalService.totalCompanyChargingItem(queryTotalChargingItemDto, page);
         page.setList(list);

@@ -67,15 +67,15 @@ public class BillingUserAcctController {
         return bool;
     }
 
-    //查询充值记录列表(系统侧使用)
+    //查询充值记录列表(企业侧使用)
     @ApiOperation(value="查询用户账户充值记录列表", notes="查询用户账户充值记录列表")
     @RequestMapping(value = "/queryUserRechargeTotal", method = {RequestMethod.POST})
     public ResultPage<UserRechargeTotalVo> queryUserRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto,
-                                                                  @RequestHeader String orgCode){
+                                                                  @RequestHeader String userId){
         if(null == queryRechargeDto){
             queryRechargeDto = new QueryRechargeDto();
         }
-        queryRechargeDto.setOrgCode(orgCode);
+        queryRechargeDto.setUserId(userId);
         ResultPage<UserRechargeTotalVo> page = new ResultPage<UserRechargeTotalVo>(queryRechargeDto);
         List<UserRechargeTotalVo> list = billingUserAcctService.queryUserRechargeTotal(queryRechargeDto, page);
         page.setList(list);

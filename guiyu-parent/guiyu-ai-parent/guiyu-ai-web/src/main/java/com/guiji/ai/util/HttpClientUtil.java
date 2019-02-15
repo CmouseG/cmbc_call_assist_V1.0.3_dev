@@ -53,12 +53,14 @@ public class HttpClientUtil
 	public static String post(String url, Object objParams) 
 	{
 		String result = null;
+		CloseableHttpClient httpClient = null;
+		CloseableHttpResponse response = null;
 		try
 		{
-			CloseableHttpClient httpClient = HttpClients.createDefault();
+			httpClient = HttpClients.createDefault();
 			HttpPost httpPost = new HttpPost(url);
 			setPostParams(httpPost, objParams);
-			CloseableHttpResponse response = httpClient.execute(httpPost);
+			response = httpClient.execute(httpPost);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				HttpEntity entity = response.getEntity();
 				result = EntityUtils.toString(entity, "utf-8");
@@ -67,6 +69,9 @@ public class HttpClientUtil
 		} 
 		catch (Exception e) {
 			throw new GuiyuException(GuiyuAIExceptionEnum.EXCP_Request_TTS);
+		} finally {
+			IOUtils.close(response);
+			IOUtils.close(httpClient);
 		}
 		return result;
 	}

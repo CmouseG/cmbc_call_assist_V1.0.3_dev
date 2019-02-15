@@ -20,7 +20,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
+import com.guiji.ai.api.IAi;
+import com.guiji.ai.vo.AsynPostReqVO;
+import com.guiji.ai.vo.SynPostReqVO;
 import com.guiji.botsentence.constant.Constant;
+import com.guiji.botsentence.controller.server.BotsentenceServerController;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
 import com.guiji.botsentence.dao.BotSentenceTtsContentMapper;
@@ -49,6 +53,7 @@ import com.guiji.botsentence.vo.TtsParamVO;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.FileUtil;
 import com.guiji.component.client.util.SFTPUtil;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.common.exception.CommonException;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -82,8 +87,14 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	@Autowired
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
+	@Autowired
+	private IAi ai;
+	
 	@Value("${tts.api.url}")
 	private String ttsApiUrl;
+	
+	//@Autowired
+	//private BotsentenceServerController botsentenceServerController;
 	
 	/**
 	 * 保存TTS变量及变量类型
@@ -510,26 +521,44 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		
 		//发送tts任务
 		logger.info("发送tts任务");
-		RequestTtsVO req = new RequestTtsVO();
-	    req.setTask_id(taskId.toString());
-	    req.setSentence(temp.getContent());
+		//RequestTtsVO req = new RequestTtsVO();
+	    //req.setTask_id(taskId.toString());
+	    //req.setSentence(temp.getContent());
+		SynPostReqVO req = new SynPostReqVO();
+		List<String> contents = new ArrayList<>();
+		req.setContent(temp.getContent());
+		req.setModel("szj");//TTS合成声音模型
 	    logger.info("请求参数: " + req.toString());
-		String jsonResult;
-		try {
-			jsonResult = HttpRequestUtils.httpPost(ttsApiUrl, BeanUtil.bean2Map(req));
-			logger.info("返回参数: " + jsonResult);
-			Gson gson = new Gson();
+		//String jsonResult;
+		//try {
+	    	ReturnData<String> result = ai.synPost(req);
+	    	logger.info("返回参数: " + result.toString());
+			if("0".equals(result.getCode())) {
+				logger.info("推送tts数据成功...");
+				String url = result.getBody();
+				if(StringUtils.isNotBlank(url)) {
+					botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), url);
+				}else {
+					logger.error("返回URL为空");
+					throw new CommonException("返回URL为空，请联系管理员!");
+				}
+			}else {
+				logger.error("推送tts数据异常，请联系管理员!");
+				throw new CommonException("推送tts数据异常，请联系管理员!");
+			}
+			//jsonResult = HttpRequestUtils.httpPost(ttsApiUrl, BeanUtil.bean2Map(req));
+			/*Gson gson = new Gson();
 			ResponseTtsVO rsp = gson.fromJson(jsonResult, ResponseTtsVO.class);
 			if(null != rsp && "received".equals(rsp.getStatus())) {
 				logger.info("推送tts数据成功...");
 			}else {
 				logger.error("推送tts数据异常，请联系管理员!");
 				throw new CommonException("推送tts数据异常，请联系管理员!");
-			}
+			}*/
 			
-		} catch (UnsupportedEncodingException e) {
+		/*} catch (UnsupportedEncodingException e) {
 			logger.error("推送tts数据异常...", e);
 			throw new CommonException("推送tts数据异常，请联系管理员!");
-		}
+		}*/
 	}
 }

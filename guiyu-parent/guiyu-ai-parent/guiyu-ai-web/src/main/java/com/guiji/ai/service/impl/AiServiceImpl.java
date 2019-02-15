@@ -26,8 +26,6 @@ public class AiServiceImpl implements IAiService
 	
 	@Value("${ttsUrl}")
 	private String ttsUrl;
-	@Value("${filePath}")
-	private String filePath;
 	
 	@Autowired
 	RedisUtil redisUtil;
@@ -38,14 +36,15 @@ public class AiServiceImpl implements IAiService
 	@Override
 	public TtsService getPlat(String model)
 	{
+		logger.info("选择的模型（model）：" + model);
 		List<String> factorys = (List<String>) redisUtil.get(model);
 		if(factorys == null || factorys.isEmpty())
 		{
 			logger.error("该模型没有对应厂商!");
-			throw new GuiyuException("该模型没有对应厂商");
+			throw new GuiyuException("该模型没有对应厂商!");
 		}
 		if(factorys.contains(AiConstants.Guiji)){
-			return new Guiji(ttsUrl,filePath);
+			return new Guiji(ttsUrl);
 		}
 		return null;
 		

@@ -12,18 +12,22 @@ import java.util.List;
 public interface BillingCompanyTotalMapper {
 
     List<TotalChargingItemVo> totalCompanyChargingByMonth(@Param("operUserId") String operUserId,
+                                                          @Param("orgCode") String orgCode,
                                                           @Param("beginMonth") String beginMonth, @Param("endMonth") String endMonth,
                                                           @Param("page")   ResultPage<TotalChargingItemVo> page);
 
     int totalChargingCountByMonth(@Param("operUserId") String operUserId,
+                                  @Param("orgCode") String orgCode,
                                   @Param("beginMonth") String beginMonth, @Param("endMonth") String endMonth);
 
     List<TotalChargingItemVo> totalCompanyChargingByDate(@Param("operUserId") String operUserId,
+                                                          @Param("orgCode") String orgCode,
                                                           @Param("beginDate") String beginDate, @Param("endDate") String endDate,
                                                           @Param("page")   ResultPage<TotalChargingItemVo> page);
 
 
     int totalChargingCountByDate(@Param("operUserId") String operUserId,
+                                 @Param("orgCode") String orgCode,
                                  @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 
     /******************************/

@@ -59,7 +59,7 @@ public class BillingUserAcctController {
     }
 
     /*********充值    begin***********************/
-    //管理员充值
+    //管理员充值(系统侧使用)
     @ApiOperation(value="企业账户充值", notes="企业账户充值")
     @RequestMapping(value = "/recharge", method = {RequestMethod.POST})
     public boolean recharge(@RequestBody RechargeDto rechargeDto){
@@ -67,8 +67,8 @@ public class BillingUserAcctController {
         return bool;
     }
 
-    //查询充值记录
-    @ApiOperation(value="查询用户账户充值记录", notes="查询用户账户充值记录")
+    //查询充值记录列表(系统侧使用)
+    @ApiOperation(value="查询用户账户充值记录列表", notes="查询用户账户充值记录列表")
     @RequestMapping(value = "/queryUserRechargeTotal", method = {RequestMethod.POST})
     public ResultPage<UserRechargeTotalVo> queryUserRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto){
         ResultPage<UserRechargeTotalVo> page = new ResultPage<UserRechargeTotalVo>(queryRechargeDto);
@@ -78,14 +78,16 @@ public class BillingUserAcctController {
         return page;
     }
 
+/*
     //管理员编辑查询充值记录
     @ApiOperation(value="查询账户充值记录", notes="查询用户账户充值记录")
     @RequestMapping(value = "/queryRechargeById", method = {RequestMethod.POST, RequestMethod.GET})
     public BillingAcctChargingRecord queryRechargeById(@RequestBody QueryRechargeDto queryRechargeDto){
         return (null != queryRechargeDto)?billingUserAcctService.queryRechargeById(queryRechargeDto.getChargingId()):null;
     }
+*/
 
-    //编辑充值附件快照
+    //编辑充值附件快照(系统侧使用)
     @ApiOperation(value="编辑变更充值附件快照", notes="编辑变更充值附件快照")
     @RequestMapping(value = "/editRechargeSnapshot", method = {RequestMethod.POST, RequestMethod.GET})
     public boolean editRechargeSnapshot(@RequestBody EditRechargeSnapshotDto editRechargeSnapshotDto){
@@ -94,7 +96,8 @@ public class BillingUserAcctController {
 
     /*********充值    end***********************/
 
-    /**************我的计费项 (用户计费项现在改为MQ通知接收处理)   begin*********/
+    /**************我的计费项 (用户计费项现在改为MQ通知接收处理，计费项controller接口暂不使用)   begin*********/
+/*
     //查询账户计费项列表
     @ApiOperation(value="查询账户计费项列表", notes="查询账户计费项列表")
     @RequestMapping(value = "/queryAcctChargingTermList", method = {RequestMethod.POST, RequestMethod.GET})
@@ -127,9 +130,12 @@ public class BillingUserAcctController {
         boolean bool = billingUserAcctService.delAcctChargingTerm(userChargingId);
         return bool;
     }
+*/
+
     /**************我的计费项    end*********/
 
-    //查询账户计费流水
+/*
+    //查询账户计费流水(暂不使用)
     @ApiOperation(value="查询账户计费流水", notes="查询账户计费流水")
     @RequestMapping(value = "/queryAcctChargingRecordList", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultPage<BillingAcctChargingRecord> queryAcctChargingRecordList(@RequestBody QueryChargingRecordDto queryChargingRecordDto){
@@ -139,6 +145,7 @@ public class BillingUserAcctController {
         page.setTotalItemAndPageNumber(billingUserAcctService.queryAcctChargingRecordCount(queryChargingRecordDto));
         return page;
     }
+*/
 
     /**************用户账户推送设置 现在只有阈值设置使用到   begin*********/
     //查询账户推送设置列表

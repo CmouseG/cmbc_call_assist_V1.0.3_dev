@@ -4,6 +4,14 @@ import com.guiji.billing.sys.PageDto;
 
 public class QueryTotalChargingItemDto extends PageDto {
 
+    /**
+     * 企业组织编码
+     */
+    private String orgCode;
+
+    /**
+     * 操作员ID
+     */
     private String operUserId;
 
     /**
@@ -55,5 +63,13 @@ public class QueryTotalChargingItemDto extends PageDto {
 
     public void setChargingItemId(String chargingItemId) {
         this.chargingItemId = chargingItemId;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
     }
 }

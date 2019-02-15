@@ -25,7 +25,7 @@ public class BillingSysRechargeController {
     @Autowired
     private BillingSysRechargeService billingSysRechargeService;
 
-    //查询公司账户充值记录
+    //查询公司账户充值记录(系统侧使用)
     @ApiOperation(value="查询公司账户充值记录", notes="查询公司账户充值记录")
     @RequestMapping(value = "/queryCompanyRechargeTotal", method = {RequestMethod.POST})
     public ResultPage<SysRechargeTotalVo> queryCompanyRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto){

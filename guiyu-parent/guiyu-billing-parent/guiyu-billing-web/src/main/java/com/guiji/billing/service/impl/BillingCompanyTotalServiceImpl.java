@@ -31,14 +31,17 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
+                        queryTotalChargingItemDto.getOrgCode(),
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(), page);
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
                 return billingCompanyTotalMapper.totalCompanyChargingByMonth(queryTotalChargingItemDto.getOperUserId(),
+                        queryTotalChargingItemDto.getOrgCode(),
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(), page);
             }
         }
         //默认
         return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
+                queryTotalChargingItemDto.getOrgCode(),
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE, page);
     }
 
@@ -52,14 +55,17 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),
+                        queryTotalChargingItemDto.getOrgCode(),
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate());
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
                 return billingCompanyTotalMapper.totalChargingCountByMonth(queryTotalChargingItemDto.getOperUserId(),
+                        queryTotalChargingItemDto.getOrgCode(),
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate());
             }
         }
         //默认
         return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),
+                queryTotalChargingItemDto.getOrgCode(),
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE);
     }
 

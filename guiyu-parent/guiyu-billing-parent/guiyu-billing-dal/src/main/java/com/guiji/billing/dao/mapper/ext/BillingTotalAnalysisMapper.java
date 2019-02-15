@@ -1,6 +1,5 @@
 package com.guiji.billing.dao.mapper.ext;
 
-import com.guiji.billing.dto.QueryAcctChargingTotalDto;
 import com.guiji.billing.entity.BillingAcctChargingTotal;
 import com.guiji.billing.entity.BillingAcctReconciliation;
 import com.guiji.billing.sys.ResultPage;
@@ -8,6 +7,7 @@ import com.guiji.billing.vo.BillingTotalChargingConsumerVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,20 +46,24 @@ public interface BillingTotalAnalysisMapper {
     //按日查询费用统计
     List<BillingTotalChargingConsumerVo> totalChargingByDate(@Param("beginDate") String beginDate,
                                                           @Param("endDate") String endDate,
+                                                          @Param("orgCode") String orgCode,
                                                           @Param("page") ResultPage<BillingTotalChargingConsumerVo> page);
 
     //按日查询费用统计条数
     int totalChargingCountByDate(@Param("beginDate") String beginDate,
-                                    @Param("endDate") String endDate);
+                                 @Param("endDate") String endDate,
+                                 @Param("orgCode") String orgCode);
 
     //按月查询费用统计
     List<BillingTotalChargingConsumerVo> totalChargingByMonth(@Param("beginMonth") String beginMonth,
                                                               @Param("endMonth") String endMonth,
+                                                              @Param("orgCode") String orgCode,
                                                               @Param("page") ResultPage<BillingTotalChargingConsumerVo> page);
 
     //按月查询费用统计
     int totalChargingCountByMonth(@Param("beginMonth") String beginMonth,
-                                  @Param("endMonth") String endMonth);
+                                  @Param("endMonth") String endMonth,
+                                  @Param("orgCode") String orgCode);
     /****************************************/
 
     //查询对账记录
@@ -70,4 +74,8 @@ public interface BillingTotalAnalysisMapper {
     int queryAcctReconcCount(@Param("acctRec") BillingAcctReconciliation acctRec);
 
     /******************************/
+
+    //调用存储过程，统计每日计费数据
+  //  int procTotalChargingByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime);
+    int procTotalChargingByDate(@Param("totalDate") String totalDate);
 }

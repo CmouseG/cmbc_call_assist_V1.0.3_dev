@@ -11,10 +11,14 @@ import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.vo.BillingTotalChargingConsumerVo;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +26,8 @@ import java.util.List;
  */
 @Service
 public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisService {
+
+    private Logger logger = LoggerFactory.getLogger(BillingTotalAnalysisServiceImpl.class);
 
     @Autowired
     private BillingTotalAnalysisMapper billingTotalAnalysisMapper;
@@ -125,6 +131,7 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
      */
     @Override
     public List<BillingTotalChargingConsumerVo> totalChargingByDate(QueryAcctChargingTotalDto queryAcctChargingTotalDto, ResultPage<BillingTotalChargingConsumerVo> page) {
+        String orgCode = queryAcctChargingTotalDto.getOrgCode();
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
@@ -132,11 +139,12 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         }else if(StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
             beginDate = DateTimeUtils.DEFAULT_BEGIN_DATE;
         }
-        return billingTotalAnalysisMapper.totalChargingByDate(beginDate, endDate, page);
+        return billingTotalAnalysisMapper.totalChargingByDate(beginDate, endDate, orgCode, page);
     }
 
     @Override
     public int totalChargingCountByDate(QueryAcctChargingTotalDto queryAcctChargingTotalDto) {
+        String orgCode = queryAcctChargingTotalDto.getOrgCode();
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
@@ -144,7 +152,7 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         }else if(StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
             beginDate = DateTimeUtils.DEFAULT_BEGIN_DATE;
         }
-        return billingTotalAnalysisMapper.totalChargingCountByDate(beginDate, endDate);
+        return billingTotalAnalysisMapper.totalChargingCountByDate(beginDate, endDate, orgCode);
     }
 
     /**
@@ -155,6 +163,7 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
      */
     @Override
     public List<BillingTotalChargingConsumerVo> totalChargingByMonth(QueryAcctChargingTotalDto queryAcctChargingTotalDto, ResultPage<BillingTotalChargingConsumerVo> page) {
+        String orgCode = queryAcctChargingTotalDto.getOrgCode();
         String beginMonth = queryAcctChargingTotalDto.getBeginMonth();
         String endMonth = queryAcctChargingTotalDto.getEndMonth();
         if(!StringUtils.isEmpty(beginMonth) && StringUtils.isEmpty(endMonth)){
@@ -162,11 +171,12 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         }else if(StringUtils.isEmpty(beginMonth) && !StringUtils.isEmpty(endMonth)){
             beginMonth = DateTimeUtils.DEFAULT_BEGIN_MONTH;
         }
-        return billingTotalAnalysisMapper.totalChargingByMonth(beginMonth, endMonth, page);
+        return billingTotalAnalysisMapper.totalChargingByMonth(beginMonth, endMonth, orgCode, page);
     }
 
     @Override
     public int totalChargingCountByMonth(QueryAcctChargingTotalDto queryAcctChargingTotalDto) {
+        String orgCode = queryAcctChargingTotalDto.getOrgCode();
         String beginMonth = queryAcctChargingTotalDto.getBeginMonth();
         String endMonth = queryAcctChargingTotalDto.getEndMonth();
         if(!StringUtils.isEmpty(beginMonth) && StringUtils.isEmpty(endMonth)){
@@ -174,7 +184,7 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         }else if(StringUtils.isEmpty(beginMonth) && !StringUtils.isEmpty(endMonth)){
             beginMonth = DateTimeUtils.DEFAULT_BEGIN_MONTH;
         }
-        return billingTotalAnalysisMapper.totalChargingCountByMonth(beginMonth, endMonth);
+        return billingTotalAnalysisMapper.totalChargingCountByMonth(beginMonth, endMonth, orgCode);
     }
 
 
@@ -204,5 +214,26 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
             BeanUtils.copyProperties(queryAcctRecDto, acctRec, BillingAcctReconciliation.class);
         }
         return billingTotalAnalysisMapper.queryAcctReconcCount(acctRec);
+    }
+
+
+    @Override
+    public void procTotalChargingByDate() {
+        //统计前一天日期
+        Date thisDate = DateTimeUtils.getDateByOffsetDays(new Date(), -1);
+        String dateStr = new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT).format(thisDate);
+        //设置开始时间
+        String beginTime = dateStr + " " + DateTimeUtils.DEFAULT_DATE_START_TIME;
+        //设置结束时间
+        String endTime = dateStr + " " + DateTimeUtils.DEFAULT_DATE_END_TIME;
+        SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+        try {
+    //        billingTotalAnalysisMapper.procTotalChargingByDate(beginTime, endTime);
+            logger.info("begin-统计日期", dateStr);
+            billingTotalAnalysisMapper.procTotalChargingByDate(dateStr);
+            logger.info("end-统计日期", dateStr);
+        }catch(Exception e){
+            logger.error("统计每日计费数据，调用存储过程异常", e);
+        }
     }
 }

@@ -4,6 +4,11 @@ import com.guiji.billing.sys.PageDto;
 
 public class QueryAcctChargingTotalDto extends PageDto {
 
+    /**
+     * 企业组织CODE
+     */
+    private String orgCode;
+
     private String accountId;
 
     private Integer type;
@@ -62,5 +67,13 @@ public class QueryAcctChargingTotalDto extends PageDto {
 
     public void setEndMonth(String endMonth) {
         this.endMonth = endMonth;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
     }
 }

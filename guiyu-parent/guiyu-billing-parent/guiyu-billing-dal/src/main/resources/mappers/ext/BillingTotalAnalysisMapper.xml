@@ -185,50 +185,66 @@
   </select>
 
 <!--统计费用  begin-->
+
+  <!--按日统计-->
   <select id="totalChargingByDate" resultType="com.guiji.billing.vo.BillingTotalChargingConsumerVo">
-    SELECT
-      recharge_amount,
-      consume_amount ,
-      total_date     AS total_time
-    FROM billing_total_charging
-    WHERE del_flag = 0
-      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
-      <if test="beginDate != null and endDate != null">
-        AND total_date BETWEEN #{beginDate} AND #{endDate}
-      </if>
-      ORDER BY create_time DESC
-      <if test="page != null and page.isPage ">
-        <if test="page.indexStart != null " >
-          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      SELECT
+        t.total_date     AS total_time,
+        SUM(t.recharge_amount) AS recharge_amount,
+        SUM(t.consume_amount) AS consume_amount
+      FROM billing_total_charging t, billing_user_acct a
+      WHERE t.del_flag = 0
+        AND t.account_id = a.account_id
+        AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
+        <if test="orgCode != null and orgCode != ''">
+          AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
         </if>
-      </if>
+        <if test="beginDate != null and endDate != null">
+          AND t.total_date BETWEEN #{beginDate} AND #{endDate}
+        </if>
+        GROUP BY t.total_date
+        ORDER BY t.total_date ASC
+        <if test="page != null and page.isPage ">
+          <if test="page.indexStart != null " >
+            limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+          </if>
+        </if>
   </select>
 
 
   <select id="totalChargingCountByDate" resultType="java.lang.Integer">
     SELECT
-      COUNT(id)
-    FROM billing_total_charging
-    WHERE del_flag = 0
-      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
+      COUNT(DISTINCT(t.total_date))
+    FROM billing_total_charging t, billing_user_acct a
+    WHERE t.del_flag = 0
+      AND t.account_id = a.account_id
+      AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
+      <if test="orgCode != null and orgCode != ''">
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
+      </if>
       <if test="beginDate != null and endDate != null">
-        AND total_date BETWEEN #{beginDate} AND #{endDate}
+        AND t.total_date BETWEEN #{beginDate} AND #{endDate}
       </if>
   </select>
 
 
   <select id="totalChargingByMonth" resultType="com.guiji.billing.vo.BillingTotalChargingConsumerVo">
     SELECT
-      recharge_amount,
-      consume_amount ,
-      total_month     AS total_time
-    FROM billing_total_charging
-    WHERE del_flag = 0
-      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
-      <if test="beginMonth != null and endMonth != null">
-        AND total_month BETWEEN #{beginMonth} AND #{endMonth}
+      t.total_month     AS total_time,
+      SUM(t.recharge_amount) AS recharge_amount,
+      SUM(t.consume_amount) AS consume_amount
+    FROM billing_total_charging t, billing_user_acct a
+    WHERE t.del_flag = 0
+      AND t.account_id = a.account_id
+      AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
+      <if test="orgCode != null and orgCode != ''">
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
       </if>
-      ORDER BY create_time DESC
+      <if test="beginMonth != null and endMonth != null">
+        AND t.total_month BETWEEN #{beginMonth} AND #{endMonth}
+      </if>
+      GROUP BY t.total_month
+      ORDER BY t.total_month ASC
       <if test="page != null and page.isPage ">
         <if test="page.indexStart != null " >
           limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
@@ -238,12 +254,16 @@
 
   <select id="totalChargingCountByMonth" resultType="java.lang.Integer">
     SELECT
-      COUNT(id)
-    FROM billing_total_charging
-    WHERE del_flag = 0
-      AND total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
+      COUNT(DISTINCT(t.total_month))
+    FROM billing_total_charging t, billing_user_acct a
+    WHERE t.del_flag = 0
+      AND t.account_id = a.account_id
+      AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
+      <if test="orgCode != null and orgCode != ''">
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
+      </if>
       <if test="beginMonth != null and endMonth != null">
-        AND total_month BETWEEN #{beginMonth} AND #{endMonth}
+        AND t.total_month BETWEEN #{beginMonth} AND #{endMonth}
       </if>
   </select>
 
@@ -289,5 +309,10 @@
       AND account_id= #{acctRec.accountId}
     </if>
   </select>
+
+  <!--计算按日统计消费、充值数据，调用存储过程  useGeneratedKeys="true" keyProperty="id" -->
+  <update id="procTotalChargingByDate" statementType="CALLABLE">
+      {call totalChargingByDate(#{totalDate,jdbcType=VARCHAR,mode=IN})}
+  </update>
 
 </mapper>

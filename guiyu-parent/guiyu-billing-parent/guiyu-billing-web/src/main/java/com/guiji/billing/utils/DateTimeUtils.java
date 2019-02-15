@@ -34,7 +34,7 @@ public class DateTimeUtils {
 	
 	public final static String DEFAULT_TIME_NOT_SECOND_FORMAT_PATTERN_SHORT = "HH:mm";
 	
-	public final static String DEFAULT_DATE_TIME = "23:59:59";
+	public final static String DEFAULT_DATE_END_TIME = "23:59:59";
 	
 	public final static String DEFAULT_DATE_START_TIME = "00:00:00";
 	

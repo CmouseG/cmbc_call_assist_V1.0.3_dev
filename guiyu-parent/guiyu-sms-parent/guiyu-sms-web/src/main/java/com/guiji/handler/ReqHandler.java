@@ -13,6 +13,7 @@ import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
 import com.guiji.service.ConfigService;
 import com.guiji.service.RecordService;
+import com.guiji.service.TaskDetailService;
 import com.guiji.sms.dao.entity.SmsConfig;
 import com.guiji.sms.dao.entity.SmsPlatform;
 import com.guiji.sms.dao.entity.SmsRecord;
@@ -26,6 +27,8 @@ public class ReqHandler
 {
 	private static final Logger logger = LoggerFactory.getLogger(ReqHandler.class);
 	
+	@Autowired
+	TaskDetailService taskDetailService;
 	@Autowired
 	ConfigService configService;
 	@Autowired
@@ -61,6 +64,7 @@ public class ReqHandler
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录
+		taskDetailService.saveTaskDetail(record, config, sendMReq); //保存短信发送详情
 	}
 	
 	/**

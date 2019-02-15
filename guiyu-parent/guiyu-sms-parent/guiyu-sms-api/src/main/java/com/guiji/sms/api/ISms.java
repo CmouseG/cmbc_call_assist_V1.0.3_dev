@@ -1,9 +1,12 @@
 package com.guiji.sms.api;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.sms.vo.MsgResultVO;
 import com.guiji.sms.vo.SendMReqVO;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -22,4 +25,14 @@ public interface ISms
 	})
 	@PostMapping(value = "sendMessage")
     public void sendMessage(@RequestBody SendMReqVO sendMReq);
+	
+	/**
+	 * 获取短信发送结果
+	 */
+	@ApiOperation(value = "获取短信发送结果")
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "planuuid", value = "挂机短信唯一标识", required = true) 
+	})
+	@GetMapping(value = "getMsgResult")
+	public ReturnData<MsgResultVO> getMsgResult(String planuuid);
 }

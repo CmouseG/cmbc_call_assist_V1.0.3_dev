@@ -25,6 +25,7 @@ import com.guiji.sms.api.ISms;
 import com.guiji.sms.vo.ConfigListReqVO;
 import com.guiji.sms.vo.ConfigListRspVO;
 import com.guiji.sms.vo.ConfigReqVO;
+import com.guiji.sms.vo.MsgResultVO;
 import com.guiji.sms.vo.PlatformListReqVO;
 import com.guiji.sms.vo.PlatformListRspVO;
 import com.guiji.sms.vo.PlatformReqVO;
@@ -45,17 +46,17 @@ public class SmsController implements ISms
 	private static final Logger logger = LoggerFactory.getLogger(SmsController.class);
 	
 	@Autowired
-	PlatformService platformService;
+	TaskService taskService;
 	@Autowired
 	TunnelService tunnelService;
 	@Autowired
 	ConfigService configService;
 	@Autowired
-	TaskService taskService;
+	SendSmsService sendSmsService;
+	@Autowired
+	PlatformService platformService;
 	@Autowired
 	TaskDetailService taskDetailService;
-	@Autowired
-	SendSmsService sendSmsService;
 	
 	/**
 	 * 获取短信平台列表
@@ -468,5 +469,25 @@ public class SmsController implements ISms
 	public void sendMessage(@RequestBody SendMReqVO sendMReq)
 	{
 		sendSmsService.pushReqToMQ(sendMReq);
+	}
+
+	/**
+	 * 获取短信发送结果
+	 */
+	@Override
+	@GetMapping(value = "getMsgResult")
+	public ReturnData<MsgResultVO> getMsgResult(String planuuid)
+	{
+		MsgResultVO msgResult = null;
+		try
+		{
+			logger.info("获取短信发送结果...");
+			msgResult = taskDetailService.getTaskDetail(planuuid);
+			
+		} catch (Exception e){
+			logger.error("请求失败！", e);
+			return Result.error(SmsConstants.Error_Request);
+		}
+		return Result.ok(msgResult);
 	}
 }

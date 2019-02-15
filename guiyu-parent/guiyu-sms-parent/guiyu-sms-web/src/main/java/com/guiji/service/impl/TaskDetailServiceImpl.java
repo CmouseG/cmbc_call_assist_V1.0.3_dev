@@ -2,6 +2,7 @@ package com.guiji.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,10 +17,13 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.model.TaskReq;
 import com.guiji.service.TaskDetailService;
 import com.guiji.sms.dao.SmsTaskDetailMapper;
+import com.guiji.sms.dao.entity.SmsConfig;
 import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.sms.dao.entity.SmsTaskDetail;
 import com.guiji.sms.dao.entity.SmsTaskDetailExample;
 import com.guiji.sms.dao.entity.SmsTaskDetailExample.Criteria;
+import com.guiji.sms.vo.MsgResultVO;
+import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.sms.vo.TaskDetailListReqVO;
 import com.guiji.sms.vo.TaskDetailListRspVO;
 import com.guiji.user.dao.entity.SysOrganization;
@@ -102,6 +106,11 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		detail.setCompanyName(taskReq.getCompanyName());
 		detail.setTunnelName(taskReq.getTunnelName());
 		detail.setSendTime(taskReq.getSendTime());
+		if(taskReq.getSmsTemplateId() != null) {
+			detail.setSmsContent("【短信模版】" + taskReq.getSmsTemplateId());
+		} else {
+			detail.setSmsContent("【短信内容】" + taskReq.getSmsContent());
+		}
 		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(taskReq.getUserId());
 		detail.setOrgCode(sysOrganization.body.getCode());
@@ -115,6 +124,37 @@ public class TaskDetailServiceImpl implements TaskDetailService
 			}
 			taskDetailMapper.insertSelective(detail);
 		}
+	}
+	
+	/**
+	 * 保存短信发送详情
+	 */
+	@Override
+	public void saveTaskDetail(SmsRecord record, SmsConfig config, SendMReqVO sendMReq)
+	{
+		SmsTaskDetail detail = new SmsTaskDetail();
+		//组装字段
+		detail.setPlanuuid(sendMReq.getPlanuuid());
+		detail.setTaskName("挂机短信");
+		detail.setSendType(2); // 调用发送
+		detail.setCompanyName(config.getCompanyName());
+		detail.setTunnelName(config.getTunnelName());
+		detail.setSendTime(new Date());
+		if(config.getSmsTemplateId() != null) {
+			detail.setSmsContent("【短信模版】" + config.getSmsTemplateId());
+		} else {
+			detail.setSmsContent("【短信内容】" + config.getSmsContent());
+		}
+		detail.setUserName(getUserName(String.valueOf(sendMReq.getUserId())));
+		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(sendMReq.getUserId().longValue());
+		detail.setOrgCode(sysOrganization.body.getCode());
+		detail.setPhone(record.getPhone());
+		if(record.getSendStatus() == 0){
+			detail.setSendStatus(0); // 发送状态：0-发送失败
+		}else{
+			detail.setSendStatus(1); // 发送状态：1-发送成功
+		}
+		taskDetailMapper.insertSelective(detail);
 	}
 	
 	public String getUserName(String userId) {
@@ -137,4 +177,28 @@ public class TaskDetailServiceImpl implements TaskDetailService
         }
         return "";
     }
+
+	@Override
+	public MsgResultVO getTaskDetail(String planuuid)
+	{
+		MsgResultVO msgResult = null;
+		SmsTaskDetailExample example = new SmsTaskDetailExample();
+		example.createCriteria().andPlanuuidEqualTo(planuuid);
+		SmsTaskDetail detail = taskDetailMapper.selectByExampleWithBLOBs(example).get(0);
+		msgResult = setParams(detail);
+		return msgResult;
+	}
+
+	private MsgResultVO setParams(SmsTaskDetail detail)
+	{
+		MsgResultVO msgResult = new MsgResultVO();
+		msgResult.setPlanuuid(detail.getPlanuuid());
+		msgResult.setPhone(detail.getPhone());
+		msgResult.setSmsContent(detail.getSmsContent());
+		msgResult.setSendStatus(detail.getSendStatus()==1?"发送成功":"发送失败");
+		msgResult.setCompanyName(detail.getCompanyName());
+		msgResult.setTunnelName(detail.getTunnelName());
+		msgResult.setSendTime(detail.getSendTime());
+		return msgResult;
+	}
 }

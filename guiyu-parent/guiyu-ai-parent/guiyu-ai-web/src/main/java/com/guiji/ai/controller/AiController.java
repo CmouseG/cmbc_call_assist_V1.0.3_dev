@@ -39,7 +39,7 @@ public class AiController implements IAi
 	
 	@Override
 	@PostMapping(value = "synPost")
-	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) {
+	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) throws Exception {
 		try
 		{
 			logger.info("语音合成（同步）...");
@@ -49,23 +49,24 @@ public class AiController implements IAi
 			return Result.ok(audioUrl);
 		} catch (Exception e) {
 			logger.error("请求失败！", e);
-			return null;
+			throw e;
 		}
 	}
 
 	@Override
 	@PostMapping(value = "asynPost")
-	public ReturnData<String> asynPost(@RequestBody AsynPostReqVO postVO)
+	public ReturnData<String> asynPost(@RequestBody AsynPostReqVO postVO) throws Exception
 	{
 		try
 		{
+			logger.info("语音合成（）...");
 			postVO.setNotifyUrl(notifyUrl);
 			String model = postVO.getModel();
 			String result = ai.getPlat(model).asynPost(postVO);
 			return Result.ok(result);
 		} catch (Exception e) {
 			logger.error("请求失败！", e);
-			return null;
+			throw e;
 		}
 	}
 	

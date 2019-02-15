@@ -18,15 +18,17 @@ public interface IAi {
 	
 	/**
      * 语音合成（同步）
+	 * @throws Exception 
      */
 	@PostMapping(value = "synPost")
-	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO);
+	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) throws Exception;
 	
 	/**
      * 语音合成（异步）
+	 * @throws Exception 
      */
 	@PostMapping(value = "asynPost")
-	public ReturnData<String> asynPost(@RequestBody AsynPostReqVO postVO);
+	public ReturnData<String> asynPost(@RequestBody AsynPostReqVO postVO) throws Exception;
 	
 	/**
 	 *回调接口

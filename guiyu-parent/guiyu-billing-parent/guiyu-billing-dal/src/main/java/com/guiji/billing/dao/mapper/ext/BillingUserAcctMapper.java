@@ -60,11 +60,13 @@ public interface BillingUserAcctMapper {
                      @Param("updateTime") Date updateTime);
 
     //
-    List<UserRechargeTotalVo> queryUserRechargeTotal(@Param("accountId") String accountId, @Param("type") Integer type, @Param("feeMode") Integer feeMode,
+    List<UserRechargeTotalVo> queryUserRechargeTotal(@Param("accountId") String accountId, @Param("orgCode") String orgCode,
+                                                     @Param("type") Integer type, @Param("feeMode") Integer feeMode,
                                                      @Param("beginDate") Date beginDate, @Param("endDate") Date endDate,
                                                      @Param("page") ResultPage<UserRechargeTotalVo> page);
 
-    int queryUserRechargeCount(@Param("accountId") String accountId, @Param("type") Integer type, @Param("feeMode") Integer feeMode,
+    int queryUserRechargeCount(@Param("accountId") String accountId, @Param("orgCode") String orgCode,
+                               @Param("type") Integer type, @Param("feeMode") Integer feeMode,
                                @Param("beginDate") Date beginDate, @Param("endDate") Date endDate);
     /****************充值 end*********************************/
 

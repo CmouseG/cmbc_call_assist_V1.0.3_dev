@@ -34,7 +34,7 @@ public interface IAi {
 	 *回调接口
 	 */
 	@PostMapping(value = "callback")
-	public ReturnData<TtsRspVO> callback(@RequestBody TtsRspVO ttsRsp);
+	public void callback(@RequestBody TtsRspVO ttsRsp);
 	
 	/**
 	 * 查询接口

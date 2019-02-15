@@ -15,6 +15,7 @@ import com.guiji.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 @Slf4j
@@ -27,16 +28,13 @@ public class LineOperationServiceImpl implements LineOperationService {
     private ILineOper lineOperApiFeign;
 
     @Override
+    @Transactional
     public Integer addLineInfo(OutLineInfoAddReq outLineInfoAddReq) {
         //本地存储数据库lineinfo
         LineInfo lineInfo = new LineInfo();
         BeanUtil.copyProperties(outLineInfoAddReq,lineInfo);
         lineInfo.setCreateDate(DateUtil.getCurrentTime());
-//        lineInfo.setCreatetBy(Integer.valueOf(lineInfoVO.getCustomerId()));
         lineInfo.setUpdateDate(DateUtil.getCurrentTime());
-//        lineInfo.setUpdateBy(Integer.valueOf(lineInfoVO.getCustomerId()));
-//        lineInfo.setOrgCode(lineInfoVO.getOrgCode());
-//        lineInfo.setCustomerId(0);
         lineInfoMapper.insertSelective(lineInfo);
 
         //调用fsmanager的增加线路接口
@@ -46,22 +44,13 @@ public class LineOperationServiceImpl implements LineOperationService {
         Result.ReturnData result = lineOperApiFeign.addLineinfos(lineInfoApi);
         if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.addLineinfos failed,code:"+result.getCode());
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//回滚事务
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_ADDLINE);
         }
-
-        /*//刷新redis缓存
-        if(lineInfoVO!=null && lineInfoVO.getCustomerId()!=null){
-            List<LineInfo> lineInfos = getLineInfoByCustomerId(lineInfoVO.getCustomerId());
-            if(lineInfos!=null && lineInfos.size()>0){
-                redisUtil.set("callCenter-lineInfo-"+lineInfoVO.getCustomerId(),lineInfos);
-            }
-        }*/
-
         return lineInfo.getLineId();
     }
 
     @Override
+    @Transactional
     public void updateLineInfo(OutLineInfoUpdateReq outLineInfoUpdateReq) {
 
         LineInfo lineInfoDB = lineInfoMapper.selectByPrimaryKey(outLineInfoUpdateReq.getLineId());
@@ -91,6 +80,7 @@ public class LineOperationServiceImpl implements LineOperationService {
 
 
     @Override
+    @Transactional
     public void deleteLineInfo(Integer id) {
         //本地删除数据库lineinfo记录，同时调用fsmanager的删除线路接口
         lineInfoMapper.deleteByPrimaryKey(id);

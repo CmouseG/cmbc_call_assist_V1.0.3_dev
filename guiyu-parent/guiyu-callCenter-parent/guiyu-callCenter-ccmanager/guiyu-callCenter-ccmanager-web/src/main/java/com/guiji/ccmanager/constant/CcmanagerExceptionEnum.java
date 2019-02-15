@@ -15,7 +15,7 @@ public enum CcmanagerExceptionEnum implements ExceptionEnum {
     EXCP_CCMANAGER_TEMP_NOTEXIST ("0303004","temp not exist"),
     EXCP_CCMANAGER_TEMP_DOWNLOADFAIL("0303005","temp download failed"),
     EXCP_CCMANAGER_CODEC("0303006","codec not right"),
-    EXCP_CCMANAGER_FSMANAGER_ADDLINE("0303007","fsmanageer add line error"),
+    EXCP_CCMANAGER_FSMANAGER_ADDLINE("0303007","新增线路失败，参数错误或线路id重复"),
     EXCP_CCMANAGER_FSMANAGER_EDITLINE("0303008","fsmanageer edit line error"),
     EXCP_CCMANAGER_FSMANAGER_DELETELINE("0303009","fsmanageer delete line error"),
     EXCP_CCMANAGER_CALLOUTSERVER_ERROR("0303010","callouserver null or error");

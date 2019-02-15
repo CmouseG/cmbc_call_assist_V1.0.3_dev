@@ -29,12 +29,14 @@ public interface ICallManagerOut {
     Result.ReturnData<String>  getLineInfoById(@RequestParam("lineId") Integer lineId);
 
 
+/*
     @ApiOperation(value = "获取客户线路列表，供调度中心使用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="out/getLineInfos")
     Result.ReturnData<List<LineConcurrent>> getLineInfos(@RequestParam("customerId") String customerId);
+*/
 
 
     @ApiOperation(value = "获取客户线路列表，供汇总使用")

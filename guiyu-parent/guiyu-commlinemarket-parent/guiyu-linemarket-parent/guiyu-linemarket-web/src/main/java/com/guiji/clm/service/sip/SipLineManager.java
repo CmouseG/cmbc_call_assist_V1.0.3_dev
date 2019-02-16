@@ -71,29 +71,28 @@ public class SipLineManager {
 	/**
 	 * 第三方SIP线路配置
 	 * 1、初始化数据
-	 * 2、调用callcenter生成线路fs gateway
 	 * @param sipLineBaseInfo
 	 * @return
 	 */
 	@Transactional
-	public SipLineBaseInfo thirdSipLineCfg(SipLineBaseInfo sipLineBaseInfo,Boolean isSuperAdmin) {
+	public SipLineBaseInfo thirdSipLineCfg(SipLineBaseInfo sipLineBaseInfo) {
 		if(sipLineBaseInfo==null || !CheckUtil.fieldIsNullCheck(sipLineBaseInfo, 
 				new String[]{"lineName","sipIp","sipPort","codec","maxConcurrentCalls","univalent","industrys","overtArea","callDirec"})) {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
-		}
-		SipLineBaseInfo currentSipLine = new SipLineBaseInfo();
-		BeanUtil.copyProperties(sipLineBaseInfo, currentSipLine); //留备份使用
-		if(StrUtils.isNotEmpty(sipLineBaseInfo.getBelongUser())) {
-			sipLineBaseInfo.setBelongUser(sipLineBaseInfo.getCrtUser());
 		}
 		SipLineBaseInfo existSipLine = null;
 		if(sipLineBaseInfo.getId()!=null) {
 			//更新
 			//先查出原线路
 			existSipLine = sipLineInfoService.queryById(sipLineBaseInfo.getId());
+			//校验状态，只有初始状态才允许修改
+			if(SipLineStatusEnum.INIT.getCode()!=existSipLine.getLineStatus()) {
+				log.error("线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能修改！",existSipLine.getId(),existSipLine.getLineName(),existSipLine.getLineStatus());
+				throw new ClmException(ClmErrorEnum.CLM1809313.getErrorCode(),ClmErrorEnum.CLM1809313.getErrorMsg());
+			}
 			BeanUtil.copyProperties(sipLineBaseInfo, existSipLine, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true)
-					.setIgnoreProperties("id","crtUser","crtTime","belongUser","orgCode","sipShareId","lineId"));
+					.setIgnoreProperties("id","lineStatus","crtUser","crtTime","belongUser","orgCode","sipShareId","lineId"));
 			sipLineBaseInfo = existSipLine;
 		}
 		if(StrUtils.isEmpty(sipLineBaseInfo.getOrgCode())) {
@@ -103,8 +102,29 @@ public class SipLineManager {
 				sipLineBaseInfo.setOrgCode(sysOrganization.getCode());
 			}
 		}
+		sipLineInfoService.save(sipLineBaseInfo);
+		return sipLineBaseInfo;
+	}
+	
+	
+	/**
+	 * 第三方SIP线路配置生效
+	 * 1、调用callcenter生成线路fs gateway
+	 * 2、检查生成虚拟线路
+	 * 3、如果分配到企业直接分配
+	 * @param sipLineBaseInfo
+	 * @return
+	 */
+	@Transactional
+	public void effectThirdSip(Integer sipLineId,Boolean isSuperAdmin) {
+		//查询SIP线路信息
+		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
+		if(SipLineStatusEnum.INIT.getCode()!=sipLineBaseInfo.getLineStatus()) {
+			log.error("线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能生效！",sipLineBaseInfo.getId(),sipLineBaseInfo.getLineName(),sipLineBaseInfo.getLineStatus());
+			throw new ClmException(ClmErrorEnum.CLM1809314.getErrorCode(),ClmErrorEnum.CLM1809314.getErrorMsg());
+		}
 		//调用呼叫中心线路，生成线路ID
-		Integer lineId = this.callcenterLine(currentSipLine, existSipLine);
+		Integer lineId = this.callcenterLine(sipLineBaseInfo, null);
 		if(lineId!=null) {
 			sipLineBaseInfo.setLineId(lineId);
 		}
@@ -114,9 +134,10 @@ public class SipLineManager {
 			//生成放到共享池的线路
 			sipLineBaseInfo.setSipShareId(shareLineId);
 		}
+		sipLineBaseInfo.setLineStatus(SipLineStatusEnum.OK.getCode()); //默认-线路生效（正常)
 		sipLineInfoService.save(sipLineBaseInfo);
 		if(sipLineBaseInfo.getSipShareId()==null) {
-			//如果客户线路没有共享出去，那么全部分给自己
+			//如果客户线路没有共享出去，那么全部分给自己(处理异常未分配情况)
 			SipLineExclusive sipLineExclusive = new SipLineExclusive();
 			BeanUtil.copyProperties(sipLineBaseInfo, sipLineExclusive);
 			if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
@@ -129,12 +150,12 @@ public class SipLineManager {
 			sipLineExclusive.setId(null);
 			this.splitExclusiveSipLine(sipLineExclusive);
 		}
-		return sipLineBaseInfo;
 	}
 	
 	
 	/**
 	 * 删除第三方线路
+	 * 1、检查状态，目前只有初始状态才允许删除
 	 * 1、检查显示是否有在使用
 	 * 2、检查线路是否被申请
 	 * 3、调用呼叫中心删除第三方线路
@@ -144,18 +165,22 @@ public class SipLineManager {
 	public void delThirdSipLineCfg(Integer id) {
 		//查询线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(id);
-		/**1、检查是否有在使用**/
-		if(sipLineBaseInfo.getLineId()!=null) {
-			//调用调度中心检查线路是否在使用
-			Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId());
-			if(inUsedFlag.getBody().booleanValue()) {
-				//在使用抛出异常，不能直接删除
-				log.error("线路编号:{}仍在调度中心使用中，不能删除",sipLineBaseInfo.getLineId());
-				throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
-			}
+		if(SipLineStatusEnum.INIT.getCode()!=sipLineBaseInfo.getLineStatus()) {
+			log.error("线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能修改！",sipLineBaseInfo.getId(),sipLineBaseInfo.getLineName(),sipLineBaseInfo.getLineStatus());
+			throw new ClmException(ClmErrorEnum.CLM1809313.getErrorCode(),ClmErrorEnum.CLM1809313.getErrorMsg());
 		}
-		/**3、调用呼叫中心删除线路**/
-		iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
+//		/**2、检查是否有在使用**/
+//		if(sipLineBaseInfo.getLineId()!=null) {
+//			//调用调度中心检查线路是否在使用
+//			Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId());
+//			if(inUsedFlag.getBody().booleanValue()) {
+//				//在使用抛出异常，不能直接删除
+//				log.error("线路编号:{}仍在调度中心使用中，不能删除",sipLineBaseInfo.getLineId());
+//				throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+//			}
+//		}
+//		/**3、调用呼叫中心删除线路**/
+//		iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
 		/**4、删除本地**/
 		sipLineInfoService.delete(id);
 		
@@ -191,9 +216,6 @@ public class SipLineManager {
 		}
 		if(StrUtils.isEmpty(sipLineShare.getEndDate())) {
 			sipLineShare.setEndDate(sipBaseInfo.getEndDate());
-		}
-		if(StrUtils.isEmpty(sipLineShare.getBelongUser())) {
-			sipLineShare.setBelongUser(sipBaseInfo.getBelongUser());
 		}
 		if(StrUtils.isEmpty(sipLineShare.getOrgCode())) {
 			sipLineShare.setOrgCode(sipBaseInfo.getOrgCode());

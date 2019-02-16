@@ -13,6 +13,8 @@ public class SipLineBaseInfo implements Serializable {
 
     private String supplier;
 
+    private Integer lineStatus;
+
     private String sipIp;
 
     private Integer sipPort;
@@ -28,6 +30,8 @@ public class SipLineBaseInfo implements Serializable {
     private Boolean regFlag;
 
     private String callerNum;
+
+    private String belongOrgCode;
 
     private String destinationPrefix;
 
@@ -58,10 +62,6 @@ public class SipLineBaseInfo implements Serializable {
     private BigDecimal univalent;
 
     private Integer lineFeeType;
-
-    private String belongUser;
-
-    private String belongOrgCode;
 
     private String remark;
 
@@ -109,6 +109,14 @@ public class SipLineBaseInfo implements Serializable {
 
     public void setSupplier(String supplier) {
         this.supplier = supplier == null ? null : supplier.trim();
+    }
+
+    public Integer getLineStatus() {
+        return lineStatus;
+    }
+
+    public void setLineStatus(Integer lineStatus) {
+        this.lineStatus = lineStatus;
     }
 
     public String getSipIp() {
@@ -173,6 +181,14 @@ public class SipLineBaseInfo implements Serializable {
 
     public void setCallerNum(String callerNum) {
         this.callerNum = callerNum == null ? null : callerNum.trim();
+    }
+
+    public String getBelongOrgCode() {
+        return belongOrgCode;
+    }
+
+    public void setBelongOrgCode(String belongOrgCode) {
+        this.belongOrgCode = belongOrgCode == null ? null : belongOrgCode.trim();
     }
 
     public String getDestinationPrefix() {
@@ -295,22 +311,6 @@ public class SipLineBaseInfo implements Serializable {
         this.lineFeeType = lineFeeType;
     }
 
-    public String getBelongUser() {
-        return belongUser;
-    }
-
-    public void setBelongUser(String belongUser) {
-        this.belongUser = belongUser == null ? null : belongUser.trim();
-    }
-
-    public String getBelongOrgCode() {
-        return belongOrgCode;
-    }
-
-    public void setBelongOrgCode(String belongOrgCode) {
-        this.belongOrgCode = belongOrgCode == null ? null : belongOrgCode.trim();
-    }
-
     public String getRemark() {
         return remark;
     }
@@ -377,6 +377,7 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", lineName=").append(lineName);
         sb.append(", lineId=").append(lineId);
         sb.append(", supplier=").append(supplier);
+        sb.append(", lineStatus=").append(lineStatus);
         sb.append(", sipIp=").append(sipIp);
         sb.append(", sipPort=").append(sipPort);
         sb.append(", sipDomain=").append(sipDomain);
@@ -385,6 +386,7 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", codec=").append(codec);
         sb.append(", regFlag=").append(regFlag);
         sb.append(", callerNum=").append(callerNum);
+        sb.append(", belongOrgCode=").append(belongOrgCode);
         sb.append(", destinationPrefix=").append(destinationPrefix);
         sb.append(", maxConcurrentCalls=").append(maxConcurrentCalls);
         sb.append(", useConcurrentCalls=").append(useConcurrentCalls);
@@ -400,8 +402,6 @@ public class SipLineBaseInfo implements Serializable {
         sb.append(", contractUnivalent=").append(contractUnivalent);
         sb.append(", univalent=").append(univalent);
         sb.append(", lineFeeType=").append(lineFeeType);
-        sb.append(", belongUser=").append(belongUser);
-        sb.append(", belongOrgCode=").append(belongOrgCode);
         sb.append(", remark=").append(remark);
         sb.append(", sipShareId=").append(sipShareId);
         sb.append(", orgCode=").append(orgCode);

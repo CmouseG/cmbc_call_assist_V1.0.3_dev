@@ -386,6 +386,66 @@ public class SipLineBaseInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andLineStatusIsNull() {
+            addCriterion("line_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusIsNotNull() {
+            addCriterion("line_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusEqualTo(Integer value) {
+            addCriterion("line_status =", value, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusNotEqualTo(Integer value) {
+            addCriterion("line_status <>", value, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusGreaterThan(Integer value) {
+            addCriterion("line_status >", value, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("line_status >=", value, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusLessThan(Integer value) {
+            addCriterion("line_status <", value, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("line_status <=", value, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusIn(List<Integer> values) {
+            addCriterion("line_status in", values, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusNotIn(List<Integer> values) {
+            addCriterion("line_status not in", values, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusBetween(Integer value1, Integer value2) {
+            addCriterion("line_status between", value1, value2, "lineStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("line_status not between", value1, value2, "lineStatus");
+            return (Criteria) this;
+        }
+
         public Criteria andSipIpIsNull() {
             addCriterion("sip_ip is null");
             return (Criteria) this;
@@ -923,6 +983,76 @@ public class SipLineBaseInfoExample {
 
         public Criteria andCallerNumNotBetween(String value1, String value2) {
             addCriterion("caller_num not between", value1, value2, "callerNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeIsNull() {
+            addCriterion("belong_org_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeIsNotNull() {
+            addCriterion("belong_org_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeEqualTo(String value) {
+            addCriterion("belong_org_code =", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeNotEqualTo(String value) {
+            addCriterion("belong_org_code <>", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeGreaterThan(String value) {
+            addCriterion("belong_org_code >", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("belong_org_code >=", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeLessThan(String value) {
+            addCriterion("belong_org_code <", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeLessThanOrEqualTo(String value) {
+            addCriterion("belong_org_code <=", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeLike(String value) {
+            addCriterion("belong_org_code like", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeNotLike(String value) {
+            addCriterion("belong_org_code not like", value, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeIn(List<String> values) {
+            addCriterion("belong_org_code in", values, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeNotIn(List<String> values) {
+            addCriterion("belong_org_code not in", values, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeBetween(String value1, String value2) {
+            addCriterion("belong_org_code between", value1, value2, "belongOrgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBelongOrgCodeNotBetween(String value1, String value2) {
+            addCriterion("belong_org_code not between", value1, value2, "belongOrgCode");
             return (Criteria) this;
         }
 
@@ -1913,146 +2043,6 @@ public class SipLineBaseInfoExample {
 
         public Criteria andLineFeeTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("line_fee_type not between", value1, value2, "lineFeeType");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserIsNull() {
-            addCriterion("belong_user is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserIsNotNull() {
-            addCriterion("belong_user is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserEqualTo(String value) {
-            addCriterion("belong_user =", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotEqualTo(String value) {
-            addCriterion("belong_user <>", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserGreaterThan(String value) {
-            addCriterion("belong_user >", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserGreaterThanOrEqualTo(String value) {
-            addCriterion("belong_user >=", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserLessThan(String value) {
-            addCriterion("belong_user <", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserLessThanOrEqualTo(String value) {
-            addCriterion("belong_user <=", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserLike(String value) {
-            addCriterion("belong_user like", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotLike(String value) {
-            addCriterion("belong_user not like", value, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserIn(List<String> values) {
-            addCriterion("belong_user in", values, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotIn(List<String> values) {
-            addCriterion("belong_user not in", values, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserBetween(String value1, String value2) {
-            addCriterion("belong_user between", value1, value2, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongUserNotBetween(String value1, String value2) {
-            addCriterion("belong_user not between", value1, value2, "belongUser");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeIsNull() {
-            addCriterion("belong_org_code is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeIsNotNull() {
-            addCriterion("belong_org_code is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeEqualTo(String value) {
-            addCriterion("belong_org_code =", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeNotEqualTo(String value) {
-            addCriterion("belong_org_code <>", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeGreaterThan(String value) {
-            addCriterion("belong_org_code >", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeGreaterThanOrEqualTo(String value) {
-            addCriterion("belong_org_code >=", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeLessThan(String value) {
-            addCriterion("belong_org_code <", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeLessThanOrEqualTo(String value) {
-            addCriterion("belong_org_code <=", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeLike(String value) {
-            addCriterion("belong_org_code like", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeNotLike(String value) {
-            addCriterion("belong_org_code not like", value, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeIn(List<String> values) {
-            addCriterion("belong_org_code in", values, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeNotIn(List<String> values) {
-            addCriterion("belong_org_code not in", values, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeBetween(String value1, String value2) {
-            addCriterion("belong_org_code between", value1, value2, "belongOrgCode");
-            return (Criteria) this;
-        }
-
-        public Criteria andBelongOrgCodeNotBetween(String value1, String value2) {
-            addCriterion("belong_org_code not between", value1, value2, "belongOrgCode");
             return (Criteria) this;
         }
 

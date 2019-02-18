@@ -594,22 +594,24 @@ public class SipLineManager {
 	 * @return
 	 */
 	public String getLineOwner(SipLineBaseInfo sipLineBaseInfo) {
-		SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getOrgCode());
-		if(org!=null) {
-			if(sipLineBaseInfo.getLineFeeType()!=null && SipLineFeeTypeEnum.UNDO_FEE.getCode()==sipLineBaseInfo.getLineFeeType()) {
-				//如果管理员选择线路时自备线路了，那么直接返回自备线路
-				return "自备";
-			}
-			if(org.getType()!=null ) {
-				if(1==org.getType()) {
-					if("1".equals(org.getCode())) {
-						//总部
-						return "自营";
-					}else {
-						return "代理商";
-					}
-				}else if(2==org.getType()) {
+		if(StrUtils.isNotEmpty(sipLineBaseInfo.getOrgCode())) {
+			SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getOrgCode());
+			if(org!=null) {
+				if(sipLineBaseInfo.getLineFeeType()!=null && SipLineFeeTypeEnum.UNDO_FEE.getCode()==sipLineBaseInfo.getLineFeeType()) {
+					//如果管理员选择线路时自备线路了，那么直接返回自备线路
 					return "自备";
+				}
+				if(org.getType()!=null ) {
+					if(1==org.getType()) {
+						if("1".equals(org.getCode())) {
+							//总部
+							return "自营";
+						}else {
+							return "代理商";
+						}
+					}else if(2==org.getType()) {
+						return "自备";
+					}
 				}
 			}
 		}

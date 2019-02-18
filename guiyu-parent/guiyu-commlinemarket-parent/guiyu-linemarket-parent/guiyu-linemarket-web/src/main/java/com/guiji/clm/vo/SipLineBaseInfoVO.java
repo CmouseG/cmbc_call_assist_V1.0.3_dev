@@ -12,6 +12,8 @@ import lombok.Data;
 */
 @Data
 public class SipLineBaseInfoVO extends SipLineBaseInfo{
+	//线路归属
+	private String lineOwner;
 	//外显归属地名称
 	private String overtAreaName;
 	//地区名称

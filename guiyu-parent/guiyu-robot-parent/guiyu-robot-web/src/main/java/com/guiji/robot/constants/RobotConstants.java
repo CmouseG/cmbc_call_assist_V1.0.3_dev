@@ -41,10 +41,10 @@ public class RobotConstants {
 	public static final int TTS_ERROR_TYPE_L = 3; //P-TTS回调后本地处理失败
 
 	//TTS接口查证状态（AI服务提供的TTS状态码）
-	public static final String TTS_INTERFACE_UNDO = "0"; //未处理
-	public static final String TTS_INTERFACE_DOING = "1"; //处理中
-	public static final String TTS_INTERFACE_DONE = "2"; //处理完成
-	public static final String TTS_INTERFACE_FAIL = "3"; //处理失败
+	public static final int TTS_INTERFACE_UNDO = 0; //未处理
+	public static final int TTS_INTERFACE_DOING = 1; //处理中
+	public static final int TTS_INTERFACE_DONE = 2; //处理完成
+	public static final int TTS_INTERFACE_FAIL = 3; //处理失败
 	
 	public static final String TTS_RSP_SUCCESS = "success"; //TTS合成返回成功状态
 	

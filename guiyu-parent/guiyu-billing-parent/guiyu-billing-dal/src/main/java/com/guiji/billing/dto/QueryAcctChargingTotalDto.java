@@ -1,15 +1,23 @@
 package com.guiji.billing.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.guiji.billing.sys.PageDto;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class QueryAcctChargingTotalDto extends PageDto {
+
+    private static final long serialVersionUID = 1422780351964509146L;
 
     private String accountId;
 
     private Integer type;
 
+  //  @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String beginDate;
 
+ //   @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private String endDate;
 
     private String beginMonth;

@@ -77,7 +77,7 @@ public class LineMarketController {
 		if(sipLineBaseInfo!=null) {
 			sipLineBaseInfo.setCrtUser(userId.toString());
 			sipLineBaseInfo.setUpdateUser(userId.toString());
-			sipLineBaseInfo = sipLineManager.thirdSipLineCfg(sipLineBaseInfo,isSuperAdmin);
+			sipLineBaseInfo = sipLineManager.thirdSipLineCfg(sipLineBaseInfo);
 			return Result.ok(sipLineBaseInfo);
 		}
 		return Result.ok();
@@ -92,6 +92,34 @@ public class LineMarketController {
 	public Result.ReturnData delThirdSipLine(@RequestParam(value="id",required=true) Integer id){
 		sipLineManager.delThirdSipLineCfg(id);
 		return Result.ok();
+	}
+	
+	
+	/**
+	 * 生效第三方线路
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/effectThirdSip", method = RequestMethod.POST)
+	public Result.ReturnData effectThirdSip(
+			@RequestParam(value="id",required=true) Integer id,
+			@RequestHeader Long userId,
+			@RequestHeader Boolean isSuperAdmin){
+		sipLineManager.effectThirdSip(id, isSuperAdmin);
+		return Result.ok();
+	}
+	
+	/**
+	 * 查询第三方线路列表-分页
+	 * @param condition
+	 * @return
+	 */
+	@RequestMapping(value = "/querySipLineBaseForPageByCondition", method = RequestMethod.POST)
+	public Result.ReturnData<Page<SipLineBaseInfoVO>> querySipLineBaseForPageByCondition(@RequestBody SipLineInfoQueryCondition condition){
+		//分页查询申请线路列表
+		Page<SipLineBaseInfo> sipLineBasePage = sipLineInfoService.querySipLineBaseForPageByCondition(condition);
+		Page<SipLineBaseInfoVO> rtnPage = new Page<SipLineBaseInfoVO>(condition.getPageNo(),sipLineBasePage.getTotalRecord(),this.baseLine2VO(sipLineBasePage.getRecords()));
+		return Result.ok(rtnPage);
 	}
 	
 	
@@ -114,7 +142,7 @@ public class LineMarketController {
 	 * @param sipLineApply
 	 * @return
 	 */
-	@RequestMapping(value = "/sipLineApply", method = RequestMethod.POST)
+	@RequestMapping(value = "/sipLineApply", method = RequestMethod.POST) 
 	public Result.ReturnData sipLineApply(@RequestBody SipLineApply sipLineApply,@RequestHeader Long userId){
 		sipLineApply.setApplyUser(userId.toString());
 		sipLineApply.setCrtUser(userId.toString());
@@ -349,15 +377,7 @@ public class LineMarketController {
 					}
 				}
 				//线路拥有者
-				Integer sipLineId = sipLineApply.getSipLineId();
-				SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
-				if(sipLineBaseInfo==null) {
-					List<SipLineBaseInfo> baseList = sipLineInfoService.queryByBaseSipId(sipLineApply.getAgentLineId()); 
-					if(baseList!=null) {
-						sipLineBaseInfo = baseList.get(0);
-					}
-				}
-				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
+				vo.setLineOwner(sipLineManager.getLineOwner(dataLocalCacheUtil.queryOrgByCode(sipLineApply.getOrgCode())));
 				voList.add(vo);
 			}
 			return voList;

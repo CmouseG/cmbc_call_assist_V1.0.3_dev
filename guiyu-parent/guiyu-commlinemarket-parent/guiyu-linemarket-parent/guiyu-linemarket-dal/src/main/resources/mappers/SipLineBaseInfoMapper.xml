@@ -6,6 +6,7 @@
     <result column="line_name" property="lineName" jdbcType="VARCHAR" />
     <result column="line_id" property="lineId" jdbcType="INTEGER" />
     <result column="supplier" property="supplier" jdbcType="VARCHAR" />
+    <result column="line_status" property="lineStatus" jdbcType="INTEGER" />
     <result column="sip_ip" property="sipIp" jdbcType="VARCHAR" />
     <result column="sip_port" property="sipPort" jdbcType="INTEGER" />
     <result column="sip_domain" property="sipDomain" jdbcType="VARCHAR" />
@@ -14,6 +15,7 @@
     <result column="codec" property="codec" jdbcType="VARCHAR" />
     <result column="reg_flag" property="regFlag" jdbcType="BIT" />
     <result column="caller_num" property="callerNum" jdbcType="VARCHAR" />
+    <result column="belong_org_code" property="belongOrgCode" jdbcType="VARCHAR" />
     <result column="destination_prefix" property="destinationPrefix" jdbcType="VARCHAR" />
     <result column="max_concurrent_calls" property="maxConcurrentCalls" jdbcType="INTEGER" />
     <result column="use_concurrent_calls" property="useConcurrentCalls" jdbcType="INTEGER" />
@@ -29,8 +31,6 @@
     <result column="contract_univalent" property="contractUnivalent" jdbcType="DECIMAL" />
     <result column="univalent" property="univalent" jdbcType="DECIMAL" />
     <result column="line_fee_type" property="lineFeeType" jdbcType="INTEGER" />
-    <result column="belong_user" property="belongUser" jdbcType="VARCHAR" />
-    <result column="belong_org_code" property="belongOrgCode" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="sip_share_id" property="sipShareId" jdbcType="INTEGER" />
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
@@ -98,11 +98,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, line_name, line_id, supplier, sip_ip, sip_port, sip_domain, sip_account, sip_psd, 
-    codec, reg_flag, caller_num, destination_prefix, max_concurrent_calls, use_concurrent_calls, 
-    call_direc, begin_date, end_date, time_begin, time_end, overt_area, industrys, areas, 
-    except_areas, contract_univalent, univalent, line_fee_type, belong_user, belong_org_code, 
-    remark, sip_share_id, org_code, crt_user, crt_time, update_time, update_user
+    id, line_name, line_id, supplier, line_status, sip_ip, sip_port, sip_domain, sip_account, 
+    sip_psd, codec, reg_flag, caller_num, belong_org_code, destination_prefix, max_concurrent_calls, 
+    use_concurrent_calls, call_direc, begin_date, end_date, time_begin, time_end, overt_area, 
+    industrys, areas, except_areas, contract_univalent, univalent, line_fee_type, remark, 
+    sip_share_id, org_code, crt_user, crt_time, update_time, update_user
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfoExample" >
     select
@@ -140,31 +140,29 @@
   </delete>
   <insert id="insert" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into sip_line_base_info (line_name, line_id, supplier, 
-      sip_ip, sip_port, sip_domain, 
-      sip_account, sip_psd, codec, 
-      reg_flag, caller_num, destination_prefix, 
-      max_concurrent_calls, use_concurrent_calls, 
-      call_direc, begin_date, end_date, 
-      time_begin, time_end, overt_area, 
-      industrys, areas, except_areas, 
-      contract_univalent, univalent, line_fee_type, 
-      belong_user, belong_org_code, remark, 
-      sip_share_id, org_code, crt_user, 
-      crt_time, update_time, update_user
-      )
+      line_status, sip_ip, sip_port, 
+      sip_domain, sip_account, sip_psd, 
+      codec, reg_flag, caller_num, 
+      belong_org_code, destination_prefix, max_concurrent_calls, 
+      use_concurrent_calls, call_direc, begin_date, 
+      end_date, time_begin, time_end, 
+      overt_area, industrys, areas, 
+      except_areas, contract_univalent, univalent, 
+      line_fee_type, remark, sip_share_id, 
+      org_code, crt_user, crt_time, 
+      update_time, update_user)
     values (#{lineName,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, #{supplier,jdbcType=VARCHAR}, 
-      #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, #{sipDomain,jdbcType=VARCHAR}, 
-      #{sipAccount,jdbcType=VARCHAR}, #{sipPsd,jdbcType=VARCHAR}, #{codec,jdbcType=VARCHAR}, 
-      #{regFlag,jdbcType=BIT}, #{callerNum,jdbcType=VARCHAR}, #{destinationPrefix,jdbcType=VARCHAR}, 
-      #{maxConcurrentCalls,jdbcType=INTEGER}, #{useConcurrentCalls,jdbcType=INTEGER}, 
-      #{callDirec,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR}, 
-      #{timeBegin,jdbcType=VARCHAR}, #{timeEnd,jdbcType=VARCHAR}, #{overtArea,jdbcType=VARCHAR}, 
-      #{industrys,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, #{exceptAreas,jdbcType=VARCHAR}, 
-      #{contractUnivalent,jdbcType=DECIMAL}, #{univalent,jdbcType=DECIMAL}, #{lineFeeType,jdbcType=INTEGER}, 
-      #{belongUser,jdbcType=VARCHAR}, #{belongOrgCode,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{sipShareId,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, 
-      #{crtTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}
-      )
+      #{lineStatus,jdbcType=INTEGER}, #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, 
+      #{sipDomain,jdbcType=VARCHAR}, #{sipAccount,jdbcType=VARCHAR}, #{sipPsd,jdbcType=VARCHAR}, 
+      #{codec,jdbcType=VARCHAR}, #{regFlag,jdbcType=BIT}, #{callerNum,jdbcType=VARCHAR}, 
+      #{belongOrgCode,jdbcType=VARCHAR}, #{destinationPrefix,jdbcType=VARCHAR}, #{maxConcurrentCalls,jdbcType=INTEGER}, 
+      #{useConcurrentCalls,jdbcType=INTEGER}, #{callDirec,jdbcType=INTEGER}, #{beginDate,jdbcType=VARCHAR}, 
+      #{endDate,jdbcType=VARCHAR}, #{timeBegin,jdbcType=VARCHAR}, #{timeEnd,jdbcType=VARCHAR}, 
+      #{overtArea,jdbcType=VARCHAR}, #{industrys,jdbcType=VARCHAR}, #{areas,jdbcType=VARCHAR}, 
+      #{exceptAreas,jdbcType=VARCHAR}, #{contractUnivalent,jdbcType=DECIMAL}, #{univalent,jdbcType=DECIMAL}, 
+      #{lineFeeType,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{sipShareId,jdbcType=INTEGER}, 
+      #{orgCode,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.SipLineBaseInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into sip_line_base_info
@@ -177,6 +175,9 @@
       </if>
       <if test="supplier != null" >
         supplier,
+      </if>
+      <if test="lineStatus != null" >
+        line_status,
       </if>
       <if test="sipIp != null" >
         sip_ip,
@@ -201,6 +202,9 @@
       </if>
       <if test="callerNum != null" >
         caller_num,
+      </if>
+      <if test="belongOrgCode != null" >
+        belong_org_code,
       </if>
       <if test="destinationPrefix != null" >
         destination_prefix,
@@ -247,12 +251,6 @@
       <if test="lineFeeType != null" >
         line_fee_type,
       </if>
-      <if test="belongUser != null" >
-        belong_user,
-      </if>
-      <if test="belongOrgCode != null" >
-        belong_org_code,
-      </if>
       <if test="remark != null" >
         remark,
       </if>
@@ -285,6 +283,9 @@
       <if test="supplier != null" >
         #{supplier,jdbcType=VARCHAR},
       </if>
+      <if test="lineStatus != null" >
+        #{lineStatus,jdbcType=INTEGER},
+      </if>
       <if test="sipIp != null" >
         #{sipIp,jdbcType=VARCHAR},
       </if>
@@ -308,6 +309,9 @@
       </if>
       <if test="callerNum != null" >
         #{callerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="belongOrgCode != null" >
+        #{belongOrgCode,jdbcType=VARCHAR},
       </if>
       <if test="destinationPrefix != null" >
         #{destinationPrefix,jdbcType=VARCHAR},
@@ -354,12 +358,6 @@
       <if test="lineFeeType != null" >
         #{lineFeeType,jdbcType=INTEGER},
       </if>
-      <if test="belongUser != null" >
-        #{belongUser,jdbcType=VARCHAR},
-      </if>
-      <if test="belongOrgCode != null" >
-        #{belongOrgCode,jdbcType=VARCHAR},
-      </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
@@ -404,6 +402,9 @@
       <if test="record.supplier != null" >
         supplier = #{record.supplier,jdbcType=VARCHAR},
       </if>
+      <if test="record.lineStatus != null" >
+        line_status = #{record.lineStatus,jdbcType=INTEGER},
+      </if>
       <if test="record.sipIp != null" >
         sip_ip = #{record.sipIp,jdbcType=VARCHAR},
       </if>
@@ -427,6 +428,9 @@
       </if>
       <if test="record.callerNum != null" >
         caller_num = #{record.callerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.belongOrgCode != null" >
+        belong_org_code = #{record.belongOrgCode,jdbcType=VARCHAR},
       </if>
       <if test="record.destinationPrefix != null" >
         destination_prefix = #{record.destinationPrefix,jdbcType=VARCHAR},
@@ -473,12 +477,6 @@
       <if test="record.lineFeeType != null" >
         line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
       </if>
-      <if test="record.belongUser != null" >
-        belong_user = #{record.belongUser,jdbcType=VARCHAR},
-      </if>
-      <if test="record.belongOrgCode != null" >
-        belong_org_code = #{record.belongOrgCode,jdbcType=VARCHAR},
-      </if>
       <if test="record.remark != null" >
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
@@ -511,6 +509,7 @@
       line_name = #{record.lineName,jdbcType=VARCHAR},
       line_id = #{record.lineId,jdbcType=INTEGER},
       supplier = #{record.supplier,jdbcType=VARCHAR},
+      line_status = #{record.lineStatus,jdbcType=INTEGER},
       sip_ip = #{record.sipIp,jdbcType=VARCHAR},
       sip_port = #{record.sipPort,jdbcType=INTEGER},
       sip_domain = #{record.sipDomain,jdbcType=VARCHAR},
@@ -519,6 +518,7 @@
       codec = #{record.codec,jdbcType=VARCHAR},
       reg_flag = #{record.regFlag,jdbcType=BIT},
       caller_num = #{record.callerNum,jdbcType=VARCHAR},
+      belong_org_code = #{record.belongOrgCode,jdbcType=VARCHAR},
       destination_prefix = #{record.destinationPrefix,jdbcType=VARCHAR},
       max_concurrent_calls = #{record.maxConcurrentCalls,jdbcType=INTEGER},
       use_concurrent_calls = #{record.useConcurrentCalls,jdbcType=INTEGER},
@@ -534,8 +534,6 @@
       contract_univalent = #{record.contractUnivalent,jdbcType=DECIMAL},
       univalent = #{record.univalent,jdbcType=DECIMAL},
       line_fee_type = #{record.lineFeeType,jdbcType=INTEGER},
-      belong_user = #{record.belongUser,jdbcType=VARCHAR},
-      belong_org_code = #{record.belongOrgCode,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       sip_share_id = #{record.sipShareId,jdbcType=INTEGER},
       org_code = #{record.orgCode,jdbcType=VARCHAR},
@@ -558,6 +556,9 @@
       </if>
       <if test="supplier != null" >
         supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="lineStatus != null" >
+        line_status = #{lineStatus,jdbcType=INTEGER},
       </if>
       <if test="sipIp != null" >
         sip_ip = #{sipIp,jdbcType=VARCHAR},
@@ -582,6 +583,9 @@
       </if>
       <if test="callerNum != null" >
         caller_num = #{callerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="belongOrgCode != null" >
+        belong_org_code = #{belongOrgCode,jdbcType=VARCHAR},
       </if>
       <if test="destinationPrefix != null" >
         destination_prefix = #{destinationPrefix,jdbcType=VARCHAR},
@@ -628,12 +632,6 @@
       <if test="lineFeeType != null" >
         line_fee_type = #{lineFeeType,jdbcType=INTEGER},
       </if>
-      <if test="belongUser != null" >
-        belong_user = #{belongUser,jdbcType=VARCHAR},
-      </if>
-      <if test="belongOrgCode != null" >
-        belong_org_code = #{belongOrgCode,jdbcType=VARCHAR},
-      </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -663,6 +661,7 @@
     set line_name = #{lineName,jdbcType=VARCHAR},
       line_id = #{lineId,jdbcType=INTEGER},
       supplier = #{supplier,jdbcType=VARCHAR},
+      line_status = #{lineStatus,jdbcType=INTEGER},
       sip_ip = #{sipIp,jdbcType=VARCHAR},
       sip_port = #{sipPort,jdbcType=INTEGER},
       sip_domain = #{sipDomain,jdbcType=VARCHAR},
@@ -671,6 +670,7 @@
       codec = #{codec,jdbcType=VARCHAR},
       reg_flag = #{regFlag,jdbcType=BIT},
       caller_num = #{callerNum,jdbcType=VARCHAR},
+      belong_org_code = #{belongOrgCode,jdbcType=VARCHAR},
       destination_prefix = #{destinationPrefix,jdbcType=VARCHAR},
       max_concurrent_calls = #{maxConcurrentCalls,jdbcType=INTEGER},
       use_concurrent_calls = #{useConcurrentCalls,jdbcType=INTEGER},
@@ -686,8 +686,6 @@
       contract_univalent = #{contractUnivalent,jdbcType=DECIMAL},
       univalent = #{univalent,jdbcType=DECIMAL},
       line_fee_type = #{lineFeeType,jdbcType=INTEGER},
-      belong_user = #{belongUser,jdbcType=VARCHAR},
-      belong_org_code = #{belongOrgCode,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       sip_share_id = #{sipShareId,jdbcType=INTEGER},
       org_code = #{orgCode,jdbcType=VARCHAR},

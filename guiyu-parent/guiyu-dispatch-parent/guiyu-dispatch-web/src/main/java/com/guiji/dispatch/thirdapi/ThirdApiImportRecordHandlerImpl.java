@@ -5,9 +5,11 @@ import com.guiji.dispatch.batchimport.BatchImportErrorCodeEnum;
 import com.guiji.dispatch.batchimport.IBatchImportFieRecordErrorService;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.ThirdImportErrorMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.ThirdImportError;
+import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
@@ -35,6 +37,9 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 
 	@Autowired
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
+	
+	@Autowired
+	private ILinesService lineService;
 
 	public void excute(DispatchPlan vo) throws Exception {
 		logger.info("ThirdApiImportRecordHandlerImpl: "+ vo);
@@ -54,9 +59,13 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 					logger.info("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}else{
-					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>.开始执行了");
+					//mod by xujin
+					for(DispatchLines line : vo.getLines()){
+						line.setCreateTime(DateUtil.getCurrent4Time());
+						line.setPlanuuid(vo.getPlanUuid());
+						lineService.insertLines(line);
+					}
 					int insert = dispatchPlanMapper.insert(vo);
-					logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>结束了" + insert);
 				}
 			}
 		} else {

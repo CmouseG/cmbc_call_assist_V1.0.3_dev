@@ -62,7 +62,11 @@ public class BillingUserAcctController {
     //管理员充值(系统侧使用)
     @ApiOperation(value="企业账户充值", notes="企业账户充值")
     @RequestMapping(value = "/recharge", method = {RequestMethod.POST})
-    public boolean recharge(@RequestBody RechargeDto rechargeDto){
+    public boolean recharge(@RequestBody RechargeDto rechargeDto,
+                            @RequestHeader String userId){
+        if(null != rechargeDto){
+            rechargeDto.setUserId(userId);
+        }
         boolean bool = billingUserAcctService.recharge(rechargeDto);
         return bool;
     }

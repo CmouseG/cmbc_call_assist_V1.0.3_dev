@@ -332,19 +332,21 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     private boolean rechargeRecord(BillingUserAcctBean acct, RechargeDto rechargeDto){
         BillingAcctChargingRecord chargingRecord = new BillingAcctChargingRecord();
+        String userId = rechargeDto.getUserId();
+        SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
         Date time = new Date();
         chargingRecord.setChargingId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
         chargingRecord.setAccountId(acct.getAccountId());
-        chargingRecord.setOperUserId(rechargeDto.getUserId());
-        chargingRecord.setOperUserName("");
-        chargingRecord.setOperUserOrgCode(acct.getOrgCode());
-        chargingRecord.setOperBeginTime(null);
-        chargingRecord.setOperEndTime(null);
+        chargingRecord.setOperUserId(userId);
+        chargingRecord.setOperUserName(user.getUsername());
+        chargingRecord.setOperUserOrgCode(acct.getOrgCode()+"|"+user.getOrgCode());
+        chargingRecord.setOperBeginTime(time);
+        chargingRecord.setOperEndTime(time);
         chargingRecord.setOperDuration(0L);
         chargingRecord.setOperDurationM(0L);
         chargingRecord.setOperDurationStr("00:00");
 
-        chargingRecord.setType(ChargingTypeEnum.RECHARGE.getType());//消费
+        chargingRecord.setType(ChargingTypeEnum.RECHARGE.getType());//充值
         chargingRecord.setFeeMode(AcctChargingFeeModeEnum.BANK_RECHARGE.getFeeCode());//通话消费
         chargingRecord.setUserChargingId(null);
         chargingRecord.setAmount(rechargeDto.getAmount());

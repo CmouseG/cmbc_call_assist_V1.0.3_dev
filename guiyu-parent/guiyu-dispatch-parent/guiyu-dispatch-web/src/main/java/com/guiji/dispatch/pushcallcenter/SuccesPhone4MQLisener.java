@@ -1,6 +1,7 @@
 package com.guiji.dispatch.pushcallcenter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
@@ -23,7 +25,9 @@ import com.guiji.notice.enm.NoticeType;
 import com.guiji.notice.entity.MessageSend;
 import com.guiji.sms.api.ISms;
 import com.guiji.sms.vo.SendMReqVO;
+import com.guiji.utils.DateUtil;
 import com.guiji.utils.JsonUtils;
+import com.guiji.wechat.vo.SendMsgReqVO;
 import com.rabbitmq.client.Channel;
 
 /**
@@ -49,6 +53,13 @@ public class SuccesPhone4MQLisener {
 	@Autowired
 	private INoticeSend sendMsg;
 
+	@Value("${weixin.templateId}")
+	String weixinTemplateId;
+	@Value("${weixin.appid}")
+	String weixinAppid;
+	@Value("${weixin.pagePath.mainUrl}")
+	String mainUrl;
+
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		try {
@@ -69,8 +80,8 @@ public class SuccesPhone4MQLisener {
 				logger.info("当前队列任务回调修改结果" + result);
 				// 查询当前是否批次结束
 				MessageSend send = selectBatchOver(dispatchPlan);
-				if(send !=null){
-					logger.info("当前批次结束,通知结束消息："+dispatchPlan.getBatchId());
+				if (send != null) {
+					logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
 					sendMsg.sendMessage(send);
 				}
 				// 第三方回调
@@ -99,14 +110,27 @@ public class SuccesPhone4MQLisener {
 		ex.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
 				.andIsDelEqualTo(Constant.IS_DEL_0).andUserIdEqualTo(dispatchPlan.getUserId());
 		int count = dispatchPlanMapper.countByExample(ex);
-		if(count ==0){
+		DispatchPlanExample ex1 = new DispatchPlanExample();
+		ex1.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId());
+		int batchCount = dispatchPlanMapper.countByExample(ex1);
+		if (count == 0) {
 			MessageSend send = new MessageSend();
 			send.setUserId(dispatchPlan.getUserId().longValue());
 			send.setNoticeType(NoticeType.task_finish);
-			send.setSmsContent("您当前拨打批次任务"+dispatchPlan.getBatchName()+"已经完成");
-			send.setMailContent("您当前拨打批次任务"+dispatchPlan.getBatchName()+"已经完成");
-			send.setEmailContent("您当前拨打批次任务"+dispatchPlan.getBatchName()+"已经完成");
-			send.setEmailSubject("任务完成通知");
+			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的+" + batchCount
+					+ "+通号码的外呼任务已完成，请登录系统查看外呼结果");
+			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的+" + batchCount
+					+ "+通号码的外呼任务已完成，请登录系统查看外呼结果");
+			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的+" + batchCount
+					+ "+通号码的外呼任务已完成，请登录系统查看外呼结果");
+			send.setEmailSubject("任务完成");
+			// 微信
+			send.setWeixinTemplateId(weixinTemplateId);
+			send.setWeixinPagePath(mainUrl);
+			send.setWeixinAppId(weixinAppid);
+			HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
+			map.put("userName", new SendMsgReqVO.Item("您的外呼任务已完成哦！请登录系统查看外呼结果", null));
+			send.setWeixinData(map);
 			return send;
 		}
 		return null;

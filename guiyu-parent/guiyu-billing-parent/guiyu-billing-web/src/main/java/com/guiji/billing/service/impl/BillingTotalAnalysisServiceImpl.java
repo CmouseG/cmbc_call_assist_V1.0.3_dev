@@ -146,9 +146,14 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
+            beginDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
             endDate = DateTimeUtils.DEFAULT_END_DATE;
         }else if(StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
             beginDate = DateTimeUtils.DEFAULT_BEGIN_DATE;
+            endDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+        }else if(!StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
+            beginDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+            endDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
         }
         return billingTotalAnalysisMapper.totalChargingByDate(beginDate, endDate, orgCode, page);
     }
@@ -164,9 +169,14 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
+            beginDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
             endDate = DateTimeUtils.DEFAULT_END_DATE;
         }else if(StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
             beginDate = DateTimeUtils.DEFAULT_BEGIN_DATE;
+            endDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+        }else if(!StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)){
+            beginDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
+            endDate = DateTimeUtils.getFormatStrByDateStr(beginDate, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
         }
         return billingTotalAnalysisMapper.totalChargingCountByDate(beginDate, endDate, orgCode);
     }

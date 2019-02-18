@@ -1,5 +1,7 @@
 package com.guiji.clm.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 /** 
@@ -10,12 +12,18 @@ import lombok.Data;
 */
 @Data
 public class SipLineInfoQueryCondition {
+	private int pageNo;
+	private int pageSize;
 	//虚拟共享线路id
 	private Integer sipShareId;
 	//线路名称
 	private String lineName;
-	//所属用户
-	private String belongUser;
+	//创建人
+	private String crtUser;
 	//所属企业
 	private String orgCode;
+	//线路状态
+	private Integer status; 
+	//线路状态（多选）
+	private List<Integer> statusList; 
 }

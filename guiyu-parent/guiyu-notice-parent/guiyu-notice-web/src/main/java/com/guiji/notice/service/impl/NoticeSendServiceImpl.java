@@ -45,10 +45,12 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Override
     public void sendMessage(MessageSend messageSend) {
+        String orgCode = messageSend.getOrgCode();
+        if(orgCode==null){
+            Result.ReturnData<SysOrganization> returnOrg = auth.getOrgByUserId(messageSend.getUserId());
+            orgCode = returnOrg.getBody().getCode();
+        }
 
-        Result.ReturnData<SysOrganization> returnOrg = auth.getOrgByUserId(messageSend.getUserId());
-
-        String orgCode = returnOrg.getBody().getCode();
         int noticeType = messageSend.getNoticeType().getValue();
 
         //notice_info新增记录
@@ -57,7 +59,9 @@ public class NoticeSendServiceImpl implements NoticeSendService {
         noticeInfo.setNoticeType(noticeType);
         noticeInfo.setOrgCode(orgCode);
         noticeInfo.setCreateTime(new Date());
-        noticeInfo.setWeixinData(messageSend.getWeixinData().toString());
+        if(messageSend.getWeixinData()!=null){
+            noticeInfo.setWeixinData(messageSend.getWeixinData().toString());
+        }
         noticeInfoMapper.insertSelective(noticeInfo);
         int infoId = noticeInfo.getId();
 

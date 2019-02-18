@@ -15,6 +15,9 @@ public class MessageSend implements Serializable {
 
     @ApiModelProperty(value = "用户ID")
     private Long userId;
+    //传了orgCode将忽略掉userId字段
+    @ApiModelProperty(value = "企业orgCode,传了orgCode可以不传用户id。因为传用户id其实也是为了得到企业orgCode")
+    private String orgCode;
 
     @ApiModelProperty(value = "通知类型")
     private NoticeType noticeType;

@@ -59,7 +59,7 @@ public class DateTimeUtils {
 	 * @param pattern
 	 * @return
 	 */
-	private static FastDateFormat getDateFormat(String pattern){
+	public static FastDateFormat getDateFormat(String pattern){
 		if(StringUtils.isEmpty(pattern)){
 			pattern=DEFAULT_DATE_FORMAT_PATTERN_FULL;
 		}
@@ -107,6 +107,29 @@ public class DateTimeUtils {
 		}catch (ParseException e){
 			return null;
 		}
+	}
+
+	public static String getFormatStrByDateStr(String dateStr, String pattern){
+		if(StringUtils.isEmpty(dateStr)){
+			return null;
+		}
+
+		if(StringUtils.isEmpty(dateStr)){
+			return dateStr;
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		try {
+			Date date = sdf.parse(dateStr);
+			return sdf.format(date);
+		}catch (ParseException e){
+			return null;
+		}
+	}
+
+	public final static void main(String args[]){
+		String s = getFormatStrByDateStr("2019-02-01 23:59:59", "yyyy-MM-dd");
+		System.out.println(s);
 	}
 	
 	/**
@@ -434,12 +457,6 @@ public class DateTimeUtils {
 	/** 是否是闰年 */
 	private static boolean isLeapYear(int year){
 		return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) ;
-	}
-
-	public static void main(String[] args) throws Exception {
-		System.out.println(DateTimeUtils.getDate("2017-12-12 12:00",DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_MIDDLE));
-		System.out.println(new Date());
-		System.out.println(DateTimeUtils.distanceDays("2017-7-12","2017-07-11",DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT));
 	}
 
 

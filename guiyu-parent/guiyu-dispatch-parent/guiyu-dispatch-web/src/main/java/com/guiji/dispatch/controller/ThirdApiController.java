@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -20,6 +21,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
@@ -39,12 +42,15 @@ import com.guiji.dispatch.dao.entity.FileRecordsExample;
 import com.guiji.dispatch.dao.entity.ThirdImportError;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
 import com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample;
+import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.model.DispatchLines;
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.DispatchPlanApi;
 import com.guiji.dispatch.model.DispatchPlanList;
 import com.guiji.dispatch.model.PlanCallInfoCount;
 import com.guiji.dispatch.model.PlanResultInfo;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.thirdapi.ThirdApiImportQueueHandler;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
@@ -87,6 +93,12 @@ public class ThirdApiController implements IThirdApiOut {
 	private FileErrorRecordsMapper fileErrorRecordsMapper;
 	@Autowired
 	private ThirdInterfaceRecordsMapper thirdCallBackMapper;
+	@Autowired
+	private LineMarketRemote lineMarket;
+	@Autowired
+	private ILinesService lineService;
+	@Autowired
+	private IPhoneRegionService phoneRegionService;
 
 	@Override
 	@GetMapping(value = "out/getCalldetail")
@@ -181,7 +193,7 @@ public class ThirdApiController implements IThirdApiOut {
 	@PostMapping(value = "out/insertDispatchPlanList")
 	public ReturnData<PlanResultInfo> insertDispatchPlanList(String jsonList) {
 		DispatchPlanList parseObject = JSONObject.parseObject(jsonList, DispatchPlanList.class);
-		// // 检验基本参数
+		//检验基本参数
 		ThirdCheckParams checkBaseParams = checkBaseParams(parseObject);
 		if (!checkBaseParams.isResult()) {
 			PlanResultInfo info = new PlanResultInfo();
@@ -234,7 +246,7 @@ public class ThirdApiController implements IThirdApiOut {
 			bean.setPlanUuid(IdGenUtil.uuid());
 			bean.setBatchId(batch.getId());
 			bean.setUserId(Integer.valueOf(parseObject.getUserId()));
-			bean.setLine(Integer.valueOf(parseObject.getLine()));
+//			bean.setLine(Integer.valueOf(parseObject.getLine()));
 			bean.setRobot(parseObject.getRobot());
 			bean.setClean(Integer.valueOf(parseObject.getIsClean()));
 			bean.setCallHour(parseObject.getCallHour());
@@ -260,6 +272,18 @@ public class ThirdApiController implements IThirdApiOut {
 				errorMsg = true;
 				continue;
 			}
+			// 加入线路
+			List<com.guiji.dispatch.dao.entity.DispatchLines> list = new ArrayList<>();
+			for (DispatchLines line : parseObject.getLines()) {
+				com.guiji.dispatch.dao.entity.DispatchLines newLine = new com.guiji.dispatch.dao.entity.DispatchLines();
+				BeanUtils.copyProperties(line,newLine);
+				newLine.setPlanuuid(dispatchPlan.getPlanUuid());
+				list.add(newLine);
+			}
+			bean.setLines(list);
+			// 查询号码归属地
+			String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
+			bean.setCityName(cityName);
 			thirdApiHandler.add(bean);
 			logger.info(" thirdApiHandler bean " + bean);
 			succ.add(bean);
@@ -282,6 +306,7 @@ public class ThirdApiController implements IThirdApiOut {
 		}
 		return returnData;
 	}
+
 
 	/**
 	 * 记录第三方的错误信息
@@ -319,11 +344,6 @@ public class ThirdApiController implements IThirdApiOut {
 			return checkResult;
 		}
 
-		if (dispatchPlanList.getLine() == null || dispatchPlanList.getLine() == "") {
-			checkResult.setResult(false);
-			checkResult.setMsg("line参数必填,请检查");
-			return checkResult;
-		}
 
 		if (dispatchPlanList.getIsClean() == null || dispatchPlanList.getIsClean() == "") {
 			checkResult.setResult(false);
@@ -350,28 +370,19 @@ public class ThirdApiController implements IThirdApiOut {
 		}
 		// 检查用户
 		ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dispatchPlanList.getUserId()));
-		// 检查线路
-		String lineName = callManagerOut.getLineInfoById(Integer.valueOf(dispatchPlanList.getLine())).getBody();
 		// 检查话术
 		ServerResult<List<BotSentenceProcess>> templateById = Process.getTemplateById(dispatchPlanList.getRobot());
-
 		if (user.getBody() == null) {
 			checkResult.setResult(false);
 			checkResult.setMsg("用户id不存在");
 			return checkResult;
 		}
 
-		if (lineName == null) {
-			checkResult.setResult(false);
-			checkResult.setMsg("线路id不存在");
-			return checkResult;
-		}
 		if (templateById.getData().size() == 0) {
 			checkResult.setResult(false);
 			checkResult.setMsg("话术模板不存在");
 			return checkResult;
 		}
-
 		return checkResult;
 	}
 

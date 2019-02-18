@@ -10,6 +10,7 @@ import com.guiji.clm.dao.SipLineBaseInfoMapper;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineBaseInfoExample;
 import com.guiji.clm.dao.entity.SipLineBaseInfoExample.Criteria;
+import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.vo.SipLineInfoQueryCondition;
 import com.guiji.common.model.Page;
 import com.guiji.utils.DateUtil;
@@ -45,6 +46,7 @@ public class SipLineInfoService {
 			}else {
 				//新增
 				sipLineBaseInfo.setUseConcurrentCalls(0);	//初始已用并发数0
+				sipLineBaseInfo.setLineStatus(SipLineStatusEnum.INIT.getCode()); //默认-线路未生效（初始化)
 				sipLineBaseInfo.setCrtTime(DateUtil.getCurrent4Time());
 				sipLineBaseInfo.setUpdateTime(DateUtil.getCurrent4Time());
 				sipLineBaseInfoMapper.insert(sipLineBaseInfo);
@@ -58,7 +60,7 @@ public class SipLineInfoService {
 	 * @param sipShareId
 	 * @return
 	 */
-	public List<SipLineBaseInfo> queryByBaseSipId(Integer sipShareId) {
+	public List<SipLineBaseInfo> queryByShareSipId(Integer sipShareId) {
 		if(sipShareId!=null) {
 			SipLineBaseInfoExample example = new SipLineBaseInfoExample();
 			example.createCriteria().andSipShareIdEqualTo(sipShareId);
@@ -108,9 +110,11 @@ public class SipLineInfoService {
 	 * @param condition
 	 * @return
 	 */
-	public Page<SipLineBaseInfo> querySipLineBaseForPageByCondition(int pageNo, int pageSize,SipLineInfoQueryCondition condition){
+	public Page<SipLineBaseInfo> querySipLineBaseForPageByCondition(SipLineInfoQueryCondition condition){
 		Page<SipLineBaseInfo> page = new Page<SipLineBaseInfo>();
 		int totalRecord = 0;
+		int pageNo = condition.getPageNo();
+		int pageSize = condition.getPageSize();
 		int limitStart = (pageNo-1)*pageSize;	//起始条数
 		int limitEnd = pageSize;	//查询条数
 		SipLineBaseInfoExample example = this.queryExample(condition);
@@ -144,14 +148,24 @@ public class SipLineInfoService {
 			if(StrUtils.isNotEmpty(condition.getLineName())) {
 				criteria.andLineNameLike("%"+condition.getLineName()+"%");
 			}
-			if(StrUtils.isNotEmpty(condition.getBelongUser())) {
-				criteria.andBelongUserEqualTo(condition.getBelongUser());
+			if(StrUtils.isNotEmpty(condition.getCrtUser())) {
+				criteria.andCrtUserEqualTo(condition.getCrtUser());
 			}
 			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
 			}
+			if(condition.getStatus()!=null) {
+				criteria.andLineStatusEqualTo(condition.getStatus());
+			}
+			if(condition.getStatusList()!=null) {
+				if(condition.getStatusList().size()==1) {
+					criteria.andLineStatusEqualTo(condition.getStatusList().get(0));
+				}else {
+					criteria.andLineStatusIn(condition.getStatusList());
+				}
+			}
 		}
-		example.setOrderByClause(" crt_time desc");
+		example.setOrderByClause(" id desc");
 		return example;
 	}
 }

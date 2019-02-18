@@ -7,6 +7,7 @@ package com.guiji.clm.enm;
 * @version V1.0  
 */
 public enum SipLineStatusEnum {
+	INIT("新增初始化", 0), 
 	OK("正常", 1), 
 	EXPIRE("到期", 2), 
 	INVALID("失效/删除", 3);

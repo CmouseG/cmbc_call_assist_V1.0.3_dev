@@ -30,7 +30,7 @@ public class SendMsgReqVO implements Serializable {
     private String pagePath;
 
     @ApiModelProperty(value = "模板数据")
-    private HashMap<String, SendMsgReqVO.Item> data;
+    public HashMap<String, SendMsgReqVO.Item> data;
 
     public SendMsgReqVO() {
         this.data = new HashMap<>();

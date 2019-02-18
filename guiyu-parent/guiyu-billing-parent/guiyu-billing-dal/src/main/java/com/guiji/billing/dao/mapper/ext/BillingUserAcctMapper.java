@@ -33,11 +33,15 @@ public interface BillingUserAcctMapper {
     //新增用户账户
     int addUserAcct(BillingUserAcctBean userAcct);
 
-    //查询欠费用户(不包括可用余额为O的企业用户)
+    //查询欠费用户(包括可用余额为O的企业用户)
     List<BillingUserAcctBean> queryArrearageAcctList();
 
     //查询可用余额低于阈值用户
     List<UserAcctThresholdVo> queryLowerThresholdAcctList();
+
+    //查询到期7天内的企业账户
+    List<BillingUserAcctBean> queryExpireDaysAcctList(@Param("time") Date time,
+                                                      @Param("expireDays") Integer expireDays);
 
     /**
      * 下减账户余额

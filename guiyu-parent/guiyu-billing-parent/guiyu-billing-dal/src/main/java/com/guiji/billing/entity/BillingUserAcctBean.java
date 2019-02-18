@@ -1,6 +1,7 @@
 package com.guiji.billing.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  *用户账户
@@ -34,6 +35,16 @@ public class BillingUserAcctBean extends BaseBean {
      * 冻结金额
      */
     private BigDecimal freezingAmount;
+
+    /**
+     * 有效开始时间
+     */
+    private Date beginTime;
+
+    /**
+     * 有效结束时间
+     */
+    private Date endTime;
 
     public String getCompanyId() {
         return companyId;
@@ -89,5 +100,21 @@ public class BillingUserAcctBean extends BaseBean {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }

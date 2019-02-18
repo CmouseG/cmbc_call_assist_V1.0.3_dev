@@ -7,8 +7,10 @@ import com.guiji.billing.entity.BillingUserAcctBean;
 import com.guiji.billing.entity.BillingUserAcctSetBean;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.vo.ArrearageNotifyVo;
+import com.guiji.billing.vo.UserAcctThresholdVo;
 import com.guiji.billing.vo.UserRechargeTotalVo;
 
+import java.util.Date;
 import java.util.List;
 
 public interface BillingUserAcctService {
@@ -35,6 +37,12 @@ public interface BillingUserAcctService {
 
     //查询欠费企业的用户列表
     com.guiji.vo.ArrearageNotifyVo queryArrearageUserList();
+
+    //查询可用余额低于阈值用户
+    List<UserAcctThresholdVo> queryLowerThresholdAcctList();
+
+    //查询到期expireDays天内的企业账户
+    List<BillingUserAcctBean> queryExpireDaysAcctList(Date time, Integer expireDays);
 
     /*********充值    begin****************************/
 

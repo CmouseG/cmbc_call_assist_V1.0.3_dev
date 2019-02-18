@@ -1,27 +1,24 @@
 package com.guiji.billing.task;
 
-import com.guiji.billing.dao.mapper.ext.BillingUserAcctMapper;
+import com.guiji.billing.entity.BillingUserAcctBean;
 import com.guiji.billing.service.BillingUserAcctService;
 import com.guiji.billing.service.msg.MsgNotifyComponent;
 import com.guiji.billing.vo.UserAcctThresholdVo;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
- * 账户余额低于阈值消息通知
+ * 企业账户到期通知
  */
 @Component
-@JobHandler(value="thresholdNotifyTaskJob")
-public class ThresholdNotifyTaskJob extends IJobHandler {
-
-    private Logger logger = LoggerFactory.getLogger(ThresholdNotifyTaskJob.class);
+@JobHandler(value="expireDaysAcctTaskJob")
+public class ExpireDaysAcctTaskJob extends IJobHandler {
 
     @Autowired
     private BillingUserAcctService billingUserAcctService;
@@ -29,19 +26,16 @@ public class ThresholdNotifyTaskJob extends IJobHandler {
     @Autowired
     private MsgNotifyComponent msgNotifyComponent;
 
-    /**
-     * 账户余额低于阈值消息通知
-     * @param param
-     * @return
-     * @throws Exception
-     */
+    public final static int expireDays = 7;
+
+
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-        //查询低于阈值列表
-        List<UserAcctThresholdVo> thresholdVoList =  billingUserAcctService.queryLowerThresholdAcctList();
-        if(null != thresholdVoList && thresholdVoList.size()>0) {
+        //查询到期expireDays天内的企业账户
+        List<BillingUserAcctBean> acctList =  billingUserAcctService.queryExpireDaysAcctList(new Date(), expireDays);
+        if(null != acctList && acctList.size()>0) {
             //消息通知
-            msgNotifyComponent.notifyByThreshold(thresholdVoList);
+            msgNotifyComponent.notifyByExpireDay(acctList, expireDays);
         }
         return ReturnT.SUCCESS;
     }

@@ -177,3 +177,10 @@ weixin:
       callReordUrl:
       reordListUrl:
 
+  #有效期到期
+  expireDay:
+    appid:   #跳转到的小程序appid
+    templateId:   #模板id
+    pagePath:
+      callReordUrl:
+      reordListUrl:

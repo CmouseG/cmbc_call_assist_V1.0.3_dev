@@ -224,6 +224,26 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         return arrearageNotifyVo;
     }
 
+    /**
+     * 查询可用余额低于阈值用户
+     * @return
+     */
+    @Override
+    public List<UserAcctThresholdVo> queryLowerThresholdAcctList() {
+        return billingUserAcctMapper.queryLowerThresholdAcctList();
+    }
+
+    /**
+     * 查询到期expireDays天内的企业账户
+     * @param time
+     * @param expireDays
+     * @return
+     */
+    @Override
+    public List<BillingUserAcctBean> queryExpireDaysAcctList(Date time, Integer expireDays) {
+        return billingUserAcctMapper.queryExpireDaysAcctList(time, expireDays);
+    }
+
     /**********充值   begin********************************/
 
     /**

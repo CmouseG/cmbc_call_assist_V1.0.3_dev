@@ -50,10 +50,6 @@ public class AnnouncementService {
     String weixinTemplateId;
     @Value("${weixin.appid}")
     String weixinAppid;
-    @Value("${weixin.pagePath.callReordUrl}")
-    String weixinCallReordUrl;
-    @Value("${weixin.pagePath.reordListUrl}")
-    String weixinReordListUrl;
 
     @Transactional
     public SysAnnouncement insert(SysAnnouncement sysAnnouncement, Long userId){

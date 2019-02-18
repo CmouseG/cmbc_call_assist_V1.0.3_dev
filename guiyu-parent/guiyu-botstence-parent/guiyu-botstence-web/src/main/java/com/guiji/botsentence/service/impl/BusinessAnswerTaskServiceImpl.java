@@ -446,6 +446,18 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 				String array[] = responses.split(",");
 				for(String temp : array) {
 					voliceInfoMapper.deleteByPrimaryKey(new Long(temp));
+
+					//删除TTS任务信息
+					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
+					ttsExample.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andBusiIdEqualTo(temp);
+					botSentenceTtsTaskMapper.deleteByExample(ttsExample);
+					logger.info("删除TTS任务信息");
+					
+					//删除备用话术信息
+					BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
+					backExample.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andVoliceIdEqualTo(new Long(temp));
+					botSentenceTtsBackupMapper.deleteByExample(backExample);
+					logger.info("删除备用话术信息");
 				}
 			}
 			

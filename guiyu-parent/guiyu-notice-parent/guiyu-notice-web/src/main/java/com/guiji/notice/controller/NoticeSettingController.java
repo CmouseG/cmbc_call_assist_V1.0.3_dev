@@ -124,8 +124,9 @@ public class NoticeSettingController implements INoticeSetting {
 
     @ApiOperation(value = "提醒设置，恢复默认设置")
     @GetMapping(value = "restoreDefaultSettings")
-    public Result.ReturnData restoreDefaultSettings(@RequestHeader String orgCode) {
-
+    public Result.ReturnData restoreDefaultSettings(@RequestHeader Long userId) {
+        Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
+        String orgCode = returnData.getBody().getCode();
         noticeSettingService.restoreDefaultSettings(orgCode);
 
         return Result.ok();

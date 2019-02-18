@@ -14,10 +14,10 @@ public interface INoticeLabel {
 
     @ApiOperation(value = "查询意向标签")
     @GetMapping(value = "queryNoticeIntent")
-    Result.ReturnData<String> queryNoticeIntent(@NotEmpty(message="参数不能为空") @RequestParam("orgCode") String orgCode);
+    Result.ReturnData<String> queryNoticeIntent(@NotEmpty(message="企业的组织编码不能为空") @RequestParam("orgCode") String orgCode);
 
     @ApiOperation(value = "修改意向标签,勾选的标签以逗号拼接传递到labels字段")
     @GetMapping(value = "updateNoticeIntent")
-    Result.ReturnData updateNoticeIntent(@NotEmpty(message="参数不能为空") @RequestParam("orgCode") String orgCode,
+    Result.ReturnData updateNoticeIntent(@NotEmpty(message="企业的组织编码不能为空") @RequestParam("orgCode") String orgCode,
                                          @NotNull(message="标签不能不传")  @RequestParam("labels") String labels);
 }

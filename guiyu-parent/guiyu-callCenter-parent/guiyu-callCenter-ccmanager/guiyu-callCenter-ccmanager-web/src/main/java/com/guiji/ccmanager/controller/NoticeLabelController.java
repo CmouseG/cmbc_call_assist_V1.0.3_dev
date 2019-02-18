@@ -29,7 +29,7 @@ public class NoticeLabelController implements INoticeLabel {
     @Override
     @ApiOperation(value = "查询意向标签")
     @GetMapping(value = "queryNoticeIntent")
-    public Result.ReturnData<String> queryNoticeIntent(@NotEmpty(message="参数不能为空") @RequestParam("orgCode") String orgCode) {
+    public Result.ReturnData<String> queryNoticeIntent(@NotEmpty(message="企业的组织编码不能为空") @RequestParam("orgCode") String orgCode) {
 
         String label = noticeLabelService.queryNoticeIntent(orgCode);
         return Result.ok(label);
@@ -38,7 +38,7 @@ public class NoticeLabelController implements INoticeLabel {
     @Override
     @ApiOperation(value = "修改意向标签,勾选的标签以逗号拼接传递到labels字段")
     @GetMapping(value = "updateNoticeIntent")
-    public Result.ReturnData updateNoticeIntent(@NotEmpty(message="参数不能为空") @RequestParam("orgCode") String orgCode,
+    public Result.ReturnData updateNoticeIntent(@NotEmpty(message="企业的组织编码不能为空") @RequestParam("orgCode") String orgCode,
                                                 @NotNull(message="标签不能不传")  @RequestParam("labels") String labels) {
 
         logger.info("----get updateNoticeIntent request labels[{}],orgCode[{}]",labels,orgCode);

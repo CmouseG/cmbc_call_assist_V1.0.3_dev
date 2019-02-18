@@ -12,6 +12,8 @@ import lombok.Data;
 public class SipLineExclusiveQueryCondition {
 	private int pageNo;
 	private int pageSize;
+	//线路名称
+	private String lineName;
 	//代理线路编号
 	private Integer agentLineId;
 	//原sip线路编号

@@ -293,7 +293,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 				if(StrUtils.isNotEmpty(busiId)) {
 					ttsWavHis = this.queryTtsWavByBusiId(busiId);
 					if(ttsWavHis != null) {
-						if(RobotConstants.TTS_STATUS_S == ttsCallback.getStatus()){
+						if(RobotConstants.TTS_INTERFACE_DONE == ttsCallback.getStatus()){
 							//**开始从callback回调的数据，拼接wav文件，完成TTS合成**//
 							try {
 								//获取话术模板配置文件
@@ -335,13 +335,15 @@ public class TtsWavServiceImpl implements ITtsWavService{
 								//独立事务保存
 								aiNewTransService.recordTtsWav(ttsWavHis);
 							}
-						}else {
+						}else if(RobotConstants.TTS_INTERFACE_FAIL == ttsCallback.getStatus()){
 							logger.error("TTS AI服务返回合成失败..");
 							ttsWavHis.setStatus(RobotConstants.TTS_STATUS_F); //合成失败
 							ttsWavHis.setErrorType(RobotConstants.TTS_ERROR_TYPE_T); //TTS接口本身返回失败状态
 							ttsWavHis.setErrorMsg("TTS服务回调状态失败");
 							//独立事务保存
 							aiNewTransService.recordTtsWav(ttsWavHis);
+						}else {
+							logger.info("TTS AI服务返回合成{}不是终态",ttsCallback.getStatus());
 						}
 						
 					}else {

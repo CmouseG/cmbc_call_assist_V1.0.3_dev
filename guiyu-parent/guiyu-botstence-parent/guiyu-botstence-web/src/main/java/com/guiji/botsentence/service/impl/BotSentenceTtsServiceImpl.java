@@ -422,7 +422,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	
 	
 	//@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId) throws Exception {
+	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId) {
 		//保存本地生成TTS任务
 		Long taskId = null;
 		//查询当前文案内容是否已经合成过，如果合成过，则不再重新合成
@@ -527,7 +527,12 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		req.setModel("szj");//TTS合成声音模型
 	    logger.info("请求参数: " + req.toString());
 	    //botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), "test-"+System.currentTimeMillis());
-    	ReturnData<String> result = ai.synPost(req);
+    	ReturnData<String> result = null;
+		try {
+			result = ai.synPost(req);
+		} catch (Exception e) {
+			logger.error("调用TTS合成接口失败...", e);
+		}
     	logger.info("返回参数: " + result.toString());
 		if("0".equals(result.getCode())) {
 			logger.info("推送tts数据成功...");

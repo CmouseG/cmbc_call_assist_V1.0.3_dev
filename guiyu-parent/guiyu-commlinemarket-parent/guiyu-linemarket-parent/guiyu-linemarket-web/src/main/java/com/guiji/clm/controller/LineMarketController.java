@@ -294,6 +294,8 @@ public class LineMarketController {
 					//盲区
 					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
 				}
+				//线路拥有者(查询原线路的归属企业)
+				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				voList.add(vo);
 			}
 			return voList;

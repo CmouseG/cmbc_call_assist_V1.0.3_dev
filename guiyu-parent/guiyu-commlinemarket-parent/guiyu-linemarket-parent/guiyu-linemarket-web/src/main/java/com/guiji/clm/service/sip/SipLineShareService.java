@@ -149,7 +149,7 @@ public class SipLineShareService {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
 			}
 		}
-		example.setOrderByClause(" crt_time desc");
+		example.setOrderByClause(" id desc");
 		return example;
 	}
 }

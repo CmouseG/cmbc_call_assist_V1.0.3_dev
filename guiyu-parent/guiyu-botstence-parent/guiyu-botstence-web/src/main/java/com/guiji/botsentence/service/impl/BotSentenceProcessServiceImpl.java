@@ -3232,6 +3232,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		botSentenceDomainMapper.deleteByPrimaryKey(domainId);
 		
+		//修改指向该域的为空
+		botSentenceBranchExtMapper.updateEndWhenDeleteDomain(processId, domain.getDomainName());
+		
 		this.updateProcessState(processId, userId);
 	}
 
@@ -3832,11 +3835,27 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				voliceIds.add(volice.getVoliceId());
 			}
 			
+			//查询volice非TTS的录音URL为空的数据
+			VoliceInfoExample voliceExample = new VoliceInfoExample();
+			voliceExample.createCriteria().andProcessIdEqualTo(processId).andVoliceUrlIsNull().andNeedTtsEqualTo(false);
+			int count1 = voliceInfoMapper.countByExample(voliceExample);
+			logger.info("一般录音未合成: " + count1);
+			
 			BotSentenceTtsTaskExample example = new BotSentenceTtsTaskExample();
-			example.createCriteria().andProcessIdEqualTo(processId).andStatusEqualTo(Constant.TTS_TASK_ING);
-			int unfinish_num = botSentenceTtsTaskMapper.countByExample(example);
-			logger.info("还剩下" + unfinish_num + "个未合成...");
-			if(unfinish_num == 0) {
+			example.createCriteria().andProcessIdEqualTo(processId).andVoliceUrlIsNull().andBusiTypeEqualTo("01").andIsParamEqualTo("02");
+			int unfinish_tts_num = botSentenceTtsTaskMapper.countByExample(example);
+			logger.info("tts录音未合成: " + unfinish_tts_num);
+			
+			//查询备用话术录音URL为空的数据
+			BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
+			backExample.createCriteria().andProcessIdEqualTo(processId).andUrlIsNull();
+			int unfinisn_back_num = botSentenceTtsBackupMapper.countByExample(backExample);
+			logger.info("备用话术录音未合成: " + unfinisn_back_num);
+			
+			int total = count1 + unfinish_tts_num + unfinisn_back_num;
+			
+			logger.info("还剩下" + total + "个未合成...");
+			if(total == 0) {
 				flag = true;
 			}
 		}else {
@@ -3939,47 +3958,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					logger.info("当前文案内容为空，不需要TTS合成，跳过...");
 					continue;
 				}
-				
-				//判断当前文案是否需要含有TTS变量
-				/*boolean isNeedTts = botSentenceTtsService.validateContainParam(temp.getContent());
-				if(isNeedTts) {
-					logger.info("当前文案需要TTS合成，需要拆分文案生成多个TTS任务");
-					logger.info("更新当前录音的url为空");
-					VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(temp.getVoliceId()));
-					volice.setVoliceUrl(null);
-					voliceInfoMapper.updateByPrimaryKey(volice);
-					
-					//拆分文案
-					String regEx = "\\$[0-9]{4}";
-					if(StringUtils.isNotBlank(volice.getContent())) {
-						String [] array =  volice.getContent().split(regEx);
-					   if(null != array && array.length > 0) {
-						  for(int i = 0 ; i < array.length ; i++) {
-							  if(StringUtils.isNotBlank(array[i]) && 
-									  !"。".equals(array[i]) && !".".equals(array[i]) &&
-									  !"，".equals(array[i]) && !",".equals(array[i]) && 
-									  !"！".equals(array[i]) && !"!".equals(array[i]) &&
-									  !"？".equals(array[i]) && !"?".equals(array[i])
-									  ) {
-								  
-								  BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-								  ttsTask.setBusiId(temp.getVoliceId().toString());
-								  ttsTask.setBusiType("01");
-								  ttsTask.setContent(array[i]);
-								  botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts);
-							  }
-						  }
-					   }
-					}
-					
-				}else {
-					BotSentenceTtsTask ttsTask = new BotSentenceTtsTask();
-					ttsTask.setBusiId(temp.getVoliceId().toString());
-					ttsTask.setBusiType("01");
-					ttsTask.setContent(temp.getContent());
-					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts);
-				}
-			}*/
 				
 				boolean isNeedTts = botSentenceTtsService.validateContainParam(temp.getContent());
 				if(isNeedTts) {
@@ -4606,13 +4584,17 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						if(botSentenceTtsService.validateContainParam(volice.getContent())){
 							logger.info("当前录音需要TTS合成，不需要更新录音 URL");
 							volice.setVoliceUrl(null);
+							volice.setLstUpdateTime(new Date(System.currentTimeMillis()));
+							volice.setNeedTts(true);
+							volice.setLstUpdateUser("tts");
 						}else {
 							volice.setVoliceUrl(url);
 							volice.setLstUpdateTime(new Date(System.currentTimeMillis()));
 							volice.setLstUpdateUser("tts");
 							volice.setNeedTts(false);
 						}
-						voliceInfoMapper.updateByPrimaryKeySelective(volice);
+						voliceInfoMapper.updateByPrimaryKey(volice);
+						//voliceInfoMapper.updateByPrimaryKeySelective(volice);
 						logger.info("更新TTS合成URL成功...");
 					}
 				}else if("02".equals(ttsTask.getBusiType())) {

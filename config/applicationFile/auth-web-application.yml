@@ -83,3 +83,6 @@ ribbon:
   MaxAutoRetriesNextServer: 1  #切换实例的重试次数
   eureka:
     enabled: true
+weixin:
+  appid: wx017a03051262ec17  #跳转到的小程序appid
+  templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id

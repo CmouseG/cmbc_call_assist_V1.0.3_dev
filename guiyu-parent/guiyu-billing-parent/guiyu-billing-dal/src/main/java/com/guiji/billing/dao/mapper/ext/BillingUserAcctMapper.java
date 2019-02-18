@@ -6,6 +6,7 @@ import com.guiji.billing.entity.BillingAcctChargingTerm;
 import com.guiji.billing.entity.BillingUserAcctBean;
 import com.guiji.billing.entity.BillingUserAcctSetBean;
 import com.guiji.billing.sys.ResultPage;
+import com.guiji.billing.vo.UserAcctThresholdVo;
 import com.guiji.billing.vo.UserRechargeTotalVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -32,8 +33,11 @@ public interface BillingUserAcctMapper {
     //新增用户账户
     int addUserAcct(BillingUserAcctBean userAcct);
 
-    //查询欠费用户(包括可用余额为O的企业用户)
+    //查询欠费用户(不包括可用余额为O的企业用户)
     List<BillingUserAcctBean> queryArrearageAcctList();
+
+    //查询可用余额低于阈值用户
+    List<UserAcctThresholdVo> queryLowerThresholdAcctList();
 
     /**
      * 下减账户余额

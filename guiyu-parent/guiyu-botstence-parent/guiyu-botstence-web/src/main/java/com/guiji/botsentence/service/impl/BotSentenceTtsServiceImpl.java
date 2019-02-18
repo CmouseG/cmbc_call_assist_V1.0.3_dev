@@ -421,7 +421,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	}
 	
 	
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	//@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId) {
 		//保存本地生成TTS任务
 		Long taskId = null;
@@ -521,44 +521,31 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		
 		//发送tts任务
 		logger.info("发送tts任务");
-		//RequestTtsVO req = new RequestTtsVO();
-	    //req.setTask_id(taskId.toString());
-	    //req.setSentence(temp.getContent());
 		SynPostReqVO req = new SynPostReqVO();
 		List<String> contents = new ArrayList<>();
 		req.setContent(temp.getContent());
 		req.setModel("szj");//TTS合成声音模型
 	    logger.info("请求参数: " + req.toString());
-		//String jsonResult;
-		//try {
-	    	ReturnData<String> result = ai.synPost(req);
-	    	logger.info("返回参数: " + result.toString());
-			if("0".equals(result.getCode())) {
-				logger.info("推送tts数据成功...");
-				String url = result.getBody();
-				if(StringUtils.isNotBlank(url)) {
-					botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), url);
-				}else {
-					logger.error("返回URL为空");
-					throw new CommonException("返回URL为空，请联系管理员!");
-				}
+	    //botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), "test-"+System.currentTimeMillis());
+    	ReturnData<String> result = null;
+		try {
+			result = ai.synPost(req);
+		} catch (Exception e) {
+			logger.error("调用TTS合成接口失败...", e);
+		}
+    	logger.info("返回参数: " + result.toString());
+		if("0".equals(result.getCode())) {
+			logger.info("推送tts数据成功...");
+			String url = result.getBody();
+			if(StringUtils.isNotBlank(url)) {
+				botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), url);
 			}else {
-				logger.error("推送tts数据异常，请联系管理员!");
-				throw new CommonException("推送tts数据异常，请联系管理员!");
+				logger.error("返回URL为空");
+				throw new CommonException("返回URL为空，请联系管理员!");
 			}
-			//jsonResult = HttpRequestUtils.httpPost(ttsApiUrl, BeanUtil.bean2Map(req));
-			/*Gson gson = new Gson();
-			ResponseTtsVO rsp = gson.fromJson(jsonResult, ResponseTtsVO.class);
-			if(null != rsp && "received".equals(rsp.getStatus())) {
-				logger.info("推送tts数据成功...");
-			}else {
-				logger.error("推送tts数据异常，请联系管理员!");
-				throw new CommonException("推送tts数据异常，请联系管理员!");
-			}*/
-			
-		/*} catch (UnsupportedEncodingException e) {
-			logger.error("推送tts数据异常...", e);
+		}else {
+			logger.error("推送tts数据异常，请联系管理员!");
 			throw new CommonException("推送tts数据异常，请联系管理员!");
-		}*/
+		}
 	}
 }

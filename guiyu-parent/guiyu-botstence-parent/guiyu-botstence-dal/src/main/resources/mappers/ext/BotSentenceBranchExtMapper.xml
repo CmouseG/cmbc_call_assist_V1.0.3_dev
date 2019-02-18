@@ -38,8 +38,14 @@
     
 </insert>
 
-<select id="querySpecialBranchoList" resultType="string">
+	<select id="querySpecialBranchoList" resultType="string">
  		select branch_name as branchName from bot_sentence_branch
  		where process_id=#{processId} and branch_name like 'special/_%' escape '/';
  	</select>
+ 	
+ 	
+ 	<update id="updateEndWhenDeleteDomain">
+ 		update bot_sentence_branch set end=null where process_id=#{processId} and end=#{domain};
+ 	</update>
+ 	
 </mapper>

@@ -15,10 +15,12 @@ import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.NasUtil;
 import com.guiji.utils.StrUtils;
+import com.guiji.wechat.vo.SendMsgReqVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,6 +46,14 @@ public class AnnouncementService {
     private UserService userService;
     @Autowired
     private INoticeSend noticeSend;
+    @Value("${weixin.templateId}")
+    String weixinTemplateId;
+    @Value("${weixin.appid}")
+    String weixinAppid;
+    @Value("${weixin.pagePath.callReordUrl}")
+    String weixinCallReordUrl;
+    @Value("${weixin.pagePath.reordListUrl}")
+    String weixinReordListUrl;
 
     @Transactional
     public SysAnnouncement insert(SysAnnouncement sysAnnouncement, Long userId){
@@ -64,8 +75,19 @@ public class AnnouncementService {
                     MessageSend messageSend = new MessageSend();
                     messageSend.setUserId(user.getId());
                     messageSend.setNoticeType(NoticeType.announcement);
-                    messageSend.setMailContent(sysAnnouncement.getTitle());//站内信
-                    messageSend.setSmsContent(sysAnnouncement.getTitle());//短信
+                    //站内信
+                    messageSend.setMailContent(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情");
+                    //邮箱
+                    messageSend.setEmailSubject("公告");
+                    messageSend.setEmailContent(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情");
+                    //短信
+                    messageSend.setSmsContent(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情");
+                    //微信
+                    messageSend.setWeixinTemplateId(weixinTemplateId);
+                    messageSend.setWeixinAppId(weixinAppid);
+                    HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
+                    map.put("userName",new SendMsgReqVO.Item(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情",null));
+                    messageSend.setWeixinData(map);
                     noticeSend.sendMessage(messageSend);
                 }
             }

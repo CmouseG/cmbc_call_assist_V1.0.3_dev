@@ -223,6 +223,8 @@ public class ILinesServiceImpl implements ILinesService {
 			LineRateResponse rate = getRate(line, lineRate);
 			if (rate != null) {
 				lineRateMap.put(line, new BigDecimal(rate.getRate()));
+			}else{
+				lineRateMap.put(line, new BigDecimal(0));
 			}
 		}
 		// 排序结果

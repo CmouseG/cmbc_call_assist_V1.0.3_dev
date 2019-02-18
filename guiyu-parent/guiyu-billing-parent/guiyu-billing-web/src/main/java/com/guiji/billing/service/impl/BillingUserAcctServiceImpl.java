@@ -3,6 +3,7 @@ package com.guiji.billing.service.impl;
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
 import com.guiji.billing.constants.BusiTypeEnum;
+import com.guiji.billing.constants.ThresholdKeyEnum;
 import com.guiji.billing.dao.mapper.ext.BillingUserAcctMapper;
 import com.guiji.billing.dto.*;
 import com.guiji.billing.entity.BillingAcctChargingRecord;
@@ -13,14 +14,17 @@ import com.guiji.billing.enums.*;
 import com.guiji.billing.exception.BaseException;
 import com.guiji.billing.service.AcctNotifyService;
 import com.guiji.billing.service.BillingUserAcctService;
+import com.guiji.billing.service.msg.MsgNotifyComponent;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DaoHandler;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.utils.IdWorker;
 import com.guiji.billing.utils.ResHandler;
 import com.guiji.billing.vo.ArrearageNotifyVo;
+import com.guiji.billing.vo.UserAcctThresholdVo;
 import com.guiji.billing.vo.UserRechargeTotalVo;
 import com.guiji.component.result.Result;
+import com.guiji.notice.api.INoticeSend;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +58,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
 
     @Autowired
     private IOrg iOrg;
+
+    @Autowired
+    private MsgNotifyComponent msgNotifyComponent;
 
     @Autowired
     private IdWorker idWorker;
@@ -229,12 +236,15 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         if(null != rechargeDto && null != rechargeDto.getAmount()) {
             boolean bool = false;
             String accountId = null;
-            BigDecimal rechargeAmount = rechargeDto.getAmount();//充值金额
+            BigDecimal amount = rechargeDto.getAmount(); //充值金额
+            BigDecimal rechargeAmount = amount.multiply(new BigDecimal(100));//充值金额转化成分
             BillingUserAcctBean acct = null;
             if(!StringUtils.isEmpty(rechargeDto.getAccountId())) {
                 accountId = rechargeDto.getAccountId();
                 //查询账户
                 acct = billingUserAcctMapper.queryUserAcct(accountId);
+                acct.setAmount(acct.getAvailableBalance().add(rechargeAmount));//总金额
+                acct.setAvailableBalance(acct.getAvailableBalance().add(rechargeAmount));//账户可以剩余余额
                 //账户充值
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
 
@@ -250,6 +260,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                     if(null != acctExist){
                         acct = acctExist;
                         accountId = acct.getAccountId();
+                        acct.setAmount(acct.getAvailableBalance().add(rechargeAmount));//总金额
+                        acct.setAvailableBalance(acct.getAvailableBalance().add(rechargeAmount));//账户可以剩余余额
                         //账户充值
                         bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
 
@@ -278,9 +290,13 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                             SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
                 }
             }
-            //充值记录
+
             if(bool){
+                //充值记录
                 bool = this.rechargeRecord(acct, rechargeDto);
+
+                //充值消息通知
+                msgNotifyComponent.notifyByRecharge(acct, rechargeDto);
             }
             return bool;
         }else{
@@ -698,11 +714,53 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             userAcctSet.setAcctSetId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
             userAcctSet.setCreateTime(new Date());
             userAcctSet.setDelFlag(SysDelEnum.NORMAL.getState());
-            billingUserAcctMapper.addUserAcctSet(userAcctSet);
-            return userAcctSet;
+            //企业余额阈值
+            if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)){
+                String setValue = null != userAcctSet.getSetValue()?(userAcctSet.getSetValue()+"00"):"0";//元转化成分
+                userAcctSet.setSetValue(setValue);
+            }
+
+            //新增配置信息
+            boolean bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcctSet(userAcctSet));
+            if(bool){
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)) {
+                    //消息通知
+                    this.thresholdNotify(userAcctSet);
+                }
+            }
+            return bool?userAcctSet:null;
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
                     SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+        }
+    }
+
+    /**
+     * 设置阈值消息通知
+     * @param userAcctSet
+     */
+    private void thresholdNotify(BillingUserAcctSetBean userAcctSet){
+        try {
+            if (null != userAcctSet) {
+                BigDecimal thresholdAmount = new BigDecimal(userAcctSet.getSetValue());
+                String accountId = userAcctSet.getAccountId();
+                BillingUserAcctBean acct = billingUserAcctMapper.queryUserAcct(accountId);
+                if (null != acct) {
+                    //当可用剩余金额小于阈值，则消息通知
+                    if (null != acct.getAvailableBalance()
+                            && acct.getAvailableBalance().compareTo(thresholdAmount) < 0) {
+                        List<UserAcctThresholdVo> thresholdVoList = new ArrayList<UserAcctThresholdVo>();
+                        UserAcctThresholdVo thresholdVo = new UserAcctThresholdVo();
+                        BeanUtils.copyProperties(acct, thresholdVo, UserAcctThresholdVo.class);
+                        thresholdVo.setThresholdKey(userAcctSet.getSetKey());
+                        thresholdVo.setThresholdValue(userAcctSet.getSetValue());
+                        thresholdVoList.add(thresholdVo);
+                        msgNotifyComponent.notifyByThreshold(thresholdVoList);
+                    }
+                }
+            }
+        }catch(Exception e){
+            logger.error("设置阈值消息通知异常", e);
         }
     }
 

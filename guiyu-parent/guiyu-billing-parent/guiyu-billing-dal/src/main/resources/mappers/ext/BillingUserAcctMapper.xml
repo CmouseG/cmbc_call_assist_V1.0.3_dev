@@ -187,6 +187,28 @@
     AND available_balance <![CDATA[ < ]]>  0
   </select>
 
+  <select id="queryLowerThresholdAcctList" resultType="com.guiji.billing.vo.UserAcctThresholdVo">
+    SELECT
+      c.id                ,
+      c.account_id        ,
+      c.company_id        ,
+      c.company_name      ,
+      c.org_code          ,
+      c.amount            ,
+      c.available_balance ,
+      c.freezing_amount   ,
+      c.create_time       ,
+      c.update_time       ,
+      c.del_flag          ,
+      s.set_key AS threshold_key,
+      s.set_value AS   threshold_value
+    FROM billing_user_acct c, billing_acct_set s
+    WHERE c.del_flag = 0
+      AND c.account_id = s.account_id
+      AND s.set_key = ${@com.guiji.billing.constants.ThresholdKeyEnum.BalanceEarlyWarning.getKey()}
+      AND c.available_balance <![CDATA[ < ]]>  s.set_value
+  </select>
+
   <!--下减企业账户余额-->
   <update id="subAcctBalanceAmount">
     UPDATE billing_user_acct

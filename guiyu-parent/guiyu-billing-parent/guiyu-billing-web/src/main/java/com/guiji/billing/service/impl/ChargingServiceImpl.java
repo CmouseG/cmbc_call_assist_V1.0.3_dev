@@ -71,7 +71,7 @@ public class ChargingServiceImpl implements ChargingService {
                     if(null != termList && termList.size()>0) {
                         BillingAcctChargingTerm term = termList.get(0);
                         //通话时长
-                        Long duration = Long.valueOf(billSec);
+                        Long duration = Long.valueOf(billSec)   ;
                         //此次通话消费金额
                         BigDecimal consumeAmount = this.getAmount(term, duration);
                         //账户可用金额
@@ -159,11 +159,11 @@ public class ChargingServiceImpl implements ChargingService {
             long subMins = duration - (hours * 3600);
             long mins = subMins/60;
             long secs = duration - (hours * 3600) - (mins * 60);
-            str = (hours>9?hours:("0"+hours)) + ":" + (mins>9?mins:("0"+mins)) + ":" + secs;
+            str = (hours>9?hours:("0"+hours)) + ":" + (mins>9?mins:("0"+mins)) + ":" + (secs>9?secs:("0"+secs));
         }else if (duration>=60L){
             long mins = duration/60;
             long secs = duration - (mins * 60);
-            str = (mins>9?mins:("0"+mins)) + ":" + secs;
+            str = (mins>9?mins:("0"+mins)) + ":" + (secs>9?secs:("0"+secs));
         }else{
             str = "00:" + (duration>9?duration:("0"+duration));
         }

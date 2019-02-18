@@ -1594,6 +1594,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		batch.setGmtModified(DateUtil.getCurrent4Time());
 		batch.setOrgCode(orgCode);
 		dispatchPlanBatchMapper.insert(batch);
+		List<String> phones = new ArrayList<>();
 		for (int i = 0; i < plans.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = plans.getMobile().get(i);
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
@@ -1608,7 +1609,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setCallData(Integer.valueOf(plans.getCallDate()));
 			bean.setFlag(Constant.IS_FLAG_0);
 			bean.setGmtCreate(DateUtil.getCurrent4Time());
-			bean.setGmtModified(DateUtil.getCurrent4Time());
+			bean.setGmtModified(DateUtil.getCurrent4Time()); 
+			//号码去重
+			if(phones.contains(bean.getPhone())){
+				logger.info("当前批量加入号码存在重复号码，已经过滤");
+				continue;
+			}
 			// 查询手机号
 			String phone = queryPhone(dispatchPlan.getPlanUuid());
 			if(phone ==null){
@@ -1644,6 +1650,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			String cityName = phoneRegionService.queryPhoneRegion(bean.getPhone());
 			bean.setCityName(cityName);
 			dispatchPlanMapper.insert(bean);
+			phones.add(bean.getPhone());
 		}
 		return true;
 	}

@@ -24,6 +24,10 @@ ALTER TABLE sys_user ADD is_desensitization int default 0 comment '号码是否�
 
 #前端增加md5加密密码，所有账号密码重置为123456,各用户自行修改密码
 update sys_user set password = '9970f16668b0ce09b694293b5164ae2b211fb9a23e9026bb4d0d1aef370f192120dd5f5a8e78c06d57fa036de0975c09b528ea7dc49262aee10c3247e62964fa';
+#调整orgcode和subcode字段长度
+alter table sys_organization change code code varchar(32) default null comment '组织编码';
+alter table sys_organization change sub_code sub_code varchar(32) default null comment '子编码';
+alter table sys_user change org_code org_code varchar(32) default null comment '企业code';
 
 INSERT INTO `guiyu_base`.`sys_dict` ( `dict_key`, `dict_value`, `dict_type`, `description`, `pid`, `remarks`, `del_flag`, `create_time`, `update_time`, `create_id`, `update_id`) 
 VALUES ('1', '意向客户', 'noticeType', '消息类型，意向客户', NULL, NULL, '0', '2019-01-29 17:32:01', '2019-01-29 17:32:01', '1', '1');

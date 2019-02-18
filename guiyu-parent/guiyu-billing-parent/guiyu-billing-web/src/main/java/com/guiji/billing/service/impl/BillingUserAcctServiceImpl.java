@@ -782,13 +782,30 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             if(null != acctSetExist){//已存在，修改
                 BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
                 userAcctSet.setUpdateTime(new Date());
+                //企业余额阈值
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)){
+                    String setValue = null != userAcctSet.getSetValue()?(userAcctSet.getSetValue()+"00"):"0";//元转化成分
+                    userAcctSet.setSetValue(setValue);
+                }
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcctSet(userAcctSet));
             }else{//不存在，新增
                 BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
                 userAcctSet.setAcctSetId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
                 userAcctSet.setCreateTime(new Date());
                 userAcctSet.setDelFlag(SysDelEnum.NORMAL.getState());
+                //企业余额阈值
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)){
+                    String setValue = null != userAcctSet.getSetValue()?(userAcctSet.getSetValue()+"00"):"0";//元转化成分
+                    userAcctSet.setSetValue(setValue);
+                }
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcctSet(userAcctSet));
+            }
+
+            if(bool){
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)) {
+                    //消息通知
+                    this.thresholdNotify(userAcctSet);
+                }
             }
             return bool;
         }else{

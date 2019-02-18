@@ -136,6 +136,9 @@ public class SipLineShareService {
 		SipLineShareExample example = new SipLineShareExample();
 		if(condition != null) {
 			Criteria criteria = example.createCriteria();
+			if(StrUtils.isNotEmpty(condition.getLineName())) {
+				criteria.andLineNameLike("%"+condition.getLineName()+"%");
+			}
 			if(condition.getLineStatus()!=null) {
 				criteria.andLineStatusEqualTo(condition.getLineStatus());
 			}

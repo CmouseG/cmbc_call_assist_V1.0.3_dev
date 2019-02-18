@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * 账户余额低于阈值消息通知
+ */
 @Component
 @JobHandler(value="thresholdNotifyTaskJob")
 public class ThresholdNotifyTaskJob extends IJobHandler {
@@ -25,9 +28,14 @@ public class ThresholdNotifyTaskJob extends IJobHandler {
     @Autowired
     private MsgNotifyComponent msgNotifyComponent;
 
+    /**
+     * 账户余额低于阈值消息通知
+     * @param param
+     * @return
+     * @throws Exception
+     */
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-
         //查询低于阈值列表
         List<UserAcctThresholdVo> thresholdVoList =  billingUserAcctMapper.queryLowerThresholdAcctList();
         if(null != thresholdVoList && thresholdVoList.size()>0) {

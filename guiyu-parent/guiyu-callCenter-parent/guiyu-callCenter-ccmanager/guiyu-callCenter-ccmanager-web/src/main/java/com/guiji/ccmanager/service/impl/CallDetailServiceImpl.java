@@ -84,7 +84,7 @@ public class CallDetailServiceImpl implements CallDetailService {
             }
         }
         if (StringUtils.isNotBlank(phoneNum)) {
-            criteria.andPhoneNumEqualTo(phoneNum);
+            criteria.andPhoneNumLike("%"+phoneNum+"%");
         }
         if (StringUtils.isNotBlank(durationMin)) {
             criteria.andDurationGreaterThan(Integer.valueOf(durationMin));
@@ -170,7 +170,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.setLimitEnd(pageSize);
         example.setOrderByClause("create_time desc");
 
-        Long userId = Long.valueOf(customerId);
+//        Long userId = Long.valueOf(customerId);
         List<CallOutPlan> list;
 //        if(isSuperAdmin || authService.isSeatOrAgent(userId)){
             example.setIsDesensitization(isDesensitization);

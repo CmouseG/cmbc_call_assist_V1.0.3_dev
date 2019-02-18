@@ -136,11 +136,11 @@ public class WeChatAppletController {
 				BotSentenceProcessVO vo = new BotSentenceProcessVO();
 				BeanUtil.copyProperties(temp, vo);
 				
-				/*if(null != temp.getCrtTime()) {
+				if(null != temp.getCrtTime()) {
 					vo.setCrtTimeStr(DateUtil.dateToString(temp.getCrtTime(), DateUtil.ymdhms));
 				}else {
 					vo.setCrtTimeStr(DateUtil.dateToString(temp.getCrtTime(), DateUtil.ymdhms));
-				}*/
+				}
 				
 				//获取每个模板对应的录音百分比
 				//int finish = voliceService.countFinishNum(temp.getProcessId());

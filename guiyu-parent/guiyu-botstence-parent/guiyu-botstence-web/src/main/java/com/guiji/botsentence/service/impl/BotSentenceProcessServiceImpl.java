@@ -3232,6 +3232,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		botSentenceDomainMapper.deleteByPrimaryKey(domainId);
 		
+		//修改指向该域的为空
+		botSentenceBranchExtMapper.updateEndWhenDeleteDomain(processId, domain.getDomainName());
+		
 		this.updateProcessState(processId, userId);
 	}
 

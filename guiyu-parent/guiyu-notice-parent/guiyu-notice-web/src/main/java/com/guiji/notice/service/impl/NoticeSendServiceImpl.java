@@ -45,10 +45,12 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
     @Override
     public void sendMessage(MessageSend messageSend) {
+        String orgCode = messageSend.getOrgCode();
+        if(orgCode==null){
+            Result.ReturnData<SysOrganization> returnOrg = auth.getOrgByUserId(messageSend.getUserId());
+            orgCode = returnOrg.getBody().getCode();
+        }
 
-        Result.ReturnData<SysOrganization> returnOrg = auth.getOrgByUserId(messageSend.getUserId());
-
-        String orgCode = returnOrg.getBody().getCode();
         int noticeType = messageSend.getNoticeType().getValue();
 
         //notice_info新增记录

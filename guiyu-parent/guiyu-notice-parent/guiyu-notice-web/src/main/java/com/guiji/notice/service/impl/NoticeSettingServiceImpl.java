@@ -4,7 +4,10 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
 import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.ccmanager.api.INoticeLabel;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
+import com.guiji.notice.constant.NoticeExceptionEnum;
+import com.guiji.notice.controller.NoticeSettingController;
 import com.guiji.notice.dao.NoticeSettingExtMapper;
 import com.guiji.notice.dao.NoticeSettingMapper;
 import com.guiji.notice.dao.entity.NoticeSetting;
@@ -20,6 +23,8 @@ import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +37,7 @@ import java.util.List;
 @Service
 public class NoticeSettingServiceImpl implements NoticeSettingService {
 
+    private final Logger logger = LoggerFactory.getLogger(NoticeSettingServiceImpl.class);
     @Autowired
     NoticeSettingMapper noticeSettingMapper;
     @Autowired
@@ -143,6 +149,17 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
                 .andNoticeTypeEqualTo(NoticeType.intentional_customer.getValue());
         noticeSetting.setIsSendMail(false);
         noticeSettingMapper.updateByExampleSelective(noticeSetting, noticeSettingExample);
+        //重置意向标签
+        Result.ReturnData returnData = null;
+        try {
+            returnData = iNoticeLabel.updateNoticeIntent(orgCode,"");
+        }catch (Exception e){
+            logger.error("调用ccmanger重置意向标签出现异常",e);
+        }
+        if(returnData==null || !returnData.success){
+            logger.error("调用ccmanger重置意向标签出现异常,code[{}]",returnData.getCode());
+            throw new GuiyuException(NoticeExceptionEnum.EXCP_NOTICE_PARAM);
+        }
     }
 
     @Override

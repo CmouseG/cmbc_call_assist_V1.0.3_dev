@@ -72,5 +72,5 @@ ribbon:
     enabled: true
 email:
   sendAccount: 821927329@qq.com  #发件人的邮箱地址
-  sendPassword: xxxxxxxxxx   #发件人的授权码  ntnrevtnjorwbfdg
+  sendPassword: ntnrevtnjorwbfdg   #发件人的授权码  ntnrevtnjorwbfdg
   smtpHost: smtp.qq.com  #smtp服务器地址

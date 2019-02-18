@@ -74,10 +74,10 @@ public class TtsCheckJobTimer extends IJobHandler{
 						int status = ttsRspVO.getStatus();	//TTS查证接口返回状态
 						int statusInt = 99;
 						//查证接口只处理终态，成功、失败
-						if(RobotConstants.TTS_INTERFACE_DOING.equals(status)) {
+						if(RobotConstants.TTS_INTERFACE_DOING==status) {
 							//将状态转为内部完成状态
 							statusInt = RobotConstants.TTS_STATUS_S;
-						}else if(RobotConstants.TTS_INTERFACE_FAIL.equals(status)) {
+						}else if(RobotConstants.TTS_INTERFACE_FAIL==status) {
 							//将状态转为内部失败状态
 							statusInt = RobotConstants.TTS_STATUS_F;
 						}else {

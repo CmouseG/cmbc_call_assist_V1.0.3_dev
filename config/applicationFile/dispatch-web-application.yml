@@ -93,4 +93,6 @@ xxl:
       logpath: /home/logs/guiyu-dispatch-web
       logretentiondays: -1
     accessToken:
- 
+weixin:
+  appid: wx017a03051262ec17  #跳转到的小程序appid
+  templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id

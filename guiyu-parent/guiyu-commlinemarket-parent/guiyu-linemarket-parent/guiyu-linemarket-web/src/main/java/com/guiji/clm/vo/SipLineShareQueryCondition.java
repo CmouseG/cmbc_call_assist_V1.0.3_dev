@@ -12,7 +12,8 @@ import lombok.Data;
 public class SipLineShareQueryCondition {
 	private int pageNo;
 	private int pageSize;
-	
+	//线路名称
+	private String lineName;
 	//线路状态：1-正常;2-到期;3-失效
 	private Integer lineStatus;
 	//行业

@@ -57,7 +57,9 @@ public class NoticeSendServiceImpl implements NoticeSendService {
         noticeInfo.setNoticeType(noticeType);
         noticeInfo.setOrgCode(orgCode);
         noticeInfo.setCreateTime(new Date());
-        noticeInfo.setWeixinData(messageSend.getWeixinData().toString());
+        if(messageSend.getWeixinData()!=null){
+            noticeInfo.setWeixinData(messageSend.getWeixinData().toString());
+        }
         noticeInfoMapper.insertSelective(noticeInfo);
         int infoId = noticeInfo.getId();
 

@@ -21,7 +21,6 @@ public interface FsAgentManager {
 
      /**
       * 上传录音文件
-      * @param fileId   文件id
       * @param fileName  文件名称
       * @param busiType  业务类型
       * @return
@@ -46,5 +45,13 @@ public interface FsAgentManager {
      * 获取缓存的录音文件时长
      * @return
      */
-    Double getWavDruation(String tempId, String filename);
+    Double getWavDruation(String tempId, String filename, String uuid);
+
+    /**
+     * 下载tts语音合成文件
+     * @param tempId
+     * @param callId
+     * @return
+     */
+    void downloadTtsWav(String tempId, String callId);
 }

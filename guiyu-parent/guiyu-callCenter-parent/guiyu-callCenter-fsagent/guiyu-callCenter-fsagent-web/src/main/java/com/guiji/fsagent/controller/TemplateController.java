@@ -5,6 +5,7 @@ import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsagent.service.TemplateService;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -34,13 +36,15 @@ public class TemplateController implements ITemplate {
     }
 
     @Override
-    public Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("callId") String callId) {
+    public Result.ReturnData<List<TtsWav>> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("callId") String callId) {
         logger.info("收到下载tts话术录音请求tempId[{}],callId[{}]", tempId, callId);
         if (StringUtils.isBlank(tempId) || StringUtils.isBlank(callId)) {
             logger.info("下载tts话术录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        return Result.ok(templateService.downloadttswav(tempId, callId));
+        List<TtsWav> list = templateService.downloadttswav(tempId, callId);
+        logger.info("返回结果下载tts话术录音请求tempId[{}],callId[{}],list[{}]", tempId, callId,list);
+        return Result.ok(list);
     }
 
     @Override

@@ -48,6 +48,8 @@ public class AIManagerImpl implements AIManager {
 
     @Autowired
     DispatchLogService dispatchLogService;
+    @Autowired
+    RobotNextHelper robotNextHelper;
 
     /**
      * 申请新的ai资源
@@ -108,12 +110,12 @@ public class AIManagerImpl implements AIManager {
         aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
         aiResponse.setReason(sellbotResponse.getReason());
 
-        String wavFilename = RobotNextHelper.getWavFilename(sellbotResponse.getWav_filename(),tempId);
+        String wavFilename = robotNextHelper.getWavFilename(sellbotResponse.getWav_filename(),tempId,aiRequest.getUuid());
         Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
         aiResponse.setWavFile(wavFilename);
         aiResponse.setAiId(aiCallNext.getAiNo());
         aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-        Double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename);
+        Double wavDruation = fsAgentManager.getWavDruation(tempId, wavFilename,aiRequest.getUuid());
         Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
         aiResponse.setWavDuration(wavDruation);
         return aiResponse;

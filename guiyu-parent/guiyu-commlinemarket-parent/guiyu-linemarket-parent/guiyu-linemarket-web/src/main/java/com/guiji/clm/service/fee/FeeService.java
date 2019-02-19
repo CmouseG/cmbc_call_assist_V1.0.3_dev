@@ -37,8 +37,7 @@ public class FeeService {
 	public void sipFee(FeeOptEnum feeOptEnum,SipLineExclusive sipLineExclusive) {
 		if(sipLineExclusive!=null 
 				&& StrUtils.isNotEmpty(sipLineExclusive.getBelongUser()) 
-				&& sipLineExclusive.getUnivalent()!=null 
-				&& (sipLineExclusive.getLineFeeType()!=null&&SipLineFeeTypeEnum.DO_FEE.getCode()==sipLineExclusive.getLineFeeType())) {
+				&& sipLineExclusive.getUnivalent()!=null) {
 			//sip线路转为计费项
 			FeeItem feeItem = this.sip2Fee(sipLineExclusive);
 			switch (feeOptEnum){
@@ -94,7 +93,11 @@ public class FeeService {
 		feeItem.setPrice(sipLineExclusive.getUnivalent().multiply(new BigDecimal(100)).toString());	//计费（分）
 		feeItem.setUnitPrice(2); //计费单位-分钟
 		feeItem.setUserId(sipLineExclusive.getBelongUser()); 
-		feeItem.setIsDeducted(0); //扣费
+		if(sipLineExclusive.getLineFeeType()!=null&&SipLineFeeTypeEnum.DO_FEE.getCode()==sipLineExclusive.getLineFeeType()){
+			feeItem.setIsDeducted(0); //扣费
+		}else {
+			feeItem.setIsDeducted(1); //不扣费
+		}
 		return feeItem;
 	}
 	
@@ -113,7 +116,7 @@ public class FeeService {
 			feeItem.setUnitPrice(2); //计费单位-分钟
 			feeItem.setUserId(voipGwPort.getUserId()); 
 			feeItem.setOrgCode(voipGwPort.getOrgCode());
-			feeItem.setIsDeducted(1); //不扣费
+			feeItem.setIsDeducted(1); //不扣费-voip统计不扣费
 			return feeItem;
 		}
 		return null;

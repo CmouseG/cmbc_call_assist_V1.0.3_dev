@@ -15,10 +15,11 @@ import com.guiji.calloutserver.service.CallOutDetailService;
 import com.guiji.calloutserver.service.ChannelService;
 import com.guiji.calloutserver.util.CommonUtil;
 import com.guiji.component.result.Result;
+import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.AiCallNext;
 import com.guiji.robot.model.AiCallNextReq;
-import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -51,6 +54,8 @@ public class RobotNextHelper {
     CallOutDetailService callOutDetailService;
     @Autowired
     CallOutDetailRecordService callOutDetailRecordService;
+    @Autowired
+    RedisUtil redisUtil;
 
     ScheduledExecutorService scheduledExecutorService;
     ConcurrentHashMap<String, ScheduledFuture> scheduleConcurrentHashMap;
@@ -122,14 +127,14 @@ public class RobotNextHelper {
                             aiResponse.setCallId(callId);
                             aiResponse.setReason(sellbotResponse.getReason());
 
-                            String wavFilename = getWavFilename(sellbotResponse.getWav_filename(),aiCallNextReq.getTemplateId());
+                            String wavFilename = getWavFilename(sellbotResponse.getWav_filename(),aiCallNextReq.getTemplateId(), callId);
                             Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
                             aiResponse.setWavFile(wavFilename);
 
                             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
                             aiResponse.setAiResponseType(sellbotResponse.getEnd());
 
-                            Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename);
+                            Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
                             Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
                             aiResponse.setWavDuration(wavDruation);
                             dealWithResponse(aiResponse,agentGroupId);
@@ -219,7 +224,7 @@ public class RobotNextHelper {
     /**
      * 返回标准的文件名称
      */
-    public static String getWavFilename(String filename, String tempId) {
+    public String getWavFilename(String filename, String tempId, String callId) {
 
         if (tempId.endsWith("_en")) {
             tempId = tempId.replace("_en", "_rec");
@@ -228,12 +233,25 @@ public class RobotNextHelper {
         if (filename != null) {
             if (filename.contains("/")) {
                 String[] arr = filename.split("/");
-                String result = arr[arr.length - 1];
-                return tempId + "/" + result;
+                filename = arr[arr.length - 1];
             }
             if(!filename.endsWith(".wav")){
                 filename =filename+".wav";
             }
+
+            //查询是否存在tts文件
+            Object value = redisUtil.get("callOutServer_ttsFile_"+callId);
+            if(value!=null){
+                List<TtsWav> list = (List<TtsWav>) value;
+                if(list.size()>0){
+                    for(TtsWav ttsWav:list){
+                        if(ttsWav.getFileName().equals(filename)){
+                            return "tts"+callId+ "/" + filename;
+                        }
+                    }
+                }
+            }
+
             return tempId + "/" + filename;
         }
         return null;

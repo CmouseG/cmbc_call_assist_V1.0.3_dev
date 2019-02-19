@@ -3,6 +3,7 @@ package com.guiji.fsagent.api;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -11,6 +12,7 @@ import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @FeignClient("guiyu-callcenter-fsagent")
 public interface ITemplate {
@@ -28,7 +30,7 @@ public interface ITemplate {
             @ApiImplicitParam(name = "callId", value = "会话Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/downloadttswav")
-     Result.ReturnData<Boolean> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam ("callId") String callId);
+    Result.ReturnData<List<TtsWav>> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam ("callId") String callId);
 
 
     @ApiOperation(value = "上传录音")

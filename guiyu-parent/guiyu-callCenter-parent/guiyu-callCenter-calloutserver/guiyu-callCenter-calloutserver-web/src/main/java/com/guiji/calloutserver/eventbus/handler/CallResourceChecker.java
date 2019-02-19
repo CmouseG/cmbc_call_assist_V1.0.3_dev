@@ -12,6 +12,7 @@ import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.AiCallApplyReq;
 import com.guiji.robot.model.AiCallNext;
+import com.guiji.robot.model.TtsVoiceReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

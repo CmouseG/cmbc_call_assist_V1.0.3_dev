@@ -63,9 +63,9 @@ public class TemplateServiceImpl implements TemplateService {
         TtsComposeCheckRsp ttsComposeCheckRsp = result.getBody();
         List<TtsVoice> list = ttsComposeCheckRsp.getTtsVoiceList();
         if(list!=null && list.size()>0){
-            File ttsDir = new File(pathConfig.getTtsPath()+callId);  // 创建tts文件夹
+            File ttsDir = new File(pathConfig.getTempPath()+"tts/"+callId);  // 创建tts文件夹
             if (!ttsDir.exists()) {//文件不存在则创建
-                ttsDir.mkdir();
+                ttsDir.mkdirs();
             }
             List<TtsWav> returnList = new ArrayList();
             for (TtsVoice ttsVoice:list) {

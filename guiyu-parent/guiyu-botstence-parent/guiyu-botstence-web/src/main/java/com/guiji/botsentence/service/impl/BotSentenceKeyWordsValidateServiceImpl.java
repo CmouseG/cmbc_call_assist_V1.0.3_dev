@@ -110,7 +110,7 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 		}
 		
 		//获取解释开场白的关键字
-		BotSentenceBranch explainBranch = botSentenceProcessService.getStartExplainBranch(processId);
+		/*BotSentenceBranch explainBranch = botSentenceProcessService.getStartExplainBranch(processId);
 		if(null != explainBranch) {
 			String intents = explainBranch.getIntents();
 			if(org.apache.commons.lang.StringUtils.isNotBlank(intents)) {
@@ -119,7 +119,7 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 					intentIds.add(new Long(array[i]));
 				}
 			}
-		}
+		}*/
 		
 		Map<String, String> keywords = botSentenceProcessService.getAllMainFlowKeywords(processId, intentIds);
 		

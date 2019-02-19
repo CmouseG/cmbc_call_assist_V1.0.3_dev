@@ -124,7 +124,6 @@ public class ISelfTestServiceImpl implements ISelfTestService {
             			responseSelfTestVO.setWavDuration(1);
             		}
 					
-					responseSelfTestVO.setWavDuration(taskList.get(0).getTimes());
 					responseSelfTestVO.setHttpFileUrl(taskList.get(0).getVoliceUrl());
 				}
         	}

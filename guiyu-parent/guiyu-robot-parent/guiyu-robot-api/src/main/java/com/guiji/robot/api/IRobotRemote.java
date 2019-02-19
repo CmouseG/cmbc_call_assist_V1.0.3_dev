@@ -64,7 +64,7 @@ public interface IRobotRemote {
             @ApiImplicitParam(name = "ttsVoice", value = "tts语音合成请求信息", required = true)
     })
     @PostMapping(value = "/remote/ttsCompose")
-	Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
+	Result.ReturnData<TtsComposeCheckRsp> ttsCompose(@RequestBody TtsVoiceReq ttsVoice);
 	
 	
 	@ApiOperation(value = "TTS语音合成后的回call服务")

@@ -296,6 +296,8 @@ public class LineMarketController {
 				}
 				//线路拥有者(查询原线路的归属企业)
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
+				vo.setContractUnivalentStr(sipLineBaseInfo.getContractUnivalent()+"元/分钟");
+				vo.setUnivalentStr(sipLineBaseInfo.getUnivalent()+"元/分钟");
 				voList.add(vo);
 			}
 			return voList;

@@ -1,14 +1,11 @@
-package com.guiji.billing.dto;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+package com.guiji.billing.entity;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class CallChargingNotifyDto implements Serializable {
+public class BillNotifyLogBean extends BaseBean {
 
-    private static final long serialVersionUID = 1617728883189467403L;
+    private static final long serialVersionUID = -3490543986688825570L;
 
     /**
      * 企业用户ID
@@ -23,13 +20,11 @@ public class CallChargingNotifyDto implements Serializable {
     /**
      * 开始时间
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /**
      * 结束时间
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /**

@@ -136,6 +136,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									logger.info("启动呼叫中心任务失败");
 									// 减少推送次数
 									cutVariable(callBean, queueCount);
+									//休眠10S
+									Thread.sleep(10000);
 									continue;
 								}
 							}

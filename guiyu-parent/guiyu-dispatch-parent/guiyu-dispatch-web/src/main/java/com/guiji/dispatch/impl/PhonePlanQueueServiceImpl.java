@@ -73,22 +73,26 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										Thread.sleep(500);
 										break;
 									}
-									// mod by xujin
-									List<DispatchPlan> bakList = new ArrayList<>();
-									List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
-									bakList.addAll(dispatchPlanList);
-									//进去队列之前，根据优line优先级进行排序
-									List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
-									if(sortLine.size()>0){
-										pushPlan2Queue(sortLine,queue);
-									}else if (bakList.size()>0 && sortLine.size()<=0){
-										logger.info("当前排序异常,请检查>>>>>>>>>>>>>>>>>>>>>>>>>>");
-										pushPlan2Queue(bakList,queue);
+										// mod by xujin
+										List<DispatchPlan> dispatchPlanList = getPhonesInterface.getPhonesByParams(dto.getUserId(),dto.getBotenceName(),hour,systemMaxPlan * 3);
+										if(dispatchPlanList.size()>0){
+											logger.info("当前查询到的数据"+dispatchPlanList.size());
+										}
+										if(dispatchPlanList.size()>0){
+											logger.info("排序数据前");
+											//进去队列之前，根据优line优先级进行排序
+											List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
+											if(sortLine.size()>0){
+												pushPlan2Queue(sortLine,queue);
+											}else if (dispatchPlanList.size()>0 && sortLine.size()<=0){
+												logger.info("当前排序异常或者没用用户规则走默认线路配置,请检查>>>>>>>>>>>>>>>>>>>>>>>>>>");
+												pushPlan2Queue(dispatchPlanList,queue);
+											}
+										}
 									}
-								}
 							}
 						} catch (Exception e) {
-                            logger.error("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
+                            logger.info("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
                         } finally{
 							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}

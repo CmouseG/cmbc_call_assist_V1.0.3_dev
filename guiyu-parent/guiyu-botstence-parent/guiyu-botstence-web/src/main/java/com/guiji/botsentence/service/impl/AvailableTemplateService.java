@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.guiji.user.dao.entity.SysOrganization;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.guiji.auth.api.IAuth;
@@ -63,8 +65,12 @@ public class AvailableTemplateService {
 		
 		if(null != list && list.size() > 0) {
 			for(BotAvailableTemplate template : list) {
-				BotSentenceProcess process = botSentenceProcessService.getBotsentenceProcessByTemplateId(template.getTemplateId());
-				template.setTemplateName(process.getTemplateName());
+				if(StringUtils.isNotBlank(template.getTemplateId())) {
+					BotSentenceProcess process = botSentenceProcessService.getBotsentenceProcessByTemplateId(template.getTemplateId());
+					if(null != process) {
+						template.setTemplateName(process.getTemplateName());
+					}
+				}
 			}
 		}
 		return list;

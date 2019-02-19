@@ -7,12 +7,14 @@ import com.guiji.fsagent.config.FsagentExceptionEnum;
 import com.guiji.fsagent.config.PathConfig;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsagent.service.TemplateService;
 import com.guiji.fsagent.util.FileUtil;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.robot.api.IRobotRemote;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoice;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.utils.NasUtil;
@@ -25,7 +27,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TemplateServiceImpl implements TemplateService {
@@ -45,34 +49,46 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public boolean downloadttswav(String tempId, String callId) {
+    public List<TtsWav> downloadttswav(String tempId, String callId) {
         //下载tts录音
         TtsVoiceReq  ttsVoiceReq = new TtsVoiceReq();
         ttsVoiceReq.setTemplateId(tempId);
         ttsVoiceReq.setSeqid(callId);
-        Result.ReturnData<List<TtsVoice>> result = iRobotFeign.ttsCompose(ttsVoiceReq);
+        Result.ReturnData<TtsComposeCheckRsp> result = iRobotFeign.ttsCompose(ttsVoiceReq);
         logger.info("ttsCompose返回结果 result[{}]",result);
         if(!result.getCode().equals("0")){
             logger.warn("下载tts录音，获取录音URL失败:"+result.getCode());
             throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_TTS_DOWNLOAD);
         }
-        List<TtsVoice> list = result.getBody();
+        TtsComposeCheckRsp ttsComposeCheckRsp = result.getBody();
+        List<TtsVoice> list = ttsComposeCheckRsp.getTtsVoiceList();
         if(list!=null && list.size()>0){
             File ttsDir = new File(pathConfig.getTtsPath()+callId);  // 创建tts文件夹
             if (!ttsDir.exists()) {//文件不存在则创建
                 ttsDir.mkdir();
             }
+            List<TtsWav> returnList = new ArrayList();
             for (TtsVoice ttsVoice:list) {
-                File ttsVoiceFile = new File(pathConfig.getTtsPath()+callId+"/"+ttsVoice.getTtsKey()+".wav");
+                String filePath = pathConfig.getTtsPath()+callId+"/"+ttsVoice.getTtsKey()+".wav";
+                File ttsVoiceFile = new File(filePath);
                 NetFileDownUtil util = new NetFileDownUtil(ttsVoice.getTtsUrl(),ttsVoiceFile);
                 try {
                     util.downfile();
+                    //获取文件时长
+                    Double fileDuration = FileUtil.getWavDuration(filePath);
+                    if(fileDuration!=null){
+                        TtsWav ttsWav = new TtsWav();
+                        ttsWav.setFileDuration(fileDuration);
+                        ttsWav.setFileName(ttsVoice.getTtsKey()+".wav");
+                        returnList.add(ttsWav);
+                    }
                 } catch (IOException e) {
                     logger.info("下载tts录音失败，失败的文件为：[{}]==》错误的原因为：[{}]",ttsVoice.getTtsUrl(), e);
                 }
             }
+            return returnList;
         }
-        return true;
+        return null;
     }
 
     @Override

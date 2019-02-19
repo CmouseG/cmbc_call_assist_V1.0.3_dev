@@ -10,9 +10,11 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsmanager.entity.FsBindVO;
 import com.guiji.utils.FeignBuildUtil;
+import com.guiji.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,9 @@ import java.util.Map;
 public class FsAgentManagerImpl implements FsAgentManager {
 
     private Cache<String, Map<String,Double>> wavCaches;
+
+    @Autowired
+    RedisUtil redisUtil;
 
     @PostConstruct
     public void init(){
@@ -152,19 +157,45 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public Double getWavDruation(String tempId, String filename){
+    public Double getWavDruation(String tempId, String filename, String callId){
+
+        if(filename.contains("/")){
+            String[] arr = filename.split("/");
+            filename = arr[arr.length-1];
+        }
+        if(!filename.endsWith(".wav")){
+            filename =filename+".wav";
+        }
+
+        //先从redis中查询rrs文件
+        Object value = redisUtil.get("callOutServer_ttsFile_"+callId);
+        if(value!=null){
+            List<TtsWav> list = (List<TtsWav>) value;
+            if(list.size()>0){
+                for(TtsWav ttsWav:list){
+                    if(ttsWav.getFileName().equals(filename)){
+                        return ttsWav.getFileDuration();
+                    }
+                }
+            }
+        }
 
         Map<String, Double> map = wavCaches.getIfPresent(tempId);
         if(map==null){
             map = getwavlength(tempId);
         }
-        if(filename.contains("/")){
-            String[] arr = filename.split("/");
-            String result = arr[arr.length-1];
-            return map.get(result);
-        }else{
-            return map.get(filename);
-        }
+        return map.get(filename);
 
+    }
+
+    @Override
+    public void downloadTtsWav(String tempId, String callId) {
+        Result.ReturnData<List<TtsWav>> returnData =iTemplate.downloadttswav(tempId,callId);
+        log.info("下载tts合成语音 ,returnData[{}]",returnData);
+        List<TtsWav> list = returnData.getBody();
+        //将文件名称，和文件时长缓存到redis中
+        if(list!=null && list.size()>0){
+            redisUtil.set("callOutServer_ttsFile_"+callId,list,60*60); //1个小时
+        }
     }
 }

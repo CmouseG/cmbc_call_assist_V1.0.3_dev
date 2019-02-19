@@ -2,14 +2,16 @@ package com.guiji.fsagent.service;
 
 import com.guiji.fsagent.entity.RecordReqVO;
 import com.guiji.fsagent.entity.RecordVO;
+import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TemplateService {
      boolean istempexist(String tempId);
 
-     boolean downloadttswav(String tempId,String callId);
+     List<TtsWav> downloadttswav(String tempId, String callId);
 
      RecordVO uploadrecord(RecordReqVO recordReqVO);
 

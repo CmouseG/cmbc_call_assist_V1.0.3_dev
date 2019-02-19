@@ -11,6 +11,7 @@ import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
+import com.guiji.calloutserver.manager.FsAgentManager;
 import com.guiji.calloutserver.manager.LineListManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.CallOutRecordService;
@@ -51,6 +52,8 @@ public class CallPlanDispatchHandler {
     CallingCountManager callingCountManager;
     @Autowired
     LineListManager lineListManager;
+    @Autowired
+    FsAgentManager fsAgentManager;
 
     //注册这个监听器
     @PostConstruct
@@ -129,7 +132,7 @@ public class CallPlanDispatchHandler {
                     callOutPlanService.add(callPlan);
                     callingCountManager.addOneCall();
                 } catch (Exception ex) {
-                    log.warn("插入calloutplan异常,重复的uuid", ex);
+                    log.error("插入calloutplan异常,重复的uuid", ex);
                     //重复的id，回调
                     dispatchService.successSchedule(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
                     callingCountManager.removeOneCall();
@@ -141,14 +144,17 @@ public class CallPlanDispatchHandler {
                 } catch (NullPointerException e) {
                     //回掉给调度中心，更改通话记录
                     //没有机器人资源，会少一路并发数，直接return了
-                    log.warn("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
-                    callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                    callPlan.setAccurateIntent("W");
-                    callPlan.setReason(e.getMessage());
-                    callOutPlanService.update(callPlan);
+                    log.error("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
+                    readyFail(callPlan,e.getMessage());
+                    return;
+                }
 
-                    dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
-                    callingCountManager.removeOneCall();
+                //下载tts语音合成文件
+                try {
+                    fsAgentManager.downloadTtsWav(callPlan.getTempId(), callPlan.getCallId().toString());
+                }catch (Exception e){
+                    log.error("downloadTtsWav，下载tts语音，出现异常 callPlan[{}]", callPlan, e);
+                    readyFail(callPlan,null);
                     return;
                 }
 
@@ -162,5 +168,15 @@ public class CallPlanDispatchHandler {
         });
 
     }
+
+    private void readyFail(CallOutPlan callPlan,String reason){
+        callPlan.setCallState(ECallState.norobot_fail.ordinal());
+        callPlan.setAccurateIntent("W");
+        callPlan.setReason(reason);
+        callOutPlanService.update(callPlan);
+        dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
+        callingCountManager.removeOneCall();
+    }
+
 
 }

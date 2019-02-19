@@ -69,7 +69,7 @@ public class TemplateServiceImpl implements TemplateService {
             }
             List<TtsWav> returnList = new ArrayList();
             for (TtsVoice ttsVoice:list) {
-                String filePath = pathConfig.getTtsPath()+callId+"/"+ttsVoice.getTtsKey()+".wav";
+                String filePath = pathConfig.getTempPath()+"tts/"+callId+"/"+ttsVoice.getTtsKey()+".wav";
                 File ttsVoiceFile = new File(filePath);
                 NetFileDownUtil util = new NetFileDownUtil(ttsVoice.getTtsUrl(),ttsVoiceFile);
                 try {

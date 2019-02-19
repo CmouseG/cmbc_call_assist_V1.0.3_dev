@@ -106,7 +106,7 @@ public class ILinesServiceImpl implements ILinesService {
 	}
 
 	@Override
-	public List<DispatchPlan> sortLine(List<DispatchPlan> list) {
+	public synchronized List<DispatchPlan> sortLine(List<DispatchPlan> list) {
 		List<DispatchPlan> res = new ArrayList<>();
 		for (DispatchPlan dis : list) {
 			// 线路一条的话就不排序
@@ -118,6 +118,11 @@ public class ILinesServiceImpl implements ILinesService {
 			List<SipRouteRuleVO> userRule = (List<SipRouteRuleVO>) redisUtils
 					.get("LINE_RULE_USER_ID_" + dis.getUserId());
 
+			if(userRule.get(0).getRuleContent() ==null){
+				logger.info("当前用户没用用户规则 不排序",dis.getUserId());
+				return new ArrayList<>();
+			}
+			
 			if (userRule != null) {
 				// 获取不同用户排序规则
 				SipRouteRuleVO ruleVO = getRule(dis, userRule);

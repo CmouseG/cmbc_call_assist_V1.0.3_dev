@@ -103,7 +103,12 @@ public class ISelfTestServiceImpl implements ISelfTestService {
 				backupExample.createCriteria().andProcessIdEqualTo(processId).andWavNameEqualTo(wavName);
 				List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
 				if(null != backupList && backupList.size() > 0) {
-					responseSelfTestVO.setWavDuration(backupList.get(0).getTimes());
+					if(backupList.get(0).getTimes() == 0) {
+            			responseSelfTestVO.setWavDuration(backupList.get(0).getContent().length()/5);
+            		}
+					if(responseSelfTestVO.getWavDuration() == 0) {
+            			responseSelfTestVO.setWavDuration(1);
+            		}
 					responseSelfTestVO.setHttpFileUrl(backupList.get(0).getUrl());
 				}
         	}else {
@@ -112,7 +117,13 @@ public class ISelfTestServiceImpl implements ISelfTestService {
 				ttsTaskExample.createCriteria().andProcessIdEqualTo(processId).andWavNameEqualTo(wavName);
 				List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
 				if(null != taskList && taskList.size() > 0) {
-					responseSelfTestVO.setWavDuration(taskList.get(0).getTimes());
+					if(taskList.get(0).getTimes() == 0) {
+            			responseSelfTestVO.setWavDuration(taskList.get(0).getContent().length()/5);
+            		}
+					if(responseSelfTestVO.getWavDuration() == 0) {
+            			responseSelfTestVO.setWavDuration(1);
+            		}
+					
 					responseSelfTestVO.setHttpFileUrl(taskList.get(0).getVoliceUrl());
 				}
         	}

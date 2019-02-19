@@ -97,6 +97,7 @@
       del_flag
     FROM billing_user_acct
     WHERE org_code = #{orgCode}
+    LIMIT 1
   </select>
 
   <insert id="addUserAcct" parameterType="com.guiji.billing.entity.BillingUserAcctBean"
@@ -222,7 +223,7 @@
     FROM billing_user_acct c, billing_acct_set s
     WHERE c.del_flag = 0
       AND c.account_id = s.account_id
-      AND s.set_key = ${@com.guiji.billing.constants.ThresholdKeyEnum@BalanceEarlyWarning.getKey()}
+      AND s.set_key = 'balanceEarlyWarning'
       AND c.available_balance <![CDATA[ < ]]> s.set_value
   </select>
 

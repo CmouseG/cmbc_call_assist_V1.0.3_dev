@@ -109,10 +109,10 @@ public class ILinesServiceImpl implements ILinesService {
 	public synchronized List<DispatchPlan> sortLine(List<DispatchPlan> list) {
 		List<DispatchPlan> res = new ArrayList<>();
 		for (DispatchPlan dis : list) {
-			// 线路一条的话就不排序
+			// 线路一条的话就不排序0
 			if (dis.getLines().size() <= 1) {
 				res.add(dis);
-				return res;
+				continue;
 			}
 			// 获取用户的排序规则
 			List<SipRouteRuleVO> userRule = (List<SipRouteRuleVO>) redisUtils

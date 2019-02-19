@@ -380,8 +380,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			
 			//处理挽回话术(除结束之外的每个主domain都必须有)
-			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory()) && !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))
-					|| "解释开场白".equals(botSentenceDomain.getDomainName())){
+			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory()) && !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))){
 				BotSentenceBranchExample intentExample = new BotSentenceBranchExample();
 				if(!Constant.DOMAIN_TYPE_AGENT.equals(botSentenceDomain.getType())) {
 					intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
@@ -436,8 +435,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 					String newRefuseKeyWordsStr = "";
 					
 					for(String temp : allRefuseKeyWords) {
-						//temp = temp.replace("\"", "");
-						//newRefuseKeyWords.add(temp);
 						newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + temp;
 					}
 					if(StringUtils.isNotBlank(complexywordStr)) {

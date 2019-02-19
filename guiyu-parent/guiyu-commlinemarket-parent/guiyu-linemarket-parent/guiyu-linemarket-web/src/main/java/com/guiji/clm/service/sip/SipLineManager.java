@@ -594,7 +594,7 @@ public class SipLineManager {
 	 * @return
 	 */
 	public String getLineOwner(SipLineBaseInfo sipLineBaseInfo) {
-		if(StrUtils.isNotEmpty(sipLineBaseInfo.getOrgCode())) {
+		if(sipLineBaseInfo !=null && StrUtils.isNotEmpty(sipLineBaseInfo.getOrgCode())) {
 			SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getOrgCode());
 			if(org!=null) {
 				if(sipLineBaseInfo.getLineFeeType()!=null && SipLineFeeTypeEnum.UNDO_FEE.getCode()==sipLineBaseInfo.getLineFeeType()) {

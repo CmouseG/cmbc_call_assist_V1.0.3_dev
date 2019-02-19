@@ -258,6 +258,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String accountId = null;
             BigDecimal amount = rechargeDto.getAmount(); //充值金额
             BigDecimal rechargeAmount = amount.multiply(new BigDecimal(100));//充值金额转化成分
+            rechargeDto.setAmount(rechargeAmount);
             BillingUserAcctBean acct = null;
             if(!StringUtils.isEmpty(rechargeDto.getAccountId())) {
                 accountId = rechargeDto.getAccountId();

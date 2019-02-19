@@ -11,6 +11,7 @@ import com.guiji.notice.entity.MessageSend;
 import com.guiji.user.dao.SysAnnouncementMapper;
 import com.guiji.user.dao.entity.SysAnnouncement;
 import com.guiji.user.dao.entity.SysAnnouncementExample;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.NasUtil;
@@ -45,6 +46,8 @@ public class AnnouncementService {
     @Autowired
     private UserService userService;
     @Autowired
+    private OrganizationService organizationService;
+    @Autowired
     private INoticeSend noticeSend;
     @Value("${weixin.templateId}")
     String weixinTemplateId;
@@ -63,29 +66,34 @@ public class AnnouncementService {
         mapper.insert(sysAnnouncement);
         logger.info("新增公告成功#end");
         //发送站内信通知,当前发布人所在组织的所有账号都接收站内通知
-        SysUser sysUser = userService.getUserById(userId);
-        if (sysUser != null) {
-            List<SysUser> allUsers =  userService.getAllUserByOrgCode(sysUser.getOrgCode());
-            if (allUsers != null) {
-                for (SysUser user : allUsers) {
-                    MessageSend messageSend = new MessageSend();
-                    messageSend.setUserId(user.getId());
-                    messageSend.setNoticeType(NoticeType.announcement);
-                    //站内信
-                    messageSend.setMailContent(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情");
-                    //邮箱
-                    messageSend.setEmailSubject("公告");
-                    messageSend.setEmailContent(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情");
-                    //短信
-                    messageSend.setSmsContent(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情");
-                    //微信
-                    messageSend.setWeixinTemplateId(weixinTemplateId);
-                    messageSend.setWeixinAppId(weixinAppid);
-                    HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-                    map.put("userName",new SendMsgReqVO.Item(sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情",null));
-                    messageSend.setWeixinData(map);
-                    noticeSend.sendMessage(messageSend);
+        List<SysOrganization> sysOrganizationList = organizationService.getOrgByUserId(userId);
+        if (sysOrganizationList != null) {
+            for (SysOrganization sysOrganization : sysOrganizationList) {
+                MessageSend messageSend = new MessageSend();
+                messageSend.setOrgCode(sysOrganization.getCode());
+                messageSend.setNoticeType(NoticeType.announcement);
+                String content = "";
+                if (sysAnnouncement != null && StringUtils.isNotEmpty(sysAnnouncement.getContent())) {
+                    if (sysAnnouncement.getContent().length() >= 50) {
+                        content = sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情";
+                    } else {
+                        content = sysAnnouncement.getContent() + ",登录系统查看详情";
+                    }
                 }
+                //站内信
+                messageSend.setMailContent(content);
+                //邮箱
+                messageSend.setEmailSubject("公告");
+                messageSend.setEmailContent(content);
+                //短信
+                messageSend.setSmsContent(content);
+                //微信
+                messageSend.setWeixinTemplateId(weixinTemplateId);
+                messageSend.setWeixinAppId(weixinAppid);
+                HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
+                map.put("userName",new SendMsgReqVO.Item(content,null));
+                messageSend.setWeixinData(map);
+                noticeSend.sendMessage(messageSend);
             }
         }
         return sysAnnouncement;

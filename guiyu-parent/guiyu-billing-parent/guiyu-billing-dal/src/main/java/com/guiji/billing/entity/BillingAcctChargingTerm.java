@@ -22,18 +22,33 @@ public class BillingAcctChargingTerm extends BaseBean {
 
     private String chargingItemName;
 
+    /**
+     * 计费项类型 1-时长 2-路数 3-月度
+     */
     private Integer chargingType;
 
     private String targetKey;
 
     private String targetName;
 
+    /**
+     * 单价:分
+     */
     private BigDecimal price;
 
+    /**
+     * 价格单位  1-秒 2-分钟 3-小时 4-天 5-月 6-年
+     */
     private Integer unitPrice;
 
+    /**
+     * 扣费标识 0-扣费 1-不扣费
+     */
     private Integer isDeducted;
 
+    /**
+     * 状态  0-停用 1-启用
+     */
     private Integer status;
 
     public String getUserChargingId() {

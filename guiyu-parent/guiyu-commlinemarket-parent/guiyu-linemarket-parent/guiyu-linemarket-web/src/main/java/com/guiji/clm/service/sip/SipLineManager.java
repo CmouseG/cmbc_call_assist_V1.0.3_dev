@@ -145,7 +145,6 @@ public class SipLineManager {
 				log.error("线路{}没有共享，但是也没有分配给企业，默认分配给配置人所属企业",sipLineBaseInfo.getId());
 				sipLineExclusive.setBelongOrgCode(sipLineBaseInfo.getOrgCode());
 			}
-			sipLineExclusive.setUnivalent(sipLineBaseInfo.getContractUnivalent()); //分配给自己使用时，价格用合同价
 			sipLineExclusive.setSipLineId(sipLineBaseInfo.getId());
 			sipLineExclusive.setId(null);
 			this.splitExclusiveSipLine(sipLineExclusive);

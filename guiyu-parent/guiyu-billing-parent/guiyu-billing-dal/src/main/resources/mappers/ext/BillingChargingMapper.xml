@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guiji.billing.dao.mapper.ext.BillingChargingMapper">
+
+  <insert id="addBillNotifyLog" parameterType="com.guiji.billing.entity.BillNotifyLogBean"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO billing_bill_notify_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="billSec != null">
+        bill_sec,
+      </if>
+      <if test="lineId != null">
+        line_id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId},
+      </if>
+      <if test="billSec != null">
+        #{billSec},
+      </if>
+      <if test="lineId != null">
+        #{lineId},
+      </if>
+      <if test="phone != null">
+        #{phone},
+      </if>
+      <if test="beginTime != null">
+        #{beginTime},
+      </if>
+      <if test="endTime != null">
+        #{endTime},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+
+</mapper>

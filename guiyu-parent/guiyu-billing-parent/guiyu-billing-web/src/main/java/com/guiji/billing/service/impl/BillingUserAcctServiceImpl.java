@@ -205,9 +205,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             for (BillingUserAcctBean acct : list) {
                 //获取企业组织下的所有用户
                 String orgCode = acct.getOrgCode();
-                Result.ReturnData<List<SysUser>> res = iAuth.getAllUserByOrgCode(orgCode);
-                if (null != res && res.success) {
-                    List<SysUser> userList = res.getBody();
+                List<SysUser> userList = ResHandler.getResObj(iAuth.getAllUserByOrgCode(orgCode));
+                if (null != userList && userList.size()>0) {
                     for (SysUser user : userList) {
                         userIdList.add(user.getId() + "");
                     }
@@ -258,13 +257,16 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String accountId = null;
             BigDecimal amount = rechargeDto.getAmount(); //充值金额
             BigDecimal rechargeAmount = amount.multiply(new BigDecimal(100));//充值金额转化成分
+            BigDecimal srcAmount = BigDecimal.ZERO, toAmount = BigDecimal.ZERO;//充值前，充值后金额
             rechargeDto.setAmount(rechargeAmount);
             BillingUserAcctBean acct = null;
             if(!StringUtils.isEmpty(rechargeDto.getAccountId())) {
                 accountId = rechargeDto.getAccountId();
                 //查询账户
                 acct = billingUserAcctMapper.queryUserAcct(accountId);
-                acct.setAmount(acct.getAvailableBalance().add(rechargeAmount));//总金额
+                srcAmount = acct.getAvailableBalance();
+                toAmount = srcAmount.add(rechargeAmount);
+                acct.setAmount(acct.getAmount().add(rechargeAmount));//总金额
                 acct.setAvailableBalance(acct.getAvailableBalance().add(rechargeAmount));//账户可以剩余余额
                 //账户充值
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
@@ -280,6 +282,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                     //企业已注册账户
                     if(null != acctExist){
                         acct = acctExist;
+                        srcAmount = acct.getAvailableBalance();
+                        toAmount = srcAmount.add(rechargeAmount);
                         accountId = acct.getAccountId();
                         acct.setAmount(acct.getAvailableBalance().add(rechargeAmount));//总金额
                         acct.setAvailableBalance(acct.getAvailableBalance().add(rechargeAmount));//账户可以剩余余额
@@ -291,6 +295,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
 
                     //企业未注册,先注册账户
                     }else {
+                        toAmount = srcAmount.add(rechargeAmount);
                         accountId = idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType());
                         //查询企业组织
                         SysOrganization org = ResHandler.getResObj(iOrg.getOrgByCode(orgCode));
@@ -314,7 +319,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
 
             if(bool){
                 //充值记录
-                bool = this.rechargeRecord(acct, rechargeDto);
+                bool = this.rechargeRecord(acct, rechargeDto, srcAmount, toAmount);
 
                 //充值消息通知
                 msgNotifyComponent.notifyByRecharge(acct, rechargeDto);
@@ -367,7 +372,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      * @param rechargeDto
      * @return
      */
-    private boolean rechargeRecord(BillingUserAcctBean acct, RechargeDto rechargeDto){
+    private boolean rechargeRecord(BillingUserAcctBean acct, RechargeDto rechargeDto, BigDecimal srcAmount, BigDecimal toAmount){
         BillingAcctChargingRecord chargingRecord = new BillingAcctChargingRecord();
         String userId = rechargeDto.getUserId();
         SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
@@ -387,8 +392,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         chargingRecord.setFeeMode(AcctChargingFeeModeEnum.BANK_RECHARGE.getFeeCode());//通话消费
         chargingRecord.setUserChargingId(null);
         chargingRecord.setAmount(rechargeDto.getAmount());
-        chargingRecord.setSrcAmount(acct.getAvailableBalance());
-        chargingRecord.setToAmount(acct.getAvailableBalance().add(rechargeDto.getAmount()));
+        chargingRecord.setSrcAmount(srcAmount);
+        chargingRecord.setToAmount(toAmount);
         chargingRecord.setPhone(null);
         chargingRecord.setAttachmentSnapshotUrl(rechargeDto.getAttachmentSnapshotUrl());
         chargingRecord.setCreateTime(time);
@@ -490,39 +495,36 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String chargingItemId = chargingTermNotifyDto.getChargingItemId();
             //查询用户所在企业组织编码
             SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
-            if(null != org){
-                //查询企业用户账户
-                String orgCode = org.getCode();
-                BillingUserAcctBean acct = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
-                if(null != acct){
-                    String accountId = acct.getAccountId();
-                    term = new BillingAcctChargingTerm();
-                    term.setAccountId(accountId);
-                    term.setUserId(userId);
-                    term.setChargingItemId(chargingItemId);
-                    term.setChargingItemName(chargingTermNotifyDto.getChargingItemName());
-                    term.setChargingType(1);
-                    term.setPrice(new BigDecimal(chargingTermNotifyDto.getPrice()));
-                    term.setUnitPrice(chargingTermNotifyDto.getUnitPrice());
-                    term.setIsDeducted(chargingTermNotifyDto.getIsDeducted());
-                    term.setStatus(chargingTermNotifyDto.getStatus());
+            //查询企业用户账户
+            String orgCode = (null != org)?org.getCode():null;
+            BillingUserAcctBean acct = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
+            String accountId = null != acct?acct.getAccountId():null;
+            term = new BillingAcctChargingTerm();
+            term.setAccountId(accountId);
+            term.setUserId(userId);
+            term.setChargingItemId(chargingItemId);
+            term.setChargingItemName(chargingTermNotifyDto.getChargingItemName());
+            term.setChargingType(null != chargingTermNotifyDto.getChargingType()?
+                    chargingTermNotifyDto.getChargingType():ChargingTremTypeEnum.TIME_DURATION.getType());
+            term.setPrice(new BigDecimal(chargingTermNotifyDto.getPrice()));
+            term.setUnitPrice(chargingTermNotifyDto.getUnitPrice());
+            term.setIsDeducted(chargingTermNotifyDto.getIsDeducted());
+            term.setStatus(chargingTermNotifyDto.getStatus());
 
-                    BillingAcctChargingTerm acctTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId, chargingItemId);
-                    //已存在，修改企业用户计费项
-                    if(null != acctTermExist){//修改
-                        term.setUserChargingId(acctTermExist.getUserChargingId());
-                        term.setUpdateTime(new Date());
-                        term.setDelFlag(SysDelEnum.NORMAL.getState());
-                        billingUserAcctMapper.updAcctChargingTerm(term);
-                    //不存在，新增企业用户计费项
-                    }else {
-                        term.setUserChargingId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
-                        term.setCreateTime(new Date());
-                        term.setDelFlag(SysDelEnum.NORMAL.getState());
-                        //新增
-                        billingUserAcctMapper.addAcctChargingTerm(term);
-                    }
-                }
+            BillingAcctChargingTerm acctTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId, chargingItemId);
+            //已存在，修改企业用户计费项
+            if(null != acctTermExist){//修改
+                term.setUserChargingId(acctTermExist.getUserChargingId());
+                term.setUpdateTime(new Date());
+                term.setDelFlag(SysDelEnum.NORMAL.getState());
+                billingUserAcctMapper.updAcctChargingTerm(term);
+            //不存在，新增企业用户计费项
+            }else {
+                term.setUserChargingId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
+                term.setCreateTime(new Date());
+                term.setDelFlag(SysDelEnum.NORMAL.getState());
+                //新增
+                billingUserAcctMapper.addAcctChargingTerm(term);
             }
             return term;
         }else{

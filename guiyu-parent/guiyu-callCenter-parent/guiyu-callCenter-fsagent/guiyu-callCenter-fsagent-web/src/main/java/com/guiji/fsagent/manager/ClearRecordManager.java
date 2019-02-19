@@ -5,11 +5,15 @@ import com.guiji.fsagent.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service
 public class ClearRecordManager {
     @Autowired
     PathConfig pathConfig;
     public void clearRecordJob(){
         FileUtil.deleteFilesByDay(pathConfig.getRecordPath(),3);
+        // 将tts合成的语音文件删掉
+        FileUtil.delete(pathConfig.getTempPath()+"tts/");
     }
 }

@@ -52,6 +52,7 @@ public class BillingMqListener {
 			if(userIdList ==null){
 				userIdList = new ArrayList<>();
 			}
+			redisUtils.set("USER_BILLING_DATA", userIdList);
 			for (String str : msgDto.getUserIdList()) {
 				if (!userIdList.contains(str)) {
 					userIdList.add(str);
@@ -59,7 +60,7 @@ public class BillingMqListener {
 					phonePlanQueueService.cleanQueueByUserId(str);
 				}
 			}
-			redisUtils.set("USER_BILLING_DATA", userIdList);
+
 		}
 	}
 }

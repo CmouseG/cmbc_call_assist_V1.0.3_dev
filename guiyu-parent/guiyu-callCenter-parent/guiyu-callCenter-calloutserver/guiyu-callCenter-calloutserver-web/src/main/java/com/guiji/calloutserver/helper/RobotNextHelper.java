@@ -246,7 +246,7 @@ public class RobotNextHelper {
                 if(list.size()>0){
                     for(TtsWav ttsWav:list){
                         if(ttsWav.getFileName().equals(filename)){
-                            return "tts/"+callId+ "/" + filename;
+                            return tempId+"/tts/"+callId+ "/" + filename;
                         }
                     }
                 }

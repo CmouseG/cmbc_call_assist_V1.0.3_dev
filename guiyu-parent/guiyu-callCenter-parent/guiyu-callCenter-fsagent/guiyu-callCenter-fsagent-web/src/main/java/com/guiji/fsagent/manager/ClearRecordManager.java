@@ -14,6 +14,6 @@ public class ClearRecordManager {
     public void clearRecordJob(){
         FileUtil.deleteFilesByDay(pathConfig.getRecordPath(),3);
         // 将tts合成的语音文件删掉
-        FileUtil.delete(pathConfig.getTempPath()+"tts/");
+        FileUtil.deleteFile(new File(pathConfig.getTempPath()+"tts"));
     }
 }

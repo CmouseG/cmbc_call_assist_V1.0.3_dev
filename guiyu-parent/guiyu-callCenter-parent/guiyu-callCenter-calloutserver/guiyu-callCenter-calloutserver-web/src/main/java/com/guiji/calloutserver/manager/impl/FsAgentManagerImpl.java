@@ -189,8 +189,8 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
-    public void downloadTtsWav(String tempId, String callId) {
-        Result.ReturnData<List<TtsWav>> returnData =iTemplate.downloadttswav(tempId,callId);
+    public void downloadTtsWav(String tempId, String planUuid, String callId) {
+        Result.ReturnData<List<TtsWav>> returnData =iTemplate.downloadttswav(tempId,planUuid,callId);
         log.info("下载tts合成语音 ,returnData[{}]",returnData);
         List<TtsWav> list = returnData.getBody();
         //将文件名称，和文件时长缓存到redis中

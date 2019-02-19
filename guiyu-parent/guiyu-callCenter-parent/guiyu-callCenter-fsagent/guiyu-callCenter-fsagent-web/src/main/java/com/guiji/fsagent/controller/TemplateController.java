@@ -36,14 +36,14 @@ public class TemplateController implements ITemplate {
     }
 
     @Override
-    public Result.ReturnData<List<TtsWav>> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("callId") String callId) {
-        logger.info("收到下载tts话术录音请求tempId[{}],callId[{}]", tempId, callId);
-        if (StringUtils.isBlank(tempId) || StringUtils.isBlank(callId)) {
+    public Result.ReturnData<List<TtsWav>> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("planUuid") String planUuid, @RequestParam("callId") String callId) {
+        logger.info("收到下载tts话术录音请求tempId[{}],planUuid[{}]", tempId, planUuid);
+        if (StringUtils.isBlank(tempId) || StringUtils.isBlank(planUuid)) {
             logger.info("下载tts话术录音请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        List<TtsWav> list = templateService.downloadttswav(tempId, callId);
-        logger.info("返回结果下载tts话术录音请求tempId[{}],callId[{}],list[{}]", tempId, callId,list);
+        List<TtsWav> list = templateService.downloadttswav(tempId, planUuid, callId);
+        logger.info("返回结果下载tts话术录音请求tempId[{}],callId[{}],list[{}]", tempId, planUuid,list);
         return Result.ok(list);
     }
 

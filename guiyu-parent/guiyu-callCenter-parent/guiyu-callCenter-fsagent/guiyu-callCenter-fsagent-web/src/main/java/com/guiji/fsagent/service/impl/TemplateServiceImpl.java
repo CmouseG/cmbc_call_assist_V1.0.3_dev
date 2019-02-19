@@ -49,11 +49,11 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<TtsWav> downloadttswav(String tempId, String callId) {
+    public List<TtsWav> downloadttswav(String tempId, String planUuid, String callId) {
         //下载tts录音
         TtsVoiceReq  ttsVoiceReq = new TtsVoiceReq();
         ttsVoiceReq.setTemplateId(tempId);
-        ttsVoiceReq.setSeqid(callId);
+        ttsVoiceReq.setSeqid(planUuid);
         Result.ReturnData<TtsComposeCheckRsp> result = iRobotFeign.ttsCompose(ttsVoiceReq);
         logger.info("ttsCompose返回结果 result[{}]",result);
         if(!result.getCode().equals("0")){

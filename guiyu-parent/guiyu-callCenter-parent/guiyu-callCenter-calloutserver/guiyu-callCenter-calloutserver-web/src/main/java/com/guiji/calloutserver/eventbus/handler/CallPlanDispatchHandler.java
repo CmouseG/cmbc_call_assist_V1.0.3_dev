@@ -151,7 +151,7 @@ public class CallPlanDispatchHandler {
 
                 //下载tts语音合成文件
                 try {
-                    fsAgentManager.downloadTtsWav(callPlan.getTempId(), callPlan.getCallId().toString());
+                    fsAgentManager.downloadTtsWav(callPlan.getTempId(), callPlan.getPlanUuid(), callPlan.getCallId().toString());
                 }catch (Exception e){
                     log.error("downloadTtsWav，下载tts语音，出现异常 callPlan[{}]", callPlan, e);
                     readyFail(callPlan,null);

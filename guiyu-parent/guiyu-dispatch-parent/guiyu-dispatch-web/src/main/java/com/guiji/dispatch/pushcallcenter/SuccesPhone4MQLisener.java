@@ -117,12 +117,12 @@ public class SuccesPhone4MQLisener {
 			MessageSend send = new MessageSend();
 			send.setUserId(dispatchPlan.getUserId().longValue());
 			send.setNoticeType(NoticeType.task_finish);
-			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的+" + batchCount
-					+ "+通号码的外呼任务已完成，请登录系统查看外呼结果");
-			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的+" + batchCount
-					+ "+通号码的外呼任务已完成，请登录系统查看外呼结果");
-			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的+" + batchCount
-					+ "+通号码的外呼任务已完成，请登录系统查看外呼结果");
+			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
+			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
+			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
 			send.setEmailSubject("任务完成");
 			// 微信
 			send.setWeixinTemplateId(weixinTemplateId);

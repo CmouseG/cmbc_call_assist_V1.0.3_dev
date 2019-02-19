@@ -104,10 +104,9 @@ public class RobotRemoteController implements IRobotRemote{
 	 * @param ttsVoice
 	 * @return
 	 */
-	public Result.ReturnData<List<TtsVoice>> ttsCompose(@RequestBody TtsVoiceReq ttsVoiceReq){
+	public Result.ReturnData<TtsComposeCheckRsp> ttsCompose(@RequestBody TtsVoiceReq ttsVoiceReq){
 		TtsComposeCheckRsp rsp = iAiAbilityCenterService.fetchTtsUrls(ttsVoiceReq);
-		List<TtsVoice> list = rsp.getTtsVoiceList();
-		return Result.ok(list);
+		return Result.ok(rsp);
 	}
 	
 	/**

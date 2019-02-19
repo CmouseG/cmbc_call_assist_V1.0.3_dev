@@ -224,6 +224,26 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         return arrearageNotifyVo;
     }
 
+    /**
+     * 查询可用余额低于阈值用户
+     * @return
+     */
+    @Override
+    public List<UserAcctThresholdVo> queryLowerThresholdAcctList() {
+        return billingUserAcctMapper.queryLowerThresholdAcctList();
+    }
+
+    /**
+     * 查询到期expireDays天内的企业账户
+     * @param time
+     * @param expireDays
+     * @return
+     */
+    @Override
+    public List<BillingUserAcctBean> queryExpireDaysAcctList(Date time, Integer expireDays) {
+        return billingUserAcctMapper.queryExpireDaysAcctList(time, expireDays);
+    }
+
     /**********充值   begin********************************/
 
     /**
@@ -238,6 +258,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String accountId = null;
             BigDecimal amount = rechargeDto.getAmount(); //充值金额
             BigDecimal rechargeAmount = amount.multiply(new BigDecimal(100));//充值金额转化成分
+            rechargeDto.setAmount(rechargeAmount);
             BillingUserAcctBean acct = null;
             if(!StringUtils.isEmpty(rechargeDto.getAccountId())) {
                 accountId = rechargeDto.getAccountId();
@@ -782,13 +803,30 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             if(null != acctSetExist){//已存在，修改
                 BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
                 userAcctSet.setUpdateTime(new Date());
+                //企业余额阈值
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)){
+                    String setValue = null != userAcctSet.getSetValue()?(userAcctSet.getSetValue()+"00"):"0";//元转化成分
+                    userAcctSet.setSetValue(setValue);
+                }
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcctSet(userAcctSet));
             }else{//不存在，新增
                 BeanUtils.copyProperties(userAcctSetDto, userAcctSet, BillingUserAcctSetBean.class);
                 userAcctSet.setAcctSetId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
                 userAcctSet.setCreateTime(new Date());
                 userAcctSet.setDelFlag(SysDelEnum.NORMAL.getState());
+                //企业余额阈值
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)){
+                    String setValue = null != userAcctSet.getSetValue()?(userAcctSet.getSetValue()+"00"):"0";//元转化成分
+                    userAcctSet.setSetValue(setValue);
+                }
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcctSet(userAcctSet));
+            }
+
+            if(bool){
+                if(ThresholdKeyEnum.BalanceEarlyWarning.getKey().equals(setKey)) {
+                    //消息通知
+                    this.thresholdNotify(userAcctSet);
+                }
             }
             return bool;
         }else{

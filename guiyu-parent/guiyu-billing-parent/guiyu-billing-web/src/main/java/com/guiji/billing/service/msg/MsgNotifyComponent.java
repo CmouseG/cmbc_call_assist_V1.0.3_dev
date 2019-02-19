@@ -64,7 +64,7 @@ public class MsgNotifyComponent {
                     //微信
                     messageSend.setWeixinAppId(thresholdAppid);
                     messageSend.setWeixinTemplateId(thresholdTemplateId);
-                    messageSend.setWeixinPagePath(thresholdCallReordUrl);
+                    messageSend.setWeixinPagePath(thresholdReordListUrl);
                     HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
                     map.put("userName",new SendMsgReqVO.Item("【硅基智能】尊敬的"+thresholdVo.getCompanyName()+"，您的账户余额已不足￥"+amount+"，为了不影响您的外呼任务，请及时充值。详情请登录后台费用中心进行查看，感谢您的使用。",null));
                     messageSend.setWeixinData(map);
@@ -113,7 +113,7 @@ public class MsgNotifyComponent {
                 //微信
                 messageSend.setWeixinAppId(rechargeAppid);
                 messageSend.setWeixinTemplateId(rechargeTemplateId);
-                messageSend.setWeixinPagePath(rechargeCallReordUrl);
+                messageSend.setWeixinPagePath(rechargeReordListUrl);
                 HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
                 map.put("userName", new SendMsgReqVO.Item("【硅基智能】尊敬的"+acct.getCompanyName()+"，您的充值已成功，您的账户当前余额￥"+acct.getAvailableBalance()+"。", null));
                 messageSend.setWeixinData(map);
@@ -124,6 +124,58 @@ public class MsgNotifyComponent {
                 logger.info("充值消息通知，日志ID:{}", logId);
             } catch (Exception e) {
                 logger.error("充值消息通知异常，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend), e);
+            }
+        }
+    }
+
+
+    /*********企业账户到期提醒******************/
+
+    @Value("${weixin.expireDay.appid}")
+    String expireDayAppid;
+    @Value("${weixin.expireDay.templateId}")
+    String expireDayTemplateId;
+    @Value("${weixin.expireDay.pagePath.callReordUrl}")
+    String expireDayCallReordUrl;
+    @Value("${weixin.expireDay.pagePath.reordListUrl}")
+    String expireDayReordListUrl;
+
+    /**
+     * 企业账户有效期距离expireDays天到期消息通知
+     * @param acctList
+     * @param expireDays
+     */
+    public void notifyByExpireDay(List<BillingUserAcctBean> acctList, Integer expireDays){
+        if(null != acctList && acctList.size()>0) {
+            for(BillingUserAcctBean acct: acctList) {
+                String logId = idWorker.nextId();
+                String companyName = acct.getCompanyName();
+                MessageSend messageSend = new MessageSend();
+                try {
+                    messageSend.setNoticeType(NoticeType.account_maturity);
+                    messageSend.setOrgCode(acct.getOrgCode());
+                    //站内信
+                    messageSend.setMailContent("尊敬的"+companyName+"，您的账户即将到期，请联系您的销售经理进行延期。");
+                    //邮箱
+                    messageSend.setEmailSubject("账户到期预警");
+                    messageSend.setEmailContent("尊敬的"+companyName+"，您的账户即将到期，请联系您的销售经理进行延期。");
+                    //短信
+                    messageSend.setSmsContent("尊敬的"+companyName+"，您的账户即将到期，请联系您的销售经理进行延期。");
+                    //微信
+                    messageSend.setWeixinAppId(expireDayAppid);
+                    messageSend.setWeixinTemplateId(expireDayTemplateId);
+                    messageSend.setWeixinPagePath(expireDayReordListUrl);
+                    HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
+                    map.put("userName",new SendMsgReqVO.Item("【硅基智能】尊敬的"+companyName+"，您的账户即将到期，请联系您的销售经理进行延期。",null));
+                    messageSend.setWeixinData(map);
+
+                    logger.info("企业账户有效期到期，消息通知，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend));
+                    //发送消息
+                    ResHandler.getResObj(iNoticeSend.sendMessage(messageSend));
+                    logger.info("企业账户有效期到期，消息通知，日志ID:{}", logId);
+                } catch (Exception e) {
+                    logger.error("企业账户有效期到期，消息通知异常，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend), e);
+                }
             }
         }
     }

@@ -4,6 +4,8 @@ import com.guiji.billing.entity.BillingUserAcctBean;
 
 public class UserAcctThresholdVo extends BillingUserAcctBean {
 
+    private static final long serialVersionUID = 3968440180417872092L;
+
     /**
      * 阈值KEY
      */

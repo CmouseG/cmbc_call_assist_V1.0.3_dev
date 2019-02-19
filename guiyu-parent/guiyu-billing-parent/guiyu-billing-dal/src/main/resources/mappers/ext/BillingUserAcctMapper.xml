@@ -124,6 +124,12 @@
       <if test="freezingAmount != null">
         freezing_amount,
       </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -156,6 +162,12 @@
       <if test="freezingAmount != null">
         #{freezingAmount,jdbcType=DECIMAL},
       </if>
+      <if test="beginTime != null">
+        #{beginTime},
+      </if>
+      <if test="endTime != null">
+        #{endTime},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -168,7 +180,7 @@
     </trim>
   </insert>
 
-
+  <!--查询欠费账户-->
   <select id="queryArrearageAcctList" resultType="com.guiji.billing.entity.BillingUserAcctBean">
     SELECT
       id                ,
@@ -179,14 +191,17 @@
       amount            ,
       available_balance ,
       freezing_amount   ,
+      begin_time,
+      end_time,
       create_time       ,
       update_time       ,
       del_flag
     FROM billing_user_acct
     WHERE del_flag = 0
-    AND available_balance <![CDATA[ < ]]>  0
+    AND available_balance <![CDATA[ <= ]]>  0
   </select>
 
+  <!--查询低于阈值账户-->
   <select id="queryLowerThresholdAcctList" resultType="com.guiji.billing.vo.UserAcctThresholdVo">
     SELECT
       c.id                ,
@@ -197,6 +212,8 @@
       c.amount            ,
       c.available_balance ,
       c.freezing_amount   ,
+      c.begin_time        ,
+      c.end_time          ,
       c.create_time       ,
       c.update_time       ,
       c.del_flag          ,
@@ -205,8 +222,28 @@
     FROM billing_user_acct c, billing_acct_set s
     WHERE c.del_flag = 0
       AND c.account_id = s.account_id
-      AND s.set_key = ${@com.guiji.billing.constants.ThresholdKeyEnum.BalanceEarlyWarning.getKey()}
-      AND c.available_balance <![CDATA[ < ]]>  s.set_value
+      AND s.set_key = ${@com.guiji.billing.constants.ThresholdKeyEnum@BalanceEarlyWarning.getKey()}
+      AND c.available_balance <![CDATA[ < ]]> s.set_value
+  </select>
+
+  <select id="queryExpireDaysAcctList" resultType="com.guiji.billing.entity.BillingUserAcctBean">
+    SELECT
+      id                ,
+      account_id        ,
+      company_id        ,
+      company_name      ,
+      org_code          ,
+      amount            ,
+      available_balance ,
+      freezing_amount   ,
+      begin_time        ,
+      end_time          ,
+      create_time       ,
+      update_time       ,
+      del_flag
+    FROM billing_user_acct
+    WHERE del_flag = 0
+      AND DATEDIFF(end_time,#{time}) <![CDATA[ <= ]]> #{expireDays}
   </select>
 
   <!--下减企业账户余额-->

@@ -50,8 +50,8 @@ public interface FsAgentManager {
     /**
      * 下载tts语音合成文件
      * @param tempId
-     * @param callId
+     * @param planUuid
      * @return
      */
-    void downloadTtsWav(String tempId, String callId);
+    void downloadTtsWav(String tempId, String planUuid, String CallId);
 }

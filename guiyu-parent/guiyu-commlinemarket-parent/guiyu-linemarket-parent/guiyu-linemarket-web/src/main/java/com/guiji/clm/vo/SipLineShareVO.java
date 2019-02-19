@@ -16,7 +16,7 @@ public class SipLineShareVO extends SipLineShare{
 	private Float callRate; 
 	//接通率百分比
 	private String callRatePercent;
-	//价格中文
+	//单价中文
 	private String univalentStr;
 	//线路归属（自营、代理商、第三方）
 	private String lineOwner;

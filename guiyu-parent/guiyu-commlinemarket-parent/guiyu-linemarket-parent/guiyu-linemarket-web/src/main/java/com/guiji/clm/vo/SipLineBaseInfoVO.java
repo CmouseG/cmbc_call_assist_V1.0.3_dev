@@ -20,4 +20,8 @@ public class SipLineBaseInfoVO extends SipLineBaseInfo{
 	private String areasName;
 	//盲区名称
 	private String exceptAreasName;
+	//单价中文XX元/分钟
+	private String univalentStr;
+	//合同单价中文 XX元/分钟
+	private String contractUnivalentStr;
 }

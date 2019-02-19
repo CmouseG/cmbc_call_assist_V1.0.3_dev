@@ -377,7 +377,7 @@ public class VoliceServiceImpl implements IVoliceService {
 
 				domainNameList.add(temp.getDomainName());
 
-				if (Constant.DOMAIN_TYPE_START.equals(temp.getType())) {// 如果是开场白，则添加解释开场白
+				/*if (Constant.DOMAIN_TYPE_START.equals(temp.getType())) {// 如果是开场白，则添加解释开场白
 					BotSentenceBranchExample startExplainBranchExample = new BotSentenceBranchExample();
 					startExplainBranchExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("解释开场白")
 							.andResponseIsNotNull().andResponseNotEqualTo("[]").andBranchNameEqualTo("enter_branch");
@@ -397,7 +397,7 @@ public class VoliceServiceImpl implements IVoliceService {
 						}
 					}
 
-				}
+				}*/
 			}
 		}
 

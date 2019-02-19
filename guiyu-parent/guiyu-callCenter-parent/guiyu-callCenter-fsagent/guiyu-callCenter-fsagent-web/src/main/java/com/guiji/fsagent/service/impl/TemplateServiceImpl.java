@@ -49,11 +49,12 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<TtsWav> downloadttswav(String tempId, String callId) {
+    public List<TtsWav> downloadttswav(String tempId, String planUuid, String callId) {
+        String tempRec = tempId.substring(0,tempId.length()-3)+"_rec";
         //下载tts录音
         TtsVoiceReq  ttsVoiceReq = new TtsVoiceReq();
         ttsVoiceReq.setTemplateId(tempId);
-        ttsVoiceReq.setSeqid(callId);
+        ttsVoiceReq.setSeqid(planUuid);
         Result.ReturnData<TtsComposeCheckRsp> result = iRobotFeign.ttsCompose(ttsVoiceReq);
         logger.info("ttsCompose返回结果 result[{}]",result);
         if(!result.getCode().equals("0")){
@@ -63,13 +64,13 @@ public class TemplateServiceImpl implements TemplateService {
         TtsComposeCheckRsp ttsComposeCheckRsp = result.getBody();
         List<TtsVoice> list = ttsComposeCheckRsp.getTtsVoiceList();
         if(list!=null && list.size()>0){
-            File ttsDir = new File(pathConfig.getTtsPath()+callId);  // 创建tts文件夹
+            File ttsDir = new File(pathConfig.getTempPath()+tempId+"/"+tempRec+"/tts/"+callId);  // 创建tts文件夹
             if (!ttsDir.exists()) {//文件不存在则创建
-                ttsDir.mkdir();
+                ttsDir.mkdirs();
             }
             List<TtsWav> returnList = new ArrayList();
             for (TtsVoice ttsVoice:list) {
-                String filePath = pathConfig.getTempPath()+"tts/"+callId+"/"+ttsVoice.getTtsKey()+".wav";
+                String filePath = pathConfig.getTempPath()+tempId+"/"+tempRec+"/tts/"+callId+"/"+ttsVoice.getTtsKey()+".wav";
                 File ttsVoiceFile = new File(filePath);
                 NetFileDownUtil util = new NetFileDownUtil(ttsVoice.getTtsUrl(),ttsVoiceFile);
                 try {

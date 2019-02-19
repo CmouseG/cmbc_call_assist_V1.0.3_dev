@@ -80,6 +80,7 @@ public class CallPlanController implements ICallPlan {
             return Result.ok(callEndIntent);
 
         }
+        log.info(">>>>>>>isCallEnd not found uuid[{}]",planUuid);
         return Result.error(Constant.ERROR_UUID_NOTFIND);
     }
 

@@ -30,7 +30,7 @@ public interface ITemplate {
             @ApiImplicitParam(name = "callId", value = "会话Id", dataType = "String", paramType = "query")
     })
     @GetMapping(value="/downloadttswav")
-    Result.ReturnData<List<TtsWav>> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam ("callId") String callId);
+    Result.ReturnData<List<TtsWav>> downloadttswav(@RequestParam("tempId") String tempId, @RequestParam("planUuid") String planUuid, @RequestParam("callId") String callId);
 
 
     @ApiOperation(value = "上传录音")

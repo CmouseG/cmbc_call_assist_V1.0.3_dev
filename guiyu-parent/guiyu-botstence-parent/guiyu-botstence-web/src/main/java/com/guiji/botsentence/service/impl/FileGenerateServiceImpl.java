@@ -234,12 +234,20 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		Map<Integer, String> idsMap = new HashMap<>();
 		Map<Long, Integer> voliceIdsMap = new HashMap<>();
 		
+		boolean needTts = false;
+		
 		int size = voliceInfos.size();
 		for (int i = 1; i <= size; i++) {
 			voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
 			idsMap.put(i, voliceInfos.get(i - 1).getContent());
 			String content = voliceInfos.get(i - 1).getContent() + "*" + i;
 			voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
+			
+			if(!needTts) {
+				if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
+					needTts = true;
+				}
+			}
 		}
 
 		// 获取所有domain
@@ -380,8 +388,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			
 			//处理挽回话术(除结束之外的每个主domain都必须有)
-			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory()) && !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))
-					|| "解释开场白".equals(botSentenceDomain.getDomainName())){
+			if((Constant.CATEGORY_TYPE_1.equals(botSentenceDomain.getCategory()) && !Constant.DOMAIN_TYPE_END.equals(botSentenceDomain.getType()))){
 				BotSentenceBranchExample intentExample = new BotSentenceBranchExample();
 				if(!Constant.DOMAIN_TYPE_AGENT.equals(botSentenceDomain.getType())) {
 					intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
@@ -436,8 +443,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 					String newRefuseKeyWordsStr = "";
 					
 					for(String temp : allRefuseKeyWords) {
-						//temp = temp.replace("\"", "");
-						//newRefuseKeyWords.add(temp);
 						newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + temp;
 					}
 					if(StringUtils.isNotBlank(complexywordStr)) {
@@ -874,11 +879,11 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		
 		
 		//判断是否需要tts
-		logger.info("判断是否需要TTS合成...");
-		BotSentenceTtsTaskExample ttsParamExample = new BotSentenceTtsTaskExample();
+		logger.info("判断是否需要TTS合成..." + needTts);
+		/*BotSentenceTtsTaskExample ttsParamExample = new BotSentenceTtsTaskExample();
 		ttsParamExample.createCriteria().andProcessIdEqualTo(processId);
-		int num = botSentenceTtsTaskMapper.countByExample(ttsParamExample);
-		if(num > 0) {
+		int num = botSentenceTtsTaskMapper.countByExample(ttsParamExample);*/
+		if(needTts) {
 			logger.info("当前话术需要TTS合成");
 			//生成replace.json
 			Map<String, Object> replaceMap = new LinkedHashMap<String, Object>();

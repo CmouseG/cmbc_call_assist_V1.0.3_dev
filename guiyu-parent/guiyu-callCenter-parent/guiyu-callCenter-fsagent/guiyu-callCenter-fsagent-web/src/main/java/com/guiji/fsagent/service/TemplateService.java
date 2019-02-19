@@ -11,9 +11,9 @@ import java.util.Map;
 public interface TemplateService {
      boolean istempexist(String tempId);
 
-     List<TtsWav> downloadttswav(String tempId, String callId);
+    List<TtsWav> downloadttswav(String tempId, String planUuid, String callId);
 
-     RecordVO uploadrecord(RecordReqVO recordReqVO);
+    RecordVO uploadrecord(RecordReqVO recordReqVO);
 
      List<WavLengthVO> getwavlength(String tempId);
 }

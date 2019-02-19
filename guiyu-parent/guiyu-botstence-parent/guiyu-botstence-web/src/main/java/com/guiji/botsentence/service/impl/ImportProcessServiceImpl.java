@@ -302,7 +302,9 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceProcess.setUserName(userName);
 				botSentenceProcess.setOrgName(orgName);
 				
-				importProcessMapper.insertSelective(botSentenceProcess);
+				botSentenceProcessMapper.insertSelective(botSentenceProcess);
+				
+				//importProcessMapper.insertSelective(botSentenceProcess);
 				
 				processId =botSentenceProcess.getProcessId(); 
 				
@@ -648,7 +650,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 							}
 							
 							//把属于流程的保存下来
-							if(!"解释开场白".equals(domainName) && !mainDomainList.contains(domainName)) {
+							//if(!"解释开场白".equals(domainName) && !mainDomainList.contains(domainName)) {
+							if(!mainDomainList.contains(domainName)) {
 								mainDomainList.add(domainName);
 							}
 							
@@ -695,7 +698,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			if("解释开场白".equals(temp.getDomainName())) {
 				startExplainDomain = temp;
 				temp.setType("start_explain");
-				temp.setCategory("3");
+				temp.setCategory("1");
 			}
 			
 			temp.setTemplateId(template_id);
@@ -765,11 +768,11 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					botSentenceBranch.setType(Constant.BRANCH_TYPE_NORMAL);
 				}
 			}
-			if("解释开场白".equals(botSentenceBranch.getNext())) {
+			/*if("解释开场白".equals(botSentenceBranch.getNext())) {
 				botSentenceBranch.setLineName(null);
 				botSentenceBranch.setIsShow(null);
 				botSentenceBranch.setType(null);
-			}
+			}*/
 			
 			if(flag) {
 				if("positive".equals(botSentenceBranch.getBranchName()) && "解释开场白".equals(botSentenceBranch.getDomain())) {

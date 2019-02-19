@@ -1,27 +1,25 @@
 package com.guiji.ccmanager.controller;
 
+import com.guiji.ccmanager.service.LineReportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @Slf4j
 @RestController
 public class TestController {
 
     @Autowired
-    TestController2 testController2;
+    LineReportService lineReportService;
 
-    @GetMapping(value = "test12345")
-    public void test(@RequestParam(value = "count", required = true) String count,
-                     @RequestParam(value = "tempId", required = true) String tempId,
-                     @RequestParam(value = "lineId", required = true) String lineId,
-                     @RequestParam(value = "userId", required = true) String userId,
-                     @RequestParam(value = "phoneNum", required = true) String phoneNum) {
-        for (int i = 0; i < Integer.valueOf(count); i++) {
-            testController2.test(tempId,Integer.valueOf(lineId),Integer.valueOf(userId),phoneNum);
-        }
+    @GetMapping(value = "test1234566")
+    public void test1234566() throws ParseException {
+        lineReportService.statisticsReportLineCode();
     }
+
+
 
 }

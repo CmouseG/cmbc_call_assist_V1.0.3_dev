@@ -276,7 +276,7 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
 //        Result.ReturnData<SysUser> result = auth.getUserById(userId);
 //        String intentLabel = result.getBody().getIntenLabel();
 //        if (StringUtils.isNotBlank(intentLabel)) {
-            String[] allIntentArr = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",};
+            String[] allIntentArr = {"A","B","C","D","E","G","H","I","J","K","L","N","O","P","Q","R","S","T","Y","Z",};
             for (String intent : allIntentArr) {
                 SettingIntent settingIntent = new SettingIntent();
                 settingIntent.setIntent(intent);

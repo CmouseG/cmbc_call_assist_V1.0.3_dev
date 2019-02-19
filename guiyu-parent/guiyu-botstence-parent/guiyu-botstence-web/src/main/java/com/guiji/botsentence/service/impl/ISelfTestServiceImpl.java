@@ -103,7 +103,7 @@ public class ISelfTestServiceImpl implements ISelfTestService {
 				backupExample.createCriteria().andProcessIdEqualTo(processId).andWavNameEqualTo(wavName);
 				List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
 				if(null != backupList && backupList.size() > 0) {
-					if(backupList.get(0).getTimes() == 0) {
+					if(null == backupList.get(0).getTimes() || backupList.get(0).getTimes() == 0) {
             			responseSelfTestVO.setWavDuration(backupList.get(0).getContent().length()/5);
             		}
 					if(responseSelfTestVO.getWavDuration() == 0) {
@@ -117,7 +117,7 @@ public class ISelfTestServiceImpl implements ISelfTestService {
 				ttsTaskExample.createCriteria().andProcessIdEqualTo(processId).andWavNameEqualTo(wavName);
 				List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
 				if(null != taskList && taskList.size() > 0) {
-					if(taskList.get(0).getTimes() == 0) {
+					if(null == taskList.get(0).getTimes() || taskList.get(0).getTimes() == 0) {
             			responseSelfTestVO.setWavDuration(taskList.get(0).getContent().length()/5);
             		}
 					if(responseSelfTestVO.getWavDuration() == 0) {

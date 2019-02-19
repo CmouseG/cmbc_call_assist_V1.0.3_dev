@@ -124,6 +124,12 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 										continue;
 									}
 								}
+								
+								if(userIdList == null){
+									logger.info(">>>>>>>>>>>>>>>>>>...当前userIdList为null");
+									Thread.sleep(2000);
+									continue;
+								}
 								// 增加推送次数
 								addVariable(callBean, queueCount);
 								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone()

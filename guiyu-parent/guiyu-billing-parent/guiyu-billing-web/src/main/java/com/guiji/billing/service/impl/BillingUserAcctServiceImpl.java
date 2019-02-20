@@ -511,7 +511,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             term.setIsDeducted(chargingTermNotifyDto.getIsDeducted());
             term.setStatus(chargingTermNotifyDto.getStatus());
 
-            BillingAcctChargingTerm acctTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, null, chargingItemId);
+            BillingAcctChargingTerm acctTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId, chargingItemId);
             //已存在，修改企业用户计费项
             if(null != acctTermExist){//修改
                 term.setUserChargingId(acctTermExist.getUserChargingId());
@@ -578,7 +578,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String chargingItemId = acctChargingTermDto.getChargingItemId();
             String userId = acctChargingTermDto.getUserId();
             String accountId = acctChargingTermDto.getAccountId();
-            BillingAcctChargingTerm acctChargingTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, null, chargingItemId);
+            BillingAcctChargingTerm acctChargingTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId, chargingItemId);
             if(null != acctChargingTermExist){
                 throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
                         "账户计费项信息已经存在!");
@@ -609,7 +609,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String userId = acctChargingTermDto.getUserId();
             String chargingItemId = acctChargingTermDto.getChargingItemId();
             String accountId = acctChargingTermDto.getAccountId();
-            BillingAcctChargingTerm acctChargingTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, null, chargingItemId);
+            BillingAcctChargingTerm acctChargingTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId, chargingItemId);
             if(null == acctChargingTermExist){
                 throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
                         "该用户的账户计费项信息不存在!");

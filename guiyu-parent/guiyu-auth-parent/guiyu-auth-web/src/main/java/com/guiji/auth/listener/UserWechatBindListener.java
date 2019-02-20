@@ -8,8 +8,7 @@ import com.guiji.utils.JsonUtils;
 import com.guiji.wechat.messages.UserBindWeChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,8 @@ import org.springframework.stereotype.Component;
 * @version V1.0  
 */
 @Component
-@RabbitListener(queues = "fanoutWechatUserBindQueue")
+@RabbitListener(bindings=@QueueBinding(value=@Queue(value="fanoutWechatUserBindQueue",durable = "true"),exchange=@Exchange(value="fanoutWechatUserBindExchange",type="fanout",durable = "true")))
+//@RabbitListener(queues = "fanoutWechatUserBindQueue")
 public class UserWechatBindListener {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired

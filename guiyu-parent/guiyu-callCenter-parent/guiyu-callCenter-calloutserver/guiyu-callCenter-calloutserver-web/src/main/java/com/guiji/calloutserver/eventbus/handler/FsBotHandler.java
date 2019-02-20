@@ -404,7 +404,8 @@ public class FsBotHandler {
             if(goEndProcess){
 
                 String hangUp = event.getSipHangupCause();
-
+                Integer duration = event.getDuration();
+                Integer billSec = event.getBillSec();
                 //将calloutdetail里面的意向标签更新到calloutplan里面
                 CallOutDetail callOutDetail = callOutDetailService.getLastDetail(event.getUuid());
                 callPlan.setTalkNum(callOutDetailService.getTalkNum(new BigInteger(event.getUuid())));
@@ -412,18 +413,34 @@ public class FsBotHandler {
                     log.info("[{}]电话拨打成功，开始设置意向标签[{}]和原因[{}]", callPlan.getCallId(), callOutDetail.getAccurateIntent(), callOutDetail.getReason());
                     callPlan.setAccurateIntent(callOutDetail.getAccurateIntent());
                     callPlan.setReason(callOutDetail.getReason());
-                }else {//电话没打出去  //todo 需要细化一下，看能否得到具体的F类
-                    if(callPlan.getAccurateIntent()==null){
-                        callPlan.setAccurateIntent("W");
-                        if(callPlan.getReason()==null && hangUp!=null){
-                            callPlan.setReason(hangUp);
+                }else {//电话没打出去
+                    if (callPlan.getAccurateIntent() == null) {
+                        if (duration != null) {
+                            if (duration > 0 && billSec != null && billSec == 0) { //设置F类
+                                log.info("挂断后，设置意向标签为F,callId[{}]", uuid);
+                                callPlan.setAccurateIntent("F");
+                                if (duration.intValue() >= 55) {
+                                    log.info("超过55秒，设置备注为无人接听,callId[{}]", uuid);
+                                    callPlan.setReason("无人接听");
+                                }
+                            }
                         }
                     }
+
+                    if (callPlan.getAccurateIntent() == null) {
+                        if (!callLineAvailableManager.isAvailable(uuid)) { //线路不可用,设置为W
+                            log.info("线路是不可用的，设置意向标签为W,callId[{}]", uuid);
+                            callPlan.setAccurateIntent("W");
+                            if (callPlan.getReason() == null && hangUp != null) {
+                                callPlan.setReason(hangUp);
+                            }
+                        }
+                    }
+
                 }
                 callPlan.setHangupTime(event.getHangupStamp());
                 callPlan.setAnswerTime(event.getAnswerStamp());
-                Integer duration = event.getDuration();
-                Integer billSec = event.getBillSec();
+
                 if (duration != null){
                     callPlan.setDuration(duration);
                     if(duration>0 && billSec!=null && billSec ==0){

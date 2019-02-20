@@ -84,8 +84,8 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 											List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
 											if(sortLine.size()>0){
 												pushPlan2Queue(sortLine,queue);
-											}else if (dispatchPlanList.size()>0 && sortLine.size()<=0){
-												logger.info("当前排序异常或者没用用户规则走默认线路配置,请检查>>>>>>>>>>>>>>>>>>>>>>>>>>");
+											}else if (dispatchPlanList.size()>0){
+												logger.info("当前排序走默认规则>>>>>>>>>>>>>>>>>>>>>>>>>>");
 												pushPlan2Queue(dispatchPlanList,queue);
 											}
 										}

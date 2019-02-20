@@ -6,6 +6,7 @@ import java.util.List;
 
 public class ArrearageNotifyVo implements Serializable {
 
+    private static final long serialVersionUID = -3596604304958935194L;
     /**
      * 企业组织Code
      */

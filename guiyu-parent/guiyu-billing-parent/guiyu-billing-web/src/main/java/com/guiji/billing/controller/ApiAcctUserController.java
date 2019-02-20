@@ -4,18 +4,26 @@ import com.guiji.api.IAcctUser;
 import com.guiji.billing.dto.QueryUserAcctDto;
 import com.guiji.billing.entity.BillingUserAcctBean;
 import com.guiji.billing.service.BillingUserAcctService;
+import com.guiji.component.result.Result;
 import com.guiji.guiyu.message.component.QueueSender;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.JsonUtils;
 import com.guiji.vo.ArrearageNotifyVo;
 import com.guiji.vo.BillingUserAcctVo;
+import com.sun.istack.internal.logging.Logger;
 import com.xxl.job.core.biz.model.ReturnT;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 //@RequestMapping(value = "/billing/api/acctUser")
 public class ApiAcctUserController implements IAcctUser {
+
+    private Logger logger = Logger.getLogger(ApiAcctUserController.class);
 
     @Autowired
     private BillingUserAcctService billingUserAcctService;
@@ -38,9 +46,9 @@ public class ApiAcctUserController implements IAcctUser {
     @Override
     @ApiOperation(value="查询欠费企业用户列表", notes="查询欠费企业用户列表")
     @RequestMapping(value = "/billing/api/acctUser/queryArrearageUserList", method = {RequestMethod.POST})
-    @ResponseBody
-    public com.guiji.vo.ArrearageNotifyVo queryArrearageUserList() {
-        return billingUserAcctService.queryArrearageUserList();
+    public Result.ReturnData queryArrearageUserList() {
+        ArrearageNotifyVo arr = billingUserAcctService.queryArrearageUserList();
+        return new Result.ReturnData<ArrearageNotifyVo>(arr);
     }
 
     @Autowired

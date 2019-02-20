@@ -382,6 +382,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                     }
                 }
 
+                logger.info("充值通知取消欠费消息:{},充值前:{},充值后:{}", JsonUtils.bean2Json(arrearageNotifyVo), srcAmount, toAmount);
                 if (null != userIdList && userIdList.size() > 0) {
                     arrearageNotifyVo = new com.guiji.vo.ArrearageNotifyVo();
                     //欠费用户ID
@@ -389,6 +390,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                     //欠费状态
                     arrearageNotifyVo.setIsArrearage(AcctArrearageStatusEnum.NORMAL.getStatus());
 
+                    logger.info("充值通知取消欠费消息:{},充值前:{},充值后:{}", JsonUtils.bean2Json(arrearageNotifyVo), srcAmount, toAmount);
                     //通知取消欠费消息
                     acctNotifyService.notifyArrearage(arrearageNotifyVo);
                 }

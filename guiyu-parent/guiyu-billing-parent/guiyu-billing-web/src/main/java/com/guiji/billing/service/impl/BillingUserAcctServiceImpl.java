@@ -188,6 +188,18 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         }
     }
 
+    @Override
+    public boolean updAcctNameByOrg(UserAcctAddDto acctAddDto) {
+        if(!StringUtils.isEmpty(acctAddDto.getOrgCode())){
+            boolean bool = false;
+
+            return bool;
+        }else{
+            throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
+                    SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+        }
+    }
+
     /**
      * 查询欠费企业账户
      * @return
@@ -203,7 +215,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     @Override
     public com.guiji.vo.ArrearageNotifyVo queryArrearageUserList() {
-        com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = null;
+        com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = new com.guiji.vo.ArrearageNotifyVo();
         String logId = idWorker.nextId();
         //查询欠费企业
         List<BillingUserAcctBean> list = this.queryArrearageAcctList();
@@ -222,7 +234,6 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 }
             }
             if (null != userIdList && userIdList.size() > 0) {
-                arrearageNotifyVo = new com.guiji.vo.ArrearageNotifyVo();
                 //欠费用户ID
                 arrearageNotifyVo.setUserIdList(userIdList);
                 //欠费状态
@@ -282,7 +293,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
 
                 //通知取消欠费消息
-                this.notifyUnfreeze(acct, rechargeAmount);
+                this.notifyUnfreeze(acct, srcAmount, toAmount);
             }else {
                 //根据企业编码
                 if(!StringUtils.isEmpty(rechargeDto.getOrgCode())){
@@ -301,7 +312,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                         bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
 
                         //通知取消欠费消息
-                        this.notifyUnfreeze(acct, rechargeAmount);
+                        this.notifyUnfreeze(acct, srcAmount, toAmount);
 
                     //企业未注册,先注册账户
                     }else {
@@ -341,12 +352,17 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         }
     }
 
-    private void notifyUnfreeze(BillingUserAcctBean acct, BigDecimal rechargeAmount){
+    /**
+     * 通知取消欠费消息
+     * @param acct 充值后的账户数据
+     * @param srcAmount  充值前数据
+     * @param toAmount  充值后数据
+     */
+    private void notifyUnfreeze(BillingUserAcctBean acct, BigDecimal srcAmount, BigDecimal toAmount){
         try {
-            BigDecimal balanceAmount = acct.getAvailableBalance();
             //如果充值使之前欠费变更为不欠费，通知取消欠费消息
-            if (balanceAmount.compareTo(BigDecimal.ZERO) <= 0
-                    && (rechargeAmount.add(balanceAmount)).compareTo(BigDecimal.ZERO) > 0) {
+            if (srcAmount.compareTo(BigDecimal.ZERO) <= 0
+                    && (toAmount).compareTo(BigDecimal.ZERO) > 0) {
                 com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = null;
                 List<BillingUserAcctBean> list = this.queryArrearageAcctList();
                 List<String> userIdList = new ArrayList<String>();

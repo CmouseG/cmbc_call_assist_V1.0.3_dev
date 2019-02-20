@@ -32,6 +32,13 @@ public interface BillingUserAcctService {
     //新增企业账户
     BillingUserAcctBean addUserAcct(UserAcctAddDto acctAddDto);
 
+    /**
+     * 修改企业名称
+     * @param acctAddDto
+     * @return
+     */
+    boolean updAcctNameByOrg(UserAcctAddDto acctAddDto);
+
     //查询欠费企业
     List<BillingUserAcctBean> queryArrearageAcctList();
 

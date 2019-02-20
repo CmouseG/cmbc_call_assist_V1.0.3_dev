@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.guiji.api.IAcctUser;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.vo.ArrearageNotifyVo;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -32,12 +34,19 @@ public class BillingRefHandler extends IJobHandler{
 	@Override
 	public ReturnT<String> execute(String arg0) throws Exception {
 		logger.info("每5分钟主动询问billing接口更新欠费账号");
-		ArrearageNotifyVo queryArrearageUserList = accountUser.queryArrearageUserList();
-		List<String> userIdList = queryArrearageUserList.getUserIdList();
-		if(userIdList == null){
-			userIdList = new ArrayList<>();
+		ReturnData<ArrearageNotifyVo> queryBillingResult = accountUser.queryArrearageUserList();
+		if(queryBillingResult.getBody()!=null){
+			ArrearageNotifyVo queryArrearageUserList = queryBillingResult.getBody();
+			List<String> userIdList = queryArrearageUserList.getUserIdList();
+			if(userIdList == null){
+				userIdList = new ArrayList<>();
+			}
+			redisUtils.set("USER_BILLING_DATA", userIdList);
+		}else{
+			logger.info("当前查询billing接口返回null");
 		}
-		redisUtils.set("USER_BILLING_DATA", userIdList);
+		
+		
 		return SUCCESS;
 	}
 

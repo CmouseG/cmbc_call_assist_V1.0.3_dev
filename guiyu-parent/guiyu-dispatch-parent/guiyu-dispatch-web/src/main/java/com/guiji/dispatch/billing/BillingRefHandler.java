@@ -1,5 +1,8 @@
 package com.guiji.dispatch.billing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,11 @@ public class BillingRefHandler extends IJobHandler{
 	public ReturnT<String> execute(String arg0) throws Exception {
 		logger.info("每5分钟主动询问billing接口更新欠费账号");
 		ArrearageNotifyVo queryArrearageUserList = accountUser.queryArrearageUserList();
-		redisUtils.set("USER_BILLING_DATA", queryArrearageUserList.getUserIdList());
+		List<String> userIdList = queryArrearageUserList.getUserIdList();
+		if(userIdList == null){
+			userIdList = new ArrayList<>();
+		}
+		redisUtils.set("USER_BILLING_DATA", userIdList);
 		return SUCCESS;
 	}
 

@@ -18,6 +18,7 @@ import com.guiji.botsentence.dao.BotAvailableTemplateMapper;
 import com.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.entity.BotAvailableTemplate;
+import com.guiji.botsentence.dao.entity.BotAvailableTemplateExample;
 import com.guiji.botsentence.dao.entity.BotPublishSentenceLog;
 import com.guiji.botsentence.dao.entity.BotSentenceProcess;
 import com.guiji.botsentence.dao.entity.BotSentenceProcessExample;
@@ -116,8 +117,15 @@ public class UpdateReceiverResolver {
 			    botAvailableTemplate.setTemplateName(botSentenceProcess.getTemplateName());
 			    botAvailableTemplate.setUserId(Long.valueOf(botSentenceProcess.getCrtUser()));
 			    botAvailableTemplate.setOrgCode(botSentenceProcess.getOrgCode());;
-			    botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
-			    botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);
+			    //如果没有当前话术，则新增 add by zhangpeng 20190220
+			    BotAvailableTemplateExample botAvailableTemplateExample = new BotAvailableTemplateExample();
+			    botAvailableTemplateExample.createCriteria().andUserIdEqualTo(Long.valueOf(botSentenceProcess.getCrtUser())).andTemplateIdEqualTo(tempId);
+			    int count = botAvailableTemplateMapper.countByExample(botAvailableTemplateExample);
+			    if(count == 0) {
+			    	botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);	
+			    }
+			    //botPublishSentenceLogMapper.deleteAvailableTemplate(botAvailableTemplate);
+			    //botPublishSentenceLogMapper.insertAvailableTemplate(botAvailableTemplate);
 //			    
 //			    //清空volice的【新增】和【修改】
 				voliceInfoExtMapper.updateVoliceFlag(botSentenceProcess.getProcessId());

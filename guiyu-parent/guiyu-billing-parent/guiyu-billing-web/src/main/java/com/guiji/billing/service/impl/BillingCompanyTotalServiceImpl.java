@@ -4,6 +4,7 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.billing.dao.mapper.ext.BillingCompanyTotalMapper;
 import com.guiji.billing.dto.QueryTotalChargingItemDto;
 import com.guiji.billing.service.BillingCompanyTotalService;
+import com.guiji.billing.service.GetApiService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.utils.ResHandler;
@@ -24,7 +25,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     private BillingCompanyTotalMapper billingCompanyTotalMapper;
 
     @Autowired
-    private IAuth iAuth;
+    private GetApiService getApiService;
 
     /**
      * 统计公司企业日期、线路数据
@@ -37,23 +38,23 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
         //获取用户ID
         String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
         //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
         String orgCode = null != org?org.getCode():"1";
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
-                        queryTotalChargingItemDto.getOrgCode(),
+                        orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(), page);
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
                 return billingCompanyTotalMapper.totalCompanyChargingByMonth(queryTotalChargingItemDto.getOperUserId(),
-                        queryTotalChargingItemDto.getOrgCode(),
+                        orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(), page);
             }
         }
         //默认
         return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
-                queryTotalChargingItemDto.getOrgCode(),
+                orgCode,
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE, page);
     }
 
@@ -67,23 +68,23 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
         //获取用户ID
         String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
         //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
         String orgCode = null != org?org.getCode():"1";
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),
-                        queryTotalChargingItemDto.getOrgCode(),
+                        orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate());
             }else if(2 == queryTotalChargingItemDto.getType()){//按月查询
                 return billingCompanyTotalMapper.totalChargingCountByMonth(queryTotalChargingItemDto.getOperUserId(),
-                        queryTotalChargingItemDto.getOrgCode(),
+                        orgCode,
                         queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate());
             }
         }
         //默认
         return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),
-                queryTotalChargingItemDto.getOrgCode(),
+                orgCode,
                 DateTimeUtils.DEFAULT_BEGIN_DATE, DateTimeUtils.DEFAULT_END_DATE);
     }
 

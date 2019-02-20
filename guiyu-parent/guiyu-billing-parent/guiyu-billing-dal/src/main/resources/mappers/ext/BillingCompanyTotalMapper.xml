@@ -18,6 +18,7 @@
       FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
       WHERE r.account_id = c.account_id
         AND r.user_charging_id = t.user_charging_id
+        AND r.oper_duration <![CDATA[ > ]]> 0
         <if test="orgCode != null">
           AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
         </if>
@@ -54,6 +55,7 @@
         FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
+          AND r.oper_duration <![CDATA[ > ]]> 0
           <if test="orgCode != null">
             AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
           </if>
@@ -86,6 +88,7 @@
         FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
+          AND r.oper_duration <![CDATA[ > ]]> 0
           <if test="orgCode != null">
             AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
           </if>
@@ -122,6 +125,7 @@
         FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
+          AND r.oper_duration <![CDATA[ > ]]> 0
           <if test="orgCode != null">
             AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
           </if>

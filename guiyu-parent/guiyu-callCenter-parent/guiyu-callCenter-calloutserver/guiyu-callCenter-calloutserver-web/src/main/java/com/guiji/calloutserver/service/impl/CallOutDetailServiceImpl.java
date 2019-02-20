@@ -39,6 +39,9 @@ public class CallOutDetailServiceImpl implements CallOutDetailService {
                 callOutDetail.setReason(subReason);
             }
         }
+        if(callOutDetail.getReason()!=null && callOutDetail.getReason().length()>=500){
+            callOutDetail.setReason(callOutDetail.getReason().substring(0,499));
+        }
 
         callOutDetailMapper.insertSelective(callOutDetail);
     }

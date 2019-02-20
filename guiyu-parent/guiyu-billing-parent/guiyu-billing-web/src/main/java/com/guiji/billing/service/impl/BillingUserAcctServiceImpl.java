@@ -610,10 +610,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
             String chargingItemId = acctChargingTermDto.getChargingItemId();
             String accountId = acctChargingTermDto.getAccountId();
             BillingAcctChargingTerm acctChargingTermExist = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId, chargingItemId);
-            if(null != acctChargingTermExist
-                    && !userChargingId.equals(acctChargingTermExist.getUserChargingId())){
+            if(null == acctChargingTermExist){
                 throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
-                        "该用户的账户计费项信息已经存在!");
+                        "该用户的账户计费项信息不存在!");
             }
 
             BillingAcctChargingTerm acctChargingTerm = new BillingAcctChargingTerm();

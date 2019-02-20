@@ -332,6 +332,7 @@ public class LineMarketController {
 				Integer sipLineId = sipLineExclusive.getSipLineId();
 				SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
+				vo.setUnivalentStr(sipLineExclusive.getUnivalent()+"元/分钟");
 				voList.add(vo);
 			}
 			return voList;
@@ -382,6 +383,7 @@ public class LineMarketController {
 				}
 				//线路拥有者
 				vo.setLineOwner(sipLineManager.getLineOwner(dataLocalCacheUtil.queryOrgByCode(sipLineApply.getOrgCode())));
+				vo.setUnivalentStr(sipLineApply.getUnivalent()+"元/分钟");
 				voList.add(vo);
 			}
 			return voList;

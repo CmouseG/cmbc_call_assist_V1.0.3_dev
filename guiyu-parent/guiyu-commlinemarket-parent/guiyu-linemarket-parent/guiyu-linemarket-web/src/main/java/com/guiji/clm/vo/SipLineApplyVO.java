@@ -24,4 +24,6 @@ public class SipLineApplyVO extends SipLineApply{
 	private String exceptAreasName;
 	//申请的线路归属（自营、代理商、第三方）
 	private String lineOwner;
+	//单价（元/分钟）
+	private String univalentStr;
 }

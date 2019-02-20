@@ -43,4 +43,6 @@ public class SipLineVO {
   	private String areasName;
   	//盲区名称
   	private String exceptAreasName;
+  	//线路计费类型:1-自营线路(扣费),2-客户自备线路(不扣费)
+  	private int lineFeeType;
 }

@@ -80,9 +80,9 @@ public class ChargingServiceImpl implements ChargingService {
             //查询企业用户账户
             BillingUserAcctBean acct = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
             String accountId = null != acct?acct.getAccountId():null;
+            //查询计费项
             BillingAcctChargingTerm acctChargingParam = new BillingAcctChargingTerm();
             acctChargingParam.setAccountId(accountId);
-            acctChargingParam.setUserId(userId+"");
             acctChargingParam.setChargingItemId(lineId);
             List<BillingAcctChargingTerm> termList = billingUserAcctMapper.queryAcctChargingTermList(acctChargingParam, null);
             if(null != termList && termList.size()>0) {

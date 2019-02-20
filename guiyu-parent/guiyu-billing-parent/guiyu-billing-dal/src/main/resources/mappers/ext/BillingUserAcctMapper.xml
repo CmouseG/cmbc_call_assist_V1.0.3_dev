@@ -440,8 +440,8 @@
     FROM billing_acct_charging_term
     WHERE del_flag = 0
       AND account_id = #{accountId}
-      AND user_id = #{userId}
       AND charging_item_id = #{chargingItemId}
+      AND user_id = #{userId}
   </select>
 
   <insert id="addAcctChargingTerm" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm"

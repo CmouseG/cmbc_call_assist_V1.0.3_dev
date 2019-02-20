@@ -42,17 +42,19 @@ public class ChargeHandler {
         CallOutPlan callOutPlan = statisticReportEvent.getCallPlan();*/
     @Async
     public void handleAfterCall(CallOutPlan callOutPlan) {
-        ChargeCallPlan chargeCallPlan = new ChargeCallPlan();
-        chargeCallPlan.setUserId(callOutPlan.getCustomerId());
-        chargeCallPlan.setBillSec(callOutPlan.getBillSec());
-        chargeCallPlan.setEndTime(callOutPlan.getHangupTime());
-        chargeCallPlan.setBeginTime(callOutPlan.getCallStartTime());
-        chargeCallPlan.setPhone(callOutPlan.getPhoneNum());
-        chargeCallPlan.setLineId(callOutPlan.getLineId());
+        if(callOutPlan.getBillSec()!=null && callOutPlan.getBillSec().intValue()>0){
+            ChargeCallPlan chargeCallPlan = new ChargeCallPlan();
+            chargeCallPlan.setUserId(callOutPlan.getCustomerId());
+            chargeCallPlan.setBillSec(callOutPlan.getBillSec());
+            chargeCallPlan.setEndTime(callOutPlan.getHangupTime());
+            chargeCallPlan.setBeginTime(callOutPlan.getCallStartTime());
+            chargeCallPlan.setPhone(callOutPlan.getPhoneNum());
+            chargeCallPlan.setLineId(callOutPlan.getLineId());
 
-        rabbitTemplate.convertAndSend("billing.ACCTCHARGING", JsonUtils.bean2Json(chargeCallPlan));
+            rabbitTemplate.convertAndSend("billing.ACCTCHARGING", JsonUtils.bean2Json(chargeCallPlan));
 
-        log.info("---将计费对象 chargeCallPlan[{}] 推到mq",chargeCallPlan);
+            log.info("---将计费对象 chargeCallPlan[{}] 推到mq",chargeCallPlan);
+        }
     }
 
 }

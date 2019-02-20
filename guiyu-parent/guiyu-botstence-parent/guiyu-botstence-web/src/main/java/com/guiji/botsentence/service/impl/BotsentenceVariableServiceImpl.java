@@ -1372,7 +1372,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	}
 
 	@Override
-	public String generateCommonJson(String processId) {
+	public String generateCommonJson(String processId, boolean needTts) {
 		LinkedHashMap<String, Object> commonMap = new LinkedHashMap<>();
 		
 		BotSentenceProcess process = botSentenceProcessService.queryBotsentenceProcessInfo(processId);
@@ -1384,12 +1384,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		commonMap.put("agent", false);
 		
 		//判断是否需要TTS
-		BotSentenceTtsTaskExample ttsParamExample = new BotSentenceTtsTaskExample();
-		ttsParamExample.createCriteria().andProcessIdEqualTo(processId);
-		int num = botSentenceTtsTaskMapper.countByExample(ttsParamExample);
-		if(num > 0) {
-			commonMap.put("tts", true);
-		}
+		commonMap.put("tts", needTts);
 		//判断是否需要转人工
 		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
 		branchExample.createCriteria().andProcessIdEqualTo(processId).andNeedAgentEqualTo(Constant.NEED_AGENT_YES);

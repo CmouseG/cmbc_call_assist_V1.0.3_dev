@@ -47,5 +47,5 @@ public interface IBotsentenceVariableService {
 	
 	public String generateJuJueJson(String processId);
 	
-	public String generateCommonJson(String processId);
+	public String generateCommonJson(String processId, boolean needTts);
 }

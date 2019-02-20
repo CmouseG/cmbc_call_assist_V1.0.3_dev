@@ -63,6 +63,7 @@ public class AIManagerImpl implements AIManager {
         aiCallStartReq.setTemplateId(tempId);
         aiCallStartReq.setSeqId(String.valueOf(aiRequest.getUuid()));
         aiCallStartReq.setUserId(aiRequest.getUserId());
+        aiCallStartReq.setDisSeqId(aiRequest.getPlanUuid());
 
         dispatchLogService.startServiceRequestLog(aiRequest.getPlanUuid(),aiRequest.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求接口aiCallStart");
         Result.ReturnData returnData = RequestHelper.loopRequest(new RequestHelper.RequestApi() {

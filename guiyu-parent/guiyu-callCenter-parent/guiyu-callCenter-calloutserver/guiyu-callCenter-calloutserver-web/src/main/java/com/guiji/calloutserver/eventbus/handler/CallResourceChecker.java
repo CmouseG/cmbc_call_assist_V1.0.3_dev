@@ -63,6 +63,7 @@ public class CallResourceChecker {
         aiCallApplyReq.setSeqId(String.valueOf(callOutPlan.getCallId()));
         aiCallApplyReq.setTemplateId(callOutPlan.getTempId());
         aiCallApplyReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
+        aiCallApplyReq.setDisSeqId(callOutPlan.getPlanUuid());
 
         log.info("发起的ai请求为[{}]", aiCallApplyReq);
 

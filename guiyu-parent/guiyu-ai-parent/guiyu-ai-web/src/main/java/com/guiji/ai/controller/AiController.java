@@ -42,7 +42,7 @@ public class AiController implements IAi
 	public ReturnData<String> synPost(@RequestBody SynPostReqVO postVO) throws Exception {
 		try
 		{
-			logger.info("语音合成（同步）...");
+			logger.info("语音合成（同步）..." + postVO.toString());
 			String model = postVO.getModel();
 			String audioUrl = ai.getPlat(model).synPost(postVO);
 			logger.info("audioUrl = " + audioUrl);
@@ -59,7 +59,7 @@ public class AiController implements IAi
 	{
 		try
 		{
-			logger.info("语音合成（）...");
+			logger.info("语音合成（异步）..." + postVO.toString());
 			postVO.setNotifyUrl(notifyUrl);
 			String model = postVO.getModel();
 			String result = ai.getPlat(model).asynPost(postVO);

@@ -188,11 +188,17 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         }
     }
 
+    /**
+     * 修改账户企业名称
+     * @param acctAddDto
+     * @return
+     */
     @Override
     public boolean updAcctNameByOrg(UserAcctAddDto acctAddDto) {
         if(!StringUtils.isEmpty(acctAddDto.getOrgCode())){
-            boolean bool = false;
-
+            String orgCode = acctAddDto.getOrgCode();
+            String companyName = acctAddDto.getCompanyName();
+            boolean bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updAcctNameByOrg(orgCode, companyName));
             return bool;
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),

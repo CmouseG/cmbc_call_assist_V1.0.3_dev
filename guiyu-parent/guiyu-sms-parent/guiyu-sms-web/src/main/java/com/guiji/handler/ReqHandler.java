@@ -6,9 +6,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.guiji.common.exception.GuiyuException;
+import com.guiji.platfrom.Cmpp;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
 import com.guiji.service.ConfigService;
@@ -36,6 +38,9 @@ public class ReqHandler
 	@Autowired
 	RedisUtil redisUtil;
 	
+	@Value("${cmppServiceUrl}")
+	private String cmppServiceUrl;
+	
 	/**
 	 * 处理短信请求
 	 * @throws Exception 
@@ -55,12 +60,15 @@ public class ReqHandler
 		SmsRecord record = null;
 		String identification = platform.getIdentification(); //根据内部标识选择平台
 		
-		if("ytx".equals(identification)){
+		if ("ytx".equals(identification)) {
 			logger.info("通过<云讯>发送短信...");
 			record = new Ytx().sendMessage(params, phone, smsTemplateId);
-		}else if("wl".equals(identification)){
+		} else if ("wl".equals(identification)) {
 			logger.info("通过<微网通联>发送短信...");
 			record = new Welink().sendMessage(params, phone, smsContent);
+		} else if ("cmpp".equals(identification)) {
+			logger.info("通过<CMPP>发送短信...");
+			record = new Cmpp(cmppServiceUrl).sendMessage(params, phone, smsContent);
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录

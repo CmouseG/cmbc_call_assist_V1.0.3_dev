@@ -36,10 +36,10 @@ public class BillingMqListener {
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
 			if(userIdList ==null){
 				userIdList = new ArrayList<>();
-			}
+			}	
 			if (userIdList.size() != 0) {
-				for (int i = 0; i < userIdList.size(); i++) {
-					if (msgDto.getUserIdList().contains(userIdList.get(i))) {
+				for (int i = 0; i < msgDto.getUserIdList().size(); i++) {
+					if (userIdList.contains(msgDto.getUserIdList().get(i))) {
 						userIdList.remove(i);
 					}
 				}

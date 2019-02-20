@@ -71,6 +71,9 @@ public class SellbotServiceImpl implements ISellbotService{
 	 */
 	public String sayhello(AiBaseInfo ai,SellbotSayhelloReq sellbotSayhelloReq) {
 		String url = "http://"+ai.getIp()+":"+ai.getPort();
+		if(sellbotSayhelloReq.getSentence()==null) {
+			sellbotSayhelloReq.setSentence("");
+		}
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotSayhelloReq));
 		if(StrUtils.isNotEmpty(sellbotRsp)) {
 			String result = null;

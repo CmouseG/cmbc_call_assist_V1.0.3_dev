@@ -852,6 +852,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		ignoreDomainList.add("用户不清楚");
 		ignoreDomainList.add("自由介绍");
 		
+		boolean needTts = false;
+		
 		//判断当前话术流程是否全部都已上传了录音信息
 		BotSentenceBranchExample example = new BotSentenceBranchExample();
 		example.createCriteria().andProcessIdEqualTo(processId).andResponseIsNotNull().andResponseNotEqualTo("[]").andDomainNotIn(ignoreDomainList);
@@ -868,6 +870,13 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 							throw new CommonException("存在未上传录音的文案!");
 						}
 					}
+					
+					if(!needTts) {
+						if(tts) {
+							needTts = true;
+						}
+					}
+					
 				}
 			}
 		}
@@ -885,15 +894,14 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		
 		
-		boolean needTts = false;
+		
 		
 		//校验TTS录音是否已上传
 		BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
 		ttsExample.createCriteria().andProcessIdEqualTo(processId).andIsParamEqualTo(Constant.IS_PARAM_FALSE);
 		List<BotSentenceTtsTask> ttsList =  botSentenceTtsTaskMapper.selectByExample(ttsExample);
 		
-		if(null != ttsList && ttsList.size() > 0) {
-			needTts = true;
+		if(needTts) {
 			for(BotSentenceTtsTask task : ttsList) {
 				if(StringUtils.isBlank(task.getVoliceUrl())) {
 					throw new CommonException("存在未上传录音的tts文案!");
@@ -938,6 +946,16 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//校验是否保存录音师
 		if(needTts && StringUtils.isBlank(process.getSoundType())) {
 			throw new CommonException("当前话术需要TTS，请选择配音师!");
+		}
+		
+		//校验打断新规文案为必输
+		BotSentenceOptions option = botsentenceVariableService.getOptionsByProcessId(processId);
+		if(null != option) {
+			if(null != option.getInterruptionConfigStart() && option.getInterruptionConfigStart()) {
+				if(StringUtils.isBlank(option.getVoice())) {
+					throw new CommonException("请设置打断规则文案!");
+				}
+			}
 		}
 		
 		process.setState("01");//审核中

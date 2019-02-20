@@ -33,6 +33,9 @@ public interface BillingUserAcctMapper {
     //新增用户账户
     int addUserAcct(BillingUserAcctBean userAcct);
 
+    //根据企业CODE变更企业名称
+    int updAcctNameByOrg(@Param("orgCode") String orgCode, @Param("companyName") String companyName);
+
     //查询欠费用户(包括可用余额为O的企业用户)
     List<BillingUserAcctBean> queryArrearageAcctList();
 

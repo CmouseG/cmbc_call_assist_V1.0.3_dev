@@ -13,6 +13,8 @@ import lombok.Data;
 //@Data
 @ApiModel(value="AiCallStartReq对象",description="发起AI电话拨打请求")
 public class AiCallStartReq {
+	@ApiModelProperty(value="会话ID-调度中心会话id",required=true)
+	private String disSeqId;
 	@ApiModelProperty(value="会话ID，该电话整个会话过程中唯一编号",required=true)
 	private String seqId;
 	@ApiModelProperty(value="机器人编号",required=true)
@@ -62,5 +64,13 @@ public class AiCallStartReq {
 
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
+	}
+
+	public String getDisSeqId() {
+		return disSeqId;
+	}
+
+	public void setDisSeqId(String disSeqId) {
+		this.disSeqId = disSeqId;
 	}
 }

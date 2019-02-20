@@ -181,6 +181,13 @@
     </trim>
   </insert>
 
+  <update id="updAcctNameByOrg">
+    UPDATE billing_user_acct
+    SET company_name = #{companyName},
+        update_time = NOW()
+    WHERE org_code = #{orgCode}
+  </update>
+
   <!--查询欠费账户-->
   <select id="queryArrearageAcctList" resultType="com.guiji.billing.entity.BillingUserAcctBean">
     SELECT
@@ -440,8 +447,8 @@
     FROM billing_acct_charging_term
     WHERE del_flag = 0
       AND account_id = #{accountId}
-      AND user_id = #{userId}
       AND charging_item_id = #{chargingItemId}
+      AND user_id = #{userId}
   </select>
 
   <insert id="addAcctChargingTerm" parameterType="com.guiji.billing.entity.BillingAcctChargingTerm"

@@ -258,6 +258,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	public AiCallNext aiCallApply(AiCallApplyReq aiCallApplyReq){
 		/**1、请求参数校验 **/
 		if(aiCallApplyReq == null
+				|| StrUtils.isEmpty(aiCallApplyReq.getDisSeqId())
 				|| StrUtils.isEmpty(aiCallApplyReq.getSeqId())
 				|| StrUtils.isEmpty(aiCallApplyReq.getPhoneNo())
 				|| StrUtils.isEmpty(aiCallApplyReq.getTemplateId())
@@ -326,6 +327,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	public AiCallNext aiCallStart(AiCallStartReq aiCallStartReq) {
 		/**1、请求参数校验 **/
 		if(aiCallStartReq == null
+				|| StrUtils.isEmpty(aiCallStartReq.getDisSeqId())
 				|| StrUtils.isEmpty(aiCallStartReq.getSeqId())
 				|| StrUtils.isEmpty(aiCallStartReq.getAiNo())
 				|| StrUtils.isEmpty(aiCallStartReq.getPhoneNo())
@@ -357,7 +359,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			HsReplace hsReplace = aiCacheService.queyHsReplace(aiCallStartReq.getTemplateId());
 			if(hsReplace !=null && hsReplace.isTemplate_tts_flag()) {
 				//需要TTS合成，将参数信息也发给sellbot，用来交互过程中返回完成sentence信息
-				TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(aiCallStartReq.getSeqId());
+				TtsWavHis ttsWavHis = iTtsWavService.queryTtsWavBySeqId(aiCallStartReq.getDisSeqId());
 				if(ttsWavHis != null) {
 					sellbotRestoreReq.setVal(ttsWavHis.getReqParams());	//	参数值
 				}
@@ -499,7 +501,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			}
 		}
 		aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_PLAY);	//播音
-		sellbotSayhelloReq.setSentence(sentenceCache==null?null:sentenceCache.getSentence());
+		sellbotSayhelloReq.setSentence(sentenceCache==null?"":sentenceCache.getSentence());
 		String sellbotRsp = iSellbotService.sayhello(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotSayhelloReq);
 		aiNext.setSellbotJson(sellbotRsp);
 		return aiNext;

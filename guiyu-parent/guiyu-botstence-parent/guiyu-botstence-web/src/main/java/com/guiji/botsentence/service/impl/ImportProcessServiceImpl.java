@@ -697,7 +697,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			
 			if("解释开场白".equals(temp.getDomainName())) {
 				startExplainDomain = temp;
-				temp.setType("start_explain");
+				temp.setType("process");
 				temp.setCategory("1");
 			}
 			

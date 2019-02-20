@@ -1,5 +1,8 @@
 package com.guiji.dispatch.billing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,11 @@ public class QueryUserBilling implements ApplicationRunner {
 					try {
 						if (!initFlag) {
 							ArrearageNotifyVo queryArrearageUserList = accountUser.queryArrearageUserList();
-							redisUtils.set("USER_BILLING_DATA", queryArrearageUserList.getUserIdList());
+							List<String> userIdList = queryArrearageUserList.getUserIdList();
+							if(userIdList == null){
+								userIdList = new ArrayList<>();
+							}
+							redisUtils.set("USER_BILLING_DATA", userIdList);
 							initFlag = true;
 						} else {
 							break;

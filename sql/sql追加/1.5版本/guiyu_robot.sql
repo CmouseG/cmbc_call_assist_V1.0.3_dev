@@ -1,2 +1,2 @@
 use guiyu_robot;
-ALTER TABLE tts_wav_his MODIFY COLUMN tts_json_data TEXT COMMENT 'TTSºÏ³ÉµÄÓïÒôJSON'
+ALTER TABLE tts_wav_his MODIFY COLUMN tts_json_data TEXT COMMENT 'TTSåˆæˆçš„è¯­éŸ³JSON';

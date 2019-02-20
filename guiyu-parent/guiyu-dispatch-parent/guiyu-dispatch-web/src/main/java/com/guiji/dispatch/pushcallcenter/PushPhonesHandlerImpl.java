@@ -121,6 +121,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								if(userIdList!=null){
 									if (userIdList.contains(String.valueOf(callBean.getUserId()))) {
 										logger.info("startMakeCall>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + callBean.getUserId());
+										updateStatusSync(dispatchRedis.getPlanUuid());
 										continue;
 									}
 								}
@@ -128,6 +129,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								if(userIdList == null){
 									logger.info(">>>>>>>>>>>>>>>>>>...当前userIdList为null");
 									Thread.sleep(2000);
+									updateStatusSync(dispatchRedis.getPlanUuid());
 									continue;
 								}
 								// 增加推送次数

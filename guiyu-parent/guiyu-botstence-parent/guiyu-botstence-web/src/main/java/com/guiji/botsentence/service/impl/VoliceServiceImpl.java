@@ -493,6 +493,31 @@ public class VoliceServiceImpl implements IVoliceService {
 			}
 			voliceInfo_list.add(vo);
 		}
+		
+		
+		// 查询静音
+		VoliceInfoExample silenceVoliceExample = new VoliceInfoExample();
+		silenceVoliceExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameEqualTo("静音");
+		List<VoliceInfo> silenceVoliceList = voliceInfoMapper.selectByExample(silenceVoliceExample);
+		if (null != silenceVoliceList && silenceVoliceList.size() > 0) {
+			int index = 1;
+			for (VoliceInfo voliceInfo : silenceVoliceList) {
+				VoliceInfoExt vo = new VoliceInfoExt();
+				vo.setProcessId(processId);
+				vo.setVoliceId(voliceInfo.getVoliceId().toString());
+				vo.setTitle("静音" + index);
+				vo.setContent(voliceInfo.getContent());
+				vo.setVoliceUrl(voliceInfo.getVoliceUrl());
+				if (StringUtils.isNotBlank(voliceInfo.getVoliceUrl())) {
+					vo.setHasVolice("是");
+				} else {
+					vo.setHasVolice("否");
+				}
+				voliceInfo_list.add(vo);
+				index++;
+			}
+		}
+		
 
 		for (VoliceInfoExt temp : voliceInfo_list) {
 			if (StringUtils.isNotBlank(temp.getContent()) && BotSentenceUtil.validateContainParam(temp.getContent())

@@ -5,6 +5,7 @@ import com.guiji.billing.dao.mapper.ext.BillingSysRechargeMapper;
 import com.guiji.billing.dto.QueryRechargeDto;
 import com.guiji.billing.enums.ChargingTypeEnum;
 import com.guiji.billing.service.BillingSysRechargeService;
+import com.guiji.billing.service.GetApiService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.utils.ResHandler;
@@ -26,7 +27,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
     private BillingSysRechargeMapper billingSysRechargeMapper;
 
     @Autowired
-    private IAuth iAuth;
+    private GetApiService getApiService;
 
     /**
      * 查询公司充值记录
@@ -39,7 +40,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
         //获取用户ID
         String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
         //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
         String orgCode = null != org?org.getCode():"1";
         Date beginDate = queryRechargeDto.getBeginDate();
@@ -63,7 +64,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
         //获取用户ID
         String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
         //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
         String orgCode = null != org?org.getCode():"1";
         Date beginDate = queryRechargeDto.getBeginDate();

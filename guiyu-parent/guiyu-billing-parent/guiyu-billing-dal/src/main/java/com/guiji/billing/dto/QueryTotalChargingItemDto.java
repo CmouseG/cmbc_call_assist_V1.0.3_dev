@@ -18,6 +18,9 @@ public class QueryTotalChargingItemDto extends PageDto {
 
     private String endDate;
 
+    /**
+     * 线路ID
+     */
     private String chargingItemId;
 
     public String getOperUserId() {

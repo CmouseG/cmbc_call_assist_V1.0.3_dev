@@ -416,7 +416,7 @@ public class FsBotHandler {
                 }else {//电话没打出去
                     if (callPlan.getAccurateIntent() == null) {
                         if (duration != null) {
-                            if (duration > 0 && billSec != null && billSec == 0) { //设置F类
+                            if (duration.intValue() > 0 && billSec != null && billSec.intValue() == 0) { //设置F类
                                 log.info("挂断后，设置意向标签为F,callId[{}]", uuid);
                                 callPlan.setAccurateIntent("F");
                                 if (duration.intValue() >= 55) {
@@ -443,13 +443,13 @@ public class FsBotHandler {
 
                 if (duration != null){
                     callPlan.setDuration(duration);
-                    if(duration>0 && billSec!=null && billSec ==0){
+                    if(duration.intValue()>0 && billSec!=null && billSec.intValue() ==0){
                         callPlan.setIsCancel(1);
                     }
                 }
                 if (billSec != null) {
                     callPlan.setBillSec(billSec);
-                    if(billSec > 0){
+                    if(billSec.intValue() > 0){
                         callPlan.setIsAnswer(1);
                     }
                 }

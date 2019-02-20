@@ -712,7 +712,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		}
 		
 		//生成通用信息common.json
-		String commonJson = botsentenceVariableService.generateCommonJson(processId);
+		String commonJson = botsentenceVariableService.generateCommonJson(processId, needTts);
 		String commonPath = templateCfgsDir+ FILE_SEPARATOR + "common.json";
 		try {
 			FileUtil.writeFile(commonPath, commonJson);

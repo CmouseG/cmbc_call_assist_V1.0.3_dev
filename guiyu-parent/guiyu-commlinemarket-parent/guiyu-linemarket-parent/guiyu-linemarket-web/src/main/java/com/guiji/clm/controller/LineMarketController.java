@@ -382,6 +382,7 @@ public class LineMarketController {
 				}
 				//线路拥有者
 				vo.setLineOwner(sipLineManager.getLineOwner(dataLocalCacheUtil.queryOrgByCode(sipLineApply.getOrgCode())));
+				vo.setUnivalentStr(sipLineApply.getUnivalent()+"元/分钟");
 				voList.add(vo);
 			}
 			return voList;

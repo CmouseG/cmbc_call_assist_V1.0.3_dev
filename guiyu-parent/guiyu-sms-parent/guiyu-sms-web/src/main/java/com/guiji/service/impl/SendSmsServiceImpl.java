@@ -6,10 +6,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
+import com.guiji.platfrom.Cmpp;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
 import com.guiji.service.RecordService;
@@ -35,6 +37,9 @@ public class SendSmsServiceImpl implements SendSmsService
 	QueueSender queueSender;
 	@Autowired
 	RedisUtil redisUtil;
+	
+	@Value("${cmppServiceUrl}")
+	private String cmppServiceUrl;
 	
 	/**
 	 * 将请求推送到MQ
@@ -62,13 +67,15 @@ public class SendSmsServiceImpl implements SendSmsService
 		
 		List<SmsRecord> records = null;
 		
-		if ("ytx".equals(identification))
-		{
+		if ("ytx".equals(identification)) {
 			logger.info("通过<云讯>发送短信...");
 			records = new Ytx().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsTemplateId());
-		}else if("wl".equals(identification)){
+		} else if ("wl".equals(identification)) {
 			logger.info("通过<微网通联>发送短信...");
 			records = new Welink().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("cmpp".equals(identification)) {
+			logger.info("通过<CMPP>发送短信...");
+			records = new Cmpp(cmppServiceUrl).sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		}
 		
 		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录

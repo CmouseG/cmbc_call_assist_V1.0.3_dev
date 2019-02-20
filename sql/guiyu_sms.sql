@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS `sms_platform`;
 CREATE TABLE `sms_platform` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `platform_name` varchar(32) NOT NULL COMMENT '平台名称',
-  `platform_params` varchar(250) NOT NULL COMMENT '配置参数列表',
+  `platform_params` varchar(250) DEFAULT NULL COMMENT '配置参数列表',
   `identification` varchar(50) NOT NULL COMMENT '内部标识',
   `create_id` int(11) DEFAULT NULL COMMENT '创建人',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',

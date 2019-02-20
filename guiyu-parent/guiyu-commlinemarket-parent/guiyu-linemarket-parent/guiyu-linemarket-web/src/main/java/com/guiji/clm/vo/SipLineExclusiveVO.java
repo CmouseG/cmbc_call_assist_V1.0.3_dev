@@ -20,4 +20,7 @@ public class SipLineExclusiveVO extends SipLineExclusive{
 	private String exceptAreasName;
 	//线路归属
 	private String lineOwner;
+	//单价中文
+	private String univalentStr;
+	
 }

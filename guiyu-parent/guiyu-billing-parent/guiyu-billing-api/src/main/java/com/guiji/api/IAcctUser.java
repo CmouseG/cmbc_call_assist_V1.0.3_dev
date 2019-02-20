@@ -17,5 +17,5 @@ public interface IAcctUser {
 
     //查询欠费企业用户列表
     @RequestMapping(value="/billing/api/acctUser/queryArrearageUserList", method={RequestMethod.POST})
-    Result.ReturnData queryArrearageUserList();
+    Result.ReturnData<ArrearageNotifyVo> queryArrearageUserList();
 }

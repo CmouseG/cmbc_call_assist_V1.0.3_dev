@@ -46,7 +46,7 @@ public class ApiAcctUserController implements IAcctUser {
     @Override
     @ApiOperation(value="查询欠费企业用户列表", notes="查询欠费企业用户列表")
     @RequestMapping(value = "/billing/api/acctUser/queryArrearageUserList", method = {RequestMethod.POST})
-    public Result.ReturnData queryArrearageUserList() {
+    public Result.ReturnData<ArrearageNotifyVo> queryArrearageUserList() {
         ArrearageNotifyVo arr = billingUserAcctService.queryArrearageUserList();
         return new Result.ReturnData<ArrearageNotifyVo>(arr);
     }

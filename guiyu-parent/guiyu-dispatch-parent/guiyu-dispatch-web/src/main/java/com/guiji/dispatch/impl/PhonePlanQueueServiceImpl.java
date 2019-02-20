@@ -81,11 +81,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 										if(dispatchPlanList.size()>0){
 											logger.info("排序数据前");
 											//进去队列之前，根据优line优先级进行排序
+											List<DispatchPlan> bak = new ArrayList<>();
+											bak.addAll(dispatchPlanList);
 											List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
 											if(sortLine.size()>0){
 												pushPlan2Queue(sortLine,queue);
-											}else if (dispatchPlanList.size()>0 && sortLine.size()<=0){
-												logger.info("当前排序异常或者没用用户规则走默认线路配置,请检查>>>>>>>>>>>>>>>>>>>>>>>>>>");
+											}else if (bak.size()>0){
+												logger.info("当前排序走默认规则>>>>>>>>>>>>>>>>>>>>>>>>>>");
 												pushPlan2Queue(dispatchPlanList,queue);
 											}
 										}

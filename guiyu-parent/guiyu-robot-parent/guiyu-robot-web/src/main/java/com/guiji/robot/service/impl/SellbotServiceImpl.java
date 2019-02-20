@@ -40,8 +40,15 @@ public class SellbotServiceImpl implements ISellbotService{
 			String json = JsonUtils.bean2Json(sellbotRestoreReq);
 			String sellbotRsp = HttpClientUtil.doPostJson(url, json);
 			if(StrUtils.isNotEmpty(sellbotRsp)) {
-				String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-				JSONObject jsonObject = JSON.parseObject(result);
+				String result = null;
+				JSONObject jsonObject = null;
+				try {
+					result = StringEscapeUtils.unescapeJava(sellbotRsp);
+					jsonObject = JSON.parseObject(result);
+				}catch (Exception e) {
+					logger.error("调用Sellbot接口返回数据JSON格式异常，返回结果：{}!",sellbotRsp);
+					throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
+				}
 				String state = jsonObject.getString("state");
 				if(StrUtils.isEmpty(state)) {
 					logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
@@ -66,8 +73,15 @@ public class SellbotServiceImpl implements ISellbotService{
 		String url = "http://"+ai.getIp()+":"+ai.getPort();
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotSayhelloReq));
 		if(StrUtils.isNotEmpty(sellbotRsp)) {
-			String result = StringEscapeUtils.unescapeJava(sellbotRsp);
-			JSONObject jsonObject = JSON.parseObject(result);
+			String result = null;
+			JSONObject jsonObject = null;
+			try {
+				result = StringEscapeUtils.unescapeJava(sellbotRsp);
+				jsonObject = JSON.parseObject(result);
+			} catch (Exception e) {
+				logger.error("调用Sellbot接口返回数据JSON格式异常，返回结果：{}!",sellbotRsp);
+				throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
+			}
 			String state = jsonObject.getString("state");
 			if(StrUtils.isEmpty(state)) {
 				logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);

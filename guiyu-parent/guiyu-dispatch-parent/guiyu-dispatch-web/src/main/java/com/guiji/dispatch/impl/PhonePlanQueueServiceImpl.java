@@ -79,7 +79,6 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 											logger.info("当前查询到的数据"+dispatchPlanList.size());
 										}
 										if(dispatchPlanList.size()>0){
-											logger.info("排序数据前");
 											//进去队列之前，根据优line优先级进行排序
 											List<DispatchPlan> bak = new ArrayList<>();
 											bak.addAll(dispatchPlanList);

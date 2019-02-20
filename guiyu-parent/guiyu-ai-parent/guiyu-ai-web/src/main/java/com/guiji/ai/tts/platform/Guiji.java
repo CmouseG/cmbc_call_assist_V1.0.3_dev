@@ -26,9 +26,9 @@ public class Guiji implements TtsService
 	@Override
 	public String synPost(SynPostReqVO postVO) throws Exception
 	{
-		logger.info("同步请求TTS...");
+		logger.info("同步请求TTS..." + postVO.toString());
 		String result = HttpClientUtil.post(ttsUrl+"synPost", postVO);
-		logger.info("TTS返回结果：" + result);
+		logger.info("（同步）TTS返回结果：" + result);
 		return JSONObject.parseObject(result).getString("body");
 	}
 
@@ -38,8 +38,9 @@ public class Guiji implements TtsService
 	@Override
 	public String asynPost(AsynPostReqVO ttsReq) throws Exception
 	{
-		logger.info("异步请求TTS...");
+		logger.info("异步请求TTS..." + ttsReq.toString());
 		String result = HttpClientUtil.post(ttsUrl+"asynPost", ttsReq);
+		logger.info("（异步）TTS返回异步结果：" + result);
 		return JSONObject.parseObject(result).getString("body");
 	}
 }

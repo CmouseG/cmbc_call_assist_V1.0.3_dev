@@ -32,7 +32,7 @@ public class ApiAcctUserController implements IAcctUser {
     @ApiOperation(value="根据企业员工ID查询企业账户", notes="根据企业员工ID查询企业账户")
     @RequestMapping(value = "/billing/api/acctUser/queryAcctByUserId", method = {RequestMethod.POST})
     @ResponseBody
-    public BillingUserAcctVo queryAcctByUserId(@RequestParam(value="userId",required=true) String userId) {
+    public Result.ReturnData<BillingUserAcctVo> queryAcctByUserId(@RequestParam(value="userId",required=true) String userId) {
         BillingUserAcctBean acct = billingUserAcctService.queryUserAcctByUserId(userId);
         BillingUserAcctVo acctVo = new BillingUserAcctVo();
         if(null != acct){
@@ -40,7 +40,7 @@ public class ApiAcctUserController implements IAcctUser {
         }else{
             acctVo = null;
         }
-        return acctVo;
+        return new Result.ReturnData<BillingUserAcctVo>(acctVo);
     }
 
     @Override

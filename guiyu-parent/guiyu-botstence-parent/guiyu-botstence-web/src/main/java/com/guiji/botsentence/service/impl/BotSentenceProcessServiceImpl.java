@@ -948,6 +948,16 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			throw new CommonException("当前话术需要TTS，请选择配音师!");
 		}
 		
+		//校验打断新规文案为必输
+		BotSentenceOptions option = botsentenceVariableService.getOptionsByProcessId(processId);
+		if(null != option) {
+			if(null != option.getInterruptionConfigStart() && option.getInterruptionConfigStart()) {
+				if(StringUtils.isBlank(option.getVoice())) {
+					throw new CommonException("请设置打断规则文案!");
+				}
+			}
+		}
+		
 		process.setState("01");//审核中
 		process.setLstUpdateTime(new Date(System.currentTimeMillis()));
 		process.setLstUpdateUser(userId);

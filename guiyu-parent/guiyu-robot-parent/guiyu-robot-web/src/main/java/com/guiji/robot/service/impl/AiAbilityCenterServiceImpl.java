@@ -501,7 +501,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			}
 		}
 		aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_PLAY);	//播音
-		sellbotSayhelloReq.setSentence(sentenceCache==null?null:sentenceCache.getSentence());
+		sellbotSayhelloReq.setSentence(sentenceCache==null?"":sentenceCache.getSentence());
 		String sellbotRsp = iSellbotService.sayhello(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotSayhelloReq);
 		aiNext.setSellbotJson(sellbotRsp);
 		return aiNext;

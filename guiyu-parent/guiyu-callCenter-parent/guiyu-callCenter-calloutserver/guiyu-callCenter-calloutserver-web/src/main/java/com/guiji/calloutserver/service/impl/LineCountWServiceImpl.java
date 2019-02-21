@@ -5,6 +5,7 @@ import com.guiji.calloutserver.service.SendNoticeService;
 import com.guiji.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -17,7 +18,8 @@ public class LineCountWServiceImpl implements LineCountWService {
     SendNoticeService sendNoticeService;
 
     @Override
-    public void addWCount(Integer lineId,String orgCode,long userId){
+    @Async
+    public void addWCount(Integer lineId, String orgCode, long userId){
         String countWKey = "callCenter_W_count_lineId_"+lineId+"_orgCode_"+orgCode;
         Object countWValue = redisUtil.get(countWKey);
         if(countWValue!=null ){

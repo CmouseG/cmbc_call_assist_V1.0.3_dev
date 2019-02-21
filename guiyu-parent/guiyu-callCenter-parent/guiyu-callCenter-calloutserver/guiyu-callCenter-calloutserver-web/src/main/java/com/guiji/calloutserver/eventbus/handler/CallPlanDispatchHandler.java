@@ -57,6 +57,8 @@ public class CallPlanDispatchHandler {
     FsAgentManager fsAgentManager;
     @Autowired
     LineCountWService lineCountWService;
+    @Autowired
+    StatisticReportHandler statisticReportHandler;
 
     //注册这个监听器
     @PostConstruct
@@ -180,6 +182,7 @@ public class CallPlanDispatchHandler {
         dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
         callingCountManager.removeOneCall();
         lineCountWService.addWCount(callPlan.getLineId(),callPlan.getOrgCode(),callPlan.getCustomerId());
+        statisticReportHandler.updateReportToday(callPlan);
     }
 
 

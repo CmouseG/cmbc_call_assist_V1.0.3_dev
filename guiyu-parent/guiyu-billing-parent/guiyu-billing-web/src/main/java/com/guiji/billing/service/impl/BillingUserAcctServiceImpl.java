@@ -232,7 +232,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 //获取企业组织下的所有用户
                 String orgCode = acct.getOrgCode();
                 List<SysUser> userList = ResHandler.getResObj(iAuth.getAllUserByOrgCode(orgCode));
-                logger.info("欠费用户列表:{},日志ID:{}", null != userList? JsonUtils.bean2Json(userList):null, logId);
+             //   logger.info("欠费用户列表:{},日志ID:{}", null != userList? JsonUtils.bean2Json(userList):null, logId);
                 if (null != userList && userList.size()>0) {
                     for (SysUser user : userList) {
                         userIdList.add(user.getId() + "");

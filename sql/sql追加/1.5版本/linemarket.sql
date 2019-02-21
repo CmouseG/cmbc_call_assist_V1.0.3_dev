@@ -21,6 +21,6 @@ INSERT INTO sip_route_item (id, item_code, item_name, seq) VALUES (3, '03', '单
 
 #4、老线路数据迁移--切到guiyu_callcenter库
 use guiyu_callcenter
-select concat('INSERT INTO sip_line_exclusive (line_id, line_name, line_type, line_status, max_concurrent_calls, line_fee_type, belong_user, belong_org_code, remark, crt_user, crt_time, update_time, update_user) VALUES (',line_id,',''',line_name,''',',1,',',1,',',1,',',max_concurrent_calls,',''',customer_id,''',''',coalesce(org_code,"1"),''',''',coalesce(remark,""),''',',1,',''2019-02-03 00:00:00'',','''2019-02-03 00:00:00'',''',1,''');') from line_info where customer_id is not null
+select concat('INSERT INTO sip_line_exclusive (line_id, line_name, line_type, line_status, max_concurrent_calls, line_fee_type, belong_user, belong_org_code, remark, crt_user, crt_time, update_time, update_user) VALUES (',line_id,',''',line_name,''',',1,',',1,',',max_concurrent_calls,',',2,',''',customer_id,''',''',coalesce(org_code,"1"),''',''',coalesce(remark,""),''',',createt_by,',''2019-02-03 00:00:00'',','''2019-02-03 00:00:00'',''',1,''');') from line_info where customer_id is not null
 #注意：查询出来的数据，企业编号要另外处理下，需要使用用户真实所属企业org_code
 #执行后生成的insert语句再到line_market库执行

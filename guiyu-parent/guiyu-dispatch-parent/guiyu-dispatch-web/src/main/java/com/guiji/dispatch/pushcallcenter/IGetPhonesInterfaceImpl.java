@@ -60,7 +60,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		if(userIdList!=null){
 			for (int j = 0; j < selectByCallHour.size(); j++) {
 				if (userIdList.contains(String.valueOf(selectByCallHour.get(j).getUserId()))) {
-					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
+//					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
 					selectByCallHour.remove(j);
 				}
 			}

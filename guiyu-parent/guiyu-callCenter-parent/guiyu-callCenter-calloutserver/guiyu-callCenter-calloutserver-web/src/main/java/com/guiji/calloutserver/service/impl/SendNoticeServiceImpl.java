@@ -73,11 +73,19 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         if(intent.equals("F")){
             Object countFValue = redisUtil.get(countFKey);
             if(countFValue!=null ){
-                redisUtil.incr(countFKey,1);
                 if((int) countFValue>=99){
-                    log.info("产生连续未接通警报,userId[{}],count[{}]",userId,countFValue);
-                    sendFNotice(Long.valueOf(userId));
-                    redisUtil.set(countFKey,0);
+                    //此处有并发问题
+                    synchronized(SendNoticeServiceImpl.class){
+
+                        int newValue = (int) redisUtil.get(countFKey);
+                        if(newValue>=99){
+                            redisUtil.set(countFKey,0);
+                            log.info("产生连续未接通警报,userId[{}],count[{}]",userId,countFValue);
+                            sendWNotice(userId);
+                        }
+                    }
+                }else{
+                    redisUtil.incr(countFKey,1);
                 }
             }else{
                 redisUtil.set(countFKey,1);
@@ -91,11 +99,19 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         if(intent.equals("W")){
             Object countWValue = redisUtil.get(countWKey);
             if(countWValue!=null ){
-                redisUtil.incr(countWKey,1);
                 if((int) countWValue>=99){
-                    log.info("产生线路报错,linId[{}],count[{}],orgCode[{]]",linId,countWValue,orgCode);
-                    sendWNotice(Long.valueOf(userId));
-                    redisUtil.set(countWKey,0);
+                    //此处有并发问题
+                    synchronized(LineCountWServiceImpl.class){
+
+                        int newValue = (int) redisUtil.get(countWKey);
+                        if(newValue>=99){
+                            redisUtil.set(countWKey,0);
+                            log.info("产生线路报错,linId[{}],count[{}],orgCode[{]]",linId,countWValue,orgCode);
+                            sendWNotice(userId);
+                        }
+                    }
+                }else{
+                    redisUtil.incr(countWKey,1);
                 }
             }else{
                 redisUtil.set(countWKey,1);

@@ -114,7 +114,7 @@ public class FsBotHandler {
                 log.error("-----error---------aiManager.applyAi:"+e);
                 //回掉给调度中心，更改通话记录
                 callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                if(callPlan.getAccurateIntent()!=null){
+                if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
                     callPlan.setReason(e.getMessage());
                 }

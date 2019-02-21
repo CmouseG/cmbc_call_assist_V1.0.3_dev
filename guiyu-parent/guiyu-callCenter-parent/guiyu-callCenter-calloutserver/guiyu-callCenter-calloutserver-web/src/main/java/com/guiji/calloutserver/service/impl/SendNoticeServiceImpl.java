@@ -82,6 +82,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
                             redisUtil.set(countFKey,0);
                             log.info("产生连续未接通警报,userId[{}],count[{}]",userId,countFValue);
                             sendWNotice(userId);
+                        }else{
+                            redisUtil.incr(countFKey,1);
                         }
                     }
                 }else{
@@ -108,6 +110,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
                             redisUtil.set(countWKey,0);
                             log.info("产生线路报错,linId[{}],count[{}],orgCode[{]]",linId,countWValue,orgCode);
                             sendWNotice(userId);
+                        }else{
+                            redisUtil.incr(countWKey,1);
                         }
                     }
                 }else{

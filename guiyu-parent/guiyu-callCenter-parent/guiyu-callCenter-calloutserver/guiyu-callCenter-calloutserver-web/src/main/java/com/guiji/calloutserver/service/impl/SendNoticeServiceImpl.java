@@ -132,7 +132,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
     /**
      * 产生连续未接通警报，发送消息
      */
-    private void sendFNotice(long userId){
+    @Override
+    public void sendFNotice(long userId){
         MessageSend messageSend = new MessageSend();
         messageSend.setNoticeType(NoticeType.unconnected_alert);
         messageSend.setUserId(userId);
@@ -156,7 +157,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
     /**
      * 线路报错，发送消息
      */
-    private void sendWNotice(long userId){
+    @Override
+    public void sendWNotice(long userId){
         MessageSend messageSend = new MessageSend();
         messageSend.setNoticeType(NoticeType.line_error);
         messageSend.setUserId(userId);

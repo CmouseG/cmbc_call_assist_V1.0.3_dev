@@ -152,17 +152,16 @@ public class LineReportServiceImpl implements LineReportService {
 
                     if (reportList != null && reportList.size() > 0) {
                         for (LineMonitorRreport lineMonitorRreport : reportList) {
-
                             if(lineMonitorRreportReturn.getLineId().intValue()== lineMonitorRreport.getLineId().intValue()){
                                 BeanUtil.copyProperties(lineMonitorRreport,lineMonitorRreportReturn);
+                            }
+                        }
 
-                                if (halfYearList != null && halfYearList.size() > 0) {
-                                    for (LineMonitorRreport halfReport : halfYearList) {
-                                        if (halfReport.getLineId().intValue() == lineMonitorRreportReturn.getLineId().intValue()) {
-                                            lineMonitorRreportReturn.setHistory(halfReport.getRate());
-                                        }
-                                    }
-                                }
+                    }
+                    if (halfYearList != null && halfYearList.size() > 0) {
+                        for (LineMonitorRreport halfReport : halfYearList) {
+                            if (halfReport.getLineId().intValue() == lineMonitorRreportReturn.getLineId().intValue()) {
+                                lineMonitorRreportReturn.setHistory(halfReport.getRate());
                             }
                         }
                     }

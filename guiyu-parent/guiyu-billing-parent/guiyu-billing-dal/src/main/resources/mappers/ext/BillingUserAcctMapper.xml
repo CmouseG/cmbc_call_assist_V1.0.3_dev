@@ -9,6 +9,7 @@
       company_id        ,
       company_name      ,
       org_code          ,
+      org_type          ,
       amount            ,
       available_balance ,
       freezing_amount   ,
@@ -71,6 +72,7 @@
       company_id        ,
       company_name      ,
       org_code          ,
+      org_type          ,
       amount            ,
       available_balance ,
       freezing_amount   ,
@@ -89,6 +91,7 @@
       company_id        ,
       company_name      ,
       org_code          ,
+      org_type          ,
       amount            ,
       available_balance ,
       freezing_amount   ,
@@ -115,6 +118,9 @@
       </if>
       <if test="orgCode != null">
         org_code,
+      </if>
+      <if test="orgType != null">
+        org_type,
       </if>
       <if test="amount != null">
         amount,
@@ -154,6 +160,9 @@
       <if test="orgCode != null">
         #{orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="orgType != null">
+        #{orgType},
+      </if>
       <if test="amount != null">
         #{amount,jdbcType=DECIMAL},
       </if>
@@ -181,6 +190,10 @@
     </trim>
   </insert>
 
+  <update id="updUserAcct">
+
+  </update>
+
   <update id="updAcctNameByOrg">
     UPDATE billing_user_acct
     SET company_name = #{companyName},
@@ -196,6 +209,7 @@
       company_id        ,
       company_name      ,
       org_code          ,
+      org_type          ,
       amount            ,
       available_balance ,
       freezing_amount   ,
@@ -206,7 +220,8 @@
       del_flag
     FROM billing_user_acct
     WHERE del_flag = 0
-    AND available_balance <![CDATA[ <= ]]>  0
+      AND org_type = ${@com.guiji.billing.enums.AcctOrgTypeEnum@Company.getType()}
+      AND available_balance <![CDATA[ <= ]]>  0
   </select>
 
   <!--查询低于阈值账户-->
@@ -217,6 +232,7 @@
       c.company_id        ,
       c.company_name      ,
       c.org_code          ,
+      c.org_type          ,
       c.amount            ,
       c.available_balance ,
       c.freezing_amount   ,
@@ -241,6 +257,7 @@
       company_id        ,
       company_name      ,
       org_code          ,
+      org_type          ,
       amount            ,
       available_balance ,
       freezing_amount   ,

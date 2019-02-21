@@ -251,9 +251,10 @@ CREATE TABLE `billing_user_acct` (
   `company_id` varchar(32) DEFAULT NULL COMMENT '公司ID',
   `company_name` varchar(255) DEFAULT NULL COMMENT '公司名称',
   `org_code` varchar(64) DEFAULT NULL COMMENT '公司编码',
+  `org_type` int(1) DEFAULT NULL COMMENT '公司组织类型，1-代理商，2-企业',
   `amount` decimal(16,2) NOT NULL DEFAULT '0.00' COMMENT '金额',
-  `available_balance` decimal(16,2) DEFAULT NULL COMMENT '可用剩余金额',
-  `freezing_amount` decimal(16,2) DEFAULT NULL COMMENT '冻结金额',
+  `available_balance` decimal(16,2) NOT NULL DEFAULT '0.00' COMMENT '可用剩余金额',
+  `freezing_amount` decimal(16,2) NOT NULL DEFAULT '0.00' COMMENT '冻结金额',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新增时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除标志 0-正常 1-删除',
@@ -262,7 +263,8 @@ CREATE TABLE `billing_user_acct` (
   PRIMARY KEY (`id`),
   KEY `idx_billing_user_acct` (`account_id`),
   KEY `idx_user_acct_code` (`org_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='计费用户账户表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='计费用户账户表'
+
 
 
 
@@ -327,3 +329,11 @@ BEGIN
 	END$$
 
 DELIMITER ;
+
+
+/*
+	初始化企业账户
+*/
+INSERT INTO guiyu_billing.billing_user_acct(account_id, company_id, company_name, org_code, org_type)  
+SELECT s.id , s.id, s.name, s.code, s.type FROM guiyu_base.sys_organization s;
+

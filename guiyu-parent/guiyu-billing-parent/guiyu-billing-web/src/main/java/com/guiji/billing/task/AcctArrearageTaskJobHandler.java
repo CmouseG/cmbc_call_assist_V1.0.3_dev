@@ -36,7 +36,7 @@ public class AcctArrearageTaskJobHandler extends IJobHandler {
         //查询欠费企业的用户列表
         ArrearageNotifyVo arrearage = billingUserAcctService.queryArrearageUserList();
         logger.info("定时任务通知欠费消息:{}", null != arrearage?JsonUtils.bean2Json(arrearage):null);
-        if(null != arrearage){
+        if(null != arrearage && null != arrearage.getUserIdList()){
             //通知欠费消息
             acctNotifyService.notifyArrearage(arrearage);
         }

@@ -10,9 +10,11 @@ import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.JsonUtils;
 import com.guiji.vo.ArrearageNotifyVo;
 import com.guiji.vo.BillingUserAcctVo;
-import com.sun.istack.internal.logging.Logger;
+
 import com.xxl.job.core.biz.model.ReturnT;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,7 @@ import java.util.List;
 //@RequestMapping(value = "/billing/api/acctUser")
 public class ApiAcctUserController implements IAcctUser {
 
-    private Logger logger = Logger.getLogger(ApiAcctUserController.class);
+    private Logger logger = LoggerFactory.getLogger(ApiAcctUserController.class);
 
     @Autowired
     private BillingUserAcctService billingUserAcctService;

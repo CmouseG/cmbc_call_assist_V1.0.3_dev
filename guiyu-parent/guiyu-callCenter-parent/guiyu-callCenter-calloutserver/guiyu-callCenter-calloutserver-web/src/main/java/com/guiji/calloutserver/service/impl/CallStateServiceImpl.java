@@ -7,6 +7,7 @@ import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.manager.CallingCountManager;
 import com.guiji.calloutserver.manager.DispatchManager;
 import com.guiji.calloutserver.service.CallStateService;
+import com.guiji.calloutserver.service.LineCountWService;
 import com.guiji.component.result.Result;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.AiHangupReq;
@@ -36,6 +37,8 @@ public class CallStateServiceImpl implements CallStateService {
     DispatchManager dispatchService;
     @Autowired
     CallingCountManager callingCountManager;
+    @Autowired
+    LineCountWService lineCountWService;
 
     @Async
     @Override
@@ -87,6 +90,7 @@ public class CallStateServiceImpl implements CallStateService {
                 }
                 //计数减一
                 callingCountManager.removeOneCall();
+                lineCountWService.addWCount(callOutPlan.getLineId(),callOutPlan.getOrgCode(),callOutPlan.getCustomerId());
             }
             //修改calloutplan的状态，放到后面，防止刚修改完状态，就接到启动计划
             callOutPlanMapper.updateCallStateIntentReason(updateCallPlan, example);

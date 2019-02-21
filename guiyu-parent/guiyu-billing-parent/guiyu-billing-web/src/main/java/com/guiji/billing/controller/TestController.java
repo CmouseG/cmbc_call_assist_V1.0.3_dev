@@ -6,6 +6,8 @@ import com.guiji.billing.dto.QueryUserAcctDto;
 import com.guiji.billing.entity.BillingUserAcctBean;
 import com.guiji.billing.service.BillingUserAcctService;
 import com.guiji.billing.service.ChargingService;
+import com.guiji.billing.task.AcctArrearageTaskJobHandler;
+import com.xxl.job.core.biz.model.ReturnT;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,5 +34,14 @@ public class TestController {
     @ResponseBody
     public void receiveAcctUserChargingTerm(@RequestBody ChargingTermNotifyDto chargingTermNotifyDto) {
         billingUserAcctService.receiveAcctUserChargingTerm(chargingTermNotifyDto);
+    }
+
+    @Autowired
+    private AcctArrearageTaskJobHandler acctArrearageTaskJobHandler;
+
+    @RequestMapping(value = "/acctArrearageTaskJobHandler", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public ReturnT<String> acctArrearageTaskJobHandler(@RequestBody ChargingTermNotifyDto chargingTermNotifyDto) throws Exception {
+        return acctArrearageTaskJobHandler.execute("");
     }
 }

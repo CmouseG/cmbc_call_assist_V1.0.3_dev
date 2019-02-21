@@ -235,7 +235,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         //查询欠费企业
         List<BillingUserAcctBean> list = this.queryArrearageAcctList();
         logger.info("欠费企业列表:{},日志ID:{}", null != list? JsonUtils.bean2Json(list):null, logId);
-        if (null != list) {
+        if (null != list && list.size()>0) {
             List<String> userIdList = new ArrayList<String>();
             for (BillingUserAcctBean acct : list) {
                 //获取企业组织下的所有用户

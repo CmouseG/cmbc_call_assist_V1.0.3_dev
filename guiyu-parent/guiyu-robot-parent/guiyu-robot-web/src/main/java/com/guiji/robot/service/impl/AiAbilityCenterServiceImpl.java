@@ -461,6 +461,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		if(aiCallNextReq == null
 				|| StrUtils.isEmpty(aiCallNextReq.getUserId())
 				|| StrUtils.isEmpty(aiCallNextReq.getAiNo())
+				|| StrUtils.isEmpty(aiCallNextReq.getSeqId())
 				|| StrUtils.isEmpty(aiCallNextReq.getStatus())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());

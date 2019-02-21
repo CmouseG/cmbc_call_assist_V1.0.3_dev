@@ -1,6 +1,7 @@
 package com.guiji.billing.service.impl;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.billing.constants.BusiTypeEnum;
 import com.guiji.billing.dao.mapper.ext.BillingChargingMapper;
 import com.guiji.billing.dao.mapper.ext.BillingUserAcctMapper;
@@ -84,10 +85,11 @@ public class ChargingServiceImpl implements ChargingService {
             //查询计费项
             BillingAcctChargingTerm acctChargingParam = new BillingAcctChargingTerm();
             acctChargingParam.setAccountId(accountId);
+            acctChargingParam.setUserId(userId+"");
             acctChargingParam.setChargingItemId(lineId);
-            List<BillingAcctChargingTerm> termList = billingUserAcctMapper.queryAcctChargingTermList(acctChargingParam, null);
-            if(null != termList && termList.size()>0) {
-                BillingAcctChargingTerm term = termList.get(0);
+            BillingAcctChargingTerm term = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId+"", lineId);
+            logger.info("账户用户线路计费项:{},账户ID:{},用户ID:{},线路ID:{}", null != term?JsonUtils.bean2Json(term):term, accountId, userId, lineId);
+            if(null != term) {
                 //通话时长
                 Long duration = Long.valueOf(billSec)   ;
                 //此次通话消费金额
@@ -129,7 +131,7 @@ public class ChargingServiceImpl implements ChargingService {
 
                 //如果扣费后欠费，则欠费消息通知
                 if(toAmount.compareTo(BigDecimal.ZERO)<=0){
-                    this.notifyArrearage(String.valueOf(userId));
+                    this.notifyArrearage(String.valueOf(userId), orgCode);
                 }
             }
             return bool;
@@ -143,9 +145,11 @@ public class ChargingServiceImpl implements ChargingService {
      * 欠费消息通知
      * @param userId
      */
-    private void notifyArrearage(String userId){
-        logger.info("用户ID:{}欠费通知开始", userId);
+    private void notifyArrearage(String userId, String orgCode){
+        logger.info("用户ID:{},所属企业orgCode:{}欠费通知开始", userId, orgCode);
         try {
+            //获取企业组织下的员工
+        //    List<SysUser> userList = ResHandler.getResObj(iAuth.getAllUserByOrgCode(orgCode));
             //查询欠费企业的用户列表
             ArrearageNotifyVo arrearage = new ArrearageNotifyVo();
             List<String> userIdList = new ArrayList<String>();

@@ -13,7 +13,7 @@
     <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',SUBSTRING(reason, 0, 255),'已接通') as reason,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,255),'已接通') as reason,
         3 AS durationType, COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -26,7 +26,7 @@
     <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',SUBSTRING(reason, 0, 255),'已接通') as reason, 2 AS durationType,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,255),'已接通') as reason, 2 AS durationType,
         COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -39,7 +39,7 @@
     <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',SUBSTRING(reason, 0, 255),'已接通') as reason, 1 AS durationType,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,255),'已接通') as reason, 1 AS durationType,
         COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -52,7 +52,7 @@
     <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',SUBSTRING(reason, 0, 255),'已接通') as reason, 0 AS durationType,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,255),'已接通') as reason, 0 AS durationType,
         COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan

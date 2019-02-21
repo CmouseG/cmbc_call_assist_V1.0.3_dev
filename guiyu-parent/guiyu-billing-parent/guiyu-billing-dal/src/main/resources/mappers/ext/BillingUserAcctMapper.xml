@@ -181,6 +181,13 @@
     </trim>
   </insert>
 
+  <update id="updAcctNameByOrg">
+    UPDATE billing_user_acct
+    SET company_name = #{companyName},
+        update_time = NOW()
+    WHERE org_code = #{orgCode}
+  </update>
+
   <!--查询欠费账户-->
   <select id="queryArrearageAcctList" resultType="com.guiji.billing.entity.BillingUserAcctBean">
     SELECT

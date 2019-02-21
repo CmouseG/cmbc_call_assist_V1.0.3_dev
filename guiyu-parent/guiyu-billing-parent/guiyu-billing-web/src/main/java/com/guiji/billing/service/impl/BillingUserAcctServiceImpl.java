@@ -27,6 +27,7 @@ import com.guiji.component.result.Result;
 import com.guiji.notice.api.INoticeSend;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,12 +125,17 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public BillingUserAcctBean queryUserAcctByUserId(String userId) {
         if(!StringUtils.isEmpty(userId)) {
+            String logId = idWorker.nextId();
+            logger.info("企业员工用户ID:{}查询企业账户,日志ID:{}", userId, logId);
             //查询用户信息
         //    SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
             //查询用户所在企业组织
             SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
-            return (null != org && !StringUtils.isEmpty(org.getCode()))?//user.getOrgCode()
+            logger.info("企业员工用户ID:{}所在企业:{}查询企业账户,日志ID:{}",userId, JsonUtils.bean2Json(org), logId);
+            BillingUserAcctBean acct = (null != org && !StringUtils.isEmpty(org.getCode()))?//user.getOrgCode()
                     billingUserAcctMapper.queryUserAcctByOrgCode(org.getCode()):null;
+            logger.info("企业员工用户ID:{}所在企业:{}查询企业账户:{},日志ID:{}",userId, JsonUtils.bean2Json(org), JsonUtils.bean2Json(acct), logId);
+            return acct;
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
                     SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
@@ -183,6 +189,24 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     }
 
     /**
+     * 修改账户企业名称
+     * @param acctAddDto
+     * @return
+     */
+    @Override
+    public boolean updAcctNameByOrg(UserAcctAddDto acctAddDto) {
+        if(!StringUtils.isEmpty(acctAddDto.getOrgCode())){
+            String orgCode = acctAddDto.getOrgCode();
+            String companyName = acctAddDto.getCompanyName();
+            boolean bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updAcctNameByOrg(orgCode, companyName));
+            return bool;
+        }else{
+            throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
+                    SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+        }
+    }
+
+    /**
      * 查询欠费企业账户
      * @return
      */
@@ -197,15 +221,18 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
      */
     @Override
     public com.guiji.vo.ArrearageNotifyVo queryArrearageUserList() {
-        com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = null;
+        com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = new com.guiji.vo.ArrearageNotifyVo();
+        String logId = idWorker.nextId();
         //查询欠费企业
         List<BillingUserAcctBean> list = this.queryArrearageAcctList();
+        logger.info("欠费企业列表:{},日志ID:{}", null != list? JsonUtils.bean2Json(list):null, logId);
         if (null != list) {
             List<String> userIdList = new ArrayList<String>();
             for (BillingUserAcctBean acct : list) {
                 //获取企业组织下的所有用户
                 String orgCode = acct.getOrgCode();
                 List<SysUser> userList = ResHandler.getResObj(iAuth.getAllUserByOrgCode(orgCode));
+             //   logger.info("欠费用户列表:{},日志ID:{}", null != userList? JsonUtils.bean2Json(userList):null, logId);
                 if (null != userList && userList.size()>0) {
                     for (SysUser user : userList) {
                         userIdList.add(user.getId() + "");
@@ -213,13 +240,13 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 }
             }
             if (null != userIdList && userIdList.size() > 0) {
-                arrearageNotifyVo = new com.guiji.vo.ArrearageNotifyVo();
                 //欠费用户ID
                 arrearageNotifyVo.setUserIdList(userIdList);
                 //欠费状态
                 arrearageNotifyVo.setIsArrearage(AcctArrearageStatusEnum.ARREARAGE.getStatus());
             }
         }
+        logger.info("最终结果，欠费用户列表:{},日志ID:{}", null != arrearageNotifyVo? JsonUtils.bean2Json(arrearageNotifyVo):null, logId);
         return arrearageNotifyVo;
     }
 
@@ -272,7 +299,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
 
                 //通知取消欠费消息
-                this.notifyUnfreeze(acct, rechargeAmount);
+                this.notifyUnfreeze(acct, srcAmount, toAmount);
             }else {
                 //根据企业编码
                 if(!StringUtils.isEmpty(rechargeDto.getOrgCode())){
@@ -291,7 +318,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                         bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.recharge(accountId, rechargeAmount, new Date()));
 
                         //通知取消欠费消息
-                        this.notifyUnfreeze(acct, rechargeAmount);
+                        this.notifyUnfreeze(acct, srcAmount, toAmount);
 
                     //企业未注册,先注册账户
                     }else {
@@ -331,12 +358,17 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         }
     }
 
-    private void notifyUnfreeze(BillingUserAcctBean acct, BigDecimal rechargeAmount){
+    /**
+     * 通知取消欠费消息
+     * @param acct 充值后的账户数据
+     * @param srcAmount  充值前数据
+     * @param toAmount  充值后数据
+     */
+    private void notifyUnfreeze(BillingUserAcctBean acct, BigDecimal srcAmount, BigDecimal toAmount){
         try {
-            BigDecimal balanceAmount = acct.getAvailableBalance();
             //如果充值使之前欠费变更为不欠费，通知取消欠费消息
-            if (balanceAmount.compareTo(BigDecimal.ZERO) <= 0
-                    && (rechargeAmount.add(balanceAmount)).compareTo(BigDecimal.ZERO) > 0) {
+            if (srcAmount.compareTo(BigDecimal.ZERO) <= 0
+                    && (toAmount).compareTo(BigDecimal.ZERO) > 0) {
                 com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = null;
                 List<BillingUserAcctBean> list = this.queryArrearageAcctList();
                 List<String> userIdList = new ArrayList<String>();
@@ -350,6 +382,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                     }
                 }
 
+                logger.info("充值通知取消欠费用户:{},充值前:{},充值后:{}", JsonUtils.bean2Json(userIdList), srcAmount, toAmount);
                 if (null != userIdList && userIdList.size() > 0) {
                     arrearageNotifyVo = new com.guiji.vo.ArrearageNotifyVo();
                     //欠费用户ID
@@ -357,6 +390,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                     //欠费状态
                     arrearageNotifyVo.setIsArrearage(AcctArrearageStatusEnum.NORMAL.getStatus());
 
+                    logger.info("充值通知取消欠费消息:{},充值前:{},充值后:{}", JsonUtils.bean2Json(arrearageNotifyVo), srcAmount, toAmount);
                     //通知取消欠费消息
                     acctNotifyService.notifyArrearage(arrearageNotifyVo);
                 }

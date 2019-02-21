@@ -11,6 +11,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import com.guiji.api.IAcctUser;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.utils.RedisUtil;
 import com.guiji.vo.ArrearageNotifyVo;
 
@@ -37,13 +38,16 @@ public class QueryUserBilling implements ApplicationRunner {
 				while (true) {
 					try {
 						if (!initFlag) {
-							ArrearageNotifyVo queryArrearageUserList = accountUser.queryArrearageUserList();
-							List<String> userIdList = queryArrearageUserList.getUserIdList();
-							if(userIdList == null){
-								userIdList = new ArrayList<>();
+							ReturnData<ArrearageNotifyVo> queryArrearageUserList = accountUser.queryArrearageUserList();
+							if(queryArrearageUserList.getBody()!=null){
+								List<String> userIdList = queryArrearageUserList.getBody().getUserIdList();
+								if(userIdList == null){
+									userIdList = new ArrayList<>();
+								}
+								redisUtils.set("USER_BILLING_DATA", userIdList);
+								initFlag = true;
 							}
-							redisUtils.set("USER_BILLING_DATA", userIdList);
-							initFlag = true;
+			
 						} else {
 							break;
 						}

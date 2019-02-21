@@ -419,7 +419,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		}
 		
 		//保存重复次数是否受限
-		if(Constant.VARIABLE_FLAG_14.equals(vo.getFlag())) {
+		/*if(Constant.VARIABLE_FLAG_14.equals(vo.getFlag())) {
 			botSentenceDomainExtMapper.batchUpdateIsSpecialLimitFree(vo.getProcessId());
 			if(null != vo.getIsSpecialLimitFreeList() && vo.getIsSpecialLimitFreeList().size() > 0) {
 				for(String domainName : vo.getIsSpecialLimitFreeList()) {
@@ -430,7 +430,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 					botSentenceDomainMapper.updateByPrimaryKey(domain);
 				}
 			}
-		}
+		}*/
 		
 		
 		

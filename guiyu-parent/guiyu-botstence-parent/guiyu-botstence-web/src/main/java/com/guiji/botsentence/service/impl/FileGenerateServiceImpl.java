@@ -280,6 +280,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			if("静音".equals(domainName) && !botSentenceOptions.getSilenceWaitStart()) {
 				continue;
 			}
+			
 			domainVO.setName(domainName);
 			jsonObject.put("name", domainName);
 						
@@ -288,6 +289,11 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			if (!StringUtils.isBlank(comDomian)) {
 				domainVO.setCom_domain(comDomian);
 				jsonObject.put("com_domain", comDomian);
+			}
+			
+			//设置一般问题的
+			if("一般问题".equals(domainName) && null != botSentenceOptions.getSpecialLimitStart() && botSentenceOptions.getSpecialLimitStart()) {
+				jsonObject.put("is_special_limit_free", botSentenceOptions.getSpecialLimitStart());
 			}
 			
 			List<String> refuseResponse = new ArrayList<>();

@@ -4,18 +4,28 @@ import com.guiji.api.IAcctUser;
 import com.guiji.billing.dto.QueryUserAcctDto;
 import com.guiji.billing.entity.BillingUserAcctBean;
 import com.guiji.billing.service.BillingUserAcctService;
+import com.guiji.component.result.Result;
 import com.guiji.guiyu.message.component.QueueSender;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.JsonUtils;
 import com.guiji.vo.ArrearageNotifyVo;
 import com.guiji.vo.BillingUserAcctVo;
+
 import com.xxl.job.core.biz.model.ReturnT;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 //@RequestMapping(value = "/billing/api/acctUser")
 public class ApiAcctUserController implements IAcctUser {
+
+    private Logger logger = LoggerFactory.getLogger(ApiAcctUserController.class);
 
     @Autowired
     private BillingUserAcctService billingUserAcctService;
@@ -24,7 +34,7 @@ public class ApiAcctUserController implements IAcctUser {
     @ApiOperation(value="根据企业员工ID查询企业账户", notes="根据企业员工ID查询企业账户")
     @RequestMapping(value = "/billing/api/acctUser/queryAcctByUserId", method = {RequestMethod.POST})
     @ResponseBody
-    public BillingUserAcctVo queryAcctByUserId(@RequestParam(value="userId",required=true) String userId) {
+    public Result.ReturnData<BillingUserAcctVo> queryAcctByUserId(@RequestParam(value="userId",required=true) String userId) {
         BillingUserAcctBean acct = billingUserAcctService.queryUserAcctByUserId(userId);
         BillingUserAcctVo acctVo = new BillingUserAcctVo();
         if(null != acct){
@@ -32,15 +42,15 @@ public class ApiAcctUserController implements IAcctUser {
         }else{
             acctVo = null;
         }
-        return acctVo;
+        return new Result.ReturnData<BillingUserAcctVo>(acctVo);
     }
 
     @Override
     @ApiOperation(value="查询欠费企业用户列表", notes="查询欠费企业用户列表")
     @RequestMapping(value = "/billing/api/acctUser/queryArrearageUserList", method = {RequestMethod.POST})
-    @ResponseBody
-    public com.guiji.vo.ArrearageNotifyVo queryArrearageUserList() {
-        return billingUserAcctService.queryArrearageUserList();
+    public Result.ReturnData<ArrearageNotifyVo> queryArrearageUserList() {
+        ArrearageNotifyVo arr = billingUserAcctService.queryArrearageUserList();
+        return new Result.ReturnData<ArrearageNotifyVo>(arr);
     }
 
     @Autowired

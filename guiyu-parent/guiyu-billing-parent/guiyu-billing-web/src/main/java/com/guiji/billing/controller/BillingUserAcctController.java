@@ -58,6 +58,12 @@ public class BillingUserAcctController {
         return billingUserAcctService.addUserAcct(acctAddDto);
     }
 
+    @ApiOperation(value="修改账户企业名称", notes="修改账户企业名称")
+    @RequestMapping(value = "/updAcctNameByOrg", method = {RequestMethod.POST})
+    public boolean updAcctNameByOrg(@RequestBody UserAcctAddDto acctAddDto){
+        return billingUserAcctService.updAcctNameByOrg(acctAddDto);
+    }
+
     /*********充值    begin***********************/
     //管理员充值(系统侧使用)
     @ApiOperation(value="企业账户充值", notes="企业账户充值")

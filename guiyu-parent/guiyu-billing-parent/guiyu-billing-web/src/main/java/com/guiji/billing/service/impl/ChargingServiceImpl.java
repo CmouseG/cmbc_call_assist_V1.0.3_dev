@@ -19,6 +19,7 @@ import com.guiji.billing.utils.ResHandler;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.JsonUtils;
 import com.guiji.vo.ArrearageNotifyVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,6 +154,8 @@ public class ChargingServiceImpl implements ChargingService {
             arrearage.setUserIdList(userIdList);
             //欠费状态
             arrearage.setIsArrearage(AcctArrearageStatusEnum.ARREARAGE.getStatus());
+
+            logger.info("通话计费通知欠费消息:{}", null != arrearage? JsonUtils.bean2Json(arrearage):null);
             //通知欠费消息
             acctNotifyService.notifyArrearage(arrearage);
         }catch(Exception e){

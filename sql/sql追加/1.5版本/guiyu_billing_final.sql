@@ -334,6 +334,6 @@ DELIMITER ;
 /*
 	初始化企业账户
 */
-INSERT INTO billing_user_acct(account_id, company_id, company_name, org_code, org_type)  
+INSERT INTO guiyu_billing.billing_user_acct(account_id, company_id, company_name, org_code, org_type)  
 SELECT s.id , s.id, s.name, s.code, s.type FROM guiyu_base.sys_organization s;
 

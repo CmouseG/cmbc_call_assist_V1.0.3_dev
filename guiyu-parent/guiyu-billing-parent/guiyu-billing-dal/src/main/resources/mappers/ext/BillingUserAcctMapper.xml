@@ -220,7 +220,7 @@
       del_flag
     FROM billing_user_acct
     WHERE del_flag = 0
-      AND org_code = ${@com.guiji.billing.enums.AcctOrgTypeEnum@Company.getType()}
+      AND org_type = ${@com.guiji.billing.enums.AcctOrgTypeEnum@Company.getType()}
       AND available_balance <![CDATA[ <= ]]>  0
   </select>
 

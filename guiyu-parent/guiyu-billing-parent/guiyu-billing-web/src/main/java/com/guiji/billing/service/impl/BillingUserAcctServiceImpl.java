@@ -153,34 +153,43 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         if(null != acctAddDto
                 && !StringUtils.isEmpty(acctAddDto.getOrgCode())) {
             BillingUserAcctBean acct = new BillingUserAcctBean();
-            //查询该企业是否已注册
             String orgCode = acctAddDto.getOrgCode();
+            //查询企业组织
+            SysOrganization org = ResHandler.getResObj(iOrg.getOrgByCode(orgCode));
+            if(null == org){
+                throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
+                        "企业组织不存在");
+            }
+
+            boolean bool = false;
+            //查询该企业是否已注册
             BillingUserAcctBean acctExist = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
             //企业已注册账户
             if(null != acctExist){
-                acct = acctExist;
+                acct.setOrgCode(org.getCode()); //企业组织编码
+                acct.setCompanyId(org.getId()+"");  //企业ID
+                acct.setCompanyName(org.getName()); //企业名称
+                acct.setOrgType(org.getType());     //企业组织类型 1-代理商 2-企业公司
+
+                acct.setUpdateTime(new Date());
+                bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.updUserAcct(acct));
 
             //企业未注册
             }else {
-                //查询企业组织
-                SysOrganization org = ResHandler.getResObj(iOrg.getOrgByCode(orgCode));
-                if(null == org){
-                    throw new BaseException(SysDefaultExceptionEnum.DEFINE_EXCEPTION.getErrorCode(),
-                            "企业组织不存在");
-                }
                 BeanUtils.copyProperties(acctAddDto, acct, BillingUserAcctBean.class);
                 acct.setAccountId(idWorker.getBusiId(BusiTypeEnum.BILLING_ACCT.getType()));
-                acct.setOrgCode(org.getCode());
-                acct.setCompanyId(org.getId()+"");
-                acct.setCompanyName(org.getName());
+                acct.setOrgCode(org.getCode()); //企业组织编码
+                acct.setCompanyId(org.getId()+"");  //企业ID
+                acct.setCompanyName(org.getName()); //企业名称
+                acct.setOrgType(org.getType());     //企业组织类型 1-代理商 2-企业公司
                 acct.setAmount(BigDecimal.ZERO);
                 acct.setAvailableBalance(BigDecimal.ZERO);
                 acct.setFreezingAmount(BigDecimal.ZERO);
                 acct.setCreateTime(new Date());
                 acct.setDelFlag(SysDelEnum.NORMAL.getState());
-                boolean bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcct(acct));
-                acct = bool?acct:null;
+                bool = DaoHandler.getMapperBoolRes(billingUserAcctMapper.addUserAcct(acct));
             }
+            acct = bool?acct:null;
             return acct;
         }else{
             throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),

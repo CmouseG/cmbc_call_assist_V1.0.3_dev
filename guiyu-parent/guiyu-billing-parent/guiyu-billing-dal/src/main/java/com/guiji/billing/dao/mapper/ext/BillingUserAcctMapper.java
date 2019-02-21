@@ -30,8 +30,11 @@ public interface BillingUserAcctMapper {
     //根据企业编码查询账户
     BillingUserAcctBean queryUserAcctByOrgCode(String orgCode);
 
-    //新增用户账户
+    //新增企业账户
     int addUserAcct(BillingUserAcctBean userAcct);
+
+    //修改企业账户
+    int updUserAcct(BillingUserAcctBean userAcct);
 
     //根据企业CODE变更企业名称
     int updAcctNameByOrg(@Param("orgCode") String orgCode, @Param("companyName") String companyName);

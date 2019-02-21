@@ -22,6 +22,11 @@ public class BillingUserAcctBean extends BaseBean {
     private String orgCode;
 
     /**
+     * 企业组织类型  1-代理商 2-企业
+     */
+    private Integer orgType;
+
+    /**
      * 账户金额
      */
     private BigDecimal amount;
@@ -116,5 +121,13 @@ public class BillingUserAcctBean extends BaseBean {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Integer getOrgType() {
+        return orgType;
+    }
+
+    public void setOrgType(Integer orgType) {
+        this.orgType = orgType;
     }
 }

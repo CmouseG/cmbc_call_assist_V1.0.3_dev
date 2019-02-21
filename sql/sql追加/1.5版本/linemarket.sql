@@ -28,3 +28,6 @@ select concat('INSERT INTO sip_line_exclusive (line_id, line_name, line_type, li
 insert into guiyu_linemarket.sip_line_base_info(line_name,line_id,line_status,sip_ip,sip_port,codec,caller_num,destination_prefix,max_concurrent_calls,use_concurrent_calls,call_direc,line_fee_type,remark,org_code,crt_user)select line_name,line_id,1,sip_ip,sip_port,codec,caller_num,callee_prefix,max_concurrent_calls,max_concurrent_calls,1,2,remark,org_code,createt_by from guiyu_callcenter.line_info;
 use guiyu_linemarket
 update sip_line_exclusive s1,sip_line_base_info s2 set s1.sip_line_id = s2.id where s1.line_id = s2.line_id and s1.sip_line_id is null;
+update sip_line_exclusive set univalent =0 where univalent is null;
+update sip_line_base_info set contract_univalent =0 where contract_univalent is null;
+update sip_line_base_info set univalent =0 where univalent is null;

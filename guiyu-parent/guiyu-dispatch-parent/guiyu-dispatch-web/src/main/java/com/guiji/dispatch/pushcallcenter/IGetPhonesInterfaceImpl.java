@@ -60,7 +60,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		if(userIdList!=null){
 			for (int j = 0; j < selectByCallHour.size(); j++) {
 				if (userIdList.contains(String.valueOf(selectByCallHour.get(j).getUserId()))) {
-//					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
+					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
 					selectByCallHour.remove(j);
 				}
 			}
@@ -109,7 +109,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		// 如果当前用户已经欠费的话，那么就删除
 		List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
 		if(userIdList!=null){
-			for (int j = 0; j < selectPlanGroupByUserIdLineRobot.size(); j++) {
+			for (int j = 0; j < planUserIdLineRobotDtos.size(); j++) {
 				if (userIdList.contains(String.valueOf(planUserIdLineRobotDtos.get(j).getUserId()))) {
 					logger.info("selectPlanGroupByUserIdRobot>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + planUserIdLineRobotDtos.get(j).getUserId());
 					planUserIdLineRobotDtos.remove(j);

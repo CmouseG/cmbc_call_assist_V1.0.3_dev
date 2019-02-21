@@ -31,6 +31,10 @@ public class BillingMqListener {
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		logger.info("BillingMqListener>>>>>>>>>>>>>>>>>>>"+message);
+		if(message.equals("") || message ==null){
+			logger.info("当前billing消费数据有问题");
+			return;
+		}
 		ArrearageNotifyDto msgDto = JsonUtils.json2Bean(message, ArrearageNotifyDto.class);
 		if (msgDto.getIsArrearage().equals(0)) {
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");

@@ -47,7 +47,7 @@ public class PlanListener implements ApplicationRunner {
                 //拉取拨打计划进队列
                 phonePlanQueueService.execute();
             } catch (Exception e) {
-                logger.error("PlanListener:" + e.getMessage());
+                logger.info("PlanListenererror>>>>>>>>>>>>>>>>>>>>.:" + e.getMessage());
             }
         }).start();
     }

@@ -590,5 +590,21 @@ public class RedisUtil {
         }
 		return null;
     }
+    
+    /**
+     * 右进（一般左进-右出，特殊场景需要后进后出）
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean rightPush(String key,Object value) {
+        try {
+            redisTemplate.opsForList().rightPush(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
   

@@ -37,7 +37,8 @@ public class FeeService {
 	public void sipFee(FeeOptEnum feeOptEnum,SipLineExclusive sipLineExclusive) {
 		if(sipLineExclusive!=null 
 				&& StrUtils.isNotEmpty(sipLineExclusive.getBelongUser()) 
-				&& sipLineExclusive.getUnivalent()!=null) {
+				&& sipLineExclusive.getUnivalent()!=null
+				&& sipLineExclusive.getUnivalent().compareTo(BigDecimal.ZERO)>0) {
 			//sip线路转为计费项
 			FeeItem feeItem = this.sip2Fee(sipLineExclusive);
 			switch (feeOptEnum){
@@ -61,7 +62,7 @@ public class FeeService {
 	 * @param voipGwPort
 	 */
 	public void voipFee(FeeOptEnum feeOptEnum,VoipGwPort voipGwPort) {
-		if(voipGwPort!=null && StrUtils.isNotEmpty(voipGwPort.getUserId()) && voipGwPort.getUnivalent()!=null) {
+		if(voipGwPort!=null && StrUtils.isNotEmpty(voipGwPort.getUserId()) && voipGwPort.getUnivalent()!=null && voipGwPort.getUnivalent().compareTo(BigDecimal.ZERO)>0) {
 			//sip线路转为计费项
 			FeeItem feeItem = this.voip2Fee(voipGwPort);
 			switch (feeOptEnum){

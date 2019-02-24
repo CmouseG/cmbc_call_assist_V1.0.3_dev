@@ -54,13 +54,23 @@ public class StatisticReportHandler {
         // todo 可优化，对数据库操作太多
         BigInteger callId = statisticReportEvent.getCallPlan().getCallId();
         CallOutPlan callOutPlan = callOutPlanService.findByCallId(callId);
+        //计费
         chargeHandler.handleAfterCall(callOutPlan);
         String intent = callOutPlan.getAccurateIntent();
-
+        //发送消息通知
         if(StringUtils.isNotEmpty(intent)){
             sendNoticeService.sendNotice(callOutPlan);
         }
+        //将记录插入到today表中
+        updateReportToday(callOutPlan);
+    }
 
+    /**
+     * 将记录插入到today表中
+     * @param callOutPlan
+     */
+    public void updateReportToday(CallOutPlan callOutPlan){
+        String intent = callOutPlan.getAccurateIntent();
         String reason = callOutPlan.getReason();
         String tempId = callOutPlan.getTempId();
         String orgCode = callOutPlan.getOrgCode();
@@ -81,6 +91,7 @@ public class StatisticReportHandler {
                 .andOrgCodeEqualTo(orgCode)
                 .andCallDateEqualTo(callDate);
 
+        //reason字段只需要记录F类是的reason即可，其他情况下的reason用不到
         if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
             criteria.andReasonEqualTo(reason);
         }
@@ -92,9 +103,7 @@ public class StatisticReportHandler {
             reportCallToday.setIntent(intent);
             if(intent != null && intent.equals("F") && StringUtils.isNotBlank(reason)){
                 reportCallToday.setReason(reason);
-            }else if(intent != null && intent.equals("W") && StringUtils.isNotBlank(reason)){
-                reportCallToday.setReason(reason);
-            }else{
+            }else if(callOutPlan.getBillSec()>0){
                 reportCallToday.setReason("已接通");
             }
             reportCallToday.setDurationAll(duration);
@@ -110,8 +119,8 @@ public class StatisticReportHandler {
             statisticMapper.updateTodayCountAndDruation(reportCallToday);
         }
 
-
     }
+
 
     int getDurationType(long duration) {
         if (duration > 30) {

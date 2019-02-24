@@ -13,7 +13,7 @@
     <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason,
         3 AS durationType, COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -26,7 +26,7 @@
     <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 2 AS durationType,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason, 2 AS durationType,
         COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -39,7 +39,7 @@
     <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 1 AS durationType,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason, 1 AS durationType,
         COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -52,7 +52,7 @@
     <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
-        if(accurate_intent = 'F' OR accurate_intent = 'W',reason,'已接通') as reason, 0 AS durationType,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason, 0 AS durationType,
         COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
         FROM
         call_out_plan
@@ -298,9 +298,9 @@
     </delete>
 
     <select id="getReasonCountAgo" resultType="com.guiji.callcenter.dao.entityext.ReasonCount">
-        SELECT SUM(call_count) AS callCount,  call_date AS callDate, reason
+        SELECT SUM(call_count) AS callCount,  call_date AS callDate, IF(ISNULL(reason),'其他',reason) AS reason
         FROM report_call_day
-        where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and reason  IS NOT NULL
+        where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR}
         <if test="orgCode != null" >
             and org_code like #{orgCode,jdbcType=VARCHAR}
         </if>
@@ -311,9 +311,9 @@
         ORDER BY  callDate
     </select>
     <select id="getReasonCountToday" resultType="com.guiji.callcenter.dao.entityext.ReasonCount">
-        SELECT SUM(call_count) AS callCount,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate,   reason
+        SELECT SUM(call_count) AS callCount,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate,   IF(ISNULL(reason),'其他',reason) AS reason
         FROM report_call_today
-        where reason  IS NOT NULL
+        where 1=1
         <if test="orgCode != null" >
             and org_code like #{orgCode,jdbcType=VARCHAR}
         </if>

@@ -33,7 +33,7 @@ public class AcctNotifyServiceImpl implements AcctNotifyService {
     @Override
     public boolean notifyArrearage(com.guiji.vo.ArrearageNotifyVo arrearageNotifyDto) {
         boolean bool = false;
-        if(null != arrearageNotifyDto){
+        if(null != arrearageNotifyDto && null != arrearageNotifyDto.getUserIdList()){
             String message = JsonUtils.bean2Json(arrearageNotifyDto);
             String logId = idWorker.nextId();
             try {

@@ -7,4 +7,8 @@ public interface SendNoticeService {
 
     @Async
     void sendNotice(CallOutPlan callOutPlan);
+
+    void sendFNotice(long userId);
+
+    void sendWNotice(long userId);
 }

@@ -8,6 +8,10 @@ import com.guiji.callcenter.dao.entityext.LineMonitorRreport;
 import com.guiji.callcenter.daoNoSharing.StastisticReportLineMapper;
 import com.guiji.ccmanager.service.LineReportService;
 import com.guiji.ccmanager.utils.DateUtils;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
+import com.guiji.component.result.Result;
+import com.guiji.utils.BeanUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,8 @@ public class LineReportServiceImpl implements LineReportService {
     ReportLineStatusMapper reportLineStatusMapper;
     @Autowired
     LineInfoMapper lineInfoMapper;
+    @Autowired
+    LineMarketRemote lineMarketRemote;
 
     @Override
     @Transactional
@@ -124,23 +130,46 @@ public class LineReportServiceImpl implements LineReportService {
             return resultList;
         } else {
 
-                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode+"%", startTime);
-                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode+"%", DateUtils.getHalfYearDate());
+            Result.ReturnData<List<SipLineVO>> returnData = lineMarketRemote.queryUserSipLineList(String.valueOf(userId));
+            List<SipLineVO> listLine = returnData.getBody();
+            if(listLine!=null && listLine.size()>0){
+
+                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode + "%", startTime);
+                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode + "%", DateUtils.getHalfYearDate());
+
+                List<LineMonitorRreport> retrunList = new ArrayList();
+
+                for(SipLineVO sipLineVO:listLine){
+                    LineMonitorRreport lineMonitorRreportReturn = new LineMonitorRreport();
+                    lineMonitorRreportReturn.setLineName(sipLineVO.getLineName());
+                    lineMonitorRreportReturn.setLineId(sipLineVO.getLineId());
+                    lineMonitorRreportReturn.setHistory(0f);
+                    lineMonitorRreportReturn.setRate(0f);
+                    lineMonitorRreportReturn.setLow(0f);
+                    lineMonitorRreportReturn.setHigh(0f);
+                    lineMonitorRreportReturn.setAnswerNum(0);
+                    lineMonitorRreportReturn.setTotalNum(0);
 
                     if (reportList != null && reportList.size() > 0) {
                         for (LineMonitorRreport lineMonitorRreport : reportList) {
+                            if(lineMonitorRreportReturn.getLineId().intValue()== lineMonitorRreport.getLineId().intValue()){
+                                BeanUtil.copyProperties(lineMonitorRreport,lineMonitorRreportReturn);
+                            }
+                        }
 
-                            if (halfYearList != null && halfYearList.size() > 0) {
-                                for (LineMonitorRreport halfReport : halfYearList) {
-                                    if (halfReport.getLineId().intValue() == lineMonitorRreport.getLineId().intValue()) {
-                                        lineMonitorRreport.setHistory(halfReport.getRate());
-                                    }
-                                }
+                    }
+                    if (halfYearList != null && halfYearList.size() > 0) {
+                        for (LineMonitorRreport halfReport : halfYearList) {
+                            if (halfReport.getLineId().intValue() == lineMonitorRreportReturn.getLineId().intValue()) {
+                                lineMonitorRreportReturn.setHistory(halfReport.getRate());
                             }
                         }
                     }
-
-            return reportList;
+                    retrunList.add(lineMonitorRreportReturn);
+                }
+                return retrunList;
+            }
+            return null;
 
         }
 

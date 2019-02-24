@@ -16,6 +16,7 @@ import com.guiji.calloutserver.manager.LineListManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.CallOutRecordService;
 import com.guiji.calloutserver.service.CallService;
+import com.guiji.calloutserver.service.LineCountWService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -54,6 +55,10 @@ public class CallPlanDispatchHandler {
     LineListManager lineListManager;
     @Autowired
     FsAgentManager fsAgentManager;
+    @Autowired
+    LineCountWService lineCountWService;
+    @Autowired
+    StatisticReportHandler statisticReportHandler;
 
     //注册这个监听器
     @PostConstruct
@@ -176,6 +181,8 @@ public class CallPlanDispatchHandler {
         callOutPlanService.update(callPlan);
         dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
         callingCountManager.removeOneCall();
+        lineCountWService.addWCount(callPlan.getLineId(),callPlan.getOrgCode(),callPlan.getCustomerId());
+        statisticReportHandler.updateReportToday(callPlan);
     }
 
 

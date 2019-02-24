@@ -187,7 +187,9 @@ public class StatisticController {
         if(!typeList.contains("已接通")){
             typeList.add("已接通");
         }
-        typeList.add("其他");
+        if(!typeList.contains("其他")){
+            typeList.add("其他");
+        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date sDate = sdf.parse(startDate);
@@ -216,7 +218,7 @@ public class StatisticController {
                     String callDate = reasonCount.getCallDate();
                     if (callDate.equals(startDateStr)) {
                         String reason = reasonCount.getReason();
-                        if (typeList.contains(reason)) {
+                        if (typeList.contains(reason) && !reason.equals("其他")) {
                             map.put(reason, reasonCount.getCallCount());
                         } else {
                             int other = (int) map.get("其他");

@@ -14,6 +14,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
+import com.guiji.dispatch.exception.BaseException;
+import com.guiji.dispatch.util.DateTimeUtils;
+import com.guiji.dispatch.util.ResHandler;
+import com.guiji.dispatch.vo.TotalPlanCountVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -1457,19 +1463,50 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		int taskCount = dispatchPlanMapper.countByExample(ex);
 		int calledCount = dispatchPlanMapper.countByExample(ex1);
-		int Batchcount = 0;
+		int batchcount = 0;
 		if (!isSuperAdmin) {
 			DispatchPlanBatchExample batch = new DispatchPlanBatchExample();
 			batch.createCriteria().andOrgCodeLike(orgCode + "%");
-			Batchcount = dispatchPlanBatchMapper.countByExample(batch);
+			batchcount = dispatchPlanBatchMapper.countByExample(batch);
 		} else {
-			Batchcount = dispatchPlanBatchMapper.countByExample(new DispatchPlanBatchExample());
+			batchcount = dispatchPlanBatchMapper.countByExample(new DispatchPlanBatchExample());
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("taskCount", taskCount);
 		jsonObject.put("calledNums", calledCount);
-		jsonObject.put("Batchcount", Batchcount);
+		jsonObject.put("batchcount", batchcount);
 		return jsonObject;
+	}
+
+	/**
+	 * 按日期统计计划数量
+	 * @param userId
+	 * @param beginDate	: yyyy-MM-dd
+	 * @param endDate	: yyyy-MM-dd
+	 * @return
+	 */
+	@Override
+	public TotalPlanCountVo totalPlanCountByUserDate(String userId, String beginDate, String endDate) {
+		if(!StringUtils.isEmpty(userId)) {
+			SysUser user = ResHandler.getResObj(auth.getUserById(Long.valueOf(userId)));
+			String orgCode = null != user ? user.getOrgCode() : null;
+			if (!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)) {
+				endDate = DateTimeUtils.DEFAULT_END_TIME;
+			} else if (StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)) {
+				beginDate = DateTimeUtils.DEFAULT_BEGIN_TIME;
+			} else if (!StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)) {
+				beginDate += " " + DateTimeUtils.DEFAULT_DATE_START_TIME;
+				endDate += " " + DateTimeUtils.DEFAULT_DATE_END_TIME;
+			}
+
+			DispatchPlan plan = new DispatchPlan();
+			plan.setOrgCode(orgCode);
+			TotalPlanCountVo totalCount = dispatchPlanMapper.totalPlanCount(plan, beginDate, endDate);//
+			return totalCount;
+		}else{
+			throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
+					SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+		}
 	}
 
 	@Override

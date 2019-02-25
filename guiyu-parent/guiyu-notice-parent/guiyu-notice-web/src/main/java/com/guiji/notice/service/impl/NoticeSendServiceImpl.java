@@ -1,5 +1,6 @@
 package com.guiji.notice.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.guiji.auth.api.IAuth;
 import com.guiji.component.result.Result;
 import com.guiji.notice.dao.NoticeInfoMapper;
@@ -144,11 +145,11 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
 
                         sendMsgReqVO.setData(messageSend.getWeixinData());
-                        sendMsgReqVO.addData("keyword1.DATA",returnUser.getBody().getUsername());
-                        sendMsgReqVO.addData("keyword4.DATA",sdf.format(new Date()));
+                        sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
+                        sendMsgReqVO.addData("keyword4",sdf.format(new Date()));
 
                         weChatApi.send(sendMsgReqVO);
-                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,messageSend);
+                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));
                     }
                 }
             }

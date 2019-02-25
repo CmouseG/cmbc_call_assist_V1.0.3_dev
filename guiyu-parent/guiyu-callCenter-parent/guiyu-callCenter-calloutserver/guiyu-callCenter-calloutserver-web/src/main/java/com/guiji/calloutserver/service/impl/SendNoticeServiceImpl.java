@@ -145,7 +145,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setWeixinPagePath(weixinCallReordUrl+callId.toString());
         messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-        map.put("userName",new SendMsgReqVO.Item("客户号码："+phone+"，点击查看详细通话记录，及时进行客户跟进",null));
+        map.put("keyword2.DATA",new SendMsgReqVO.Item(intent+"类意向客户",null));
+        map.put("keyword3.DATA",new SendMsgReqVO.Item("客户号码："+phone+"，点击查看详细通话记录，及时进行客户跟进",null));
         messageSend.setWeixinData(map);
         iNoticeSend.sendMessage(messageSend);
     }
@@ -169,7 +170,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setWeixinPagePath(weixinReordListUrl);
         messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-        map.put("userName",new SendMsgReqVO.Item("您的外呼任务出现连续100通电话未接通，请点击查看",null));
+        map.put("keyword2.DATA",new SendMsgReqVO.Item("连续未接通警报",null));
+        map.put("keyword3.DATA",new SendMsgReqVO.Item("您的外呼任务出现连续100通电话未接通，请点击查看",null));
         messageSend.setWeixinData(map);
         iNoticeSend.sendMessage(messageSend);
     }
@@ -194,7 +196,8 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         messageSend.setWeixinPagePath(weixinReordListUrl);
         messageSend.setWeixinAppId(weixinAppid);
         HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-        map.put("userName",new SendMsgReqVO.Item("您的外呼任务出现连续100通电话线路报错的问题，请点击查看具体报错信息，并联系您的线路提供商",null));
+        map.put("keyword2.DATA",new SendMsgReqVO.Item("线路报错",null));
+        map.put("keyword3.DATA",new SendMsgReqVO.Item("您的外呼任务出现连续100通电话线路报错的问题，请点击查看具体报错信息，并联系您的线路提供商",null));
         messageSend.setWeixinData(map);
         iNoticeSend.sendMessage(messageSend);
     }

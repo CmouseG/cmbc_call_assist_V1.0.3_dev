@@ -10,11 +10,13 @@ callback_url_token=guiji_wechat_token
 encoding_aes_key=guijiHUizZiqnGAVEfqFYbYUstomVTo1eoL7iOZlfPP
 ```
 
-### 消息模板
 
-- 客服通知提醒
-```  
-    模板ID：sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s
+
+### 发送模板消息
+
+- 消息模板
+```
+   模板ID：sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s
     
     {{first.DATA}}
     客户名称：{{keyword1.DATA}}
@@ -24,7 +26,46 @@ encoding_aes_key=guijiHUizZiqnGAVEfqFYbYUstomVTo1eoL7iOZlfPP
     {{remark.DATA}}
 ```
 
-### 消息示例
+- 接口使用说明
+```  
+    使用说明：
+    调用接口 :  WeChatApi  Result.ReturnData<String> send(@RequestBody SendMsgReqVO sendMsgReqVO);
+    
+    必填字段：
+       openID "微信用户openID"
+       templateId 模板ID
+    示例：
+        sendMsgReqVO.setOpenID("XXXXX");
+        sendMsgReqVO.setTemplateId("sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s");
+    
+    示例：设置消息文案主体
+        sendMsgReqVO.addData("first", "你好！");
+        sendMsgReqVO.addData("keyword1", "用户1");
+        sendMsgReqVO.addData("keyword2", "A类意向客户");
+        sendMsgReqVO.addData("keyword3", "您的外呼任务已完成哦！请登录系统查看外呼结果");
+        sendMsgReqVO.addData("keyword4", "2019-01-30 15:52:10");
+        sendMsgReqVO.addData("remark", "通知结束");
+    用户收到消息：
+        你好！
+        客户名称：用户1
+        客服类型：A类意向客户
+        提醒内容：您的外呼任务已完成哦！请登录系统查看外呼结果
+        通知时间：2019-01-30 15:52:10
+        通知结束
+        
+    示例：设置页面跳转url
+    sendMsgReqVO.setUrl("www.bing.com");
+    
+    
+    示例：设置小程序(url和miniprogram都是非必填字段，若都不传则模板无跳转；若都传，会优先跳转至小程序。)
+    appid	是	所需跳转到的小程序appid（该小程序appid必须与发模板消息的公众号是绑定关联关系，暂不支持小游戏）
+    pagepath	否	所需跳转到小程序的具体页面路径，支持带参数,（示例index?foo=bar），暂不支持小游戏
+            
+            sendMsgReqVO.setAppId("XXXX");
+            sendMsgReqVO.setPagePath("/path/page");
+```
+
+### 消息场景
 
 
 ```

@@ -428,12 +428,9 @@ public class FsBotHandler {
                     }
 
                     if (callPlan.getAccurateIntent() == null) {
-                        if (!callLineAvailableManager.isAvailable(uuid)) { //线路不可用,设置为W
-                            log.info("线路是不可用的，设置意向标签为W,callId[{}]", uuid);
-                            callPlan.setAccurateIntent("W");
-                            if (callPlan.getReason() == null && hangUp != null) {
-                                callPlan.setReason(hangUp);
-                            }
+                        callPlan.setAccurateIntent("W");
+                        if (callPlan.getReason() == null && hangUp != null) {
+                            callPlan.setReason(hangUp);
                         }
                     }
 

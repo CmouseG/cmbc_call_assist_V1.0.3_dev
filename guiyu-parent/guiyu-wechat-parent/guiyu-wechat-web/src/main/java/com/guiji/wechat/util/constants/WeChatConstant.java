@@ -4,6 +4,8 @@ public class WeChatConstant {
 
     public static final String DEFAULT_SUCCESS = "success";
 
+    public static final String DEFAULT_SUBSCRIBE_REPLY = "欢迎关注硅语电话机器人，智能、高效、快捷，在此过程中，我们将竭诚为您服务。";
+
     public static final String PARAM_GRANT_TYPE = "grant_type";
 
     public static final String PARAM_APPID = "appid";

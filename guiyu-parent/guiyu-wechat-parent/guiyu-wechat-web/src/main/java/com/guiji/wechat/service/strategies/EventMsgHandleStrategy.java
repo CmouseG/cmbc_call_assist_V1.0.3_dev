@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static com.guiji.wechat.util.constants.CallbackParameterNameConstant.*;
 import static com.guiji.wechat.util.constants.RabbitMqConstant.USER_BIND_WECHAT_EXCHANGE;
+import static com.guiji.wechat.util.constants.WeChatConstant.DEFAULT_SUBSCRIBE_REPLY;
 import static com.guiji.wechat.util.constants.WeChatConstant.DEFAULT_SUCCESS;
 
 @Component("eventMsgHandleStrategy")
@@ -50,7 +51,7 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
             case SUBSCRIBE:
                 return handleSubscribeEvent(eventMsgReqDto);
             case SCAN:
-                return handleScanEvent(eventMsgReqDto);
+                return DEFAULT_SUCCESS;
             case UNSUBSCRIBE:
                 return DEFAULT_SUCCESS;// TODO: 19-2-25
             default:
@@ -65,22 +66,7 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
         sendUserBindWeChatMessage(eventMsgReqDto);
 
         BaseReply textReply = TextReply.build()
-                .setContent("欢迎关注！")// TODO: 19-2-25
-                .setToUserOpenId(eventMsgReqDto.getFromUserName())
-                .setWeChatOpenId(eventMsgReqDto.getToUserName());
-
-        return XmlUtil.objectToXml(textReply);
-    }
-
-    private String handleScanEvent(EventMsgReqDto eventMsgReqDto) {
-
-        logger.info("user scan event:{}", JSON.toJSONString(eventMsgReqDto));
-
-
-        sendUserBindWeChatMessage(eventMsgReqDto);
-
-        BaseReply textReply = TextReply.build()
-                .setContent("欢迎扫描！")// TODO: 19-2-25
+                .setContent(DEFAULT_SUBSCRIBE_REPLY)
                 .setToUserOpenId(eventMsgReqDto.getFromUserName())
                 .setWeChatOpenId(eventMsgReqDto.getToUserName());
 

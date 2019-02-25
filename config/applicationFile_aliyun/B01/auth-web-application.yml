@@ -86,8 +86,8 @@ ribbon:
     enabled: true
 
 weixin:
-  appid: wx017a03051262ec17  #跳转到的小程序appid
-  templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
+  appid: wx1558a28a6907c3e8  #跳转到的小程序appid
+  templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
   pagePath:
     callReordUrl: pages/detail/detail?id= #小程序通话详情页面
     reordListUrl: pages/list/list #小程序通话记录列表页面

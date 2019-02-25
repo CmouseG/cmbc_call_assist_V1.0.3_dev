@@ -133,6 +133,8 @@ public class RobotNextHelper {
 
                             aiResponse.setResponseTxt(sellbotResponse.getAnswer());
                             aiResponse.setAiResponseType(sellbotResponse.getEnd());
+                            aiResponse.setKeyWords(sellbotResponse.getKeywords());
+                            aiResponse.setWordSegmentResult(sellbotResponse.getWord_segment_result());
 
                             Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
                             Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
@@ -152,12 +154,8 @@ public class RobotNextHelper {
 
     public void dealWithResponse(AIResponse aiResponse,String agentGroupId) {
         String callId = aiResponse.getCallId();
-//        CallOutDetail callDetail = callOutDetailService.getLastDetailCustomer(callId);
-//
-//        if (callDetail == null || StringUtils.isNotBlank(callDetail.getBotAnswerText())) {
         CallOutDetail callDetail = new CallOutDetail();
         callDetail.setCallId(new BigInteger(callId));
-//            callDetail.setCallDetailId(IdGenUtil.uuid());
         setDetailValues(aiResponse, callDetail, callId, agentGroupId);
         callOutDetailService.save(callDetail);
 
@@ -165,16 +163,6 @@ public class RobotNextHelper {
         callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
         callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
         callOutDetailRecordService.save(callDetailRecord);
-//        } else {
-//            setDetailValues(aiResponse, callDetail, callId);
-//            callOutDetailService.update(callDetail);
-//
-//            CallOutDetailRecord callDetailRecord = new CallOutDetailRecord();
-//            callDetailRecord.setCallDetailId(callDetail.getCallDetailId());
-//            callDetailRecord.setBotRecordFile(aiResponse.getWavFile());
-//            callOutDetailRecordService.update(callDetailRecord);
-//        }
-
     }
 
 
@@ -201,6 +189,8 @@ public class RobotNextHelper {
         callDetail.setBotAnswerTime(new Date());
         callDetail.setAccurateIntent(aiResponse.getAccurateIntent());
         callDetail.setReason(aiResponse.getReason());
+        callDetail.setKeywords(aiResponse.getKeyWords());
+        callDetail.setWordSegmentResult(aiResponse.getWordSegmentResult());
     }
 
 

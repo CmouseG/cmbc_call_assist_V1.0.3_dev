@@ -1135,6 +1135,146 @@ public class CallOutDetailExample {
             addCriterion("isupdate not between", value1, value2, "isupdate");
             return (Criteria) this;
         }
+
+        public Criteria andWordSegmentResultIsNull() {
+            addCriterion("word_segment_result is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultIsNotNull() {
+            addCriterion("word_segment_result is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultEqualTo(String value) {
+            addCriterion("word_segment_result =", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultNotEqualTo(String value) {
+            addCriterion("word_segment_result <>", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultGreaterThan(String value) {
+            addCriterion("word_segment_result >", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultGreaterThanOrEqualTo(String value) {
+            addCriterion("word_segment_result >=", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultLessThan(String value) {
+            addCriterion("word_segment_result <", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultLessThanOrEqualTo(String value) {
+            addCriterion("word_segment_result <=", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultLike(String value) {
+            addCriterion("word_segment_result like", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultNotLike(String value) {
+            addCriterion("word_segment_result not like", value, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultIn(List<String> values) {
+            addCriterion("word_segment_result in", values, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultNotIn(List<String> values) {
+            addCriterion("word_segment_result not in", values, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultBetween(String value1, String value2) {
+            addCriterion("word_segment_result between", value1, value2, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andWordSegmentResultNotBetween(String value1, String value2) {
+            addCriterion("word_segment_result not between", value1, value2, "wordSegmentResult");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsIsNull() {
+            addCriterion("keywords is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsIsNotNull() {
+            addCriterion("keywords is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsEqualTo(String value) {
+            addCriterion("keywords =", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsNotEqualTo(String value) {
+            addCriterion("keywords <>", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsGreaterThan(String value) {
+            addCriterion("keywords >", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsGreaterThanOrEqualTo(String value) {
+            addCriterion("keywords >=", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsLessThan(String value) {
+            addCriterion("keywords <", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsLessThanOrEqualTo(String value) {
+            addCriterion("keywords <=", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsLike(String value) {
+            addCriterion("keywords like", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsNotLike(String value) {
+            addCriterion("keywords not like", value, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsIn(List<String> values) {
+            addCriterion("keywords in", values, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsNotIn(List<String> values) {
+            addCriterion("keywords not in", values, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsBetween(String value1, String value2) {
+            addCriterion("keywords between", value1, value2, "keywords");
+            return (Criteria) this;
+        }
+
+        public Criteria andKeywordsNotBetween(String value1, String value2) {
+            addCriterion("keywords not between", value1, value2, "keywords");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

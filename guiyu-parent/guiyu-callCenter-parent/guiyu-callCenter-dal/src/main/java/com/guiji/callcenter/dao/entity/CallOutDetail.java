@@ -37,6 +37,10 @@ public class CallOutDetail implements Serializable {
 
     private Integer isupdate;
 
+    private String wordSegmentResult;
+
+    private String keywords;
+
     private static final long serialVersionUID = 1L;
 
     public BigInteger getCallDetailId() {
@@ -167,6 +171,22 @@ public class CallOutDetail implements Serializable {
         this.isupdate = isupdate;
     }
 
+    public String getWordSegmentResult() {
+        return wordSegmentResult;
+    }
+
+    public void setWordSegmentResult(String wordSegmentResult) {
+        this.wordSegmentResult = wordSegmentResult == null ? null : wordSegmentResult.trim();
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords == null ? null : keywords.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -189,6 +209,8 @@ public class CallOutDetail implements Serializable {
         sb.append(", totalDuration=").append(totalDuration);
         sb.append(", shardingValue=").append(shardingValue);
         sb.append(", isupdate=").append(isupdate);
+        sb.append(", wordSegmentResult=").append(wordSegmentResult);
+        sb.append(", keywords=").append(keywords);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -6,8 +6,8 @@ spring:
   # REDIS (RedisProperties)
   redis:
     database: 0
-   # host: 192.168.1.81
-    host: localhost
+    host: 192.168.1.81
+   # host: localhost
     password: 123456
     port: 6379  
     pool:
@@ -53,6 +53,7 @@ eureka:
        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 mybatis:
   mapper-locations: classpath*:mappers/**/*.xml
+  config-location: classpath:config/mybatis-config.xml
 jdbc:
   type: mysql
 ribbon:
@@ -69,7 +70,7 @@ properties:
 jdbc_driver0: 
       com.mysql.jdbc.Driver
 jdbc_url0: 
-     jdbc:mysql://192.168.1.57:3306/guiyu_dispatch?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+     jdbc:mysql://192.168.1.81:3306/guiyu_dispatch?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0:
      root
 jdbc_password0: 
@@ -81,11 +82,17 @@ xxl:
   job:
     admin:
       ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.57:18016/xxl-job-admin
+      addresses: http://192.168.1.78:18016/xxl-job-admin
     executor:
       ip:
       port: 9031
       logpath: /home/logs/guiyu-dispatch-web
       logretentiondays: -1
     accessToken:
- 
+
+weixin:
+  appid: wx1558a28a6907c3e8  #跳转到的小程序appid
+  templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
+  pagePath:
+    mainUrl:  #小程序通话详情页面
+    reordListUrl:  #小程序通话记录列表页面

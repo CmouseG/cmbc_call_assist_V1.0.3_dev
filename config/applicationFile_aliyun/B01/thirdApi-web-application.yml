@@ -1,0 +1,81 @@
+server:
+  port: 18019
+#myconfig
+spring:
+  application:
+    name: guiyu-thirdApi-web
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://192.168.1.57:3306/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: base
+    password: base@1234
+    driver-class-name: com.mysql.jdbc.Driver
+    minIdle: 5
+    maxActive: 200
+    initialSize: 5
+    timeBetweenEvictionRunsMillis: 3000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 'ZTM' FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+  redis:
+    database: 0 # Redis数据库索引（默认为0）
+    host: 172.16.167.215
+    password: Toolwiz.admin.2017
+    port: 6379
+    timeout: 5000 # 连接超时时间（毫秒）
+    pool:
+      max-active: 400 # 连接池最大连接数（使用负值表示没有限制
+      max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-idle: 300 # 连接池中的最大空闲连接
+      min-idle: 100 # 连接池中的最小空闲连接
+  rabbitmq:
+    host: 172.16.167.215
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: Guiyu.admin.2017
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
+
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
+properties:
+  error: properties/error.properties
+#注册中心配置      
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+       # defaultZone: http://192.168.1.78:18001/eureka/
+      instance:
+          status-page-url: http://localhost:18000/eureka//swagger-ui.html
+##网关地址
+gateway:
+   host: http://guiyu-cloud-zuul:18000/
+
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true
+

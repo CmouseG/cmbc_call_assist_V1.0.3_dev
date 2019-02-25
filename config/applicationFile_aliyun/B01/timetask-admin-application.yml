@@ -1,0 +1,41 @@
+server:
+    context-path: /xxl-job-admin
+    port: 18016
+spring:
+    datasource:
+        driver-class-name: com.mysql.jdbc.Driver
+        password: job@1234
+        tomcat:
+            max-active: 30
+            max-wait: 10000
+            test-on-borrow: true
+        type: org.apache.tomcat.jdbc.pool.DataSource
+        url: jdbc:mysql://172.16.167.215:3311/xxl-job?Unicode=true&characterEncoding=UTF-8
+        username: job
+    freemarker:
+        charset: UTF-8
+        request-context-attribute: request
+        settings:
+            number_format: 0.##########
+        suffix: .ftl
+        templateLoaderPath: classpath:/templates/
+    mvc:
+        static-path-pattern: /static/**
+    resources:
+        static-locations: classpath:/static/
+mybatis:
+    mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
+xxl:
+    job:
+        accessToken: ''
+        i18n: ''
+        login:
+            password: 123456
+            username: admin
+        mail:
+            host: ''
+            password: ''
+            port: ''
+            sendNick: ''
+            ssl: false
+            username: ''

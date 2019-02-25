@@ -33,6 +33,8 @@ public class LineCountWServiceImpl implements LineCountWService {
                         redisUtil.set(countWKey,0);
                         log.info("发起呼叫前，产生线路报错,linId[{}],count[{}],orgCode[{]]",lineId,countWValue,orgCode);
                         sendNoticeService.sendWNotice(userId);
+                    }else{
+                        redisUtil.incr(countWKey,1);
                     }
                 }
             }else{

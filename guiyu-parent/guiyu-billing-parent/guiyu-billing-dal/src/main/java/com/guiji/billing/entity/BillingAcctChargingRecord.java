@@ -77,9 +77,14 @@ public class BillingAcctChargingRecord extends BaseBean {
     private String userChargingId;
 
     /**
-     * 消费金额
+     * 扣费金额
      */
     private BigDecimal amount;
+
+    /**
+     * 计费金额
+     */
+    private BigDecimal chargingAmount;
 
     /**
      * 消费前企业账户可用金额
@@ -279,5 +284,13 @@ public class BillingAcctChargingRecord extends BaseBean {
 
     public void setAttachmentSnapshotUrl(String attachmentSnapshotUrl) {
         this.attachmentSnapshotUrl = attachmentSnapshotUrl;
+    }
+
+    public BigDecimal getChargingAmount() {
+        return chargingAmount;
+    }
+
+    public void setChargingAmount(BigDecimal chargingAmount) {
+        this.chargingAmount = chargingAmount;
     }
 }

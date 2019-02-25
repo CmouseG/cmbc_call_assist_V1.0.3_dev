@@ -1,5 +1,6 @@
 package com.guiji.notice.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.guiji.auth.api.IAuth;
 import com.guiji.component.result.Result;
 import com.guiji.notice.dao.NoticeInfoMapper;
@@ -13,6 +14,7 @@ import com.guiji.notice.entity.MessageSend;
 import com.guiji.notice.service.NoticeSendService;
 import com.guiji.notice.service.SendEmailService;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.utils.BeanUtil;
 import com.guiji.wechat.api.WeChatApi;
@@ -22,13 +24,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class NoticeSendServiceImpl implements NoticeSendService {
 
     private final Logger logger = LoggerFactory.getLogger(NoticeSendServiceImpl.class);
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     NoticeInfoMapper noticeInfoMapper;
@@ -129,18 +134,30 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
+                        Result.ReturnData<SysUser> returnUser = auth.getUserById(userId);
                         String openId = returnData.getBody().getWechatOpenid();
                         SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
 
                         sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
                         sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
                         sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
-                        sendMsgReqVO.setData(messageSend.getWeixinData());
                         sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
                         sendMsgReqVO.setOpenID(openId);
                         sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
+
+                        HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
+                        if(data!=null){
+                            sendMsgReqVO.setData(data);
+                            if(data.get("keyword1")==null){
+                                sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
+                            }
+                            if(data.get("keyword4")==null) {
+                                sendMsgReqVO.addData("keyword4", sdf.format(new Date()));
+                            }
+                        }
+
                         weChatApi.send(sendMsgReqVO);
-                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,messageSend);
+                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));
                     }
                 }
             }

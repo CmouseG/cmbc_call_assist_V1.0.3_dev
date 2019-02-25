@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -144,9 +145,16 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         sendMsgReqVO.setOpenID(openId);
                         sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
 
-                        sendMsgReqVO.setData(messageSend.getWeixinData());
-                        sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
-                        sendMsgReqVO.addData("keyword4",sdf.format(new Date()));
+                        HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
+                        if(data!=null){
+                            sendMsgReqVO.setData(data);
+                            if(data.get("keyword1")==null){
+                                sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
+                            }
+                            if(data.get("keyword4")==null) {
+                                sendMsgReqVO.addData("keyword4", sdf.format(new Date()));
+                            }
+                        }
 
                         weChatApi.send(sendMsgReqVO);
                         logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));

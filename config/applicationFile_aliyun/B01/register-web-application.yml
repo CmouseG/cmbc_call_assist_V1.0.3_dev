@@ -1,0 +1,38 @@
+server:
+  port: 18001
+spring:
+  application:
+    name: guiyu-cloud-registeration
+eureka:
+  instance:
+    hostname: guiyu-cloud-registeration
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    healthcheck:
+      enabled: true
+  server:
+  #### 清理间隔（单位毫秒，默认是60*1000），开发环境设置如下可快速移除不可用的服务
+    eviction-interval-timer-in-ms: 5000
+    enable-self-preservation: false
+###actuator监控点 start####
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+##默认情况下很多端点是不允许访问的，会返回401:Unauthorized
+management:
+  security:
+    enabled: false
+###actuator监控点 end####
+
+#超时设置
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true

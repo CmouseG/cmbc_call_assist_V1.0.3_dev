@@ -1,0 +1,32 @@
+server:
+  port: 18003
+spring:
+  application:
+    name: guiyu-cloud-monitor
+zipkin:
+  collector:
+    rabbitmq:
+      addresses: 172.16.167.215:5672
+      virtual-host: /
+      username: guiyu
+      password: Guiyu.admin.2017
+      queue: zipkin
+eureka:  
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
+turbine:
+  app-config-list: micro-a-service
+  cluster-name-expression: "'default'"

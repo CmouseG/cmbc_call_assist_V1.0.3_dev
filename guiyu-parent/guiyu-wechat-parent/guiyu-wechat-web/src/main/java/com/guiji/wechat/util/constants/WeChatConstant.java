@@ -2,6 +2,8 @@ package com.guiji.wechat.util.constants;
 
 public class WeChatConstant {
 
+    public static final String DEFAULT_SUCCESS = "success";
+
     public static final String PARAM_GRANT_TYPE = "grant_type";
 
     public static final String PARAM_APPID = "appid";

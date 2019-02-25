@@ -641,6 +641,7 @@
       type              ,
       user_charging_id  ,
       amount            ,
+      charging_amount   ,
       src_amount        ,
       to_amount         ,
       evidence          ,
@@ -744,6 +745,9 @@
       <if test="amount != null">
         amount,
       </if>
+      <if test="chargingAmount != null">
+        charging_amount,
+      </if>
       <if test="srcAmount != null">
         src_amount,
       </if>
@@ -821,6 +825,9 @@
       <if test="amount != null">
         #{amount,jdbcType=DECIMAL},
       </if>
+      <if test="chargingAmount != null">
+        #{chargingAmount},
+      </if>
       <if test="srcAmount != null">
         #{srcAmount,jdbcType=DECIMAL},
       </if>
@@ -865,6 +872,7 @@
       type              ,
       user_charging_id  ,
       amount            ,
+      charging_amount   ,
       src_amount        ,
       to_amount         ,
       evidence          ,

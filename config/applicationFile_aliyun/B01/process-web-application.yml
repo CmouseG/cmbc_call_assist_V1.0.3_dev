@@ -1,0 +1,73 @@
+server:
+  port: 18081
+spring:
+  application:
+    name: guiyu-process-web
+  datasource:
+    url: jdbc:mysql://172.16.167.215:3311/guiyu_base?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: base
+    password: base@1234
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    database: 1
+    host: 172.16.167.215
+    password: Toolwiz.admin.2017
+    port: 6379
+    pool:
+      max-active: 400
+      max-wait: -1
+      min-idle: 100
+      max-idle: 300
+  rabbitmq:
+    host: 172.16.167.215
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: Guiyu.admin.2017
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
+
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
+
+  #数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+properties:
+  error: properties/error.properties
+rabbit:
+  general:
+    fanout:                               #需要绑定交换机与队列关系
+      exchange: fanoutPublishBotstence|fanoutRestoreModel  #交换机名称
+      queue: fanoutPublishBotstence.SELLBOT,fanoutPublishBotstence.FREESWITCH,fanoutPublishBotstence.ROBOT|fanoutRestoreModel.TTS #队列名称
+#xxl-job admin中心配置
+xxl:
+  job:
+    admin:
+      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://172.16.167.213:18016/xxl-job-admin
+    executor:
+      ip: 172.16.167.213
+      port: 9987
+      logpath: /home/logs/guiyu-process-web
+      logretentiondays: -1
+    accessToken:

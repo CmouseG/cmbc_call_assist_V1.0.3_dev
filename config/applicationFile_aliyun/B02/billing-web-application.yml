@@ -16,7 +16,7 @@ spring:
   #数据源
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_billing?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    url: jdbc:mysql://172.16.167.215:3311/guiyu_billing?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: billing
     password: billing@1234
     driver-class-name: com.mysql.jdbc.Driver
@@ -30,12 +30,13 @@ spring:
     testOnBorrow: false
     testOnReturn: false
 
+
   #redis
   redis:
     database: 0 # Redis数据库索引（默认为0）
-    host: 192.168.1.81 # Redis服务器地址
+    host: 172.16.167.215 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
-    password: 123456 # Redis服务器连接密码（默认为空）
+    password: Toolwiz.admin.2017 # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
     pool:
       max-active: 400 # 连接池最大连接数（使用负值表示没有限制
@@ -44,11 +45,11 @@ spring:
       min-idle: 100 # 连接池中的最小空闲连接  
   #MQ
   rabbitmq:
-    host: 192.168.1.81
+    host: 172.16.167.215 
     port: 5672
     virtual-host: /
     username: guiyu
-    password: 123456
+    password: Guiyu.admin.2017
 
   zipkin:
     rabbitmq:
@@ -97,7 +98,7 @@ eureka:
   client:
       service-url:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
-                    #http://192.168.1.78:18001/eureka/
+                    #http://192.168.1.124:18001/eureka/
       instance:
           status-page-url: http://localhost:18000/eureka//swagger-ui.html
 ###网关地址
@@ -129,9 +130,9 @@ xxl:
   job:
     admin:
       ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.78:18016/xxl-job-admin
+      addresses: http://172.16.167.213:18016/xxl-job-admin
     executor:
-      ip:
+      ip: 172.16.167.214
       port: 9092
       logpath: /home/logs/guiyu-billing-web
       logretentiondays: -1
@@ -145,10 +146,10 @@ fdfs:
     width: 150
     height: 150
   trackerList:            #TrackerList参数,支持多个
-    - 192.168.1.83:22122
+    - 172.16.167.214:22122
   pool:
     jmx-enabled: false
-  webServerUrl: http://192.168.1.83:8080/
+  webServerUrl: http://tel.guiji.ai:8080/
 
 ###日志
 #logging:
@@ -157,6 +158,7 @@ fdfs:
 #    org:
 #      springframework:
 #        web: info
+
 
 
 ##微信
@@ -173,14 +175,6 @@ weixin:
   recharge:
     appid: wx017a03051262ec17  #跳转到的小程序appid
     templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
-    pagePath:
-      callReordUrl:
-      reordListUrl:
-
-  #有效期到期
-  expireDay:
-    appid:   #跳转到的小程序appid
-    templateId:   #模板id
     pagePath:
       callReordUrl:
       reordListUrl:

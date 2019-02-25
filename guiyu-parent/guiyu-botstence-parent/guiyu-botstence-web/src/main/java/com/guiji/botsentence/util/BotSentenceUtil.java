@@ -458,15 +458,36 @@ public class BotSentenceUtil {
             logger.info("执行命令结果: " + stringBuilder.toString());
             
             //从视频信息中解析时长
-            String regexDuration = "Duration: (.*?), bitrate: (\\d*) kb\\/s";
+            /*String regexDuration = "Duration: (.*?), bitrate: (\\d*) kb\\/s";
             Pattern pattern = Pattern.compile(regexDuration);
             Matcher m = pattern.matcher(stringBuilder.toString());
             if (m.find()) {
                 int time = getTimelen(m.group(1));
                 logger.info("解析获取录音时长：" + time + "s" + ", 比特率：" + m.group(2) + "kb/s");
                 return time;
+            }*/
+            //先获取录音时长
+    		//StringBuilder stringBuilder = new StringBuilder();
+            //stringBuilder = new StringBuilder("ffmpeg version 2.8.15 Copyright (c) 2000-2018 the FFmpeg developers  built with gcc 4.8.5 (GCC) 20150623 (Red Hat 4.8.5-28)  configuration: --prefix=/usr --bindir=/usr/bin --datadir=/usr/share/ffmpeg --incdir=/usr/include/ffmpeg --libdir=/usr/lib64 --mandir=/usr/share/man --arch=x86_64 --optflags='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic' --extra-ldflags='-Wl,-z,relro ' --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libvo-amrwbenc --enable-version3 --enable-bzlib --disable-crystalhd --enable-gnutls --enable-ladspa --enable-libass --enable-libcdio --enable-libdc1394 --disable-indev=jack --enable-libfreetype --enable-libgsm --enable-libmp3lame --enable-openal --enable-libopenjpeg --enable-libopus --enable-libpulse --enable-libschroedinger --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libvorbis --enable-libv4l2 --enable-libx264 --enable-libx265 --enable-libxvid --enable-x11grab --enable-avfilter --enable-avresample --enable-postproc --enable-pthreads --disable-static --enable-shared --enable-gpl --disable-debug --disable-stripping --shlibdir=/usr/lib64 --enable-runtime-cpudetect  libavutil      54. 31.100 / 54. 31.100  libavcodec     56. 60.100 / 56. 60.100  libavformat    56. 40.101 / 56. 40.101  libavdevice    56.  4.100 / 56.  4.100  libavfilter     5. 40.101 /  5. 40.101  libavresample   2.  1.  0 /  2.  1.  0  libswscale      3.  1.101 /  3.  1.101  libswresample   1.  2.101 /  1.  2.101  libpostproc    53.  3.100 / 53.  3.100Guessed Channel Layout for  Input Stream #0.0 : monoInput #0, wav, from '/home/botsentence/fileTemp/168716_1-15510664217987672122148787305737wav':  Duration: 00:00:06.18, bitrate: 128 kb/s    Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 8000 Hz, 1 channels, s16, 128 kb/sAt least one output file must be specified");
+            
+            String regexDuration = "Duration: (.*?),";
+            Pattern pattern = Pattern.compile(regexDuration);
+            Matcher m = pattern.matcher(stringBuilder.toString());
+            int time = 0;
+            if (m.find()) {
+                time = getTimelen(m.group(1));
+                logger.info("解析获取音频时长：" + time + "s");
+                
             }
-            return 0;
+            
+            String regexDuration2 = "bitrate: (\\d*) kb\\/s";
+            Pattern pattern2 = Pattern.compile(regexDuration2);
+            Matcher m2 = pattern2.matcher(stringBuilder.toString());
+            if (m2.find()) {
+                logger.info("解析获取音频比特率：" + m2.group(1) + "kb/s");
+            }
+            
+            return time;
     	}catch(Exception e) {
     		logger.error("获取录音时长异常....", e);
     	}

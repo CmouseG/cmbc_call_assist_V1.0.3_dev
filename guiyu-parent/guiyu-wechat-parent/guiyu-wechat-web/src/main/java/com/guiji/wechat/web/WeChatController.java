@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -73,9 +72,15 @@ public class WeChatController implements WeChatApi {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatProperty.getQrCodeShowUrl())
                 .queryParam(WeChatConstant.PARAM_TICKET, qrCodeRpsVO.getTicket());
 
-        ResponseEntity<byte[]> response = restTemplate.exchange(builder.build().encode().toUri().toString(), HttpMethod.GET, httpEntity, byte[].class);
+        try{
+            ResponseEntity<byte[]> response = restTemplate.exchange(builder.build().encode().toUri().toString(), HttpMethod.GET, httpEntity, byte[].class);
+            logger.info("weChat get qrCode image response{}", response.toString());
+            qrCodeRpsVO.setQrCodeBytes(response.getBody());
 
-        qrCodeRpsVO.setQrCodeBytes(response.getBody());
+        }catch (Exception e){
+            logger.error("weChat get qrCode image error{}", e);
+            return Result.error("微信接口请求失败，请稍侯重试!");
+        }
 
         return Result.ok(qrCodeRpsVO);
     }

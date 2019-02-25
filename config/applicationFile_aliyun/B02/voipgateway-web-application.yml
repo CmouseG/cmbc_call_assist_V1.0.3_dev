@@ -1,11 +1,11 @@
 server:
-  port: 18093
+  port: 18094
 spring:
   application:
-    name: guiyu-linemarket-web
+    name: guiyu-voipgateway-web
   datasource:  
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.1.81:3306/guiyu_linemarket?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    url: jdbc:mysql://172.16.168.84:3306/dcmsdb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver 
@@ -18,23 +18,6 @@ spring:
     testWhileIdle: true  
     testOnBorrow: false  
     testOnReturn: false
-  redis:
-    database: 0 # Redis数据库索引（默认为0）
-    host: 192.168.1.78 # Redis服务器地址
-    port: 6379 # Redis服务器连接端口
-    password: 123456 # Redis服务器连接密码（默认为空）
-    timeout: 5000 # 连接超时时间（毫秒）
-    pool:
-      max-active: 400 # 连接池最大连接数（使用负值表示没有限制
-      max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
-      max-idle: 300 # 连接池中的最大空闲连接
-      min-idle: 100 # 连接池中的最小空闲连接  
-  rabbitmq:
-    host: 192.168.1.81
-    port: 5672
-    virtual-host: /
-    username: guiyu
-    password: 123456
   zipkin:
     rabbitmq:
       queue: zipkin
@@ -50,7 +33,7 @@ management:
   security:
     enabled: false
 mybatis:   
-  mapperLocations: classpath*:mappers/**/*.xml  
+  mapperLocations: classpath*:mappers/*.xml  
   config-location: classpath:config/mybatis-config.xml      
 
 properties:
@@ -80,15 +63,3 @@ ribbon:
   MaxAutoRetriesNextServer: 1  #切换实例的重试次数
   eureka:
     enabled: true
-#xxl-job admin中心配置
-xxl:
-  job:
-    admin:
-      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
-      addresses: http://192.168.1.78:18016/xxl-job-admin
-    executor:
-      ip:
-      port: 9093
-      logpath: /home/logs/guiyu-linemarket-web
-      logretentiondays: -1
-    accessToken:          

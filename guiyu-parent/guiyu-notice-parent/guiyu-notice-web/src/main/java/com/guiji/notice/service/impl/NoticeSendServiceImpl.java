@@ -13,6 +13,7 @@ import com.guiji.notice.entity.MessageSend;
 import com.guiji.notice.service.NoticeSendService;
 import com.guiji.notice.service.SendEmailService;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.utils.BeanUtil;
 import com.guiji.wechat.api.WeChatApi;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import java.util.List;
 public class NoticeSendServiceImpl implements NoticeSendService {
 
     private final Logger logger = LoggerFactory.getLogger(NoticeSendServiceImpl.class);
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     NoticeInfoMapper noticeInfoMapper;
@@ -129,16 +132,21 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
+                        Result.ReturnData<SysUser> returnUser = auth.getUserById(userId);
                         String openId = returnData.getBody().getWechatOpenid();
                         SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
 
                         sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
                         sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
                         sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
-                        sendMsgReqVO.setData(messageSend.getWeixinData());
                         sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
                         sendMsgReqVO.setOpenID(openId);
                         sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
+
+                        sendMsgReqVO.setData(messageSend.getWeixinData());
+                        sendMsgReqVO.addData("keyword1.DATA",returnUser.getBody().getUsername());
+                        sendMsgReqVO.addData("keyword4.DATA",sdf.format(new Date()));
+
                         weChatApi.send(sendMsgReqVO);
                         logger.info("send weixin---> openId[{}],messageSend[{}]",openId,messageSend);
                     }

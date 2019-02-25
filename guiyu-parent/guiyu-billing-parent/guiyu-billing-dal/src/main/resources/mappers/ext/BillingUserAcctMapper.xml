@@ -1044,7 +1044,7 @@
       AND set_key = #{setKey}
   </update>
 
-  <update id="">
+  <update id="delUserAcctSet">
     UPDATE billing_acct_set
     SET del_flag = 1,
         update_time = #{updateTime}

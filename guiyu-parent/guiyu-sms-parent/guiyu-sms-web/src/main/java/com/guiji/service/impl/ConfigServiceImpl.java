@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.service.ConfigService;
@@ -180,7 +181,11 @@ public class ConfigServiceImpl implements ConfigService
 								.andOrgCodeLike(orgCode+"%")
 								.andRunStatusEqualTo(1)
 								.andTemplateIdEqualTo(templateId);
-		return configMapper.selectByExampleWithBLOBs(example).get(0);
+		List<SmsConfig> configs = configMapper.selectByExampleWithBLOBs(example);
+		if (configs == null || configs.isEmpty()){
+			throw new GuiyuException("没有短信配置，不发送短信!");
+		}
+		return configs.get(0);
 	}
 	
 	public String getUserName(String userId) {

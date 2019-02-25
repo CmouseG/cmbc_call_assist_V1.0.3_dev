@@ -83,10 +83,7 @@ public class ReqHandler
 		Map<String, Object> resultMap = new HashMap<>();
 		// 获取配置
 		SmsConfig config = configService.getConfigToSend(sendMReq.getIntentionTag(),sendMReq.getOrgCode(),sendMReq.getTemplateId());
-		if (config == null){
-			logger.info("没有短信配置，不发送短信");
-			throw new GuiyuException("没有短信配置，不发送短信");
-		} else if (config.getAuditingStatus() == 0){
+		if (config.getAuditingStatus() == 0){
 			logger.info("短信内容未审核，暂不能发送短信");
 			throw new GuiyuException("短信内容未审核，暂不能发送短信");
 		} else if (config.getRunStatus() == 0){

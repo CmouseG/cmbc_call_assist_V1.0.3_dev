@@ -133,15 +133,12 @@ public class FsBotHandler {
                 callPlan.setCallState(ECallState.answer.ordinal());
             }
             callPlan.setAnswerTime(new Date());
-//            callPlan.setAccurateIntent(aiResponse.getAccurateIntent());
             callPlan.setIsAnswer(1);
             callOutPlanService.update(callPlan);
 
             //插入通话记录详情
-//            String detailID = IdGenUtil.uuid();
             CallOutDetail callDetail = new CallOutDetail();
             callDetail.setCallId(callPlan.getCallId());
-//            callDetail.setCallDetailId(detailID);
             callDetail.setAiDuration(Math.toIntExact(endTime - startTime));
             callDetail.setTotalDuration(callDetail.getAiDuration());
             callDetail.setBotAnswerText(aiResponse.getResponseTxt());

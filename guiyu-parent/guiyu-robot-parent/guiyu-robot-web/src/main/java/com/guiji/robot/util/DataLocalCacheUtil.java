@@ -147,7 +147,7 @@ public class DataLocalCacheUtil {
 	
 	
 	/**
-	 * 查询用户所有角色信息
+	 * 查询模板
 	 * @param userId
 	 * @return
 	 */
@@ -163,7 +163,7 @@ public class DataLocalCacheUtil {
 				hsReplace = aiCacheService.queyHsReplace(templateId);
 				if(hsReplace != null) {
 					//缓存1小时有效
-					LocalCacheUtil.set("KEY_TEMPLATE"+templateId, hsReplace, LocalCacheUtil.HARF_HOUR);
+					LocalCacheUtil.set("KEY_TEMPLATE"+templateId, hsReplace, LocalCacheUtil.TEN_MIN);
 					return hsReplace;
 				}else {
 					log.error("话术模板ID:{},查询不到模板信息",templateId);

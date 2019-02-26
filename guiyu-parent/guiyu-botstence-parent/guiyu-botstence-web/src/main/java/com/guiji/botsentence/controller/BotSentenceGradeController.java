@@ -108,6 +108,7 @@ public class BotSentenceGradeController {
 			BotSentenceGrade grade = botSentenceGradeService.getBotSentenceGrade(processId);
 			if(null == grade) {
 				grade = new BotSentenceGrade();
+				grade.setInitStat("D");//设置默认意向
 				grade.setCrtTime(new Date(System.currentTimeMillis()));
 				grade.setCrtUser(userId);
 				grade.setProcessId(processId);
@@ -185,6 +186,7 @@ public class BotSentenceGradeController {
 							vo.setRuleNo(ruleNo);
 							vo.setRemark(list.get(0).getRemark());
 							vo.setEvaluate(evaluate);
+							vo.setInitStat(grade.getInitStat());
 							results.add(vo);
 						}
 					}
@@ -325,6 +327,17 @@ public class BotSentenceGradeController {
 		
 		//更新话术流程状态
 		botSentenceProcessService.updateProcessState(processId, userId);
+	}
+	
+	@RequestMapping(value="saveInitStat")
+	public ServerResult saveInitStat(@JsonParam String processId, @JsonParam String initStat) {
+		BotSentenceGrade grade = botSentenceGradeService.getBotSentenceGrade(processId);
+		if(null == grade) {
+			throw new CommonException("请先维护意向标签!");
+		}
+		grade.setInitStat(initStat);
+		botSentenceGradeMapper.updateByPrimaryKey(grade);
+		return ServerResult.createBySuccess();
 	}
 	
 }

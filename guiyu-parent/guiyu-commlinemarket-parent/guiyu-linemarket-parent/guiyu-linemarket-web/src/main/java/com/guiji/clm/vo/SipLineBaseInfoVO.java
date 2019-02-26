@@ -12,6 +12,8 @@ import lombok.Data;
 */
 @Data
 public class SipLineBaseInfoVO extends SipLineBaseInfo{
+	//线路分配企业名称
+	private String belongOrgName;
 	//线路归属
 	private String lineOwner;
 	//外显归属地名称

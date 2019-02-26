@@ -1172,6 +1172,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 			statMap.put("show", "");
 			statMap.put("max_conversation_count", 12);
 			statMap.put("stat_order", BotSentenceUtil.StringToList(grade.getStatOrder()));
+			statMap.put("init_stat", grade.getInitStat());
 		}
 		
 		/*List<String> ruleNoList = botSentenceGradeRuleExtMapper.queryDistinctProcessId(processId);

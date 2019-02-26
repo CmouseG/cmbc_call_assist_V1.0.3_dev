@@ -6,5 +6,5 @@ import com.guiji.fsmanager.entity.SimCardVO;
 public interface ISimCardService {
      FsSipVO createGateway(SimCardVO simCardVO);
 
-     Boolean deleteGateway(String gatewayId) ;
+     boolean deleteGateway(String gatewayId) ;
 }

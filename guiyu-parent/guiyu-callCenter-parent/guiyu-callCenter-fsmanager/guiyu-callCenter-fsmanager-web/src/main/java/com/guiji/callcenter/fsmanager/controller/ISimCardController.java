@@ -31,11 +31,10 @@ public class ISimCardController implements ISimCard {
 
     @Override
     public Result.ReturnData<Boolean> deleteGateway(@PathVariable(value = "gatewayId") String gatewayId) {
-        if (StringUtils.isBlank(gatewayId)){
+        if (StringUtils.isBlank(gatewayId)) {
             log.info("删除sim卡网关请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
-        iSimCardService.deleteGateway(gatewayId);
-        return Result.ok();
+        return Result.ok(iSimCardService.deleteGateway(gatewayId));
     }
 }

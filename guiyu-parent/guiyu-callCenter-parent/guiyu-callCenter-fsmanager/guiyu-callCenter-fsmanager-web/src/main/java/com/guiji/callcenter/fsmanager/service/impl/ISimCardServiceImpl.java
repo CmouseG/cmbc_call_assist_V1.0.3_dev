@@ -4,8 +4,10 @@ import com.guiji.callcenter.dao.SimGatewayMapper;
 import com.guiji.callcenter.dao.entity.SimGateway;
 import com.guiji.callcenter.dao.entity.SimGatewayExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
+import com.guiji.callcenter.fsmanager.config.FsmanagerExceptionEnum;
 import com.guiji.callcenter.fsmanager.manager.EurekaManager;
 import com.guiji.callcenter.fsmanager.service.ISimCardService;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.entity.FsSipVO;
 import com.guiji.fsmanager.entity.SimCardVO;
@@ -13,20 +15,21 @@ import com.guiji.simagent.api.ISimCardOperate;
 import com.guiji.simagent.entity.FsSipOprVO;
 import com.guiji.simagent.entity.SimCardOprVO;
 import com.guiji.utils.FeignBuildUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
-
+@Slf4j
 @Service
 public class ISimCardServiceImpl implements ISimCardService {
-
     @Autowired
     SimGatewayMapper simGatewayMapper;
     @Autowired
     EurekaManager eurekaManager;
+
     @Override
     public FsSipVO createGateway(SimCardVO simCardVO) {
         int startCount = simCardVO.getStartCount();
@@ -74,18 +77,26 @@ public class ISimCardServiceImpl implements ISimCardService {
     }
 
     @Override
-    public Boolean deleteGateway(String gatewayId) {
+    public boolean deleteGateway(String gatewayId) {
         SimGatewayExample simGatewayExample = new SimGatewayExample();
         simGatewayExample.createCriteria().andSimGatewayIdEqualTo(gatewayId);
         List<SimGateway> simGatewayList = simGatewayMapper.selectByExample(simGatewayExample);
         if(simGatewayList.size()>0){
             SimGateway simGateway = simGatewayList.get(0);
-            ISimCardOperate ISimCardOperateApi = FeignBuildUtil.feignBuilderTarget(ISimCardOperate.class, Constant.PROTOCOL + simGateway.getSimAgentId());
-            Result.ReturnData<Boolean> result = ISimCardOperateApi.deleteGateway(simGateway.getStartCount(),simGateway.getCountsStep(),simGateway.getCountNum());
             simGatewayMapper.deleteByExample(simGatewayExample);
-            return result.getBody();
-        }else{
-            return false;
+            ISimCardOperate ISimCardOperateApi = FeignBuildUtil.feignBuilderTarget(ISimCardOperate.class, Constant.PROTOCOL + simGateway.getSimAgentId());
+            Result.ReturnData<Boolean> result = null;
+            try {
+                result = ISimCardOperateApi.deleteGateway(simGateway.getStartCount(),simGateway.getCountsStep(),simGateway.getCountNum());
+            } catch (Exception e) {
+                log.warn("simagent服务:[{}]故障-->",simGateway, e);
+                //todo --告警某个simagent服务挂了
+                throw new GuiyuException(FsmanagerExceptionEnum.EXCP_FSMANAGER_SIMAGENT_DOWN);
+            }
+            if (!result.body) {
+              return false;
+            }
         }
+        return true;
     }
 }

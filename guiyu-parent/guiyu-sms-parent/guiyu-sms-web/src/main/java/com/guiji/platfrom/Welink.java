@@ -111,7 +111,7 @@ public class Welink implements ISendMsg
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"State\":\"404\",\"MsgState\":\"调用接口异常\",\"MsgID\":\"\"}";
+			result = "{\"State\":\"404\",\"MsgState\":\"调用接口异常\"}";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

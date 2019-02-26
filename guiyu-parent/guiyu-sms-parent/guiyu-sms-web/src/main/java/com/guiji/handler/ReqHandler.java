@@ -13,6 +13,7 @@ import com.guiji.common.exception.GuiyuException;
 import com.guiji.platfrom.Cmpp;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
+import com.guiji.platfrom.Zxy;
 import com.guiji.service.ConfigService;
 import com.guiji.service.RecordService;
 import com.guiji.service.TaskDetailService;
@@ -69,6 +70,9 @@ public class ReqHandler
 		} else if ("cmpp".equals(identification)) {
 			logger.info("通过<CMPP>发送短信...");
 			record = new Cmpp(cmppServiceUrl).sendMessage(params, phone, smsContent);
+		} else if ("zxy".equals(identification)) {
+			logger.info("通过<专信云>发送短信...");
+			record = new Zxy().sendMessage(params, phone, smsContent);
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录

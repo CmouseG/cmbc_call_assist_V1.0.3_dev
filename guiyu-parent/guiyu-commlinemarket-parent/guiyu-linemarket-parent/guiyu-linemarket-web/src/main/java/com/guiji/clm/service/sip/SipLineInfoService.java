@@ -46,7 +46,6 @@ public class SipLineInfoService {
 			}else {
 				//新增
 				sipLineBaseInfo.setUseConcurrentCalls(0);	//初始已用并发数0
-				sipLineBaseInfo.setLineStatus(SipLineStatusEnum.INIT.getCode()); //默认-线路未生效（初始化)
 				sipLineBaseInfo.setCrtTime(DateUtil.getCurrent4Time());
 				sipLineBaseInfo.setUpdateTime(DateUtil.getCurrent4Time());
 				sipLineBaseInfoMapper.insert(sipLineBaseInfo);

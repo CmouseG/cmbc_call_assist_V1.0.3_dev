@@ -17,6 +17,10 @@ public class ClmConstants {
 	//语音网关sip密码步长
 	public static final int VOIP_PSD_STEP = 10;
 	
+	//变更路由规则锁
 	public static final String LOCK_LINEMARKET_SAVERULE = "LOCK_LINEMARKET_SAVERULE_";
+	
+	//初始化voip设备锁
+	public static final String LOCK_LINEMARKET_INIT_VOIP = "LOCK_LINEMARKET_INIT_VOIP";
 	
 }

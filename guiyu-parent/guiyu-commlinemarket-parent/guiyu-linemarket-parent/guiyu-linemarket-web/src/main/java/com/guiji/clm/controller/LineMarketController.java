@@ -15,6 +15,7 @@ import com.guiji.clm.dao.entity.SipLineApply;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.SipLineShare;
+import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.service.sip.SipLineApplyService;
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.service.sip.SipLineInfoService;
@@ -77,7 +78,7 @@ public class LineMarketController {
 		if(sipLineBaseInfo!=null) {
 			sipLineBaseInfo.setCrtUser(userId.toString());
 			sipLineBaseInfo.setUpdateUser(userId.toString());
-			sipLineBaseInfo = sipLineManager.thirdSipLineCfg(sipLineBaseInfo);
+			sipLineBaseInfo = sipLineManager.thirdSipLineCfg(sipLineBaseInfo,isSuperAdmin);
 			return Result.ok(sipLineBaseInfo);
 		}
 		return Result.ok();
@@ -298,6 +299,21 @@ public class LineMarketController {
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				vo.setContractUnivalentStr(sipLineBaseInfo.getContractUnivalent()+"元/分钟");
 				vo.setUnivalentStr(sipLineBaseInfo.getUnivalent()+"元/分钟");
+				if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+					//没有归属企业 - 共享线路
+					if(SipLineStatusEnum.INIT.getCode()==sipLineBaseInfo.getLineStatus()) {
+						//共享线路没有生效前，可以编辑
+						vo.setEditable(true);
+						vo.setEffectable(true); //需要显示生效按钮
+					}else {
+						vo.setEditable(false);
+						vo.setEffectable(false); 
+					}
+				}else {
+					//自备线路
+					vo.setEditable(true);
+					vo.setEffectable(false); 
+				}
 				voList.add(vo);
 			}
 			return voList;

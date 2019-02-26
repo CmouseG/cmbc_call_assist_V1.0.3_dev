@@ -12,6 +12,7 @@ import com.guiji.clm.dao.VoipGwPortMapper;
 import com.guiji.clm.dao.entity.VoipGwInfo;
 import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.dao.entity.VoipGwPortExample;
+import com.guiji.clm.dao.ext.VoipGwInfoMapperExt;
 import com.guiji.clm.enm.VoipGwRegStatusEnum;
 import com.guiji.clm.enm.VoipGwRegTypeStatusEnum;
 import com.guiji.clm.exception.ClmErrorEnum;
@@ -25,6 +26,8 @@ import com.guiji.clm.vo.VoipGwPortQueryCondition;
 import com.guiji.clm.vo.VoipGwPortVO;
 import com.guiji.clm.vo.VoipGwQueryCondition;
 import com.guiji.common.model.Page;
+import com.guiji.component.lock.DistributedLockHandler;
+import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysOrganization;
@@ -57,6 +60,10 @@ public class VoipGwManager {
 	VoipGatewayRemote voipGatewayRemote;
 	@Autowired
 	FeeService feeService;
+	@Autowired
+	VoipGwInfoMapperExt voipGwInfoMapperExt;
+	@Autowired
+	DistributedLockHandler distributedLockHandler;
 	
 	/**
 	 * 客户发起网关初始化申请
@@ -73,31 +80,47 @@ public class VoipGwManager {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
 		}
-		/**1、名称校验**/
-		VoipGwInfo voipGwInfoExist = voipGwService.queryByGwName(voipGwInfo.getGwName());
-		if(voipGwInfoExist!=null) {
-			log.error("新申请的网关名称:{}已经存在,不能发起申请",voipGwInfo.getGwName());
-			throw new ClmException(ClmErrorEnum.CLM1809304.getErrorCode(),ClmErrorEnum.CLM1809304.getErrorMsg());
-		}
-		if(StrUtils.isEmpty(voipGwInfo.getOrgCode())) {
-			//设置企业
-			SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(voipGwInfo.getUserId());
-			if(sysOrganization!=null) {
-				voipGwInfo.setOrgCode(sysOrganization.getCode());
+		Lock lock = new Lock(ClmConstants.LOCK_LINEMARKET_INIT_VOIP, ClmConstants.LOCK_LINEMARKET_INIT_VOIP);
+		if (distributedLockHandler.tryLock(lock)) { // 持锁
+			try {
+				/**1、名称校验**/
+				VoipGwInfo voipGwInfoExist = voipGwService.queryByGwName(voipGwInfo.getGwName());
+				if(voipGwInfoExist!=null) {
+					log.error("新申请的网关名称:{}已经存在,不能发起申请",voipGwInfo.getGwName());
+					throw new ClmException(ClmErrorEnum.CLM1809304.getErrorCode(),ClmErrorEnum.CLM1809304.getErrorMsg());
+				}
+				if(StrUtils.isEmpty(voipGwInfo.getOrgCode())) {
+					//设置企业
+					SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(voipGwInfo.getUserId());
+					if(sysOrganization!=null) {
+						voipGwInfo.setOrgCode(sysOrganization.getCode());
+					}
+				}
+				/**2、调用呼叫中心服务，注册账号密码**/
+				//TODO 调用注册中心注册
+				//TODO 更新IP/端口
+//				voipGwInfo.setSipIp(sipIp);
+//				voipGwInfo.setSipPort(sipPort);
+				/**3、初始化网关sip起始账号、密码、步长等信息**/
+				this.initStartSipAccount(voipGwInfo);
+				/**4、保存本地信息**/
+				voipGwService.save(voipGwInfo);
+				/**5、初始化网关所有端口**/
+				voipGwService.initVoipGwPort(voipGwInfo);
+				return voipGwInfo;
+			} catch (ClmException e) {
+				throw e; 
+			} catch (Exception e1) {
+				log.error("初始化VOIP网关异常！",e1);
+				throw new ClmException(ClmErrorEnum.CLM1809314.getErrorCode(),ClmErrorEnum.CLM1809314.getErrorMsg());
+			}finally {
+				//释放锁
+				distributedLockHandler.releaseLock(lock);
 			}
+		}else {
+			log.error("用户资源删除未能获取到锁!");
+			throw new ClmException(ClmErrorEnum.CLM1809315.getErrorCode(),ClmErrorEnum.CLM1809315.getErrorMsg());
 		}
-		/**2、调用呼叫中心服务，注册账号密码**/
-		//TODO 调用注册中心注册
-		//TODO 更新IP/端口
-//		voipGwInfo.setSipIp(sipIp);
-//		voipGwInfo.setSipPort(sipPort);
-		/**3、初始化网关sip起始账号、密码、步长等信息**/
-		this.initStartSipAccount(voipGwInfo);
-		/**4、保存本地信息**/
-		voipGwService.save(voipGwInfo);
-		/**5、初始化网关所有端口**/
-		voipGwService.initVoipGwPort(voipGwInfo);
-		return voipGwInfo;
 	}
 	
 	/**
@@ -119,11 +142,7 @@ public class VoipGwManager {
 	 */
 	private void initStartSipAccount(VoipGwInfo voipGwInfo) {
 		//查询目前最大语音网关配置的sip账号
-		Integer maxVoipSipAccount = null; 
-		if(maxVoipSipAccount == null) {
-			//首次使用默认账号开始
-			maxVoipSipAccount = ClmConstants.VOIP_ACCOUNT;
-		}
+		Integer maxVoipSipAccount = this.queryMaxSipAccount(); 
 		Integer nextVoipSipAccount = maxVoipSipAccount + 1000;  //从第4位开始递增
 		Integer nextVoipSipPsd = nextVoipSipAccount*10; //密码=账号+1位
 		voipGwInfo.setStartSipAccount(nextVoipSipAccount);
@@ -132,6 +151,19 @@ public class VoipGwManager {
 		voipGwInfo.setSipPwdStep(ClmConstants.VOIP_PSD_STEP);
 		voipGwInfo.setGwRegStatus(VoipGwRegStatusEnum.INIT.getCode()); //初始状态
 		voipGwInfo.setRegType(VoipGwRegTypeStatusEnum.reverse.getCode()); //反向注册：网关注册到fs
+	}
+	
+	/**
+	 * 查询下一个sip账号
+	 * @return
+	 */
+	private Integer queryMaxSipAccount() {
+		Integer maxSipAccount = voipGwInfoMapperExt.queryMaxSipAccount();
+		if(maxSipAccount==null) {
+			return ClmConstants.VOIP_ACCOUNT;
+		}else {
+			return maxSipAccount;
+		}
 	}
 	
 	

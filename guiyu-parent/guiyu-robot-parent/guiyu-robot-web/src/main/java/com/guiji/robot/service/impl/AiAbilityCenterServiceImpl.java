@@ -80,6 +80,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	IAiCycleHisService iAiCycleHisService;
 	@Autowired
 	AiAsynDealService aiAsynDealService;
+	@Autowired
+	CallDealService callDealService;
 	
 	/**
 	 * 导入任务时话术参数检查以及准备TTS合成
@@ -371,7 +373,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());
 			aiNext.setSellbotJson(sellbotRsp);
-			/**6、记录调用中心日志**/
+			/**6、记录通话历史***/
+			callDealService.aiCallStart(aiCallStartReq, sellbotRsp);
+			/**7、记录调用中心日志**/
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "开始拨打电话,成功!");
 			return aiNext;
 		} catch (Exception e) {
@@ -448,6 +452,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		AiFlowSentenceCache aiFlowSentenceCache = new AiFlowSentenceCache();
 		BeanUtil.copyProperties(aiFlowMsgPushReq, aiFlowSentenceCache);
 		aiCacheService.putFlowSentence(aiFlowSentenceCache);
+		//异步同步到客户一通电话对话记录中
+		callDealService.flowMsgPush(aiFlowMsgPushReq);
 	}
 	
 	
@@ -505,6 +511,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		sellbotSayhelloReq.setSentence(sentenceCache==null?"":sentenceCache.getSentence());
 		String sellbotRsp = iSellbotService.sayhello(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotSayhelloReq);
 		aiNext.setSellbotJson(sellbotRsp);
+		//异步记录对话记录
+		callDealService.aiCallNext(aiCallNextReq.getUserId(), aiCallNextReq.getSeqId(), sellbotRsp);
 		return aiNext;
 	}
 	
@@ -546,6 +554,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		aiCacheService.delAllSentenceBySeqId(aiHangupReq.getSeqId());
 		/**5、记录log **/
 		aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "挂断电话完成!");
+		/**6、清除这通电话数据 **/
+		callDealService.delUserCall(aiHangupReq.getUserId(), aiHangupReq.getSeqId());
 	}
 	
 	

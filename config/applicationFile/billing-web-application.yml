@@ -163,7 +163,7 @@ fdfs:
 weixin:
   #阈值
   threshold:
-    appid: wx1558a28a6907c3e8  #跳转到的小程序appid
+    appid:  #跳转到的小程序appid
     templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
     pagePath:
       callReordUrl:

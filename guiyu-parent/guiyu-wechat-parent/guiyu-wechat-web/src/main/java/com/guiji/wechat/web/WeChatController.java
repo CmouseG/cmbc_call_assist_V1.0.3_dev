@@ -149,7 +149,7 @@ public class WeChatController implements WeChatApi {
             JSONObject miniProgramJson = new JSONObject();
             miniProgramJson.put(TEMPLATE_PARAM_APP_ID, sendMsgReqVO.getAppId());
             miniProgramJson.put(TEMPLATE_PARAM_PAGE_PATH, sendMsgReqVO.getPagePath());
-            json.put(TEMPLATE_PARAM_MINI_PROGRAM, miniProgramJson.toJSONString());
+            json.put(TEMPLATE_PARAM_MINI_PROGRAM, miniProgramJson);
         }
 
         json.put(TEMPLATE_PARAM_DATA, sendMsgReqVO.getData());

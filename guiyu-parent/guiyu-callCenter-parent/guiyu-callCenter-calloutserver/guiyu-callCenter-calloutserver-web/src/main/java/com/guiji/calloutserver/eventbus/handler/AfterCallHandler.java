@@ -59,7 +59,7 @@ public class AfterCallHandler {
                 //调用fsagent上传主录音文件
                 CallOutRecord callRecord = callOutRecordService.findByCallId(callPlan.getCallId());
                 log.info("待上传的主录音文件为[{}]", callRecord);
-                uploadMainRecord(callRecord,Long.valueOf(callPlan.getCustomerId()));
+                uploadMainRecord(callRecord,callPlan);
 
                 List<CallOutDetailRecord> callOutDetailRecords = callOutDetailRecordService.findByCallId(callPlan.getCallId());
                 log.info("待上传的分支对话录音为[{}]", callOutDetailRecords);
@@ -77,12 +77,11 @@ public class AfterCallHandler {
     /**
      * 上传主录音文件
      *
-     * @param callOutRecord
-     * @param userId
      */
-    public void uploadMainRecord(CallOutRecord callOutRecord, Long userId) {
+    public void uploadMainRecord(CallOutRecord callOutRecord, CallOutPlan callPlan) {
         log.info("开始上传主录音，callId[{}], file[{}]", callOutRecord.getCallId(), callOutRecord.getRecordFile());
-        RecordVO recordVO = fsAgentManager.uploadRecord(String.valueOf(callOutRecord.getCallId()), callOutRecord.getRecordFile(), "mainrecord",userId);
+        RecordVO recordVO = fsAgentManager.uploadRecord(String.valueOf(callOutRecord.getCallId()), callOutRecord.getRecordFile(), "mainrecord",
+                Long.valueOf(callPlan.getCustomerId()),callPlan.getBillSec(),callPlan.getDuration());
         log.info("上传录音返回结果为[{}]", recordVO);
         callOutRecord.setRecordUrl(recordVO.getFileUrl());
         callOutRecordService.update(callOutRecord);
@@ -102,7 +101,7 @@ public class AfterCallHandler {
             //上传客户说话录音
             if (!Strings.isNullOrEmpty(detailRecord.getCustomerRecordFile())) {
                 String fileId = "customer_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
-                RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getCustomerRecordFile(), busiType, userId);
+                RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getCustomerRecordFile(), busiType, userId, null, null);
                 log.info("上传客户说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getCustomerRecordFile(), recordVO);
                 detailRecord.setCustomerRecordUrl(recordVO.getFileUrl());
                 isEdit = true;
@@ -114,7 +113,7 @@ public class AfterCallHandler {
             //上传座席说话录音
             if (!Strings.isNullOrEmpty(detailRecord.getAgentRecordFile())) {
                 String fileId = "agent_" + detailRecord.getCallId() + "_" + detailRecord.getCallDetailId();
-                RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getAgentRecordFile(), busiType, userId);
+                RecordVO recordVO = fsAgentManager.uploadRecord(fileId, detailRecord.getAgentRecordFile(), busiType, userId, null ,null);
                 log.info("上传座席说话录音[{}][{}]，返回结果为[{}]", fileId, detailRecord.getAgentRecordFile(), recordVO);
                 detailRecord.setAgentRecordUrl(recordVO.getFileUrl());
                 isEdit = true;

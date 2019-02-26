@@ -20,6 +20,7 @@
         <module>guiyu-component</module>
         <module>guiyu-message-queue</module>
         <module>guiyu-sysoperalog-parent</module>
+        <module>guiyu-wsserver-parent</module>
     </modules>
 
 

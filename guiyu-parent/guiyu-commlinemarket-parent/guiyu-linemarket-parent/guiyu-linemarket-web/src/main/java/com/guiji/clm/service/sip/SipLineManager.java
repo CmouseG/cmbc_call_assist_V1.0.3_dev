@@ -75,7 +75,7 @@ public class SipLineManager {
 	 * @return
 	 */
 	@Transactional
-	public SipLineBaseInfo thirdSipLineCfg(SipLineBaseInfo sipLineBaseInfo) {
+	public SipLineBaseInfo thirdSipLineCfg(SipLineBaseInfo sipLineBaseInfo,Boolean isSuperAdmin) {
 		if(sipLineBaseInfo==null || !CheckUtil.fieldIsNullCheck(sipLineBaseInfo, 
 				new String[]{"lineName","sipIp","sipPort","codec","maxConcurrentCalls","univalent","industrys","overtArea","callDirec"})) {
 			//非空校验
@@ -86,14 +86,11 @@ public class SipLineManager {
 			//更新
 			//先查出原线路
 			existSipLine = sipLineInfoService.queryById(sipLineBaseInfo.getId());
-			//校验状态，只有初始状态才允许修改
-			if(SipLineStatusEnum.INIT.getCode()!=existSipLine.getLineStatus()) {
-				log.error("线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能修改！",existSipLine.getId(),existSipLine.getLineName(),existSipLine.getLineStatus());
+			//校验状态，如果是共享线路且状态已经生效不允许修改
+			if(StrUtils.isEmpty(existSipLine.getBelongOrgCode()) && SipLineStatusEnum.INIT.getCode()!=existSipLine.getLineStatus()) {
+				log.error("共享线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能修改！",existSipLine.getId(),existSipLine.getLineName(),existSipLine.getLineStatus());
 				throw new ClmException(ClmErrorEnum.CLM1809313.getErrorCode(),ClmErrorEnum.CLM1809313.getErrorMsg());
 			}
-			BeanUtil.copyProperties(sipLineBaseInfo, existSipLine, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true)
-					.setIgnoreProperties("id","lineStatus","crtUser","crtTime","belongUser","orgCode","sipShareId","lineId"));
-			sipLineBaseInfo = existSipLine;
 		}
 		if(StrUtils.isEmpty(sipLineBaseInfo.getOrgCode())) {
 			//设置企业
@@ -102,10 +99,28 @@ public class SipLineManager {
 				sipLineBaseInfo.setOrgCode(sysOrganization.getCode());
 			}
 		}
-		sipLineInfoService.save(sipLineBaseInfo);
+		sipLineBaseInfo.setLineStatus(SipLineStatusEnum.INIT.getCode()); //默认-线路初始化
+		if(StrUtils.isNotEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+			//选择企业不为空，表示自备线路
+			this.effectThirdSip(sipLineBaseInfo, isSuperAdmin);
+		}else {
+			//共享线路-未生效
+			//直接保存数据
+			sipLineInfoService.save(sipLineBaseInfo);
+		}
 		return sipLineBaseInfo;
 	}
 	
+	/**
+	 * 第三方线路生效
+	 * @param sipLineId
+	 * @param isSuperAdmin
+	 */
+	public void effectThirdSip(Integer sipLineId,Boolean isSuperAdmin) {
+		//查询SIP线路信息
+		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
+		this.effectThirdSip(sipLineBaseInfo, isSuperAdmin);
+	}
 	
 	/**
 	 * 第三方SIP线路配置生效
@@ -116,39 +131,36 @@ public class SipLineManager {
 	 * @return
 	 */
 	@Transactional
-	public void effectThirdSip(Integer sipLineId,Boolean isSuperAdmin) {
-		//查询SIP线路信息
-		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
-		if(SipLineStatusEnum.INIT.getCode()!=sipLineBaseInfo.getLineStatus()) {
-			log.error("线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能生效！",sipLineBaseInfo.getId(),sipLineBaseInfo.getLineName(),sipLineBaseInfo.getLineStatus());
-			throw new ClmException(ClmErrorEnum.CLM1809314.getErrorCode(),ClmErrorEnum.CLM1809314.getErrorMsg());
+	public void effectThirdSip(SipLineBaseInfo sipLineBaseInfo,Boolean isSuperAdmin) {
+		SipLineBaseInfo extSipLineBaseInfo=null;
+		if(sipLineBaseInfo.getId()!=null) {
+			//线路更新
+			//查询存量线路信息
+			extSipLineBaseInfo = sipLineInfoService.queryById(sipLineBaseInfo.getId());
 		}
 		//调用呼叫中心线路，生成线路ID
-		Integer lineId = this.callcenterLine(sipLineBaseInfo, null);
-		if(lineId!=null) {
-			sipLineBaseInfo.setLineId(lineId);
+		Integer lineId = this.callcenterLine(sipLineBaseInfo, extSipLineBaseInfo);
+		if(lineId==null) {
+			log.error("调用线路市场，返回线路lineid为空!");
+			throw new ClmException(ClmErrorEnum.CLM1809308.getErrorCode(),ClmErrorEnum.CLM1809308.getErrorMsg());
 		}
+		if(extSipLineBaseInfo!=null) {
+			BeanUtil.copyProperties(sipLineBaseInfo, extSipLineBaseInfo, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true)
+					.setIgnoreProperties("id","lineStatus","crtUser","crtTime","belongUser","orgCode","sipShareId","lineId"));
+			sipLineBaseInfo = extSipLineBaseInfo;
+		}
+		sipLineBaseInfo.setLineId(lineId);
 		//校验是否生成虚拟共享线路
 		Integer shareLineId = initShareSipLine(sipLineBaseInfo, isSuperAdmin);
 		if(shareLineId!=null) {
 			//生成放到共享池的线路
 			sipLineBaseInfo.setSipShareId(shareLineId);
 		}
-		sipLineBaseInfo.setLineStatus(SipLineStatusEnum.OK.getCode()); //默认-线路生效（正常)
+		sipLineBaseInfo.setLineStatus(SipLineStatusEnum.OK.getCode()); //默认-线路生效
+		//保存线路信息
 		sipLineInfoService.save(sipLineBaseInfo);
-		if(sipLineBaseInfo.getSipShareId()==null) {
-			//如果客户线路没有共享出去，那么全部分给自己(处理异常未分配情况)
-			SipLineExclusive sipLineExclusive = new SipLineExclusive();
-			BeanUtil.copyProperties(sipLineBaseInfo, sipLineExclusive);
-			if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
-				//如果分配企业为空，那么默认分配给自己
-				log.error("线路{}没有共享，但是也没有分配给企业，默认分配给配置人所属企业",sipLineBaseInfo.getId());
-				sipLineExclusive.setBelongOrgCode(sipLineBaseInfo.getOrgCode());
-			}
-			sipLineExclusive.setSipLineId(sipLineBaseInfo.getId());
-			sipLineExclusive.setId(null);
-			this.splitExclusiveSipLine(sipLineExclusive);
-		}
+		//变更独享线路--1、新增/更新分配出的独享线路 2、变更费用 
+		this.changeExclusiveLine(sipLineBaseInfo);
 	}
 	
 	
@@ -165,24 +177,38 @@ public class SipLineManager {
 		//查询线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(id);
 		if(SipLineStatusEnum.INIT.getCode()!=sipLineBaseInfo.getLineStatus()) {
-			log.error("线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能修改！",sipLineBaseInfo.getId(),sipLineBaseInfo.getLineName(),sipLineBaseInfo.getLineStatus());
-			throw new ClmException(ClmErrorEnum.CLM1809313.getErrorCode(),ClmErrorEnum.CLM1809313.getErrorMsg());
+			//如果现在是初始化状态，可以直接删除
+			sipLineInfoService.delete(id);
+		}else {
+			//不是初始化状态，如果是共享线路不能删除
+			if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+				log.error("共享线路ID：{},线路名称：{},现在状态为:{}，不是初始状态，不能删除！",sipLineBaseInfo.getId(),sipLineBaseInfo.getLineName(),sipLineBaseInfo.getLineStatus());
+				throw new ClmException(ClmErrorEnum.CLM1809313.getErrorCode(),ClmErrorEnum.CLM1809313.getErrorMsg());
+			}
+			/**下边的情况是 自备线路的删除了**/
+			/**1、检查是否有在使用**/
+			if(sipLineBaseInfo.getLineId()!=null) {
+				//调用调度中心检查线路是否在使用
+				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId());
+				if(inUsedFlag.getBody().booleanValue()) {
+					//在使用抛出异常，不能直接删除
+					log.error("线路编号:{}仍在调度中心使用中，不能删除",sipLineBaseInfo.getLineId());
+					throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+				}
+			}
+			/**2、调用呼叫中心删除线路**/
+			iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
+			/**3、删除计费**/
+			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
+			if(exclusiveList!=null && !exclusiveList.isEmpty()) {
+				for(SipLineExclusive sipLineExclusive:exclusiveList) {
+					//取消计费
+					feeService.sipFee(FeeOptEnum.DEL, sipLineExclusive);
+				}
+			}
+			/**4、删除本地**/
+			sipLineInfoService.delete(id);
 		}
-//		/**2、检查是否有在使用**/
-//		if(sipLineBaseInfo.getLineId()!=null) {
-//			//调用调度中心检查线路是否在使用
-//			Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId());
-//			if(inUsedFlag.getBody().booleanValue()) {
-//				//在使用抛出异常，不能直接删除
-//				log.error("线路编号:{}仍在调度中心使用中，不能删除",sipLineBaseInfo.getLineId());
-//				throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
-//			}
-//		}
-//		/**3、调用呼叫中心删除线路**/
-//		iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
-		/**4、删除本地**/
-		sipLineInfoService.delete(id);
-		
 	}
 	
 	
@@ -286,8 +312,6 @@ public class SipLineManager {
 		sipLineExclusive.setLineStatus(SipLineStatusEnum.OK.getCode()); //默认状态:正常
 		sipLineExclusive.setLineType(SipLineTypeEnum.SELF.getCode()); //线路类型：自营
 		sipLineExclusiveService.save(sipLineExclusive);
-		//计费准备
-		feeService.sipFee(FeeOptEnum.UP, sipLineExclusive);
 	}
 	
 	/**
@@ -689,8 +713,63 @@ public class SipLineManager {
 					throw new ClmException(ClmErrorEnum.CLM1809308.getErrorCode(),ClmErrorEnum.CLM1809308.getErrorMsg());
 				}
 			}
+			return existSipLineBaseInfo.getLineId();
+		}else {
+			throw new ClmException("线路数据异常,原线路数据为："+existSipLineBaseInfo);
 		}
-		return null;
 	}
 	
+	/**
+	 * 变更独享线路
+	 * 1、新增、更新独享线路信息
+	 * 2、变更计费项
+	 * @param sipLineBaseInfo
+	 */
+	private void changeExclusiveLine(SipLineBaseInfo sipLineBaseInfo) {
+		if(sipLineBaseInfo.getSipShareId()==null) {
+			//独享线路，需要
+			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
+			if(exclusiveList!=null && !exclusiveList.isEmpty()) {
+				//不为空，确定是否需要更新独享线路数据
+				for(SipLineExclusive exclusive : exclusiveList){
+					if(StrUtils.isNotEmpty(exclusive.getBelongUser())) {
+						//如果线路已经分配人了，那么检查计费项是否有变更
+						//因为变更时：归属企业、是否扣费，不能变化，所以只校验下：单价、线路名称是否有变化，如果有变化，更新计费项
+						if((sipLineBaseInfo.getUnivalent()==null||BigDecimal.ZERO==sipLineBaseInfo.getUnivalent())
+							&& (exclusive.getUnivalent()!=null&&exclusive.getUnivalent().compareTo(BigDecimal.ZERO)>0)) {
+							//如果新的单价改为了0,原来不为0,那么要删除原计费项
+							feeService.sipFee(FeeOptEnum.DEL, exclusive);
+						}else if(exclusive.getUnivalent()!=null&&exclusive.getUnivalent().compareTo(BigDecimal.ZERO)>0){
+							//更新费用的前提是原来单价不为0，有费用
+							if(
+								(sipLineBaseInfo.getUnivalent()!=null&&sipLineBaseInfo.getUnivalent().compareTo(exclusive.getUnivalent())!=0)
+								||(!exclusive.getLineName().equals(sipLineBaseInfo.getLineName()))){
+								BeanUtil.copyProperties(sipLineBaseInfo, exclusive, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true)
+										.setIgnoreProperties("id","lineStatus","crtUser","crtTime","belongUser","orgCode"));
+								//更新计费项
+								feeService.sipFee(FeeOptEnum.UP, exclusive);
+							}
+						}
+					}
+					BeanUtil.copyProperties(sipLineBaseInfo, exclusive, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true)
+							.setIgnoreProperties("id","lineStatus","crtUser","crtTime","belongUser","orgCode"));
+					//更新独享线路
+					sipLineExclusiveService.save(exclusive);
+				}
+			}else {
+				//为空，没有分配独享数据，重新分配
+				//如果客户线路没有共享出去，那么全部分给自己(处理异常未分配情况)
+				SipLineExclusive sipLineExclusive = new SipLineExclusive();
+				BeanUtil.copyProperties(sipLineBaseInfo, sipLineExclusive);
+				if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+					//如果分配企业为空，那么默认分配给自己
+					log.error("线路{}没有共享，但是也没有分配给企业，默认分配给配置人所属企业",sipLineBaseInfo.getId());
+					sipLineExclusive.setBelongOrgCode(sipLineBaseInfo.getOrgCode());
+				}
+				sipLineExclusive.setSipLineId(sipLineBaseInfo.getId());
+				sipLineExclusive.setId(null);
+				this.splitExclusiveSipLine(sipLineExclusive);
+			}
+		}
+	}
 }

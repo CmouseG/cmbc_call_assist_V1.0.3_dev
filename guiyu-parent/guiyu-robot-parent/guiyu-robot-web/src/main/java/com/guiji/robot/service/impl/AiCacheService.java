@@ -21,10 +21,13 @@ import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiFlowSentenceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.CallInfo;
 import com.guiji.robot.service.vo.HsReplace;
+import com.guiji.robot.util.DataLocalCacheUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.ReadTxtUtil;
 import com.guiji.robot.util.SystemUtil;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
@@ -42,9 +45,12 @@ public class AiCacheService {
 	RedisUtil redisUtil;
 	@Autowired
 	IUserAiCfgService iUserAiCfgService;
+	@Autowired
+	DataLocalCacheUtil dataLocalCacheUtil;
 	@Value("${file.hushuDir}")
     private String hushuDir;	//话术模板存放目录
 
+	/************************************用户资源begin******************************************/
 	/**
 	 * 根据用户id查询用户的资源缓存信息
 	 * 如果用户缓存不存在，那么重新查询后设置环境
@@ -79,8 +85,6 @@ public class AiCacheService {
 		}
 	}
 	
-	
-	
 	/**
 	 * 新增/更新一个用户的缓存资源
 	 * @param userResourceCache
@@ -92,7 +96,6 @@ public class AiCacheService {
 		redisUtil.hmset(RobotConstants.ROBOT_USER_RESOURCE, map);
 	}
 	
-	
 	/**
 	 * 删除用户资源缓存
 	 * @param userId
@@ -100,8 +103,10 @@ public class AiCacheService {
 	public void delUserResource(String userId) {
 		redisUtil.hdel(RobotConstants.ROBOT_USER_RESOURCE,userId);
 	}
+	/************************************end******************************************/
 	
 	
+	/************************************机器人资源池begin******************************************/
 	/**
 	 * 初始化AI资源池
 	 * @param list
@@ -148,9 +153,10 @@ public class AiCacheService {
 		}
 		return null;
 	}
+	/************************************end******************************************/
 	
 	
-	
+	/************************************用户分配的机器人begin******************************************/
 	/**
 	 * 将分配好的机器人放入缓存
 	 * userid{aiNo-aiInuse}
@@ -204,7 +210,6 @@ public class AiCacheService {
 		redisUtil.hdel(RobotConstants.ROBOT_ASSIGN_AI+userId,aiNo);
 	}
 	
-	
 	/**
 	 * 查询缓存中所有已分配的机器人
 	 * @return
@@ -223,7 +228,6 @@ public class AiCacheService {
 		return allAiMap;
 	}
 	
-	
 	/**
 	 * 根据用户ID和机器人编号查询某个在使用的机器人信息
 	 * @param userId
@@ -239,7 +243,6 @@ public class AiCacheService {
 		return null;
 	}
 	
-	
 	/**
 	 * 更新缓存数据状态
 	 * @param aiInuse
@@ -248,8 +251,10 @@ public class AiCacheService {
 	public void changeAiInUse(AiInuseCache aiInuse) {
 		redisUtil.hset(RobotConstants.ROBOT_ASSIGN_AI+aiInuse.getUserId(), aiInuse.getAiNo(), aiInuse);
 	}
+	/************************************end******************************************/
 	
 	
+	/************************************话术模板begin******************************************/
 	/**
 	 * 查询话术模板数据
 	 */
@@ -285,7 +290,6 @@ public class AiCacheService {
 		}
 	}
 	
-	
 	/**
 	 * 从缓存中将模板清除掉后重新读取
 	 * @param templateId
@@ -306,9 +310,10 @@ public class AiCacheService {
 			}
 		}
 	}
+	/************************************end******************************************/
 	
 	
-	
+	/************************************消息流begin******************************************/
 	/**
 	 * 新增消息流数据
 	 * @param userResourceCache
@@ -319,7 +324,6 @@ public class AiCacheService {
 		//提交到redis（通话流数据，缓存10分钟即可）
 		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache,10*60);
 	}
-	
 	
 	/**
 	 * 根据会话Id查询消息流数据
@@ -338,7 +342,6 @@ public class AiCacheService {
 		return null;
 	}
 	
-	
 	/**
 	 * 删除某个会话ID下的消息流
 	 * @param seqId 会话id
@@ -347,7 +350,6 @@ public class AiCacheService {
 		redisUtil.del(RobotConstants.ROBOT_SENTENCE_RESOURCE+seqId);
 	}
 	
-	
 	/**
 	 * 删除某个某个会话下某个时间点的消息流
 	 * @param userId
@@ -355,6 +357,93 @@ public class AiCacheService {
 	public void delSentence(String seqId,Long timestamp) {
 		redisUtil.hdel(RobotConstants.ROBOT_SENTENCE_RESOURCE+seqId,String.valueOf(timestamp));
 	}
+	/************************************end******************************************/
+	
+	/************************************电话通话内容begin******************************************/
+	/**
+	 * 为用户新增一通电话
+	 * userid{seqId-callInfo}
+	 * @param userId
+	 * @param callInfo
+	 * @return
+	 */
+	public void cacheUserCalls(String userId,CallInfo callInfo){
+		if(StrUtils.isNotEmpty(userId)) {
+			SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put(callInfo.getSeqId(), callInfo);
+			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, map, 10*60);	//放入缓存，10分钟
+		}
+	}
+	/**
+	 * 根据用户ID和会话ID查询某通正在进行的通话
+	 * @param userId
+	 * @param seqId
+	 * @return
+	 */
+	public CallInfo queryUserCall(String userId,String seqId) {
+		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+		//查询某通电话
+		Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, seqId);
+		if(cacheObj != null) {
+			return (CallInfo) cacheObj;
+		}
+		return null;
+	}
+	/**
+	 * 查询用户现在正在进行的通话数据
+	 * @param userId
+	 * @return
+	 */
+	public List<CallInfo> queryUserCallList(String userId){
+		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+		Map<Object,Object> allMap = redisUtil.hmget(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId);
+		if(allMap != null && !allMap.isEmpty()) {
+			List<CallInfo> list = new ArrayList<CallInfo>();
+			for (Map.Entry<Object,Object> aiEntry : allMap.entrySet()) { 
+				CallInfo callInfo = (CallInfo) aiEntry.getValue();
+				list.add(callInfo);
+			}
+			return list;
+		}
+		return null;
+	}
+	/**
+	 * 查询企业下所有用户通话列表
+	 * @param orgCode
+	 * @return
+	 */
+	public Map<String,List<CallInfo>> queryCallsByOrg(String orgCode){
+		Map<String,List<CallInfo>> allUserCallMap = new HashMap<String,List<CallInfo>>();
+		//查询所有在缓存中的用户数据
+		Set<String> userSet = redisUtil.getAllKeyMatch(RobotConstants.ROBOT_USER_CALL+orgCode+"_");
+		if(userSet != null && !userSet.isEmpty()) {
+			for(String key:userSet) {
+				String userId = key.substring(key.lastIndexOf("_")+1);	//将key中的userid截取出来
+				List<CallInfo> list = this.queryUserCallList(userId);
+				allUserCallMap.put(userId, list);
+			}
+		}
+		return allUserCallMap;
+	}
+	/**
+	 * 删除某个用户的所有通话
+	 * @param userId
+	 */
+	public void delUserCalls(String userId) {
+		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+		redisUtil.del(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId);
+	}
+	/**
+	 * 删除某个用户某通电话
+	 * @param userId
+	 */
+	public void delUserCall(String userId,String seqId) {
+		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+		redisUtil.hdel(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId,seqId);
+	}
+	/**************************************end****************************************/
+	
 	
 	
 	/**

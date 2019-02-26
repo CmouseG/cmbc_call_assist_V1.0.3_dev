@@ -1,15 +1,16 @@
 package com.guiji.dispatch.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import com.guiji.dispatch.util.DateTimeUtils;
+import com.guiji.dispatch.vo.TotalPlanCountVo;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
@@ -225,6 +226,17 @@ public class DispatchPlanController {
 			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
 			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin) {
 		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin, orgCode);
+	}
+
+
+	//根据用户统计当天计划数量
+	@Log(info ="根据用户统计当天计划数量")
+	@PostMapping("totalPlanCountByUserDate")
+	public TotalPlanCountVo totalPlanCountByUserDate(@RequestHeader String userId){
+		String dateStr = new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT).format(new Date());
+	//	beginDate = dateStr + " " + DateTimeUtils.DEFAULT_DATE_START_TIME;
+	//	endDate = dateStr + " " + DateTimeUtils.DEFAULT_DATE_END_TIME;
+		return dispatchPlanService.totalPlanCountByUserDate(userId, dateStr, dateStr);
 	}
 
 }

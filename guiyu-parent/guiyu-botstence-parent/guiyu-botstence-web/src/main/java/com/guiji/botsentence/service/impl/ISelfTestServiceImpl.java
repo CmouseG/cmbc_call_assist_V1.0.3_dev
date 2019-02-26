@@ -90,6 +90,7 @@ public class ISelfTestServiceImpl implements ISelfTestService {
         responseSelfTestVO.setAnswerTxt(responseVO.getAnswer());
         responseSelfTestVO.setUuid(uuid);
         responseSelfTestVO.setWavFileUrl(responseVO.getWav_filename());
+        responseSelfTestVO.setWavDuration(0);
         
         //根据音频文件名获取相应的URL
         String processId = request.getProcessId();
@@ -103,12 +104,18 @@ public class ISelfTestServiceImpl implements ISelfTestService {
 				backupExample.createCriteria().andProcessIdEqualTo(processId).andWavNameEqualTo(wavName);
 				List<BotSentenceTtsBackup> backupList = botSentenceTtsBackupMapper.selectByExample(backupExample);
 				if(null != backupList && backupList.size() > 0) {
-					if(null == backupList.get(0).getTimes() || backupList.get(0).getTimes() == 0) {
-            			responseSelfTestVO.setWavDuration(backupList.get(0).getContent().length()/5);
-            		}
-					if(responseSelfTestVO.getWavDuration() == 0) {
-            			responseSelfTestVO.setWavDuration(1);
-            		}
+					if(StringUtils.isNotBlank(backupList.get(0).getUrl())) {
+						if(null != backupList.get(0).getTimes() && backupList.get(0).getTimes() > 0) {
+							responseSelfTestVO.setWavDuration(backupList.get(0).getTimes());
+						}
+						
+						if(null == backupList.get(0).getTimes() || backupList.get(0).getTimes() == 0) {
+	            			responseSelfTestVO.setWavDuration(backupList.get(0).getContent().length()/5);
+	            		}
+						if(responseSelfTestVO.getWavDuration() == 0) {
+	            			responseSelfTestVO.setWavDuration(1);
+	            		}
+					}
 					responseSelfTestVO.setHttpFileUrl(backupList.get(0).getUrl());
 				}
         	}else {
@@ -117,13 +124,18 @@ public class ISelfTestServiceImpl implements ISelfTestService {
 				ttsTaskExample.createCriteria().andProcessIdEqualTo(processId).andWavNameEqualTo(wavName);
 				List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(ttsTaskExample);
 				if(null != taskList && taskList.size() > 0) {
-					if(null == taskList.get(0).getTimes() || taskList.get(0).getTimes() == 0) {
-            			responseSelfTestVO.setWavDuration(taskList.get(0).getContent().length()/5);
-            		}
-					if(responseSelfTestVO.getWavDuration() == 0) {
-            			responseSelfTestVO.setWavDuration(1);
-            		}
-					
+					if(StringUtils.isNotBlank(taskList.get(0).getVoliceUrl())) {
+						if(null != taskList.get(0).getTimes() && taskList.get(0).getTimes() > 0) {
+							responseSelfTestVO.setWavDuration(taskList.get(0).getTimes());
+						}
+						
+						if(null == taskList.get(0).getTimes() || taskList.get(0).getTimes() == 0) {
+	            			responseSelfTestVO.setWavDuration(taskList.get(0).getContent().length()/5);
+	            		}
+						if(responseSelfTestVO.getWavDuration() == 0) {
+	            			responseSelfTestVO.setWavDuration(1);
+	            		}
+					}
 					responseSelfTestVO.setHttpFileUrl(taskList.get(0).getVoliceUrl());
 				}
         	}

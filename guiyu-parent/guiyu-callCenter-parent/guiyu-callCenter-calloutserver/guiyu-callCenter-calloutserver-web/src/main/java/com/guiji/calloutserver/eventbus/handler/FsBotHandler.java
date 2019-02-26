@@ -296,25 +296,29 @@ public class FsBotHandler {
      * @param sellbotResponse
      */
     public void playToAgent(AIResponse sellbotResponse,String agentGroupId) {
-        //获取转人工的队列号
-        CallOutPlan callPlan = new CallOutPlan();
-        callPlan.setCallId(new BigInteger(sellbotResponse.getCallId()));
-        callPlan.setAgentStartTime(new Date());
-        callPlan.setCallState(ECallState.to_agent.ordinal());
-        callOutPlanService.update(callPlan);
 
-        //播放完提示音后，将当前呼叫转到座席组
-        channelHelper.playAndTransferToAgentGroup(sellbotResponse.getCallId(), sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
-
-        log.info("在开始转人工后，释放ai资源");
         CallOutPlan realCallPlan = callOutPlanService.findByCallId(new BigInteger(sellbotResponse.getCallId()));
+        if(realCallPlan.getAgentId()==null){//非协呼
+
+            //获取转人工的队列号
+            CallOutPlan callPlan = new CallOutPlan();
+            callPlan.setCallId(new BigInteger(sellbotResponse.getCallId()));
+            callPlan.setAgentStartTime(new Date());
+            callPlan.setCallState(ECallState.to_agent.ordinal());
+            callOutPlanService.update(callPlan);
+
+            //播放完提示音后，将当前呼叫转到座席组
+            channelHelper.playAndTransferToAgentGroup(sellbotResponse.getCallId(), sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
+        }
+        log.info("在开始转人工后，释放ai资源");
         aiManager.releaseAi(realCallPlan);
 
         //停止定时任务
-        robotNextHelper.stopAiCallNextTimer(callPlan.getCallId().toString());
+        robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());
         //构建事件抛出
-        ToAgentEvent toAgentEvent = new ToAgentEvent(callPlan);
+        ToAgentEvent toAgentEvent = new ToAgentEvent(realCallPlan);
         asyncEventBus.post(toAgentEvent);
+
     }
 
     public void buildCallOutDetail(BigInteger callId, AsrCustomerEvent event) {
@@ -437,6 +441,13 @@ public class FsBotHandler {
                 }
                 callPlan.setHangupTime(event.getHangupStamp());
                 callPlan.setAnswerTime(event.getAnswerStamp());
+                if(event.getHangupDisposition()!=null){
+                    if(event.getHangupDisposition().equals("send_bye")){//机器人挂断
+                        callPlan.setHangupDirection(0);
+                    }else{//用户挂断
+                        callPlan.setHangupDirection(1);
+                    }
+                }
 
                 if (duration != null){
                     callPlan.setDuration(duration);

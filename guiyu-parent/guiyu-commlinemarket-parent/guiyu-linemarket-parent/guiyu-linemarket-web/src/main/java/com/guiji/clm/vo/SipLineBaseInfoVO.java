@@ -24,4 +24,8 @@ public class SipLineBaseInfoVO extends SipLineBaseInfo{
 	private String univalentStr;
 	//合同单价中文 XX元/分钟
 	private String contractUnivalentStr;
+	//是否可编辑
+	private boolean editable;
+	//是否需要生效
+	private boolean effectable;
 }

@@ -691,12 +691,12 @@ public class SipLineManager {
 		}else if(existSipLineBaseInfo!=null && existSipLineBaseInfo.getLineId()!=null) {
 			//线路变更
 			//检查下本次变更后和原来的是否有变化
-			if(!sipLineBaseInfo.getSipIp().equals(existSipLineBaseInfo.getSipIp())
-					||!sipLineBaseInfo.getSipPort().equals(existSipLineBaseInfo.getSipPort())
-					||!sipLineBaseInfo.getCodec().equals(existSipLineBaseInfo.getCodec())
-					||!sipLineBaseInfo.getCallerNum().equals(existSipLineBaseInfo.getCallerNum())
-					||!sipLineBaseInfo.getDestinationPrefix().equals(existSipLineBaseInfo.getDestinationPrefix())
-					||!sipLineBaseInfo.getMaxConcurrentCalls().equals(existSipLineBaseInfo.getMaxConcurrentCalls())
+			if(!this.objEquals(sipLineBaseInfo.getSipIp(), existSipLineBaseInfo.getSipIp())
+					||!this.objEquals(sipLineBaseInfo.getSipPort(), existSipLineBaseInfo.getSipPort())
+					||!this.objEquals(sipLineBaseInfo.getCodec(), existSipLineBaseInfo.getCodec())
+					||!this.objEquals(sipLineBaseInfo.getCallerNum(), existSipLineBaseInfo.getCallerNum())
+					||!this.objEquals(sipLineBaseInfo.getDestinationPrefix(), existSipLineBaseInfo.getDestinationPrefix())
+					||!this.objEquals(sipLineBaseInfo.getMaxConcurrentCalls(), existSipLineBaseInfo.getMaxConcurrentCalls())
 					) {
 				OutLineInfoUpdateReq lineInfo = new OutLineInfoUpdateReq();
 				lineInfo.setLineId(existSipLineBaseInfo.getLineId());
@@ -771,5 +771,24 @@ public class SipLineManager {
 				this.splitExclusiveSipLine(sipLineExclusive);
 			}
 		}
+	}
+	
+	/**
+	 * 比较2个属性是否相等
+	 * @param obj1
+	 * @param obj2
+	 * @return
+	 */
+	private boolean objEquals(Object obj1,Object obj2) {
+		if(obj1==null && obj2 == null) {
+			return true;
+		}else {
+			if(obj1!=null && obj2!=null) {
+				if(obj1.equals(obj2)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

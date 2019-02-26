@@ -137,6 +137,8 @@ public class RobotNextHelper {
 
                                 aiResponse.setResponseTxt(sellbotResponse.getAnswer());
                                 aiResponse.setAiResponseType(sellbotResponse.getEnd());
+                                aiResponse.setKeyWords(sellbotResponse.getKeywords());
+                                aiResponse.setWordSegmentResult(sellbotResponse.getWord_segment_result());
 
                                 Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
                                 Preconditions.checkNotNull(wavDruation, "wavDruation is null error");

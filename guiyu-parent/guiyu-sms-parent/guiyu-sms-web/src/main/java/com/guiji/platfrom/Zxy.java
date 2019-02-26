@@ -52,8 +52,8 @@ public class Zxy implements ISendMsg
 		List<SmsRecord> records = new ArrayList<>();
 		SmsRecord record = null;
 		
-		String appKey = MapUtil.getString(params, "app_key", 0);
-		String appSecret = MapUtil.getString(params, "app_secret", 0);
+		String appKey = MapUtil.getString(params, "appKey", 0);
+		String appSecret = MapUtil.getString(params, "appSecret", 0);
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
 		paramsList.add(new BasicNameValuePair("appKey", appKey));
 		paramsList.add(new BasicNameValuePair("appSecret", appSecret));

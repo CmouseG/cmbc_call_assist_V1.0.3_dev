@@ -296,6 +296,13 @@ public class LineMarketController {
 					//盲区
 					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
 				}
+				//企业名称
+				if(StrUtils.isNotEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+					SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getBelongOrgCode());
+					if(org != null) {
+						vo.setBelongOrgName(org.getName());
+					}
+				}
 				//线路拥有者(查询原线路的归属企业)
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				vo.setContractUnivalentStr(sipLineBaseInfo.getContractUnivalent()+"元/分钟");

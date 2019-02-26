@@ -56,6 +56,12 @@ public class RobotConstants {
 	public static final String LOCK_ROBOT_AIPOOL_ASSIGN = "LOCK_ROBOT_AIPOOL_ASSIGN";	//资源锁-机器人池分配锁
 	
 	/**
+	 * 话术模板版本
+	 */
+	public static final int HS_VERSION_SB = 1;	//话术模板版本：1-老版本
+	public static final int HS_VERSION_FL = 2;	//话术模板版本：2-飞龙版本
+	
+	/**
 	 * 通话状态
 	 */
 	public static final int CALLINT_STATUS_I = 1; //I-通话中

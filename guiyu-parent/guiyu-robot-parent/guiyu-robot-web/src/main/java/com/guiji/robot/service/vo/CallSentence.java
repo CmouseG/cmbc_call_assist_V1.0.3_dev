@@ -20,6 +20,8 @@ public class CallSentence {
 	private String intent;
 	//对话类型：1-AI;2-客户
 	private int diaType;
+	//是否打断后的对话-用于判断打断
+	private boolean interruptFlag;
 	//当前域名：开场白、一般问题、出错 、其他。。。
 	private String answered_domain;
 	//当前状态：开场白、一般问题、出错 、其他。。。（不知道和answered_domain的区别，尽量使用answered_domain吧）

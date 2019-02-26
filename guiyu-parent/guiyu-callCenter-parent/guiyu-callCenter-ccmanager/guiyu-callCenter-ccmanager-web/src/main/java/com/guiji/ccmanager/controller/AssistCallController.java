@@ -38,4 +38,13 @@ public class AssistCallController {
         return iAssistCall.assistCloseRobot(callId);
     }
 
+    @ApiOperation(value = "协呼，转人工并且关闭机器人")
+    @GetMapping("/assistToAgentAndCloseRobot")
+    public Result.ReturnData assistToAgentAndCloseRobot(String callId,String agentGroupId){
+
+        String server = assistCallService.getServerId(new BigInteger(callId));
+        IAssistCall iAssistCall = FeignBuildUtil.feignBuilderTarget(IAssistCall.class, Constant.PROTOCOL + server);
+        return iAssistCall.assistToAgentAndCloseRobot(callId,agentGroupId);
+    }
+
 }

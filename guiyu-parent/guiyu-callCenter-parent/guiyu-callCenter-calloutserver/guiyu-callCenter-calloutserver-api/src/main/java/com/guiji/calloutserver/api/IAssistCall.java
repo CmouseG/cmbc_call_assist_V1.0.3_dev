@@ -19,4 +19,7 @@ public interface IAssistCall {
     @GetMapping("/assistCloseRobot")
     Result.ReturnData assistCloseRobot(@RequestParam("callId") String callId);
 
+    @ApiOperation(value = "转人工并且关闭机器人")
+    @GetMapping("/assistToAgentAndCloseRobot")
+    Result.ReturnData assistToAgentAndCloseRobot(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId);
 }

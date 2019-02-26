@@ -41,7 +41,7 @@ public class AssistCallController implements IAssistCall {
     @GetMapping("/assistToAgent")
     public Result.ReturnData assistToAgent(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId){
 
-        log.info("接到转人工请求，callId[{}]",callId);
+        log.info("接到转人工请求，callId[{}],agentGroupId[{}]",callId,agentGroupId);
         BigInteger bigInteCallId = new BigInteger(callId);
 
         CallOutPlan callPlan = new CallOutPlan();
@@ -76,6 +76,35 @@ public class AssistCallController implements IAssistCall {
             return Result.error(Constant.ERROR_CALLCOUNT_FAILED);
         }
 
+    }
+
+    @GetMapping("/assistToAgentAndCloseRobot")
+    public Result.ReturnData assistToAgentAndCloseRobot(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId){
+
+        log.info("接到assistToAgentAndCloseRobot请求，callId[{}],agentGroupId[{}]",callId,agentGroupId);
+        BigInteger bigInteCallId = new BigInteger(callId);
+
+        CallOutPlan callPlan = new CallOutPlan();
+        callPlan.setCallId(bigInteCallId);
+        callPlan.setAgentStartTime(new Date());
+        callPlan.setCallState(ECallState.to_agent.ordinal());
+        callOutPlanService.update(callPlan);
+
+        String toAgentFs = toAgentManager.findToAgentFsAdder();
+        localFsServer.transferToAgentGroup(callId, toAgentFs, agentGroupId);
+
+        AsrCustomerEvent event = new AsrCustomerEvent();
+        event.setUuid(callId);
+        event.setAsrText("转人工");
+        AIRequest aiRequest = new AIRequest(event);
+
+        try {
+            aiManager.sendAiRequest(aiRequest);
+            return Result.ok();
+        } catch (Exception e) {
+            log.error("关闭机器人出现异常",e);
+            return Result.error(Constant.ERROR_CALLCOUNT_FAILED);
+        }
     }
 
 }

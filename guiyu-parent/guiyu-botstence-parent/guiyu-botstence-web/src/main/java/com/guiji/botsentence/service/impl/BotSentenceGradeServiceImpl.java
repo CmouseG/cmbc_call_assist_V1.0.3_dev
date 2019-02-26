@@ -60,6 +60,7 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 			throw new CommonException("话术流程编号为空");
 		}
 		BotSentenceGrade exist = this.getBotSentenceGrade(botSentenceGrade.getProcessId());
+		exist.setInitStat("D");
 		exist.setStatOrder(botSentenceGrade.getStatOrder());
 		exist.setCrtTime(new Date(System.currentTimeMillis()));
 		exist.setCrtUser(userId);

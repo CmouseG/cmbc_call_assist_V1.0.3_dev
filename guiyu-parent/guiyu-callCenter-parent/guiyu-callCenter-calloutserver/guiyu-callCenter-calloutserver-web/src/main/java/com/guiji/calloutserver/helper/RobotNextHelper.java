@@ -103,43 +103,46 @@ public class RobotNextHelper {
                         log.info("-------------start  robotRemote aiCallNext aiCallNextReq[{}]",aiCallNextReq);
                         Result.ReturnData<AiCallNext> result = robotRemote.aiCallNext(aiCallNextReq);
                         AiCallNext aiCallNext = result.getBody();
-//                        String status = aiCallNext.getHelloStatus();
-                        if (aiCallNext!=null && aiCallNext.getHelloStatus()!=null && aiCallNext.getHelloStatus().equals("play")) {
-                            log.info("-------------end  robotRemote aiCallNext result[{}]",result);
-                            //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
-                            if (channelHelper.isChannelLock(callId)) {
-                                log.info("通道媒体[{}]已被锁定，跳过该次识别请求 startAiCallNextTimer", callId);
-                                return;
+                        if(result.getCode().equals("00060006")){ //机器人不存在
+                            log.info("机器人不存在，停止定时任务aiCallNext, callId[{}]",callId);
+                            stopAiCallNextTimer(callId);
+                            return;
+                        }else {
+                            if (aiCallNext != null && aiCallNext.getHelloStatus() != null && aiCallNext.getHelloStatus().equals("play")) {
+                                log.info("-------------end  robotRemote aiCallNext result[{}]", result);
+                                //判断当前通道是否被锁定，如果锁定的话，则跳过后续处理
+                                if (channelHelper.isChannelLock(callId)) {
+                                    log.info("通道媒体[{}]已被锁定，跳过该次识别请求 startAiCallNextTimer", callId);
+                                    return;
+                                }
+
+                                String resp = aiCallNext.getSellbotJson();
+
+                                log.debug("robotRemote.flowMsgPush getSellbotJson[{}]", resp);
+
+                                SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
+                                Preconditions.checkState(sellbotResponse != null && sellbotResponse.isValid(), "invalid aiCallNext response");
+
+                                AIResponse aiResponse = new AIResponse();
+                                aiResponse.setResult(true);
+                                aiResponse.setMatched(true);
+                                aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
+                                aiResponse.setAiId(aiCallNext.getAiNo());
+                                aiResponse.setCallId(callId);
+                                aiResponse.setReason(sellbotResponse.getReason());
+
+                                String wavFilename = getWavFilename(sellbotResponse.getWav_filename(), aiCallNextReq.getTemplateId(), callId);
+                                Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
+                                aiResponse.setWavFile(wavFilename);
+
+                                aiResponse.setResponseTxt(sellbotResponse.getAnswer());
+                                aiResponse.setAiResponseType(sellbotResponse.getEnd());
+
+                                Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
+                                Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
+                                aiResponse.setWavDuration(wavDruation);
+                                dealWithResponse(aiResponse, agentGroupId);
                             }
-
-                            String resp = aiCallNext.getSellbotJson();
-
-                            log.debug("robotRemote.flowMsgPush getSellbotJson[{}]", resp);
-
-                            SellbotResponse sellbotResponse = CommonUtil.jsonToJavaBean(resp, SellbotResponse.class);
-                            Preconditions.checkState(sellbotResponse != null && sellbotResponse.isValid(), "invalid aiCallNext response");
-
-                            AIResponse aiResponse = new AIResponse();
-                            aiResponse.setResult(true);
-                            aiResponse.setMatched(true);
-                            aiResponse.setAccurateIntent(sellbotResponse.getAccurate_intent());
-                            aiResponse.setAiId(aiCallNext.getAiNo());
-                            aiResponse.setCallId(callId);
-                            aiResponse.setReason(sellbotResponse.getReason());
-
-                            String wavFilename = getWavFilename(sellbotResponse.getWav_filename(),aiCallNextReq.getTemplateId(), callId);
-                            Preconditions.checkNotNull(wavFilename, "wavFilename is null error");
-                            aiResponse.setWavFile(wavFilename);
-
-                            aiResponse.setResponseTxt(sellbotResponse.getAnswer());
-                            aiResponse.setAiResponseType(sellbotResponse.getEnd());
-                            aiResponse.setKeyWords(sellbotResponse.getKeywords());
-                            aiResponse.setWordSegmentResult(sellbotResponse.getWord_segment_result());
-
-                            Double wavDruation = fsAgentManager.getWavDruation(aiCallNextReq.getTemplateId(), wavFilename, callId);
-                            Preconditions.checkNotNull(wavDruation, "wavDruation is null error");
-                            aiResponse.setWavDuration(wavDruation);
-                            dealWithResponse(aiResponse,agentGroupId);
                         }
                     } catch (Exception e) {
                         log.error("scheduledExecutorService.scheduleAtFixedRate has error: ", e);

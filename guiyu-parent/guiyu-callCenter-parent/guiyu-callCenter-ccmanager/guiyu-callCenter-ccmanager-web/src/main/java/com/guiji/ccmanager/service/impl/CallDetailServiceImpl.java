@@ -404,8 +404,8 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.createCriteria().andCallIdIn(idList);
         example.setOrderByClause("create_time desc");
 //        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
-            example.setIsDesensitization(isDesensitization);
-            list = callOutPlanMapper.selectByExample4Encrypt(example);
+        example.setIsDesensitization(isDesensitization);
+        list = callOutPlanMapper.selectByExample4Encrypt(example);
 //        }else{
 //            list = callOutPlanMapper.selectByExample(example);
 //        }

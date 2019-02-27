@@ -6,15 +6,36 @@ import java.util.Date;
 
 public class TotalChargingItemDetailVo implements Serializable {
 
+    private static final long serialVersionUID = -2483301540617847667L;
+    /**
+     * 手机号码
+     */
     private String phone;
 
+    /**
+     * 开始时间
+     */
     private Date beginTime;
 
+    /**
+     * 结束时间
+     */
     private Date EndTime;
 
+    /**
+     * 通话时长
+     */
     private String operDurationStr;
 
+    /**
+     * 实际扣费金额
+     */
     private BigDecimal amount;
+
+    /**
+     * 计费金额
+     */
+    private BigDecimal chargingAmount;
 
     public String getPhone() {
         return phone;
@@ -54,5 +75,13 @@ public class TotalChargingItemDetailVo implements Serializable {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public BigDecimal getChargingAmount() {
+        return chargingAmount;
+    }
+
+    public void setChargingAmount(BigDecimal chargingAmount) {
+        this.chargingAmount = chargingAmount;
     }
 }

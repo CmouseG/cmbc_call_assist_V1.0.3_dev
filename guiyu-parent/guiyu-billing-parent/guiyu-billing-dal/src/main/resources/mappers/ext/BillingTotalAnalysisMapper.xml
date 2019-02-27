@@ -315,4 +315,11 @@
       {call totalChargingByDate(#{totalDate,jdbcType=VARCHAR,mode=IN})}
   </update>
 
+  <!--计算按月统计消费、充值数据，调用存储过程 -->
+  <update id="procTotalChargingByMonth" statementType="CALLABLE">
+      {call totalChargingByMonth(#{totalMonth,jdbcType=VARCHAR,mode=IN},
+                                  #{beginDate,jdbcType=VARCHAR,mode=IN},
+                                  #{endDate,jdbcType=VARCHAR,mode=IN})}
+  </update>
+
 </mapper>

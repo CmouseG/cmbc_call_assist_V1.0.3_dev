@@ -9,11 +9,12 @@
       charging_item_name,
       COUNT(id) AS call_count,
       SUM(oper_duration_m) AS duration,
-      SUM(amount) AS total_amout
+      SUM(amount) AS total_amout,
+      SUM(charging_amount) as total_charging_amout
     FROM
     (
       SELECT t.charging_item_id, t.charging_item_name,
-        r.id, r.oper_duration_m, r.amount ,
+        r.id, r.oper_duration_m, r.amount , r.charging_amount,
         DATE_FORMAT(r.create_time, '%Y-%m') AS opt_time
       FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
       WHERE r.account_id = c.account_id
@@ -50,7 +51,7 @@
       FROM
       (
         SELECT t.charging_item_id, t.charging_item_name,
-          r.id, r.oper_duration_m, r.amount ,
+          r.id, r.oper_duration_m, r.amount , r.charging_amount,
           DATE_FORMAT(r.create_time, '%Y-%m') AS opt_time
         FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
         WHERE r.account_id = c.account_id
@@ -79,11 +80,12 @@
       charging_item_name,
       COUNT(id) AS call_count,
       SUM(oper_duration_m) AS duration,
-      SUM(amount) AS total_amout
+      SUM(amount) AS total_amout,
+      SUM(charging_amount) as total_charging_amout
     FROM
     (
       SELECT t.charging_item_id, t.charging_item_name,
-          r.id, r.oper_duration_m, r.amount ,
+          r.id, r.oper_duration_m, r.amount , r.charging_amount,
           DATE_FORMAT(r.create_time, '%Y-%m-%d') AS opt_time
         FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
         WHERE r.account_id = c.account_id
@@ -120,7 +122,7 @@
       FROM
       (
         SELECT t.charging_item_id, t.charging_item_name,
-          r.id, r.oper_duration_m, r.amount ,
+          r.id, r.oper_duration_m, r.amount ,r.charging_amount,
           DATE_FORMAT(r.create_time, '%Y-%m-%d') AS opt_time
         FROM billing_acct_charging_record r, billing_acct_charging_term t, billing_user_acct c
         WHERE r.account_id = c.account_id
@@ -148,7 +150,8 @@
       r.oper_begin_time AS begin_time,
       r.oper_end_time AS end_time,
       r.oper_duration_str,
-      r.amount
+      r.amount,
+      r.charging_amount
     FROM billing_acct_charging_record r, billing_acct_charging_term t
     WHERE r.user_charging_id = t.user_charging_id
       <if test="chargingItemId != null">

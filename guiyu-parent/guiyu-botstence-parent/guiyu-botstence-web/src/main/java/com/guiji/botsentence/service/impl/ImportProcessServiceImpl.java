@@ -552,12 +552,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					return false;
 				}
 			} else if (file.getName().equals("sim.txt")) {
-				try {
+				/*try {
 					sim_txt = FileUtil.readToString(file);
 				} catch (IOException e) {
 					logger.error("read sim.txt IOException:" + e);
 					return false;
-				}
+				}*/
 			} else if (file.getName().equals("weights.txt")) {
 				try {
 					weights_txt = FileUtil.readToString(file);

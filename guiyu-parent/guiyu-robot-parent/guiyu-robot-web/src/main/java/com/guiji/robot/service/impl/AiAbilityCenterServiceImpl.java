@@ -493,19 +493,21 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		/**2、打断-过滤不能打断的域**/
 		//获取实施通话
 		CallInfo callInfo = aiCacheService.queryUserCall(aiCallNextReq.getUserId(), aiCallNextReq.getSeqId());
-		if(hsReplace.getNon_interruptable()!=null && hsReplace.getNon_interruptable().length>0 && callInfo!=null) {
-			//校验不打断域
-			if(RobotConstants.CALL_STATUS_BEGIN.equals(aiCallNextReq.getStatus()) || RobotConstants.CALL_STATUS_ING.equals(aiCallNextReq.getStatus())) {
-				//如果状态现在还是在开场白/播音中，那么校验是否忽略打断的域，如果不能打断的域，直接返回wait
-				String currentDomain = callInfo.getCurrent_domain();
-				if(StrUtils.isNotEmpty(currentDomain)) {
-					if(Arrays.asList(hsReplace.getNon_interruptable()).contains(currentDomain)) {
-						logger.info("模板{}配置的当前域{}不能打断",aiCallNextReq.getTemplateId(),currentDomain);
-						aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
-						return aiNext;
+		if(callInfo!=null) {
+			if(hsReplace.getNon_interruptable()!=null && hsReplace.getNon_interruptable().length>0) {
+				//校验不打断域
+				if(RobotConstants.CALL_STATUS_BEGIN.equals(aiCallNextReq.getStatus()) || RobotConstants.CALL_STATUS_ING.equals(aiCallNextReq.getStatus())) {
+					//如果状态现在还是在开场白/播音中，那么校验是否忽略打断的域，如果不能打断的域，直接返回wait
+					String currentDomain = callInfo.getCurrent_domain();
+					if(StrUtils.isNotEmpty(currentDomain)) {
+						if(Arrays.asList(hsReplace.getNon_interruptable()).contains(currentDomain)) {
+							logger.info("模板{}配置的当前域{}不能打断",aiCallNextReq.getTemplateId(),currentDomain);
+							aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
+							return aiNext;
+						}
+					}else {
+						logger.error("seqid:{}，当前域不能为空！",aiCallNextReq.getSeqId());
 					}
-				}else {
-					logger.error("seqid:{}，当前域不能为空！",aiCallNextReq.getSeqId());
 				}
 			}
 		}else {
@@ -685,6 +687,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	private boolean isNeedVoiceCheck(AiFlowMsgPushReq aiFlowMsgPushReq) {
+		if(1==1) {
+			//因为现在调用阿里的asr识别，所以暂时不需要调用我们自己的噪音检测，所以先直接返回不需要检测
+			return false;
+		}
 		//长度>4不需要走噪音检测
 		if(aiFlowMsgPushReq.getSentence().length()>4) {
 			return false;

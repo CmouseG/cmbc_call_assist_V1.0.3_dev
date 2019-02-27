@@ -36,7 +36,7 @@ public class AssistCallController implements IAssistCall {
     AIManager aiManager;
 
     /**
-     * 转人工
+     * 协呼
      */
     @GetMapping("/assistToAgent")
     public Result.ReturnData assistToAgent(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId){

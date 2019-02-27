@@ -57,6 +57,7 @@ public class CallDealService {
 		callInfo.setCallStartTime(new Date());	//呼叫开始时间
 		callInfo.setIntentLevel(callSentence.getIntent()); //意向
 		callInfo.setCurrent_domain(callSentence.getAnswered_domain());	//当前域
+		callInfo.setState(callSentence.getState());	//当前域名称（sellbot hello需要）
 		callInfo.setIncr(this.getNextIncrNo(aiCallStartReq)); //获取新电话编号
 		callInfo.setSentenceList(sentenceList);	//开场白
 		aiCacheService.cacheUserCalls(aiCallStartReq.getUserId(), callInfo);	//放入cache
@@ -95,6 +96,7 @@ public class CallDealService {
 		callInfo.setDialogCount(callInfo.getDialogCount()+1); //对话轮数 
 		callInfo.setIntentLevel(callSentence.getIntent()); //意向
 		callInfo.setCurrent_domain(callSentence.getAnswered_domain());	//当前域
+		callInfo.setState(callSentence.getState());	//当前域名称（sellbot hello需要）
 		//如果交互时sellbot返回的数据，有客户的话，那么需要把前边推送的消息中同一句话删除掉，否则会重复显示
 		if(StrUtils.isNotEmpty(callSentence.getSentence())) {
 			//删除最后一条数据

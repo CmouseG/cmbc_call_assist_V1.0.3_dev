@@ -157,7 +157,7 @@ public class AIManagerImpl implements AIManager {
     @Override
     public void releaseAi(CallOutPlan callOutPlan) {
         AiHangupReq hangupReq = new AiHangupReq();
-        hangupReq.setSeqId(callOutPlan.getPlanUuid());
+        hangupReq.setSeqId(callOutPlan.getCallId().toString());
         hangupReq.setAiNo(callOutPlan.getAiId());
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));

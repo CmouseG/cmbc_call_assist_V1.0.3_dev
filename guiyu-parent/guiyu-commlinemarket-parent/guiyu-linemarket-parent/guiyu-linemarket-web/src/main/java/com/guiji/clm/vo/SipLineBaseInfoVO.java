@@ -12,6 +12,8 @@ import lombok.Data;
 */
 @Data
 public class SipLineBaseInfoVO extends SipLineBaseInfo{
+	//线路分配企业名称
+	private String belongOrgName;
 	//线路归属
 	private String lineOwner;
 	//外显归属地名称
@@ -24,4 +26,8 @@ public class SipLineBaseInfoVO extends SipLineBaseInfo{
 	private String univalentStr;
 	//合同单价中文 XX元/分钟
 	private String contractUnivalentStr;
+	//是否可编辑
+	private boolean editable;
+	//是否需要生效
+	private boolean effectable;
 }

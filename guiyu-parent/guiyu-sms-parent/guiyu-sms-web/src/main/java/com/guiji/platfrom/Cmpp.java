@@ -19,6 +19,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.guiji.platfrom.send.ISendMsg;
 import com.guiji.sms.dao.entity.SmsRecord;
 
+/**
+ * Cmpp
+ */
 public class Cmpp implements ISendMsg
 {
 	private static final Logger logger = LoggerFactory.getLogger(Cmpp.class);
@@ -115,7 +118,7 @@ public class Cmpp implements ISendMsg
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"code\":\"404\",\"msg\":\"调用接口异常\",\"data\":\"\"}";
+			result = "{\"code\":\"404\",\"msg\":\"调用接口异常\"}";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

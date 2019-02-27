@@ -1,16 +1,18 @@
 package com.guiji.fsagent.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
-
+@Slf4j
 public class FileUtil {
-    private static  final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      * 删除文件
@@ -89,9 +91,56 @@ public class FileUtil {
             Double durationInSeconds = (frames+0.0) / format.getFrameRate();
             return durationInSeconds;
         } catch (Exception e) {
-            logger.warn("获取wav时长出现异常", e);
+            log.warn("获取wav时长出现异常", e);
+        }finally {
+            try {
+                if(audioInputStream!=null){
+                    audioInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
+    }
+
+    /**
+     * 截取音频文件
+     * @param sourceFileName
+     * @param destinationFileName
+     * @param startSecond
+     * @param secondsToCopy
+     */
+    public static void copyAudio(String sourceFileName, String destinationFileName, int startSecond, int secondsToCopy) {
+        AudioInputStream inputStream = null;
+        AudioInputStream shortenedStream = null;
+        try {
+            File file = new File(sourceFileName);
+            AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
+            AudioFormat format = fileFormat.getFormat();
+            inputStream = AudioSystem.getAudioInputStream(file);
+            int bytesPerSecond = format.getFrameSize() * (int) format.getFrameRate();
+            inputStream.skip(startSecond * bytesPerSecond);
+            long framesOfAudioToCopy = secondsToCopy * (int) format.getFrameRate();
+            shortenedStream = new AudioInputStream(inputStream, format, framesOfAudioToCopy);
+            File destinationFile = new File(destinationFileName);
+            AudioSystem.write(shortenedStream, fileFormat.getType(), destinationFile);
+        } catch (Exception e) {
+            log.warn("截取音频文件出现异常", e);
+        } finally {
+            if (inputStream != null)
+                try {
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (shortenedStream != null)
+                try {
+                shortenedStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

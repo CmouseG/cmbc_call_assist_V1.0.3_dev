@@ -46,4 +46,7 @@ public class CallOutDetailVO implements Serializable {
     private String customerRecordFile;
     private String customerRecordUrl;
 
+    private String wordSegmentResult;
+    private String keywords;
+
 }

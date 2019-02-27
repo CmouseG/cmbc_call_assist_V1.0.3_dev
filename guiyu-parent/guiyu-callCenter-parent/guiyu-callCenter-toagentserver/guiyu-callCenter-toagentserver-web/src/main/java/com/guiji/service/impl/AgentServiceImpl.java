@@ -667,14 +667,21 @@ public class AgentServiceImpl implements AgentService {
         fsManager.syncUser(agentMapper.selectMinUserId()+"",user.getUserId() + "");
 
         Queue queue = new Queue();
-        queue.setQueueName("默认坐席组");
-        queue.setCreator(user.getUserId());
-        queue.setCreateTime(date);
-        queue.setUpdateUser(user.getUserId());
-        queue.setUpdateTime(date);
-        queue.setOrgCode(user.getOrgCode());
-        queueMapper.insert(queue);
-        fsManager.createQueue(queue.getQueueId() + "");
+        QueueExample queueExample = new QueueExample();
+        queueExample.createCriteria().andOrgCodeEqualTo(user.getOrgCode()).andQueueNameEqualTo("默认坐席组");
+        List<Queue> queueList = queueMapper.selectByExample(queueExample);
+        if(queueList.size()>0){
+            queue=queueList.get(0);
+        }else{
+            queue.setQueueName("默认坐席组");
+            queue.setCreator(user.getUserId());
+            queue.setCreateTime(date);
+            queue.setUpdateUser(user.getUserId());
+            queue.setUpdateTime(date);
+            queue.setOrgCode(user.getOrgCode());
+            queueMapper.insert(queue);
+            fsManager.createQueue(queue.getQueueId() + "");
+        }
 
         //第三步callcenter绑定
         TierInfo tierInfo = new TierInfo();

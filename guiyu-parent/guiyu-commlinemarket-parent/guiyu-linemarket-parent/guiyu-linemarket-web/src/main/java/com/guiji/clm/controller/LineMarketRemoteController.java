@@ -15,6 +15,7 @@ import com.guiji.component.result.Result;
 import com.guiji.utils.StrUtils;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.util.AreaDictUtil;
@@ -78,7 +79,7 @@ public class LineMarketRemoteController implements LineMarketRemote{
     private SipLineVO exclusive2SipLine(SipLineExclusive sipLineExclusive) {
     	if(sipLineExclusive!=null) {
     		SipLineVO vo = new SipLineVO();
-			BeanUtil.copyProperties(sipLineExclusive, vo);
+			BeanUtil.copyProperties(sipLineExclusive, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 			if(StrUtils.isNotEmpty(vo.getOvertArea())) {
 				//外显归属地
 				vo.setOvertAreaName(AreaDictUtil.getAreaName(vo.getOvertArea()));

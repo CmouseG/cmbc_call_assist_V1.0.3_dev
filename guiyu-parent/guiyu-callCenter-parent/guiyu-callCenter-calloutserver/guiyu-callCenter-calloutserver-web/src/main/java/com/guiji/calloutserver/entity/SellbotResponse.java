@@ -50,8 +50,8 @@ public class SellbotResponse {
     private String app_port;
     private int end;
 
-    private String word_segment_result;
     private String keywords;
+    private String word_segment_result;
 
     //值为 0 的时候代表精确命中关键词
     //值为 1，代表未命中

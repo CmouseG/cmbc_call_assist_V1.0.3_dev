@@ -34,6 +34,8 @@ import com.guiji.botsentence.dao.BotSentenceOptionsMapper;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.BotSentenceTemplateMapper;
 import com.guiji.botsentence.dao.BotSentenceTradeMapper;
+import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
+import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceAddition;
 import com.guiji.botsentence.dao.entity.BotSentenceAdditionExample;
@@ -50,6 +52,8 @@ import com.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import com.guiji.botsentence.dao.entity.BotSentenceTemplateExample;
 import com.guiji.botsentence.dao.entity.BotSentenceTrade;
 import com.guiji.botsentence.dao.entity.BotSentenceTradeExample;
+import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
+import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExample;
 import com.guiji.botsentence.dao.ext.ImportProcessMapper;
@@ -123,6 +127,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 	
 	@Autowired
 	private BotSentenceKeyWordsService botSentenceKeyWordsService;
+	
+	@Autowired
+	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
+	
+	@Autowired
+	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
 	@Autowired
 	private IAuth iAuth;
@@ -222,55 +232,24 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		}*/
 		
 		String processId = "";
+		boolean isNew = true;
+		List<BotSentenceProcess> list = new ArrayList<>();
 		
 		if("02".equals(paramVO.getTemplateType())) {//导入个人流程
-			
-			if(StringUtils.isNotBlank(templatId)) {
+			if(StringUtils.isNotBlank(template_id)) {
 				logger.info("更新话术模板");
 				logger.info("模板编号:" + template_id);
 				BotSentenceProcessExample example = new BotSentenceProcessExample();
-				example.createCriteria().andTemplateIdEqualTo(templatId);
-				List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
-				if(null != list && list.size() > 0 || !templatId.equals(template_id)) {
-					logger.info("导入更新个人话术模板");
-					processId = list.get(0).getProcessId();
-					//先删除当前话术有关的数据
-					//删除domain
-					BotSentenceDomainExample deleteDomainExample = new BotSentenceDomainExample();
-					deleteDomainExample.createCriteria().andProcessIdEqualTo(processId);
-					botSentenceDomainMapper.deleteByExample(deleteDomainExample);
-					
-					//删除branch
-					BotSentenceBranchExample deleteBranchExample = new BotSentenceBranchExample();
-					deleteBranchExample.createCriteria().andProcessIdEqualTo(processId);
-					botSentenceBranchMapper.deleteByExample(deleteBranchExample);
-					
-					//删除intent
-					BotSentenceIntentExample deleteIntentExample = new BotSentenceIntentExample();
-					deleteIntentExample.createCriteria().andProcessIdEqualTo(processId);
-					botSentenceIntentMapper.deleteByExample(deleteIntentExample);
-					
-					//删除volice
-					VoliceInfoExample deleteVoliceExample = new VoliceInfoExample();
-					deleteVoliceExample.createCriteria().andProcessIdEqualTo(processId);
-					voliceInfoMapper.deleteByExample(deleteVoliceExample);
-					
-					//删除label
-					//BotSentenceLabelExample deleteLabelExample = new BotSentenceLabelExample();
-					//deleteLabelExample.createCriteria().andProcessIdEqualTo(processId);
-					//botSentenceLabelMapper.deleteByExample(deleteLabelExample);
-					
-					//删除addition
-					BotSentenceAdditionExample deleteAdditionExample = new BotSentenceAdditionExample();
-					deleteAdditionExample.createCriteria().andProcessIdEqualTo(processId);
-					botSentenceAdditionMapper.deleteByExample(deleteAdditionExample);
-					
-					
-				}else {
-					throw new CommonException("当前模板不存在!");
+				example.createCriteria().andTemplateIdEqualTo(template_id);
+				list = botSentenceProcessMapper.selectByExample(example);
+				if(null != list && list.size() > 0) {
+					isNew = false;
 				}
-				
-			}else {
+			}
+			
+			logger.info("是否新建话术: " + isNew);
+			
+			if(isNew) {
 				// 插入process
 				processId = importProcessMapper.getProcessId();
 				BotSentenceProcess botSentenceProcess = new BotSentenceProcess();
@@ -278,17 +257,19 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceProcess.setState(Constant.APPROVE_MAEKING);
 				botSentenceProcess.setTemplateType("02");
 				
-				//生成模板编号
-				Pinyin4jUtil util= new Pinyin4jUtil();
-				String pingyin = "";
-				try {
-					pingyin = util.toPinYinLowercase(trade);
-				} catch (BadHanyuPinyinOutputFormatCombination e) {
-					logger.error("生成首字母异常...", e);
-					pingyin = SystemUtil.getSysJournalNo(5, false);
+				if(StringUtils.isBlank(template_id)) {
+					//生成模板编号
+					Pinyin4jUtil util= new Pinyin4jUtil();
+					String pingyin = "";
+					try {
+						pingyin = util.toPinYinLowercase(trade);
+					} catch (BadHanyuPinyinOutputFormatCombination e) {
+						logger.error("生成首字母异常...", e);
+						pingyin = SystemUtil.getSysJournalNo(5, false);
+					}
+					
+					template_id = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
 				}
-				
-				template_id = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
 				
 				botSentenceProcess.setTemplateId(template_id);//模板编号
 				botSentenceProcess.setTemplateName(template_name);//模板名称
@@ -328,19 +309,58 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				options.setCrtTime(new Date(System.currentTimeMillis()));
 				options.setCrtUser(userId);
 				botSentenceOptionsMapper.insert(options);
+			}else {
+				logger.info("导入更新个人话术模板");
+				processId = list.get(0).getProcessId();
+				//先删除当前话术有关的数据
+				//删除domain
+				BotSentenceDomainExample deleteDomainExample = new BotSentenceDomainExample();
+				deleteDomainExample.createCriteria().andProcessIdEqualTo(processId);
+				botSentenceDomainMapper.deleteByExample(deleteDomainExample);
+				
+				//删除branch
+				BotSentenceBranchExample deleteBranchExample = new BotSentenceBranchExample();
+				deleteBranchExample.createCriteria().andProcessIdEqualTo(processId);
+				botSentenceBranchMapper.deleteByExample(deleteBranchExample);
+				
+				//删除intent
+				BotSentenceIntentExample deleteIntentExample = new BotSentenceIntentExample();
+				deleteIntentExample.createCriteria().andProcessIdEqualTo(processId);
+				botSentenceIntentMapper.deleteByExample(deleteIntentExample);
+				
+				//删除volice
+				VoliceInfoExample deleteVoliceExample = new VoliceInfoExample();
+				deleteVoliceExample.createCriteria().andProcessIdEqualTo(processId);
+				voliceInfoMapper.deleteByExample(deleteVoliceExample);
+				
+				//删除addition
+				BotSentenceAdditionExample deleteAdditionExample = new BotSentenceAdditionExample();
+				deleteAdditionExample.createCriteria().andProcessIdEqualTo(processId);
+				botSentenceAdditionMapper.deleteByExample(deleteAdditionExample);
+				
+				//删除tts task
+				BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
+				ttsExample.createCriteria().andProcessIdEqualTo(processId);
+				botSentenceTtsTaskMapper.deleteByExample(ttsExample);
+				
+				//删除tts 备用话术
+				BotSentenceTtsBackupExample backupExample = new BotSentenceTtsBackupExample();
+				backupExample.createCriteria().andProcessIdEqualTo(processId);
+				botSentenceTtsBackupMapper.deleteByExample(backupExample);
 			}
+			
 			
 		}else {//默认为导入话术模板
 			//判断当前模板是否已存在，如果存在则更新
 			BotSentenceTemplateExample queryExample = new BotSentenceTemplateExample();
 			queryExample.createCriteria().andTemplateIdEqualTo(template_id);
-			List<BotSentenceTemplate> list = botSentenceTemplateMapper.selectByExample(queryExample);
+			List<BotSentenceTemplate> templateList = botSentenceTemplateMapper.selectByExample(queryExample);
 			
 			BotSentenceTemplate template = null;
 			
-			if(null != list && list.size() > 0) {
+			if(null != templateList && templateList.size() > 0) {
 				logger.info("当前话术模板已存在，自动覆盖，保证话术模板流程编号不变....");
-				template = list.get(0);
+				template = templateList.get(0);
 				template.setLstUpdateTime(new Date(System.currentTimeMillis()));
 				template.setLstUpdateUser(userId);
 				template.setState("04");
@@ -377,11 +397,6 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				VoliceInfoExample deleteVoliceExample = new VoliceInfoExample();
 				deleteVoliceExample.createCriteria().andProcessIdEqualTo(processId);
 				voliceInfoMapper.deleteByExample(deleteVoliceExample);
-				
-				//删除label
-				//BotSentenceLabelExample deleteLabelExample = new BotSentenceLabelExample();
-				//deleteLabelExample.createCriteria().andProcessIdEqualTo(processId);
-				//botSentenceLabelMapper.deleteByExample(deleteLabelExample);
 				
 				//删除addition
 				BotSentenceAdditionExample deleteAdditionExample = new BotSentenceAdditionExample();
@@ -537,12 +552,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					return false;
 				}
 			} else if (file.getName().equals("sim.txt")) {
-				try {
+				/*try {
 					sim_txt = FileUtil.readToString(file);
 				} catch (IOException e) {
 					logger.error("read sim.txt IOException:" + e);
 					return false;
-				}
+				}*/
 			} else if (file.getName().equals("weights.txt")) {
 				try {
 					weights_txt = FileUtil.readToString(file);

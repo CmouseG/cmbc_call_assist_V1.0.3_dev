@@ -53,6 +53,7 @@ public class TunnelServiceImpl implements TunnelService
 		
 		example.setLimitStart((tunnelListReq.getPageNum() - 1) * tunnelListReq.getPageSize());
 		example.setLimitEnd(tunnelListReq.getPageSize());
+		example.setOrderByClause("id desc");
 		List<SmsTunnel> tunnelList = tunnelMapper.selectByExampleWithBLOBs(example); //分页返回的记录
 		for(SmsTunnel tunnel : tunnelList)
 		{

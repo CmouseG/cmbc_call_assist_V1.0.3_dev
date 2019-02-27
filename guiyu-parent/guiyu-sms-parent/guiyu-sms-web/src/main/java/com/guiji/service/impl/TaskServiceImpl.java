@@ -77,6 +77,7 @@ public class TaskServiceImpl implements TaskService
 		
 		example.setLimitStart((taskListReq.getPageNum() - 1) * taskListReq.getPageSize());
 		example.setLimitEnd(taskListReq.getPageSize());
+		example.setOrderByClause("id desc");
 		taskListRsp.setSmsTaskList(taskMapper.selectByExampleWithBLOBs(example)); // 分页返回的记录
 		
 		return taskListRsp;

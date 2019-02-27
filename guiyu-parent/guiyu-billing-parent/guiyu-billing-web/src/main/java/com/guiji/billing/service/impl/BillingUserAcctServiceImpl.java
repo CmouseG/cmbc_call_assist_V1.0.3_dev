@@ -376,7 +376,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     private void notifyUnfreeze(BillingUserAcctBean acct, BigDecimal srcAmount, BigDecimal toAmount){
         try {
             //如果充值使之前欠费变更为不欠费，通知取消欠费消息
-            if (srcAmount.compareTo(BigDecimal.ZERO) <= 0
+            if (srcAmount.compareTo(BigDecimal.ZERO) < 0
                     && (toAmount).compareTo(BigDecimal.ZERO) > 0) {
                 com.guiji.vo.ArrearageNotifyVo arrearageNotifyVo = null;
                 List<BillingUserAcctBean> list = this.queryArrearageAcctList();

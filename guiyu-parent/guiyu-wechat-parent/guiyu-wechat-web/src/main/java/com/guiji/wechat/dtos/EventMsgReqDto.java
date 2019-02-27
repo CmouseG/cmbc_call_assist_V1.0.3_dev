@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class EventMsgReqDto {
 
+    private final static String WECHAT_REGEX = "qrscene_";
+
     /**
      * 开发者微信号
      */
@@ -95,5 +97,12 @@ public class EventMsgReqDto {
 
     public void setTicket(String ticket) {
         this.ticket = ticket;
+    }
+
+    public String getCallbackParameter(){
+        if(eventKey.startsWith(WECHAT_REGEX)){
+            return eventKey.split(WECHAT_REGEX)[1];
+        }
+        return eventKey;
     }
 }

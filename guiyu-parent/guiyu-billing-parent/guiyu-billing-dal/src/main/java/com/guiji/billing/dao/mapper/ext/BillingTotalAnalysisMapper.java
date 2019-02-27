@@ -78,4 +78,9 @@ public interface BillingTotalAnalysisMapper {
     //调用存储过程，统计每日计费数据
   //  int procTotalChargingByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime);
     int procTotalChargingByDate(@Param("totalDate") String totalDate);
+
+    //调用存储过程，统计每月计费数据
+    int procTotalChargingByMonth(@Param("totalMonth") String totalMonth,
+                                 @Param("beginDate") String beginDate,
+                                 @Param("endDate") String endDate);
 }

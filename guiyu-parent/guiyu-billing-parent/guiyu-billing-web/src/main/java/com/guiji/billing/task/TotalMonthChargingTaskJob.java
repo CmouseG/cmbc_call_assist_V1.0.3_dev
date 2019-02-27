@@ -10,20 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 统计每日计费数据
+ * 统计每月计费数据
  */
 @Component
-@JobHandler(value="totalDateChargingTaskJob")
-public class TotalDateChargingTaskJob extends IJobHandler {
+@JobHandler(value="totalMonthChargingTaskJob")
+public class TotalMonthChargingTaskJob extends IJobHandler {
 
-    private Logger logger = LoggerFactory.getLogger(TotalDateChargingTaskJob.class);
+    private Logger logger = LoggerFactory.getLogger(TotalMonthChargingTaskJob.class);
 
     @Autowired
     private BillingTotalAnalysisService billingTotalAnalysisService;
 
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-        billingTotalAnalysisService.procTotalChargingByDate();
+        billingTotalAnalysisService.procTotalChargingByMonth();
         return ReturnT.SUCCESS;
     }
 }

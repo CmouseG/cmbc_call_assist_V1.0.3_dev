@@ -79,6 +79,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		
 		example.setLimitStart((taskDetailListReq.getPageNum() - 1) * taskDetailListReq.getPageSize());
 		example.setLimitEnd(taskDetailListReq.getPageSize());
+		example.setOrderByClause("id desc");
 		taskDetailListRsp.setSmsTaskDetailList(taskDetailMapper.selectByExampleWithBLOBs(example)); // 分页返回的记录
 		
 		return taskDetailListRsp;

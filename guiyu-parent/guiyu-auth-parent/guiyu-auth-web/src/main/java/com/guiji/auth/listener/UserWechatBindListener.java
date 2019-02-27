@@ -39,7 +39,7 @@ public class UserWechatBindListener {
 				logger.info("接收MQ监听消息{}",message);
 				UserIdVo userIdVo = JsonUtils.json2Bean(userBindWeChatMessage.getCallbackParameter(), UserIdVo.class);
 				//用户绑定微信
-				userService.userBindWechat(userIdVo.getUserId(),userBindWeChatMessage.getWeChatNickName(),userBindWeChatMessage.getOpenId());
+				userService.userBindWechat(Long.parseLong(userIdVo.getUserId()),userBindWeChatMessage.getWeChatNickName(),userBindWeChatMessage.getOpenId());
 				logger.info("用户微信绑定完成");
 			}
 		} catch (Exception e) {

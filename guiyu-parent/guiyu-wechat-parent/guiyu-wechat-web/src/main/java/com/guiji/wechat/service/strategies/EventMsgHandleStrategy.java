@@ -86,7 +86,7 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
     private void sendUserBindWeChatMessage(EventMsgReqDto eventMsgReqDto) {
         UserBindWeChatMessage message = new UserBindWeChatMessage();
 
-        if(StringUtils.isEmpty(eventMsgReqDto.getEventKey())){
+        if(StringUtils.isEmpty(eventMsgReqDto.getCallbackParameter())){
             return;
         }
 
@@ -98,7 +98,7 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
         message.setWeChatNickName(weChatUserDto.getNickname());
         message.setOpenId(openId);
         message.setBindTime(eventMsgReqDto.getCreateTime());
-        message.setCallbackParameter(eventMsgReqDto.getEventKey());
+        message.setCallbackParameter(eventMsgReqDto.getCallbackParameter());
 
         fanoutSender.send(USER_BIND_WECHAT_EXCHANGE, JSON.toJSONString(message));
         logger.info("user bind weChat message:{}", JSON.toJSONString(message));

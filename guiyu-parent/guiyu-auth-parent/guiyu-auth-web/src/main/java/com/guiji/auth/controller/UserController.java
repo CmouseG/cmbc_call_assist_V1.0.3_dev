@@ -290,7 +290,7 @@ public class UserController implements IAuth {
 	public void getQRCode(Long userId, HttpServletResponse response) {
 		QRCodeReqVO request = new QRCodeReqVO();
 		UserIdVo userIdVo = new UserIdVo();
-		userIdVo.setUserId(userId);
+		userIdVo.setUserId(String.valueOf(userId));
 		request.setCallbackParameter(JsonUtils.bean2Json(userIdVo));
 		Result.ReturnData<QRCodeRpsVO> result = weChatApi.getQRCode(request);
 		byte[] bytes = null;

@@ -6,13 +6,13 @@ import java.io.Serializable;
  * Created by ty on 2019/1/30.
  */
 public class UserIdVo implements Serializable {
-    private Long userId;
+    private String userId;
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 }

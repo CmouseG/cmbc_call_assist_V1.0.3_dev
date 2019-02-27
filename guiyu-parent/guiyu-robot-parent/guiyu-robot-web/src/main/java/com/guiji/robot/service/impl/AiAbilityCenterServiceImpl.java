@@ -510,6 +510,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 					}
 				}
 			}
+			if(StrUtils.isNotEmpty(callInfo.getState())) {
+				sellbotSayhelloReq.setState(callInfo.getState());
+			}
 		}else {
 			logger.error("根据用户id:{},seqid:{}获取实时通话数据为空",aiCallNextReq.getUserId(),aiCallNextReq.getSeqId());
 		}

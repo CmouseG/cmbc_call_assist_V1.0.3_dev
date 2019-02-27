@@ -56,6 +56,7 @@ public class PlatformServiceImpl implements PlatformService
 
 		example.setLimitStart((platformListReq.getPageNum() - 1) * platformListReq.getPageSize());
 		example.setLimitEnd(platformListReq.getPageSize());
+		example.setOrderByClause("id desc");
 		List<SmsPlatform> platformList = platformMapper.selectByExample(example);
 		for(SmsPlatform platform : platformList)
 		{

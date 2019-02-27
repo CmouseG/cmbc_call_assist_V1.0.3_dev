@@ -37,6 +37,8 @@ public class CallInfo {
 	private String intentLevel;
 	//话术当前域
 	private String current_domain;
+	//返回机器人当前域的域的名称（sellbot hello接口需要）
+	private String state;
 	//通话编号（只是为了在前端长链接展示时排序使用）
 	private long incr;
 	//对话list

@@ -88,15 +88,15 @@ public class RobotNextHelper {
                         Long startTime = channel.getStartPlayTime().getTime();
 
                         if (channel.getEndPlayTime() != null && startTime < channel.getEndPlayTime().getTime()) {//播放结束
-                            if (channel.getIsPrologue() != null && channel.getIsPrologue()) {//开场白
-                                aiCallNextReq.setStatus("999");
-                            } else {
-                                aiCallNextReq.setStatus("0");
-                            }
+                            aiCallNextReq.setStatus("0");
                             aiCallNextReq.setTimestamp(channel.getEndPlayTime().getTime());
                             aiCallNextReq.setWaitCnt((int) (new Date().getTime()-channel.getEndPlayTime().getTime())/1000);
                         } else {//播音中
-                            aiCallNextReq.setStatus("1");
+                            if (channel.getIsPrologue() != null && channel.getIsPrologue()) {//开场白
+                                aiCallNextReq.setStatus("999");
+                            } else {
+                                aiCallNextReq.setStatus("1");
+                            }
                             aiCallNextReq.setTimestamp(channel.getStartPlayTime().getTime());
                             aiCallNextReq.setWaitCnt(0);
                         }

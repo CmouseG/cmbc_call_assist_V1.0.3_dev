@@ -8,6 +8,7 @@ import com.guiji.billing.service.GetApiService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.utils.ResHandler;
+import com.guiji.billing.vo.TotalChargingItemDetailVo;
 import com.guiji.billing.vo.TotalChargingItemVo;
 import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     }
 
     @Override
-    public List<TotalChargingItemVo> totalChargingItemList(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemVo> page) {
+    public List<TotalChargingItemDetailVo> totalChargingItemList(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemDetailVo> page) {
         return billingCompanyTotalMapper.totalChargingItemList(queryTotalChargingItemDto.getChargingItemId(),
                 queryTotalChargingItemDto.getBeginDate(), queryTotalChargingItemDto.getEndDate(), page);
     }

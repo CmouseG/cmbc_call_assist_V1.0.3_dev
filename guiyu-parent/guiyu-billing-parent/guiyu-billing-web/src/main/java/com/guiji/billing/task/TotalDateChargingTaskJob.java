@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * 统计每日计费数据
+ */
 @Component
 @JobHandler(value="totalDateChargingTaskJob")
 public class TotalDateChargingTaskJob extends IJobHandler {

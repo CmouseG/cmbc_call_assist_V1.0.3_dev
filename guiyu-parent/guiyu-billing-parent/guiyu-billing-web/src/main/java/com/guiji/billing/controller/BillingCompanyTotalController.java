@@ -3,6 +3,7 @@ package com.guiji.billing.controller;
 import com.guiji.billing.dto.QueryTotalChargingItemDto;
 import com.guiji.billing.service.BillingCompanyTotalService;
 import com.guiji.billing.sys.ResultPage;
+import com.guiji.billing.vo.TotalChargingItemDetailVo;
 import com.guiji.billing.vo.TotalChargingItemVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,9 @@ public class BillingCompanyTotalController {
     //话费分析详情(企业侧使用)
     @ApiOperation(value="话费分析详情", notes="话费分析详情")
     @RequestMapping(value = "/totalChargingItemList", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResultPage<TotalChargingItemVo> totalChargingItemList(@RequestBody QueryTotalChargingItemDto queryTotalChargingItemDto){
-        ResultPage<TotalChargingItemVo> page = new ResultPage<TotalChargingItemVo>(queryTotalChargingItemDto);
-        List<TotalChargingItemVo> list = billingCompanyTotalService.totalChargingItemList(queryTotalChargingItemDto, page);
+    public ResultPage<TotalChargingItemDetailVo> totalChargingItemList(@RequestBody QueryTotalChargingItemDto queryTotalChargingItemDto){
+        ResultPage<TotalChargingItemDetailVo> page = new ResultPage<TotalChargingItemDetailVo>(queryTotalChargingItemDto);
+        List<TotalChargingItemDetailVo> list = billingCompanyTotalService.totalChargingItemList(queryTotalChargingItemDto, page);
         page.setList(list);
         page.setTotalItemAndPageNumber(billingCompanyTotalService.totalChargingItemCount(queryTotalChargingItemDto));
         return page;

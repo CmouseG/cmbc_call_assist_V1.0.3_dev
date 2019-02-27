@@ -9,6 +9,7 @@ public class BotSentenceGradeVO {
 	private String evaluate;
 	private Date crtTime;
 	private String remark;
+	private String initStat;
 	
 	public String getIntentName() {
 		return intentName;
@@ -39,6 +40,12 @@ public class BotSentenceGradeVO {
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public String getInitStat() {
+		return initStat;
+	}
+	public void setInitStat(String initStat) {
+		this.initStat = initStat;
 	}
 
 	

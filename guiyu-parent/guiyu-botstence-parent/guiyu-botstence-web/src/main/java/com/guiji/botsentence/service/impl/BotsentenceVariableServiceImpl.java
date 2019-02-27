@@ -1155,6 +1155,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	@Override
 	public String generateStatJson(String processId) {
 		LinkedHashMap<String, Object> statMap = new LinkedHashMap<>();
+		statMap.put("init_stat", "D");
 		BotSentenceGrade grade = botSentenceGradeService.getBotSentenceGrade(processId);
 		if(null != grade && StringUtils.isNotBlank(grade.getStatOrder())) {
 			List<String> intentNameList = BotSentenceUtil.StringToList(grade.getStatOrder());
@@ -1172,6 +1173,9 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 			statMap.put("show", "");
 			statMap.put("max_conversation_count", 12);
 			statMap.put("stat_order", BotSentenceUtil.StringToList(grade.getStatOrder()));
+			if(StringUtils.isNotBlank(grade.getInitStat())) {
+				statMap.put("init_stat", grade.getInitStat());
+			}
 		}
 		
 		/*List<String> ruleNoList = botSentenceGradeRuleExtMapper.queryDistinctProcessId(processId);

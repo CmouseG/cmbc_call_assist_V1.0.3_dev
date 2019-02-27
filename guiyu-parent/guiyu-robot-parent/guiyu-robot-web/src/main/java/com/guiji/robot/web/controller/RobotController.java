@@ -20,8 +20,11 @@ import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.impl.AiCacheService;
+import com.guiji.robot.service.impl.MonitorUserService;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.AiPoolInfo;
+import com.guiji.robot.service.vo.CallInfo;
+import com.guiji.robot.service.vo.MonitorCallData;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.StrUtils;
 
@@ -38,6 +41,8 @@ public class RobotController {
 	IAiResourceManagerService iAiResourceManagerService;
 	@Autowired
 	AiCacheService aiCacheService;
+	@Autowired
+	MonitorUserService monitorUserService;
 	
 	
 	/**
@@ -61,7 +66,7 @@ public class RobotController {
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserInUseAiList(qUserId);
 		if(ListUtil.isNotEmpty(aiList)) {
 			//按机器人名称正序
-			aiList.sort(Comparator.comparing(AiInuseCache::getSortId).thenComparing(AiInuseCache::getSortId));
+			aiList.sort(Comparator.comparing(AiInuseCache::getSortId));
 		}
 		return Result.ok(aiList);
 	}
@@ -88,7 +93,7 @@ public class RobotController {
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserBusyUseAiList(qUserId);
 		if(ListUtil.isNotEmpty(aiList)) {
 			//按机器人名称正序
-			aiList.sort(Comparator.comparing(AiInuseCache::getSortId).thenComparing(AiInuseCache::getSortId));
+			aiList.sort(Comparator.comparing(AiInuseCache::getSortId));
 		}
 		return Result.ok(aiList);
 	}
@@ -115,7 +120,7 @@ public class RobotController {
 		List<AiInuseCache> aiList = iAiResourceManagerService.queryUserSleepUseAiList(qUserId);
 		if(ListUtil.isNotEmpty(aiList)) {
 			//按机器人名称正序
-			aiList.sort(Comparator.comparing(AiInuseCache::getSortId).thenComparing(AiInuseCache::getSortId));
+			aiList.sort(Comparator.comparing(AiInuseCache::getSortId));
 		}
 		return Result.ok(aiList);
 	}
@@ -177,4 +182,5 @@ public class RobotController {
 		AiPoolInfo aiPoolInfo = iAiResourceManagerService.queryAiPoolInfo();
 		return Result.ok(aiPoolInfo);
 	}
+	
 }

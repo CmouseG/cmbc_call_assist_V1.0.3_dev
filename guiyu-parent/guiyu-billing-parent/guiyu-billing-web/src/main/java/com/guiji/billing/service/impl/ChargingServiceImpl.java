@@ -135,7 +135,7 @@ public class ChargingServiceImpl implements ChargingService {
                 }
 
                 //如果扣费后欠费，则欠费消息通知
-                if(toAmount.compareTo(BigDecimal.ZERO)<=0){
+                if(toAmount.compareTo(BigDecimal.ZERO)<0){
                     this.notifyArrearage(String.valueOf(userId), orgCode);
                 }
             }

@@ -57,14 +57,26 @@ public class FileController {
 	private DispatchPlanMapper dispatchMapper;
 	@Autowired
 	private ILinesService lineServiceImpl;
+
+	/**
+	 * 查询文件记录
+	 * @param pagenum
+	 * @param pagesize
+	 * @param batchName
+	 * @param startTime
+	 * @param endTime
+	 * @param orgCode
+	 * @return
+	 */
 	@GetMapping(value = "queryFileRecords")
 	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,
 			@RequestParam(required = false, name = "batchName") String batchName,
 			@RequestParam(required = false, name = "startTime") String startTime,
-			@RequestParam(required = false, name = "endTime") String endTime) {
+			@RequestParam(required = false, name = "endTime") String endTime,
+			@RequestHeader String orgCode) {
 		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
-				endTime);
+				endTime,orgCode);
 		return queryFileInterface;
 	}
 

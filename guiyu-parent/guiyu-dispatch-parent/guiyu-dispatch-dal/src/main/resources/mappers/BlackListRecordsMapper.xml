@@ -244,4 +244,55 @@
       org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="queryBlackListRecords" resultType="com.guiji.dispatch.dao.entity.BlackListRecords">
+    SELECT
+      id, phone, create_time, type, user_id, user_name, org_code
+    FROM black_list_records
+    WHERE 1 = 1
+    <if test="blackRecord != null">
+      <if test="blackRecord.userId != null">
+        AND user_id = #{blackRecord.userId}
+      </if>
+      <if test="blackRecord.type != null">
+        AND type = #{blackRecord.type}
+      </if>
+      <if test="blackRecord.phone != null and blackRecord.phone != ''">
+        AND phone = #{blackRecord.phone}
+      </if>
+      <if test="blackRecord.orgCode != null and blackRecord.orgCode != ''" >
+        AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '.%'))
+      </if>
+    </if>
+    <if test="page != null and page.isPage ">
+      <if test="page.orderBy != null " >
+        order by ${page.orderBy}	${page.sort}
+      </if>
+      <if test="page.indexStart != null " >
+        limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+      </if>
+    </if>
+  </select>
+
+  <select id="queryBlackRecordsCount" resultType="java.lang.Integer">
+    SELECT
+      COUNT(id)
+    FROM black_list_records
+    WHERE 1 = 1
+      <if test="blackRecord != null">
+        <if test="blackRecord.userId != null">
+          AND user_id = #{blackRecord.userId}
+        </if>
+        <if test="blackRecord.type != null">
+          AND type = #{blackRecord.type}
+        </if>
+        <if test="blackRecord.phone != null and blackRecord.phone != ''">
+          AND phone = #{blackRecord.phone}
+        </if>
+        <if test="blackRecord.orgCode != null and blackRecord.orgCode != ''" >
+          AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '.%'))
+        </if>
+      </if>
+  </select>
+
 </mapper>

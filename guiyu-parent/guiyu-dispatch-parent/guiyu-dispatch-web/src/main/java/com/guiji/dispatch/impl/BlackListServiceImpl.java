@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.sys.ResultPage;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -219,16 +220,28 @@ public class BlackListServiceImpl implements IBlackListService {
 		Page<BlackList> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
+		/*
 		BlackListExample example = new BlackListExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 		example.setOrderByClause("`gmt_create` DESC");
-		Criteria andStatusEqualTo = example.createCriteria().andOrgCodeLike(orgCode + "%")
+		Criteria andStatusEqualTo = example.createCriteria().andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode + ".%")
 				.andStatusEqualTo(Constant.BATCH_STATUS_SHOW);
 		if (phone != null && !phone.equals("")) {
 			andStatusEqualTo.andPhoneEqualTo(phone);
 		}
 		List<BlackList> result = blackListMapper.selectByExample(example);
+		*/
+		BlackList blackParam = new BlackList();
+		blackParam.setPhone(phone);
+		blackParam.setOrgCode(orgCode);
+		blackParam.setStatus(Constant.BATCH_STATUS_SHOW);
+		ResultPage<BlackList> pageRes = new ResultPage<BlackList>();
+		pageRes.setPageNo(pagenum);
+		pageRes.setPageSize(pagesize);
+		pageRes.setOrderBy("gmt_create");
+		pageRes.setSort("DESC");
+		List<BlackList> result = blackListMapper.queryBlackList(blackParam, pageRes);
 		if (isDesensitization.equals(0)) {
 			for (BlackList black : result) {
 				if (black.getPhone().length() <= 7) {
@@ -242,7 +255,10 @@ public class BlackListServiceImpl implements IBlackListService {
 				black.setPhone(phoneNumber);
 			}
 		}
+		/*
 		int countByExample = blackListMapper.countByExample(example);
+		*/
+		int countByExample = blackListMapper.queryBlackCount(blackParam);
 		page.setRecords(result);
 		page.setTotal(countByExample);
 		return page;
@@ -283,22 +299,40 @@ public class BlackListServiceImpl implements IBlackListService {
 		return insert > 0 ? true : false;
 	}
 
+	/**
+	 * 查询黑名单记录列表
+	 * @param pagenum
+	 * @param pagesize
+	 * @param orgCode
+	 * @return
+	 */
 	@Override
 	public Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, String orgCode) {
 		Page<BlackListRecords> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
+		/*
 		BlackListRecordsExample example = new BlackListRecordsExample();
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 		example.setOrderByClause("`create_time` DESC");
 		com.guiji.dispatch.dao.entity.BlackListRecordsExample.Criteria andOrgCodeEqualTo = example.createCriteria()
-				.andOrgCodeEqualTo(orgCode);
+				.andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode + ".%");
 		// if (userName != null && !userName.equals("")) {
 		// andOrgCodeEqualTo.andUserNameEqualTo(userName);
 		// }
 		List<BlackListRecords> result = blackRecordsMapper.selectByExample(example);
 		int countByExample = blackRecordsMapper.countByExample(example);
+		*/
+		BlackListRecords blackRecord = new BlackListRecords();
+		blackRecord.setOrgCode(orgCode);
+		ResultPage<BlackListRecords> pageRes = new ResultPage<BlackListRecords>();
+		pageRes.setPageNo(pagenum);
+		pageRes.setPageSize(pagesize);
+		pageRes.setOrderBy("create_time");
+		pageRes.setSort("DESC");
+		List<BlackListRecords> result = blackRecordsMapper.queryBlackListRecords(blackRecord, pageRes);
+		int countByExample = blackRecordsMapper.queryBlackRecordsCount(blackRecord);
 		page.setRecords(result);
 		page.setTotal(countByExample);
 		return page;

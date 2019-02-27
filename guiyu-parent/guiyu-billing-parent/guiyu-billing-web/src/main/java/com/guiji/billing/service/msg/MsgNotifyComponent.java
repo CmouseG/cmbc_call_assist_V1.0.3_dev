@@ -119,7 +119,7 @@ public class MsgNotifyComponent {
                 HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
                 map.put("keyword1", new SendMsgReqVO.Item(acct.getCompanyName(), null));
                 map.put("keyword2", new SendMsgReqVO.Item("充值到账", null));
-                map.put("keyword3", new SendMsgReqVO.Item("【硅基智能】尊敬的"+acct.getCompanyName()+"，您的充值已成功，您的账户当前余额￥"+acct.getAvailableBalance()+"。", null));
+                map.put("keyword3", new SendMsgReqVO.Item("【硅基智能】尊敬的"+acct.getCompanyName()+"，您的充值已成功，您的账户当前余额￥"+amount+"。", null));
                 messageSend.setWeixinData(map);
 
                 logger.info("充值消息通知，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend));

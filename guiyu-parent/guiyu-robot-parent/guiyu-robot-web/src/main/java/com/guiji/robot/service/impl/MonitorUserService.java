@@ -104,7 +104,6 @@ public class MonitorUserService {
 										}else {
 											callList.get(j).setAssistFlag(false);
 										}
-										callList.get(j).setAssistFlag(false); //不能协呼
 									}
 									//分配后的数据再重新排序，优先 可转人工操作 / 大小
 									callList.sort(Comparator.comparing(CallInfo::isAssistFlag).reversed().thenComparing(CallInfo::getIncr));

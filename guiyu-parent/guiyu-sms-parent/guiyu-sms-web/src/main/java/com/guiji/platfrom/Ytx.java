@@ -114,7 +114,7 @@ public class Ytx implements ISendMsg
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"statusCode\":\"404\",\"statusMsg\":\"调用接口异常\",\"requestId\":\"\"}";
+			result = "{\"statusCode\":\"404\",\"statusMsg\":\"调用接口异常\"}";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

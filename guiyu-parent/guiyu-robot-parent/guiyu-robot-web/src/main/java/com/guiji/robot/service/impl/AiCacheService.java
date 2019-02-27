@@ -3,8 +3,10 @@ package com.guiji.robot.service.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
 import com.guiji.robot.exception.AiErrorEnum;
@@ -271,6 +275,14 @@ public class AiCacheService {
 				replaceHsReplace.setAgent(commonHsReplace.isAgent());
 				replaceHsReplace.setTemplateId(commonHsReplace.getTemplateId());
 				replaceHsReplace.setTrade(commonHsReplace.getTrade());
+				//设置打断配置opinion.json
+				this.initTempFlowCfg(replaceHsReplace);
+				//设置话术模板版本-老sellbot版本还是飞龙版本
+				replaceHsReplace.setVersion(this.getHsVersion(templateId));
+				if(RobotConstants.HS_VERSION_FL==replaceHsReplace.getVersion()) {
+					//如果是飞龙版本，那么将新类型的参数替换为老sellbot的参数形式，tts合成时屏蔽新老差异
+					this.unDiffTtsParams(replaceHsReplace);
+				}
 				if(replaceHsReplace != null) {
 					//提交到redis
 					Map<String,Object> map = new HashMap<String,Object>();
@@ -444,7 +456,27 @@ public class AiCacheService {
 	}
 	/**************************************end****************************************/
 	
-	
+	/**
+	 * 获取该话术模板版本：1-老sellbot版本；2-飞龙版本
+	 * 判断依据根据飞龙版本要求，根据scene.json文件判断，只有飞龙版本有这个文件
+	 * @param templateId
+	 * @return
+	 */
+	private int getHsVersion(String templateId) {
+		String hushuDirPath = SystemUtil.getRootPath()+hushuDir + "/" + templateId + "/" + templateId + "/"; //话术模板存放目录
+		if(!new File(hushuDirPath).exists()) {
+			//话术模板检查
+			logger.error("话术模板{}在路径{}不存在。。。",templateId,hushuDirPath);
+			throw new RobotException(AiErrorEnum.AI00060026.getErrorCode(),AiErrorEnum.AI00060026.getErrorMsg());
+		}
+		String policyPath = hushuDirPath + "scene.json";
+		if(!new File(policyPath).exists()) {
+			logger.info("话术模板{},scene.json文件{}不存在，判断为老sellbot模板",templateId,policyPath);
+			return RobotConstants.HS_VERSION_SB;
+		}else {
+			return RobotConstants.HS_VERSION_FL;
+		}
+	}
 	
 	/**
 	 * 获取replace.json对象
@@ -488,6 +520,59 @@ public class AiCacheService {
 		return hsReplace;
 	}
 	
+	/**
+	 * 设置话术模板中配置的打断配置 options.json
+	 * @param hsReplace
+	 * @return
+	 */
+	private void initTempFlowCfg(HsReplace hsReplace) {
+		String opinionFile = SystemUtil.getRootPath()+hushuDir + "/" + hsReplace.getTemplateId() + "/" + hsReplace.getTemplateId() + "/options.json"; //模板配置信息
+		if(!new File(opinionFile).exists()) {
+			logger.info("话术模板{},options.json文件{}不存在，使用默认打断参数",hsReplace.getTemplateId());
+		}else {
+			//options.json文件存在，读取文件设置打断策略
+			//读取本地话术模板文件
+			String json = ReadTxtUtil.readTxtFile(opinionFile);
+			if(StrUtils.isNotEmpty(json)) {
+				JSONObject jsonObject;
+				try {
+					jsonObject = JSON.parseObject(json);
+					if(jsonObject!=null) {
+						//静音的次数
+						int silence_wait_secs = jsonObject.getIntValue("silence_wait_secs");
+						if(silence_wait_secs>0) {
+							hsReplace.setSilence_wait_secs(silence_wait_secs);
+						}
+						//静音等待时间
+						int silence_wait_time = jsonObject.getIntValue("silence_wait_time");
+						hsReplace.setSilence_wait_time(silence_wait_time);
+						//不可打断的域配置，多域 空格分隔
+						String non_interruptables = jsonObject.getString("non_interruptable");
+						if(StrUtils.isNotEmpty(non_interruptables)) {
+							hsReplace.setNon_interruptable(non_interruptables.split(" "));
+						}
+						JSONObject ic = (JSONObject) jsonObject.get("interruption_config");
+						if(ic!=null) {
+							//打断间隔时间
+							int interrupt_min_interval = ic.getIntValue("interrupt_min_interval");
+							if(interrupt_min_interval>0) {
+								hsReplace.setInterrupt_min_interval(interrupt_min_interval);
+							}
+							//打断字数
+							int interrupt_words_num = ic.getIntValue("interrupt_words_num");
+							if(interrupt_words_num>0) {
+								hsReplace.setInterrupt_words_num(interrupt_words_num);
+							}
+						}
+					}
+				} catch (Exception e) {
+					//抛出异常，但是不停止，使用默认打断配置继续
+					logger.error("解析话术模板"+hsReplace.getTemplateId()+"打断配置options.json异常",e);
+				}
+			}
+		}
+	}
+	
 	
 	/**
 	 * 获取话术模板replace.json文件路径
@@ -521,4 +606,29 @@ public class AiCacheService {
 		}
 		return hushuDirPath + "common.json";
 	}
+	
+	/**
+	 * 如果是飞龙版本，tts_pos需要替换的参数类似： 
+	 * "1_2":"请问您是[客户姓名]吗"
+	 * 如果是sellbot版本，tts_pos需要替换的参数类似:
+	 * "1_2":"请问您是$1111吗"
+	 * 需要在这里将飞龙参数方式替换为老的方式，简化后续合成处理
+	 * @param hsReplace
+	 */
+	private void unDiffTtsParams(HsReplace hsReplace) {
+		Map<String,String> tts_pos = hsReplace.getTts_pos();	//待替换的文本
+		Map<String,String> replace_map_relationship = hsReplace.getReplace_map_relationship();	//参数新老映射
+		if(tts_pos!=null && replace_map_relationship!=null) {
+			Iterator<Entry<String, String>> keyIterator = replace_map_relationship.entrySet().iterator();
+			for (Map.Entry<String, String> entry : tts_pos.entrySet()) {
+				String ttsPosStr = entry.getValue();	//待替换文本
+				while(keyIterator.hasNext()) {
+					Entry<String, String> keyNext = keyIterator.next();
+					ttsPosStr = ttsPosStr.replaceAll(keyNext.getValue(), keyNext.getKey()); //将"客户名称"替换为0000
+				}
+				entry.setValue(ttsPosStr);
+			}
+		}
+	}
+	
 }

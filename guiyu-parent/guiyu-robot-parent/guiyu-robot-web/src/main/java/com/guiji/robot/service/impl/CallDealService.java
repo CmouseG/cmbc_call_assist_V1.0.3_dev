@@ -85,10 +85,11 @@ public class CallDealService {
 	 * @param sellbotRsp
 	 */
 	@Async
-	public void aiCallNext(String userId,String seqId,String sellbotRsp) {
+	public void aiCallNext(boolean interruptFlag,String userId,String seqId,String sellbotRsp) {
 		CallSentence callSentence = JsonUtils.json2Bean(sellbotRsp, CallSentence.class); //sellbot返回数据组装
 		callSentence.setRecordTime(new Date());	//记录时间
 		callSentence.setDiaType(RobotConstants.DIA_TYPE_AI); //对话主体类型：AI说的话
+		callSentence.setInterruptFlag(interruptFlag); //是否打断
 		//查询用户的某通电话缓存数据
 		CallInfo callInfo = aiCacheService.queryUserCall(userId,seqId);
 		callInfo.setDialogCount(callInfo.getDialogCount()+1); //对话轮数 

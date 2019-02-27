@@ -453,7 +453,7 @@ public class SipLineManager {
 				}
 				sipLineInfoService.save(sipLineBaseInfo);
 				feeNoticeChangeFlag = true;
-				BeanUtil.copyProperties(sipLineApplyExist, sipLineExclusive);
+				BeanUtil.copyProperties(sipLineApplyExist, sipLineExclusive,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				sipLineExclusive.setId(null); //重新生成
 				sipLineExclusive.setLineStatus(SipLineStatusEnum.OK.getCode()); //默认状态:正常
 				sipLineExclusive.setLineType(SipLineTypeEnum.AGENT.getCode()); //线路类型：代理
@@ -691,12 +691,12 @@ public class SipLineManager {
 		}else if(existSipLineBaseInfo!=null && existSipLineBaseInfo.getLineId()!=null) {
 			//线路变更
 			//检查下本次变更后和原来的是否有变化
-			if(!sipLineBaseInfo.getSipIp().equals(existSipLineBaseInfo.getSipIp())
-					||!sipLineBaseInfo.getSipPort().equals(existSipLineBaseInfo.getSipPort())
-					||!sipLineBaseInfo.getCodec().equals(existSipLineBaseInfo.getCodec())
-					||!sipLineBaseInfo.getCallerNum().equals(existSipLineBaseInfo.getCallerNum())
-					||!sipLineBaseInfo.getDestinationPrefix().equals(existSipLineBaseInfo.getDestinationPrefix())
-					||!sipLineBaseInfo.getMaxConcurrentCalls().equals(existSipLineBaseInfo.getMaxConcurrentCalls())
+			if(!this.objEquals(sipLineBaseInfo.getSipIp(), existSipLineBaseInfo.getSipIp())
+					||!this.objEquals(sipLineBaseInfo.getSipPort(), existSipLineBaseInfo.getSipPort())
+					||!this.objEquals(sipLineBaseInfo.getCodec(), existSipLineBaseInfo.getCodec())
+					||!this.objEquals(sipLineBaseInfo.getCallerNum(), existSipLineBaseInfo.getCallerNum())
+					||!this.objEquals(sipLineBaseInfo.getDestinationPrefix(), existSipLineBaseInfo.getDestinationPrefix())
+					||!this.objEquals(sipLineBaseInfo.getMaxConcurrentCalls(), existSipLineBaseInfo.getMaxConcurrentCalls())
 					) {
 				OutLineInfoUpdateReq lineInfo = new OutLineInfoUpdateReq();
 				lineInfo.setLineId(existSipLineBaseInfo.getLineId());
@@ -760,7 +760,7 @@ public class SipLineManager {
 				//为空，没有分配独享数据，重新分配
 				//如果客户线路没有共享出去，那么全部分给自己(处理异常未分配情况)
 				SipLineExclusive sipLineExclusive = new SipLineExclusive();
-				BeanUtil.copyProperties(sipLineBaseInfo, sipLineExclusive);
+				BeanUtil.copyProperties(sipLineBaseInfo, sipLineExclusive,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
 					//如果分配企业为空，那么默认分配给自己
 					log.error("线路{}没有共享，但是也没有分配给企业，默认分配给配置人所属企业",sipLineBaseInfo.getId());
@@ -771,5 +771,24 @@ public class SipLineManager {
 				this.splitExclusiveSipLine(sipLineExclusive);
 			}
 		}
+	}
+	
+	/**
+	 * 比较2个属性是否相等
+	 * @param obj1
+	 * @param obj2
+	 * @return
+	 */
+	private boolean objEquals(Object obj1,Object obj2) {
+		if(obj1==null && obj2 == null) {
+			return true;
+		}else {
+			if(obj1!=null && obj2!=null) {
+				if(obj1.equals(obj2)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

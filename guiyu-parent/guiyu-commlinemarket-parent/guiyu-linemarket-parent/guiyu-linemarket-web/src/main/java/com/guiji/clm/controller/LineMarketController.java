@@ -38,6 +38,7 @@ import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.StrUtils;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import lombok.extern.slf4j.Slf4j;
 
 /** 
@@ -247,7 +248,7 @@ public class LineMarketController {
 			List<SipLineShareVO> voList = new ArrayList<SipLineShareVO>();
 			for(SipLineShare sipLineShare : list) {
 				SipLineShareVO vo = new SipLineShareVO();
-				BeanUtil.copyProperties(sipLineShare, vo);
+				BeanUtil.copyProperties(sipLineShare, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				//TODO 接通率
 				vo.setUnivalentStr(sipLineShare.getUnivalent()+"元/分钟");
 				//线路拥有者
@@ -282,7 +283,7 @@ public class LineMarketController {
 			List<SipLineBaseInfoVO> voList = new ArrayList<SipLineBaseInfoVO>();
 			for(SipLineBaseInfo sipLineBaseInfo : list) {
 				SipLineBaseInfoVO vo = new SipLineBaseInfoVO();
-				BeanUtil.copyProperties(sipLineBaseInfo, vo);
+				BeanUtil.copyProperties(sipLineBaseInfo, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isNotEmpty(vo.getOvertArea())) {
 					//外显归属地
 					vo.setOvertAreaName(AreaDictUtil.getAreaName(vo.getOvertArea()));
@@ -294,6 +295,13 @@ public class LineMarketController {
 				if(StrUtils.isNotEmpty(vo.getExceptAreas())) {
 					//盲区
 					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
+				}
+				//企业名称
+				if(StrUtils.isNotEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+					SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getBelongOrgCode());
+					if(org != null) {
+						vo.setBelongOrgName(org.getName());
+					}
 				}
 				//线路拥有者(查询原线路的归属企业)
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
@@ -331,7 +339,7 @@ public class LineMarketController {
 			List<SipLineExclusiveVO> voList = new ArrayList<SipLineExclusiveVO>();
 			for(SipLineExclusive sipLineExclusive : list) {
 				SipLineExclusiveVO vo = new SipLineExclusiveVO();
-				BeanUtil.copyProperties(sipLineExclusive, vo);
+				BeanUtil.copyProperties(sipLineExclusive, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isNotEmpty(vo.getOvertArea())) {
 					//外显归属地
 					vo.setOvertAreaName(AreaDictUtil.getAreaName(vo.getOvertArea()));
@@ -367,7 +375,7 @@ public class LineMarketController {
 			List<SipLineApplyVO> voList = new ArrayList<SipLineApplyVO>();
 			for(SipLineApply sipLineApply : list) {
 				SipLineApplyVO vo = new SipLineApplyVO();
-				BeanUtil.copyProperties(sipLineApply, vo);
+				BeanUtil.copyProperties(sipLineApply, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isNotEmpty(vo.getApplyUser())) {
 					SysUser sysUser = dataLocalCacheUtil.queryUser(vo.getApplyUser());
 					if(sysUser!=null) {

@@ -247,6 +247,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				}
 			}
 			
+			logger.info("是否新建话术: " + isNew);
+			
 			if(isNew) {
 				// 插入process
 				processId = importProcessMapper.getProcessId();

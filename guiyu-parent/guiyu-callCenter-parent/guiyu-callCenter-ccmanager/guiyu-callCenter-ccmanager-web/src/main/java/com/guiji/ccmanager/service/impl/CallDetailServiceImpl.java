@@ -93,10 +93,10 @@ public class CallDetailServiceImpl implements CallDetailService {
             criteria.andDurationLessThanOrEqualTo(Integer.valueOf(callOutPlanQueryEntity.getDurationMax()));
         }
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getBillSecMin())) {
-            criteria.andDurationGreaterThan(Integer.valueOf(callOutPlanQueryEntity.getBillSecMin()));
+            criteria.andBillSecGreaterThan(Integer.valueOf(callOutPlanQueryEntity.getBillSecMin()));
         }
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getBillSecMax())) {
-            criteria.andDurationLessThanOrEqualTo(Integer.valueOf(callOutPlanQueryEntity.getBillSecMax()));
+            criteria.andBillSecLessThanOrEqualTo(Integer.valueOf(callOutPlanQueryEntity.getBillSecMax()));
         }
         String accurateIntent =callOutPlanQueryEntity.getAccurateIntent();
         if (StringUtils.isNotBlank(accurateIntent)) {

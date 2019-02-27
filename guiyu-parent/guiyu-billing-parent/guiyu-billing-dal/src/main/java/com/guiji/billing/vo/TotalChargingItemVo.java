@@ -31,9 +31,14 @@ public class TotalChargingItemVo implements Serializable {
     private Long duration;
 
     /**
-     * 话费
+     * 实际扣费金额
      */
     private BigDecimal totalAmout;
+
+    /**
+     * 计费金额
+     */
+    private BigDecimal totalChargingAmout;
 
     public String getTotalDate() {
         return totalDate;
@@ -81,5 +86,13 @@ public class TotalChargingItemVo implements Serializable {
 
     public void setTotalAmout(BigDecimal totalAmout) {
         this.totalAmout = totalAmout;
+    }
+
+    public BigDecimal getTotalChargingAmout() {
+        return totalChargingAmout;
+    }
+
+    public void setTotalChargingAmout(BigDecimal totalChargingAmout) {
+        this.totalChargingAmout = totalChargingAmout;
     }
 }

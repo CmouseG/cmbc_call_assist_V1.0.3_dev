@@ -20,7 +20,7 @@ public class TotalChargingItemDetailVo implements Serializable {
     /**
      * 结束时间
      */
-    private Date EndTime;
+    private Date endTime;
 
     /**
      * 通话时长
@@ -54,11 +54,11 @@ public class TotalChargingItemDetailVo implements Serializable {
     }
 
     public Date getEndTime() {
-        return EndTime;
+        return endTime;
     }
 
     public void setEndTime(Date endTime) {
-        EndTime = endTime;
+        this.endTime = endTime;
     }
 
     public String getOperDurationStr() {

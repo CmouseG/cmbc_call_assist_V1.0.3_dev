@@ -2,6 +2,7 @@ package com.guiji.billing.dao.mapper.ext;
 
 import com.guiji.billing.dto.QueryTotalChargingItemDto;
 import com.guiji.billing.sys.ResultPage;
+import com.guiji.billing.vo.TotalChargingItemDetailVo;
 import com.guiji.billing.vo.TotalChargingItemVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -32,9 +33,9 @@ public interface BillingCompanyTotalMapper {
 
     /******************************/
 
-    List<TotalChargingItemVo> totalChargingItemList(@Param("chargingItemId") String chargingItemId,
-                                                         @Param("beginDate") String beginDate, @Param("endDate") String endDate,
-                                                         @Param("page")   ResultPage<TotalChargingItemVo> page);
+    List<TotalChargingItemDetailVo> totalChargingItemList(@Param("chargingItemId") String chargingItemId,
+                                                          @Param("beginDate") String beginDate, @Param("endDate") String endDate,
+                                                          @Param("page")   ResultPage<TotalChargingItemDetailVo> page);
 
 
     int totalChargingItemCount(@Param("chargingItemId") String chargingItemId,

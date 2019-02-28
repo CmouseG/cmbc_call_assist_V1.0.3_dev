@@ -62,7 +62,6 @@ public class ChannelHelper {
         log.info("需要设置通道媒体文件[{}]的属性，时间为[{}], isPrologue[{}], isEnd[{}]", mediaFile, mediaFileDuration, isPrologue, isEnd);
 
         Channel channel = channelService.findByUuid(uuid);
-        setChannel(channel, uuid, mediaFile, mediaFileDuration, isLock, isEnd, isPrologue);
 
         if(isEnd){
             //预约挂断，在指定时长后挂断当前通道
@@ -71,6 +70,7 @@ public class ChannelHelper {
         }
 
         localFsServer.playToChannel(uuid, mediaFile);
+        setChannel(channel, uuid, mediaFile, mediaFileDuration, isLock, isEnd, isPrologue);
     }
 
     public void playAiReponse(AIResponse aiResponse, boolean isLock, boolean isPrologue){
@@ -203,8 +203,8 @@ public class ChannelHelper {
                         channelService.delete(uuid);
                     }
                 },
-                mediaFileDuration.longValue(), TimeUnit.SECONDS);
-
+                (long)(mediaFileDuration*1000)+500, TimeUnit.MILLISECONDS);
+                //加个500ms，调用异步命令到freeswitch放音会有部分时间消耗
         futureConcurrentHashMap.put(uuid, schedule);
     }
 

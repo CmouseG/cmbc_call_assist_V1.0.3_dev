@@ -18,33 +18,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.platfrom.send.ISendMsg;
+import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.utils.MapUtil;
 
 /**
  * 专信云
  */
-public class Zxy implements ISendMsg
+public class Zxy implements ISendMsgByContent
 {
 	private static final Logger logger = LoggerFactory.getLogger(Zxy.class);
 	
 	private String url = "https://api.zhuanxinyun.com/api/v2/sendSms.json";
-
-	@Override
-	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, Integer templateId)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SmsRecord sendMessage(Map<String, Object> params, String phone, Integer templateId) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent) throws Exception
@@ -54,14 +39,14 @@ public class Zxy implements ISendMsg
 		
 		String appKey = MapUtil.getString(params, "app_key", 0);
 		String appSecret = MapUtil.getString(params, "app_secret", 0);
-		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
-		paramsList.add(new BasicNameValuePair("appKey", appKey));
-		paramsList.add(new BasicNameValuePair("appSecret", appSecret));
-		paramsList.add(new BasicNameValuePair("content", msgContent));
 		
 		for(String phone : phoneList)
 		{
+			List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
+			paramsList.add(new BasicNameValuePair("appKey", appKey));
+			paramsList.add(new BasicNameValuePair("appSecret", appSecret));
 			paramsList.add(new BasicNameValuePair("phones", phone));
+			paramsList.add(new BasicNameValuePair("content", msgContent));
 			record = send(paramsList);
 			record.setPhone(phone);
 			records.add(record);

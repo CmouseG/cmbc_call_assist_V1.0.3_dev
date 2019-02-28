@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.platfrom.send.ISendMsg;
+import com.guiji.platfrom.send.ISendMsgByTemplateId;
 import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.utils.Base64MD5Util;
 import com.guiji.utils.MapUtil;
@@ -28,7 +28,7 @@ import com.guiji.utils.MapUtil;
 /**
  * 云讯
  */
-public class Ytx implements ISendMsg
+public class Ytx implements ISendMsgByTemplateId
 {
 	private static final Logger logger = LoggerFactory.getLogger(Ytx.class);
 
@@ -157,19 +157,5 @@ public class Ytx implements ISendMsg
 		json.put("sppwd", "257693");
 		return json;
 	}
-
-	@Override
-	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }

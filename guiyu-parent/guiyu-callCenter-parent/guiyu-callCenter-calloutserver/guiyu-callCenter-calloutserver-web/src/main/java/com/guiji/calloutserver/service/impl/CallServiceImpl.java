@@ -75,7 +75,7 @@ public class CallServiceImpl implements CallService {
         log.info("开始执行呼叫命令[{}]", cmd);
         fsManager.executeAsync(cmd);
 
-        Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValue("bell_time","bell_time");
+        Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValueByTypeKey("bell_time","bell_time");
         String value = returnData.getBody().get(0).getDictValue();
         makecallScheduledExecutor.schedule(() -> {
             log.info("时间已到，去检查电话是否已经接听,callId[{}]",callid);

@@ -162,7 +162,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
                         sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
                         sendMsgReqVO.setOpenID(openId);
-                        sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
+                        sendMsgReqVO.setUserId(String.valueOf(userId));
 
                         HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
                         if(data!=null){

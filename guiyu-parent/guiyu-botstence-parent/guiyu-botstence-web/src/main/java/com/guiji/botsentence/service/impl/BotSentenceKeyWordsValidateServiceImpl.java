@@ -89,7 +89,7 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 		ignoredomain.add("号码过滤");
 		ignoredomain.add("不清楚");
 		ignoredomain.add("不知道");
-		ignoredomain.add("未匹配");
+		ignoredomain.add("未匹配响应");
 		
 		
 		BotSentenceIntentExample intentExample = new BotSentenceIntentExample();

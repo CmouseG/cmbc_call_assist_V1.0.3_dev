@@ -85,8 +85,15 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 		}
 		
 		//增加号码过滤不去重
+		List<String> ignoredomain = new ArrayList<>();
+		ignoredomain.add("号码过滤");
+		ignoredomain.add("不清楚");
+		ignoredomain.add("不知道");
+		ignoredomain.add("未匹配响应");
+		
+		
 		BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
-		intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameEqualTo("号码过滤");
+		intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameIn(ignoredomain);
 		List<BotSentenceIntent> phoneIgnoreList = botSentenceIntentMapper.selectByExample(intentExample);
 		if(null != phoneIgnoreList && phoneIgnoreList.size() > 0) {
 			for(BotSentenceIntent intent : phoneIgnoreList) {

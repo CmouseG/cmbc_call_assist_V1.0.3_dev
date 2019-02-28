@@ -28,6 +28,11 @@ public class TotalChargingItemDetailVo implements Serializable {
     private String operDurationStr;
 
     /**
+     * 通话时长：分钟
+     */
+    private Integer operDurationM;
+
+    /**
      * 实际扣费金额
      */
     private BigDecimal amount;
@@ -83,5 +88,13 @@ public class TotalChargingItemDetailVo implements Serializable {
 
     public void setChargingAmount(BigDecimal chargingAmount) {
         this.chargingAmount = chargingAmount;
+    }
+
+    public Integer getOperDurationM() {
+        return operDurationM;
+    }
+
+    public void setOperDurationM(Integer operDurationM) {
+        this.operDurationM = operDurationM;
     }
 }

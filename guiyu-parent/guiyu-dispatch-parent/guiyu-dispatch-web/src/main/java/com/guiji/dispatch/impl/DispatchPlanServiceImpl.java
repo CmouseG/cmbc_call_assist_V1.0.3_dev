@@ -1501,8 +1501,22 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			DispatchPlan plan = new DispatchPlan();
 			plan.setOrgCode(orgCode);
-			TotalPlanCountVo totalCount = dispatchPlanMapper.totalPlanCount(plan, beginDate, endDate);//
-			return totalCount;
+			TotalPlanCountVo total = new TotalPlanCountVo();
+			int totalCount = 0, doingCount = 0, finishCount = 0, suspendCount=0, stopCount=0;
+			TotalPlanCountVo total0 = dispatchPlanMapper.totalPlanCount(0, plan, beginDate, endDate);//
+			TotalPlanCountVo total1 = dispatchPlanMapper.totalPlanCount(1, plan, beginDate, endDate);//
+			TotalPlanCountVo total2 = dispatchPlanMapper.totalPlanCount(2, plan, beginDate, endDate);//
+			totalCount = total0.getTotalCount() + total1.getTotalCount() + total2.getTotalCount();
+			doingCount = total0.getDoingCount() + total1.getDoingCount() + total2.getDoingCount();
+			finishCount = total0.getFinishCount() + total1.getFinishCount() + total2.getFinishCount();
+			suspendCount = total0.getSuspendCount() + total1.getSuspendCount() + total2.getSuspendCount();
+			stopCount = total0.getStopCount() + total1.getStopCount() + total2.getStopCount();
+			total.setTotalCount(totalCount);
+			total.setDoingCount(doingCount);
+			total.setFinishCount(finishCount);
+			total.setSuspendCount(suspendCount);
+			total.setStopCount(stopCount);
+			return total;
 		}else{
 			throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
 					SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());

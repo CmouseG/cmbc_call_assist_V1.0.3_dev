@@ -610,6 +610,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		List<String> mainDomainList = new ArrayList<>();
 		List<String> mainBranchList = new ArrayList<>();
 		
+		boolean isExport = false;
+		
 		for (File file : listFile) {
 			String fileName = file.getName();
 			if (fileName.equals("new_domain_cfg")) {
@@ -628,6 +630,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 							//校验是否存在指向一般问题的domain
 							if(!"一般问题".equals(domainName) && "一般问题".equals(importDomainVO.getCom_domain())) {
 								throw new CommonException("导入模板失败,流程"+domainName+"指向了一般问题!");
+							}
+							
+							if(StringUtils.isNotBlank(importDomainVO.getPosition_x())) {
+								isExport = true;
+								logger.info("当前域的坐标: " + importDomainVO.getPosition_x() + "==="  +importDomainVO.getPosition_y());
+								mainDomainList.add(domainName);
 							}
 							
 							String branchStr = importDomainVO.getBranch();
@@ -740,9 +748,10 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		
 		logger.info("开始初始化坐标...");
 		//初始化数据
-		initPositive(domainList);
-		logger.info("初始化坐标结束...");
-		
+		if(!isExport) {
+			initPositive(domainList);
+			logger.info("初始化坐标结束...");
+		}
 		
 		//branch设置resp，然后插入库中
 		for(BotSentenceBranch botSentenceBranch:branchList) {
@@ -1019,6 +1028,13 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		if("投诉".equals(domainName)) {
 			botSentenceDomain.setCategory(null);
 		}
+		if(StringUtils.isNotBlank(importDomainVO.getPosition_x())) {
+			botSentenceDomain.setCategory("1");
+			botSentenceDomain.setPositionX(new Integer(importDomainVO.getPosition_x()));
+			botSentenceDomain.setPositionY(new Integer(importDomainVO.getPosition_y()));
+		}
+		
+		
 		/*if (!domainName.equals("一般问题") && !domainName.equals("在忙") && !domainName.equals("号码过滤")
 				&& !domainName.equals("结束_在忙") && !domainName.equals("结束_未匹配") && !domainName.equals("出错")
 				&& !domainName.equals("投诉") && !domainName.equals("未匹配响应") && !domainName.equals("拒绝")

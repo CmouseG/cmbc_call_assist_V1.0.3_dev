@@ -40,7 +40,8 @@ public class SimCardOperateServiceImpl implements SimCardOperateService {
         GlobalVar globalVar = fs.getGlobalVar();
         FsSipOprVO fsSipOprVO = new FsSipOprVO();
         fsSipOprVO.setSipIp(globalVar.getGc_docker_ip());
-        fsSipOprVO.setSipPort(globalVar.getInternal_sip_port());
+        fsSipOprVO.setSipPort(globalVar.getInternal_sip_port1());
+        fsSipOprVO.setLinePort(globalVar.getInternal_sip_port());
         return fsSipOprVO;
     }
 

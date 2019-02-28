@@ -1,5 +1,7 @@
 package com.guiji.clm.util;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +9,7 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.StrUtils;
@@ -105,6 +108,33 @@ public class DataLocalCacheUtil {
 					return userData.getBody();
 				}else {
 					log.error("用户ID:{},查询不到用户信息，返回：{}",userId,userData);
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 查询用户所有角色信息
+	 * @param userId
+	 * @return
+	 */
+	public List<SysRole> queryUserRole(String userId) {
+		if(StrUtils.isNotEmpty(userId)) {
+			//先从缓存中取
+			List<SysRole> roleList = LocalCacheUtil.getT("KEY_USER_ROLE"+userId);
+			if(roleList!=null) {
+				//缓存中有，直接取
+				return roleList;
+			}else{
+				//缓存中没有,重新查，并放入内存
+				ReturnData<List<SysRole>> userRoleData = iAuth.getRoleByUserId(Long.valueOf(userId));
+				if(userRoleData != null && userRoleData.getBody()!=null) {
+					//内存10分钟有效
+					LocalCacheUtil.set("KEY_USER_ROLE"+userId, userRoleData.getBody(), LocalCacheUtil.TEN_MIN);
+					return userRoleData.getBody();
+				}else {
+					log.error("用户ID:{},查询不到用户角色信息，返回：{}",userId,userRoleData);
 				}
 			}
 		}

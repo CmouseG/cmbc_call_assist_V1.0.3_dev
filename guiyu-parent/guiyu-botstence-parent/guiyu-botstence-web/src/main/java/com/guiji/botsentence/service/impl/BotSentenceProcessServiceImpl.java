@@ -1541,6 +1541,27 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		long voliceId = commonDialog.getVoliceId();
 		String branchId = commonDialog.getBranchId();
 		
+		
+		//与除主流程之外的所有关键字去重
+		List<Long> intentIds = new ArrayList<>();
+		
+		//获取所有关键词库对应关键词集合
+		if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
+			for(BotSentenceIntentVO temp : commonDialog.getIntentList()) {
+				if(StringUtils.isNotBlank(commonDialog.getIntentDomain())) {
+					temp.setIntentDomain(commonDialog.getIntentDomain());
+				}else {
+					temp.setIntentDomain(commonDialog.getDomain());
+				}
+				if(null != temp.getId()) {
+					intentIds.add(new Long(temp.getId()));
+				}
+			}
+			//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
+			botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
+		}
+		
+		
 		if((!"号码过滤".equals(commonDialog.getDomain())) && (!"投诉".equals(commonDialog.getDomain()))) {
 
 			if(null == commonDialog || StringUtils.isBlank(commonDialog.getContent()) || StringUtils.isBlank(commonDialog.getBranchId())) {
@@ -1549,27 +1570,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			
 			if(0 == commonDialog.getVoliceId()) {
 				throw new CommonException("更新失败，请求数据为空!");
-			}
-			
-			
-			
-			//与除主流程之外的所有关键字去重
-			List<Long> intentIds = new ArrayList<>();
-			
-			//获取所有关键词库对应关键词集合
-			if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
-				for(BotSentenceIntentVO temp : commonDialog.getIntentList()) {
-					if(StringUtils.isNotBlank(commonDialog.getIntentDomain())) {
-						temp.setIntentDomain(commonDialog.getIntentDomain());
-					}else {
-						temp.setIntentDomain(commonDialog.getDomain());
-					}
-					if(null != temp.getId()) {
-						intentIds.add(new Long(temp.getId()));
-					}
-				}
-				//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
-				botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
 			}
 			
 			VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));

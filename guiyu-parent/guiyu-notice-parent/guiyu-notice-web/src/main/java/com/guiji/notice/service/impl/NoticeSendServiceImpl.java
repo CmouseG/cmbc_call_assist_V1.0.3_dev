@@ -110,7 +110,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         Result.ReturnData<SysUserExt> returnData = null;
                         try {
                             returnData = auth.getUserExtByUserId(userId);
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             logger.error("auth.getUserExtByUserId",e);
                             continue;
                         }
@@ -126,19 +126,22 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                         Result.ReturnData<SysUserExt> returnData = null;
                         try {
                             returnData = auth.getUserExtByUserId(userId);
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             logger.error("auth.getUserExtByUserId",e);
                             continue;
                         }
-                        String email = returnData.getBody().getEmail();
-                        if(email!=null){
-                            try {
-                                sendEmailService.sendEmail(email,messageSend.getEmailSubject(),messageSend.getEmailContent());
-                                logger.info("send email---> email[{}],messageSend[{}]",email,messageSend);
-                            } catch (Exception e) {
-                                logger.error("-----sendEmail,has eror messageSend[{}]",messageSend,e);
+                        if(returnData!=null && returnData.getBody()!=null){
+                            String email = returnData.getBody().getEmail();
+                            if(email!=null){
+                                try {
+                                    sendEmailService.sendEmail(email,messageSend.getEmailSubject(),messageSend.getEmailContent());
+                                    logger.info("send email---> email[{}],messageSend[{}]",email,messageSend);
+                                } catch (Exception e) {
+                                    logger.error("-----sendEmail,has eror messageSend[{}]",messageSend,e);
+                                }
                             }
                         }
+
                     }
                 }
                 //是否发送微信
@@ -147,14 +150,15 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = null;
+                        Result.ReturnData<SysUser> returnUser = null;
                         try {
                             returnData = auth.getUserExtByUserId(userId);
-                        } catch (UnsupportedEncodingException e) {
-                            logger.error("auth.getUserExtByUserId",e);
+                            returnUser = auth.getUserById(userId);
+                        } catch (Exception e) {
+                            logger.error("auth.getUserExtByUserId,getUserById",e);
                             continue;
                         }
 
-                        Result.ReturnData<SysUser> returnUser = auth.getUserById(userId);
                         if(returnUser!=null && returnUser.getBody()!=null){
                             String openId = returnData.getBody().getWechatOpenid();
                             SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();

@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.platfrom.send.ISendMsgByTemplateId;
 import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.utils.Base64MD5Util;

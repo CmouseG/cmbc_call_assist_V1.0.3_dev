@@ -330,13 +330,17 @@ public class BotSentenceGradeController {
 	}
 	
 	@RequestMapping(value="saveInitStat")
-	public ServerResult saveInitStat(@JsonParam String processId, @JsonParam String initStat) {
+	public ServerResult saveInitStat(@JsonParam String processId, @JsonParam String initStat, @RequestHeader String userId) {
 		BotSentenceGrade grade = botSentenceGradeService.getBotSentenceGrade(processId);
 		if(null == grade) {
 			throw new CommonException("请先维护意向标签!");
 		}
 		grade.setInitStat(initStat);
 		botSentenceGradeMapper.updateByPrimaryKey(grade);
+		
+		//更新话术流程状态
+		botSentenceProcessService.updateProcessState(processId, userId);
+		
 		return ServerResult.createBySuccess();
 	}
 	

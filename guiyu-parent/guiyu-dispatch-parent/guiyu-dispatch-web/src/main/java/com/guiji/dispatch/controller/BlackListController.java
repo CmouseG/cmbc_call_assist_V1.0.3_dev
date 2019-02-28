@@ -22,7 +22,7 @@ public class BlackListController {
 	private IBlackListService blackListService;
 
 	/**
-	 * 查询
+	 * 查询黑名单
 	 * @param blackList
 	 * @param userId
 	 * @param orgCode
@@ -81,8 +81,14 @@ public class BlackListController {
 		}
 		return batchImport;
 	}
-	
-	
+
+	/**
+	 * 查询黑名单记录
+	 * @param pagenum
+	 * @param pagesize
+	 * @param orgCode
+	 * @return
+	 */
 	@PostMapping("selectBlackListRecords")
 	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode){

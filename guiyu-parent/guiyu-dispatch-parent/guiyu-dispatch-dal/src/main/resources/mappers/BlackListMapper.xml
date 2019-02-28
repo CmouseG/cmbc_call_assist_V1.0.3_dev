@@ -358,4 +358,57 @@
 		</foreach>
 	</insert>
 
+
+	<select id="queryBlackList" resultType="com.guiji.dispatch.dao.entity.BlackList">
+		SELECT
+			id, phone, remark, gmt_create, gmt_modified, type, user_id,
+			update_user_id, org_code,
+			create_user_name, update_user_name, status
+		FROM black_list
+		WHERE 1 = 1
+		<if test="black != null">
+			<if test="black.userId != null">
+				AND user_id = #{black.userId}
+			</if>
+			<if test="black.phone != null and black.phone != ''">
+				AND phone = #{black.phone}
+			</if>
+			<if test="black.orgCode != null and black.orgCode != ''" >
+				AND (org_code = #{black.orgCode} OR org_code LIKE CONCAT(#{black.orgCode}, '.%'))
+			</if>
+			<if test="black.status != null">
+				AND status = #{black.status}
+			</if>
+		</if>
+		<if test="page != null and page.isPage ">
+			<if test="page.orderBy != null " >
+				order by ${page.orderBy}	${page.sort}
+			</if>
+			<if test="page.indexStart != null " >
+				limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+			</if>
+		</if>
+	</select>
+
+	<select id="queryBlackCount" resultType="java.lang.Integer">
+		SELECT
+			COUNT(id)
+		FROM black_list
+		WHERE 1 = 1
+		<if test="black != null">
+			<if test="black.userId != null">
+				AND user_id = #{black.userId}
+			</if>
+			<if test="black.phone != null and black.phone != ''">
+				AND phone = #{black.phone}
+			</if>
+			<if test="black.orgCode != null and black.orgCode != ''" >
+				AND (org_code = #{black.orgCode} OR org_code LIKE CONCAT(#{black.orgCode}, '.%'))
+			</if>
+			<if test="black.status != null">
+				AND status = #{black.status}
+			</if>
+		</if>
+
+	</select>
 </mapper>

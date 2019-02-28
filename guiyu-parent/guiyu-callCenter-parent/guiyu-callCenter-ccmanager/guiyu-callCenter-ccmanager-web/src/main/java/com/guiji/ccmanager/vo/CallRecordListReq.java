@@ -24,6 +24,7 @@ public class CallRecordListReq {
     String callId;
     String tempId;
     String isRead;
+    String customerId;
 
 
 }

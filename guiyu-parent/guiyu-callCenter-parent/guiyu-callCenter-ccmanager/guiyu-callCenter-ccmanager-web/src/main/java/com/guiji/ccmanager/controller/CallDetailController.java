@@ -131,6 +131,7 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "freason", value = "直接传名称,以逗号分隔", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)

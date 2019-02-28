@@ -59,7 +59,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
 
-    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity) {
+    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity,String queryUser) {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         if (callOutPlanQueryEntity.getStartDate() != null) {
@@ -67,6 +67,9 @@ public class CallDetailServiceImpl implements CallDetailService {
         }
         if (callOutPlanQueryEntity.getEndDate() != null) {
             criteria.andCallStartTimeLessThan(callOutPlanQueryEntity.getEndDate());
+        }
+        if(StringUtils.isNotBlank(queryUser)){
+            criteria.andCustomerIdEqualTo(Integer.valueOf(queryUser));
         }
         if(!callOutPlanQueryEntity.getIsSuperAdmin()){//不是管理员
             long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
@@ -177,7 +180,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setIsSuperAdmin(isSuperAdmin);
-        CallOutPlanExample example = getExample(callOutPlanQueryEntity);
+        CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
@@ -213,7 +216,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
         callOutPlanQueryEntity.setIsSuperAdmin(isSuperAdmin);
-        CallOutPlanExample example = getExample(callOutPlanQueryEntity);
+        CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
 
         return callOutPlanMapper.countByExample(example);
     }

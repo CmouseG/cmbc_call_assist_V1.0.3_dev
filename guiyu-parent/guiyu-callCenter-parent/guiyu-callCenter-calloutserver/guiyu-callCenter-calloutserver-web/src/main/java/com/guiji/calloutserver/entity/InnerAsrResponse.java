@@ -1,67 +1,58 @@
 package com.guiji.calloutserver.entity;
 
+import com.guiji.calloutserver.util.DateUtil;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
+import java.util.List;
 
-@Slf4j
 @Data
 public class InnerAsrResponse {
-    private Header header;
-    private Payload payload;
+    private int finish;
+    private String request_id;
+    private ResultBean result;
+    private int status_code;
+    private String version;
 
     public String getBeginTime(){
-        if(payload==null){
+        if(result==null || result.getBegin_time()==null){
             return null;
         }
 
-        LocalDateTime time = LocalDateTime.now().minus(getDuration(), ChronoField.MILLI_OF_DAY.getBaseUnit());
-        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return DateUtil.timeStampToDate(result.getBegin_time());
     }
 
     public String getEndTime(){
-        if(payload==null){
+        if(result==null || result.getEnd_time()==null){
             return null;
         }
 
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return DateUtil.timeStampToDate(result.getEnd_time());
     }
 
     public Long getDuration(){
-        if(payload == null){
+        if(result == null || result.getBegin_time()==null || result.getEnd_time()==null){
             return null;
         }
 
-        return (long)(payload.getTime() - payload.getBegin_time());
+        return result.getEnd_time() - result.getBegin_time();
     }
 
     public String getAsrText(){
-        if(payload == null){
+        if(result == null){
             return null;
         }
 
-        return payload.getResult();
+        return result.getText();
     }
 
     @Data
-    public static class Payload {
-        private float index;
-        private float time;
-        private float begin_time;
-        private String result;
-        private float confidence;
-    }
-
-    @Data
-    public static class Header {
-        private String namespace;
-        private String name;
-        private float status;
-        private String message_id;
-        private String task_id;
-        private String status_text;
+    public static class ResultBean {
+        private int sentence_id;
+        private Long begin_time;
+        private Long current_time;
+        private Long end_time;
+        private int status_code;
+        private String text;
+        private List<?> words;
     }
 }

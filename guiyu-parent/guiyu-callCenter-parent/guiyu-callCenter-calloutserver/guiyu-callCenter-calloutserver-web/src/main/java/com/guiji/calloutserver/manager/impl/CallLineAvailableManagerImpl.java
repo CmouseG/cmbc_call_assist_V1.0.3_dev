@@ -33,4 +33,24 @@ public class CallLineAvailableManagerImpl implements CallLineAvailableManager {
             return true;
         }
     }
+
+    @Override
+    @Async
+    public void channelAlreadyAnswer(String callId) {
+
+        //暂存1个小时  1*60*60
+        redisUtil.set("callCenter-channelAnswer-"+callId,true,3600);
+
+    }
+
+
+    @Override
+    public boolean isChannelAnswer(String callId) {
+
+        if(redisUtil.get("callCenter-channelAnswer-"+callId)==null){//没有接
+            return false;
+        }else{
+            return true;
+        }
+    }
 }

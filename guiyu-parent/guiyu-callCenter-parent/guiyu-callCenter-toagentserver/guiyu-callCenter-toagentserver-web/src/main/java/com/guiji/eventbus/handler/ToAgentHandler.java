@@ -2,6 +2,7 @@ package com.guiji.eventbus.handler;
 
 import com.google.common.base.Strings;
 import com.guiji.callcenter.dao.entity.Agent;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
@@ -45,6 +46,9 @@ public class ToAgentHandler {
     @Autowired
     PhoneService phoneService;
 
+    @Autowired
+    IDispatchPlanOut iDispatchPlanOut;
+
     @PostConstruct
     public void init(){
         simpleEventSender.register(this);
@@ -86,7 +90,12 @@ public class ToAgentHandler {
             callPlan.setAgentChannelUuid(event.getAgentUuid());
             callPlan.setCallState(CallState.agent_answer.ordinal());
             callPlan.setAccurateIntent("B");
-
+            try {
+                //同步修改的意向标签到Dispatch
+                iDispatchPlanOut.updateLabelByUUID(callPlan.getPlanUuid(), "B");
+            } catch (Exception e){
+                log.info("同步修改的意向标签到Dispatch失败");
+            }
             callPlanService.update(callPlan);
 
             //读取之前的机器人对话内容，然后推送到前台

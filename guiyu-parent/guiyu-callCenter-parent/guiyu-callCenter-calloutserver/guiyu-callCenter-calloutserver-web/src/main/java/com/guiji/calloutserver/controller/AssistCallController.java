@@ -1,13 +1,16 @@
 package com.guiji.calloutserver.controller;
 
 
+import com.google.common.eventbus.AsyncEventBus;
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.api.IAssistCall;
 import com.guiji.calloutserver.constant.Constant;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.eventbus.event.AsrCustomerEvent;
+import com.guiji.calloutserver.eventbus.event.ToAgentEvent;
 import com.guiji.calloutserver.fs.LocalFsServer;
+import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.ToAgentManager;
 import com.guiji.calloutserver.service.CallOutPlanService;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -34,6 +38,16 @@ public class AssistCallController implements IAssistCall {
     CallOutPlanService callOutPlanService;
     @Autowired
     AIManager aiManager;
+    @Autowired
+    RobotNextHelper robotNextHelper;
+    @Autowired
+    AsyncEventBus asyncEventBus;
+    //注册这个监听器
+    @PostConstruct
+    public void register() {
+        asyncEventBus.register(this);
+    }
+
 
     /**
      * 协呼
@@ -93,18 +107,19 @@ public class AssistCallController implements IAssistCall {
         String toAgentFs = toAgentManager.findToAgentFsAdder();
         localFsServer.transferToAgentGroup(callId, toAgentFs, agentGroupId);
 
-        AsrCustomerEvent event = new AsrCustomerEvent();
-        event.setUuid(callId);
-        event.setAsrText("转人工");
-        AIRequest aiRequest = new AIRequest(event);
 
-        try {
-            aiManager.sendAiRequest(aiRequest);
-            return Result.ok();
-        } catch (Exception e) {
-            log.error("关闭机器人出现异常",e);
-            return Result.error(Constant.ERROR_CALLCOUNT_FAILED);
-        }
+        log.info("协呼之后，释放ai资源");
+        CallOutPlan realCallPlan = callOutPlanService.findByCallId(bigInteCallId);
+        aiManager.releaseAi(realCallPlan);
+
+        //停止定时任务
+        robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());
+        //构建事件抛出
+        ToAgentEvent toAgentEvent = new ToAgentEvent(realCallPlan);
+        asyncEventBus.post(toAgentEvent);
+
+        return Result.ok();
+
     }
 
 }

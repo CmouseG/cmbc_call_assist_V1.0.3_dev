@@ -272,7 +272,7 @@ public class AgentServiceImpl implements AgentService {
             List<Tier> tierRes = tierMapper.selectByExample(tierExample);
             if (tierRes != null) {
                 Tier tier = tierRes.get(0);
-                if (request.getQueueId() != tier.getQueueId()) {//两次的队列id不一样
+                if (request.getQueueId() != tier.getQueueId()) {   //两次的队列id不一样
                     //删除原来的绑定关系
                     TierInfo tierInfo = new TierInfo(tier.getQueueId() + "", agent.getUserId() + "");
                     fsManager.deleteTier(tierInfo);
@@ -286,21 +286,22 @@ public class AgentServiceImpl implements AgentService {
                     tier.setUpdateTime(date);
                     tier.setUpdateUser(create.getUserId());
                     tierMapper.updateByPrimaryKey(tier);
-                } else {
-                    //创建新的绑定关系
-                    TierInfo tierInfoNew = new TierInfo();
-                    tierInfoNew.setAgentId(agent.getUserId() + "");
-                    tierInfoNew.setQueueId(request.getQueueId() + "");
-                    fsManager.addTier(tierInfoNew);
-                    //第四步将绑定关系存入数据库
-                    Tier tiernew = new Tier();
-                    tiernew.setQueueId(agent.getUserId());
-                    tiernew.setUserId(request.getQueueId());
-                    tiernew.setCreator(agent.getUserId());
-                    tiernew.setUpdateUser(agent.getUserId());
-                    tiernew.setCreateTime(date);
-                    tiernew.setUpdateTime(date);
-                    tierMapper.insert(tiernew);
+//                } else {
+//                    //创建新的绑定关系
+//                    TierInfo tierInfoNew = new TierInfo();
+//                    tierInfoNew.setAgentId(agent.getUserId() + "");
+//                    tierInfoNew.setQueueId(request.getQueueId() + "");
+//                    fsManager.addTier(tierInfoNew);
+//                    //第四步将绑定关系存入数据库
+//                    Tier tiernew = new Tier();
+//                    tiernew.setQueueId(agent.getUserId());
+//                    tiernew.setUserId(request.getQueueId());
+//                    tiernew.setCreator(agent.getUserId());
+//                    tiernew.setUpdateUser(agent.getUserId());
+//                    tiernew.setCreateTime(date);
+//                    tiernew.setUpdateTime(date);
+//                    tiernew.setOrgCode(create.getOrgCode());
+//                    tierMapper.insert(tiernew);
                 }
             }
         }

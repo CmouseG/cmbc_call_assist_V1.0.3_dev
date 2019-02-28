@@ -12,5 +12,6 @@ public class CallOutDetailVO {
     private String answer;
     private String content;
     private String file;
-
+    private String wordSegmentResult;
+    private String keywords;
 }

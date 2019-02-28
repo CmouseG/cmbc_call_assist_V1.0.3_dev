@@ -88,6 +88,7 @@ public class ResultPage<T> implements Serializable {
 	
 	public ResultPage(){
 		super();
+		this.isPage = true;
 	}
 
 	/**

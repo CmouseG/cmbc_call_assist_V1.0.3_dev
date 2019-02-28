@@ -545,7 +545,9 @@ public class AiCacheService {
 						}
 						//静音等待时间
 						int silence_wait_time = jsonObject.getIntValue("silence_wait_time");
-						hsReplace.setSilence_wait_time(silence_wait_time);
+						if(silence_wait_time>0) {
+							hsReplace.setSilence_wait_time(silence_wait_time);
+						}
 						//不可打断的域配置，多域 空格分隔
 						String non_interruptables = jsonObject.getString("non_interruptable");
 						if(StrUtils.isNotEmpty(non_interruptables)) {

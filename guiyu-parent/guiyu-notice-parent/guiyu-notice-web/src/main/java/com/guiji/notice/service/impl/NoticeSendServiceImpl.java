@@ -159,7 +159,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                             continue;
                         }
 
-                        if(returnUser!=null && returnUser.getBody()!=null){
+                        if(returnUser!=null && returnUser.getBody()!=null && returnData!=null && returnData.getBody()!=null){
                             String openId = returnData.getBody().getWechatOpenid();
                             SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
 

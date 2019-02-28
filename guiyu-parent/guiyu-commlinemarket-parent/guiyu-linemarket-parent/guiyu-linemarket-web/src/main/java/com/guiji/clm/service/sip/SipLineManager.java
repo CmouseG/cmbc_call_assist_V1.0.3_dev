@@ -190,9 +190,9 @@ public class SipLineManager {
 			if(sipLineBaseInfo.getLineId()!=null) {
 				//调用调度中心检查线路是否在使用
 				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId());
+				log.error("线路编号:{}调用调度中心检查是否使用中，返回结果：",sipLineBaseInfo.getLineId(),inUsedFlag);
 				if(inUsedFlag.getBody().booleanValue()) {
 					//在使用抛出异常，不能直接删除
-					log.error("线路编号:{}仍在调度中心使用中，不能删除",sipLineBaseInfo.getLineId());
 					throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
 				}
 			}
@@ -202,6 +202,8 @@ public class SipLineManager {
 			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
 			if(exclusiveList!=null && !exclusiveList.isEmpty()) {
 				for(SipLineExclusive sipLineExclusive:exclusiveList) {
+					//删除已分配线路
+					sipLineExclusiveService.delById(sipLineExclusive.getId());
 					//取消计费
 					feeService.sipFee(FeeOptEnum.DEL, sipLineExclusive);
 				}

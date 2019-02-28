@@ -153,30 +153,33 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                             logger.error("auth.getUserExtByUserId",e);
                             continue;
                         }
+
                         Result.ReturnData<SysUser> returnUser = auth.getUserById(userId);
-                        String openId = returnData.getBody().getWechatOpenid();
-                        SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
+                        if(returnUser!=null && returnUser.getBody()!=null){
+                            String openId = returnData.getBody().getWechatOpenid();
+                            SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
 
-                        sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
-                        sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
-                        sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
-                        sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
-                        sendMsgReqVO.setOpenID(openId);
-                        sendMsgReqVO.setUserId(String.valueOf(userId));
+                            sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
+                            sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
+                            sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
+                            sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
+                            sendMsgReqVO.setOpenID(openId);
+                            sendMsgReqVO.setUserId(String.valueOf(userId));
 
-                        HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
-                        if(data!=null){
-                            sendMsgReqVO.setData(data);
-                            if(data.get("keyword1")==null){
-                                sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
+                            HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
+                            if(data!=null){
+                                sendMsgReqVO.setData(data);
+                                if(data.get("keyword1")==null){
+                                    sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
+                                }
+                                if(data.get("keyword4")==null) {
+                                    sendMsgReqVO.addData("keyword4", sdf.format(new Date()));
+                                }
                             }
-                            if(data.get("keyword4")==null) {
-                                sendMsgReqVO.addData("keyword4", sdf.format(new Date()));
-                            }
+
+                            weChatApi.send(sendMsgReqVO);
+                            logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));
                         }
-
-                        weChatApi.send(sendMsgReqVO);
-                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));
                     }
                 }
             }

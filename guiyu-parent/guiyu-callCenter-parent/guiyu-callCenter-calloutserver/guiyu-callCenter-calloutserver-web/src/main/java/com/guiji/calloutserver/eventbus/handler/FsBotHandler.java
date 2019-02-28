@@ -101,6 +101,7 @@ public class FsBotHandler {
             }
             //防止没有收到channel_progress事件，将状态改为线路已通
             callLineAvailableManager.lineAreAvailable(uuid);
+            callLineAvailableManager.channelAlreadyAnswer(uuid);
 
             AIInitRequest request = new AIInitRequest(String.valueOf(callPlan.getCallId()),callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(), String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
 

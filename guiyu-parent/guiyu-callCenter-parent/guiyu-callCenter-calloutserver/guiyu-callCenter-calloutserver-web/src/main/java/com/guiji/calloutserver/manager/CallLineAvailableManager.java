@@ -1,6 +1,8 @@
 package com.guiji.calloutserver.manager;
 
 
+import org.springframework.scheduling.annotation.Async;
+
 import java.util.List;
 
 /**
@@ -20,4 +22,18 @@ public interface CallLineAvailableManager {
      * @return
      */
     boolean isAvailable(String callId);
+
+    /**
+     * 电话已经接听
+     * @param callId
+     */
+    @Async
+    void channelAlreadyAnswer(String callId);
+
+    /**
+     * 查询电话是否接听
+     * @param callId
+     * @return
+     */
+    boolean isChannelAnswer(String callId);
 }

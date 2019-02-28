@@ -27,18 +27,11 @@ public class WeChatCommonImpl implements WeChatCommonApi {
 
     private Logger logger = LoggerFactory.getLogger(WeChatCommonImpl.class);
 
-    private static final String EMOJI_REGEX = "[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]";
-
-    private static final String UNKNOWN_NICKNAME = "未知昵称";
-
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     @Resource
     private WeChatProperty weChatProperty;
-
-    @Resource
-    private RestTemplate restTemplate;
 
     @Override
     public WeChatUserDto getWeChatUserInfo(String openId) {
@@ -55,14 +48,6 @@ public class WeChatCommonImpl implements WeChatCommonApi {
 
         logger.info("weChat user info:{}", responseEntity.getBody());
 
-        WeChatUserDto weChatUserDto = JSON.parseObject(responseEntity.getBody(), WeChatUserDto.class);
-
-        String nickName = weChatUserDto.getNickname().replaceAll(EMOJI_REGEX, "");
-        if(StringUtils.isEmpty(nickName)){
-                nickName = UNKNOWN_NICKNAME;
-        }
-        weChatUserDto.setNickname(nickName);
-
-        return weChatUserDto;
+        return JSON.parseObject(responseEntity.getBody(), WeChatUserDto.class);
     }
 }

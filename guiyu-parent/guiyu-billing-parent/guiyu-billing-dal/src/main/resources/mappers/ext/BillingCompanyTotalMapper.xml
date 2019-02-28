@@ -150,6 +150,7 @@
       r.oper_begin_time AS begin_time,
       r.oper_end_time AS end_time,
       r.oper_duration_str,
+      r.oper_duration_m,
       r.amount,
       r.charging_amount
     FROM billing_acct_charging_record r, billing_acct_charging_term t

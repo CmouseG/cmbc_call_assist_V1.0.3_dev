@@ -1153,7 +1153,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						
 						vo.setHuashu(volice.getContent());//话术
 						vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-						vo.setLuoji("未识别" + index);//逻辑
+						//vo.setLuoji("未识别" + index);//逻辑
+						vo.setLuoji("第" + index + "未识别时回复的话术");//逻辑
 						vo.setYujin("未识别");//语境
 						vo.setTitle("未识别" + index);
 						

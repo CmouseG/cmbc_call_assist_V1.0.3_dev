@@ -19,4 +19,12 @@ public class WavLengthVO {
     public void setLength(double length) {
         this.length = length;
     }
+
+    @Override
+    public String toString() {
+        return "WavLengthVO{" +
+                "fileName='" + fileName + '\'' +
+                ", length=" + length +
+                '}';
+    }
 }

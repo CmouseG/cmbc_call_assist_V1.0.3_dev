@@ -28,7 +28,7 @@ public class SysDictController implements ISysDict {
     private SysDictService sysDictService;
     @Override
     @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称查询数据字典")
-    public ReturnData<List<SysDictVO>> getDictByType(@RequestParam("dictType")String dictType) {
+    public ReturnData<List<SysDictVO>> getDictByType(String dictType) {
         List<SysDictVO> result = new ArrayList<SysDictVO>();
         SysDict sysDictQ = new SysDict();
         sysDictQ.setDictType(dictType);
@@ -41,9 +41,24 @@ public class SysDictController implements ISysDict {
         return Result.ok(result);
     }
 
+    @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称和key查询数据字典")
+    public ReturnData<List<SysDictVO>> getDictValue(String dictType, String dictKey) {
+        List<SysDictVO> result = new ArrayList<SysDictVO>();
+        SysDict sysDictQ = new SysDict();
+        sysDictQ.setDictType(dictType);
+        sysDictQ.setDictKey(dictKey);
+        List<SysDict> list = sysDictService.queryDictList(sysDictQ);
+        for (SysDict sysDict : list) {
+            SysDictVO sysDictVO = new SysDictVO();
+            BeanUtil.copyProperties(sysDict,sysDictVO);
+            result.add(sysDictVO);
+        }
+        return Result.ok(result);
+    }
+
     @Override
     @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称和key查询数据字典")
-    public ReturnData<List<SysDictVO>> getDictValue(@RequestParam("dictType")String dictType, @RequestParam("dictKey")String dictKey) {
+    public ReturnData<List<SysDictVO>> getDictValueByTypeKey(@RequestParam("dictType")String dictType, @RequestParam("dictKey")String dictKey) {
         List<SysDictVO> result = new ArrayList<SysDictVO>();
         SysDict sysDictQ = new SysDict();
         sysDictQ.setDictType(dictType);

@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +26,10 @@ import static com.guiji.wechat.util.constants.WeChatConstant.PARAM_OPEN_ID;
 public class WeChatCommonImpl implements WeChatCommonApi {
 
     private Logger logger = LoggerFactory.getLogger(WeChatCommonImpl.class);
+
+    private static final String EMOJI_REGEX = "[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]";
+
+    private static final String UNKNOWN_NICKNAME = "未知昵称";
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -50,6 +55,14 @@ public class WeChatCommonImpl implements WeChatCommonApi {
 
         logger.info("weChat user info:{}", responseEntity.getBody());
 
-        return JSON.parseObject(responseEntity.getBody(), WeChatUserDto.class);
+        WeChatUserDto weChatUserDto = JSON.parseObject(responseEntity.getBody(), WeChatUserDto.class);
+
+        String nickName = weChatUserDto.getNickname().replaceAll(EMOJI_REGEX, "");
+        if(StringUtils.isEmpty(nickName)){
+                nickName = UNKNOWN_NICKNAME;
+        }
+        weChatUserDto.setNickname(nickName);
+
+        return weChatUserDto;
     }
 }

@@ -1383,7 +1383,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (!isSuperAdmin) {
 			andStatusPlanEqualTo2.andOrgCodeLike(orgCode + "%");
 		}
-		ex1.setOrderByClause("`gmt_create` DESC");
+		ex1.setOrderByClause("`gmt_create` ASC");
+		ex1.setLimitStart(0);
+		ex1.setLimitEnd(1);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
 
 		DispatchPlan dis = new DispatchPlan();
@@ -1398,6 +1400,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			andStatusPlanEqualTo3.andOrgCodeLike(orgCode + "%");
 		}
 		ex2.setOrderByClause("`gmt_create` DESC");
+		ex2.setLimitStart(0);
+		ex2.setLimitEnd(1);
 		List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
 
 		DispatchPlan dis1 = new DispatchPlan();

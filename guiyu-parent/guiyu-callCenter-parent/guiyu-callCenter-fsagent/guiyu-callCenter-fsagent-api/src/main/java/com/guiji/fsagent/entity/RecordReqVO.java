@@ -64,4 +64,17 @@ public class RecordReqVO {
     public void setBillsec(int billsec) {
         this.billsec = billsec;
     }
+
+    @Override
+    public String toString() {
+        return "RecordReqVO{" +
+                "sysCode='" + sysCode + '\'' +
+                ", busiId='" + busiId + '\'' +
+                ", busiType='" + busiType + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", userId=" + userId +
+                ", duration=" + duration +
+                ", billsec=" + billsec +
+                '}';
+    }
 }

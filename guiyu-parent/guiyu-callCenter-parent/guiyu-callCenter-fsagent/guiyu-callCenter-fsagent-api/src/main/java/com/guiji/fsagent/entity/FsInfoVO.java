@@ -60,4 +60,16 @@ public class FsInfoVO {
     public void setFsEslPwd(String fsEslPwd) {
         this.fsEslPwd = fsEslPwd;
     }
+
+    @Override
+    public String toString() {
+        return "FsInfoVO{" +
+                "fsAgentId='" + fsAgentId + '\'' +
+                ", fsIp='" + fsIp + '\'' +
+                ", fsInPort='" + fsInPort + '\'' +
+                ", fsOutPort='" + fsOutPort + '\'' +
+                ", fsEslPort='" + fsEslPort + '\'' +
+                ", fsEslPwd='" + fsEslPwd + '\'' +
+                '}';
+    }
 }

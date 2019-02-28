@@ -15,6 +15,8 @@ import com.guiji.clm.dao.entity.SipLineApply;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.SipLineShare;
+import com.guiji.clm.dao.entity.ext.SipLineQuery;
+import com.guiji.clm.dao.ext.SipLineExclusiveMapperExt;
 import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.service.sip.SipLineApplyService;
 import com.guiji.clm.service.sip.SipLineExclusiveService;
@@ -34,6 +36,7 @@ import com.guiji.clm.vo.SipLineShareVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.StrUtils;
 
@@ -63,7 +66,49 @@ public class LineMarketController {
 	SipLineManager sipLineManager;
 	@Autowired
 	DataLocalCacheUtil dataLocalCacheUtil;
+	@Autowired
+	SipLineExclusiveMapperExt sipLineExclusiveMapperExt;
 	
+	/**
+	 * 统计线路数量
+	 * 一般客户统计自己的
+	 * 管理员按企业统计
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/querySipLineExclusiveNum", method = RequestMethod.POST)
+	public Result.ReturnData querySipLineExclusiveNum(
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode,
+			@RequestHeader Boolean isSuperAdmin){
+		SipLineQuery query = new SipLineQuery();
+		List<Integer> lineStatusList = new ArrayList<Integer>();
+		lineStatusList.add(SipLineStatusEnum.OK.getCode());	//正常线路
+		query.setLineStatusList(lineStatusList);
+		if(isSuperAdmin) {
+			//查询全部
+		}else {
+			//如果有管理员角色，按企业查询
+			boolean isAdmin = false;
+			List<SysRole> roleList = dataLocalCacheUtil.queryUserRole(userId.toString());
+			if(roleList!=null && !roleList.isEmpty()) {
+				for(SysRole role : roleList) {
+					if("管理员".equals(role.getName())) {
+						//TODO  如果是管理员，先简单判断吧，后续可以增加企业编号字段来确定，现在表里的orgcode是企业真实code，不能直接使用
+						isAdmin = true;
+						break;
+					}
+				}
+			}
+			if(isAdmin) {
+				query.setOrgCode(orgCode);
+			}else {
+				query.setUserId(userId.toString());
+			}
+		}
+		Integer totalNum = sipLineExclusiveMapperExt.querySipLineExclusiveNum(query);
+		return Result.ok(totalNum);
+	}
 	
 	/**
 	 * 新增/修改第三方线路

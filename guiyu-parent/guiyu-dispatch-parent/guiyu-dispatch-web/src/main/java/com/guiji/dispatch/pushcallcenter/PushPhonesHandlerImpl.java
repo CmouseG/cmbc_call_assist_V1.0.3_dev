@@ -172,6 +172,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			// redisUtil.set(queueName, currentCount);
 			// 递减1
 			redisUtil.decr(queueName, 1);
+			redisUtil.expire(queueName, 300);
 		}
 	}
 
@@ -183,6 +184,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		// currentCount = currentCount + 1;
 		// redisUtil.set(queueName, currentCount);
 		redisUtil.incr(queueName, 1);
+		redisUtil.expire(queueName, 300);
 	}
 
 	public void updateStatusSync(String planUUID) {

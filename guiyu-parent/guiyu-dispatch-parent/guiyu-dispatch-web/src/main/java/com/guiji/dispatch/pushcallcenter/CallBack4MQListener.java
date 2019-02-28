@@ -49,6 +49,7 @@ public class CallBack4MQListener {
 //				currentCount = currentCount - 1;
 //				redisUtil.set(queueCount, currentCount);
 				redisUtil.decr(queueCount, 1);
+				redisUtil.expire(queueCount, 300);
 			}
 
 

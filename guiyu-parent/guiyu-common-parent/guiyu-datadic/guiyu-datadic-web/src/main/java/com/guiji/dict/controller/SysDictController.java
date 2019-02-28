@@ -11,6 +11,7 @@ import com.guiji.utils.BeanUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class SysDictController implements ISysDict {
     private SysDictService sysDictService;
     @Override
     @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称查询数据字典")
-    public ReturnData<List<SysDictVO>> getDictByType(String dictType) {
+    public ReturnData<List<SysDictVO>> getDictByType(@RequestParam("dictType")String dictType) {
         List<SysDictVO> result = new ArrayList<SysDictVO>();
         SysDict sysDictQ = new SysDict();
         sysDictQ.setDictType(dictType);
@@ -42,7 +43,7 @@ public class SysDictController implements ISysDict {
 
     @Override
     @SysOperaLog(operaTarget = "数据字典", operaType = "根据名称和key查询数据字典")
-    public ReturnData<List<SysDictVO>> getDictValue(String dictType, String dictKey) {
+    public ReturnData<List<SysDictVO>> getDictValue(@RequestParam("dictType")String dictType, @RequestParam("dictKey")String dictKey) {
         List<SysDictVO> result = new ArrayList<SysDictVO>();
         SysDict sysDictQ = new SysDict();
         sysDictQ.setDictType(dictType);

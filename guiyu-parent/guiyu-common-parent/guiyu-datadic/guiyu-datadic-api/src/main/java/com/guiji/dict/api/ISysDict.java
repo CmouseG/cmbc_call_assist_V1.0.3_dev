@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface ISysDict {
             @ApiImplicitParam(name="dictType",value="字典类型",required=true)
     })
     @RequestMapping(value = "/getDictByType", method = RequestMethod.POST)
-    public ReturnData<List<SysDictVO>> getDictByType(String dictType);
+    public ReturnData<List<SysDictVO>> getDictByType(@RequestParam("dictType") String dictType);
 
     @ApiOperation(value="查询字典", notes="根据字典类型和字典标签名")
     @ApiImplicitParams({
@@ -33,5 +34,5 @@ public interface ISysDict {
             @ApiImplicitParam(name="dictKey",value="字典标签",required=true)
     })
     @RequestMapping(value = "/getDictValue", method = RequestMethod.POST)
-    public ReturnData<List<SysDictVO>> getDictValue(String dictType, String dictKey);
+    public ReturnData<List<SysDictVO>> getDictValue(@RequestParam("dictType")String dictType, @RequestParam("dictKey")String dictKey);
 }

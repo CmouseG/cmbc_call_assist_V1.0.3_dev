@@ -85,7 +85,7 @@ public class Zxy implements ISendMsgByContent
 			record.setSendStatus(1);
 		} else
 		{
-			logger.info("发送失败:errorCode:{},errorMsg:{},MsgID:{}", errorCode, errorMsg);
+			logger.info("发送失败:errorCode:{},errorMsg:{}", errorCode, errorMsg);
 			record.setSendStatus(0);
 		}
 

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -106,7 +107,13 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                     for(String userIdString:receiverArr){
                         //发送短信
                         long userId = Long.valueOf(userIdString);
-                        Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
+                        Result.ReturnData<SysUserExt> returnData = null;
+                        try {
+                            returnData = auth.getUserExtByUserId(userId);
+                        } catch (UnsupportedEncodingException e) {
+                            logger.error("auth.getUserExtByUserId",e);
+                            continue;
+                        }
                         String phone = returnData.getBody().getMobile();
                         //发送短信，接口还没有好
                     }
@@ -116,7 +123,13 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 if(isSendEmail){
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
-                        Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
+                        Result.ReturnData<SysUserExt> returnData = null;
+                        try {
+                            returnData = auth.getUserExtByUserId(userId);
+                        } catch (UnsupportedEncodingException e) {
+                            logger.error("auth.getUserExtByUserId",e);
+                            continue;
+                        }
                         String email = returnData.getBody().getEmail();
                         if(email!=null){
                             try {
@@ -133,7 +146,13 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 if(isSendWeixin){
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
-                        Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
+                        Result.ReturnData<SysUserExt> returnData = null;
+                        try {
+                            returnData = auth.getUserExtByUserId(userId);
+                        } catch (UnsupportedEncodingException e) {
+                            logger.error("auth.getUserExtByUserId",e);
+                            continue;
+                        }
                         Result.ReturnData<SysUser> returnUser = auth.getUserById(userId);
                         String openId = returnData.getBody().getWechatOpenid();
                         SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();

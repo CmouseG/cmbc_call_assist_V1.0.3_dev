@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.clm.dao.ext.SipLineExclusiveMapperExt" >
+  
+  
+  <!-- 按条件统计线路-->
+  <select id="querySipLineExclusiveNum" resultType="java.lang.Integer" parameterType="com.guiji.clm.dao.entity.ext.SipLineQuery">
+    select count(1) from sip_line_exclusive
+    where 1=1 
+    <if test="userId != null and userId !=''" >
+    	and belong_user = #{userId,jdbcType=VARCHAR}
+    </if>
+    <if test="orgCode != null and orgCode !=''" >
+    	and belong_org_code like '${orgCode}%'
+    </if>
+    <if test="lineStatusList != null and lineStatusList.size() != 0"> and line_status in 
+		<foreach collection="lineStatusList" item="item" open="(" close=")" index="i" separator=","> #{item,jdbcType=VARCHAR}
+        </foreach>
+	</if>
+   </select>
+   
+</mapper>

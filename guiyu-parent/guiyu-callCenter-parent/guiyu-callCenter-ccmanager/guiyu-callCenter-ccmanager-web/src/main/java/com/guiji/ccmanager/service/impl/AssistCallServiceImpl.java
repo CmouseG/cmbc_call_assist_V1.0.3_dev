@@ -16,12 +16,10 @@ public class AssistCallServiceImpl implements AssistCallService {
     CallOutPlanMapper callOutPlanMapper;
 
     @Override
-    public String getServerId(BigInteger callId){
+    public CallOutPlan getCallOutplan(BigInteger callId){
         CallOutPlan callOutPlan = callOutPlanMapper.selectByPrimaryKey(callId);
-        if(callOutPlan!=null){
-            return callOutPlan.getServerid();
-        }
-        return null;
+
+        return callOutPlan;
     }
 
 }

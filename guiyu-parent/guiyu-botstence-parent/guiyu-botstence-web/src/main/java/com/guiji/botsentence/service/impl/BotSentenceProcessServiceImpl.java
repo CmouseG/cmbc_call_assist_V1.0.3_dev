@@ -1153,7 +1153,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						
 						vo.setHuashu(volice.getContent());//话术
 						vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-						vo.setLuoji("未识别" + index);//逻辑
+						//vo.setLuoji("未识别" + index);//逻辑
+						vo.setLuoji("第" + index + "次未识别时回复的话术");//逻辑
 						vo.setYujin("未识别");//语境
 						vo.setTitle("未识别" + index);
 						
@@ -1567,7 +1568,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						intentIds.add(new Long(temp.getId()));
 					}
 				}
-				botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
+				//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
+				botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
 			}
 			
 			VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));
@@ -4427,5 +4429,82 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			}
 		}
+	}
+	
+	
+	public Map<String, String> getAllSelectKeywords(String processId, List<Long> intentIds){
+		Map<String, String> map = new HashMap<>();
+		List<String> list = new ArrayList<>();
+		list.add("在忙");
+		list.add("投诉");
+		list.add("拒绝");
+		list.add("用户不清楚");
+		List<BotSentenceBranch> allBranchList = new ArrayList<>();
+		
+		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+		branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainIn(list).andBranchNameEqualTo("negative");
+		List<BotSentenceBranch> branchList1 = botSentenceBranchMapper.selectByExample(branchExample);
+		if(null != branchList1 && branchList1.size() > 0) {
+			allBranchList.addAll(branchList1);
+		}
+		
+		//号码过滤取special
+		BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
+		branchExample2.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("号码过滤").andBranchNameEqualTo("special");
+		List<BotSentenceBranch> branchList2 = botSentenceBranchMapper.selectByExample(branchExample2);
+		if(null != branchList2 && branchList2.size() > 0) {
+			allBranchList.addAll(branchList2);
+		}
+		
+		//一般问题分支
+		BotSentenceBranchExample branchExample3 = new BotSentenceBranchExample();
+		branchExample3.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题");
+		List<BotSentenceBranch> branchList3 = botSentenceBranchMapper.selectByExample(branchExample3);
+		if(null != branchList3 && branchList3.size() > 0) {
+			allBranchList.addAll(branchList3);
+		}
+		
+		List<BusinessAnswerTaskExt> businessAnswerList = businessAnswerTaskService.queryBusinessAnswerListByPage(processId);
+		
+		if(null != allBranchList && allBranchList.size() > 0) {
+			for(BotSentenceBranch branch : allBranchList) {
+				if(StringUtils.isNotBlank(branch.getIntents())) {
+					String [] array = branch.getIntents().split(",");
+					for(int i = 0 ; i < array.length ; i++) {
+						BotSentenceIntent intent = botSentenceIntentMapper.selectByPrimaryKey(new Long(array[i]));
+						if(null != intentIds && intentIds.contains(new Long(array[i]))) {//如果为当前需要过滤的意图，则跳过
+							continue;
+						}
+						
+						List<String> keywordList = BotSentenceUtil.getKeywords(intent.getKeywords());
+						System.out.println(keywordList.get(0));
+						String []keyword_array = keywordList.get(0).split(",");
+						for(int j = 0 ; j < keyword_array.length ; j++) {
+							if(StringUtils.isNotBlank(keyword_array[j])) {
+								//list.add(keyword_array[j]);
+								if(StringUtils.isNotBlank(branch.getLineName())) {
+									map.put(keyword_array[j].replace("\"", ""), branch.getDomain() + "(" + branch.getLineName() + ")");
+								}else {
+									if("一般问题".equals(branch.getDomain())) {
+										for(BusinessAnswerTaskExt businessAnswer: businessAnswerList) {
+											if(branch.getBranchId().equals(businessAnswer.getBranchId())) {
+												map.put(keyword_array[j].replace("\"", ""), branch.getDomain() + businessAnswer.getIndex());
+											}
+										}
+										
+									}else {
+										map.put(keyword_array[j].replace("\"", ""), branch.getDomain());
+									}
+									
+								}
+								
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return map;
 	}
 }

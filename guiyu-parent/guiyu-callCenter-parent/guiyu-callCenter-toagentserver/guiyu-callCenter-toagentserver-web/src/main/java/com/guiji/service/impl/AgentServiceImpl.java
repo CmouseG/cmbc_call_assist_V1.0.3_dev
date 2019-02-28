@@ -300,6 +300,7 @@ public class AgentServiceImpl implements AgentService {
                     tiernew.setUpdateUser(agent.getUserId());
                     tiernew.setCreateTime(date);
                     tiernew.setUpdateTime(date);
+                    tiernew.setOrgCode(create.getOrgCode());
                     tierMapper.insert(tiernew);
                 }
             }

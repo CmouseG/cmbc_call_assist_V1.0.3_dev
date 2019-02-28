@@ -1,5 +1,7 @@
 package com.guiji.auth.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 import com.guiji.auth.model.SysUserRoleVo;
@@ -277,10 +279,10 @@ public class UserService {
 		return mapper.getSysUserExtByUserId(id);
 	}
 
-	public void userBindWechat(Long userId,String weChat,String weChatOpenId) {
+	public void userBindWechat(Long userId,String weChat,String weChatOpenId) throws UnsupportedEncodingException {
 		SysUserExt sysUserExt = new SysUserExt();
 		sysUserExt.setUserId(userId);
-		sysUserExt.setWechat(weChat);
+		sysUserExt.setWechat(URLEncoder.encode(weChat, "utf-8"));
 		sysUserExt.setWechatOpenid(weChatOpenId);
 		sysUserExt.setWechatStatus(1);//已绑定
 		sysUserExt.setUpdateTime(new Date());

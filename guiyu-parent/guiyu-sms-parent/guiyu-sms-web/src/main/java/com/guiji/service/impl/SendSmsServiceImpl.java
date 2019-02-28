@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
 import com.guiji.platfrom.Cmpp;
+import com.guiji.platfrom.ShenzhenCredit2;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
 import com.guiji.platfrom.Zxy;
@@ -80,6 +81,9 @@ public class SendSmsServiceImpl implements SendSmsService
 		} else if ("zxy".equals(identification)) {
 			logger.info("通过<专信云>群发短信...");
 			records = new Zxy().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("zxy".equals(identification)) {
+			logger.info("通过<深圳信用卡2专属>群发短信...");
+			records = new ShenzhenCredit2().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		}
 		
 		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录

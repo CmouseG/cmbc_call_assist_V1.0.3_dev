@@ -1,5 +1,6 @@
 package com.guiji.auth.api;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import com.guiji.auth.model.SysUserRoleVo;
@@ -54,6 +55,6 @@ public interface IAuth {
 	public ReturnData<List<SysUserRoleVo>> getAllUserRoleByOrgCode(@RequestParam("orgCode") String orgCode);
 
 	@RequestMapping("/user/getUserExtByUserId")
-	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId);
+	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId) throws UnsupportedEncodingException;
 	
 }

@@ -133,7 +133,8 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		//校验关键字
 		//获取所有关键词库对应关键词集合
 		if(null != record.getIntentList() && record.getIntentList().size() > 0) {
-			botSentenceKeyWordsValidateService.validateBusinessAskKeywords(record.getIntentList(), record.getProcessId(), null);
+			//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(record.getIntentList(), record.getProcessId(), null);
+			botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(record.getIntentList(), record.getProcessId(), null);
 			
 		}else {
 			throw new CommonException("请选择意图!");
@@ -420,7 +421,8 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 					intentIds.add(new Long(temp.getId()));
 				}
 			}
-			botSentenceKeyWordsValidateService.validateBusinessAskKeywords(record.getIntentList(), record.getProcessId(), intentIds);
+			//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(record.getIntentList(), record.getProcessId(), intentIds);
+			botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(record.getIntentList(), record.getProcessId(), intentIds);
 		}else {
 			throw new CommonException("请选择意图!");
 		}

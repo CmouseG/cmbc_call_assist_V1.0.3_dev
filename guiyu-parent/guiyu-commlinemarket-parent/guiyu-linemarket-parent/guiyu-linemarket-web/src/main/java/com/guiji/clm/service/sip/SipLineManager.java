@@ -176,7 +176,7 @@ public class SipLineManager {
 	public void delThirdSipLineCfg(Integer id) {
 		//查询线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(id);
-		if(SipLineStatusEnum.INIT.getCode()!=sipLineBaseInfo.getLineStatus()) {
+		if(SipLineStatusEnum.INIT.getCode()==sipLineBaseInfo.getLineStatus()) {
 			//如果现在是初始化状态，可以直接删除
 			sipLineInfoService.delete(id);
 		}else {

@@ -1,6 +1,8 @@
 package com.guiji.auth.controller;
 
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -279,8 +281,10 @@ public class UserController implements IAuth {
 	}
 
 	@RequestMapping("/user/getUserExtByUserId")
-	public ReturnData<SysUserExt> getUserExtByUserId(Long userId) {
-		return Result.ok(service.getUserExtByUserId(userId));
+	public ReturnData<SysUserExt> getUserExtByUserId(Long userId) throws UnsupportedEncodingException {
+		SysUserExt sysUserExt = service.getUserExtByUserId(userId);
+		sysUserExt.setWechat(URLDecoder.decode(sysUserExt.getWechat(), "utf-8"));
+		return Result.ok(sysUserExt);
 	}
 
 	/**

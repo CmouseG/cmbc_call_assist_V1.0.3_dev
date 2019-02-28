@@ -95,11 +95,11 @@ public class ShenzhenCredit2 implements ISendMsgByContent
 
 		if ("Success".equals(returnstatus) && "ok".equals(message))
 		{
-			logger.info("发送成功:returnstatus:{},message:{},taskID:{}", returnstatus, message,taskID);
+			logger.info("发送成功:returnstatus:{},message:{},taskID:{}", returnstatus,message,taskID);
 			record.setSendStatus(1);
 		} else
 		{
-			logger.info("发送失败:returnstatus:{},message:{},taskID:{}", returnstatus, message,taskID);
+			logger.info("发送失败:returnstatus:{},message:{},taskID:{}", returnstatus,message,taskID);
 			record.setSendStatus(0);
 		}
 
@@ -124,7 +124,7 @@ public class ShenzhenCredit2 implements ISendMsgByContent
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"returnstatus\":\"404\",\"message\":\"调用接口异常\"}";
+			result = "{\"returnsms\":{\"returnstatus\":\"404\",\"message\":\"调用接口异常\"}}";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

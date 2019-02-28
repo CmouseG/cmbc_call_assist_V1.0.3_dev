@@ -1,11 +1,13 @@
+USE guiyu_billing;
+
 ALTER TABLE billing_acct_charging_record
-ADD charging_amount      DECIMAL(16,2) COMMENT '¼Æ·Ñ½ğ¶î';
+ADD charging_amount      DECIMAL(16,2) COMMENT 'è®¡è´¹é‡‘é¢';
 
 UPDATE billing_acct_charging_record
 SET charging_amount = amount;
 
 /*
-	°´ÔÂÍ³¼Æ»ã×Ü
+	æŒ‰æœˆç»Ÿè®¡æ±‡æ€»
 */
 DELIMITER $$
 
@@ -15,16 +17,16 @@ DROP PROCEDURE IF EXISTS `totalChargingByMonth`$$
 
 CREATE DEFINER=`billing`@`%` PROCEDURE `totalChargingByMonth`(IN total_month VARCHAR(16), IN begin_date VARCHAR(16), IN end_date VARCHAR(16))
 BEGIN
-		DECLARE account_id VARCHAR(32);			-- ÕË»§ID
-		DECLARE total_mode INT;				--	Í³¼Æ·½Ê½£º1-ÈÕ  2-ÔÂ
+		DECLARE account_id VARCHAR(32);			-- è´¦æˆ·ID
+		DECLARE total_mode INT;				--	ç»Ÿè®¡æ–¹å¼ï¼š1-æ—¥  2-æœˆ
 		
-		DECLARE recharge_amount DECIMAL(16,2);		--	Í³¼Æ¼ÆËã³äÖµ½ğ¶î
-		DECLARE consume_amount DECIMAL(16,2);		--	Í³¼Æ¼ÆËãÏû·Ñ½ğ¶î
+		DECLARE recharge_amount DECIMAL(16,2);		--	ç»Ÿè®¡è®¡ç®—å……å€¼é‡‘é¢
+		DECLARE consume_amount DECIMAL(16,2);		--	ç»Ÿè®¡è®¡ç®—æ¶ˆè´¹é‡‘é¢
 		
-		-- ¶¨Òå±éÀú±êÖ¾£¬Ä¬ÈÏfalse
+		-- å®šä¹‰éå†æ ‡å¿—ï¼Œé»˜è®¤false
 		DECLARE done INT DEFAULT FALSE;
 	
-		-- ¶¨ÒåÓÎ±ê	²éÑ¯Í³¼ÆÃ¿ÈÕ³äÖµ¡¢Ïû·Ñ½ğ¶î	
+		-- å®šä¹‰æ¸¸æ ‡	æŸ¥è¯¢ç»Ÿè®¡æ¯æ—¥å……å€¼ã€æ¶ˆè´¹é‡‘é¢	
 		DECLARE cur_account CURSOR FOR
 			SELECT  r.account_id,
 				SUM(CASE WHEN r.type = 1 THEN r.amount ELSE 0 END ) AS ra,
@@ -33,32 +35,32 @@ BEGIN
 			WHERE r.create_time BETWEEN CONCAT(begin_date, ' 00:00:00') AND CONCAT(end_date, ' 23:59:59') 
 			GROUP BY r.account_id;
 		
-		-- ½«½áÊø±êÖ¾°ó¶¨µ½ÓÎ±ê
+		-- å°†ç»“æŸæ ‡å¿—ç»‘å®šåˆ°æ¸¸æ ‡
 		DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 		
 		SET total_mode = 2;
 		
 		SELECT total_month, begin_date, end_date FROM DUAL;
-		-- É¾³ıÖ®Ç°Í³¼ÆµÄtotal_monthÊı¾İ
+		-- åˆ é™¤ä¹‹å‰ç»Ÿè®¡çš„total_monthæ•°æ®
 		DELETE c.* FROM billing_total_charging c WHERE c.total_mode=2 AND c.total_month= total_month;
 		 	
-		-- ´ò¿ªÓÎ±ê
+		-- æ‰“å¼€æ¸¸æ ‡
 		OPEN cur_account;
 			
-		-- ±éÀú
+		-- éå†
 		read_loop : LOOP
-			-- È¡Öµ È¡¶à¸ö×Ö¶Î
+			-- å–å€¼ å–å¤šä¸ªå­—æ®µ
 			FETCH  NEXT FROM cur_account INTO account_id, recharge_amount, consume_amount;
 			IF done THEN
 				LEAVE read_loop;
 			END IF;
 
-			-- ²åÈë·ÑÓÃÍ³¼Æ±í
+			-- æ’å…¥è´¹ç”¨ç»Ÿè®¡è¡¨
 			INSERT INTO billing_total_charging(account_id, total_mode, recharge_amount, consume_amount, total_month, create_time, del_flag) 
 			VALUES (account_id, total_mode, recharge_amount, consume_amount, total_month, NOW(), 0);
 		
-		END LOOP;	-- ±éÀú½áÊø
-		-- ¹Ø±ÕÓÎ±ê
+		END LOOP;	-- éå†ç»“æŸ
+		-- å…³é—­æ¸¸æ ‡
 		CLOSE cur_account;
 	
 	END$$

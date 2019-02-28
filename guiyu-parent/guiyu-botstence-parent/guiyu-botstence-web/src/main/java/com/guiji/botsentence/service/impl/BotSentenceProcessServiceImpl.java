@@ -1569,7 +1569,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					}
 				}
 				//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
-				botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId());
+				botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
 			}
 			
 			VoliceInfo volice = voliceInfoMapper.selectByPrimaryKey(new Long(voliceId));
@@ -4432,7 +4432,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	}
 	
 	
-	public Map<String, String> getAllSelectKeywords(String processId){
+	public Map<String, String> getAllSelectKeywords(String processId, List<Long> intentIds){
 		Map<String, String> map = new HashMap<>();
 		List<String> list = new ArrayList<>();
 		list.add("在忙");
@@ -4472,6 +4472,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					String [] array = branch.getIntents().split(",");
 					for(int i = 0 ; i < array.length ; i++) {
 						BotSentenceIntent intent = botSentenceIntentMapper.selectByPrimaryKey(new Long(array[i]));
+						if(null != intentIds && intentIds.contains(new Long(array[i]))) {//如果为当前需要过滤的意图，则跳过
+							continue;
+						}
+						
 						List<String> keywordList = BotSentenceUtil.getKeywords(intent.getKeywords());
 						System.out.println(keywordList.get(0));
 						String []keyword_array = keywordList.get(0).split(",");

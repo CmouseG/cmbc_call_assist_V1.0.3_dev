@@ -252,7 +252,7 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 	
 	
 	@Override
-	public void validateBusinessAskKeywords2(List<BotSentenceIntentVO> list, String processId) {
+	public void validateBusinessAskKeywords2(List<BotSentenceIntentVO> list, String processId, List<Long> ignoreIntentIds) {
 		//根据意图列表获取所有关键词
 		String[] keys = new String[] {};
 		
@@ -273,7 +273,7 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 			}
 		}
 		
-		Map<String, String> keywords = botSentenceProcessService.getAllSelectKeywords(processId);	
+		Map<String, String> keywords = botSentenceProcessService.getAllSelectKeywords(processId, ignoreIntentIds);	
 		
 		String message = "";
 		

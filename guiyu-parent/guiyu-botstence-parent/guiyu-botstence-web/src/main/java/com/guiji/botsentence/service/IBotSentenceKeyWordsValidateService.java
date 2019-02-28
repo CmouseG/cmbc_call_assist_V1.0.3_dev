@@ -28,5 +28,5 @@ public interface IBotSentenceKeyWordsValidateService {
 	
 	public void validateIntents(String processId, Long intentId);
 	
-	public void validateBusinessAskKeywords2(List<BotSentenceIntentVO> list, String processId);
+	public void validateBusinessAskKeywords2(List<BotSentenceIntentVO> list, String processId, List<Long> ignoreIntentIds);
 }

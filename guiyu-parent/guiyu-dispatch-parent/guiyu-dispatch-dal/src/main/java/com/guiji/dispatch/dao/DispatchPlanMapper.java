@@ -55,6 +55,7 @@ public interface DispatchPlanMapper {
 	List<DispatchPlan> selectPlanGroupByUserId(DispatchPlan record);
 
 
-    TotalPlanCountVo totalPlanCount(@Param("plan") DispatchPlan plan,
+    TotalPlanCountVo totalPlanCount(@Param("tableNum") Integer tableNum,
+                                    @Param("plan") DispatchPlan plan,
                                     @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 }

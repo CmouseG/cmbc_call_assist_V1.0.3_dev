@@ -95,7 +95,8 @@ public class VoipGwService {
 	public VoipGwInfo queryByGwName(String gwName) {
 		if(StrUtils.isNotEmpty(gwName)) {
 			VoipGwInfoExample example = new VoipGwInfoExample();
-			example.createCriteria().andGwNameEqualTo(gwName);
+			//查询状态-正常  且名称
+			example.createCriteria().andGwStatusEqualTo(VoipGwStatusEnum.OK.getCode()).andGwNameEqualTo(gwName);
 			List<VoipGwInfo> list = voipGwInfoMapper.selectByExample(example);
 			if(list!=null && !list.isEmpty()){
 				return list.get(0);

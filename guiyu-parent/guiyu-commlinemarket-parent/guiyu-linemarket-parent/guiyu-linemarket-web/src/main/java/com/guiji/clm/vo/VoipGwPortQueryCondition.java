@@ -1,5 +1,7 @@
 package com.guiji.clm.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 /** 
@@ -18,4 +20,6 @@ public class VoipGwPortQueryCondition {
 	private String userId;
 	//归属企业
 	private String orgCode;
+	//状态
+	private List<Integer> gwStatus;
 }

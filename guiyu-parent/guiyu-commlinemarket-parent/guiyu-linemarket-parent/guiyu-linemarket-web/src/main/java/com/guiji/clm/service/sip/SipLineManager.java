@@ -197,6 +197,7 @@ public class SipLineManager {
 				}
 			}
 			/**2、调用呼叫中心删除线路**/
+			log.info("调用呼叫中心删除线路：{}",sipLineBaseInfo.getLineId());
 			iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
 			/**3、删除计费**/
 			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());

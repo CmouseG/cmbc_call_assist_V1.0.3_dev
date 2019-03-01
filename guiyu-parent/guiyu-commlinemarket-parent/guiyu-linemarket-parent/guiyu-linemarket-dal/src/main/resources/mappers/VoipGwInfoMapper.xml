@@ -9,8 +9,10 @@
     <result column="company_Id" property="companyId" jdbcType="INTEGER" />
     <result column="dev_id" property="devId" jdbcType="INTEGER" />
     <result column="port_num" property="portNum" jdbcType="INTEGER" />
+    <result column="gw_status" property="gwStatus" jdbcType="INTEGER" />
     <result column="sip_ip" property="sipIp" jdbcType="VARCHAR" />
     <result column="sip_port" property="sipPort" jdbcType="INTEGER" />
+    <result column="line_port" property="linePort" jdbcType="INTEGER" />
     <result column="start_sip_account" property="startSipAccount" jdbcType="INTEGER" />
     <result column="start_sip_pwd" property="startSipPwd" jdbcType="INTEGER" />
     <result column="sip_account_step" property="sipAccountStep" jdbcType="INTEGER" />
@@ -85,9 +87,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, gw_name, gw_brand, gw_version, company_Id, dev_id, port_num, sip_ip, sip_port, 
-    start_sip_account, start_sip_pwd, sip_account_step, sip_pwd_step, univalent, reg_type, 
-    gw_reg_status, gw_ip, user_id, org_code, crt_user, crt_time, update_time, update_user
+    id, gw_name, gw_brand, gw_version, company_Id, dev_id, port_num, gw_status, sip_ip, 
+    sip_port, line_port, start_sip_account, start_sip_pwd, sip_account_step, sip_pwd_step, 
+    univalent, reg_type, gw_reg_status, gw_ip, user_id, org_code, crt_user, crt_time, 
+    update_time, update_user
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.VoipGwInfoExample" >
     select
@@ -126,20 +129,22 @@
   <insert id="insert" parameterType="com.guiji.clm.dao.entity.VoipGwInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into voip_gw_info (gw_name, gw_brand, gw_version, 
       company_Id, dev_id, port_num, 
-      sip_ip, sip_port, start_sip_account, 
-      start_sip_pwd, sip_account_step, sip_pwd_step, 
-      univalent, reg_type, gw_reg_status, 
-      gw_ip, user_id, org_code, 
-      crt_user, crt_time, update_time, 
-      update_user)
+      gw_status, sip_ip, sip_port, 
+      line_port, start_sip_account, start_sip_pwd, 
+      sip_account_step, sip_pwd_step, univalent, 
+      reg_type, gw_reg_status, gw_ip, 
+      user_id, org_code, crt_user, 
+      crt_time, update_time, update_user
+      )
     values (#{gwName,jdbcType=VARCHAR}, #{gwBrand,jdbcType=VARCHAR}, #{gwVersion,jdbcType=VARCHAR}, 
       #{companyId,jdbcType=INTEGER}, #{devId,jdbcType=INTEGER}, #{portNum,jdbcType=INTEGER}, 
-      #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, #{startSipAccount,jdbcType=INTEGER}, 
-      #{startSipPwd,jdbcType=INTEGER}, #{sipAccountStep,jdbcType=INTEGER}, #{sipPwdStep,jdbcType=INTEGER}, 
-      #{univalent,jdbcType=DECIMAL}, #{regType,jdbcType=INTEGER}, #{gwRegStatus,jdbcType=INTEGER}, 
-      #{gwIp,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
-      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR})
+      #{gwStatus,jdbcType=INTEGER}, #{sipIp,jdbcType=VARCHAR}, #{sipPort,jdbcType=INTEGER}, 
+      #{linePort,jdbcType=INTEGER}, #{startSipAccount,jdbcType=INTEGER}, #{startSipPwd,jdbcType=INTEGER}, 
+      #{sipAccountStep,jdbcType=INTEGER}, #{sipPwdStep,jdbcType=INTEGER}, #{univalent,jdbcType=DECIMAL}, 
+      #{regType,jdbcType=INTEGER}, #{gwRegStatus,jdbcType=INTEGER}, #{gwIp,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.VoipGwInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into voip_gw_info
@@ -162,11 +167,17 @@
       <if test="portNum != null" >
         port_num,
       </if>
+      <if test="gwStatus != null" >
+        gw_status,
+      </if>
       <if test="sipIp != null" >
         sip_ip,
       </if>
       <if test="sipPort != null" >
         sip_port,
+      </if>
+      <if test="linePort != null" >
+        line_port,
       </if>
       <if test="startSipAccount != null" >
         start_sip_account,
@@ -230,11 +241,17 @@
       <if test="portNum != null" >
         #{portNum,jdbcType=INTEGER},
       </if>
+      <if test="gwStatus != null" >
+        #{gwStatus,jdbcType=INTEGER},
+      </if>
       <if test="sipIp != null" >
         #{sipIp,jdbcType=VARCHAR},
       </if>
       <if test="sipPort != null" >
         #{sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="linePort != null" >
+        #{linePort,jdbcType=INTEGER},
       </if>
       <if test="startSipAccount != null" >
         #{startSipAccount,jdbcType=INTEGER},
@@ -310,11 +327,17 @@
       <if test="record.portNum != null" >
         port_num = #{record.portNum,jdbcType=INTEGER},
       </if>
+      <if test="record.gwStatus != null" >
+        gw_status = #{record.gwStatus,jdbcType=INTEGER},
+      </if>
       <if test="record.sipIp != null" >
         sip_ip = #{record.sipIp,jdbcType=VARCHAR},
       </if>
       <if test="record.sipPort != null" >
         sip_port = #{record.sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="record.linePort != null" >
+        line_port = #{record.linePort,jdbcType=INTEGER},
       </if>
       <if test="record.startSipAccount != null" >
         start_sip_account = #{record.startSipAccount,jdbcType=INTEGER},
@@ -372,8 +395,10 @@
       company_Id = #{record.companyId,jdbcType=INTEGER},
       dev_id = #{record.devId,jdbcType=INTEGER},
       port_num = #{record.portNum,jdbcType=INTEGER},
+      gw_status = #{record.gwStatus,jdbcType=INTEGER},
       sip_ip = #{record.sipIp,jdbcType=VARCHAR},
       sip_port = #{record.sipPort,jdbcType=INTEGER},
+      line_port = #{record.linePort,jdbcType=INTEGER},
       start_sip_account = #{record.startSipAccount,jdbcType=INTEGER},
       start_sip_pwd = #{record.startSipPwd,jdbcType=INTEGER},
       sip_account_step = #{record.sipAccountStep,jdbcType=INTEGER},
@@ -413,11 +438,17 @@
       <if test="portNum != null" >
         port_num = #{portNum,jdbcType=INTEGER},
       </if>
+      <if test="gwStatus != null" >
+        gw_status = #{gwStatus,jdbcType=INTEGER},
+      </if>
       <if test="sipIp != null" >
         sip_ip = #{sipIp,jdbcType=VARCHAR},
       </if>
       <if test="sipPort != null" >
         sip_port = #{sipPort,jdbcType=INTEGER},
+      </if>
+      <if test="linePort != null" >
+        line_port = #{linePort,jdbcType=INTEGER},
       </if>
       <if test="startSipAccount != null" >
         start_sip_account = #{startSipAccount,jdbcType=INTEGER},
@@ -472,8 +503,10 @@
       company_Id = #{companyId,jdbcType=INTEGER},
       dev_id = #{devId,jdbcType=INTEGER},
       port_num = #{portNum,jdbcType=INTEGER},
+      gw_status = #{gwStatus,jdbcType=INTEGER},
       sip_ip = #{sipIp,jdbcType=VARCHAR},
       sip_port = #{sipPort,jdbcType=INTEGER},
+      line_port = #{linePort,jdbcType=INTEGER},
       start_sip_account = #{startSipAccount,jdbcType=INTEGER},
       start_sip_pwd = #{startSipPwd,jdbcType=INTEGER},
       sip_account_step = #{sipAccountStep,jdbcType=INTEGER},

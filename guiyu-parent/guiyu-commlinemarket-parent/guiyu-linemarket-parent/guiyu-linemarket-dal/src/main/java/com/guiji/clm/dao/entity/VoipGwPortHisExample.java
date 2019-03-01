@@ -426,6 +426,66 @@ public class VoipGwPortHisExample {
             return (Criteria) this;
         }
 
+        public Criteria andGwStatusIsNull() {
+            addCriterion("gw_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusIsNotNull() {
+            addCriterion("gw_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusEqualTo(Integer value) {
+            addCriterion("gw_status =", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusNotEqualTo(Integer value) {
+            addCriterion("gw_status <>", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusGreaterThan(Integer value) {
+            addCriterion("gw_status >", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("gw_status >=", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusLessThan(Integer value) {
+            addCriterion("gw_status <", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("gw_status <=", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusIn(List<Integer> values) {
+            addCriterion("gw_status in", values, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusNotIn(List<Integer> values) {
+            addCriterion("gw_status not in", values, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusBetween(Integer value1, Integer value2) {
+            addCriterion("gw_status between", value1, value2, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("gw_status not between", value1, value2, "gwStatus");
+            return (Criteria) this;
+        }
+
         public Criteria andAliasIsNull() {
             addCriterion("`alias` is null");
             return (Criteria) this;

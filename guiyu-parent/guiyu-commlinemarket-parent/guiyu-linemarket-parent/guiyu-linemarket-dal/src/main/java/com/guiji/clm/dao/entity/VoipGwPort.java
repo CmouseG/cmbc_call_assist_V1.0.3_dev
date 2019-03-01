@@ -11,6 +11,8 @@ public class VoipGwPort implements Serializable {
 
     private Integer lineId;
 
+    private Integer gwStatus;
+
     private String alias;
 
     private Integer companyId;
@@ -63,6 +65,14 @@ public class VoipGwPort implements Serializable {
 
     public void setLineId(Integer lineId) {
         this.lineId = lineId;
+    }
+
+    public Integer getGwStatus() {
+        return gwStatus;
+    }
+
+    public void setGwStatus(Integer gwStatus) {
+        this.gwStatus = gwStatus;
     }
 
     public String getAlias() {
@@ -186,6 +196,7 @@ public class VoipGwPort implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", port=").append(port);
         sb.append(", lineId=").append(lineId);
+        sb.append(", gwStatus=").append(gwStatus);
         sb.append(", alias=").append(alias);
         sb.append(", companyId=").append(companyId);
         sb.append(", devId=").append(devId);

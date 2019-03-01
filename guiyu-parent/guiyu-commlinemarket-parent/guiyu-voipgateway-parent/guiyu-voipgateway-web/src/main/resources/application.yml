@@ -5,7 +5,7 @@ spring:
     name: guiyu-voipgateway-web
   datasource:  
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://192.168.1.57:3306/dcmsdb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    url: jdbc:mysql://192.168.1.203:3306/dcmsdb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver 

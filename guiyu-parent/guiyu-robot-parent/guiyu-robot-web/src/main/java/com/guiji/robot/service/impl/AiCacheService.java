@@ -90,6 +90,23 @@ public class AiCacheService {
 	}
 	
 	/**
+	 * 查询所有用户资源--只查缓存中数据
+	 * @return
+	 */
+	public Map<String,UserResourceCache> getAllUserResources(){
+		Map<Object, Object> map = redisUtil.hmget(RobotConstants.ROBOT_USER_RESOURCE);
+		if(map != null) {
+			Map<String,UserResourceCache> userMap = new HashMap<String,UserResourceCache>();
+			for(Map.Entry<Object, Object> entry : map.entrySet()) {
+				userMap.put((String)entry.getKey(), (UserResourceCache)entry.getValue());
+			}
+			return userMap;
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * 新增/更新一个用户的缓存资源
 	 * @param userResourceCache
 	 */

@@ -1,6 +1,7 @@
 package com.guiji.robot.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -153,4 +154,9 @@ public interface IRobotRemote {
 	@ApiOperation(value = "查询用户机器人配置信息")
     @PostMapping(value = "/remote/queryUserResourceCache")
 	Result.ReturnData<UserResourceCache> queryUserResourceCache(@RequestParam(value="userId",required=true) String userId);
+	
+	
+	@ApiOperation(value = "查询所有用户机器人配置信息")
+    @PostMapping(value = "/remote/queryAllUserResourceCache")
+	Result.ReturnData<Map<String,UserResourceCache>> queryAllUserResourceCache();
 }

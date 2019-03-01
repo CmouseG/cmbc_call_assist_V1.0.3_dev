@@ -117,7 +117,7 @@ public class FsBotHandler {
                 callPlan.setCallState(ECallState.norobot_fail.ordinal());
                 if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
-                    callPlan.setReason(e.getMessage());
+                    callPlan.setReason("606");
                 }
                 callOutPlanService.update(callPlan);
 //                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");

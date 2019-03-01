@@ -57,7 +57,7 @@ public class CallServiceImpl implements CallService {
         if(ip.contains(":")){
             ip = ip.split(":")[0];
         }
-       String callid = callplan.getCallId().toString();
+        String callid = callplan.getCallId().toString();
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +

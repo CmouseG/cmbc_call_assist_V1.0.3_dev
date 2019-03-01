@@ -43,19 +43,17 @@ public class ChargeHandler {
     @Async
     public void handleAfterCall(CallOutPlan callOutPlan) {
         if(callOutPlan.getBillSec()!=null && callOutPlan.getBillSec().intValue()>0){
-            if(callOutPlan.getAccurateIntent()!=null && !callOutPlan.getAccurateIntent().equals("W") && !callOutPlan.getAccurateIntent().equals("F")){
-                ChargeCallPlan chargeCallPlan = new ChargeCallPlan();
-                chargeCallPlan.setUserId(callOutPlan.getCustomerId());
-                chargeCallPlan.setBillSec(callOutPlan.getBillSec());
-                chargeCallPlan.setEndTime(callOutPlan.getHangupTime());
-                chargeCallPlan.setBeginTime(callOutPlan.getCallStartTime());
-                chargeCallPlan.setPhone(callOutPlan.getPhoneNum());
-                chargeCallPlan.setLineId(callOutPlan.getLineId());
+            ChargeCallPlan chargeCallPlan = new ChargeCallPlan();
+            chargeCallPlan.setUserId(callOutPlan.getCustomerId());
+            chargeCallPlan.setBillSec(callOutPlan.getBillSec());
+            chargeCallPlan.setEndTime(callOutPlan.getHangupTime());
+            chargeCallPlan.setBeginTime(callOutPlan.getCallStartTime());
+            chargeCallPlan.setPhone(callOutPlan.getPhoneNum());
+            chargeCallPlan.setLineId(callOutPlan.getLineId());
 
-                rabbitTemplate.convertAndSend("billing.ACCTCHARGING", JsonUtils.bean2Json(chargeCallPlan));
+            rabbitTemplate.convertAndSend("billing.ACCTCHARGING", JsonUtils.bean2Json(chargeCallPlan));
 
-                log.info("---将计费对象 chargeCallPlan[{}] 推到mq",chargeCallPlan);
-            }
+            log.info("---将计费对象 chargeCallPlan[{}] 推到mq",chargeCallPlan);
         }
     }
 

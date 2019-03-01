@@ -636,8 +636,8 @@
                 hangup_direction = #{hangupDirection,jdbcType=INTEGER},
             </if>
             <if test="accurateIntent != null" >
-                reason = IF( accurate_intent IS NULL ,#{reason,jdbcType=VARCHAR}, reason),
-                accurate_intent = IF( accurate_intent IS NULL ,#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
+                reason = IF( accurate_intent IS NULL or accurate_intent ='W',#{reason,jdbcType=VARCHAR}, reason),
+                accurate_intent = IF( accurate_intent IS NULL  or accurate_intent ='W',#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
             </if>
 
             <if test="hangupCode != null" >

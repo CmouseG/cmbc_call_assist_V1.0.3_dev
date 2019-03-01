@@ -3290,7 +3290,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public void updateProcessState(String processId, String userId) {
 		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		process.setTestState(Constant.TEST_STATE_UNDEPLOY);
-		if(Constant.APPROVE_PASS.equals(process.getState()) || Constant.APPROVE_NOTPASS.equals(process.getState()) || Constant.APPROVE_ONLINE.equals(process.getState())) {
+		if(Constant.APPROVE_PASS.equals(process.getState()) || Constant.APPROVE_NOTPASS.equals(process.getState()) || Constant.APPROVE_ONLINE.equals(process.getState())
+				|| Constant.ERROR.equals(process.getState())) {
 			process.setState(Constant.APPROVE_MAEKING);
 		}
 		process.setLstUpdateTime(new Date(System.currentTimeMillis()));

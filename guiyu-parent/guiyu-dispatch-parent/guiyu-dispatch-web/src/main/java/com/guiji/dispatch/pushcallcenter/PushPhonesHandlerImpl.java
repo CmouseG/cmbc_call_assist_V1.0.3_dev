@@ -91,12 +91,17 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 								Integer callMax = dto.getMaxRobotCount();
 
+								logger.info("用户当前呼叫数：："+redisUserIdCount);
+								logger.info("用户当前分配数：："+callMax);
+
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}
 
 								//判断用户模板是否有可用机器人
-								if(!this.checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
+								boolean availableRobot = this.checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName());
+								logger.info("ROBOT, 是否存在可用机器人："+availableRobot);
+								if(!availableRobot){
 									continue;
 								}
 
@@ -203,6 +208,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					}
 				}
 			}
+
+			logger.info("用户{}模板编号：{}配置的机器人数量{},目前并发的数量{}..",userId,templateId,templateCfgAiNum,templateAssignAiNum);
 			if(templateAssignAiNum+1>templateCfgAiNum) {
 				logger.error("用户{}模板编号：{}配置的机器人数量{}即将超过了目前并发的数量{},无法继续分配拨打电话..",userId,templateId,templateCfgAiNum,templateAssignAiNum);
 				return false;

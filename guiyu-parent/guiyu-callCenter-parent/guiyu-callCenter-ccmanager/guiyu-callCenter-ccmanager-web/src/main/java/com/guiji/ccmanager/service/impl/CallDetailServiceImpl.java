@@ -149,8 +149,13 @@ public class CallDetailServiceImpl implements CallDetailService {
             map.put("time", callRecordReq.getTime() - 1);
         if (callRecordReq.getAccurateIntent() != null)
             map.put("accurateIntent", callRecordReq.getAccurateIntent());
-        List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(map);
-        return list;
+        List<BigInteger> ids = callOutPlanMapper.selectCallPlanRecordIds4Encrypt(map);
+        if(ids!=null && ids.size()>0){
+            List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(ids,callRecordReq.getIsDesensitization());
+            return list;
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -184,10 +189,22 @@ public class CallDetailServiceImpl implements CallDetailService {
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("create_time desc");
-
+        example.setOrderByClause("call_id desc");
         example.setIsDesensitization(isDesensitization);
-        List<CallOutPlan> list = callOutPlanMapper.selectByExample4Encrypt(example);
+
+        List<CallOutPlan> list = null;
+        if(pageNo<10){
+            list = callOutPlanMapper.selectByExample4Encrypt(example);
+        }else{
+            List<BigInteger> listIds= callOutPlanMapper.selectCallIds4Encrypt(example);
+            if(listIds!=null && listIds.size()>0){
+                CallOutPlanExample exampleIds = new CallOutPlanExample();
+                exampleIds.createCriteria().andCallIdIn(listIds);
+                exampleIds.setOrderByClause("call_id desc");
+
+                list = callOutPlanMapper.selectByExample4Encrypt(exampleIds);
+            }
+        }
 
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 

@@ -72,8 +72,16 @@ public class CallServiceImpl implements CallService {
                 aliAsrConfig.getAccessSecret(),
                 recordFile);
 
-        log.info("开始执行呼叫命令[{}]", cmd);
-        fsManager.executeAsync(cmd);
+        synchronized (this){
+            log.info("开始执行呼叫命令[{}]", cmd);
+            fsManager.executeAsync(cmd);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValueByTypeKey("bell_time","bell_time");
         String value = returnData.getBody().get(0).getDictValue();

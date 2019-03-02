@@ -117,7 +117,7 @@ public class VoipGwManager {
 				/**4、调用呼叫中心服务，注册账号密码**/
 				SimCardVO fsGateway = new SimCardVO();
 				fsGateway.setGatewayId(voipGwInfo.getId().toString());	//新增的网关id
-				fsGateway.setStartCount(voipGwInfo.getSipAccountStep()); //起始账号
+				fsGateway.setStartCount(voipGwInfo.getStartSipAccount()); //起始账号
 				fsGateway.setStartPwd(voipGwInfo.getStartSipPwd()); //起始密码
 				fsGateway.setCountsStep(voipGwInfo.getSipAccountStep()); //账号步长
 				fsGateway.setPwdStep(voipGwInfo.getSipPwdStep()); //密码步长

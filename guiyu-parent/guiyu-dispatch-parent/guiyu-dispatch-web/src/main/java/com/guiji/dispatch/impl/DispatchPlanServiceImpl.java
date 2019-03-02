@@ -1212,6 +1212,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample ex1 = new DispatchPlanExample();
 			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
+
+            dis.setStatusPlan(Constant.STATUSPLAN_3);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		} else {

@@ -189,7 +189,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 * @return
 	 */
 	@Override
-	public AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq) {
+	public synchronized AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq) {
 		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN, RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN);
 		if (distributedLockHandler.tryLock(lock)) {
 			try {

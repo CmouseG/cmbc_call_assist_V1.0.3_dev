@@ -3,9 +3,13 @@ package com.guiji.dispatch.pushcallcenter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.guiji.dispatch.bean.UserLineBotenceVO;
+import com.guiji.robot.model.AiInuseCache;
+import com.guiji.robot.model.UserResourceCache;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -91,6 +95,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									continue;
 								}
 
+								//判断用户模板是否有可用机器人
+								if(!this.checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
+									continue;
+								}
+
 								Object obj = (Object) redisUtil.lrightPop(queue);
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
@@ -161,6 +170,81 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			}
 		}
 	}
+
+
+	/**
+	 * 校验用户某个模板是否有可用机器人
+	 * @param userId
+	 * @param templateId
+	 * @return true : 有可用机器人，可以继续拨打电话
+	 */
+	public boolean checkUserAvailableRobot(String userId,String templateId) {
+		if(StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(templateId)) {
+			//用户资源
+			UserResourceCache userResource = this.getUserResource(userId);
+			//该模板配置的机器人数量，默认0
+			int templateCfgAiNum = 0;
+			//用户分配的机器人数量，默认0
+			int templateAssignAiNum = 0;
+			if(userResource.getTempAiNumMap()!=null && userResource.getTempAiNumMap().get(templateId)!=null) {
+				//获取该模板配置的机器人数量
+				templateCfgAiNum = userResource.getTempAiNumMap().get(templateId);
+			}
+			if(templateCfgAiNum<=0) {
+				logger.error("用户:{},模板：{},机器人数量为：0");
+				return false;
+			}
+			//获取用户目前在忙的机器人列表
+			List<AiInuseCache> userAiList = this.queryUserAiInUseList(userId);
+			if(userAiList!=null && !userAiList.isEmpty()) {
+				for(AiInuseCache robot : userAiList) {
+					if(templateId.equals(robot.getTemplateIds())) {
+						templateAssignAiNum++;
+					}
+				}
+			}
+			if(templateAssignAiNum+1>templateCfgAiNum) {
+				logger.error("用户{}模板编号：{}配置的机器人数量{}即将超过了目前并发的数量{},无法继续分配拨打电话..",userId,templateId,templateCfgAiNum,templateAssignAiNum);
+				return false;
+			}else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 根据用户id查询用户的资源缓存信息
+	 * @param userId
+	 * @return
+	 */
+	public UserResourceCache getUserResource(String userId) {
+		Object cacheObj = redisUtil.hget("ROBOT_USER_RESOURCE", userId);
+		if(cacheObj != null) {
+			return (UserResourceCache)cacheObj;
+		}
+		return null;
+	}
+
+	/**
+	 * 查询用户现在已分配的机器人
+	 * @param userId
+	 * @return
+	 */
+	public List<AiInuseCache> queryUserAiInUseList(String userId){
+		Map<Object,Object> allMap = redisUtil.hmget("ROBOT_USER_AI_"+userId);
+		if(allMap != null && !allMap.isEmpty()) {
+			List<AiInuseCache> list = new ArrayList<AiInuseCache>();
+			for (Map.Entry<Object,Object> aiEntry : allMap.entrySet()) {
+				AiInuseCache aiInuse = (AiInuseCache) aiEntry.getValue();
+				list.add(aiInuse);
+			}
+			return list;
+		}
+		return null;
+	}
+
+
 
 	private void cutVariable(com.guiji.calloutserver.entity.DispatchPlan callBean, String queueName) {
 		Integer currentCount = (Integer) redisUtil.get(queueName);

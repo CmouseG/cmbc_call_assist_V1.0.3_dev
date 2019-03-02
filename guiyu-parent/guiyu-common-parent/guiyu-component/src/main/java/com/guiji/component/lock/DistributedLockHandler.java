@@ -66,9 +66,12 @@ public class DistributedLockHandler
 			long startTime = System.currentTimeMillis();
 			while (true)
 			{
-				if (!template.hasKey(lock.getName()))
+				//setIfAbsent : redis命令setnx(), 作用：SET if Not Exists，其主要有两个参数 setnx(key, value)。该方法是原子的，如果 key 不存在，则设置当前 key 成功，返回 1；如果当前 key 已经存在，则设置当前 key 失败，返回 0
+				//在分布式锁的使用中比去校验key是否存在 安全的多（因为原子性）
+				if (template.opsForValue().setIfAbsent(lock.getName(), lock.getValue()))
 				{
-					template.opsForValue().set(lock.getName(), lock.getValue(), lockExpireTime, TimeUnit.MILLISECONDS);
+					//设置有效期
+					template.expire(lock.getName(), lockExpireTime, TimeUnit.MILLISECONDS);
 					logger.debug(Thread.currentThread().getName() + " : get lock[" + lock.getName() + "]");
 					return true;
 				} 

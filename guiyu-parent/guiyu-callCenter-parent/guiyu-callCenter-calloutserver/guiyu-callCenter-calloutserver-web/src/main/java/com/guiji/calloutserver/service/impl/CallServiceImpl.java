@@ -61,7 +61,7 @@ public class CallServiceImpl implements CallService {
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
-                        ", record_session:/recordings/%s" +
+                        ", record_session:/usr/local/freeswitch/recordings/%s" +
                         ", park' inline",
                 callid,
                 callplan.getLineId(),

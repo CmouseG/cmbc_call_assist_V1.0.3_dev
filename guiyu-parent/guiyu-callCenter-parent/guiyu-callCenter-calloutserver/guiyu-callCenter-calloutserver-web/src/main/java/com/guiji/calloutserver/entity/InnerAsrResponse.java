@@ -1,58 +1,67 @@
 package com.guiji.calloutserver.entity;
 
-import com.guiji.calloutserver.util.DateUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 
+@Slf4j
 @Data
 public class InnerAsrResponse {
-    private int finish;
-    private String request_id;
-    private ResultBean result;
-    private int status_code;
-    private String version;
+    private Header header;
+    private Payload payload;
 
     public String getBeginTime(){
-        if(result==null || result.getBegin_time()==null){
+        if(payload==null){
             return null;
         }
 
-        return DateUtil.timeStampToDate(result.getBegin_time());
+        LocalDateTime time = LocalDateTime.now().minus(getDuration(), ChronoField.MILLI_OF_DAY.getBaseUnit());
+        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     public String getEndTime(){
-        if(result==null || result.getEnd_time()==null){
+        if(payload==null){
             return null;
         }
 
-        return DateUtil.timeStampToDate(result.getEnd_time());
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     public Long getDuration(){
-        if(result == null || result.getBegin_time()==null || result.getEnd_time()==null){
+        if(payload == null){
             return null;
         }
 
-        return result.getEnd_time() - result.getBegin_time();
+        return (long)(payload.getTime() - payload.getBegin_time());
     }
 
     public String getAsrText(){
-        if(result == null){
+        if(payload == null){
             return null;
         }
 
-        return result.getText();
+        return payload.getResult();
     }
 
     @Data
-    public static class ResultBean {
-        private int sentence_id;
-        private Long begin_time;
-        private Long current_time;
-        private Long end_time;
-        private int status_code;
-        private String text;
-        private List<?> words;
+    public static class Payload {
+        private float index;
+        private float time;
+        private float begin_time;
+        private String result;
+        private float confidence;
+    }
+
+    @Data
+    public static class Header {
+        private String namespace;
+        private String name;
+        private float status;
+        private String message_id;
+        private String task_id;
+        private String status_text;
     }
 }

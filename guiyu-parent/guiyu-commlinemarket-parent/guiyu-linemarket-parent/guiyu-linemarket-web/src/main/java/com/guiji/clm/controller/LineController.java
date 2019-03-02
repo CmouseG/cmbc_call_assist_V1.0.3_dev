@@ -55,7 +55,7 @@ public class LineController {
 		if(sysOrganization!=null) {
 			SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
 			condition.setOrgCode(sysOrganization.getCode());	//查询本企业下线路
-			condition.setLineStatus(SipLineStatusEnum.OK.getCode()); //正常状态
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}}); //正常状态
 			List<SipLineExclusive> list = sipLineExclusiveService.querySipLineExclusiveList(condition);
 			if(list!=null && !list.isEmpty()) {
 				List<LineAssignInfo> rtnList = new ArrayList<LineAssignInfo>();

@@ -1,5 +1,7 @@
 package com.guiji.clm.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 /** 
@@ -14,8 +16,8 @@ public class SipLineShareQueryCondition {
 	private int pageSize;
 	//线路名称
 	private String lineName;
-	//线路状态：1-正常;2-到期;3-失效
-	private Integer lineStatus;
+	//线路状态(1-正常;2-到期;3-失效)
+	private List<Integer> statusList; 
 	//行业
 	private String industry;
 	//归属企业

@@ -164,6 +164,13 @@ public class LineMarketController {
 	@RequestMapping(value = "/querySipLineBaseForPageByCondition", method = RequestMethod.POST)
 	public Result.ReturnData<Page<SipLineBaseInfoVO>> querySipLineBaseForPageByCondition(@RequestBody SipLineInfoQueryCondition condition){
 		//分页查询申请线路列表
+		if(condition==null) {
+			condition = new SipLineInfoQueryCondition();
+		}
+		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
+			//默认查询正常
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		}
 		Page<SipLineBaseInfo> sipLineBasePage = sipLineInfoService.querySipLineBaseForPageByCondition(condition);
 		Page<SipLineBaseInfoVO> rtnPage = new Page<SipLineBaseInfoVO>(condition.getPageNo(),sipLineBasePage.getTotalRecord(),this.baseLine2VO(sipLineBasePage.getRecords()));
 		return Result.ok(rtnPage);
@@ -178,6 +185,13 @@ public class LineMarketController {
 	@RequestMapping(value = "/querySipLineSharePage", method = RequestMethod.POST)
 	public Result.ReturnData<Page<SipLineShareVO>> querySipLineSharePage(@RequestBody SipLineShareQueryCondition condition){
 		//分页查询申请线路列表
+		if(condition==null) {
+			condition = new SipLineShareQueryCondition();
+		}
+		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
+			//默认查询正常
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		}
 		Page<SipLineShare> shareLinePage = sipLineShareService.querySipShareForPageByCondition(condition);
 		Page<SipLineShareVO> rtnPage = new Page<SipLineShareVO>(condition.getPageNo(),shareLinePage.getTotalRecord(),this.shareLine2VO(shareLinePage.getRecords()));
 		return Result.ok(rtnPage);
@@ -207,6 +221,10 @@ public class LineMarketController {
 	public Result.ReturnData<List<SipLineBaseInfoVO>> queryThirdSipLineByShareId(@RequestParam(value="sipShareId",required=true) Integer sipShareId){
 		SipLineInfoQueryCondition condition = new SipLineInfoQueryCondition();
 		condition.setSipShareId(sipShareId);
+		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
+			//默认查询正常
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		}
 		List<SipLineBaseInfo> list = sipLineInfoService.querySipLineBaseListByCondition(condition);
 		return Result.ok(this.baseLine2VO(list));
 	}
@@ -249,6 +267,10 @@ public class LineMarketController {
 		if(StrUtils.isEmpty(condition.getUserId())) {
 			condition.setUserId(userId.toString());
 		}
+		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
+			//默认查询正常
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		}
 		Page<SipLineExclusive> page = sipLineExclusiveService.querySipLineExclusiveForPageByCondition(condition);
 		Page<SipLineExclusiveVO> rtnPage = new Page<SipLineExclusiveVO>(condition.getPageNo(),page.getTotalRecord(),this.exclusiveLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);
@@ -265,6 +287,10 @@ public class LineMarketController {
 		if(StrUtils.isEmpty(condition.getUserId())) {
 			condition.setUserId(userId.toString());
 		}
+		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
+			//默认查询正常
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		}
 		List<SipLineExclusive> list = sipLineExclusiveService.querySipLineExclusiveList(condition);
 		return Result.ok(this.exclusiveLine2VO(list));
 	}
@@ -277,6 +303,10 @@ public class LineMarketController {
 	@RequestMapping(value = "/queryConditionExclusiveSipLinePage", method = RequestMethod.POST)
 	public Result.ReturnData<Page<SipLineExclusiveVO>> queryConditionExclusiveSipLinePage(@RequestBody SipLineExclusiveQueryCondition condition){
 		if(condition==null) condition=new SipLineExclusiveQueryCondition();
+		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
+			//默认查询正常
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		}
 		Page<SipLineExclusive> page = sipLineExclusiveService.querySipLineExclusiveForPageByCondition(condition);
 		Page<SipLineExclusiveVO> rtnPage = new Page<SipLineExclusiveVO>(condition.getPageNo(),page.getTotalRecord(),this.exclusiveLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);

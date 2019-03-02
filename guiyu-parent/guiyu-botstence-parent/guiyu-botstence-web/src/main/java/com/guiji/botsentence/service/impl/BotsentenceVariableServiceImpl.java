@@ -1248,7 +1248,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		
 		//一般问题分支
 		BotSentenceBranchExample branchExample3 = new BotSentenceBranchExample();
-		branchExample3.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题");
+		branchExample3.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题").andBranchNameLike("special%");
 		List<BotSentenceBranch> branchList3 = botSentenceBranchMapper.selectByExample(branchExample3);
 		if(null != branchList3 && branchList3.size() > 0) {
 			for(BotSentenceBranch branch : branchList3) {

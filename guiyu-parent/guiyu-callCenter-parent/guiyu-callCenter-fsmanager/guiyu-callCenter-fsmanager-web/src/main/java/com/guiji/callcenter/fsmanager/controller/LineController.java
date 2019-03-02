@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -81,4 +83,25 @@ public class LineController implements ILineOper {
         logger.info("收到获取所有线路配置文件接口返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
+
+    @Override
+    public Result.ReturnData batchLinesinfos(@RequestBody List<LineInfoVO> lineInfo) {
+        logger.info("收到增加线路接口请求，LineInfoVO[{}]", lineInfo);
+//        if (!lineService.batchLinesinfos(lineInfo)) {
+//            logger.info("增加线路接口请求失败，线路重名");
+//            return Result.error(Constant.ERROR_CODE_LINE_REPEAT);
+//        }
+        lineService.batchLinesinfos(lineInfo);
+        return Result.ok();
+    }
+
+    @Override
+    public Result.ReturnData<List<LineXmlnfoVO>> batchlinexmlinfosAll(@RequestParam("lineIds") String lineIds) {
+        String [] values =lineIds.split(",");
+        List<LineXmlnfoVO> list =  lineService.batchlinexmlinfosAll( Arrays.asList(values));
+        logger.info("获取线路配置文件接口请求返回：，LineXmlnfoVO[{}]",list);
+        return Result.ok(list);
+    }
+
+
 }

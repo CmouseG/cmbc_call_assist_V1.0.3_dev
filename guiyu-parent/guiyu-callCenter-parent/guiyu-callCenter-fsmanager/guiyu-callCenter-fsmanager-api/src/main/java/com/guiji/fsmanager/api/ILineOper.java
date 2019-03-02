@@ -60,4 +60,21 @@ public interface ILineOper {
     @RequestMapping(value = "/linexmlinfos", method = RequestMethod.GET)
      Result.ReturnData<List<LineXmlnfoVO>>  linexmlinfosAll();
 
+    @ApiOperation(value = "批量增加线路接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sipIp", value = "sip地址", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sipPort", value = "sip端口", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "codec", value = "编码方式", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "callerNum", value = "主叫", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "calleePrefix", value = "前缀", dataType = "String", paramType = "query")
+    })
+    @RequestMapping(value = "/batchlineinfos", method = RequestMethod.POST)
+    Result.ReturnData  batchLinesinfos(@RequestBody List<LineInfoVO> lineInfo);
+
+    @ApiOperation(value = "批量获取配置文件接口")
+    @RequestMapping(value = "/batchlinexmlinfos", method = RequestMethod.POST)
+    Result.ReturnData<List<LineXmlnfoVO>>  batchlinexmlinfosAll(@RequestParam("lineIds") String lineIds);
+
+
 }

@@ -1,4 +1,4 @@
-package com.guiji.robot.model;
+package com.guiji.robot.service.vo;
 
 import lombok.Data;
 

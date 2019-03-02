@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.guiji.dispatch.bean.UserLineBotenceVO;
-import com.guiji.robot.model.AiInuseCache;
 import com.guiji.robot.model.UserResourceCache;
+import com.guiji.robot.service.vo.AiInuseCache;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

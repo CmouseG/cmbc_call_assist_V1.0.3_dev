@@ -29,8 +29,8 @@ public class HsReplace {
 	private String[] replace_variables_type;	//本模板需要的参数类型
 	
 	/**打断设置**/
-	private int silence_wait_secs = 2;	//静音的次数 (一轮中静音的次数，超过次数后挂断，默认2次)，sellbot已经处理了，超过2次静音后，返回end=1（挂断要求）
-	private int silence_wait_time = 8;	//静音等待时间 (默认8S)
+	private int silence_wait_secs = 2;	//静音等待时间 (默认8S)
+	private int silence_wait_time = 8;	//静音的次数 (一轮中静音的次数，超过次数后挂断，默认2次)，sellbot已经处理了，超过2次静音后，返回end=1（挂断要求）
 	private String[] non_interruptable;	//不打断域，多个域空格分隔
 	private int interrupt_words_num = 3;	//打断的字数（最小值3，建议值5），小于这个字数忽略掉，不打断
 	private int interrupt_min_interval = 3; //打断间隔时间（最小值3，建议值3）,不能连续打断

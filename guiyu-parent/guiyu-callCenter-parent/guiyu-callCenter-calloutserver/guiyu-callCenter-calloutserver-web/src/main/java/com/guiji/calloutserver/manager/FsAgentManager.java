@@ -42,6 +42,13 @@ public interface FsAgentManager {
     Map<String, Double> getwavlength(String tempId);
 
     /**
+     * 刷新模板录音时长
+     * @param tempId
+     * @return
+     */
+    Map<String, Double> refreshWavLength(String tempId);
+
+    /**
      * 获取缓存的录音文件时长
      * @return
      */

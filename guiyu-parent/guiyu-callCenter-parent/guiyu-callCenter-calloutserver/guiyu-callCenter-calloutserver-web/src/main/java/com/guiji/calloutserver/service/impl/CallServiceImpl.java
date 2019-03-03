@@ -74,13 +74,13 @@ public class CallServiceImpl implements CallService {
                 recordFile);
 
         synchronized (this){
-            log.info("开始执行呼叫命令[{}]", cmd);
-            fsManager.executeAsync(cmd);
             try {
-                Thread.sleep(50);
+                Thread.sleep(30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            log.info("开始执行呼叫命令[{}]", cmd);
+            fsManager.executeAsync(cmd);
         }
 
 

@@ -25,7 +25,7 @@ public class TempReadyServiceImpl implements TempReadyService {
     @Override
     public boolean isTempOk(String tempId) {
 
-        String key = "callCenter-"+tempId+eurekaManager.getInstanceId();
+        String key = "callCenter_isTempOk_"+tempId+eurekaManager.getInstanceId();
         Object value =  redisUtil.get(key);
         if(value!=null){
             return (boolean) value;

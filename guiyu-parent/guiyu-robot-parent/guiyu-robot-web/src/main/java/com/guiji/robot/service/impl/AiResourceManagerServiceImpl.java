@@ -3,7 +3,6 @@ package com.guiji.robot.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +188,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 * @return
 	 */
 	@Override
-	public synchronized AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq) {
+	public AiInuseCache aiAssign(AiCallApplyReq aiCallApplyReq) {
 		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN, RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN);
 		if (distributedLockHandler.tryLock(lock)) {
 			try {

@@ -533,7 +533,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			logger.info("会话ID:{}没有获取到有效的流消息",aiCallNextReq.getSeqId());
 			//流消息未发送,客户8S没说话,机器人要回一句
 			//默认打断次数配置，后续根据 话术模板 取个性化配置
-			int break_time = hsReplace.getSilence_wait_time();
+			int break_time = hsReplace.getSilence_wait_secs();
 			if(aiCallNextReq.getWaitCnt() < break_time){
 				logger.info("会话ID:{},,等待时间{},小于限制时间:{}...return wait",aiCallNextReq.getSeqId(),aiCallNextReq.getWaitCnt(),break_time);
 				aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);

@@ -11,6 +11,8 @@ import java.util.Map;
 public class LocalCacheUtil {
 	//缓存10分钟
 	public static int TEN_MIN = 10*60*1000;
+	//缓存30分钟
+	public static int HARF_HOUR = 30*60*1000;
 	//缓存1个小时
 	public static int ONE_HOUR = 60*60*1000;
 	

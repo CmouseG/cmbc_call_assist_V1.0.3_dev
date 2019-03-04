@@ -1,0 +1,49 @@
+server:
+  port: 38002
+
+spring:
+  application:
+    name: guiyu-tts
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.167.215:3311/guiyu_tts?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: tts
+    password: tts@1234
+  redis:
+    database: 8
+    host: 172.16.167.215
+    port: 6379
+    password: Toolwiz.admin.2017
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+  rabbitmq:
+    host: 172.16.167.215
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: Guiyu.admin.2017
+
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+properties:
+  error: properties/error.properties
+
+rabbit:
+  general:
+    direct:
+      queue: szj.queue
+
+filePath: /home/apps/tts/wav/
+ttsServiceUrl: http://218.2.153.30:8089/synthesize
+nasServiceUrl: http://172.16.167.214:38001/upload  #nas部署机器
+
+
+
+ 

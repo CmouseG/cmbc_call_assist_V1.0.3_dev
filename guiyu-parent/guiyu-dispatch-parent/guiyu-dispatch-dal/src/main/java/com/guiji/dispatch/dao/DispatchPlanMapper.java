@@ -6,6 +6,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.dispatch.vo.TotalPlanCountVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface DispatchPlanMapper {
@@ -52,4 +53,9 @@ public interface DispatchPlanMapper {
 	List<DispatchPlan> selectPlanGroupByUserIdLineRobot(DispatchPlan record);
 	
 	List<DispatchPlan> selectPlanGroupByUserId(DispatchPlan record);
+
+
+    TotalPlanCountVo totalPlanCount(@Param("tableNum") Integer tableNum,
+                                    @Param("plan") DispatchPlan plan,
+                                    @Param("beginDate") String beginDate, @Param("endDate") String endDate);
 }

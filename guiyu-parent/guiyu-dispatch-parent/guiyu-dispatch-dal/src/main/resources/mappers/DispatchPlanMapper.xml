@@ -897,4 +897,24 @@
 			limit #{limitStart} , #{limitEnd}
 		</if>
 	</select>
+
+  <select id="totalPlanCount" resultType="com.guiji.dispatch.vo.TotalPlanCountVo">
+    SELECT
+      COUNT(id) AS totalCount,
+      IFNULL(SUM(status_plan = 1),0) AS doingCount,
+      IFNULL(SUM(status_plan = 2),0) AS finishCount,
+      IFNULL(SUM(status_plan = 3),0) AS suspendCount,
+      IFNULL(SUM(status_plan = 4),0) AS stopCount
+    FROM dispatch_plan_${tableNum}
+    WHERE is_del = 0
+      <if test="plan != null">
+        <if test="plan.orgCode != null">
+          AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '.%'))
+        </if>
+      </if>
+      <if test="beginDate != null and endDate != null">
+        AND gmt_create BETWEEN #{beginDate} AND #{endDate}
+      </if>
+  </select>
+
 </mapper>

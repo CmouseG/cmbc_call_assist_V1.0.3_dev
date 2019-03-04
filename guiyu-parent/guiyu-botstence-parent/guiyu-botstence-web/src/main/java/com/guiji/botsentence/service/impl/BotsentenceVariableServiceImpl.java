@@ -1155,6 +1155,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	@Override
 	public String generateStatJson(String processId) {
 		LinkedHashMap<String, Object> statMap = new LinkedHashMap<>();
+		statMap.put("init_stat", "D");
 		BotSentenceGrade grade = botSentenceGradeService.getBotSentenceGrade(processId);
 		if(null != grade && StringUtils.isNotBlank(grade.getStatOrder())) {
 			List<String> intentNameList = BotSentenceUtil.StringToList(grade.getStatOrder());
@@ -1172,6 +1173,9 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 			statMap.put("show", "");
 			statMap.put("max_conversation_count", 12);
 			statMap.put("stat_order", BotSentenceUtil.StringToList(grade.getStatOrder()));
+			if(StringUtils.isNotBlank(grade.getInitStat())) {
+				statMap.put("init_stat", grade.getInitStat());
+			}
 		}
 		
 		/*List<String> ruleNoList = botSentenceGradeRuleExtMapper.queryDistinctProcessId(processId);
@@ -1202,45 +1206,68 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	 */
 	@Override
 	public String generateSelectJson(String processId, List<String> agentKeywordList) {
-		//查询以下几个域的意图列表
+		//以下几个域的negative分支
 		List<String> list = new ArrayList<>();
-		list.add("号码过滤");
-		list.add("自由介绍");
-		list.add("用户不清楚");
-		//list.add("结束_在忙");
-		list.add("一般问题");
-		list.add("拒绝");
+		list.add("在忙");
 		list.add("投诉");
-		list.add("agent");
-		
-		Map<String, String> selectMap = new HashMap<String, String>();
-		
-		BotSentenceIntentExample example1 = new BotSentenceIntentExample();
-		example1.createCriteria().andProcessIdEqualTo(processId).andDomainNameEqualTo("在忙").andForSelectEqualTo(0);
-		List<BotSentenceIntent> intentList1 = botSentenceIntentMapper.selectByExampleWithBLOBs(example1);
-		for (BotSentenceIntent botSentenceIntent : intentList1) {
-			String keys = "";
-			String domainName = "结束_在忙";//botSentenceIntent.getDomainName();
-			
-			keys = botSentenceIntent.getKeywords();
-			
-			if(StringUtils.isNotBlank(keys) && keys.length() > 2) {
-				keys = keys.substring(1, keys.length() - 1);//去掉前后的[]号
-				if(selectMap.containsKey(domainName)) {
-					String existKeywords = selectMap.get(domainName);
-					keys = existKeywords + "," + keys;
+		list.add("拒绝");
+		list.add("用户不清楚");
+		List<String> intentIdList = new ArrayList<>();
+		BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+		branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainIn(list).andBranchNameEqualTo("negative");
+		List<BotSentenceBranch> branchList = botSentenceBranchMapper.selectByExample(branchExample);
+		if(null != branchList && branchList.size() > 0) {
+			for(BotSentenceBranch branch : branchList) {
+				String intents = branch.getIntents();
+				if(StringUtils.isNotBlank(intents)) {
+					String [] array = intents.split(",");
+					for(String intentId : array) {
+						intentIdList.add(intentId);
+					}
 				}
-				selectMap.put(domainName, keys);
 			}
 		}
 		
 		
-		BotSentenceIntentExample example = new BotSentenceIntentExample();
-		example.createCriteria().andProcessIdEqualTo(processId).andDomainNameIn(list).andForSelectEqualTo(0);
-		List<BotSentenceIntent> intentList = botSentenceIntentMapper.selectByExampleWithBLOBs(example);
+		//号码过滤取special
+		BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
+		branchExample2.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("号码过滤").andBranchNameEqualTo("special");
+		List<BotSentenceBranch> branchList2 = botSentenceBranchMapper.selectByExample(branchExample2);
+		if(null != branchList2 && branchList2.size() > 0) {
+			for(BotSentenceBranch branch : branchList2) {
+				String intents = branch.getIntents();
+				if(StringUtils.isNotBlank(intents)) {
+					String [] array = intents.split(",");
+					for(String intentId : array) {
+						intentIdList.add(intentId);
+					}
+				}
+			}
+		}
 		
-		for (BotSentenceIntent botSentenceIntent : intentList) {
+		
+		//一般问题分支
+		BotSentenceBranchExample branchExample3 = new BotSentenceBranchExample();
+		branchExample3.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题").andBranchNameLike("special%");
+		List<BotSentenceBranch> branchList3 = botSentenceBranchMapper.selectByExample(branchExample3);
+		if(null != branchList3 && branchList3.size() > 0) {
+			for(BotSentenceBranch branch : branchList3) {
+				String intents = branch.getIntents();
+				if(StringUtils.isNotBlank(intents)) {
+					String [] array = intents.split(",");
+					for(String intentId : array) {
+						intentIdList.add(intentId);
+					}
+				}
+			}
+		}
+		
+		Map<String, String> selectMap = new HashMap<String, String>();
+		
+		for (String intentId : intentIdList) {
 			String keys = "";
+			
+			BotSentenceIntent botSentenceIntent = botSentenceIntentMapper.selectByPrimaryKey(new Long(intentId));
 			String domainName = botSentenceIntent.getDomainName();
 			
 			keys = botSentenceIntent.getKeywords();
@@ -1278,7 +1305,6 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		String jsonString = null;
 		try {
 			jsonString = JSON.toJSONString(selectMap).replace("\"[", "[").replace("]\"", "]").replace("\\", "");
-			//jsonString = BotSentenceUtil.formatJson(jsonString);
 			return jsonString;
 		} catch (Exception e) {
 			logger.error("转换select.json异常...", e);

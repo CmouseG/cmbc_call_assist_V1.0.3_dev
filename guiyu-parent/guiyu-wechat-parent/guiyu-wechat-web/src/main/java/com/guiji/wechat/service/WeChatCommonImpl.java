@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -31,9 +32,6 @@ public class WeChatCommonImpl implements WeChatCommonApi {
 
     @Resource
     private WeChatProperty weChatProperty;
-
-    @Resource
-    private RestTemplate restTemplate;
 
     @Override
     public WeChatUserDto getWeChatUserInfo(String openId) {

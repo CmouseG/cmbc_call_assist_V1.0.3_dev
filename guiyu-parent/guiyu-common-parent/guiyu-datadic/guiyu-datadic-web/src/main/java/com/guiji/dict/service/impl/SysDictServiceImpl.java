@@ -37,7 +37,7 @@ public class SysDictServiceImpl implements SysDictService {
         // 校验参数
         check(sysDict);
         if(sysDict != null) {
-            int id = sysDict.getId();	//主键ID
+            Integer id = sysDict.getId();	//主键ID
             if(StrUtils.isEmpty(id)) {
                 logger.info("新增字典");
                 sysDict.setDelFlag(0);

@@ -15,6 +15,9 @@ import com.guiji.clm.dao.entity.SipLineApply;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
 import com.guiji.clm.dao.entity.SipLineShare;
+import com.guiji.clm.dao.entity.ext.SipLineQuery;
+import com.guiji.clm.dao.ext.SipLineExclusiveMapperExt;
+import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.service.sip.SipLineApplyService;
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.service.sip.SipLineInfoService;
@@ -33,10 +36,12 @@ import com.guiji.clm.vo.SipLineShareVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.StrUtils;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import lombok.extern.slf4j.Slf4j;
 
 /** 
@@ -61,7 +66,49 @@ public class LineMarketController {
 	SipLineManager sipLineManager;
 	@Autowired
 	DataLocalCacheUtil dataLocalCacheUtil;
+	@Autowired
+	SipLineExclusiveMapperExt sipLineExclusiveMapperExt;
 	
+	/**
+	 * 统计线路数量
+	 * 一般客户统计自己的
+	 * 管理员按企业统计
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/querySipLineExclusiveNum", method = RequestMethod.POST)
+	public Result.ReturnData querySipLineExclusiveNum(
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode,
+			@RequestHeader Boolean isSuperAdmin){
+		SipLineQuery query = new SipLineQuery();
+		List<Integer> lineStatusList = new ArrayList<Integer>();
+		lineStatusList.add(SipLineStatusEnum.OK.getCode());	//正常线路
+		query.setLineStatusList(lineStatusList);
+		if(isSuperAdmin) {
+			//查询全部
+		}else {
+			//如果有管理员角色，按企业查询
+			boolean isAdmin = false;
+			List<SysRole> roleList = dataLocalCacheUtil.queryUserRole(userId.toString());
+			if(roleList!=null && !roleList.isEmpty()) {
+				for(SysRole role : roleList) {
+					if("管理员".equals(role.getName())) {
+						//TODO  如果是管理员，先简单判断吧，后续可以增加企业编号字段来确定，现在表里的orgcode是企业真实code，不能直接使用
+						isAdmin = true;
+						break;
+					}
+				}
+			}
+			if(isAdmin) {
+				query.setOrgCode(orgCode);
+			}else {
+				query.setUserId(userId.toString());
+			}
+		}
+		Integer totalNum = sipLineExclusiveMapperExt.querySipLineExclusiveNum(query);
+		return Result.ok(totalNum);
+	}
 	
 	/**
 	 * 新增/修改第三方线路
@@ -77,7 +124,7 @@ public class LineMarketController {
 		if(sipLineBaseInfo!=null) {
 			sipLineBaseInfo.setCrtUser(userId.toString());
 			sipLineBaseInfo.setUpdateUser(userId.toString());
-			sipLineBaseInfo = sipLineManager.thirdSipLineCfg(sipLineBaseInfo);
+			sipLineBaseInfo = sipLineManager.thirdSipLineCfg(sipLineBaseInfo,isSuperAdmin);
 			return Result.ok(sipLineBaseInfo);
 		}
 		return Result.ok();
@@ -246,7 +293,7 @@ public class LineMarketController {
 			List<SipLineShareVO> voList = new ArrayList<SipLineShareVO>();
 			for(SipLineShare sipLineShare : list) {
 				SipLineShareVO vo = new SipLineShareVO();
-				BeanUtil.copyProperties(sipLineShare, vo);
+				BeanUtil.copyProperties(sipLineShare, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				//TODO 接通率
 				vo.setUnivalentStr(sipLineShare.getUnivalent()+"元/分钟");
 				//线路拥有者
@@ -281,7 +328,7 @@ public class LineMarketController {
 			List<SipLineBaseInfoVO> voList = new ArrayList<SipLineBaseInfoVO>();
 			for(SipLineBaseInfo sipLineBaseInfo : list) {
 				SipLineBaseInfoVO vo = new SipLineBaseInfoVO();
-				BeanUtil.copyProperties(sipLineBaseInfo, vo);
+				BeanUtil.copyProperties(sipLineBaseInfo, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isNotEmpty(vo.getOvertArea())) {
 					//外显归属地
 					vo.setOvertAreaName(AreaDictUtil.getAreaName(vo.getOvertArea()));
@@ -294,10 +341,32 @@ public class LineMarketController {
 					//盲区
 					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
 				}
+				//企业名称
+				if(StrUtils.isNotEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+					SysOrganization org = dataLocalCacheUtil.queryOrgByCode(sipLineBaseInfo.getBelongOrgCode());
+					if(org != null) {
+						vo.setBelongOrgName(org.getName());
+					}
+				}
 				//线路拥有者(查询原线路的归属企业)
 				vo.setLineOwner(sipLineManager.getLineOwner(sipLineBaseInfo));
 				vo.setContractUnivalentStr(sipLineBaseInfo.getContractUnivalent()+"元/分钟");
 				vo.setUnivalentStr(sipLineBaseInfo.getUnivalent()+"元/分钟");
+				if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
+					//没有归属企业 - 共享线路
+					if(SipLineStatusEnum.INIT.getCode()==sipLineBaseInfo.getLineStatus()) {
+						//共享线路没有生效前，可以编辑
+						vo.setEditable(true);
+						vo.setEffectable(true); //需要显示生效按钮
+					}else {
+						vo.setEditable(false);
+						vo.setEffectable(false); 
+					}
+				}else {
+					//自备线路
+					vo.setEditable(true);
+					vo.setEffectable(false); 
+				}
 				voList.add(vo);
 			}
 			return voList;
@@ -315,7 +384,7 @@ public class LineMarketController {
 			List<SipLineExclusiveVO> voList = new ArrayList<SipLineExclusiveVO>();
 			for(SipLineExclusive sipLineExclusive : list) {
 				SipLineExclusiveVO vo = new SipLineExclusiveVO();
-				BeanUtil.copyProperties(sipLineExclusive, vo);
+				BeanUtil.copyProperties(sipLineExclusive, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isNotEmpty(vo.getOvertArea())) {
 					//外显归属地
 					vo.setOvertAreaName(AreaDictUtil.getAreaName(vo.getOvertArea()));
@@ -351,7 +420,7 @@ public class LineMarketController {
 			List<SipLineApplyVO> voList = new ArrayList<SipLineApplyVO>();
 			for(SipLineApply sipLineApply : list) {
 				SipLineApplyVO vo = new SipLineApplyVO();
-				BeanUtil.copyProperties(sipLineApply, vo);
+				BeanUtil.copyProperties(sipLineApply, vo,CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
 				if(StrUtils.isNotEmpty(vo.getApplyUser())) {
 					SysUser sysUser = dataLocalCacheUtil.queryUser(vo.getApplyUser());
 					if(sysUser!=null) {

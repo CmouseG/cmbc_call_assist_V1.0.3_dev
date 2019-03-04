@@ -10,12 +10,11 @@ import org.apache.commons.lang.StringUtils;
 public class MapUtil {
 	
 	/**
-	 * String转Map
+	 * String转Map（key=value&key=value）
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Map handleStringToMap(String StrParams) throws Exception {
+	public static Map<String, String> handleStringToMap(String StrParams) throws Exception {
 		
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<>();
 		if (StringUtils.isBlank(StrParams)) {
 			throw new Exception("待转换为Map的字符串不能为空");
 		}

@@ -1,6 +1,7 @@
 package com.guiji.billing.service.impl;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.billing.constants.BusiTypeEnum;
 import com.guiji.billing.dao.mapper.ext.BillingChargingMapper;
 import com.guiji.billing.dao.mapper.ext.BillingUserAcctMapper;
@@ -84,14 +85,19 @@ public class ChargingServiceImpl implements ChargingService {
             //查询计费项
             BillingAcctChargingTerm acctChargingParam = new BillingAcctChargingTerm();
             acctChargingParam.setAccountId(accountId);
+            acctChargingParam.setUserId(userId+"");
             acctChargingParam.setChargingItemId(lineId);
-            List<BillingAcctChargingTerm> termList = billingUserAcctMapper.queryAcctChargingTermList(acctChargingParam, null);
-            if(null != termList && termList.size()>0) {
-                BillingAcctChargingTerm term = termList.get(0);
+            BillingAcctChargingTerm term = billingUserAcctMapper.queryAcctChargingTerm(accountId, userId+"", lineId);
+            logger.info("账户用户线路计费项:{},账户ID:{},用户ID:{},线路ID:{}", null != term?JsonUtils.bean2Json(term):"无", accountId, userId, lineId);
+            if(null != term) {
                 //通话时长
                 Long duration = Long.valueOf(billSec)   ;
-                //此次通话消费金额
-                BigDecimal consumeAmount = this.getAmount(term, duration);
+                //此次通话计费金额（根据线路计费项计算原始消费金额）
+                BigDecimal chargingAmount = this.getAmount(term, duration);
+                //此次通话实际消费金额(判断计费项是否"扣费"，是否"启用"，否则实际消费金额为0)
+                BigDecimal consumeAmount = (term.getIsDeducted() == AcctChargingDeductedEnum.CHARGING.getStatus()
+                        && term.getStatus() == AcctChargingStatusEnum.START_UP.getStatus()) ?
+                        chargingAmount : BigDecimal.ZERO;
                 //账户可用金额
                 BigDecimal availableBalance = null != acct?acct.getAvailableBalance():BigDecimal.ZERO;
                 //消费前账户金额
@@ -114,7 +120,8 @@ public class ChargingServiceImpl implements ChargingService {
                 chargingRecord.setType(ChargingTypeEnum.CONSUME.getType());//消费
                 chargingRecord.setFeeMode(AcctChargingFeeModeEnum.CALL_RESUME.getFeeCode());//通话消费
                 chargingRecord.setUserChargingId(term.getUserChargingId());
-                chargingRecord.setAmount(consumeAmount);
+                chargingRecord.setAmount(consumeAmount);//实际消费金额
+                chargingRecord.setChargingAmount(chargingAmount);//原始计费金额
                 chargingRecord.setSrcAmount(srcAmount);
                 chargingRecord.setToAmount(toAmount);
                 chargingRecord.setPhone(phone);
@@ -128,8 +135,8 @@ public class ChargingServiceImpl implements ChargingService {
                 }
 
                 //如果扣费后欠费，则欠费消息通知
-                if(toAmount.compareTo(BigDecimal.ZERO)<=0){
-                    this.notifyArrearage(String.valueOf(userId));
+                if(toAmount.compareTo(BigDecimal.ZERO)<0){
+                    this.notifyArrearage(String.valueOf(userId), orgCode);
                 }
             }
             return bool;
@@ -143,9 +150,11 @@ public class ChargingServiceImpl implements ChargingService {
      * 欠费消息通知
      * @param userId
      */
-    private void notifyArrearage(String userId){
-        logger.info("用户ID:{}欠费通知开始", userId);
+    private void notifyArrearage(String userId, String orgCode){
+        logger.info("用户ID:{},所属企业orgCode:{}欠费通知开始", userId, orgCode);
         try {
+            //获取企业组织下的员工
+        //    List<SysUser> userList = ResHandler.getResObj(iAuth.getAllUserByOrgCode(orgCode));
             //查询欠费企业的用户列表
             ArrearageNotifyVo arrearage = new ArrearageNotifyVo();
             List<String> userIdList = new ArrayList<String>();
@@ -165,7 +174,7 @@ public class ChargingServiceImpl implements ChargingService {
     }
 
     /**
-     * 计算消费金额
+     * 计算消费扣费金额
      * @param term
      * @param duration
      * @return
@@ -173,14 +182,14 @@ public class ChargingServiceImpl implements ChargingService {
     private BigDecimal getAmount(BillingAcctChargingTerm term, Long duration){
         BigDecimal amount = BigDecimal.ZERO;
         //计费项启用，并且属于扣费类型
-        if(term.getStatus() == AcctChargingStatusEnum.START_UP.getStatus()
-                && term.getIsDeducted() == AcctChargingDeductedEnum.CHARGING.getStatus()){
+        /*if(term.getStatus() == AcctChargingStatusEnum.START_UP.getStatus()
+                && term.getIsDeducted() == AcctChargingDeductedEnum.CHARGING.getStatus()){*/
             if(term.getUnitPrice() == ChargingUnitPriceTypeEnum.MINUTE.getType()){//按分钟计费
                 //按分钟计算，不满一分钟算一分钟
                 long mins = this.getMins(duration);
                 amount = term.getPrice().multiply(new BigDecimal(mins));
             }
-        }
+        /*}*/
         return amount;
     }
 

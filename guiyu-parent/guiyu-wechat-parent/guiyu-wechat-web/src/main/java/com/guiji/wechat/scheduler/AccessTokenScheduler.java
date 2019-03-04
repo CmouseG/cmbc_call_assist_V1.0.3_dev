@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.guiji.wechat.dtos.AccessTokenRpsDto;
 import com.guiji.wechat.util.constants.WeChatConstant;
 import com.guiji.wechat.util.properties.WeChatProperty;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -12,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,7 +37,12 @@ public class AccessTokenScheduler {
      * 定时任务每100分钟执行一次，刷新AccessToken
      */
     @Scheduled(fixedRate = 100 * 60 * 1000L)
-    public void updateAccessToken() {
+    public void updateAccessTokenSchedule(){
+        updateAccessToken();
+    }
+
+
+    public ResponseEntity<String> updateAccessToken(){
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(weChatProperty.getAccessTokenUrl())
                 .queryParam(WeChatConstant.PARAM_GRANT_TYPE, WeChatConstant.ACCESS_TOKEN_GRANT_TYPE)
@@ -46,15 +51,15 @@ public class AccessTokenScheduler {
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
 
-        logger.info("access token response entity:{}", responseEntity.toString());
-
         AccessTokenRpsDto accessTokenRpsDto = JSON.parseObject(responseEntity.getBody(), AccessTokenRpsDto.class);
-
-        if (HttpStatus.OK != responseEntity.getStatusCode() || StringUtils.isBlank(accessTokenRpsDto.getAccess_token())) {
-            logger.error("failed to get access token from weChat!");
-            return;
+        if((HttpStatus.OK != responseEntity.getStatusCode()) || null == accessTokenRpsDto || StringUtils.isEmpty(accessTokenRpsDto.getAccess_token())){
+            logger.error("failed to get access token from weChat! responseEntity:{}", JSON.toJSONString(responseEntity));
+            return responseEntity;
         }
 
         stringRedisTemplate.opsForValue().set(WeChatConstant.ACCESS_TOKEN_CACHE_KEY, accessTokenRpsDto.getAccess_token(), 2, TimeUnit.HOURS);
+
+        logger.info("access token response entity:{}", JSON.toJSONString(responseEntity));
+        return responseEntity;
     }
 }

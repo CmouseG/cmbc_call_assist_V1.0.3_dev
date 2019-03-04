@@ -3,6 +3,7 @@ package com.guiji.dispatch.service;
 import java.io.IOException;
 import java.util.List;
 
+import com.guiji.dispatch.vo.TotalPlanCountVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
@@ -231,6 +232,8 @@ public interface IDispatchPlanService {
 
 	JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin,
 			String orgCode);
+
+	TotalPlanCountVo totalPlanCountByUserDate(String userId, String startTime, String endTime);
 
 	boolean insertDispatchPlanList(List<DispatchPlan> list);
 

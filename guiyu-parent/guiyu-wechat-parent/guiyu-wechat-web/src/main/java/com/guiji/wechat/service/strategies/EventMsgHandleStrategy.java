@@ -6,11 +6,15 @@ import com.guiji.wechat.dtos.EventMsgReqDto;
 import com.guiji.wechat.dtos.WeChatUserDto;
 import com.guiji.wechat.messages.UserBindWeChatMessage;
 import com.guiji.wechat.service.api.WeChatCommonApi;
+import com.guiji.wechat.util.XmlUtil;
 import com.guiji.wechat.util.enums.EventTypeEnum;
 import com.guiji.wechat.util.enums.MsgTypeEnum;
+import com.guiji.wechat.util.reply.BaseReply;
+import com.guiji.wechat.util.reply.TextReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -18,6 +22,8 @@ import java.util.Map;
 
 import static com.guiji.wechat.util.constants.CallbackParameterNameConstant.*;
 import static com.guiji.wechat.util.constants.RabbitMqConstant.USER_BIND_WECHAT_EXCHANGE;
+import static com.guiji.wechat.util.constants.WeChatConstant.DEFAULT_SUBSCRIBE_REPLY;
+import static com.guiji.wechat.util.constants.WeChatConstant.DEFAULT_SUCCESS;
 
 @Component("eventMsgHandleStrategy")
 public class EventMsgHandleStrategy extends MsgHandleStrategy {
@@ -35,42 +41,54 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
 
         EventMsgReqDto eventMsgReqDto = convertMsgToDto(callbackMessage);
 
-        String replyMessage = "no match event type:";
-
         EventTypeEnum eventTypeEnum = eventMsgReqDto.getEventTypeEnum();
+
         if (null == eventTypeEnum) {
-            return replyMessage;
+            logger.error("no match event type!");
+            return DEFAULT_SUCCESS;
         }
 
         switch (eventTypeEnum) {
             case SUBSCRIBE:
-                replyMessage = handleSubscribeEvent(eventMsgReqDto);
-                break;
+                return handleSubscribeEvent(eventMsgReqDto);
             case SCAN:
-                replyMessage = handleScanEvent(eventMsgReqDto);
-                break;
+                return handleScanEvent(eventMsgReqDto);
             case UNSUBSCRIBE:
-                // TODO: 19-1-26
-                break;
+                return DEFAULT_SUCCESS;// TODO: 19-2-25
+            default:
+                return DEFAULT_SUCCESS;
         }
-
-        return replyMessage;
     }
 
     private String handleSubscribeEvent(EventMsgReqDto eventMsgReqDto) {
 
+        logger.info("user subscribe event:{}", JSON.toJSONString(eventMsgReqDto));
+
         sendUserBindWeChatMessage(eventMsgReqDto);
-        return buildUserBindWeChatReply(eventMsgReqDto);
+
+        BaseReply textReply = TextReply.build()
+                .setContent(DEFAULT_SUBSCRIBE_REPLY)
+                .setToUserOpenId(eventMsgReqDto.getFromUserName())
+                .setWeChatOpenId(eventMsgReqDto.getToUserName());
+
+        return XmlUtil.objectToXml(textReply);
     }
 
     private String handleScanEvent(EventMsgReqDto eventMsgReqDto) {
 
+        logger.info("user scan event:{}", JSON.toJSONString(eventMsgReqDto));
+
         sendUserBindWeChatMessage(eventMsgReqDto);
-        return buildUserBindWeChatReply(eventMsgReqDto);
+
+        return DEFAULT_SUCCESS;
     }
 
     private void sendUserBindWeChatMessage(EventMsgReqDto eventMsgReqDto) {
         UserBindWeChatMessage message = new UserBindWeChatMessage();
+
+        if(StringUtils.isEmpty(eventMsgReqDto.getCallbackParameter())){
+            return;
+        }
 
         String openId = eventMsgReqDto.getFromUserName();
 
@@ -80,22 +98,10 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
         message.setWeChatNickName(weChatUserDto.getNickname());
         message.setOpenId(openId);
         message.setBindTime(eventMsgReqDto.getCreateTime());
-        message.setCallbackParameter(eventMsgReqDto.getEventKey());
+        message.setCallbackParameter(eventMsgReqDto.getCallbackParameter());
 
         fanoutSender.send(USER_BIND_WECHAT_EXCHANGE, JSON.toJSONString(message));
         logger.info("user bind weChat message:{}", JSON.toJSONString(message));
-    }
-
-    private String buildUserBindWeChatReply(EventMsgReqDto eventMsgReqDto) {
-
-        return "success";
-//        TextReplyVO textReplyVO = new TextReplyVO();
-//        textReplyVO.setFromUserName(eventMsgReqDto.getToUserName());
-//        textReplyVO.setToUserName(eventMsgReqDto.getFromUserName());
-//        textReplyVO.setCreateTime(System.currentTimeMillis());
-//        textReplyVO.setMsgType(MsgTypeEnum.TEXT.getKey());
-//        textReplyVO.setContent("回复文本消息");// TODO: 19-1-26
-//        return XmlUtil.objectToXml(textReplyVO);
     }
 
     private EventMsgReqDto convertMsgToDto(Map<String, String> callbackMessage) {

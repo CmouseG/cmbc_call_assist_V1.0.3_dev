@@ -206,6 +206,12 @@ public class WeChatAppletController {
 		}
 		vo.setVolicedRate(volicedRate);
 		
+		if(null != process.getCrtTime()) {
+			vo.setCrtTimeStr(DateUtil.dateToString(process.getCrtTime(), DateUtil.ymdhms));
+		}else {
+			vo.setCrtTimeStr(DateUtil.dateToString(process.getCrtTime(), DateUtil.ymdhms));
+		}
+		
 		if(Constant.APPROVE_MAEKING.equals(process.getState())) {
 			vo.setStateName("制作中");
 		}else if(Constant.APPROVE_CHECKING.equals(process.getState())) {

@@ -105,6 +105,9 @@
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
+    <if test="limitStart != null and limitStart>=0">
+      limit #{limitStart} , #{limitEnd}
+    </if>
   </select>
   <select id="selectByExample" parameterType="com.guiji.sms.dao.entity.SmsConfigExample" resultMap="BaseResultMap">
     select

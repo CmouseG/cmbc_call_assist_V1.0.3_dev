@@ -11,8 +11,11 @@ import org.springframework.stereotype.Component;
 
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.platfrom.Cmpp;
+import com.guiji.platfrom.Junlong;
+import com.guiji.platfrom.ShenzhenCredit2;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
+import com.guiji.platfrom.Zxy;
 import com.guiji.service.ConfigService;
 import com.guiji.service.RecordService;
 import com.guiji.service.TaskDetailService;
@@ -69,6 +72,15 @@ public class ReqHandler
 		} else if ("cmpp".equals(identification)) {
 			logger.info("通过<CMPP>发送短信...");
 			record = new Cmpp(cmppServiceUrl).sendMessage(params, phone, smsContent);
+		} else if ("zxy".equals(identification)) {
+			logger.info("通过<专信云>发送短信...");
+			record = new Zxy().sendMessage(params, phone, smsContent);
+		} else if ("szCredit2".equals(identification)) {
+			logger.info("通过<深圳信用卡2专属>发送短信...");
+			record = new ShenzhenCredit2().sendMessage(params, phone, smsContent);
+		} else if ("jl".equals(identification)) {
+			logger.info("通过<君隆科技>发送短信...");
+			record = new Junlong().sendMessage(params, phone, smsContent);
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录
@@ -83,10 +95,7 @@ public class ReqHandler
 		Map<String, Object> resultMap = new HashMap<>();
 		// 获取配置
 		SmsConfig config = configService.getConfigToSend(sendMReq.getIntentionTag(),sendMReq.getOrgCode(),sendMReq.getTemplateId());
-		if (config == null){
-			logger.info("没有短信配置，不发送短信");
-			throw new GuiyuException("没有短信配置，不发送短信");
-		} else if (config.getAuditingStatus() == 0){
+		if (config.getAuditingStatus() == 0){
 			logger.info("短信内容未审核，暂不能发送短信");
 			throw new GuiyuException("短信内容未审核，暂不能发送短信");
 		} else if (config.getRunStatus() == 0){

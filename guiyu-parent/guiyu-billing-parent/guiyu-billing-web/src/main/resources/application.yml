@@ -33,7 +33,7 @@ spring:
   #redis
   redis:
     database: 0 # Redis数据库索引（默认为0）
-    host: 192.168.1.78 # Redis服务器地址
+    host: 192.168.1.81 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
     password: 123456 # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
@@ -163,24 +163,24 @@ fdfs:
 weixin:
   #阈值
   threshold:
-    appid: wx017a03051262ec17  #跳转到的小程序appid
-    templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
     pagePath:
       callReordUrl:
       reordListUrl:
 
   #充值
   recharge:
-    appid: wx017a03051262ec17  #跳转到的小程序appid
-    templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
     pagePath:
       callReordUrl:
       reordListUrl:
 
   #有效期到期
   expireDay:
-    appid:   #跳转到的小程序appid
-    templateId:   #模板id
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s   #模板id
     pagePath:
       callReordUrl:
       reordListUrl:

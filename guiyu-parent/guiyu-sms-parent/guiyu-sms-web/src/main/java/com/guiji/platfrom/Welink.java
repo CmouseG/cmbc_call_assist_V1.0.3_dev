@@ -17,31 +17,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.platfrom.send.ISendMsg;
+import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.sms.dao.entity.SmsRecord;
 
 /**
  * 微网通联
  */
-public class Welink implements ISendMsg
+public class Welink implements ISendMsgByContent
 {
 	private static final Logger logger = LoggerFactory.getLogger(Welink.class);
 	private static String url = "http://api.51welink.com/json/sms/g_Submit";
-
-	@Override
-	public SmsRecord sendMessage(Map<String, Object> params, String phone, Integer templateId) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, Integer templateId)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
@@ -111,7 +96,7 @@ public class Welink implements ISendMsg
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"State\":\"404\",\"MsgState\":\"调用接口异常\",\"MsgID\":\"\"}";
+			result = "{\"State\":\"404\",\"MsgState\":\"调用接口异常\"}";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

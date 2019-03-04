@@ -1,0 +1,62 @@
+server:
+  port: 18125
+
+spring:
+  application:
+    name: guiyu-callcenter-toagentserver
+  rabbitmq:
+    host: 172.16.167.215
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: Guiyu.admin.2017
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
+    
+    
+jdbc_driver0: com.mysql.jdbc.Driver
+jdbc_url0: jdbc:mysql://172.16.167.215:3311/guiyu_callcenter?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&serverTimezone=UTC&useSSL=false
+jdbc_username0: callcenter
+jdbc_password0: callcenter@1234
+validationQuery: SELECT 1
+                      
+                      
+#数据库连接配置
+mybatis:
+  mapper-locations: classpath*:mappers/**/*.xml
+jdbc:
+  type: mysql
+
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+fs:
+   #homeDir: C:/Program Files/FreeSWITCH
+   homeDir: /home/freeswitch/fsbot
+   serverEslTimeout : 2
+   reconnectSleepTime : 1000
+   wssUrl: tel.guiji.ai
+
+fsbot:
+     homeDir: /home/apps/jars
+     recordingsDir: ${fs.homeDir}/recordings/
+     recordingsDirZip: ${fs.homeDir}/recordings/zip/
+     noAuth: false
+
+aliasr:
+       accessId: LTAIqRMF6ucN0gwp
+       accessSecret: mvGam0vMuMu82NQFNbdrp4NLsz30y8
+
+properties:
+    error: error.properties
+

@@ -129,7 +129,9 @@ public class SuccesPhone4MQLisener {
 			send.setWeixinPagePath(mainUrl);
 			send.setWeixinAppId(weixinAppid);
 			HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-			map.put("userName", new SendMsgReqVO.Item("您的外呼任务已完成哦！请登录系统查看外呼结果", null));
+		//	map.put("keyword1", new SendMsgReqVO.Item(dispatchPlan.getUserId(), null));
+			map.put("keyword2", new SendMsgReqVO.Item("任务完成", null));
+			map.put("keyword3", new SendMsgReqVO.Item("您的外呼任务已完成哦！请登录系统查看外呼结果", null));
 			send.setWeixinData(map);
 			return send;
 		}

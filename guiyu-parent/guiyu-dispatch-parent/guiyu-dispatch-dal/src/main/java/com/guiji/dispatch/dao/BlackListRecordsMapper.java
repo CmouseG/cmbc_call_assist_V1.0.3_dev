@@ -3,6 +3,8 @@ package com.guiji.dispatch.dao;
 import com.guiji.dispatch.dao.entity.BlackListRecords;
 import com.guiji.dispatch.dao.entity.BlackListRecordsExample;
 import java.util.List;
+
+import com.guiji.dispatch.sys.ResultPage;
 import org.apache.ibatis.annotations.Param;
 
 public interface BlackListRecordsMapper {
@@ -27,4 +29,13 @@ public interface BlackListRecordsMapper {
     int updateByPrimaryKeySelective(BlackListRecords record);
 
     int updateByPrimaryKey(BlackListRecords record);
+
+    /*********add by qianxin  begin*****************************/
+    //查询黑名单记录列表
+    List<BlackListRecords> queryBlackListRecords(@Param("blackRecord") BlackListRecords blackRecord,
+                                                 @Param("page") ResultPage<BlackListRecords> page);
+
+    //查询黑名单记录数量
+    int queryBlackRecordsCount(@Param("blackRecord") BlackListRecords blackRecord);
+
 }

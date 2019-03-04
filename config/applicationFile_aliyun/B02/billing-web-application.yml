@@ -1,0 +1,188 @@
+server:
+  port: 18092
+spring:
+  application:
+    name: guiyu-billing-web
+
+  #http
+  http:
+    multipart:
+      enabled: true   # 启用http上传处理
+      max-file-size: 100MB # 设置单个文件的最大长度
+      max-request-size: 100MB # 设置最大的请求文件的大小
+      file-size-threshold: 1MB  # 当上传文件达到1MB的时候进行磁盘写入
+      location: /  # 上传的临时目录
+
+  #数据源
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://172.16.167.215:3311/guiyu_billing?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: billing
+    password: billing@1234
+    driver-class-name: com.mysql.jdbc.Driver
+    minIdle: 5
+    maxActive: 200
+    initialSize: 5
+    timeBetweenEvictionRunsMillis: 3000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 'ZTM' FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+
+
+  #redis
+  redis:
+    database: 0 # Redis数据库索引（默认为0）
+    host: 172.16.167.215 # Redis服务器地址
+    port: 6379 # Redis服务器连接端口
+    password: Toolwiz.admin.2017 # Redis服务器连接密码（默认为空）
+    timeout: 5000 # 连接超时时间（毫秒）
+    pool:
+      max-active: 400 # 连接池最大连接数（使用负值表示没有限制
+      max-wait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-idle: 300 # 连接池中的最大空闲连接
+      min-idle: 100 # 连接池中的最小空闲连接  
+  #MQ
+  rabbitmq:
+    host: 172.16.167.215 
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: Guiyu.admin.2017
+
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+  sleuth:
+    sampler:
+      percentage: 0.5
+
+####mybatis
+mybatis:
+  mapperLocations: classpath*:mappers/*/*.xml
+  config-location: classpath:config/mybatis-config.xml
+jdbc:
+  type: mysql
+
+####队列
+rabbit:
+  general:
+    fanout:                               #需要绑定交换机与队列关系
+      exchange: fanoutPushBilling # fanoutXXX1|fanoutXXX2  #交换机名称
+      #fanoutPushBilling.ARREARAGE:通知外系统用户欠费
+      #billing.CHARGINGTERMNOTIFY:接收外系统用户计费项数据通知
+      #billing.ACCTCHARGING：接收外系统通知计费
+      queue: fanoutPushBilling.ARREARAGE #队列名称     监听队列|监听队列
+#    direct:
+#      queue: billing.ACCTCHARGING,billing.CHARGINGTERMNOTIFY
+
+####临时目录
+file:
+  tmpPath: apps/tmp/
+  hushuDir: home/billing_tmpl/
+  
+properties:
+  error: properties/error.properties
+  threadpool: properties/threadPool.properties
+
+####注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+        defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+                    #http://192.168.1.124:18001/eureka/
+      instance:
+          status-page-url: http://localhost:18000/eureka//swagger-ui.html
+###网关地址
+gateway:
+   host: http://guiyu-cloud-zuul:18000/
+
+####ribbon
+ribbon:
+  ReadTimeout: 30000 #请求处理的超时时间
+  ConnectTimeout: 30000  #请求连接的超时时间
+  MaxAutoRetries: 0   #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 1  #切换实例的重试次数
+  eureka:
+    enabled: true
+
+###actuator监控点 start####
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+##默认情况下很多端点是不允许访问的，会返回401:Unauthorized
+management:
+  security:
+    enabled: false
+###actuator监控点 end####
+
+#xxl-job admin中心配置
+xxl:
+  job:
+    admin:
+      ### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://172.16.167.213:18016/xxl-job-admin
+    executor:
+      ip: 172.16.167.214
+      port: 9092
+      logpath: /home/logs/guiyu-billing-web
+      logretentiondays: -1
+    accessToken:
+
+###fastdfs配置
+fdfs:
+  soTimeout: 1500         #获取文件超时时间
+  connectTimeout: 600     #连接超时时间
+  thumbImage:             #缩略图生成参数
+    width: 150
+    height: 150
+  trackerList:            #TrackerList参数,支持多个
+    - 172.16.167.214:22122
+  pool:
+    jmx-enabled: false
+  webServerUrl: http://tel.guiji.ai:8080/
+
+###日志
+#logging:
+#  config: classpath:logback.xml
+#  level:
+#    org:
+#      springframework:
+#        web: info
+
+
+
+##微信
+weixin:
+  #阈值
+  threshold:
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
+    pagePath:
+      callReordUrl:
+      reordListUrl:
+
+  #充值
+  recharge:
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
+    pagePath:
+      callReordUrl:
+      reordListUrl:
+
+  #有效期到期
+  expireDay:
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s   #模板id
+    pagePath:
+      callReordUrl:
+      reordListUrl:

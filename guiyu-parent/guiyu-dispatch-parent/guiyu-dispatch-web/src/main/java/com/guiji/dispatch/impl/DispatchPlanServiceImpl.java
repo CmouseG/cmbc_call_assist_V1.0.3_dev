@@ -14,6 +14,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
+import com.guiji.dispatch.exception.BaseException;
+import com.guiji.dispatch.util.DateTimeUtils;
+import com.guiji.dispatch.util.ResHandler;
+import com.guiji.dispatch.vo.TotalPlanCountVo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -1206,6 +1212,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample ex1 = new DispatchPlanExample();
 			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
 					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
+
+            dis.setStatusPlan(Constant.STATUSPLAN_3);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		} else {
@@ -1377,7 +1385,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (!isSuperAdmin) {
 			andStatusPlanEqualTo2.andOrgCodeLike(orgCode + "%");
 		}
-		ex1.setOrderByClause("`gmt_create` DESC");
+		ex1.setOrderByClause("`gmt_create` ASC");
+		ex1.setLimitStart(0);
+		ex1.setLimitEnd(1);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
 
 		DispatchPlan dis = new DispatchPlan();
@@ -1392,6 +1402,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			andStatusPlanEqualTo3.andOrgCodeLike(orgCode + "%");
 		}
 		ex2.setOrderByClause("`gmt_create` DESC");
+		ex2.setLimitStart(0);
+		ex2.setLimitEnd(1);
 		List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
 
 		DispatchPlan dis1 = new DispatchPlan();
@@ -1457,19 +1469,64 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		int taskCount = dispatchPlanMapper.countByExample(ex);
 		int calledCount = dispatchPlanMapper.countByExample(ex1);
-		int Batchcount = 0;
+		int batchcount = 0;
 		if (!isSuperAdmin) {
 			DispatchPlanBatchExample batch = new DispatchPlanBatchExample();
 			batch.createCriteria().andOrgCodeLike(orgCode + "%");
-			Batchcount = dispatchPlanBatchMapper.countByExample(batch);
+			batchcount = dispatchPlanBatchMapper.countByExample(batch);
 		} else {
-			Batchcount = dispatchPlanBatchMapper.countByExample(new DispatchPlanBatchExample());
+			batchcount = dispatchPlanBatchMapper.countByExample(new DispatchPlanBatchExample());
 		}
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("taskCount", taskCount);
 		jsonObject.put("calledNums", calledCount);
-		jsonObject.put("Batchcount", Batchcount);
+		jsonObject.put("batchcount", batchcount);
 		return jsonObject;
+	}
+
+	/**
+	 * 按日期统计计划数量
+	 * @param userId
+	 * @param beginDate	: yyyy-MM-dd
+	 * @param endDate	: yyyy-MM-dd
+	 * @return
+	 */
+	@Override
+	public TotalPlanCountVo totalPlanCountByUserDate(String userId, String beginDate, String endDate) {
+		if(!StringUtils.isEmpty(userId)) {
+			SysUser user = ResHandler.getResObj(auth.getUserById(Long.valueOf(userId)));
+			String orgCode = null != user ? user.getOrgCode() : null;
+			if (!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)) {
+				endDate = DateTimeUtils.DEFAULT_END_TIME;
+			} else if (StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)) {
+				beginDate = DateTimeUtils.DEFAULT_BEGIN_TIME;
+			} else if (!StringUtils.isEmpty(beginDate) && !StringUtils.isEmpty(endDate)) {
+				beginDate += " " + DateTimeUtils.DEFAULT_DATE_START_TIME;
+				endDate += " " + DateTimeUtils.DEFAULT_DATE_END_TIME;
+			}
+
+			DispatchPlan plan = new DispatchPlan();
+			plan.setOrgCode(orgCode);
+			TotalPlanCountVo total = new TotalPlanCountVo();
+			int totalCount = 0, doingCount = 0, finishCount = 0, suspendCount=0, stopCount=0;
+			TotalPlanCountVo total0 = dispatchPlanMapper.totalPlanCount(0, plan, beginDate, endDate);//
+			TotalPlanCountVo total1 = dispatchPlanMapper.totalPlanCount(1, plan, beginDate, endDate);//
+			TotalPlanCountVo total2 = dispatchPlanMapper.totalPlanCount(2, plan, beginDate, endDate);//
+			totalCount = total0.getTotalCount() + total1.getTotalCount() + total2.getTotalCount();
+			doingCount = total0.getDoingCount() + total1.getDoingCount() + total2.getDoingCount();
+			finishCount = total0.getFinishCount() + total1.getFinishCount() + total2.getFinishCount();
+			suspendCount = total0.getSuspendCount() + total1.getSuspendCount() + total2.getSuspendCount();
+			stopCount = total0.getStopCount() + total1.getStopCount() + total2.getStopCount();
+			total.setTotalCount(totalCount);
+			total.setDoingCount(doingCount);
+			total.setFinishCount(finishCount);
+			total.setSuspendCount(suspendCount);
+			total.setStopCount(stopCount);
+			return total;
+		}else{
+			throw new BaseException(SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorCode(),
+					SysDefaultExceptionEnum.NULL_PARAM_EXCEPTION.getErrorMsg());
+		}
 	}
 
 	@Override

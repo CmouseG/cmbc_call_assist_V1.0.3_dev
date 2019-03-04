@@ -78,6 +78,10 @@ public class CallRecordController {
                         resCallOutDetailVO.setContent(callOutDetailVO.getCustomerSayText());
                     if (callOutDetailVO.getCustomerRecordUrl() != null)
                         resCallOutDetailVO.setFile(callOutDetailVO.getCustomerRecordUrl());
+                    if (callOutDetailVO.getKeywords() != null)
+                        resCallOutDetailVO.setKeywords(callOutDetailVO.getKeywords());
+                    if (callOutDetailVO.getWordSegmentResult() != null)
+                        resCallOutDetailVO.setWordSegmentResult(callOutDetailVO.getWordSegmentResult());
                     resList.add(resCallOutDetailVO);
                 }
                 resCallOutPlan.setVoiceInfo(resList);

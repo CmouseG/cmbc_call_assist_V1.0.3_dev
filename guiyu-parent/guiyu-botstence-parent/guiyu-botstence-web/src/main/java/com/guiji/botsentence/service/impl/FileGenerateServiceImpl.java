@@ -277,7 +277,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			JSONObject jsonObject = new JSONObject(true);
 			domainVOList.add(domainVO);
 			//判断静音开关是否打开决定 是否要生成静音.json
-			if("静音".equals(domainName) && !botSentenceOptions.getSilenceWaitStart()) {
+			if("静音".equals(domainName) && null!= botSentenceOptions.getSilenceWaitStart() && !botSentenceOptions.getSilenceWaitStart()) {
 				continue;
 			}
 			

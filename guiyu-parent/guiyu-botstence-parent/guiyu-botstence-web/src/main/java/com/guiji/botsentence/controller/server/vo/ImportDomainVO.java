@@ -22,6 +22,9 @@ public class ImportDomainVO {
 	private boolean ignore_user_sentence;
 	private boolean ignore_but_negative;
 	private List<String> ignore;
+	private String position_x;
+	private String position_y;
+
 	
 	public String getCom_domain() {
 		return com_domain;
@@ -76,6 +79,18 @@ public class ImportDomainVO {
 	}
 	public void setIgnore(List<String> ignore) {
 		this.ignore = ignore;
+	}
+	public String getPosition_x() {
+		return position_x;
+	}
+	public void setPosition_x(String position_x) {
+		this.position_x = position_x;
+	}
+	public String getPosition_y() {
+		return position_y;
+	}
+	public void setPosition_y(String position_y) {
+		this.position_y = position_y;
 	}
 	
 	

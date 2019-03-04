@@ -91,15 +91,26 @@ public class ExternalController implements IAgentGroup{
             agentSumResponse.setTotalCount(agentList.size());
             int onlineCount = 0;
             for (Agent agent : agentList) {
-                if(agent.getAnswerType()== EAnswerType.MOBILE.ordinal()){
-                    if(agent.getUserState()== EUserState.ONLINE.ordinal()){
-                        onlineCount++;
-                    }
-                }else{
-                    if(agentService.agentVertoState(agent)){
+
+                if (agent.getUserState() == 1) {//数据库中显示在线
+                    if (agent.getAnswerType() == 0) { //网页接听
+                        if (fsManager.getVertoStatus(agent.getUserId() + "")) {
+                            onlineCount++;
+                        }
+                    } else {  //手机接听
                         onlineCount++;
                     }
                 }
+
+//                if(agent.getAnswerType()== EAnswerType.MOBILE.ordinal()){
+//                    if(agent.getUserState()== EUserState.ONLINE.ordinal()){
+//                        onlineCount++;
+//                    }
+//                }else{
+//                    if(agentService.agentVertoState(agent)){
+//                        onlineCount++;
+//                    }
+//                }
             }
 
             agentSumResponse.setOnlineCount(onlineCount);

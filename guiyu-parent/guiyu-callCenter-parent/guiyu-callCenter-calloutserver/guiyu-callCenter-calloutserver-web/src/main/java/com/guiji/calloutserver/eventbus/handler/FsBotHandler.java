@@ -101,6 +101,7 @@ public class FsBotHandler {
             }
             //防止没有收到channel_progress事件，将状态改为线路已通
             callLineAvailableManager.lineAreAvailable(uuid);
+            callLineAvailableManager.channelAlreadyAnswer(uuid);
 
             AIInitRequest request = new AIInitRequest(String.valueOf(callPlan.getCallId()),callPlan.getPlanUuid(), callPlan.getTempId(), callPlan.getPhoneNum(), String.valueOf(callPlan.getCustomerId()), callPlan.getAiId());
 
@@ -114,9 +115,9 @@ public class FsBotHandler {
                 log.error("-----error---------aiManager.applyAi:"+e);
                 //回掉给调度中心，更改通话记录
                 callPlan.setCallState(ECallState.norobot_fail.ordinal());
-                if(callPlan.getAccurateIntent()!=null){
+                if(callPlan.getAccurateIntent()==null){
                     callPlan.setAccurateIntent("W");
-                    callPlan.setReason(e.getMessage());
+                    callPlan.setReason("606");
                 }
                 callOutPlanService.update(callPlan);
 //                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
@@ -275,7 +276,7 @@ public class FsBotHandler {
             //判断是否已经做过F类判断，如果做过，则直接挂断该通话
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
-                localFsServer.hangup(callPlan.getCallId());
+                localFsServer.hangup(callPlan.getCallId().toString());
             }
         }
     }
@@ -296,25 +297,29 @@ public class FsBotHandler {
      * @param sellbotResponse
      */
     public void playToAgent(AIResponse sellbotResponse,String agentGroupId) {
-        //获取转人工的队列号
-        CallOutPlan callPlan = new CallOutPlan();
-        callPlan.setCallId(new BigInteger(sellbotResponse.getCallId()));
-        callPlan.setAgentStartTime(new Date());
-        callPlan.setCallState(ECallState.to_agent.ordinal());
-        callOutPlanService.update(callPlan);
 
-        //播放完提示音后，将当前呼叫转到座席组
-        channelHelper.playAndTransferToAgentGroup(sellbotResponse.getCallId(), sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
-
-        log.info("在开始转人工后，释放ai资源");
         CallOutPlan realCallPlan = callOutPlanService.findByCallId(new BigInteger(sellbotResponse.getCallId()));
+        if(realCallPlan.getAgentId()==null){//非协呼
+
+            //获取转人工的队列号
+            CallOutPlan callPlan = new CallOutPlan();
+            callPlan.setCallId(new BigInteger(sellbotResponse.getCallId()));
+            callPlan.setAgentStartTime(new Date());
+            callPlan.setCallState(ECallState.to_agent.ordinal());
+            callOutPlanService.update(callPlan);
+
+            //播放完提示音后，将当前呼叫转到座席组
+            channelHelper.playAndTransferToAgentGroup(sellbotResponse.getCallId(), sellbotResponse.getWavFile(),sellbotResponse.getWavDuration(), agentGroupId);
+        }
+        log.info("在开始转人工后，释放ai资源");
         aiManager.releaseAi(realCallPlan);
 
         //停止定时任务
-        robotNextHelper.stopAiCallNextTimer(callPlan.getCallId().toString());
+        robotNextHelper.stopAiCallNextTimer(realCallPlan.getCallId().toString());
         //构建事件抛出
-        ToAgentEvent toAgentEvent = new ToAgentEvent(callPlan);
+        ToAgentEvent toAgentEvent = new ToAgentEvent(realCallPlan);
         asyncEventBus.post(toAgentEvent);
+
     }
 
     public void buildCallOutDetail(BigInteger callId, AsrCustomerEvent event) {
@@ -428,18 +433,22 @@ public class FsBotHandler {
                     }
 
                     if (callPlan.getAccurateIntent() == null) {
-                        if (!callLineAvailableManager.isAvailable(uuid)) { //线路不可用,设置为W
-                            log.info("线路是不可用的，设置意向标签为W,callId[{}]", uuid);
-                            callPlan.setAccurateIntent("W");
-                            if (callPlan.getReason() == null && hangUp != null) {
-                                callPlan.setReason(hangUp);
-                            }
+                        callPlan.setAccurateIntent("W");
+                        if (callPlan.getReason() == null && hangUp != null) {
+                            callPlan.setReason(hangUp);
                         }
                     }
 
                 }
                 callPlan.setHangupTime(event.getHangupStamp());
                 callPlan.setAnswerTime(event.getAnswerStamp());
+                if(event.getHangupDisposition()!=null){
+                    if(event.getHangupDisposition().equals("send_bye")){//机器人挂断
+                        callPlan.setHangupDirection(0);
+                    }else{//用户挂断
+                        callPlan.setHangupDirection(1);
+                    }
+                }
 
                 if (duration != null){
                     callPlan.setDuration(duration);

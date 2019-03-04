@@ -9,10 +9,7 @@ import com.guiji.ccmanager.service.CallDetailService;
 import com.guiji.ccmanager.utils.DateUtils;
 import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
-import com.guiji.ccmanager.vo.CallDetailUpdateReq;
-import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
-import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
-import com.guiji.ccmanager.vo.CallRecordReq;
+import com.guiji.ccmanager.vo.*;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.utils.DateUtil;
@@ -126,45 +123,44 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "customerId", value = "客户id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "phoneNum", value = "电话号码", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "durationMin", value = "通话时长，最小值", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "durationMax", value = "通话时长，最大值", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "durationMin", value = "拨打时长，最小值", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "durationMax", value = "拨打时长，最大值", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "billSecMin", value = "接听时长，最小值", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "billSecMax", value = "接听时长，最大值", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "accurateIntent", value = "意向标签，以逗号分隔", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "freason", value = "直接传名称,以逗号分隔", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "callId", value = "通话ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "tempId", value = "话术模板id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value = "getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(String startDate, String endDate, String pageSize, String pageNo, String phoneNum, String durationMin,
-                                                                         String durationMax, String accurateIntent, String freason, String callId, String tempId, String isRead,
-                                                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
+    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
+                                                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
 
-        log.info("get request getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}], phoneNum[{}], durationMin[{}], durationMax[{}], " +
-                        "accurateIntent[{}],  freason[{}], callId[{}],  tempId[{}], isRead[{}]",
-                startDate, endDate, userId, pageSize, pageNo, phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead);
+        log.info("get request getCallRecord，callRecordListReq[{}]",callRecordListReq);
 
-        if(StringUtils.isBlank(pageSize) || StringUtils.isBlank(pageNo)){
+        if(StringUtils.isBlank(callRecordListReq.getPageSize()) || StringUtils.isBlank(callRecordListReq.getPageNo())){
             return Result.error(Constant.ERROR_PARAM);
         }
 
         Date end = null;
         Date start = null;
-        if(StringUtils.isNotBlank(startDate)){
-            start = DateUtil.stringToDate(startDate,"yyyy-MM-dd HH:mm:ss");
+        if(StringUtils.isNotBlank(callRecordListReq.getStartDate())){
+            start = DateUtil.stringToDate(callRecordListReq.getStartDate(),"yyyy-MM-dd HH:mm:ss");
         }
-        if(StringUtils.isNotBlank(endDate)){
-            end = DateUtil.stringToDate(endDate,"yyyy-MM-dd HH:mm:ss");
+        if(StringUtils.isNotBlank(callRecordListReq.getEndDate())){
+            end = DateUtil.stringToDate(callRecordListReq.getEndDate(),"yyyy-MM-dd HH:mm:ss");
         }
 
-        int pageSizeInt = Integer.parseInt(pageSize);
-        int pageNoInt = Integer.parseInt(pageNo);
+        int pageSizeInt = Integer.parseInt(callRecordListReq.getPageSize());
+        int pageNoInt = Integer.parseInt(callRecordListReq.getPageNo());
 
         List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin,String.valueOf(userId),orgCode, pageSizeInt,pageNoInt,
-                phoneNum, durationMin, durationMax,  accurateIntent,  freason, callId,  tempId, isRead, isDesensitization);
-        int count = callDetailService.callrecordCount(start,end,isSuperAdmin,String.valueOf(userId),orgCode, phoneNum, durationMin, durationMax,
-                accurateIntent,  freason, callId,  tempId, isRead);
+                callRecordListReq, isDesensitization);
+        int count = callDetailService.callrecordCount(start,end,isSuperAdmin,String.valueOf(userId),orgCode, callRecordListReq);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);
@@ -172,8 +168,7 @@ public class CallDetailController implements ICallPlanDetail {
         page.setTotal(count);
         page.setRecords(list);
 
-        log.info("response success getCallRecord，startDate[{}], endDate[{}],userId[{}],pageSize[{}],pageNo[{}]",
-                startDate, endDate, userId, pageSize, pageNo);
+        log.info("response success getCallRecord，callRecordListReq[{}]",callRecordListReq);
 
         return Result.ok(page);
     }

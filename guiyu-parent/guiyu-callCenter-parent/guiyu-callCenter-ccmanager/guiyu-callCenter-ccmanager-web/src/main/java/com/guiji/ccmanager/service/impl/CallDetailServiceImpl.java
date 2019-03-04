@@ -3,6 +3,7 @@ package com.guiji.ccmanager.service.impl;
 import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.ccmanager.constant.Constant;
+import com.guiji.ccmanager.entity.CallOutPlanQueryEntity;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
@@ -58,20 +59,22 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanMapper.updateByPrimaryKeySelective(callOutPlan);
     }
 
-    public CallOutPlanExample getExample(Date startDate, Date endDate, String customerId,String orgCode, String phoneNum, String durationMin, String durationMax,
-                                         String accurateIntent, String freason, String callId, String tempId, String isRead,Boolean isSuperAdmin) {
+    public CallOutPlanExample getExample(CallOutPlanQueryEntity callOutPlanQueryEntity,String queryUser) {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
-        if (startDate != null) {
-            criteria.andCallStartTimeGreaterThan(startDate);
+        if (callOutPlanQueryEntity.getStartDate() != null) {
+            criteria.andCreateTimeGreaterThan(callOutPlanQueryEntity.getStartDate());
         }
-        if (endDate != null) {
-            criteria.andCallStartTimeLessThan(endDate);
+        if (callOutPlanQueryEntity.getEndDate() != null) {
+            criteria.andCreateTimeLessThan(callOutPlanQueryEntity.getEndDate());
         }
-        if(!isSuperAdmin){//不是管理员
-            long userId = Long.valueOf(customerId);
+        if(StringUtils.isNotBlank(queryUser)){
+            criteria.andCustomerIdEqualTo(Integer.valueOf(queryUser));
+        }
+        if(!callOutPlanQueryEntity.getIsSuperAdmin()){//不是管理员
+            long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
             if (authService.isAgentOrCompanyAdmin(userId) ) {//代理商 或者企业管理员
-                criteria.andOrgCodeLike(orgCode+"%");
+                criteria.andOrgCodeLike(callOutPlanQueryEntity.getOrgCode()+"%");
             } else if(authService.isSeat(userId)){//客服
                 String userName = authService.getUserName(userId);
                 AgentExample agentExample = new AgentExample();
@@ -80,18 +83,25 @@ public class CallDetailServiceImpl implements CallDetailService {
                 Long agentId = listAgent.get(0).getUserId();
                 criteria.andAgentIdEqualTo(String.valueOf(agentId));
             }else {
-                criteria.andCustomerIdEqualTo(Integer.valueOf(customerId));
+                criteria.andCustomerIdEqualTo(Integer.valueOf(callOutPlanQueryEntity.getCustomerId()));
             }
         }
-        if (StringUtils.isNotBlank(phoneNum)) {
-            criteria.andPhoneNumLike("%"+phoneNum+"%");
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getPhoneNum())) {
+            criteria.andPhoneNumLike("%"+callOutPlanQueryEntity.getPhoneNum()+"%");
         }
-        if (StringUtils.isNotBlank(durationMin)) {
-            criteria.andDurationGreaterThan(Integer.valueOf(durationMin));
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getDurationMin())) {
+            criteria.andDurationGreaterThan(Integer.valueOf(callOutPlanQueryEntity.getDurationMin()));
         }
-        if (StringUtils.isNotBlank(durationMax)) {
-            criteria.andDurationLessThanOrEqualTo(Integer.valueOf(durationMax));
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getDurationMax())) {
+            criteria.andDurationLessThanOrEqualTo(Integer.valueOf(callOutPlanQueryEntity.getDurationMax()));
         }
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getBillSecMin())) {
+            criteria.andBillSecGreaterThan(Integer.valueOf(callOutPlanQueryEntity.getBillSecMin()));
+        }
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getBillSecMax())) {
+            criteria.andBillSecLessThanOrEqualTo(Integer.valueOf(callOutPlanQueryEntity.getBillSecMax()));
+        }
+        String accurateIntent =callOutPlanQueryEntity.getAccurateIntent();
         if (StringUtils.isNotBlank(accurateIntent)) {
             if (accurateIntent.contains(",")) {
                 String[] arr = accurateIntent.split(",");
@@ -100,6 +110,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                 criteria.andAccurateIntentEqualTo(accurateIntent);
             }
         }
+        String freason =callOutPlanQueryEntity.getFreason();
         if (StringUtils.isNotBlank(freason)) {
             if (freason.contains(",")) {
                 String[] arr = freason.split(",");
@@ -108,14 +119,14 @@ public class CallDetailServiceImpl implements CallDetailService {
                 criteria.andReasonEqualTo(freason);
             }
         }
-        if (StringUtils.isNotBlank(callId)) {
-            criteria.andCallIdEqualTo(new BigInteger(callId));
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getCallId())) {
+            criteria.andCallIdEqualTo(new BigInteger(callOutPlanQueryEntity.getCallId()));
         }
-        if (StringUtils.isNotBlank(tempId)) {
-            criteria.andTempIdEqualTo(tempId);
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getTempId())) {
+            criteria.andTempIdEqualTo(callOutPlanQueryEntity.getTempId());
         }
-        if (StringUtils.isNotBlank(isRead)) {
-            criteria.andIsreadEqualTo(Integer.valueOf(isRead));
+        if (StringUtils.isNotBlank(callOutPlanQueryEntity.getIsRead())) {
+            criteria.andIsreadEqualTo(Integer.valueOf(callOutPlanQueryEntity.getIsRead()));
         }
         criteria.andIsdelEqualTo(0);
         criteria.andCallStateGreaterThanOrEqualTo(Constant.CALLSTATE_HANGUP_OK);
@@ -138,8 +149,13 @@ public class CallDetailServiceImpl implements CallDetailService {
             map.put("time", callRecordReq.getTime() - 1);
         if (callRecordReq.getAccurateIntent() != null)
             map.put("accurateIntent", callRecordReq.getAccurateIntent());
-        List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(map);
-        return list;
+        List<BigInteger> ids = callOutPlanMapper.selectCallPlanRecordIds4Encrypt(map);
+        if(ids!=null && ids.size()>0){
+            List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(ids,callRecordReq.getIsDesensitization());
+            return list;
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -159,25 +175,36 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate,Boolean isSuperAdmin, String customerId, String orgCode,
-                                                   int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
-                                                   String accurateIntent, String freason, String callId, String tempId, String isRead, Integer isDesensitization) {
+    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode,
+                                                   int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization) {
 
-        CallOutPlanExample example = getExample(startDate, endDate, customerId, orgCode, phoneNum, durationMin,
-                durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
+        CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
+        BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
+        callOutPlanQueryEntity.setStartDate(startDate);
+        callOutPlanQueryEntity.setEndDate(endDate);
+        callOutPlanQueryEntity.setCustomerId(customerId);
+        callOutPlanQueryEntity.setOrgCode(orgCode);
+        callOutPlanQueryEntity.setIsSuperAdmin(isSuperAdmin);
+        CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
         example.setLimitEnd(pageSize);
-        example.setOrderByClause("create_time desc");
+        example.setOrderByClause("call_id desc");
+        example.setIsDesensitization(isDesensitization);
 
-//        Long userId = Long.valueOf(customerId);
-        List<CallOutPlan> list;
-//        if(isSuperAdmin || authService.isSeatOrAgent(userId)){
-            example.setIsDesensitization(isDesensitization);
+        List<CallOutPlan> list = null;
+        if(pageNo<10){
             list = callOutPlanMapper.selectByExample4Encrypt(example);
-//        }else{
-//            list = callOutPlanMapper.selectByExample(example);
-//        }
+        }else{
+            List<BigInteger> listIds= callOutPlanMapper.selectCallIds4Encrypt(example);
+            if(listIds!=null && listIds.size()>0){
+                CallOutPlanExample exampleIds = new CallOutPlanExample();
+                exampleIds.createCriteria().andCallIdIn(listIds);
+                exampleIds.setOrderByClause("call_id desc");
+
+                list = callOutPlanMapper.selectByExample4Encrypt(exampleIds);
+            }
+        }
 
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 
@@ -197,11 +224,16 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public int callrecordCount(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode, String phoneNum, String durationMin, String durationMax,
-                               String accurateIntent, String freason, String callId, String tempId, String isRead) {
+    public int callrecordCount(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode, CallRecordListReq callRecordListReq) {
 
-        CallOutPlanExample example = getExample(startDate, endDate, customerId, orgCode,
-                phoneNum, durationMin, durationMax, accurateIntent, freason, callId, tempId, isRead, isSuperAdmin);
+        CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
+        BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
+        callOutPlanQueryEntity.setStartDate(startDate);
+        callOutPlanQueryEntity.setEndDate(endDate);
+        callOutPlanQueryEntity.setCustomerId(customerId);
+        callOutPlanQueryEntity.setOrgCode(orgCode);
+        callOutPlanQueryEntity.setIsSuperAdmin(isSuperAdmin);
+        CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
 
         return callOutPlanMapper.countByExample(example);
     }
@@ -244,6 +276,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                         CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
                         callOutDetailVOInsert.setCustomerSayText("无声音");
                         callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getBotAnswerTime());
+                        callOutDetailVOInsert.setCallId(callId);
                         resList.add(callOutDetailVOInsert);
                     }
                 }
@@ -254,6 +287,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                         CallOutDetailVO callOutDetailVOInsert = new CallOutDetailVO();
                         callOutDetailVOInsert.setCustomerSayText("无声音");
                         callOutDetailVOInsert.setCustomerSayTime(callOutDetailBefore.getAgentAnswerTime());
+                        callOutDetailVOInsert.setCallId(callId);
                         resList.add(callOutDetailVOInsert);
                     }
                 }
@@ -390,8 +424,8 @@ public class CallDetailServiceImpl implements CallDetailService {
         example.createCriteria().andCallIdIn(idList);
         example.setOrderByClause("create_time desc");
 //        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
-            example.setIsDesensitization(isDesensitization);
-            list = callOutPlanMapper.selectByExample4Encrypt(example);
+        example.setIsDesensitization(isDesensitization);
+        list = callOutPlanMapper.selectByExample4Encrypt(example);
 //        }else{
 //            list = callOutPlanMapper.selectByExample(example);
 //        }

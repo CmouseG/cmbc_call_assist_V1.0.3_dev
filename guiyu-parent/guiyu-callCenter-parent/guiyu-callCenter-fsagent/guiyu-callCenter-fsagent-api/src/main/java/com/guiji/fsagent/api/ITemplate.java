@@ -39,7 +39,9 @@ public interface ITemplate {
             @ApiImplicitParam(name = "busiId", value = "上传的影像文件关联的业务ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "busiType", value = "上传的影像文件业务类型", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "fileName", value = "文件名", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "userId", value = "用户Id", dataType = "Long", paramType = "query")
+            @ApiImplicitParam(name = "userId", value = "用户Id", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(name = "duration", value = "电话呼通总时长", dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "billsec", value = "客户接听时长", dataType = "int", paramType = "query")
     })
     @PostMapping(value = "/uploadrecord",consumes = "application/json")
      Result.ReturnData<RecordVO> uploadrecord(@RequestBody RecordReqVO recordReqVO);

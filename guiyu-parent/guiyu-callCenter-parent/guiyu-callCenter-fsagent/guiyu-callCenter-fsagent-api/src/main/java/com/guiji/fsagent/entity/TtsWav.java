@@ -24,4 +24,12 @@ public class TtsWav implements Serializable {
     public void setFileDuration(Double fileDuration) {
         this.fileDuration = fileDuration;
     }
+
+    @Override
+    public String toString() {
+        return "TtsWav{" +
+                "fileName='" + fileName + '\'' +
+                ", fileDuration=" + fileDuration +
+                '}';
+    }
 }

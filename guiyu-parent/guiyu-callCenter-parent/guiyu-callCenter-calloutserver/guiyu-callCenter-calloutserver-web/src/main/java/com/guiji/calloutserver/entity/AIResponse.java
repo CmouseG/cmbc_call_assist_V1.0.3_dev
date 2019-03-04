@@ -37,6 +37,9 @@ public class AIResponse {
     //是否匹配到ai的关键词
     private boolean isMatched;
 
+    private String keyWords;
+    private String wordSegmentResult;
+
 
     public void setAiResponseType(Integer end) {
         EAIResponseType type = EAIResponseType.UNKNOWN;
@@ -132,7 +135,21 @@ public class AIResponse {
         return aiResponseType;
     }
 
+    public String getKeyWords() {
+        return keyWords;
+    }
 
+    public void setKeyWords(String keyWords) {
+        this.keyWords = keyWords;
+    }
+
+    public String getWordSegmentResult() {
+        return wordSegmentResult;
+    }
+
+    public void setWordSegmentResult(String wordSegmentResult) {
+        this.wordSegmentResult = wordSegmentResult;
+    }
 
     public boolean isMatched() {
         return isMatched;

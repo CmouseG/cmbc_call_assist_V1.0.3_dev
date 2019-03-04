@@ -2,10 +2,7 @@ package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
-import com.guiji.ccmanager.vo.CallDetailUpdateReq;
-import com.guiji.ccmanager.vo.CallOutPlan4ListSelect;
-import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
-import com.guiji.ccmanager.vo.CallRecordReq;
+import com.guiji.ccmanager.vo.*;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -19,13 +16,11 @@ import java.util.Map;
  */
 public interface CallDetailService {
     List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode,
-                                            int pageSize, int pageNo, String phoneNum, String durationMin, String durationMax,
-                                            String accurateIntent, String freason, String callId, String tempId, String isRead, Integer isDesensitization);
+                                            int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization);
 
     CallPlanDetailRecordVO getCallDetail(BigInteger callId);
 
-    int callrecordCount(Date start, Date end, Boolean isSuperAdmin, String customerId, String orgCode, String phoneNum, String durationMin, String durationMax,
-                        String accurateIntent, String freason, String callId, String tempId, String isRead);
+    int callrecordCount(Date start, Date end, Boolean isSuperAdmin, String customerId, String orgCode, CallRecordListReq callRecordListReq);
 
     String getDialogue(String callId);
 

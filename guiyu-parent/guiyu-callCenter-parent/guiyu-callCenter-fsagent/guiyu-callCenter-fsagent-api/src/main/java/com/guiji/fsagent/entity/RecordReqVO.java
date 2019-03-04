@@ -6,6 +6,9 @@ public class RecordReqVO {
     private String busiType;
     private String fileName;
     private Long userId;
+    private int duration;
+    private int billsec;
+
     public String getSysCode() {
         return sysCode;
     }
@@ -44,5 +47,34 @@ public class RecordReqVO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getBillsec() {
+        return billsec;
+    }
+
+    public void setBillsec(int billsec) {
+        this.billsec = billsec;
+    }
+
+    @Override
+    public String toString() {
+        return "RecordReqVO{" +
+                "sysCode='" + sysCode + '\'' +
+                ", busiId='" + busiId + '\'' +
+                ", busiType='" + busiType + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", userId=" + userId +
+                ", duration=" + duration +
+                ", billsec=" + billsec +
+                '}';
     }
 }

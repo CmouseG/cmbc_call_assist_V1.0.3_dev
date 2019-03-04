@@ -276,7 +276,7 @@ public class FsBotHandler {
             //判断是否已经做过F类判断，如果做过，则直接挂断该通话
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
-                localFsServer.hangup(callPlan.getCallId());
+                localFsServer.hangup(callPlan.getCallId().toString());
             }
         }
     }

@@ -90,7 +90,7 @@ public class CallServiceImpl implements CallService {
             log.info("时间已到，去检查电话是否已经接听,callId[{}]",callid);
             if(!callLineAvailableManager.isChannelAnswer(callid)){
                 log.info("时间已到，电话没有接听，手动挂断,callId[{}]",callid);
-                fsManager.hangup(callplan.getCallId());
+                fsManager.hangup(callplan.getCallId().toString());
             }
 
         }, Integer.valueOf(value), TimeUnit.SECONDS);

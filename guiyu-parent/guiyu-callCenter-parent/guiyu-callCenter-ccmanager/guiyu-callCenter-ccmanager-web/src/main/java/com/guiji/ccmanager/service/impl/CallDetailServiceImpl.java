@@ -63,10 +63,10 @@ public class CallDetailServiceImpl implements CallDetailService {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         if (callOutPlanQueryEntity.getStartDate() != null) {
-            criteria.andCallStartTimeGreaterThan(callOutPlanQueryEntity.getStartDate());
+            criteria.andCreateTimeGreaterThan(callOutPlanQueryEntity.getStartDate());
         }
         if (callOutPlanQueryEntity.getEndDate() != null) {
-            criteria.andCallStartTimeLessThan(callOutPlanQueryEntity.getEndDate());
+            criteria.andCreateTimeLessThan(callOutPlanQueryEntity.getEndDate());
         }
         if(StringUtils.isNotBlank(queryUser)){
             criteria.andCustomerIdEqualTo(Integer.valueOf(queryUser));

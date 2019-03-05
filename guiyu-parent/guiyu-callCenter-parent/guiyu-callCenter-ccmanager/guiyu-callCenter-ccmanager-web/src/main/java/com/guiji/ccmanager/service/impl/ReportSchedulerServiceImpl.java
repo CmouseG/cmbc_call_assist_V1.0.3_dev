@@ -10,6 +10,8 @@ import com.guiji.ccmanager.service.ReportSchedulerService;
 import com.guiji.ccmanager.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
@@ -42,7 +44,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     public void reportCallDayScheduler() {
 
         statisticMapper.deleteReportCallDay();
-
+        //sharding jdbc 不支持 case when操作，所以分开来操作
         List<ReportCallDay> list30 = statisticMapper.countReportCallDayDruation30();
         List<ReportCallDay> list10 = statisticMapper.countReportCallDayDruation10();
         List<ReportCallDay> list5 = statisticMapper.countReportCallDayDruation5();
@@ -69,17 +71,40 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     }
 
     @Override
-    @Transactional
     public void reportCallTodayScheduler() {
 
-        List<ReportCallDay> list = statisticMapper.countReportCallToday();
+        //sharding jdbc 不支持 case when操作，所以分开来操作
+        List<ReportCallDay> list30 = statisticMapper.countReportCallToday30();
+        List<ReportCallDay> list10 = statisticMapper.countReportCallToday10();
+        List<ReportCallDay> list5 = statisticMapper.countReportCallToday5();
+        List<ReportCallDay> list0 = statisticMapper.countReportCallToday0();
+
+        List<ReportCallDay> list = new ArrayList<>();
+        if(list30!=null && list30.size() >0){
+            list.addAll(list30);
+        }
+        if(list30!=null && list30.size() >0){
+            list.addAll(list10);
+        }
+        if(list30!=null && list30.size() >0){
+            list.addAll(list5);
+        }
+        if(list30!=null && list30.size() >0){
+            list.addAll(list0);
+        }
         if(list!=null && list.size()>0){
-            //先清空
-            statisticMapper.reportCallTodayTruncate();
-            statisticMapper.insertReportCallToday(list);
+            insertReportCallToday(list);
         }
 
     }
+    // todo 如果删除后，用户恰好来查询，那么将查不到数据 //其实可以优化，将结果放在redis里面
+    @Transactional
+    public void insertReportCallToday(List<ReportCallDay> list){
+        statisticMapper.reportCallTodayTruncate();
+        statisticMapper.insertReportCallToday(list);
+    }
+
+
 
     @Override
     @Transactional

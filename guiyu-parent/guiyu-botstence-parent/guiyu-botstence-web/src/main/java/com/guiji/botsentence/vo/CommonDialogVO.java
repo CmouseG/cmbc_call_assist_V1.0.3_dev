@@ -2,6 +2,8 @@ package com.guiji.botsentence.vo;
 
 import java.util.List;
 
+import com.guiji.botsentence.dao.entity.VoliceInfo;
+
 /**
  * 通用对话前台显示
  * @author 张朋
@@ -40,6 +42,8 @@ public class CommonDialogVO {
 	 private String intentDomain;
 	 
 	 private List<BotSentenceIntentVO> intentList;
+	 
+	 private List<VoliceInfo> refuseList;
 	 
 	public List<BotSentenceIntentVO> getIntentList() {
 		return intentList;
@@ -186,6 +190,14 @@ public class CommonDialogVO {
 				+ ", templateId=" + templateId + ", yujin=" + yujin + ", huashu=" + huashu + ", luoji=" + luoji
 				+ ", voliceId=" + voliceId + ", voliceUrl=" + voliceUrl + ", domain=" + domain + ", title=" + title
 				+ ", voliceName=" + voliceName + ", flag=" + flag + "]";
+	}
+
+	public List<VoliceInfo> getRefuseList() {
+		return refuseList;
+	}
+
+	public void setRefuseList(List<VoliceInfo> refuseList) {
+		this.refuseList = refuseList;
 	}
 
 	

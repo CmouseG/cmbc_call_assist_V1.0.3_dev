@@ -10,7 +10,7 @@ public class ReportCallDay implements Serializable {
     private Integer durationType;
 
     private String intent;
-    private String intentShow;
+    private String reasonShow;
 
     private String reason;
 
@@ -96,12 +96,12 @@ public class ReportCallDay implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
-    public String getIntentShow() {
-        return intentShow;
+    public String getReasonShow() {
+        return reasonShow;
     }
 
-    public void setIntentShow(String intentShow) {
-        this.intentShow = intentShow;
+    public void setReasonShow(String reasonShow) {
+        this.reasonShow = reasonShow;
     }
 
     @Override
@@ -114,7 +114,7 @@ public class ReportCallDay implements Serializable {
         sb.append(", callDate=").append(callDate);
         sb.append(", durationType=").append(durationType);
         sb.append(", intent=").append(intent);
-        sb.append(", intentShow=").append(intentShow);
+        sb.append(", reasonShow=").append(reasonShow);
         sb.append(", reason=").append(reason);
         sb.append(", callCount=").append(callCount);
         sb.append(", durationAll=").append(durationAll);

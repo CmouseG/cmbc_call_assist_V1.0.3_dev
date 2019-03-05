@@ -7,7 +7,9 @@
       process_id, 
       com_domain, category, ignore_but_domains, 
       is_interrupt, is_main_flow, crt_time, 
-      crt_user, lst_update_time, lst_update_user, type, parent, position_x, position_y
+      crt_user, lst_update_time, lst_update_user, type, parent, position_x, position_y,
+      ignore_user_sentence, ignore_but_negative, match_order, not_match_less4_to, 
+      not_match_to, no_words_to, is_special_limit_free
       )
     VALUES
     <foreach collection="list" item="item" index="index" separator="," >
@@ -28,7 +30,14 @@
         #{item.type},
         #{item.parent},
         #{item.positionX},
-        #{item.positionY}
+        #{item.positionY},
+        #{item.ignoreUserSentence},
+        #{item.ignoreButNegative},
+        #{item.matchOrder},
+        #{item.notMatchLess4To},
+        #{item.notMatchTo},
+        #{item.noWordsTo},
+        #{item.isSpecialLimitFree}
         )
     </foreach>
     

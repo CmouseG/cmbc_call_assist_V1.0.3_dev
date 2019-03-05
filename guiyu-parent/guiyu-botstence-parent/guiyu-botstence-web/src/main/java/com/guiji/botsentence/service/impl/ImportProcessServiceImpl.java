@@ -190,8 +190,15 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				try {
 					options_json = FileUtil.readToString(file);
 					JSONObject json = JSONObject.parseObject(options_json);
-					template_id = json.getString("tempname") + "_en";
-					//trade = json.getString("trade");
+					String templateId = json.getString("tempname");
+					if(StringUtils.isNotBlank(templateId)) {
+						if(templateId.endsWith("_en")) {
+							template_id = templateId;
+						}else {
+							template_id = templateId + "_en";
+						}
+					}
+					//template_id = json.getString("tempname") + "_en";
 					des = json.getString("des");
 					template_name = json.getString("dianame");//模板名称
 					

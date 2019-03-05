@@ -70,6 +70,19 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
     @Override
     @Transactional
+    public void reportCallTodayScheduler() {
+
+        List<ReportCallDay> list = statisticMapper.countReportCallToday();
+        if(list!=null && list.size()>0){
+            //先清空
+            statisticMapper.reportCallTodayTruncate();
+            statisticMapper.insertReportCallToday(list);
+        }
+
+    }
+
+    @Override
+    @Transactional
     public void reportCallHourScheduler() {
         statisticMapper.deleteReportCallHour();
         List<ReportCallHour>  listOut = statisticMapper.countReportCallHourOut();

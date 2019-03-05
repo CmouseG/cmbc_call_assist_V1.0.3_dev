@@ -9,7 +9,24 @@
 
     </update>
 
-
+    <select id="countReportCallToday" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT
+        DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        org_code AS orgCode,accurate_intent AS intent,
+        IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
+        CASE bill_sec
+        WHEN bill_sec >=30 THEN 3
+        WHEN bill_sec &lt;30 AND bill_sec >= 10 THEN 2
+        WHEN bill_sec &lt;10 AND bill_sec >= 5 THEN 1
+        ELSE 0
+        END AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id AS tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time > CURRENT_DATE()
+        GROUP BY org_code,accurate_intent,reasonShow,temp_id,durationType
+    </select>
     <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
         org_code as orgCode,accurate_intent as intent,
@@ -69,6 +86,17 @@
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.callDate,jdbcType=VARCHAR}, #{item.durationType,jdbcType=INTEGER}, #{item.intent,jdbcType=VARCHAR},
+            #{item.reason,jdbcType=VARCHAR}, #{item.callCount,jdbcType=INTEGER}, #{item.durationAll,jdbcType=BIGINT},
+            #{item.orgCode,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <insert id="insertReportCallToday" parameterType="java.util.List">
+        INSERT INTO report_call_today (
+        call_date, duration_type,intent, reason, call_count,duration_all,org_code,tempid)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.callDate,jdbcType=VARCHAR}, #{item.durationType,jdbcType=INTEGER}, #{item.intentShow,jdbcType=VARCHAR},
             #{item.reason,jdbcType=VARCHAR}, #{item.callCount,jdbcType=INTEGER}, #{item.durationAll,jdbcType=BIGINT},
             #{item.orgCode,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
             )

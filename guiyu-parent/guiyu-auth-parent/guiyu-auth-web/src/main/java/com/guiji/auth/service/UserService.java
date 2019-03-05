@@ -69,7 +69,7 @@ public class UserService {
 		}
 		user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
-		mapper.insert(user);
+		mapper.insertSelective(user);
 		mapper.insertUserRole(user.getId(),roleId);
 		mapper.addUserExt(user.getId());
 		noticeSetting.addNoticeSettingReceiver(user.getId());

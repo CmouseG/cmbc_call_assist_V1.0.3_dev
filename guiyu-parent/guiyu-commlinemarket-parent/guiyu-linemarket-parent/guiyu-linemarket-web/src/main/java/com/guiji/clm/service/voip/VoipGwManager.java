@@ -147,7 +147,7 @@ public class VoipGwManager {
 						lineInfo.setSipIp(voipGwInfo.getSipIp());	//线路sip地址
 						lineInfo.setSipPort(fsSipVO.getLinePort()); //新增线路时的使用端口
 						lineInfo.setCodec("PCMA"); //网关编号都支持，所以此处默认个最常用编码：PCMA
-						lineInfo.setCallerNum(voipGwInfo.getStartSipAccount().toString()); //主叫号码送网关端口账号
+						lineInfo.setCallerNum(port.getSipAccount().toString()); //主叫号码送网关端口账号
 						lineInfo.setMaxConcurrentCalls(1);	//端口并发数默认1
 						lineInfo.setOrgCode(voipGwInfo.getOrgCode()); //企业编号
 						lineInfo.setRemark("语音网关");

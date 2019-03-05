@@ -143,7 +143,7 @@ public class VoipGwManager {
 					for(VoipGwPort port : portList) {
 						//线路新增
 						OutLineInfoAddReq lineInfo = new OutLineInfoAddReq();
-						lineInfo.setLineName(voipGwInfo.getGwName()+port.getPort());
+						lineInfo.setLineName(voipGwInfo.getGwName()+"-"+port.getPort());
 						lineInfo.setSipIp(voipGwInfo.getSipIp());	//线路sip地址
 						lineInfo.setSipPort(fsSipVO.getLinePort()); //新增线路时的使用端口
 						lineInfo.setCodec("PCMA"); //网关编号都支持，所以此处默认个最常用编码：PCMA

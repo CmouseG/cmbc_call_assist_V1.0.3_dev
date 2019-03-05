@@ -576,6 +576,66 @@ public class VoipGwInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andGwStatusIsNull() {
+            addCriterion("gw_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusIsNotNull() {
+            addCriterion("gw_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusEqualTo(Integer value) {
+            addCriterion("gw_status =", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusNotEqualTo(Integer value) {
+            addCriterion("gw_status <>", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusGreaterThan(Integer value) {
+            addCriterion("gw_status >", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("gw_status >=", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusLessThan(Integer value) {
+            addCriterion("gw_status <", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("gw_status <=", value, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusIn(List<Integer> values) {
+            addCriterion("gw_status in", values, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusNotIn(List<Integer> values) {
+            addCriterion("gw_status not in", values, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusBetween(Integer value1, Integer value2) {
+            addCriterion("gw_status between", value1, value2, "gwStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andGwStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("gw_status not between", value1, value2, "gwStatus");
+            return (Criteria) this;
+        }
+
         public Criteria andSipIpIsNull() {
             addCriterion("sip_ip is null");
             return (Criteria) this;
@@ -703,6 +763,66 @@ public class VoipGwInfoExample {
 
         public Criteria andSipPortNotBetween(Integer value1, Integer value2) {
             addCriterion("sip_port not between", value1, value2, "sipPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortIsNull() {
+            addCriterion("line_port is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortIsNotNull() {
+            addCriterion("line_port is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortEqualTo(Integer value) {
+            addCriterion("line_port =", value, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortNotEqualTo(Integer value) {
+            addCriterion("line_port <>", value, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortGreaterThan(Integer value) {
+            addCriterion("line_port >", value, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortGreaterThanOrEqualTo(Integer value) {
+            addCriterion("line_port >=", value, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortLessThan(Integer value) {
+            addCriterion("line_port <", value, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortLessThanOrEqualTo(Integer value) {
+            addCriterion("line_port <=", value, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortIn(List<Integer> values) {
+            addCriterion("line_port in", values, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortNotIn(List<Integer> values) {
+            addCriterion("line_port not in", values, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortBetween(Integer value1, Integer value2) {
+            addCriterion("line_port between", value1, value2, "linePort");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinePortNotBetween(Integer value1, Integer value2) {
+            addCriterion("line_port not between", value1, value2, "linePort");
             return (Criteria) this;
         }
 

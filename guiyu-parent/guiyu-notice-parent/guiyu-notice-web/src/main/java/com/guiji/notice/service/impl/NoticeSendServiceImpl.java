@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -106,7 +107,13 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                     for(String userIdString:receiverArr){
                         //发送短信
                         long userId = Long.valueOf(userIdString);
-                        Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
+                        Result.ReturnData<SysUserExt> returnData = null;
+                        try {
+                            returnData = auth.getUserExtByUserId(userId);
+                        } catch (Exception e) {
+                            logger.error("auth.getUserExtByUserId",e);
+                            continue;
+                        }
                         String phone = returnData.getBody().getMobile();
                         //发送短信，接口还没有好
                     }
@@ -116,16 +123,25 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 if(isSendEmail){
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
-                        Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
-                        String email = returnData.getBody().getEmail();
-                        if(email!=null){
-                            try {
-                                sendEmailService.sendEmail(email,messageSend.getEmailSubject(),messageSend.getEmailContent());
-                                logger.info("send email---> email[{}],messageSend[{}]",email,messageSend);
-                            } catch (Exception e) {
-                                logger.error("-----sendEmail,has eror messageSend[{}]",messageSend,e);
+                        Result.ReturnData<SysUserExt> returnData = null;
+                        try {
+                            returnData = auth.getUserExtByUserId(userId);
+                        } catch (Exception e) {
+                            logger.error("auth.getUserExtByUserId",e);
+                            continue;
+                        }
+                        if(returnData!=null && returnData.getBody()!=null){
+                            String email = returnData.getBody().getEmail();
+                            if(email!=null){
+                                try {
+                                    sendEmailService.sendEmail(email,messageSend.getEmailSubject(),messageSend.getEmailContent());
+                                    logger.info("send email---> email[{}],messageSend[{}]",email,messageSend);
+                                } catch (Exception e) {
+                                    logger.error("-----sendEmail,has eror messageSend[{}]",messageSend,e);
+                                }
                             }
                         }
+
                     }
                 }
                 //是否发送微信
@@ -133,31 +149,41 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 if(isSendWeixin){
                     for(String userIdString:receiverArr){
                         long userId = Long.valueOf(userIdString);
-                        Result.ReturnData<SysUserExt> returnData = auth.getUserExtByUserId(userId);
-                        Result.ReturnData<SysUser> returnUser = auth.getUserById(userId);
-                        String openId = returnData.getBody().getWechatOpenid();
-                        SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
-
-                        sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
-                        sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
-                        sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
-                        sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
-                        sendMsgReqVO.setOpenID(openId);
-                        sendMsgReqVO.setUserId(String.valueOf(messageSend.getUserId()));
-
-                        HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
-                        if(data!=null){
-                            sendMsgReqVO.setData(data);
-                            if(data.get("keyword1")==null){
-                                sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
-                            }
-                            if(data.get("keyword4")==null) {
-                                sendMsgReqVO.addData("keyword4", sdf.format(new Date()));
-                            }
+                        Result.ReturnData<SysUserExt> returnData = null;
+                        Result.ReturnData<SysUser> returnUser = null;
+                        try {
+                            returnData = auth.getUserExtByUserId(userId);
+                            returnUser = auth.getUserById(userId);
+                        } catch (Exception e) {
+                            logger.error("auth.getUserExtByUserId,getUserById",e);
+                            continue;
                         }
 
-                        weChatApi.send(sendMsgReqVO);
-                        logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));
+                        if(returnUser!=null && returnUser.getBody()!=null && returnData!=null && returnData.getBody()!=null){
+                            String openId = returnData.getBody().getWechatOpenid();
+                            SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
+
+                            sendMsgReqVO.setPagePath(messageSend.getWeixinPagePath());
+                            sendMsgReqVO.setTemplateId(messageSend.getWeixinTemplateId());
+                            sendMsgReqVO.setAppId(messageSend.getWeixinAppId());
+                            sendMsgReqVO.setUrl(messageSend.getWeixinUrl());
+                            sendMsgReqVO.setOpenID(openId);
+                            sendMsgReqVO.setUserId(String.valueOf(userId));
+
+                            HashMap<String, SendMsgReqVO.Item> data =messageSend.getWeixinData();
+                            if(data!=null){
+                                sendMsgReqVO.setData(data);
+                                if(data.get("keyword1")==null){
+                                    sendMsgReqVO.addData("keyword1",returnUser.getBody().getUsername());
+                                }
+                                if(data.get("keyword4")==null) {
+                                    sendMsgReqVO.addData("keyword4", sdf.format(new Date()));
+                                }
+                            }
+
+                            weChatApi.send(sendMsgReqVO);
+                            logger.info("send weixin---> openId[{}],messageSend[{}]",openId,JSON.toJSONString(sendMsgReqVO));
+                        }
                     }
                 }
             }

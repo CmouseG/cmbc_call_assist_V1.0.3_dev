@@ -20,7 +20,7 @@
         WHERE
         create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
         AND create_time &lt; CURRENT_DATE()
-        AND bill_sec &gt;30
+        AND bill_sec &gt;=30
         GROUP BY org_code,accurate_intent,reason,temp_id
     </select>
     <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">

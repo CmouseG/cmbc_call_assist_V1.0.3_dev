@@ -25,7 +25,7 @@ public class TempReadyServiceImpl implements TempReadyService {
     @Override
     public boolean isTempOk(String tempId) {
 
-        String key = "callCenter-"+tempId+eurekaManager.getInstanceId();
+        String key = "callCenter_isTempOk_"+tempId+eurekaManager.getInstanceId();
         Object value =  redisUtil.get(key);
         if(value!=null){
             return (boolean) value;
@@ -65,7 +65,7 @@ public class TempReadyServiceImpl implements TempReadyService {
 
         log.info("开始获取模板录音时长[{}]", tempId);
         try {
-            Map<String, Double> map = fsAgentManager.getwavlength(tempId);
+            Map<String, Double> map = fsAgentManager.refreshWavLength(tempId);
             if(map==null || map.size()==0){
                 log.warn("启动呼叫计划失败，录音不存在，下载录音文件时长失败[{}]", tempId);
                 return false;

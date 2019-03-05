@@ -459,6 +459,25 @@ public class DateTimeUtils {
 		return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) ;
 	}
 
+	/**
+	 * 获取月份第一天/最后一天
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String getMonthLastDate(String year, String month, String flag){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cl = Calendar.getInstance();
+		cl.set(Calendar.YEAR, Integer.valueOf(year));
+		cl.set(Calendar.MONTH, Integer.valueOf(month)-1);
+		if("first".equals(flag)){//第一天
+			cl.set(Calendar.DAY_OF_MONTH, 1);
+		}else{
+			cl.set(Calendar.DAY_OF_MONTH, cl.getActualMaximum(Calendar.DAY_OF_MONTH));
+		}
+		String last = format.format(cl.getTime());
+		return last;
+	}
 
 	public final static String DEFAULT_BEGIN_TIME = "1970-01-01 00:00:00";
 

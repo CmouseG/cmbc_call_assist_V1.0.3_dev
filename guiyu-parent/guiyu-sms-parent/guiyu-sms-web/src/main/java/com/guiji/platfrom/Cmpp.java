@@ -16,10 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.guiji.platfrom.send.ISendMsg;
+import com.guiji.platfrom.send.ISendMsgByContent;
 import com.guiji.sms.dao.entity.SmsRecord;
 
-public class Cmpp implements ISendMsg
+/**
+ * Cmpp
+ */
+public class Cmpp implements ISendMsgByContent
 {
 	private static final Logger logger = LoggerFactory.getLogger(Cmpp.class);
 	
@@ -28,21 +31,6 @@ public class Cmpp implements ISendMsg
 	public Cmpp(String cmppServiceUrl)
 	{
 		this.cmppServiceUrl = cmppServiceUrl;
-	}
-
-	@Override
-	public SmsRecord sendMessage(Map<String, Object> params, String phone, Integer templateId) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, Integer templateId)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -112,10 +100,11 @@ public class Cmpp implements ISendMsg
 			httpPost.setEntity(entity);
 			response = httpClient.execute(httpPost); // 执行请求
 			result = EntityUtils.toString(response.getEntity(), "utf-8");
+			EntityUtils.consume(entity);
 		} 
 		catch (Exception e){
 			logger.error("调用接口异常！", e);
-			result = "{\"code\":\"404\",\"msg\":\"调用接口异常\",\"data\":\"\"}";
+			result = "{\"code\":\"404\",\"msg\":\"调用接口异常\"}";
 		}
 		finally {
 			IOUtils.closeQuietly(response);

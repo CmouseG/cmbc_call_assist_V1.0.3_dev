@@ -1,14 +1,9 @@
 package com.guiji.calloutserver.helper;
 
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.Subscribe;
-import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.entity.AIResponse;
 import com.guiji.calloutserver.entity.Channel;
-import com.guiji.calloutserver.eventbus.event.ChannelHangupEvent;
 import com.guiji.calloutserver.eventbus.handler.AfterMediaChecker;
 import com.guiji.calloutserver.fs.LocalFsServer;
-import com.guiji.calloutserver.config.AiConfig;
 import com.guiji.calloutserver.manager.ToAgentManager;
 import com.guiji.calloutserver.service.ChannelService;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +39,15 @@ public class ChannelHelper {
     ScheduledExecutorService scheduledExecutorService;
     ConcurrentHashMap<String, ScheduledFuture> futureConcurrentHashMap;
 
+    ScheduledExecutorService killChannelExecutorService;
+    ConcurrentHashMap<String, ScheduledFuture> killChannelScheduleHashMap;
+
     @PostConstruct
     private void init(){
-        scheduledExecutorService = Executors.newScheduledThreadPool(2);
+        scheduledExecutorService = Executors.newScheduledThreadPool(10);
         futureConcurrentHashMap = new ConcurrentHashMap<>();
+        killChannelExecutorService = Executors.newScheduledThreadPool(10);
+        killChannelScheduleHashMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -62,16 +62,30 @@ public class ChannelHelper {
         log.info("需要设置通道媒体文件[{}]的属性，时间为[{}], isPrologue[{}], isEnd[{}]", mediaFile, mediaFileDuration, isPrologue, isEnd);
 
         Channel channel = channelService.findByUuid(uuid);
-        setChannel(channel, uuid, mediaFile, mediaFileDuration, isLock, isEnd, isPrologue);
 
         if(isEnd){
             //预约挂断，在指定时长后挂断当前通道
             //在原来文件时长的基础上，增加3秒，防止话没说完，就被挂断
-            localFsServer.scheduleHangup(uuid, mediaFileDuration + 3);
+//            localFsServer.scheduleHangup(uuid, mediaFileDuration + 3);
+            ScheduledFuture<?> schedule = killChannelExecutorService.schedule(() -> {
+                        localFsServer.hangup(uuid);
+                    },
+                    (long)(mediaFileDuration*1000)+3000, TimeUnit.MILLISECONDS);
+            killChannelScheduleHashMap.put(uuid, schedule);
         }
 
         localFsServer.playToChannel(uuid, mediaFile);
+        setChannel(channel, uuid, mediaFile, mediaFileDuration, isLock, isEnd, isPrologue);
     }
+
+    public void stopKillChannel(String uuid){
+        if(killChannelScheduleHashMap.get(uuid)!=null){
+            log.info("停止挂断计时器,uuid[{}]",uuid);
+            ScheduledFuture scheduledFuture = killChannelScheduleHashMap.get(uuid);
+            scheduledFuture.cancel(true);
+        };
+    }
+
 
     public void playAiReponse(AIResponse aiResponse, boolean isLock, boolean isPrologue){
         playFile(aiResponse.getCallId(), aiResponse.getWavFile(), aiResponse.getWavDuration(),  isLock, false, isPrologue);
@@ -203,8 +217,8 @@ public class ChannelHelper {
                         channelService.delete(uuid);
                     }
                 },
-                mediaFileDuration.longValue(), TimeUnit.SECONDS);
-
+                (long)(mediaFileDuration*1000)+500, TimeUnit.MILLISECONDS);
+                //加个500ms，调用异步命令到freeswitch放音会有部分时间消耗
         futureConcurrentHashMap.put(uuid, schedule);
     }
 

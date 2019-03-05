@@ -14,6 +14,7 @@ import com.guiji.wechat.util.reply.TextReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -51,7 +52,7 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
             case SUBSCRIBE:
                 return handleSubscribeEvent(eventMsgReqDto);
             case SCAN:
-                return DEFAULT_SUCCESS;
+                return handleScanEvent(eventMsgReqDto);
             case UNSUBSCRIBE:
                 return DEFAULT_SUCCESS;// TODO: 19-2-25
             default:
@@ -73,8 +74,21 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
         return XmlUtil.objectToXml(textReply);
     }
 
+    private String handleScanEvent(EventMsgReqDto eventMsgReqDto) {
+
+        logger.info("user scan event:{}", JSON.toJSONString(eventMsgReqDto));
+
+        sendUserBindWeChatMessage(eventMsgReqDto);
+
+        return DEFAULT_SUCCESS;
+    }
+
     private void sendUserBindWeChatMessage(EventMsgReqDto eventMsgReqDto) {
         UserBindWeChatMessage message = new UserBindWeChatMessage();
+
+        if(StringUtils.isEmpty(eventMsgReqDto.getCallbackParameter())){
+            return;
+        }
 
         String openId = eventMsgReqDto.getFromUserName();
 
@@ -84,7 +98,7 @@ public class EventMsgHandleStrategy extends MsgHandleStrategy {
         message.setWeChatNickName(weChatUserDto.getNickname());
         message.setOpenId(openId);
         message.setBindTime(eventMsgReqDto.getCreateTime());
-        message.setCallbackParameter(eventMsgReqDto.getEventKey());
+        message.setCallbackParameter(eventMsgReqDto.getCallbackParameter());
 
         fanoutSender.send(USER_BIND_WECHAT_EXCHANGE, JSON.toJSONString(message));
         logger.info("user bind weChat message:{}", JSON.toJSONString(message));

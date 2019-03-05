@@ -6,6 +6,8 @@ import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.Queue;
 import com.guiji.component.result.Result;
 import com.guiji.config.ErrorConstant;
+import com.guiji.entity.EAnswerType;
+import com.guiji.entity.EUserState;
 import com.guiji.fs.FreeSWITCH;
 import com.guiji.fs.FsManager;
 import com.guiji.fs.pojo.GlobalVar;
@@ -89,8 +91,14 @@ public class ExternalController implements IAgentGroup{
             agentSumResponse.setTotalCount(agentList.size());
             int onlineCount = 0;
             for (Agent agent : agentList) {
-                if(!agentService.agentVertoState(agent)){
-                    onlineCount++;
+                if(agent.getAnswerType()== EAnswerType.MOBILE.ordinal()){
+                    if(agent.getUserState()== EUserState.ONLINE.ordinal()){
+                        onlineCount++;
+                    }
+                }else{
+                    if(agentService.agentVertoState(agent)){
+                        onlineCount++;
+                    }
                 }
             }
 

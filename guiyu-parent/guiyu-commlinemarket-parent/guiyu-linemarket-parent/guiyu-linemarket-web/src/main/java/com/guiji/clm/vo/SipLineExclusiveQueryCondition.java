@@ -1,5 +1,7 @@
 package com.guiji.clm.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 /** 
@@ -21,7 +23,7 @@ public class SipLineExclusiveQueryCondition {
 	//线路类型(1-自营线路;2-代理线路)
 	private Integer lineType;
 	//线路状态(1-正常;2-到期;3-失效)
-	private Integer lineStatus;
+	private List<Integer> statusList; 
 	//归属人
 	private String userId;
 	//归属企业

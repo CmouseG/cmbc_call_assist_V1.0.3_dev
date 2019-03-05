@@ -1,5 +1,6 @@
 package com.guiji.robot.util;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -42,4 +43,53 @@ public class ListUtil {
 	    }
 	    return result;
 	  }
+	
+	/**
+	 * 将一组数据平均分成n组
+	 * @param source 要分组的数据源
+	 * @param n      平均分成n组
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> List<List<T>> averageAssign(List<T> source, int n) {
+	    List<List<T>> result = new ArrayList<List<T>>();
+	    if(n==0 || n==1) {
+	    	result.add(source);
+			return result;
+		}
+	    int remainder = source.size() % n;  //(先计算出余数)
+	    int number = source.size() / n;  //然后是商
+	    int offset = 0;//偏移量
+	    for (int i = 0; i < n; i++) {
+	        List<T> value = null;
+	        if (remainder > 0) {
+	            value = source.subList(i * number + offset, (i + 1) * number + offset + 1);
+	            remainder--;
+	            offset++;
+	        } else {
+	            value = source.subList(i * number + offset, (i + 1) * number + offset);
+	        }
+	        result.add(value);
+	    }
+	    return result;
+	}
+	
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<String>();
+		list.add("1");
+		list.add("2");
+		list.add("3");
+		list.add("4");
+		list.add("5");
+		list.add("6");
+		list.add("7");
+		list.add("8");
+		list.add("9");
+		list.add("10");
+		list.add("11");
+		List<List<String>> listGroup = ListUtil.averageAssign(list,3);
+		for(List<String> group : listGroup) {
+			System.out.println(group);
+		}
+	}
 }

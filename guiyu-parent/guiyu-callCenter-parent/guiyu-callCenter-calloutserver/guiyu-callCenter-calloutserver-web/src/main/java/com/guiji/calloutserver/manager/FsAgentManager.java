@@ -25,7 +25,7 @@ public interface FsAgentManager {
       * @param busiType  业务类型
       * @return
       */
-    RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId);
+    RecordVO uploadRecord(String callId, String fileName, String busiType, Long userId, Integer billsec, Integer duration);
 
     /**
      * 模板是否存在
@@ -40,6 +40,13 @@ public interface FsAgentManager {
      * @return
      */
     Map<String, Double> getwavlength(String tempId);
+
+    /**
+     * 刷新模板录音时长
+     * @param tempId
+     * @return
+     */
+    Map<String, Double> refreshWavLength(String tempId);
 
     /**
      * 获取缓存的录音文件时长

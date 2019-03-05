@@ -49,4 +49,7 @@ public interface BillingTotalAnalysisService {
 
     //存储过程，统计每日计费数据
     void procTotalChargingByDate();
+
+    //存储过程，统计每月计费数据
+    void procTotalChargingByMonth();
 }

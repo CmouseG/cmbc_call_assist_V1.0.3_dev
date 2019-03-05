@@ -22,4 +22,8 @@ public class VoipGwPortVO extends VoipGwPort{
 	private Integer loadType;
 	//网关里配置的手机卡
 	private String gwPhoneNo;
+	//账号是否匹配--网关配置端口sip账号，集中管理后需要将端口分配对应的账号
+	private boolean isSipMatched;
+	//客户名称
+	private String userName;
 }

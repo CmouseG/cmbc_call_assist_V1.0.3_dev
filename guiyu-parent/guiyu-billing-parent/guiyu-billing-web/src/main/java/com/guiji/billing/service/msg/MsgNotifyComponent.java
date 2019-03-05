@@ -66,7 +66,9 @@ public class MsgNotifyComponent {
                     messageSend.setWeixinTemplateId(thresholdTemplateId);
                     messageSend.setWeixinPagePath(thresholdReordListUrl);
                     HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-                    map.put("userName",new SendMsgReqVO.Item("【硅基智能】尊敬的"+thresholdVo.getCompanyName()+"，您的账户余额已不足￥"+amount+"，为了不影响您的外呼任务，请及时充值。详情请登录后台费用中心进行查看，感谢您的使用。",null));
+                    map.put("keyword1", new SendMsgReqVO.Item(thresholdVo.getCompanyName(), null));
+                    map.put("keyword2", new SendMsgReqVO.Item("余额不足", null));
+                    map.put("keyword3", new SendMsgReqVO.Item("【硅基智能】尊敬的"+thresholdVo.getCompanyName()+"，您的账户余额已不足￥"+amount+"，为了不影响您的外呼任务，请及时充值。详情请登录后台费用中心进行查看，感谢您的使用。",null));
                     messageSend.setWeixinData(map);
 
                     logger.info("低于阈值，消息通知，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend));
@@ -115,7 +117,9 @@ public class MsgNotifyComponent {
                 messageSend.setWeixinTemplateId(rechargeTemplateId);
                 messageSend.setWeixinPagePath(rechargeReordListUrl);
                 HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-                map.put("userName", new SendMsgReqVO.Item("【硅基智能】尊敬的"+acct.getCompanyName()+"，您的充值已成功，您的账户当前余额￥"+acct.getAvailableBalance()+"。", null));
+                map.put("keyword1", new SendMsgReqVO.Item(acct.getCompanyName(), null));
+                map.put("keyword2", new SendMsgReqVO.Item("充值到账", null));
+                map.put("keyword3", new SendMsgReqVO.Item("【硅基智能】尊敬的"+acct.getCompanyName()+"，您的充值已成功，您的账户当前余额￥"+amount+"。", null));
                 messageSend.setWeixinData(map);
 
                 logger.info("充值消息通知，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend));
@@ -166,7 +170,9 @@ public class MsgNotifyComponent {
                     messageSend.setWeixinTemplateId(expireDayTemplateId);
                     messageSend.setWeixinPagePath(expireDayReordListUrl);
                     HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-                    map.put("userName",new SendMsgReqVO.Item("【硅基智能】尊敬的"+companyName+"，您的账户即将到期，请联系您的销售经理进行延期。",null));
+                    map.put("keyword1", new SendMsgReqVO.Item(acct.getCompanyName(), null));
+                    map.put("keyword2", new SendMsgReqVO.Item("账户到期预警", null));
+                    map.put("keyword3", new SendMsgReqVO.Item("【硅基智能】尊敬的"+companyName+"，您的账户即将到期，请联系您的销售经理进行延期。",null));
                     messageSend.setWeixinData(map);
 
                     logger.info("企业账户有效期到期，消息通知，日志ID:{},入参数据:{}", logId, JsonUtils.bean2Json(messageSend));

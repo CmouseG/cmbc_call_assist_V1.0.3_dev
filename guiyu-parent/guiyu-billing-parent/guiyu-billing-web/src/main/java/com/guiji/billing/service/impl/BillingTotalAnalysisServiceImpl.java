@@ -10,6 +10,7 @@ import com.guiji.billing.entity.BillingAcctReconciliation;
 import com.guiji.billing.service.BillingTotalAnalysisService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
+import com.guiji.billing.utils.IdWorker;
 import com.guiji.billing.utils.ResHandler;
 import com.guiji.billing.vo.BillingTotalChargingConsumerVo;
 import com.guiji.user.dao.entity.SysOrganization;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +39,9 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
 
     @Autowired
     private IAuth iAuth;
+
+    @Autowired
+    private IdWorker idWorker;
 
     /**
      * 按日查询费用统计
@@ -245,6 +250,7 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
 
     @Override
     public void procTotalChargingByDate() {
+        String logId = idWorker.nextId();
         //统计前一天日期
         Date thisDate = DateTimeUtils.getDateByOffsetDays(new Date(), -1);
         String dateStr = new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT).format(thisDate);
@@ -255,11 +261,37 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
         SimpleDateFormat sdf = new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT);
         try {
     //        billingTotalAnalysisMapper.procTotalChargingByDate(beginTime, endTime);
-            logger.info("begin-统计日期", dateStr);
+            logger.info("begin-统计日期:{},logId:{}", dateStr, logId);
             billingTotalAnalysisMapper.procTotalChargingByDate(dateStr);
-            logger.info("end-统计日期", dateStr);
+            logger.info("end-统计日期:{},logId:{}", dateStr, logId);
         }catch(Exception e){
-            logger.error("统计每日计费数据，调用存储过程异常", e);
+            logger.error("统计每日计费数据，调用存储过程异常,logId:"+logId, e);
         }
+    }
+
+    /**
+     * 统计每月计费数据
+     */
+    @Override
+    public void procTotalChargingByMonth() {
+        String logId = idWorker.nextId();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.MONTH, -1);
+        String yearMonth = format.format(c.getTime());
+        String year = yearMonth.split("-")[0];
+        String month = yearMonth.split("-")[1];
+
+        String firstDate = DateTimeUtils.getMonthLastDate(year, month, "first");
+        String lastDate = DateTimeUtils.getMonthLastDate(year, month, "last");
+        try {
+            logger.info("begin-统计月份:{},logId:{}", year + "-" + month, logId);
+            billingTotalAnalysisMapper.procTotalChargingByMonth(year + "-" + month, firstDate, lastDate);
+            logger.info("end-统计月份:{},logId:{}", year + "-" + month, logId);
+        }catch(Exception e){
+            logger.error("统计每月计费数据，调用存储过程异常,logId:"+logId, e);
+        }
+
     }
 }

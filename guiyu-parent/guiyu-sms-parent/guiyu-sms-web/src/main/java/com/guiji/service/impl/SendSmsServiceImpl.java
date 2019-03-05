@@ -12,8 +12,11 @@ import org.springframework.stereotype.Service;
 import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
 import com.guiji.platfrom.Cmpp;
+import com.guiji.platfrom.Junlong;
+import com.guiji.platfrom.ShenzhenCredit2;
 import com.guiji.platfrom.Welink;
 import com.guiji.platfrom.Ytx;
+import com.guiji.platfrom.Zxy;
 import com.guiji.service.RecordService;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskDetailService;
@@ -68,14 +71,23 @@ public class SendSmsServiceImpl implements SendSmsService
 		List<SmsRecord> records = null;
 		
 		if ("ytx".equals(identification)) {
-			logger.info("通过<云讯>发送短信...");
+			logger.info("通过<云讯>群发短信...");
 			records = new Ytx().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsTemplateId());
 		} else if ("wl".equals(identification)) {
-			logger.info("通过<微网通联>发送短信...");
+			logger.info("通过<微网通联>群发短信...");
 			records = new Welink().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		} else if ("cmpp".equals(identification)) {
-			logger.info("通过<CMPP>发送短信...");
+			logger.info("通过<CMPP>群发短信...");
 			records = new Cmpp(cmppServiceUrl).sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("zxy".equals(identification)) {
+			logger.info("通过<专信云>群发短信...");
+			records = new Zxy().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("zxy".equals(identification)) {
+			logger.info("通过<深圳信用卡2专属>群发短信...");
+			records = new ShenzhenCredit2().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("jl".equals(identification)) {
+			logger.info("通过<君隆科技>群发短信...");
+			records = new Junlong().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		}
 		
 		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录

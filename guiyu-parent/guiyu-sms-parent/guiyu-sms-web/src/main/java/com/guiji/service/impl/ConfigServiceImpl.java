@@ -56,6 +56,7 @@ public class ConfigServiceImpl implements ConfigService
 
 		example.setLimitStart((configListReq.getPageNum() - 1) * configListReq.getPageSize());
 		example.setLimitEnd(configListReq.getPageSize());
+		example.setOrderByClause("id desc");
 		List<SmsConfig> configList = configMapper.selectByExampleWithBLOBs(example); // 分页返回的记录
 		for(SmsConfig config : configList)
 		{

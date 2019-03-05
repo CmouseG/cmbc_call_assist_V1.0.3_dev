@@ -56,6 +56,12 @@ public class RobotConstants {
 	public static final String LOCK_ROBOT_AIPOOL_ASSIGN = "LOCK_ROBOT_AIPOOL_ASSIGN";	//资源锁-机器人池分配锁
 	
 	/**
+	 * 话术模板版本
+	 */
+	public static final int HS_VERSION_SB = 1;	//话术模板版本：1-老版本
+	public static final int HS_VERSION_FL = 2;	//话术模板版本：2-飞龙版本
+	
+	/**
 	 * 通话状态
 	 */
 	public static final int CALLINT_STATUS_I = 1; //I-通话中
@@ -75,6 +81,12 @@ public class RobotConstants {
 	public static final String HELLO_STATUS_WAIT = "wait"; //继续不做动作
 	
 	/**
+	 * 对话主体类型：1-机器人说的话，2-客户说的话
+	 */
+	public static final int DIA_TYPE_AI = 1; //AI
+	public static final int DIA_TYPE_CUST = 2; //客户
+	
+	/**
 	 * AI资源池
 	 */
 	public static final String ROBOT_POOL_AI = "ROBOT_POOL_AI";
@@ -83,6 +95,16 @@ public class RobotConstants {
 	 * 分配的机器人缓存
 	 */
 	public static final String ROBOT_ASSIGN_AI = "ROBOT_USER_AI_";
+	
+	/**
+	 * 用户电话缓存
+	 */
+	public static final String ROBOT_USER_CALL = "ROBOT_USER_CALL_";
+	
+	/**
+	 * 数据监控用户缓存
+	 */
+	public static final String ROBOT_MONITOR_USER = "ROBOT_MONITOR_USER_";
 	
 	/**
 	 * 用户机器人资源

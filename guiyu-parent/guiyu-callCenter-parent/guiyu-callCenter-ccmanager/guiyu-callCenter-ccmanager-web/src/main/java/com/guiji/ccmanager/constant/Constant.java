@@ -30,6 +30,10 @@ public class Constant {
     public static final String ERROR_VALIDATE = "0303007";
     public static final String ERROR_DATEFORMAT = "0303012";
 
+    public static final String ERROR_ASSIT_PLANNOTEXITST = "0303021";
+    public static final String ERROR_ASSIT_SERVERNOTEXITST = "0303022";
+    public static final String ERROR_ASSIT_TOAGENTED = "0303023";
+
 
 
     public static final int CALLSTATE_INIT = 0;//刚加入的计划，等待调度

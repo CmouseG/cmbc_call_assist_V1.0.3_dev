@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.clm.dao.ext.VoipGwInfoMapperExt" >
+  
+  
+  <!-- 查询目前最大的SIP账号-->
+  <select id="queryMaxSipAccount" resultType="java.lang.Integer" >
+    select max(start_sip_account) from voip_gw_info
+   </select>
+   
+</mapper>

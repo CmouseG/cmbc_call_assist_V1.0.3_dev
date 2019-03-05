@@ -1,6 +1,7 @@
 package com.guiji.robot.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,10 +48,13 @@ import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.vo.AiBaseInfo;
 import com.guiji.robot.service.vo.AiFlowSentenceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.CallInfo;
+import com.guiji.robot.service.vo.CallSentence;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.SellbotMatchReq;
 import com.guiji.robot.service.vo.SellbotRestoreReq;
 import com.guiji.robot.service.vo.SellbotSayhelloReq;
+import com.guiji.robot.util.DataLocalCacheUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
@@ -80,6 +84,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	IAiCycleHisService iAiCycleHisService;
 	@Autowired
 	AiAsynDealService aiAsynDealService;
+	@Autowired
+	CallDealService callDealService;
+	@Autowired
+	DataLocalCacheUtil dataLocalCacheUtil;
 	
 	/**
 	 * 导入任务时话术参数检查以及准备TTS合成
@@ -371,7 +379,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			AiCallNext aiNext = new AiCallNext();
 			aiNext.setAiNo(nowAi.getAiNo());
 			aiNext.setSellbotJson(sellbotRsp);
-			/**6、记录调用中心日志**/
+			/**6、记录通话历史***/
+			callDealService.aiCallStart(aiCallStartReq, sellbotRsp);
+			/**7、记录调用中心日志**/
 			aiAsynDealService.recordCallLog(aiCallStartReq.getSeqId(), aiCallStartReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "开始拨打电话,成功!");
 			return aiNext;
 		} catch (Exception e) {
@@ -448,6 +458,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		AiFlowSentenceCache aiFlowSentenceCache = new AiFlowSentenceCache();
 		BeanUtil.copyProperties(aiFlowMsgPushReq, aiFlowSentenceCache);
 		aiCacheService.putFlowSentence(aiFlowSentenceCache);
+		//异步同步到客户一通电话对话记录中
+		callDealService.flowMsgPush(aiFlowMsgPushReq);
 	}
 	
 	
@@ -458,14 +470,18 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 */
 	@Override
 	public AiCallNext aiCallNext(AiCallNextReq aiCallNextReq) {
+		/**1、数据校验**/
 		if(aiCallNextReq == null
 				|| StrUtils.isEmpty(aiCallNextReq.getUserId())
 				|| StrUtils.isEmpty(aiCallNextReq.getAiNo())
 				|| StrUtils.isEmpty(aiCallNextReq.getSeqId())
+				|| StrUtils.isEmpty(aiCallNextReq.getTemplateId())
 				|| StrUtils.isEmpty(aiCallNextReq.getStatus())) {
 			//必输校验不通过
 			throw new RobotException(AiErrorEnum.AI00060001.getErrorCode(),AiErrorEnum.AI00060001.getErrorMsg());
 		}
+		//话术模板数据，next请求太频繁所以放入本地内存
+		HsReplace hsReplace = dataLocalCacheUtil.queryTemplate(aiCallNextReq.getTemplateId());
 		AiCallNext aiNext = new AiCallNext();
 		aiNext.setAiNo(aiCallNextReq.getAiNo());
 		SellbotSayhelloReq sellbotSayhelloReq = new SellbotSayhelloReq();
@@ -474,14 +490,41 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//机器人不存在
 			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
+		/**2、打断-过滤不能打断的域**/
+		//获取实施通话
+		CallInfo callInfo = aiCacheService.queryUserCall(aiCallNextReq.getUserId(), aiCallNextReq.getSeqId());
+		if(callInfo!=null) {
+			if(hsReplace.getNon_interruptable()!=null && hsReplace.getNon_interruptable().length>0) {
+				//校验不打断域
+				if(RobotConstants.CALL_STATUS_BEGIN.equals(aiCallNextReq.getStatus()) || RobotConstants.CALL_STATUS_ING.equals(aiCallNextReq.getStatus())) {
+					//如果状态现在还是在开场白/播音中，那么校验是否忽略打断的域，如果不能打断的域，直接返回wait
+					String currentDomain = callInfo.getCurrent_domain();
+					if(StrUtils.isNotEmpty(currentDomain)) {
+						if(Arrays.asList(hsReplace.getNon_interruptable()).contains(currentDomain)) {
+							logger.info("模板{}配置的当前域{}不能打断",aiCallNextReq.getTemplateId(),currentDomain);
+							aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
+							return aiNext;
+						}
+					}else {
+						logger.error("seqid:{}，当前域不能为空！",aiCallNextReq.getSeqId());
+					}
+				}
+			}
+			if(StrUtils.isNotEmpty(callInfo.getState())) {
+				sellbotSayhelloReq.setState(callInfo.getState());
+			}
+		}else {
+			logger.error("根据用户id:{},seqid:{}获取实时通话数据为空",aiCallNextReq.getUserId(),aiCallNextReq.getSeqId());
+		}
+		/**3、根据客户最近的话校验是否需要打断**/
 		//从缓存中获取一条长度最长的sentence同ai交互
 		AiFlowSentenceCache sentenceCache = this.getMsgFlowSentence(aiCallNextReq);
 		if(sentenceCache != null) {
 			//先过滤掉wait的数据操作
-			String waitFlag = this.flowMsgWaitDeal(sentenceCache, aiCallNextReq);
+			String waitFlag = this.flowMsgWaitDeal(hsReplace,sentenceCache, aiCallNextReq);
 			//不管处理结果如何,从缓存中清掉这个已经用掉的数据
 			aiCacheService.delSentence(sentenceCache.getSeqId(), sentenceCache.getTimestamp());
-			if(RobotConstants.HELLO_STATUS_WAIT.equals(waitFlag)) {
+			if(StrUtils.isNotEmpty(waitFlag) && RobotConstants.HELLO_STATUS_WAIT.equals(waitFlag)) {
 				//如果结果是wait操作
 				aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
 				return aiNext;
@@ -490,7 +533,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			logger.info("会话ID:{}没有获取到有效的流消息",aiCallNextReq.getSeqId());
 			//流消息未发送,客户8S没说话,机器人要回一句
 			//默认打断次数配置，后续根据 话术模板 取个性化配置
-			int break_time = 8;
+			int break_time = hsReplace.getSilence_wait_secs();
 			if(aiCallNextReq.getWaitCnt() < break_time){
 				logger.info("会话ID:{},,等待时间{},小于限制时间:{}...return wait",aiCallNextReq.getSeqId(),aiCallNextReq.getWaitCnt(),break_time);
 				aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
@@ -501,10 +544,26 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				sellbotSayhelloReq.setSilence_exceed(true);
 			}
 		}
+		/**4、播音开始**/
+		boolean interruptFlag = true; //是否打断-默认不是打断，而是正常
+		if(RobotConstants.CALL_STATUS_OVER.equals(aiCallNextReq.getStatus())) {
+			//如果是因为播音结束走到这里，不能算打断
+			interruptFlag = false;
+		}else {
+			//打断
+			interruptFlag = true;
+			if(this.isLessInterruptMinInterval(hsReplace, callInfo)) {
+				//本来需要打断的，但是如果本次打断超过了设置的打断最小时间间隔，仍然不能打断
+				aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_WAIT);
+				return aiNext;
+			}
+		}
 		aiNext.setHelloStatus(RobotConstants.HELLO_STATUS_PLAY);	//播音
 		sellbotSayhelloReq.setSentence(sentenceCache==null?"":sentenceCache.getSentence());
 		String sellbotRsp = iSellbotService.sayhello(new AiBaseInfo(nowAi.getAiNo(),nowAi.getIp(),nowAi.getPort()),sellbotSayhelloReq);
 		aiNext.setSellbotJson(sellbotRsp);
+		//异步记录对话记录
+		callDealService.aiCallNext(interruptFlag,aiCallNextReq.getUserId(), aiCallNextReq.getSeqId(), sellbotRsp);
 		return aiNext;
 	}
 	
@@ -546,6 +605,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		aiCacheService.delAllSentenceBySeqId(aiHangupReq.getSeqId());
 		/**5、记录log **/
 		aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_END, "挂断电话完成!");
+		/**6、清除这通电话数据 **/
+		callDealService.delUserCall(aiHangupReq.getUserId(), aiHangupReq.getSeqId());
 	}
 	
 	
@@ -629,6 +690,10 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @return
 	 */
 	private boolean isNeedVoiceCheck(AiFlowMsgPushReq aiFlowMsgPushReq) {
+		if(1==1) {
+			//因为现在调用阿里的asr识别，所以暂时不需要调用我们自己的噪音检测，所以先直接返回不需要检测
+			return false;
+		}
 		//长度>4不需要走噪音检测
 		if(aiFlowMsgPushReq.getSentence().length()>4) {
 			return false;
@@ -711,7 +776,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 	 * @param sentenceCache
 	 * @param aiCallNextReq
 	 */
-	private String flowMsgWaitDeal(AiFlowSentenceCache sentenceCache,AiCallNextReq aiCallNextReq) {
+	private String flowMsgWaitDeal(HsReplace hsReplace,AiFlowSentenceCache sentenceCache,AiCallNextReq aiCallNextReq) {
 		//播音状态
 		String status = aiCallNextReq.getStatus();
 		if(RobotConstants.CALL_STATUS_BEGIN.equals(status)) {
@@ -733,7 +798,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				logger.info("会话ID:{},sentence:{},匹配黑名单...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
 				return RobotConstants.HELLO_STATUS_WAIT;
 			}
-			if(sentenceCache.getSentence().length()<3) {
+			if(sentenceCache.getSentence().length()< hsReplace.getInterrupt_words_num()) {
 				//长度<3且没有命中关键字-wait
 				AiCallLngKeyMatchReq aiCallLngKeyMatchReq = new AiCallLngKeyMatchReq();
 				BeanUtil.copyProperties(aiCallNextReq, aiCallLngKeyMatchReq);
@@ -741,7 +806,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				boolean isMatched = this.isMatched(aiCallLngKeyMatchReq);
 				if(!isMatched) {
 					//未匹配关键字
-					logger.info("会话ID:{},sentence:{},长度<3且未匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence());
+					logger.info("会话ID:{},sentence:{},长度<{}且未匹配关键字...return wait",aiCallNextReq.getSeqId(),sentenceCache.getSentence(),hsReplace.getInterrupt_words_num());
 					return RobotConstants.HELLO_STATUS_WAIT;
 				}
 			}
@@ -761,6 +826,37 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			for(String str:array) {
 				if(txt.indexOf(str)>=0) {
 					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 校验是否超过了最小打断时间间隔
+	 * true:超过了最小的打断间隔，不能继续打断了
+	 * false:没有超
+	 * @return
+	 */
+	private boolean isLessInterruptMinInterval(HsReplace hsReplace,CallInfo callInfo) {
+		if(callInfo!=null && callInfo.getSentenceList()!=null && !callInfo.getSentenceList().isEmpty()) {
+			for(int i=callInfo.getSentenceList().size()-1;i>=0;i--){
+				//倒叙校验，最近一个打断是否有超过模板设置的最小打断间隔
+				CallSentence callSentence = callInfo.getSentenceList().get(i);
+				if(RobotConstants.DIA_TYPE_AI == callSentence.getDiaType()) {
+					boolean interruptFlag = callSentence.isInterruptFlag();	//是否断掉
+					if(interruptFlag) {
+						//如果是打断
+						Date recordTime = callSentence.getRecordTime();	//最近打断记录时间
+						if(recordTime!=null) {
+							int interval = (int)(new Date().getTime()-recordTime.getTime())/1000;
+							if(interval < hsReplace.getInterrupt_min_interval()) {
+								logger.info("会话id:{},最近一次打断时间:{},本次小于设置的最小打断时间间隔{}，不能打断",callInfo.getSeqId(),recordTime,hsReplace.getInterrupt_min_interval());
+								return true;
+							}
+						}
+						break;
+					}
 				}
 			}
 		}

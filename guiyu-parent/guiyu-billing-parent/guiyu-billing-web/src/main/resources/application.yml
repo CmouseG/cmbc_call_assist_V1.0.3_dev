@@ -163,24 +163,24 @@ fdfs:
 weixin:
   #阈值
   threshold:
-    appid: wx017a03051262ec17  #跳转到的小程序appid
-    templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
     pagePath:
       callReordUrl:
       reordListUrl:
 
   #充值
   recharge:
-    appid: wx017a03051262ec17  #跳转到的小程序appid
-    templateId: XqbPFDO46Z9X7eDifzCJMU0TJVExXpxBBAeEZR_iQqE  #模板id
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s  #模板id
     pagePath:
       callReordUrl:
       reordListUrl:
 
   #有效期到期
   expireDay:
-    appid:   #跳转到的小程序appid
-    templateId:   #模板id
+    appid:  #跳转到的小程序appid
+    templateId: sWm0PZIGJ0EZZ0gH3n7eeT__sC1mGxqqzhHkGXwzy_s   #模板id
     pagePath:
       callReordUrl:
       reordListUrl:

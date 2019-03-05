@@ -85,8 +85,15 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 		}
 		
 		//增加号码过滤不去重
+		List<String> ignoredomain = new ArrayList<>();
+		ignoredomain.add("号码过滤");
+		ignoredomain.add("不清楚");
+		ignoredomain.add("不知道");
+		ignoredomain.add("未匹配响应");
+		
+		
 		BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
-		intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameEqualTo("号码过滤");
+		intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainNameIn(ignoredomain);
 		List<BotSentenceIntent> phoneIgnoreList = botSentenceIntentMapper.selectByExample(intentExample);
 		if(null != phoneIgnoreList && phoneIgnoreList.size() > 0) {
 			for(BotSentenceIntent intent : phoneIgnoreList) {
@@ -241,6 +248,77 @@ public class BotSentenceKeyWordsValidateServiceImpl implements IBotSentenceKeyWo
 		if(StringUtils.isNotBlank(message)) {
 			throw new CommonException(message);
 		}
+	}
+	
+	
+	@Override
+	public void validateBusinessAskKeywords2(List<BotSentenceIntentVO> list, String processId, List<Long> ignoreIntentIds) {
+		//根据意图列表获取所有关键词
+		String[] keys = new String[] {};
+		
+		//获取所有关键词库对应关键词集合
+		if(null != list && list.size() > 0) {
+			String allKeywords = "";
+			for(BotSentenceIntentVO temp : list) {
+				if(org.apache.commons.lang.StringUtils.isNotBlank(temp.getKeywords())) {
+					String replaceKeyWords = temp.getKeywords().replaceAll("，", ",");
+					replaceKeyWords = replaceKeyWords.replace("\n", "");
+					
+					allKeywords = allKeywords + replaceKeyWords + ",";
+				}
+			}
+			if(org.apache.commons.lang.StringUtils.isNotBlank(allKeywords)) {
+				allKeywords = allKeywords.substring(0, allKeywords.length()-1);
+				keys=allKeywords.split(",");
+			}
+		}
+		
+		Map<String, String> keywords = botSentenceProcessService.getAllSelectKeywords(processId, ignoreIntentIds);	
+		
+		String message = "";
+		
+		//校验意图之间关键词是否重复
+		if(null != list && list.size() > 0) {
+			for(int i = 0 ; i < list.size() - 1 ; i++) {
+				//获取关键词
+				BotSentenceIntentVO vo1 = list.get(i);
+				String keywords1 = vo1.getKeywords();
+				if(StringUtils.isBlank(keywords1)) {
+					continue;
+				}
+				List<String> keywordList1 = BotSentenceUtil.StringToList(keywords1);
+				
+				for(int j = i+1; j < list.size() ; j++) {
+					//获取关键词
+					BotSentenceIntentVO vo2 = list.get(j);
+					String keywords2 = vo2.getKeywords();
+					if(StringUtils.isBlank(keywords2)) {
+						continue;
+					}
+					List<String> keywordList2 = BotSentenceUtil.StringToList(keywords2);
+					for(String temp : keywordList2) {
+						if(keywordList1.contains(temp)) {
+							String repeat = "意图'"+vo1.getName()+"'与'"+vo2.getName()+"'的关键词【"+temp+"】重复";
+							message = message + repeat + "<br/>";
+						}
+					}
+				}
+			}
+		}
+		
+		
+		for(int j = 0 ; j < keys.length ; j++) {
+			//校验关键字是否重复
+			if(keywords.containsKey(keys[j])) {
+				String repeat = "【" + keys[j] + "】 与 【" + keywords.get(keys[j]) + "】的关键字重复了";
+				message = message + repeat + "<br/>";
+			}
+		}
+		
+		if(org.apache.commons.lang.StringUtils.isNotBlank(message)) {
+			throw new CommonException(message);
+		}
+	
 	}
 	
 }

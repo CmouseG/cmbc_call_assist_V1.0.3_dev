@@ -538,7 +538,7 @@
     left join sys_organization f on (case b.role_id when 4 then f.code=LEFT(a.org_code, LENGTH(a.org_code) - LOCATE('.', REVERSE(a.org_code))) else f.code= a.org_code end)
     where a.del_flag=0
     <if test="userName != '' ">
-      and a.username=#{userName}
+      and a.username like concat(#{userName},'%');
     </if>
     <if test="roleId !='' ">
       and c.id like concat('%',#{roleId},'%')

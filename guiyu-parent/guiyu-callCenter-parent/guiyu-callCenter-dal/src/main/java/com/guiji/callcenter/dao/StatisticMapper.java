@@ -19,13 +19,14 @@ public interface StatisticMapper {
 
     void updateTodayCountAndDruation(ReportCallToday reportCallToday);
 
-
+    List<ReportCallDay> countReportCallToday();
     List<ReportCallDay> countReportCallDayDruation30();
     List<ReportCallDay> countReportCallDayDruation10();
     List<ReportCallDay> countReportCallDayDruation5();
     List<ReportCallDay> countReportCallDayDruation0();
 
     void insertReportCallDay(List<ReportCallDay> list);
+    void insertReportCallToday(List<ReportCallDay> list);
 
     void deleteReportCallDay();
 
@@ -64,4 +65,6 @@ public interface StatisticMapper {
     List<ErrorMatch> getErrorMaths();
 
     Map getLineCountAndConcurrent(@Param("customerId") String customerId, @Param("orgCode") String orgCode);
+
+
 }

@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class LineOperateController implements ILineOperate {
     private final Logger logger = LoggerFactory.getLogger(LineOperateController.class);
@@ -57,5 +59,15 @@ public class LineOperateController implements ILineOperate {
         FileUtil.delete(fs.getGateway()+"gw_"+lineId+".xml");
         fs.execute("sofia profile external killgw gw_"+ lineId);
         return Result.ok();
+    }
+
+    @Override
+    public Result.ReturnData<Boolean> updatenotifybatch(@RequestParam("lineIds") String lineIds) {
+        logger.info("收到批量更新配置信息通知请求，lineIds[{}]",lineIds);
+        if(StringUtils.isBlank(lineIds)){
+            logger.info("更新配置信息通知请求失败，参数错误，为null或空");
+            return Result.error(Constant.ERROR_CODE_PARAM);
+        }
+        return Result.ok(lineOperateService.updatenotifybatch(lineIds));
     }
 }

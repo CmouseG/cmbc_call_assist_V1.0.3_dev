@@ -16,4 +16,7 @@ public interface LineService {
 
      List<LineXmlnfoVO> linexmlinfosAll() ;
 
+     boolean batchLinesinfos(List<LineInfoVO> lineInfo) ;
+
+     List<LineXmlnfoVO> batchlinexmlinfosAll(List<String> lineIds);
 }

@@ -9,7 +9,8 @@ public enum FsmanagerExceptionEnum implements ExceptionEnum {
 
     EXCP_FSMANAGER_LINE_REPEAT("0301003","创建线路失败，线路名称重复"),
     EXCP_FSMANAGER_NONE_FREESWITCH("0301002","申请freeswitch资源失败，空闲且正常的freeswitch为空"),
-    EXCP_FSMANAGER_FSAGENT_NO_RECORD("0301004","模板不存在");
+    EXCP_FSMANAGER_FSAGENT_NO_RECORD("0301004","模板不存在"),
+    EXCP_FSMANAGER_SIMAGENT_DOWN("0301005","simagent服务宕了");
     //返回码
     private String errorCode;
     //返回信息

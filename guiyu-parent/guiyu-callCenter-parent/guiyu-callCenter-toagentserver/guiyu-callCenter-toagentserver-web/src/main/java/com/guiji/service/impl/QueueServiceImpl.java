@@ -86,6 +86,7 @@ public class QueueServiceImpl implements QueueService {
         queueMapper.insert(queue);
         Boolean result = fsManager.createQueue(queue.getQueueId() + "");
 
+
         // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
         String other = "callcenter_config+queue+load+"+queue.getQueueId();
@@ -122,9 +123,12 @@ public class QueueServiceImpl implements QueueService {
         queueMapper.deleteByPrimaryKey(Long.parseLong(queueId));
         //第四步删除callcenter中的该队列
         fsManager.deleteQueue(queueId);
-        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+        /**
+         * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+         */
+//        // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
         return true;
     }
 
@@ -163,9 +167,12 @@ public class QueueServiceImpl implements QueueService {
             }
         }
         queueMapper.updateByPrimaryKey(queue);
-        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+        /**
+         * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+         */
+//        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
     }
 
     @Override

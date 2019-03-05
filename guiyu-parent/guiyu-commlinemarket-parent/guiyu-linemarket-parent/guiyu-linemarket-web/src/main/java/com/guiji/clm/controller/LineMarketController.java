@@ -168,8 +168,8 @@ public class LineMarketController {
 			condition = new SipLineInfoQueryCondition();
 		}
 		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
-			//默认查询正常
-			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+			//默认查询未生效和正常数据
+			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.INIT.getCode());add(SipLineStatusEnum.OK.getCode());}});
 		}
 		Page<SipLineBaseInfo> sipLineBasePage = sipLineInfoService.querySipLineBaseForPageByCondition(condition);
 		Page<SipLineBaseInfoVO> rtnPage = new Page<SipLineBaseInfoVO>(condition.getPageNo(),sipLineBasePage.getTotalRecord(),this.baseLine2VO(sipLineBasePage.getRecords()));

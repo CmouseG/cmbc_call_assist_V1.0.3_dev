@@ -183,7 +183,7 @@ public class CallPlanDispatchHandler {
         dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), isNeedPlan);
         callingCountManager.removeOneCall();
         lineCountWService.addWCount(callPlan.getLineId(),callPlan.getOrgCode(),callPlan.getCustomerId());
-        statisticReportHandler.updateReportToday(callPlan);
+//        statisticReportHandler.updateReportToday(callPlan);
     }
 
 

@@ -36,6 +36,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.fsmanager.api.ISimCard;
 import com.guiji.fsmanager.entity.FsSipVO;
+import com.guiji.fsmanager.entity.LineInfoVO;
 import com.guiji.fsmanager.entity.SimCardVO;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
@@ -140,10 +141,11 @@ public class VoipGwManager {
 					/**5、初始化网关所有端口**/
 					List<VoipGwPort> portList = voipGwService.initVoipGwPort(voipGwInfo);
 					/**6、遍历端口，调用呼叫中心新增线路，并更新端口信息**/
+					List<OutLineInfoAddReq> outLineInfoAddReqList = new ArrayList<OutLineInfoAddReq>();
 					for(VoipGwPort port : portList) {
 						//线路新增
 						OutLineInfoAddReq lineInfo = new OutLineInfoAddReq();
-						lineInfo.setLineName(voipGwInfo.getGwName()+port.getPort());
+						lineInfo.setLineName(voipGwInfo.getGwName()+"-"+port.getPort());
 						lineInfo.setSipIp(voipGwInfo.getSipIp());	//线路sip地址
 						lineInfo.setSipPort(fsSipVO.getLinePort()); //新增线路时的使用端口
 						lineInfo.setCodec("PCMA"); //网关编号都支持，所以此处默认个最常用编码：PCMA
@@ -151,14 +153,26 @@ public class VoipGwManager {
 						lineInfo.setMaxConcurrentCalls(1);	//端口并发数默认1
 						lineInfo.setOrgCode(voipGwInfo.getOrgCode()); //企业编号
 						lineInfo.setRemark("语音网关");
-						log.info("开始调用呼叫中心新增线路：{}",lineInfo);
-						Result.ReturnData<Integer> lineIdData = iLineOperation.addLineInfo(lineInfo);
-						log.error("完成调用呼叫中心新增线路,返回结果:{}",lineIdData);
-						if(lineIdData==null || lineIdData.getBody()==null) {
+						outLineInfoAddReqList.add(lineInfo);
+					}
+					if(outLineInfoAddReqList!=null && !outLineInfoAddReqList.isEmpty()) {
+						log.info("开始调用呼叫中心批量新增线路：{}",outLineInfoAddReqList);
+						Result.ReturnData<List<LineInfoVO>> lineListData = iLineOperation.batchAddLineInfo(outLineInfoAddReqList);
+						log.error("完成调用呼叫中心批量新增线路,返回结果:{}",lineListData);
+						if(lineListData==null || lineListData.getBody()==null) {
 							throw new ClmException(ClmErrorEnum.CLM1809308.getErrorCode(),ClmErrorEnum.CLM1809308.getErrorMsg());
 						}
-						port.setLineId(lineIdData.getBody());
-						voipGwPortService.save(port);
+						List<LineInfoVO> lineList = lineListData.getBody();
+						for(VoipGwPort port : portList) {
+							for(LineInfoVO line : lineList) {
+								if(port.getSipAccount().toString().equals(line.getCallerNum())) {
+									//sip账号和 主叫号码一致
+									port.setLineId(Integer.valueOf(line.getLineId()));
+									voipGwPortService.save(port);
+									break;
+								}
+							}
+						}
 					}
 				}catch (Exception e) {
 					//如果在调用fsmanager服务注册网关后，发生了异常，那么需要将新增的网关删除掉

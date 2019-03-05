@@ -138,6 +138,10 @@ public class SipLineManager {
 			//线路更新
 			//查询存量线路信息
 			extSipLineBaseInfo = sipLineInfoService.queryById(sipLineBaseInfo.getId());
+			if(extSipLineBaseInfo!=null && StrUtils.isEmpty(extSipLineBaseInfo.getLineId())) {
+				//如果线路id是空的，那么可能是新增的共享线路还没有生效，存量线路设置为null
+				extSipLineBaseInfo = null;
+			}
 		}
 		//调用呼叫中心线路，生成线路ID
 		Integer lineId = this.callcenterLine(sipLineBaseInfo, extSipLineBaseInfo);

@@ -9,10 +9,7 @@ import com.guiji.calloutserver.enm.ECallDirection;
 import com.guiji.calloutserver.enm.ECallState;
 import com.guiji.calloutserver.eventbus.event.AfterCallEvent;
 import com.guiji.calloutserver.eventbus.event.CallResourceReadyEvent;
-import com.guiji.calloutserver.manager.CallingCountManager;
-import com.guiji.calloutserver.manager.DispatchManager;
-import com.guiji.calloutserver.manager.FsAgentManager;
-import com.guiji.calloutserver.manager.LineListManager;
+import com.guiji.calloutserver.manager.*;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.CallOutRecordService;
 import com.guiji.calloutserver.service.CallService;
@@ -59,6 +56,8 @@ public class CallPlanDispatchHandler {
     LineCountWService lineCountWService;
     @Autowired
     StatisticReportHandler statisticReportHandler;
+    @Autowired
+    AIManager aiManager;
 
     //注册这个监听器
     @PostConstruct
@@ -106,7 +105,7 @@ public class CallPlanDispatchHandler {
 
         CallOutPlan callPlan = afterCallEvent.getCallPlan();
         log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
-        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(), callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
+        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(), callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
 
     }
 
@@ -139,7 +138,7 @@ public class CallPlanDispatchHandler {
                 } catch (Exception ex) {
                     log.error("插入calloutplan异常,重复的uuid", ex);
                     //重复的id，回调
-                    dispatchService.successSchedule(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
+                    dispatchService.successSchedule(callPlan.getPlanUuid(), null, null, callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
                     callingCountManager.removeOneCall();
                     return;
                 }
@@ -150,16 +149,18 @@ public class CallPlanDispatchHandler {
                     //回掉给调度中心，更改通话记录
                     //没有机器人资源，会少一路并发数，直接return了
                     log.error("checkSellbot，检查机器人资源失败 callPlan[{}]", callPlan);
-                    readyFail(callPlan,e.getMessage());
+                    readyFail(callPlan,"605",false);
                     return;
                 }
 
-                //下载tts语音合成文件
+                //下载tts语音合成文件 todo 并发是否会有问题
                 try {
                     fsAgentManager.downloadTtsWav(callPlan.getTempId(), callPlan.getPlanUuid(), callPlan.getCallId().toString());
                 }catch (Exception e){
                     log.error("downloadTtsWav，下载tts语音，出现异常 callPlan[{}]", callPlan, e);
-                    readyFail(callPlan,null);
+                    readyFail(callPlan,null,true);
+                    //释放机器人
+                    aiManager.releaseAi(callPlan);
                     return;
                 }
 
@@ -174,12 +175,12 @@ public class CallPlanDispatchHandler {
 
     }
 
-    private void readyFail(CallOutPlan callPlan,String reason){
+    private void readyFail(CallOutPlan callPlan,String reason,Boolean isNeedPlan){
         callPlan.setCallState(ECallState.norobot_fail.ordinal());
         callPlan.setAccurateIntent("W");
         callPlan.setReason(reason);
         callOutPlanService.update(callPlan);
-        dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId());
+        dispatchService.successSchedule(callPlan.getPlanUuid(), callPlan.getPhoneNum(), "W", callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), isNeedPlan);
         callingCountManager.removeOneCall();
         lineCountWService.addWCount(callPlan.getLineId(),callPlan.getOrgCode(),callPlan.getCustomerId());
         statisticReportHandler.updateReportToday(callPlan);

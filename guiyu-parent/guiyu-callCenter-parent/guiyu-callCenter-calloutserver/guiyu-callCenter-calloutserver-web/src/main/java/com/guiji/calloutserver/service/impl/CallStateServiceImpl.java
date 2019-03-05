@@ -63,7 +63,7 @@ public class CallStateServiceImpl implements CallStateService {
         updateCallPlan.setCallState(ECallState.hangup_fail.ordinal());
 
         updateCallPlan.setAccurateIntent("W");
-        updateCallPlan.setReason("系统通信异常");
+        updateCallPlan.setReason("603");
 
         //回调调度中心和机器人中心
         log.info("updateCallState 查询的list大小:" + list.size());
@@ -83,7 +83,7 @@ public class CallStateServiceImpl implements CallStateService {
                 }
 
                 try {
-                    dispatchService.successSchedule(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(),callOutPlan.getAccurateIntent(), callOutPlan.getCustomerId(), callOutPlan.getLineId(),callOutPlan.getTempId());
+                    dispatchService.successSchedule(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(),callOutPlan.getAccurateIntent(), callOutPlan.getCustomerId(), callOutPlan.getLineId(),callOutPlan.getTempId(),true);
                     log.info("---->>回调dispatcher，返回结果,callId[{}]",callOutPlan.getCallId());
                 } catch (Exception e) {
                     log.error("调用调度中心 successSchedule 出现异常:" + e);

@@ -162,16 +162,16 @@ public class LocalFsServer implements IEslEventListener {
      * @param uuid
      * @param timeOut
      */
-    public void scheduleHangup(String uuid, Double timeOut){
-        String hangupCmd = String.format("sched_api +%s  uuid_kill %s", timeOut, uuid);
-        executeAsync(hangupCmd);
-    }
+//    public void scheduleHangup(String uuid, Double timeOut){
+//        String hangupCmd = String.format("sched_api +%s  uuid_kill %s", timeOut, uuid);
+//        executeAsync(hangupCmd);
+//    }
 
     /**
      * 杀掉通道
      * @param uuid
      */
-    public void hangup(BigInteger uuid){
+    public void hangup(String uuid){
         executeAsync("uuid_kill " + uuid);
     }
 

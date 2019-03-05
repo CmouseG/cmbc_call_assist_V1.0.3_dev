@@ -26,9 +26,9 @@ public class DispatchManagerImpl implements DispatchManager {
      *  回掉调度中心结果
      */
     @Override
-    public void successSchedule(String callId, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId) {
+    public void successSchedule(String callId, String phoneNo, String intent, Integer userId ,Integer lineId, String tempId, Boolean isNeedPlan) {
         log.info("=========startSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
-        if(StringUtils.isBlank(callId) || StringUtils.isBlank(intent)){
+        if(StringUtils.isBlank(callId)){  // todo  优化
             log.info("---startSchedule callid is null or intnet is null:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
             return;
         }
@@ -46,8 +46,10 @@ public class DispatchManagerImpl implements DispatchManager {
         if(tempId!=null){
             mqSuccPhoneDto.setTempId(tempId);
         }
-        rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto));
-        rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));
+        rabbitTemplate.convertAndSend("dispatch.SuccessPhoneMQ", JsonUtils.bean2Json(mqSuccPhoneDto)); // 用于判断计划是否完成，可以重复调用
+        if(isNeedPlan){
+            rabbitTemplate.convertAndSend("dispatch.CallBackEvent", JsonUtils.bean2Json(mqSuccPhoneDto));//这个队列用于控制是否会有下一个计划过来，机器人申请失败无需调用
+        }
         log.info("========successSchedule:callId[{}],phoneNo[{}],intent[{}]",callId,phoneNo,intent);
     }
 }

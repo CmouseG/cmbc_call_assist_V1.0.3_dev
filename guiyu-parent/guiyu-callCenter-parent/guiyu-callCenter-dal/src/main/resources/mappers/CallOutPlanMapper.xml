@@ -122,11 +122,25 @@
             limit #{limitStart} , #{limitEnd}
         </if>
     </select>
+    <select id="selectCallIds4Encrypt" resultType="java.math.BigInteger" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
+        select
+        call_id
+        from call_out_plan
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart != null and limitStart>=0" >
+            limit #{limitStart} , #{limitEnd}
+        </if>
+    </select>
     <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
         select
         call_id, IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
         customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time,
-        agent_channel_uuid, agent_group_id, agent_start_time, create_time, call_start_time,
+        agent_channel_uuid, agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
         accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,
         isdel, isread
@@ -141,12 +155,9 @@
             limit #{limitStart} , #{limitEnd}
         </if>
     </select>
-    <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map" parameterType="java.util.Map" >
-        select
-        CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
-        a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse,a.talk_num
+    <select id="selectCallPlanRecordIds4Encrypt" resultType="java.math.BigInteger" parameterType="java.util.Map" >
+        select a.call_id
         from call_out_plan a
-        left join call_out_record b on a.call_id = b.call_id
         where a.isdel =0
         and a.call_state >=7
         <if test="accurateIntent != null" >
@@ -164,6 +175,19 @@
         order by a.create_time desc
         limit #{limitStart} , #{limitEnd}
     </select>
+    <select id="selectCallPlanRecord4Encrypt" resultType="java.util.Map" >
+        select
+        CAST(a.call_id AS CHAR) as id, IF(1=#{isDesensitization},a.phone_num,REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****')) AS phone ,
+        a.duration as calltime, a.accurate_intent as label, b.record_url as voicefile ,a.isread as isbrowse,a.talk_num
+        from call_out_plan a
+        left join call_out_record b on a.call_id = b.call_id
+        where a.call_id
+        <foreach collection="idList"
+                 index="index" open="in(" close=")" separator=",">
+            #{idList[${index}]}
+        </foreach>
+    </select>
+
     <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map" >
         select count(*)
         from call_out_plan
@@ -636,8 +660,8 @@
                 hangup_direction = #{hangupDirection,jdbcType=INTEGER},
             </if>
             <if test="accurateIntent != null" >
-                reason = IF( accurate_intent IS NULL ,#{reason,jdbcType=VARCHAR}, reason),
-                accurate_intent = IF( accurate_intent IS NULL ,#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
+                reason = IF( accurate_intent IS NULL or accurate_intent ='W',#{reason,jdbcType=VARCHAR}, reason),
+                accurate_intent = IF( accurate_intent IS NULL  or accurate_intent ='W',#{accurateIntent,jdbcType=VARCHAR}, accurate_intent),
             </if>
 
             <if test="hangupCode != null" >

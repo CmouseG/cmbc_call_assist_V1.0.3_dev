@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,11 +58,11 @@ public class CallServiceImpl implements CallService {
         if(ip.contains(":")){
             ip = ip.split(":")[0];
         }
-       String callid = callplan.getCallId().toString();
+        String callid = callplan.getCallId().toString();
         //构建外呼命令
         String cmd = String.format("originate {origination_uuid=%s,origination_caller_id_name=%s}" +
                         "sofia/internal/%s@%s:%s 'start_asr:%s %s" +
-                        ", record_session:/recordings/%s" +
+                        ", record_session:/usr/local/freeswitch/recordings/%s" +
                         ", park' inline",
                 callid,
                 callplan.getLineId(),
@@ -72,8 +73,16 @@ public class CallServiceImpl implements CallService {
                 aliAsrConfig.getAccessSecret(),
                 recordFile);
 
-        log.info("开始执行呼叫命令[{}]", cmd);
-        fsManager.executeAsync(cmd);
+        synchronized (this){
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info("开始执行呼叫命令[{}]", cmd);
+            fsManager.executeAsync(cmd);
+        }
+
 
         Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValueByTypeKey("bell_time","bell_time");
         String value = returnData.getBody().get(0).getDictValue();
@@ -81,7 +90,7 @@ public class CallServiceImpl implements CallService {
             log.info("时间已到，去检查电话是否已经接听,callId[{}]",callid);
             if(!callLineAvailableManager.isChannelAnswer(callid)){
                 log.info("时间已到，电话没有接听，手动挂断,callId[{}]",callid);
-                fsManager.hangup(callplan.getCallId());
+                fsManager.hangup(callplan.getCallId().toString());
             }
 
         }, Integer.valueOf(value), TimeUnit.SECONDS);

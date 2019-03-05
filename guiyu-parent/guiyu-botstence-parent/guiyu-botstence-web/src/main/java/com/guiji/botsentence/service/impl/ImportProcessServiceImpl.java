@@ -257,24 +257,26 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceProcess.setState(Constant.APPROVE_MAEKING);
 				botSentenceProcess.setTemplateType("02");
 				
-				if(StringUtils.isBlank(template_id)) {
+				//if(StringUtils.isBlank(template_id) || "_en".equals(template_id)) {
 					//生成模板编号
 					Pinyin4jUtil util= new Pinyin4jUtil();
 					String pingyin = "";
 					try {
-						pingyin = util.toPinYinLowercase(trade);
+						pingyin = util.toPinYinLowercase(template_name);
 					} catch (BadHanyuPinyinOutputFormatCombination e) {
 						logger.error("生成首字母异常...", e);
 						pingyin = SystemUtil.getSysJournalNo(5, false);
 					}
 					
 					template_id = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
-				}
+				//}
+				logger.info("自动生成模板编号: " + template_id);
 				
 				botSentenceProcess.setTemplateId(template_id);//模板编号
 				botSentenceProcess.setTemplateName(template_name);//模板名称
 				botSentenceProcess.setCrtTime(date);//创建时间
 				botSentenceProcess.setIndustry(trade);//行业
+				botSentenceProcess.setIndustryId(tradeId);//行业编号
 				botSentenceProcess.setVersion("0");//默认版本为0
 				botSentenceProcess.setAccountNo(userId);//设置账号
 				botSentenceProcess.setCrtUser(userId);

@@ -630,17 +630,21 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
             }
         }
         
+        boolean isAllEmpty = true;
+        
         for (BotSentenceIntentVO botSentenceIntentVO : list) {
         	Long intentId = botSentenceIntentVO.getId();
             if (null == intentId) {//新增
                 String keywordsJson = BotSentenceUtil.generateKeywords(botSentenceIntentVO.getKeywords());
                 if(StringUtils.isNotBlank(keywordsJson	)) {
                 	keywordsJson = keywordsJson.substring(1, keywordsJson.length() - 1);
+                	isAllEmpty = false;
                 }else {
                 	if("00".equals(type)) {
                 		keywordsJson = "";
                 	}else {
-                		throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");	
+                		//throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");
+                		continue;
                 	}
                 }
                 
@@ -668,11 +672,13 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
                 String keywordsJson = BotSentenceUtil.generateKeywords(botSentenceIntentVO.getKeywords());
                 if(StringUtils.isNotBlank(keywordsJson	)) {
                 	keywordsJson = keywordsJson.substring(1, keywordsJson.length() - 1);
+                	isAllEmpty = false;
                 }else {
                 	if("00".equals(type)) {
                 		keywordsJson = "";
                 	}else {
-                		throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");	
+                		//throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");
+                		continue;
                 	}
                 }
                 
@@ -686,6 +692,10 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
         		}
                 botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
             }
+        }
+        
+        if(isAllEmpty) {
+        	throw new CommonException("关键词不能为空!");	
         }
         
         //删除未选择的意图

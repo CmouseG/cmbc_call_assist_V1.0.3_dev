@@ -215,5 +215,15 @@ public class Constant {
 	
 	
 	public static final String APPROVE_TYPE = "approve";
+	
+	/**
+	 * 分享给所有人
+	 */
+	public static final String SHARE_TYPE_00 = "00";
+	
+	/**
+	 * 分享给指定用户
+	 */
+	public static final String SHARE_TYPE_01 = "01";
 }
 

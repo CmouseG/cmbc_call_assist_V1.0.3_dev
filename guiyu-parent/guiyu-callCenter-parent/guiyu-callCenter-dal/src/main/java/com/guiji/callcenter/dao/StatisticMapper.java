@@ -19,7 +19,11 @@ public interface StatisticMapper {
 
     void updateTodayCountAndDruation(ReportCallToday reportCallToday);
 
-    List<ReportCallDay> countReportCallToday();
+    List<ReportCallDay> countReportCallToday30();
+    List<ReportCallDay> countReportCallToday10();
+    List<ReportCallDay> countReportCallToday5();
+    List<ReportCallDay> countReportCallToday0();
+
     List<ReportCallDay> countReportCallDayDruation30();
     List<ReportCallDay> countReportCallDayDruation10();
     List<ReportCallDay> countReportCallDayDruation5();

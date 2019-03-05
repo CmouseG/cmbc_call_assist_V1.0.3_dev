@@ -534,4 +534,10 @@ public class BotSentenceProcessController {
 		return ServerResult.createBySuccess(result);
 	}
 	
+	@RequestMapping(value="saveIndustry")
+	public ServerResult saveTrade(@JsonParam String industryName, @JsonParam String industryId, @RequestHeader("userId") String userId){
+		botSentenceProcessService.saveTrade(industryName, industryId, userId);
+		return ServerResult.createBySuccess();
+	}
+	
 }

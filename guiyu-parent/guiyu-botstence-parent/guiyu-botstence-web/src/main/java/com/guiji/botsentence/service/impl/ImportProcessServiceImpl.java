@@ -561,12 +561,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					return false;
 				}
 			} else if (file.getName().equals("sim.txt")) {
-				/*try {
+				try {
 					sim_txt = FileUtil.readToString(file);
 				} catch (IOException e) {
 					logger.error("read sim.txt IOException:" + e);
 					return false;
-				}*/
+				}
 			} else if (file.getName().equals("weights.txt")) {
 				try {
 					weights_txt = FileUtil.readToString(file);
@@ -601,7 +601,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		BotSentenceAddition botSentenceAddition = new BotSentenceAddition();
 		botSentenceAddition.setProcessId(processId);
 		//botSentenceAddition.setOptionsJson(options_json);
-		botSentenceAddition.setSimTxt(sim_txt);
+		botSentenceAddition.setSimTxt("");
 		botSentenceAddition.setStopwordsTxt(stopwords_txt);
 		//botSentenceAddition.setTemplateJson(template_json);
 		botSentenceAddition.setUserdictTxt(userdict_txt);

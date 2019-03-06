@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,12 @@ public class ILinesServiceImpl implements ILinesService {
 		for (DispatchPlan dis : list) {
 			// 线路一条的话就不排序0
 			if (dis.getLines().size() <= 1) {
+				res.add(dis);
+				continue;
+			}
+
+			// 线路一条的话就不排序0
+			if (dis.getLineType() == PlanLineTypeEnum.GATEWAY.getType()) {
 				res.add(dis);
 				continue;
 			}

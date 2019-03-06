@@ -10,15 +10,18 @@ import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.entity.DispatchRobotOp;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.dispatch.service.IResourcePoolService;
+import com.guiji.dispatch.service.RobotService;
 import com.guiji.dispatch.util.AllotUserLineBotenceUtil;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
 import com.guiji.robot.model.UserResourceCache;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +59,10 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private IRobotRemote robotRemote;
     @Autowired
     private IPhonePlanQueueService phonePlanQueueService;
+
+    @Autowired
+    private RobotService robotService;
+
     @Override
     public boolean initResourcePool() {
         long start = System.currentTimeMillis();
@@ -110,7 +117,50 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                 if (systemMaxPlan == 0) {
                     logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
                 }
-                List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(userLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
+
+                /*******分别封装补充机器人数据，未做补充机器人数据    begin**********************************/
+                //查询人工操作分配机器人操作数据
+                List<DispatchRobotOp> allDisRobotList = robotService.queryDisRobotOpList(null, null);
+                //封装未补充操作机器人数据列表(即,去除需要补充的机器人数据)
+                List<UserLineBotenceVO> filterUserLineBotenceVOList = new ArrayList<UserLineBotenceVO>();
+                //封装人工补充操作机器人数据列表，剔除不做补充机器人列表
+                List<DispatchRobotOp> opDisRobotList = new ArrayList<DispatchRobotOp>();
+                if(null != allDisRobotList){
+                    for(UserLineBotenceVO userBotence : userLineBotenceVOList){
+                        int i = 0;
+                        for(DispatchRobotOp robotOp: allDisRobotList){
+                            //判断用户ID，话术模板ID是否相同，相同则表示记录已经进行了补充机器人操作
+                            if(robotOp.getUserId().equals(userBotence.getUserId()+"")
+                                && robotOp.getBotstenceId().equals(userBotence.getBotenceName())){
+                                opDisRobotList.add(robotOp);//封装加入人工补充操作机器人数据
+                                i++;
+                            }
+                        }
+                        if(i == 0){//匹配未做补充机器人操作，加入列表
+                            filterUserLineBotenceVOList.add(userBotence);
+                        }
+                    }
+                }else{
+                    filterUserLineBotenceVOList = userLineBotenceVOList;
+                }
+                logger.info("人工操作机器人:{}", JsonUtils.bean2Json(opDisRobotList));
+                /*******分别封装补充机器人数据，未做补充机器人数据    end**********************************/
+
+                /**************计算机器人总数减去用户分配机器人数 和 补充机器人数   begin*********/
+                logger.info("最大机器人总数减去手动分配机器人之前数量:{}",systemMaxPlan);
+                systemMaxPlan = subSupplRobotNum(opDisRobotList, userBotstenceRobotList, systemMaxPlan);
+                logger.info("最大机器人总数减去手动分配机器人之后数量:{}",systemMaxPlan);
+                /**************计算机器人总数减去用户分配机器人数 和 补充机器人数   end*********/
+
+                //计算分配机器人数
+            //    List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(userLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
+                List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(filterUserLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
+                //将补充操作的机器人分配数据重新加入到用户机器人分配列表中去
+                List<UserLineBotenceVO> opList = this.filterOpUserBotstence(opDisRobotList);
+                if(null != opList && opList.size()>0){
+                    userLineBotenceVOS.addAll(opList);
+                }
+                //从redis获取用户机器人分配数据
                 List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>) redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
 
                 if(!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis))
@@ -126,6 +176,63 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
         }
 
         return true;
+    }
+
+    /**
+     * 封装人工操作的用户分配机器人数据
+     * @param opDisRobotList
+     * @return
+     */
+    private List<UserLineBotenceVO> filterOpUserBotstence(List<DispatchRobotOp> opDisRobotList){
+        List<UserLineBotenceVO> opList = null;
+        if(null != opDisRobotList && opDisRobotList.size()>0){
+            opList = new ArrayList<UserLineBotenceVO>();
+            for(DispatchRobotOp opRobot: opDisRobotList){
+                UserLineBotenceVO userLineBotence = new UserLineBotenceVO();
+                userLineBotence.setUserId(Integer.valueOf(opRobot.getUserId()));
+                userLineBotence.setBotenceName(opRobot.getBotstenceId());
+                userLineBotence.setMaxRobotCount(opRobot.getCurrentNum());
+                opList.add(userLineBotence);
+            }
+        }
+        logger.info("封装人工操作的用户分配机器人数据:{}", null != opList?JsonUtils.bean2Json(opList):"空");
+        return opList;
+    }
+
+
+    /**
+     * 计算机器人总数减去用户分配机器人数 和 补充机器人数
+     * @param opDisRobotList
+     * @param userBotstenceRobotList
+     * @param systemMaxPlan
+     * @return
+     */
+    private int subSupplRobotNum(List<DispatchRobotOp> opDisRobotList, List<UserResourceCache> userBotstenceRobotList,
+                                 int systemMaxPlan){
+        //用户各个模板配置的机器人数量，拼接key:userId+templateId
+        Map<String, Integer> allUserBotenceCfg = AllotUserLineBotenceUtil.convertUserRes2Map(userBotstenceRobotList);
+        if(null != allUserBotenceCfg && (null != opDisRobotList && opDisRobotList.size()>0)){
+            for(DispatchRobotOp opRobot : opDisRobotList){
+                String userBotstenceKey = opRobot.getUserId()+"-" +opRobot.getBotstenceId();
+                if(allUserBotenceCfg.containsKey(userBotstenceKey)){//用户模板机器人数包涵用户机器人
+                    Integer robotNum = allUserBotenceCfg.get(userBotstenceKey);//robot分配模板机器人数量
+                    Integer supplNum = opRobot.getSupplNum();//人工操作机器人数量
+                    Integer supplType = opRobot.getSupplType();//操作标识   1-增加补充  2-扣减
+                    opRobot.setRobotNum(robotNum);
+                    systemMaxPlan -= robotNum;  //减除robot分配机器人数量
+                    if(1 == supplType){//总数
+                        systemMaxPlan -= supplNum;//减除人工手动补充机器人数量
+                        opRobot.setCurrentNum(robotNum+supplNum);
+                    }else if(2 == supplNum){
+                        systemMaxPlan += supplNum;
+                        opRobot.setCurrentNum(robotNum-supplNum);
+                    }else{
+                        opRobot.setCurrentNum(robotNum);
+                    }
+                }
+            }
+        }
+        return systemMaxPlan;
     }
 
 

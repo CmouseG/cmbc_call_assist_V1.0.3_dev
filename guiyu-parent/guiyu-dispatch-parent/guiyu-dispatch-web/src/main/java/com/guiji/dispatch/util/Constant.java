@@ -9,7 +9,7 @@ public class Constant {
 	public static final Integer STATUSPLAN_3 = 3;
 	public static final Integer STATUSPLAN_4 = 4;
 	public static final Integer STATUSPLAN_5_REDIS = 5;
-	// 0未同步1已同步
+	// 同步呼叫中心状态	0未同步1已同步
 	public static final Integer STATUS_SYNC_0 = 0;
 	public static final Integer STATUS_SYNC_1 = 1;
 
@@ -40,6 +40,7 @@ public class Constant {
 	public static final Integer IS_CLEAN_0 = 0;
 	public static final Integer IS_CLEAN_1 = 1;
 
+	//洗号码标识	0-未准备 1-准备中 2-已完成
 	public static final String IS_FLAG_0 = "0";
 	public static final String IS_FLAG_1 = "1";
 	public static final String IS_FLAG_2 = "2";

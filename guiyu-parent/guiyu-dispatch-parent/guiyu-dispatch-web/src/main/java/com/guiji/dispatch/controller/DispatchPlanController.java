@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,12 +44,14 @@ public class DispatchPlanController {
 	@PostMapping("addSchedule")
 	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId,
 			@RequestHeader String orgCode) {
+		logger.info("单个任务导入begin,dispatchPaln:{}:", (null != dispatchPlan)? JsonUtils.bean2Json(dispatchPlan):null);
 		MessageDto dto = new MessageDto();
 		try {
 			dto = dispatchPlanService.addSchedule(dispatchPlan, userId, orgCode);
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
+		logger.info("单个任务导入end,dispatchPaln:{}:", (null != dto)? JsonUtils.bean2Json(dto):null);
 		return dto;
 	}
 

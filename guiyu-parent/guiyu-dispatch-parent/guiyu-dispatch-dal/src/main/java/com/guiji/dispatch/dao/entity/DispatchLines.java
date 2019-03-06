@@ -19,6 +19,12 @@ public class DispatchLines implements Serializable {
 
     private String overtarea;
 
+    /**
+     * 线路类型 1-SIP 2-路由网关
+     * PlanLineTypeEnum
+     */
+    private Integer lineType;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -77,6 +83,14 @@ public class DispatchLines implements Serializable {
         this.overtarea = overtarea == null ? null : overtarea.trim();
     }
 
+    public Integer getLineType() {
+        return lineType;
+    }
+
+    public void setLineType(Integer lineType) {
+        this.lineType = lineType;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -90,6 +104,7 @@ public class DispatchLines implements Serializable {
         sb.append(", lineName=").append(lineName);
         sb.append(", lineAmount=").append(lineAmount);
         sb.append(", overtarea=").append(overtarea);
+        sb.append(", lineType=").append(lineType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

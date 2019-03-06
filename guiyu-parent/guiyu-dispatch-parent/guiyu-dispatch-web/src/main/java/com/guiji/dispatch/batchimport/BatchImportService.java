@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -77,9 +79,9 @@ public class BatchImportService implements IBatchImportService {
 				dispatchPlan.setBatchId(batchId);
 				dispatchPlan.setUserId(userId.intValue());
 				dispatchPlan.setOrgCode(orgCode);
-				//查询号码归属地
+				/*//查询号码归属地
 				String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
-				dispatchPlan.setCityName(cityName);
+				dispatchPlan.setCityName(cityName);*/
 
 				// 校验黑名单逻辑
 				if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode)) {

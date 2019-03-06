@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.ext.RobotMapper">
+
+	<select id="queryDisRobotOpList" resultType="com.guiji.dispatch.entity.DispatchRobotOp">
+		SELECT
+			id                   ,
+			user_id              ,
+			botstence_id         ,
+			robot_num            ,
+			suppl_num            ,
+			suppl_type           ,
+			current_num          ,
+			add_time             ,
+			upd_time             ,
+			del_flag
+		FROM dispatch_robot_op
+		WHERE del_flag = 0
+			<if test="dispatchRobotOp != null">
+				<if test="dispatchRobotOp.userId != null">
+					AND user_id = #{dispatchRobotOp.userId}
+				</if>
+				<if test="dispatchRobotOp.botstenceId != null">
+					AND botstence_id = #{dispatchRobotOp.botstenceId}
+				</if>
+			</if>
+			ORDER BY add_time DESC
+			<if test="page != null and page.isPage ">
+				<!--<if test="page.orderBy != null " >
+					order by ${page.orderBy}	${page.sort}
+				</if>-->
+				<if test="page.indexStart != null " >
+					limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+				</if>
+			</if>
+	</select>
+
+
+	<select id="queryDisRobotOp" resultType="com.guiji.dispatch.entity.DispatchRobotOp">
+		SELECT
+			id                   ,
+			user_id              ,
+			botstence_id         ,
+			robot_num            ,
+			suppl_num            ,
+			suppl_type           ,
+			current_num          ,
+			add_time             ,
+			upd_time             ,
+			del_flag
+		FROM dispatch_robot_op
+		WHERE del_flag = 0
+			AND user_id = #{userId}
+			AND botstence_id = #{botstenceId}
+			LIMIT 1
+	</select>
+
+	<insert id="addDisRobotOp" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO dispatch_robot_op
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="botstenceId != null">
+				botstence_id,
+			</if>
+			<if test="robotNum != null">
+				robot_num,
+			</if>
+			<if test="supplNum != null">
+				suppl_num,
+			</if>
+			<if test="supplType != null">
+				suppl_type,
+			</if>
+			<if test="currentNum != null">
+				current_num,
+			</if>
+			<if test="addTime != null">
+				add_time,
+			</if>
+			<if test="updTime != null">
+				upd_time,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="botstenceId != null">
+				#{botstenceId},
+			</if>
+			<if test="robotNum != null">
+				#{robotNum},
+			</if>
+			<if test="supplNum != null">
+				#{supplNum},
+			</if>
+			<if test="supplType != null">
+				#{supplType},
+			</if>
+			<if test="currentNum != null">
+				#{currentNum},
+			</if>
+			<if test="addTime != null">
+				#{addTime},
+			</if>
+			<if test="updTime != null">
+				#{updTime},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updDisRobotOp">
+		UPDATE dispatch_robot_op
+		<set>
+			<if test="robotNum != null">
+				robot_num = #{robotNum},
+			</if>
+			<if test="supplNum != null">
+				suppl_type = suppl_num = #{supplNum},
+			</if>
+			<if test="supplType != null">
+				suppl_type = #{supplType},
+			</if>
+			<if test="currentNum != null">
+				current_num = #{currentNum},
+			</if>
+			<if test="addTime != null">
+				add_time = #{addTime},
+			</if>
+			<if test="updTime != null">
+				upd_time = #{updTime},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag},
+			</if>
+		</set>
+	</update>
+
+
+</mapper>

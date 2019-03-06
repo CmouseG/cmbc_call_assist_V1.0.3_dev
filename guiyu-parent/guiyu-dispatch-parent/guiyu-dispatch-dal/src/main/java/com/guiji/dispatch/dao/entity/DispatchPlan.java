@@ -79,8 +79,17 @@ public class DispatchPlan implements Serializable {
     private String orgCode;
 
     private Integer fileRecordId;
-    
+
+    /**
+     * 线路
+     */
     List<DispatchLines> lines;
+
+    /**
+     * 线路类型 1-SIP 2-路由网关
+     * PlanLineTypeEnum
+     */
+    private Integer lineType;
     
     private String cityName;
 
@@ -400,6 +409,14 @@ public class DispatchPlan implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public Integer getLineType() {
+        return lineType;
+    }
+
+    public void setLineType(Integer lineType) {
+        this.lineType = lineType;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -435,6 +452,7 @@ public class DispatchPlan implements Serializable {
         sb.append(", batchName=").append(batchName);
         sb.append(", flag=").append(flag);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", lineType=").append(lineType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

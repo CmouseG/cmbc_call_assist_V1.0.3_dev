@@ -2,9 +2,15 @@ package com.guiji.dispatch.pushcallcenter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.guiji.dispatch.bean.UserLineBotenceVO;
+import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.enums.GateWayLineStatusEnum;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.util.DateTimeUtils;
+import com.guiji.dispatch.vo.GateWayLineOccupyVo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,20 +98,38 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
+								logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_ + user_id + templId :{}", JsonUtils.bean2Json(obj));
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
 								}
 								DispatchPlan dispatchRedis = (DispatchPlan) obj;
 
 								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
+                                GateWayLineOccupyVo occupyLine = null;
 								try {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
 									callBean.setTempId(dispatchRedis.getRobot());
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 									List<Integer> lines = new ArrayList<>();
 									for (DispatchLines line : dispatchRedis.getLines()) {
-										lines.add(line.getLineId());
+										logger.info("推送网关拨打用户网关线路:{}", JsonUtils.bean2Json(line));
+									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
+									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
+									        Integer lineId = line.getLineId();
+                                            GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey+lineId);
+                                            if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
+                                                lines.add(line.getLineId());
+                                                occupyLine = gateWayLine;
+                                                logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
+                                                break;//有闲置，则推送，网关路线只能推送一个
+                                            }
+                                        }else {
+                                            lines.add(line.getLineId());
+                                        }
 									}
+									if(null == lines || lines.size()==0){//没有需要推送的线路,继续循环下条任务计划 用户模板
+                                        continue;
+                                    }
 									callBean.setLineList(lines);
 								} catch (IllegalAccessException e) {
 									updateStatusSync(dispatchRedis.getPlanUuid());
@@ -147,7 +171,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									//休眠10S
 									Thread.sleep(10000);
 									continue;
-								}
+								}else{
+								    //推送成功，则标识网关SIM卡路线被占用
+									this.occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName());
+                                }
 							}
 						} finally {
 							distributedLockHandler.releaseLock(queueLock); // 释放锁
@@ -158,6 +185,27 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				logger.info("pushHandler代码异常了", e);
 			} finally {
 				distributedLockHandler.releaseLock(pushHandlerLock); // 释放锁
+			}
+		}
+	}
+
+	/**
+	 * 标识网关SIM卡路线被占用
+	 * @param occupyLine
+	 * @param userId
+	 * @param botstenceId
+	 */
+	private void occupyGateWayLine(GateWayLineOccupyVo occupyLine, String userId, String botstenceId){
+		if(null != occupyLine){
+			try {
+				occupyLine.setStatus(GateWayLineStatusEnum.OCCUPY.getState());
+				occupyLine.setOccupyTime(DateTimeUtils.getDateString(new Date(), DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
+				occupyLine.setUserId(userId);
+				occupyLine.setBotstenceId(botstenceId);
+				redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKey + occupyLine.getLineId(),
+						occupyLine);
+			}catch(Exception e){
+				logger.error("标识网关路线被占用异常", e);
 			}
 		}
 	}

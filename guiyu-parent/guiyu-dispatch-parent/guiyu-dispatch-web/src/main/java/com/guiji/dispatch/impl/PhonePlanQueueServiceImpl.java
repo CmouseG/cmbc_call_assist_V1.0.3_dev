@@ -93,20 +93,21 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 									}
 							}
 						} catch (Exception e) {
-                            logger.info("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
+                            logger.info("PhonePlanQueueServiceImpl#execute:" + e);
                         } finally{
 							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}
 					}
 				}
 			} catch (Exception e) {
-				logger.error("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
+				logger.error("PhonePlanQueueServiceImpl#execute:" + e);
 			}
 		}
 	}
 
 	@Override
 	public boolean pushPlan2Queue(List<DispatchPlan> dispatchPlanList,String queue) {
+		logger.info("推入要拨打电话数据KEY:{}",queue);
 		return redisUtil.leftPushAll(queue, dispatchPlanList);
 	}
 

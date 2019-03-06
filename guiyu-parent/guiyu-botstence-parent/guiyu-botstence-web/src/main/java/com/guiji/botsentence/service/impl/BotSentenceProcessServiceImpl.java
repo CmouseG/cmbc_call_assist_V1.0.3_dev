@@ -1472,6 +1472,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//aa = DigestUtils.md5Hex("192.168.1.208:8888");
 		System.out.println(JSONObject.toJSONString(keys));
 			
+		String aa = "0102";
+		System.out.println(aa.substring(aa.length() -2, aa.length()));
+		
 		
 //		
 //		System.out.println(System.currentTimeMillis());
@@ -3108,11 +3111,6 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		domainNames.add(domain.getDomainName());
 		
 		if(null != domainNames && domainNames.size() > 0) {
-			//删除branch信息
-			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
-			branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainIn(domainNames);
-			botSentenceBranchMapper.deleteByExample(branchExample);
-			
 			//删除原来其它domain指向当前节点的next数据
 			BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
 			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames);
@@ -3125,6 +3123,35 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			List<VoliceInfo> voliceList = voliceInfoMapper.selectByExample(voliceExample);
 			if(null != voliceList && voliceList.size() > 0) {
 				for(VoliceInfo volice : voliceList) {
+					boolean flag = false;
+					//判断是否有其它域在使用当前方案，如果有，则不删除
+					BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+					branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainNotIn(domainNames);
+					List<BotSentenceBranch> list = botSentenceBranchMapper.selectByExample(branchExample);
+					if(null != list && list.size() > 0) {
+						for(BotSentenceBranch branch : list) {
+							String respStr = branch.getResponse();
+							if(StringUtils.isNotBlank(respStr) && !"[]".equals(respStr.trim()) && respStr.trim().startsWith("[") && respStr.trim().endsWith("]")) {
+								String[] respArray = respStr.substring(1,respStr.length()-1).split(",");
+								for(String resp : respArray) {
+									if(StringUtils.isNotBlank(resp) && resp.equals(volice.getVoliceId().toString())) {
+										flag = true;
+										break;
+									}
+								}
+								if(flag) {
+									break;
+								}
+							}
+						}
+					}
+					
+					if(flag) {
+						continue;
+					}
+					
+					voliceInfoMapper.deleteByPrimaryKey(volice.getVoliceId());
+					
 					//删除TTS任务信息
 					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
 					ttsExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(volice.getVoliceId().toString());
@@ -3139,8 +3166,12 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				}
 			}
 			
-			voliceInfoMapper.deleteByExample(voliceExample);
 			
+			
+			//删除branch信息
+			BotSentenceBranchExample branchExample = new BotSentenceBranchExample();
+			branchExample.createCriteria().andProcessIdEqualTo(processId).andDomainIn(domainNames);
+			botSentenceBranchMapper.deleteByExample(branchExample);
 			
 			//删除意图信息
 			BotSentenceIntentExample intentExample = new BotSentenceIntentExample();
@@ -4619,5 +4650,68 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		
 		return map;
+	}
+
+	@Override
+	public void saveTrade(String industryName, String industryId, String userId) {
+		
+			
+		BotSentenceTrade newTrade = new BotSentenceTrade();
+		if(StringUtils.isNotBlank(industryId)) {
+			BotSentenceTradeExample example = new BotSentenceTradeExample();
+			example.createCriteria().andIndustryIdEqualTo(industryId);
+			List<BotSentenceTrade> list = botSentenceTradeMapper.selectByExample(example);
+			BotSentenceTrade trade = list.get(0);
+			
+			//获取行业编号
+			BotSentenceTradeExample example1 = new BotSentenceTradeExample();
+			example1.createCriteria().andParentIdEqualTo(industryId);
+			example1.setOrderByClause(" industry_id desc");
+			List<BotSentenceTrade> list2 = botSentenceTradeMapper.selectByExample(example1);
+			String newIndustryId = null;
+			if(null != list2 && list2.size() > 0) {
+				BotSentenceTrade max = list2.get(0);
+				newIndustryId = max.getIndustryId().substring(max.getIndustryId().length() -2, max.getIndustryId().length());
+				
+				int newIndustry = new Integer(newIndustryId) + 1;
+				if(newIndustry > 9) {
+					newTrade.setIndustryId(industryId + newIndustry) ;
+				}else {
+					newTrade.setIndustryId(industryId + "0" + newIndustry) ;
+				}
+				
+			}else {
+				newIndustryId = industryId + "01";
+			}
+			
+			newTrade.setIndustryId(newIndustryId);
+			
+			newTrade.setIndustryName(industryName);
+			newTrade.setParentId(trade.getIndustryId());
+			newTrade.setParentName(trade.getIndustryName());
+			newTrade.setLevel(trade.getLevel() + 1);
+			newTrade.setCrtTime(new Date(System.currentTimeMillis()));
+			newTrade.setCrtUser(userId);
+			botSentenceTradeMapper.insert(newTrade);
+		}else {
+			BotSentenceTradeExample example1 = new BotSentenceTradeExample();
+			example1.createCriteria().andLevelEqualTo(1);
+			example1.setOrderByClause(" industry_id desc");
+			List<BotSentenceTrade> list2 = botSentenceTradeMapper.selectByExample(example1);
+			BotSentenceTrade max = list2.get(0);
+			int newIndustry = new Integer(max.getIndustryId()) + 1;
+			if(newIndustry > 9) {
+				newTrade.setIndustryId(newIndustry + "") ;
+			}else {
+				newTrade.setIndustryId("0" + newIndustry) ;
+			}
+			
+			newTrade.setIndustryName(industryName);
+			newTrade.setLevel(1);
+			newTrade.setCrtTime(new Date(System.currentTimeMillis()));
+			newTrade.setCrtUser(userId);
+			botSentenceTradeMapper.insert(newTrade);
+		}
+			
 	}
 }

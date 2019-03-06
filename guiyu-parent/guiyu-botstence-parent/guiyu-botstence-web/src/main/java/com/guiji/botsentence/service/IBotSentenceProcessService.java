@@ -134,4 +134,6 @@ public interface IBotSentenceProcessService {
 	public BotSentenceProcess getBotsentenceProcessByTemplateId(String templateId);
 	
 	public void generateTTSCallback(String id, String url);
+	
+	public void saveTrade(String industryName, String industryId, String userId);
 }

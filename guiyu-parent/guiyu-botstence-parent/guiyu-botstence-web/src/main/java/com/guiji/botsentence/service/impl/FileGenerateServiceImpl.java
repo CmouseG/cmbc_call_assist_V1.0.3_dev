@@ -473,8 +473,24 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			domainVO.setBranch(branchShow);
 			jsonObject.put("branch", branchShow);
+			
 			domainVO.setLimit(1);
 			jsonObject.put("limit", 1);
+			
+			if("拒绝".equals(domainName)) {
+				BotSentenceBranchExample example1 = new BotSentenceBranchExample();
+				example1.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
+				List<BotSentenceBranch> list1 = botSentenceBranchMapper.selectByExample(example1);
+				if(null != list1 && list1.size() > 0) {
+					BotSentenceBranch branch = list1.get(0);
+					if(StringUtils.isNotBlank(branch.getResponse()) && !"[]".equals(branch.getResponse().trim()) 
+							&& branch.getResponse().trim().startsWith("[") && branch.getResponse().trim().endsWith("]")) {
+						String[] respArray = branch.getResponse().substring(1,branch.getResponse().length()-1).split(",");
+						domainVO.setLimit(respArray.length);
+						jsonObject.put("limit", respArray.length);
+					}
+				}
+			}
 			
 			//设置变量
 			

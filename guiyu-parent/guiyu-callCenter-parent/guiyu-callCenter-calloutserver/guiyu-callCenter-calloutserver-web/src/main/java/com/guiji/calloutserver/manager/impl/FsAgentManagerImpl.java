@@ -121,7 +121,11 @@ public class FsAgentManagerImpl implements FsAgentManager {
 
         String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
 
-        Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
+        if (tempId.endsWith("_en")) {
+            tempId = tempId.substring(0,tempId.length()-3)+"_rec";
+        }
+
+        Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId);
         if(result!=null && result.success){
             List<WavLengthVO> list = result.getBody();
             if(list!=null && list.size()>0){
@@ -146,7 +150,12 @@ public class FsAgentManagerImpl implements FsAgentManager {
         String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
 
         if(redisUtil.get(key)==null){
-            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
+
+            if (tempId.endsWith("_en")) {
+                tempId = tempId.substring(0,tempId.length()-3)+"_rec";
+            }
+
+            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId);
             if(result!=null && result.success){
                 List<WavLengthVO> list = result.getBody();
                 if(list!=null && list.size()>0){
@@ -167,6 +176,24 @@ public class FsAgentManagerImpl implements FsAgentManager {
 
     @Override
     public Double getWavDruation(String tempId, String filename, String callId){
+
+        if(filename.contains(",")){
+            String[] fileArr = filename.split(",");
+            Double result=0d;
+            for(String fileNameOne:fileArr){
+                Double oneResult = getOneWavDruation(fileNameOne,tempId,callId);
+                if(oneResult!=null){
+                    result += oneResult;
+                }
+            }
+            return result;
+        }else{
+            return getOneWavDruation( tempId, filename, callId);
+        }
+
+    }
+
+    public Double getOneWavDruation(String tempId, String filename, String callId){
 
         if(filename.contains("/")){
             String[] arr = filename.split("/");

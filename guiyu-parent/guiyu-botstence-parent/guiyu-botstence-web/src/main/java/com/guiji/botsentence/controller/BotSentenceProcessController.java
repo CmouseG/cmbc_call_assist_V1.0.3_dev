@@ -69,6 +69,9 @@ public class BotSentenceProcessController {
 	@Autowired
 	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
 	
+	@Autowired
+	private IndustryUtil industryUtil;
+	
 	
 	/**
 	 * 根据条件查询话术流程列表
@@ -541,6 +544,7 @@ public class BotSentenceProcessController {
 	@RequestMapping(value="saveIndustry")
 	public ServerResult saveTrade(@JsonParam String industryName, @JsonParam String industryId, @RequestHeader("userId") String userId){
 		botSentenceProcessService.saveTrade(industryName, industryId, userId);
+		industryUtil.initIndustry();
 		return ServerResult.createBySuccess();
 	}
 	

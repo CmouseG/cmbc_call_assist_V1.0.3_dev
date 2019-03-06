@@ -22,4 +22,6 @@ public class SellbotRestoreReq {
 //	private String key;
 	//给sellbot用来合成tts完整sentence变量
 	private String val;
+	//飞龙使用的业务参数
+	private String business_data;
 }

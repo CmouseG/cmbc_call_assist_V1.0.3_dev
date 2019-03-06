@@ -11,6 +11,7 @@ import com.guiji.process.model.ProcessReleaseVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guiji.component.lock.DistributedLockHandler;
@@ -26,10 +27,13 @@ import com.guiji.robot.service.IAiResourceManagerService;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.robot.service.vo.AiPoolInfo;
+import com.guiji.robot.service.vo.HsReplace;
+import com.guiji.robot.util.DataLocalCacheUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
+import com.guiji.utils.SystemUtil;
 
 /** 
 * @ClassName: AiResourceManagerServiceImpl 
@@ -53,6 +57,11 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	IProcessSchedule iProcessSchedule;
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
+	@Autowired
+	DataLocalCacheUtil dataLocalCacheUtil;
+	//需要为sellbot mock的话术模板
+	@Value("#{'${template.mock:}'.split(',')}")
+	private List<String> mockTemplateList;
 	
 	
 	/**
@@ -115,6 +124,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 				List<AiInuseCache> aiNewPoolList = new ArrayList<AiInuseCache>();
 				for(int i=0;i<instanceList.size();i++) {
 					AiInuseCache aiInuse = new AiInuseCache();
+					aiInuse.setVersion(RobotConstants.HS_VERSION_SB); //sellbot机器人
 					aiInuse.setAiNo(this.genAiNo(instanceList.get(i).getIp(), String.valueOf(instanceList.get(i).getPort()))); //机器人临时编号
 					aiInuse.setAiStatus(RobotConstants.AI_STATUS_F); //新申请机器人默认空闲状态
 					aiInuse.setInitDate(DateUtil.getCurrentymd()); //初始化日期
@@ -192,39 +202,29 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		Lock lock = new Lock(RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN, RobotConstants.LOCK_ROBOT_AIPOOL_ASSIGN);
 		if (distributedLockHandler.tryLock(lock)) {
 			try {
-				//获取AI机器人资源池
-				List<AiInuseCache> aiPoolList = this.queryAiPoolList();
-				if(aiPoolList == null || aiPoolList.isEmpty()) {
-					//如果缓存中没有数据，初始化下
-					aiPoolList = this.aiPoolInit();
-				}
 				AiInuseCache assignAi = null;
-				if(aiPoolList != null && !aiPoolList.isEmpty()) {
-					for(AiInuseCache aiInuseCache : aiPoolList) {
-						if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
-							//找到1个空闲的机器人
-							assignAi = aiInuseCache;
-							break;
-						}
-					}
+				String templateId = aiCallApplyReq.getTemplateId();
+				//获取模板
+				HsReplace hsReplace = dataLocalCacheUtil.queryTemplate(templateId);
+				if(RobotConstants.HS_VERSION_FL==hsReplace.getVersion() 
+						|| (mockTemplateList!=null&&mockTemplateList.contains(templateId))) {
+					//如果是飞龙的话术模板或者是测试需要mock的模板分配飞龙机器人
+					//分配一个飞龙机器人
+					assignAi = new AiInuseCache();
+					assignAi.setVersion(RobotConstants.HS_VERSION_FL); //新版本飞龙机器人
+					assignAi.setAiNo(SystemUtil.getBusiSerialNo(null,20));	//生成20位的机器人编号
+					assignAi.setUserId(aiCallApplyReq.getUserId());	//用户号
+					assignAi.setTemplateIds(aiCallApplyReq.getTemplateId());	//模板号
+					assignAi.setAiStatus(RobotConstants.AI_STATUS_B); //忙
+					assignAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
+					assignAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
+					assignAi.setSeqId(aiCallApplyReq.getSeqId());	//会话id
+				}else {
+					//分配一个sellbot的机器人
+					assignAi = this.getSellbotAi(aiCallApplyReq);
 				}
-				if(assignAi==null) {
-					//没有空闲机器人
-					logger.error("本地机器人资源池机器人总数{},没有空闲机器人",aiPoolList.size());
-					throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
-				}
-				//设置分配后的部分信息
-				assignAi.setUserId(aiCallApplyReq.getUserId());	//用户号
-				assignAi.setTemplateIds(aiCallApplyReq.getTemplateId());	//模板号
-				assignAi.setAiStatus(RobotConstants.AI_STATUS_B); //忙
-				assignAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
-				assignAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
-				assignAi.setSeqId(aiCallApplyReq.getSeqId());	//会话id
-				assignAi.setCallNum(assignAi.getCallNum()+1); //拨打数量
 				//将这个机器人分配给用户
 				aiCacheService.changeAiInUse(assignAi);
-				//将资源池中机器人状态更新为忙
-				aiCacheService.changeAiPool(assignAi);
 				return assignAi;
 			} catch (RobotException e) {
 				throw e; 
@@ -241,6 +241,48 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		}
 	}
 	
+	/**
+	 * 获取sellbot ai
+	 * 其他地方不可直接调用，只为机器人资源分配使用
+	 * @param aiCallApplyReq
+	 * @return
+	 */
+	private AiInuseCache getSellbotAi(AiCallApplyReq aiCallApplyReq) {
+		//获取AI机器人资源池
+		List<AiInuseCache> aiPoolList = this.queryAiPoolList();
+		if(aiPoolList == null || aiPoolList.isEmpty()) {
+			//如果缓存中没有数据，初始化下
+			aiPoolList = this.aiPoolInit();
+		}
+		AiInuseCache assignAi = null;
+		if(aiPoolList != null && !aiPoolList.isEmpty()) {
+			for(AiInuseCache aiInuseCache : aiPoolList) {
+				if(RobotConstants.AI_STATUS_F.equals(aiInuseCache.getAiStatus())) {
+					//找到1个空闲的机器人
+					assignAi = aiInuseCache;
+					break;
+				}
+			}
+		}
+		if(assignAi==null) {
+			//没有空闲机器人
+			logger.error("本地机器人资源池机器人总数{},没有空闲机器人",aiPoolList.size());
+			throw new RobotException(AiErrorEnum.AI00060002.getErrorCode(),AiErrorEnum.AI00060002.getErrorMsg());
+		}
+		//设置分配后的部分信息
+		assignAi.setVersion(RobotConstants.HS_VERSION_SB); //sellbot机器人
+		assignAi.setUserId(aiCallApplyReq.getUserId());	//用户号
+		assignAi.setTemplateIds(aiCallApplyReq.getTemplateId());	//模板号
+		assignAi.setAiStatus(RobotConstants.AI_STATUS_B); //忙
+		assignAi.setCallingPhone(aiCallApplyReq.getPhoneNo()); //正在拨打的电话
+		assignAi.setCallingTime(DateUtil.getCurrentTime()); //开始拨打时间
+		assignAi.setSeqId(aiCallApplyReq.getSeqId());	//会话id
+		assignAi.setCallNum(assignAi.getCallNum()+1); //拨打数量
+		//将资源池中机器人状态更新为忙
+		aiCacheService.changeAiPool(assignAi);
+		return assignAi;
+	}
+	
 	
 	/**
 	 * 机器人资源释放还回进程资源池
@@ -253,11 +295,14 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		if(aiInuse != null) {
 			//从用户缓存中也清理掉该用户的找个机器人
 			aiCacheService.delUserAi(aiInuse.getUserId(), aiInuse.getAiNo());
-			//将机器人资源池中的机器人状态置为闲
-			aiInuse.setAiStatus(RobotConstants.AI_STATUS_F);
-			aiInuse.setCallingPhone(null);
-			aiInuse.setCallingTime(null);
-			aiCacheService.changeAiPool(aiInuse);
+			if(RobotConstants.HS_VERSION_SB==aiInuse.getVersion()) {
+				//如果是sellbot的机器人，那么才需要还回资源池，其他直接干掉
+				//将机器人资源池中的机器人状态置为闲
+				aiInuse.setAiStatus(RobotConstants.AI_STATUS_F);
+				aiInuse.setCallingPhone(null);
+				aiInuse.setCallingTime(null);
+				aiCacheService.changeAiPool(aiInuse);
+			}
 		}
 	}
 	
@@ -272,17 +317,22 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		if(ListUtil.isNotEmpty(aiList)) {
 			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
 			for(AiInuseCache ai : aiList) {
-				ProcessInstanceVO vo = new ProcessInstanceVO();
-				vo.setIp(ai.getIp());
-				vo.setPort(Integer.valueOf(ai.getPort()));
-				processList.add(vo);
+				if(RobotConstants.HS_VERSION_SB==ai.getVersion()) {
+					//只有sellbot机器人才需要释放并还回进程管理资源池
+					ProcessInstanceVO vo = new ProcessInstanceVO();
+					vo.setIp(ai.getIp());
+					vo.setPort(Integer.valueOf(ai.getPort()));
+					processList.add(vo);
+				}
 			}
-			//调用进程管理释放资源
-			ProcessReleaseVO processReleaseVO = new ProcessReleaseVO();
-			processReleaseVO.setProcessInstanceVOS(processList);
-			iProcessSchedule.release(processReleaseVO);
-			//异步记录日志
-			aiAsynDealService.releaseAiCycleHis(aiList);
+			if(processList!=null && !processList.isEmpty()) {
+				//调用进程管理释放资源
+				ProcessReleaseVO processReleaseVO = new ProcessReleaseVO();
+				processReleaseVO.setProcessInstanceVOS(processList);
+				iProcessSchedule.release(processReleaseVO);
+				//异步记录日志
+				aiAsynDealService.releaseAiCycleHis(aiList);
+			}
 		}
 	}
 	
@@ -406,7 +456,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 	 * @param applyAiNum
 	 * @return
 	 */
-	public List<ProcessInstanceVO> applyAiResouceFromProcess(int applyAiNum){
+	private List<ProcessInstanceVO> applyAiResouceFromProcess(int applyAiNum){
 		//调用进程管理服务申请sellbot机器人资源
 		ReturnData<List<ProcessInstanceVO>> processInstanceListData = iProcessSchedule.getSellbot(10000);
 		if(processInstanceListData == null) {

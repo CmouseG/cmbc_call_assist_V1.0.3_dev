@@ -121,6 +121,11 @@ public class RobotConstants {
 	 */
 	public static final String ROBOT_SENTENCE_RESOURCE = "ROBOT_SENTENCE_";
 	
+	/**
+	 * 业务数据-电话过程中可能需要用户业务信息
+	 */
+	public static final String ROBOT_BUSI_DATA = "ROBOT_BUSI_DATA";
+	
 	
 	//单字白名单，这些单字不忽略
 	public static final List<String> filter_text = Arrays.asList("滚", "交", "叫", "教", "较", "角", "带", "贷", "代", "好", "哦", "没", "行", "是", "想", "嗯", "不", "讲", "有");

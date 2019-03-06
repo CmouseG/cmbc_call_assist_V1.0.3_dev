@@ -181,7 +181,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
             String[] fileArr = filename.split(",");
             Double result=0d;
             for(String fileNameOne:fileArr){
-                Double oneResult = getOneWavDruation(fileNameOne,tempId,callId);
+                Double oneResult = getOneWavDruation(tempId,fileNameOne,callId);
                 if(oneResult!=null){
                     result += oneResult;
                 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -56,6 +57,19 @@ public class AvailableTemplateController {
 		List<BotSentenceProcess> list=botSentenceProcessService.getTemplateByOrgCode(orgCode);
         return ServerResult.createBySuccess(list);
     }
+    
+    /**
+     * 用户管理，根据组织机构查询企业的话术数量
+     */
+    @GetMapping("countTemplateByOrgCode")
+    public ServerResult<Integer> countTemplateByOrgCode(@JsonParam String orgCode){
+    	if(StringUtils.isBlank(orgCode)) {
+    		return ServerResult.createByErrorMessage("机构号为空!");
+    	}
+		int num = botSentenceProcessService.countTemplateByOrgCode(orgCode);
+        return ServerResult.createBySuccess(num);
+    }
+    
 	/**
 	 * 用户可用话术
 	 */

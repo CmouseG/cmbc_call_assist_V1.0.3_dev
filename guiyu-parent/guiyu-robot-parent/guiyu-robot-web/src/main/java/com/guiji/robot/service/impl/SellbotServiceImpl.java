@@ -93,15 +93,7 @@ public class SellbotServiceImpl implements ISellbotService{
 				logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
 				throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());
 			}
-//			return result;
-			//TODO 因为sellbot可能返回2个语音文件，callcenter需要做相应处理，但是还没有处理好，robot代码又需要尽快提交，所以先临时处理下，如果返回了多个语音文件，此处处理返回后边1个
-			String wavFiles = jsonObject.getString("wav_filename");	//	语音文件
-			if(StrUtils.isNotEmpty(wavFiles) && wavFiles.indexOf(",")>0) {
-				wavFiles = wavFiles.substring(wavFiles.indexOf(",")+1);
-				jsonObject.put("wav_filename", wavFiles);
-			}
-			return jsonObject.toJSONString();
-			//END
+			return result;
 		}else {
 			logger.error("调用Sellbot接口返回异常，返回结果：{}!",sellbotRsp);
 			throw new RobotException(AiErrorEnum.AI00060020.getErrorCode(),AiErrorEnum.AI00060020.getErrorMsg());

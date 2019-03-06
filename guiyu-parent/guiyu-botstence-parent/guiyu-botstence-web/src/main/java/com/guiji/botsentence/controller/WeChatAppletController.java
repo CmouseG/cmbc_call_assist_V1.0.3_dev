@@ -354,7 +354,8 @@ public class WeChatAppletController {
 	
 	@RequestMapping(value="queryVoliceListSimple")
 	public ServerResult<List<VoliceInfoExt>> queryVoliceListSimple(@JsonParam String processId) {
-		List<VoliceInfoExt> list = service.queryVoliceListSimple(processId);
+		//List<VoliceInfoExt> list = service.queryVoliceListSimple(processId);
+		List<VoliceInfoExt> list=service.queryVoliceInfoList(processId);
 		return ServerResult.createBySuccess(list);
 	}
 	

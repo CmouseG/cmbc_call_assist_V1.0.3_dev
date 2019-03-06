@@ -77,6 +77,12 @@ public class BotSentenceProcessCopyController {
 				
 				BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(vo.getProcessId());
 				
+				if(null != process.getLstUpdateTime()) {
+					vo.setCrtTimeStr(DateUtil.dateToString(process.getLstUpdateTime(), DateUtil.ymdhms));
+				}else {
+					vo.setCrtTimeStr(DateUtil.dateToString(process.getCrtTime(), DateUtil.ymdhms));
+				}
+				
 				
 				vo.setShareCount(temp.getShareCount());
 				//设置行业显示三级
@@ -107,5 +113,11 @@ public class BotSentenceProcessCopyController {
 		}
 		List<AvaliableOrgVO> list = botSentenceProcessCopyService.queryAvaliableOrgList(processId);
 		return ServerResult.createBySuccess(list);
+	}
+	
+	@RequestMapping(value="cancelShare")
+	public ServerResult cancelShare(@JsonParam String processId, @RequestHeader String userId) {
+		botSentenceProcessCopyService.cancelShare(processId, userId);
+		return ServerResult.createBySuccess();
 	}
 }

@@ -924,6 +924,66 @@ public class BotSentenceShareAuthExample {
             addCriterion("lst_update_user not between", value1, value2, "lstUpdateUser");
             return (Criteria) this;
         }
+
+        public Criteria andSharedIsNull() {
+            addCriterion("shared is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedIsNotNull() {
+            addCriterion("shared is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedEqualTo(Boolean value) {
+            addCriterion("shared =", value, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedNotEqualTo(Boolean value) {
+            addCriterion("shared <>", value, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedGreaterThan(Boolean value) {
+            addCriterion("shared >", value, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("shared >=", value, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedLessThan(Boolean value) {
+            addCriterion("shared <", value, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedLessThanOrEqualTo(Boolean value) {
+            addCriterion("shared <=", value, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedIn(List<Boolean> values) {
+            addCriterion("shared in", values, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedNotIn(List<Boolean> values) {
+            addCriterion("shared not in", values, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedBetween(Boolean value1, Boolean value2) {
+            addCriterion("shared between", value1, value2, "shared");
+            return (Criteria) this;
+        }
+
+        public Criteria andSharedNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("shared not between", value1, value2, "shared");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

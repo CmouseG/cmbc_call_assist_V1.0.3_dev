@@ -638,7 +638,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		//String orgCode=data.getBody().getOrgCode();
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
-		Criteria criteria = example.createCriteria().andTypeEqualTo("00");
+		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%"+templateName+"%");
 		}
@@ -648,7 +648,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		
 		
 		String orgCode = "1.%";
-		Criteria criteria1 = example.createCriteria().andTypeEqualTo("01");
+		Criteria criteria1 = example.createCriteria().andTypeEqualTo("01").andSharedEqualTo(true);;
 		criteria1.andAvailableOrgLike(orgCode + ",%");
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria1.andTemplateNameLike("%"+templateName+"%");
@@ -711,6 +711,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		botSentenceShare.setTemplateId(share.getTemplateId());
 		botSentenceShare.setTemplateName(share.getTemplateName());
 		botSentenceShare.setType(share.getType());
+		botSentenceShare.setShared(true);
 		if(Constant.SHARE_TYPE_01.equals(share.getType())) {//特定用户，即指定的机构列表
 			List<String> orgCodeList = share.getOrgCodeList();
 			/*String avaliableOrg = "";
@@ -748,7 +749,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		//String orgCode=data.getBody().getOrgCode();
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
-		Criteria criteria = example.createCriteria().andTypeEqualTo("00");
+		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);;
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%"+templateName+"%");
 		}
@@ -758,7 +759,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		
 		
 		String orgCode = "1.%";
-		Criteria criteria1 = example.createCriteria().andTypeEqualTo("01");
+		Criteria criteria1 = example.createCriteria().andTypeEqualTo("01").andSharedEqualTo(true);;
 		criteria1.andAvailableOrgLike(orgCode + ",%");
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%"+templateName+"%");
@@ -798,6 +799,20 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 			}
 		}
 		return resultList;
+	}
+
+	@Override
+	public void cancelShare(String processId, String userId) {
+		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
+		example.createCriteria().andProcessIdEqualTo(processId);
+		List<BotSentenceShareAuth> list = botSentenceShareAuthMapper.selectByExample(example);
+		if(null != list && list.size() > 0) {
+			BotSentenceShareAuth share = list.get(0);
+			share.setShared(false);
+			share.setLstUpdateTime(new Date(System.currentTimeMillis()));
+			share.setLstUpdateUser(userId);
+			botSentenceShareAuthMapper.updateByPrimaryKey(share);
+		}
 	}
 	
 }

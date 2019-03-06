@@ -189,13 +189,16 @@ public class FsAgentManagerImpl implements FsAgentManager {
             }
         }
 
-//        Map<String, Double> map = wavCaches.getIfPresent(tempId);
         Object map = redisUtil.get("calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId);
-        if(map==null){
-            map = getwavlength(tempId);
-        }
-        return ((Map<String, Double>)map).get(filename);
 
+        if (map != null && ((Map<String, Double>) map).get(filename) != null) {
+            return ((Map<String, Double>) map).get(filename);
+        } else {
+            map = refreshWavLength(tempId);
+            if (map != null)
+                return ((Map<String, Double>) map).get(filename);
+        }
+        return null;
     }
 
     @Override

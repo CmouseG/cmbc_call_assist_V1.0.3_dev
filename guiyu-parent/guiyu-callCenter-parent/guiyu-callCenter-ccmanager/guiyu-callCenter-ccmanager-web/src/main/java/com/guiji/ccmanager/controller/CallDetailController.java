@@ -184,7 +184,7 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallDetail")
-    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId){
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin){
 
         log.info("get request getCallDetail，callId[{}]", callId);
 
@@ -193,8 +193,10 @@ public class CallDetailController implements ICallPlanDetail {
         }
         CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
         //修改状态为已读
-        if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
-            callDetailService.updateIsRead(callId);
+        if(!isSuperAdmin && !authService.isAgent(userId)){
+            if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
+                callDetailService.updateIsRead(callId);
+            }
         }
 
         log.info("reponse success getCallDetail，callId[{}]", callId);

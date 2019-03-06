@@ -136,4 +136,6 @@ public interface IBotSentenceProcessService {
 	public void generateTTSCallback(String id, String url);
 	
 	public void saveTrade(String industryName, String industryId, String userId);
+	
+	public int countTemplateByOrgCode(String orgCode);
 }

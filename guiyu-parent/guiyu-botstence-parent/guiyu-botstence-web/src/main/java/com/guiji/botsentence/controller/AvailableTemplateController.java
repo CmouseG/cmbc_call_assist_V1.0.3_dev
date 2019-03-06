@@ -56,6 +56,16 @@ public class AvailableTemplateController {
 		List<BotSentenceProcess> list=botSentenceProcessService.getTemplateByOrgCode(orgCode);
         return ServerResult.createBySuccess(list);
     }
+    
+    /**
+     * 用户管理，根据组织机构查询企业的话术数量
+     */
+    @GetMapping("getTemplateByOrgCode")
+    public ServerResult<Integer> countTemplateByOrgCode(@JsonParam String orgCode){
+		int num = botSentenceProcessService.countTemplateByOrgCode(orgCode);
+        return ServerResult.createBySuccess(num);
+    }
+    
 	/**
 	 * 用户可用话术
 	 */

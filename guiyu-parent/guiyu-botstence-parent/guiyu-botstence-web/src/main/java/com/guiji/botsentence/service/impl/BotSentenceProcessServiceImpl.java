@@ -4418,6 +4418,17 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		criteria.andStateNotEqualTo("99");
 		return botSentenceProcessMapper.selectByExample(example);
 	}
+	
+	
+	@Override
+	public int countTemplateByOrgCode(String orgCode) {
+		BotSentenceProcessExample example = new BotSentenceProcessExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrgCodeLike(orgCode+"%");
+		criteria.andStateNotEqualTo("99");
+		int num = botSentenceProcessMapper.countByExample(example);
+		return num;
+	}
 
 	@Override
 	public List<BotSentenceTemplateTradeVO> queryIndustryListByOrgCode(String orgCode) {

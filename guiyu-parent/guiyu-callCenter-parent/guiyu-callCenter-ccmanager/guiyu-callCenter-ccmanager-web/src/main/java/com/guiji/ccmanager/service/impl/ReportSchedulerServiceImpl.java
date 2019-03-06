@@ -10,8 +10,6 @@ import com.guiji.ccmanager.service.ReportSchedulerService;
 import com.guiji.ccmanager.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
@@ -71,6 +69,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     }
 
     @Override
+    @Transactional
     public void reportCallTodayScheduler() {
 
         //sharding jdbc 不支持 case when操作，所以分开来操作
@@ -93,18 +92,11 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
             list.addAll(list0);
         }
         if(list!=null && list.size()>0){
-            insertReportCallToday(list);
+            statisticMapper.deleteCallTodayTruncate();
+            statisticMapper.insertReportCallToday(list);
         }
 
     }
-    // todo 如果删除后，用户恰好来查询，那么将查不到数据 //其实可以优化，将结果放在redis里面
-    @Transactional
-    public void insertReportCallToday(List<ReportCallDay> list){
-        statisticMapper.reportCallTodayTruncate();
-        statisticMapper.insertReportCallToday(list);
-    }
-
-
 
     @Override
     @Transactional
@@ -129,7 +121,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Override
     @Transactional
     public void reportCallTodayTruncate() {
-        statisticMapper.reportCallTodayTruncate();
+//        statisticMapper.reportCallTodayTruncate();
         //清空30天之前的数据 call_line_result
         stastisticReportLineMapper.deleteCallLineResultDaysAgo(30);
         //清空一年之前的数据 report_line_code

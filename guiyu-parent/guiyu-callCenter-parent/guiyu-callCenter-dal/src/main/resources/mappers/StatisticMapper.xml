@@ -11,7 +11,7 @@
 
     <select id="countReportCallToday30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT
-        DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
         org_code AS orgCode,accurate_intent AS intent,
         IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
         3 AS durationType,
@@ -25,7 +25,7 @@
     </select>
     <select id="countReportCallToday10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT
-        DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
         org_code AS orgCode,accurate_intent AS intent,
         IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
         2 AS durationType,
@@ -39,7 +39,7 @@
     </select>
     <select id="countReportCallToday5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT
-        DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
         org_code AS orgCode,accurate_intent AS intent,
         IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
         1 AS durationType,
@@ -53,7 +53,7 @@
     </select>
     <select id="countReportCallToday0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
         SELECT
-        DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
         org_code AS orgCode,accurate_intent AS intent,
         IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
         0 AS durationType,
@@ -199,7 +199,7 @@
     <select id="getDashboardOverViewTodayNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
         SELECT  SUM(call_count) AS notConnect, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
         FROM report_call_today
-        WHERE intent = 'F' OR intent = 'W'
+        WHERE (intent = 'F' OR intent = 'W')
         <if test="orgCode != null" >
             AND org_code like #{orgCode,jdbcType=VARCHAR}
         </if>
@@ -391,6 +391,9 @@
     <update id="reportCallTodayTruncate">
         truncate table report_call_today
     </update>
+    <delete id="deleteCallTodayTruncate">
+        delete  from report_call_today
+    </delete>
     <select id="getErrorMaths" resultType="com.guiji.callcenter.dao.entity.ErrorMatch">
         select error_name as errorName,en_name as enName
         from error_match

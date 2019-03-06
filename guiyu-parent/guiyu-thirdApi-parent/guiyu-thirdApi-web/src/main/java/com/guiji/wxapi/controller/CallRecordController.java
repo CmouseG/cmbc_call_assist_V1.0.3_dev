@@ -44,7 +44,7 @@ public class CallRecordController {
     @ApiOperation(value = "获取单条通话记录详情")
     @GetMapping("getCallDetailById")
     public Result.ReturnData<CallOutPlanVO> getCallDetail(String id) {
-        Result.ReturnData<CallPlanDetailRecordVO> result = iCallPlanDetail.getCallDetail(id);
+        Result.ReturnData<CallPlanDetailRecordVO> result = iCallPlanDetail.getCallDetailApi(id);
         CallPlanDetailRecordVO callOutPlanVO = result.getBody();
         if (callOutPlanVO != null) {
             CallOutPlanVO resCallOutPlan = new CallOutPlanVO();

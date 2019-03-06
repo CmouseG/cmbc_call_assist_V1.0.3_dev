@@ -32,8 +32,8 @@ public interface ICallPlanDetail {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
-    @GetMapping(value = "getCallDetail")
-    Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId);
+    @GetMapping(value = "getCallDetailApi")
+    Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(@RequestParam(value="callId") String callId);
 
     @ApiOperation(value = "获取通话记录列表")
     @PostMapping(value = "getCallRecordList")

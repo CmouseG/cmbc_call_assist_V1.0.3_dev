@@ -117,6 +117,7 @@ public class SipLineManager {
 	 * @param sipLineId
 	 * @param isSuperAdmin
 	 */
+	@Transactional
 	public void effectThirdSip(Integer sipLineId,Boolean isSuperAdmin) {
 		//查询SIP线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
@@ -178,6 +179,7 @@ public class SipLineManager {
 	 * 4、删除
 	 * @param id
 	 */
+	@Transactional
 	public void delThirdSipLineCfg(Integer id) {
 		//查询线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(id);
@@ -353,6 +355,10 @@ public class SipLineManager {
 			}
 		}else {
 			sysOrganization = dataLocalCacheUtil.queryOrgByCode(sipLineApply.getApplyOrgCode());
+		}
+		if(sysOrganization==null) {
+			log.error("企业信息不存在，申请信息：{}",sipLineApply);
+			throw new ClmException(ClmErrorEnum.CLM1809317.getErrorCode(),ClmErrorEnum.CLM1809317.getErrorMsg());
 		}
 		//获取企业配置的机器人数量
 		Integer orgRobotNum = sysOrganization.getRobot();
@@ -563,7 +569,6 @@ public class SipLineManager {
 	 * 变更SIP线路时是否检查是否生成共享线路
 	 * @param sipLineBaseInfo
 	 */
-	@Transactional
 	private Integer initShareSipLine(SipLineBaseInfo sipLineBaseInfo,Boolean isSuperAdmin) {
 		Integer callDirec = sipLineBaseInfo.getCallDirec();	//呼叫方向
 		String industrys = sipLineBaseInfo.getIndustrys();	//行业

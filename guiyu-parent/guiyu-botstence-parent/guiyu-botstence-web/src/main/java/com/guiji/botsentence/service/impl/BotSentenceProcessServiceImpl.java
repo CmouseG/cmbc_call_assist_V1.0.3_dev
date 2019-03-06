@@ -2729,7 +2729,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			}else if(Constant.BRANCH_TYPE_POSITIVE.equals(edge.getType())) {//如果是未拒绝
 				//判断当前卡片向下是否已存在未拒绝的分支，如果存在，则不允许新增
 				BotSentenceBranchExample example = new BotSentenceBranchExample();
-				example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(botSentenceBranch.getDomain()).andTypeEqualTo(Constant.BRANCH_TYPE_POSITIVE);
+				example.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo(botSentenceBranch.getDomain()).andTypeEqualTo(Constant.BRANCH_TYPE_POSITIVE)
+				.andBranchIdNotEqualTo(branchId);
 				int num = botSentenceBranchMapper.countByExample(example);
 				if(num > 0) {
 					throw new CommonException("当前节点【" + botSentenceBranch.getDomain() + "】已存在'未拒绝'的分支");
@@ -2741,10 +2742,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					for(int i = 0 ; i < intents.length ; i++) {
 						botSentenceIntentMapper.deleteByPrimaryKey(new Long(intents[i]));
 					}
-					
-					//更新Branchname
-					botSentenceBranch.setBranchName("positive");
 				}
+				//更新Branchname
+				botSentenceBranch.setBranchName("positive");
 				botSentenceBranch.setIntents(null);
 				botSentenceBranch.setEnd(null);
 			}

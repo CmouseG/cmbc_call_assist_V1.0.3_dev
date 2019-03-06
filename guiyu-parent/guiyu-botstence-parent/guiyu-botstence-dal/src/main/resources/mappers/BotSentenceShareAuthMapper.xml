@@ -14,6 +14,7 @@
     <result column="crt_user" property="crtUser" jdbcType="VARCHAR" />
     <result column="lst_update_time" property="lstUpdateTime" jdbcType="TIMESTAMP" />
     <result column="lst_update_user" property="lstUpdateUser" jdbcType="VARCHAR" />
+    <result column="shared" property="shared" jdbcType="BIT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, process_id, template_id, template_name, `type`, available_org, nick_name, share_count, 
-    crt_time, crt_user, lst_update_time, lst_update_user
+    crt_time, crt_user, lst_update_time, lst_update_user, shared
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample" >
     select
@@ -115,13 +116,13 @@
     insert into bot_sentence_share_auth (id, process_id, template_id, 
       template_name, `type`, available_org, 
       nick_name, share_count, crt_time, 
-      crt_user, lst_update_time, lst_update_user
-      )
+      crt_user, lst_update_time, lst_update_user, 
+      shared)
     values (#{id,jdbcType=INTEGER}, #{processId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, 
       #{templateName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{availableOrg,jdbcType=VARCHAR}, 
       #{nickName,jdbcType=VARCHAR}, #{shareCount,jdbcType=INTEGER}, #{crtTime,jdbcType=TIMESTAMP}, 
-      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}
-      )
+      #{crtUser,jdbcType=VARCHAR}, #{lstUpdateTime,jdbcType=TIMESTAMP}, #{lstUpdateUser,jdbcType=VARCHAR}, 
+      #{shared,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.botsentence.dao.entity.BotSentenceShareAuth" >
     insert into bot_sentence_share_auth
@@ -162,6 +163,9 @@
       <if test="lstUpdateUser != null" >
         lst_update_user,
       </if>
+      <if test="shared != null" >
+        shared,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -199,6 +203,9 @@
       </if>
       <if test="lstUpdateUser != null" >
         #{lstUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="shared != null" >
+        #{shared,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -247,6 +254,9 @@
       <if test="record.lstUpdateUser != null" >
         lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
       </if>
+      <if test="record.shared != null" >
+        shared = #{record.shared,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -265,7 +275,8 @@
       crt_time = #{record.crtTime,jdbcType=TIMESTAMP},
       crt_user = #{record.crtUser,jdbcType=VARCHAR},
       lst_update_time = #{record.lstUpdateTime,jdbcType=TIMESTAMP},
-      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR}
+      lst_update_user = #{record.lstUpdateUser,jdbcType=VARCHAR},
+      shared = #{record.shared,jdbcType=BIT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -306,6 +317,9 @@
       <if test="lstUpdateUser != null" >
         lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
       </if>
+      <if test="shared != null" >
+        shared = #{shared,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -321,7 +335,8 @@
       crt_time = #{crtTime,jdbcType=TIMESTAMP},
       crt_user = #{crtUser,jdbcType=VARCHAR},
       lst_update_time = #{lstUpdateTime,jdbcType=TIMESTAMP},
-      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR}
+      lst_update_user = #{lstUpdateUser,jdbcType=VARCHAR},
+      shared = #{shared,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

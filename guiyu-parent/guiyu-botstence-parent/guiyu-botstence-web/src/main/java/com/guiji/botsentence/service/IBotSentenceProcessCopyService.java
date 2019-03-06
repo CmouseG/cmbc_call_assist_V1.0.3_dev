@@ -1,9 +1,13 @@
 package com.guiji.botsentence.service;
 
 import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import com.guiji.botsentence.dao.entity.BotSentenceShareAuth;
 import com.guiji.botsentence.vo.AvaliableOrgVO;
 import com.guiji.botsentence.vo.BotSentenceShareVO;
+import com.guiji.component.client.config.JsonParam;
 
 public interface IBotSentenceProcessCopyService {
 
@@ -18,4 +22,6 @@ public interface IBotSentenceProcessCopyService {
 	public void saveBotStenceSharHistory(BotSentenceShareVO share);
 	
 	public List<AvaliableOrgVO> queryAvaliableOrgList(String processId);
+	
+	public void cancelShare(String processId, String userId);
 }

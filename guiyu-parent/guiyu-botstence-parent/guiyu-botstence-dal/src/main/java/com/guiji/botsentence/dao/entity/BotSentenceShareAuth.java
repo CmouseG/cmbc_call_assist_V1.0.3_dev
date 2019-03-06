@@ -28,6 +28,8 @@ public class BotSentenceShareAuth implements Serializable {
 
     private String lstUpdateUser;
 
+    private Boolean shared;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -126,6 +128,14 @@ public class BotSentenceShareAuth implements Serializable {
         this.lstUpdateUser = lstUpdateUser == null ? null : lstUpdateUser.trim();
     }
 
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -144,6 +154,7 @@ public class BotSentenceShareAuth implements Serializable {
         sb.append(", crtUser=").append(crtUser);
         sb.append(", lstUpdateTime=").append(lstUpdateTime);
         sb.append(", lstUpdateUser=").append(lstUpdateUser);
+        sb.append(", shared=").append(shared);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

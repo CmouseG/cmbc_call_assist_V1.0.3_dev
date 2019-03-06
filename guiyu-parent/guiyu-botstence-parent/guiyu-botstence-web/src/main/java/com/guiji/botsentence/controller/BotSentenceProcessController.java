@@ -137,9 +137,13 @@ public class BotSentenceProcessController {
 				//设置是否分享
 				BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
 				example.createCriteria().andProcessIdEqualTo(temp.getProcessId());
-				int count = botSentenceShareAuthMapper.countByExample(example);
-				if(count > 0) {
-					vo.setShared(true);
+				List<BotSentenceShareAuth> shareList =  botSentenceShareAuthMapper.selectByExample(example);
+				if(null != shareList && shareList.size() > 0) {
+					if(null != shareList.get(0).getShared()) {
+						vo.setShared(shareList.get(0).getShared());
+					}else {
+						vo.setShared(false);
+					}
 				}else {
 					vo.setShared(false);
 				}

@@ -24,7 +24,7 @@ public class ApplicationInit {
 
         log.info("----------application init start check----------");
 
-        Lock lock = new Lock("ApplicationInit.isTruncateSuccess", "ApplicationInit.isTruncateSuccess");
+        /*Lock lock = new Lock("ApplicationInit.isTruncateSuccess", "ApplicationInit.isTruncateSuccess");
         try {
             if (distributedLockHandler.tryLock(lock)) {
                 if (!reportSchedulerService.isTruncateSuccess()) {  //假如清空today表失败了。将之前几天的数据删除掉
@@ -36,7 +36,7 @@ public class ApplicationInit {
             log.error("检查清空当天统计表失败",e);
         }finally {
             distributedLockHandler.releaseLock(lock);// 释放锁
-        }
+        }*/
 
         Lock lockDay = new Lock("ApplicationInit.isDaySheduleSuccess", "ApplicationInit.isDaySheduleSuccess");
         try {

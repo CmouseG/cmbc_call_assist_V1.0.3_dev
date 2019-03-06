@@ -69,6 +69,9 @@ public class LineController {
 					}else if(line.getBelongUser().equals(customerId)) {
 						//已分配给我
 						vo.setIsAlloted(true);
+					}else {
+						//不是分配给我的不显示
+						continue;
 					}
 					rtnList.add(vo);
 				}

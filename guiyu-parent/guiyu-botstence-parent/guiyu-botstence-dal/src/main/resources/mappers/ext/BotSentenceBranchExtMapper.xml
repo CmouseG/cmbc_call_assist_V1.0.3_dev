@@ -7,7 +7,7 @@
       `next`, intents, `end`, 
       `domain`, is_special_limit_free, user_ask, 
       crt_time, crt_user, lst_update_time, 
-      lst_update_user, key_words, line_name, is_show, respname, type, weight)
+      lst_update_user, key_words, line_name, is_show, respname, type, weight, need_agent, rule)
     VALUES
     <foreach collection="list" item="item" index="index" separator="," >
         (
@@ -32,7 +32,9 @@
         #{item.isShow},
         #{item.respname},
         #{item.type},
-        #{item.weight}
+        #{item.weight},
+        #{item.needAgent},
+        #{item.rule}
         )
     </foreach>
     

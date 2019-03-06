@@ -62,14 +62,13 @@ public class StatisticReportHandler {
             sendNoticeService.sendNotice(callOutPlan);
         }
         //将记录插入到today表中
-        updateReportToday(callOutPlan);
+//        updateReportToday(callOutPlan);
     }
 
     /**
      * 将记录插入到today表中
-     * @param callOutPlan
      */
-    public void updateReportToday(CallOutPlan callOutPlan){
+/*    public void updateReportToday(CallOutPlan callOutPlan){
         String intent = callOutPlan.getAccurateIntent();
         String reason = callOutPlan.getReason();
         String tempId = callOutPlan.getTempId();
@@ -119,7 +118,7 @@ public class StatisticReportHandler {
             statisticMapper.updateTodayCountAndDruation(reportCallToday);
         }
 
-    }
+    }*/
 
 
     int getDurationType(long duration) {

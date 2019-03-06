@@ -77,10 +77,13 @@ public class ChannelProgressHandler {
 
                     if(callOutPlan2Minutes.getCallState()==ECallState.progress.ordinal()){
 
-                        callOutPlan2Minutes.setCallState(ECallState.hangup_fail.ordinal());
-                        callOutPlan2Minutes.setReason("604");
-                        callOutPlan2Minutes.setAccurateIntent("W");
-                        callOutPlanService.updateNotOverWriteIntent(callOutPlan2Minutes);
+                        CallOutPlan callOutPlanUpdate = new CallOutPlan();
+                        callOutPlanUpdate.setCallId(callOutPlan2Minutes.getCallId());
+                        callOutPlanUpdate.setCallState(ECallState.hangup_fail.ordinal());
+                        callOutPlanUpdate.setReason("604");
+                        callOutPlanUpdate.setAccurateIntent("W");
+                        callOutPlanService.updateNotOverWriteIntent(callOutPlanUpdate);
+
 
                         //释放ai资源
                         log.info("2分钟后，开始释放ai资源,callplanId[{}], aiId[{}]", callOutPlan2Minutes.getCallId(), callOutPlan2Minutes.getAiId());

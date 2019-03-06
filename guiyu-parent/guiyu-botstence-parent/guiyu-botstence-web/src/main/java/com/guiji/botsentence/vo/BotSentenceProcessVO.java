@@ -60,6 +60,11 @@ public class BotSentenceProcessVO implements Serializable {
 	private String orgCode;
     private String orgName;
     private String userName;
+    
+    private int shareCount;
+    private String nickName;
+    
+    private boolean shared;
 
     private static final long serialVersionUID = 1L;
 
@@ -327,6 +332,31 @@ public class BotSentenceProcessVO implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+
+	public int getShareCount() {
+		return shareCount;
+	}
+
+	public void setShareCount(int shareCount) {
+		this.shareCount = shareCount;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public boolean isShared() {
+		return shared;
+	}
+
+	public void setShared(boolean shared) {
+		this.shared = shared;
+	}
+	
 	
     
 }

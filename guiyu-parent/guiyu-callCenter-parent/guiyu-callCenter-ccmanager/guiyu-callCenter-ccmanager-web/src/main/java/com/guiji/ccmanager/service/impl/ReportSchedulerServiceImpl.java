@@ -42,7 +42,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     public void reportCallDayScheduler() {
 
         statisticMapper.deleteReportCallDay();
-
+        //sharding jdbc 不支持 case when操作，所以分开来操作
         List<ReportCallDay> list30 = statisticMapper.countReportCallDayDruation30();
         List<ReportCallDay> list10 = statisticMapper.countReportCallDayDruation10();
         List<ReportCallDay> list5 = statisticMapper.countReportCallDayDruation5();
@@ -70,6 +70,36 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
 
     @Override
     @Transactional
+    public void reportCallTodayScheduler() {
+
+        //sharding jdbc 不支持 case when操作，所以分开来操作
+        List<ReportCallDay> list30 = statisticMapper.countReportCallToday30();
+        List<ReportCallDay> list10 = statisticMapper.countReportCallToday10();
+        List<ReportCallDay> list5 = statisticMapper.countReportCallToday5();
+        List<ReportCallDay> list0 = statisticMapper.countReportCallToday0();
+
+        List<ReportCallDay> list = new ArrayList<>();
+        if(list30!=null && list30.size() >0){
+            list.addAll(list30);
+        }
+        if(list30!=null && list30.size() >0){
+            list.addAll(list10);
+        }
+        if(list30!=null && list30.size() >0){
+            list.addAll(list5);
+        }
+        if(list30!=null && list30.size() >0){
+            list.addAll(list0);
+        }
+        if(list!=null && list.size()>0){
+            statisticMapper.deleteCallTodayTruncate();
+            statisticMapper.insertReportCallToday(list);
+        }
+
+    }
+
+    @Override
+    @Transactional
     public void reportCallHourScheduler() {
         statisticMapper.deleteReportCallHour();
         List<ReportCallHour>  listOut = statisticMapper.countReportCallHourOut();
@@ -91,7 +121,7 @@ public class ReportSchedulerServiceImpl implements ReportSchedulerService {
     @Override
     @Transactional
     public void reportCallTodayTruncate() {
-        statisticMapper.reportCallTodayTruncate();
+//        statisticMapper.reportCallTodayTruncate();
         //清空30天之前的数据 call_line_result
         stastisticReportLineMapper.deleteCallLineResultDaysAgo(30);
         //清空一年之前的数据 report_line_code

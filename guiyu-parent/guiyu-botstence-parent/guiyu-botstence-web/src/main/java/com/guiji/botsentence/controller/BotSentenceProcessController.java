@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateIndustryVO;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateTradeVO;
+import com.guiji.botsentence.dao.BotSentenceShareAuthMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceDomain;
 import com.guiji.botsentence.dao.entity.BotSentenceIntent;
 import com.guiji.botsentence.dao.entity.BotSentenceProcess;
+import com.guiji.botsentence.dao.entity.BotSentenceShareAuth;
+import com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample;
 import com.guiji.botsentence.dao.entity.BotSentenceTemplate;
 import com.guiji.botsentence.dao.entity.BotSentenceTemplateExample;
 import com.guiji.botsentence.service.IBotSentenceProcessService;
@@ -62,6 +65,9 @@ public class BotSentenceProcessController {
 	
 	@Autowired
 	private IBotSentenceTemplateService botSentenceTemplateService;
+	
+	@Autowired
+	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
 	
 	
 	/**
@@ -125,8 +131,18 @@ public class BotSentenceProcessController {
 					String level_3 = industryId;
 					Map<String, String> map = IndustryUtil.map;
 					vo.setIndustry(map.get(level_1) + "/" + map.get(level_2) + "/" + map.get(level_3));
+					//vo.setIndustryId(level_1 + "," + level_2 + "," + level_3);
 				}
 				
+				//设置是否分享
+				BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
+				example.createCriteria().andProcessIdEqualTo(temp.getProcessId());
+				int count = botSentenceShareAuthMapper.countByExample(example);
+				if(count > 0) {
+					vo.setShared(true);
+				}else {
+					vo.setShared(false);
+				}
 				results.add(vo);
 			}
 			
@@ -516,6 +532,12 @@ public class BotSentenceProcessController {
 	public ServerResult<List<BotSentenceProcess>> getTemplateById(String templateId){
 		List<BotSentenceProcess> result=botSentenceProcessService.getTemplateById(templateId);
 		return ServerResult.createBySuccess(result);
+	}
+	
+	@RequestMapping(value="saveIndustry")
+	public ServerResult saveTrade(@JsonParam String industryName, @JsonParam String industryId, @RequestHeader("userId") String userId){
+		botSentenceProcessService.saveTrade(industryName, industryId, userId);
+		return ServerResult.createBySuccess();
 	}
 	
 }

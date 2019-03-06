@@ -190,8 +190,15 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				try {
 					options_json = FileUtil.readToString(file);
 					JSONObject json = JSONObject.parseObject(options_json);
-					template_id = json.getString("tempname") + "_en";
-					//trade = json.getString("trade");
+					String templateId = json.getString("tempname");
+					if(StringUtils.isNotBlank(templateId)) {
+						if(templateId.endsWith("_en")) {
+							template_id = templateId;
+						}else {
+							template_id = templateId + "_en";
+						}
+					}
+					//template_id = json.getString("tempname") + "_en";
 					des = json.getString("des");
 					template_name = json.getString("dianame");//模板名称
 					
@@ -554,12 +561,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					return false;
 				}
 			} else if (file.getName().equals("sim.txt")) {
-				/*try {
+				try {
 					sim_txt = FileUtil.readToString(file);
 				} catch (IOException e) {
 					logger.error("read sim.txt IOException:" + e);
 					return false;
-				}*/
+				}
 			} else if (file.getName().equals("weights.txt")) {
 				try {
 					weights_txt = FileUtil.readToString(file);
@@ -594,7 +601,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		BotSentenceAddition botSentenceAddition = new BotSentenceAddition();
 		botSentenceAddition.setProcessId(processId);
 		//botSentenceAddition.setOptionsJson(options_json);
-		botSentenceAddition.setSimTxt(sim_txt);
+		botSentenceAddition.setSimTxt("");
 		botSentenceAddition.setStopwordsTxt(stopwords_txt);
 		//botSentenceAddition.setTemplateJson(template_json);
 		botSentenceAddition.setUserdictTxt(userdict_txt);

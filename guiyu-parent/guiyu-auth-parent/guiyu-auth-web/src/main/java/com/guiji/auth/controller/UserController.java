@@ -87,10 +87,11 @@ public class UserController implements IAuth {
 		}
 
 		if (StringUtils.isEmpty(param.getVaildTime())) {
-			user.setVaildTime(new Date());
+			user.setVaildTime(null);
 		} else {
 			user.setVaildTime(parseStringDate(param.getVaildTime()));
 		}
+		user.setIsDesensitization(param.getIsDesensitization());
 		service.insert(user, param.getRoleId());
 		return user;
 	}

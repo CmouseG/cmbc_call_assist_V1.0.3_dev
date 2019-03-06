@@ -1,5 +1,6 @@
 package com.guiji.callcenter.fsmanager.service.impl;
 
+import com.google.common.base.Joiner;
 import com.guiji.callcenter.dao.LineConfigMapper;
 import com.guiji.callcenter.dao.entity.LineConfig;
 import com.guiji.callcenter.dao.entity.LineConfigExample;
@@ -118,40 +119,102 @@ public class LineServiceImpl implements LineService {
 
     @Override
     public List<LineXmlnfoVO> linexmlinfos(String lineId) {
-        XmlUtil util = new XmlUtil();
         List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
         //查询数据库
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
         criteria.andLineIdEqualTo(lineId);
         List<LineConfig> list =lineConfigMapper.selectByExample(example);
-
         for (LineConfig config:list) {
-            LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
-            lineXmlnfo.setConfigType(config.getFileType());
-            lineXmlnfo.setFileName(config.getFileName());
-            lineXmlnfo.setFileData(util.getBase64(config.getFileData()));
-            listLine.add(lineXmlnfo);
+            listLine.add(getLineXmlnfoVO(config));
         }
         return listLine;
     }
 
     @Override
     public List<LineXmlnfoVO> linexmlinfosAll() {
-        XmlUtil util = new XmlUtil();
         List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
         LineConfigExample example = new LineConfigExample();
         LineConfigExample.Criteria criteria = example.createCriteria();
         List<LineConfig> list =lineConfigMapper.selectByExample(example);
         for (LineConfig config:list) {
-            LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
-            lineXmlnfo.setConfigType(config.getFileType());
-            lineXmlnfo.setFileName(config.getFileName());
-            lineXmlnfo.setFileData(util.getBase64(config.getFileData()));
-            listLine.add(lineXmlnfo);
+            listLine.add(getLineXmlnfoVO(config));
         }
         return listLine;
     }
+
+    @Override
+    public boolean batchLinesinfos(List<LineInfoVO> lineInfos) {
+        List<String> LineList = new ArrayList<>();
+        for (LineInfoVO lineInfoVO:lineInfos) {
+            LineList.add(lineInfoVO.getLineId());
+            buildLine(lineInfoVO);
+        }
+        //调用通知fsagent更新方法
+        updatenotifyBatch(LineList);
+        return true;
+    }
+
+    @Override
+    public List<LineXmlnfoVO> batchlinexmlinfosAll(List<String> lineIds) {
+        List<LineXmlnfoVO> listLine = new ArrayList<LineXmlnfoVO>();
+        LineConfigExample example = new LineConfigExample();
+        List<LineConfig> list =lineConfigMapper.selectByExample(example);
+        for (LineConfig config:list) {
+            if(lineIds.contains(config.getLineId())){
+                listLine.add(getLineXmlnfoVO(config));
+            }
+        }
+        return listLine;
+    }
+
+    /**
+     * 拼装LineXmlnfoVO
+     * @param config
+     * @return
+     */
+    public LineXmlnfoVO getLineXmlnfoVO(LineConfig config){
+        XmlUtil util = new XmlUtil();
+        LineXmlnfoVO lineXmlnfo = new LineXmlnfoVO();
+        lineXmlnfo.setConfigType(config.getFileType());
+        lineXmlnfo.setFileName(config.getFileName());
+        lineXmlnfo.setFileData(util.getBase64(config.getFileData()));
+        return lineXmlnfo;
+    }
+
+
+    /**
+     *
+     * @param lineInfoVO
+     */
+    public void buildLine(LineInfoVO lineInfoVO){
+        String lineId = lineInfoVO.getLineId();
+        //查询数据库，看有无重名
+        LineConfigExample example = new LineConfigExample();
+        LineConfigExample.Criteria criteria = example.createCriteria();
+        criteria.andLineIdEqualTo(lineId);
+        List<LineConfig>  list =lineConfigMapper.selectByExample(example);
+        if(list.size()>0){
+            lineConfigMapper.deleteByPrimaryKey(list.get(0).getId());
+        }
+        String gatewayxml = buildGateway(lineInfoVO);
+        LineConfig recordgw = new LineConfig();
+        recordgw.setLineId(lineId);
+        recordgw.setFileType(Constant.CONFIG_TYPE_GATEWAY);
+        recordgw.setFileName("gw_"+lineId+".xml");
+        recordgw.setFileData(gatewayxml);
+        lineConfigMapper.insert(recordgw);
+
+        String dialplanxml = buildDialplan(lineInfoVO);
+        LineConfig recorddl = new LineConfig();
+        recorddl.setLineId(lineId);
+        recorddl.setFileType(Constant.CONFIG_TYPE_DIALPLAN);
+        recorddl.setFileName("01_"+lineId+".xml");
+        recorddl.setFileData(dialplanxml);
+        lineConfigMapper.insert(recorddl);
+
+    }
+
 
 
     /**
@@ -273,5 +336,24 @@ public class LineServiceImpl implements LineService {
             }
         }
     }
+
+    /**
+     * 通知fsagent批量更新配置文件
+     * @param LineList
+     */
+    public void updatenotifyBatch(List<String> LineList){
+        //通知所有的fsagent服务更新线路
+        List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
+        for(String server:serverList){
+            ILineOperate lineOperateApi = FeignBuildUtil.feignBuilderTarget(ILineOperate.class,Constant.PROTOCOL +server);
+            //调用fsagent通知更新接口
+            Result.ReturnData<Boolean> result = lineOperateApi.updatenotifybatch(Joiner.on(",").join(LineList));
+            if(!result.getCode().equals("0")){
+                logger.info("通知[{}]这个fsagent更新接口失败",server);
+                //TODO --告警
+            }
+        }
+    }
+
 
 }

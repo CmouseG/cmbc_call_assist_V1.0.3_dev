@@ -14,10 +14,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.enums.GateWayLineStatusEnum;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
-import com.guiji.dispatch.util.DateTimeUtils;
-import com.guiji.dispatch.util.ResHandler;
+import com.guiji.dispatch.service.*;
+import com.guiji.dispatch.util.*;
+import com.guiji.dispatch.vo.GateWayLineOccupyVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -71,13 +75,7 @@ import com.guiji.dispatch.dao.entity.UserSmsConfigExample;
 import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
-import com.guiji.dispatch.service.IBlackListService;
-import com.guiji.dispatch.service.IDispatchPlanService;
-import com.guiji.dispatch.service.IPhonePlanQueueService;
-import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.sms.IMessageService;
-import com.guiji.dispatch.util.Base64MD5Util;
-import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
@@ -139,6 +137,17 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
 	private IPhoneRegionService phoneRegionService;
 
+	@Autowired
+    private GateWayLineService gateWayLineService;
+
+	/**
+	 * 单个任务导入
+	 * @param dispatchPlan
+	 * @param userId
+	 * @param orgCode
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
 		boolean checkPhoneInBlackList = blackService.checkPhoneInBlackList(dispatchPlan.getPhone(), orgCode);
@@ -199,17 +208,28 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
 		dispatchPlan.setOrgCode(orgCode);
+		//路线类型
+        Integer lineType = dispatchPlan.getLineType();
 		// 加入线路
-		for (DispatchLines lines : dispatchPlan.getLines()) {
+        List<DispatchLines> lineList = dispatchPlan.getLines();
+		for (DispatchLines lines : lineList) {
 			lines.setCreateTime(DateUtil.getCurrent4Time());
 			lines.setPlanuuid(dispatchPlan.getPlanUuid());
+			lines.setLineType(dispatchPlan.getLineType());
 			lineService.insertLines(lines);
 		}
 
 		// 查询号码归属地
 		String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
 		dispatchPlan.setCityName(cityName);
-		dispatchPlanMapper.insert(dispatchPlan);
+		boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(dispatchPlan));
+		if(bool){
+		    //判断是否是路由网关路线
+            if(null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType) {
+                //设置加入路由网关路线redis及状态
+                gateWayLineService.setGatewayLineRedis(lineList);
+            }
+        }
 		return dto;
 	}
 
@@ -564,7 +584,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	/**
 	 * 请求短信参数
-	 * 
+	 *
 	 * @param url
 	 * @param json
 	 * @return
@@ -599,7 +619,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	/**
 	 * 发送短信
-	 * 
+	 *
 	 * @param sendSMsDispatchPlan
 	 * @param label
 	 * @return
@@ -694,7 +714,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	/**
 	 * 记录第三方接口记录详情
-	 * 
+	 *
 	 * @param url
 	 * @param jsonObject
 	 * @return
@@ -716,7 +736,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	/**
 	 * 检查是否完成号码通知了
-	 * 
+	 *
 	 * @param dispatchPlan
 	 * @return
 	 */
@@ -1666,7 +1686,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setCallData(Integer.valueOf(plans.getCallDate()));
 			bean.setFlag(Constant.IS_FLAG_0);
 			bean.setGmtCreate(DateUtil.getCurrent4Time());
-			bean.setGmtModified(DateUtil.getCurrent4Time()); 
+			bean.setGmtModified(DateUtil.getCurrent4Time());
 			//号码去重
 			if(phones.contains(bean.getPhone())){
 				logger.info("当前批量加入号码存在重复号码，已经过滤");
@@ -1698,7 +1718,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				continue;
 			}
 
-			for (DispatchLines lines : plans.getLines()) {
+			//路线类型
+			Integer lineType = dispatchPlan.getLineType();
+			// 加入线路
+			List<DispatchLines> lineList = plans.getLines();
+			for (DispatchLines lines : lineList) {
 				lines.setCreateTime(DateUtil.getCurrent4Time());
 				lines.setPlanuuid(bean.getPlanUuid());
 				lineService.insertLines(lines);
@@ -1706,7 +1730,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// 查询号码归属地
 			String cityName = phoneRegionService.queryPhoneRegion(bean.getPhone());
 			bean.setCityName(cityName);
-			dispatchPlanMapper.insert(bean);
+			boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(bean));
+			if(bool){
+				//判断是否是路由网关路线
+				if(null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType) {
+					//设置加入路由网关路线redis及状态
+					gateWayLineService.setGatewayLineRedis(lineList);
+				}
+			}
 			phones.add(bean.getPhone());
 		}
 		return true;

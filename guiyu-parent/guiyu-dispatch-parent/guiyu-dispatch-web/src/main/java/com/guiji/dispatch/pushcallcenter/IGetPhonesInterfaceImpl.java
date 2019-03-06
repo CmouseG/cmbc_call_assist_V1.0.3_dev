@@ -40,6 +40,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 	 */
 	@Override
 	public List<DispatchPlan> getPhonesByParams(Integer userId, String robot, String callHour, Integer limit) {
+		List<DispatchPlan> planList = new ArrayList<DispatchPlan>();
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -55,30 +56,32 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis);
-		// 如果当前用户已经欠费的话，那么就删除
-		List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
-		if(userIdList!=null){
-			for (int j = 0; j < selectByCallHour.size(); j++) {
-				if (userIdList.contains(String.valueOf(selectByCallHour.get(j).getUserId()))) {
+		if(null != selectByCallHour) {
+			// 如果当前用户已经欠费的话，那么就删除
+			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
+			if (userIdList != null) {
+				for (int j = 0; j < selectByCallHour.size(); j++) {
+					if (!userIdList.contains(String.valueOf(selectByCallHour.get(j).getUserId()))) {
 //					logger.info("getPhonesByParams>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + selectByCallHour.get(j).getUserId());
-					selectByCallHour.remove(j);
+						planList.add(selectByCallHour.get(j));
+					}
 				}
 			}
-		}
 
-		List<String> ids = new ArrayList<>();
-		for (DispatchPlan plan : selectByCallHour) {
-			ids.add(plan.getPlanUuid());
+			List<String> ids = new ArrayList<>();
+			for (DispatchPlan plan : planList) {
+				ids.add(plan.getPlanUuid());
+			}
+			if (ids.size() > 0) {
+				dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+			}
+			// 查询出每个任务下对应的线路
+			for (DispatchPlan bean : planList) {
+				List<DispatchLines> queryLinesByPlanUUID = linesService.queryLinesByPlanUUID(bean.getPlanUuid());
+				bean.setLines(queryLinesByPlanUUID);
+			}
 		}
-		if (ids.size() > 0) {
-			dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
-		}
-		// 查询出每个任务下对应的线路
-		for (DispatchPlan bean : selectByCallHour) {
-			List<DispatchLines> queryLinesByPlanUUID = linesService.queryLinesByPlanUUID(bean.getPlanUuid());
-			bean.setLines(queryLinesByPlanUUID);
-		}
-		return selectByCallHour;
+		return planList;
 	}
 
 	/**
@@ -99,15 +102,25 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		List<PlanUserIdLineRobotDto> planUserIdLineRobotDtos = new ArrayList<>();
 		// 去掉line分组
 		List<DispatchPlan> selectPlanGroupByUserIdLineRobot = dispatchMapper.selectPlanGroupByUserIdLineRobot(dis);
+		// 查询欠费用户
+		List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
+		boolean hasArrearage = null != userIdList?true:false;
 		for (DispatchPlan result : selectPlanGroupByUserIdLineRobot) {
 			PlanUserIdLineRobotDto dto = new PlanUserIdLineRobotDto();
 			dto.setUserId(result.getUserId());
 			dto.setRobot(result.getRobot());
-			planUserIdLineRobotDtos.add(dto);
+			if(hasArrearage){
+				//只加入不欠费用户， 如果当前用户已经欠费的话，那么就删除
+				if(!userIdList.contains(String.valueOf(result.getUserId()))) {
+					planUserIdLineRobotDtos.add(dto);
+				}else{
+					logger.info("selectPlanGroupByUserIdRobot>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + result.getUserId());
+				}
+			}else{
+				planUserIdLineRobotDtos.add(dto);
+			}
 		}
 
-		// 如果当前用户已经欠费的话，那么就删除
-		List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
 		if(userIdList!=null){
 			for (int j = 0; j < planUserIdLineRobotDtos.size(); j++) {
 				if (userIdList.contains(String.valueOf(planUserIdLineRobotDtos.get(j).getUserId()))) {

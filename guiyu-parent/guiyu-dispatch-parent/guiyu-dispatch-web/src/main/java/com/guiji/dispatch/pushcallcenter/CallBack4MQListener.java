@@ -86,23 +86,44 @@ public class CallBack4MQListener {
 				String botstenceId = mqSuccPhoneDto.getTempId();
 				//获取网关线路对象
 				Integer lineId = mqSuccPhoneDto.getLineId();
-				GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey + lineId);
-				if (null != gateWayLine) {
-					//获取用户线路机器人分配
-					String key = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
-					Object obj = (Object) redisUtil.get(key);
-					if (null != obj) {
-						DispatchPlan dispatchRedis = (DispatchPlan) obj;
-						//判断是否是网关线路
-						if (null != dispatchRedis && PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()) {
-							//释放网关路线
-							this.releaseGateWay(gateWayLine, lineId);
+				logger.info("释放网关线路ID:{}", lineId);
+				if(null != lineId) {
+					String gateWayLineKey = RedisConstant.RedisConstantKey.gatewayLineKey + lineId;
+					GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(gateWayLineKey);
+					logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
+					if (null != gateWayLine) {
+						//获取用户线路机器人分配
+						String key = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
+						Object obj = (Object) redisUtil.get(key);
+						if (null != obj) {
+							DispatchPlan dispatchRedis = (DispatchPlan) obj;
+							//判断是否是网关线路
+							if (null != dispatchRedis && PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()) {
+								//释放网关路线
+								this.releaseGateWay(gateWayLine, gateWayLineKey);
+							}
+						} else {
+							if (gateWayLine.getUserId().equals(userId)
+									&& gateWayLine.getBotstenceId().equals(botstenceId)) {
+								//释放网关路线
+								this.releaseGateWay(gateWayLine, gateWayLineKey);
+							}
 						}
-					} else {
-						if (gateWayLine.getUserId().equals(userId)
-								&& gateWayLine.getBotstenceId().equals(botstenceId)) {
-							//释放网关路线
-							this.releaseGateWay(gateWayLine, lineId);
+					}
+				}else{
+					//如果返回lineId，则模糊匹配查询出所有网关路线
+					Set<String> gatewayLineKeySet = redisUtil.getAllKeyMatch(RedisConstant.RedisConstantKey.gatewayLineKey);
+					if(null != gatewayLineKeySet){
+						Iterator<String> iter =gatewayLineKeySet.iterator();
+						while(iter.hasNext()){
+							//获取网关线路
+							String gateWayLineKey = iter.next();
+							GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo)redisUtil.get(gateWayLineKey);
+							if (null != gateWayLine
+								&& gateWayLine.getUserId().equals(userId) && gateWayLine.getBotstenceId().equals(botstenceId)) {
+								//释放网关路线
+								this.releaseGateWay(gateWayLine, gateWayLineKey);
+							}
 						}
 					}
 				}
@@ -116,15 +137,14 @@ public class CallBack4MQListener {
 	/**
 	 * 释放网关路线占用
 	 * @param gateWayLine
-	 * @param lineId
+	 * @param gateWayLineKey
 	 */
-	private void releaseGateWay(GateWayLineOccupyVo gateWayLine, Integer lineId){
+	private void releaseGateWay(GateWayLineOccupyVo gateWayLine, String gateWayLineKey){
 		//释放网关线路状态
 		gateWayLine.setStatus(GateWayLineStatusEnum.LEISURE.getState());
 		gateWayLine.setReleaseTime(DateTimeUtils.getDateString(new Date(),DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
 	//	gateWayLine.setUserId(null);
 	//	gateWayLine.setBotstenceId(null);
-		redisUtil.set(RedisConstant.RedisConstantKey.gatewayLineKey + lineId,
-				gateWayLine);
+		redisUtil.set(gateWayLineKey, gateWayLine);
 	}
 }

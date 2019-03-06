@@ -2,12 +2,12 @@ package com.guiji.robot.service.vo;
 
 import lombok.Data;
 
-/** 
-* @ClassName: AiInuseCache 
-* @Description: 目前已经分配的AI机器人缓存数据
-* @date 2018年11月16日 上午9:49:49 
-* @version V1.0  
-*/
+/**
+ * @ClassName: AiInuseCache
+ * @Description: 目前已经分配的AI机器人缓存数据
+ * @date 2018年11月16日 上午9:49:49
+ * @version V1.0
+ */
 @Data
 public class AiInuseCache {
 	//用户号
@@ -16,6 +16,8 @@ public class AiInuseCache {
 	private String aiNo;
 	//机器人昵称
 	private String aiName;
+	//机器人类型（1-老版本,2-飞龙）
+	private int version;
 	//机器人IP
 	private String ip;
 	//机器人端口

@@ -635,8 +635,8 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 	@Override
 	public List<BotSentenceShareAuth> queryBotstenceMarket(String userId, int pageSize, int pageNo, String templateName, String nickName, String orderType) {
 		//获取机构
-		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		//String orgCode=data.getBody().getOrgCode();
+		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		String orgCode=data.getBody().getOrgCode();
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
 		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);
 		if(StringUtils.isNotBlank(templateName)) {
@@ -646,8 +646,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 			criteria.andNickNameLike("%"+nickName+"%");
 		}
 		
-		
-		String orgCode = "1.%";
+		//String orgCode = "1.%";
 		Criteria criteria1 = example.createCriteria().andTypeEqualTo("01").andSharedEqualTo(true);;
 		criteria1.andAvailableOrgLike(orgCode + ",%");
 		if(StringUtils.isNotBlank(templateName)) {
@@ -746,8 +745,8 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 	public int countBotstenceMarket(String userId, String templateName, String nickName) {
 
 		//获取机构
-		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		//String orgCode=data.getBody().getOrgCode();
+		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		String orgCode=data.getBody().getOrgCode();
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
 		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);;
 		if(StringUtils.isNotBlank(templateName)) {
@@ -756,9 +755,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		if(StringUtils.isNotBlank(nickName)) {
 			criteria.andNickNameLike("%"+nickName+"%");
 		}
-		
-		
-		String orgCode = "1.%";
+		//String orgCode = "1.%";
 		Criteria criteria1 = example.createCriteria().andTypeEqualTo("01").andSharedEqualTo(true);;
 		criteria1.andAvailableOrgLike(orgCode + ",%");
 		if(StringUtils.isNotBlank(templateName)) {

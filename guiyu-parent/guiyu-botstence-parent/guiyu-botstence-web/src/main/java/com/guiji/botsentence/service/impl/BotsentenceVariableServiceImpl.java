@@ -269,6 +269,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 				VoliceInfo voliceInfo = voliceService.getVoliceInfo(new Long(options.getVoice()));
 				if(!voliceInfo.getContent().equals(vo.getVoliceContent())) {
 					voliceInfo.setContent(vo.getVoliceContent());
+					voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
 					voliceInfo.setLstUpdateUser(userId);
 					voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
 					voliceService.saveVoliceInfo(voliceInfo, userId);
@@ -281,7 +282,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 				voliceInfo.setContent(vo.getVoliceContent().replace("\n", "").trim());
 				voliceInfo.setProcessId(vo.getProcessId());
 				voliceInfo.setTemplateId(options.getTemplateId());
-				voliceInfo.setType("00");
+				voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
 				//voliceInfo.setDomainName(DOMAIN);
 				voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
 				voliceInfo.setCrtUser(userId);

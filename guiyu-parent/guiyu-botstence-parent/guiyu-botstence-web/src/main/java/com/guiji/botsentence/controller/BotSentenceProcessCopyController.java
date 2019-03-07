@@ -71,9 +71,9 @@ public class BotSentenceProcessCopyController {
 				
 				BeanUtil.copyProperties(temp, vo);
 				
-				if(null != temp.getCrtTime()) {
+				/*if(null != temp.getCrtTime()) {
 					vo.setCrtTimeStr(DateUtil.dateToString(temp.getCrtTime(), DateUtil.ymdhms));
-				}
+				}*/
 				
 				BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(vo.getProcessId());
 				

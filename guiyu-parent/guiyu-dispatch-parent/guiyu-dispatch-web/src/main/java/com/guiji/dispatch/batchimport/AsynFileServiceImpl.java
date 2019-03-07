@@ -7,17 +7,15 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.eclipse.jetty.server.UserIdentity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
@@ -31,10 +29,6 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.NasUtil;
-
-import com.guiji.botsentence.api.IBotSentenceProcess;
-import com.guiji.botsentence.api.entity.BotSentenceProcess;
-import com.guiji.botsentence.api.entity.ServerResult;
 
 @Service
 public class AsynFileServiceImpl implements AsynFileService {
@@ -64,21 +58,8 @@ public class AsynFileServiceImpl implements AsynFileService {
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
-		boolean isExcel2003 = true;
-		if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
-			isExcel2003 = false;
-		}
-		InputStream is = file.getInputStream();
-		Workbook wb = null;
-		if (isExcel2003) {
-			wb = new HSSFWorkbook(is);
-		} else {
-			wb = new XSSFWorkbook(is);
-		}
-		Sheet sheet = wb.getSheetAt(0);
-		if (sheet == null) {
-			throw new Exception("模板文件不正确。");
-		}
+		InputStream inputStream = file.getInputStream();
+		
 		//
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
@@ -106,7 +87,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		dispatchPlan.setFileRecordId(fileRecordId.intValue());
 
 		// 导入
-		batchImportService.batchImport(sheet, dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode);
+		batchImportService.batchImport(inputStream, dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode);
 	}
 
 	private Long saveFileRecord(String fileName, DispatchPlanBatch dispatchPlanBatch, DispatchPlan dispatchPlan,

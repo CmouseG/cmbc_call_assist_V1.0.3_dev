@@ -8,6 +8,7 @@ import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.service.GateWayLineService;
+import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
@@ -46,11 +47,20 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 
 	@Autowired
 	private GateWayLineService gateWayLineService;
+	
+	@Autowired
+	private IBlackListService blackService;
 
 	public void excute(DispatchPlan vo) throws Exception {
 
 		if (vo == null) {
 			return;
+		}
+		
+		// 校验黑名单逻辑
+		if (blackService.checkPhoneInBlackList(vo.getPhone(),vo.getOrgCode())) {
+		   blackService.setBlackPhoneStatus(vo);
+		   return;
 		}
 
 		// 检查校验参数

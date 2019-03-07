@@ -106,7 +106,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
-								logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_ + user_id + templId :{}", JsonUtils.bean2Json(obj));
+								if(null != obj) {
+									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_ + user_id + templId :{}", JsonUtils.bean2Json(obj));
+								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
 								}
@@ -130,7 +132,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                                 occupyLine = gateWayLine;
                                                 logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
                                                 break;//有闲置，则推送，网关路线只能推送一个
-                                            }
+                                            }else{
+												redisUtil.leftPush(queue, dispatchRedis);
+											}
+
                                         }else {
                                             lines.add(line.getLineId());
                                         }

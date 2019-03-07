@@ -43,4 +43,7 @@ aliasr:
 
 properties:
     error: error.properties
+    
+job:
+    initCallCenter: 0 0 * * *  ?
 

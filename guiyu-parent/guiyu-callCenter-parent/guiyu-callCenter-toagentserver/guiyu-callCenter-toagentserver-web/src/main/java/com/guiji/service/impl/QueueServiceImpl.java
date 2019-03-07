@@ -86,15 +86,25 @@ public class QueueServiceImpl implements QueueService {
         queue.setOrgCode(agent.getOrgCode());
         queue.setLineId(queueInfo.getLineId());
         queueMapper.insert(queue);
-        Boolean result = fsManager.createQueue(queue.getQueueId() + "");
+       // Boolean result = fsManager.createQueue(queue.getQueueId() + "");
+        List<String> queueIdList = new ArrayList<>();
+        queueIdList.add(queue.getQueueId()+"");
 
+        QueueExample queueExample1 = new QueueExample();
+        List<Queue> queueList1 = queueMapper.selectByExample(queueExample1);
+        for (Queue queues:queueList1) {
+            queueIdList.add(queues.getQueueId()+"");
+        }
+        //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
+        fsManager.initCallcenter(null,queueIdList,null);
 
         // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        String other = "callcenter_config+queue+load+"+queue.getQueueId();
+      //  String other = "callcenter_config+queue+load+"+queue.getQueueId();
+        String other = "reload+mod_callcenter";
         fsManager.syncCallcenter(fileUrl,other);
 
-        return result;
+        return true;
     }
     //上传配置文件，并保存到nas中
     private String uploadConfig(Long userId, String configPath){

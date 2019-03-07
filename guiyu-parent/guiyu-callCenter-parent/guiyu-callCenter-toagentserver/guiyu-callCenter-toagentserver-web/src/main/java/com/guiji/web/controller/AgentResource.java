@@ -85,7 +85,7 @@ public class AgentResource {
         Queue queue = queueService.findByQueueId(request.getQueueId());
         if(queue == null){
             return Result.error("0307001");
-        }else if(queue!=null&&queue.getLineId() == null){
+        }else if(queue!=null&&queue.getLineId() == null&&request.getAnswerType() == EAnswerType.MOBILE){
             return Result.error("0307011");
         }
 

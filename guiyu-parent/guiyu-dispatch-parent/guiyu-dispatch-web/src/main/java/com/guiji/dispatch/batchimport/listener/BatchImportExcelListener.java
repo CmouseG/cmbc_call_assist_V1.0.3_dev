@@ -1,13 +1,5 @@
 package com.guiji.dispatch.batchimport.listener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.guiji.dispatch.batchimport.BatchImportErrorCodeEnum;
@@ -23,6 +15,14 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BatchImportExcelListener extends AnalysisEventListener<Object>
 {
@@ -65,16 +65,20 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	{
 		i++; 
 		List row = (List) object;
-		
+
 		try
 		{
+			logger.info("获取的数据行是：{}", JsonUtils.bean2Json(row));
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
+
+			logger.info("获取的dispatchPlan是：{}", JsonUtils.bean2Json(dispatchPlan));
+
 			if (dispatchPlan == null) {
 				dispatchPlan = new DispatchPlan();
 				dispatchPlan.setFileRecordId(fileRecordId);
-				dispatchPlan.setPhone((String) row.get(0));
-				dispatchPlan.setParams((String) row.get(1));
-				dispatchPlan.setAttach((String) row.get(2));
+				dispatchPlan.setPhone(getRowValue(row, 0));
+				dispatchPlan.setParams(getRowValue(row, 1));
+				dispatchPlan.setAttach(getRowValue(row, 2));
 				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i.intValue());
 				return;
 			}
@@ -108,21 +112,22 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 			phones.add(dispatchPlan.getPhone());
 		} catch (Exception e) {
 			saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN);
-			logger.debug("导入失败, 第{}行发生异常", i, e);
+			logger.error("导入失败, 第{}行发生异常", i, e);
 		}
 		
 	}
 	
 	private DispatchPlan doWithOneRow(List row, DispatchPlan dispatchPlanParam) {
-		String phone = (String) row.get(0);
+
+		String phone = getRowValue(row, 0);
 		if (!isNumLegal(phone)) {
 			// 非手机号 导入失败(第" + (r + 1) + "行,电话号码格式不正确
 			logger.debug("非手机号 导入失败, 第{}行,电话号码{}格式不正确", i, phone);
 			return null;
 		}
 
-		String params = (String) row.get(1);
-		String attach = (String) row.get(2);
+		String params = getRowValue(row, 1);
+		String attach = getRowValue(row, 2);
 
 		DispatchPlan dispatchPlan = new DispatchPlan();
 		BeanUtil.copyProperties(dispatchPlanParam, dispatchPlan);
@@ -142,6 +147,15 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
 
 		return dispatchPlan;
+	}
+
+	private String getRowValue(List row, int columIndex)
+	{
+		if (row == null || row.size() < (columIndex + 1))
+		{
+			return "";
+		}
+		return (String) row.get(columIndex);
 	}
 	
 	/**

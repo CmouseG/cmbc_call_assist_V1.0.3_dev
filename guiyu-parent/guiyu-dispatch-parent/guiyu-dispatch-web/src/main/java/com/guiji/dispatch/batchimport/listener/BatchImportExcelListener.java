@@ -63,12 +63,12 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	@Override
 	public void invoke(Object object, AnalysisContext context)
 	{
-		i++; 
-		List row = (List) object;
+		i++;
+		BatchImportExcelModel row = (BatchImportExcelModel) object;
 
 		try
 		{
-			logger.info("获取的数据行是：{}", JsonUtils.bean2Json(row));
+			logger.info("获取的数据行是：{}", row);
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
 
 			logger.info("获取的dispatchPlan是：{}", JsonUtils.bean2Json(dispatchPlan));
@@ -76,9 +76,9 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 			if (dispatchPlan == null) {
 				dispatchPlan = new DispatchPlan();
 				dispatchPlan.setFileRecordId(fileRecordId);
-				dispatchPlan.setPhone(getRowValue(row, 0));
-				dispatchPlan.setParams(getRowValue(row, 1));
-				dispatchPlan.setAttach(getRowValue(row, 2));
+				dispatchPlan.setPhone(row.getPhone());
+				dispatchPlan.setParams(row.getParamaters());
+				dispatchPlan.setAttach(row.getAttach());
 				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i.intValue());
 				return;
 			}
@@ -116,18 +116,18 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		}
 		
 	}
-	
-	private DispatchPlan doWithOneRow(List row, DispatchPlan dispatchPlanParam) {
 
-		String phone = getRowValue(row, 0);
+	private DispatchPlan doWithOneRow(BatchImportExcelModel row, DispatchPlan dispatchPlanParam)
+	{
+		String phone = row.getPhone();
 		if (!isNumLegal(phone)) {
 			// 非手机号 导入失败(第" + (r + 1) + "行,电话号码格式不正确
 			logger.debug("非手机号 导入失败, 第{}行,电话号码{}格式不正确", i, phone);
 			return null;
 		}
 
-		String params = getRowValue(row, 1);
-		String attach = getRowValue(row, 2);
+		String params = row.getParamaters();
+		String attach = row.getAttach();
 
 		DispatchPlan dispatchPlan = new DispatchPlan();
 		BeanUtil.copyProperties(dispatchPlanParam, dispatchPlan);
@@ -149,15 +149,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		return dispatchPlan;
 	}
 
-	private String getRowValue(List row, int columIndex)
-	{
-		if (row == null || row.size() < (columIndex + 1))
-		{
-			return "";
-		}
-		return (String) row.get(columIndex);
-	}
-	
+
 	/**
 	 * 正则表达 手机号码由11位数字组成， 匹配格式：前三位固定格式+后8位任意数 此方法中前三位格式有： 13+任意数 15+除4的任意数
 	 * 18+除1和4的任意数 17+除9的任意数 147

@@ -1,5 +1,7 @@
 package com.guiji.listener;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -34,17 +36,22 @@ public class MessagesTaskListener
 		{
 			TaskReq taskReq = JsonUtils.json2Bean(message, TaskReq.class);
 			logger.info(taskReq.toString());
+
+			smsTask = taskMapper.selectByPrimaryKey(taskReq.getTaskId());
+			if(smsTask == null){ 
+				throw new Exception("没有查到任务");
+			}
 			sendSmsService.preSendMsg(taskReq); // 发送
-			SmsTaskExample example = new SmsTaskExample();
-			example.createCriteria().andTaskNameEqualTo(taskReq.getTaskName())
-									.andTunnelNameEqualTo(taskReq.getTunnelName())
-									.andSendDateEqualTo(taskReq.getSendTime())
-									.andCompanyNameEqualTo(taskReq.getCompanyName());
-			smsTask = taskMapper.selectByExampleWithBLOBs(example).get(0);
 			smsTask.setSendStatus(SmsConstants.End); // 2-已结束
 		} catch (Exception e) {
+			logger.error("处理失败", e);
+			if(smsTask == null)
+			{
+				smsTask = new SmsTask();
+			}
 			smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
 		}
+		
 		taskMapper.updateByPrimaryKeySelective(smsTask);
 	}
 }

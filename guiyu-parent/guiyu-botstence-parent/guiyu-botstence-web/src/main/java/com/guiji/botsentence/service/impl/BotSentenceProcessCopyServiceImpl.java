@@ -635,8 +635,9 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 	@Override
 	public List<BotSentenceShareAuth> queryBotstenceMarket(String userId, int pageSize, int pageNo, String templateName, String nickName, String orderType) {
 		//获取机构
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
+		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		ReturnData<SysOrganization> data = iAuth.getOrgByUserId(new Long(userId));
+		String orgCode=data.getBody().getCode();
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
 		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);
 		if(StringUtils.isNotBlank(templateName)) {
@@ -745,8 +746,8 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 	public int countBotstenceMarket(String userId, String templateName, String nickName) {
 
 		//获取机构
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
+		ReturnData<SysOrganization> data = iAuth.getOrgByUserId(new Long(userId));
+		String orgCode=data.getBody().getCode();
 		BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
 		Criteria criteria = example.createCriteria().andTypeEqualTo("00").andSharedEqualTo(true);;
 		if(StringUtils.isNotBlank(templateName)) {

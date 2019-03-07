@@ -26,6 +26,7 @@ import com.guiji.botsentence.dao.BotSentenceGradeRuleMapper;
 import com.guiji.botsentence.dao.BotSentenceIntentMapper;
 import com.guiji.botsentence.dao.BotSentenceOptionsMapper;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
+import com.guiji.botsentence.dao.BotSentenceShareAuthMapper;
 import com.guiji.botsentence.dao.BotSentenceSurveyIntentMapper;
 import com.guiji.botsentence.dao.BotSentenceSurveyMapper;
 import com.guiji.botsentence.dao.BotSentenceTemplateMapper;
@@ -58,6 +59,7 @@ import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExample;
 import com.guiji.botsentence.dao.entity.VoliceInfoExt;
 import com.guiji.botsentence.dao.entity.BotSentenceProcessExample.Criteria;
+import com.guiji.botsentence.dao.entity.BotSentenceShareAuthExample;
 import com.guiji.botsentence.dao.entity.ext.IntentVO;
 import com.guiji.botsentence.dao.entity.ext.VoliceInfoVO;
 import com.guiji.botsentence.dao.ext.BotSentenceBranchExtMapper;
@@ -85,6 +87,7 @@ import com.guiji.component.result.ServerResult;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
+import com.netflix.discovery.converters.Auto;
 
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
@@ -161,6 +164,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	
 	@Autowired
 	private BotSentenceSurveyMapper botSentenceSurveyMapper;
+	
+	@Autowired
+	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
+	
 	
 	@Autowired
 	private IAuth iAuth;
@@ -1024,6 +1031,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			process.setLstUpdateUser(userId);
 			botSentenceProcessMapper.updateByPrimaryKey(process);
 			
+			//删除分享
+			BotSentenceShareAuthExample example = new BotSentenceShareAuthExample();
+			example.createCriteria().andProcessIdEqualTo(processId);
+			botSentenceShareAuthMapper.deleteByExample(example);
 			logger.info("删除话术数据成功...");
 		}else {
 			throw new CommonException("当前状态不是制作中，不允许删除!");

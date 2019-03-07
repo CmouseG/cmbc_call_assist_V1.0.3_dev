@@ -238,16 +238,29 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		
 		int size = voliceInfos.size();
 		for (int i = 1; i <= size; i++) {
-			voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
-			idsMap.put(i, voliceInfos.get(i - 1).getContent());
-			String content = voliceInfos.get(i - 1).getContent() + "*" + i;
-			voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
-			
-			if(!needTts) {
-				if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
-					needTts = true;
+			if(Constant.VOLICE_TYPE_INTERRUPT.equals(voliceInfos.get(i - 1).getType())) {
+				voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), 8000);
+				idsMap.put(8000, voliceInfos.get(i - 1).getContent());
+				String content = voliceInfos.get(i - 1).getContent() + "*" + 8000;
+				voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
+				if(!needTts) {
+					if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
+						needTts = true;
+					}
+				}
+			}else {
+				voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
+				idsMap.put(i, voliceInfos.get(i - 1).getContent());
+				String content = voliceInfos.get(i - 1).getContent() + "*" + i;
+				voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
+				
+				if(!needTts) {
+					if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
+						needTts = true;
+					}
 				}
 			}
+			
 		}
 
 		// 获取所有domain

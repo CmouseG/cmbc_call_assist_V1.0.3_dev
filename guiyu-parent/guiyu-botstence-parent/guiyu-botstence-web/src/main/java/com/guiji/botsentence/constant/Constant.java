@@ -55,6 +55,11 @@ public class Constant {
 	public static final String VOLICE_TYPE_NORMAL = "00";
 	
 	/**
+	 * 录音类型，打断规则
+	 */
+	public static final String VOLICE_TYPE_INTERRUPT = "02";
+	
+	/**
 	 * category类型==主流程（流程图显示部分）
 	 */
 	public static final String CATEGORY_TYPE_1 = "1";

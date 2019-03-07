@@ -1,41 +1,41 @@
 USE guiyu_dispatch;
 
 ALTER TABLE dispatch_plan
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_plan_0
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_plan_1
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_plan_2
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_lines
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 ALTER TABLE dispatch_lines_0
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_lines_1
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_lines_2
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 ALTER TABLE dispatch_lines_3
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 ALTER TABLE dispatch_lines_4
-ADD line_type            INT(1) COMMENT '线路类型，1-SIP，2-网关';
+ADD line_type            INT(1) NOT NULL DEFAULT 1 COMMENT '线路类型，1-SIP，2-网关';
 
 
 

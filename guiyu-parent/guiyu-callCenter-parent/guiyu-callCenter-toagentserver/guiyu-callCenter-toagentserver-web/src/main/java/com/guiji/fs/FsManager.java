@@ -335,24 +335,28 @@ public class FsManager {
         List<Agent>  agentList = new ArrayList<>();
         List<Queue>  queueList = new ArrayList<>();
         List<Tier>  tierList = new ArrayList<>();
-        for (AgentInfo agentInfo:agentInfoList) {
-            Agent agent = new Agent();
-            agent.setAgentId(agentInfo.getAgentId());
-            agent.setContact(agentInfo.getContact());
-            agentList.add(agent);
+        if(agentInfoList!=null){
+            for (AgentInfo agentInfo:agentInfoList) {
+                Agent agent = new Agent();
+                agent.setAgentId(agentInfo.getAgentId());
+                agent.setContact(agentInfo.getContact());
+                agentList.add(agent);
+            }
         }
-        for (String queueId: queueIdList) {
-            Queue queue = new Queue();
-            queue.setQueueId(queueId);
-            queueList.add(queue);
+        if(queueIdList!=null) {
+            for (String queueId : queueIdList) {
+                Queue queue = new Queue();
+                queue.setQueueId(queueId);
+                queueList.add(queue);
+            }
         }
-
-        for (TierInfo tierInfo: tierInfoList) {
-            Tier tier = new Tier();
-            BeanUtils.copyProperties(tierInfo, tier);
-            tierList.add(tier);
+        if(tierInfoList!=null){
+            for (TierInfo tierInfo: tierInfoList) {
+                Tier tier = new Tier();
+                BeanUtils.copyProperties(tierInfo, tier);
+                tierList.add(tier);
+            }
         }
-
      return   modCallCenter.initCallcenter(agentList,queueList,tierList);
     }
 

@@ -112,12 +112,8 @@ public class TaskServiceImpl implements TaskService
 		
 		// 解析excel文件
 		List<String> phoneList = null;
-		try{
-			phoneList = ParseFileUtil.parseExcelFile(taskReqVO.getFile());
-		} catch (Exception e) {
-			logger.error("解析文件失败", e);
-			throw new GuiyuException(SmsExceptionEnum.ParseFile_Error);
-		}
+		phoneList = ParseFileUtil.parseExcelFile(taskReqVO.getFile());
+		 
 		smsTask.setPhoneNum(phoneList.size());
 		smsTask.setFileName(taskReqVO.getFile().getOriginalFilename());
 		

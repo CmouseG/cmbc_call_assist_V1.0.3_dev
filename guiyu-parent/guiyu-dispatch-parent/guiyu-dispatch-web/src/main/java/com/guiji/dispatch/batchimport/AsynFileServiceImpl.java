@@ -1,16 +1,5 @@
 package com.guiji.dispatch.batchimport;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.api.IBotSentenceProcess;
@@ -29,6 +18,13 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.NasUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AsynFileServiceImpl implements AsynFileService {
@@ -58,8 +54,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
 			throw new Exception("上传文件格式不正确");
 		}
-		InputStream inputStream = file.getInputStream();
-		
+
 		//
 		DispatchPlanBatch dispatchPlanBatch = JSONObject.parseObject(str, DispatchPlanBatch.class);
 		dispatchPlanBatch.setGmtModified(DateUtil.getCurrent4Time());
@@ -83,14 +78,17 @@ public class AsynFileServiceImpl implements AsynFileService {
 		dispatchPlanBatch.setStatusShow(Constant.BATCH_STATUS_SHOW);
 		dispatchPlanBatchMapper.insert(dispatchPlanBatch);
 
-		Long fileRecordId = saveFileRecord(fileName, dispatchPlanBatch, dispatchPlan, userId, orgCode, file);
-		dispatchPlan.setFileRecordId(fileRecordId.intValue());
+		FileRecords FileRecord = saveFileRecord(fileName, dispatchPlanBatch, dispatchPlan, userId, orgCode, file);
+		dispatchPlan.setFileRecordId(FileRecord.getId().intValue());
+
+		//		String path = "/opt/home/" + UUID.randomUUID();
+		//		HttpDownload.downLoadFromUrl(FileRecord.getUrl(), fileName, path);
 
 		// 导入
-		batchImportService.batchImport(inputStream, dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode);
+		batchImportService.batchImport(new BufferedInputStream(file.getInputStream()), dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode);
 	}
 
-	private Long saveFileRecord(String fileName, DispatchPlanBatch dispatchPlanBatch, DispatchPlan dispatchPlan,
+	private FileRecords saveFileRecord(String fileName, DispatchPlanBatch dispatchPlanBatch, DispatchPlan dispatchPlan,
 			Long userId, String orgCode, MultipartFile file) throws Exception {
 		// 用户
 		ReturnData<SysUser> user = authService.getUserById(userId);
@@ -138,7 +136,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		fileRecords.setId(fileRecordId);
 		fileRecords.setUrl(sysFileRsp.getSkUrl());
 		batchImportFileRecordService.update(fileRecords);
-		return fileRecordId;
+		return fileRecords;
 
 	}
 

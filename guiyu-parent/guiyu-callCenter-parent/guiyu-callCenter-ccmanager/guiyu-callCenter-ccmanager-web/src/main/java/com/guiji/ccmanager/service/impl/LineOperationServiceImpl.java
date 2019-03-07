@@ -11,6 +11,7 @@ import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
 import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.toagentserver.api.IAgentGroup;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class LineOperationServiceImpl implements LineOperationService {
     LineInfoMapper lineInfoMapper;
     @Autowired
     private ILineOper lineOperApiFeign;
+    @Autowired
+    IAgentGroup iAgentGroup;
 
     @Override
     @Transactional
@@ -120,6 +123,12 @@ public class LineOperationServiceImpl implements LineOperationService {
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(String.valueOf(id));
         if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.deleteLineinfos,code:"+result.getCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);
+        }
+        Result.ReturnData resultUntying = iAgentGroup.untyingLineinfos(String.valueOf(id));
+        if(!resultUntying.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+            log.warn("lineOperApiFeign.untyingLineinfos,code:"+resultUntying.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);
         }

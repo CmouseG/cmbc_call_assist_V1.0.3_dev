@@ -83,9 +83,8 @@ public class ExternalController implements IAgentGroup{
 
     @Override
     public Result.ReturnData untyingLineinfos(String lineId) {
-
-
-        return null;
+        queueService.untyingLineinfos(lineId);
+        return Result.ok();
     }
 
     @RequestMapping(path = "/agentsum", method = RequestMethod.GET)

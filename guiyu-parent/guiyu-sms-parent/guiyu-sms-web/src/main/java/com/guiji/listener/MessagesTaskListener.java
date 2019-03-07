@@ -1,7 +1,5 @@
 package com.guiji.listener;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -14,8 +12,8 @@ import com.guiji.model.TaskReq;
 import com.guiji.service.SendSmsService;
 import com.guiji.sms.dao.SmsTaskMapper;
 import com.guiji.sms.dao.entity.SmsTask;
-import com.guiji.sms.dao.entity.SmsTaskExample;
 import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
 
 @Component
 @RabbitListener(queues = "MessagesTaskMQ.Sms")
@@ -27,6 +25,8 @@ public class MessagesTaskListener
 	SendSmsService sendSmsService;
 	@Autowired
 	SmsTaskMapper taskMapper;
+	@Autowired
+	RedisUtil redisUtil;
 	
 	@RabbitHandler
 	public void process(String message) throws Exception
@@ -51,7 +51,7 @@ public class MessagesTaskListener
 			}
 			smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
 		}
-		
+		redisUtil.del(smsTask.getId().toString());
 		taskMapper.updateByPrimaryKeySelective(smsTask);
 	}
 }

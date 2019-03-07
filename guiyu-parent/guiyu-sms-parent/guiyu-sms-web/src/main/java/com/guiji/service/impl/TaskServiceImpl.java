@@ -124,8 +124,7 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(currentDate);
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-//				sendSmsService.pushTaskToMQ(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
+				smsTask.setSendStatus(SmsConstants.Begining); // 1-进行中
 				smsTask.setSendDate(currentDate);
 			}
 		} 
@@ -166,7 +165,6 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
 				sendSmsService.pushTaskToMQ(taskReq); // 发送
-				redisUtil.del(smsTask.getId().toString());
 			}
 		}
 		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑
@@ -225,7 +223,6 @@ public class TaskServiceImpl implements TaskService
 			taskReq.setCompanyName(smsTask.getCompanyName());
 			taskReq.setUserId(smsTask.getCreateId());
 			sendSmsService.pushTaskToMQ(taskReq); // 发送
-			redisUtil.del(smsTask.getId().toString());
 		}
 		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑
 		

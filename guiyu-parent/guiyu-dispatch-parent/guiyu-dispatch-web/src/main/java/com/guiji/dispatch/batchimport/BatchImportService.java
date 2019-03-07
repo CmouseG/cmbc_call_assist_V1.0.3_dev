@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.fastjson.util.IOUtils;
 import com.guiji.dispatch.batchimport.listener.BatchImportExcelListener;
+import com.guiji.dispatch.batchimport.listener.BatchImportExcelModel;
 import com.guiji.dispatch.dao.FileRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.impl.DispatchPlanServiceImpl;
@@ -45,7 +46,7 @@ public class BatchImportService implements IBatchImportService {
 			excelListener.setFileRecordErrorService(fileRecordErrorService);
 			excelListener.setFileRecordsMapper(fileRecordsMapper);
 			excelListener.setPhoneRegionService(phoneRegionService);
-			EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
+			EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1, BatchImportExcelModel.class), excelListener);
 		} catch (Exception e) {
 			logger.error("批量导入失败!!!", e);
 		} finally {

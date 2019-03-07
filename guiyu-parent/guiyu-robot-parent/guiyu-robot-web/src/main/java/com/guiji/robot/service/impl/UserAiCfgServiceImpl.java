@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,8 +132,24 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 					//如果新的模板不为空，并且（数据被清理过了，或者原本就没有拆分数据），那么初始化下
 					UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
 					BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+					userAiCfgInfo.setId(null); //清空id
 					userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
 					this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
+				}else {
+					//如果模板增加了，那么从拆分项中取一条数据，将该模板新增上去
+					String nowTemplates = userAiCfgBaseInfo.getTemplateIds();	//本次最新模板
+					String existTemplates = existUserAiCfgBaseInfo.getTemplateIds();	//库中的模板
+					if(StrUtils.isNotEmpty(nowTemplates) && StrUtils.isNotEmpty(existTemplates)) {
+						String[] nowTemplateArray = nowTemplates.split(",");
+						String[] existTemplateArray = existTemplates.split(",");
+						List<String> addTemplateLis = ListUtil.removeAll(Arrays.asList(nowTemplateArray), Arrays.asList(existTemplateArray));	//获取本次新增的模板
+						if(addTemplateLis!=null && !addTemplateLis.isEmpty()) {
+							String addTemplateStr = StringUtils.join(addTemplateLis.toArray(), ",");	//将本次新增的模板用逗号分隔
+							UserAiCfgInfo userAiCfgInfo = cfgInfoList.get(0);	//取一条拆分项，将模板增加进去
+							userAiCfgInfo.setTemplateIds(userAiCfgInfo.getTemplateIds()+","+addTemplateStr);
+							this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
+						}
+					}
 				}
 				if(StrUtils.isEmpty(userAiCfgBaseInfo.getUserId())) {
 					userAiCfgBaseInfo.setUserId(userId);
@@ -143,11 +160,11 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 				userAiCfgBaseInfo.setCrtTime(existUserAiCfgBaseInfo.getCrtTime());
 			}else {
 				//新增
-				//1、初始化一条用户机器人线路拆分(此处修改为不自动分配，因为开户时可能模板还没有发布，所以此处不处理 modify 2018-12-7)
-//				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
-//				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
-//				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
-//				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
+				//1、初始化一条用户机器人线路拆分
+				UserAiCfgInfo userAiCfgInfo = new UserAiCfgInfo();
+				BeanUtil.copyProperties(userAiCfgBaseInfo, userAiCfgInfo);
+				userAiCfgInfo.setAiNum(userAiCfgBaseInfo.getAiTotalNum()); //机器人总数(初始化时为全部)
+				this.userAiCfgChange(userAiCfgBaseInfo,userAiCfgInfo);
 				//设置用户机构号
 				//查询用户机构信息
 				if(StrUtils.isNotEmpty(userAiCfgBaseInfo.getUserId())) {
@@ -296,7 +313,7 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 		if(totalRecord > 0) {
 			example.setLimitStart(limitStart);
 			example.setLimitEnd(limitEnd);
-			example.setOrderByClause(" crt_time desc");
+			example.setOrderByClause(" id desc");
 			List<UserAiCfgBaseInfo> list = userAiCfgBaseInfoMapper.selectByExample(example);
 			page.setRecords(list);
 		}

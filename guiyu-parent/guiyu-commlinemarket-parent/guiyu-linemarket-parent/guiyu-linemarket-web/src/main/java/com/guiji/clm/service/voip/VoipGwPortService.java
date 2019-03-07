@@ -148,11 +148,11 @@ public class VoipGwPortService {
 	 * @param condition
 	 * @return
 	 */
-	public Page<VoipGwPort> queryVoipGwPortForPageByCondition(int pageNo, int pageSize,VoipGwPortQueryCondition condition){
+	public Page<VoipGwPort> queryVoipGwPortForPageByCondition(VoipGwPortQueryCondition condition){
 		Page<VoipGwPort> page = new Page<VoipGwPort>();
 		int totalRecord = 0;
-		int limitStart = (pageNo-1)*pageSize;	//起始条数
-		int limitEnd = pageSize;	//查询条数
+		int limitStart = (condition.getPageNo()-1)*condition.getPageSize();	//起始条数
+		int limitEnd = condition.getPageSize();	//查询条数
 		VoipGwPortExample example = this.queryExample(condition);
 		//查询总数
 		totalRecord = voipGwPortMapper.countByExample(example);
@@ -162,8 +162,8 @@ public class VoipGwPortService {
 			List<VoipGwPort> list = voipGwPortMapper.selectByExample(example);
 			page.setRecords(list);
 		}
-		page.setPageNo(pageNo);
-		page.setPageSize(pageSize);
+		page.setPageNo(condition.getPageNo());
+		page.setPageSize(condition.getPageSize());
 		page.setTotal(totalRecord);
 		return page;
 	}
@@ -189,6 +189,9 @@ public class VoipGwPortService {
 			}
 			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
+			}
+			if(StrUtils.isNotEmpty(condition.getPhoneNo())) {
+				criteria.andPhoneNoLike("%"+ condition.getPhoneNo() +"%");
 			}
 			if(condition.getGwStatus()!=null && !condition.getGwStatus().isEmpty()) {
 				if(condition.getGwStatus().size()==1) {

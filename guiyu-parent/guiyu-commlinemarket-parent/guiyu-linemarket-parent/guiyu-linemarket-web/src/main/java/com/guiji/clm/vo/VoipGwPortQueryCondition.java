@@ -12,10 +12,14 @@ import lombok.Data;
 */
 @Data
 public class VoipGwPortQueryCondition {
+	private int pageNo;
+	private int pageSize;
 	//网关ID
 	private Integer gwId;
 	//网关端口sip账号
 	private Integer startSipAccount;
+	//手机号-模糊搜索
+	private String phoneNo;	
 	//归属人
 	private String userId;
 	//归属企业

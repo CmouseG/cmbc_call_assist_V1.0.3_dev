@@ -233,34 +233,24 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		
 		Map<Integer, String> idsMap = new HashMap<>();
 		Map<Long, Integer> voliceIdsMap = new HashMap<>();
-		
+		Map<Long, Integer> interruptMap = new HashMap<>();
 		boolean needTts = false;
 		
 		int size = voliceInfos.size();
 		for (int i = 1; i <= size; i++) {
 			if(Constant.VOLICE_TYPE_INTERRUPT.equals(voliceInfos.get(i - 1).getType())) {
-				voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), 8000);
-				idsMap.put(8000, voliceInfos.get(i - 1).getContent());
-				String content = voliceInfos.get(i - 1).getContent() + "*" + 8000;
-				voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
-				if(!needTts) {
-					if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
-						needTts = true;
-					}
-				}
-			}else {
-				voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
-				idsMap.put(i, voliceInfos.get(i - 1).getContent());
-				String content = voliceInfos.get(i - 1).getContent() + "*" + i;
-				voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
-				
-				if(!needTts) {
-					if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
-						needTts = true;
-					}
+				interruptMap.put(voliceInfos.get(i - 1).getVoliceId(), 8000);
+			}
+			voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
+			idsMap.put(i, voliceInfos.get(i - 1).getContent());
+			String content = voliceInfos.get(i - 1).getContent() + "*" + i;
+			voliceMap.put(voliceInfos.get(i - 1).getVoliceId(), content);
+			
+			if(!needTts) {
+				if(BotSentenceUtil.validateContainParam(voliceInfos.get(i - 1).getContent())) {
+					needTts = true;
 				}
 			}
-			
 		}
 
 		// 获取所有domain
@@ -763,7 +753,11 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			String wavURL = voliceInfos.get(i - 1).getVoliceUrl();
 			try {
 				if (StringUtils.isNotBlank(wavURL)) {
-					generateWAV(restTemplate, wavURL, Integer.toString(i), wavfile.getPath());
+					if(interruptMap.containsKey(voliceInfos.get(i - 1).getVoliceId())) {
+						generateWAV(restTemplate, wavURL, interruptMap.get(voliceInfos.get(i - 1).getVoliceId()).toString(), wavfile.getPath());
+					}else {
+						generateWAV(restTemplate, wavURL, Integer.toString(i), wavfile.getPath());
+					}
 				}
 			} catch (IOException e) {
 				logger.error("generate wav has exception:" + wavURL, e);

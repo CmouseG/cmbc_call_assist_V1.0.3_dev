@@ -160,12 +160,21 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		DispatchPlanExample planEx = new DispatchPlanExample();
 		planEx.createCriteria().andUserIdEqualTo(userId)
 				.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING));
-		List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
-		for (com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2) {
-			List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(dis.getPlanUuid());
-			if (queryLinesByPlanUUID.size() > 0) {
-				res.body = true;
-				return res;
+		int count = dispatchMapper.countByExample(planEx);
+
+		int limitNum = 5000;
+		int times = (count%limitNum==0)?count/limitNum:(count/limitNum+1);
+		for(int i=0; i<times; i++){
+			planEx.setLimitStart(i*limitNum);
+			planEx.setLimitEnd(i*limitNum + limitNum);
+			planEx.setOrderByClause("gmt_create DESC");
+			List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
+			for (com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2) {
+				Integer result = lineService.countLineId(dis.getPlanUuid());
+				if (result > 0) {
+					res.body = true;
+					return res;
+				}
 			}
 		}
 		res.body = false;
@@ -177,12 +186,20 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		ReturnData<Boolean> res = new ReturnData<>();
 		DispatchPlanExample planEx = new DispatchPlanExample();
 		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING));
+		int count = dispatchMapper.countByExample(planEx);
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
-		for(com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2){
-			List<DispatchLines> queryLinesByPlanUUIDAndLineId = lineService.queryLinesByPlanUUIDAndLineId(dis.getPlanUuid(),lineId);
-			if(queryLinesByPlanUUIDAndLineId.size()>0){
-				res.body = true;
-				return res;
+		int limitNum = 5000;
+		int times = (count%limitNum==0)?count/limitNum:(count/limitNum+1);
+		for(int i=0; i<times; i++) {
+			planEx.setLimitStart(i * limitNum);
+			planEx.setLimitEnd(i * limitNum + limitNum);
+			planEx.setOrderByClause("gmt_create DESC");
+			for(com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2){
+				Integer result = lineService.countLineIdAndUUid(dis.getPlanUuid(),lineId);
+				if(result>0){
+					res.body = true;
+					return res;
+				}
 			}
 		}
 		res.body = false;

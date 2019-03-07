@@ -23,8 +23,8 @@ public interface IBotSentenceTradeService {
 	 * 查询所有行业树型结构
 	 * @return
 	 */
-	@RequestMapping(value = "/botsentenceServer/queryAllTradeList")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryAllTradeList();
+	@RequestMapping(value = "/botsentenceServer/queryTradeListByTradeIdList")
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeListByOrgCode(@RequestParam("tradeIdList")List<String> tradeIdList);
 	
 	/**
 	 * 根据行业ID查询行业名称
@@ -32,4 +32,12 @@ public interface IBotSentenceTradeService {
 	 */
 	@RequestMapping(value = "/botsentenceServer/queryTradeByTradeId")
 	public Result.ReturnData<BotSentenceTradeVO> queryTradeByTradeId(@RequestParam("tradeId")String tradeId);
+	
+	
+	/**
+	 * 查询所有行业树型结构
+	 * @return
+	 */
+	@RequestMapping(value = "/botsentenceServer/queryAllTradeList")
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryAllTradeList();
 }

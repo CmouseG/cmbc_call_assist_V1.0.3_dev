@@ -5,16 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.entity.SmsConstants;
-import com.guiji.entity.SmsExceptionEnum;
 import com.guiji.model.TaskReq;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskService;
@@ -33,8 +29,6 @@ import com.guiji.utils.RedisUtil;
 @Service
 public class TaskServiceImpl implements TaskService
 {
-	private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
-	
 	@Autowired
 	IAuth auth;
 	@Autowired
@@ -117,30 +111,33 @@ public class TaskServiceImpl implements TaskService
 		smsTask.setPhoneNum(phoneList.size());
 		smsTask.setFileName(taskReqVO.getFile().getOriginalFilename());
 		
+		TaskReq taskReq = null;
+		Date currentDate = new Date();
 		if(taskReqVO.getSendType() == SmsConstants.HandSend)
 		{
 			if(smsTask.getAuditingStatus() == SmsConstants.UnAuditing) {
 				smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
 			} else {
 				//组装发送请求
-				TaskReq taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 
+				taskReq = new TaskReq(taskReqVO.getTaskName(), taskReqVO.getSendType(), phoneList, 
 						taskReqVO.getTunnelName(), taskReqVO.getSmsTemplateId(), taskReqVO.getSmsContent());
-				taskReq.setSendTime(new Date());
+				taskReq.setSendTime(currentDate);
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				try
-				{
-					sendSmsService.preSendMsg(taskReq); // 发送
-					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
-				} catch (Exception e){
-					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
-				}
+				smsTask.setSendStatus(SmsConstants.Begining); // 1-进行中
+				smsTask.setSendDate(currentDate);
 			}
 		} 
 		else {
 			smsTask.setSendStatus(SmsConstants.UnStart); // 0-未开始
 		}
 		taskMapper.insertSelective(smsTask); //新增
+		
+		if(taskReq != null)
+		{
+			taskReq.setTaskId(smsTask.getId());
+			sendSmsService.pushTaskToMQ(taskReq); // 发送
+		}
 		if(smsTask.getSendStatus() == SmsConstants.UnStart){
 			redisUtil.set(smsTask.getId().toString(), phoneList); //未发送名单存入Redis
 		}
@@ -167,17 +164,10 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				try
-				{
-					sendSmsService.preSendMsg(taskReq); // 发送
-					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
-				} catch (Exception e){
-					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
-				}
-				redisUtil.del(smsTask.getId().toString());
+				sendSmsService.pushTaskToMQ(taskReq); // 发送
 			}
 		}
-		taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
+		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑
 	}
 	
 	/**
@@ -232,16 +222,9 @@ public class TaskServiceImpl implements TaskService
 			taskReq.setSendTime(new Date());
 			taskReq.setCompanyName(smsTask.getCompanyName());
 			taskReq.setUserId(smsTask.getCreateId());
-			try
-			{
-				sendSmsService.preSendMsg(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.End); // 2-已结束
-			} catch (Exception e){
-				smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
-			}
-			redisUtil.del(smsTask.getId().toString());
+			sendSmsService.pushTaskToMQ(taskReq); // 发送
 		}
-		taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
+		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑
 		
 	}
 

@@ -500,7 +500,7 @@ public class CallCenterConfig {
             XAgent xa = new XAgent();
             BeanUtils.copyProperties(templateAgent, xa);
             xa.setName(agent.getAgentId());
-            xa.setContact(getAgentContact(agent));
+            xa.setContact(agent.getContact());
             xa.setMax_no_answer("999999");
             callCenterConfig.getAgents().getAgent().add(xa);
         }

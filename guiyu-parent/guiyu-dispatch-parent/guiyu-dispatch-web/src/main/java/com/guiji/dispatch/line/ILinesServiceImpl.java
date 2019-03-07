@@ -386,4 +386,17 @@ public class ILinesServiceImpl implements ILinesService {
 		return linesMapper.selectByExample(ex);
 	}
 
+	@Override
+	public Integer countLineIdAndUUid(String uuid, Integer lineId) {
+		DispatchLinesExample ex = new DispatchLinesExample();
+		ex.createCriteria().andPlanuuidEqualTo(uuid).andLineIdEqualTo(lineId);
+		return linesMapper.countByExample(ex);
+	}
+
+	@Override
+	public Integer countLineId(String uuid) {
+		DispatchLinesExample ex = new DispatchLinesExample();
+		ex.createCriteria().andPlanuuidEqualTo(uuid);
+		return linesMapper.countByExample(ex);
+	}
 }

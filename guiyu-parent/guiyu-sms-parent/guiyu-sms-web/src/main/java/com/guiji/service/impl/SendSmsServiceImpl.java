@@ -54,6 +54,15 @@ public class SendSmsServiceImpl implements SendSmsService
 	}
 	
 	/**
+	 * 将群发任务推送到MQ
+	 */
+	@Override
+	public void pushTaskToMQ(TaskReq taskReq)
+	{
+		queueSender.send("MessagesTaskMQ.Sms", JsonUtils.bean2Json(taskReq));
+	}
+	
+	/**
 	 * 群发短信
 	 */
 	@Override

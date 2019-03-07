@@ -4725,4 +4725,57 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 			
 	}
+
+	@Override
+	public List<BotSentenceTemplateTradeVO> queryTradeListByTradeIdList(List<String> tradeIdList) {
+
+		List<BotSentenceTemplateTradeVO> results = new ArrayList<>();
+		BotSentenceTradeExample example = new BotSentenceTradeExample();
+		example.createCriteria().andLevelEqualTo(1);
+		List<BotSentenceTrade> industryList = botSentenceTradeMapper.selectByExample(example);
+		if(null != industryList && industryList.size() > 0) {
+			for(BotSentenceTrade industry : industryList) {
+				boolean flag = false;
+				BotSentenceTemplateTradeVO vo = new BotSentenceTemplateTradeVO();
+				vo.setValue(industry.getIndustryId());
+				vo.setLabel(industry.getIndustryName());
+				vo.setLevel(industry.getLevel());
+				List<BotSentenceTrade> childIndustryList1 = getChildIndustryList(industry.getIndustryId());
+				if(null != childIndustryList1 && childIndustryList1.size() > 0) {
+					List<BotSentenceTemplateTradeVO> childs1 = new ArrayList<>();
+					for(BotSentenceTrade child1 : childIndustryList1) {
+						if(null != tradeIdList && tradeIdList.size() > 0 && !tradeIdList.contains(child1.getIndustryId())) {
+							continue;
+						}
+						flag = true;
+						BotSentenceTemplateTradeVO childVo = new BotSentenceTemplateTradeVO();
+						childVo.setValue(child1.getIndustryId());
+						childVo.setLabel(child1.getIndustryName());
+						childVo.setLevel(child1.getLevel());
+						childs1.add(childVo);
+						
+						List<BotSentenceTrade> childIndustryList2 = getChildIndustryList(child1.getIndustryId());
+						if(null != childIndustryList2 && childIndustryList2.size() > 0) {
+							List<BotSentenceTemplateTradeVO> childs2 = new ArrayList<>();
+							for(BotSentenceTrade child2 : childIndustryList2) {
+								BotSentenceTemplateTradeVO childVo2 = new BotSentenceTemplateTradeVO();
+								childVo2.setValue(child2.getIndustryId());
+								childVo2.setLabel(child2.getIndustryName());
+								childVo2.setLevel(child2.getLevel());
+								childs2.add(childVo2);
+							}
+							childVo.setChildren(childs2);
+						}
+					}
+					
+					vo.setChildren(childs1);
+				}
+				if(flag) {
+					results.add(vo);
+				}
+				
+			}
+		}
+		return results;
+	}
 }

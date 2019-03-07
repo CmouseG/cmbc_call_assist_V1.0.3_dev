@@ -81,7 +81,8 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			return;
 		}
 		//路线类型
-		Integer lineType = vo.getLineType();
+		Integer lineType = null != vo.getLineType()?vo.getLineType():PlanLineTypeEnum.SIP.getType();
+		vo.setLineType(lineType);
 		// 加入线路
 		List<DispatchLines> lineList = vo.getLines();
 		//加入线路

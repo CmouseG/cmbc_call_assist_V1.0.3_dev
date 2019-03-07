@@ -209,8 +209,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
 		dispatchPlan.setOrgCode(orgCode);
 		//路线类型
-        Integer lineType = dispatchPlan.getLineType();
-		// 加入线路
+        Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
+		dispatchPlan.setLineType(lineType);
+        // 加入线路
         List<DispatchLines> lineList = dispatchPlan.getLines();
 		for (DispatchLines lines : lineList) {
 			lines.setCreateTime(DateUtil.getCurrent4Time());
@@ -1719,12 +1720,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 
 			//路线类型
-			Integer lineType = dispatchPlan.getLineType();
+			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
+			dispatchPlan.setLineType(lineType);
 			// 加入线路
 			List<DispatchLines> lineList = plans.getLines();
 			for (DispatchLines lines : lineList) {
 				lines.setCreateTime(DateUtil.getCurrent4Time());
 				lines.setPlanuuid(bean.getPlanUuid());
+				lines.setLineType(lineType);
 				lineService.insertLines(lines);
 			}
 			// 查询号码归属地

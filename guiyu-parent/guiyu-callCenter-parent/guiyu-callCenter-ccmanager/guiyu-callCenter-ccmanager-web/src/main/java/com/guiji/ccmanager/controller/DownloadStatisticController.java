@@ -144,12 +144,12 @@ public class DownloadStatisticController {
                 if (j == 1) {
                     sheet.addCell(new Label(i, j, metaIntent));
                 }
-                sheet.addCell(new Label(i, j + 1, map.get(metaIntent).toString()));
+                sheet.addCell(new Label(i, j + 1, map.get(metaIntent)==null ? "0" : map.get(metaIntent).toString()));
                 if (sumMap.get(metaIntent) == null) {
                     sumMap.put(metaIntent, (int) map.get(metaIntent));
                 } else {
                     int old = sumMap.get(metaIntent);
-                    sumMap.put(metaIntent, (int) map.get(metaIntent) + old);
+                    sumMap.put(metaIntent, (int) (map.get(metaIntent)== null ? 0 : map.get(metaIntent)) + old);
                 }
                 i++;
             }
@@ -226,8 +226,14 @@ public class DownloadStatisticController {
         if (down == 0) {
             return "0%";
         }
-        DecimalFormat df1 = new DecimalFormat("##.00%");    //##.00%   百分比格式，后面不足2位的用0补齐
-        return df1.format((float) top / down);
+//        DecimalFormat df1 = new DecimalFormat("##.00%");    //##.00%   百分比格式，后面不足2位的用0补齐
+//        return df1.format((float) top / down);
+
+        java.text.NumberFormat nf = java.text.NumberFormat.getPercentInstance();
+        nf.setMaximumIntegerDigits(5);//小数点前保留几位
+        nf.setMinimumFractionDigits(2);// 小数点后保留几位
+        String str = nf.format((float) top / down);
+        return str;
     }
 
     /**

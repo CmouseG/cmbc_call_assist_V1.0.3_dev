@@ -72,3 +72,18 @@ CREATE INDEX idx_dispatch_robot_op ON dispatch_robot_op
    user_id,
    botstence_id
 );
+
+
+/***创建唯一索引***/
+CREATE  UNIQUE INDEX uk_dispatch_plan_plan_uuid USING BTREE ON dispatch_plan_0(
+   plan_uuid
+);
+
+CREATE  UNIQUE INDEX uk_dispatch_plan_plan_uuid USING BTREE ON dispatch_plan_1(
+   plan_uuid
+);
+
+CREATE  UNIQUE INDEX uk_dispatch_plan_plan_uuid USING BTREE ON dispatch_plan_2(
+   plan_uuid
+);
+

@@ -2,14 +2,12 @@ package com.guiji.dispatch.impl;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallManagerOut;
-import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.bean.UserResourceDto;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.entity.DispatchRobotOp;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
@@ -29,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +90,8 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     public boolean distributeByUser() throws Exception{
         Lock lock = new Lock("planDistributeJobHandler.lock","planDistributeJobHandler.lock");
         try {
-            if (distributedLockHandler.tryLock(lock)) {
+            if (distributedLockHandler.tryLock(lock, 1000L))
+            {
                 logger.info("根据用户模板线路分配拨打号码比例#start");
                 //查询当前时间段有拨打计划的[用户|线路|模板]
                 String hour = String.valueOf(DateUtil.getCurrentHour());
@@ -156,7 +154,7 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
             //    List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(userLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
                 List<UserLineBotenceVO> userLineBotenceVOS = AllotUserLineBotenceUtil.allot(filterUserLineBotenceVOList,userBotstenceRobotList,systemMaxPlan);
                 //将补充操作的机器人分配数据重新加入到用户机器人分配列表中去
-                List<UserLineBotenceVO> opList = this.filterOpUserBotstence(opDisRobotList);
+                List<UserLineBotenceVO> opList = filterOpUserBotstence(opDisRobotList);
                 if(null != opList && opList.size()>0){
                     userLineBotenceVOS.addAll(opList);
                 }

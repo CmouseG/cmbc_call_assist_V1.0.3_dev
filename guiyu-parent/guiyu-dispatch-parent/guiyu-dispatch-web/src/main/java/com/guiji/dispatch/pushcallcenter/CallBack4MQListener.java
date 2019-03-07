@@ -92,9 +92,15 @@ public class CallBack4MQListener {
 					GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(gateWayLineKey);
 					logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
 					if (null != gateWayLine) {
+						if (gateWayLine.getUserId().equals(userId)
+								&& gateWayLine.getBotstenceId().equals(botstenceId)) {
+							//释放网关路线
+							this.releaseGateWay(gateWayLine, gateWayLineKey);
+						}
+						/*
 						//获取用户线路机器人分配
 						String key = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
-						Object obj = (Object) redisUtil.get(key);
+						Object obj = (Object)redisUtil.get(key);
 						if (null != obj) {
 							DispatchPlan dispatchRedis = (DispatchPlan) obj;
 							//判断是否是网关线路
@@ -109,6 +115,7 @@ public class CallBack4MQListener {
 								this.releaseGateWay(gateWayLine, gateWayLineKey);
 							}
 						}
+						*/
 					}
 				}else{
 					//如果返回lineId，则模糊匹配查询出所有网关路线

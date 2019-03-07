@@ -1,40 +1,38 @@
 package com.guiji.dispatch.pushcallcenter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.guiji.calloutserver.api.ICallPlan;
+import com.guiji.component.lock.DistributedLockHandler;
+import com.guiji.component.lock.Lock;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
-import com.guiji.robot.model.UserResourceCache;
-import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.PushRecords;
 import com.guiji.dispatch.enums.GateWayLineStatusEnum;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.GateWayLineOccupyVo;
+import com.guiji.robot.model.UserResourceCache;
+import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.utils.DateUtil;
+import com.guiji.utils.JsonUtils;
+import com.guiji.utils.RedisUtil;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.support.atomic.RedisAtomicDouble;
 import org.springframework.stereotype.Service;
 
-import com.guiji.calloutserver.api.ICallPlan;
-import com.guiji.component.lock.DistributedLockHandler;
-import com.guiji.component.lock.Lock;
-import com.guiji.component.result.Result.ReturnData;
-import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.dao.entity.PushRecords;
-import com.guiji.dispatch.util.Constant;
-import com.guiji.utils.DateUtil;
-import com.guiji.utils.JsonUtils;
-import com.guiji.utils.RedisUtil;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 推送号码
@@ -89,7 +87,8 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								+ dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);
 						try {
-							if (distributedLockHandler.tryLock(queueLock)) {
+							if (distributedLockHandler.tryLock(queueLock, 1000L))
+							{
 								Integer redisUserIdCount = (Integer) redisUtil.get(queueCount);
 								if (redisUserIdCount == null) {
 									redisUserIdCount = 0;
@@ -102,12 +101,14 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								//判断用户模板是否有可用机器人
-								if(!this.checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
+								if(!checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
 									continue;
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
-								logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_ + user_id + templId :{}", JsonUtils.bean2Json(obj));
+								if(null != obj) {
+									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_ + user_id + templId :{}", JsonUtils.bean2Json(obj));
+								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
 								}
@@ -131,7 +132,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                                 occupyLine = gateWayLine;
                                                 logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
                                                 break;//有闲置，则推送，网关路线只能推送一个
-                                            }
+                                            }else{
+												redisUtil.leftPush(queue, dispatchRedis);
+											}
+
                                         }else {
                                             lines.add(line.getLineId());
                                         }
@@ -182,7 +186,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									continue;
 								}else{
 								    //推送成功，则标识网关SIM卡路线被占用
-									this.occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName());
+									occupyGateWayLine(occupyLine, dto.getUserId()+"", dto.getBotenceName());
                                 }
 							}
 						} finally {
@@ -208,7 +212,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	public boolean checkUserAvailableRobot(String userId,String templateId) {
 		if(StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(templateId)) {
 			//用户资源
-			UserResourceCache userResource = this.getUserResource(userId);
+			UserResourceCache userResource = getUserResource(userId);
 			//该模板配置的机器人数量，默认0
 			int templateCfgAiNum = 0;
 			//用户分配的机器人数量，默认0
@@ -222,7 +226,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				return false;
 			}
 			//获取用户目前在忙的机器人列表
-			List<AiInuseCache> userAiList = this.queryUserAiInUseList(userId);
+			List<AiInuseCache> userAiList = queryUserAiInUseList(userId);
 			if(userAiList!=null && !userAiList.isEmpty()) {
 				for(AiInuseCache robot : userAiList) {
 					if(templateId.equals(robot.getTemplateIds())) {

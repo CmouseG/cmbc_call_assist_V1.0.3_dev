@@ -1,6 +1,7 @@
 package com.guiji.dispatch.controller;
 
 import com.guiji.dispatch.dto.DispatchRobotOpDto;
+import com.guiji.dispatch.pushcallcenter.CallBack4MQListener;
 import com.guiji.dispatch.pushcallcenter.IPushPhonesHandler;
 import com.guiji.dispatch.service.IResourcePoolService;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +46,22 @@ public class TestController {
         boolean bool =  false;
         try {
             iPushPhonesHandler.pushHandler();
+        }catch(Exception e){
+            logger.error("pushHandler>>>>>>>>>>>>>",e);
+        }
+    }
+
+    @Autowired
+    private CallBack4MQListener callBack4MQListener;
+
+    @ApiOperation(value="", notes="")
+    @RequestMapping(value = "/callBack4MQListener", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public void callBack4MQListener(@RequestBody DispatchRobotOpDto opRobotDto){
+        boolean bool =  false;
+        try {
+            String str = "{\"lineId\":731,\"planuuid\":\"bfd2a388cf49445ba7073689347b3f00\",\"tempId\":\"111_35227_en\",\"userId\":64}";
+            callBack4MQListener.process(str, null, null);
         }catch(Exception e){
             logger.error("pushHandler>>>>>>>>>>>>>",e);
         }

@@ -24,6 +24,7 @@ import com.guiji.clm.service.fee.FeeService;
 import com.guiji.clm.service.fee.FeeService.FeeOptEnum;
 import com.guiji.clm.util.CheckUtil;
 import com.guiji.clm.util.DataLocalCacheUtil;
+import com.guiji.clm.vo.SipLineBaseInfoVO;
 import com.guiji.clm.vo.VoipGwInfoVO;
 import com.guiji.clm.vo.VoipGwPortQueryCondition;
 import com.guiji.clm.vo.VoipGwPortVO;
@@ -443,6 +444,18 @@ public class VoipGwManager {
 		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
 		return this.changePort2VO(list);
 	}
+	
+	
+	/**
+	 * 根据条件查询网关端口信息(带监控信息)--分页查询
+	 * @param condition
+	 * @return
+	 */
+	public Page<VoipGwPortVO> queryVoipGwPortListWrapForPage(VoipGwPortQueryCondition condition) {
+		Page<VoipGwPort> page = voipGwPortService.queryVoipGwPortForPageByCondition(condition);
+		return new Page<VoipGwPortVO>(condition.getPageNo(),page.getTotalRecord(),this.changePort2VO(page.getRecords()));
+	}
+	
 	
 	/**
 	 * 将本地网关数据转为带监控的VO数据

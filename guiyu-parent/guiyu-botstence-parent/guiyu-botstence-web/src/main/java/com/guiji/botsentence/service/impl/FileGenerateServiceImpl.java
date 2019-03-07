@@ -233,11 +233,14 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		
 		Map<Integer, String> idsMap = new HashMap<>();
 		Map<Long, Integer> voliceIdsMap = new HashMap<>();
-		
+		Map<Long, Integer> interruptMap = new HashMap<>();
 		boolean needTts = false;
 		
 		int size = voliceInfos.size();
 		for (int i = 1; i <= size; i++) {
+			if(Constant.VOLICE_TYPE_INTERRUPT.equals(voliceInfos.get(i - 1).getType())) {
+				interruptMap.put(voliceInfos.get(i - 1).getVoliceId(), 8000);
+			}
 			voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
 			idsMap.put(i, voliceInfos.get(i - 1).getContent());
 			String content = voliceInfos.get(i - 1).getContent() + "*" + i;
@@ -750,7 +753,11 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			String wavURL = voliceInfos.get(i - 1).getVoliceUrl();
 			try {
 				if (StringUtils.isNotBlank(wavURL)) {
-					generateWAV(restTemplate, wavURL, Integer.toString(i), wavfile.getPath());
+					if(interruptMap.containsKey(voliceInfos.get(i - 1).getVoliceId())) {
+						generateWAV(restTemplate, wavURL, interruptMap.get(voliceInfos.get(i - 1).getVoliceId()).toString(), wavfile.getPath());
+					}else {
+						generateWAV(restTemplate, wavURL, Integer.toString(i), wavfile.getPath());
+					}
 				}
 			} catch (IOException e) {
 				logger.error("generate wav has exception:" + wavURL, e);

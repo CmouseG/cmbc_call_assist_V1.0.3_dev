@@ -7,8 +7,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,4 +29,12 @@ public interface IAgentGroup {
     @ApiOperation(value = "获取转人工freeswitch的基本信息")
     @GetMapping(value="getfsinfo")
     Result.ReturnData<FsInfoVO> getFsInfo();
+
+    @ApiOperation(value = "解除转人工线路绑定")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "lineId", value = "线路Id", dataType = "String", paramType = "query")
+    })
+    @RequestMapping(value = "/untying/{lineId}", method = RequestMethod.DELETE)
+    Result.ReturnData  untyingLineinfos(@PathVariable(value = "lineId") String lineId);
+
 }

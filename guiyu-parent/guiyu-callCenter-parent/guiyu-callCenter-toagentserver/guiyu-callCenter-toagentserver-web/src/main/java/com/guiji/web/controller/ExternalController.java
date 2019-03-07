@@ -81,6 +81,13 @@ public class ExternalController implements IAgentGroup{
         return Result.error(ErrorConstant.FS_CONNECT_FAIL);
     }
 
+    @Override
+    public Result.ReturnData untyingLineinfos(String lineId) {
+
+
+        return null;
+    }
+
     @RequestMapping(path = "/agentsum", method = RequestMethod.GET)
     public Result.ReturnData<AgentSumResponse> getAgentStateSum(@RequestParam String orgCode){
         log.info("收到获取座席状态统计，orgCode[{}]", orgCode);

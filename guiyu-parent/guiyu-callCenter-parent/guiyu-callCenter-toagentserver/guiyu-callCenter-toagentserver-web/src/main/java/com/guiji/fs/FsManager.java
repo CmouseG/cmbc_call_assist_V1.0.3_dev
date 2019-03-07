@@ -115,18 +115,18 @@ public class FsManager {
      */
     public boolean updateAgent(AgentInfo agentInfo){
         Preconditions.checkArgument(agentInfo!=null && agentInfo.getAgentId()!=null, "null agentInfo");
-        Agent agent = new Agent();
-        agent.setAgentId(agentInfo.getAgentId());
+//        Agent agent = new Agent();
+//        agent.setAgentId(agentInfo.getAgentId());
         if(agentInfo.getStatus()!=null){
             modCallCenter.updateAgentStatus(agentInfo.getAgentId(),agentInfo.getStatus());
-            agent.setStatus(agentInfo.getStatus());
+//            agent.setStatus(agentInfo.getStatus());
         }
         if(agentInfo.getContact()!=null){
             modCallCenter.updateAgentContact(agentInfo.getAgentId(),agentInfo.getContact());
-            agent.setContact(agentInfo.getContact());
+ //           agent.setContact(agentInfo.getContact());
         }
-        //修改配置文件
-        modCallCenter.updateAgent(agent);
+//        //修改配置文件
+//        modCallCenter.updateAgent(agent);
         return true;
     }
 
@@ -199,11 +199,11 @@ public class FsManager {
         Preconditions.checkArgument(agentInfo.getStatus()!=null,"null agentStatus");
         modCallCenter.updateAgentStatus(agentInfo.getAgentId(),agentInfo.getStatus());
 
-        Agent agent = new Agent();
-        agent.setAgentId(agentInfo.getAgentId());
-        agent.setStatus(agentInfo.getStatus());
-        //修改配置文件
-        modCallCenter.updateAgent(agent);
+//        Agent agent = new Agent();
+//        agent.setAgentId(agentInfo.getAgentId());
+//        agent.setStatus(agentInfo.getStatus());
+//        //修改配置文件
+//        modCallCenter.updateAgent(agent);
         return true;
     }
 

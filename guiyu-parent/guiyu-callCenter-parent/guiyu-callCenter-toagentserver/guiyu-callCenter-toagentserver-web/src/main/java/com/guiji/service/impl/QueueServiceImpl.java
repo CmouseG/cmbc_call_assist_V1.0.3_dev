@@ -14,7 +14,9 @@ import com.guiji.config.FsBotConfig;
 import com.guiji.config.ToagentserverException;
 import com.guiji.entity.EAnswerType;
 import com.guiji.entity.EUserRole;
+import com.guiji.entity.EUserState;
 import com.guiji.fs.FsManager;
+import com.guiji.fs.pojo.AgentStatus;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsLineManager;
@@ -201,7 +203,9 @@ public class QueueServiceImpl implements QueueService {
                 queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 if (queryQueue.getLineId() != null) {
                     LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-                    queryQueue.setLineName(lineInfo.getLineName());
+                    if(lineInfo!=null){
+                        queryQueue.setLineName(lineInfo.getLineName());
+                    }
                 }
                 TierExample tierExample = new TierExample();
                 tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -265,5 +269,36 @@ public class QueueServiceImpl implements QueueService {
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(orgCode);
         return queueMapper.selectByExample(queueExample);
+    }
+
+    @Override
+    public void untyingLineinfos(String lineId) {
+        //1、根据lineId查询所有的坐席组
+        QueueExample queueExample = new QueueExample();
+        queueExample.createCriteria().andLineIdEqualTo(Integer.parseInt(lineId));
+         List<Queue> queues =queueMapper.selectByExample(queueExample);
+        for (Queue queue:queues) {
+            //遍历队列，解绑线路
+            queue.setLineId(null);
+            queueMapper.updateByPrimaryKey(queue);
+            //遍历队列，查询绑定关系
+            TierExample tierExample = new TierExample();
+            tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+            List<Tier> tierList =tierMapper.selectByExample(tierExample);
+            //遍历绑定关系，查看坐席是否为手机接听，如果是手机接听改为网页接听并置成离线
+            for (Tier tier:tierList) {
+                 Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
+                if(agent.getAnswerType()==1){
+                    AgentInfo agentInfo = new AgentInfo();
+                    agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
+                    agentInfo.setStatus(AgentStatus.Logged_Out);
+                    agentInfo.setAgentId(agent.getUserId() + "");
+                    fsManager.addAgent(agentInfo);
+                    agent.setAnswerType(EAnswerType.WEB.ordinal());
+                    agent.setUserState(EUserState.OFFLINE.ordinal());
+                    agentMapper.updateByPrimaryKey(agent);
+                }
+            }
+        }
     }
 }

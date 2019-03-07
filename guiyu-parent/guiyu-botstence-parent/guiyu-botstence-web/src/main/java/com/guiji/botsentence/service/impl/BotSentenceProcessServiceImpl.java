@@ -4697,9 +4697,11 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				int newIndustry = new Integer(newIndustryId) + 1;
 				if(newIndustry > 9) {
-					newTrade.setIndustryId(industryId + newIndustry) ;
+					newIndustryId = industryId + newIndustry;
+					//newTrade.setIndustryId(industryId + newIndustry) ;
 				}else {
-					newTrade.setIndustryId(industryId + "0" + newIndustry) ;
+					newIndustryId = industryId + "0" + newIndustry;
+					//newTrade.setIndustryId(industryId + "0" + newIndustry) ;
 				}
 				
 			}else {
@@ -4723,9 +4725,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			BotSentenceTrade max = list2.get(0);
 			int newIndustry = new Integer(max.getIndustryId()) + 1;
 			if(newIndustry > 9) {
-				newTrade.setIndustryId(industryId + newIndustry + "") ;
+				newTrade.setIndustryId(newIndustry + "") ;
 			}else {
-				newTrade.setIndustryId(industryId + "0" + newIndustry) ;
+				newTrade.setIndustryId("0" + newIndustry) ;
 			}
 			
 			newTrade.setIndustryName(industryName);

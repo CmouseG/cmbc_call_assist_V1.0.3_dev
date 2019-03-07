@@ -21,6 +21,8 @@ public class AiHangupReq {
 	private String phoneNo;
 	@ApiModelProperty(value="机器人编号",required=true)
 	private String aiNo;
+	@ApiModelProperty(value="话术模板编号",required=true)
+	private String templateId;
 
 	public String getSeqId() {
 		return seqId;
@@ -52,5 +54,22 @@ public class AiHangupReq {
 
 	public void setAiNo(String aiNo) {
 		this.aiNo = aiNo;
+	}
+
+	public String getTemplateId() {
+		return templateId;
+	}
+
+	public void setTemplateId(String templateId) {
+		this.templateId = templateId;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "AiHangupReq [seqId=" + seqId + ", userId=" + userId + ", phoneNo=" + phoneNo + ", aiNo=" + aiNo
+				+ ", templateId=" + templateId + "]";
 	}
 }

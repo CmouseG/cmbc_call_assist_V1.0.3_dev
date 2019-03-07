@@ -359,9 +359,9 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//无空闲的机器人
 			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
-		if(!aiCallStartReq.getPhoneNo().equals(nowAi.getCallingPhone())) {
+		if(!aiCallStartReq.getSeqId().equals(nowAi.getSeqId())) {
 			//机器人已经分配给其他号码
-			logger.error("机器人{}已经分配给{}，{}不可拨打，详细信息：{}!",nowAi.getAiNo(),nowAi.getCallingPhone(),aiCallStartReq.getPhoneNo(),nowAi);
+			logger.error("机器人{}已经分配给{}，{}不可拨打，详细信息：{}!",nowAi.getAiNo(),nowAi.getSeqId(),aiCallStartReq.getSeqId(),nowAi);
 			throw new RobotException(AiErrorEnum.AI00060025.getErrorCode(),AiErrorEnum.AI00060025.getErrorMsg());
 		}
 		try {
@@ -494,6 +494,11 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 			//机器人不存在
 			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
 		}
+		if(!aiCallNextReq.getSeqId().equals(nowAi.getSeqId())) {
+			//机器人已经分配给其他号码
+			logger.error("机器人{}已经分配给{}，{}不可拨打，详细信息：{}!",nowAi.getAiNo(),nowAi.getSeqId(),aiCallNextReq.getSeqId(),nowAi);
+			throw new RobotException(AiErrorEnum.AI00060025.getErrorCode(),AiErrorEnum.AI00060025.getErrorMsg());
+		}
 		/**2、打断-过滤不能打断的域**/
 		//获取实施通话
 		CallInfo callInfo = aiCacheService.queryUserCall(aiCallNextReq.getUserId(), aiCallNextReq.getSeqId());
@@ -590,6 +595,7 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 				|| StrUtils.isEmpty(aiHangupReq.getSeqId())
 				|| StrUtils.isEmpty(aiHangupReq.getAiNo())
 				|| StrUtils.isEmpty(aiHangupReq.getPhoneNo())
+				|| StrUtils.isEmpty(aiHangupReq.getTemplateId())
 				|| StrUtils.isEmpty(aiHangupReq.getUserId())) {
 			//记录log
 			aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "挂断电话,请求必输参数校验失败!");
@@ -601,10 +607,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		/**3、资源校验以及准备**/
 		AiInuseCache nowAi = iAiResourceManagerService.queryUserAi(aiHangupReq.getUserId(), aiHangupReq.getAiNo());
 		if(nowAi == null) {
-			//记录log
-			aiAsynDealService.recordCallLog(aiHangupReq.getSeqId(), aiHangupReq.getPhoneNo(), Constant.MODULAR_STATUS_ERROR, "挂断电话,机器人"+aiHangupReq.getAiNo()+"不存在");
-			//机器人不存在
-			throw new RobotException(AiErrorEnum.AI00060006.getErrorCode(),AiErrorEnum.AI00060006.getErrorMsg());
+			//机器人不存在，不再抛异常了
+			logger.error("会话id：{}，机器人编号：{}，AI缓存不存在!",aiHangupReq.getSeqId(),aiHangupReq.getAiNo());
 		}
 		//将用户机器人释放掉
 		iAiResourceManagerService.aiRelease(nowAi);
@@ -618,8 +622,8 @@ public class AiAbilityCenterServiceImpl implements IAiAbilityCenterService{
 		try {
 			FlHelloReq flHelloReq = new FlHelloReq();
 			flHelloReq.setSeqid(aiHangupReq.getSeqId());
-			flHelloReq.setCfg_name(nowAi.getTemplateIds());
-			robotServerSwitchService.getRobotServerInstance(nowAi.getTemplateIds()).clean(flHelloReq);
+			flHelloReq.setCfg_name(aiHangupReq.getTemplateId());
+			robotServerSwitchService.getRobotServerInstance(aiHangupReq.getTemplateId()).clean(flHelloReq);
 		} catch (Exception e) {
 			//如果调用外部挂断失败的话，只打印异常，但是不继续抛出，不影响主业务
 			logger.error("会话id："+aiHangupReq.getSeqId()+",调用机器人服务挂断电话清理数据发生异常",e);

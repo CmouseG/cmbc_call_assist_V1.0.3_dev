@@ -1,55 +1,47 @@
 package com.guiji.utils;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.fastjson.util.IOUtils;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.entity.SmsExceptionEnum;
+import com.guiji.listener.ParseExcelListener;
 
 public class ParseFileUtil
 {
+	private static final Logger logger = LoggerFactory.getLogger(ParseFileUtil.class);
+	
 	/**
 	 * 解析excel文件
 	 */
 	public static List<String> parseExcelFile(MultipartFile file) throws Exception
 	{
 		List<String> phoneList = new ArrayList<>();
-		
+		// 校验文件类型
 		String fileName = file.getOriginalFilename();
 		if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
-            throw new GuiyuException(SmsExceptionEnum.Incorrect_Format);
-        }
-        Workbook workbook = null;
-        if (fileName.matches("^.+\\.(?i)(xlsx)$")) { 
-        	workbook = new XSSFWorkbook(file.getInputStream());
-        } else {
-        	workbook = new HSSFWorkbook(file.getInputStream());
-        }
-        Sheet sheet = workbook.getSheetAt(0);
-		for (int r = 1; r <= sheet.getLastRowNum(); r++)
+			throw new GuiyuException(SmsExceptionEnum.Incorrect_Format);
+		}
+		InputStream inputStream = file.getInputStream();
+		
+		try
 		{
-			Row row = sheet.getRow(r);
-			if (row == null){
-                continue;
-            }
-			row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
-			String phone = row.getCell(0).getStringCellValue(); //获取手机号
-			if(phone==null || phone.isEmpty()){
-                throw new GuiyuException("导入失败(第"+(r+1)+"行,号码未填写)");
-            }
-			if(!Pattern.compile("^\\d{11}$").matcher(phone).matches()){ //对号码进行校验
-				throw new GuiyuException(SmsExceptionEnum.PhoneNum_Error);
-			}
-			phoneList.add(phone);
+			ParseExcelListener listener = new ParseExcelListener(phoneList);
+			EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), listener);
+			
+		} catch (Exception e) {
+			logger.error("解析文件失败！" + e);
+			throw new GuiyuException(SmsExceptionEnum.ParseFile_Error); 
+		} finally {
+			IOUtils.close(inputStream);
 		}
 		
 		return phoneList;

@@ -62,9 +62,24 @@
 			<version>2.6.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>easyexcel</artifactId>
+			<version>1.1.2-beta5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.17</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.9</version>
+			<version>3.17</version>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -74,6 +89,10 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jta-narayana</artifactId>
 		</dependency>
 	</dependencies>
 

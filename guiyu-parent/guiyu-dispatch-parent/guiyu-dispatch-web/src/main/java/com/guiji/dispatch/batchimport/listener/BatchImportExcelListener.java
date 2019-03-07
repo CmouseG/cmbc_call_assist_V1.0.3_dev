@@ -95,12 +95,12 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 //			dispatchPlan.setCityName(cityName);
 			
 			// 校验黑名单逻辑
-			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode)) {
-				count = count + 1;
-				blackService.setBlackPhoneStatus(dispatchPlan);
-				phones.add(dispatchPlan.getPhone());
-				return;
-			}
+//			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(),orgCode)) {
+//				count = count + 1;
+//				blackService.setBlackPhoneStatus(dispatchPlan);
+//				phones.add(dispatchPlan.getPhone());
+//				return;
+//			}
 			
 			// 放入队列
 			BatchImportQueueHandler.add(dispatchPlan);

@@ -134,7 +134,23 @@ public class QueueServiceImpl implements QueueService {
         //第三步：删除数据库中该队列
         queueMapper.deleteByPrimaryKey(Long.parseLong(queueId));
         //第四步删除callcenter中的该队列
-        fsManager.deleteQueue(queueId);
+       // fsManager.deleteQueue(queueId);
+
+        List<String> queueIdList = new ArrayList<>();
+        QueueExample queueExample = new QueueExample();
+        List<Queue> queueList = queueMapper.selectByExample(queueExample);
+        for (Queue queues:queueList) {
+            queueIdList.add(queues.getQueueId()+"");
+        }
+        //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
+        fsManager.initCallcenter(null,queueIdList,null);
+
+        // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+        String other = "reload+mod_callcenter";
+        fsManager.syncCallcenter(fileUrl,other);
+
+
         /**
          * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
          */

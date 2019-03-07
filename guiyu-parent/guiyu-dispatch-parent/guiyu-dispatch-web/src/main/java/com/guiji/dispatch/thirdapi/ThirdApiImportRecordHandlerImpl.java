@@ -65,13 +65,15 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 					return;
 				}else{
 					//路线类型
-					Integer lineType = vo.getLineType();
+					Integer lineType = null != vo.getLineType()?vo.getLineType():PlanLineTypeEnum.SIP.getType();
+					vo.setLineType(lineType);
 					// 加入线路
 					List<DispatchLines> lineList = vo.getLines();
 					//mod by xujin
 					for(DispatchLines line : lineList){
 						line.setCreateTime(DateUtil.getCurrent4Time());
 						line.setPlanuuid(vo.getPlanUuid());
+						line.setLineType(lineType);
 						lineService.insertLines(line);
 					}
 					int insert = dispatchPlanMapper.insert(vo);

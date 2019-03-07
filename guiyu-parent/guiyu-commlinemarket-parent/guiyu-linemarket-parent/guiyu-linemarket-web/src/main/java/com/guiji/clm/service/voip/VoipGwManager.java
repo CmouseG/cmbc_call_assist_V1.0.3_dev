@@ -253,9 +253,24 @@ public class VoipGwManager {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
 		}
-		List<VoipGwPort> portList = new ArrayList<VoipGwPort>();
+		List<VoipGwPort> feePortList = new ArrayList<VoipGwPort>();	//要计费端口
+		List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();	//要解除计费端口
 		for(VoipGwPort gwPort : gwPortList) {
 			VoipGwPort port = voipGwPortService.queryById(gwPort.getId());
+			if(StrUtils.isNotEmpty(port.getUserId()) && !port.getUserId().equals(userId)) {
+				//如果是换卡操作，那么检查被换卡的用户是否可以被换
+				//调用调度中心检查线路是否在使用
+				Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(port.getUserId()));
+				if(inUsedFlag.getBody().booleanValue()) {
+					//在使用抛出异常，不能直接删除
+					log.error("网关线路编号:{}仍在调度中心使用中，不能删除",port.getLineId());
+					throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+				}
+				// 复制一份记录取消计费数据
+				VoipGwPort feePort = new VoipGwPort();
+				BeanUtil.copyProperties(port, feePort);
+				unFeePortList.add(feePort);
+			}
 			if(StrUtils.isNotEmpty(gwPort.getPhoneNo())) {
 				port.setPhoneNo(gwPort.getPhoneNo());
 			}
@@ -270,11 +285,25 @@ public class VoipGwManager {
 				port.setOrgCode(gwPort.getOrgCode());
 			}
 			port.setCrtUser(userId);
-			voipGwPortService.save(port);
-			portList.add(port);
-			//计费
-			feeService.voipFee(FeeOptEnum.UP, port);
+			voipGwPortService.save(port);	//保存
+			//将要计费数据复制一份
+			VoipGwPort feePort = new VoipGwPort();
+			BeanUtil.copyProperties(port, feePort);
+			feePortList.add(feePort);
 		}
+		if(unFeePortList!=null && !unFeePortList.isEmpty()) {
+			for(VoipGwPort port:unFeePortList) {
+				//取消计费
+				feeService.voipFee(FeeOptEnum.DEL, port);
+			}
+		}
+		if(feePortList!=null && !feePortList.isEmpty()) {
+			for(VoipGwPort port:feePortList) {
+				//计费
+				feeService.voipFee(FeeOptEnum.UP, port);
+			}
+		}
+		
 	}
 	
 	
@@ -289,18 +318,34 @@ public class VoipGwManager {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
 		}
-		//设置企业
-		List<VoipGwPort> portList = new ArrayList<VoipGwPort>();
+		//计费项
+		List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();
 		for(Integer gwPortId : gwPortIdList) {
 			VoipGwPort port = voipGwPortService.queryById(gwPortId);
+			//调用调度中心检查线路是否在使用
+			Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(userId));
+			if(inUsedFlag.getBody().booleanValue()) {
+				//在使用抛出异常，不能直接删除
+				log.error("网关线路编号:{}仍在调度中心使用中，不能删除",port.getLineId());
+				throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+			}
+			// 复制一份记录取消计费数据
+			VoipGwPort feePort = new VoipGwPort();
+			BeanUtil.copyProperties(port, feePort);
+			unFeePortList.add(feePort);
 			port.setUserId(null);
 			port.setOrgCode(null);
 			port.setPhoneNo(null);
 			port.setCrtUser(userId);
 			voipGwPortService.save(port);
-			portList.add(port);
 		}
-		//TODO 计费
+		//删除计费项
+		if(unFeePortList!=null && !unFeePortList.isEmpty()) {
+			for(VoipGwPort port:unFeePortList) {
+				//取消计费
+				feeService.voipFee(FeeOptEnum.DEL, port);
+			}
+		}
 	}
 	
 	
@@ -315,6 +360,8 @@ public class VoipGwManager {
 				log.info("语音网关{}不存在...",gwId);
 				throw new ClmException(ClmErrorEnum.CLM1809316.getErrorCode(),ClmErrorEnum.CLM1809316.getErrorMsg());
 			}
+			//计费项
+			List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();
 			//根据网关编号查询所有端口
 			List<VoipGwPort> portList = voipGwPortService.queryVoipGwPortsByGwId(gwId);
 			/**1、线路使用中校验**/
@@ -328,6 +375,10 @@ public class VoipGwManager {
 							//在使用抛出异常，不能直接删除
 							throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
 						}
+						// 复制一份记录取消计费数据
+						VoipGwPort feePort = new VoipGwPort();
+						BeanUtil.copyProperties(port, feePort);
+						unFeePortList.add(feePort);
 					}
 				}
 				//线路都没有使用的情况下，才可以删除网关
@@ -342,10 +393,18 @@ public class VoipGwManager {
 				/**3、调用fsag**/
 				log.error("调用fsmanager删除网关:{}",gwId);
 				iSimCard.deleteGateway(gwId.toString());
-				/**网关、端口设置删除标记**/
+				/**4、网关、端口设置删除标记**/
 				voipGwInfo.setGwStatus(VoipGwStatusEnum.INVALID.getCode()); //删除标记
 				voipGwService.save(voipGwInfo);
 				voipGwPortService.delGwPortByGwId(gwId);
+				/**5、删除计费项**/
+				//删除计费项
+				if(unFeePortList!=null && !unFeePortList.isEmpty()) {
+					for(VoipGwPort port:unFeePortList) {
+						//取消计费
+						feeService.voipFee(FeeOptEnum.DEL, port);
+					}
+				}
 			}
 		}
 	}

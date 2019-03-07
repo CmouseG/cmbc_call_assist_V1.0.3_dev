@@ -175,6 +175,26 @@ public class VoipGwController {
 		return Result.ok(list);
 	}
 	
+	
+	/**
+	 * 根据条件查询VOIP端口数据-分页
+	 * @param condition
+	 * @return
+	 */
+	@RequestMapping(value = "/queryVoipPortForPage", method = RequestMethod.POST)
+	public Result.ReturnData<Page<VoipGwPortVO>> queryVoipPortForPage(@RequestBody VoipGwPortQueryCondition condition){
+		if(condition == null) {
+			condition = new VoipGwPortQueryCondition();
+		}
+		if(condition.getGwStatus()==null) {
+			//默认查询正常数据
+			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+		}
+		Page<VoipGwPortVO> portPage = voipGwManager.queryVoipGwPortListWrapForPage(condition);
+		return Result.ok(portPage);
+	}
+	
+	
 	/**
 	 * 查询已分配的端口列表
 	 * @param condition

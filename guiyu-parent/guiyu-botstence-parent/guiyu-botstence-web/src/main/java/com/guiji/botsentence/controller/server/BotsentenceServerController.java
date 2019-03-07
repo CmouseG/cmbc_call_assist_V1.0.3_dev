@@ -461,4 +461,11 @@ public class BotsentenceServerController {
 		}
 	}
 	
+	@RequestMapping(value="queryTradeListByTradeIdList")
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryAllTradeList(@RequestParam("tradeIdList")List<String> tradeIdList) {
+		logger.info("根据行业编号{}查询行业信息...", tradeIdList.toString());
+		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTradeListByTradeIdList(tradeIdList);
+		return ServerResult.createBySuccess(list);
+	}
+	
 }

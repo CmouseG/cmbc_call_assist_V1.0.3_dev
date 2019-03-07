@@ -35,13 +35,19 @@ public class BatchImportService implements IBatchImportService {
 
 	@Override
 	public void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode) {
-        BatchImportExcelListener excelListener = new BatchImportExcelListener(dispatchPlanParam, batchId, userId, orgCode);
-        excelListener.setBatchImportQueueHandler(batchImportQueueHandler);
-        excelListener.setBlackService(blackService);
-        excelListener.setFileRecordErrorService(fileRecordErrorService);
-        excelListener.setFileRecordsMapper(fileRecordsMapper);
-        excelListener.setPhoneRegionService(phoneRegionService);
-        EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
-        IOUtils.close(inputStream);
+		try
+		{
+			BatchImportExcelListener excelListener = new BatchImportExcelListener(dispatchPlanParam, batchId, userId, orgCode);
+	        excelListener.setBatchImportQueueHandler(batchImportQueueHandler);
+	        excelListener.setBlackService(blackService);
+	        excelListener.setFileRecordErrorService(fileRecordErrorService);
+	        excelListener.setFileRecordsMapper(fileRecordsMapper);
+	        excelListener.setPhoneRegionService(phoneRegionService);
+	        EasyExcelFactory.readBySax(inputStream, new Sheet(1, 1), excelListener);
+		} catch (Exception e) {
+			logger.error("批量导入失败!!!", e);
+		} finally {
+			IOUtils.close(inputStream);
+		}
 	}
 }

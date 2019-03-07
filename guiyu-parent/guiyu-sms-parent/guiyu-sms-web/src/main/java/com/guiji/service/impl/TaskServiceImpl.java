@@ -5,16 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.entity.SmsConstants;
-import com.guiji.entity.SmsExceptionEnum;
 import com.guiji.model.TaskReq;
 import com.guiji.service.SendSmsService;
 import com.guiji.service.TaskService;
@@ -33,8 +29,6 @@ import com.guiji.utils.RedisUtil;
 @Service
 public class TaskServiceImpl implements TaskService
 {
-	private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
-	
 	@Autowired
 	IAuth auth;
 	@Autowired
@@ -128,13 +122,7 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				try
-				{
-					sendSmsService.preSendMsg(taskReq); // 发送
-					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
-				} catch (Exception e){
-					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
-				}
+				sendSmsService.pushTaskToMQ(taskReq); // 发送
 			}
 		} 
 		else {
@@ -167,17 +155,11 @@ public class TaskServiceImpl implements TaskService
 				taskReq.setSendTime(new Date());
 				taskReq.setCompanyName(smsTask.getCompanyName());
 				taskReq.setUserId(userId);
-				try
-				{
-					sendSmsService.preSendMsg(taskReq); // 发送
-					smsTask.setSendStatus(SmsConstants.End); // 2-已结束
-				} catch (Exception e){
-					smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
-				}
+				sendSmsService.pushTaskToMQ(taskReq); // 发送
 				redisUtil.del(smsTask.getId().toString());
 			}
 		}
-		taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
+		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑
 	}
 	
 	/**
@@ -232,16 +214,10 @@ public class TaskServiceImpl implements TaskService
 			taskReq.setSendTime(new Date());
 			taskReq.setCompanyName(smsTask.getCompanyName());
 			taskReq.setUserId(smsTask.getCreateId());
-			try
-			{
-				sendSmsService.preSendMsg(taskReq); // 发送
-				smsTask.setSendStatus(SmsConstants.End); // 2-已结束
-			} catch (Exception e){
-				smsTask.setSendStatus(SmsConstants.Fail); // 3-发送失败
-			}
+			sendSmsService.pushTaskToMQ(taskReq); // 发送
 			redisUtil.del(smsTask.getId().toString());
 		}
-		taskMapper.updateByPrimaryKeyWithBLOBs(smsTask); //编辑
+		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑
 		
 	}
 

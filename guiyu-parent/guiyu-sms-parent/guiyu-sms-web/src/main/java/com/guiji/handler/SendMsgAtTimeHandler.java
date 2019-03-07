@@ -55,13 +55,7 @@ public class SendMsgAtTimeHandler extends IJobHandler
 			taskReq.setCompanyName(task.getCompanyName());
 			taskReq.setUserId(task.getCreateId());
 			taskService.updateSendStatusById(1,task.getId()); //进行中
-			try
-			{	
-				sendSmsService.preSendMsg(taskReq); //群发短信
-				taskService.updateSendStatusById(2,task.getId()); //已结束
-			} catch (Exception e) {
-				taskService.updateSendStatusById(3,task.getId()); //发送失败
-			}
+			sendSmsService.pushTaskToMQ(taskReq); // 发送
 			redisUtil.del(task.getId().toString());
 		}
 		return SUCCESS;

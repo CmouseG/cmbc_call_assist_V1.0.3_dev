@@ -645,7 +645,7 @@ public class AgentServiceImpl implements AgentService {
 
         //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        String other = "reload mod_callcenter";
+        String other = "reload+mod_callcenter";
         fsManager.syncCallcenter(fileUrl,other);
         fsManager.syncUser(agentMapper.selectMinUserId()+"",agentMapper.selectMaxUserId()+"");
     }

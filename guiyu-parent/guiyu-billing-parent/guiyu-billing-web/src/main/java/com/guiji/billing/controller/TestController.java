@@ -44,4 +44,10 @@ public class TestController {
     public ReturnT<String> acctArrearageTaskJobHandler(@RequestBody ChargingTermNotifyDto chargingTermNotifyDto) throws Exception {
         return acctArrearageTaskJobHandler.execute("");
     }
+
+    @RequestMapping(value = "/queryPlanRemarkById", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public ReturnT<String> queryPlanRemarkById(@RequestBody ChargingTermNotifyDto chargingTermNotifyDto) throws Exception {
+        return acctArrearageTaskJobHandler.execute("");
+    }
 }

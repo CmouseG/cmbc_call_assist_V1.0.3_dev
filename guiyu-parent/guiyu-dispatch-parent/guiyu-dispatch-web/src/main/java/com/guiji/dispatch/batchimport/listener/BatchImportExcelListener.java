@@ -9,6 +9,7 @@ import com.guiji.dispatch.dao.FileRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.FileRecords;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
@@ -141,6 +142,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
+		dispatchPlan.setLineType(null != dispatchPlan.getLineType()?
+				dispatchPlan.getLineType(): PlanLineTypeEnum.SIP.getType());
 
 		return dispatchPlan;
 	}

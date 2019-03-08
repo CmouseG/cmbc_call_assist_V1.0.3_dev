@@ -135,11 +135,11 @@ public interface IDispatchPlanOut {
 
     //查询计划任务
     @ApiOperation(value="根据uuId查询计划任务")
-    @RequestMapping(value="/dipatch/api/queryDispatchPlanById", method={RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value="/dipatch/api/queryDispatchPlanById", method={RequestMethod.GET})
     Result.ReturnData<DispatchPlan> queryDispatchPlanById(@RequestParam("planUuid") String planUuid);
 
    @ApiOperation(value="根据uuId查询计划任务备注")
-   @RequestMapping(value="/dipatch/api/queryPlanRemarkById", method={RequestMethod.POST, RequestMethod.GET})
+   @RequestMapping(value="/dipatch/api/queryPlanRemarkById", method={RequestMethod.GET})
    Result.ReturnData<String> queryPlanRemarkById(@RequestParam("planUuid") String planUuid);
 
 }

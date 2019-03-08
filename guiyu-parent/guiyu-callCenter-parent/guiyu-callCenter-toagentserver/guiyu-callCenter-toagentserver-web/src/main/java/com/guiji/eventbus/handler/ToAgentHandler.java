@@ -154,9 +154,11 @@ public class ToAgentHandler {
 
         Result.ReturnData result = iDispatchPlanOut.queryPlanRemarkById(callPlan.getPlanUuid());
         if(!result.getCode().equals("0")){
-            log.warn(",code:"+result.getCode());
+            log.warn("从Dispatch获取备注信息失败,code:"+result.getCode());
         }else{
-            queryRecordInDetail.setRemark(result.getBody().toString());
+            if(result.getBody()!=null){
+                queryRecordInDetail.setRemark(result.getBody().toString());
+            }
         }
         log.info("构建好的phoneinfo为[{}], 准备发送给座席[{}]", queryRecordInDetail, event.getAgentId());
         fsManager.vchat(event.getAgentId(), VChatMsgHelper.buildPhoneInfoMsg(queryRecordInDetail));

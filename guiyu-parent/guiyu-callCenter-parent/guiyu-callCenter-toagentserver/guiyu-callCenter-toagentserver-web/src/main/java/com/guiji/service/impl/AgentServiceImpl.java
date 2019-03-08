@@ -621,7 +621,7 @@ public class AgentServiceImpl implements AgentService {
                 agentInfo.setStatus(AgentStatus.Available);
             }
             if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
-                agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")");
+                agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
             }else if(agent.getAnswerType()==EAnswerType.MOBILE.ordinal()){
                 Long queueId = agent_queue.get(agent.getUserId());
                 if(queueId!=null){
@@ -632,10 +632,10 @@ public class AgentServiceImpl implements AgentService {
                         String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",lineId,agent.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
                         agentInfo.setContact(contact);
                     } else{
-                        agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")");
+                        agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
                     }
                 }else{
-                    agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")");
+                    agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
                 }
             }
             agentInfoList.add(agentInfo);
@@ -674,7 +674,7 @@ public class AgentServiceImpl implements AgentService {
         agentInfo.setAgentId(user.getUserId() + "");
         agentInfo.setPassword("555666");
         agentInfo.setStatus(AgentStatus.Available);
-        agentInfo.setContact("${verto_contact(" + user.getUserId() + ")");
+        agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
         fsManager.addAgent(agentInfo);
         //同步fs用户到freeswitch()
         fsManager.syncUser(agentMapper.selectMinUserId()+"",user.getUserId() + "");

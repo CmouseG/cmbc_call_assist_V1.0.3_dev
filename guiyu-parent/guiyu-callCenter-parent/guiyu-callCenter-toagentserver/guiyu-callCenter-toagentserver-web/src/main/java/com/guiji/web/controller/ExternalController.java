@@ -97,17 +97,16 @@ public class ExternalController implements IAgentGroup{
             agentSumResponse.setTotalCount(agentList.size());
             int onlineCount = 0;
             for (Agent agent : agentList) {
-                if(agent.getAnswerType()== EAnswerType.MOBILE.ordinal()){
-                    if(agent.getUserState()== EUserState.ONLINE.ordinal()){
-                        onlineCount++;
-                    }
-                }else{
-                    if(agentService.agentVertoState(agent)){
+                if (agent.getUserState() == 1) {
+                    if (agent.getAnswerType() == 0) {
+                        if (fsManager.getVertoStatus(agent.getUserId() + "")) {
+                            onlineCount++;
+                        }
+                    } else {
                         onlineCount++;
                     }
                 }
             }
-
             agentSumResponse.setOnlineCount(onlineCount);
         }
 

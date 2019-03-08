@@ -93,7 +93,7 @@ public class OrganizationService {
 		for(Map map : list)
 		{
 			ServerResult<Integer> result = botSentenceProcess.countTemplateByOrgCode((String) map.get("code"));
-			if(result != null && "000000".equals(result.getRspCode())) {
+			if(result != null) {
 				map.put("botstence", result.getData());
 			}
 		}

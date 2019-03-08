@@ -43,7 +43,9 @@ public interface SysUserMapper {
     
     String getPassword(String principal);
     
-    Long getUserId(@Param("username")String username,@Param("password")String password);
+    Long getUserId(@Param("username")String username,@Param("password")String password); 
+    
+    Long getUserIdForLogin(@Param("username")String username,@Param("password")String password);
     
     List<Map<String,String>> getUserByName(String userName);
     

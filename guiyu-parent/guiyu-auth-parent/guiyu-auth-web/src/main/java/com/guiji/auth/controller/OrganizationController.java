@@ -2,9 +2,8 @@ package com.guiji.auth.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import com.guiji.robot.api.IRobotRemote;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.guiji.auth.api.IOrg;
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.OrganizationService;
+import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
@@ -69,7 +69,7 @@ public class OrganizationController implements IOrg{
 	}
 	
 	@RequestMapping("selectOpenByPage")
-	public Page<Object> selectOpenByPage(Page<Object> page){
+	public Page<Map> selectOpenByPage(Page<Map> page){
 		return organizationService.selectOpenByPage(page);
 	}
 	
@@ -132,5 +132,12 @@ public class OrganizationController implements IOrg{
 		return organizationService.getOrgByOrgCodeOrgName(orgCode,orgName);
 	}
 
-
+	/**
+	 * 前台使用
+	 */
+	@RequestMapping("getIndustrysByOrgCode")
+	public ReturnData<List<BotSentenceTemplateTradeVO>> getIndustrysByOrgCode(String orgCode){
+		return Result.ok(organizationService.getIndustrysByOrgCode(orgCode));
+	}
+	
 }

@@ -56,8 +56,8 @@ eureka:
       defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 #fastdfs配置
 fdfs:
-  soTimeout: 1500         #获取文件超时时间
-  connectTimeout: 600     #连接超时时间
+  soTimeout: 15000         #获取文件超时时间
+  connectTimeout: 6000     #连接超时时间
   thumbImage:             #缩略图生成参数
     width: 150
     height: 150

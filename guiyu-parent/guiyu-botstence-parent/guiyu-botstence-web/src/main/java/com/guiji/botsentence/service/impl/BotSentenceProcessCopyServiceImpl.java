@@ -169,9 +169,17 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 	@Override
 	@Transactional
 	public String copy(String processId, String orgCode, String userId, String tempalteName) {
+//		ReturnData<SysOrganization> data=iAuth.getOrgByUserId(new Long(userId));
+//		orgCode=data.getBody().getCode();
+//		String orgName = data.getBody().getName();
+		
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		orgCode=data.getBody().getOrgCode();
-		String orgName = data.getBody().getOrgName();
+		
+		ReturnData<SysOrganization> data2=iAuth.getOrgByUserId(new Long(userId));
+		String orgName = data2.getBody().getName();
+		
+		ReturnData<SysUser> userData = iAuth.getUserById(new Long(userId));
 		
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
@@ -201,11 +209,11 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		
 		String templateId = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
 		process.setOrgCode(orgCode);
-		process.setOrgName("测试企业");
-		//process.setUserName(userName);
+		process.setOrgName(orgName);
+		process.setUserName(userData.getBody().getUsername());
 		process.setState("00");//制作中
 		process.setVersion("0");//初始版本为0
-		//process.setAccountNo(userId);//所属账号
+		process.setAccountNo(userId);//所属账号
 		process.setIndustry(botSentenceTemplate.getIndustry());//所属行业
 		process.setIndustryId(botSentenceTemplate.getIndustryId());
 		process.setTemplateId(templateId);//模板编号

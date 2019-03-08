@@ -47,4 +47,7 @@ public class CallInfo {
 	//显示使用字段
 	//机器人名称
 	private String aiName;
+	
+	//过期时间-数据清理使用
+	private long expire;
 }

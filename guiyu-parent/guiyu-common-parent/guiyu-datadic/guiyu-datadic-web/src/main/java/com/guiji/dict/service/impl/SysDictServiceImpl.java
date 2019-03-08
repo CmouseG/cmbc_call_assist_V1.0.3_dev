@@ -80,9 +80,27 @@ public class SysDictServiceImpl implements SysDictService {
     }
 
     @Override
+    public List<SysDict> queryDictListLocal(SysDict sysDict) {
+        logger.info("查询字典，查询条件="+sysDict);
+        List<SysDict> sysDictList = null;
+        //先查缓存
+        String redisKey = RedisConstant.REDIS_DICT_PREFIX + sysDict.getDictType();
+        sysDictList = (List<SysDict>)redisUtil.get(redisKey);
+        if (sysDictList == null || sysDictList.size()<1) {
+            //缓存不存在则查询数据库
+            SysDictExample example = this.getExampleByConditionLocal(sysDict);
+            sysDictList = sysDictMapper.selectByExample(example);
+            //查完数据库保存到缓存
+            redisUtil.set(redisKey,sysDictList);
+        }
+
+        return sysDictList;
+    }
+
+    @Override
     public Page<SysDict> queryDictPage(int pageNo, int pageSize, SysDict sysDict) {
         Page<SysDict> page = new Page<SysDict>();
-        SysDictExample example = this.getExampleByCondition(sysDict);
+        SysDictExample example = this.getExampleByConditionLocal(sysDict);
         if(example == null) example = new SysDictExample();
         int totalRecord = sysDictMapper.countByExample(example); //总数
         example.setLimitStart((pageNo-1)*pageSize);	//起始条数
@@ -137,6 +155,42 @@ public class SysDictServiceImpl implements SysDictService {
             }
             if(StrUtils.isNotEmpty(dictType)) {
                 criteria.andDictTypeEqualTo(dictType);
+            }
+            if(StrUtils.isNotEmpty(description)) {
+                criteria.andDescriptionLike("%"+description+"%");
+            }
+            if(StrUtils.isNotEmpty(remarks)) {
+                criteria.andRemarksLike("%"+remarks+"%");
+            }
+            return example;
+        }else {
+            logger.info("查询全部字典列表");
+        }
+        return null;
+    }
+
+    private SysDictExample getExampleByConditionLocal(SysDict sysDict) {
+        logger.info("查询字典，查询条件="+sysDict);
+        if(sysDict != null) {
+            Integer id = sysDict.getId();	//主键ID
+            String dictKey = sysDict.getDictKey();	//标签名
+            String dictValue = sysDict.getDictValue();	//数据值
+            String dictType = sysDict.getDictType();	//类型
+            String description = sysDict.getDescription();	//描述
+            String remarks = sysDict.getRemarks();	//备注信息
+            SysDictExample example = new SysDictExample();
+            SysDictExample.Criteria criteria = example.createCriteria();
+            if(id != null) {
+                criteria.andIdEqualTo(id);
+            }
+            if(StrUtils.isNotEmpty(dictKey)) {
+                criteria.andDictKeyEqualTo(dictKey);
+            }
+            if(StrUtils.isNotEmpty(dictValue)) {
+                criteria.andDictValueEqualTo(dictValue);
+            }
+            if(StrUtils.isNotEmpty(dictType)) {
+                criteria.andDictTypeLike("%"+dictType+"%");
             }
             if(StrUtils.isNotEmpty(description)) {
                 criteria.andDescriptionLike("%"+description+"%");

@@ -393,7 +393,8 @@ public class AiCacheService {
 	 * @return
 	 */
 	public void cacheUserCalls(String userId,CallInfo callInfo){
-		if(StrUtils.isNotEmpty(userId)) {
+		if(StrUtils.isNotEmpty(userId) && callInfo!=null) {
+			callInfo.setExpire(System.currentTimeMillis());
 			SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put(callInfo.getSeqId(), callInfo);
@@ -409,9 +410,16 @@ public class AiCacheService {
 	public CallInfo queryUserCall(String userId,String seqId) {
 		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
 		//查询某通电话
-		Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, seqId);
+		String key = RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId;
+		Object cacheObj = redisUtil.hget(key, seqId);
 		if(cacheObj != null) {
-			return (CallInfo) cacheObj;
+			CallInfo callInfo = (CallInfo) cacheObj;
+			if(System.currentTimeMillis()-callInfo.getExpire()>=5*60*1000) {
+				//超时5分钟删除
+				redisUtil.hdel(key,seqId);
+				return null;
+			}
+			return callInfo;
 		}
 		return null;
 	}
@@ -422,11 +430,17 @@ public class AiCacheService {
 	 */
 	public List<CallInfo> queryUserCallList(String userId){
 		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
-		Map<Object,Object> allMap = redisUtil.hmget(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId);
+		String key = RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId;
+		Map<Object,Object> allMap = redisUtil.hmget(key);
 		if(allMap != null && !allMap.isEmpty()) {
 			List<CallInfo> list = new ArrayList<CallInfo>();
 			for (Map.Entry<Object,Object> aiEntry : allMap.entrySet()) { 
 				CallInfo callInfo = (CallInfo) aiEntry.getValue();
+				if(System.currentTimeMillis()-callInfo.getExpire()>=5*60*1000) {
+					//超时5分钟删除
+					redisUtil.hdel(key,callInfo.getSeqId());
+					continue;
+				}
 				list.add(callInfo);
 			}
 			return list;

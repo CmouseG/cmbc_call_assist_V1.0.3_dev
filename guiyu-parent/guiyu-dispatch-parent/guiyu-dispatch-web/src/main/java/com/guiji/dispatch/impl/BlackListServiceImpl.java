@@ -236,9 +236,7 @@ public class BlackListServiceImpl implements IBlackListService {
 		blackParam.setPhone(phone);
 		blackParam.setOrgCode(orgCode);
 		blackParam.setStatus(Constant.BATCH_STATUS_SHOW);
-		ResultPage<BlackList> pageRes = new ResultPage<BlackList>();
-		pageRes.setPageNo(pagenum);
-		pageRes.setPageSize(pagesize);
+		ResultPage<BlackList> pageRes = new ResultPage<BlackList>(pagenum, pagesize);
 		pageRes.setOrderBy("gmt_create");
 		pageRes.setSort("DESC");
 		List<BlackList> result = blackListMapper.queryBlackList(blackParam, pageRes);
@@ -326,9 +324,7 @@ public class BlackListServiceImpl implements IBlackListService {
 		*/
 		BlackListRecords blackRecord = new BlackListRecords();
 		blackRecord.setOrgCode(orgCode);
-		ResultPage<BlackListRecords> pageRes = new ResultPage<BlackListRecords>();
-		pageRes.setPageNo(pagenum);
-		pageRes.setPageSize(pagesize);
+		ResultPage<BlackListRecords> pageRes = new ResultPage<BlackListRecords>(pagenum, pagesize);
 		pageRes.setOrderBy("create_time");
 		pageRes.setSort("DESC");
 		List<BlackListRecords> result = blackRecordsMapper.queryBlackListRecords(blackRecord, pageRes);

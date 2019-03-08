@@ -88,10 +88,7 @@ public class FileInterfaceImpl implements FileInterface {
 				logger.error("queryFileInterface 转换失败");
 			}
 		}
-		ResultPage<FileRecords> pageRes = new ResultPage<FileRecords>();
-		pageRes.setIsPage(true);
-		pageRes.setPageNo(pagenum);
-		pageRes.setPageSize(pagesize);
+		ResultPage<FileRecords> pageRes = new ResultPage<FileRecords>(pagenum, pagesize);
 		pageRes.setOrderBy("create_time");
 		pageRes.setSort("DESC");
 		List<FileRecords> list = recordMapper.queryFileRecordList(queryRecord,

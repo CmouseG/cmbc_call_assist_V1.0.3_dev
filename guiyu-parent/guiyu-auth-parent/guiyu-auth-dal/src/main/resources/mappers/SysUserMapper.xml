@@ -532,7 +532,7 @@
       and username=#{userName}
     </if>
     <if test="orgCode != null ">
-      and org_code like CONCAT(#{orgCode},'%')
+      and (org_code = #{orgCode} or org_code like CONCAT(#{orgCode},'.%'))
     </if>
   </select>
 
@@ -554,7 +554,7 @@
       and c.id like concat('%',#{roleId},'%')
     </if>
     <if test="orgCode != null ">
-      and a.org_code like CONCAT(#{orgCode},'%')
+      and (a.org_code = #{orgCode} or a.org_code like CONCAT(#{orgCode},'.%'))
     </if>
     order by a.create_time desc
     LIMIT ${(pageNo-1)*pageSize},#{pageSize}

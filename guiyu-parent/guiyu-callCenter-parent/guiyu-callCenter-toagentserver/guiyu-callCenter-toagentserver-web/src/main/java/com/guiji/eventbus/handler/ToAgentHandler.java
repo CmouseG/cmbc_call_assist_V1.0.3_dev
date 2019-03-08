@@ -2,6 +2,7 @@ package com.guiji.eventbus.handler;
 
 import com.google.common.base.Strings;
 import com.guiji.callcenter.dao.entity.Agent;
+import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.entity.*;
 import com.guiji.eventbus.SimpleEventSender;
@@ -48,6 +49,7 @@ public class ToAgentHandler {
 
     @Autowired
     IDispatchPlanOut iDispatchPlanOut;
+
 
     @PostConstruct
     public void init(){
@@ -148,9 +150,14 @@ public class ToAgentHandler {
 
         String answerTime = DateUtil.toString(callPlan.getAnswerTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC);
         queryRecordInDetail.setAnswerTime(answerTime);
-
         queryRecordInDetail.setCallrecordId(callPlan.getPlanUuid());
 
+        Result.ReturnData result = iDispatchPlanOut.queryPlanRemarkById(callPlan.getPlanUuid());
+        if(!result.getCode().equals("0")){
+            log.warn(",code:"+result.getCode());
+        }else{
+            queryRecordInDetail.setRemark(result.getBody().toString());
+        }
         log.info("构建好的phoneinfo为[{}], 准备发送给座席[{}]", queryRecordInDetail, event.getAgentId());
         fsManager.vchat(event.getAgentId(), VChatMsgHelper.buildPhoneInfoMsg(queryRecordInDetail));
     }

@@ -20,6 +20,7 @@ import com.guiji.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -51,16 +52,18 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 	@Autowired
 	private IBlackListService blackService;
 
-	public void excute(DispatchPlan vo) throws Exception {
+	@Override
+	public void preCheck(DispatchPlan vo) throws Exception
+	{
 
 		if (vo == null) {
 			return;
 		}
-		
+
 		// 校验黑名单逻辑
 		if (blackService.checkPhoneInBlackList(vo.getPhone(),vo.getOrgCode())) {
-		   blackService.setBlackPhoneStatus(vo);
-		   return;
+			blackService.setBlackPhoneStatus(vo);
+			return;
 		}
 
 		// 检查校验参数
@@ -80,30 +83,64 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			logger.debug("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
+	}
+
+	@Async("asyncBatchImportSaveDBExecutor")
+	@Override
+	public void saveDB(DispatchPlan vo)
+	{
 		//路线类型
-		Integer lineType = null != vo.getLineType()?vo.getLineType():PlanLineTypeEnum.SIP.getType();
+		Integer lineType = null != vo.getLineType() ? vo.getLineType() : PlanLineTypeEnum.SIP.getType();
 		vo.setLineType(lineType);
 		// 加入线路
 		List<DispatchLines> lineList = vo.getLines();
-		//加入线路
-		for(DispatchLines lines : lineList){
-			lines.setCreateTime(DateUtil.getCurrent4Time());
-			lines.setPlanuuid(vo.getPlanUuid());
-			lines.setLineType(vo.getLineType());
-			lineService.insertLines(lines);
+
+		try
+		{
+			//加入线路
+			for (DispatchLines lines : lineList)
+			{
+				lines.setCreateTime(DateUtil.getCurrent4Time());
+				lines.setPlanuuid(vo.getPlanUuid());
+				lines.setLineType(vo.getLineType());
+				lineService.insertLines(lines);
+			}
+		} catch (Exception e)
+		{
+			// doNothing
 		}
 
-		//查询号码归属地
-		String cityName = phoneRegionService.queryPhoneRegion(vo.getPhone());
-		vo.setCityName(cityName);
+		try
+		{
+			//查询号码归属地
+			String cityName = phoneRegionService.queryPhoneRegion(vo.getPhone());
+			vo.setCityName(cityName);
 
-		boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(vo));
-		if(bool){
-			//判断是否是路由网关路线
-			if(null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType) {
-				//设置加入路由网关路线redis及状态
-				gateWayLineService.setGatewayLineRedis(lineList);
+		} catch (Exception e)
+		{
+			// doNothing
+		}
+
+
+		vo.setGmtModified(DateUtil.getCurrent4Time());
+		vo.setGmtCreate(DateUtil.getCurrent4Time());
+
+		try
+		{
+			boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(vo));
+			if (bool)
+			{
+				//判断是否是路由网关路线
+				if (null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType)
+				{
+					//设置加入路由网关路线redis及状态
+					gateWayLineService.setGatewayLineRedis(lineList);
+				}
 			}
+
+		} catch (Exception e)
+		{
+			// doNothing
 		}
 	}
 

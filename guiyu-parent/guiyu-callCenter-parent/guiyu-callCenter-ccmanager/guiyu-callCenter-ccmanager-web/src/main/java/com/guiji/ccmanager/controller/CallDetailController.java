@@ -212,6 +212,10 @@ public class CallDetailController implements ICallPlanDetail {
             return Result.error(Constant.ERROR_PARAM);
         }
         CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
+        //修改状态为已读
+        if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
+            callDetailService.updateIsRead(callId);
+        }
 
         log.info("reponse success getCallDetailApi，callId[{}]", callId);
         return Result.ok(callOutPlanVO);

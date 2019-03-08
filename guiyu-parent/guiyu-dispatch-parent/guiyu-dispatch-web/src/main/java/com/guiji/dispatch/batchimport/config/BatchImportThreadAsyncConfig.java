@@ -20,4 +20,12 @@ public class BatchImportThreadAsyncConfig
     public Executor asyncBatchImportExecutor() {
         return new VisiableThreadPoolTaskExecutor("async-batch-import-", 5, 10, 100000, 60);
     }
+
+    @Bean(name = "asyncBatchImportSaveDBExecutor")
+    public Executor asyncBatchImportSaveDBExecutor()
+    {
+        return new VisiableThreadPoolTaskExecutor("async-batch-import-savedb-", 40, 100, 200000, 60);
+    }
+
+
 }

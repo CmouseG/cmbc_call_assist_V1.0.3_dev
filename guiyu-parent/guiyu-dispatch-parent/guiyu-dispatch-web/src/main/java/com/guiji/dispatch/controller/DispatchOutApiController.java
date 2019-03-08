@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -205,7 +206,35 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		res.body = false;
 		return res;
 	}
-	
-	
+
+	/**
+	 * 查询任务计划
+	 * @param planUuid
+	 * @return
+	 */
+	@Override
+	public ReturnData<DispatchPlan> queryDispatchPlanById(String planUuid) {
+		com.guiji.dispatch.dao.entity.DispatchPlan  plan = !StringUtils.isEmpty(planUuid)?
+				dispatchPlanService.queryDispatchPlanById(planUuid):null;
+		DispatchPlan dispatchPlan = null;
+		if(null != plan){
+			dispatchPlan = new DispatchPlan();
+			BeanUtils.copyProperties(plan, dispatchPlan, DispatchPlan.class);
+		}
+		return new ReturnData<DispatchPlan>(dispatchPlan);
+	}
+
+	/**
+	 * 查询任务计划备注
+	 * @param planUuid
+	 * @return
+	 */
+	@Override
+	public ReturnData<String> queryPlanRemarkById(String planUuid) {
+		String planAttach = !StringUtils.isEmpty(planUuid)?
+				dispatchPlanService.queryPlanRemarkById(planUuid):null;
+		return new ReturnData<String>(planAttach);
+	}
+
 
 }

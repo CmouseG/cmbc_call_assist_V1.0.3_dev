@@ -173,6 +173,8 @@ public class WeChatAppletController {
 					vo.setStateName("已上线");
 				}else if(Constant.DEPLOYING.equals(temp.getState())) {
 					vo.setStateName("部署中");
+				}else if(Constant.ERROR.equals(temp.getState())) {
+					vo.setStateName("部署失败");
 				}
 				
 				results.add(vo);
@@ -352,7 +354,8 @@ public class WeChatAppletController {
 	
 	@RequestMapping(value="queryVoliceListSimple")
 	public ServerResult<List<VoliceInfoExt>> queryVoliceListSimple(@JsonParam String processId) {
-		List<VoliceInfoExt> list = service.queryVoliceListSimple(processId);
+		//List<VoliceInfoExt> list = service.queryVoliceListSimple(processId);
+		List<VoliceInfoExt> list=service.queryVoliceInfoList(processId);
 		return ServerResult.createBySuccess(list);
 	}
 	

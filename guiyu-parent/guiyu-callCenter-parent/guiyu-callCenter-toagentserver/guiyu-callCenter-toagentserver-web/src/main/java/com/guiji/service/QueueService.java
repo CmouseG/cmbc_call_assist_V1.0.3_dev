@@ -25,4 +25,6 @@ public interface QueueService {
     Queue findByQueueId(Long queueId);
 
     List<Queue> findByOrgCode(String orgCode);
+
+    void untyingLineinfos(String lineId);
 }

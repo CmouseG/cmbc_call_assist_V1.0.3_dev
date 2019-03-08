@@ -10,6 +10,8 @@ import com.guiji.ccmanager.service.LineOperationService;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsmanager.api.ILineOper;
+import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.toagentserver.api.IAgentGroup;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -26,6 +31,37 @@ public class LineOperationServiceImpl implements LineOperationService {
     LineInfoMapper lineInfoMapper;
     @Autowired
     private ILineOper lineOperApiFeign;
+    @Autowired
+    IAgentGroup iAgentGroup;
+
+    @Override
+    @Transactional
+    public List<LineInfoVO> batchAddLineInfo(List<OutLineInfoAddReq> outLineInfoAddReqList) {
+
+        List<com.guiji.fsmanager.entity.LineInfoVO> queryList = new ArrayList<>();
+
+        //本地存储数据库lineinfo
+        for(OutLineInfoAddReq outLineInfoAddReq:outLineInfoAddReqList){
+            LineInfo lineInfo = new LineInfo();
+            BeanUtil.copyProperties(outLineInfoAddReq,lineInfo);
+            lineInfo.setCreateDate(DateUtil.getCurrentTime());
+            lineInfo.setUpdateDate(DateUtil.getCurrentTime());
+            lineInfoMapper.insertSelective(lineInfo);
+
+            com.guiji.fsmanager.entity.LineInfoVO lineInfoApi = new com.guiji.fsmanager.entity.LineInfoVO();
+            BeanUtil.copyProperties(lineInfo,lineInfoApi);
+            lineInfoApi.setLineId(String.valueOf(lineInfo.getLineId()));
+            queryList.add(lineInfoApi);
+        }
+
+        //调用fsmanager的增加线路接口
+        Result.ReturnData result = lineOperApiFeign.batchLinesinfos(queryList);
+        if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+            log.warn("lineOperApiFeign.addLineinfos failed,code:"+result.getCode());
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_ADDLINE);
+        }
+        return queryList;
+    }
 
     @Override
     @Transactional
@@ -87,6 +123,12 @@ public class LineOperationServiceImpl implements LineOperationService {
         Result.ReturnData result = lineOperApiFeign.deleteLineinfos(String.valueOf(id));
         if(!result.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
             log.warn("lineOperApiFeign.deleteLineinfos,code:"+result.getCode());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);
+        }
+        Result.ReturnData resultUntying = iAgentGroup.untyingLineinfos(String.valueOf(id));
+        if(!resultUntying.getCode().equals(Constant.SUCCESS_COMMON)){// body应该也要判断一下
+            log.warn("lineOperApiFeign.untyingLineinfos,code:"+resultUntying.getCode());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new GuiyuException(CcmanagerExceptionEnum.EXCP_CCMANAGER_FSMANAGER_DELETELINE);
         }

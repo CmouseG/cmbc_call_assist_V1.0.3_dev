@@ -35,22 +35,24 @@ public class AllotUserLineBotenceUtil {
             return result;
         }
 
+        //用户机器人，拼接key
         Map<String, List<UserLineBotenceVO>> allUserBotence = getAllUserBotence(userLineBotenceVOList);
 
+        //用户各个模板配置的机器人数量，拼接key:userId+templateId
         Map<String, Integer> allUserBotenceCfg = convertUserRes2Map(configRes);
 
         int allCount = 0;
         for (Map.Entry<String, List<UserLineBotenceVO>> ent : allUserBotence.entrySet()) {
 
-            if(allUserBotenceCfg.containsKey(ent.getKey()))
+            if(allUserBotenceCfg.containsKey(ent.getKey()))//用户模板机器人数包涵用户机器人
             {
                 allCount = allCount + allUserBotenceCfg.get(ent.getKey());
             }
         }
 
 
-        int userBotenceCount = 0;
-        int hasDividCount = 0;
+        int userBotenceCount = 0;//分配用户机器人数
+        int hasDividCount = 0;  //已使用数量
         Map<String, Integer> userDistributeMap = new HashMap<>();
         for (Map.Entry<String, List<UserLineBotenceVO>> ent : allUserBotence.entrySet()) {
 
@@ -59,11 +61,13 @@ public class AllotUserLineBotenceUtil {
                 continue;
             }
 
+            //剩余可使用数量*用户模板配置机器人数/机器人总数 + 用户机器人数据
             userBotenceCount = canDividCount * allUserBotenceCfg.get(ent.getKey()) / allCount + ent.getValue().size();
             if ((userBotenceCount) > allUserBotenceCfg.get(ent.getKey())) {
                 userBotenceCount = allUserBotenceCfg.get(ent.getKey());
             }
 
+            //设置分配（用户ID+模板）机器人数
             userDistributeMap.put(ent.getKey(), userBotenceCount);
             hasDividCount = hasDividCount + userBotenceCount;
         }
@@ -76,8 +80,8 @@ public class AllotUserLineBotenceUtil {
                 {
                     continue;
                 }
-                int cut = maxRobot - hasDividCount;
-                int tmp = ent.getValue() + cut - allUserBotenceCfg.get(ent.getKey());
+                int cut = maxRobot - hasDividCount;     //最大机器人数 - 已使用机器人数量
+                int tmp = ent.getValue() + cut - allUserBotenceCfg.get(ent.getKey());//分配用户机器人数+剩余数量-用户模板机器人数
                 if (tmp > 0) {
                     ent.setValue(allUserBotenceCfg.get(ent.getKey()));
                     hasDividCount = hasDividCount + allUserBotenceCfg.get(ent.getKey()) - ent.getValue();
@@ -115,8 +119,12 @@ public class AllotUserLineBotenceUtil {
         return result;
     }
 
-
-    private static Map<String, List<UserLineBotenceVO>> getAllUserBotence(List<UserLineBotenceVO> userLineBotenceVOList) {
+    /**
+     * 拼接用户-机器人
+     * @param userLineBotenceVOList
+     * @return
+     */
+    public static Map<String, List<UserLineBotenceVO>> getAllUserBotence(List<UserLineBotenceVO> userLineBotenceVOList) {
         Map<String, List<UserLineBotenceVO>> result = new HashMap<>();
         if (userLineBotenceVOList == null) {
             return result;
@@ -142,7 +150,12 @@ public class AllotUserLineBotenceUtil {
         return result;
     }
 
-    private static Map<String, Integer> convertUserRes2Map(List<UserResourceCache> configRes) {
+    /**
+     * 拼接用户模板配置的机器人数量:  key:userId+templateId   value:机器人数量
+     * @param configRes
+     * @return
+     */
+    public static Map<String, Integer> convertUserRes2Map(List<UserResourceCache> configRes) {
         Map<String, Integer> result = new HashMap<>();
         if (configRes == null) {
             return result;

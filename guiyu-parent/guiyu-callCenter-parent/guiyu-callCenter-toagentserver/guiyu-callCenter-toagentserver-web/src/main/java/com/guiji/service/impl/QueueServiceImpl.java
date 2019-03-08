@@ -14,7 +14,9 @@ import com.guiji.config.FsBotConfig;
 import com.guiji.config.ToagentserverException;
 import com.guiji.entity.EAnswerType;
 import com.guiji.entity.EUserRole;
+import com.guiji.entity.EUserState;
 import com.guiji.fs.FsManager;
+import com.guiji.fs.pojo.AgentStatus;
 import com.guiji.fsline.entity.FsLineVO;
 import com.guiji.manager.EurekaManager;
 import com.guiji.manager.FsLineManager;
@@ -84,14 +86,25 @@ public class QueueServiceImpl implements QueueService {
         queue.setOrgCode(agent.getOrgCode());
         queue.setLineId(queueInfo.getLineId());
         queueMapper.insert(queue);
-        Boolean result = fsManager.createQueue(queue.getQueueId() + "");
+       // Boolean result = fsManager.createQueue(queue.getQueueId() + "");
+        List<String> queueIdList = new ArrayList<>();
+        queueIdList.add(queue.getQueueId()+"");
+
+        QueueExample queueExample1 = new QueueExample();
+        List<Queue> queueList1 = queueMapper.selectByExample(queueExample1);
+        for (Queue queues:queueList1) {
+            queueIdList.add(queues.getQueueId()+"");
+        }
+        //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
+        fsManager.initCallcenter(null,queueIdList,null);
 
         // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        String other = "callcenter_config+queue+load+"+queue.getQueueId();
+      //  String other = "callcenter_config+queue+load+"+queue.getQueueId();
+        String other = "reload+mod_callcenter";
         fsManager.syncCallcenter(fileUrl,other);
 
-        return result;
+        return true;
     }
     //上传配置文件，并保存到nas中
     private String uploadConfig(Long userId, String configPath){
@@ -121,10 +134,29 @@ public class QueueServiceImpl implements QueueService {
         //第三步：删除数据库中该队列
         queueMapper.deleteByPrimaryKey(Long.parseLong(queueId));
         //第四步删除callcenter中的该队列
-        fsManager.deleteQueue(queueId);
-        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+       // fsManager.deleteQueue(queueId);
+
+        List<String> queueIdList = new ArrayList<>();
+        QueueExample queueExample = new QueueExample();
+        List<Queue> queueList = queueMapper.selectByExample(queueExample);
+        for (Queue queues:queueList) {
+            queueIdList.add(queues.getQueueId()+"");
+        }
+        //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
+        fsManager.initCallcenter(null,queueIdList,null);
+
+        // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+        String other = "reload+mod_callcenter";
+        fsManager.syncCallcenter(fileUrl,other);
+
+
+        /**
+         * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+         */
+//        // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
         return true;
     }
 
@@ -163,9 +195,12 @@ public class QueueServiceImpl implements QueueService {
             }
         }
         queueMapper.updateByPrimaryKey(queue);
-        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+        /**
+         * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+         */
+//        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
     }
 
     @Override
@@ -194,7 +229,9 @@ public class QueueServiceImpl implements QueueService {
                 queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 if (queryQueue.getLineId() != null) {
                     LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-                    queryQueue.setLineName(lineInfo.getLineName());
+                    if(lineInfo!=null){
+                        queryQueue.setLineName(lineInfo.getLineName());
+                    }
                 }
                 TierExample tierExample = new TierExample();
                 tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -258,5 +295,36 @@ public class QueueServiceImpl implements QueueService {
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(orgCode);
         return queueMapper.selectByExample(queueExample);
+    }
+
+    @Override
+    public void untyingLineinfos(String lineId) {
+        //1、根据lineId查询所有的坐席组
+        QueueExample queueExample = new QueueExample();
+        queueExample.createCriteria().andLineIdEqualTo(Integer.parseInt(lineId));
+         List<Queue> queues =queueMapper.selectByExample(queueExample);
+        for (Queue queue:queues) {
+            //遍历队列，解绑线路
+            queue.setLineId(null);
+            queueMapper.updateByPrimaryKey(queue);
+            //遍历队列，查询绑定关系
+            TierExample tierExample = new TierExample();
+            tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
+            List<Tier> tierList =tierMapper.selectByExample(tierExample);
+            //遍历绑定关系，查看坐席是否为手机接听，如果是手机接听改为网页接听并置成离线
+            for (Tier tier:tierList) {
+                 Agent agent = agentMapper.selectByPrimaryKey(tier.getUserId());
+                if(agent.getAnswerType()==1){
+                    AgentInfo agentInfo = new AgentInfo();
+                    agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
+                    agentInfo.setStatus(AgentStatus.Logged_Out);
+                    agentInfo.setAgentId(agent.getUserId() + "");
+                    fsManager.addAgent(agentInfo);
+                    agent.setAnswerType(EAnswerType.WEB.ordinal());
+                    agent.setUserState(EUserState.OFFLINE.ordinal());
+                    agentMapper.updateByPrimaryKey(agent);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.guiji.clm.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.clm.dao.entity.VoipGwInfo;
 import com.guiji.clm.dao.entity.VoipGwPort;
+import com.guiji.clm.enm.VoipGwStatusEnum;
 import com.guiji.clm.service.voip.VoipGwManager;
 import com.guiji.clm.service.voip.VoipGwPortService;
 import com.guiji.clm.util.DataLocalCacheUtil;
@@ -59,6 +61,19 @@ public class VoipGwController {
 		return Result.ok(initedGwInfo);
 	}
 	
+	
+	/**
+	 * 删除网关设备
+	 * @param gwId
+	 * @return
+	 */
+	@RequestMapping(value = "/delVoipGateway", method = RequestMethod.POST)
+	public Result.ReturnData delVoipGateway(@RequestParam(value="gwId",required=true)Integer gwId){
+		voipGwManager.delVoipGateway(gwId);
+		return Result.ok();
+	}
+	
+	
 	/**
 	 * 分页查询网关设备信息（带监控信息）
 	 * @param pageNo
@@ -85,6 +100,10 @@ public class VoipGwController {
 				log.error("用户：{}所属企业为空,不能查询",userId);
 				return Result.ok();
 			}
+		}
+		if(condition.getGwStatus()==null) {
+			//默认查询正常数据
+			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
 		}
 		Page<VoipGwInfoVO> page = voipGwManager.queryVoipGwForPageWrap(condition.getPageNo(), condition.getPageSize(), condition);
 		return Result.ok(page);
@@ -144,7 +163,51 @@ public class VoipGwController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryVoipPortList", method = RequestMethod.POST)
-	public Result.ReturnData queryVoipPortList(@RequestBody VoipGwPortQueryCondition condition){
+	public Result.ReturnData<List<VoipGwPort>> queryVoipPortList(@RequestBody VoipGwPortQueryCondition condition){
+		if(condition == null) {
+			condition = new VoipGwPortQueryCondition();
+		}
+		if(condition.getGwStatus()==null) {
+			//默认查询正常数据
+			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+		}
+		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
+		return Result.ok(list);
+	}
+	
+	
+	/**
+	 * 根据条件查询VOIP端口数据-分页
+	 * @param condition
+	 * @return
+	 */
+	@RequestMapping(value = "/queryVoipPortForPage", method = RequestMethod.POST)
+	public Result.ReturnData<Page<VoipGwPortVO>> queryVoipPortForPage(@RequestBody VoipGwPortQueryCondition condition){
+		if(condition == null) {
+			condition = new VoipGwPortQueryCondition();
+		}
+		if(condition.getGwStatus()==null) {
+			//默认查询正常数据
+			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+		}
+		Page<VoipGwPortVO> portPage = voipGwManager.queryVoipGwPortListWrapForPage(condition);
+		return Result.ok(portPage);
+	}
+	
+	
+	/**
+	 * 查询已分配的端口列表
+	 * @param condition
+	 * @return
+	 */
+	@RequestMapping(value = "/queryUserAvailableVoipPortList", method = RequestMethod.POST)
+	public Result.ReturnData<List<VoipGwPort>> queryUserAvailableVoipPortList(@RequestHeader Long userId){
+		VoipGwPortQueryCondition condition = new VoipGwPortQueryCondition();
+		condition.setUserId(userId.toString());
+		if(condition.getGwStatus()==null) {
+			//默认查询正常数据
+			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
+		}
 		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
 		return Result.ok(list);
 	}

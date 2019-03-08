@@ -11,6 +11,7 @@ import com.guiji.clm.dao.entity.VoipGwInfo;
 import com.guiji.clm.dao.entity.VoipGwInfoExample;
 import com.guiji.clm.dao.entity.VoipGwInfoExample.Criteria;
 import com.guiji.clm.dao.entity.VoipGwPort;
+import com.guiji.clm.enm.VoipGwStatusEnum;
 import com.guiji.clm.exception.ClmErrorEnum;
 import com.guiji.clm.exception.ClmException;
 import com.guiji.clm.vo.VoipGwQueryCondition;
@@ -63,6 +64,7 @@ public class VoipGwService {
 					log.error("本次网关名称：{},重复的网关ID：{}",gwName,existGw.getId());
 					throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
 				}
+				voipGwInfo.setGwStatus(VoipGwStatusEnum.OK.getCode()); //初始正常状态
 				voipGwInfo.setCrtTime(DateUtil.getCurrent4Time());
 				voipGwInfo.setUpdateTime(DateUtil.getCurrent4Time());
 				voipGwInfoMapper.insert(voipGwInfo);
@@ -93,7 +95,8 @@ public class VoipGwService {
 	public VoipGwInfo queryByGwName(String gwName) {
 		if(StrUtils.isNotEmpty(gwName)) {
 			VoipGwInfoExample example = new VoipGwInfoExample();
-			example.createCriteria().andGwNameEqualTo(gwName);
+			//查询状态-正常  且名称
+			example.createCriteria().andGwStatusEqualTo(VoipGwStatusEnum.OK.getCode()).andGwNameEqualTo(gwName);
 			List<VoipGwInfo> list = voipGwInfoMapper.selectByExample(example);
 			if(list!=null && !list.isEmpty()){
 				return list.get(0);
@@ -162,6 +165,13 @@ public class VoipGwService {
 			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
 			}
+			if(condition.getGwStatus()!=null && !condition.getGwStatus().isEmpty()) {
+				if(condition.getGwStatus().size()==1) {
+					criteria.andGwStatusEqualTo(condition.getGwStatus().get(0));
+				}else {
+					criteria.andGwStatusIn(condition.getGwStatus());
+				}
+			}
 		}
 		example.setOrderByClause(" crt_time desc");
 		return example;
@@ -182,8 +192,8 @@ public class VoipGwService {
 			BeanUtil.copyProperties(voipGwInfo, port, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true).setIgnoreProperties("id","userId","orgCode"));
 			port.setPort(i);	//端口编号
 			port.setGwId(voipGwInfo.getId()); //网关id
-			port.setSipAccount(voipGwInfo.getStartSipAccount() + i*voipGwInfo.getSipAccountStep());	//端口账号
-			port.setSipPwd(voipGwInfo.getStartSipPwd() + i*voipGwInfo.getSipPwdStep()); //端口sip密码
+			port.setSipAccount(voipGwInfo.getStartSipAccount() + (i-1)*voipGwInfo.getSipAccountStep());	//端口账号
+			port.setSipPwd(voipGwInfo.getStartSipPwd() + (i-1)*voipGwInfo.getSipPwdStep()); //端口sip密码
 			list.add(port);
 			voipGwPortService.save(port);
 		}

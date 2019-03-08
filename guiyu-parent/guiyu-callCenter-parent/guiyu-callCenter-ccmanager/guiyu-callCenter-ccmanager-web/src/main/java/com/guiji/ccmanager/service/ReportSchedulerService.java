@@ -20,4 +20,6 @@ public interface ReportSchedulerService {
     boolean isDaySheduleSuccess();
 
     void reportCallLineDayReportScheduler();
+
+    void reportCallTodayScheduler();
 }

@@ -10,6 +10,7 @@ import com.guiji.calloutserver.entity.AIRequest;
 import com.guiji.calloutserver.eventbus.event.AsrCustomerEvent;
 import com.guiji.calloutserver.eventbus.event.ToAgentEvent;
 import com.guiji.calloutserver.fs.LocalFsServer;
+import com.guiji.calloutserver.helper.ChannelHelper;
 import com.guiji.calloutserver.helper.RobotNextHelper;
 import com.guiji.calloutserver.manager.AIManager;
 import com.guiji.calloutserver.manager.ToAgentManager;
@@ -42,6 +43,8 @@ public class AssistCallController implements IAssistCall {
     RobotNextHelper robotNextHelper;
     @Autowired
     AsyncEventBus asyncEventBus;
+    @Autowired
+    ChannelHelper channelHelper;
     //注册这个监听器
     @PostConstruct
     public void register() {
@@ -107,6 +110,8 @@ public class AssistCallController implements IAssistCall {
         String toAgentFs = toAgentManager.findToAgentFsAdder();
         localFsServer.transferToAgentGroup(callId, toAgentFs, agentGroupId);
 
+        //如果已经进入挂断操作，则停止挂断
+        channelHelper.stopKillChannel(callId);
 
         log.info("协呼之后，释放ai资源");
         CallOutPlan realCallPlan = callOutPlanService.findByCallId(bigInteCallId);

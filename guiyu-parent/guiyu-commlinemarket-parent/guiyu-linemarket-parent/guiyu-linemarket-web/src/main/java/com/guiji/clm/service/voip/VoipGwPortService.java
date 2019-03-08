@@ -9,6 +9,7 @@ import com.guiji.clm.dao.VoipGwPortMapper;
 import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.dao.entity.VoipGwPortExample;
 import com.guiji.clm.dao.entity.VoipGwPortExample.Criteria;
+import com.guiji.clm.enm.VoipGwStatusEnum;
 import com.guiji.clm.vo.VoipGwPortQueryCondition;
 import com.guiji.common.model.Page;
 import com.guiji.utils.DateUtil;
@@ -44,6 +45,7 @@ public class VoipGwPortService {
 				voipGwPortMapper.updateByPrimaryKey(voipGwPort);
 			}else {
 				//新增
+				voipGwPort.setGwStatus(VoipGwStatusEnum.OK.getCode()); //初始正常状态
 				voipGwPort.setCrtTime(DateUtil.getCurrent4Time());
 				voipGwPort.setUpdateTime(DateUtil.getCurrent4Time());
 				voipGwPortMapper.insert(voipGwPort);
@@ -66,6 +68,21 @@ public class VoipGwPortService {
 		}
 		return null;
 	}
+	
+	/**
+	 * 根据网关删除所有端口数据--逻辑删除
+	 * @param gwId
+	 */
+	public void delGwPortByGwId(Integer gwId) {
+		if(gwId!=null) {
+			VoipGwPort record = new VoipGwPort();
+			record.setGwStatus(VoipGwStatusEnum.INVALID.getCode()); //删除
+			VoipGwPortExample example = new VoipGwPortExample();
+			example.createCriteria().andGwIdEqualTo(gwId);
+			voipGwPortMapper.updateByExampleSelective(record, example);
+		}
+	}
+	
 	
 	/**
 	 * 某些某个网关某个端口号数据
@@ -131,11 +148,11 @@ public class VoipGwPortService {
 	 * @param condition
 	 * @return
 	 */
-	public Page<VoipGwPort> queryVoipGwPortForPageByCondition(int pageNo, int pageSize,VoipGwPortQueryCondition condition){
+	public Page<VoipGwPort> queryVoipGwPortForPageByCondition(VoipGwPortQueryCondition condition){
 		Page<VoipGwPort> page = new Page<VoipGwPort>();
 		int totalRecord = 0;
-		int limitStart = (pageNo-1)*pageSize;	//起始条数
-		int limitEnd = pageSize;	//查询条数
+		int limitStart = (condition.getPageNo()-1)*condition.getPageSize();	//起始条数
+		int limitEnd = condition.getPageSize();	//查询条数
 		VoipGwPortExample example = this.queryExample(condition);
 		//查询总数
 		totalRecord = voipGwPortMapper.countByExample(example);
@@ -145,8 +162,8 @@ public class VoipGwPortService {
 			List<VoipGwPort> list = voipGwPortMapper.selectByExample(example);
 			page.setRecords(list);
 		}
-		page.setPageNo(pageNo);
-		page.setPageSize(pageSize);
+		page.setPageNo(condition.getPageNo());
+		page.setPageSize(condition.getPageSize());
 		page.setTotal(totalRecord);
 		return page;
 	}
@@ -172,6 +189,16 @@ public class VoipGwPortService {
 			}
 			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
+			}
+			if(StrUtils.isNotEmpty(condition.getPhoneNo())) {
+				criteria.andPhoneNoLike("%"+ condition.getPhoneNo() +"%");
+			}
+			if(condition.getGwStatus()!=null && !condition.getGwStatus().isEmpty()) {
+				if(condition.getGwStatus().size()==1) {
+					criteria.andGwStatusEqualTo(condition.getGwStatus().get(0));
+				}else {
+					criteria.andGwStatusIn(condition.getGwStatus());
+				}
 			}
 		}
 		example.setOrderByClause(" gw_id desc,port asc");	//根据网关、端口排序

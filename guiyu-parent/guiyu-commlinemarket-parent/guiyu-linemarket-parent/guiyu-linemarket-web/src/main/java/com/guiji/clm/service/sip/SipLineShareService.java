@@ -11,6 +11,7 @@ import com.guiji.clm.dao.SipLineShareMapper;
 import com.guiji.clm.dao.entity.SipLineShare;
 import com.guiji.clm.dao.entity.SipLineShareExample;
 import com.guiji.clm.dao.entity.SipLineShareExample.Criteria;
+import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.vo.SipLineShareQueryCondition;
 import com.guiji.common.model.Page;
 import com.guiji.utils.DateUtil;
@@ -89,7 +90,7 @@ public class SipLineShareService {
 	public SipLineShare querySipLineShareByUnit(String orgCode,String industrys,String overtArea,Integer callDirec,BigDecimal univalent) {
 		SipLineShareExample example = new SipLineShareExample();
 		example.createCriteria().andOrgCodeEqualTo(orgCode).andIndustrysEqualTo(industrys).andOvertAreaEqualTo(overtArea)
-			.andCallDirecEqualTo(callDirec).andUnivalentEqualTo(univalent);
+			.andCallDirecEqualTo(callDirec).andUnivalentEqualTo(univalent).andLineStatusEqualTo(SipLineStatusEnum.OK.getCode());
 		List<SipLineShare> list = sipLineShareMapper.selectByExample(example);
 		if(list!=null && !list.isEmpty()) {
 			return list.get(0);
@@ -139,8 +140,12 @@ public class SipLineShareService {
 			if(StrUtils.isNotEmpty(condition.getLineName())) {
 				criteria.andLineNameLike("%"+condition.getLineName()+"%");
 			}
-			if(condition.getLineStatus()!=null) {
-				criteria.andLineStatusEqualTo(condition.getLineStatus());
+			if(condition.getStatusList()!=null) {
+				if(condition.getStatusList().size()==1) {
+					criteria.andLineStatusEqualTo(condition.getStatusList().get(0));
+				}else {
+					criteria.andLineStatusIn(condition.getStatusList());
+				}
 			}
 			if(StrUtils.isNotEmpty(condition.getIndustry())) {
 				criteria.andIndustrysEqualTo(condition.getIndustry());

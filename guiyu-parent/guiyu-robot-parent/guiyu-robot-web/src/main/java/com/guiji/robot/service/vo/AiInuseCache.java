@@ -16,6 +16,8 @@ public class AiInuseCache {
 	private String aiNo;
 	//机器人昵称
 	private String aiName;
+	//机器人类型（1-老版本,2-飞龙）
+	private int version;
 	//机器人IP
 	private String ip;
 	//机器人端口

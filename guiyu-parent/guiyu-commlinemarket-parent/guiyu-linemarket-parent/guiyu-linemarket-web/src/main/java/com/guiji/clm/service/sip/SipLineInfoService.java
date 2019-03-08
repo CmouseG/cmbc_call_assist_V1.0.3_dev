@@ -10,7 +10,6 @@ import com.guiji.clm.dao.SipLineBaseInfoMapper;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineBaseInfoExample;
 import com.guiji.clm.dao.entity.SipLineBaseInfoExample.Criteria;
-import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.vo.SipLineInfoQueryCondition;
 import com.guiji.common.model.Page;
 import com.guiji.utils.DateUtil;
@@ -68,17 +67,6 @@ public class SipLineInfoService {
 		return null;
 	}
 
-	/**
-	 * 删除
-	 * @param id
-	 */
-	@Transactional
-	public void delete(Integer id) {
-		if(id!=null) {
-			sipLineBaseInfoMapper.deleteByPrimaryKey(id);
-		}
-	}
-	
 	
 	/**
 	 * 根据主键查询第三方sip线路

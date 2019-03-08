@@ -436,14 +436,26 @@ public class VoliceServiceImpl implements IVoliceService {
 		List<CommonDialogVO> commonDialog_list = botSentenceProcessService.queryCommonDialog(processId);
 		if (null != commonDialog_list && commonDialog_list.size() > 0) {
 			for (CommonDialogVO commonDialog : commonDialog_list) {
-				if (!"重复".equals(commonDialog.getYujin()) && commonDialog.getVoliceId() > 0) {
-					String voliceId = commonDialog.getVoliceId() + "";
-					if (StringUtils.isNotBlank(voliceId) && !voliceid_list.contains(voliceId)) {
-						voliceid_list.add(voliceId);
+				if("拒绝".equals(commonDialog.getYujin())) {
+					List<VoliceInfo> refuseList = commonDialog.getRefuseList();
+					if(null != refuseList && refuseList.size() > 0) {
+						for(VoliceInfo temp : refuseList) {
+							List<VoliceInfoExt> extlist = getVoliceInfoExtList(processId, temp.getVoliceId(),
+									commonDialog.getTitle());
+							voliceInfo_list.addAll(extlist);
+						}
+					}
+					
+				}else {
+					if (!"重复".equals(commonDialog.getYujin()) && commonDialog.getVoliceId() > 0) {
+						String voliceId = commonDialog.getVoliceId() + "";
+						if (StringUtils.isNotBlank(voliceId) && !voliceid_list.contains(voliceId)) {
+							voliceid_list.add(voliceId);
 
-						List<VoliceInfoExt> extlist = getVoliceInfoExtList(processId, new Long(voliceId),
-								commonDialog.getTitle());
-						voliceInfo_list.addAll(extlist);
+							List<VoliceInfoExt> extlist = getVoliceInfoExtList(processId, new Long(voliceId),
+									commonDialog.getTitle());
+							voliceInfo_list.addAll(extlist);
+						}
 					}
 				}
 			}

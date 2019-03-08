@@ -3,6 +3,7 @@ package com.guiji.botsentence.service;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateIndustryVO;
 import com.guiji.botsentence.controller.server.vo.BotSentenceTemplateTradeVO;
@@ -134,4 +135,10 @@ public interface IBotSentenceProcessService {
 	public BotSentenceProcess getBotsentenceProcessByTemplateId(String templateId);
 	
 	public void generateTTSCallback(String id, String url);
+	
+	public void saveTrade(String industryName, String industryId, String userId);
+	
+	public int countTemplateByOrgCode(String orgCode);
+	
+	public List<BotSentenceTemplateTradeVO> queryTradeListByTradeIdList(List<String> tradeIdList);
 }

@@ -190,8 +190,15 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				try {
 					options_json = FileUtil.readToString(file);
 					JSONObject json = JSONObject.parseObject(options_json);
-					template_id = json.getString("tempname") + "_en";
-					//trade = json.getString("trade");
+					String templateId = json.getString("tempname");
+					if(StringUtils.isNotBlank(templateId)) {
+						if(templateId.endsWith("_en")) {
+							template_id = templateId;
+						}else {
+							template_id = templateId + "_en";
+						}
+					}
+					//template_id = json.getString("tempname") + "_en";
 					des = json.getString("des");
 					template_name = json.getString("dianame");//模板名称
 					
@@ -257,24 +264,26 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceProcess.setState(Constant.APPROVE_MAEKING);
 				botSentenceProcess.setTemplateType("02");
 				
-				if(StringUtils.isBlank(template_id)) {
+				//if(StringUtils.isBlank(template_id) || "_en".equals(template_id)) {
 					//生成模板编号
 					Pinyin4jUtil util= new Pinyin4jUtil();
 					String pingyin = "";
 					try {
-						pingyin = util.toPinYinLowercase(trade);
+						pingyin = util.toPinYinLowercase(template_name);
 					} catch (BadHanyuPinyinOutputFormatCombination e) {
 						logger.error("生成首字母异常...", e);
 						pingyin = SystemUtil.getSysJournalNo(5, false);
 					}
 					
 					template_id = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
-				}
+				//}
+				logger.info("自动生成模板编号: " + template_id);
 				
 				botSentenceProcess.setTemplateId(template_id);//模板编号
 				botSentenceProcess.setTemplateName(template_name);//模板名称
 				botSentenceProcess.setCrtTime(date);//创建时间
 				botSentenceProcess.setIndustry(trade);//行业
+				botSentenceProcess.setIndustryId(tradeId);//行业编号
 				botSentenceProcess.setVersion("0");//默认版本为0
 				botSentenceProcess.setAccountNo(userId);//设置账号
 				botSentenceProcess.setCrtUser(userId);
@@ -552,12 +561,12 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					return false;
 				}
 			} else if (file.getName().equals("sim.txt")) {
-				/*try {
+				try {
 					sim_txt = FileUtil.readToString(file);
 				} catch (IOException e) {
 					logger.error("read sim.txt IOException:" + e);
 					return false;
-				}*/
+				}
 			} else if (file.getName().equals("weights.txt")) {
 				try {
 					weights_txt = FileUtil.readToString(file);
@@ -592,7 +601,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		BotSentenceAddition botSentenceAddition = new BotSentenceAddition();
 		botSentenceAddition.setProcessId(processId);
 		//botSentenceAddition.setOptionsJson(options_json);
-		botSentenceAddition.setSimTxt(sim_txt);
+		botSentenceAddition.setSimTxt("");
 		botSentenceAddition.setStopwordsTxt(stopwords_txt);
 		//botSentenceAddition.setTemplateJson(template_json);
 		botSentenceAddition.setUserdictTxt(userdict_txt);

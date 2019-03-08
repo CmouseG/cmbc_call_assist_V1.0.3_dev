@@ -10,6 +10,13 @@ import lombok.Data;
 */
 @Data
 public class SellbotMatchReq {
+	/**sellbot需要属性**/
 	//用来匹配的用户的话的文本
 	private String sentence;
+	
+	/**飞龙需要属性**/
+	//会话id
+	private String seqId;
+	//话术模板
+	private String cfg;
 }

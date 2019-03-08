@@ -36,9 +36,10 @@ public class ModCallCenter {
      * @return
      */
     public boolean addAgent(Agent agent){
-        Preconditions.checkArgument(!callCenterConfig.isAgentExist(agent.getAgentId()), "agent already exist in config");
+        //不再同步更新xml文件
+        //Preconditions.checkArgument(!callCenterConfig.isAgentExist(agent.getAgentId()), "agent already exist in config");
         Preconditions.checkArgument(!callCenterApi.isAgentExist(agent.getAgentId()), "agent already exist in memory");
-        callCenterConfig.addAgent(agent);
+       // callCenterConfig.addAgent(agent);
         return callCenterApi.addAgent(agent);
     }
 
@@ -63,7 +64,7 @@ public class ModCallCenter {
      * @return
      */
     public boolean deleteAgent(String agentId){
-        callCenterConfig.deleteAgent(agentId);
+       // callCenterConfig.deleteAgent(agentId);
         callCenterApi.deleteAgent(agentId);
         return true;
     }
@@ -115,10 +116,10 @@ public class ModCallCenter {
     }
 
     public boolean addTier(Tier tier){
-        callCenterConfig.addTier(tier);
+       // callCenterConfig.addTier(tier);
         callCenterApi.addTier(tier);
-        callCenterApi.reloadTire(tier.getQueueId(),tier.getAgentId());
-        callCenterApi.reloadQueue(tier.getQueueId());
+//        callCenterApi.reloadTire(tier.getQueueId(),tier.getAgentId());
+//        callCenterApi.reloadQueue(tier.getQueueId());
         return true;
     }
 
@@ -127,7 +128,7 @@ public class ModCallCenter {
     }
 
     public boolean deleteTier(Tier tier){
-        callCenterConfig.deleteTier(tier);
+     //   callCenterConfig.deleteTier(tier);
         callCenterApi.deleteTier(tier);
         return true;
     }

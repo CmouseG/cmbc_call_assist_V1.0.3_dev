@@ -1,5 +1,7 @@
 package com.guiji.clm.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 /** 
@@ -20,4 +22,6 @@ public class VoipGwQueryCondition {
 	private String sipIp;
 	//归属企业
 	private String orgCode;
+	//状态
+	private List<Integer> gwStatus;
 }

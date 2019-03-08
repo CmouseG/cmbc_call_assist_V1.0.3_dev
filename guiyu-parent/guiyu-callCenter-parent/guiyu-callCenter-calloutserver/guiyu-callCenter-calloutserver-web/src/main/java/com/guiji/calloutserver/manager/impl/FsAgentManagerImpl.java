@@ -34,15 +34,8 @@ import java.util.Map;
 @Service
 public class FsAgentManagerImpl implements FsAgentManager {
 
-    private Cache<String, Map<String,Double>> wavCaches;
-
     @Autowired
     RedisUtil redisUtil;
-
-    @PostConstruct
-    public void init(){
-        wavCaches = CacheBuilder.newBuilder().build();
-    }
 
     private ITemplate iTemplate;
 
@@ -124,26 +117,45 @@ public class FsAgentManagerImpl implements FsAgentManager {
     }
 
     @Override
+    public Map<String, Double> refreshWavLength(String tempId) {
+
+        String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
+
+        if (tempId.endsWith("_en")) {
+            tempId = tempId.substring(0,tempId.length()-3)+"_rec";
+        }
+
+        Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId);
+        if(result!=null && result.success){
+            List<WavLengthVO> list = result.getBody();
+            if(list!=null && list.size()>0){
+                Map<String,Double> map =new HashMap<String,Double>();
+                for(WavLengthVO wavLengthVO:list){
+                    map.put(wavLengthVO.getFileName(),wavLengthVO.getLength());
+                }
+                redisUtil.set(key,map);
+                return map;
+            }
+        }
+
+        if(redisUtil.get(key)!=null){
+            return (Map<String, Double>) redisUtil.get(key);
+        }
+        return null;
+    }
+
+    @Override
     public Map<String, Double> getwavlength(String tempId){
 
-        if(wavCaches.getIfPresent(tempId)==null){
-           /* Result.ReturnData<List<WavLengthVO>> result = null;
-            try{
-                result = RequestHelper.loopRequest(new RequestHelper.RequestApi() {
-                    @Override
-                    public Result.ReturnData execute() {
-                        return  iTemplate.getwavlength(tempId.replace("_en","_rec"));
-                    }
+        String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
 
-                    @Override
-                    public void onErrorResult(Result.ReturnData result) {
-                        log.warn("判断模板是否存在，错误码是[{}][{}]", result.getCode(), result.getMsg());
-                    }
-                }, 5, 1, 2, 60,true);
-            }catch (Exception ex){
-                log.warn("判断模板是否存在出现异常", ex);
-            }*/
-            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId.replace("_en","_rec"));
+        if(redisUtil.get(key)==null){
+
+            if (tempId.endsWith("_en")) {
+                tempId = tempId.substring(0,tempId.length()-3)+"_rec";
+            }
+
+            Result.ReturnData<List<WavLengthVO>> result = iTemplate.getwavlength(tempId);
             if(result!=null && result.success){
                 List<WavLengthVO> list = result.getBody();
                 if(list!=null && list.size()>0){
@@ -151,19 +163,37 @@ public class FsAgentManagerImpl implements FsAgentManager {
                     for(WavLengthVO wavLengthVO:list){
                         map.put(wavLengthVO.getFileName(),wavLengthVO.getLength());
                     }
-                    wavCaches.put(tempId,map);
+                    redisUtil.set(key,map);
                     return map;
                 }
             }
 
         }else{
-            return wavCaches.getIfPresent(tempId);
+            return (Map<String, Double>) redisUtil.get(key);
         }
         return null;
     }
 
     @Override
     public Double getWavDruation(String tempId, String filename, String callId){
+
+        if(filename.contains(",")){
+            String[] fileArr = filename.split(",");
+            Double result=0d;
+            for(String fileNameOne:fileArr){
+                Double oneResult = getOneWavDruation(tempId,fileNameOne,callId);
+                if(oneResult!=null){
+                    result += oneResult;
+                }
+            }
+            return result;
+        }else{
+            return getOneWavDruation( tempId, filename, callId);
+        }
+
+    }
+
+    public Double getOneWavDruation(String tempId, String filename, String callId){
 
         if(filename.contains("/")){
             String[] arr = filename.split("/");
@@ -173,7 +203,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
             filename =filename+".wav";
         }
 
-        //先从redis中查询rrs文件
+        //先从redis中查询tts文件
         Object value = redisUtil.get("callOutServer_ttsFile_"+callId);
         if(value!=null){
             List<TtsWav> list = (List<TtsWav>) value;
@@ -186,12 +216,16 @@ public class FsAgentManagerImpl implements FsAgentManager {
             }
         }
 
-        Map<String, Double> map = wavCaches.getIfPresent(tempId);
-        if(map==null){
-            map = getwavlength(tempId);
-        }
-        return map.get(filename);
+        Object map = redisUtil.get("calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId);
 
+        if (map != null && ((Map<String, Double>) map).get(filename) != null) {
+            return ((Map<String, Double>) map).get(filename);
+        } else {
+            map = refreshWavLength(tempId);
+            if (map != null)
+                return ((Map<String, Double>) map).get(filename);
+        }
+        return null;
     }
 
     @Override

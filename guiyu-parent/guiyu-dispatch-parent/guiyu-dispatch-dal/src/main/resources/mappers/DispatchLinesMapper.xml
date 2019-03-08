@@ -9,6 +9,7 @@
     <result column="line_name" property="lineName" jdbcType="VARCHAR" />
     <result column="line_amount" property="lineAmount" jdbcType="DECIMAL" />
     <result column="overtArea" property="overtarea" jdbcType="VARCHAR" />
+    <result column="line_type" property="lineType" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, planuuid, create_time, line_id, line_name, line_amount, overtArea
+    id, planuuid, create_time, line_id, line_name, line_amount, overtArea, line_type
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchLinesExample" >
     select
@@ -108,10 +109,10 @@
   <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchLines" >
     insert into dispatch_lines (id, planuuid, create_time, 
       line_id, line_name, line_amount, 
-      overtArea)
+      overtArea, line_type)
     values (#{id,jdbcType=INTEGER}, #{planuuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{lineId,jdbcType=INTEGER}, #{lineName,jdbcType=VARCHAR}, #{lineAmount,jdbcType=DECIMAL}, 
-      #{overtarea,jdbcType=VARCHAR})
+      #{overtarea,jdbcType=VARCHAR}, #{lineType})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchLines" >
     insert into dispatch_lines
@@ -137,6 +138,9 @@
       <if test="overtarea != null" >
         overtArea,
       </if>
+      <if test="lineType != null" >
+        line_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -159,6 +163,9 @@
       </if>
       <if test="overtarea != null" >
         #{overtarea,jdbcType=VARCHAR},
+      </if>
+      <if test="lineType != null" >
+        #{lineType},
       </if>
     </trim>
   </insert>
@@ -192,6 +199,9 @@
       <if test="record.overtarea != null" >
         overtArea = #{record.overtarea,jdbcType=VARCHAR},
       </if>
+      <if test="record.lineType != null" >
+        line_type = #{record.lineType},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -205,7 +215,8 @@
       line_id = #{record.lineId,jdbcType=INTEGER},
       line_name = #{record.lineName,jdbcType=VARCHAR},
       line_amount = #{record.lineAmount,jdbcType=DECIMAL},
-      overtArea = #{record.overtarea,jdbcType=VARCHAR}
+      overtArea = #{record.overtarea,jdbcType=VARCHAR},
+      line_type = #{lineType}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -231,6 +242,9 @@
       <if test="overtarea != null" >
         overtArea = #{overtarea,jdbcType=VARCHAR},
       </if>
+      <if test="lineType != null" >
+        line_type = #{lineType},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -241,7 +255,8 @@
       line_id = #{lineId,jdbcType=INTEGER},
       line_name = #{lineName,jdbcType=VARCHAR},
       line_amount = #{lineAmount,jdbcType=DECIMAL},
-      overtArea = #{overtarea,jdbcType=VARCHAR}
+      overtArea = #{overtarea,jdbcType=VARCHAR},
+      line_type = #{lineType}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

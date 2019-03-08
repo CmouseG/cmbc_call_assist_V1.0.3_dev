@@ -36,20 +36,24 @@ public class BillingMqListener {
 			return;
 		}
 		ArrearageNotifyDto msgDto = JsonUtils.json2Bean(message, ArrearageNotifyDto.class);
+		//取消欠费
 		if (msgDto.getIsArrearage().equals(0)) {
+			//获取欠费用户列表数据
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
-			if(userIdList ==null){
-				userIdList = new ArrayList<>();
-			}	
-			if (userIdList.size() != 0) {
-				for (int i = 0; i < msgDto.getUserIdList().size(); i++) {
-					if (userIdList.contains(msgDto.getUserIdList().get(i))) {
-						userIdList.remove(i);
+			if(null != userIdList && null != msgDto.getUserIdList()){
+				List<String> unfreezeList = msgDto.getUserIdList();//需要取消欠费的用户
+				List<String> arrearageList = new ArrayList<String>();//存储仍然欠费的用户
+				for (String un: unfreezeList) {
+					if (!userIdList.contains(un)) {
+						arrearageList.add(un);
 					}
 				}
+				if(arrearageList.size()>0) {
+					redisUtils.set("USER_BILLING_DATA", arrearageList);
+				}
 			}
-			redisUtils.set("USER_BILLING_DATA", userIdList);
 
+		//欠费
 		} else if (msgDto.getIsArrearage().equals(-1)) {
 			// 如果是欠费判断当前redis里面是否存在 不存在的话添加
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");

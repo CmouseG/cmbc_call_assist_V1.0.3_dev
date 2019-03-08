@@ -19,9 +19,13 @@ public class VoipGwInfo implements Serializable {
 
     private Integer portNum;
 
+    private Integer gwStatus;
+
     private String sipIp;
 
     private Integer sipPort;
+
+    private Integer linePort;
 
     private Integer startSipAccount;
 
@@ -109,6 +113,14 @@ public class VoipGwInfo implements Serializable {
         this.portNum = portNum;
     }
 
+    public Integer getGwStatus() {
+        return gwStatus;
+    }
+
+    public void setGwStatus(Integer gwStatus) {
+        this.gwStatus = gwStatus;
+    }
+
     public String getSipIp() {
         return sipIp;
     }
@@ -123,6 +135,14 @@ public class VoipGwInfo implements Serializable {
 
     public void setSipPort(Integer sipPort) {
         this.sipPort = sipPort;
+    }
+
+    public Integer getLinePort() {
+        return linePort;
+    }
+
+    public void setLinePort(Integer linePort) {
+        this.linePort = linePort;
     }
 
     public Integer getStartSipAccount() {
@@ -250,8 +270,10 @@ public class VoipGwInfo implements Serializable {
         sb.append(", companyId=").append(companyId);
         sb.append(", devId=").append(devId);
         sb.append(", portNum=").append(portNum);
+        sb.append(", gwStatus=").append(gwStatus);
         sb.append(", sipIp=").append(sipIp);
         sb.append(", sipPort=").append(sipPort);
+        sb.append(", linePort=").append(linePort);
         sb.append(", startSipAccount=").append(startSipAccount);
         sb.append(", startSipPwd=").append(startSipPwd);
         sb.append(", sipAccountStep=").append(sipAccountStep);

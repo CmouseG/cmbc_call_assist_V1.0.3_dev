@@ -57,7 +57,7 @@ public class SipRouteRuleController {
 	public Result.ReturnData saveUserSipRoute(
 			@RequestBody SipRouteRule sipRouteRule,
 			@RequestHeader Long userId) {
-		if(sipRouteRule!=null && sipRouteRule.getId()!=null) {
+		if(sipRouteRule.getId()!=null) {
 			SipRouteRule extSipRouteRule = sipRouteRuleService.queryById(sipRouteRule.getId());
 			BeanUtil.copyProperties(extSipRouteRule, sipRouteRule, CopyOptions.create().setIgnoreProperties("ruleContent"));
 		}else {

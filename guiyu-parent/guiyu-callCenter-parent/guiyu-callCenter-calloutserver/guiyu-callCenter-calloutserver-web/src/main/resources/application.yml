@@ -70,8 +70,8 @@ fsbot:
   workEndTime: 21:00
   callMaxCountPerDay: 3
 aliasr:
-  accessId: LTAInHHRM9fM0PHK
-  accessSecret: tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA  aleg
+  accessId: 7mvC7CqfaKDWwfpN
+  accessSecret: tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA LTAInHHRM9fM0PHK aleg 800 null
 ai:
   url: http://47.98.109.96:%s
   startPort: 15055

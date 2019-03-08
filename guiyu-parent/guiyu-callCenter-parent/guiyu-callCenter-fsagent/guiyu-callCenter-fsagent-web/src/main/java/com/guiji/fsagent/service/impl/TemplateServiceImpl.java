@@ -108,23 +108,23 @@ public class TemplateServiceImpl implements TemplateService {
             logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadFile);
             throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
         }
-        if(FileUtil.getWavDuration(uploadFile)==0){
-            logger.info("上传录音失败,录音文件长度为0，文件名为:[{}]",uploadFile);
-            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NO_LENGTH);
-        }
-
-        if (recordReqVO.getDuration() > 0 && recordReqVO.getBillsec() > 0) {
-            int duration = recordReqVO.getDuration();
-            int billsec = recordReqVO.getBillsec();
-            int differ = duration - billsec;
-            if (differ > 5) {
-                int startSecond = differ - 5;//开始的时间为两个时间的差值缩小5秒
-                 String[] wavName = record.getFileName().split("\\.");
-                 String newFileName = fsConfig.getHomeDir()+"/recordings/" +wavName[0]+"_1.wav";
-                FileUtil.copyAudio(uploadFile, newFileName, startSecond, billsec+5);
-                uploadFile = newFileName;
-            }
-        }
+//        if(FileUtil.getWavDuration(uploadFile)==0){
+//            logger.info("上传录音失败,录音文件长度为0，文件名为:[{}]",uploadFile);
+//            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NO_LENGTH);
+//        }
+//
+//        if (recordReqVO.getDuration() > 0 && recordReqVO.getBillsec() > 0) {
+//            int duration = recordReqVO.getDuration();
+//            int billsec = recordReqVO.getBillsec();
+//            int differ = duration - billsec;
+//            if (differ > 5) {
+//                int startSecond = differ - 5;//开始的时间为两个时间的差值缩小5秒
+//                 String[] wavName = record.getFileName().split("\\.");
+//                 String newFileName = fsConfig.getHomeDir()+"/recordings/" +wavName[0]+"_1.wav";
+//                FileUtil.copyAudio(uploadFile, newFileName, startSecond, billsec+5);
+//                uploadFile = newFileName;
+//            }
+//        }
 
         SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadFile));
         if(sysFileRspVO==null){

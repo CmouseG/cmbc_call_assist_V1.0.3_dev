@@ -1,9 +1,10 @@
 package com.guiji.dispatch.batchimport;
 
 import com.guiji.dispatch.dao.entity.DispatchPlan;
-import org.apache.poi.ss.usermodel.Sheet;
+
+import java.io.InputStream;
 
 public interface IBatchImportService {
 
-    void batchImport(Sheet sheet, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode);
+    void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode);
 }

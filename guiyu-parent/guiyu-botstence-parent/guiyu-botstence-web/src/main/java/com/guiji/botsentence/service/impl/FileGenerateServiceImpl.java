@@ -233,11 +233,14 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 		
 		Map<Integer, String> idsMap = new HashMap<>();
 		Map<Long, Integer> voliceIdsMap = new HashMap<>();
-		
+		Map<Long, Integer> interruptMap = new HashMap<>();
 		boolean needTts = false;
 		
 		int size = voliceInfos.size();
 		for (int i = 1; i <= size; i++) {
+			if(Constant.VOLICE_TYPE_INTERRUPT.equals(voliceInfos.get(i - 1).getType())) {
+				interruptMap.put(voliceInfos.get(i - 1).getVoliceId(), 8000);
+			}
 			voliceIdsMap.put(voliceInfos.get(i - 1).getVoliceId(), i);
 			idsMap.put(i, voliceInfos.get(i - 1).getContent());
 			String content = voliceInfos.get(i - 1).getContent() + "*" + i;
@@ -277,7 +280,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			JSONObject jsonObject = new JSONObject(true);
 			domainVOList.add(domainVO);
 			//判断静音开关是否打开决定 是否要生成静音.json
-			if("静音".equals(domainName) && !botSentenceOptions.getSilenceWaitStart()) {
+			if("静音".equals(domainName) && null!= botSentenceOptions.getSilenceWaitStart() && !botSentenceOptions.getSilenceWaitStart()) {
 				continue;
 			}
 			
@@ -473,8 +476,24 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			
 			domainVO.setBranch(branchShow);
 			jsonObject.put("branch", branchShow);
+			
 			domainVO.setLimit(1);
 			jsonObject.put("limit", 1);
+			
+			if("拒绝".equals(domainName)) {
+				BotSentenceBranchExample example1 = new BotSentenceBranchExample();
+				example1.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
+				List<BotSentenceBranch> list1 = botSentenceBranchMapper.selectByExample(example1);
+				if(null != list1 && list1.size() > 0) {
+					BotSentenceBranch branch = list1.get(0);
+					if(StringUtils.isNotBlank(branch.getResponse()) && !"[]".equals(branch.getResponse().trim()) 
+							&& branch.getResponse().trim().startsWith("[") && branch.getResponse().trim().endsWith("]")) {
+						String[] respArray = branch.getResponse().substring(1,branch.getResponse().length()-1).split(",");
+						domainVO.setLimit(respArray.length);
+						jsonObject.put("limit", respArray.length);
+					}
+				}
+			}
 			
 			//设置变量
 			
@@ -734,7 +753,11 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			String wavURL = voliceInfos.get(i - 1).getVoliceUrl();
 			try {
 				if (StringUtils.isNotBlank(wavURL)) {
-					generateWAV(restTemplate, wavURL, Integer.toString(i), wavfile.getPath());
+					if(interruptMap.containsKey(voliceInfos.get(i - 1).getVoliceId())) {
+						generateWAV(restTemplate, wavURL, interruptMap.get(voliceInfos.get(i - 1).getVoliceId()).toString(), wavfile.getPath());
+					}else {
+						generateWAV(restTemplate, wavURL, Integer.toString(i), wavfile.getPath());
+					}
 				}
 			} catch (IOException e) {
 				logger.error("generate wav has exception:" + wavURL, e);

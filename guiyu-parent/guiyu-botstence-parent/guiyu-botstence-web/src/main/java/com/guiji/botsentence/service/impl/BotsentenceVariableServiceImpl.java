@@ -269,6 +269,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 				VoliceInfo voliceInfo = voliceService.getVoliceInfo(new Long(options.getVoice()));
 				if(!voliceInfo.getContent().equals(vo.getVoliceContent())) {
 					voliceInfo.setContent(vo.getVoliceContent());
+					voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
 					voliceInfo.setLstUpdateUser(userId);
 					voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
 					voliceService.saveVoliceInfo(voliceInfo, userId);
@@ -281,7 +282,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 				voliceInfo.setContent(vo.getVoliceContent().replace("\n", "").trim());
 				voliceInfo.setProcessId(vo.getProcessId());
 				voliceInfo.setTemplateId(options.getTemplateId());
-				voliceInfo.setType("00");
+				voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
 				//voliceInfo.setDomainName(DOMAIN);
 				voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
 				voliceInfo.setCrtUser(userId);
@@ -1248,7 +1249,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		
 		//一般问题分支
 		BotSentenceBranchExample branchExample3 = new BotSentenceBranchExample();
-		branchExample3.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题");
+		branchExample3.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("一般问题").andBranchNameLike("special%");
 		List<BotSentenceBranch> branchList3 = botSentenceBranchMapper.selectByExample(branchExample3);
 		if(null != branchList3 && branchList3.size() > 0) {
 			for(BotSentenceBranch branch : branchList3) {

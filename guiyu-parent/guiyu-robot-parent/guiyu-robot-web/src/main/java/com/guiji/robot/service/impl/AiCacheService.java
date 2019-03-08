@@ -25,6 +25,7 @@ import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.service.IUserAiCfgService;
 import com.guiji.robot.service.vo.AiFlowSentenceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
+import com.guiji.robot.service.vo.CallBusiData;
 import com.guiji.robot.service.vo.CallInfo;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.util.DataLocalCacheUtil;
@@ -88,6 +89,23 @@ public class AiCacheService {
 			return (UserResourceCache)cacheObj;
 		}
 	}
+	
+	/**
+	 * 查询所有用户资源--只查缓存中数据
+	 * @return
+	 */
+	public Map<String,UserResourceCache> getAllUserResources(){
+		Map<Object, Object> map = redisUtil.hmget(RobotConstants.ROBOT_USER_RESOURCE);
+		if(map != null) {
+			Map<String,UserResourceCache> userMap = new HashMap<String,UserResourceCache>();
+			for(Map.Entry<Object, Object> entry : map.entrySet()) {
+				userMap.put((String)entry.getKey(), (UserResourceCache)entry.getValue());
+			}
+			return userMap;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 新增/更新一个用户的缓存资源
@@ -283,16 +301,11 @@ public class AiCacheService {
 					//如果是飞龙版本，那么将新类型的参数替换为老sellbot的参数形式，tts合成时屏蔽新老差异
 					this.unDiffTtsParams(replaceHsReplace);
 				}
-				if(replaceHsReplace != null) {
-					//提交到redis
-					Map<String,Object> map = new HashMap<String,Object>();
-					map.put(templateId, replaceHsReplace);
-					redisUtil.hmset(RobotConstants.ROBOT_TEMPLATE_RESOURCE, map);
-					return replaceHsReplace;
-				}else {
-					logger.error("读取本地话术模板common.json和replace.json文件失败，文件路径：{}",replaceHsReplace);
-					throw new RobotException(AiErrorEnum.AI00060016.getErrorCode(),AiErrorEnum.AI00060016.getErrorMsg());
-				}
+				//提交到redis
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put(templateId, replaceHsReplace);
+				redisUtil.hmset(RobotConstants.ROBOT_TEMPLATE_RESOURCE, map);
+				return replaceHsReplace;
 			}else {
 				//如果查到了，直接返回
 				return (HsReplace) cacheObj;
@@ -333,8 +346,8 @@ public class AiCacheService {
 	public void putFlowSentence(AiFlowSentenceCache aiFlowSentenceCache){
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put(String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache);
-		//提交到redis（通话流数据，缓存10分钟即可）
-		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache,10*60);
+		//提交到redis（通话流数据，缓存5分钟即可）
+		redisUtil.hset(RobotConstants.ROBOT_SENTENCE_RESOURCE+aiFlowSentenceCache.getSeqId(), String.valueOf(aiFlowSentenceCache.getTimestamp()), aiFlowSentenceCache,5*60);
 	}
 	
 	/**
@@ -380,11 +393,12 @@ public class AiCacheService {
 	 * @return
 	 */
 	public void cacheUserCalls(String userId,CallInfo callInfo){
-		if(StrUtils.isNotEmpty(userId)) {
+		if(StrUtils.isNotEmpty(userId) && callInfo!=null) {
+			callInfo.setExpire(System.currentTimeMillis());
 			SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put(callInfo.getSeqId(), callInfo);
-			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, map, 10*60);	//放入缓存，10分钟
+			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, map, 5*60);	//放入缓存，5分钟
 		}
 	}
 	/**
@@ -396,9 +410,16 @@ public class AiCacheService {
 	public CallInfo queryUserCall(String userId,String seqId) {
 		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
 		//查询某通电话
-		Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, seqId);
+		String key = RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId;
+		Object cacheObj = redisUtil.hget(key, seqId);
 		if(cacheObj != null) {
-			return (CallInfo) cacheObj;
+			CallInfo callInfo = (CallInfo) cacheObj;
+			if(System.currentTimeMillis()-callInfo.getExpire()>=5*60*1000) {
+				//超时5分钟删除
+				redisUtil.hdel(key,seqId);
+				return null;
+			}
+			return callInfo;
 		}
 		return null;
 	}
@@ -409,11 +430,17 @@ public class AiCacheService {
 	 */
 	public List<CallInfo> queryUserCallList(String userId){
 		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
-		Map<Object,Object> allMap = redisUtil.hmget(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId);
+		String key = RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId;
+		Map<Object,Object> allMap = redisUtil.hmget(key);
 		if(allMap != null && !allMap.isEmpty()) {
 			List<CallInfo> list = new ArrayList<CallInfo>();
 			for (Map.Entry<Object,Object> aiEntry : allMap.entrySet()) { 
 				CallInfo callInfo = (CallInfo) aiEntry.getValue();
+				if(System.currentTimeMillis()-callInfo.getExpire()>=5*60*1000) {
+					//超时5分钟删除
+					redisUtil.hdel(key,callInfo.getSeqId());
+					continue;
+				}
 				list.add(callInfo);
 			}
 			return list;
@@ -455,6 +482,43 @@ public class AiCacheService {
 		redisUtil.hdel(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId,seqId);
 	}
 	/**************************************end****************************************/
+	
+	/************************************电话业务数据资源******************************************/
+	/**
+	 * 查询某通电话的业务数据
+	 * @param phoneNo
+	 * @return
+	 */
+	public CallBusiData queryCallBusiData(String phoneNo) {
+		Object cacheObj = redisUtil.hget(RobotConstants.ROBOT_BUSI_DATA, phoneNo);
+		if(cacheObj != null) {
+			return (CallBusiData)cacheObj;
+		}
+		return null;
+	}
+	
+	/**
+	 * 新增/更新业务数据
+	 * @param callBusiData
+	 */
+	public void putCallBusiData(CallBusiData callBusiData){
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put(callBusiData.getPhoneNo(), callBusiData);
+		//提交到redis
+		redisUtil.hmset(RobotConstants.ROBOT_BUSI_DATA, map ,5*60);  //缓存5分钟
+ 	}
+	
+	/**
+	 * 删除电话业务数据
+	 * @param userId
+	 */
+	public void delCallBusiData(String phoneNo) {
+		redisUtil.hdel(RobotConstants.ROBOT_BUSI_DATA,phoneNo);
+	}
+	/************************************end******************************************/
+	
+	
+	
 	
 	/**
 	 * 获取该话术模板版本：1-老sellbot版本；2-飞龙版本
@@ -528,7 +592,7 @@ public class AiCacheService {
 	private void initTempFlowCfg(HsReplace hsReplace) {
 		String opinionFile = SystemUtil.getRootPath()+hushuDir + "/" + hsReplace.getTemplateId() + "/" + hsReplace.getTemplateId() + "/options.json"; //模板配置信息
 		if(!new File(opinionFile).exists()) {
-			logger.info("话术模板{},options.json文件{}不存在，使用默认打断参数",hsReplace.getTemplateId());
+			logger.info("话术模板{},options.json文件{}不存在，使用默认打断参数",hsReplace.getTemplateId(),opinionFile);
 		}else {
 			//options.json文件存在，读取文件设置打断策略
 			//读取本地话术模板文件

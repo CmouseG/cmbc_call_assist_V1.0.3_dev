@@ -179,14 +179,34 @@ public class CallDetailController implements ICallPlanDetail {
         return callDetailService.getFtypes();
     }
 
-    @ApiOperation(value = "查看通话记录详情，前台页面使用,后台可使用")
+    @ApiOperation(value = "查看通话记录详情，前台页面使用")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
     @GetMapping(value="getCallDetail")
-    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId){
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId,
+                                                                   @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin){
 
         log.info("get request getCallDetail，callId[{}]", callId);
+
+        if(StringUtils.isBlank(callId)){
+            return Result.error(Constant.ERROR_PARAM);
+        }
+        CallPlanDetailRecordVO callOutPlanVO = callDetailService.getCallDetail(new BigInteger(callId));
+        //修改状态为已读
+        if(!isSuperAdmin && !authService.isAgent(userId)){
+            if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
+                callDetailService.updateIsRead(callId);
+            }
+        }
+
+        log.info("reponse success getCallDetail，callId[{}]", callId);
+        return Result.ok(callOutPlanVO);
+    }
+
+    @Override
+    public Result.ReturnData<CallPlanDetailRecordVO> getCallDetailApi(String callId) {
+        log.info("get request getCallDetailApi，callId[{}]", callId);
 
         if(StringUtils.isBlank(callId)){
             return Result.error(Constant.ERROR_PARAM);
@@ -197,7 +217,7 @@ public class CallDetailController implements ICallPlanDetail {
             callDetailService.updateIsRead(callId);
         }
 
-        log.info("reponse success getCallDetail，callId[{}]", callId);
+        log.info("reponse success getCallDetailApi，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
     }
 

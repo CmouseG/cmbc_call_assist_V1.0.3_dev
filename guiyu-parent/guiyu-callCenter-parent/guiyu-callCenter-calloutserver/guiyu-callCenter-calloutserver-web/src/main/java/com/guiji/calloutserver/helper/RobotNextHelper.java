@@ -222,34 +222,49 @@ public class RobotNextHelper {
     public String getWavFilename(String filename, String tempId, String callId) {
 
         if (tempId.endsWith("_en")) {
-            tempId = tempId.replace("_en", "_rec");
+            tempId = tempId.substring(0,tempId.length()-3)+"_rec";
         }
 
         if (filename != null) {
-            if (filename.contains("/")) {
-                String[] arr = filename.split("/");
-                filename = arr[arr.length - 1];
-            }
-            if(!filename.endsWith(".wav")){
-                filename =filename+".wav";
-            }
 
-            //查询是否存在tts文件
-            Object value = redisUtil.get("callOutServer_ttsFile_"+callId);
-            if(value!=null){
-                List<TtsWav> list = (List<TtsWav>) value;
-                if(list.size()>0){
-                    for(TtsWav ttsWav:list){
-                        if(ttsWav.getFileName().equals(filename)){
-                            return tempId+"/tts/"+callId+ "/" + filename;
-                        }
-                    }
+            if(filename.contains(",")){
+                String[] fileArr = filename.split(",");
+                String result="";
+                for(String fileNameOne:fileArr){
+                    String oneName = getOneWavFileName(fileNameOne,tempId,callId);
+                    result += oneName+",";
                 }
+                return result.substring(0,result.length()-1);
+            }else{
+                return getOneWavFileName(filename,tempId,callId);
             }
-
-            return tempId + "/" + filename;
         }
         return null;
     }
+
+    public String getOneWavFileName(String filename, String tempId, String callId){
+        if (filename.contains("/")) {
+            String[] arr = filename.split("/");
+            filename = arr[arr.length - 1];
+        }
+        if(!filename.endsWith(".wav")){
+            filename =filename+".wav";
+        }
+
+        //查询是否存在tts文件
+        Object value = redisUtil.get("callOutServer_ttsFile_"+callId);
+        if(value!=null){
+            List<TtsWav> list = (List<TtsWav>) value;
+            if(list.size()>0){
+                for(TtsWav ttsWav:list){
+                    if(ttsWav.getFileName().equals(filename)){
+                        return tempId+"/tts/"+callId+ "/" + filename;
+                    }
+                }
+            }
+        }
+        return tempId + "/" + filename;
+    }
+
 
 }

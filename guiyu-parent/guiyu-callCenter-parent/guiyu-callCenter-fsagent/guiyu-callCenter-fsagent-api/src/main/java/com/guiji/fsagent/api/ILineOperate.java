@@ -24,4 +24,7 @@ public interface ILineOperate {
     @RequestMapping(value = "/lineinfos/{lineId}", method = RequestMethod.DELETE)
      Result.ReturnData<Boolean>  deleteLineinfos(@RequestParam ("lineId")String lineId);
 
+    @RequestMapping(value = "/updatenotifybatch", method = RequestMethod.GET)
+    Result.ReturnData<Boolean> updatenotifybatch(@RequestParam("lineIds") String lineIds);
+
 }

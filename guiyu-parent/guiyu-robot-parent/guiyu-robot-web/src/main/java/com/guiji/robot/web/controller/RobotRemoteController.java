@@ -1,6 +1,7 @@
 package com.guiji.robot.web.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,5 +278,15 @@ public class RobotRemoteController implements IRobotRemote{
 			return Result.ok(userResourceCache);
 		}
 		return Result.ok();
+	}
+	
+	
+	/**
+	 * 查询所有用户机器人配置信息
+	 */
+	@Override
+	public Result.ReturnData<Map<String,UserResourceCache>> queryAllUserResourceCache(){
+		Map<String,UserResourceCache> uerResourceMap = aiCacheService.getAllUserResources();
+		return Result.ok(uerResourceMap);
 	}
 }

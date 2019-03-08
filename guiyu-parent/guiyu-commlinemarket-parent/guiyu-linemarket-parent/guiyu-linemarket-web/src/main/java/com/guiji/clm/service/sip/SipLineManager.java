@@ -1,6 +1,7 @@
 package com.guiji.clm.service.sip;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +117,7 @@ public class SipLineManager {
 	 * @param sipLineId
 	 * @param isSuperAdmin
 	 */
+	@Transactional
 	public void effectThirdSip(Integer sipLineId,Boolean isSuperAdmin) {
 		//查询SIP线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(sipLineId);
@@ -137,6 +139,10 @@ public class SipLineManager {
 			//线路更新
 			//查询存量线路信息
 			extSipLineBaseInfo = sipLineInfoService.queryById(sipLineBaseInfo.getId());
+			if(extSipLineBaseInfo!=null && StrUtils.isEmpty(extSipLineBaseInfo.getLineId())) {
+				//如果线路id是空的，那么可能是新增的共享线路还没有生效，存量线路设置为null
+				extSipLineBaseInfo = null;
+			}
 		}
 		//调用呼叫中心线路，生成线路ID
 		Integer lineId = this.callcenterLine(sipLineBaseInfo, extSipLineBaseInfo);
@@ -173,12 +179,14 @@ public class SipLineManager {
 	 * 4、删除
 	 * @param id
 	 */
+	@Transactional
 	public void delThirdSipLineCfg(Integer id) {
 		//查询线路信息
 		SipLineBaseInfo sipLineBaseInfo = sipLineInfoService.queryById(id);
 		if(SipLineStatusEnum.INIT.getCode()==sipLineBaseInfo.getLineStatus()) {
-			//如果现在是初始化状态，可以直接删除
-			sipLineInfoService.delete(id);
+			//如果现在是初始化状态，可以直接删除-逻辑删除
+			sipLineBaseInfo.setLineStatus(SipLineStatusEnum.INVALID.getCode()); //失效/删除
+			sipLineInfoService.save(sipLineBaseInfo);
 		}else {
 			//不是初始化状态，如果是共享线路不能删除
 			if(StrUtils.isEmpty(sipLineBaseInfo.getBelongOrgCode())) {
@@ -197,19 +205,22 @@ public class SipLineManager {
 				}
 			}
 			/**2、调用呼叫中心删除线路**/
+			log.info("调用呼叫中心删除线路：{}",sipLineBaseInfo.getLineId());
 			iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
 			/**3、删除计费**/
 			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
 			if(exclusiveList!=null && !exclusiveList.isEmpty()) {
 				for(SipLineExclusive sipLineExclusive:exclusiveList) {
 					//删除已分配线路
-					sipLineExclusiveService.delById(sipLineExclusive.getId());
+					sipLineExclusive.setLineStatus(SipLineStatusEnum.INVALID.getCode());	//删除状态
+					sipLineExclusiveService.save(sipLineExclusive);
 					//取消计费
 					feeService.sipFee(FeeOptEnum.DEL, sipLineExclusive);
 				}
 			}
-			/**4、删除本地**/
-			sipLineInfoService.delete(id);
+			/**4、删除本地-逻辑删除**/
+			sipLineBaseInfo.setLineStatus(SipLineStatusEnum.INVALID.getCode()); //失效/删除
+			sipLineInfoService.save(sipLineBaseInfo);
 		}
 	}
 	
@@ -344,6 +355,10 @@ public class SipLineManager {
 			}
 		}else {
 			sysOrganization = dataLocalCacheUtil.queryOrgByCode(sipLineApply.getApplyOrgCode());
+		}
+		if(sysOrganization==null) {
+			log.error("企业信息不存在，申请信息：{}",sipLineApply);
+			throw new ClmException(ClmErrorEnum.CLM1809317.getErrorCode(),ClmErrorEnum.CLM1809317.getErrorMsg());
 		}
 		//获取企业配置的机器人数量
 		Integer orgRobotNum = sysOrganization.getRobot();
@@ -528,7 +543,7 @@ public class SipLineManager {
 			//查询目前正常的独享自营线路
 			SipLineExclusiveQueryCondition exclusiveCondition = new SipLineExclusiveQueryCondition();
 			exclusiveCondition.setSipLineId(sipBaseId);
-			exclusiveCondition.setLineStatus(SipLineStatusEnum.OK.getCode());
+			exclusiveCondition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
 			exclusiveCondition.setLineType(SipLineTypeEnum.SELF.getCode());
 			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.querySipLineExclusiveList(exclusiveCondition);
 			//独享线路并发总数
@@ -554,7 +569,6 @@ public class SipLineManager {
 	 * 变更SIP线路时是否检查是否生成共享线路
 	 * @param sipLineBaseInfo
 	 */
-	@Transactional
 	private Integer initShareSipLine(SipLineBaseInfo sipLineBaseInfo,Boolean isSuperAdmin) {
 		Integer callDirec = sipLineBaseInfo.getCallDirec();	//呼叫方向
 		String industrys = sipLineBaseInfo.getIndustrys();	//行业

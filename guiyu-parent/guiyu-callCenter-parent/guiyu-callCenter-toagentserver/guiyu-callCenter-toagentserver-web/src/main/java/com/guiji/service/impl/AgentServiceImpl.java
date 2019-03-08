@@ -6,6 +6,7 @@ import com.guiji.callcenter.dao.CallOutPlanMapper;
 import com.guiji.callcenter.dao.QueueMapper;
 import com.guiji.callcenter.dao.TierMapper;
 import com.guiji.callcenter.dao.entity.*;
+import com.guiji.callcenter.dao.entity.Queue;
 import com.guiji.callcenter.helper.PageExample;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.SysFileReqVO;
@@ -42,9 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Auther: 魏驰
@@ -176,11 +175,12 @@ public class AgentServiceImpl implements AgentService {
         tier.setUpdateUser(user.getUserId());
         tier.setOrgCode(create.getOrgCode());
         tierMapper.insert(tier);
-
-        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(create.getUserId(), fsBotConfig.getHomeDir() + "/callcenter.conf.xml");
-
-        fsManager.syncCallcenter(fileUrl, null);
+/**
+ * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+ */
+//        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(create.getUserId(), fsBotConfig.getHomeDir() + "/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl, null);
         return true;
     }
 
@@ -286,29 +286,15 @@ public class AgentServiceImpl implements AgentService {
                     tier.setUpdateTime(date);
                     tier.setUpdateUser(create.getUserId());
                     tierMapper.updateByPrimaryKey(tier);
-//                } else {
-//                    //创建新的绑定关系
-//                    TierInfo tierInfoNew = new TierInfo();
-//                    tierInfoNew.setAgentId(agent.getUserId() + "");
-//                    tierInfoNew.setQueueId(request.getQueueId() + "");
-//                    fsManager.addTier(tierInfoNew);
-//                    //第四步将绑定关系存入数据库
-//                    Tier tiernew = new Tier();
-//                    tiernew.setQueueId(agent.getUserId());
-//                    tiernew.setUserId(request.getQueueId());
-//                    tiernew.setCreator(agent.getUserId());
-//                    tiernew.setUpdateUser(agent.getUserId());
-//                    tiernew.setCreateTime(date);
-//                    tiernew.setUpdateTime(date);
-//                    tiernew.setOrgCode(create.getOrgCode());
-//                    tierMapper.insert(tiernew);
                 }
             }
         }
-
-        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+/**
+ * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+ */
+//        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
         return true;
     }
 
@@ -332,9 +318,12 @@ public class AgentServiceImpl implements AgentService {
             //删除数据库中的用户信息
             agentMapper.deleteByPrimaryKey(Long.parseLong(userId));
         }
-        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+        /**
+         * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+         */
+//        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
         return true;
     }
 
@@ -365,10 +354,12 @@ public class AgentServiceImpl implements AgentService {
             return false;
         }
         agentMapper.updateByPrimaryKey(agent);
-
-        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+/**
+ * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+ */
+//        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
         return true;
     }
 
@@ -599,6 +590,26 @@ public class AgentServiceImpl implements AgentService {
         List<AgentInfo> agentInfoList = new ArrayList<>();
         List<String> queueIdList = new ArrayList<>();
         List<TierInfo> tierInfoList = new ArrayList<>();
+        Map<Long,Integer> queue_line = new HashMap<>();//用于存储坐席组对应的lineId
+        Map<Long,Long> agent_queue = new HashMap<>();//用于存储坐席对应的坐席组Id
+        //查询所有的群组，组装成queueIdList
+        QueueExample queueExample = new QueueExample();
+        List<Queue> queueList = queueMapper.selectByExample(queueExample);
+        for (Queue queue:queueList) {
+            queueIdList.add(queue.getQueueId()+"");
+            queue_line.put(queue.getQueueId(),queue.getLineId());
+        }
+        //查询所有的tier，组装成tierInfoList
+        TierExample tierExample = new TierExample();
+        List<Tier> tierList =tierMapper.selectByExample(tierExample);
+        for (Tier tier:tierList) {
+            TierInfo tierInfo = new TierInfo();
+            tierInfo.setAgentId(tier.getUserId() + "");
+            tierInfo.setQueueId(tier.getQueueId() + "");
+            tierInfoList.add(tierInfo);
+            agent_queue.put(tier.getUserId(),tier.getQueueId());
+        }
+        //查询所有的坐席，组装成agentInfoList
         AgentExample agentExample = new AgentExample();
         List<Agent> agentList =agentMapper.selectByExample(agentExample);
         for (Agent agent:agentList) {
@@ -612,28 +623,29 @@ public class AgentServiceImpl implements AgentService {
             if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
                 agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")");
             }else if(agent.getAnswerType()==EAnswerType.MOBILE.ordinal()){
-                agentInfo.setContact("loopback/" + agent.getMobile());
+                Long queueId = agent_queue.get(agent.getUserId());
+                if(queueId!=null){
+                    Integer lineId = queue_line.get(queueId);
+                    if(lineId!=null){
+                        FsLineVO fsLineVO = fsLineManager.getFsLine();
+                        String[] ip = fsLineVO.getFsIp().split(":");
+                        String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",lineId,agent.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
+                        agentInfo.setContact(contact);
+                    } else{
+                        agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")");
+                    }
+                }else{
+                    agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")");
+                }
             }
             agentInfoList.add(agentInfo);
         }
-        QueueExample queueExample = new QueueExample();
-        List<Queue> queueList = queueMapper.selectByExample(queueExample);
-        for (Queue queue:queueList) {
-            queueIdList.add(queue.getQueueId()+"");
-        }
-        TierExample tierExample = new TierExample();
-        List<Tier> tierList =tierMapper.selectByExample(tierExample);
-        for (Tier tier:tierList) {
-            TierInfo tierInfo = new TierInfo();
-            tierInfo.setAgentId(tier.getUserId() + "");
-            tierInfo.setQueueId(tier.getQueueId() + "");
-            tierInfoList.add(tierInfo);
-        }
+        //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
         fsManager.initCallcenter(agentInfoList,queueIdList,tierInfoList);
 
         //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
         String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        String other = "reload mod_callcenter";
+        String other = "reload+mod_callcenter";
         fsManager.syncCallcenter(fileUrl,other);
         fsManager.syncUser(agentMapper.selectMinUserId()+"",agentMapper.selectMaxUserId()+"");
     }
@@ -719,9 +731,12 @@ public class AgentServiceImpl implements AgentService {
         }
         fsManager.updateAgentState(agentInfo);
         agentMapper.updateByPrimaryKey(agent);
-        //todo -- 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        fsManager.syncCallcenter(fileUrl,null);
+        /**
+         * 不再每次操作同步更新xml文件了，改为定时刷新xml文件
+         */
+//        //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+//        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        fsManager.syncCallcenter(fileUrl,null);
         return true;
     }
 

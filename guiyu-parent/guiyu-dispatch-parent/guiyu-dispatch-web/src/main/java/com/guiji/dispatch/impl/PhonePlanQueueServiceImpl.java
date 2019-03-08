@@ -2,25 +2,21 @@ package com.guiji.dispatch.impl;
 
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
-import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
-import com.guiji.dispatch.bean.UserResourceDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.line.ILinesService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.RedisUtil;
-import io.swagger.models.auth.In;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ty on 2019/1/7.
@@ -66,7 +62,8 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.lock" + queue,"dispatch.lock" + queue);
 						try {
-							if (distributedLockHandler.tryLock(queueLock)) {
+							if (distributedLockHandler.tryLock(queueLock, 1000L))
+							{
 								long currentQueueSize = redisUtil.lGetListSize(queue);
 								if (currentQueueSize < systemMaxPlan *2) {
 									if (distributedLockHandler.isLockExist(lock)) { // 默认锁设置
@@ -93,20 +90,21 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 									}
 							}
 						} catch (Exception e) {
-                            logger.info("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
+                            logger.info("PhonePlanQueueServiceImpl#execute:" + e);
                         } finally{
 							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}
 					}
 				}
 			} catch (Exception e) {
-				logger.error("PhonePlanQueueServiceImpl#execute:" + e.getMessage());
+				logger.error("PhonePlanQueueServiceImpl#execute:" + e);
 			}
 		}
 	}
 
 	@Override
 	public boolean pushPlan2Queue(List<DispatchPlan> dispatchPlanList,String queue) {
+		logger.info("推入要拨打电话数据KEY:{}",queue);
 		return redisUtil.leftPushAll(queue, dispatchPlanList);
 	}
 

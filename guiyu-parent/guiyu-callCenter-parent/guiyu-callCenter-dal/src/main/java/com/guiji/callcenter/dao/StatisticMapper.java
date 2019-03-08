@@ -19,6 +19,10 @@ public interface StatisticMapper {
 
     void updateTodayCountAndDruation(ReportCallToday reportCallToday);
 
+    List<ReportCallDay> countReportCallToday30();
+    List<ReportCallDay> countReportCallToday10();
+    List<ReportCallDay> countReportCallToday5();
+    List<ReportCallDay> countReportCallToday0();
 
     List<ReportCallDay> countReportCallDayDruation30();
     List<ReportCallDay> countReportCallDayDruation10();
@@ -26,6 +30,7 @@ public interface StatisticMapper {
     List<ReportCallDay> countReportCallDayDruation0();
 
     void insertReportCallDay(List<ReportCallDay> list);
+    void insertReportCallToday(List<ReportCallDay> list);
 
     void deleteReportCallDay();
 
@@ -57,11 +62,14 @@ public interface StatisticMapper {
     List<ReasonCount> getReasonCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("orgCode") String orgCode,@Param("tempId") String tempId);
     List<ReasonCount> getReasonCountToday(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
 
-    void reportCallTodayTruncate();
+//    void reportCallTodayTruncate();
+    void deleteCallTodayTruncate();
 
     void deleteReportCallHour();
 
     List<ErrorMatch> getErrorMaths();
 
     Map getLineCountAndConcurrent(@Param("customerId") String customerId, @Param("orgCode") String orgCode);
+
+
 }

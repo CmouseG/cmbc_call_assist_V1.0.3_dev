@@ -19,7 +19,7 @@ public class VoipGwInfoVO extends VoipGwInfo{
 	private boolean beEnable; //设备是否启用
 	private Integer chFreeNum;	//设备空闲通道数
 	private Integer chUseNum;	//设备在忙的通道数
-	private Integer chPutNum;	//可用通道数（闲+忙）插卡可用的通道数
+	private Integer chPutNum=0;	//可用通道数（闲+忙）插卡可用的通道数 ,默认显示0
 	//网关端口信息
 	List<VoipGwPortVO> portList;
 }

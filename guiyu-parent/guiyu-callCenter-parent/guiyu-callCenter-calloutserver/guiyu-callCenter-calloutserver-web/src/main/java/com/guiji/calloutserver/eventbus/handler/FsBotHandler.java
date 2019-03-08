@@ -114,12 +114,14 @@ public class FsBotHandler {
             }catch (Exception e){//申请资源异常 ，回调调度中心，更改calloutplan的状态  //todo 此处应该有告警，没有机器人资源
                 log.error("-----error---------aiManager.applyAi:"+e);
                 //回掉给调度中心，更改通话记录
-                callPlan.setCallState(ECallState.norobot_fail.ordinal());
+                CallOutPlan callPlanUpdate = new CallOutPlan();
+                callPlanUpdate.setCallId(callPlan.getCallId());
+                callPlanUpdate.setCallState(ECallState.norobot_fail.ordinal());
                 if(callPlan.getAccurateIntent()==null){
-                    callPlan.setAccurateIntent("W");
-                    callPlan.setReason(e.getMessage());
+                    callPlanUpdate.setAccurateIntent("W");
+                    callPlanUpdate.setReason("606");
                 }
-                callOutPlanService.update(callPlan);
+                callOutPlanService.update(callPlanUpdate);
 //                dispatchService.successSchedule(callPlan.getCallId(),callPlan.getPhoneNum(),"W");
                 return;
             }
@@ -276,7 +278,7 @@ public class FsBotHandler {
             //判断是否已经做过F类判断，如果做过，则直接挂断该通话
             if(errorMatch.getErrorType()>=0){
                 log.info("触发F类识别，需要手工挂断[{}]", callPlan.getCallId());
-                localFsServer.hangup(callPlan.getCallId());
+                localFsServer.hangup(callPlan.getCallId().toString());
             }
         }
     }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.ccmanager.api.ILineOperation;
+import com.guiji.ccmanager.entity.OutLineInfoAddReq;
 import com.guiji.clm.constant.ClmConstants;
 import com.guiji.clm.dao.VoipGwPortMapper;
 import com.guiji.clm.dao.entity.VoipGwInfo;
@@ -15,12 +17,14 @@ import com.guiji.clm.dao.entity.VoipGwPortExample;
 import com.guiji.clm.dao.ext.VoipGwInfoMapperExt;
 import com.guiji.clm.enm.VoipGwRegStatusEnum;
 import com.guiji.clm.enm.VoipGwRegTypeStatusEnum;
+import com.guiji.clm.enm.VoipGwStatusEnum;
 import com.guiji.clm.exception.ClmErrorEnum;
 import com.guiji.clm.exception.ClmException;
 import com.guiji.clm.service.fee.FeeService;
 import com.guiji.clm.service.fee.FeeService.FeeOptEnum;
 import com.guiji.clm.util.CheckUtil;
 import com.guiji.clm.util.DataLocalCacheUtil;
+import com.guiji.clm.vo.SipLineBaseInfoVO;
 import com.guiji.clm.vo.VoipGwInfoVO;
 import com.guiji.clm.vo.VoipGwPortQueryCondition;
 import com.guiji.clm.vo.VoipGwPortVO;
@@ -30,7 +34,13 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.fsmanager.api.ISimCard;
+import com.guiji.fsmanager.entity.FsSipVO;
+import com.guiji.fsmanager.entity.LineInfoVO;
+import com.guiji.fsmanager.entity.SimCardVO;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.StrUtils;
 import com.guiji.voipgateway.api.VoipGatewayRemote;
@@ -64,6 +74,12 @@ public class VoipGwManager {
 	VoipGwInfoMapperExt voipGwInfoMapperExt;
 	@Autowired
 	DistributedLockHandler distributedLockHandler;
+	@Autowired
+	ISimCard iSimCard;
+	@Autowired
+	ILineOperation iLineOperation;
+	@Autowired
+	IDispatchPlanOut iDispatchPlanOut;
 	
 	/**
 	 * 客户发起网关初始化申请
@@ -96,17 +112,75 @@ public class VoipGwManager {
 						voipGwInfo.setOrgCode(sysOrganization.getCode());
 					}
 				}
-				/**2、调用呼叫中心服务，注册账号密码**/
-				//TODO 调用注册中心注册
-				//TODO 更新IP/端口
-//				voipGwInfo.setSipIp(sipIp);
-//				voipGwInfo.setSipPort(sipPort);
-				/**3、初始化网关sip起始账号、密码、步长等信息**/
+				/**2、初始化网关sip起始账号、密码、步长等信息**/
 				this.initStartSipAccount(voipGwInfo);
-				/**4、保存本地信息**/
+				/**3、保存本地信息**/
 				voipGwService.save(voipGwInfo);
-				/**5、初始化网关所有端口**/
-				voipGwService.initVoipGwPort(voipGwInfo);
+				/**4、调用呼叫中心服务，注册账号密码**/
+				SimCardVO fsGateway = new SimCardVO();
+				fsGateway.setGatewayId(voipGwInfo.getId().toString());	//新增的网关id
+				fsGateway.setStartCount(voipGwInfo.getStartSipAccount()); //起始账号
+				fsGateway.setStartPwd(voipGwInfo.getStartSipPwd()); //起始密码
+				fsGateway.setCountsStep(voipGwInfo.getSipAccountStep()); //账号步长
+				fsGateway.setPwdStep(voipGwInfo.getSipPwdStep()); //密码步长
+				fsGateway.setCountNum(voipGwInfo.getPortNum()); //端口数量
+				FsSipVO fsSipVO = null;
+				log.info("开始调用fsmanager服务注册网关：{}",fsGateway);
+				ReturnData<FsSipVO> fsSipData = iSimCard.createGateway(fsGateway);
+				log.info("结束调用fsmanager服务注册网关，返回：{}",fsSipData);
+				if(fsSipData!=null && fsSipData.success && fsSipData.getBody()!=null) {
+					fsSipVO = fsSipData.getBody();
+					voipGwInfo.setSipIp(fsSipVO.getSipIp()); //用户网关注册到我们的fs的ip
+					voipGwInfo.setSipPort(Integer.valueOf(fsSipVO.getSipPort())); //用户网关注册到我们的fs的端口
+					voipGwInfo.setLinePort(Integer.valueOf(fsSipVO.getLinePort())); //提供给呼叫中心的线路端口，ip公用
+				}else {
+					throw new ClmException(ClmErrorEnum.CLM1809314.getErrorCode(),ClmErrorEnum.CLM1809314.getErrorMsg());
+				}
+				try {
+					//重新更新ip/port
+					voipGwService.save(voipGwInfo);
+					/**5、初始化网关所有端口**/
+					List<VoipGwPort> portList = voipGwService.initVoipGwPort(voipGwInfo);
+					/**6、遍历端口，调用呼叫中心新增线路，并更新端口信息**/
+					List<OutLineInfoAddReq> outLineInfoAddReqList = new ArrayList<OutLineInfoAddReq>();
+					for(VoipGwPort port : portList) {
+						//线路新增
+						OutLineInfoAddReq lineInfo = new OutLineInfoAddReq();
+						lineInfo.setLineName(voipGwInfo.getGwName()+"-"+port.getPort());
+						lineInfo.setSipIp(voipGwInfo.getSipIp());	//线路sip地址
+						lineInfo.setSipPort(fsSipVO.getLinePort()); //新增线路时的使用端口
+						lineInfo.setCodec("PCMA"); //网关编号都支持，所以此处默认个最常用编码：PCMA
+						lineInfo.setCallerNum(port.getSipAccount().toString()); //主叫号码送网关端口账号
+						lineInfo.setMaxConcurrentCalls(1);	//端口并发数默认1
+						lineInfo.setOrgCode(voipGwInfo.getOrgCode()); //企业编号
+						lineInfo.setRemark("语音网关");
+						outLineInfoAddReqList.add(lineInfo);
+					}
+					if(outLineInfoAddReqList!=null && !outLineInfoAddReqList.isEmpty()) {
+						log.info("开始调用呼叫中心批量新增线路：{}",outLineInfoAddReqList);
+						Result.ReturnData<List<LineInfoVO>> lineListData = iLineOperation.batchAddLineInfo(outLineInfoAddReqList);
+						log.error("完成调用呼叫中心批量新增线路,返回结果:{}",lineListData);
+						if(lineListData==null || lineListData.getBody()==null) {
+							throw new ClmException(ClmErrorEnum.CLM1809308.getErrorCode(),ClmErrorEnum.CLM1809308.getErrorMsg());
+						}
+						List<LineInfoVO> lineList = lineListData.getBody();
+						for(VoipGwPort port : portList) {
+							for(LineInfoVO line : lineList) {
+								if(port.getSipAccount().toString().equals(line.getCallerNum())) {
+									//sip账号和 主叫号码一致
+									port.setLineId(Integer.valueOf(line.getLineId()));
+									voipGwPortService.save(port);
+									break;
+								}
+							}
+						}
+					}
+				}catch (Exception e) {
+					//如果在调用fsmanager服务注册网关后，发生了异常，那么需要将新增的网关删除掉
+					log.error("调用fsmanager删除网关:{}",voipGwInfo.getId());
+					iSimCard.deleteGateway(voipGwInfo.getId().toString());
+					throw new ClmException(ClmErrorEnum.CLM1809314.getErrorCode(),ClmErrorEnum.CLM1809314.getErrorMsg());
+				}
 				return voipGwInfo;
 			} catch (ClmException e) {
 				throw e; 
@@ -180,9 +254,24 @@ public class VoipGwManager {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
 		}
-		List<VoipGwPort> portList = new ArrayList<VoipGwPort>();
+		List<VoipGwPort> feePortList = new ArrayList<VoipGwPort>();	//要计费端口
+		List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();	//要解除计费端口
 		for(VoipGwPort gwPort : gwPortList) {
 			VoipGwPort port = voipGwPortService.queryById(gwPort.getId());
+			if(StrUtils.isNotEmpty(port.getUserId()) && !port.getUserId().equals(userId)) {
+				//如果是换卡操作，那么检查被换卡的用户是否可以被换
+				//调用调度中心检查线路是否在使用
+				Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(port.getUserId()));
+				if(inUsedFlag.getBody().booleanValue()) {
+					//在使用抛出异常，不能直接删除
+					log.error("网关线路编号:{}仍在调度中心使用中，不能删除",port.getLineId());
+					throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+				}
+				// 复制一份记录取消计费数据
+				VoipGwPort feePort = new VoipGwPort();
+				BeanUtil.copyProperties(port, feePort);
+				unFeePortList.add(feePort);
+			}
 			if(StrUtils.isNotEmpty(gwPort.getPhoneNo())) {
 				port.setPhoneNo(gwPort.getPhoneNo());
 			}
@@ -197,11 +286,25 @@ public class VoipGwManager {
 				port.setOrgCode(gwPort.getOrgCode());
 			}
 			port.setCrtUser(userId);
-			voipGwPortService.save(port);
-			portList.add(port);
-			//计费
-			feeService.voipFee(FeeOptEnum.UP, port);
+			voipGwPortService.save(port);	//保存
+			//将要计费数据复制一份
+			VoipGwPort feePort = new VoipGwPort();
+			BeanUtil.copyProperties(port, feePort);
+			feePortList.add(feePort);
 		}
+		if(unFeePortList!=null && !unFeePortList.isEmpty()) {
+			for(VoipGwPort port:unFeePortList) {
+				//取消计费
+				feeService.voipFee(FeeOptEnum.DEL, port);
+			}
+		}
+		if(feePortList!=null && !feePortList.isEmpty()) {
+			for(VoipGwPort port:feePortList) {
+				//计费
+				feeService.voipFee(FeeOptEnum.UP, port);
+			}
+		}
+		
 	}
 	
 	
@@ -216,20 +319,97 @@ public class VoipGwManager {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
 		}
-		//设置企业
-		List<VoipGwPort> portList = new ArrayList<VoipGwPort>();
+		//计费项
+		List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();
 		for(Integer gwPortId : gwPortIdList) {
 			VoipGwPort port = voipGwPortService.queryById(gwPortId);
+			//调用调度中心检查线路是否在使用
+			Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(userId));
+			if(inUsedFlag.getBody().booleanValue()) {
+				//在使用抛出异常，不能直接删除
+				log.error("网关线路编号:{}仍在调度中心使用中，不能删除",port.getLineId());
+				throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+			}
+			// 复制一份记录取消计费数据
+			VoipGwPort feePort = new VoipGwPort();
+			BeanUtil.copyProperties(port, feePort);
+			unFeePortList.add(feePort);
 			port.setUserId(null);
 			port.setOrgCode(null);
 			port.setPhoneNo(null);
 			port.setCrtUser(userId);
 			voipGwPortService.save(port);
-			portList.add(port);
 		}
-		//TODO 计费
-		
+		//删除计费项
+		if(unFeePortList!=null && !unFeePortList.isEmpty()) {
+			for(VoipGwPort port:unFeePortList) {
+				//取消计费
+				feeService.voipFee(FeeOptEnum.DEL, port);
+			}
+		}
 	}
+	
+	
+	/**
+	 * 删除语音网关
+	 * @param gwId
+	 */
+	public void delVoipGateway(Integer gwId){
+		if(gwId!=null) {
+			VoipGwInfo voipGwInfo = voipGwService.queryById(gwId);
+			if(voipGwInfo==null) {
+				log.info("语音网关{}不存在...",gwId);
+				throw new ClmException(ClmErrorEnum.CLM1809316.getErrorCode(),ClmErrorEnum.CLM1809316.getErrorMsg());
+			}
+			//计费项
+			List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();
+			//根据网关编号查询所有端口
+			List<VoipGwPort> portList = voipGwPortService.queryVoipGwPortsByGwId(gwId);
+			/**1、线路使用中校验**/
+			if(portList!=null && !portList.isEmpty()) {
+				for(VoipGwPort port : portList) {
+					if(port.getLineId()!=null) {
+						//调用调度中心检查线路是否在使用
+						Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsed(port.getLineId());
+						log.error("线路编号:{},调用调度中心检查是否使用中，返回结果：{}",port.getLineId(),inUsedFlag);
+						if(inUsedFlag.getBody().booleanValue()) {
+							//在使用抛出异常，不能直接删除
+							throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+						}
+						// 复制一份记录取消计费数据
+						VoipGwPort feePort = new VoipGwPort();
+						BeanUtil.copyProperties(port, feePort);
+						unFeePortList.add(feePort);
+					}
+				}
+				//线路都没有使用的情况下，才可以删除网关
+				/**2、调用呼叫中心删除线路**/
+				for(VoipGwPort port : portList) {
+					if(port.getLineId()!=null) {
+						log.info("调用呼叫中心删除线路：{}",port.getLineId());
+						iLineOperation.deleteLineInfo(port.getLineId());
+						//TODO 调用费用中心删除费用
+					}
+				}
+				/**3、调用fsag**/
+				log.error("调用fsmanager删除网关:{}",gwId);
+				iSimCard.deleteGateway(gwId.toString());
+				/**4、网关、端口设置删除标记**/
+				voipGwInfo.setGwStatus(VoipGwStatusEnum.INVALID.getCode()); //删除标记
+				voipGwService.save(voipGwInfo);
+				voipGwPortService.delGwPortByGwId(gwId);
+				/**5、删除计费项**/
+				//删除计费项
+				if(unFeePortList!=null && !unFeePortList.isEmpty()) {
+					for(VoipGwPort port:unFeePortList) {
+						//取消计费
+						feeService.voipFee(FeeOptEnum.DEL, port);
+					}
+				}
+			}
+		}
+	}
+	
 	
 	
 	/**
@@ -264,6 +444,18 @@ public class VoipGwManager {
 		List<VoipGwPort> list = voipGwPortService.queryVoipGwPortList(condition);
 		return this.changePort2VO(list);
 	}
+	
+	
+	/**
+	 * 根据条件查询网关端口信息(带监控信息)--分页查询
+	 * @param condition
+	 * @return
+	 */
+	public Page<VoipGwPortVO> queryVoipGwPortListWrapForPage(VoipGwPortQueryCondition condition) {
+		Page<VoipGwPort> page = voipGwPortService.queryVoipGwPortForPageByCondition(condition);
+		return new Page<VoipGwPortVO>(condition.getPageNo(),page.getTotalRecord(),this.changePort2VO(page.getRecords()));
+	}
+	
 	
 	/**
 	 * 将本地网关数据转为带监控的VO数据
@@ -320,7 +512,8 @@ public class VoipGwManager {
 					List<SimPort> simPortList = gwPortData.getBody();
 					if(simPortList!=null && !simPortList.isEmpty()) {
 						for(SimPort simPort : simPortList) {
-							if(voipGwPort.getPort()==simPort.getPortNumber()) {
+							if(voipGwPort.getSipAccount().equals(simPort.getPortNumber())) {
+								vo.setSipMatched(true); //账号匹配了
 								vo.setPortRegStatus(simPort.getRegStatusId()); //端口注册状态
 								vo.setPortWorkStatus(simPort.getWorkStatusId()); //端口工作状态
 								vo.setPortConnFlag(simPort.getConnectionStatus()==1?true:false); //基站连接状态
@@ -335,6 +528,14 @@ public class VoipGwManager {
 							}
 						}
 					}
+				}
+				//设置用户姓名
+				if(StrUtils.isNotEmpty(voipGwPort.getUserId())) {
+					SysUser sysUser = dataLocalCacheUtil.queryUser(voipGwPort.getUserId());
+					if(sysUser==null) {
+						log.error("用户编号：{}查询不到用户信息",voipGwPort.getUserId());
+					}
+					vo.setUserName(sysUser.getUsername());
 				}
 				rtnList.add(vo);
 			}

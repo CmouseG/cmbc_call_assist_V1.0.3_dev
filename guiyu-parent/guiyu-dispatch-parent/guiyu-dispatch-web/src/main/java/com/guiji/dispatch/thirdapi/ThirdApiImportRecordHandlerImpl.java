@@ -9,7 +9,9 @@ import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.ThirdImportError;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.service.GateWayLineService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
@@ -41,6 +43,9 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 	@Autowired
 	private ILinesService lineService;
 
+	@Autowired
+	private GateWayLineService gateWayLineService;
+
 	public void excute(DispatchPlan vo) throws Exception {
 		logger.info("ThirdApiImportRecordHandlerImpl: "+ vo);
 		if (vo == null) {
@@ -59,13 +64,26 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 					logger.info("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}else{
+					//路线类型
+					Integer lineType = null != vo.getLineType()?vo.getLineType():PlanLineTypeEnum.SIP.getType();
+					vo.setLineType(lineType);
+					// 加入线路
+					List<DispatchLines> lineList = vo.getLines();
 					//mod by xujin
-					for(DispatchLines line : vo.getLines()){
+					for(DispatchLines line : lineList){
 						line.setCreateTime(DateUtil.getCurrent4Time());
 						line.setPlanuuid(vo.getPlanUuid());
+						line.setLineType(lineType);
 						lineService.insertLines(line);
 					}
 					int insert = dispatchPlanMapper.insert(vo);
+					if(insert>0){
+						//判断是否是路由网关路线
+						if(null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType) {
+							//设置加入路由网关路线redis及状态
+							gateWayLineService.setGatewayLineRedis(lineList);
+						}
+					}
 				}
 			}
 		} else {

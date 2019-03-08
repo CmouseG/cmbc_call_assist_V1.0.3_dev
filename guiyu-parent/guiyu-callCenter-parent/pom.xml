@@ -19,6 +19,7 @@
         <module>guiyu-callCenter-ccmanager</module>
         <module>guiyu-callCenter-calloutserver</module>
         <module>guiyu-callCenter-toagentserver</module>
+        <module>guiyu-callCenter-simagent</module>
     </modules>
 
     <dependencies>

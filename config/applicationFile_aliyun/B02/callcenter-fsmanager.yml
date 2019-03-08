@@ -9,7 +9,7 @@ spring:
     port: 5672
     virtual-host: /
     username: guiyu
-    password: 123456
+    password: Guiyu.admin.2017
   zipkin:
     rabbitmq:
       queue: zipkin

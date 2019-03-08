@@ -11,6 +11,7 @@ import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
 import com.guiji.robot.service.ISellbotService;
 import com.guiji.robot.service.vo.AiBaseInfo;
+import com.guiji.robot.service.vo.FlHelloReq;
 import com.guiji.robot.service.vo.SellbotMatchReq;
 import com.guiji.robot.service.vo.SellbotRestoreReq;
 import com.guiji.robot.service.vo.SellbotSayhelloReq;
@@ -34,6 +35,7 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @param sellbotRestoreReq
 	 * @return
 	 */
+	@Override
 	public String restore(AiBaseInfo ai,SellbotRestoreReq sellbotRestoreReq) {
 		if(sellbotRestoreReq != null) {
 			String url = "http://"+ai.getIp()+":"+ai.getPort()+"/restore";
@@ -69,6 +71,7 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @param sellbotSayhelloReq
 	 * @return
 	 */
+	@Override
 	public String sayhello(AiBaseInfo ai,SellbotSayhelloReq sellbotSayhelloReq) {
 		String url = "http://"+ai.getIp()+":"+ai.getPort();
 		if(sellbotSayhelloReq.getSentence()==null) {
@@ -103,10 +106,22 @@ public class SellbotServiceImpl implements ISellbotService{
 	 * @param sellbotMatchReq
 	 * @return
 	 */
+	@Override
 	public String match(AiBaseInfo ai,SellbotMatchReq sellbotMatchReq) {
 		String url = "http://"+ai.getIp()+":"+ai.getPort()+"/is_match";
 		String sellbotRsp = HttpClientUtil.doPostJson(url, JsonUtils.bean2Json(sellbotMatchReq));
 		String result = StringEscapeUtils.unescapeJava(sellbotRsp);
 		return result;
+	}
+	
+	
+	/**
+	 * 电话挂断后做数据清理（目前只有飞龙需要，sellbot不需要，为接口统一需要统一封装下）
+	 * @param flHelloReq
+	 * @return
+	 */
+	@Override
+	public void clean(FlHelloReq flHelloReq) {
+		//sellbot 在restore清理
 	}
 }

@@ -7,6 +7,7 @@
     <result column="dev_id" property="devId" jdbcType="INTEGER" />
     <result column="port" property="port" jdbcType="INTEGER" />
     <result column="line_id" property="lineId" jdbcType="INTEGER" />
+    <result column="gw_status" property="gwStatus" jdbcType="INTEGER" />
     <result column="alias" property="alias" jdbcType="VARCHAR" />
     <result column="gw_id" property="gwId" jdbcType="INTEGER" />
     <result column="sip_account" property="sipAccount" jdbcType="INTEGER" />
@@ -77,8 +78,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, company_Id, dev_id, port, line_id, `alias`, gw_id, sip_account, sip_pwd, univalent, 
-    phone_no, user_id, org_code, crt_user, crt_time
+    id, company_Id, dev_id, port, line_id, gw_status, `alias`, gw_id, sip_account, sip_pwd, 
+    univalent, phone_no, user_id, org_code, crt_user, crt_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.clm.dao.entity.VoipGwPortHisExample" >
     select
@@ -116,15 +117,17 @@
   </delete>
   <insert id="insert" parameterType="com.guiji.clm.dao.entity.VoipGwPortHis" useGeneratedKeys="true" keyProperty="id" >
     insert into voip_gw_port_his (company_Id, dev_id, port, 
-      line_id, `alias`, gw_id, 
-      sip_account, sip_pwd, univalent, 
-      phone_no, user_id, org_code, 
-      crt_user, crt_time)
+      line_id, gw_status, `alias`, 
+      gw_id, sip_account, sip_pwd, 
+      univalent, phone_no, user_id, 
+      org_code, crt_user, crt_time
+      )
     values (#{companyId,jdbcType=INTEGER}, #{devId,jdbcType=INTEGER}, #{port,jdbcType=INTEGER}, 
-      #{lineId,jdbcType=INTEGER}, #{alias,jdbcType=VARCHAR}, #{gwId,jdbcType=INTEGER}, 
-      #{sipAccount,jdbcType=INTEGER}, #{sipPwd,jdbcType=INTEGER}, #{univalent,jdbcType=DECIMAL}, 
-      #{phoneNo,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
-      #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP})
+      #{lineId,jdbcType=INTEGER}, #{gwStatus,jdbcType=INTEGER}, #{alias,jdbcType=VARCHAR}, 
+      #{gwId,jdbcType=INTEGER}, #{sipAccount,jdbcType=INTEGER}, #{sipPwd,jdbcType=INTEGER}, 
+      #{univalent,jdbcType=DECIMAL}, #{phoneNo,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{orgCode,jdbcType=VARCHAR}, #{crtUser,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.clm.dao.entity.VoipGwPortHis" useGeneratedKeys="true" keyProperty="id" >
     insert into voip_gw_port_his
@@ -140,6 +143,9 @@
       </if>
       <if test="lineId != null" >
         line_id,
+      </if>
+      <if test="gwStatus != null" >
+        gw_status,
       </if>
       <if test="alias != null" >
         `alias`,
@@ -184,6 +190,9 @@
       </if>
       <if test="lineId != null" >
         #{lineId,jdbcType=INTEGER},
+      </if>
+      <if test="gwStatus != null" >
+        #{gwStatus,jdbcType=INTEGER},
       </if>
       <if test="alias != null" >
         #{alias,jdbcType=VARCHAR},
@@ -241,6 +250,9 @@
       <if test="record.lineId != null" >
         line_id = #{record.lineId,jdbcType=INTEGER},
       </if>
+      <if test="record.gwStatus != null" >
+        gw_status = #{record.gwStatus,jdbcType=INTEGER},
+      </if>
       <if test="record.alias != null" >
         `alias` = #{record.alias,jdbcType=VARCHAR},
       </if>
@@ -283,6 +295,7 @@
       dev_id = #{record.devId,jdbcType=INTEGER},
       port = #{record.port,jdbcType=INTEGER},
       line_id = #{record.lineId,jdbcType=INTEGER},
+      gw_status = #{record.gwStatus,jdbcType=INTEGER},
       `alias` = #{record.alias,jdbcType=VARCHAR},
       gw_id = #{record.gwId,jdbcType=INTEGER},
       sip_account = #{record.sipAccount,jdbcType=INTEGER},
@@ -311,6 +324,9 @@
       </if>
       <if test="lineId != null" >
         line_id = #{lineId,jdbcType=INTEGER},
+      </if>
+      <if test="gwStatus != null" >
+        gw_status = #{gwStatus,jdbcType=INTEGER},
       </if>
       <if test="alias != null" >
         `alias` = #{alias,jdbcType=VARCHAR},
@@ -351,6 +367,7 @@
       dev_id = #{devId,jdbcType=INTEGER},
       port = #{port,jdbcType=INTEGER},
       line_id = #{lineId,jdbcType=INTEGER},
+      gw_status = #{gwStatus,jdbcType=INTEGER},
       `alias` = #{alias,jdbcType=VARCHAR},
       gw_id = #{gwId,jdbcType=INTEGER},
       sip_account = #{sipAccount,jdbcType=INTEGER},

@@ -26,4 +26,12 @@ public interface ILinesService {
 	 * 根据排序规则排序
 	 */
 	List<DispatchPlan> sortLine(List<DispatchPlan> list);
+
+
+	Integer countLineId(String uuid);
+
+
+	public Integer countLineIdAndUUid(String uuid, Integer lineId);
+
+
 }

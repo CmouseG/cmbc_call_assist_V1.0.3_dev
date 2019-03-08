@@ -142,6 +142,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
+        //路线类型
 		dispatchPlan.setLineType(null != dispatchPlan.getLineType()?
 				dispatchPlan.getLineType(): PlanLineTypeEnum.SIP.getType());
 

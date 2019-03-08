@@ -175,7 +175,9 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 		
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		orgCode=data.getBody().getOrgCode();
-		String orgName = data.getBody().getOrgName();
+		
+		ReturnData<SysOrganization> data2=iAuth.getOrgByUserId(new Long(userId));
+		String orgName = data2.getBody().getName();
 		
 		ReturnData<SysUser> userData = iAuth.getUserById(new Long(userId));
 		

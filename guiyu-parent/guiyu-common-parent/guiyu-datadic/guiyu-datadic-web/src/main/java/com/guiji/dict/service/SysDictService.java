@@ -13,6 +13,8 @@ public interface SysDictService {
 
     public List<SysDict> queryDictList(SysDict sysDict);
 
+    public List<SysDict> queryDictListLocal(SysDict sysDict);
+
     public Page<SysDict> queryDictPage(int pageNo, int pageSize, SysDict sysDict);
 
     public SysDict get(int id);

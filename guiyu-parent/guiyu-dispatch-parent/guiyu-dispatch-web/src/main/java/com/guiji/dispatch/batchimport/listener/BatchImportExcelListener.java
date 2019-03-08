@@ -15,7 +15,6 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
-import com.guiji.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,10 +67,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 
 		try
 		{
-			logger.info("获取的数据行是：{}", row);
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
-
-			logger.info("获取的dispatchPlan是：{}", JsonUtils.bean2Json(dispatchPlan));
 
 			if (dispatchPlan == null) {
 				dispatchPlan = new DispatchPlan();

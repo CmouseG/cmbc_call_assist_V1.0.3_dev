@@ -1687,6 +1687,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<String> phones = new ArrayList<>();
 		for (int i = 0; i < plans.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = plans.getMobile().get(i);
+			//路线类型
+			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
+
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
 			BeanUtils.copyProperties(dispatchPlan, bean);
 			bean.setPlanUuid(IdGenUtil.uuid());
@@ -1725,15 +1728,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setReplayType(Constant.REPLAY_TYPE_0);
 			bean.setLineName(plans.getLineName());
 			bean.setRobotName(plans.getRobotName());
+			bean.setLineType(lineType);			//线路类型		1-SIP， 2-SIM
 			// 校验黑名单逻辑
 			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(), orgCode)) {
 				blackService.setBlackPhoneStatus(bean);
 				continue;
 			}
 
-			//路线类型
-			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
-			dispatchPlan.setLineType(lineType);
+			dispatchPlan.setLineType(lineType);	//线路类型		1-SIP， 2-SIM
 			// 加入线路
 			List<DispatchLines> lineList = plans.getLines();
 			for (DispatchLines lines : lineList) {

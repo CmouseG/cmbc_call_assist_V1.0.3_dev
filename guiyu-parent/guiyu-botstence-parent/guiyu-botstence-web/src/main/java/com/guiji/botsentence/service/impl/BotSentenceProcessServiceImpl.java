@@ -4697,9 +4697,11 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				int newIndustry = new Integer(newIndustryId) + 1;
 				if(newIndustry > 9) {
-					newTrade.setIndustryId(industryId + newIndustry) ;
+					newIndustryId = industryId + newIndustry;
+					//newTrade.setIndustryId(industryId + newIndustry) ;
 				}else {
-					newTrade.setIndustryId(industryId + "0" + newIndustry) ;
+					newIndustryId = industryId + "0" + newIndustry;
+					//newTrade.setIndustryId(industryId + "0" + newIndustry) ;
 				}
 				
 			}else {

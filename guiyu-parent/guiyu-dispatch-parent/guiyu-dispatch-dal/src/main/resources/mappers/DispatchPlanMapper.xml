@@ -932,4 +932,19 @@
     </if>
   </select>
 
+
+  <select id="queryDispatchPlanById" resultType="com.guiji.dispatch.dao.entity.DispatchPlan">
+      SELECT
+        <include refid="Base_Column_List"/>
+      FROM dispatch_plan
+      WHERE plan_uuid = #{planUuid}
+  </select>
+
+  <select id="queryPlanRemarkById" resultType="java.lang.String">
+    SELECT
+      attach
+    FROM dispatch_plan
+    WHERE plan_uuid = #{planUuid}
+  </select>
+
 </mapper>

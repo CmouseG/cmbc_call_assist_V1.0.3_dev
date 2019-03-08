@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.dispatch.model.DispatchPlan;
@@ -129,6 +131,16 @@ public interface IDispatchPlanOut {
     })
     @GetMapping(value="out/lineIsUsed")
     Result.ReturnData<Boolean> lineIsUsed(@RequestParam("lineId") Integer lineId);
-    
+
+
+    //查询计划任务
+    @ApiOperation(value="根据uuId查询计划任务")
+    @RequestMapping(value="/dipatch/api/queryDispatchPlanById", method={RequestMethod.POST, RequestMethod.GET})
+    Result.ReturnData<DispatchPlan> queryDispatchPlanById(@RequestParam("planUuid") String planUuid);
+
+   @ApiOperation(value="根据uuId查询计划任务备注")
+   @RequestMapping(value="/dipatch/api/queryPlanRemarkById", method={RequestMethod.POST, RequestMethod.GET})
+   Result.ReturnData<String> queryPlanRemarkById(@RequestParam("planUuid") String planUuid);
+
 }
 

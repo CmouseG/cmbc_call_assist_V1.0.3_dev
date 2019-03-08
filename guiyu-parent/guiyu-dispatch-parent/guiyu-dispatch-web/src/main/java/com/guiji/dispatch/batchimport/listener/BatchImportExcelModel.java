@@ -35,6 +35,9 @@ public class BatchImportExcelModel extends BaseRowModel
 
     public void setParamaters(String paramaters)
     {
+        if(null == paramaters || "".equals(paramaters)){
+            paramaters = "";
+        }
         this.paramaters = paramaters;
     }
 
@@ -45,6 +48,9 @@ public class BatchImportExcelModel extends BaseRowModel
 
     public void setAttach(String attach)
     {
+        if(null == attach || "".equals(attach)){
+            attach = "";
+        }
         this.attach = attach;
     }
 

@@ -122,7 +122,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 									List<Integer> lines = new ArrayList<>();
 									for (DispatchLines line : dispatchRedis.getLines()) {
-										logger.info("推送网关拨打用户网关线路:{}", JsonUtils.bean2Json(line));
+										logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
 									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
 									        Integer lineId = line.getLineId();
@@ -135,9 +135,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                             }else{
 												redisUtil.leftPush(queue, dispatchRedis);
 											}
-
+											callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
                                         }else {
                                             lines.add(line.getLineId());
+											callBean.setSimCall(false);
                                         }
 									}
 									if(null == lines || lines.size()==0){//没有需要推送的线路,继续循环下条任务计划 用户模板

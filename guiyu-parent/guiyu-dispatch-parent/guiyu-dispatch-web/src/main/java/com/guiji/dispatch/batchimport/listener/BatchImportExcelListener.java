@@ -9,13 +9,13 @@ import com.guiji.dispatch.dao.FileRecordsMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.dao.entity.FileRecords;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
-import com.guiji.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,10 +68,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 
 		try
 		{
-			logger.info("获取的数据行是：{}", row);
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
-
-			logger.info("获取的dispatchPlan是：{}", JsonUtils.bean2Json(dispatchPlan));
 
 			if (dispatchPlan == null) {
 				dispatchPlan = new DispatchPlan();
@@ -145,6 +142,9 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setReplayType(Constant.REPLAY_TYPE_0);
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
+        //路线类型
+		dispatchPlan.setLineType(null != dispatchPlan.getLineType()?
+				dispatchPlan.getLineType(): PlanLineTypeEnum.SIP.getType());
 
 		return dispatchPlan;
 	}

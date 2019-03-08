@@ -453,7 +453,17 @@
   </select>
 
   <select id="getUserId" resultType="long">
-    select id from sys_user where username=#{username} and password=#{password}
+    select id from sys_user t 
+    where t.username = #{username} 
+    and t.password = #{password} 
+  </select>
+  
+  <select id="getUserIdForLogin" resultType="long">
+    select id from sys_user t 
+    where t.username = #{username} 
+    and t.password = #{password} 
+    and t.status = 1 
+    and (t.vaild_time >= curdate() OR ISNULL(t.vaild_time))
   </select>
 
 

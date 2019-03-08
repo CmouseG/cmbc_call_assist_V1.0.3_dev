@@ -51,7 +51,7 @@ public class MenuController {
 
 	@RequestMapping("update")
 	public void update(SysMenu menu,@RequestHeader Long userId) throws CheckConditionException{
-		if(!Pattern.matches(URL_MATCH, menu.getUrl())){
+		if(!"/".equals(menu.getUrl())&&!Pattern.matches(URL_MATCH, menu.getUrl())){
 			throw new CheckConditionException("00010008");
 		}
 		menu.setUpdateId(userId);

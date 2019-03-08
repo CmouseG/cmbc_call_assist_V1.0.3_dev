@@ -14,4 +14,6 @@ public class QueryRecordInDetail {
     private Integer billSec;
     private String label;
 
+    private String remark;
+
 }

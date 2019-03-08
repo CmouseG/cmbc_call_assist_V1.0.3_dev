@@ -21,7 +21,7 @@ public class ZuulService {
 	private SysMenuMapper menuMapper;
 	
 	public Long getUserId(String username,String password){
-		return userMapper.getUserId( username, password);
+		return userMapper.getUserIdForLogin(username, password);
 	}
 
 	public List<SysRole> getRoleByUserId(Long userId) {

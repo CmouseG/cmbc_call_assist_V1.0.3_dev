@@ -1,6 +1,7 @@
 package com.guiji.user.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -39,7 +40,9 @@ public interface SysOrganizationMapper {
     
     public int countCode(String code);
     
-    public List<Object> selectOpenByPage(Page page);
+    public List<Object> selectOpenByPage(Page page); 
+    
+    public List<Map> selectOpenByPage2(Page page);
 
     int countRobotByUserId(String code);
 

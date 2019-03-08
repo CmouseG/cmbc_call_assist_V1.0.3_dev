@@ -1,25 +1,28 @@
 package com.guiji.auth.service;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.IBotSentenceTradeService;
+import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
+import com.guiji.botsentence.api.entity.ServerResult;
+import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
+import com.guiji.user.dao.SysOrganizationMapper;
 import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysOrganizationExample;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.RedisUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.guiji.common.model.Page;
-import com.guiji.user.dao.SysOrganizationMapper;
-import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysOrganizationExample;
-import com.guiji.user.dao.entity.SysOrganizationExample.Criteria;
 
 @Service
 public class OrganizationService {
@@ -31,7 +34,11 @@ public class OrganizationService {
 	@Autowired
 	private IRobotRemote iRobotRemote;
 	@Autowired
-	private INoticeSetting noticeSetting;
+	private INoticeSetting noticeSetting; 
+	@Autowired
+	private IBotSentenceProcess botSentenceProcess;
+	@Autowired
+	private IBotSentenceTradeService botSentenceTradeService;
 	@Autowired
 	private RedisUtil redisUtil;
 	private static final String REDIS_ORG_BY_USERID = "REDIS_ORG_BY_USERID_";
@@ -78,11 +85,18 @@ public class OrganizationService {
 		return page;
 	}
 	
-	public Page<Object> selectOpenByPage(Page<Object> page){
+	public Page<Map> selectOpenByPage(Page<Map> page){
 		SysOrganizationExample example=new SysOrganizationExample();
 		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(1);
 		int num=sysOrganizationMapper.countByExample(example);
-		List<Object> list=sysOrganizationMapper.selectOpenByPage(page);
+		List<Map> list=sysOrganizationMapper.selectOpenByPage2(page);
+		for(Map map : list)
+		{
+			ServerResult<Integer> result = botSentenceProcess.countTemplateByOrgCode((String) map.get("code"));
+			if(result != null && result.getRspCode().equals("0")) {
+				map.put("botstence", result.getData());
+			}
+		}
 		page.setTotal(num);
 		page.setRecords(list);
 		return page;
@@ -205,6 +219,16 @@ public class OrganizationService {
 
 	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
 		return sysOrganizationMapper.getOrgByOrgCodeOrgName(orgCode,orgName);
+	}
+	
+	/**
+	 * 根据组织代码查询行业数据
+	 * @param orgCode
+	 * @return
+	 */
+	public List<BotSentenceTemplateTradeVO> getIndustrysByOrgCode(String orgCode) {
+		ServerResult<List<BotSentenceTemplateTradeVO>> botSentenceTemplateTradeVOList = botSentenceTradeService.queryTradeListByOrgCode(sysOrganizationMapper.getIndustryByOrgCode(orgCode));
+		return botSentenceTemplateTradeVOList.getData();
 	}
 
 }

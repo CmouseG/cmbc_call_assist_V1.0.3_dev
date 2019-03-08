@@ -1,5 +1,6 @@
 package com.guiji.dispatch.dao;
 
+import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 
@@ -54,8 +55,14 @@ public interface DispatchPlanMapper {
 	
 	List<DispatchPlan> selectPlanGroupByUserId(DispatchPlan record);
 
-
+    //按日期统计计划数量
     TotalPlanCountVo totalPlanCount(@Param("tableNum") Integer tableNum,
                                     @Param("plan") DispatchPlan plan,
                                     @Param("beginDate") String beginDate, @Param("endDate") String endDate);
+
+    //查询任务计划
+    DispatchPlan queryDispatchPlanById(String planUuId);
+
+    //查询任务计划备注
+    String queryPlanRemarkById(String planUuid);
 }

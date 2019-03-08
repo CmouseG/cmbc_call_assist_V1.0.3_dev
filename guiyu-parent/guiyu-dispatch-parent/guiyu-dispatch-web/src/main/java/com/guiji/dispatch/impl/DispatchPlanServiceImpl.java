@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.enums.GateWayLineStatusEnum;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.enums.PlanTableNumEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
 import com.guiji.dispatch.service.*;
@@ -1530,6 +1531,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			plan.setOrgCode(orgCode);
 			TotalPlanCountVo total = new TotalPlanCountVo();
 			int totalCount = 0, doingCount = 0, finishCount = 0, suspendCount=0, stopCount=0;
+			PlanTableNumEnum[] tables = PlanTableNumEnum.values();
+			for(PlanTableNumEnum tableNum : tables){
+				TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(tableNum.getNum(), plan, beginDate, endDate);
+				totalCount = totalNum.getTotalCount() + totalNum.getTotalCount() + totalNum.getTotalCount();
+				doingCount = totalNum.getDoingCount() + totalNum.getDoingCount() + totalNum.getDoingCount();
+				finishCount = totalNum.getFinishCount() + totalNum.getFinishCount() + totalNum.getFinishCount();
+				suspendCount = totalNum.getSuspendCount() + totalNum.getSuspendCount() + totalNum.getSuspendCount();
+				stopCount = totalNum.getStopCount() + totalNum.getStopCount() + totalNum.getStopCount();
+			}
+			/*
 			TotalPlanCountVo total0 = dispatchPlanMapper.totalPlanCount(0, plan, beginDate, endDate);//
 			TotalPlanCountVo total1 = dispatchPlanMapper.totalPlanCount(1, plan, beginDate, endDate);//
 			TotalPlanCountVo total2 = dispatchPlanMapper.totalPlanCount(2, plan, beginDate, endDate);//
@@ -1538,6 +1549,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			finishCount = total0.getFinishCount() + total1.getFinishCount() + total2.getFinishCount();
 			suspendCount = total0.getSuspendCount() + total1.getSuspendCount() + total2.getSuspendCount();
 			stopCount = total0.getStopCount() + total1.getStopCount() + total2.getStopCount();
+			*/
 			total.setTotalCount(totalCount);
 			total.setDoingCount(doingCount);
 			total.setFinishCount(finishCount);
@@ -1675,6 +1687,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<String> phones = new ArrayList<>();
 		for (int i = 0; i < plans.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = plans.getMobile().get(i);
+			//路线类型
+			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
+
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
 			BeanUtils.copyProperties(dispatchPlan, bean);
 			bean.setPlanUuid(IdGenUtil.uuid());
@@ -1713,15 +1728,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setReplayType(Constant.REPLAY_TYPE_0);
 			bean.setLineName(plans.getLineName());
 			bean.setRobotName(plans.getRobotName());
+			bean.setLineType(lineType);			//线路类型		1-SIP， 2-SIM
 			// 校验黑名单逻辑
 			if (blackService.checkPhoneInBlackList(dispatchPlan.getPhone(), orgCode)) {
 				blackService.setBlackPhoneStatus(bean);
 				continue;
 			}
 
-			//路线类型
-			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
-			dispatchPlan.setLineType(lineType);
+			dispatchPlan.setLineType(lineType);	//线路类型		1-SIP， 2-SIM
 			// 加入线路
 			List<DispatchLines> lineList = plans.getLines();
 			for (DispatchLines lines : lineList) {
@@ -1757,4 +1771,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return selectByExample.get(0).getPhone();
 	}
 
+	@Override
+	public DispatchPlan queryDispatchPlanById(String planUuId) {
+		return dispatchPlanMapper.queryDispatchPlanById(planUuId);
+	}
+
+	@Override
+	public String queryPlanRemarkById(String planUuid) {
+		return dispatchPlanMapper.queryPlanRemarkById(planUuid);
+	}
 }

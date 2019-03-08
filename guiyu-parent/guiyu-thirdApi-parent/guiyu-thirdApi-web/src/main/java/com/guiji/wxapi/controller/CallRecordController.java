@@ -63,6 +63,8 @@ public class CallRecordController {
                 callData.setPhone(callOutPlanVO.getPhoneNum());
             if (callOutPlanVO.getRecordUrl() != null)
                 callData.setVoicefile(callOutPlanVO.getRecordUrl());
+            if (callOutPlanVO.getAttach() != null)
+                callData.setAttach(callOutPlanVO.getAttach());
             resCallOutPlan.setCallData(callData);
 
             List<CallOutDetailVO> list = callOutPlanVO.getDetailList();

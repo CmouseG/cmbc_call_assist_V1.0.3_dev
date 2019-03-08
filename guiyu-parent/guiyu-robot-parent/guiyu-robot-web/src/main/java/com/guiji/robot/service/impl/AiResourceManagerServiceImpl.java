@@ -317,8 +317,7 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 		if(ListUtil.isNotEmpty(aiList)) {
 			List<ProcessInstanceVO> processList = new ArrayList<ProcessInstanceVO>();
 			for(AiInuseCache ai : aiList) {
-				if(RobotConstants.HS_VERSION_SB==ai.getVersion()) {
-					//只有sellbot机器人才需要释放并还回进程管理资源池
+				if(StrUtils.isNotEmpty(ai.getIp())) {
 					ProcessInstanceVO vo = new ProcessInstanceVO();
 					vo.setIp(ai.getIp());
 					vo.setPort(Integer.valueOf(ai.getPort()));
@@ -327,11 +326,12 @@ public class AiResourceManagerServiceImpl implements IAiResourceManagerService{
 			}
 			if(processList!=null && !processList.isEmpty()) {
 				//调用进程管理释放资源
+				logger.info("调用进程管理释放：{}个sellbot机器人",processList.size());
 				ProcessReleaseVO processReleaseVO = new ProcessReleaseVO();
 				processReleaseVO.setProcessInstanceVOS(processList);
 				iProcessSchedule.release(processReleaseVO);
-				//异步记录日志
-				aiAsynDealService.releaseAiCycleHis(aiList);
+				//异步记录日志--这个日志没有用，不再记录了
+//				aiAsynDealService.releaseAiCycleHis(aiList);
 			}
 		}
 	}

@@ -94,31 +94,53 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		vo.setLineType(lineType);
 		// 加入线路
 		List<DispatchLines> lineList = vo.getLines();
-		//加入线路
-		for (DispatchLines lines : lineList)
+
+		try
 		{
-			lines.setCreateTime(DateUtil.getCurrent4Time());
-			lines.setPlanuuid(vo.getPlanUuid());
-			lines.setLineType(vo.getLineType());
-			lineService.insertLines(lines);
+			//加入线路
+			for (DispatchLines lines : lineList)
+			{
+				lines.setCreateTime(DateUtil.getCurrent4Time());
+				lines.setPlanuuid(vo.getPlanUuid());
+				lines.setLineType(vo.getLineType());
+				lineService.insertLines(lines);
+			}
+		} catch (Exception e)
+		{
+			// doNothing
 		}
 
-		//查询号码归属地
-		String cityName = phoneRegionService.queryPhoneRegion(vo.getPhone());
-		vo.setCityName(cityName);
+		try
+		{
+			//查询号码归属地
+			String cityName = phoneRegionService.queryPhoneRegion(vo.getPhone());
+			vo.setCityName(cityName);
+
+		} catch (Exception e)
+		{
+			// doNothing
+		}
+
 
 		vo.setGmtModified(DateUtil.getCurrent4Time());
 		vo.setGmtCreate(DateUtil.getCurrent4Time());
 
-		boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(vo));
-		if (bool)
+		try
 		{
-			//判断是否是路由网关路线
-			if (null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType)
+			boolean bool = DaoHandler.getMapperBoolRes(dispatchPlanMapper.insert(vo));
+			if (bool)
 			{
-				//设置加入路由网关路线redis及状态
-				gateWayLineService.setGatewayLineRedis(lineList);
+				//判断是否是路由网关路线
+				if (null != lineType && PlanLineTypeEnum.GATEWAY.getType() == lineType)
+				{
+					//设置加入路由网关路线redis及状态
+					gateWayLineService.setGatewayLineRedis(lineList);
+				}
 			}
+
+		} catch (Exception e)
+		{
+			// doNothing
 		}
 	}
 

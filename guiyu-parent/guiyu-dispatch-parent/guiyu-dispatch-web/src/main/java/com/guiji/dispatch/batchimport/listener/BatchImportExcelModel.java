@@ -22,6 +22,9 @@ public class BatchImportExcelModel extends BaseRowModel
 
     public void setPhone(String phone)
     {
+        if(null == phone || "".equals(phone)){
+            phone = "";
+        }
         this.phone = phone;
     }
 

@@ -106,7 +106,7 @@ public class AgentServiceImpl implements AgentService {
         if (!fsBotConfig.isNoAuth()) {
             log.info("开始将用户同步到auth模块，用户名[{}],crmUserId[{}]", request.getAgentName(), crmUserid);
             Long syncrs = authManager.syncUser(request.getCrmLoginId(), request.getAgentPwd(), crmUserid);
-            if(syncrs==null){
+            if (syncrs == null) {
                 throw new Exception("0307015");
             }
         }
@@ -185,7 +185,7 @@ public class AgentServiceImpl implements AgentService {
     }
 
     //上传配置文件，并保存到nas中
-    private String uploadConfig(Long userId, String configPath){
+    private String uploadConfig(Long userId, String configPath) {
         NasUtil nasUtil = new NasUtil();
         SysFileReqVO reqVO = new SysFileReqVO();
         reqVO.setThumbImageFlag("0");
@@ -200,12 +200,12 @@ public class AgentServiceImpl implements AgentService {
 
 
     @Override
-    public boolean updateAgent(String userId, AgentRequest request, Agent create) throws Exception{
+    public boolean updateAgent(String userId, AgentRequest request, Agent create) throws Exception {
         Agent agent = agentMapper.selectByPrimaryKey(Long.parseLong(userId));//根据坐席ID查询用户信息
         if (create.getUserRole() == EUserRole.AGENT.ordinal()) {
             if (!create.getUserId().toString().equals(userId)) {//是坐席请求，改的又不是自己直接返回错误
-               // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
-                 throw new Exception("0307005");
+                // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_NOT_OWNER);
+                throw new Exception("0307005");
             }
         }
         Date date = new Date();
@@ -248,17 +248,17 @@ public class AgentServiceImpl implements AgentService {
                 agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
             } else if (agent.getAnswerType() == EAnswerType.MOBILE.ordinal()) {
                 if (StringUtils.isBlank(agent.getMobile())) {
-                   // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_ANSWERTYPE_NONEMOBILE);
+                    // throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_ANSWERTYPE_NONEMOBILE);
                     throw new Exception("0307006");
                 }
                 Queue queue = queueMapper.selectByPrimaryKey(request.getQueueId());
-                if(queue.getLineId()==null){
+                if (queue.getLineId() == null) {
                     //throw new GuiyuException(ToagentserverException.EXCP_TOAGENT_QUEUE_NO_LINE);
                     throw new Exception("0307011");
                 }
                 FsLineVO fsLineVO = fsLineManager.getFsLine();
                 String[] ip = fsLineVO.getFsIp().split(":");
-                String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",queue.getLineId(),request.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
+                String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", queue.getLineId(), request.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
                 agentInfo.setContact(contact);
                 //agentInfo.setContact("loopback/" + request.getMobile());
             }
@@ -328,7 +328,7 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public boolean agentState(AgentRequest request, Agent user) throws Exception{
+    public boolean agentState(AgentRequest request, Agent user) throws Exception {
         Agent agent = agentMapper.selectByPrimaryKey(request.getUserId());//根据坐席ID查询用户信息
         if (user.getUserRole() == EUserRole.AGENT.ordinal()) {
             if (!user.getUserId().toString().equals(request.getUserId())) {//是坐席请求，改的又不是自己直接返回错误
@@ -398,7 +398,7 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public Paging getAllAgent(Agent user,String crmLoginId, String queueId, Integer page, Integer size) {
+    public Paging getAllAgent(Agent user, String crmLoginId, String queueId, Integer page, Integer size) {
         List<QueryAgent> queryAgentList = new ArrayList<QueryAgent>();
         Paging paging = new Paging();
         AgentExample example = new AgentExample();
@@ -413,9 +413,9 @@ public class AgentServiceImpl implements AgentService {
                     for (Tier tier : tierRes) {
                         userIds.add(tier.getUserId());
                     }
-                    if(!Strings.isNullOrEmpty(crmLoginId)){
+                    if (!Strings.isNullOrEmpty(crmLoginId)) {
                         example.createCriteria().andUserIdIn(userIds).andCrmLoginIdLike(crmLoginId);
-                    }else{
+                    } else {
                         example.createCriteria().andUserIdIn(userIds);
                     }
 
@@ -423,9 +423,9 @@ public class AgentServiceImpl implements AgentService {
                     example.createCriteria().andUserIdEqualTo(0L);
                 }
             } else { //如果没有传queueId
-                if(!Strings.isNullOrEmpty(crmLoginId)){
+                if (!Strings.isNullOrEmpty(crmLoginId)) {
                     example.createCriteria().andOrgCodeEqualTo(user.getOrgCode()).andCrmLoginIdLike(crmLoginId);
-                }else{
+                } else {
                     example.createCriteria().andOrgCodeEqualTo(user.getOrgCode());
                 }
             }
@@ -530,7 +530,7 @@ public class AgentServiceImpl implements AgentService {
         TierExample tierExample = new TierExample();
         tierExample.createCriteria().andUserIdEqualTo(agent.getUserId());
         List<Tier> tierRes = tierMapper.selectByExample(tierExample);
-        if (tierRes != null && tierRes.size()>0) {
+        if (tierRes != null && tierRes.size() > 0) {
             Tier tier = tierRes.get(0);
             Queue queue = queueMapper.selectByPrimaryKey(tier.getQueueId());
             if (queue != null) {
@@ -561,8 +561,8 @@ public class AgentServiceImpl implements AgentService {
             fsManager.updateAgentState(agentInfo);
         }
         if (agent.getUserState() == EUserState.OFFLINE.ordinal()) {
-                agent.setUserState(EUserState.ONLINE.ordinal());
-                agentMapper.updateByPrimaryKey(agent);
+            agent.setUserState(EUserState.ONLINE.ordinal());
+            agentMapper.updateByPrimaryKey(agent);
         }
         return state;
     }
@@ -575,7 +575,7 @@ public class AgentServiceImpl implements AgentService {
     @Override
     public boolean isAgentBusy(String agentId) {
         CallPlan callPlan = callPlanService.findByAgentId(agentId);
-        return callPlan!=null && callPlan.getCallId()!=null;
+        return callPlan != null && callPlan.getCallId() != null;
     }
 
     @Override
@@ -590,64 +590,64 @@ public class AgentServiceImpl implements AgentService {
         List<AgentInfo> agentInfoList = new ArrayList<>();
         List<String> queueIdList = new ArrayList<>();
         List<TierInfo> tierInfoList = new ArrayList<>();
-        Map<Long,Integer> queue_line = new HashMap<>();//用于存储坐席组对应的lineId
-        Map<Long,Long> agent_queue = new HashMap<>();//用于存储坐席对应的坐席组Id
+        Map<Long, Integer> queue_line = new HashMap<>();//用于存储坐席组对应的lineId
+        Map<Long, Long> agent_queue = new HashMap<>();//用于存储坐席对应的坐席组Id
         //查询所有的群组，组装成queueIdList
         QueueExample queueExample = new QueueExample();
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
-        for (Queue queue:queueList) {
-            queueIdList.add(queue.getQueueId()+"");
-            queue_line.put(queue.getQueueId(),queue.getLineId());
+        for (Queue queue : queueList) {
+            queueIdList.add(queue.getQueueId() + "");
+            queue_line.put(queue.getQueueId(), queue.getLineId());
         }
         //查询所有的tier，组装成tierInfoList
         TierExample tierExample = new TierExample();
-        List<Tier> tierList =tierMapper.selectByExample(tierExample);
-        for (Tier tier:tierList) {
+        List<Tier> tierList = tierMapper.selectByExample(tierExample);
+        for (Tier tier : tierList) {
             TierInfo tierInfo = new TierInfo();
             tierInfo.setAgentId(tier.getUserId() + "");
             tierInfo.setQueueId(tier.getQueueId() + "");
             tierInfoList.add(tierInfo);
-            agent_queue.put(tier.getUserId(),tier.getQueueId());
+            agent_queue.put(tier.getUserId(), tier.getQueueId());
         }
         //查询所有的坐席，组装成agentInfoList
         AgentExample agentExample = new AgentExample();
-        List<Agent> agentList =agentMapper.selectByExample(agentExample);
-        for (Agent agent:agentList) {
+        List<Agent> agentList = agentMapper.selectByExample(agentExample);
+        for (Agent agent : agentList) {
             AgentInfo agentInfo = new AgentInfo();
             agentInfo.setAgentId(agent.getUserId() + "");
-            if(agent.getUserState()==EUserState.OFFLINE.ordinal()){
+            if (agent.getUserState() == EUserState.OFFLINE.ordinal()) {
                 agentInfo.setStatus(AgentStatus.Logged_Out);
-            }else if(agent.getUserState()==EUserState.ONLINE.ordinal()){
+            } else if (agent.getUserState() == EUserState.ONLINE.ordinal()) {
                 agentInfo.setStatus(AgentStatus.Available);
             }
-            if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
+            if (agent.getAnswerType() == EAnswerType.WEB.ordinal()) {
                 agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
-            }else if(agent.getAnswerType()==EAnswerType.MOBILE.ordinal()){
+            } else if (agent.getAnswerType() == EAnswerType.MOBILE.ordinal()) {
                 Long queueId = agent_queue.get(agent.getUserId());
-                if(queueId!=null){
+                if (queueId != null) {
                     Integer lineId = queue_line.get(queueId);
-                    if(lineId!=null){
+                    if (lineId != null) {
                         FsLineVO fsLineVO = fsLineManager.getFsLine();
                         String[] ip = fsLineVO.getFsIp().split(":");
-                        String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s",lineId,agent.getMobile(),ip[0]+":"+fsLineVO.getFsInPort());
+                        String contact = String.format("{origination_caller_id_name=%s}sofia/internal/%s@%s", lineId, agent.getMobile(), ip[0] + ":" + fsLineVO.getFsInPort());
                         agentInfo.setContact(contact);
-                    } else{
+                    } else {
                         agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
                     }
-                }else{
+                } else {
                     agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
                 }
             }
             agentInfoList.add(agentInfo);
         }
         //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
-        fsManager.initCallcenter(agentInfoList,queueIdList,tierInfoList);
+        fsManager.initCallcenter(agentInfoList, queueIdList, tierInfoList);
 
         //调用上传NAS的接口，得到文件下载地址，并调用lua脚本
-        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+        String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir() + "/callcenter.conf.xml");
         String other = "reload+mod_callcenter";
-        fsManager.syncCallcenter(fileUrl,other);
-        fsManager.syncUser(agentMapper.selectMinUserId()+"",agentMapper.selectMaxUserId()+"");
+        fsManager.syncCallcenter(fileUrl, other);
+        fsManager.syncUser(agentMapper.selectMinUserId() + "", agentMapper.selectMaxUserId() + "");
     }
 
     @Override
@@ -677,15 +677,19 @@ public class AgentServiceImpl implements AgentService {
         agentInfo.setContact("${verto_contact(" + user.getUserId() + ")}");
         fsManager.addAgent(agentInfo);
         //同步fs用户到freeswitch()
-        fsManager.syncUser(agentMapper.selectMinUserId()+"",user.getUserId() + "");
+        fsManager.syncUser(agentMapper.selectMinUserId() + "", user.getUserId() + "");
 
         Queue queue = new Queue();
         QueueExample queueExample = new QueueExample();
         queueExample.createCriteria().andOrgCodeEqualTo(user.getOrgCode()).andQueueNameEqualTo("默认坐席组");
         List<Queue> queueList = queueMapper.selectByExample(queueExample);
-        if(queueList.size()>0){
-            queue=queueList.get(0);
-        }else{
+        if (queueList.size() > 0) {
+            queue = queueList.get(0);
+            TierInfo tierInfo = new TierInfo();
+            tierInfo.setAgentId(user.getUserId() + "");
+            tierInfo.setQueueId(queue.getQueueId() + "");
+            fsManager.addTier(tierInfo);
+        } else {
             queue.setQueueName("默认坐席组");
             queue.setCreator(user.getUserId());
             queue.setCreateTime(date);
@@ -693,14 +697,28 @@ public class AgentServiceImpl implements AgentService {
             queue.setUpdateTime(date);
             queue.setOrgCode(user.getOrgCode());
             queueMapper.insert(queue);
-            fsManager.createQueue(queue.getQueueId() + "");
+            //fsManager.createQueue(queue.getQueueId() + "");
+
+            List<String> queueIdList = new ArrayList<>();
+            QueueExample queueExample1 = new QueueExample();
+            List<Queue> queueList1 = queueMapper.selectByExample(queueExample1);
+            for (Queue queues : queueList1) {
+                queueIdList.add(queues.getQueueId() + "");
+            }
+            //调用基于模板批量创建坐席、队列和绑定关系的方法，生成xml
+            fsManager.initCallcenter(null, queueIdList, null);
+            // 调用上传NAS的接口，得到文件下载地址，并调用lua脚本
+            String fileUrl = uploadConfig(1L, fsBotConfig.getHomeDir() + "/callcenter.conf.xml");
+            //创建为坐席组之后，执行新增tier命令
+            String other = "reload+mod_callcenter|callcenter_config+tier+add+" + queue.getQueueId() + "+" + user.getUserId() + "+1+1";
+            fsManager.syncCallcenter(fileUrl, other);
         }
 
-        //第三步callcenter绑定
-        TierInfo tierInfo = new TierInfo();
-        tierInfo.setAgentId(user.getUserId() + "");
-        tierInfo.setQueueId(queue.getQueueId() + "");
-        fsManager.addTier(tierInfo);
+//        //第三步callcenter绑定
+//        TierInfo tierInfo = new TierInfo();
+//        tierInfo.setAgentId(user.getUserId() + "");
+//        tierInfo.setQueueId(queue.getQueueId() + "");
+//        fsManager.addTier(tierInfo);
 
         //第四步将绑定关系存入数据库
         Tier tier = new Tier();
@@ -712,20 +730,20 @@ public class AgentServiceImpl implements AgentService {
         tier.setUpdateUser(user.getUserId());
         tier.setOrgCode(user.getOrgCode());
         tierMapper.insert(tier);
-        String fileUrl = uploadConfig(user.getUserId(), fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
-        String other = "callcenter_config+queue+load+"+queue.getQueueId()+"|callcenter_config+tier+add+"+queue.getQueueId()+"+"+user.getUserId()+"+1+1";
-        fsManager.syncCallcenter(fileUrl,other);
+//        String fileUrl = uploadConfig(user.getUserId(), fsBotConfig.getHomeDir()+"/callcenter.conf.xml");
+//        String other = "callcenter_config+queue+load+"+queue.getQueueId()+"|callcenter_config+tier+add+"+queue.getQueueId()+"+"+user.getUserId()+"+1+1";
+//        fsManager.syncCallcenter(fileUrl,other);
         return user;
     }
 
     @Override
-    public boolean agentStateByVerto(EUserState eUserState,Agent agent) {
+    public boolean agentStateByVerto(EUserState eUserState, Agent agent) {
         AgentInfo agentInfo = new AgentInfo();
         agentInfo.setAgentId(agent.getUserId() + "");
-        if(eUserState==EUserState.OFFLINE){
+        if (eUserState == EUserState.OFFLINE) {
             agentInfo.setStatus(AgentStatus.Logged_Out);
             agent.setUserState(EUserState.OFFLINE.ordinal());
-        }else{
+        } else {
             agentInfo.setStatus(AgentStatus.Available);
             agent.setUserState(EUserState.ONLINE.ordinal());
         }

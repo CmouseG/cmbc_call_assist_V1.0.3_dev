@@ -1,13 +1,10 @@
 package com.guiji.web.controller;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.Queue;
 import com.guiji.component.result.Result;
 import com.guiji.config.ErrorConstant;
-import com.guiji.entity.EAnswerType;
-import com.guiji.entity.EUserState;
 import com.guiji.fs.FreeSWITCH;
 import com.guiji.fs.FsManager;
 import com.guiji.fs.pojo.GlobalVar;
@@ -48,14 +45,12 @@ public class ExternalController implements IAgentGroup{
     @Override
     public Result.ReturnData<List<AgentGroupInfo>> getGroups(String orgCode) {
         log.info("收到获取队列列表请求，org[{}]", orgCode);
-
         List<Queue> queueList = queueService.findByOrgCode(orgCode);
         List<AgentGroupInfo> groups = new ArrayList<>(queueList.size());
         for (Queue queue : queueList) {
             AgentGroupInfo groupInfo = new AgentGroupInfo(queue.getQueueId().toString(), queue.getQueueName());
             groups.add(groupInfo);
         }
-
         log.info("获取队列请求返回结果为[{}]", groups);
         return Result.ok(groups);
     }
@@ -63,9 +58,7 @@ public class ExternalController implements IAgentGroup{
     @Override
     public Result.ReturnData<FsInfoVO> getFsInfo() {
         log.info("收到获取转人工fs基本信息接口");
-
         FsInfoVO fsInfoVO = new FsInfoVO();
-
         FreeSWITCH fs =fsManager.getFS();
         if(fs!=null){
             GlobalVar globalVar = fs.getGlobalVar();
@@ -77,7 +70,6 @@ public class ExternalController implements IAgentGroup{
                 return Result.ok(fsInfoVO);
             }
         }
-
         return Result.error(ErrorConstant.FS_CONNECT_FAIL);
     }
 
@@ -90,7 +82,6 @@ public class ExternalController implements IAgentGroup{
     @RequestMapping(path = "/agentsum", method = RequestMethod.GET)
     public Result.ReturnData<AgentSumResponse> getAgentStateSum(@RequestParam String orgCode){
         log.info("收到获取座席状态统计，orgCode[{}]", orgCode);
-
         AgentSumResponse agentSumResponse = new AgentSumResponse();
         List<Agent> agentList = agentService.findByOrgCode(orgCode);
         if(agentList!=null && agentList.size()>0){
@@ -109,7 +100,6 @@ public class ExternalController implements IAgentGroup{
             }
             agentSumResponse.setOnlineCount(onlineCount);
         }
-
         log.info("获取座席状态统计，返回结果为[{}]", agentSumResponse);
         return Result.ok(agentSumResponse);
     }

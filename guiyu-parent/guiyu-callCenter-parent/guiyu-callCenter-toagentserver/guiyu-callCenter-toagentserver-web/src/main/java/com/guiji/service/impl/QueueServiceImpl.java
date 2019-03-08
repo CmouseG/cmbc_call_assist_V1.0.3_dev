@@ -87,9 +87,8 @@ public class QueueServiceImpl implements QueueService {
         queue.setLineId(queueInfo.getLineId());
         queueMapper.insert(queue);
        // Boolean result = fsManager.createQueue(queue.getQueueId() + "");
-        List<String> queueIdList = new ArrayList<>();
-        queueIdList.add(queue.getQueueId()+"");
 
+        List<String> queueIdList = new ArrayList<>();
         QueueExample queueExample1 = new QueueExample();
         List<Queue> queueList1 = queueMapper.selectByExample(queueExample1);
         for (Queue queues:queueList1) {

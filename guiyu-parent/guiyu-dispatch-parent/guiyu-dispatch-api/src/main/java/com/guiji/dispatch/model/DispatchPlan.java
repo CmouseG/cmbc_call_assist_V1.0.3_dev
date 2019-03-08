@@ -24,7 +24,10 @@ public class DispatchPlan implements Serializable {
 
     private String phone;
 
-    private String attach;
+	/**
+	 * 附加参数，备注
+	 */
+	private String attach;
 
     private String params;
 

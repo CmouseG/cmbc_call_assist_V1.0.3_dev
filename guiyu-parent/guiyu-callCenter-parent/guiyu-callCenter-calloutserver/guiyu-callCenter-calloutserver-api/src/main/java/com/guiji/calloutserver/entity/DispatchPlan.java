@@ -19,6 +19,8 @@ public class DispatchPlan implements Serializable {
 
     private boolean isTts;
 
+    private boolean simCall;
+
     private String orgCode;
 
     private String agentGroupId;
@@ -97,6 +99,14 @@ public class DispatchPlan implements Serializable {
         this.agentGroupId = agentGroupId;
     }
 
+    public boolean getSimCall() {
+        return simCall;
+    }
+
+    public void setSimCall(boolean simCall) {
+        this.simCall = simCall;
+    }
+
     @Override
     public String toString() {
         return "DispatchPlan{" +
@@ -107,6 +117,7 @@ public class DispatchPlan implements Serializable {
                 ", tempId='" + tempId + '\'' +
                 ", lineList=" + lineList +
                 ", isTts=" + isTts +
+                ", simCall='" + simCall + '\'' +
                 ", orgCode='" + orgCode + '\'' +
                 ", agentGroupId='" + agentGroupId + '\'' +
                 '}';

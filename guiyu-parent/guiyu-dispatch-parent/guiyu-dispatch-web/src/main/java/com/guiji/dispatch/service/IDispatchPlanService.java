@@ -3,6 +3,7 @@ package com.guiji.dispatch.service;
 import java.io.IOException;
 import java.util.List;
 
+import com.guiji.component.result.Result;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -251,4 +252,12 @@ public interface IDispatchPlanService {
 	
 	public boolean batchInsertDisplanPlan( BatchDispatchPlanList plans,  Long userId,
 			 String orgCode);
-	}
+
+
+	//查询任务计划
+	DispatchPlan queryDispatchPlanById(String planUuId);
+
+	//查询任务计划备注
+	String queryPlanRemarkById(String planUuid);
+}
+

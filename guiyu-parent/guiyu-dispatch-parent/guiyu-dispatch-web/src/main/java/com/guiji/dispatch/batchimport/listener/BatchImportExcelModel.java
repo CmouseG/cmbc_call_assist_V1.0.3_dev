@@ -17,6 +17,9 @@ public class BatchImportExcelModel extends BaseRowModel
 
     public String getPhone()
     {
+        if(null == phone || "".equals(phone)){
+            return "";
+        }
         return phone;
     }
 
@@ -30,6 +33,9 @@ public class BatchImportExcelModel extends BaseRowModel
 
     public String getParamaters()
     {
+        if(null == paramaters || "".equals(paramaters)){
+            return "";
+        }
         return paramaters;
     }
 
@@ -43,6 +49,9 @@ public class BatchImportExcelModel extends BaseRowModel
 
     public String getAttach()
     {
+        if(null == attach || "".equals(attach)){
+            return "";
+        }
         return attach;
     }
 

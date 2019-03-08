@@ -12,6 +12,7 @@ import com.guiji.ccmanager.utils.ZipUtil;
 import com.guiji.ccmanager.vo.*;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
+import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
 import io.swagger.annotations.ApiImplicitParam;
@@ -53,6 +54,9 @@ public class CallDetailController implements ICallPlanDetail {
 
     @Value("${download.path}")
     private String downloadPath;
+
+    @Autowired
+    IDispatchPlanOut dispatchPlanOut;
 
     @Autowired
     private CallDetailService callDetailService;
@@ -215,6 +219,12 @@ public class CallDetailController implements ICallPlanDetail {
         //修改状态为已读
         if(callOutPlanVO.getIsread()!=null && callOutPlanVO.getIsread()==0){
             callDetailService.updateIsRead(callId);
+        }
+        //请求调度中心，获取attach字段
+        String planUuid = callOutPlanVO.getPlanUuid();
+        Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
+        if(result.success){
+            callOutPlanVO.setAttach(result.getBody());
         }
 
         log.info("reponse success getCallDetailApi，callId[{}]", callId);

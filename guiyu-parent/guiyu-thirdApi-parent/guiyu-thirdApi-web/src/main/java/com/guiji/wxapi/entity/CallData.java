@@ -17,5 +17,6 @@ public class CallData implements Serializable {
     private Integer calltime;
     private Date starttime;
     private String voicefile;
+    private String attach;
 
 }

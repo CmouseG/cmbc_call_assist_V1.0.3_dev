@@ -55,4 +55,7 @@ public class CallOutPlanVO implements Serializable {
     private Integer isread;
     private List<CallOutDetailVO> detailList;
 
+    private String attach;
+    private String planUuid;
+
 }

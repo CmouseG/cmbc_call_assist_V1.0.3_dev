@@ -576,7 +576,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 		List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
 		if(null != selectByExample && selectByExample.size()>0){
-			Set<String> planUuidSet = new HashSet<String>();
+			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
 			for(DispatchPlan dis : selectByExample){
 				planUuidSet.add(dis.getPlanUuid());
 			}

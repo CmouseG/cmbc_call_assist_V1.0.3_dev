@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guiji.dispatch.enums.SysDelEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +161,8 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		// 查询当前任务中心
 		DispatchPlanExample planEx = new DispatchPlanExample();
 		planEx.createCriteria().andUserIdEqualTo(userId)
-				.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING));
+				.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
+				.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
 		int count = dispatchMapper.countByExample(planEx);
 
 		int limitNum = 5000;
@@ -186,7 +188,8 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	public ReturnData<Boolean> lineIsUsed(Integer lineId) {
 		ReturnData<Boolean> res = new ReturnData<>();
 		DispatchPlanExample planEx = new DispatchPlanExample();
-		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING));
+		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
+				.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
 		int count = dispatchMapper.countByExample(planEx);
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
 		int limitNum = 5000;

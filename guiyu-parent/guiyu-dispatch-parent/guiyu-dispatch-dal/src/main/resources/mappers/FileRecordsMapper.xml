@@ -466,6 +466,9 @@
         <if test="startTime != null and endTime != null">
           AND create_time BETWEEN #{startTime} AND #{endTime}
         </if>
+        <if test="status != null">
+          AND status = #{status}
+        </if>
       </if>
       <if test="page != null and page.isPage ">
         <if test="page.orderBy != null " >
@@ -492,6 +495,9 @@
       </if>
       <if test="startTime != null and endTime != null">
         AND create_time BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status != null">
+        AND status = #{status}
       </if>
     </if>
   </select>

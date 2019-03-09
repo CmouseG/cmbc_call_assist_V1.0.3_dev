@@ -121,9 +121,9 @@ public class CallPlanDispatchHandler {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(),
-                callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
         }
+        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(),
+                callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
 
     }
 

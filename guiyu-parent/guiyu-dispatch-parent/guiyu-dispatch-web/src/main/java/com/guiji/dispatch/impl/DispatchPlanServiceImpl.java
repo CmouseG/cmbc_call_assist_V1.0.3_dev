@@ -47,10 +47,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -577,31 +574,45 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-
-		// 转换userName
-		for (DispatchPlan dis : selectByExample) {
-			ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
-			if (user.getBody() != null) {
-				dis.setUserName(user.getBody().getUsername());
+		List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
+		if(null != selectByExample && selectByExample.size()>0){
+			Set<String> planUuidSet = new HashSet<String>();
+			for(DispatchPlan dis : selectByExample){
+				planUuidSet.add(dis.getPlanUuid());
 			}
 
-			List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(dis.getPlanUuid());
-			dis.setLines(queryLinesByPlanUUID);
+			loopA:for(String planUuid : planUuidSet) {
+				// 转换userName
+				loopB:for (DispatchPlan dis : selectByExample) {
+					if(planUuid.equals(dis.getPlanUuid())) {
+						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
+						if (user.getBody() != null) {
+							dis.setUserName(user.getBody().getUsername());
+						}
 
-			// isDesensitization
-			if (isDesensitization.equals(0))
-			{
-				if (dis.getPhone().length() <= 7)
-				{
-					continue;
+						List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
+						dis.setLines(queryLinesByPlanUUID);
+
+						// isDesensitization
+						if (isDesensitization.equals(0)) {
+							if (dis.getPhone().length() <= 7) {
+								continue;
+							}
+							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
+							dis.setPhone(phoneNumber);
+						}
+
+						resList.add(dis);
+						continue loopA;
+					}
 				}
-				String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
-				dis.setPhone(phoneNumber);
 			}
 		}
 
+
+
 		int count = dispatchPlanMapper.countByExample(example);
-		page.setRecords(selectByExample);
+		page.setRecords(resList);
 		page.setTotal(count);
 		return page;
 	}

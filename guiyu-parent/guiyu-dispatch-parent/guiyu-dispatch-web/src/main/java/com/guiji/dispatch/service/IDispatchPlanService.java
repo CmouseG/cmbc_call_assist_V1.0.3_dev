@@ -1,12 +1,5 @@
 package com.guiji.dispatch.service;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.guiji.component.result.Result;
-import com.guiji.dispatch.vo.TotalPlanCountVo;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
@@ -17,6 +10,9 @@ import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.vo.TotalPlanCountVo;
+
+import java.util.List;
 
 public interface IDispatchPlanService {
 
@@ -91,18 +87,6 @@ public interface IDispatchPlanService {
 	 * @return 响应报文
 	 */
 	boolean successSchedule(String planUuid, String label);
-
-	/**
-	 * 批量导入
-	 * 
-	 * @param fileName
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 * @throws Exception
-	 */
-	public boolean batchImport(String fileName, Long userId, MultipartFile file, String dispatchPlan, String orgCode)
-			throws IOException, Exception;
 
 	/**
 	 * 写入批次

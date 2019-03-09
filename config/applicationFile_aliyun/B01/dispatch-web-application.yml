@@ -98,3 +98,8 @@ weixin:
   pagePath:
     mainUrl:  #小程序通话详情页面
     reordListUrl:  #小程序通话记录列表页面
+rabbit:
+  general:
+    fanout:                               #需要绑定交换机与队列关系
+      exchange: fanout.dispatch.BatchImportSaveDB|fanout.dispatch.BatchImportSaveLineDB  #交换机名称
+      queue: fanout.dispatch.BatchImportSaveDB.SAVEDB|fanout.dispatch.BatchImportSaveLineDB.saveDb #队列名称

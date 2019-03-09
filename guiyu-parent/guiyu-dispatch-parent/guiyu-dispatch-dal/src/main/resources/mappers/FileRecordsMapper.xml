@@ -463,11 +463,11 @@
         <if test="record.orgCode != null and record.orgCode != ''" >
           AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '.%'))
         </if>
+        <if test="record.status != null">
+          AND status = #{record.status}
+        </if>
         <if test="startTime != null and endTime != null">
           AND create_time BETWEEN #{startTime} AND #{endTime}
-        </if>
-        <if test="status != null">
-          AND status = #{status}
         </if>
       </if>
       <if test="page != null and page.isPage ">
@@ -493,11 +493,11 @@
       <if test="record.orgCode != null and record.orgCode != ''" >
         AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '.%'))
       </if>
+      <if test="record.status != null">
+        AND status = #{record.status}
+      </if>
       <if test="startTime != null and endTime != null">
         AND create_time BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="status != null">
-        AND status = #{status}
       </if>
     </if>
   </select>

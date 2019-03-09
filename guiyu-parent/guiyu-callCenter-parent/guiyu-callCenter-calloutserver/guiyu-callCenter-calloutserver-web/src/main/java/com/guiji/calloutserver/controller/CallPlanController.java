@@ -49,7 +49,7 @@ public class CallPlanController implements ICallPlan {
             if(tempReadyService.isTempOk(dispatchPlan.getTempId())){
                 CallOutPlan callOutPlan = toCallPlan(dispatchPlan);
 
-                callPlanDispatchHandler.readyToMakeCall(callOutPlan,dispatchPlan.getLineList());
+                callPlanDispatchHandler.readyToMakeCall(callOutPlan,dispatchPlan.getLineList(),dispatchPlan.getSimCall());
 
                 log.info(">>>>>>>end startMakeCall dispatchPlan,,ok");//注释掉
                 return Result.ok();

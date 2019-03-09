@@ -1,5 +1,7 @@
-package com.guiji.dispatch.batchimport;
+package com.guiji.dispatch.batchimport.listener;
 
+import com.guiji.dispatch.batchimport.BatchImportRecordHandlerImpl;
+import com.guiji.dispatch.batchimport.IBatchImportRecordHandler;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.utils.JsonUtils;
 import com.rabbitmq.client.Channel;
@@ -29,7 +31,7 @@ public class BatchImportMQListener {
 		{
 			handler.preCheck(vo);
 
-			handler.saveDB(vo);
+			//handler.saveDB(vo);
 			//logger.info("结束异步调用，{}", System.currentTimeMillis() - start);
 		} catch (Exception e)
 		{

@@ -160,6 +160,12 @@ public class FlyDragonServiceImpl implements ISellbotService{
 	 */
 	private FlHelloRsp initFlHelloRsp(FlHelloRsp rsp,JSONObject jsonObject) {
 		rsp.setAnswered_domain("");
+		rsp.setCfg_name(jsonObject.getString("cfg_name"));
+		rsp.setSub_cfg_name(jsonObject.getString("sub_cfg_name"));
+		rsp.setStatus(jsonObject.getString("status"));
+		rsp.setIntent_name(jsonObject.getString("intent_name"));
+		rsp.setUserinfo(jsonObject.getString("userinfo"));
+		rsp.setScene_name(jsonObject.getString("scene_name"));
 		rsp.setIntent(jsonObject.getString("accurate_intent"));
 		rsp.setEnd(jsonObject.getString("end"));
 		rsp.setAnswer(jsonObject.getString("answer"));

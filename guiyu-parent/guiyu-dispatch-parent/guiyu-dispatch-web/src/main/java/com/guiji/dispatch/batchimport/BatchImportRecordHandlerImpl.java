@@ -12,15 +12,16 @@ import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
+import com.guiji.guiyu.message.component.FanoutSender;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 	
 	@Autowired
 	private IBlackListService blackService;
+
+	@Autowired
+	private FanoutSender fanoutSender;
 
 	@Override
 	public void preCheck(DispatchPlan vo) throws Exception
@@ -83,9 +87,10 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			logger.debug("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
+
+		fanoutSender.send("fanout.dispatch.BatchImportSaveDB", JsonUtils.bean2Json(vo));
 	}
 
-	@Async("asyncBatchImportSaveDBExecutor")
 	@Override
 	public void saveDB(DispatchPlan vo)
 	{
@@ -103,7 +108,9 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 				lines.setCreateTime(DateUtil.getCurrent4Time());
 				lines.setPlanuuid(vo.getPlanUuid());
 				lines.setLineType(vo.getLineType());
-				lineService.insertLines(lines);
+				// lineService.insertLines(lines);
+
+				fanoutSender.send("fanout.dispatch.BatchImportSaveLineDB", JsonUtils.bean2Json(lines));
 			}
 		} catch (Exception e)
 		{
@@ -120,7 +127,6 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		{
 			// doNothing
 		}
-
 
 		vo.setGmtModified(DateUtil.getCurrent4Time());
 		vo.setGmtCreate(DateUtil.getCurrent4Time());
@@ -143,6 +149,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 			// doNothing
 		}
 	}
+
 
 	private void saveFileErrorRecords(DispatchPlan vo, BatchImportErrorCodeEnum errorCodeEnum) throws Exception {
 		FileErrorRecords records = new FileErrorRecords();

@@ -122,9 +122,10 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 									List<Integer> lines = new ArrayList<>();
 									for (DispatchLines line : dispatchRedis.getLines()) {
-										logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
 									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
+											logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
+									    	callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
 									        Integer lineId = line.getLineId();
                                             GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey+lineId);
                                             if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
@@ -135,7 +136,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                             }else{
 												redisUtil.leftPush(queue, dispatchRedis);
 											}
-											callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
                                         }else {
                                             lines.add(line.getLineId());
 											callBean.setSimCall(false);

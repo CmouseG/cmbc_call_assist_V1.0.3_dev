@@ -14,6 +14,9 @@ import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.CallOutRecordService;
 import com.guiji.calloutserver.service.CallService;
 import com.guiji.calloutserver.service.LineCountWService;
+import com.guiji.component.result.Result;
+import com.guiji.dict.api.ISysDict;
+import com.guiji.dict.vo.SysDictVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -58,6 +61,11 @@ public class CallPlanDispatchHandler {
     StatisticReportHandler statisticReportHandler;
     @Autowired
     AIManager aiManager;
+    @Autowired
+    SimCallManager simCallManager;
+    @Autowired
+    ISysDict iSysDict;
+
 
     //注册这个监听器
     @PostConstruct
@@ -105,7 +113,17 @@ public class CallPlanDispatchHandler {
 
         CallOutPlan callPlan = afterCallEvent.getCallPlan();
         log.info("拨打结束，回调调度中心，callId[{}]", callPlan.getCallId());
-        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(), callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
+        if(simCallManager.isSimCall(callPlan.getCallId().toString())){
+            try {
+                Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValueByTypeKey("simcall_time","simcall_time");
+                String value = returnData.getBody().get(0).getDictValue();
+                Thread.sleep(Integer.valueOf(value)*1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(),
+                callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
+        }
 
     }
 
@@ -114,7 +132,7 @@ public class CallPlanDispatchHandler {
      * 准备发起呼叫
      */
 //    @Async
-    public void readyToMakeCall(CallOutPlan callPlan, List<Integer> lineList) {
+    public void readyToMakeCall(CallOutPlan callPlan, List<Integer> lineList, Boolean simCall) {
 
         executor.submit(new Runnable(){
             @Override
@@ -169,6 +187,8 @@ public class CallPlanDispatchHandler {
 
                 //将lineList 存储到到redis中
                 lineListManager.addLineList(callPlan.getCallId().toString(),lineList);
+                //存储sim卡状态
+                simCallManager.addSimCall(callPlan.getCallId().toString(),simCall);
             }
 
         });

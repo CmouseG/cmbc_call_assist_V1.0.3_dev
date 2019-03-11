@@ -685,12 +685,12 @@ public class AiCacheService {
 		Map<String,String> tts_pos = hsReplace.getTts_pos();	//待替换的文本
 		Map<String,String> replace_map_relationship = hsReplace.getReplace_map_relationship();	//参数新老映射
 		if(tts_pos!=null && replace_map_relationship!=null) {
-			Iterator<Entry<String, String>> keyIterator = replace_map_relationship.entrySet().iterator();
 			for (Map.Entry<String, String> entry : tts_pos.entrySet()) {
+				Iterator<Entry<String, String>> keyIterator = replace_map_relationship.entrySet().iterator();
 				String ttsPosStr = entry.getValue();	//待替换文本
 				while(keyIterator.hasNext()) {
 					Entry<String, String> keyNext = keyIterator.next();
-					ttsPosStr = ttsPosStr.replaceAll(keyNext.getValue(), keyNext.getKey()); //将"客户名称"替换为0000
+					ttsPosStr = ttsPosStr.replaceAll("\\["+keyNext.getValue()+"\\]", keyNext.getKey()); //将"[客户名称]"替换为0000
 				}
 				entry.setValue(ttsPosStr);
 			}

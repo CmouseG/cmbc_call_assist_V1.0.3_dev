@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.guiji.dispatch.enums.SysDelEnum;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.component.result.Result;
@@ -233,6 +236,8 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	 * @return
 	 */
 	@Override
+	@ApiOperation(value="查询任务计划备注", notes="查询任务计划备注")
+	@RequestMapping(value = "/dispatch/api/queryPlanRemarkById", method = {RequestMethod.GET})
 	public ReturnData<String> queryPlanRemarkById(String planUuid) {
 		String planAttach = !StringUtils.isEmpty(planUuid)?
 				dispatchPlanService.queryPlanRemarkById(planUuid):null;

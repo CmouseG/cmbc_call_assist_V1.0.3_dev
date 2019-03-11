@@ -74,10 +74,13 @@ public class CallRecordController {
                     com.guiji.wxapi.entity.CallOutDetailVO resCallOutDetailVO = new com.guiji.wxapi.entity.CallOutDetailVO();
                     resCallOutDetailVO.setCallid(callOutDetailVO.getCallId().toString());
                     resCallOutDetailVO.setId(callOutDetailVO.getCallDetailId());
-                    if (callOutDetailVO.getBotAnswerText() != null)
+                    if (callOutDetailVO.getBotAnswerText() != null) {
                         resCallOutDetailVO.setAnswer(callOutDetailVO.getBotAnswerText());
-                    if (callOutDetailVO.getCustomerSayText() != null)
+                    } else if (callOutDetailVO.getCustomerSayText() != null) {
                         resCallOutDetailVO.setContent(callOutDetailVO.getCustomerSayText());
+                    } else if (callOutDetailVO.getAgentAnswerText() != null) {
+                        resCallOutDetailVO.setAnswer(callOutDetailVO.getAgentAnswerText());
+                    }
                     if (callOutDetailVO.getCustomerRecordUrl() != null)
                         resCallOutDetailVO.setFile(callOutDetailVO.getCustomerRecordUrl());
                     if (callOutDetailVO.getKeywords() != null)

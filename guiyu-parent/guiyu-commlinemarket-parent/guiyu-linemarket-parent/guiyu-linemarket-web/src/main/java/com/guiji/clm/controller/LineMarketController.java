@@ -101,7 +101,8 @@ public class LineMarketController {
 				}
 			}
 			if(isAdmin) {
-				query.setOrgCode(orgCode);
+				SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
+				query.setOrgCode(sysOrganization.getCode());
 			}else {
 				query.setUserId(userId.toString());
 			}
@@ -236,7 +237,13 @@ public class LineMarketController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryApplyLinePage", method = RequestMethod.POST)
-	public Result.ReturnData<Page<SipLineApplyVO>> queryApplyLinePage(@RequestBody SipLineApplyQueryCondition condition){
+	public Result.ReturnData<Page<SipLineApplyVO>> queryApplyLinePage(
+			@RequestBody SipLineApplyQueryCondition condition,
+			@RequestHeader Long userId){
+		//临时
+		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
+		condition.setOrgCode(sysOrganization.getCode());
+		//
 		Page<SipLineApply> page = sipLineApplyService.querySipLineApplyForPageByCondition(condition);
 		Page<SipLineApplyVO> rtnPage = new Page<SipLineApplyVO>(page.getPageNo(),page.getTotalRecord(),this.applyLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);
@@ -291,6 +298,10 @@ public class LineMarketController {
 			//默认查询正常
 			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
 		}
+		//临时
+		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
+		condition.setOrgCode(sysOrganization.getCode());
+		//
 		List<SipLineExclusive> list = sipLineExclusiveService.querySipLineExclusiveList(condition);
 		return Result.ok(this.exclusiveLine2VO(list));
 	}
@@ -301,12 +312,18 @@ public class LineMarketController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryConditionExclusiveSipLinePage", method = RequestMethod.POST)
-	public Result.ReturnData<Page<SipLineExclusiveVO>> queryConditionExclusiveSipLinePage(@RequestBody SipLineExclusiveQueryCondition condition){
+	public Result.ReturnData<Page<SipLineExclusiveVO>> queryConditionExclusiveSipLinePage(
+			@RequestBody SipLineExclusiveQueryCondition condition,
+			@RequestHeader Long userId){
 		if(condition==null) condition=new SipLineExclusiveQueryCondition();
 		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
 			//默认查询正常
 			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
 		}
+		//临时
+		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
+		condition.setOrgCode(sysOrganization.getCode());
+		//
 		Page<SipLineExclusive> page = sipLineExclusiveService.querySipLineExclusiveForPageByCondition(condition);
 		Page<SipLineExclusiveVO> rtnPage = new Page<SipLineExclusiveVO>(condition.getPageNo(),page.getTotalRecord(),this.exclusiveLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);

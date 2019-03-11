@@ -4705,6 +4705,14 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			
 		BotSentenceTrade newTrade = new BotSentenceTrade();
 		if(StringUtils.isNotBlank(industryId)) {
+			//校验当前行业是否已存在
+			BotSentenceTradeExample exist = new BotSentenceTradeExample();
+			exist.createCriteria().andParentIdEqualTo(industryId).andIndustryNameEqualTo(industryName);
+			int count = botSentenceTradeMapper.countByExample(exist);
+			if(count > 0) {
+				throw new CommonException("当前行业已存在!");
+			}
+			
 			BotSentenceTradeExample example = new BotSentenceTradeExample();
 			example.createCriteria().andIndustryIdEqualTo(industryId);
 			List<BotSentenceTrade> list = botSentenceTradeMapper.selectByExample(example);

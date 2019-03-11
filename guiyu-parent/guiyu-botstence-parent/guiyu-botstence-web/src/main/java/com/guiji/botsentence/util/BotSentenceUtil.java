@@ -29,8 +29,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.json.JSONConstant;
+import com.guiji.common.exception.CommonException;
+import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.client.util.FileUtil;
 import com.guiji.component.client.util.JsonBase64Crypter;
+import com.guiji.utils.NasUtil;
 
 public class BotSentenceUtil {
 
@@ -675,4 +679,20 @@ public class BotSentenceUtil {
 	            sb.append('\t');
 	        }
 	    }
+	    
+	    public static String updloadNas(String busiId, String userId, File file) {
+	    	SysFileReqVO sysFileReqVO = new SysFileReqVO();
+			sysFileReqVO.setBusiId(busiId);
+			sysFileReqVO.setBusiType("");
+			sysFileReqVO.setSysCode("botstence");
+			sysFileReqVO.setUserId(new Long(userId));
+			SysFileRspVO rsp = new NasUtil().uploadNas(sysFileReqVO, file);
+			logger.info("上传文件返回报文: " + rsp.toString());
+			if(null != rsp && StringUtils.isNotBlank(rsp.getSkUrl())) {
+				return rsp.getSkUrl();
+			}else {
+				throw new CommonException("上传文件失败");
+			}
+	    }
+	    
 }

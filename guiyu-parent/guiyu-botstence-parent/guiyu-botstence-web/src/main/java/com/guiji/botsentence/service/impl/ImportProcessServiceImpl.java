@@ -514,7 +514,8 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 							String wavName = wavFile.getName();
 							if (wavName.endsWith(".wav")) {
 								try {
-									String uploadurl = qiuniuUploadUtil.upload(new FileInputStream(wavFile), processId + "_" + wavName);
+									String uploadurl = BotSentenceUtil.updloadNas(processId, userId, wavFile);
+									//String uploadurl = qiuniuUploadUtil.upload(new FileInputStream(wavFile), processId + "_" + wavName);
 									mavMap.put(wavName.replace(".wav", ""), uploadurl);
 									
 									int times = BotSentenceUtil.getVideoTime(wavFile.getPath());

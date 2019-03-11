@@ -22,7 +22,7 @@ public class BlackListController {
 	private IBlackListService blackListService;
 
 	/**
-	 * 查询黑名单
+	 * 保存黑名单
 	 * @param blackList
 	 * @param userId
 	 * @param orgCode

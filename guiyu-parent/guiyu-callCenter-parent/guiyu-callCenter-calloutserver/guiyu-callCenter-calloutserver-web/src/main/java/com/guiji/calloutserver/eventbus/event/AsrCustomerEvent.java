@@ -17,4 +17,9 @@ public class AsrCustomerEvent extends AsrBaseEvent{
     public void setCallPlan(CallOutPlan callPlan) {
         this.callPlan = callPlan;
     }
+
+    @Override
+    public String toString() {
+        return super.toString()+",callid:"+callPlan.getCallId();
+    }
 }

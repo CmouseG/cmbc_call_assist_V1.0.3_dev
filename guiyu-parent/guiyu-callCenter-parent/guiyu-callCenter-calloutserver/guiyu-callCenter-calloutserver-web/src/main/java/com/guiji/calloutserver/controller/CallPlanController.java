@@ -103,6 +103,7 @@ public class CallPlanController implements ICallPlan {
         callOutPlan.setOrgCode(dispatchPlan.getOrgCode());
         callOutPlan.setBatchId(dispatchPlan.getBatchId());
         callOutPlan.setAgentGroupId(dispatchPlan.getAgentGroupId());
+        callOutPlan.setRemarks(dispatchPlan.getRemarks());
 
         return callOutPlan;
     }

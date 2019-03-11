@@ -95,7 +95,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Integer callMax = dto.getMaxRobotCount();
-								logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
+							//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}
@@ -107,7 +107,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
 								if(null != obj) {
-									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_ + user_id + templId :{}", JsonUtils.bean2Json(obj));
+									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
@@ -120,6 +120,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									BeanUtils.copyProperties(callBean, dispatchRedis);
 									callBean.setTempId(dispatchRedis.getRobot());
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
+									callBean.setRemarks(dispatchRedis.getAttach());
 									List<Integer> lines = new ArrayList<>();
 									for (DispatchLines line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
@@ -237,7 +238,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				}
 			}
 
-			logger.info("在忙机器人数:{},总共分配机器人数:{}", templateAssignAiNum, templateCfgAiNum);
+	//		logger.info("在忙机器人数:{},总共分配机器人数:{}", templateAssignAiNum, templateCfgAiNum);
 
 			if(templateAssignAiNum+1>templateCfgAiNum) {
 				logger.error("用户{}模板编号：{}配置的机器人数量{}即将超过了目前并发的数量{},无法继续分配拨打电话..",userId,templateId,templateCfgAiNum,templateAssignAiNum);
@@ -246,7 +247,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				bool = true;
 			}
 		}
-		logger.info("用户:{},模板:{}是否有机器人可用:{}",userId, templateId, bool);
+	//	logger.info("用户:{},模板:{}是否有机器人可用:{}",userId, templateId, bool);
 		return bool;
 	}
 

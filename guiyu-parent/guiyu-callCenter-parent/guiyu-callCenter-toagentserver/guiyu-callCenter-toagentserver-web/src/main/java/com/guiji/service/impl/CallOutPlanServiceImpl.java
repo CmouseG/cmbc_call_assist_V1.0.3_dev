@@ -91,6 +91,7 @@ public class CallOutPlanServiceImpl implements CallOutPlanService {
         callOutPlan.setAccurateIntent(request.getLabel());
         callOutPlanMapper.updateByPrimaryKey(callOutPlan);
         try {
+            log.info("前端修改意向標簽的時候將標簽同步到Dispatch");
             //同步修改的意向标签到Dispatch
             iDispatchPlanOut.updateLabelByUUID(request.getCallRecordId(), request.getLabel());
         } catch (Exception e){

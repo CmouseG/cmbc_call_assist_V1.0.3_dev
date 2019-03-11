@@ -76,44 +76,11 @@ public class FsBotHandler {
                 return;
             }
 
-            //判断当前队列是否处于可服务状态
-            if (!isQueueInService(event.getQueueId(), agents)) {
-                //TODO:如果当前没有座席处于服务状态，如何处理
-                log.warn("当前座席组无法接听电话，需要提示crm进行登录, queueId:[{}]", event.getQueueId());
-            }
-
             //将当前呼入电话转入座席组中
             fsManager.transferToAgentGroup(event.getUuid(), event.getCallerNum(), event.getQueueId().toString());
         }catch (Exception ex){
             log.warn("在处理channel_answer时出现异常", ex);
         }
-    }
-
-    //判断当前队列是否处于可服务器状态
-    private boolean isQueueInService(Long queueId, List<Agent> agents) {
-        for(Agent user: agents){
-            //需要满足座席处于签入状态，并且登录
-            if(user.getUserState() == EUserState.ONLINE.ordinal()){
-                if(user.getAnswerType() == EAnswerType.MOBILE.ordinal()){
-                    log.info("有座席处于在线，并且手机接听，则处于可服务状态, userId[{}]", user.getUserId());
-                    return true;
-                }else if(user.getAnswerType() == EAnswerType.WEB.ordinal()){
-                    //判断verto是否在线
-                    AgentInfo agent = fsManager.getAgent(user.getUserId().toString());
-                    if(agent.getState() == AgentState.CheckIn
-                           && agent.getState() == AgentState.InCall
-                            && agent.getState() == AgentState.InProgress){
-                        log.info("当前队列[{}]有座席[{}]verto处于登录状态，可以接听电话", queueId, user.getUserId());
-                        return true;
-                    }
-                }else{
-                    log.warn("未知的座席接听类型[{}]", user.getAnswerType());
-                }
-            }
-        }
-
-        log.info("队列[{}]目前没有可以接听电话的座席", queueId);
-        return false;
     }
 
     /**

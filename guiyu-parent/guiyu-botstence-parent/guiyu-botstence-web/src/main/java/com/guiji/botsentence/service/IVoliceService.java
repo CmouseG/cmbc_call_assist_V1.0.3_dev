@@ -75,7 +75,7 @@ public interface IVoliceService {
 	 * @param processId
 	 * @param inStream
 	 */
-	public String uploadOneVolice(String processId, String voliceId, InputStream inStream, String type, int times, String userId);
+	public String uploadOneVolice(String processId, String voliceId, File inStream, String type, int times, String userId);
 	
 	public String uploadOneVolice(String processId, String voliceId, MultipartFile multipartFile, String type, String userId) throws IOException;
 	

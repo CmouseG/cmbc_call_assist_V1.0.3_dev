@@ -230,6 +230,12 @@ public class VoliceServiceImpl implements IVoliceService {
 				BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
 				backExample.createCriteria().andProcessIdEqualTo(voliceInfo.getProcessId()).andVoliceIdEqualTo(voliceInfo.getVoliceId());
 				botSentenceTtsBackupMapper.deleteByExample(backExample);
+				
+				//判断新的文案是否和之前一样，如果不一样，则设置录音url为空
+				if(!oldContent.equals(voliceInfo.getContent())) {
+					logger.info("修改了文案，则更新当前录音的url为空");
+					voliceInfo.setVoliceUrl(null);
+				}
 			}
 			voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
 			voliceInfo.setLstUpdateUser(userId);
@@ -584,9 +590,7 @@ public class VoliceServiceImpl implements IVoliceService {
 				for (int i = 0; i < listFile.size(); i++) {
 					File temp = listFile.get(i);
 					if (!temp.isDirectory()) {
-						// listFile.remove(temp);
-						// ZipEntry entry = (ZipEntry)entries.nextElement();
-						InputStream entryInStream = new FileInputStream(temp);
+						//InputStream entryInStream = new FileInputStream(temp);
 						String name = temp.getName();
 
 						boolean needTts = false;
@@ -606,14 +610,14 @@ public class VoliceServiceImpl implements IVoliceService {
 
 						if (!"wav".equals(suffix)) {
 							formatFileList.add(name);
-							entryInStream.close();
+							//entryInStream.close();
 							continue;
 						}
 
 						long size = temp.length();
 						if (size > 1 * 1024 * 1024) {
 							sizeFileList.add(name);
-							entryInStream.close();
+							//entryInStream.close();
 							continue;
 							// throw new CommonException("序号"+voliceId+"文件大小超过1M,请您压缩后重新上传");
 						}
@@ -628,7 +632,8 @@ public class VoliceServiceImpl implements IVoliceService {
 							logger.error("获取录音时长异常...", e);
 						}
 						if (voliceIds.contains(voliceId)) {
-							String url = qiuniuUploadUtil.upload(entryInStream, null);
+							String url = BotSentenceUtil.updloadNas(processId, userId, temp);
+							//String url = qiuniuUploadUtil.upload(entryInStream, null);
 							
 							if (needTts) {
 								if (index > 0) {
@@ -696,7 +701,7 @@ public class VoliceServiceImpl implements IVoliceService {
 						} else {
 							notmatchFileList.add(name);
 						}
-						entryInStream.close();
+						//entryInStream.close();
 					}
 				}
 			}
@@ -1212,13 +1217,15 @@ public class VoliceServiceImpl implements IVoliceService {
 	}
 
 	@Override
-	public String uploadOneVolice(String processId, String voliceId, InputStream inStream, String type, int times, String userId) {
-		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
-		String keyName = "upload_by_template_gui/"
-				+ DateUtil.yyyyMMddHHmmss2.format(new Date(System.currentTimeMillis())) + "_" + process.getTemplateId()
-				+ ".wav";
+	public String uploadOneVolice(String processId, String voliceId, File file, String type, int times, String userId) {
+//		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
+//		String keyName = "upload_by_template_gui/"
+//				+ DateUtil.yyyyMMddHHmmss2.format(new Date(System.currentTimeMillis())) + "_" + process.getTemplateId()
+//				+ ".wav";
 		logger.info("开始上传录音 ");
-		String voliceUrl = qiuniuUploadUtil.upload(inStream, keyName);
+		
+		String voliceUrl = BotSentenceUtil.updloadNas(processId, userId, file);
+		//String voliceUrl = qiuniuUploadUtil.upload(inStream, keyName);
 
 		logger.info("上传录音成功: " + voliceUrl);
 		String voliceId2 = voliceId.split("_")[0];
@@ -1639,7 +1646,7 @@ public class VoliceServiceImpl implements IVoliceService {
 	@Override
 	public String uploadOneVolice(String processId, String voliceId, MultipartFile multipartFile, String type, String userId) throws IOException {
 		File dir = new File(tempPath);
-		File file = File.createTempFile(voliceId + "-" + String.valueOf(System.currentTimeMillis()), "wav", dir);
+		File file = File.createTempFile(voliceId + "-" + String.valueOf(System.currentTimeMillis()), ".wav", dir);
 		FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), file);
 		int times = 0;
 		try {
@@ -1650,13 +1657,15 @@ public class VoliceServiceImpl implements IVoliceService {
 			logger.error("获取录音时长异常...", e);
 		}
 		
-		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
-		String keyName = "upload_by_template_gui/"
-				+ DateUtil.yyyyMMddHHmmss2.format(new Date(System.currentTimeMillis())) + "_" + process.getTemplateId()
-				+ ".wav";
+		//BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
+//		String keyName = "upload_by_template_gui/"
+//				+ DateUtil.yyyyMMddHHmmss2.format(new Date(System.currentTimeMillis())) + "_" + process.getTemplateId()
+//				+ ".wav";
 		logger.info("开始上传录音 ");
 		String voliceUrl;
-		voliceUrl = qiuniuUploadUtil.upload(new FileInputStream(file), keyName);
+		voliceUrl = BotSentenceUtil.updloadNas(processId, userId, file);
+		
+		//voliceUrl = qiuniuUploadUtil.upload(new FileInputStream(file), keyName);
 
 		logger.info("上传录音成功: " + voliceUrl);
 		String voliceId2 = voliceId.split("_")[0];

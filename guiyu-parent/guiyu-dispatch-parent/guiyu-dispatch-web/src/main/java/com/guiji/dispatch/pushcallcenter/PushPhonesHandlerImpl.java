@@ -95,7 +95,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Integer callMax = dto.getMaxRobotCount();
-
+								logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}

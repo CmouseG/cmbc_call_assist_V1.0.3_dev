@@ -182,7 +182,9 @@ public class VoipGwController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryVoipPortForPage", method = RequestMethod.POST)
-	public Result.ReturnData<Page<VoipGwPortVO>> queryVoipPortForPage(@RequestBody VoipGwPortQueryCondition condition){
+	public Result.ReturnData<Page<VoipGwPortVO>> queryVoipPortForPage(
+			@RequestBody VoipGwPortQueryCondition condition,
+			@RequestHeader Long userId){
 		if(condition == null) {
 			condition = new VoipGwPortQueryCondition();
 		}
@@ -190,6 +192,10 @@ public class VoipGwController {
 			//默认查询正常数据
 			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
 		}
+		//临时
+		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
+		condition.setOrgCode(sysOrganization.getCode());
+		//
 		Page<VoipGwPortVO> portPage = voipGwManager.queryVoipGwPortListWrapForPage(condition);
 		return Result.ok(portPage);
 	}

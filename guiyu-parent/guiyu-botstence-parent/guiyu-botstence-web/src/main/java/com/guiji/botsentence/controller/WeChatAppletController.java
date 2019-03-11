@@ -128,7 +128,7 @@ public class WeChatAppletController {
 			throw new CommonException("用户账号为空");
 		}
 		
-		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(100, 1, null, userId, userId);
+		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(100, 1, null, userId, userId, null);
 		//List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessListByAccountNo(accountNo);
 		List<BotSentenceProcessVO> results = new ArrayList<>();
 		if(null != list) {

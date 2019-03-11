@@ -189,7 +189,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private boolean offline;
 	
 	@Override
-	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId) {
+	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state) {
 		
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String orgCode=data.getBody().getOrgCode();
@@ -198,6 +198,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		Criteria criteria = example.createCriteria();
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%" + templateName + "%");
+		}
+		
+		if(StringUtils.isNotBlank(state)) {
+			criteria.andStateEqualTo(state);
 		}
 		
 		criteria.andOrgCodeLike(orgCode+"%");
@@ -215,7 +219,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	}
 
 	@Override
-	public int countBotSentenceProcess(String templateName, String accountNo, String userId) {
+	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state) {
 
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String orgCode=data.getBody().getOrgCode();
@@ -225,6 +229,11 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		if(StringUtils.isNotBlank(templateName)) {
 			criteria.andTemplateNameLike("%" + templateName + "%");
 		}
+		
+		if(StringUtils.isNotBlank(state)) {
+			criteria.andStateEqualTo(state);
+		}
+		
 		criteria.andOrgCodeLike(orgCode+"%");
 		//criteria.andAccountNoEqualTo(String.valueOf(userId));
 		
@@ -1577,19 +1586,23 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		List<Long> intentIds = new ArrayList<>();
 		
 		//获取所有关键词库对应关键词集合
-		if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
-			for(BotSentenceIntentVO temp : commonDialog.getIntentList()) {
-				if(StringUtils.isNotBlank(commonDialog.getIntentDomain())) {
-					temp.setIntentDomain(commonDialog.getIntentDomain());
-				}else {
-					temp.setIntentDomain(commonDialog.getDomain());
+		if((!"失败邀约".equals(commonDialog.getYujin())) && (!"未识别".equals(commonDialog.getYujin())) 
+				&& !"出错".equals(commonDialog.getYujin()) && !"失败结束".equals(commonDialog.getYujin())
+				&& !"强制结束".equals(commonDialog.getYujin()) && !"结束_未匹配".equals(commonDialog.getYujin())) {
+			if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
+				for(BotSentenceIntentVO temp : commonDialog.getIntentList()) {
+					if(StringUtils.isNotBlank(commonDialog.getIntentDomain())) {
+						temp.setIntentDomain(commonDialog.getIntentDomain());
+					}else {
+						temp.setIntentDomain(commonDialog.getDomain());
+					}
+					if(null != temp.getId()) {
+						intentIds.add(new Long(temp.getId()));
+					}
 				}
-				if(null != temp.getId()) {
-					intentIds.add(new Long(temp.getId()));
-				}
+				//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
+				botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
 			}
-			//botSentenceKeyWordsValidateService.validateBusinessAskKeywords(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
-			botSentenceKeyWordsValidateService.validateBusinessAskKeywords2(commonDialog.getIntentList(), commonDialog.getProcessId(), intentIds);
 		}
 		
 		//没有文案的域

@@ -92,27 +92,13 @@ public class ModCallCenter {
      * @return
      */
     public Agent getAgent(String agentId){
-        Agent agent = callCenterConfig.getAgent(agentId);
         Agent rtAgent = callCenterApi.getAgent(agentId);
-        if(rtAgent!=null){
-            agent.setStatus(rtAgent.getStatus());
-            agent.setState(rtAgent.getState());
-        }
-        return agent;
+        return rtAgent;
     }
 
     public List<Agent> getAllAgents(){
-        List<Agent> agents = callCenterConfig.getAllAgents();
         List<Agent> rtAgents = callCenterApi.getAllAgents();
-        for(Agent agent: agents){
-            for(Agent rta: rtAgents){
-                if(agent.getAgentId().equals(rta.getAgentId())){
-                    agent.setStatus(rta.getStatus());
-                    agent.setState(rta.getState());
-                }
-            }
-        }
-        return agents;
+        return rtAgents;
     }
 
     public boolean addTier(Tier tier){

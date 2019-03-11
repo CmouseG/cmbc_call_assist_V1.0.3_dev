@@ -81,13 +81,13 @@ public class BotSentenceProcessController {
 	 * @param accountNo
 	 */
 	@RequestMapping(value="queryBotSentenceProcessListByPage")
-	public ServerResult<Page<BotSentenceProcessVO>> queryBotSentenceProcessListByPage(@JsonParam int pageSize, @JsonParam int pageNo, @JsonParam String templateName, @JsonParam String accountNo, @RequestHeader String userId) {
+	public ServerResult<Page<BotSentenceProcessVO>> queryBotSentenceProcessListByPage(@JsonParam int pageSize, @JsonParam int pageNo, @JsonParam String templateName, @JsonParam String accountNo, @RequestHeader String userId, @JsonParam String state) {
 		Page<BotSentenceProcessVO> page = new Page<BotSentenceProcessVO>();
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
-		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(pageSize, pageNo, templateName, accountNo, userId);
+		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(pageSize, pageNo, templateName, accountNo, userId, state);
 		
-		int totalNum = botSentenceProcessService.countBotSentenceProcess(templateName, accountNo, userId);
+		int totalNum = botSentenceProcessService.countBotSentenceProcess(templateName, accountNo, userId, state);
 		if(null != list) {
 			
 			List<BotSentenceProcessVO> results = new ArrayList<>();

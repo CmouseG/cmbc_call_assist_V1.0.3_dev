@@ -227,7 +227,7 @@ public class OrganizationService {
 	 * @return
 	 */
 	public List<BotSentenceTemplateTradeVO> getIndustrysByOrgCode(String orgCode) {
-		ServerResult<List<BotSentenceTemplateTradeVO>> botSentenceTemplateTradeVOList = botSentenceTradeService.queryTradeListByOrgCode(sysOrganizationMapper.getIndustryByOrgCode(orgCode));
+		ServerResult<List<BotSentenceTemplateTradeVO>> botSentenceTemplateTradeVOList = botSentenceTradeService.queryTradeListByTradeIdList(sysOrganizationMapper.getIndustryByOrgCode(orgCode));
 		return botSentenceTemplateTradeVOList.getData();
 	}
 

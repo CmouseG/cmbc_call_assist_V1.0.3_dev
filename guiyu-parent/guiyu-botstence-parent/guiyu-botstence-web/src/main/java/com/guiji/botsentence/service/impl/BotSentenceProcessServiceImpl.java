@@ -1586,9 +1586,18 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		List<Long> intentIds = new ArrayList<>();
 		
 		//获取所有关键词库对应关键词集合
-		if((!"失败邀约".equals(commonDialog.getYujin())) && (!"未识别".equals(commonDialog.getYujin())) 
-				&& !"出错".equals(commonDialog.getYujin()) && !"失败结束".equals(commonDialog.getYujin())
-				&& !"强制结束".equals(commonDialog.getYujin()) && !"结束_未匹配".equals(commonDialog.getYujin())) {
+		
+		//不需要校验关键词的域
+		List<String> notValidateList = new ArrayList<>();
+		notValidateList.add("失败邀约");
+		notValidateList.add("未识别");
+		notValidateList.add("出错");
+		notValidateList.add("失败结束");
+		notValidateList.add("强制结束");
+		notValidateList.add("结束_未匹配");
+		
+		
+		if(!notValidateList.contains(commonDialog.getYujin())) {
 			if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
 				for(BotSentenceIntentVO temp : commonDialog.getIntentList()) {
 					if(StringUtils.isNotBlank(commonDialog.getIntentDomain())) {
@@ -1700,16 +1709,19 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		
 		
-		//更新branch
-		if(null != branch) {
-			if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
-				//新增意图
-				String intentIds2 = botSentenceKeyWordsService.saveIntent(branch.getDomain(), branch.getProcessId(), branch.getTemplateId(), commonDialog.getIntentList(), "00", branch, userId);
-				branch.setIntents(intentIds2);
-			}else {
-				branch.setIntents(null);
+		//更新branch的意图
+		if(!notValidateList.contains(commonDialog.getYujin())) {
+			if(null != branch) {
+				if(null != commonDialog.getIntentList() && commonDialog.getIntentList().size() > 0) {
+					//新增意图
+					String intentIds2 = botSentenceKeyWordsService.saveIntent(branch.getDomain(), branch.getProcessId(), branch.getTemplateId(), commonDialog.getIntentList(), "00", branch, userId);
+					branch.setIntents(intentIds2);
+				}else {
+					branch.setIntents(null);
+				}
 			}
 		}
+		
 		branch.setLstUpdateTime(new Date(System.currentTimeMillis()));
 		branch.setLstUpdateUser(userId);
 		botSentenceBranchMapper.updateByPrimaryKey(branch);

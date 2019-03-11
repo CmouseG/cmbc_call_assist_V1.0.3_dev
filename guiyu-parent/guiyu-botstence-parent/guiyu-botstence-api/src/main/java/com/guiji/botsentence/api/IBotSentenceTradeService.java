@@ -24,7 +24,7 @@ public interface IBotSentenceTradeService {
 	 * @return
 	 */
 	@RequestMapping(value = "/botsentenceServer/queryTradeListByTradeIdList")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeListByOrgCode(@RequestParam("tradeIdList")List<String> tradeIdList);
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeListByTradeIdList(@RequestParam("tradeIdList")List<String> tradeIdList);
 	
 	/**
 	 * 根据行业ID查询行业名称

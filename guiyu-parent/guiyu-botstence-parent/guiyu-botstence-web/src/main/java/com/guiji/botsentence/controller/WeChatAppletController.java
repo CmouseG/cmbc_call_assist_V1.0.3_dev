@@ -315,7 +315,8 @@ public class WeChatAppletController {
 						logger.error("获取录音时长异常...", e);
 					}
 					
-					voliceUrl = service.uploadOneVolice(processId, voliceId, in, type, times, userId);
+					//voliceUrl = service.uploadOneVolice(processId, voliceId, in, type, times, userId);
+					voliceUrl = service.uploadOneVolice(processId, voliceId, wavFile, type, times, userId);
 					in.close();
 					inputStream.close();
 					mp3File.delete();

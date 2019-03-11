@@ -95,7 +95,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Integer callMax = dto.getMaxRobotCount();
-
+								logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}
@@ -211,6 +211,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	 * @return true : 有可用机器人，可以继续拨打电话
 	 */
 	public boolean checkUserAvailableRobot(String userId,String templateId) {
+		boolean bool = false;
 		if(StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(templateId)) {
 			//用户资源
 			UserResourceCache userResource = getUserResource(userId);
@@ -235,14 +236,18 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					}
 				}
 			}
+
+			logger.info("在忙机器人数:{},总共分配机器人数:{}", templateAssignAiNum, templateCfgAiNum);
+
 			if(templateAssignAiNum+1>templateCfgAiNum) {
 				logger.error("用户{}模板编号：{}配置的机器人数量{}即将超过了目前并发的数量{},无法继续分配拨打电话..",userId,templateId,templateCfgAiNum,templateAssignAiNum);
-				return false;
+				bool = false;
 			}else {
-				return true;
+				bool = true;
 			}
 		}
-		return false;
+		logger.info("用户:{},模板:{}是否有机器人可用:{}",userId, templateId, bool);
+		return bool;
 	}
 
 	/**

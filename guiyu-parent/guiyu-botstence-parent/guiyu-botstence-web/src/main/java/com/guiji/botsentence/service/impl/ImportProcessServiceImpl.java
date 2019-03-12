@@ -871,73 +871,78 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		// 插入enter_branch
 		String enter = importDomainVO.getEnter();
 		if (StringUtils.isNotBlank(enter)) {
-			String response = "";
-			if (enter.startsWith("[")) {
-				enter = enter.replace("[", "").replace("]", "");
-			}
-			if (StringUtils.isNotBlank(enter)) {
-				String[] enters = enter.split("\",\"");
-				for (String enterResp : enters) {
-					if (StringUtils.isNotBlank(enterResp)) {
-						responseMap.put(getId(enterResp), getRespContent(enterResp));
-						response = response+getId(enterResp)+",";
-					}
-				}
+			if("[]".equals(enter)) {
 				BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
 				botSentenceBranch.setBranchName("enter_branch");
 				botSentenceBranch.setDomain(domainName);
 				botSentenceBranch.setProcessId(processId);
 				botSentenceBranch.setTemplateId(templateId);
-				botSentenceBranch.setResponse(response);
+				//botSentenceBranch.setResponse();
 				botSentenceBranch.setCrtTime(date);
 				botSentenceBranch.setCrtUser(userId);
 				branchList.add(botSentenceBranch);
+			}else {
+				String response = "";
+				if (enter.startsWith("[")) {
+					enter = enter.replace("[", "").replace("]", "");
+				}
+				if (StringUtils.isNotBlank(enter)) {
+					String[] enters = enter.split("\",\"");
+					for (String enterResp : enters) {
+						if (StringUtils.isNotBlank(enterResp)) {
+							responseMap.put(getId(enterResp), getRespContent(enterResp));
+							response = response+getId(enterResp)+",";
+						}
+					}
+					BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
+					botSentenceBranch.setBranchName("enter_branch");
+					botSentenceBranch.setDomain(domainName);
+					botSentenceBranch.setProcessId(processId);
+					botSentenceBranch.setTemplateId(templateId);
+					botSentenceBranch.setResponse(response);
+					botSentenceBranch.setCrtTime(date);
+					botSentenceBranch.setCrtUser(userId);
+					branchList.add(botSentenceBranch);
+				}
 			}
-		}else {
-			BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
-			botSentenceBranch.setBranchName("enter_branch");
-			botSentenceBranch.setDomain(domainName);
-			botSentenceBranch.setProcessId(processId);
-			botSentenceBranch.setTemplateId(templateId);
-			botSentenceBranch.setResponse("[]");
-			botSentenceBranch.setCrtTime(date);
-			botSentenceBranch.setCrtUser(userId);
-			branchList.add(botSentenceBranch);
+			
 		}
 		// 插入failed_enter_branch
 		String failEnter = importDomainVO.getFailed_enter();
 		if (StringUtils.isNotBlank(failEnter)) {
-			String responseFail = "";
-			if (failEnter.startsWith("[")) {
-				failEnter = failEnter.replace("[", "").replace("]", "");
-			}
-			if (StringUtils.isNotBlank(failEnter)) {
-				String[] entersfail = failEnter.split("\",\"");
-				for (String enterRespFail : entersfail) {
-					if (StringUtils.isNotBlank(enterRespFail)) {
-						responseMap.put(getId(enterRespFail), getRespContent(enterRespFail));
-						responseFail = responseFail+getId(enterRespFail)+",";
-					}
+			if("[]".equals(failEnter)) {
+				BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
+				botSentenceBranch.setBranchName("failed_enter_branch");
+				botSentenceBranch.setDomain(domainName);
+				botSentenceBranch.setProcessId(processId);
+				botSentenceBranch.setTemplateId(templateId);
+				//botSentenceBranch.setResponse("[]");
+				botSentenceBranch.setCrtTime(date);
+				botSentenceBranch.setCrtUser(userId);
+				branchList.add(botSentenceBranch);
+			}else {
+				String responseFail = "";
+				if (failEnter.startsWith("[")) {
+					failEnter = failEnter.replace("[", "").replace("]", "");
 				}
-				BotSentenceBranch botSentenceBranchFail = new BotSentenceBranch();
-				botSentenceBranchFail.setBranchName("failed_enter_branch");
-				botSentenceBranchFail.setDomain(domainName);
-				botSentenceBranchFail.setProcessId(processId);
-				botSentenceBranchFail.setResponse(responseFail);
-				botSentenceBranchFail.setCrtTime(date);
-				botSentenceBranchFail.setCrtUser(userId);
-				branchList.add(botSentenceBranchFail);
+				if (StringUtils.isNotBlank(failEnter)) {
+					String[] entersfail = failEnter.split("\",\"");
+					for (String enterRespFail : entersfail) {
+						if (StringUtils.isNotBlank(enterRespFail)) {
+							responseMap.put(getId(enterRespFail), getRespContent(enterRespFail));
+							responseFail = responseFail+getId(enterRespFail)+",";
+						}
+					}
+					BotSentenceBranch botSentenceBranchFail = new BotSentenceBranch();
+					botSentenceBranchFail.setBranchName("failed_enter_branch");
+					botSentenceBranchFail.setDomain(domainName);
+					botSentenceBranchFail.setProcessId(processId);
+					botSentenceBranchFail.setResponse(responseFail);
+					botSentenceBranchFail.setCrtTime(date);
+					botSentenceBranchFail.setCrtUser(userId);
+					branchList.add(botSentenceBranchFail);
+				}
 			}
-		}else {
-			BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
-			botSentenceBranch.setBranchName("failed_enter_branch");
-			botSentenceBranch.setDomain(domainName);
-			botSentenceBranch.setProcessId(processId);
-			botSentenceBranch.setTemplateId(templateId);
-			botSentenceBranch.setResponse("[]");
-			botSentenceBranch.setCrtTime(date);
-			botSentenceBranch.setCrtUser(userId);
-			branchList.add(botSentenceBranch);
 		}
 
 		// 插入其他branch

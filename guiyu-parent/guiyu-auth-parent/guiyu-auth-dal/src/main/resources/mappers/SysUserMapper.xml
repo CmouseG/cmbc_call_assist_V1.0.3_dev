@@ -532,7 +532,7 @@
       and username=#{userName}
     </if>
     <if test="orgCode != null ">
-      and (org_code = #{orgCode} or org_code like CONCAT(#{orgCode},'.%'))
+      and (org_code = #{orgCode} or org_code like CONCAT(#{orgCode},'%'))
     </if>
   </select>
 
@@ -545,7 +545,7 @@
     LEFT JOIN sys_role c on c.id=b.role_id
     LEFT JOIN sys_user_login_record d on d.user_id=a.id
     left join sys_user e on e.id=a.create_id
-    left join sys_organization f on (case b.role_id when 4 then f.code=LEFT(a.org_code, LENGTH(a.org_code) - LOCATE('.', REVERSE(a.org_code))) else f.code= a.org_code end)
+    left join sys_organization f on (case when b.role_id in(4,5) then f.code=LEFT(left(a.org_code,length(a.org_code)-1), LENGTH(left(a.org_code,length(a.org_code)-1)) - LOCATE('.', REVERSE(left(a.org_code,length(a.org_code)-1)))) else f.code= left(a.org_code,length(a.org_code)-1) end)
     where a.del_flag=0
     <if test="userName != '' ">
       and a.username like concat(#{userName},'%')
@@ -554,7 +554,7 @@
       and c.id like concat('%',#{roleId},'%')
     </if>
     <if test="orgCode != null ">
-      and (a.org_code = #{orgCode} or a.org_code like CONCAT(#{orgCode},'.%'))
+      and (a.org_code = #{orgCode} or a.org_code like CONCAT(#{orgCode},'%'))
     </if>
     order by a.create_time desc
     LIMIT ${(pageNo-1)*pageSize},#{pageSize}
@@ -575,7 +575,7 @@
     a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
     a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,a.start_time as startTime,b.`name` as orgName,a.is_desensitization as isDesensitization
     from sys_user a
-    LEFT JOIN sys_organization b on a.org_code=b.`code`
+    LEFT JOIN sys_organization b on left(a.org_code,length(a.org_code)-1)=b.`code`
     where a.id=#{userId}
   </select>
 
@@ -588,7 +588,7 @@
     LEFT JOIN sys_role c on c.id=b.role_id
     LEFT JOIN sys_user_login_record d on d.user_id=a.id
     left join sys_user e on e.id=a.create_id
-    left join sys_organization f on (case b.role_id when 4 then f.code=LEFT(a.org_code, LENGTH(a.org_code) - LOCATE('.', REVERSE(a.org_code))) else f.code= a.org_code end)
+    left join sys_organization f on (case when b.role_id in(4,5) then f.code=LEFT(left(a.org_code,length(a.org_code)-1), LENGTH(left(a.org_code,length(a.org_code)-1)) - LOCATE('.', REVERSE(left(a.org_code,length(a.org_code)-1)))) else f.code= left(a.org_code,length(a.org_code)-1) end)
     where a.del_flag=0
     <if test="userName != '' ">
       and a.username like concat('%',#{userName},'%')

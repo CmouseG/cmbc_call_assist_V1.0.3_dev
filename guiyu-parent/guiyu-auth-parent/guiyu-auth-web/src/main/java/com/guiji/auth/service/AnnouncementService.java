@@ -93,6 +93,7 @@ public class AnnouncementService {
                 HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
                 map.put("keyword2",new SendMsgReqVO.Item(NoticeType.announcement.getDesc(),null));
                 map.put("keyword3",new SendMsgReqVO.Item(content,null));
+                map.put("userName",new SendMsgReqVO.Item(content,null));
                 messageSend.setWeixinData(map);
                 noticeSend.sendMessage(messageSend);
             }

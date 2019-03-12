@@ -131,6 +131,13 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getIsRead())) {
             criteria.andIsreadEqualTo(Integer.valueOf(callOutPlanQueryEntity.getIsRead()));
         }
+        if (callOutPlanQueryEntity.getIntervened()!=null) {
+            if(callOutPlanQueryEntity.getIntervened().equals("1")){
+                criteria.andIntervenedEqualTo(true);
+            }else if(callOutPlanQueryEntity.getIntervened().equals("0")){
+                criteria.andIntervenedEqualTo(false);
+            }
+        }
         criteria.andIsdelEqualTo(0);
         criteria.andCallStateGreaterThanOrEqualTo(Constant.CALLSTATE_HANGUP_OK);
         return example;

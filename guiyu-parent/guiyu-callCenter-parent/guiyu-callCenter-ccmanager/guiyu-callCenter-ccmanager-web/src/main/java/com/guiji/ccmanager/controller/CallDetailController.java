@@ -139,7 +139,8 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
+            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "intervened", value = "是否已介入，0:未介入,1:已介入,不传或其他值则是全部", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,

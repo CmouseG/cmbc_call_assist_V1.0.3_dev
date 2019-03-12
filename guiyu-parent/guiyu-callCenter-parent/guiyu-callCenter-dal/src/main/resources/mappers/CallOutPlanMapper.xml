@@ -144,7 +144,7 @@
         customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time,
         agent_channel_uuid, agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
-        accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,
+        accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,intervened,
         isdel, isread
         from call_out_plan
         <if test="_parameter != null" >

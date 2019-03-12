@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.CallPlanExportMapper" >
+
+    <select id="selectExportCallPlanDetail"  resultType="com.guiji.callcenter.dao.entityext.CallOutPlanRegistration" >
+        select
+            a.call_id as callId,
+        <if test="isDesensitization == 1" >
+            a.phone_num as phoneNum,
+        </if>
+        <if test="isDesensitization == 0" >
+            REPLACE(a.phone_num, SUBSTR(a.phone_num,4,4), '****') as phoneNum,
+        </if>
+
+            a.customer_id as customerId , a.temp_id as tempId,  a.agent_answer_time as agentAnswerTime,
+            a.agent_start_time as agentStartTime, a.create_time as createTime, ifnull(a.call_start_time,a.create_time) as callStartTime,
+            a.hangup_time as hangupTime, a.answer_time as answerTime, a.duration, a.bill_sec as billSec,
+            a.accurate_intent as accurateIntent, a.reason, a.hangup_code as hangupCode, a.remarks, a.freason,
+            b.customer_addr as customerAddr, b.customer_mobile as customerMobile, b.customer_name as customerName ,b.remark
+            from call_out_plan a
+            left join registration b on a.plan_uuid = b.plan_uuid
+
+            where
+            a.call_id in
+        <foreach collection="callIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+            order by a.create_time desc
+
+    </select>
+
+</mapper>

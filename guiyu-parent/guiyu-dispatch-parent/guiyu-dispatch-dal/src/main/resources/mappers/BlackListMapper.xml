@@ -374,7 +374,7 @@
 				AND phone = #{black.phone}
 			</if>
 			<if test="black.orgCode != null and black.orgCode != ''" >
-				AND (org_code = #{black.orgCode} OR org_code LIKE CONCAT(#{black.orgCode}, '.%'))
+				AND (org_code = #{black.orgCode} OR org_code LIKE CONCAT(#{black.orgCode}, '%'))
 			</if>
 			<if test="black.status != null">
 				AND status = #{black.status}
@@ -403,7 +403,7 @@
 				AND phone = #{black.phone}
 			</if>
 			<if test="black.orgCode != null and black.orgCode != ''" >
-				AND (org_code = #{black.orgCode} OR org_code LIKE CONCAT(#{black.orgCode}, '.%'))
+				AND (org_code = #{black.orgCode} OR org_code LIKE CONCAT(#{black.orgCode}, '%'))
 			</if>
 			<if test="black.status != null">
 				AND status = #{black.status}

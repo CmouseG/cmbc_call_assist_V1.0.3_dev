@@ -924,7 +924,7 @@
     WHERE is_del = 0
     <if test="plan != null">
       <if test="plan.orgCode != null">
-        AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '.%'))
+        AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '%'))
       </if>
     </if>
     <if test="beginDate != null and endDate != null">

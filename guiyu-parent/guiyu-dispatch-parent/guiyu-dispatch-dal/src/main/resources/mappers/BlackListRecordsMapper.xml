@@ -261,7 +261,7 @@
         AND phone = #{blackRecord.phone}
       </if>
       <if test="blackRecord.orgCode != null and blackRecord.orgCode != ''" >
-        AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '.%'))
+        AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '%'))
       </if>
     </if>
     <if test="page != null and page.isPage ">
@@ -290,7 +290,7 @@
           AND phone = #{blackRecord.phone}
         </if>
         <if test="blackRecord.orgCode != null and blackRecord.orgCode != ''" >
-          AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '.%'))
+          AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '%'))
         </if>
       </if>
   </select>

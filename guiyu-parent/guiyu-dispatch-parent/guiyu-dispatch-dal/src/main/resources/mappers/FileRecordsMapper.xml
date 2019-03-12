@@ -461,7 +461,7 @@
           AND batch_name LIKE CONCAT('%',#{record.batchName},'%')
         </if>
         <if test="record.orgCode != null and record.orgCode != ''" >
-          AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '.%'))
+          AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '%'))
         </if>
         <if test="record.status != null">
           AND status = #{record.status}
@@ -491,7 +491,7 @@
         AND batch_name LIKE CONCAT('%',#{record.batchName},'%')
       </if>
       <if test="record.orgCode != null and record.orgCode != ''" >
-        AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '.%'))
+        AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '%'))
       </if>
       <if test="record.status != null">
         AND status = #{record.status}

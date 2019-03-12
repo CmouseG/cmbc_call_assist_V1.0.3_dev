@@ -67,6 +67,8 @@ public class UserService {
 			String orgCode = organizationService.getSubOrgCode(user.getOrgCode());
 			user.setOrgCode(orgCode);
 		}
+
+		user.setOrgCode(user.getOrgCode() + ".");
 		user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
 		mapper.insertSelective(user);
@@ -132,9 +134,9 @@ public class UserService {
 			List<SysRole> sysRoleList = mapper.getRoleByUserId(userId);
 			String orgCode = null;
 			if (sysUser != null) {
-				orgCode = sysUser.getOrgCode();
+				orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
 				if (sysRoleList != null && sysRoleList.size() > 0 && (sysRoleList.get(0).getId() == 4 || sysRoleList.get(0).getId() == 5)) {
-					orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
+					orgCode = orgCode.substring(0,orgCode.lastIndexOf("."));
 				}
 				sysOrganization = organizationService.getOrgByCode(orgCode);
 				//根据组织查询产品系列

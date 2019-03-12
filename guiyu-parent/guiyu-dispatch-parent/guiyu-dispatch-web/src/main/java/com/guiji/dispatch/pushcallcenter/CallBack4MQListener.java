@@ -62,16 +62,18 @@ public class CallBack4MQListener {
 		re.setCallbackStatus(Constant.CALLBACKED);
 		int result = recordMapper.updateByExampleSelective(re, ex);
 		if (result > 0) {
-			String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT+mqSuccPhoneDto.getUserId()+"_"+mqSuccPhoneDto.getTempId();
-			Integer currentCount = (Integer) redisUtil.get(queueCount);
-			if (currentCount > 0) {
+			try {
+				String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
+				Integer currentCount = (Integer) redisUtil.get(queueCount);
+				if (currentCount > 0) {
 //				currentCount = currentCount - 1;
 //				redisUtil.set(queueCount, currentCount);
-				redisUtil.decr(queueCount, 1);
-				redisUtil.expire(queueCount, 300);
+					redisUtil.decr(queueCount, 1);
+					redisUtil.expire(queueCount, 300);
+				}
+			}catch(Exception e){
+				logger.error("计算器异常", e);
 			}
-
-
 		}
 	}
 

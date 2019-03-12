@@ -21,7 +21,7 @@
         AND r.user_charging_id = t.user_charging_id
         AND r.oper_duration <![CDATA[ > ]]> 0
         <if test="orgCode != null">
-          AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+          AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
         </if>
         <if test="operUserId != null">
           AND r.oper_user_id = #{operUserId}
@@ -58,7 +58,7 @@
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
           <if test="orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
           </if>
           <if test="operUserId != null">
             AND r.oper_user_id = #{operUserId}
@@ -92,7 +92,7 @@
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
           <if test="orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
           </if>
           <if test="operUserId != null">
             AND r.oper_user_id = #{operUserId}
@@ -129,7 +129,7 @@
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
           <if test="orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'%') )
           </if>
           <if test="operUserId != null">
             AND r.oper_user_id = #{operUserId}

@@ -65,6 +65,7 @@ public class AssistCallController implements IAssistCall {
         callPlan.setCallId(bigInteCallId);
         callPlan.setAgentStartTime(new Date());
         callPlan.setCallState(ECallState.to_agent.ordinal());
+        callPlan.setIntervened(true); //已介入
         callOutPlanService.update(callPlan);
 
         String toAgentFs = toAgentManager.findToAgentFsAdder();
@@ -105,6 +106,7 @@ public class AssistCallController implements IAssistCall {
         callPlan.setCallId(bigInteCallId);
         callPlan.setAgentStartTime(new Date());
         callPlan.setCallState(ECallState.to_agent.ordinal());
+        callPlan.setIntervened(true); //已介入
         callOutPlanService.update(callPlan);
 
         String toAgentFs = toAgentManager.findToAgentFsAdder();

@@ -2,6 +2,7 @@ package com.guiji.ccmanager.service.impl;
 
 import com.guiji.callcenter.dao.*;
 import com.guiji.callcenter.dao.entity.*;
+import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.entity.CallOutPlanQueryEntity;
 import com.guiji.ccmanager.manager.CacheManager;
@@ -50,6 +51,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     CallOutDetailLogMapper callOutDetailLogMapper;
     @Autowired
     AgentMapper agentMapper;
+    @Autowired
+    CallPlanExportMapper callPlanExportMapper;
 
     @Override
     public void updateIsRead(String callId) {
@@ -416,35 +419,20 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin, Integer isDesensitization) {
+    public List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin, Integer isDesensitization) {
 
-        String customerId = String.valueOf(userID);
-        List<CallOutPlan> list;
-        CallOutPlanExample example = new CallOutPlanExample();
-        example.createCriteria().andCallIdIn(idList);
-        example.setOrderByClause("create_time desc");
-//        if(isSuperAdmin || authService.isAgent(Long.valueOf(customerId))){
-        example.setIsDesensitization(isDesensitization);
-        list = callOutPlanMapper.selectByExample4Encrypt(example);
-//        }else{
-//            list = callOutPlanMapper.selectByExample(example);
-//        }
-
-        List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
+        List<CallOutPlanRegistration> list = callPlanExportMapper.selectExportCallPlanDetail(idList,isDesensitization);
 
         if (list != null && list.size() > 0) {
-            for (CallOutPlan callOutPlan : list) {
-                CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
-                BeanUtil.copyProperties(callOutPlan, callOutPlan4ListSelect);
+            for (CallOutPlanRegistration callOutPlanRegistration : list) {
 
-                callOutPlan4ListSelect.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
-                callOutPlan4ListSelect.setUserName(cacheManager.getUserName(callOutPlan.getCustomerId()));
-                callOutPlan4ListSelect.setCallId(callOutPlan.getCallId().toString());
-                listResult.add(callOutPlan4ListSelect);
+                Integer customerId = callOutPlanRegistration.getCustomerId();
+                String tempId = callOutPlanRegistration.getTempId();
+                callOutPlanRegistration.setTempId(cacheManager.getTempName(tempId));
+                callOutPlanRegistration.setUserName(cacheManager.getUserName(customerId));
             }
         }
-
-        return listResult;
+        return list;
     }
 
     @Override

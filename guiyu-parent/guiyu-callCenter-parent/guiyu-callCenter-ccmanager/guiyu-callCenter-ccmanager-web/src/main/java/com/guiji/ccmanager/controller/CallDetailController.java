@@ -2,6 +2,7 @@ package com.guiji.ccmanager.controller;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
 import com.guiji.ccmanager.api.ICallPlanDetail;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.AuthService;
@@ -323,7 +324,7 @@ public class CallDetailController implements ICallPlanDetail {
         }
         //生成文件
         Map<String,String> map = callDetailService.getDialogues(idList);
-        List<CallOutPlan4ListSelect> listPlan = callDetailService.getCallPlanList(idList,userId,isSuperAdmin,isDesensitization);
+        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList,userId,isSuperAdmin,isDesensitization);
 
         if(listPlan==null || listPlan.size()==0){
             return "无通话记录";
@@ -355,7 +356,7 @@ public class CallDetailController implements ICallPlanDetail {
         return  null;
     }
 
-    public void generateExcelList(OutputStream out, List<CallOutPlan4ListSelect> listPlan ,Map<String,String> map) throws IOException, WriteException {
+    public void generateExcelList(OutputStream out, List<CallOutPlanRegistration> listPlan ,Map<String,String> map) throws IOException, WriteException {
         WritableWorkbook wb = Workbook.createWorkbook(out);
 
         WritableSheet sheet =  wb.createSheet("sheet1",0);
@@ -375,6 +376,8 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.setColumnView(8, 10);
         sheet.setColumnView(9, 10);
         sheet.setColumnView(10, 100);
+        sheet.setColumnView(11, 20);
+        sheet.setColumnView(12, 20);
         sheet.addCell(new Label(0, 0 , "被叫电话",format));
         sheet.addCell(new Label(1, 0 , "意向标签",format));
         sheet.addCell(new Label(2, 0 , "意向备注",format));
@@ -386,10 +389,12 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.addCell(new Label(8, 0 , "拨打时长",format));
         sheet.addCell(new Label(9, 0 , "接听时长",format));
         sheet.addCell(new Label(10, 0 , "通话记录",format));
+        sheet.addCell(new Label(11, 0 , "客户信息",format));
+        sheet.addCell(new Label(12, 0 , "登记历史",format));
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(int i=1;i<=listPlan.size();i++){
-            CallOutPlan4ListSelect callPlan = listPlan.get(i-1);
+            CallOutPlanRegistration callPlan = listPlan.get(i-1);
             sheet.addCell(new Label(0, i , callPlan.getPhoneNum(),format));
             sheet.addCell(new Label(1, i , callPlan.getAccurateIntent(),format));
             sheet.addCell(new Label(2, i , callPlan.getReason(),format));
@@ -400,7 +405,24 @@ public class CallDetailController implements ICallPlanDetail {
             sheet.addCell(new Label(7, i , callPlan.getUserName(),format));
             sheet.addCell(new Label(8, i , callPlan.getDuration()!=null? DateUtils.secondToTime(callPlan.getDuration()): "",format));
             sheet.addCell(new Label(9, i , callPlan.getBillSec()!=null? DateUtils.secondToTime(callPlan.getBillSec()): "",format));
-            sheet.addCell(new Label(10, i , map.get(callPlan.getCallId()),format));
+            sheet.addCell(new Label(10, i , map.get(callPlan.getCallId().toString()),format));
+
+            sheet.addCell(new Label(11, i , callPlan.getRemarks()!=null ? callPlan.getRemarks() : "暂无信息",format));
+
+            String registration = "";
+            if(callPlan.getCustomerName()!=null){
+                registration += "客户姓名："+callPlan.getCustomerName() +"\r\n";
+            }
+            if(callPlan.getCustomerMobile()!=null){
+                registration += "客户电话："+callPlan.getCustomerMobile()+"\r\n";
+            }
+            if(callPlan.getCustomerAddr()!=null){
+                registration += "客户地址："+callPlan.getCustomerAddr();
+            }
+            if(registration.equals("")){
+                registration = "暂无信息";
+            }
+            sheet.addCell(new Label(12, i , registration,format));
         }
 
         wb.write();

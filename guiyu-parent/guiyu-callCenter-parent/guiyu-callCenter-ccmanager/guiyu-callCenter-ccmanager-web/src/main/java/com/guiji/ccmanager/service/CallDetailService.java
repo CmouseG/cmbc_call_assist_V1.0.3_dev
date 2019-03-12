@@ -2,6 +2,7 @@ package com.guiji.ccmanager.service;
 
 import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.callcenter.dao.entity.CallOutRecord;
+import com.guiji.callcenter.dao.entityext.CallOutPlanRegistration;
 import com.guiji.ccmanager.vo.*;
 
 import java.math.BigInteger;
@@ -46,5 +47,5 @@ public interface CallDetailService {
 
     List<CallOutPlan> getCallRecordListByPhone(String phone);
 
-    List<CallOutPlan4ListSelect> getCallPlanList(List<BigInteger> callIds, Long userId, Boolean isSuperAdmin, Integer isDesensitization);
+    List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> callIds, Long userId, Boolean isSuperAdmin, Integer isDesensitization);
 }

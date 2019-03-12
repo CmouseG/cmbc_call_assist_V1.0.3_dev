@@ -5,12 +5,14 @@ import com.guiji.callcenter.dao.LineConfigMapper;
 import com.guiji.callcenter.dao.entity.LineConfig;
 import com.guiji.callcenter.dao.entity.LineConfigExample;
 import com.guiji.callcenter.fsmanager.config.Constant;
+import com.guiji.callcenter.fsmanager.config.FsmanagerExceptionEnum;
 import com.guiji.callcenter.fsmanager.config.GatewayConfig;
 import com.guiji.callcenter.fsmanager.entity.DialplanVO;
 import com.guiji.callcenter.fsmanager.entity.GatewayVO;
 import com.guiji.callcenter.fsmanager.manager.EurekaManager;
 import com.guiji.callcenter.fsmanager.service.LineService;
 import com.guiji.callcenter.fsmanager.util.XmlUtil;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ILineOperate;
 import com.guiji.fsmanager.entity.LineInfoVO;
@@ -346,11 +348,16 @@ public class LineServiceImpl implements LineService {
         List<String> serverList =  eurekaManager.getInstances(Constant.SERVER_NAME_FSAGENT);
         for(String server:serverList){
             ILineOperate lineOperateApi = FeignBuildUtil.feignBuilderTarget(ILineOperate.class,Constant.PROTOCOL +server);
-            //调用fsagent通知更新接口
-            Result.ReturnData<Boolean> result = lineOperateApi.updatenotifybatch(Joiner.on(",").join(LineList));
-            if(!result.getCode().equals("0")){
-                logger.info("通知[{}]这个fsagent更新接口失败",server);
-                //TODO --告警
+         try {
+             //调用fsagent通知更新接口
+             Result.ReturnData<Boolean> result = lineOperateApi.updatenotifybatch(Joiner.on(",").join(LineList));
+             if (!result.getCode().equals("0")) {
+                 logger.info("通知[{}]这个fsagent更新接口失败", server);
+              }
+           }catch (Exception e){
+             logger.warn("fsagent服务:[{}]故障-->", e);
+             //todo --告警某个fagsent服务挂了
+             throw new GuiyuException(FsmanagerExceptionEnum.EXCP_FSMANAGER_FSAGENT_DOWN);
             }
         }
     }

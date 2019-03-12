@@ -227,11 +227,12 @@ public class CallDetailController implements ICallPlanDetail {
             callDetailService.updateIsRead(callId);
         }
         //请求调度中心，获取attach字段
-        String planUuid = callOutPlanVO.getPlanUuid();
+        /*String planUuid = callOutPlanVO.getPlanUuid();
         Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
         if(result.success){
             callOutPlanVO.setAttach(result.getBody());
-        }
+        }*/
+        callOutPlanVO.setAttach(callOutPlanVO.getRemarks());
 
         log.info("reponse success getCallDetailApi，callId[{}]", callId);
         return Result.ok(callOutPlanVO);

@@ -177,7 +177,7 @@ public class VoipGwManager {
 					}
 				}catch (Exception e) {
 					//如果在调用fsmanager服务注册网关后，发生了异常，那么需要将新增的网关删除掉
-					log.error("调用fsmanager删除网关:{}",voipGwInfo.getId());
+					log.error("调用fsmanager删除网关:"+voipGwInfo.getId(),e);
 					iSimCard.deleteGateway(voipGwInfo.getId().toString());
 					throw new ClmException(ClmErrorEnum.CLM1809314.getErrorCode(),ClmErrorEnum.CLM1809314.getErrorMsg());
 				}

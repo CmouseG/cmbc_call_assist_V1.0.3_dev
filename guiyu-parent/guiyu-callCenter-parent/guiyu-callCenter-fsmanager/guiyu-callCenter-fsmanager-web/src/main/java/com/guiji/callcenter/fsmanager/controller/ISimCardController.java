@@ -26,6 +26,7 @@ public class ISimCardController implements ISimCard {
             log.info("创建sim卡网关请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
+        log.info("收到创建sim卡网关请求",simCardVO.toString());
         return Result.ok(iSimCardService.createGateway(simCardVO));
     }
 
@@ -35,6 +36,7 @@ public class ISimCardController implements ISimCard {
             log.info("删除sim卡网关请求失败，参数错误，为null或空");
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
+        log.info("收到删除sim卡网关的请求",gatewayId);
         return Result.ok(iSimCardService.deleteGateway(gatewayId));
     }
 }

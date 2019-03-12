@@ -153,14 +153,19 @@ public class ToAgentHandler {
         queryRecordInDetail.setAnswerTime(answerTime);
         queryRecordInDetail.setCallrecordId(callPlan.getPlanUuid());
 
-        Result.ReturnData result = iDispatchPlanOut.queryPlanRemarkById(callPlan.getPlanUuid());
-        if(!result.getCode().equals("0")){
-            log.warn("从Dispatch获取备注信息失败,code:"+result.getCode());
-        }else{
-            if(result.getBody()!=null){
-                queryRecordInDetail.setRemark(result.getBody().toString());
+        try {
+            Result.ReturnData result = iDispatchPlanOut.queryPlanRemarkById(callPlan.getPlanUuid());
+            if (!result.getCode().equals("0")) {
+                log.warn("从Dispatch获取备注信息失败,code:" + result.getCode());
+            } else {
+                if (result.getBody() != null) {
+                    queryRecordInDetail.setRemark(result.getBody().toString());
+                }
             }
+        }catch(Exception ex){
+            log.warn("从调度中心获取备注信息出现异常", ex);
         }
+
         log.info("构建好的phoneinfo为[{}], 准备发送给座席[{}]", queryRecordInDetail, event.getAgentId());
         fsManager.vchat(event.getAgentId(), VChatMsgHelper.buildPhoneInfoMsg(queryRecordInDetail));
     }

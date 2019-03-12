@@ -893,6 +893,16 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceBranch.setCrtUser(userId);
 				branchList.add(botSentenceBranch);
 			}
+		}else {
+			BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
+			botSentenceBranch.setBranchName("enter_branch");
+			botSentenceBranch.setDomain(domainName);
+			botSentenceBranch.setProcessId(processId);
+			botSentenceBranch.setTemplateId(templateId);
+			botSentenceBranch.setResponse("[]");
+			botSentenceBranch.setCrtTime(date);
+			botSentenceBranch.setCrtUser(userId);
+			branchList.add(botSentenceBranch);
 		}
 		// 插入failed_enter_branch
 		String failEnter = importDomainVO.getFailed_enter();
@@ -918,6 +928,16 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceBranchFail.setCrtUser(userId);
 				branchList.add(botSentenceBranchFail);
 			}
+		}else {
+			BotSentenceBranch botSentenceBranch = new BotSentenceBranch();
+			botSentenceBranch.setBranchName("failed_enter_branch");
+			botSentenceBranch.setDomain(domainName);
+			botSentenceBranch.setProcessId(processId);
+			botSentenceBranch.setTemplateId(templateId);
+			botSentenceBranch.setResponse("[]");
+			botSentenceBranch.setCrtTime(date);
+			botSentenceBranch.setCrtUser(userId);
+			branchList.add(botSentenceBranch);
 		}
 
 		// 插入其他branch

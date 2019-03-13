@@ -8,6 +8,7 @@ import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
 import com.guiji.service.AgentService;
 import com.guiji.service.CallPlanService;
+import com.guiji.service.impl.AgentServiceImpl;
 import com.guiji.util.CommonUtil;
 import com.guiji.util.DateUtil;
 import com.google.common.base.Strings;
@@ -36,6 +37,11 @@ public class FsEventHandler {
 
     @Autowired
     CallCache callCache;
+
+    public void onConnect(){
+        log.info("连接freeswitch的时候加载全局callcenter.xml文件");
+        agentService.initCallcenter();
+    }
 
     public void handleEvent(EslEvent eslEvent) {
         String eventName = eslEvent.getEventName();

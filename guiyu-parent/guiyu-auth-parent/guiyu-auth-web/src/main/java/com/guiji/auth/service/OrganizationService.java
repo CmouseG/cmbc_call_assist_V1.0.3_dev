@@ -113,7 +113,13 @@ public class OrganizationService {
 	}
 	
 	public List<SysOrganization> getOrgByUserId(Long userId){
-		return sysOrganizationMapper.getOrgByUserId(userId);
+		SysUser sysUser = sysUsermapper.getUserById(userId);
+		String orgCode = null;
+		if (sysUser != null) {
+			orgCode = sysUser.getOrgCode();
+			orgCode = orgCode.substring(0,orgCode.lastIndexOf("."));
+		}
+		return sysOrganizationMapper.getOrgByUserId(orgCode);
 	}
 	
 	public boolean checkName(String name){

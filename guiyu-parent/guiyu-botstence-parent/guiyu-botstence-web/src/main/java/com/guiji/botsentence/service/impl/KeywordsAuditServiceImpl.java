@@ -104,12 +104,11 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
                 customizeKeyWords.removeAll(oldIntentIdToKeyWordsMap.get(oldIntentId));
             }
             customizeKeyWords.removeAll(allTemplateKeywords);//去除行业模板已有的关键字
-
+            //去除所有组合关键字
+            customizeKeyWords.removeIf(keyword -> keyword.contains(ASSEMBLE_KEYWORD_REGEX));
             if(CollectionUtils.isEmpty(customizeKeyWords)){
                 continue;
             }
-            //去除所有组合关键字
-            customizeKeyWords.removeIf(keyword -> keyword.contains(ASSEMBLE_KEYWORD_REGEX));
 
             BotSentenceKeywordAudit keywordAudit = new BotSentenceKeywordAudit();
             keywordAudit.setProcessId(processId);

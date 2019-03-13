@@ -1,0 +1,1 @@
+INSERT INTO `guiyu_base`.`sys_organization` (`id`, `name`, `code`, `type`, `robot`, `line`, `del_flag`, `open`, `create_id`, `create_time`, `update_id`, `update_time`, `sub_code`, `botstence`) VALUES ('1', 'ϵͳ', '1', '1', NULL, '0', '0', '0', '1', '2018-12-17 10:17:49', '1', '2019-03-08 11:42:24', NULL, '0');

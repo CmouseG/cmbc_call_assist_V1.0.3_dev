@@ -43,8 +43,10 @@ public class NoticeSettingController implements INoticeSetting {
 
     @ApiOperation(value = "提醒设置，查询提醒设置列表")
     @GetMapping(value = "getNoticeSettingList")
-    public Result.ReturnData<List<NoticeSettingVO>> getNoticeSettingList(@RequestHeader String orgCode) {
+    public Result.ReturnData<List<NoticeSettingVO>> getNoticeSettingList(@RequestHeader Long userId) {
 
+        Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
+        String orgCode = returnData.getBody().getCode();
         List<NoticeSetting> list = noticeSettingService.getNoticeSettingList(orgCode);
 
         List<NoticeSettingVO> resultList = new ArrayList<>();
@@ -59,10 +61,10 @@ public class NoticeSettingController implements INoticeSetting {
                 if(StringUtils.isNotBlank(receivers)){
                     String[] receiverArr = receivers.split(",");
                     for(String userIdStr:receiverArr){
-                        Long userId = Long.valueOf(userIdStr);
-                        Result.ReturnData<SysUser> result = auth.getUserById(userId);
+                        Long receiveUserId = Long.valueOf(userIdStr);
+                        Result.ReturnData<SysUser> result = auth.getUserById(receiveUserId);
                         String userName = result.getBody().getUsername();
-                        User user = new User(userId,userName);
+                        User user = new User(receiveUserId,userName);
                         userList.add(user);
                     }
 

@@ -53,7 +53,7 @@ public class AssistCallController implements IAssistCall {
 
 
     /**
-     * 协呼
+     * 协呼  废弃
      */
     @GetMapping("/assistToAgent")
     public Result.ReturnData assistToAgent(@RequestParam("callId") String callId,@RequestParam("agentGroupId") String agentGroupId){
@@ -75,7 +75,7 @@ public class AssistCallController implements IAssistCall {
 
 
     /**
-     * 关闭机器人
+     * 关闭机器人  废弃
      */
     @GetMapping("/assistCloseRobot")
     public Result.ReturnData assistCloseRobot(@RequestParam("callId") String callId){
@@ -102,6 +102,11 @@ public class AssistCallController implements IAssistCall {
         log.info("接到assistToAgentAndCloseRobot请求，callId[{}],agentGroupId[{}]",callId,agentGroupId);
         BigInteger bigInteCallId = new BigInteger(callId);
 
+        CallOutPlan realCallPlan = callOutPlanService.findByCallId(bigInteCallId);
+        if(realCallPlan.getCallState()>=ECallState.hangup_ok.ordinal()){
+            return Result.error("0305015");
+        }
+
         CallOutPlan callPlan = new CallOutPlan();
         callPlan.setCallId(bigInteCallId);
         callPlan.setAgentStartTime(new Date());
@@ -116,7 +121,7 @@ public class AssistCallController implements IAssistCall {
         channelHelper.stopKillChannel(callId);
 
         log.info("协呼之后，释放ai资源");
-        CallOutPlan realCallPlan = callOutPlanService.findByCallId(bigInteCallId);
+
         aiManager.releaseAi(realCallPlan);
 
         //停止定时任务

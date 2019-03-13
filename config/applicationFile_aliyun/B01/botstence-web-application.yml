@@ -151,3 +151,9 @@ tts.api.url: http://47.96.79.114:10000/poc/wav
 #硅基快配置小程序
 wechat.appid: wx6b74c97d21bf735c
 wechat.secret: 00078045f8a8483beb734f8cc90b47f8
+
+rabbit:
+  general:
+    fanout:
+      exchange: fanoutSpeechAuditExchange
+      queue: fanoutSpeechAuditQueue

@@ -95,3 +95,9 @@ logging:
     org:
       springframework:
         web: info
+
+rabbit:
+  general:
+    fanout:
+      exchange: fanoutSpeechAuditExchange
+      queue: fanoutSpeechAuditQueue

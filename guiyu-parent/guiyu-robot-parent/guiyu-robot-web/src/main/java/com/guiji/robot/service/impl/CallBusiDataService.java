@@ -91,7 +91,8 @@ public class CallBusiDataService {
 				busiDataObject.put("上次拨打意向", callBusiData.getIntentLevel());
 			}
 			if(busiDataObject!=null) {
-				sellbotRestoreReq.setBusiness_data(busiDataObject.toJSONString());
+				log.info("会话id:{}本次拼装的业务数据为：{}",aiCallStartReq.getSeqId(),busiDataObject.toJSONString());
+				sellbotRestoreReq.setBusiness_data(busiDataObject);
 			}
 		}else {
 			if(hsReplace !=null && hsReplace.isTemplate_tts_flag()) {

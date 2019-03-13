@@ -551,7 +551,7 @@ public class AiCacheService {
 		//获取话术模板json文件
 		String replaceFilePath = this.getHsCommonJsonPath(templateId);
 		if(!new File(replaceFilePath).exists()) {
-			logger.info("话术模板{},common.json文件{}不存在，不需要tts合成",templateId,replaceFilePath);
+			logger.info("话术模板{},common.json文件{}不存在",templateId,replaceFilePath);
 			HsReplace hsReplace = new HsReplace();
 			return new HsReplace();
 		}

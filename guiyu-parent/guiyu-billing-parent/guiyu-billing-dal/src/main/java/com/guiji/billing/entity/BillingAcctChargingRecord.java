@@ -28,7 +28,12 @@ public class BillingAcctChargingRecord extends BaseBean {
     private String operUserName;
 
     /**
-     * 用户所属企业orgCode
+     * 操作员用户企业编码
+     */
+    private String operOrgCode;
+
+    /**
+     * 被充值/消费 企业orgCode
      */
     private String operUserOrgCode;
 
@@ -292,5 +297,13 @@ public class BillingAcctChargingRecord extends BaseBean {
 
     public void setChargingAmount(BigDecimal chargingAmount) {
         this.chargingAmount = chargingAmount;
+    }
+
+    public String getOperOrgCode() {
+        return operOrgCode;
+    }
+
+    public void setOperOrgCode(String operOrgCode) {
+        this.operOrgCode = operOrgCode;
     }
 }

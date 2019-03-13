@@ -1,5 +1,7 @@
 package com.guiji.robot.service.vo;
 
+import com.alibaba.fastjson.JSONObject;
+
 import lombok.Data;
 
 /** 
@@ -23,5 +25,5 @@ public class SellbotRestoreReq {
 	//给sellbot用来合成tts完整sentence变量
 	private String val;
 	//飞龙使用的业务参数
-	private String business_data;
+	private JSONObject business_data;
 }

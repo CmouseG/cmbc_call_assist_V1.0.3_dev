@@ -27,6 +27,7 @@ public class CallOutPlanQueryEntity {
     String tempId;
     String isRead;
     Boolean isSuperAdmin;
+    String intervened;
 
 }
 

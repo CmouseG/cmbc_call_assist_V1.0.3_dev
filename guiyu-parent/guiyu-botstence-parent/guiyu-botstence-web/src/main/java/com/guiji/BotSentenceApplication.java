@@ -1,19 +1,17 @@
 package com.guiji;
 
 
-import java.util.List;
+import com.guiji.component.client.config.JsonParamArgResolverHandler;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.guiji.component.client.config.JsonParamArgResolverHandler;
-import com.guiji.component.result.ResultReturnValueHandler;
+import java.util.List;
 
 
 /** 
@@ -26,6 +24,7 @@ import com.guiji.component.result.ResultReturnValueHandler;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
+@EnableRabbit
 @MapperScan({"com.guiji.*.dao","com.guiji.botsentence.crm.dao"})
 public class BotSentenceApplication extends WebMvcConfigurerAdapter{
 

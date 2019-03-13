@@ -237,7 +237,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	 */
 	@Override
 	@ApiOperation(value="查询任务计划备注", notes="查询任务计划备注")
-	@RequestMapping(value = "/dispatch/api/queryPlanRemarkById", method = {RequestMethod.GET})
+	@RequestMapping(value = "/dispatch/queryPlanRemarkById", method = {RequestMethod.GET})
 	public ReturnData<String> queryPlanRemarkById(String planUuid) {
 		String planAttach = !StringUtils.isEmpty(planUuid)?
 				dispatchPlanService.queryPlanRemarkById(planUuid):null;

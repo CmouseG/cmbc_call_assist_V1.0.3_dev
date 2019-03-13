@@ -1,5 +1,7 @@
 package com.guiji.robot.service.vo;
 
+import com.alibaba.fastjson.JSONObject;
+
 import lombok.Data;
 
 /** 
@@ -21,7 +23,7 @@ public class FlHelloReq {
 	//现在播的录音文件（非必输）
 	private String cur_dialog_filename;
 	//{"姓名":张三,"年龄":12} # 表示客户信息的业务数据
-	private String business_data;
+	private JSONObject business_data;
 	/** key和val是为了兼容老的sellbot,合起来表示客户信息的业务数据, 他们和 business_data一起使用的话，以business_data为主,要想用key|val 就不要传business_data这个字段 **/
 	//保留老sellbot字段，基本没用
 	private String key;

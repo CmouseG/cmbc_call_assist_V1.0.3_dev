@@ -77,6 +77,8 @@ public class CallOutPlan implements Serializable {
 
     private Integer isAnswer;
 
+    private Boolean intervened;
+
     private static final long serialVersionUID = 1L;
 
     public BigInteger getCallId() {
@@ -367,6 +369,14 @@ public class CallOutPlan implements Serializable {
         this.isAnswer = isAnswer;
     }
 
+    public Boolean getIntervened() {
+        return intervened;
+    }
+
+    public void setIntervened(Boolean intervened) {
+        this.intervened = intervened;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -409,6 +419,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", talkNum=").append(talkNum);
         sb.append(", isCancel=").append(isCancel);
         sb.append(", isAnswer=").append(isAnswer);
+        sb.append(", intervened=").append(intervened);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

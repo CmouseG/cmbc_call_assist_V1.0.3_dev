@@ -85,6 +85,8 @@ public class CallOutPlan4ListSelect {
 
     private Integer batchId;
 
+    private Boolean intervened;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -351,6 +353,14 @@ public class CallOutPlan4ListSelect {
         this.batchId = batchId;
     }
 
+    public Boolean getIntervened() {
+        return intervened;
+    }
+
+    public void setIntervened(Boolean intervened) {
+        this.intervened = intervened;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -390,6 +400,7 @@ public class CallOutPlan4ListSelect {
         sb.append(", isread=").append(isread);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", batchId=").append(batchId);
+        sb.append(", intervened=").append(intervened);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

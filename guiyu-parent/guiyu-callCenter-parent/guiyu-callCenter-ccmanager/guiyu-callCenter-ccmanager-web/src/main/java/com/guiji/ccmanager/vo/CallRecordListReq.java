@@ -25,6 +25,6 @@ public class CallRecordListReq {
     String tempId;
     String isRead;
     String customerId;
-
+    String intervened;
 
 }

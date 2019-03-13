@@ -6,7 +6,7 @@
     insert into bot_sentence_intent (`name`, industry, 
       template_id, process_id, crt_time, 
       crt_user, lst_update_time, lst_update_user, 
-      keywords,for_select,domain_name)
+      keywords,for_select,domain_name,old_id)
     VALUES
     <foreach collection="list" item="item" index="index" separator="," >
         (
@@ -20,7 +20,8 @@
         #{item.lstUpdateUser},
         #{item.keywords},
         #{item.forSelect},
-        #{item.domainName}
+        #{item.domainName},
+        #{item.oldIntentId}
         )
     </foreach>
     

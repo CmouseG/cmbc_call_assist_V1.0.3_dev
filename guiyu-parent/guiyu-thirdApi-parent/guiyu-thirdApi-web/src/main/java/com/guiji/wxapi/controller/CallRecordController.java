@@ -79,10 +79,13 @@ public class CallRecordController {
                     } else if (callOutDetailVO.getCustomerSayText() != null) {
                         resCallOutDetailVO.setContent(callOutDetailVO.getCustomerSayText());
                     } else if (callOutDetailVO.getAgentAnswerText() != null) {
-                        resCallOutDetailVO.setAnswer(callOutDetailVO.getAgentAnswerText());
+                        resCallOutDetailVO.setAnswer(StringUtils.isBlank(callOutDetailVO.getAgentAnswerText()) ? "无应答":callOutDetailVO.getAgentAnswerText());
                     }
-                    if (callOutDetailVO.getCustomerRecordUrl() != null)
+                    if (callOutDetailVO.getCustomerRecordUrl() != null){
                         resCallOutDetailVO.setFile(callOutDetailVO.getCustomerRecordUrl());
+                    }else if (callOutDetailVO.getAgentRecordUrl() != null){
+                        resCallOutDetailVO.setFile(callOutDetailVO.getAgentRecordUrl());
+                    }
                     if (callOutDetailVO.getKeywords() != null)
                         resCallOutDetailVO.setKeywords(callOutDetailVO.getKeywords());
                     if (callOutDetailVO.getWordSegmentResult() != null)

@@ -2435,6 +2435,66 @@ public class CallOutPlanExample {
             addCriterion("is_answer not between", value1, value2, "isAnswer");
             return (Criteria) this;
         }
+
+        public Criteria andIntervenedIsNull() {
+            addCriterion("intervened is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedIsNotNull() {
+            addCriterion("intervened is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedEqualTo(Boolean value) {
+            addCriterion("intervened =", value, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedNotEqualTo(Boolean value) {
+            addCriterion("intervened <>", value, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedGreaterThan(Boolean value) {
+            addCriterion("intervened >", value, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("intervened >=", value, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedLessThan(Boolean value) {
+            addCriterion("intervened <", value, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedLessThanOrEqualTo(Boolean value) {
+            addCriterion("intervened <=", value, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedIn(List<Boolean> values) {
+            addCriterion("intervened in", values, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedNotIn(List<Boolean> values) {
+            addCriterion("intervened not in", values, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedBetween(Boolean value1, Boolean value2) {
+            addCriterion("intervened between", value1, value2, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andIntervenedNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("intervened not between", value1, value2, "intervened");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

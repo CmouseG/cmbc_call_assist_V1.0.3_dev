@@ -110,7 +110,8 @@ public class ChargingServiceImpl implements ChargingService {
                 chargingRecord.setAccountId(accountId);
                 chargingRecord.setOperUserId(userId+"");
                 chargingRecord.setOperUserName(null != user?user.getUsername():"");
-                chargingRecord.setOperUserOrgCode(null != user?user.getOrgCode():"");
+                chargingRecord.setOperOrgCode(null != user?user.getOrgCode():"");
+                chargingRecord.setOperUserOrgCode(null != user?user.getOrgCode():"");//消费企业编码
                 chargingRecord.setOperBeginTime(beginTime);
                 chargingRecord.setOperEndTime(endTime);
                 chargingRecord.setOperDuration(duration);

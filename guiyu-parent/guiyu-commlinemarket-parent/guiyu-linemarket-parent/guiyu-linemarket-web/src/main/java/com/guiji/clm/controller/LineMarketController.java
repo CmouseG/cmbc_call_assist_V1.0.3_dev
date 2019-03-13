@@ -240,10 +240,6 @@ public class LineMarketController {
 	public Result.ReturnData<Page<SipLineApplyVO>> queryApplyLinePage(
 			@RequestBody SipLineApplyQueryCondition condition,
 			@RequestHeader Long userId){
-		//临时
-		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
-		condition.setOrgCode(sysOrganization.getCode());
-		//
 		Page<SipLineApply> page = sipLineApplyService.querySipLineApplyForPageByCondition(condition);
 		Page<SipLineApplyVO> rtnPage = new Page<SipLineApplyVO>(page.getPageNo(),page.getTotalRecord(),this.applyLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);

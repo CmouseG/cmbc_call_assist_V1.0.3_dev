@@ -122,8 +122,10 @@ public class CallPlanDispatchHandler {
                 e.printStackTrace();
             }
         }
-        dispatchService.successSchedule(callPlan.getPlanUuid(),callPlan.getPhoneNum(),callPlan.getAccurateIntent(),
-                callPlan.getCustomerId(), callPlan.getLineId(), callPlan.getTempId(), true);
+        //重新查询一次，意向标签可能不准确
+        CallOutPlan realCallOutPlan = callOutPlanService.findByCallId(callPlan.getCallId());
+        dispatchService.successSchedule(realCallOutPlan.getPlanUuid(),realCallOutPlan.getPhoneNum(),realCallOutPlan.getAccurateIntent(),
+                realCallOutPlan.getCustomerId(), realCallOutPlan.getLineId(), realCallOutPlan.getTempId(), true);
 
     }
 

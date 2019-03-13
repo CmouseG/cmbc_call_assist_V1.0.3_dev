@@ -35,13 +35,6 @@ public class FlyDragonServiceImpl implements ISellbotService{
 	//飞龙服务地址
 	@Value("${flydragon_server_url:''}")
 	private String flydragonUrl;
-
-	public static void main(String[] args) {
-		String url = "http://192.168.1.55:15000/api/hello";
-		String json = "{\"business_data\":\"{\\\"客户姓氏\\\":\\\"王\\\",\\\"审核通过\\\":\\\"是\\\"}\",\"cfg_name\":\"dkgxb1_en\",\"cur_dialog_content\":\"\",\"cur_dialog_status\":0,\"seqid\":\"312325512431140864\"}";
-		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
-		System.out.println(flydragonRsp);
-	}
 	
 	/**
 	 * 飞龙初始化接口,每通电话前需要调用下初始化操作。

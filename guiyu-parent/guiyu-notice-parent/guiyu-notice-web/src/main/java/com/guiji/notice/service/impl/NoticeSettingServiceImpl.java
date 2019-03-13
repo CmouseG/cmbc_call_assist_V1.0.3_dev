@@ -172,9 +172,9 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
     }
 
     @Override
-    public List<User> getUserList4Receive(String userCode) {
+    public List<User> getUserList4Receive(Long userId) {
 
-        Result.ReturnData<SysOrganization> returnData = iOrg.getOrgByCode(userCode);
+        Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
         String orgCode = returnData.getBody().getCode();
 
         Result.ReturnData<List<SysUserRoleVo>> result = auth.getAllUserRoleByOrgCode(orgCode);
@@ -182,27 +182,12 @@ public class NoticeSettingServiceImpl implements NoticeSettingService {
 
         List<User> returnList = new ArrayList<>();
 
-//        NoticeSetting noticeSetting = noticeSettingMapper.selectByPrimaryKey(id);
-//        String receivers = noticeSetting.getReceivers();
-//        String[] receiverIds = null;
-//        if(receivers!=null){
-//            receiverIds = receivers.split(",");
-//        }
-
         for (SysUserRoleVo sysUserRoleVo : list) {
             User user = new User();
-            Long userId = sysUserRoleVo.getSysUser().getId();
-            user.setId(userId);
+            Long sysUserId = sysUserRoleVo.getSysUser().getId();
+            user.setId(sysUserId);
             user.setUsername(sysUserRoleVo.getSysUser().getUsername());
             user.setRole(sysUserRoleVo.getSysRoleList().get(0).getId().intValue());
-//            user.setSelected(false);
-//            if(receiverIds!=null && receiverIds.length>0){
-//                for(String idStr:receiverIds){
-//                    if(idStr.equals(String.valueOf(userId))){
-//                        user.setSelected(true);
-//                    }
-//                }
-//            }
             returnList.add(user);
         }
         return returnList;

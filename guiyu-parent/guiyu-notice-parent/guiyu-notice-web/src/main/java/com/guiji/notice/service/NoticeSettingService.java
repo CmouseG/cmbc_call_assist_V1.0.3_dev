@@ -16,7 +16,7 @@ public interface NoticeSettingService {
 
     void setReceivers(String receiverIds, Integer integer);
 
-    List<User> getUserList4Receive(String orgCode);
+    List<User> getUserList4Receive(Long userId);
 
     void updateNoticeSetting(List<NoticeSettingUpdateReq> NoticeSettingUpdateReqs);
 

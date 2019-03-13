@@ -161,6 +161,7 @@ public class AIManagerImpl implements AIManager {
         hangupReq.setAiNo(callOutPlan.getAiId());
         hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
         hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
+        hangupReq.setTemplateId(callOutPlan.getTempId());
 
         log.info("释放机器人资源，aiId[{}]", callOutPlan.getAiId());
         dispatchLogService.startServiceRequestLog(callOutPlan.getPlanUuid(),callOutPlan.getPhoneNum(), com.guiji.dispatch.model.Constant.MODULAR_STATUS_START, "开始向机器人中心请求挂断");

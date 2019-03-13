@@ -1,5 +1,6 @@
 package com.guiji.robot.service.impl;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class FlyDragonServiceImpl implements ISellbotService{
 	//飞龙服务地址
 	@Value("${flydragon_server_url:''}")
 	private String flydragonUrl;
-
+	
 	/**
 	 * 飞龙初始化接口,每通电话前需要调用下初始化操作。
 	 * @param sellbotRestoreReq
@@ -52,10 +53,11 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		String json = JsonUtils.bean2Json(flHelloReq);
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
 		if(StrUtils.isNotEmpty(flydragonRsp)) {
-			JSONObject jsonObject = JSON.parseObject(flydragonRsp);
+			String result = StringEscapeUtils.unescapeJava(flydragonRsp);
+			JSONObject jsonObject = JSON.parseObject(result);
 			String code = jsonObject.getString("code");
 			if(!"0".equals(code)) {
-				log.error("调用飞龙接口返回异常，返回结果：{}!",flydragonRsp);
+				log.error("调用飞龙接口返回异常，url:{},请求信息：{}，返回结果：{}!",url,json,result);
 				throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 			}
 			FlHelloRsp rsp = new FlHelloRsp();
@@ -64,7 +66,7 @@ public class FlyDragonServiceImpl implements ISellbotService{
 			this.initFlHelloRsp(rsp, jsonObject);
 			return JsonUtils.bean2Json(rsp);
 		}else {
-			log.error("调用飞龙接口返回异常，返回结果为空");
+			log.error("调用飞龙接口返回异常，url:{},请求信息：{},返回结果：{}!",url,json,flydragonRsp);
 			throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 		}
 	}
@@ -85,10 +87,11 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		String json = JsonUtils.bean2Json(flHelloReq);
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
 		if(StrUtils.isNotEmpty(flydragonRsp)) {
-			JSONObject jsonObject = JSON.parseObject(flydragonRsp);
+			String result = StringEscapeUtils.unescapeJava(flydragonRsp);
+			JSONObject jsonObject = JSON.parseObject(result);
 			String code = jsonObject.getString("code");
 			if(!"0".equals(code)) {
-				log.error("调用飞龙接口返回异常，返回结果：{}!",flydragonRsp);
+				log.error("调用飞龙接口返回异常，url:{},请求信息：{}，返回结果：{}!",url,json,result);
 				throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 			}
 			FlHelloRsp rsp = new FlHelloRsp();
@@ -97,7 +100,7 @@ public class FlyDragonServiceImpl implements ISellbotService{
 			this.initFlHelloRsp(rsp, jsonObject);
 			return JsonUtils.bean2Json(rsp);
 		}else {
-			log.error("调用飞龙接口返回异常，返回结果：{}!",flydragonRsp);
+			log.error("调用飞龙接口返回异常，url：{}，请求信息：{},返回结果：{}!",url,json,flydragonRsp);
 			throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 		}
 	}
@@ -118,11 +121,12 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		String json = JsonUtils.bean2Json(flMatchReq);
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
 		if(StrUtils.isNotEmpty(flydragonRsp)) {
-			JSONObject jsonObject = JSON.parseObject(flydragonRsp);
+			String result = StringEscapeUtils.unescapeJava(flydragonRsp);
+			JSONObject jsonObject = JSON.parseObject(result);
 			String matched = jsonObject.getString("matched");	//	返回是否匹配
 			return "{\"matched\": "+matched+"}";
 		}else {
-			log.error("调用飞龙接口返回异常，返回结果：{}!",flydragonRsp);
+			log.error("调用飞龙接口返回异常，url:{},请求信息：{}，返回结果：{}!",url,json,flydragonRsp);
 			throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 		}
 	}
@@ -139,14 +143,15 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		String json = JsonUtils.bean2Json(flHelloReq);
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
 		if(StrUtils.isNotEmpty(flydragonRsp)) {
-			JSONObject jsonObject = JSON.parseObject(flydragonRsp);
+			String result = StringEscapeUtils.unescapeJava(flydragonRsp);
+			JSONObject jsonObject = JSON.parseObject(result);
 			String code = jsonObject.getString("code");
 			if(!"0".equals(code)) {
-				log.error("调用飞龙接口返回异常，返回结果：{}!",flydragonRsp);
+				log.error("调用飞龙接口返回异常，url:{}，请求信息：{}，返回结果：{}!",url,json,result);
 				throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 			}
 		}else {
-			log.error("调用飞龙接口返回异常，返回结果：{}!",flydragonRsp);
+			log.error("调用飞龙接口返回异常，请求信息：{},返回结果：{}!",json,flydragonRsp);
 			throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());
 		}
 	}

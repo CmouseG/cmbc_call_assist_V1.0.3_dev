@@ -47,7 +47,7 @@
  	
  	
  	<update id="updateEndWhenDeleteDomain">
- 		update bot_sentence_branch set end=null where process_id=#{processId} and end=#{domain};
+ 		update bot_sentence_branch set end=null, rule=null where process_id=#{processId} and end=#{domain};
  	</update>
  	
 </mapper>

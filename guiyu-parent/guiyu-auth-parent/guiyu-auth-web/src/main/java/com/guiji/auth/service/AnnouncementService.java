@@ -65,39 +65,46 @@ public class AnnouncementService {
         sysAnnouncement.setUpdateId(userId.intValue());
         mapper.insert(sysAnnouncement);
         logger.info("新增公告成功#end");
-        //发送站内信通知,当前发布人所在组织的所有账号都接收站内通知
-        List<SysOrganization> sysOrganizationList = organizationService.getOrgByUserId(userId);
-        if (sysOrganizationList != null) {
-            for (SysOrganization sysOrganization : sysOrganizationList) {
-                MessageSend messageSend = new MessageSend();
-                messageSend.setOrgCode(sysOrganization.getCode());
-                messageSend.setNoticeType(NoticeType.announcement);
-                String content = "";
-                if (sysAnnouncement != null && StringUtils.isNotEmpty(sysAnnouncement.getContent())) {
-                    if (sysAnnouncement.getContent().length() >= 50) {
-                        content = sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情";
-                    } else {
-                        content = sysAnnouncement.getContent() + ",登录系统查看详情";
-                    }
+        new Thread(() -> {
+        	//发送站内信通知,当前发布人所在组织的所有账号都接收站内通知
+            List<SysOrganization> sysOrganizationList = organizationService.getOrgByUserId(userId);
+            if (sysOrganizationList != null) {
+                for (SysOrganization sysOrganization : sysOrganizationList) {
+                	try
+					{
+                		MessageSend messageSend = new MessageSend();
+                        messageSend.setOrgCode(sysOrganization.getCode());
+                        messageSend.setNoticeType(NoticeType.announcement);
+                        String content = "";
+                        if (sysAnnouncement != null && StringUtils.isNotEmpty(sysAnnouncement.getContent())) {
+                            if (sysAnnouncement.getContent().length() >= 50) {
+                                content = sysAnnouncement.getContent().substring(0,50) + ",登录系统查看详情";
+                            } else {
+                                content = sysAnnouncement.getContent() + ",登录系统查看详情";
+                            }
+                        }
+                        //站内信
+                        messageSend.setMailContent(content);
+                        //邮箱
+                        messageSend.setEmailSubject("公告");
+                        messageSend.setEmailContent(content);
+                        //短信
+                        messageSend.setSmsContent(content);
+                        //微信
+                        messageSend.setWeixinTemplateId(weixinTemplateId);
+                        messageSend.setWeixinAppId(weixinAppid);
+                        HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
+                        map.put("keyword2",new SendMsgReqVO.Item(NoticeType.announcement.getDesc(),null));
+                        map.put("keyword3",new SendMsgReqVO.Item(content,null));
+                        map.put("userName",new SendMsgReqVO.Item(content,null));
+                        messageSend.setWeixinData(map);
+                        noticeSend.sendMessage(messageSend);
+					} catch (Exception e) {
+						logger.error("发送站内信通知失败，组织编码为：" + sysOrganization.getCode() + "，错误信息：" + e.getMessage());
+					}
                 }
-                //站内信
-                messageSend.setMailContent(content);
-                //邮箱
-                messageSend.setEmailSubject("公告");
-                messageSend.setEmailContent(content);
-                //短信
-                messageSend.setSmsContent(content);
-                //微信
-                messageSend.setWeixinTemplateId(weixinTemplateId);
-                messageSend.setWeixinAppId(weixinAppid);
-                HashMap<String, SendMsgReqVO.Item> map = new HashMap<>();
-                map.put("keyword2",new SendMsgReqVO.Item(NoticeType.announcement.getDesc(),null));
-                map.put("keyword3",new SendMsgReqVO.Item(content,null));
-                map.put("userName",new SendMsgReqVO.Item(content,null));
-                messageSend.setWeixinData(map);
-                noticeSend.sendMessage(messageSend);
             }
-        }
+        }).start(); 
         return sysAnnouncement;
     }
 

@@ -107,9 +107,9 @@ public class NoticeSettingController implements INoticeSetting {
 
     @ApiOperation(value = "跳转到编辑消息接收者时，调用该方法获取用户列表")
     @GetMapping(value = "getUserList4Receive")
-    public Result.ReturnData getUserList4Receive(@RequestHeader String orgCode) {
+    public Result.ReturnData getUserList4Receive(@RequestHeader Long userId) {
 
-        List<User> list = noticeSettingService.getUserList4Receive(orgCode);
+        List<User> list = noticeSettingService.getUserList4Receive(userId);
         return Result.ok(list);
     }
 

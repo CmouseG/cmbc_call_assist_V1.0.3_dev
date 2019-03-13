@@ -48,7 +48,7 @@ public class CallStateServiceImpl implements CallStateService {
         CallOutPlanExample example = new CallOutPlanExample();
         CallOutPlanExample.Criteria criteria = example.createCriteria();
         //转人工对话可能会比较长，不包括转人工的状态
-        criteria.andCallStateLessThanOrEqualTo(ECallState.answer.ordinal());
+        criteria.andCallStateLessThanOrEqualTo(ECallState.to_agent.ordinal());
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MINUTE, -7);

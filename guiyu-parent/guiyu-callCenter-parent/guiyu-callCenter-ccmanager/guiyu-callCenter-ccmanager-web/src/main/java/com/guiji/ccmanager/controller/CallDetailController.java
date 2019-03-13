@@ -139,7 +139,8 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "isRead", value = "是否已读,0表示未读，1表示已读", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
-            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
+            @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "intervened", value = "是否已介入，0:未介入,1:已介入,不传或其他值则是全部", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getCallRecord")
     public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
@@ -209,6 +210,17 @@ public class CallDetailController implements ICallPlanDetail {
             callOutPlanVO.setPhoneNum(phone.substring(0, 3)+"****"+phone.substring(7));
         }
 
+        //请求调度中心，获取attach字段
+        try{
+            String planUuid = callOutPlanVO.getPlanUuid();
+            Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
+            if(result.success){
+                callOutPlanVO.setAttach(result.getBody());
+            }
+        } catch (Exception e){
+            log.error("queryPlanRemarkById请求调度中心异常，callId[{}]", callId);
+        }
+
         log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
     }
@@ -226,11 +238,16 @@ public class CallDetailController implements ICallPlanDetail {
             callDetailService.updateIsRead(callId);
         }
         //请求调度中心，获取attach字段
-        String planUuid = callOutPlanVO.getPlanUuid();
-        Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
-        if(result.success){
-            callOutPlanVO.setAttach(result.getBody());
+        try{
+            String planUuid = callOutPlanVO.getPlanUuid();
+            Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
+            if(result.success){
+                callOutPlanVO.setAttach(result.getBody());
+            }
+        } catch (Exception e){
+            log.error("queryPlanRemarkById请求调度中心异常，callId[{}]", callId);
         }
+//        callOutPlanVO.setAttach(callOutPlanVO.getRemarks());
 
         log.info("reponse success getCallDetailApi，callId[{}]", callId);
         return Result.ok(callOutPlanVO);

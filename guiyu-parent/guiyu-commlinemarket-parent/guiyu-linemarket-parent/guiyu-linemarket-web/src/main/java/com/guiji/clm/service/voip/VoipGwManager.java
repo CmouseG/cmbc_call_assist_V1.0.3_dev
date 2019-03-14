@@ -111,7 +111,7 @@ public class VoipGwManager {
 					if(sysOrganization!=null) {
 						voipGwInfo.setOrgCode(sysOrganization.getCode());
 					}
-				}
+				} 
 				/**2、初始化网关sip起始账号、密码、步长等信息**/
 				this.initStartSipAccount(voipGwInfo);
 				/**3、保存本地信息**/

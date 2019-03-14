@@ -315,6 +315,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 if(!StringUtils.isEmpty(rechargeDto.getOrgCode())){
                     //查询该企业是否已注册
                     String orgCode = rechargeDto.getOrgCode();
+                    //如果前端传过来的带后缀点.
+                    if(!StringUtils.isEmpty(orgCode) && orgCode.endsWith(AuthConstant.orgSuffix)){
+                        orgCode = orgCode.substring(0, orgCode.length()-1);
+                    }
                     BillingUserAcctBean acctExist = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
                     //企业已注册账户
                     if(null != acctExist){

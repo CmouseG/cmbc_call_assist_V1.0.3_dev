@@ -351,7 +351,7 @@ public class LineMarketController {
 				}
 				if(StrUtils.isNotEmpty(vo.getExceptAreas())) {
 					//盲区
-					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
+					vo.setExceptAreasName(AreaDictUtil.getLowAreaNames(vo.getExceptAreas()));
 				}
 				voList.add(vo);
 			}
@@ -382,7 +382,7 @@ public class LineMarketController {
 				}
 				if(StrUtils.isNotEmpty(vo.getExceptAreas())) {
 					//盲区
-					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
+					vo.setExceptAreasName(AreaDictUtil.getLowAreaNames(vo.getExceptAreas()));
 				}
 				//企业名称
 				if(StrUtils.isNotEmpty(sipLineBaseInfo.getBelongOrgCode())) {
@@ -438,7 +438,7 @@ public class LineMarketController {
 				}
 				if(StrUtils.isNotEmpty(vo.getExceptAreas())) {
 					//盲区
-					vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
+					vo.setExceptAreasName(AreaDictUtil.getLowAreaNames(vo.getExceptAreas()));
 				}
 				//线路拥有者(查询原线路的归属企业)
 				Integer sipLineId = sipLineExclusive.getSipLineId();
@@ -490,7 +490,7 @@ public class LineMarketController {
 					}
 					if(StrUtils.isNotEmpty(sipLineShare.getExceptAreas())) {
 						//盲区
-						vo.setExceptAreasName(AreaDictUtil.getAreaName(sipLineShare.getExceptAreas()));
+						vo.setExceptAreasName(AreaDictUtil.getLowAreaNames(sipLineShare.getExceptAreas()));
 					}
 				}
 				//线路拥有者

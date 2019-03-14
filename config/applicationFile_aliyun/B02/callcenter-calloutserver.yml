@@ -88,8 +88,8 @@ ai:
   wavFileHome: /home/aiwav/
   realWavFileHome: ${fsbot.homeDir}/home/aiwav/
 ribbon:
-  ReadTimeout: 30000
-  ConnectTimeout: 30000
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 #支持的最大拨打数量
 callCount.max: 400
 #xxl-job admin中心配置

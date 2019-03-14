@@ -34,7 +34,7 @@ public interface SysOrganizationMapper {
     
     List<Object> selectByPage(Page page);
     
-    public List<SysOrganization> getOrgByUserId(Long userId);
+    public List<SysOrganization> getOrgByUserId(String orgCode);
     
     public boolean existChildren(SysOrganization record);
     

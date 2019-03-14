@@ -454,12 +454,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
         String accountId = queryRechargeDto.getAccountId();
-        //获取用户ID
-        String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
-        //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():"1";
+        String orgCode = (null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getOrgCode()))?queryRechargeDto.getOrgCode():"1";
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -479,12 +475,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
         String accountId = queryRechargeDto.getAccountId();
-        //获取用户ID
-        String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
-        //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():"1";
+        String orgCode = (null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getOrgCode()))?queryRechargeDto.getOrgCode():"1";
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){

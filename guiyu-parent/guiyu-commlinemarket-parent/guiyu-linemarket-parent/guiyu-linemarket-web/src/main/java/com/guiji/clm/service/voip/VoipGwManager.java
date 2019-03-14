@@ -130,7 +130,7 @@ public class VoipGwManager {
 				log.info("结束调用fsmanager服务注册网关，返回：{}",fsSipData);
 				if(fsSipData!=null && fsSipData.success && fsSipData.getBody()!=null) {
 					fsSipVO = fsSipData.getBody();
-					voipGwInfo.setSipIp(fsSipVO.getSipIp()); //用户网关注册到我们的fs的ip
+					voipGwInfo.setSipIp(fsSipVO.getSipIp()); //用户网关注册到我们的fs的ip（外网ip ,和 lineip对应的，一个内网-内部注册，一个外网-给客户看）
 					voipGwInfo.setSipPort(Integer.valueOf(fsSipVO.getSipPort())); //用户网关注册到我们的fs的端口
 					voipGwInfo.setLinePort(Integer.valueOf(fsSipVO.getLinePort())); //提供给呼叫中心的线路端口，ip公用
 				}else {
@@ -147,7 +147,7 @@ public class VoipGwManager {
 						//线路新增
 						OutLineInfoAddReq lineInfo = new OutLineInfoAddReq();
 						lineInfo.setLineName(voipGwInfo.getGwName()+"-"+port.getPort());
-						lineInfo.setSipIp(voipGwInfo.getSipIp());	//线路sip地址
+						lineInfo.setSipIp(fsSipVO.getLineIp());	//线路sip地址(内网IP)
 						lineInfo.setSipPort(fsSipVO.getLinePort()); //新增线路时的使用端口
 						lineInfo.setCodec("PCMA"); //网关编号都支持，所以此处默认个最常用编码：PCMA
 						lineInfo.setCallerNum(port.getSipAccount().toString()); //主叫号码送网关端口账号

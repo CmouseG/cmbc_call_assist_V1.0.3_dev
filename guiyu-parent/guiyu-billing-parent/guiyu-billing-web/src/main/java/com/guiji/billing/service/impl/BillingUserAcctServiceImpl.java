@@ -466,7 +466,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         String userId = queryRechargeDto.getUserId();
         SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = (null != org)?(org.getCode() + AuthConstant.orgSuffix):AuthConstant.superOrgCode;
+        String orgCode = (null != org)?org.getCode():AuthConstant.superOrgCode;
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -489,7 +489,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         String userId = queryRechargeDto.getUserId();
         SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = (null != org)?(org.getCode() + AuthConstant.orgSuffix):AuthConstant.superOrgCode;
+        String orgCode = (null != org)?org.getCode():AuthConstant.superOrgCode;
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){

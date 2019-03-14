@@ -197,7 +197,7 @@
         AND t.account_id = a.account_id
         AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
         <if test="orgCode != null and orgCode != ''">
-          AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
+          AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
         </if>
         <if test="beginDate != null and endDate != null">
           AND t.total_date BETWEEN #{beginDate} AND #{endDate}
@@ -220,7 +220,7 @@
       AND t.account_id = a.account_id
       AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@DAY.getType()}
       <if test="orgCode != null and orgCode != ''">
-        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
       </if>
       <if test="beginDate != null and endDate != null">
         AND t.total_date BETWEEN #{beginDate} AND #{endDate}
@@ -238,7 +238,7 @@
       AND t.account_id = a.account_id
       AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
       <if test="orgCode != null and orgCode != ''">
-        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
       </if>
       <if test="beginMonth != null and endMonth != null">
         AND t.total_month BETWEEN #{beginMonth} AND #{endMonth}
@@ -260,7 +260,7 @@
       AND t.account_id = a.account_id
       AND t.total_mode = ${@com.guiji.billing.enums.ChargingTotalTypeEnum@MONTH.getType()}
       <if test="orgCode != null and orgCode != ''">
-        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
+        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'.%'))
       </if>
       <if test="beginMonth != null and endMonth != null">
         AND t.total_month BETWEEN #{beginMonth} AND #{endMonth}

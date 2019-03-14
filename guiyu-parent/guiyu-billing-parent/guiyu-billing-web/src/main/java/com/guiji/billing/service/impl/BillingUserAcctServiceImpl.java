@@ -15,6 +15,7 @@ import com.guiji.billing.enums.*;
 import com.guiji.billing.exception.BaseException;
 import com.guiji.billing.service.AcctNotifyService;
 import com.guiji.billing.service.BillingUserAcctService;
+import com.guiji.billing.service.GetApiService;
 import com.guiji.billing.service.msg.MsgNotifyComponent;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DaoHandler;
@@ -51,6 +52,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
 
     @Autowired
     private BillingUserAcctMapper billingUserAcctMapper;
+
+    @Autowired
+    private GetApiService getApiService;
 
     @Autowired
     private AcctNotifyService acctNotifyService;
@@ -315,6 +319,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 if(!StringUtils.isEmpty(rechargeDto.getOrgCode())){
                     //查询该企业是否已注册
                     String orgCode = rechargeDto.getOrgCode();
+                    //如果前端传过来的带后缀点.
+                    if(!StringUtils.isEmpty(orgCode) && orgCode.endsWith(AuthConstant.orgSuffix)){
+                        orgCode = orgCode.substring(0, orgCode.length()-1);
+                    }
                     BillingUserAcctBean acctExist = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
                     //企业已注册账户
                     if(null != acctExist){
@@ -455,8 +463,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
         String accountId = queryRechargeDto.getAccountId();
+        String userId = queryRechargeDto.getUserId();
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = (null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getOrgCode()))?queryRechargeDto.getOrgCode():"1";
+        String orgCode = (null != org)?(org.getCode() + AuthConstant.orgSuffix):AuthConstant.superOrgCode;
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -476,8 +486,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
         String accountId = queryRechargeDto.getAccountId();
+        String userId = queryRechargeDto.getUserId();
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = (null != queryRechargeDto && !StringUtils.isEmpty(queryRechargeDto.getOrgCode()))?queryRechargeDto.getOrgCode():"1";
+        String orgCode = (null != org)?(org.getCode() + AuthConstant.orgSuffix):AuthConstant.superOrgCode;
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){

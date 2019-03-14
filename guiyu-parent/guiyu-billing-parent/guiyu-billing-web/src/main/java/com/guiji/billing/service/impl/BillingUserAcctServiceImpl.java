@@ -425,7 +425,7 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         chargingRecord.setOperUserId(userId);
         chargingRecord.setOperUserName(user.getUsername());
         chargingRecord.setOperOrgCode(user.getOrgCode());   //操作员用户企业编码
-        chargingRecord.setOperUserOrgCode(acct.getOrgCode());//被充值所属企业orgCode
+        chargingRecord.setOperUserOrgCode(user.getOrgCode());//被充值所属企业orgCode, 从企业账户里面去是不带.,自己拼接
         chargingRecord.setOperBeginTime(time);
         chargingRecord.setOperEndTime(time);
         chargingRecord.setOperDuration(0L);

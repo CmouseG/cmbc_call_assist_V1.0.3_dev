@@ -164,11 +164,15 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 			orgCode=data.getBody().getOrgCode();
 			orgName=data.getBody().getOrgName();
 		}
+		
 		if(StringUtils.isBlank(userId.toString())) {
 			logger.error("用户信息为空");
 			return false;
 		}
 		
+		if(!orgCode.endsWith(".")) {
+			orgCode = orgCode + ".";
+		}
 		
 		Date date = new Date();
 		//String filePath = "C:\\\\Users\\\\Administrator\\\\Desktop\\\\POS机";
@@ -184,6 +188,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 		String des = "";
 		String template_name = "";
 		String options_json = "";
+		boolean hasTemplateId = false;
 		//获取模板名称
 		for (File file : listFile) {
 			if(file.getName().equals("options.json")) {
@@ -197,6 +202,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 						}else {
 							template_id = templateId + "_en";
 						}
+						hasTemplateId = true;
 					}
 					//template_id = json.getString("tempname") + "_en";
 					des = json.getString("des");
@@ -265,6 +271,7 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 				botSentenceProcess.setTemplateType("02");
 				
 				//if(StringUtils.isBlank(template_id) || "_en".equals(template_id)) {
+				if(!hasTemplateId) {
 					//生成模板编号
 					Pinyin4jUtil util= new Pinyin4jUtil();
 					String pingyin = "";
@@ -276,8 +283,9 @@ public class ImportProcessServiceImpl implements IImportProcessService {
 					}
 					
 					template_id = pingyin + "_" + SystemUtil.getSysJournalNo(5, true) + "_en";
+					logger.info("自动生成模板编号: " + template_id);
+				}
 				//}
-				logger.info("自动生成模板编号: " + template_id);
 				
 				botSentenceProcess.setTemplateId(template_id);//模板编号
 				botSentenceProcess.setTemplateName(template_name);//模板名称

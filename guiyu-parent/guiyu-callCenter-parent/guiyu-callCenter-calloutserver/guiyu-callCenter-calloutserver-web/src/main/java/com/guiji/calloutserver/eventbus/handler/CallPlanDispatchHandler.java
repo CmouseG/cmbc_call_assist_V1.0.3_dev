@@ -118,7 +118,7 @@ public class CallPlanDispatchHandler {
                 Result.ReturnData<List<SysDictVO>> returnData = iSysDict.getDictValueByTypeKey("simcall_time","simcall_time");
                 String value = returnData.getBody().get(0).getDictValue();
                 Thread.sleep(Integer.valueOf(value)*1000);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

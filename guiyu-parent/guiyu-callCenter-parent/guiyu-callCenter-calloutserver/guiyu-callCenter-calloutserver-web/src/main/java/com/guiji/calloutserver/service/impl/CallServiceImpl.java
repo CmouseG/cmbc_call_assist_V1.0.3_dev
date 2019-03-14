@@ -76,7 +76,7 @@ public class CallServiceImpl implements CallService {
         synchronized (this){
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             log.info("开始执行呼叫命令[{}]", cmd);

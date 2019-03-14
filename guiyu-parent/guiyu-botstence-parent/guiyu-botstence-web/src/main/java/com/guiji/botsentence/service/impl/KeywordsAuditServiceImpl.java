@@ -307,7 +307,7 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
                 templateKeywords = Lists.newArrayList();
             }
             templateKeywords.addAll(keywords);
-            keywordTemplate.setKeywords(JSON.toJSONString(templateKeywords));
+            keywordTemplate.setKeywords(JSON.toJSONString(Sets.newHashSet(templateKeywords)));
             botSentenceKeywordTemplateMapper.updateByPrimaryKeySelective(keywordTemplate);
         }
     }

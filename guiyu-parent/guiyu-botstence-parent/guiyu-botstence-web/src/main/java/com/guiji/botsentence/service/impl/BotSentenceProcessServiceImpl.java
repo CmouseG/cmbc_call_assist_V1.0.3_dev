@@ -16,6 +16,7 @@ import com.guiji.botsentence.dao.ext.*;
 import com.guiji.botsentence.message.SpeechAuditMessage;
 import com.guiji.botsentence.service.BotSentenceKeyWordsService;
 import com.guiji.botsentence.service.IBotSentenceProcessService;
+import com.guiji.botsentence.service.IBotSentenceTemplateService;
 import com.guiji.botsentence.util.BotSentenceUtil;
 import com.guiji.botsentence.vo.*;
 import com.guiji.common.exception.CommonException;
@@ -118,6 +119,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	@Autowired
 	private BotSentenceShareAuthMapper botSentenceShareAuthMapper;
 	
+	@Autowired
+	private IBotSentenceTemplateService botSentenceTemplateService;
 	
 	@Autowired
 	private IAuth iAuth;
@@ -127,6 +130,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	
 	@Autowired
 	private BotSentenceSurveyIntentMapper botSentenceSurveyIntentMapper;
+	
+	@Autowired
+	private BotSentenceTradeExtMapper botSentenceTradeExtMapper;
 	
 	private static final String domain_prefix = "分支";
 	private static final String branch_prefix = "special_";
@@ -4779,4 +4785,63 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		return results;
 	}
+
+	@Override
+	public List<BotSentenceTemplateTradeVO> queryTradeListByTemplateIdList(List<String> templateIdList) {
+		List<String> tradeIdList = new ArrayList<>();
+		/*for(String temp : templateIdList) {
+			BotSentenceTemplateExample example = new BotSentenceTemplateExample();
+			example.createCriteria().andTemplateIdEqualTo(temp);
+			List<BotSentenceTemplate> list = botSentenceTemplateMapper.selectByExample(example);
+			if(null != list && list.size() > 0) {
+				BotSentenceTemplate process = list.get(0);
+				String industryId = process.getIndustryId();
+				BotSentenceTradeExample tradeExample = new BotSentenceTradeExample();
+				tradeExample.createCriteria().andIndustryIdEqualTo(industryId);
+				List<BotSentenceTrade> tradeList = botSentenceTradeMapper.selectByExample(tradeExample);
+				if(null != tradeList && tradeList.size() > 0) {
+					tradeIdList.add(tradeList.get(0).getParentId());
+				}
+			}
+		}*/
+		
+		tradeIdList = botSentenceTradeExtMapper.queryParentIdListByTemplateIdList(templateIdList);
+		
+		if(null != tradeIdList && tradeIdList.size() > 0) {
+			List<BotSentenceTemplateTradeVO> result =  this.queryTradeListByTradeIdList(tradeIdList);
+			
+			if(null != result && result.size() > 0) {
+				for(BotSentenceTemplateTradeVO trade : result) {
+					if(null != trade.getChildren()) {
+						for(BotSentenceTemplateTradeVO trade1 : trade.getChildren()) {
+							if(null != trade1.getChildren()) {
+								List<BotSentenceTemplateTradeVO> trade2List = trade1.getChildren();
+								for(int i = trade2List.size()-1 ; i >= 0 ; i--) {
+									//查询第3级行业下属的模板
+									BotSentenceTemplateTradeVO trade2 = trade2List.get(i);
+									List<BotSentenceTemplate> templateList = botSentenceTemplateService.queryTemplateByIndustry(trade2.getValue());
+									if(null != templateList && templateList.size() > 0) {
+										List<BotSentenceTemplateTradeVO> children = new ArrayList<>();
+										for(BotSentenceTemplate template : templateList) {
+											BotSentenceTemplateTradeVO vo = new BotSentenceTemplateTradeVO();
+											vo.setLabel(template.getTemplateName());
+											vo.setValue(template.getProcessId());
+											children.add(vo);
+										}
+										trade2.setChildren(children);
+									}/*else {
+										//过滤第3级行业
+										trade2List.remove(i);
+									}*/
+								}
+							}
+						}
+					}
+				}
+			}
+			return result;
+		}
+		return null;
+	}
+	
 }

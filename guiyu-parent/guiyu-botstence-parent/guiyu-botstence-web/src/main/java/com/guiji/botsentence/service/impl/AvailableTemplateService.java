@@ -35,11 +35,11 @@ public class AvailableTemplateService {
 	 * 企业可用话术
 	 */
 	public List<BotAvailableTemplate>  getOrgAvailableTemplate(Long userId){
-		//ReturnData<SysOrganization> data=iAuth.getOrgByUserId(userId);
-		ReturnData<SysUser> data=iAuth.getUserById(userId);
-		String orgCode=data.getBody().getOrgCode();
+		ReturnData<SysOrganization> data=iAuth.getOrgByUserId(userId);
+		//ReturnData<SysUser> data=iAuth.getUserById(userId);
+		String orgCode=data.getBody().getCode();
 		BotAvailableTemplateExample example=new BotAvailableTemplateExample();
-		example.createCriteria().andOrgCodeLike(orgCode+"%");
+		example.createCriteria().andOrgCodeLike(orgCode+".%");
 		List<BotAvailableTemplate> list = botAvailableTemplateMapper.selectByExample(example);
 		if(null != list && list.size() > 0) {
 			for(BotAvailableTemplate template : list) {

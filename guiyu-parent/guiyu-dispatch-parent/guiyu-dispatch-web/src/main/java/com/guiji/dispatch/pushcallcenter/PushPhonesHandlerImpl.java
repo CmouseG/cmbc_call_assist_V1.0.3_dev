@@ -107,7 +107,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
 								if(null != obj) {
-									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
+								//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
@@ -125,14 +125,14 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									for (DispatchLines line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
 									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
-											logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
+										//	logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
 									    	callBean.setSimCall(true);//  simCall  true:是SIM卡  false：不是SIM卡
 									        Integer lineId = line.getLineId();
                                             GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(RedisConstant.RedisConstantKey.gatewayLineKey+lineId);
                                             if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
                                                 lines.add(line.getLineId());
                                                 occupyLine = gateWayLine;
-                                                logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
+                                        //        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
                                                 break;//有闲置，则推送，网关路线只能推送一个
                                             }else{
 												redisUtil.leftPush(queue, dispatchRedis);
@@ -174,7 +174,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								// 增加推送次数
 								addVariable(callBean, queueCount);
 								logger.info("通知呼叫中心开始打电话:" + callBean.getPlanUuid() + "-----" + callBean.getPhone()
-										+ "---------" + callBean.getLineList());
+										+ "---------" + callBean.getLineList() + ", 通知呼叫中心时间:" + DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
 								ReturnData startMakeCall = callPlanCenter.startMakeCall(callBean);
 								// 记录推送记录
 								insertPush(dispatchRedis);

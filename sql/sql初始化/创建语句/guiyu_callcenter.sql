@@ -1,5 +1,4 @@
-
-CREATE DATABASE  IF NOT EXISTS `guiyu_callcenter`  ;
+CREATE DATABASE  IF NOT EXISTS `guiyu_callcenter`  DEFAULT CHARACTER SET utf8 ;
 
 USE `guiyu_callcenter`;
 

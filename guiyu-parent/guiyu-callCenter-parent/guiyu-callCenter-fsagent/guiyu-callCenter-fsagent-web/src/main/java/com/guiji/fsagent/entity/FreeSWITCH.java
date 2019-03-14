@@ -175,7 +175,9 @@ public class FreeSWITCH {
         globalVar.setGc_docker_ip(fsEslClient.execute("global_getvar gc_docker_ip"));
         globalVar.setInternal_sip_port1(fsEslClient.execute("global_getvar internal_sip_port1"));
         globalVar.setInternal_sip_port(fsEslClient.execute("global_getvar internal_sip_port"));
-
+        if(!fsEslClient.execute("global_getvar fs_role").equals("-ERR no reply")){
+            globalVar.setFs_role(fsEslClient.execute("global_getvar fs_role"));
+        }
         logger.info("freeswitch[{}]全局变量为[{}]", fsName, globalVar.toString());
     }
 

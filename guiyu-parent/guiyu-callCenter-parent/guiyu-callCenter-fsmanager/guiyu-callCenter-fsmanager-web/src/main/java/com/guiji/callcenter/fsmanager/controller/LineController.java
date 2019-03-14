@@ -72,7 +72,7 @@ public class LineController implements ILineOper {
             return Result.error(Constant.ERROR_CODE_PARAM);
         }
         List<LineXmlnfoVO> list =  lineService.linexmlinfos(lineId);
-        logger.info("获取线路配置文件接口请求返回：，LineXmlnfoVO[{}]",list);
+      //  logger.info("获取线路配置文件接口请求返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
 
@@ -80,17 +80,13 @@ public class LineController implements ILineOper {
     public Result.ReturnData linexmlinfosAll() {
         logger.info("收到获取所有线路配置文件接口请求");
         List<LineXmlnfoVO> list =  lineService.linexmlinfosAll();
-        logger.info("收到获取所有线路配置文件接口返回：，LineXmlnfoVO[{}]",list);
+      //  logger.info("收到获取所有线路配置文件接口返回：，LineXmlnfoVO[{}]",list);
         return Result.ok(list);
     }
 
     @Override
     public Result.ReturnData batchLinesinfos(@RequestBody List<LineInfoVO> lineInfo) {
         logger.info("收到增加线路接口请求，LineInfoVO[{}]", lineInfo);
-//        if (!lineService.batchLinesinfos(lineInfo)) {
-//            logger.info("增加线路接口请求失败，线路重名");
-//            return Result.error(Constant.ERROR_CODE_LINE_REPEAT);
-//        }
         lineService.batchLinesinfos(lineInfo);
         return Result.ok();
     }

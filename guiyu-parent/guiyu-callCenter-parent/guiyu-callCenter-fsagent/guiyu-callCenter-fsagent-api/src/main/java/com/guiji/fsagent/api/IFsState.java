@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface IFsState {
     @ApiOperation(value = "检查服务健康状态")
     @RequestMapping(value = "/ishealthy", method = RequestMethod.GET)
-     Result.ReturnData<Boolean> ishealthy();
+     Result.ReturnData<String> ishealthy();
 
     @ApiOperation(value = "获取freeswitch基本信息")
     @RequestMapping(value = "/fsinfo", method = RequestMethod.GET)

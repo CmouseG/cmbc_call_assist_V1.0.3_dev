@@ -67,7 +67,6 @@ public class LineMarketRemoteController implements LineMarketRemote{
 			@RequestParam(value="userId",required=true) String userId,
 			@RequestParam(value="lineId",required=true) Integer lineId){
 		SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
-		condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
 		condition.setUserId(userId);
 		condition.setLineId(lineId);
 		List<SipLineExclusive> list = SipLineExclusiveService.querySipLineExclusiveList(condition);

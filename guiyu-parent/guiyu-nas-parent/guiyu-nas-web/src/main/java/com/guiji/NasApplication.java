@@ -7,7 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
+import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -19,6 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients(basePackages = "com.guiji")
 @EnableAutoResultPack
 @EnableSwagger2
+@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 @Import(FdfsClientConfig.class)
 @MapperScan("com.guiji.nas.dao")
 public class NasApplication {

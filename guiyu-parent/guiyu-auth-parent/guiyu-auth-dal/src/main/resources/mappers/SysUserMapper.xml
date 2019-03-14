@@ -615,7 +615,7 @@
     inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,
     update_time, del_flag, vaild_time,start_time,is_desensitization
     from sys_user
-    where org_code like CONCAT(#{orgCode},'%')
+    where org_code like CONCAT(#{orgCode},'.%')
   </select>
 
   <insert id="addUserExt">

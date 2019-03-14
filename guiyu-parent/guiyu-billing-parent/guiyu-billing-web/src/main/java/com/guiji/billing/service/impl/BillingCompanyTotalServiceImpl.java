@@ -38,7 +38,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     public List<TotalChargingItemVo> totalCompanyChargingItem(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemVo> page) {
         //获取用户ID
         String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
-        //获取企业组织
+        //获取企业组织 code后面不带点.
         SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
         String orgCode = null != org?org.getCode():"1";
@@ -68,7 +68,7 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     public int totalCompanyChargingCount(QueryTotalChargingItemDto queryTotalChargingItemDto) {
         //获取用户ID
         String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
-        //获取企业组织
+        //获取企业组织 code后面不带点.
         SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
         String orgCode = null != org?org.getCode():"1";

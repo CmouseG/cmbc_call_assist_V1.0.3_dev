@@ -17,7 +17,7 @@ public class FsStateController implements IFsState {
     FsStateService fsStateService;
 
     @Override
-    public Result.ReturnData<Boolean> ishealthy() {
+    public Result.ReturnData<String> ishealthy() {
         logger.info("收到检查服务健康状态请求");
         return Result.ok(fsStateService.ishealthy());
     }

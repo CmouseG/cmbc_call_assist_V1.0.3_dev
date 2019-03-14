@@ -38,4 +38,15 @@ public interface LineMarketRemote {
     @PostMapping(value = "/remote/querySipLineById")
 	Result.ReturnData<SipLineVO> queryUserSipLineList(@RequestParam(value="id",required=true) Integer id);
     
+    /**
+	 * 查询用户SIP线路列表
+	 * @param userId
+	 * @param lineId
+	 * @return
+	 */
+    @PostMapping(value = "/remote/queryUserSipLineByLineId")
+	public Result.ReturnData<SipLineVO> queryUserSipLineByLineId(
+			@RequestParam(value="userId",required=true) String userId,
+			@RequestParam(value="lineId",required=true) Integer lineId);
+    
 }

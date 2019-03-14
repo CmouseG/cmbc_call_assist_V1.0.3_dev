@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.dao.entity.SipLineExclusive;
+import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.model.SipLineVO;
 import com.guiji.component.result.Result;
 import com.guiji.utils.StrUtils;
@@ -19,6 +20,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 
 import com.guiji.clm.service.sip.SipLineExclusiveService;
 import com.guiji.clm.util.AreaDictUtil;
+import com.guiji.clm.vo.SipLineExclusiveQueryCondition;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,6 +55,26 @@ public class LineMarketRemoteController implements LineMarketRemote{
     public Result.ReturnData<SipLineVO> queryUserSipLineList(@RequestParam(value="id",required=true) Integer id){
     	SipLineExclusive sipLineExclusive = SipLineExclusiveService.queryById(id);
     	return Result.ok(this.exclusive2SipLine(sipLineExclusive));
+    }
+    
+    /**
+	 * 查询用户SIP线路列表
+	 * @param userId
+	 * @param lineId
+	 * @return
+	 */
+	public Result.ReturnData<SipLineVO> queryUserSipLineByLineId(
+			@RequestParam(value="userId",required=true) String userId,
+			@RequestParam(value="lineId",required=true) Integer lineId){
+		SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
+		condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
+		condition.setUserId(userId);
+		condition.setLineId(lineId);
+		List<SipLineExclusive> list = SipLineExclusiveService.querySipLineExclusiveList(condition);
+		if(list!=null && !list.isEmpty()) {
+			return Result.ok(this.exclusive2SipLine(list.get(0)));
+		}
+		return Result.ok();
     }
     
     /**

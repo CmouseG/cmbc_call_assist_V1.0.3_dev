@@ -249,7 +249,7 @@ public class VoipGwManager {
 	 * @param userId 分配人
 	 */
 	@Transactional
-	public void assignGwPort(List<VoipGwPort> gwPortList,String userId) {
+	public void assignGwPort(List<VoipGwPort> gwPortList,String operUserId) {
 		if(gwPortList==null) {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
@@ -258,7 +258,7 @@ public class VoipGwManager {
 		List<VoipGwPort> unFeePortList = new ArrayList<VoipGwPort>();	//要解除计费端口
 		for(VoipGwPort gwPort : gwPortList) {
 			VoipGwPort port = voipGwPortService.queryById(gwPort.getId());
-			if(StrUtils.isNotEmpty(port.getUserId()) && !port.getUserId().equals(userId)) {
+			if(StrUtils.isNotEmpty(port.getUserId()) && !port.getUserId().equals(gwPort.getUserId())) {
 				//如果是换卡操作，那么检查被换卡的用户是否可以被换
 				//调用调度中心检查线路是否在使用
 				Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(port.getUserId()));
@@ -285,7 +285,7 @@ public class VoipGwManager {
 			}else {
 				port.setOrgCode(gwPort.getOrgCode());
 			}
-			port.setCrtUser(userId);
+			port.setCrtUser(operUserId);
 			voipGwPortService.save(port);	//保存
 			//将要计费数据复制一份
 			VoipGwPort feePort = new VoipGwPort();
@@ -311,10 +311,10 @@ public class VoipGwManager {
 	/**
 	 * 拔卡
 	 * @param gwPortIdList
-	 * @param userId
+	 * @param operUserId 操作人
 	 */
 	@Transactional
-	public void unAssignGwPort(List<Integer> gwPortIdList,String userId) {
+	public void unAssignGwPort(List<Integer> gwPortIdList,String operUserId) {
 		if(gwPortIdList==null) {
 			//非空校验
 			throw new ClmException(ClmErrorEnum.C00060001.getErrorCode(),ClmErrorEnum.C00060001.getErrorMsg());
@@ -324,7 +324,7 @@ public class VoipGwManager {
 		for(Integer gwPortId : gwPortIdList) {
 			VoipGwPort port = voipGwPortService.queryById(gwPortId);
 			//调用调度中心检查线路是否在使用
-			Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(userId));
+			Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(port.getUserId()));
 			if(inUsedFlag.getBody().booleanValue()) {
 				//在使用抛出异常，不能直接删除
 				log.error("网关线路编号:{}仍在调度中心使用中，不能删除",port.getLineId());
@@ -337,7 +337,7 @@ public class VoipGwManager {
 			port.setUserId(null);
 			port.setOrgCode(null);
 			port.setPhoneNo(null);
-			port.setCrtUser(userId);
+			port.setCrtUser(operUserId);
 			voipGwPortService.save(port);
 		}
 		//删除计费项

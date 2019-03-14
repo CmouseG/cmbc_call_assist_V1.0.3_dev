@@ -94,6 +94,7 @@ public class NoticeSettingController implements INoticeSetting {
         Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
         String orgCode = returnData.getBody().getCode();
         if (authService.isCompanyAdmin(userId)) {
+            logger.info("创建消息接受者,管理员,orgCode[{}],userId[{}],",orgCode,userId);
             noticeSettingService.addNoticeSettingReceiver(orgCode, userId);
         }
         return Result.ok();

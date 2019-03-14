@@ -30,7 +30,7 @@
     </foreach>
   </insert>
   <update id="addNoticeSettingReceiver">
-  UPDATE  notice_setting SET receivers = CONCAT(receivers,',',#{userId})
+  UPDATE  notice_setting SET receivers =  IF(ISNULL(receivers), #{userId},CONCAT(receivers,',',#{userId}))
   WHERE org_code =  #{orgCode}
   </update>
 

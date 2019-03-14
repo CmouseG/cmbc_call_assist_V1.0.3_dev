@@ -21,7 +21,7 @@
     WHERE r.del_flag = 0
       AND r.account_id = a.account_id
       <if test="orgCode != null and orgCode != ''">
-        AND (a.org_code = #{orgCode} OR a.org_code LIKE CONCAT(#{orgCode},'%'))
+        AND (r.oper_user_org_code = #{orgCode} OR r.oper_user_org_code LIKE CONCAT(#{orgCode},'%'))
       </if>
       <if test="type != null">
         AND r.type = #{type}

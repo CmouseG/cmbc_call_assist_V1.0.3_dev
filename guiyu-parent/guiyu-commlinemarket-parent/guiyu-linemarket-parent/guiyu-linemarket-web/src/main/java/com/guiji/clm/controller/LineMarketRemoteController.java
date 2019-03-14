@@ -90,7 +90,7 @@ public class LineMarketRemoteController implements LineMarketRemote{
 			}
 			if(StrUtils.isNotEmpty(vo.getExceptAreas())) {
 				//盲区
-				vo.setExceptAreasName(AreaDictUtil.getAreaName(vo.getExceptAreas()));
+				vo.setExceptAreasName(AreaDictUtil.getLowAreaNames(vo.getExceptAreas()));
 			}
 			return vo;
     	}

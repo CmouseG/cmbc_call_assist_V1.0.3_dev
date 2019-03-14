@@ -24,10 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 */
 @Slf4j
 public class AreaDictUtil {
+	private static String areaJson;
 	private static JSONObject areaJsonObj;
     
 	public static void main(String[] args) {
 		System.out.println(AreaDictUtil.getAreaName("410000,410300"));
+		System.out.println(AreaDictUtil.getLowAreaNames("410300,410100"));
 	}
 	
 	static {
@@ -35,7 +37,7 @@ public class AreaDictUtil {
 		try {
 			Resource resource = resourceLoader.getResource("classpath:area.json");
 	        InputStream inputStream = resource.getInputStream();
-			String areaJson = getString(inputStream);
+	        areaJson = getString(inputStream);
 			areaJsonObj = JSON.parseObject(areaJson);
 		} catch (IOException e) {
 			log.error("解析area.json文件失败,请求参数",e);
@@ -44,6 +46,8 @@ public class AreaDictUtil {
 	
 	/**
 	 * 根据地区码查询地区名称
+	 * 参数：上层地区,下级地区    410000,410300  (河南省,洛阳市) 返回洛阳市
+	 * 返回下级地区名称
 	 * @param areaCode
 	 * @return
 	 */
@@ -62,6 +66,34 @@ public class AreaDictUtil {
 		}
 		return null;
 	}
+	
+	
+	/**
+	 * 查询多个底层地区，如：洛阳市,郑州市  （编号）
+	 * 使用json不太好处理，树形结构不确定多少层，因为编号长度固定，所以直接使用字符串匹配
+	 * 返回名称
+	 * @param areaArrayCode
+	 * @return
+	 */
+	public static String getLowAreaNames(String areaArrayCode) {
+		if(StrUtils.isNotEmpty(areaArrayCode)) {
+			StringBuffer sb = new StringBuffer();
+			String[] areaArray = areaArrayCode.split(",");
+			for(String area:areaArray) {
+				int indexBegin = areaJson.indexOf(area);
+				if(indexBegin>=0) {
+					int indexEnd = areaJson.indexOf("\"", indexBegin+9);
+					String areaName = areaJson.substring(indexBegin+9, indexEnd);
+					sb.append(","+areaName);
+				}
+			}
+			if(sb!=null && sb.length()>1) {
+				return sb.toString().substring(1);
+			}
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 读取文件

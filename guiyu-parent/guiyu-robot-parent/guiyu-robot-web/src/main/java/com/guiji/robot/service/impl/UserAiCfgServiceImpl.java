@@ -284,6 +284,9 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService{
 	public List<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoByOrgCode(String orgCode){
 		if(StrUtils.isNotEmpty(orgCode)) {
 			UserAiCfgBaseInfoExample example = new UserAiCfgBaseInfoExample();
+			if(!orgCode.endsWith(".")) {
+				orgCode = orgCode+".";
+			}
 			example.createCriteria().andOrgCodeLike(orgCode+"%");
 			return userAiCfgBaseInfoMapper.selectByExample(example);
 		}

@@ -122,6 +122,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 									callBean.setRemarks(dispatchRedis.getAttach());
 									List<Integer> lines = new ArrayList<>();
+									boolean isSimPush = false;//是否是SIM卡推送
 									for (DispatchLines line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
 									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
@@ -132,16 +133,22 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                             if(GateWayLineStatusEnum.LEISURE.getState() == gateWayLine.getStatus()){//状态闲置未被占用   0-闲置  1-占用
                                                 lines.add(line.getLineId());
                                                 occupyLine = gateWayLine;
+												isSimPush = true;
                                         //        logger.info("推送SIM卡网关拨打用户:{},话术模板:{},网关线路:{}", callBean.getUserId(), callBean.getTempId(), lineId);
                                                 break;//有闲置，则推送，网关路线只能推送一个
-                                            }else{
-												redisUtil.leftPush(queue, dispatchRedis);
-											}
+                                            }
                                         }else {
                                             lines.add(line.getLineId());
 											callBean.setSimCall(false);
                                         }
 									}
+
+									//SIM网关路线，不推送呼叫中，重新入栈推送队列
+									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()
+										&& !isSimPush){
+										redisUtil.leftPush(queue, dispatchRedis);
+									}
+
 									if(null == lines || lines.size()==0){//没有需要推送的线路,继续循环下条任务计划 用户模板
                                         continue;
                                     }

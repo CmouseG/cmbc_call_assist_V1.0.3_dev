@@ -42,9 +42,6 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 	@Override
 	public void execute(DispatchPlan dis) {
 		logger.info("---------------------第三方回调------------------------");
-		logger.info("---------------------第三方回调------------------------");
-		logger.info("---------------------第三方回调------------------------");
-		logger.info("---------------------第三方回调------------------------");
 		// 回调批次拨打结束通知。
 		ReturnData<SysUser> user = auth.getUserById(dis.getUserId().longValue());
 		if (user.getBody() != null) {

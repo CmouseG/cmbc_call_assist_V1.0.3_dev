@@ -48,4 +48,12 @@ public interface IBotSentenceTradeService {
 	 */
 	@RequestMapping(value = "/botsentenceServer/queryAllTradeList")
 	public ServerResult<List<BotSentenceTemplateTradeVO>> queryAllTradeList();
+	
+	
+	/**
+	 * 查询所有模板的树结构
+	 * @return
+	 */
+	@RequestMapping(value = "/botsentenceServer/queryTradeListByTemplateIdList")
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeListByTemplateIdList(@RequestParam("templateIdList")List<String> templateIdList);
 }

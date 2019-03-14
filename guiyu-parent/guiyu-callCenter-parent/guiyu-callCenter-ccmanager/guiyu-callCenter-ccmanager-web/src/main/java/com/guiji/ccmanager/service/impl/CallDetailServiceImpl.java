@@ -8,6 +8,7 @@ import com.guiji.ccmanager.entity.CallOutPlanQueryEntity;
 import com.guiji.ccmanager.manager.CacheManager;
 import com.guiji.ccmanager.service.AuthService;
 import com.guiji.ccmanager.service.CallDetailService;
+import com.guiji.ccmanager.service.LineNameService;
 import com.guiji.ccmanager.vo.*;
 import com.guiji.utils.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,8 @@ public class CallDetailServiceImpl implements CallDetailService {
     AgentMapper agentMapper;
     @Autowired
     CallPlanExportMapper callPlanExportMapper;
+    @Autowired
+    LineNameService lineNameService;
 
     @Override
     public void updateIsRead(String callId) {
@@ -226,6 +229,7 @@ public class CallDetailServiceImpl implements CallDetailService {
                 callOutPlan4ListSelect.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
                 callOutPlan4ListSelect.setUserName(cacheManager.getUserName(callOutPlan.getCustomerId()));
                 callOutPlan4ListSelect.setCallId(callOutPlan.getCallId().toString());
+                callOutPlan4ListSelect.setLineName(lineNameService.getLineName(callOutPlan.getLineId(),callOutPlan.getCustomerId()));
                 listResult.add(callOutPlan4ListSelect);
             }
         }

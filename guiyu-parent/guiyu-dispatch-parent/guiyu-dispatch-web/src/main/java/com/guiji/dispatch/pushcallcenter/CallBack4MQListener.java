@@ -50,7 +50,7 @@ public class CallBack4MQListener {
 	public void process(String message, Channel channel, Message message2) {
 		// 呼叫中心回调之后去获取最新的并发数量和呼叫中心的负载情况推送对应数量的号码
 		MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
-		logger.info("呼叫中心回调数据:{}", JsonUtils.bean2Json(mqSuccPhoneDto));
+		logger.info("呼叫中心回调数据:{},回调时间:{}", JsonUtils.bean2Json(mqSuccPhoneDto), DateTimeUtils.getCurrentDateString(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL));
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
 		this.leisureGateWayLine(mqSuccPhoneDto);
 		/********判断处理网关SIM卡线路占用释放	begin*************************************/
@@ -64,12 +64,15 @@ public class CallBack4MQListener {
 		if (result > 0) {
 			try {
 				String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + mqSuccPhoneDto.getUserId() + "_" + mqSuccPhoneDto.getTempId();
-				Integer currentCount = (Integer) redisUtil.get(queueCount);
-				if (currentCount > 0) {
+				Object countObj = redisUtil.get(queueCount);
+				Integer currentCount = null != countObj?((Integer)countObj):null;
+				if (null != currentCount && currentCount > 0) {
 //				currentCount = currentCount - 1;
 //				redisUtil.set(queueCount, currentCount);
 					redisUtil.decr(queueCount, 1);
 					redisUtil.expire(queueCount, 300);
+				}else{
+					logger.error("呼叫回调，" + queueCount + "已不存在");
 				}
 			}catch(Exception e){
 				logger.error("计算器异常", e);
@@ -88,11 +91,11 @@ public class CallBack4MQListener {
 				String botstenceId = mqSuccPhoneDto.getTempId();
 				//获取网关线路对象
 				Integer lineId = mqSuccPhoneDto.getLineId();
-				logger.info("释放网关线路ID:{}", lineId);
+			//	logger.info("释放网关线路ID:{}", lineId);
 				if(null != lineId) {
 					String gateWayLineKey = RedisConstant.RedisConstantKey.gatewayLineKey + lineId;
 					GateWayLineOccupyVo gateWayLine = (GateWayLineOccupyVo) redisUtil.get(gateWayLineKey);
-					logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
+			//		logger.info("释放网关线路ID:{},对象:{}", lineId, JsonUtils.bean2Json(gateWayLine));
 					if (null != gateWayLine) {
 						if (gateWayLine.getUserId().equals(userId)
 								&& gateWayLine.getBotstenceId().equals(botstenceId)) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,10 @@ public class AvailableTemplateService {
 	 */
 	public List<BotAvailableTemplate>  getOrgAvailableTemplate(Long userId){
 		ReturnData<SysOrganization> data=iAuth.getOrgByUserId(userId);
+		//ReturnData<SysUser> data=iAuth.getUserById(userId);
 		String orgCode=data.getBody().getCode();
 		BotAvailableTemplateExample example=new BotAvailableTemplateExample();
-		example.createCriteria().andOrgCodeLike(orgCode+"%");
+		example.createCriteria().andOrgCodeLike(orgCode+".%");
 		List<BotAvailableTemplate> list = botAvailableTemplateMapper.selectByExample(example);
 		if(null != list && list.size() > 0) {
 			for(BotAvailableTemplate template : list) {

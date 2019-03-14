@@ -7,7 +7,7 @@
     <result column="intent_id" jdbcType="INTEGER" property="intentId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="keywords_count" jdbcType="INTEGER" property="keywordsCount" />
-    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -112,7 +112,7 @@
     insert into bot_sentence_keyword_audit (process_id, intent_id, user_id, 
       keywords_count, create_time)
     values (#{processId,jdbcType=VARCHAR}, #{intentId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
-      #{keywordsCount,jdbcType=INTEGER}, #{createTime,jdbcType=DATE})
+      #{keywordsCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.guiji.botsentence.dao.entity.BotSentenceKeywordAudit" useGeneratedKeys="true">
     insert into bot_sentence_keyword_audit
@@ -147,7 +147,7 @@
         #{keywordsCount,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
-        #{createTime,jdbcType=DATE},
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -176,7 +176,7 @@
         keywords_count = #{record.keywordsCount,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null">
-        create_time = #{record.createTime,jdbcType=DATE},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -190,7 +190,7 @@
       intent_id = #{record.intentId,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
       keywords_count = #{record.keywordsCount,jdbcType=INTEGER},
-      create_time = #{record.createTime,jdbcType=DATE}
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -211,7 +211,7 @@
         keywords_count = #{keywordsCount,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
-        create_time = #{createTime,jdbcType=DATE},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -222,7 +222,7 @@
       intent_id = #{intentId,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=INTEGER},
       keywords_count = #{keywordsCount,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=DATE}
+      create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

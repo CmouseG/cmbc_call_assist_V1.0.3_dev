@@ -39,6 +39,7 @@
     <result column="is_cancel" property="isCancel" jdbcType="INTEGER" />
     <result column="is_answer" property="isAnswer" jdbcType="INTEGER" />
     <result column="intervened" property="intervened" jdbcType="BIT" />
+    <result column="line_name" property="lineName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -58,6 +59,35 @@
                 </when>
                 <when test="criterion.listValue" >
                   and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Example_Where_Clause2" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and a.${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and a.${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and a.${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and a.${criterion.condition}
                   <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
                     #{listItem}
                   </foreach>
@@ -141,14 +171,15 @@
     <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
         select
         call_id, IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
-        customer_id, temp_id, line_id, serverId, agent_id, agent_answer_time,
-        agent_channel_uuid, agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
+        temp_id, agent_id, agent_answer_time,a.customer_id,
+        agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
         accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,intervened,
-        isdel, isread
-        from call_out_plan
+        isdel, isread ,b.line_name
+        from call_out_plan a
+        left join line_info b on a.line_id = b.line_id
         <if test="_parameter != null" >
-            <include refid="Example_Where_Clause" />
+            <include refid="Example_Where_Clause2" />
         </if>
         <if test="orderByClause != null" >
             order by ${orderByClause}

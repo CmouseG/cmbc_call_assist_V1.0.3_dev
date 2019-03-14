@@ -87,6 +87,8 @@ public class CallOutPlan4ListSelect {
 
     private Boolean intervened;
 
+    private String lineName;
+
     private static final long serialVersionUID = 1L;
 
     public String getCallId() {
@@ -361,6 +363,14 @@ public class CallOutPlan4ListSelect {
         this.intervened = intervened;
     }
 
+    public String getLineName() {
+        return lineName;
+    }
+
+    public void setLineName(String lineName) {
+        this.lineName = lineName;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -401,6 +411,7 @@ public class CallOutPlan4ListSelect {
         sb.append(", orgCode=").append(orgCode);
         sb.append(", batchId=").append(batchId);
         sb.append(", intervened=").append(intervened);
+        sb.append(", lineName=").append(lineName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

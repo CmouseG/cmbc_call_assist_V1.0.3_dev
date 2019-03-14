@@ -53,6 +53,7 @@ public class FsEslClient implements IEslEventListener{
                 logger.info("开始连接FreeSWITCH,[{}][{}]", eslIp, eslPort);
                 eslClient.connect(eslIp, Integer.parseInt(eslPort), eslPwd, 10);
                 initClient(eslClient);
+                fsEventHandler.onConnect();
             }catch (Exception ex){
                 logger.warn("获取FreeSWITCH ESL连接出现异常", ex);
             }

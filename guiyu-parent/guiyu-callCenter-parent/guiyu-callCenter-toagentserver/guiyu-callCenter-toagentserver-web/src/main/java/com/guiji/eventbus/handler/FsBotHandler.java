@@ -8,6 +8,7 @@ import com.guiji.eventbus.event.*;
 import com.guiji.fs.FsManager;
 import com.guiji.fs.pojo.AgentState;
 import com.guiji.service.*;
+import com.guiji.util.DateUtil;
 import com.guiji.web.request.AgentInfo;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
@@ -57,30 +58,50 @@ public class FsBotHandler {
         log.info("收到ChannelAnswer事件[{}], 准备进行处理", event);
 
         try {
-            if(!event.isCallToAgent()) {
-                log.info("未知的应答事件[{}]，跳过处理", event);
+            if(!event.isCallToAgent() && !event.getIsXiehu()) {
+                log.info("未知的应答事件[{}], 非转人工或协呼，跳过处理", event);
                 return;
             }
 
             CallPlan callPlan = callPlanService.findByCallId(event.getSeqId(), event.getCallDirection());
-            if (!event.isCallToAgent()) {
-                log.warn("该接听事件不属于转人工或者asterisk送的字段不全，忽略");
-                return;
-            }
 
-            //判断座席组是否有座席成员
-            List<Agent> agents = tierService.findAgentsByQueueId(event.getQueueId());
-            if (agents == null && agents.size() == 0) {
-                doWithUnWorkTimeVistor(event, callPlan);
-                log.warn("当前座席组中没有分配座席，提示退出，queueId:[{}]", event.getQueueId());
-                return;
-            }
+            if(event.isCallToAgent()){
+                log.debug("开始处理转人工事件[{}]", event);
+                //判断座席组是否有座席成员
+                List<Agent> agents = tierService.findAgentsByQueueId(event.getQueueId());
+                if (agents == null && agents.size() == 0) {
+                    doWithUnWorkTimeVistor(event, callPlan);
+                    log.warn("当前座席组中没有分配座席，提示退出，queueId:[{}]", event.getQueueId());
+                    return;
+                }
 
-            //将当前呼入电话转入座席组中
-            fsManager.transferToAgentGroup(event.getUuid(), event.getCallerNum(), event.getQueueId().toString());
+                //将当前呼入电话转入座席组中
+                fsManager.transferToAgentGroup(event.getUuid(), event.getCallerNum(), event.getQueueId().toString());
+            }else{
+                handleXiehu(event, callPlan);
+            }
         }catch (Exception ex){
             log.warn("在处理channel_answer时出现异常", ex);
         }
+    }
+
+    /**
+     * 处理协呼应答事件
+     * @param event
+     * @param callPlan
+     */
+    private void handleXiehu(ChannelAnswerEvent event, CallPlan callPlan) {
+        //构建AgentAnswerEvent，便于后续事件流转
+        AgentAnswerEvent agentEvent = new AgentAnswerEvent();
+        agentEvent.setCallDirection(event.getCallDirection());
+        agentEvent.setAgentAnswerTime(DateUtil.getCurrentDateTime());
+        agentEvent.setAgentId(event.getAgentId());
+        agentEvent.setAgentUuid(event.getUuid());
+        agentEvent.setCustomerNum(event.getCallerNum());
+        agentEvent.setCustomerUuid(event.getOtherLegUuid());
+        agentEvent.setSeqId(event.getSeqId());
+
+        simpleEventSender.sendEvent(agentEvent);
     }
 
     /**

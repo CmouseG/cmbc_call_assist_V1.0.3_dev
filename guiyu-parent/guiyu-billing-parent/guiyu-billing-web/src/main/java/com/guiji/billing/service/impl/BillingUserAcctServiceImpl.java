@@ -2,6 +2,7 @@ package com.guiji.billing.service.impl;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
+import com.guiji.billing.constants.AuthConstant;
 import com.guiji.billing.constants.BusiTypeEnum;
 import com.guiji.billing.constants.ThresholdKeyEnum;
 import com.guiji.billing.dao.mapper.ext.BillingUserAcctMapper;
@@ -14,6 +15,7 @@ import com.guiji.billing.enums.*;
 import com.guiji.billing.exception.BaseException;
 import com.guiji.billing.service.AcctNotifyService;
 import com.guiji.billing.service.BillingUserAcctService;
+import com.guiji.billing.service.GetApiService;
 import com.guiji.billing.service.msg.MsgNotifyComponent;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DaoHandler;
@@ -50,6 +52,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
 
     @Autowired
     private BillingUserAcctMapper billingUserAcctMapper;
+
+    @Autowired
+    private GetApiService getApiService;
 
     @Autowired
     private AcctNotifyService acctNotifyService;
@@ -314,6 +319,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
                 if(!StringUtils.isEmpty(rechargeDto.getOrgCode())){
                     //查询该企业是否已注册
                     String orgCode = rechargeDto.getOrgCode();
+                    //如果前端传过来的带后缀点.
+                    if(!StringUtils.isEmpty(orgCode) && orgCode.endsWith(AuthConstant.orgSuffix)){
+                        orgCode = orgCode.substring(0, orgCode.length()-1);
+                    }
                     BillingUserAcctBean acctExist = billingUserAcctMapper.queryUserAcctByOrgCode(orgCode);
                     //企业已注册账户
                     if(null != acctExist){
@@ -424,8 +433,8 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
         chargingRecord.setAccountId(acct.getAccountId());
         chargingRecord.setOperUserId(userId);
         chargingRecord.setOperUserName(user.getUsername());
-        chargingRecord.setOperOrgCode(user.getOrgCode());   //操作员用户企业编码
-        chargingRecord.setOperUserOrgCode(acct.getOrgCode());//被充值所属企业orgCode
+        chargingRecord.setOperOrgCode(user.getOrgCode()+ AuthConstant.orgSuffix);   //操作员用户企业编码
+        chargingRecord.setOperUserOrgCode(acct.getOrgCode()+ AuthConstant.orgSuffix);//被充值所属企业orgCode, 从企业账户里面去是不带.,自己拼接
         chargingRecord.setOperBeginTime(time);
         chargingRecord.setOperEndTime(time);
         chargingRecord.setOperDuration(0L);
@@ -454,12 +463,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
         String accountId = queryRechargeDto.getAccountId();
-        //获取用户ID
-        String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
-        //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        String userId = queryRechargeDto.getUserId();
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():"1";
+        String orgCode = (null != org)?org.getCode():AuthConstant.superOrgCode;
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -479,12 +486,10 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
         String accountId = queryRechargeDto.getAccountId();
-        //获取用户ID
-        String userId = null != queryRechargeDto.getUserId()?queryRechargeDto.getUserId():"1";
-        //获取企业组织
-        SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
+        String userId = queryRechargeDto.getUserId();
+        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():"1";
+        String orgCode = (null != org)?org.getCode():AuthConstant.superOrgCode;
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){

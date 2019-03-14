@@ -11,6 +11,7 @@ import com.guiji.botsentence.dao.entity.BotSentenceProcess;
 import com.guiji.botsentence.dao.entity.*;
 import com.guiji.botsentence.dao.ext.BotSentenceKeywordAuditItemExtMapper;
 import com.guiji.botsentence.service.IKeywordsAuditService;
+import com.guiji.botsentence.service.ITradeService;
 import com.guiji.botsentence.util.enums.KeywordAuditStatus;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.ServerResult;
@@ -24,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -61,6 +59,9 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
 
     @Resource
     private BotSentenceKeywordAuditItemExtMapper botSentenceKeywordAuditItemExtMapper;
+
+    @Resource
+    private ITradeService iTradeService;
 
     @Override
     @Transactional
@@ -104,12 +105,11 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
                 customizeKeyWords.removeAll(oldIntentIdToKeyWordsMap.get(oldIntentId));
             }
             customizeKeyWords.removeAll(allTemplateKeywords);//去除行业模板已有的关键字
-
+            //去除所有组合关键字
+            customizeKeyWords.removeIf(keyword -> keyword.contains(ASSEMBLE_KEYWORD_REGEX));
             if(CollectionUtils.isEmpty(customizeKeyWords)){
                 continue;
             }
-            //去除所有组合关键字
-            customizeKeyWords.removeIf(keyword -> keyword.contains(ASSEMBLE_KEYWORD_REGEX));
 
             BotSentenceKeywordAudit keywordAudit = new BotSentenceKeywordAudit();
             keywordAudit.setProcessId(processId);
@@ -194,6 +194,14 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
             processIdToProcessMap = processes.stream().collect(Collectors.toMap(BotSentenceProcess::getProcessId, Function.identity()));
         }
 
+        Set<String> industryIds = Sets.newHashSet();
+        processIdToProcessMap.values().forEach(process -> {
+            if(processIdSet.contains(process.getProcessId())){
+                industryIds.add(process.getIndustryId());
+            }
+        });
+        Map<String, String> industryIdToFullNameMap = iTradeService.getIndustryIdToFullNameMap(industryIds);
+
         BotSentenceKeywordAuditItemExample auditItemExample = new BotSentenceKeywordAuditItemExample();
         auditItemExample.createCriteria()
                 .andAuditStatusEqualTo(keywordsAuditListReqVO.getKeywordAuditStatus())
@@ -216,8 +224,9 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
             BotSentenceProcess process = processIdToProcessMap.get(keywordAudit.getProcessId());
             auditRpsVO.setAuditItems(auditIdToItemListMap.get(keywordAudit.getId()));
 
-            auditRpsVO.setIndustryId(process.getIndustryId());
-            auditRpsVO.setIndustry(process.getIndustry());
+            String industryId = process.getIndustryId();
+            auditRpsVO.setIndustryId(industryId);
+            auditRpsVO.setIndustry(industryIdToFullNameMap.get(industryId));
             auditRpsVO.setTemplateName(process.getTemplateName());
 
             auditRpsVO.setProduceUserId(keywordAudit.getUserId());
@@ -298,7 +307,7 @@ public class KeywordsAuditServiceImpl implements IKeywordsAuditService {
                 templateKeywords = Lists.newArrayList();
             }
             templateKeywords.addAll(keywords);
-            keywordTemplate.setKeywords(JSON.toJSONString(templateKeywords));
+            keywordTemplate.setKeywords(JSON.toJSONString(Sets.newHashSet(templateKeywords)));
             botSentenceKeywordTemplateMapper.updateByPrimaryKeySelective(keywordTemplate);
         }
     }

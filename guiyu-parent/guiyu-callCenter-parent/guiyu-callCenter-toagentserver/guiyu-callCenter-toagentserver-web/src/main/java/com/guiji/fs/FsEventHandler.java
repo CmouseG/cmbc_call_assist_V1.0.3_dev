@@ -8,6 +8,7 @@ import com.guiji.eventbus.SimpleEventSender;
 import com.guiji.eventbus.event.*;
 import com.guiji.service.AgentService;
 import com.guiji.service.CallPlanService;
+import com.guiji.service.impl.AgentServiceImpl;
 import com.guiji.util.CommonUtil;
 import com.guiji.util.DateUtil;
 import com.google.common.base.Strings;
@@ -36,6 +37,11 @@ public class FsEventHandler {
 
     @Autowired
     CallCache callCache;
+
+    public void onConnect(){
+        log.info("连接freeswitch的时候加载全局callcenter.xml文件");
+        agentService.initCallcenter();
+    }
 
     public void handleEvent(EslEvent eslEvent) {
         String eventName = eslEvent.getEventName();
@@ -152,6 +158,7 @@ public class FsEventHandler {
         event.setCallerNum(eventHeaders.get("Caller-Caller-ID-Number"));
         event.setCalledNum(eventHeaders.get("Caller-Destination-Number"));
         event.setSeqId(eventHeaders.get("variable_ai_seq_id"));
+        event.setAgentId(eventHeaders.get("variable_ai_agent_id"));
 
         ECallDirection callDirection = null;
         String direction = eventHeaders.get("variable_ai_call_direction");
@@ -164,12 +171,30 @@ public class FsEventHandler {
             return;
         }
 
-        callCache.put(event.getUuid(), event.getSeqId(), callDirection, EUserType.CUSTOMER);
         event.setCallDirection(callDirection);
-
         String queueId = eventHeaders.get("variable_ai_queue_id");
         if(!Strings.isNullOrEmpty(queueId)){
             event.setQueueId(Long.parseLong(queueId));
+        }
+
+        //协呼事件构建
+        if(!Strings.isNullOrEmpty(eventHeaders.get("variable_ai_xiehu"))){
+            log.debug("当前的channelanswer事件为协呼事件");
+            event.setIsXiehu(true);
+            String otherLegUuid = eventHeaders.get("Other-Leg-Unique-ID");
+            if(Strings.isNullOrEmpty(otherLegUuid)){
+                otherLegUuid = eventHeaders.get("variable_call_uuid");
+                if(Strings.isNullOrEmpty(otherLegUuid)){
+                    log.warn("协呼的channelAnswer事件中，Other-Leg-Unique-ID和variable_call_uuid属性都为空，跳过处理");
+                    return;
+                }
+            }
+            event.setOtherLegUuid(otherLegUuid);
+
+            callCache.put(event.getOtherLegUuid(), event.getSeqId(), callDirection, EUserType.CUSTOMER);
+            callCache.put(event.getUuid(), event.getSeqId(), callDirection, EUserType.AGENT);
+        }else{
+            callCache.put(event.getUuid(), event.getSeqId(), callDirection, EUserType.CUSTOMER);
         }
 
         simpleEventSender.sendEvent(event);

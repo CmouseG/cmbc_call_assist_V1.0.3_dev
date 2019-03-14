@@ -2,9 +2,8 @@ package com.guiji.botsentence.dao;
 
 import com.guiji.botsentence.dao.entity.BotSentenceKeywordAudit;
 import com.guiji.botsentence.dao.entity.BotSentenceKeywordAuditExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface BotSentenceKeywordAuditMapper {
     long countByExample(BotSentenceKeywordAuditExample example);

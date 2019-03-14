@@ -468,4 +468,15 @@ public class BotsentenceServerController {
 		return ServerResult.createBySuccess(list);
 	}
 	
+	
+	@RequestMapping(value="queryTradeListByTemplateIdList")
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryTradeListByTemplateIdList(@RequestParam("templateIdList")List<String> templateIdList) {
+		logger.info("根据话术模板编号{}查询行业树信息...", templateIdList.toString());
+		if(null != templateIdList && templateIdList.size() > 0) {
+			List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTradeListByTemplateIdList(templateIdList);
+			return ServerResult.createBySuccess(list);
+		}
+		return ServerResult.createBySuccess(null);
+	}
+	
 }

@@ -4,6 +4,7 @@ import com.guiji.component.result.Result;
 import com.guiji.fsagent.config.Constant;
 import com.guiji.fsagent.config.FsConfig;
 import com.guiji.fsagent.entity.FreeSWITCH;
+import com.guiji.fsagent.entity.GlobalVar;
 import com.guiji.fsagent.util.Base64Util;
 import com.guiji.fsmanager.api.IFsResource;
 import com.guiji.fsmanager.api.ILineOper;
@@ -45,7 +46,10 @@ public class ApplicationInit {
             String serviceId = eurekaManager.getInstanceId();
             serviceId = serviceId.substring(0, serviceId.lastIndexOf(":"));
             freeSwitch = new FreeSWITCH(fsConfig.getHomeDir(), serviceId);
-            ReloadLine();
+            GlobalVar globalVar = freeSwitch.getGlobalVar();
+            if(globalVar.getFs_role().equals("norole")||globalVar.getFs_role().equals("line")){//如果是line角色和空角色的freeswitch，需要init所有的线路到本地
+                ReloadLine();
+            }
         } catch (Exception e) {
             logger.warn("初始化fsagent出现异常", e);
             //TODO: 报警

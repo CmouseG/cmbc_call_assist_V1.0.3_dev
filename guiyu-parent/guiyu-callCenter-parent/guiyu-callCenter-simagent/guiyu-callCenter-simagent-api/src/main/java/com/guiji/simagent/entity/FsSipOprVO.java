@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class FsSipOprVO implements Serializable {
     private String sipIp;
     private String sipPort;
+    private String lineIp;
     private String linePort;
 
     public String getSipIp() {
@@ -31,11 +32,20 @@ public class FsSipOprVO implements Serializable {
         this.linePort = linePort;
     }
 
+    public String getLineIp() {
+        return lineIp;
+    }
+
+    public void setLineIp(String lineIp) {
+        this.lineIp = lineIp;
+    }
+
     @Override
     public String toString() {
         return "FsSipOprVO{" +
                 "sipIp='" + sipIp + '\'' +
                 ", sipPort='" + sipPort + '\'' +
+                ", lineIp='" + lineIp + '\'' +
                 ", linePort='" + linePort + '\'' +
                 '}';
     }

@@ -8,4 +8,19 @@
 		)
  	</select>
   
+  <select id="queryParentIdListByTemplateIdList" resultType="String" parameterType="java.util.List" >
+ 	SELECT
+    	distinct
+    	t2.parent_id
+	FROM
+    	bot_sentence_template t1,
+    	bot_sentence_trade t2
+	WHERE
+    	t1.industry_id=t2.industry_id
+	AND t1.template_id IN 
+	<foreach collection="list" item="templateIdList" index="index" open="(" close=")" separator=",">
+	  #{templateIdList}
+	</foreach>
+ 	</select>
+  
 </mapper>

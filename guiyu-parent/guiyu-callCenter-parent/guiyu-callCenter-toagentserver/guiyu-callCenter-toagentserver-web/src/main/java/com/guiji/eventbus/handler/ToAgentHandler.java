@@ -94,8 +94,11 @@ public class ToAgentHandler {
             callPlan.setAccurateIntent("B");
             try {
                 //同步修改的意向标签到Dispatch
-                log.info("收到坐席接听事件的时候默认将意向标签改为B同步到dispatch中");
-                iDispatchPlanOut.updateLabelByUUID(callPlan.getPlanUuid(), "B");
+                log.info("收到坐席接听事件的时候默认将意向标签改为B同步到dispatch中:[{}]",callPlan.getPlanUuid());
+              Result.ReturnData<Boolean> result =iDispatchPlanOut.updateLabelByUUID(callPlan.getPlanUuid(), "B");
+                if (!result.getCode().equals("0")) {
+                    log.info("认将意向标签改为B同步到dispatch中失败");
+                }
             } catch (Exception e){
                 log.info("同步修改的意向标签到Dispatch失败");
             }

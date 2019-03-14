@@ -141,4 +141,6 @@ public interface IBotSentenceProcessService {
 	public int countTemplateByOrgCode(String orgCode);
 	
 	public List<BotSentenceTemplateTradeVO> queryTradeListByTradeIdList(List<String> tradeIdList);
+	
+	public List<BotSentenceTemplateTradeVO> queryTradeListByTemplateIdList(List<String> templateIdList);
 }

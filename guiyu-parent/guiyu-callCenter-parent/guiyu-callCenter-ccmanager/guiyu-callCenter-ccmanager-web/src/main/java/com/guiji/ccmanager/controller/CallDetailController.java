@@ -211,7 +211,7 @@ public class CallDetailController implements ICallPlanDetail {
         }
 
         //请求调度中心，获取attach字段
-        try{
+        /*try{
             String planUuid = callOutPlanVO.getPlanUuid();
             Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
             if(result.success){
@@ -219,7 +219,8 @@ public class CallDetailController implements ICallPlanDetail {
             }
         } catch (Exception e){
             log.error("queryPlanRemarkById请求调度中心异常，callId[{}]", callId);
-        }
+        }*/
+        callOutPlanVO.setAttach(callOutPlanVO.getRemarks());
 
         log.info("reponse success getCallDetail，callId[{}]", callId);
         return Result.ok(callOutPlanVO);
@@ -238,7 +239,7 @@ public class CallDetailController implements ICallPlanDetail {
             callDetailService.updateIsRead(callId);
         }
         //请求调度中心，获取attach字段
-        try{
+    /*    try{
             String planUuid = callOutPlanVO.getPlanUuid();
             Result.ReturnData<String> result = dispatchPlanOut.queryPlanRemarkById(planUuid);
             if(result.success){
@@ -246,8 +247,8 @@ public class CallDetailController implements ICallPlanDetail {
             }
         } catch (Exception e){
             log.error("queryPlanRemarkById请求调度中心异常，callId[{}]", callId);
-        }
-//        callOutPlanVO.setAttach(callOutPlanVO.getRemarks());
+        }*/
+        callOutPlanVO.setAttach(callOutPlanVO.getRemarks());
 
         log.info("reponse success getCallDetailApi，callId[{}]", callId);
         return Result.ok(callOutPlanVO);

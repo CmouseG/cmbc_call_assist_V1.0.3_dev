@@ -1,6 +1,7 @@
 package com.guiji.billing.service.impl;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.billing.constants.AuthConstant;
 import com.guiji.billing.dao.mapper.ext.BillingCompanyTotalMapper;
 import com.guiji.billing.dto.QueryTotalChargingItemDto;
 import com.guiji.billing.service.BillingCompanyTotalService;
@@ -37,11 +38,12 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     @Override
     public List<TotalChargingItemVo> totalCompanyChargingItem(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemVo> page) {
         //获取用户ID
-        String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
-        //获取企业组织
+        String userId = null != queryTotalChargingItemDto.getUserId()?
+                queryTotalChargingItemDto.getUserId():AuthConstant.superUserId;
+        //获取企业组织 code后面不带点.
         SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():"1";
+        String orgCode = null != org?org.getCode():AuthConstant.superOrgCode;    //org.getCode() + AuthConstant.orgSuffix
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
@@ -67,11 +69,12 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
     @Override
     public int totalCompanyChargingCount(QueryTotalChargingItemDto queryTotalChargingItemDto) {
         //获取用户ID
-        String userId = null != queryTotalChargingItemDto.getUserId()?queryTotalChargingItemDto.getUserId():"1";
-        //获取企业组织
+        String userId = null != queryTotalChargingItemDto.getUserId()?
+                queryTotalChargingItemDto.getUserId():AuthConstant.superUserId;
+        //获取企业组织 code后面不带点.
         SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():"1";
+        String orgCode = null != org?org.getCode():AuthConstant.superOrgCode;   //(org.getCode() + AuthConstant.orgSuffix)
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),

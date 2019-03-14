@@ -74,9 +74,9 @@ public class ChargingServiceImpl implements ChargingService {
             String phone = callChargingNotifyDto.getPhone();    //号码
             Date beginTime = callChargingNotifyDto.getBeginTime();  //开始时间
             Date endTime = callChargingNotifyDto.getEndTime();  //结束时间
-            //查询通话用户信息
+            //查询通话用户信息,企业组织编码后面有.
             SysUser user = ResHandler.getResObj(iAuth.getUserById(Long.valueOf(userId)));
-            //查询企业组织
+            //查询企业组织，企业组织编码后面没有.
             SysOrganization org = ResHandler.getResObj(iAuth.getOrgByUserId(Long.valueOf(userId)));
             String orgCode = (null != org)?org.getCode():null;
             //查询企业用户账户

@@ -1,4 +1,24 @@
 <include>
+	<extension name="access_to_xiehu_Extension">
+		<!-- 9-out-123456778-100001  -->
+		<condition field="destination_number" expression="^9-([^-]{2,5})-([^-]{3,40})-v(.*)$">
+			<action application="log" data="info:callDirection >>>>>>>>>>first:$1"/>
+			<action application="log" data="info:callId >>>>>>>>>>second:$2"/>
+			<action application="log" data="info:agentId >>>>>>>>>>third:$3"/>
+
+			<action application="export" data="nolocal:ai_call_direction=$1"/>
+			<action application="export" data="nolocal:ai_seq_id=$2"/>
+			<action application="export" data="nolocal:ai_agent_id=$3"/>
+			<action application="export" data="nolocal:ai_xiehu=true"/>
+
+			<action application="set" data="recording_follow_transfer=true"/>
+			<action application="record_session" data="$${recordings_dir}/${uuid}.wav"/>
+			<action application="start_asr"/>
+			<action application="log" data="info bridge >>>>>>>>>>verto client $3:${verto_contact $3@${domain}}"/>
+			<action application="bridge" data="${verto_contact $3@${domain}}"/>
+		</condition>
+	</extension>
+
 	<extension name="access_to_zrg_Extension">
 		<!-- 9-out-123456778-300001  -->
 		<condition field="destination_number" expression="^9-([^-]{2,5})-([^-]{3,40})-(.*)$">
@@ -14,7 +34,7 @@
 
 			<action application="set" data="recording_follow_transfer=true"/>
 			<action application="record_session" data="$${recordings_dir}/${uuid}.wav"/>
-			<action application="start_asr" data="LTAInHHRM9fM0PHK tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA aleg"/>
+			<action application="start_asr"/>
 			<action application="park"/>
 		</condition>
 	</extension>
@@ -22,7 +42,7 @@
 	<extension name="to_agentgroup_Extension">
 		<condition field="destination_number" expression="^ag_(\d{11,15})_(.*)$">
 			<action application="set" data="effective_caller_id_number=$1"/>
-			<action application="export" data="nolocal:execute_on_answer=start_asr LTAInHHRM9fM0PHK tBBA0vyrBc7zfLSsQpBNTSMh3qa6tA aleg"/>
+			<action application="export" data="nolocal:execute_on_answer=start_asr"/>
 			<action application="set" data="cc_export_vars=nolocal:execute_on_answer"/>
 			<action application="callcenter" data="$2"/>
 		</condition>

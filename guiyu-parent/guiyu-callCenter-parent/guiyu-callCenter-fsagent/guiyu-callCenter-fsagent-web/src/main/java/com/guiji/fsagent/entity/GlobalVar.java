@@ -11,6 +11,7 @@ public class GlobalVar {
     private String internal_sip_port1;
     private String external_sip_port;
     private String gc_docker_ip;
+    private String fs_role="norole";
 
     public String getDomain() {
         return domain;
@@ -50,5 +51,25 @@ public class GlobalVar {
 
     public void setGc_docker_ip(String gc_docker_ip) {
         this.gc_docker_ip = gc_docker_ip;
+    }
+
+    public String getFs_role() {
+        return fs_role;
+    }
+
+    public void setFs_role(String fs_role) {
+        this.fs_role = fs_role;
+    }
+
+    @Override
+    public String toString() {
+        return "GlobalVar{" +
+                "domain='" + domain + '\'' +
+                ", internal_sip_port='" + internal_sip_port + '\'' +
+                ", internal_sip_port1='" + internal_sip_port1 + '\'' +
+                ", external_sip_port='" + external_sip_port + '\'' +
+                ", gc_docker_ip='" + gc_docker_ip + '\'' +
+                ", fs_role='" + fs_role + '\'' +
+                '}';
     }
 }

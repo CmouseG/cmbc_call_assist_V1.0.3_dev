@@ -63,7 +63,7 @@ public class GetCallCenterPhoneHandler extends IJobHandler {
 					successPhoneMQService.insertSuccesPhone4BusinessMQ(dto);
 				}
 			} else {
-				logger.info("调用呼叫中心isCallEnd接口失败");
+				logger.info("plan_uuid:" + records.getPlanuuid() +"五分钟没有回调，主动调用呼叫中心isCallEnd接口失败");
 			}
 		}
 		XxlJobLogger.log("XXL-JOB, GetCallCenterPhoneHandler end.");

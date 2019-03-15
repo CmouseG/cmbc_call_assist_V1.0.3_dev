@@ -67,6 +67,7 @@ public class AiFreeJobTimer extends IJobHandler{
 								AiHangupReq aiHangupReq = new AiHangupReq();
 								BeanUtil.copyProperties(ai, aiHangupReq); //属性拷贝
 								aiHangupReq.setPhoneNo(ai.getCallingPhone()); //正在拨打的手机号
+								aiHangupReq.setTemplateId(ai.getTemplateIds()); //模板
 								//强制挂断电话
 								iAiAbilityCenterService.aiHangup(aiHangupReq);
 								XxlJobLogger.log("强制挂断电话,{}",ai);

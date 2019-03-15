@@ -291,13 +291,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public boolean successSchedule(String planUuid, String label) {
 		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
-		logger.info("----------------------------successSchedule-------------------------------------");
 		logger.info("写入mq之前的UUID lable:" + planUuid + "--------------" + label);
 		// 写入mq中
 		MQSuccPhoneDto dto = new MQSuccPhoneDto();
@@ -657,12 +650,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlan isSuccess, boolean flag) {
 		logger.info("----------------------------queryAvailableSchedules-------------------------------------");
 		logger.info("-----------------------------------------------------------------------------------------");
-		logger.info("---------------------------------------------------------------------------------------- ");
-		logger.info("-----------------------------------------------------------------------------------------");
-		logger.info("---------------------------------------------------------------------------------------- ");
-		logger.info("-----------------------------------------------------------------------------------------");
-		logger.info("-----------------------------------------------------------------------------------------");
-		logger.info("---------------------------------------------------------------------------------------- ");
 
 		if (redisUtil.get("robotId") != null) {
 			logger.info("当前模板升级中，接口 queryAvailableSchedules 对应模板查不到数据，" + redisUtil.get("robotId"));

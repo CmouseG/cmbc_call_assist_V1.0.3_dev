@@ -21,7 +21,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients(basePackages = "com.guiji")
 @EnableAutoResultPack
 @EnableSwagger2
-@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 @Import(FdfsClientConfig.class)
 @MapperScan("com.guiji.nas.dao")
 public class NasApplication {

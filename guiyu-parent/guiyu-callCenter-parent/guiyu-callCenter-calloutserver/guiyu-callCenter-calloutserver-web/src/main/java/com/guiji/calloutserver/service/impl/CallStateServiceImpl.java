@@ -76,6 +76,7 @@ public class CallStateServiceImpl implements CallStateService {
                     hangupReq.setAiNo(callOutPlan.getAiId());
                     hangupReq.setPhoneNo(callOutPlan.getPhoneNum());
                     hangupReq.setUserId(String.valueOf(callOutPlan.getCustomerId()));
+                    hangupReq.setTemplateId(callOutPlan.getTempId());
                     Result.ReturnData result = robotRemote.aiHangup(hangupReq);
                     log.info("---->>回调机器人中心释放资源，返回结果result[{}],callId[{}]",result,callOutPlan.getCallId());
                 } catch (Exception e) {

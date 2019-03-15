@@ -252,6 +252,11 @@ public class UserService {
 		return sysUserList;
 	}
 
+	public List<SysUser> getAllUserByOrgCodeForWeb(String orgCode){
+		List<SysUser> sysUserList = mapper.getAllUserByOrgCodeForWeb(orgCode);
+		return sysUserList;
+	}
+
 	public List<SysUserRoleVo> getAllUserRoleByOrgCode(String orgCode){
 		List<SysUserRoleVo> sysUserRoleVoList = new ArrayList<SysUserRoleVo>();
 		List<SysUser> sysUserList = mapper.getAllUserByOrgCode(orgCode);

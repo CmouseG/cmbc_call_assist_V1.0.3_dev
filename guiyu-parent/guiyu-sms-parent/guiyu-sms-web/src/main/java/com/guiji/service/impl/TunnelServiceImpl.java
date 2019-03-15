@@ -48,7 +48,7 @@ public class TunnelServiceImpl implements TunnelService
 		List<SmsTunnelVO> tunnelVOList = new ArrayList<>();
 		
 		SmsTunnelExample example = new SmsTunnelExample();
-		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+".%");
 		tunnelListRsp.setTotalCount(tunnelMapper.selectByExampleWithBLOBs(example).size()); //总条数
 		
 		example.setLimitStart((tunnelListReq.getPageNum() - 1) * tunnelListReq.getPageSize());

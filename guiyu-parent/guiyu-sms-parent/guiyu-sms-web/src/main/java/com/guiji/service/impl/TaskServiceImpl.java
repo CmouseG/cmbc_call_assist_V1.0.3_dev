@@ -52,7 +52,7 @@ public class TaskServiceImpl implements TaskService
 		SmsTaskExample example = new SmsTaskExample();
 		Criteria criteria = example.createCriteria();
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		criteria.andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		criteria.andOrgCodeLike(sysOrganization.body.getCode()+".%");
 		if(taskListReq.getStatus() != null){
 			criteria.andSendStatusEqualTo(taskListReq.getStatus()); //任务状态
 		}

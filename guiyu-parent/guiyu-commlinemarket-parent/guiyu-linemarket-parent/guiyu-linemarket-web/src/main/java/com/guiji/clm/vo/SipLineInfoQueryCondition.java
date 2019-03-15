@@ -18,6 +18,8 @@ public class SipLineInfoQueryCondition {
 	private Integer sipShareId;
 	//线路名称
 	private String lineName;
+	//线路id
+	private Integer lineId;
 	//创建人
 	private String crtUser;
 	//所属企业

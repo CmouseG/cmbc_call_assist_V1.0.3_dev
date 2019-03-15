@@ -20,6 +20,8 @@ public class VoipGwPortQueryCondition {
 	private Integer startSipAccount;
 	//手机号-模糊搜索
 	private String phoneNo;	
+	//线路编号
+	private Integer lineId;
 	//归属人
 	private String userId;
 	//归属企业

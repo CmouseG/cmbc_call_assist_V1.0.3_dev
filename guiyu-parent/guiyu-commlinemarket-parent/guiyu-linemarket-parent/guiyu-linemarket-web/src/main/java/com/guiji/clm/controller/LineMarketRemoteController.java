@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
+import com.guiji.clm.dao.entity.VoipGwPort;
 import com.guiji.clm.enm.SipLineStatusEnum;
 import com.guiji.clm.model.SipLineVO;
 import com.guiji.component.result.Result;
@@ -19,8 +21,12 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 
 import com.guiji.clm.service.sip.SipLineExclusiveService;
+import com.guiji.clm.service.sip.SipLineInfoService;
+import com.guiji.clm.service.voip.VoipGwPortService;
 import com.guiji.clm.util.AreaDictUtil;
 import com.guiji.clm.vo.SipLineExclusiveQueryCondition;
+import com.guiji.clm.vo.SipLineInfoQueryCondition;
+import com.guiji.clm.vo.VoipGwPortQueryCondition;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +41,10 @@ import lombok.extern.slf4j.Slf4j;
 public class LineMarketRemoteController implements LineMarketRemote{
 	@Autowired
 	SipLineExclusiveService SipLineExclusiveService;
+	@Autowired
+	VoipGwPortService voipGwPortService;
+	@Autowired
+	SipLineInfoService sipLineInfoService;
 	
 	/**
 	 * 查询用户SIP线路列表
@@ -59,6 +69,7 @@ public class LineMarketRemoteController implements LineMarketRemote{
     
     /**
 	 * 查询用户SIP线路列表
+	 * 本接口只给呼叫中心提供查询线路名称的服务，会先查sip线路，如果不是，那么查询卡线，再然后从原始线路中查询名称
 	 * @param userId
 	 * @param lineId
 	 * @return
@@ -69,9 +80,32 @@ public class LineMarketRemoteController implements LineMarketRemote{
 		SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
 		condition.setUserId(userId);
 		condition.setLineId(lineId);
+		SipLineVO vo = new SipLineVO();
 		List<SipLineExclusive> list = SipLineExclusiveService.querySipLineExclusiveList(condition);
 		if(list!=null && !list.isEmpty()) {
-			return Result.ok(this.exclusive2SipLine(list.get(0)));
+			vo.setLineName(list.get(0).getLineName());
+			return Result.ok(vo);
+		}else {
+			//卡线
+			VoipGwPortQueryCondition portCondition = new VoipGwPortQueryCondition();
+			List<VoipGwPort> portLieList = voipGwPortService.queryVoipGwPortList(portCondition);
+			if(portLieList!=null && !portLieList.isEmpty()) {
+				if(StrUtils.isNotEmpty(portLieList.get(0).getPhoneNo())) {
+					//卡线如果有手机号，那么返回手机号
+					vo.setLineName(portLieList.get(0).getPhoneNo());
+				}else {
+					vo.setLineName("网关端口"+portLieList.get(0).getPort());
+				}
+				return Result.ok(vo);
+			}else {
+				//从原始线路中查找下
+				SipLineInfoQueryCondition sipCondition = new SipLineInfoQueryCondition();
+				List<SipLineBaseInfo> baseLineList = sipLineInfoService.querySipLineBaseListByCondition(sipCondition);
+				if(baseLineList!=null && !baseLineList.isEmpty()) {
+					vo.setLineName(baseLineList.get(0).getLineName());
+					return Result.ok(vo);
+				}
+			}
 		}
 		return Result.ok();
     }

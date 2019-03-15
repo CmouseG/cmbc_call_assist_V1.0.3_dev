@@ -271,6 +271,11 @@ public class UserController implements IAuth {
 		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCode(orgCode));
 	}
 
+	@RequestMapping("/user/getAllUserByOrgCodeForWeb")
+	public ReturnData<List<SysUser>> getAllUserByOrgCodeForWeb(@RequestParam("orgCode") String orgCode) {
+		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCodeForWeb(orgCode));
+	}
+
 	@RequestMapping("/user/getAllUserRoleByOrgCode")
 	public ReturnData<List<SysUserRoleVo>> getAllUserRoleByOrgCode(@RequestParam("orgCode") String orgCode) {
 		return new ReturnData<List<SysUserRoleVo>>(service.getAllUserRoleByOrgCode(orgCode));

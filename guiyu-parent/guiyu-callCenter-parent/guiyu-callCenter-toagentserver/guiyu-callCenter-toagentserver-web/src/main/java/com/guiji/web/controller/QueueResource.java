@@ -99,12 +99,13 @@ public class QueueResource {
      */
     @RequestMapping(path = "/queues", method = RequestMethod.GET)
     public Result.ReturnData<Paging> queryQueues(HttpSession session,
+                                                 @RequestParam(value = "systemUserId", defaultValue = "") String systemUserId,
                                    @RequestParam(value = "queueName", defaultValue = "") String queueName,
                                    @RequestParam(value = "pageNo", defaultValue = "0") Integer page,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
         log.info("收到查询坐席组列表请求queueName:[{}],pageNo:[{}],pageSize:[{}]",queueName,page,size);
         Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        Paging paging = queueService.queryQueues(agent,queueName,page,size);
+        Paging paging = queueService.queryQueues(agent,queueName,page,size,systemUserId);
         return Result.ok(paging);
     }
 }

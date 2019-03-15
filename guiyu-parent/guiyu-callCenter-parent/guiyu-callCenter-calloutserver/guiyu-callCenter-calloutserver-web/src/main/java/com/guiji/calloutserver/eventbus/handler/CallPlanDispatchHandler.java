@@ -151,6 +151,7 @@ public class CallPlanDispatchHandler {
                 callPlan.setIsAnswer(0);
                 callPlan.setIsCancel(0);//是否超时
                 callPlan.setTalkNum(0);
+                callPlan.setIntervened(false);
 
                 try {
                     callOutPlanService.add(callPlan);

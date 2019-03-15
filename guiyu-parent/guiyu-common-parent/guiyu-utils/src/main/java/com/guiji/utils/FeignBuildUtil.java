@@ -1,6 +1,8 @@
 package com.guiji.utils;
 
 import feign.Feign;
+import feign.Request;
+import feign.Retryer;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.springframework.cloud.netflix.feign.support.SpringMvcContract;
@@ -23,10 +25,10 @@ public class FeignBuildUtil {
       return  Feign.builder()
                .encoder(new JacksonEncoder())
                .decoder(new JacksonDecoder())
-              .contract(new SpringMvcContract())
-//               .options(new Request.Options(1000, 3500))
-//               .retryer(new Retryer.Default(5000, 5000, 3));
-              .target( apiType,  url);
+               .contract(new SpringMvcContract())
+               .options(new Request.Options(90000, 90000))// 超时时间  90s
+               .retryer(Retryer.NEVER_RETRY) //重试机制，重试次数，重试间隔
+               .target( apiType,  url);
 
    }
 

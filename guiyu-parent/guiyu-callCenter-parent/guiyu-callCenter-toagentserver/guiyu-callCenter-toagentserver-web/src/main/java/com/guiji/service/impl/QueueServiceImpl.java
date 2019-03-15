@@ -7,9 +7,12 @@ import com.guiji.callcenter.dao.QueueMapper;
 import com.guiji.callcenter.dao.TierMapper;
 import com.guiji.callcenter.dao.entity.*;
 import com.guiji.callcenter.helper.PageExample;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
+import com.guiji.component.result.Result;
 import com.guiji.config.FsBotConfig;
 import com.guiji.config.ToagentserverException;
 import com.guiji.entity.EAnswerType;
@@ -64,6 +67,8 @@ public class QueueServiceImpl implements QueueService {
     FsLineManager fsLineManager;
     @Autowired
     LineInfoMapper lineInfoMapper;
+    @Autowired
+    LineMarketRemote lineMarketRemote;
 
     @Override
     public boolean addQueue(QueueInfo queueInfo, Agent agent) throws Exception{
@@ -203,7 +208,7 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
-    public Paging queryQueues(Agent agent, String queueName, Integer page, Integer size) {
+    public Paging queryQueues(Agent agent, String queueName, Integer page, Integer size,String systemUserId) {
         List<QueryQueue> list = new ArrayList<QueryQueue>();
         PageExample testPage = new PageExample();
         testPage.setPageNum(page);
@@ -227,10 +232,23 @@ public class QueueServiceImpl implements QueueService {
                 queryQueue.setUserName(agent.getUserName());
                 queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 if (queryQueue.getLineId() != null) {
-                    LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-                    if(lineInfo!=null){
-                        queryQueue.setLineName(lineInfo.getLineName());
+                    Result.ReturnData<SipLineVO> result ;
+                    try {
+                        result = lineMarketRemote.queryUserSipLineByLineId(systemUserId, queryQueue.getLineId());
+                        if (result.getCode().equals("0")) {
+                            SipLineVO sipLineVO = result.getBody();
+                            if(sipLineVO!=null){
+                                queryQueue.setLineName(sipLineVO.getLineName());
+                            }
+                        }
+                    }catch(Exception e){
+                        log.info("调用线路市场获取线路名称失败");
                     }
+
+//                    LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
+//                    if(lineInfo!=null){
+//                        queryQueue.setLineName(lineInfo.getLineName());
+//                    }
                 }
                 TierExample tierExample = new TierExample();
                 tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());

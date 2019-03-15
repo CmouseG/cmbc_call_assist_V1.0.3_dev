@@ -208,7 +208,7 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
-    public Paging queryQueues(Agent agent, String queueName, Integer page, Integer size,String systemUserId) {
+    public Paging queryQueues(Agent agent, String queueName, Integer page, Integer size, String systemUserId) {
         List<QueryQueue> list = new ArrayList<QueryQueue>();
         PageExample testPage = new PageExample();
         testPage.setPageNum(page);
@@ -217,9 +217,9 @@ public class QueueServiceImpl implements QueueService {
         Paging paging = new Paging();
         if (agent.getUserRole() == EUserRole.ADMIN.ordinal()) {  //如果是admin用户，则根据队列的创建者来查询
             QueueExample queueExample = new QueueExample();
-            if(StringUtils.isBlank(queueName)){
+            if (StringUtils.isBlank(queueName)) {
                 queueExample.createCriteria().andOrgCodeEqualTo(agent.getOrgCode());
-            }else{
+            } else {
                 queueExample.createCriteria().andCreatorEqualTo(agent.getUserId()).andQueueNameLike(queueName);
             }
             queueExample.setOrderByClause("update_time DESC");
@@ -230,25 +230,34 @@ public class QueueServiceImpl implements QueueService {
                 QueryQueue queryQueue = new QueryQueue();
                 BeanUtils.copyProperties(queue, queryQueue);
                 queryQueue.setUserName(agent.getUserName());
-                queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
+                queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
                 if (queryQueue.getLineId() != null) {
-                    Result.ReturnData<SipLineVO> result ;
+                    Result.ReturnData<SipLineVO> result;
                     try {
                         result = lineMarketRemote.queryUserSipLineByLineId(systemUserId, queryQueue.getLineId());
                         if (result.getCode().equals("0")) {
                             SipLineVO sipLineVO = result.getBody();
-                            if(sipLineVO!=null){
+                            if (sipLineVO != null) {
                                 queryQueue.setLineName(sipLineVO.getLineName());
+                            } else {
+                                LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
+                                if (lineInfo != null) {
+                                    queryQueue.setLineName(lineInfo.getLineName());
+                                }
+                            }
+                        } else {
+                            LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
+                            if (lineInfo != null) {
+                                queryQueue.setLineName(lineInfo.getLineName());
                             }
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         log.info("调用线路市场获取线路名称失败");
+                        LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
+                        if (lineInfo != null) {
+                            queryQueue.setLineName(lineInfo.getLineName());
+                        }
                     }
-
-//                    LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
-//                    if(lineInfo!=null){
-//                        queryQueue.setLineName(lineInfo.getLineName());
-//                    }
                 }
                 TierExample tierExample = new TierExample();
                 tierExample.createCriteria().andQueueIdEqualTo(queue.getQueueId());
@@ -269,7 +278,7 @@ public class QueueServiceImpl implements QueueService {
             QueryQueue queryQueue = new QueryQueue();
             BeanUtils.copyProperties(queue, queryQueue);
             queryQueue.setUserName(agent.getUserName());
-            queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(),DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
+            queryQueue.setUpdateTime(DateUtil.getStrDate(queue.getUpdateTime(), DateUtil.FORMAT_YEARMONTHDAY_HOURMINSEC));
             if (queryQueue.getLineId() != null) {
                 LineInfo lineInfo = lineInfoMapper.selectByPrimaryKey(queryQueue.getLineId());
                 queryQueue.setLineName(lineInfo.getLineName());

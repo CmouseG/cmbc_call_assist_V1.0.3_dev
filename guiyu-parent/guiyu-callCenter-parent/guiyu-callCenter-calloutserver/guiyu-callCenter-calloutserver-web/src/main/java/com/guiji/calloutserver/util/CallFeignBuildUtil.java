@@ -1,4 +1,4 @@
-package com.guiji.utils;
+package com.guiji.calloutserver.util;
 
 import feign.Feign;
 import feign.Request;
@@ -12,7 +12,7 @@ import org.springframework.cloud.netflix.feign.support.SpringMvcContract;
  * @Date: 2018/10/29 0029 10:59
  * @Description:
  */
-public class FeignBuildUtil {
+public class CallFeignBuildUtil {
 
    /**
     * 获取指定url的请求接口，用于访问url的接口

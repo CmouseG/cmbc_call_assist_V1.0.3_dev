@@ -46,13 +46,12 @@ public class PlatformServiceImpl implements PlatformService
 	public PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq, Long userId)
 	{
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		String orgCode = sysOrganization.body.getCode();
 		
 		PlatformListRspVO platformListRsp = new PlatformListRspVO();
 		List<SmsPlatformVO> platformVOList = new ArrayList<>();
 
 		SmsPlatformExample example = new SmsPlatformExample();
-		example.createCriteria().andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode+".%");
+		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		platformListRsp.setTotalCount(platformMapper.selectByExample(example).size()); // 总条数
 
 		example.setLimitStart((platformListReq.getPageNum() - 1) * platformListReq.getPageSize());

@@ -171,13 +171,12 @@
     <select id="selectByExample4Encrypt" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
         select
         call_id, IF(1=#{isDesensitization},phone_num,REPLACE(phone_num, SUBSTR(phone_num,4,4), '****')) AS phone_num ,
-        temp_id, agent_id, agent_answer_time,a.customer_id,
+        temp_id, agent_id, agent_answer_time,a.customer_id,a.line_id,
         agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
         accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,intervened,
-        isdel, isread ,b.line_name
+        isdel, isread
         from call_out_plan a
-        left join line_info b on a.line_id = b.line_id
         <if test="_parameter != null" >
             <include refid="Example_Where_Clause2" />
         </if>

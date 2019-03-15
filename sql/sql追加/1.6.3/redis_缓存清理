@@ -1,0 +1,4 @@
+/usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 keys  *REDIS_USER_BY_USERID_* | xargs /usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 del
+/usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 keys  *REDIS_ROLE_BY_USERID_* | xargs /usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 del
+/usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 keys  *REDIS_ORG_BY_USERID_* | xargs  /usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 del
+/usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 keys  *REDIS_ORG_BY_CODE_* | xargs    /usr/local/redis/src/redis-cli -a Toolwiz.admin.2017 del

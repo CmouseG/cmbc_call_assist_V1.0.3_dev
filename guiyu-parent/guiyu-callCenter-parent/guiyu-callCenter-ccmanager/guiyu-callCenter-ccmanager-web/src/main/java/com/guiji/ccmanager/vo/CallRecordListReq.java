@@ -26,5 +26,8 @@ public class CallRecordListReq {
     String isRead;
     String customerId;
 
+    String startCount;
+    String endCount;
+
 
 }

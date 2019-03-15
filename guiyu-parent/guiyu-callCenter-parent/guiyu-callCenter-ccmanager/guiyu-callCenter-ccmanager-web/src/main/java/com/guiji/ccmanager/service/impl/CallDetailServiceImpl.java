@@ -423,13 +423,29 @@ public class CallDetailServiceImpl implements CallDetailService {
 
         List<CallOutPlanRegistration> list = callPlanExportMapper.selectExportCallPlanDetail(idList,isDesensitization);
 
+        Map<String,String> tempmap = new HashMap();
+        Map<Integer,String> usernameMap = new HashMap();
         if (list != null && list.size() > 0) {
             for (CallOutPlanRegistration callOutPlanRegistration : list) {
 
-                Integer customerId = callOutPlanRegistration.getCustomerId();
                 String tempId = callOutPlanRegistration.getTempId();
-                callOutPlanRegistration.setTempId(cacheManager.getTempName(tempId));
-                callOutPlanRegistration.setUserName(cacheManager.getUserName(customerId));
+                if(tempmap.get(tempId)!=null){
+                    callOutPlanRegistration.setTempId(tempmap.get(tempId));
+                }else{
+                    String tempName = cacheManager.getTempName(tempId);
+                    tempmap.put(tempId,tempName);
+                    callOutPlanRegistration.setTempId(tempName);
+                }
+
+                Integer customerId = callOutPlanRegistration.getCustomerId();
+                if(usernameMap.get(customerId)!=null){
+                    callOutPlanRegistration.setUserName(usernameMap.get(customerId));
+                }else{
+                    String userName = cacheManager.getUserName(customerId);
+                    usernameMap.put(customerId,userName);
+                    callOutPlanRegistration.setUserName(userName);
+                }
+
             }
         }
         return list;

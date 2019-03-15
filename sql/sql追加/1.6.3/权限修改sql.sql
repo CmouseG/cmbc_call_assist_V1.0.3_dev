@@ -30,11 +30,6 @@ UPDATE guiyu_notice.notice_info set org_code=concat(org_code,'.');
 UPDATE guiyu_notice.notice_setting set org_code=concat(org_code,'.');
 UPDATE guiyu_robot.user_ai_cfg_base_info set org_code=concat(org_code,'.');
 UPDATE guiyu_robot.user_ai_cfg_base_info_20181228 set org_code=concat(org_code,'.');
-UPDATE guiyu_sms.sms_config set org_code=concat(org_code,'.');
-UPDATE guiyu_sms.sms_platform set org_code=concat(org_code,'.');
-UPDATE guiyu_sms.sms_task set org_code=concat(org_code,'.');
-UPDATE guiyu_sms.sms_task_detail set org_code=concat(org_code,'.');
-UPDATE guiyu_sms.sms_tunnel set org_code=concat(org_code,'.');
 UPDATE guiyu_billing.billing_acct_charging_record r1, billing_acct_charging_record r2 SET r1.oper_user_org_code = CONCAT(SUBSTRING_INDEX(r2.`oper_user_org_code`,'|',1), '.') WHERE r1.id = r2.id AND r1.type=1 AND r2.type=1;
 UPDATE guiyu_billing.billing_acct_charging_record r SET r.oper_user_org_code = REPLACE(r.oper_user_org_code, '..','.') WHERE FIND_IN_SET('..', r.oper_user_org_code);
 

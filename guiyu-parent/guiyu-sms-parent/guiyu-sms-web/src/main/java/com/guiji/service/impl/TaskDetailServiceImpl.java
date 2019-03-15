@@ -54,8 +54,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		SmsTaskDetailExample example = new SmsTaskDetailExample();
 		Criteria criteria = example.createCriteria();
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		String orgCode = sysOrganization.body.getCode();
-		example.createCriteria().andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode+".%");
+		criteria.andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		if(StringUtils.isNotEmpty(taskDetailListReq.getTaskName())){
 			criteria.andTaskNameEqualTo(taskDetailListReq.getTaskName());
 		}

@@ -44,11 +44,13 @@ public class TunnelServiceImpl implements TunnelService
 	public TunnelListRspVO getTunnelList(TunnelListReqVO tunnelListReq, Long userId)
 	{
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
+		String orgCode = sysOrganization.body.getCode();
+		
 		TunnelListRspVO tunnelListRsp = new TunnelListRspVO();
 		List<SmsTunnelVO> tunnelVOList = new ArrayList<>();
 		
 		SmsTunnelExample example = new SmsTunnelExample();
-		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		example.createCriteria().andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode+".%");
 		tunnelListRsp.setTotalCount(tunnelMapper.selectByExampleWithBLOBs(example).size()); //总条数
 		
 		example.setLimitStart((tunnelListReq.getPageNum() - 1) * tunnelListReq.getPageSize());

@@ -19,7 +19,7 @@ public interface QueueService {
     boolean deleteQueue(String queueId);
     void updateQueue(String queueId, QueueInfo QueueInfo, Agent agent)throws Exception;
 
-    Paging queryQueues(Agent agent, String queueName, Integer page, Integer size);
+    Paging queryQueues(Agent agent, String queueName, Integer page, Integer size,String systemUserId);
     QueryQueue getQueue(String queueId);
 
     Queue findByQueueId(Long queueId);

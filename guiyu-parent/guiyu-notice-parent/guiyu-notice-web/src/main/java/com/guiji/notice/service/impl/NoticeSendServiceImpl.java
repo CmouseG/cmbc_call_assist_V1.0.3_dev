@@ -11,9 +11,11 @@ import com.guiji.notice.dao.entity.NoticeMailInfo;
 import com.guiji.notice.dao.entity.NoticeSetting;
 import com.guiji.notice.dao.entity.NoticeSettingExample;
 import com.guiji.notice.entity.MessageSend;
+import com.guiji.notice.service.AuthService;
 import com.guiji.notice.service.NoticeSendService;
 import com.guiji.notice.service.SendEmailService;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.utils.BeanUtil;
@@ -27,9 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class NoticeSendServiceImpl implements NoticeSendService {
@@ -49,6 +49,8 @@ public class NoticeSendServiceImpl implements NoticeSendService {
     SendEmailService sendEmailService;
     @Autowired
     WeChatApi weChatApi;
+    @Autowired
+    AuthService authService;
 
     @Override
     public void sendMessage(MessageSend messageSend) {
@@ -83,12 +85,32 @@ public class NoticeSendServiceImpl implements NoticeSendService {
 
             String receivers = noticeSetting.getReceivers();
             if(receivers!=null){
-                String[] receiverArr =  receivers.split(",");
+                String[] receiverArray =  receivers.split(",");
+
+                List<String> receiverList = new ArrayList<>();
+                if(messageSend.getUserId()!=null){
+                    long userId = messageSend.getUserId().longValue();
+                    if(authService.isCompanyOprater(userId)){//假如是企业操作员,需要将其他操作员从接收者中去除
+                        for(String userIdString:receiverArray){
+                            if(userIdString.equals(String.valueOf(userId)) || !authService.isCompanyOprater(Long.valueOf(userIdString))){ //是操作员
+                                receiverList.add(userIdString);
+                            }
+                        }
+                    }else{//管理员
+                        for(String userIdString:receiverArray){
+                            if(!authService.isCompanyOprater(Long.valueOf(userIdString))){ //是操作员
+                                receiverList.add(userIdString);
+                            }
+                        }
+                    }
+                }else{
+                    receiverList = Arrays.asList(receiverArray);
+                }
 
                 //是否发送站内信
                 boolean isSendMail = noticeSetting.getIsSendMail();
                 if(isSendMail){
-                    for(String userIdString:receiverArr){
+                    for(String userIdString:receiverList){
                         NoticeMailInfo noticeMailInfo = new NoticeMailInfo();
                         noticeMailInfo.setInfoId(infoId);
                         noticeMailInfo.setReceiverId(Integer.valueOf(userIdString));
@@ -105,7 +127,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 //是否发送短信
                 boolean isSendSms = noticeSetting.getIsSendSms();
                 if(isSendSms){
-                    for(String userIdString:receiverArr){
+                    for(String userIdString:receiverList){
                         //发送短信
                         long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = null;
@@ -122,7 +144,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 //是否发送邮件
                 boolean isSendEmail = noticeSetting.getIsSendEmail();
                 if(isSendEmail){
-                    for(String userIdString:receiverArr){
+                    for(String userIdString:receiverList){
                         long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = null;
                         try {
@@ -148,7 +170,7 @@ public class NoticeSendServiceImpl implements NoticeSendService {
                 //是否发送微信
                 boolean isSendWeixin = noticeSetting.getIsSendWeixin();
                 if(isSendWeixin){
-                    for(String userIdString:receiverArr){
+                    for(String userIdString:receiverList){
                         long userId = Long.valueOf(userIdString);
                         Result.ReturnData<SysUserExt> returnData = null;
                         Result.ReturnData<SysUser> returnUser = null;

@@ -33,4 +33,24 @@ public class AuthServiceImpl implements AuthService {
         }
         return false;
     }
+
+    /**
+     * 判断是否是企业操作员
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean isCompanyOprater(Long userId) {
+        Result.ReturnData<List<SysRole>> result = auth.getRoleByUserId(userId);
+        List<SysRole> list = result.getBody();
+        if (list != null && list.size() > 0) {
+            for (SysRole sysRole : list) {
+                if (sysRole.getId().intValue() == 4) { //企业操作员
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

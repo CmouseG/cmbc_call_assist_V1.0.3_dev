@@ -79,6 +79,8 @@ public interface SysUserMapper {
 
     public List<SysUser> getAllUserByOrgCode(String orgCode);
 
+    public List<SysUser> getAllUserByOrgCodeForWeb(String orgCode);
+
     void addUserExt(@Param("userId")Long userId);
 
     SysUserExt getSysUserExtByUserId(Long id);

@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.guiji.dispatch.dto.QueryPlanListDto;
+import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.utils.JsonUtils;
@@ -242,4 +244,33 @@ public class DispatchPlanController {
 		return dispatchPlanService.totalPlanCountByUserDate(userId, dateStr, dateStr);
 	}
 
+	//查询计划列表
+	@ApiOperation(value="查询计划列表", notes="查询计划列表")
+	@RequestMapping(value = "/dispatch/plan/queryPlanList", method = {RequestMethod.POST, RequestMethod.GET})
+	public Page<DispatchPlan> queryPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
+												  @RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
+												  @RequestBody QueryPlanListDto queryPlanDto){
+		if(null == queryPlanDto){
+			queryPlanDto = new QueryPlanListDto();
+			queryPlanDto.setPageNo(1);
+		}else{
+			queryPlanDto.setPageNo(queryPlanDto.getPageNo()>0?queryPlanDto.getPageNo():1);
+		}
+
+		queryPlanDto.setOperUserId(userId+"");
+		queryPlanDto.setOperOrgCode(orgCode);
+		queryPlanDto.setSuperAdmin(isSuperAdmin);
+		queryPlanDto.setIsDesensitization(isDesensitization);
+
+		ResultPage<DispatchPlan> resPage = new ResultPage<DispatchPlan>(queryPlanDto);
+		resPage = dispatchPlanService.queryPlanList(queryPlanDto, resPage);
+		Page<DispatchPlan> page = new Page<>();
+		Integer pageNo = queryPlanDto.getPageNo();
+		Integer pageSize = queryPlanDto.getPageSize();
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setRecords(resPage.getList());
+		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
+		return page;
+	}
 }

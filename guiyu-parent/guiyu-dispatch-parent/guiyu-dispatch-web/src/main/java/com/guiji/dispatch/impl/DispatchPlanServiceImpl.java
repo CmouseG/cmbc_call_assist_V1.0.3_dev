@@ -14,6 +14,8 @@ import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.*;
 import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
+import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
+import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.enums.PlanTableNumEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
@@ -23,10 +25,12 @@ import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.service.*;
 import com.guiji.dispatch.sms.IMessageService;
+import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.ResHandler;
+import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
@@ -1412,5 +1416,210 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public String queryPlanRemarkById(String planUuid) {
 		return dispatchPlanMapper.queryPlanRemarkById(planUuid);
+	}
+
+	/**
+	 * 查询计划列表
+	 * @param queryPlanDto
+	 * @return
+	 */
+	@Override
+	public ResultPage<DispatchPlan> queryPlanList(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlan> page) {
+		Integer pageNo = page.getPageNo();
+		Integer pageSize = page.getPageSize();
+		DispatchPlanExample example = new DispatchPlanExample();
+		example.setLimitStart((pageNo - 1) * pageSize);
+		example.setLimitEnd(pageSize);
+		example.setOrderByClause("`gmt_create` DESC");
+		Criteria createCriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
+			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
+		}
+		if (!StringUtils.isEmpty(queryPlanDto.getStartCallData()) && !StringUtils.isEmpty(queryPlanDto.getEndCallData())) {
+			createCriteria.andCallDataBetween(Integer.valueOf(queryPlanDto.getStartCallData()), Integer.valueOf(queryPlanDto.getEndCallData()));
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
+			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
+			List<Integer> ids = new ArrayList<>();
+			if (queryPlanDto.getPlanStatus().contains(",")) {
+				String[] split = queryPlanDto.getPlanStatus().split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+				}
+				createCriteria.andStatusPlanIn(ids);
+			} else {
+				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
+			}
+		}
+		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(queryPlanDto.getStartTime()).getTime()), new Timestamp(sdf.parse(queryPlanDto.getEndTime()).getTime()));
+			} catch (ParseException e) {
+				logger.error("error", e);
+			}
+		}
+
+		if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
+			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+			List<Integer> ids = new ArrayList<>();
+			if (queryPlanDto.getReplayType().contains(",")) {
+				String[] split = queryPlanDto.getReplayType().split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+				}
+				createCriteria.andReplayTypeIn(ids);
+			} else {
+				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
+			}
+		}
+
+		if(null != queryPlanDto.getResultList()
+				&& queryPlanDto.getResultList().size()>0){
+			createCriteria.andResultIn(queryPlanDto.getResultList());
+		}
+
+		if (!queryPlanDto.isSuperAdmin()) {
+			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+		} else {
+			// // 超级用户
+			// if (selectUserId != null) {
+			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
+			// }
+		}
+		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
+
+		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
+		List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
+		if(null != selectByExample && selectByExample.size()>0){
+			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
+			for(DispatchPlan dis : selectByExample){
+				planUuidSet.add(dis.getPlanUuid());
+			}
+
+			Integer isDesensitization = queryPlanDto.getIsDesensitization();
+			loopA:for(String planUuid : planUuidSet) {
+				// 转换userName
+				loopB:for (DispatchPlan dis : selectByExample) {
+					if(planUuid.equals(dis.getPlanUuid())) {
+						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
+						if (user.getBody() != null) {
+							dis.setUserName(user.getBody().getUsername());
+						}
+
+						List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
+						dis.setLines(queryLinesByPlanUUID);
+
+						// isDesensitization
+						if (isDesensitization.equals(0)) {
+							if (dis.getPhone().length() <= 7) {
+								continue;
+							}
+							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
+							dis.setPhone(phoneNumber);
+						}
+
+						resList.add(dis);
+						continue loopA;
+					}
+				}
+			}
+		}
+
+
+
+		int count = dispatchPlanMapper.countByExample(example);
+		page.setList(resList);
+		page.setTotalItemAndPageNumber(count);
+		return page;
+	}
+
+	/**
+	 * 查询下载计划数据
+	 * @param queryPlanDto
+	 * @return
+	 */
+	@Override
+	public List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto) {
+		Integer startIdx = queryPlanDto.getStartIdx();
+		Integer pageSize = queryPlanDto.getPageSize();
+		DispatchPlanExample example = new DispatchPlanExample();
+		example.setLimitStart(startIdx);
+		example.setLimitEnd(pageSize);
+		example.setOrderByClause("`gmt_create` DESC");
+		Criteria createCriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
+			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
+		}
+		if (!StringUtils.isEmpty(queryPlanDto.getStartCallData()) && !StringUtils.isEmpty(queryPlanDto.getEndCallData())) {
+			createCriteria.andCallDataBetween(Integer.valueOf(queryPlanDto.getStartCallData()), Integer.valueOf(queryPlanDto.getEndCallData()));
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
+			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
+			List<Integer> ids = new ArrayList<>();
+			if (queryPlanDto.getPlanStatus().contains(",")) {
+				String[] split = queryPlanDto.getPlanStatus().split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+				}
+				createCriteria.andStatusPlanIn(ids);
+			} else {
+				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
+			}
+		}
+		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(queryPlanDto.getStartTime()).getTime()), new Timestamp(sdf.parse(queryPlanDto.getEndTime()).getTime()));
+			} catch (ParseException e) {
+				logger.error("error", e);
+			}
+		}
+
+		if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
+			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+			List<Integer> ids = new ArrayList<>();
+			if (queryPlanDto.getReplayType().contains(",")) {
+				String[] split = queryPlanDto.getReplayType().split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+				}
+				createCriteria.andReplayTypeIn(ids);
+			} else {
+				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
+			}
+		}
+
+		if(null != queryPlanDto.getResultList()
+				&& queryPlanDto.getResultList().size()>0){
+			createCriteria.andResultIn(queryPlanDto.getResultList());
+		}
+
+		if (!queryPlanDto.isSuperAdmin() && !StringUtils.isEmpty(queryPlanDto.getOperOrgCode())) {
+			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+		} else {
+			// // 超级用户
+			// if (selectUserId != null) {
+			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
+			// }
+		}
+		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
+
+		List<DownLoadPlanVo> list = dispatchPlanMapper.queryDownloadPlanList(example);
+		return list;
 	}
 }

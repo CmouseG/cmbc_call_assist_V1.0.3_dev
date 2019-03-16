@@ -947,4 +947,60 @@
     WHERE plan_uuid = #{planUuid}
   </select>
 
+
+
+  <select id="queryDownloadPlanList"
+          resultType="com.guiji.dispatch.vo.DownLoadPlanVo"
+          parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
+    SELECT
+        <if test="distinct" >
+          distinct
+        </if>
+        'true' as QUERYID,
+        id              ,
+        plan_uuid       ,
+        user_id         ,
+        batch_id        ,
+        phone           ,
+        attach          ,
+        params          ,
+        status_plan     ,
+        status_sync     ,
+        recall          ,
+        recall_params   ,
+        robot           ,
+        line            ,
+        result          ,
+        call_agent      ,
+        clean           ,
+        call_data       ,
+        call_hour       ,
+        gmt_create      ,
+        gmt_modified    ,
+        is_tts          ,
+        replay_type     ,
+        is_del          ,
+        username        ,
+        line_name       ,
+        robot_name      ,
+        batch_name      ,
+        flag            ,
+        org_code        ,
+        org_id          ,
+        city_name       ,
+        city_code       ,
+        line_type       ,
+        DATE_FORMAT(gmt_create,'%Y-%m-%d %H:%i:%s') AS add_time
+    FROM dispatch_plan
+      <if test="_parameter != null" >
+        <include refid="Example_Where_Clause" />
+      </if>
+      <if test="orderByClause != null" >
+        order by ${orderByClause}
+      </if>
+      <if test="limitStart != null and limitStart>=0" >
+        limit #{limitStart} , #{limitEnd}
+      </if>
+  </select>
+
 </mapper>

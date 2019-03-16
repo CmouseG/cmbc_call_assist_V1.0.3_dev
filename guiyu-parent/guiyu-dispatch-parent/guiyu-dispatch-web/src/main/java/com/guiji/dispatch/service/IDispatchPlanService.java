@@ -9,7 +9,11 @@ import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
+import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
+import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.sys.ResultPage;
+import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 
 import java.util.List;
@@ -243,5 +247,11 @@ public interface IDispatchPlanService {
 
 	//查询任务计划备注
 	String queryPlanRemarkById(String planUuid);
+
+	//查询计划列表
+	ResultPage<DispatchPlan> queryPlanList(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlan> page);
+
+	//查询计划列表
+	List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
 }
 

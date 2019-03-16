@@ -88,6 +88,7 @@ public class LineMarketRemoteController implements LineMarketRemote{
 		}else {
 			//卡线
 			VoipGwPortQueryCondition portCondition = new VoipGwPortQueryCondition();
+			portCondition.setLineId(lineId);
 			List<VoipGwPort> portLieList = voipGwPortService.queryVoipGwPortList(portCondition);
 			if(portLieList!=null && !portLieList.isEmpty()) {
 				if(StrUtils.isNotEmpty(portLieList.get(0).getPhoneNo())) {

@@ -2,6 +2,8 @@ server:
   port: 18012
   tomcat:
     uri-encoding: UTF-8
+    max-threads: 1000
+    max-connections: 20000
 spring:
   application:
     name: guiyu-nas-web
@@ -64,7 +66,9 @@ fdfs:
   trackerList:            #TrackerList参数,支持多个
     - 192.168.1.83:22122
   pool:
-    jmx-enabled: false
+    #jmx-enabled: false
+    max-total: 500
+    max-wait-millis: 120
   webServerUrl: http://192.168.1.83:8080/
 properties:
   error: properties/error.properties

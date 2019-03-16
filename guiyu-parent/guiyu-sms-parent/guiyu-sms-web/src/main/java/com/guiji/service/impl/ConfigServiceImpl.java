@@ -51,8 +51,7 @@ public class ConfigServiceImpl implements ConfigService
 
 		SmsConfigExample example = new SmsConfigExample();
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		String orgCode = sysOrganization.body.getCode();
-		example.createCriteria().andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode+".%");
+		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
 		configListRsp.setTotalCount(configMapper.selectByExampleWithBLOBs(example).size()); // 总条数
 
 		example.setLimitStart((configListReq.getPageNum() - 1) * configListReq.getPageSize());

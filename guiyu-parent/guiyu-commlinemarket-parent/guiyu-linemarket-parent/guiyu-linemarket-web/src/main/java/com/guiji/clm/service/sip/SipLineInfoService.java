@@ -141,6 +141,9 @@ public class SipLineInfoService {
 			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
 			}
+			if(condition.getLineId()!=null) {
+				criteria.andLineIdEqualTo(condition.getLineId());
+			}
 			if(condition.getStatus()!=null) {
 				criteria.andLineStatusEqualTo(condition.getStatus());
 			}

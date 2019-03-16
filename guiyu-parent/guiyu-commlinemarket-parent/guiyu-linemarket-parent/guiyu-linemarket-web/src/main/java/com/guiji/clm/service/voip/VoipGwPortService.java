@@ -187,6 +187,9 @@ public class VoipGwPortService {
 			if(StrUtils.isNotEmpty(condition.getUserId())) {
 				criteria.andUserIdEqualTo(condition.getUserId());
 			}
+			if(condition.getLineId()!=null) {
+				criteria.andLineIdEqualTo(condition.getLineId());
+			}
 			if(StrUtils.isNotEmpty(condition.getOrgCode())) {
 				criteria.andOrgCodeEqualTo(condition.getOrgCode());
 			}

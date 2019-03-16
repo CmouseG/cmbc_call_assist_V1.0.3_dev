@@ -4817,7 +4817,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			if(null != result && result.size() > 0) {
 				for(BotSentenceTemplateTradeVO trade : result) {
 					if(null != trade.getChildren()) {
-						for(BotSentenceTemplateTradeVO trade1 : trade.getChildren()) {
+						List<BotSentenceTemplateTradeVO> trade1List = trade.getChildren();
+						for(int j = trade1List.size()-1 ; j >= 0 ; j--) {
+							BotSentenceTemplateTradeVO trade1 = trade1List.get(j);
+						//for(BotSentenceTemplateTradeVO trade1 : trade.getChildren()) {
 							if(null != trade1.getChildren()) {
 								List<BotSentenceTemplateTradeVO> trade2List = trade1.getChildren();
 								for(int i = trade2List.size()-1 ; i >= 0 ; i--) {
@@ -4827,17 +4830,24 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 									if(null != templateList && templateList.size() > 0) {
 										List<BotSentenceTemplateTradeVO> children = new ArrayList<>();
 										for(BotSentenceTemplate template : templateList) {
-											BotSentenceTemplateTradeVO vo = new BotSentenceTemplateTradeVO();
-											vo.setLabel(template.getTemplateName());
-											vo.setValue(template.getProcessId());
-											children.add(vo);
+											if(templateIdList.contains(template.getTemplateId())) {
+												BotSentenceTemplateTradeVO vo = new BotSentenceTemplateTradeVO();
+												vo.setLabel(template.getTemplateName());
+												vo.setValue(template.getTemplateId());
+												children.add(vo);
+											}
 										}
 										trade2.setChildren(children);
-									}/*else {
+									}else {
 										//过滤第3级行业
 										trade2List.remove(i);
-									}*/
+									}
 								}
+							}
+							
+							if(!tradeIdList.contains(trade1.getValue())) {
+								//过滤第不包含的行业
+								trade1List.remove(j);
 							}
 						}
 					}

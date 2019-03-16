@@ -1,11 +1,10 @@
 package com.guiji.calloutserver.manager.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.guiji.calloutserver.helper.RequestHelper;
 import com.guiji.calloutserver.manager.EurekaManager;
 import com.guiji.calloutserver.manager.FsAgentManager;
+import com.guiji.calloutserver.util.CallFeignBuildUtil;
 import com.guiji.component.result.Result;
 import com.guiji.fsagent.api.ITemplate;
 import com.guiji.fsagent.entity.RecordReqVO;
@@ -13,13 +12,11 @@ import com.guiji.fsagent.entity.RecordVO;
 import com.guiji.fsagent.entity.TtsWav;
 import com.guiji.fsagent.entity.WavLengthVO;
 import com.guiji.fsmanager.entity.FsBindVO;
-import com.guiji.utils.FeignBuildUtil;
 import com.guiji.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +42,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     @Override
     public void init(FsBindVO fsBindVO) {
         log.info("开始初始化FsAgentManager，地址为[{}]", fsBindVO.getFsAgentAddr());
-        iTemplate = FeignBuildUtil.feignBuilderTarget(ITemplate.class,"http://" + fsBindVO.getFsAgentAddr());
+        iTemplate = CallFeignBuildUtil.feignBuilderTarget(ITemplate.class,"http://" + fsBindVO.getFsAgentAddr());
     }
 
     @Override

@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @RestController
 public class NoticeSendController implements INoticeSend {
 
@@ -18,13 +21,22 @@ public class NoticeSendController implements INoticeSend {
     @Autowired
     NoticeSendService noticeSendService;
 
+    private ExecutorService executor = Executors.newCachedThreadPool() ;
+
     @Override
     public Result.ReturnData sendMessage(@RequestBody MessageSend messageSend) {
 
         logger.info("--------get request sendMessage MessageSend[{}]",messageSend);
 
         if (messageSend != null && messageSend.getNoticeType() != null) {
-            noticeSendService.sendMessage(messageSend);
+
+            executor.submit(new Runnable() {
+                                @Override
+                                public void run() {
+                                    noticeSendService.sendMessage(messageSend);
+                                }
+                            });
+
             logger.info("==========end sendMessage userId[{}]",messageSend.getUserId());
             return Result.ok();
         } else {

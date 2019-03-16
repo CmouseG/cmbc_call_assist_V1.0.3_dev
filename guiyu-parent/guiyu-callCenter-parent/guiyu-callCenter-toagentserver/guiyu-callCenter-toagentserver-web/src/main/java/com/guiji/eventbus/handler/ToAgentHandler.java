@@ -17,6 +17,7 @@ import com.guiji.util.DateUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
+import com.guiji.web.request.AgentInfo;
 import com.guiji.web.response.QueryRecordInDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,10 @@ public class ToAgentHandler {
         if(agent.getAnswerType()==EAnswerType.WEB.ordinal()){
             log.info("verto登录之后，将[{}]状态设置为在线", agent.getUserId());
             agentService.agentStateByVerto(EUserState.ONLINE,agent);
+            AgentInfo agentInfo = new AgentInfo();
+            agentInfo.setAgentId(agent.getUserId() + "");
+            agentInfo.setContact("${verto_contact(" + agent.getUserId() + ")}");
+            fsManager.updateAgent(agentInfo);
         }
     }
 

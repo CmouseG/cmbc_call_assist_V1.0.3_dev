@@ -374,7 +374,7 @@ public class CallDetailController implements ICallPlanDetail {
         return  null;
     }
 
-    public void generateExcelList(OutputStream out, List<CallOutPlanRegistration> listPlan ,Map<String,String> map) throws IOException, WriteException {
+    public static void generateExcelList(OutputStream out, List<CallOutPlanRegistration> listPlan ,Map<String,String> map) throws IOException, WriteException {
         WritableWorkbook wb = Workbook.createWorkbook(out);
 
         WritableSheet sheet =  wb.createSheet("sheet1",0);

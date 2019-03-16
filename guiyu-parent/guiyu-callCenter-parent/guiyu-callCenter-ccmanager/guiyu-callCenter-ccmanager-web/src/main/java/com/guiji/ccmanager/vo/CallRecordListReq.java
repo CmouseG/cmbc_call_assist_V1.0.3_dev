@@ -27,4 +27,6 @@ public class CallRecordListReq {
     String customerId;
     String intervened;
 
+    String startCount;
+    String endCount;
 }

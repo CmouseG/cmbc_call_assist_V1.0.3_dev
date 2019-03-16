@@ -7,6 +7,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import java.util.List;
 import java.util.Map;
 
+import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -65,4 +66,7 @@ public interface DispatchPlanMapper {
 
     //查询任务计划备注
     String queryPlanRemarkById(String planUuid);
+
+    //查询下载数据
+    List<DownLoadPlanVo> queryDownloadPlanList(DispatchPlanExample example);
 }

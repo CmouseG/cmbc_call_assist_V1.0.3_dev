@@ -10,13 +10,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
+import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.vo.DownLoadPlanVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.common.model.Page;
@@ -57,6 +56,9 @@ public class FileController {
 	private DispatchPlanMapper dispatchMapper;
 	@Autowired
 	private ILinesService lineServiceImpl;
+
+	@Autowired
+	private IDispatchPlanService dispatchPlanService;
 
 	/**
 	 * 查询文件记录
@@ -267,4 +269,131 @@ public class FileController {
 
 	}
 
+
+
+	//查询计划列表
+	@ApiOperation(value="导出计划列表", notes="导出计划列表")
+	@RequestMapping(value = "dispatch/file/downloadPlanList", method = {RequestMethod.POST, RequestMethod.GET})
+	public Result.ReturnData<Object> downloadPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
+													  @RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
+													  HttpServletResponse resp,
+													  @RequestBody QueryDownloadPlanListDto queryPlanDto)
+			throws UnsupportedEncodingException, WriteException {
+		/********导出数量处理	begin*********************/
+		int maxCount = 30000;
+		int pageSize = maxCount;
+		int startIdx = 0;
+		int endIdx = 0;
+		if(null == queryPlanDto){
+			queryPlanDto = new QueryDownloadPlanListDto();
+		}else{
+			startIdx = (queryPlanDto.getStartIdx()>0)?(queryPlanDto.getStartIdx()-1):0;
+			endIdx = (queryPlanDto.getEndIdx()>0)?queryPlanDto.getEndIdx():0;
+			if(startIdx>=0 && endIdx>=0){
+				pageSize = (endIdx-startIdx>maxCount)?maxCount:(endIdx-startIdx);
+			}
+		}
+		queryPlanDto.setPageSize(pageSize);
+		queryPlanDto.setStartIdx(startIdx);
+		/********导出数量处理	end*********************/
+
+		/********操作员条件处理	*********************/
+		queryPlanDto.setOperUserId(userId+"");
+		queryPlanDto.setOperOrgCode(orgCode);
+		queryPlanDto.setSuperAdmin(isSuperAdmin);
+		queryPlanDto.setIsDesensitization(isDesensitization);
+
+		//查询导出数据
+		List<DownLoadPlanVo> selectByExample = dispatchPlanService.queryDownloadPlanList(queryPlanDto);
+		String fileName = "任务导出结果详情.xls";
+		HttpDownload.setHeader(resp, fileName);
+
+		OutputStream out = null;
+		try {
+			out = resp.getOutputStream();
+			this.generateDownloadExcel(selectByExample, out,isDesensitization);
+		} catch (IOException e) {
+			log.error("downloadDialogue IOException :" + e);
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					log.error("out.close error:" + e);
+				}
+			}
+		}
+		return null;
+	}
+
+
+	private void generateDownloadExcel(List<DownLoadPlanVo> selectByExample, OutputStream out, Integer isDesensitization)
+			throws RowsExceededException, WriteException, IOException {
+
+		Map<String, String> map = new HashMap<>();
+		map.put("1", "计划中");
+		map.put("2", "已完成");
+		map.put("3", "已暂停");
+		map.put("4", "已停止");
+		WritableWorkbook wb = Workbook.createWorkbook(out);
+		WritableSheet sheet = wb.createSheet("sheet1", 0);
+		WritableCellFormat format = new WritableCellFormat();
+		format.setBorder(Border.ALL, BorderLineStyle.THIN);
+		format.setWrap(true);
+
+		sheet.setColumnView(0, 12);
+		sheet.setColumnView(1, 12);
+
+		sheet.addCell(new Label(0, 0, "批次"));
+		sheet.addCell(new Label(1, 0, "号码"));
+		sheet.addCell(new Label(2, 0, "号码信息"));
+		sheet.addCell(new Label(3, 0, "计划状态"));
+		sheet.addCell(new Label(4, 0, "话术"));
+		sheet.addCell(new Label(5, 0, "线路"));
+		sheet.addCell(new Label(6, 0, "计划日期"));
+		sheet.addCell(new Label(7, 0, "计划时间"));
+		sheet.addCell(new Label(8, 0, "所属用户"));
+		sheet.addCell(new Label(9, 0, "添加日期"));
+		for (int i = 0; i < selectByExample.size(); i++) {
+			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
+			//查询线路
+			//	List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuid());
+			int k = 0;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
+			k++;
+			if(isDesensitization.equals(0)){
+				String phoneNumber = dispatchPlan.getPhone().substring(0, 3) + "****"
+						+ dispatchPlan.getPhone().substring(7, dispatchPlan.getPhone().length());
+				sheet.addCell(new Label(k, i + 1,phoneNumber));
+				k++;
+			}else{
+				sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
+				k++;
+			}
+			sheet.addCell(new Label(k, i + 1, ""));//号码信息
+			k++;
+			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
+			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
+			k++;
+			String lineName="";
+			/*for(DispatchLines lines : queryLinesByPlanUUID){
+				lineName = lineName +""+ lines.getLineName()+",";
+			}*/
+			//String lineNames = lineName.substring(0, lineName.length()-1);
+			sheet.addCell(new Label(k, i + 1, ""));
+			k++;
+			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallData())));
+			k++;
+			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallHour())));
+			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getUsername()));
+			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getAddTime()));
+		}
+
+		wb.write();
+		wb.close();
+
+	}
 }

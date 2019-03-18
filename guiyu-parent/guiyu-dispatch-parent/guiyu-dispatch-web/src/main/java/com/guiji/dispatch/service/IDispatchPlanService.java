@@ -7,6 +7,7 @@ import com.guiji.common.model.Page;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
@@ -222,7 +223,21 @@ public interface IDispatchPlanService {
 	JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin,
 			String orgCode);
 
+	/**
+	 * 根据用户ID统计计划数据
+	 * @param userId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	TotalPlanCountVo totalPlanCountByUserDate(String userId, String startTime, String endTime);
+
+	/**
+	 * 根据批次ID统计计划数据
+	 * @param batchId
+	 * @return
+	 */
+	TotalPlanCountVo totalPlanCountByBatch(Integer batchId);
 
 	boolean insertDispatchPlanList(List<DispatchPlan> list);
 
@@ -253,5 +268,8 @@ public interface IDispatchPlanService {
 
 	//查询计划列表
 	List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
+
+	//根据plan_uuid查询线路列表
+	List<DispatchLines> queryLineByPlan(String planUuid);
 }
 

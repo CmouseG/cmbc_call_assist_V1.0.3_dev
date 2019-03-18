@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
@@ -272,5 +273,11 @@ public class DispatchPlanController {
 		page.setRecords(resPage.getList());
 		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
 		return page;
+	}
+
+	@ApiOperation(value="查询计划列表", notes="查询计划列表")
+	@RequestMapping(value = "/dispatch/plan/queryLineByPlan", method = {RequestMethod.POST, RequestMethod.GET})
+	public List<DispatchLines> queryLineByPlan(){
+		return null;
 	}
 }

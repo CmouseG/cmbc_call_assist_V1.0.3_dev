@@ -120,7 +120,7 @@ public class FileController {
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPlanUuidIn(ids);
 
-		List<DispatchPlan> selectByExample = dispatchMapper.selectByExample(ex);
+		List<DownLoadPlanVo> selectByExample = dispatchMapper.queryDownloadPlanList(ex);
 		String fileName = "任务导出结果详情.xls";
 		HttpDownload.setHeader(resp, fileName);
 
@@ -142,7 +142,7 @@ public class FileController {
 		return null;
 	}
 
-	private void generateExcel4Dispatch(List<DispatchPlan> selectByExample, OutputStream out, Integer isDesensitization)
+	private void generateExcel4Dispatch(List<DownLoadPlanVo> selectByExample, OutputStream out, Integer isDesensitization)
 			throws RowsExceededException, WriteException, IOException {
 
 		Map<String, String> map = new HashMap<>();
@@ -159,16 +159,31 @@ public class FileController {
 		sheet.setColumnView(0, 12);
 		sheet.setColumnView(1, 12);
 
-		sheet.addCell(new Label(0, 0, "批次"));
+		/*sheet.addCell(new Label(0, 0, "批次"));
 		sheet.addCell(new Label(1, 0, "号码"));
 		sheet.addCell(new Label(2, 0, "计划状态"));
 		sheet.addCell(new Label(3, 0, "话术"));
 		sheet.addCell(new Label(4, 0, "线路"));
 		sheet.addCell(new Label(5, 0, "计划日期"));
 		sheet.addCell(new Label(6, 0, "计划时间"));
-		sheet.addCell(new Label(7, 0, "所属用户"));
+		sheet.addCell(new Label(7, 0, "所属用户"));*/
+
+		sheet.addCell(new Label(0, 0, "批次"));
+		sheet.addCell(new Label(1, 0, "号码"));
+		sheet.addCell(new Label(2, 0, "变量参数"));
+		sheet.addCell(new Label(3, 0, "附件参数"));
+		sheet.addCell(new Label(4, 0, "计划状态"));
+		sheet.addCell(new Label(5, 0, "意向标签"));
+		sheet.addCell(new Label(6, 0, "话术"));
+		sheet.addCell(new Label(7, 0, "线路"));
+		sheet.addCell(new Label(8, 0, "计划日期"));
+		sheet.addCell(new Label(9, 0, "计划时间"));
+		sheet.addCell(new Label(10, 0, "所属用户"));
+		sheet.addCell(new Label(11, 0, "添加日期"));
+
+
 		for (int i = 0; i < selectByExample.size(); i++) {
-			DispatchPlan dispatchPlan = selectByExample.get(i);
+			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
 			//查询线路
 			List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuid());
 			int k = 0;
@@ -183,7 +198,13 @@ public class FileController {
 				sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
 				k++;
 			}
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getParams()));
+			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getAttach()));
+			k++;
 			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
+			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getResult()));
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;
@@ -199,6 +220,8 @@ public class FileController {
 			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallHour())));
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getUsername()));
+			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getAddTime()));
 		}
 
 		wb.write();
@@ -347,14 +370,16 @@ public class FileController {
 		sheet.addCell(new Label(0, 0, "批次"));
 		sheet.addCell(new Label(1, 0, "号码"));
 		sheet.addCell(new Label(2, 0, "变量参数"));
-		sheet.addCell(new Label(3, 0, "计划状态"));
-		sheet.addCell(new Label(4, 0, "意向标签"));
-		sheet.addCell(new Label(5, 0, "话术"));
-		sheet.addCell(new Label(6, 0, "线路"));
-		sheet.addCell(new Label(7, 0, "计划日期"));
-		sheet.addCell(new Label(8, 0, "计划时间"));
-		sheet.addCell(new Label(9, 0, "所属用户"));
-		sheet.addCell(new Label(10, 0, "添加日期"));
+		sheet.addCell(new Label(3, 0, "附件参数"));
+		sheet.addCell(new Label(4, 0, "计划状态"));
+		sheet.addCell(new Label(5, 0, "意向标签"));
+		sheet.addCell(new Label(6, 0, "话术"));
+		sheet.addCell(new Label(7, 0, "线路"));
+		sheet.addCell(new Label(8, 0, "计划日期"));
+		sheet.addCell(new Label(9, 0, "计划时间"));
+		sheet.addCell(new Label(10, 0, "所属用户"));
+		sheet.addCell(new Label(11, 0, "添加日期"));
+
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
 			//查询线路
@@ -373,9 +398,11 @@ public class FileController {
 			}
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getParams()));//变量参数
 			k++;
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getAttach()));//附件参数
+			k++;
 			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
 			k++;
-			sheet.addCell(new Label(k, i + 1, map.get(dispatchPlan.getResult())));//意向标签
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getResult()));//意向标签
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;

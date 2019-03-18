@@ -922,11 +922,14 @@
       IFNULL(SUM(status_plan = 4),0) AS stopCount
     FROM dispatch_plan_${tableNum}
     WHERE is_del = 0
-    <if test="plan != null">
-      <if test="plan.orgCode != null">
-        AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '%'))
-      </if>
-    </if>
+        <if test="plan != null">
+            <if test="plan.orgCode != null">
+            AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '%'))
+            </if>
+            <if test="plan.batchId != null">
+                AND batch_id = #{plan.batchId}
+            </if>
+        </if>
     <if test="beginDate != null and endDate != null">
       AND gmt_create BETWEEN #{beginDate} AND #{endDate}
     </if>

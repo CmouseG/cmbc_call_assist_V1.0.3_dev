@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.enums.IsNotifyMsgEnum;
+import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.vo.TotalPlanCountVo;
+import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -11,6 +16,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
@@ -37,7 +43,7 @@ import com.rabbitmq.client.Channel;
  *
  */
 @Component
-@RabbitListener(queues = "dispatch.SuccessPhoneMQ")
+@RabbitListener(queues = "dispatch.SuccessPhoneMQ", containerFactory = "successMqRabbitFactory")
 public class SuccesPhone4MQLisener {
 	private static Logger logger = LoggerFactory.getLogger(ModularMqListener.class);
 
@@ -46,6 +52,12 @@ public class SuccesPhone4MQLisener {
 
 	@Autowired
 	private SuccPhonesThirdInterface thirdInterface;
+
+	@Autowired
+	private IDispatchPlanService dispatchPlanService;
+
+	@Autowired
+	private RedisUtil redisUtil;
 
 	@Autowired
 	private ISms sms;
@@ -60,6 +72,7 @@ public class SuccesPhone4MQLisener {
 	@Value("${weixin.pagePath.mainUrl}")
 	String mainUrl;
 
+	@Async("asyncSuccPhoneExecutor")
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		try {
@@ -78,12 +91,8 @@ public class SuccesPhone4MQLisener {
 				dispatchPlan.setResult(mqSuccPhoneDto.getLabel());
 				int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
 				logger.info("当前队列任务回调修改结果" + result);
-				// 查询当前是否批次结束
-				MessageSend send = selectBatchOver(dispatchPlan);
-				if (send != null) {
-					logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
-					sendMsg.sendMessage(send);
-				}
+				//消息通知(后期线程池)
+				this.sendMsgNotify(dispatchPlan);
 				// 第三方回调
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信
@@ -105,23 +114,55 @@ public class SuccesPhone4MQLisener {
 		}
 	}
 
+	/**
+	 * 发送消息通知
+	 * @param dispatchPlan
+	 */
+	private void sendMsgNotify(DispatchPlan dispatchPlan){
+		// 查询当前是否批次结束
+		MessageSend send = selectBatchOver(dispatchPlan);
+		String redisKey = RedisConstant.RedisConstantKey.MSG_NOTIFY_FLAG_ + dispatchPlan.getBatchId();
+		Object obj = redisUtil.get(redisKey);
+		if (send != null
+				//消息推送标识不存在，或未推送
+				&& (null == obj || (null != obj && !IsNotifyMsgEnum.HAVING.getFlag().equals((String)obj)))) {
+			logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
+			sendMsg.sendMessage(send);
+			redisUtil.set(redisKey, IsNotifyMsgEnum.HAVING.getFlag());
+			redisUtil.expire(redisKey, 180);//失效时间
+		}
+	}
+
+	/**
+	 * 消息通知
+	 * @param dispatchPlan
+	 * @return
+	 */
 	private MessageSend selectBatchOver(DispatchPlan dispatchPlan) {
+		/*
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
 				.andIsDelEqualTo(Constant.IS_DEL_0).andUserIdEqualTo(dispatchPlan.getUserId());
 		int count = dispatchPlanMapper.countByExample(ex);
-		DispatchPlanExample ex1 = new DispatchPlanExample();
+		*/
+
+		/*DispatchPlanExample ex1 = new DispatchPlanExample();
 		ex1.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId());
-		int batchCount = dispatchPlanMapper.countByExample(ex1);
-		if (count == 0) {
+		int batchCount = dispatchPlanMapper.countByExample(ex1);*/
+
+		//统计计划数量(已完成，计划中，暂停中，停止中)
+		TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId());
+	//	if (count == 0) {
+		if (totalCount.getFinishCount()>0 && totalCount.getDoingCount() == 0
+				&& totalCount.getStopCount()==0 && totalCount.getSuspendCount()==0) {
 			MessageSend send = new MessageSend();
 			send.setUserId(dispatchPlan.getUserId().longValue());
 			send.setNoticeType(NoticeType.task_finish);
-			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
 					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
-			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
 					+ "通号码的外呼任务已完成，点击查看外呼结果");
-			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
 					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
 			send.setEmailSubject("任务完成");
 			// 微信

@@ -12,5 +12,8 @@ public class RedisConstant {
 
         //分配用户、话术模板的机器人数据
         public final static String ROBOT_USER_RESOURCE = "ROBOT_USER_RESOURCE";
+
+        //是否已经外推消息
+        public final static String MSG_NOTIFY_FLAG_ = "MSG_NOTIFY_FLAG_";
     }
 }

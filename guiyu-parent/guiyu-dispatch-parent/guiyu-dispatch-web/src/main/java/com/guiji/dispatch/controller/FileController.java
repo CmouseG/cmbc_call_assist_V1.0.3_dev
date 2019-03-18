@@ -315,8 +315,7 @@ public class FileController {
 			startIdx = (queryPlanDto.getStartIdx()>0)?(queryPlanDto.getStartIdx()-1):0;
 			endIdx = (queryPlanDto.getEndIdx()>0)?queryPlanDto.getEndIdx():0;
 			if(startIdx>endIdx){
-				throw new GuiyuException(DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorCode(),
-						DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorMsg());
+				throw new GuiyuException("开始数不能大于结束数");
 			}
 			if(startIdx>=0 && endIdx>=0){
 				pageSize = (endIdx-startIdx>maxCount)?maxCount:(endIdx-startIdx);

@@ -123,13 +123,13 @@ public class SuccesPhone4MQLisener {
 		MessageSend send = selectBatchOver(dispatchPlan);
 		String redisKey = RedisConstant.RedisConstantKey.MSG_NOTIFY_FLAG_ + dispatchPlan.getBatchId();
 		Object obj = redisUtil.get(redisKey);
-		if (send != null
+		if (send != null && null == obj){
 				//消息推送标识不存在，或未推送
-				&& (null == obj || (null != obj && !IsNotifyMsgEnum.HAVING.getFlag().equals((String)obj)))) {
+		//		&& (null == obj || (null != obj && !IsNotifyMsgEnum.HAVING.getFlag().equals((String)obj)))) {
 			logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
 			sendMsg.sendMessage(send);
 			redisUtil.set(redisKey, IsNotifyMsgEnum.HAVING.getFlag());
-			redisUtil.expire(redisKey, 180);//失效时间
+			redisUtil.expire(redisKey, 60);//失效时间
 		}
 	}
 
@@ -154,7 +154,7 @@ public class SuccesPhone4MQLisener {
 		TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId());
 	//	if (count == 0) {
 		if (totalCount.getFinishCount()>0 && totalCount.getDoingCount() == 0
-				&& totalCount.getStopCount()==0 && totalCount.getSuspendCount()==0) {
+				) {//&& totalCount.getStopCount()==0 && totalCount.getSuspendCount()==0
 			MessageSend send = new MessageSend();
 			send.setUserId(dispatchPlan.getUserId().longValue());
 			send.setNoticeType(NoticeType.task_finish);

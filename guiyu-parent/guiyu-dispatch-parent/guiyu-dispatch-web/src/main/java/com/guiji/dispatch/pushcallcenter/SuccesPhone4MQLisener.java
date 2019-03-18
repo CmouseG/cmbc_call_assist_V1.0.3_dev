@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.vo.TotalPlanCountVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -11,6 +13,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
@@ -48,6 +51,9 @@ public class SuccesPhone4MQLisener {
 	private SuccPhonesThirdInterface thirdInterface;
 
 	@Autowired
+	private IDispatchPlanService dispatchPlanService;
+
+	@Autowired
 	private ISms sms;
 
 	@Autowired
@@ -60,6 +66,7 @@ public class SuccesPhone4MQLisener {
 	@Value("${weixin.pagePath.mainUrl}")
 	String mainUrl;
 
+	@Async("asyncSuccPhoneExecutor")
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {
 		try {
@@ -105,23 +112,36 @@ public class SuccesPhone4MQLisener {
 		}
 	}
 
+	/**
+	 * 消息通知
+	 * @param dispatchPlan
+	 * @return
+	 */
 	private MessageSend selectBatchOver(DispatchPlan dispatchPlan) {
+		/*
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId()).andStatusPlanEqualTo(Constant.STATUSPLAN_1)
 				.andIsDelEqualTo(Constant.IS_DEL_0).andUserIdEqualTo(dispatchPlan.getUserId());
 		int count = dispatchPlanMapper.countByExample(ex);
-		DispatchPlanExample ex1 = new DispatchPlanExample();
+		*/
+
+		/*DispatchPlanExample ex1 = new DispatchPlanExample();
 		ex1.createCriteria().andBatchIdEqualTo(dispatchPlan.getBatchId());
-		int batchCount = dispatchPlanMapper.countByExample(ex1);
-		if (count == 0) {
+		int batchCount = dispatchPlanMapper.countByExample(ex1);*/
+
+		//统计计划数量(已完成，计划中，暂停中，停止中)
+		TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId());
+	//	if (count == 0) {
+		if (totalCount.getFinishCount()>0 && totalCount.getDoingCount() == 0
+				&& totalCount.getStopCount()==0 && totalCount.getSuspendCount()==0) {
 			MessageSend send = new MessageSend();
 			send.setUserId(dispatchPlan.getUserId().longValue());
 			send.setNoticeType(NoticeType.task_finish);
-			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+			send.setSmsContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
 					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
-			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+			send.setMailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
 					+ "通号码的外呼任务已完成，点击查看外呼结果");
-			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + batchCount
+			send.setEmailContent("您在" + DateUtil.formatDatetime(dispatchPlan.getGmtCreate()) + "创建的" + totalCount.getFinishCount()	//batchCount
 					+ "通号码的外呼任务已完成，请登录系统查看外呼结果");
 			send.setEmailSubject("任务完成");
 			// 微信

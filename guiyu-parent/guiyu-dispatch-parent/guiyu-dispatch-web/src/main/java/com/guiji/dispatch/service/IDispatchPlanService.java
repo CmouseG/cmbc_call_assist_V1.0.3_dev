@@ -222,7 +222,21 @@ public interface IDispatchPlanService {
 	JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin,
 			String orgCode);
 
+	/**
+	 * 根据用户ID统计计划数据
+	 * @param userId
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	TotalPlanCountVo totalPlanCountByUserDate(String userId, String startTime, String endTime);
+
+	/**
+	 * 根据批次ID统计计划数据
+	 * @param batchId
+	 * @return
+	 */
+	TotalPlanCountVo totalPlanCountByBatch(Integer batchId);
 
 	boolean insertDispatchPlanList(List<DispatchPlan> list);
 

@@ -1206,6 +1206,29 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
+	public TotalPlanCountVo totalPlanCountByBatch(Integer batchId) {
+		DispatchPlan plan = new DispatchPlan();
+		plan.setBatchId(batchId);
+		TotalPlanCountVo total = new TotalPlanCountVo();
+		int totalCount = 0, doingCount = 0, finishCount = 0, suspendCount=0, stopCount=0;
+		PlanTableNumEnum[] tables = PlanTableNumEnum.values();
+		for(PlanTableNumEnum tableNum : tables){
+			TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(tableNum.getNum(), plan, null, null);
+			totalCount = totalNum.getTotalCount() + totalNum.getTotalCount() + totalNum.getTotalCount();
+			doingCount = totalNum.getDoingCount() + totalNum.getDoingCount() + totalNum.getDoingCount();
+			finishCount = totalNum.getFinishCount() + totalNum.getFinishCount() + totalNum.getFinishCount();
+			suspendCount = totalNum.getSuspendCount() + totalNum.getSuspendCount() + totalNum.getSuspendCount();
+			stopCount = totalNum.getStopCount() + totalNum.getStopCount() + totalNum.getStopCount();
+		}
+		total.setTotalCount(totalCount);
+		total.setDoingCount(doingCount);
+		total.setFinishCount(finishCount);
+		total.setSuspendCount(suspendCount);
+		total.setStopCount(stopCount);
+		return total;
+	}
+
+	@Override
 	public boolean insertDispatchPlanList(List<DispatchPlan> list) {
 		int result = dispatchPlanMapper.insertDispatchPlanList(list);
 		return result > 0 ? true : false;

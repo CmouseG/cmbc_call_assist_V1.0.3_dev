@@ -1177,11 +1177,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			PlanTableNumEnum[] tables = PlanTableNumEnum.values();
 			for(PlanTableNumEnum tableNum : tables){
 				TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(tableNum.getNum(), plan, beginDate, endDate);
-				totalCount = totalNum.getTotalCount() + totalNum.getTotalCount() + totalNum.getTotalCount();
-				doingCount = totalNum.getDoingCount() + totalNum.getDoingCount() + totalNum.getDoingCount();
-				finishCount = totalNum.getFinishCount() + totalNum.getFinishCount() + totalNum.getFinishCount();
-				suspendCount = totalNum.getSuspendCount() + totalNum.getSuspendCount() + totalNum.getSuspendCount();
-				stopCount = totalNum.getStopCount() + totalNum.getStopCount() + totalNum.getStopCount();
+				totalCount += totalNum.getTotalCount();
+				doingCount += totalNum.getDoingCount();
+				finishCount += totalNum.getFinishCount();
+				suspendCount += totalNum.getSuspendCount();
+				stopCount += totalNum.getStopCount();
 			}
 			/*
 			TotalPlanCountVo total0 = dispatchPlanMapper.totalPlanCount(0, plan, beginDate, endDate);//
@@ -1214,11 +1214,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		PlanTableNumEnum[] tables = PlanTableNumEnum.values();
 		for(PlanTableNumEnum tableNum : tables){
 			TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(tableNum.getNum(), plan, null, null);
-			totalCount = totalNum.getTotalCount() + totalNum.getTotalCount() + totalNum.getTotalCount();
-			doingCount = totalNum.getDoingCount() + totalNum.getDoingCount() + totalNum.getDoingCount();
-			finishCount = totalNum.getFinishCount() + totalNum.getFinishCount() + totalNum.getFinishCount();
-			suspendCount = totalNum.getSuspendCount() + totalNum.getSuspendCount() + totalNum.getSuspendCount();
-			stopCount = totalNum.getStopCount() + totalNum.getStopCount() + totalNum.getStopCount();
+			totalCount += totalNum.getTotalCount();
+			doingCount += totalNum.getDoingCount();
+			finishCount += totalNum.getFinishCount();
+			suspendCount += totalNum.getSuspendCount();
+			stopCount += totalNum.getStopCount();
 		}
 		total.setTotalCount(totalCount);
 		total.setDoingCount(doingCount);

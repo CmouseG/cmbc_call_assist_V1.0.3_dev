@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import com.guiji.dispatch.constant.RedisConstant;
+import com.guiji.dispatch.enums.IsNotifyMsgEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
+import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -40,7 +43,7 @@ import com.rabbitmq.client.Channel;
  *
  */
 @Component
-@RabbitListener(queues = "dispatch.SuccessPhoneMQ")
+@RabbitListener(queues = "dispatch.SuccessPhoneMQ", containerFactory = "successMqRabbitFactory")
 public class SuccesPhone4MQLisener {
 	private static Logger logger = LoggerFactory.getLogger(ModularMqListener.class);
 
@@ -52,6 +55,9 @@ public class SuccesPhone4MQLisener {
 
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
+
+	@Autowired
+	private RedisUtil redisUtil;
 
 	@Autowired
 	private ISms sms;
@@ -115,9 +121,15 @@ public class SuccesPhone4MQLisener {
 	private void sendMsgNotify(DispatchPlan dispatchPlan){
 		// 查询当前是否批次结束
 		MessageSend send = selectBatchOver(dispatchPlan);
-		if (send != null) {
+		String redisKey = RedisConstant.RedisConstantKey.MSG_NOTIFY_FLAG_ + dispatchPlan.getBatchId();
+		Object obj = redisUtil.get(redisKey);
+		if (send != null
+				//消息推送标识不存在，或未推送
+				&& (null == obj || (null != obj && !IsNotifyMsgEnum.HAVING.getFlag().equals((String)obj)))) {
 			logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
 			sendMsg.sendMessage(send);
+			redisUtil.set(redisKey, IsNotifyMsgEnum.HAVING.getFlag());
+			redisUtil.expire(redisKey, 180);//失效时间
 		}
 	}
 

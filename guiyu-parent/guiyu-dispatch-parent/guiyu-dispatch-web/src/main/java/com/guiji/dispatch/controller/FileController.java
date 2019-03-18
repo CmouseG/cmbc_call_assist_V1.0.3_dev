@@ -10,7 +10,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
+import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import io.swagger.annotations.ApiOperation;
@@ -72,11 +74,11 @@ public class FileController {
 	 */
 	@GetMapping(value = "queryFileRecords")
 	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize,
-			@RequestParam(required = false, name = "batchName") String batchName,
-			@RequestParam(required = false, name = "startTime") String startTime,
-			@RequestParam(required = false, name = "endTime") String endTime,
-			@RequestHeader String orgCode) {
+												@RequestParam(required = true, name = "pagesize") int pagesize,
+												@RequestParam(required = false, name = "batchName") String batchName,
+												@RequestParam(required = false, name = "startTime") String startTime,
+												@RequestParam(required = false, name = "endTime") String endTime,
+												@RequestHeader String orgCode) {
 		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
 				endTime,orgCode);
 		return queryFileInterface;
@@ -111,7 +113,7 @@ public class FileController {
 
 	@PostMapping(value = "downloadChooseNum")
 	public Result.ReturnData<Object> downloadChooseNum(@RequestHeader Integer isDesensitization,
-			@RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
+													   @RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
 		List<String> ids = new ArrayList<>();
 		for (int i = 0; i < dtos.length; i++) {
@@ -231,7 +233,7 @@ public class FileController {
 
 	@GetMapping(value = "downloadErrorRecords")
 	public Result.ReturnData<Object> downloadErrorRecords(@RequestHeader Integer isDesensitization,
-			@RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
+														  @RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
 		List<FileErrorRecords> queryErrorRecords = file.queryErrorRecords(fileRecordId);
 		String fileName = "错误详情结果.xls";
@@ -312,6 +314,10 @@ public class FileController {
 		}else{
 			startIdx = (queryPlanDto.getStartIdx()>0)?(queryPlanDto.getStartIdx()-1):0;
 			endIdx = (queryPlanDto.getEndIdx()>0)?queryPlanDto.getEndIdx():0;
+			if(startIdx>endIdx){
+				throw new GuiyuException(DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorCode(),
+						DispatchCodeExceptionEnum.IN_DATA_EXCEPTION.getErrorMsg());
+			}
 			if(startIdx>=0 && endIdx>=0){
 				pageSize = (endIdx-startIdx>maxCount)?maxCount:(endIdx-startIdx);
 			}

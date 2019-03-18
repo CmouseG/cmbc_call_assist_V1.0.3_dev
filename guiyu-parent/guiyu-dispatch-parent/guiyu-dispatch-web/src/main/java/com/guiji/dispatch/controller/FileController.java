@@ -346,7 +346,7 @@ public class FileController {
 
 		sheet.addCell(new Label(0, 0, "批次"));
 		sheet.addCell(new Label(1, 0, "号码"));
-		sheet.addCell(new Label(2, 0, "号码信息"));
+		sheet.addCell(new Label(2, 0, "变量参数"));
 		sheet.addCell(new Label(3, 0, "计划状态"));
 		sheet.addCell(new Label(4, 0, "意向标签"));
 		sheet.addCell(new Label(5, 0, "话术"));
@@ -371,7 +371,7 @@ public class FileController {
 				sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
 				k++;
 			}
-			sheet.addCell(new Label(k, i + 1, dispatchPlan.getParams()));//号码信息:参数
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getParams()));//变量参数
 			k++;
 			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
 			k++;

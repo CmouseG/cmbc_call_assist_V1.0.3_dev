@@ -8,6 +8,8 @@ public interface SendNoticeService {
     @Async
     void sendNotice(CallOutPlan callOutPlan);
 
+    void dealIntentWNotice(String intent, int userId, int linId);
+
     void sendFNotice(long userId);
 
     void sendWNotice(long userId);

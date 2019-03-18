@@ -7,6 +7,7 @@ import com.guiji.callcenter.dao.entity.NoticeSendLabel;
 import com.guiji.callcenter.dao.entity.NoticeSendLabelExample;
 import com.guiji.calloutserver.service.CallOutPlanService;
 import com.guiji.calloutserver.service.SendNoticeService;
+import com.guiji.calloutserver.util.DateUtil;
 import com.guiji.component.result.Result;
 import com.guiji.notice.api.INoticeSend;
 import com.guiji.notice.enm.NoticeType;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -55,7 +55,7 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         int userId = Integer.valueOf(callOutPlan.getCustomerId());
         String phone = callOutPlan.getPhoneNum();
         String intent = callOutPlan.getAccurateIntent();
-        String orgCode = callOutPlan.getOrgCode();
+//        String orgCode = callOutPlan.getOrgCode();
         int linId  = callOutPlan.getLineId();
         log.info("进入方法sendNotice，进入发送消息流程， userId[{}],phone[{}],intent[{}]",userId,phone,intent);
 
@@ -67,11 +67,20 @@ public class SendNoticeServiceImpl implements SendNoticeService {
                 sendIntentionalCustomer(Long.valueOf(userId), phone, intent, callOutPlan.getCallId());
             }
         }
+        dealIntentFNotice(intent,userId);
+        dealIntentWNotice(intent,userId,linId);
+    }
 
+    public void dealIntentFNotice(String intent,int userId){
         //	连续未接通警报.单个账号批量加入计划，连续100个F类推送提醒；下次的连续未接通警报，应该除去本次已报警的F类拨打记录
         String countFKey = "callCenter_F_count_userId_"+userId;
-        if(intent.equals("F")){
+        //  2个小时内最多推送一次，一天最多三次
+        String countFSendNumberKey = "callCenter_F_sendNumber_userId_"+userId;  //发送次数
+        String sendFLockKey = "callCenter_F_sendLock_userId_"+userId;  //锁住时间，2个小时
+
+        if(intent.equals("F") && redisUtil.get(sendFLockKey)==null){
             Object countFValue = redisUtil.get(countFKey);
+
             if(countFValue!=null ){
                 if((int) countFValue>=99){
                     //此处有并发问题
@@ -80,8 +89,22 @@ public class SendNoticeServiceImpl implements SendNoticeService {
                         int newValue = (int) redisUtil.get(countFKey);
                         if(newValue>=99){
                             redisUtil.set(countFKey,0);
-                            log.info("产生连续未接通警报,userId[{}],count[{}]",userId,countFValue);
-                            sendWNotice(userId);
+
+                            Object countFSendNumberValue = redisUtil.get(countFSendNumberKey);
+                            if( countFSendNumberValue ==null){
+                                redisUtil.set(countFSendNumberKey,1, DateUtil.getSecondsBeforeDawn());
+                                redisUtil.set(sendFLockKey,true,7200);//锁住2个小时
+                                sendFNotice(userId);
+                                log.info("产生连续未接通警报,userId[{}],count[{}]",userId,countFValue);
+                            }else if((int)countFSendNumberValue ==1 || (int)countFSendNumberValue == 2){
+                                redisUtil.incr(countFSendNumberKey,1);
+                                redisUtil.set(sendFLockKey,true,7200);//锁住2个小时
+                                sendFNotice(userId);
+                                log.info("产生连续未接通警报,userId[{}],count[{}]",userId,countFValue);
+                            }else{
+                                log.info("连续未接通警报,当天已经发送了3次，不会再发送");
+                            }
+
                         }else{
                             redisUtil.incr(countFKey,1);
                         }
@@ -95,10 +118,17 @@ public class SendNoticeServiceImpl implements SendNoticeService {
         }else{
             redisUtil.set(countFKey,0);
         }
+    }
 
+    @Override
+    public void dealIntentWNotice(String intent,int userId,int linId){
         //	线路报错.单个线路，出现连续100通电话的W线路报错问题推送提醒
-        String countWKey = "callCenter_W_count_lineId_"+linId+"_orgCode_"+orgCode;
-        if(intent.equals("W")){
+        String countWKey = "callCenter_W_count_lineId_"+linId+"_userId_"+userId;
+        //  2个小时内最多推送一次，一天最多三次
+        String countWSendNumberKey = "callCenter_W_sendNumber_userId_"+userId;  //发送次数
+        String sendWLockKey = "callCenter_W_sendLock_userId_"+userId;  //锁住时间，2个小时
+
+        if(intent.equals("W")  && redisUtil.get(sendWLockKey)==null){
             Object countWValue = redisUtil.get(countWKey);
             if(countWValue!=null ){
                 if((int) countWValue>=99){
@@ -108,11 +138,25 @@ public class SendNoticeServiceImpl implements SendNoticeService {
                         int newValue = (int) redisUtil.get(countWKey);
                         if(newValue>=99){
                             redisUtil.set(countWKey,0);
-                            log.info("产生线路报错,linId[{}],count[{}],orgCode[{]]",linId,countWValue,orgCode);
-                            sendWNotice(userId);
+
+                            Object countWSendNumberValue = redisUtil.get(countWSendNumberKey);
+                            if( countWSendNumberValue ==null){
+                                redisUtil.set(countWSendNumberKey,1, DateUtil.getSecondsBeforeDawn());
+                                redisUtil.set(sendWLockKey,true,7200);//锁住2个小时
+                                sendWNotice(userId);
+                                log.info("产生线路报错,userId[{}],count[{}]",userId,countWValue);
+                            }else if((int)countWSendNumberValue ==1 || (int)countWSendNumberValue == 2){
+                                redisUtil.incr(countWSendNumberKey,1);
+                                redisUtil.set(sendWLockKey,true,7200);//锁住2个小时
+                                sendWNotice(userId);
+                                log.info("产生线路报错,userId[{}],count[{}]",userId,countWValue);
+                            }else{
+                                log.info("产生线路报错,当天已经发送了3次，不会再发送");
+                            }
                         }else{
                             redisUtil.incr(countWKey,1);
                         }
+
                     }
                 }else{
                     redisUtil.incr(countWKey,1);
@@ -129,7 +173,7 @@ public class SendNoticeServiceImpl implements SendNoticeService {
     /**
      * 意向客户，发送消息
      */
-    private void sendIntentionalCustomer(long userId, String phone, String intent, BigInteger callId){
+    public void sendIntentionalCustomer(long userId, String phone, String intent, BigInteger callId){
         MessageSend messageSend = new MessageSend();
         messageSend.setNoticeType(NoticeType.intentional_customer);
         messageSend.setUserId(userId);

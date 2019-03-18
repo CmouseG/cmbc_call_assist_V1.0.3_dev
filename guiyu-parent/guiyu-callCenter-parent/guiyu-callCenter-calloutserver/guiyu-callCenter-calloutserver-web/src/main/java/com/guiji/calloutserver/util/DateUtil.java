@@ -12,6 +12,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class DateUtil {
 
@@ -21,6 +22,24 @@ public class DateUtil {
      */
     public static String FORMAT_YEARMONTHDAY_HOURMINSEC = "yyyy-MM-dd HH:mm:ss";
     public static String FORMAT_YEARMONTHDAY = "yyyy-MM-dd";
+
+    /**
+     * 获取此时到凌晨的秒数
+     * @return
+     */
+    public static long getSecondsBeforeDawn(){
+
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        long endTime = cal.getTime();
+
+        return (endTime - System.currentTimeMillis())/1000;
+    }
+
 
     /**
      * 获取当前的日期， 年月日，如20121218
@@ -139,7 +158,7 @@ public class DateUtil {
     public static void main(String[] args) {
 //        String ff = "yyyy-MM-dd HH:mm:ss";
 //        System.out.println("currdate: " + getCurrentDateByFormat(ff));
-        System.out.println(timeStampToDate(1726272727L));
+        System.out.println(getSecondsBeforeDawn());
     }
 
     /**

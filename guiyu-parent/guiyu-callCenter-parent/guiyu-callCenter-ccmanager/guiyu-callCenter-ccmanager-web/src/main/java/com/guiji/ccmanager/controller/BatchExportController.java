@@ -15,10 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -61,8 +58,8 @@ public class BatchExportController {
             @ApiImplicitParam(name = "endCount", value = "到多少条", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "intervened", value = "是否已介入，0:未介入,1:已介入,不传或其他值则是全部", dataType = "String", paramType = "query")
     })
-    @PostMapping(value = "batchExportCallRecord")
-    public String batchExportCallRecord(@RequestBody CallRecordListReq callRecordListReq, HttpServletResponse resp,
+    @GetMapping(value = "batchExportCallRecord")
+    public String batchExportCallRecord(CallRecordListReq callRecordListReq, HttpServletResponse resp,
                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) throws UnsupportedEncodingException {
 
@@ -72,6 +69,8 @@ public class BatchExportController {
             return "缺少参数!";
         }else if(Integer.valueOf(callRecordListReq.getEndCount()).intValue()-Integer.valueOf(callRecordListReq.getStartCount()).intValue()>30000){
             return "不能超过30000条!";
+        }else if(Integer.valueOf(callRecordListReq.getEndCount()).intValue()-Integer.valueOf(callRecordListReq.getStartCount()).intValue()<=0){
+            return "起始值必须小于结束值!";
         }
 
         Date end = null;

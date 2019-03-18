@@ -58,8 +58,8 @@ public class BatchExportController {
             @ApiImplicitParam(name = "endCount", value = "到多少条", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "intervened", value = "是否已介入，0:未介入,1:已介入,不传或其他值则是全部", dataType = "String", paramType = "query")
     })
-    @GetMapping(value = "batchExportCallRecord")
-    public String batchExportCallRecord(CallRecordListReq callRecordListReq, HttpServletResponse resp,
+    @PostMapping(value = "batchExportCallRecord")
+    public String batchExportCallRecord(@RequestBody CallRecordListReq callRecordListReq, HttpServletResponse resp,
                                         @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) throws UnsupportedEncodingException {
 

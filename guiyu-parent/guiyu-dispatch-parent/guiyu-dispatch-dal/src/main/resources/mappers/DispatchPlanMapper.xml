@@ -986,7 +986,6 @@
         batch_name      ,
         flag            ,
         org_code        ,
-        org_id          ,
         city_name       ,
         city_code       ,
         line_type       ,

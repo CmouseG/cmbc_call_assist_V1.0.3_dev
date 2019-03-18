@@ -35,7 +35,7 @@ public class DateUtil {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         cal.add(Calendar.DAY_OF_MONTH, 1);
-        long endTime = cal.getTime();
+        long endTime = cal.getTime().getTime();
 
         return (endTime - System.currentTimeMillis())/1000;
     }

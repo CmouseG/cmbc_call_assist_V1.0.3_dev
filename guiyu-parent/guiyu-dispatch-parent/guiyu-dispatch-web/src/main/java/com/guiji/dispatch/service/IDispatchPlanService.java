@@ -7,6 +7,7 @@ import com.guiji.common.model.Page;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
@@ -267,5 +268,8 @@ public interface IDispatchPlanService {
 
 	//查询计划列表
 	List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
+
+	//根据plan_uuid查询线路列表
+	List<DispatchLines> queryLineByPlan(String planUuid);
 }
 

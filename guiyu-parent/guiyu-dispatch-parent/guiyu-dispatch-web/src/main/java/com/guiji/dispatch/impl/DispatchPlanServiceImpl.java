@@ -1645,4 +1645,14 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<DownLoadPlanVo> list = dispatchPlanMapper.queryDownloadPlanList(example);
 		return list;
 	}
+
+	@Override
+	public List<DispatchLines> queryLineByPlan(String planUuid) {
+		if(!StringUtils.isEmpty(planUuid)){
+			return null;
+		}else{
+			return null;
+		}
+
+	}
 }

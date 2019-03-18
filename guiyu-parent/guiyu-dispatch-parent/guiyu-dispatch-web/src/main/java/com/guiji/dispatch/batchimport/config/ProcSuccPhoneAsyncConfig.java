@@ -16,6 +16,6 @@ public class ProcSuccPhoneAsyncConfig {
 
     @Bean(name = "asyncSuccPhoneExecutor")
     public Executor asyncSuccPhoneExecutor() {
-        return new VisiableThreadPoolTaskExecutor("async-batch-import-", 5, 10, 100000, 60);
+        return new VisiableThreadPoolTaskExecutor("async-succPhone-consumer-", 5, 10, 100000, 60);
     }
 }

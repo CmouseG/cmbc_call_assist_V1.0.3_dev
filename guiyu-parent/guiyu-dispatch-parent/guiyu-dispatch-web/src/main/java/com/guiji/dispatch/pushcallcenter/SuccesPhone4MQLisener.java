@@ -85,12 +85,8 @@ public class SuccesPhone4MQLisener {
 				dispatchPlan.setResult(mqSuccPhoneDto.getLabel());
 				int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
 				logger.info("当前队列任务回调修改结果" + result);
-				// 查询当前是否批次结束
-				MessageSend send = selectBatchOver(dispatchPlan);
-				if (send != null) {
-					logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
-					sendMsg.sendMessage(send);
-				}
+				//消息通知(后期线程池)
+				this.sendMsgNotify(dispatchPlan);
 				// 第三方回调
 				thirdInterface.execute(dispatchPlan);
 				// 发送短信
@@ -109,6 +105,19 @@ public class SuccesPhone4MQLisener {
 			} catch (IOException e1) {
 				logger.info("SuccesPhone4MQLisener ack确认机制有问题");
 			}
+		}
+	}
+
+	/**
+	 * 发送消息通知
+	 * @param dispatchPlan
+	 */
+	private void sendMsgNotify(DispatchPlan dispatchPlan){
+		// 查询当前是否批次结束
+		MessageSend send = selectBatchOver(dispatchPlan);
+		if (send != null) {
+			logger.info("当前批次结束,通知结束消息：" + dispatchPlan.getBatchId());
+			sendMsg.sendMessage(send);
 		}
 	}
 

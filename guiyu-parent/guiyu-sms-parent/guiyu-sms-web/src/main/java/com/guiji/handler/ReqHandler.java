@@ -6,7 +6,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.guiji.common.exception.GuiyuException;
@@ -25,6 +24,7 @@ import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.sms.dao.entity.SmsTunnel;
 import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.JsonUtils;
+import com.guiji.utils.MapUtil;
 import com.guiji.utils.RedisUtil;
 
 @Component
@@ -40,9 +40,6 @@ public class ReqHandler
 	RecordService recordService;
 	@Autowired
 	RedisUtil redisUtil;
-	
-	@Value("${cmppServiceUrl}")
-	private String cmppServiceUrl;
 	
 	/**
 	 * 处理短信请求
@@ -71,7 +68,7 @@ public class ReqHandler
 			record = new Welink().sendMessage(params, phone, smsContent);
 		} else if ("cmpp".equals(identification)) {
 			logger.info("通过<CMPP>发送短信...");
-			record = new Cmpp(cmppServiceUrl).sendMessage(params, phone, smsContent);
+			record = new Cmpp(MapUtil.getString(params, "cmppServiceUrl", 0)).sendMessage(params, phone, smsContent);
 		} else if ("zxy".equals(identification)) {
 			logger.info("通过<专信云>发送短信...");
 			record = new Zxy().sendMessage(params, phone, smsContent);

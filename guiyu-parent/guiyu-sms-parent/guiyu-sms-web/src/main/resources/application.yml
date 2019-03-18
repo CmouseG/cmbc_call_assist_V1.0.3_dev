@@ -81,6 +81,4 @@ xxl:
       logpath: /home/logs/guiyu-sms-web
       logretentiondays: -1
     accessToken:
-    
-#cmpp服务地址
-cmppServiceUrl: http://localhost:38000/sendMsg
+

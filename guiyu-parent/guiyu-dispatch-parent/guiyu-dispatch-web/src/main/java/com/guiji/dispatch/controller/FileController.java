@@ -346,14 +346,15 @@ public class FileController {
 
 		sheet.addCell(new Label(0, 0, "批次"));
 		sheet.addCell(new Label(1, 0, "号码"));
-		sheet.addCell(new Label(2, 0, "号码信息"));
+		sheet.addCell(new Label(2, 0, "变量参数"));
 		sheet.addCell(new Label(3, 0, "计划状态"));
-		sheet.addCell(new Label(4, 0, "话术"));
-		sheet.addCell(new Label(5, 0, "线路"));
-		sheet.addCell(new Label(6, 0, "计划日期"));
-		sheet.addCell(new Label(7, 0, "计划时间"));
-		sheet.addCell(new Label(8, 0, "所属用户"));
-		sheet.addCell(new Label(9, 0, "添加日期"));
+		sheet.addCell(new Label(4, 0, "意向标签"));
+		sheet.addCell(new Label(5, 0, "话术"));
+		sheet.addCell(new Label(6, 0, "线路"));
+		sheet.addCell(new Label(7, 0, "计划日期"));
+		sheet.addCell(new Label(8, 0, "计划时间"));
+		sheet.addCell(new Label(9, 0, "所属用户"));
+		sheet.addCell(new Label(10, 0, "添加日期"));
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
 			//查询线路
@@ -370,9 +371,11 @@ public class FileController {
 				sheet.addCell(new Label(k, i + 1, dispatchPlan.getPhone()));
 				k++;
 			}
-			sheet.addCell(new Label(k, i + 1, ""));//号码信息
+			sheet.addCell(new Label(k, i + 1, dispatchPlan.getParams()));//变量参数
 			k++;
 			sheet.addCell(new Label(k, i + 1, map.get(String.valueOf(dispatchPlan.getStatusPlan()))));
+			k++;
+			sheet.addCell(new Label(k, i + 1, map.get(dispatchPlan.getResult())));//意向标签
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;

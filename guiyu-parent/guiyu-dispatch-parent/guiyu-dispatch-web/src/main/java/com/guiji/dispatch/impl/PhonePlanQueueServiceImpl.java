@@ -80,6 +80,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 											List<DispatchPlan> bak = new ArrayList<>();
 											bak.addAll(dispatchPlanList);
 											List<DispatchPlan> sortLine = lineService.sortLine(dispatchPlanList);
+											logger.info("sortLine", sortLine);
 											if(sortLine.size()>0){
 												pushPlan2Queue(sortLine,queue);
 											}else if (bak.size()>0){
@@ -90,14 +91,16 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 									}
 							}
 						} catch (Exception e) {
-                            logger.info("PhonePlanQueueServiceImpl#execute:" + e);
+                            logger.info("PhonePlanQueueServiceImpl#execute:",e);
+							e.printStackTrace();
                         } finally{
 							distributedLockHandler.releaseLock(queueLock); // 释放锁
 						}
 					}
 				}
 			} catch (Exception e) {
-				logger.error("PhonePlanQueueServiceImpl#execute:" + e);
+				logger.error("PhonePlanQueueServiceImpl#execute:" , e);
+				e.printStackTrace();
 			}
 		}
 	}

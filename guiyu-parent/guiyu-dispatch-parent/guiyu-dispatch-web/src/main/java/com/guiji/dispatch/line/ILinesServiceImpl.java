@@ -315,7 +315,7 @@ public class ILinesServiceImpl implements ILinesService {
 
 	private LineRateResponse getRate(DispatchLines line, List<LineRateResponse> lineRate2) {
 		for (LineRateResponse rate : lineRate2) {
-			if (rate.getLineId().equals(line.getLineId())) {
+			if (rate.getLineId() == line.getLineId()) {
 				return rate;
 			}
 		}

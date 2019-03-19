@@ -264,33 +264,42 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 		}
 		
 		//保存打断新规录音信息
-		if(StringUtils.isNotBlank(vo.getVoliceContent())) {
-			if(StringUtils.isNotBlank(options.getVoice())) {
-				VoliceInfo voliceInfo = voliceService.getVoliceInfo(new Long(options.getVoice()));
-				if(!voliceInfo.getContent().equals(vo.getVoliceContent())) {
-					voliceInfo.setContent(vo.getVoliceContent());
+		if(Constant.VARIABLE_FLAG_04.equals(vo.getFlag())) {
+			if(StringUtils.isNotBlank(vo.getVoliceContent())) {//有文案
+				if(StringUtils.isNotBlank(options.getVoice())) {//如果之前有保存过，则直接更新文案
+					VoliceInfo voliceInfo = voliceService.getVoliceInfo(new Long(options.getVoice()));
+					if(!voliceInfo.getContent().equals(vo.getVoliceContent())) {
+						voliceInfo.setContent(vo.getVoliceContent());
+						voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
+						voliceInfo.setLstUpdateUser(userId);
+						voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
+						voliceService.saveVoliceInfo(voliceInfo, userId);
+						newOptions.setVoice(voliceInfo.getVoliceId().toString());
+					}
+				}else {//如果之前没有保存过，则新增一条文案录音信息
+					//插入音频信息
+					VoliceInfo voliceInfo=new VoliceInfo();
+					voliceInfo.setContent(vo.getVoliceContent().replace("\n", "").trim());
+					voliceInfo.setProcessId(vo.getProcessId());
+					voliceInfo.setTemplateId(options.getTemplateId());
 					voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
-					voliceInfo.setLstUpdateUser(userId);
-					voliceInfo.setLstUpdateTime(new Date(System.currentTimeMillis()));
+					//voliceInfo.setDomainName(DOMAIN);
+					voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
+					voliceInfo.setCrtUser(userId);
+					voliceInfo.setFlag("【新增】");
+					//voliceInfoMapper.insertSelective(voliceInfo);
 					voliceService.saveVoliceInfo(voliceInfo, userId);
+					
 					newOptions.setVoice(voliceInfo.getVoliceId().toString());
 				}
-				
 			}else {
-				//插入音频信息
-				VoliceInfo voliceInfo=new VoliceInfo();
-				voliceInfo.setContent(vo.getVoliceContent().replace("\n", "").trim());
-				voliceInfo.setProcessId(vo.getProcessId());
-				voliceInfo.setTemplateId(options.getTemplateId());
-				voliceInfo.setType(Constant.VOLICE_TYPE_INTERRUPT);
-				//voliceInfo.setDomainName(DOMAIN);
-				voliceInfo.setCrtTime(new Date(System.currentTimeMillis()));
-				voliceInfo.setCrtUser(userId);
-				voliceInfo.setFlag("【新增】");
-				//voliceInfoMapper.insertSelective(voliceInfo);
-				voliceService.saveVoliceInfo(voliceInfo, userId);
-				
-				newOptions.setVoice(voliceInfo.getVoliceId().toString());
+				//判断之前是不是有保存过打断文案,如果有，则需要删除
+				if(StringUtils.isNotBlank(options.getVoice())) {
+					BotSentenceOptions exist = botSentenceOptionsMapper.selectByPrimaryKey(options.getOptionsId());
+					exist.setVoice(null);
+					botSentenceOptionsMapper.updateByPrimaryKey(exist);
+					voliceInfoMapper.deleteByPrimaryKey(new Long(options.getVoice()));
+				}
 			}
 		}
 		

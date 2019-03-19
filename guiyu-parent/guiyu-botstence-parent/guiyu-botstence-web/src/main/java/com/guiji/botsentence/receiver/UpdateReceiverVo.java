@@ -41,6 +41,11 @@ public class UpdateReceiverVo {
 	public void setFreeswitch(int freeswitch) {
 		this.freeswitch = freeswitch;
 	}
+
+	@Override
+	public String toString() {
+		return "[tmplId="+ tmplId + ", sellbot="+ sellbot + ", robot="+robot + ", freeswitch="+freeswitch + "]";
+	}
 	
 	
 }

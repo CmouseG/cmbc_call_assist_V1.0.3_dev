@@ -222,6 +222,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         List<CallOutPlan4ListSelect> listResult = new ArrayList<CallOutPlan4ListSelect>();
 
         if (list != null && list.size() > 0) {
+            Map<String,String> lineMap = new HashMap();  //本地map，避免反复查询redis
             for (CallOutPlan callOutPlan : list) {
                 CallOutPlan4ListSelect callOutPlan4ListSelect = new CallOutPlan4ListSelect();
                 BeanUtil.copyProperties(callOutPlan, callOutPlan4ListSelect);
@@ -229,7 +230,15 @@ public class CallDetailServiceImpl implements CallDetailService {
                 callOutPlan4ListSelect.setTempId(cacheManager.getTempName(callOutPlan.getTempId()));
                 callOutPlan4ListSelect.setUserName(cacheManager.getUserName(callOutPlan.getCustomerId()));
                 callOutPlan4ListSelect.setCallId(callOutPlan.getCallId().toString());
-                callOutPlan4ListSelect.setLineName(lineNameService.getLineName(callOutPlan.getLineId(),callOutPlan.getCustomerId()));
+
+                String lineKey =callOutPlan.getLineId().toString()+"_"+callOutPlan.getCustomerId().toString();
+                if(lineMap.get(lineKey)!=null){
+                    callOutPlan4ListSelect.setLineName(lineMap.get(lineKey));
+                }else{
+                    String lineName =lineNameService.getLineName(callOutPlan.getLineId(),callOutPlan.getCustomerId());
+                    lineMap.put(lineKey,lineName);
+                    callOutPlan4ListSelect.setLineName(lineName);
+                }
                 listResult.add(callOutPlan4ListSelect);
             }
         }

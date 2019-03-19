@@ -1,5 +1,6 @@
 package com.guiji.botsentence.receiver;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,24 +55,31 @@ public class UpdateReceiverResolver {
 
 	public void resolver(PublishBotstenceResultMsgVO param){
 		logger.info("resolver---start");
+		logger.info("接收部署参数: " + param.toString());
 		String tempId=param.getTmplId();
 		UpdateReceiverVo vo=cache.get(tempId);
 		if(vo==null){
+			logger.info("缓存不存在当前模板数据" + tempId);
 			vo=new UpdateReceiverVo();
 			vo.setTmplId(tempId);
 			cache.put(tempId, vo);
+		}else {
+			logger.info("缓存存在当前模板数据: " + vo.toString());
 		}
 		if(param.getProcessTypeEnum()==ProcessTypeEnum.SELLBOT){
+			logger.info("设置sellbot");
 			vo.setSellbot(param.getResult());
 		}else if(param.getProcessTypeEnum()==ProcessTypeEnum.ROBOT){
+			logger.info("设置robot");
 			vo.setRobot(param.getResult());
 		}else if(param.getProcessTypeEnum()==ProcessTypeEnum.FREESWITCH){
+			logger.info("设置freeswitch");
 			vo.setFreeswitch(param.getResult());
 		}
-		logger.info(JSONObject.toJSONString(vo));
-		logger.info("--------------------------cache------------------------");
-		logger.info(JSONObject.toJSONString(cache));
-		logger.info("--------------------------cache------------------------");
+//		logger.info(JSONObject.toJSONString(vo));
+//		logger.info("--------------------------cache------------------------");
+//		logger.info(JSONObject.toJSONString(cache));
+//		logger.info("--------------------------cache------------------------");
 		if(vo.getSellbot()!=-1 && vo.getRobot()!=-1 && vo.getFreeswitch()!=-1){
 			cache.remove(tempId);
 			iDispatchPlanOut.successSchedule4TempId(tempId);
@@ -83,6 +91,8 @@ public class UpdateReceiverResolver {
 			List<BotSentenceProcess> list = botSentenceProcessMapper.selectByExample(example);
 			BotSentenceProcess botSentenceProcess =list.get(0);
 			botSentenceProcess.setState(Constant.ERROR);//部署失败
+			botSentenceProcess.setLstUpdateUser("deploy");
+			botSentenceProcess.setLstUpdateTime(new Date(System.currentTimeMillis()));
 		    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 		    
 		    BotPublishSentenceLog record=new BotPublishSentenceLog();

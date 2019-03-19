@@ -36,4 +36,8 @@
 	<update id="updateIntentNameByRemark" parameterType="String">
 		update bot_sentence_grade_rule set remark=#{remark} where process_id=#{processId} and intent_name=#{intentName}
 	</update>
+	
+	<update id="updateValue2ByDomain" parameterType="String">
+		update bot_sentence_grade_rule set value2=#{newDomainName} where process_id=#{processId} and type='01' and value2=#{domainName}
+	</update>
 </mapper>

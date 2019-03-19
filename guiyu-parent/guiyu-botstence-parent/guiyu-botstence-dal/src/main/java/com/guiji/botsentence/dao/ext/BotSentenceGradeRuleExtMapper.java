@@ -15,4 +15,6 @@ public interface BotSentenceGradeRuleExtMapper {
 	String queryMaxRuleNo(@Param("processId") String processId);
 	
 	void updateIntentNameByRemark(@Param("processId") String processId, @Param("intentName") String intentName, @Param("remark") String remark);
+	
+	void updateValue2ByDomain(@Param("newDomainName") String newDomainName, @Param("processId") String processId, @Param("domainName") String domainName);
 }

@@ -27,6 +27,8 @@ public class DispatchPlan implements Serializable {
 
     private String remarks;
 
+    private String params;
+
     private static final long serialVersionUID = 1L;
 
     public String getPlanUuid() {
@@ -117,6 +119,14 @@ public class DispatchPlan implements Serializable {
         this.remarks = remarks;
     }
 
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
+    }
+
     @Override
     public String toString() {
         return "DispatchPlan{" +
@@ -130,6 +140,7 @@ public class DispatchPlan implements Serializable {
                 ", simCall='" + simCall + '\'' +
                 ", orgCode='" + orgCode + '\'' +
                 ", remarks='" + remarks + '\'' +
+                ", params='" + params + '\'' +
                 ", agentGroupId='" + agentGroupId + '\'' +
                 '}';
     }

@@ -1414,8 +1414,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					//设置加入路由网关路线redis及状态
 					gateWayLineService.setGatewayLineRedis(lineList);
 				}
+
+				phones.add(bean.getPhone());
 			}
-			phones.add(bean.getPhone());
 		}
 		return true;
 	}

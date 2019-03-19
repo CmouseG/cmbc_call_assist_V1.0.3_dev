@@ -527,7 +527,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 					}
 				}
 				//合成后的wav文件本地路径
-				String ttsFilePath = tmpFilePath + com.guiji.utils.SystemUtil.getBusiSerialNo(templateId)+".wav";
+				String ttsFilePath = tmpFilePath + com.guiji.utils.SystemUtil.getBusiSerialNo(templateId,50)+".wav";
 				try {
 					//合成语音
 					WavMergeUtil.mergeWav(wavArr,ttsFilePath);

@@ -361,6 +361,10 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 								List<String> keywords = getIntentKeys(botSentenceBranch.getIntents());
 								BranchNodeVO.setKeys(keywords);
 								BranchNodeVO.setEnd(botSentenceBranch.getEnd());
+								if(org.apache.commons.lang.StringUtils.isNotBlank(botSentenceBranch.getRule()) && Constant.BRANCH_RULE_02.equals(botSentenceBranch.getRule())) {
+									BranchNodeVO.setEnd_to_enter(true);
+								}
+								
 								String userAsk = botSentenceBranch.getUserAsk();
 								if(StringUtils.isNotBlank(userAsk)) {
 									userAsk = userAsk.replace(",", "，");
@@ -500,8 +504,22 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 			if(null != botSentenceOptions.getIgnoreButDomainsStart() && botSentenceOptions.getIgnoreButDomainsStart()) {
 				if(StringUtils.isNotBlank(botSentenceDomain.getIgnoreButDomains())) {
 					//写入每下流程
-					//domainVO.setIgnore_but_domains(Arrays.asList(botSentenceDomain.getIgnoreButDomains().split(",")));
-					jsonObject.put("ignore_but_domains", Arrays.asList(botSentenceDomain.getIgnoreButDomains().split(",")));
+					//用户回复未超过4个字，且未匹配到关键词时
+					//用户回复超过4个字，且未匹配到关键词
+					//用户回复无声音时
+					//设置以上三个变量同时放入到相应的ignore_but_domains
+					List<String> ignore_but_domains = BotSentenceUtil.StringToList(botSentenceDomain.getIgnoreButDomains()); 
+					//Arrays.asList(botSentenceDomain.getIgnoreButDomains().split(","));
+					if(StringUtils.isNotBlank(botSentenceDomain.getNotMatchLess4To()) && !ignore_but_domains.contains(botSentenceDomain.getNotMatchLess4To())) {
+						ignore_but_domains.add(botSentenceDomain.getNotMatchLess4To());
+					}
+					if(StringUtils.isNotBlank(botSentenceDomain.getNotMatchTo()) && !ignore_but_domains.contains(botSentenceDomain.getNotMatchTo())) {
+						ignore_but_domains.add(botSentenceDomain.getNotMatchTo());
+					}
+					if(StringUtils.isNotBlank(botSentenceDomain.getNoWordsTo()) && !ignore_but_domains.contains(botSentenceDomain.getNoWordsTo())) {
+						ignore_but_domains.add(botSentenceDomain.getNoWordsTo());
+					}
+					jsonObject.put("ignore_but_domains", ignore_but_domains);
 				}
 			}
 			if(null != botSentenceOptions.getIgnoreButNegativeStart() && botSentenceOptions.getIgnoreButNegativeStart()) {

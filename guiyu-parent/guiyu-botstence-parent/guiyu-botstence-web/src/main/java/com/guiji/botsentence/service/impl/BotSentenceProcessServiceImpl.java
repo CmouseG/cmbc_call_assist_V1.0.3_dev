@@ -27,6 +27,8 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.guiyu.message.component.FanoutSender;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
+import com.netflix.discovery.converters.Auto;
+
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -121,6 +123,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	
 	@Autowired
 	private IBotSentenceTemplateService botSentenceTemplateService;
+	
+	@Autowired
+	private BotSentenceGradeRuleExtMapper botSentenceGradeRuleExtMapper;
 	
 	@Autowired
 	private IAuth iAuth;
@@ -1034,7 +1039,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			//查询关键词库列表
 			List<BotSentenceIntentVO> intentList = botSentenceKeyWordsService.getIntent(branch.getBranchId());
 			vo.setHuashu("重复上一句");//话术
-			vo.setLuoji("重复3次后走邀约失败");//逻辑
+			vo.setLuoji("用户表示没听清时的回复，回复机器人的上一句话术");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -1081,7 +1086,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			List<BotSentenceIntentVO> intentList = botSentenceKeyWordsService.getIntent(branch.getBranchId());
 			//vo.setYujin("全局挽回");//语境
 			vo.setYujin(branch.getDomain());//语境
-			vo.setLuoji("没有话术时，被拒绝走失败结束");
+			vo.setLuoji("机器人回复业务问答和通用对话时被用户拒绝，则机器人回复该话术");
 			vo.setBranchId(branch.getBranchId());
 			vo.setTemplateId(branch.getTemplateId());
 			vo.setProcessId(processId);
@@ -1113,6 +1118,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
 				vo.setYujin("失败邀约");//语境
 				vo.setTitle("失败邀约");
+				vo.setLuoji("机器人连续重复回复3次同样的话术后，走失败邀约");
 				//vo.setYujin(branch.getDomain());//语境
 				//vo.setTitle(branch.getDomain());
 				vo.setBranchId(branch.getBranchId());
@@ -1155,7 +1161,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						vo.setHuashu(volice.getContent());//话术
 						vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
 						//vo.setLuoji("未识别" + index);//逻辑
-						vo.setLuoji("第" + index + "次未识别时回复的话术");//逻辑
+						vo.setLuoji("机器人第" + index + "次未识别出用户的回复则走该话术");//逻辑
 						vo.setYujin("未识别");//语境
 						vo.setTitle("未识别" + index);
 						
@@ -1201,7 +1207,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				//vo.setLuoji("触发\"出错\"流程");//逻辑
 				//vo.setYujin("其他");//语境
 				//vo.setTitle("其他1");
-				vo.setLuoji("触发\"" + branch.getDomain() +"\"流程");//逻辑
+				vo.setLuoji("如果没有邀约流程，且模板中有逻辑指向邀约（失败邀约），则用出错的话术代替之");//逻辑
 				vo.setYujin(branch.getDomain());//语境
 				vo.setTitle(branch.getDomain());
 				vo.setBranchId(branch.getBranchId());
@@ -1240,6 +1246,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
 				vo.setYujin("失败结束");//语境
 				vo.setTitle("失败结束");
+				vo.setLuoji("用户投诉、号码过滤、及连续被拒绝的情况，机器人走该话术");
 				//vo.setYujin(branch.getDomain());//语境
 				//vo.setTitle(branch.getDomain());
 				vo.setBranchId(branch.getBranchId());
@@ -1290,6 +1297,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				vo.setLuoji("命中在忙关键词,走在忙结束,机器人主动挂断");//逻辑
 				//vo.setYujin("在忙");//语境
 				//vo.setTitle("在忙");
+				vo.setLuoji("命中在忙关键词，走在忙结束,机器人主动挂断");
 				vo.setYujin(branch.getDomain());//语境
 				vo.setTitle(branch.getDomain());
 				vo.setBranchId(branch.getBranchId());
@@ -1325,7 +1333,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				//vo.setLuoji("触发\"强制结束\"流程");//逻辑
 				//vo.setYujin("其他");//语境
 				//vo.setTitle("其他2");
-				vo.setLuoji("触发\"" + branch.getDomain() +"\"流程");//逻辑
+				vo.setLuoji("通话轮数超过12轮，机器人走该话术");//逻辑
 				vo.setYujin(branch.getDomain());//语境
 				vo.setTitle(branch.getDomain());
 				vo.setBranchId(branch.getBranchId());
@@ -1361,7 +1369,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				//vo.setLuoji("触发\"结束_未匹配\"流程");//逻辑
 				//vo.setYujin("其他");//语境
 				//vo.setTitle("其他3");
-				vo.setLuoji("触发\"" + branch.getDomain() +"\"流程");//逻辑
+				vo.setLuoji("①机器人第3次未识别出用户的回复则走该话术；②机器人走失败邀约后，机器人第1次未识别出用户的回复则走该话术");//逻辑
 				vo.setYujin(branch.getDomain());//语境
 				vo.setTitle(branch.getDomain());
 				vo.setBranchId(branch.getBranchId());
@@ -1392,7 +1400,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			vo.setHuashu("投诉默认触发结束_失败");//话术
 			//vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setLuoji("命中投诉关键词");//逻辑
+			vo.setLuoji("触发投诉关键词时，机器人走该话术，投诉关键词在编辑——自定义汇中可查看");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -1421,7 +1429,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			vo.setHuashu("号码过滤默认触发结束_失败");//话术
 			//vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setLuoji("命中号码过滤关键词");//逻辑
+			vo.setLuoji("触发号码过滤关键词时，机器人走该话术，号码过滤关键词在编辑——自定义中可查看");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -2112,6 +2120,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				throw new CommonException("当前名称名已存在,请输入新的节点名称");
 			}
 		}
+		
+		this.updateValiableDomainName(domain.getProcessId(), oldDomainName, newDomainName, "update");
 		
 		domain.setType(blankDomain.getType());
 		domain.setDomainName(blankDomain.getLabel());
@@ -3205,6 +3215,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		//修改指向该域的为空
 		botSentenceBranchExtMapper.updateEndWhenDeleteDomain(processId, domain.getDomainName());
 
+		//处理变量及意向
+		this.updateValiableDomainName(processId, domain.getDomainName(), null, "delete");
+		
 		this.updateProcessState(processId, userId);
 	}
 
@@ -4856,6 +4869,40 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			return result;
 		}
 		return null;
+	}
+
+	@Override
+	public void updateValiableDomainName(String processId, String domainName, String newDomainName, String type) {
+		BotSentenceOptions options = botsentenceVariableService.getOptionsByProcessId(processId);
+		if("delete".equals(type)) {
+			//无法被打断的流程
+			if(StringUtils.isNotBlank(options.getNonInterruptable())) {
+				List<String> list = BotSentenceUtil.StringToList(options.getNonInterruptable());
+				if(list.contains(domainName)) {
+					list.remove(domainName);
+					options.setNonInterruptable(BotSentenceUtil.listToString(list));
+					botSentenceOptionsMapper.updateByPrimaryKey(options);
+				}
+			}
+			
+			//用户回复未超过4个字，且未匹配到关键词时，回复某个主流程
+			botSentenceDomainExtMapper.updateNotMatchLess4ToByDomain(processId, domainName);
+			
+			//用户回复超过4个字，且未匹配到关键词时，将用户的回复配置为
+			botSentenceDomainExtMapper.updateNotMatchToByDomain(processId, domainName);
+			
+			//用户回复无声音时，将用户的回复配置为
+			botSentenceDomainExtMapper.updateNotWordsToByDomain(processId, domainName);
+			
+			//删除相应的意向
+			BotSentenceGradeRuleExample ruleExample = new BotSentenceGradeRuleExample();
+			ruleExample.createCriteria().andProcessIdEqualTo(processId).andTypeEqualTo("01").andValue2EqualTo(domainName);
+			botSentenceGradeRuleMapper.deleteByExample(ruleExample);
+		}else if("update".equals(type)) {
+			//更新意向
+			botSentenceGradeRuleExtMapper.updateValue2ByDomain(newDomainName, processId, domainName);
+		}
+		
 	}
 	
 }

@@ -143,4 +143,6 @@ public interface IBotSentenceProcessService {
 	public List<BotSentenceTemplateTradeVO> queryTradeListByTradeIdList(List<String> tradeIdList);
 	
 	public List<BotSentenceTemplateTradeVO> queryTradeListByTemplateIdList(List<String> templateIdList);
+	
+	public void updateValiableDomainName(String processId, String domainName, String newDomainName, String type);
 }

@@ -42,6 +42,11 @@ public interface ConfigService
 	/**
 	 * 根据意向标签和用户获取配置
 	 */
-	SmsConfig getConfigToSend(String intentionTag, String orgCode, String templateId);
+	public SmsConfig getConfigToSend(String intentionTag, String orgCode, String templateId);
+
+	/**
+	 * 判断是否有配置
+	 */
+	public Integer hasConfig(String intentionTag, String orgCode, String templateId);
 
 }

@@ -92,23 +92,23 @@ public class ReqHandler
 		Map<String, Object> resultMap = new HashMap<>();
 		// 获取配置
 		SmsConfig config = configService.getConfigToSend(sendMReq.getIntentionTag(),sendMReq.getOrgCode(),sendMReq.getTemplateId());
-		if (config.getAuditingStatus() == 0){
-			logger.info("短信内容未审核，暂不能发送短信");
+		if(config == null) {
+			throw new GuiyuException("没有短信配置，不发送短信");
+		}
+		if (config.getAuditingStatus() == 0) {
 			throw new GuiyuException("短信内容未审核，暂不能发送短信");
-		} else if (config.getRunStatus() == 0){
-			logger.info("停止状态，不再发送短信");
+		} 
+		if (config.getRunStatus() == 0) {
 			throw new GuiyuException("停止状态，不再发送短信");
 		}
 		// 获取通道
 		SmsTunnel tunnel = (SmsTunnel) redisUtil.get(config.getTunnelName());
 		if (tunnel == null){
-			logger.info("没有短信通道，不发送短信");
 			throw new GuiyuException("没有短信通道，不发送短信");
 		}
 		// 获取平台
 		SmsPlatform platform = (SmsPlatform) redisUtil.get(tunnel.getPlatformName());
 		if (platform == null){
-			logger.info("没有短信平台，不发送短信");
 			throw new GuiyuException("没有短信平台，不发送短信");
 		}
 		

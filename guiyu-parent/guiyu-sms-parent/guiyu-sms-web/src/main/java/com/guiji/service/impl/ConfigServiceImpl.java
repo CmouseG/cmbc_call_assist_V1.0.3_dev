@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
-import com.guiji.common.exception.GuiyuException;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.service.ConfigService;
@@ -184,10 +183,22 @@ public class ConfigServiceImpl implements ConfigService
 								.andTemplateIdEqualTo(templateId);
 		List<SmsConfig> configs = configMapper.selectByExampleWithBLOBs(example);
 		if (configs == null || configs.isEmpty()){
-			throw new GuiyuException("没有短信配置，不发送短信!");
+			return null;
 		}
 		return configs.get(0);
 	}
+	
+	@Override
+	public Integer hasConfig(String intentionTag, String orgCode, String templateId)
+	{
+		SmsConfigExample example = new SmsConfigExample();
+		example.createCriteria().andIntentionTagLike("%"+intentionTag+"%")
+								.andOrgCodeLike(orgCode+"%")
+								.andTemplateIdEqualTo(templateId);
+		Long count = configMapper.countByExample(example);
+		return count.intValue();
+	}
+	
 	
 	public String getUserName(String userId) {
 		String cacheName = (String) redisUtil.get(userId);

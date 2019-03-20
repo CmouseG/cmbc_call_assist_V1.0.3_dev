@@ -7,6 +7,7 @@ import com.guiji.process.api.IProcessSchedule;
 import com.guiji.process.model.ChangeModelReq;
 import com.guiji.process.model.ProcessReleaseVO;
 import com.guiji.common.model.process.ProcessInstanceVO;
+import com.guiji.process.model.PublishBotstenceTaskVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.process.server.service.IProceseScheduleService;
 import org.slf4j.Logger;
@@ -73,9 +74,9 @@ public class ProcessScheduleController implements IProcessSchedule {
 
     @Override
     @SysOperaLog(operaTarget = "进程管理", operaType = "发布话术")
-    public Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req) {
-        processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile(),req.getUserId());
-        return Result.ok();
+    public Result.ReturnData<PublishBotstenceTaskVO> publishResource(@RequestBody UpgrateResouceReq req) {
+        PublishBotstenceTaskVO publisthBotstenceTaskVo = processScheduleService.publishResource(req.getProcessTypeEnum(),req.getTmplId(),req.getFile(),req.getUserId());
+        return Result.ok(publisthBotstenceTaskVo);
     }
 
 }

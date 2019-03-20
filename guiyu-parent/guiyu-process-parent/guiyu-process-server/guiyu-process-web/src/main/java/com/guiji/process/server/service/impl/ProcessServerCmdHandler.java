@@ -219,6 +219,7 @@ public class ProcessServerCmdHandler implements IProcessCmdHandler {
                     }
 
                     publishBotstenceResultMsgVO.setTmplId(tmplId);
+                    publishBotstenceResultMsgVO.setSubJobId(cmdMessageVO.getReqKey());
                     if (cmdMessageVO.getCommandResult() != null) {
                         if (Integer.valueOf(cmdMessageVO.getCommandResult()) == 0) {
                             publishBotstenceResultMsgVO.setResult(0);

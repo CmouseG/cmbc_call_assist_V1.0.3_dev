@@ -524,7 +524,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		SynPostReqVO req = new SynPostReqVO();
 		List<String> contents = new ArrayList<>();
 		req.setContent(temp.getContent());
-		req.setModel("szj");//TTS合成声音模型
+		req.setModel("mh");//TTS合成声音模型
 	    logger.info("请求参数: " + req.toString());
 	    //botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), "test-"+System.currentTimeMillis());
     	ReturnData<String> result = null;

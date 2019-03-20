@@ -4,6 +4,7 @@ import com.guiji.component.result.Result;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.model.ChangeModelReq;
 import com.guiji.process.model.ProcessReleaseVO;
+import com.guiji.process.model.PublishBotstenceTaskVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -102,7 +103,7 @@ public interface IProcessSchedule {
             @ApiImplicitParam(name = "req", value = "发布资源", dataType = "UpgrateResouceReq", paramType = "query"),
     })
     @PostMapping(value="/publishResource")
-    Result.ReturnData<Boolean> publishResource(@RequestBody UpgrateResouceReq req);
+    Result.ReturnData<PublishBotstenceTaskVO> publishResource(@RequestBody UpgrateResouceReq req);
 
 }
 

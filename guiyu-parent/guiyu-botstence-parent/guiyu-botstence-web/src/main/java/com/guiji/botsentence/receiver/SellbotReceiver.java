@@ -21,11 +21,12 @@ public class SellbotReceiver {
 	
 	@RabbitHandler
 	public void process(String message) {
-		logger.info("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : xiaohuozi");
+		logger.info("接收部署回调...");
+		logger.info("response报文: " + message);
 		PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message,PublishBotstenceResultMsgVO.class);
-		logger.info("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO.toString());
+		//logger.info("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO.toString());
 		resolver.resolver(publishBotstenceResultMsgVO);
-		logger.debug("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO);
+		//logger.debug("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO);
 	}
 
 }

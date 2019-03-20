@@ -3,6 +3,7 @@ package com.guiji.process.server.service;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.common.model.process.ProcessInstanceVO;
 import com.guiji.process.model.ProcessReleaseVO;
+import com.guiji.process.model.PublishBotstenceTaskVO;
 
 import java.util.List;
 
@@ -68,5 +69,5 @@ public interface IProceseScheduleService {
      * @param file
      * @return
      */
-    void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file,Long userId);
+    PublishBotstenceTaskVO publishResource(ProcessTypeEnum processTypeEnum, String tmplId, String file, Long userId);
 }

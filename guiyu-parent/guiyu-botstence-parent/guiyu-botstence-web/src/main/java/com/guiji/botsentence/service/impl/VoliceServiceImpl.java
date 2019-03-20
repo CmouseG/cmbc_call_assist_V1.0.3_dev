@@ -45,6 +45,7 @@ import org.w3c.dom.DOMImplementationList;
 import com.google.common.io.Files;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.dao.BotSentenceBranchMapper;
+import com.guiji.botsentence.dao.BotSentenceDeployMapper;
 import com.guiji.botsentence.dao.BotSentenceDomainMapper;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
@@ -52,6 +53,7 @@ import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceBranch;
 import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
+import com.guiji.botsentence.dao.entity.BotSentenceDeploy;
 import com.guiji.botsentence.dao.entity.BotSentenceDomain;
 import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
 import com.guiji.botsentence.dao.entity.BotSentenceOptions;
@@ -87,6 +89,7 @@ import com.guiji.component.result.ServerResult;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.process.api.IProcessSchedule;
+import com.guiji.process.model.PublishBotstenceTaskVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.utils.NasUtil;
 import com.jcraft.jsch.JSchException;
@@ -144,6 +147,9 @@ public class VoliceServiceImpl implements IVoliceService {
 	
 	@Autowired
 	private IDispatchPlanOut iDispatchPlanOut;
+	
+	@Autowired
+	private BotSentenceDeployMapper botSentenceDeployMapper;
 	
 	private static String NAS_UPLAOD_SYSTEM_CODE="09";
 	
@@ -885,7 +891,26 @@ public class VoliceServiceImpl implements IVoliceService {
 				//部署
 				
 				resouceReq.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
-				iProcessSchedule.publishResource(resouceReq);
+				ReturnData<PublishBotstenceTaskVO> result = iProcessSchedule.publishResource(resouceReq);
+				if("0".equals(result.getCode())) {
+					String jobId = result.getBody().getJobId();
+					List<String> list = result.getBody().getSubJobIds();
+					if(null != list && list.size() > 0) {
+						for(String temp : list) {
+							BotSentenceDeploy deploy = new BotSentenceDeploy();
+							deploy.setJobId(jobId);
+							deploy.setSubJobId(temp);
+							deploy.setStatus("1");//默认表示失败
+							deploy.setCrtTime(new Date(System.currentTimeMillis()));
+							deploy.setCrtUser(userId);
+							deploy.setProcessId(processId);
+							deploy.setTemplateId(templateId);
+							botSentenceDeployMapper.insert(deploy);
+						}
+					}
+				}else {
+					return false;
+				}
 				return true;
 			}
 			

@@ -468,6 +468,8 @@ public class SmsController implements ISms
 	@PostMapping(value = "sendMessage")
 	public void sendMessage(@RequestBody SendMReqVO sendMReq)
 	{
+		Integer count = configService.hasConfig(sendMReq.getIntentionTag(), sendMReq.getOrgCode(), sendMReq.getTemplateId());
+		if(count == null || count <= 0) {return;}
 		sendSmsService.pushReqToMQ(sendMReq);
 	}
 

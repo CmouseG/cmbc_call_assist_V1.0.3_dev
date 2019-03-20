@@ -1676,76 +1676,6 @@ public class CallOutPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andOriginateCmdIsNull() {
-            addCriterion("originate_cmd is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdIsNotNull() {
-            addCriterion("originate_cmd is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdEqualTo(String value) {
-            addCriterion("originate_cmd =", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdNotEqualTo(String value) {
-            addCriterion("originate_cmd <>", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdGreaterThan(String value) {
-            addCriterion("originate_cmd >", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdGreaterThanOrEqualTo(String value) {
-            addCriterion("originate_cmd >=", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdLessThan(String value) {
-            addCriterion("originate_cmd <", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdLessThanOrEqualTo(String value) {
-            addCriterion("originate_cmd <=", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdLike(String value) {
-            addCriterion("originate_cmd like", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdNotLike(String value) {
-            addCriterion("originate_cmd not like", value, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdIn(List<String> values) {
-            addCriterion("originate_cmd in", values, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdNotIn(List<String> values) {
-            addCriterion("originate_cmd not in", values, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdBetween(String value1, String value2) {
-            addCriterion("originate_cmd between", value1, value2, "originateCmd");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginateCmdNotBetween(String value1, String value2) {
-            addCriterion("originate_cmd not between", value1, value2, "originateCmd");
-            return (Criteria) this;
-        }
-
         public Criteria andRemarksIsNull() {
             addCriterion("remarks is null");
             return (Criteria) this;
@@ -2493,6 +2423,76 @@ public class CallOutPlanExample {
 
         public Criteria andIntervenedNotBetween(Boolean value1, Boolean value2) {
             addCriterion("intervened not between", value1, value2, "intervened");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsIsNull() {
+            addCriterion("params is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsIsNotNull() {
+            addCriterion("params is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsEqualTo(String value) {
+            addCriterion("params =", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotEqualTo(String value) {
+            addCriterion("params <>", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsGreaterThan(String value) {
+            addCriterion("params >", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsGreaterThanOrEqualTo(String value) {
+            addCriterion("params >=", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsLessThan(String value) {
+            addCriterion("params <", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsLessThanOrEqualTo(String value) {
+            addCriterion("params <=", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsLike(String value) {
+            addCriterion("params like", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotLike(String value) {
+            addCriterion("params not like", value, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsIn(List<String> values) {
+            addCriterion("params in", values, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotIn(List<String> values) {
+            addCriterion("params not in", values, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsBetween(String value1, String value2) {
+            addCriterion("params between", value1, value2, "params");
+            return (Criteria) this;
+        }
+
+        public Criteria andParamsNotBetween(String value1, String value2) {
+            addCriterion("params not between", value1, value2, "params");
             return (Criteria) this;
         }
     }

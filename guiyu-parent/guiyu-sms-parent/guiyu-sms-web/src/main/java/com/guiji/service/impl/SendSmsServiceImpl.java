@@ -6,7 +6,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.guiji.guiyu.message.component.QueueSender;
@@ -41,9 +40,6 @@ public class SendSmsServiceImpl implements SendSmsService
 	QueueSender queueSender;
 	@Autowired
 	RedisUtil redisUtil;
-	
-	@Value("${cmppServiceUrl}")
-	private String cmppServiceUrl;
 	
 	/**
 	 * 将请求推送到MQ

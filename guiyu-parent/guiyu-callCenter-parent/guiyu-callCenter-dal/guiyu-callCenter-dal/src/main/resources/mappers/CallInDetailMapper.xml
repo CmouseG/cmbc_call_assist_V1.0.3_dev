@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.CallInDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallInDetail" >
+    <id column="call_detail_id" property="callDetailId" jdbcType="BIGINT" />
+    <result column="call_id" property="callId" jdbcType="BIGINT" />
+    <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR" />
+    <result column="agent_answer_text" property="agentAnswerText" jdbcType="VARCHAR" />
+    <result column="agent_answer_time" property="agentAnswerTime" jdbcType="TIMESTAMP" />
+    <result column="ai_duration" property="aiDuration" jdbcType="INTEGER" />
+    <result column="asr_duration" property="asrDuration" jdbcType="INTEGER" />
+    <result column="bot_answer_text" property="botAnswerText" jdbcType="VARCHAR" />
+    <result column="bot_answer_time" property="botAnswerTime" jdbcType="TIMESTAMP" />
+    <result column="call_detail_type" property="callDetailType" jdbcType="INTEGER" />
+    <result column="customer_say_text" property="customerSayText" jdbcType="VARCHAR" />
+    <result column="customer_say_time" property="customerSayTime" jdbcType="TIMESTAMP" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+    <result column="total_duration" property="totalDuration" jdbcType="INTEGER" />
+    <result column="sharding_value" property="shardingValue" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    call_detail_id, call_id, accurate_intent, agent_answer_text, agent_answer_time, ai_duration, 
+    asr_duration, bot_answer_text, bot_answer_time, call_detail_type, customer_say_text, 
+    customer_say_time, reason, total_duration, sharding_value
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallInDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from call_in_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from call_in_detail
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from call_in_detail
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallInDetailExample" >
+    delete from call_in_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
+    insert into call_in_detail (call_detail_id, call_id, accurate_intent, 
+      agent_answer_text, agent_answer_time, ai_duration, 
+      asr_duration, bot_answer_text, bot_answer_time, 
+      call_detail_type, customer_say_text, customer_say_time, 
+      reason, total_duration, sharding_value
+      )
+    values (#{callDetailId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{accurateIntent,jdbcType=VARCHAR}, 
+      #{agentAnswerText,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, #{aiDuration,jdbcType=INTEGER}, 
+      #{asrDuration,jdbcType=INTEGER}, #{botAnswerText,jdbcType=VARCHAR}, #{botAnswerTime,jdbcType=TIMESTAMP}, 
+      #{callDetailType,jdbcType=INTEGER}, #{customerSayText,jdbcType=VARCHAR}, #{customerSayTime,jdbcType=TIMESTAMP}, 
+      #{reason,jdbcType=VARCHAR}, #{totalDuration,jdbcType=INTEGER}, #{shardingValue,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
+    insert into call_in_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="callDetailId != null" >
+        call_detail_id,
+      </if>
+      <if test="callId != null" >
+        call_id,
+      </if>
+      <if test="accurateIntent != null" >
+        accurate_intent,
+      </if>
+      <if test="agentAnswerText != null" >
+        agent_answer_text,
+      </if>
+      <if test="agentAnswerTime != null" >
+        agent_answer_time,
+      </if>
+      <if test="aiDuration != null" >
+        ai_duration,
+      </if>
+      <if test="asrDuration != null" >
+        asr_duration,
+      </if>
+      <if test="botAnswerText != null" >
+        bot_answer_text,
+      </if>
+      <if test="botAnswerTime != null" >
+        bot_answer_time,
+      </if>
+      <if test="callDetailType != null" >
+        call_detail_type,
+      </if>
+      <if test="customerSayText != null" >
+        customer_say_text,
+      </if>
+      <if test="customerSayTime != null" >
+        customer_say_time,
+      </if>
+      <if test="reason != null" >
+        reason,
+      </if>
+      <if test="totalDuration != null" >
+        total_duration,
+      </if>
+      <if test="shardingValue != null" >
+        sharding_value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="callDetailId != null" >
+        #{callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null" >
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="accurateIntent != null" >
+        #{accurateIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="agentAnswerText != null" >
+        #{agentAnswerText,jdbcType=VARCHAR},
+      </if>
+      <if test="agentAnswerTime != null" >
+        #{agentAnswerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="aiDuration != null" >
+        #{aiDuration,jdbcType=INTEGER},
+      </if>
+      <if test="asrDuration != null" >
+        #{asrDuration,jdbcType=INTEGER},
+      </if>
+      <if test="botAnswerText != null" >
+        #{botAnswerText,jdbcType=VARCHAR},
+      </if>
+      <if test="botAnswerTime != null" >
+        #{botAnswerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="callDetailType != null" >
+        #{callDetailType,jdbcType=INTEGER},
+      </if>
+      <if test="customerSayText != null" >
+        #{customerSayText,jdbcType=VARCHAR},
+      </if>
+      <if test="customerSayTime != null" >
+        #{customerSayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reason != null" >
+        #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="totalDuration != null" >
+        #{totalDuration,jdbcType=INTEGER},
+      </if>
+      <if test="shardingValue != null" >
+        #{shardingValue,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.CallInDetailExample" resultType="java.lang.Integer" >
+    select count(*) from call_in_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update call_in_detail
+    <set >
+      <if test="record.callDetailId != null" >
+        call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.callId != null" >
+        call_id = #{record.callId,jdbcType=BIGINT},
+      </if>
+      <if test="record.accurateIntent != null" >
+        accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agentAnswerText != null" >
+        agent_answer_text = #{record.agentAnswerText,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agentAnswerTime != null" >
+        agent_answer_time = #{record.agentAnswerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.aiDuration != null" >
+        ai_duration = #{record.aiDuration,jdbcType=INTEGER},
+      </if>
+      <if test="record.asrDuration != null" >
+        asr_duration = #{record.asrDuration,jdbcType=INTEGER},
+      </if>
+      <if test="record.botAnswerText != null" >
+        bot_answer_text = #{record.botAnswerText,jdbcType=VARCHAR},
+      </if>
+      <if test="record.botAnswerTime != null" >
+        bot_answer_time = #{record.botAnswerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.callDetailType != null" >
+        call_detail_type = #{record.callDetailType,jdbcType=INTEGER},
+      </if>
+      <if test="record.customerSayText != null" >
+        customer_say_text = #{record.customerSayText,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerSayTime != null" >
+        customer_say_time = #{record.customerSayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reason != null" >
+        reason = #{record.reason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.totalDuration != null" >
+        total_duration = #{record.totalDuration,jdbcType=INTEGER},
+      </if>
+      <if test="record.shardingValue != null" >
+        sharding_value = #{record.shardingValue,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update call_in_detail
+    set call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      call_id = #{record.callId,jdbcType=BIGINT},
+      accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
+      agent_answer_text = #{record.agentAnswerText,jdbcType=VARCHAR},
+      agent_answer_time = #{record.agentAnswerTime,jdbcType=TIMESTAMP},
+      ai_duration = #{record.aiDuration,jdbcType=INTEGER},
+      asr_duration = #{record.asrDuration,jdbcType=INTEGER},
+      bot_answer_text = #{record.botAnswerText,jdbcType=VARCHAR},
+      bot_answer_time = #{record.botAnswerTime,jdbcType=TIMESTAMP},
+      call_detail_type = #{record.callDetailType,jdbcType=INTEGER},
+      customer_say_text = #{record.customerSayText,jdbcType=VARCHAR},
+      customer_say_time = #{record.customerSayTime,jdbcType=TIMESTAMP},
+      reason = #{record.reason,jdbcType=VARCHAR},
+      total_duration = #{record.totalDuration,jdbcType=INTEGER},
+      sharding_value = #{record.shardingValue,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
+    update call_in_detail
+    <set >
+      <if test="callId != null" >
+        call_id = #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="accurateIntent != null" >
+        accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
+      </if>
+      <if test="agentAnswerText != null" >
+        agent_answer_text = #{agentAnswerText,jdbcType=VARCHAR},
+      </if>
+      <if test="agentAnswerTime != null" >
+        agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="aiDuration != null" >
+        ai_duration = #{aiDuration,jdbcType=INTEGER},
+      </if>
+      <if test="asrDuration != null" >
+        asr_duration = #{asrDuration,jdbcType=INTEGER},
+      </if>
+      <if test="botAnswerText != null" >
+        bot_answer_text = #{botAnswerText,jdbcType=VARCHAR},
+      </if>
+      <if test="botAnswerTime != null" >
+        bot_answer_time = #{botAnswerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="callDetailType != null" >
+        call_detail_type = #{callDetailType,jdbcType=INTEGER},
+      </if>
+      <if test="customerSayText != null" >
+        customer_say_text = #{customerSayText,jdbcType=VARCHAR},
+      </if>
+      <if test="customerSayTime != null" >
+        customer_say_time = #{customerSayTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reason != null" >
+        reason = #{reason,jdbcType=VARCHAR},
+      </if>
+      <if test="totalDuration != null" >
+        total_duration = #{totalDuration,jdbcType=INTEGER},
+      </if>
+      <if test="shardingValue != null" >
+        sharding_value = #{shardingValue,jdbcType=INTEGER},
+      </if>
+    </set>
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallInDetail" >
+    update call_in_detail
+    set call_id = #{callId,jdbcType=BIGINT},
+      accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
+      agent_answer_text = #{agentAnswerText,jdbcType=VARCHAR},
+      agent_answer_time = #{agentAnswerTime,jdbcType=TIMESTAMP},
+      ai_duration = #{aiDuration,jdbcType=INTEGER},
+      asr_duration = #{asrDuration,jdbcType=INTEGER},
+      bot_answer_text = #{botAnswerText,jdbcType=VARCHAR},
+      bot_answer_time = #{botAnswerTime,jdbcType=TIMESTAMP},
+      call_detail_type = #{callDetailType,jdbcType=INTEGER},
+      customer_say_text = #{customerSayText,jdbcType=VARCHAR},
+      customer_say_time = #{customerSayTime,jdbcType=TIMESTAMP},
+      reason = #{reason,jdbcType=VARCHAR},
+      total_duration = #{totalDuration,jdbcType=INTEGER},
+      sharding_value = #{shardingValue,jdbcType=INTEGER}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </update>
+</mapper>

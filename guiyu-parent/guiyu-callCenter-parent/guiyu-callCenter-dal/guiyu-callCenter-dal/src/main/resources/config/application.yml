@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    test-while-idle: true  #验证连接的有效性
+    #获取连接时候验证，会影响性能
+#    test-on-borrow: true
+    validation-query: SELECT 1 FROM DUAL
+    #空闲连接回收的时间间隔，与test-while-idle一起使用，设置5分钟
+    time-between-eviction-runs-millis: 300000
+    #连接池空闲连接的有效时间 ，设置30分钟
+    min-evictable-idle-time-millis: 1800000
+#sharding:
+#  jdbc:
+#    config:
+#      sharding:
+#        props.sql.show: false
+#        tables:
+#          call_out_detail:
+#            actual-data-nodes: guiyu_callcenter.call_out_detail_${0..1}
+#            table-strategy:
+#              standard:
+#                sharding-column: sharding_value
+#                precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingInt
+#                range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingInt
+#            key-generator-column-name: call_detail_id
+#          call_out_plan:
+#            actual-data-nodes: guiyu_callcenter.call_out_plan_${0..1}
+#            table-strategy:
+#              standard:
+#                sharding-column: phone_num
+#                precise-algorithm-class-name: com.guiji.callcenter.sharding.PreciseShardingString  #精确分片算法类名称，用于=和IN。
+#                range-algorithm-class-name: com.guiji.callcenter.sharding.RangeShardingString  #范围分片算法类名称，用于BETWEEN，可选。
+#            key-generator-column-name: call_id

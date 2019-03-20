@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.CallInDetailRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
+    <id column="call_detail_id" property="callDetailId" jdbcType="BIGINT" />
+    <result column="call_id" property="callId" jdbcType="BIGINT" />
+    <result column="agent_record_file" property="agentRecordFile" jdbcType="VARCHAR" />
+    <result column="agent_record_url" property="agentRecordUrl" jdbcType="VARCHAR" />
+    <result column="bot_record_file" property="botRecordFile" jdbcType="VARCHAR" />
+    <result column="bot_record_url" property="botRecordUrl" jdbcType="VARCHAR" />
+    <result column="customer_record_file" property="customerRecordFile" jdbcType="VARCHAR" />
+    <result column="customer_record_url" property="customerRecordUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    call_detail_id, call_id, agent_record_file, agent_record_url, bot_record_file, bot_record_url, 
+    customer_record_file, customer_record_url
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecordExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from call_in_detail_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from call_in_detail_record
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from call_in_detail_record
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecordExample" >
+    delete from call_in_detail_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
+    insert into call_in_detail_record (call_detail_id, call_id, agent_record_file, 
+      agent_record_url, bot_record_file, bot_record_url, 
+      customer_record_file, customer_record_url)
+    values (#{callDetailId,jdbcType=BIGINT}, #{callId,jdbcType=BIGINT}, #{agentRecordFile,jdbcType=VARCHAR}, 
+      #{agentRecordUrl,jdbcType=VARCHAR}, #{botRecordFile,jdbcType=VARCHAR}, #{botRecordUrl,jdbcType=VARCHAR}, 
+      #{customerRecordFile,jdbcType=VARCHAR}, #{customerRecordUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
+    insert into call_in_detail_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="callDetailId != null" >
+        call_detail_id,
+      </if>
+      <if test="callId != null" >
+        call_id,
+      </if>
+      <if test="agentRecordFile != null" >
+        agent_record_file,
+      </if>
+      <if test="agentRecordUrl != null" >
+        agent_record_url,
+      </if>
+      <if test="botRecordFile != null" >
+        bot_record_file,
+      </if>
+      <if test="botRecordUrl != null" >
+        bot_record_url,
+      </if>
+      <if test="customerRecordFile != null" >
+        customer_record_file,
+      </if>
+      <if test="customerRecordUrl != null" >
+        customer_record_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="callDetailId != null" >
+        #{callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="callId != null" >
+        #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="agentRecordFile != null" >
+        #{agentRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="agentRecordUrl != null" >
+        #{agentRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="botRecordFile != null" >
+        #{botRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="botRecordUrl != null" >
+        #{botRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="customerRecordFile != null" >
+        #{customerRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="customerRecordUrl != null" >
+        #{customerRecordUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecordExample" resultType="java.lang.Integer" >
+    select count(*) from call_in_detail_record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update call_in_detail_record
+    <set >
+      <if test="record.callDetailId != null" >
+        call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.callId != null" >
+        call_id = #{record.callId,jdbcType=BIGINT},
+      </if>
+      <if test="record.agentRecordFile != null" >
+        agent_record_file = #{record.agentRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agentRecordUrl != null" >
+        agent_record_url = #{record.agentRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.botRecordFile != null" >
+        bot_record_file = #{record.botRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.botRecordUrl != null" >
+        bot_record_url = #{record.botRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerRecordFile != null" >
+        customer_record_file = #{record.customerRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerRecordUrl != null" >
+        customer_record_url = #{record.customerRecordUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update call_in_detail_record
+    set call_detail_id = #{record.callDetailId,jdbcType=BIGINT},
+      call_id = #{record.callId,jdbcType=BIGINT},
+      agent_record_file = #{record.agentRecordFile,jdbcType=VARCHAR},
+      agent_record_url = #{record.agentRecordUrl,jdbcType=VARCHAR},
+      bot_record_file = #{record.botRecordFile,jdbcType=VARCHAR},
+      bot_record_url = #{record.botRecordUrl,jdbcType=VARCHAR},
+      customer_record_file = #{record.customerRecordFile,jdbcType=VARCHAR},
+      customer_record_url = #{record.customerRecordUrl,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
+    update call_in_detail_record
+    <set >
+      <if test="callId != null" >
+        call_id = #{callId,jdbcType=BIGINT},
+      </if>
+      <if test="agentRecordFile != null" >
+        agent_record_file = #{agentRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="agentRecordUrl != null" >
+        agent_record_url = #{agentRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="botRecordFile != null" >
+        bot_record_file = #{botRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="botRecordUrl != null" >
+        bot_record_url = #{botRecordUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="customerRecordFile != null" >
+        customer_record_file = #{customerRecordFile,jdbcType=VARCHAR},
+      </if>
+      <if test="customerRecordUrl != null" >
+        customer_record_url = #{customerRecordUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.callcenter.dao.entity.CallInDetailRecord" >
+    update call_in_detail_record
+    set call_id = #{callId,jdbcType=BIGINT},
+      agent_record_file = #{agentRecordFile,jdbcType=VARCHAR},
+      agent_record_url = #{agentRecordUrl,jdbcType=VARCHAR},
+      bot_record_file = #{botRecordFile,jdbcType=VARCHAR},
+      bot_record_url = #{botRecordUrl,jdbcType=VARCHAR},
+      customer_record_file = #{customerRecordFile,jdbcType=VARCHAR},
+      customer_record_url = #{customerRecordUrl,jdbcType=VARCHAR}
+    where call_detail_id = #{callDetailId,jdbcType=BIGINT}
+  </update>
+</mapper>

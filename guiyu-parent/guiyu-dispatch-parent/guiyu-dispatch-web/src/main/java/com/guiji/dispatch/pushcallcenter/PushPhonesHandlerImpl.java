@@ -94,7 +94,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									redisUserIdCount = 0;
 								}
 
-								Integer callMax = dto.getMaxRobotCount();
+								Integer callMax = null !=dto.getMaxRobotCount()?dto.getMaxRobotCount():0;
 							//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
@@ -121,6 +121,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setTempId(dispatchRedis.getRobot());
 									callBean.setAgentGroupId(dispatchRedis.getCallAgent());
 									callBean.setRemarks(dispatchRedis.getAttach());
+									callBean.setParams(dispatchRedis.getParams());
 									List<Integer> lines = new ArrayList<>();
 									boolean isSimPush = false;//是否是SIM卡推送
 									for (DispatchLines line : dispatchRedis.getLines()) {

@@ -174,7 +174,7 @@
         temp_id, agent_id, agent_answer_time,a.customer_id,a.line_id,
         agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
-        accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,intervened,
+        accurate_intent, reason, hangup_code, remarks, has_tts, ai_id, freason,intervened,
         isdel, isread, params
         from call_out_plan a
         <if test="_parameter != null" >
@@ -707,9 +707,6 @@
 
             <if test="hangupCode != null" >
                 hangup_code = #{hangupCode,jdbcType=VARCHAR},
-            </if>
-            <if test="originateCmd != null" >
-                originate_cmd = #{originateCmd,jdbcType=VARCHAR},
             </if>
             <if test="remarks != null" >
                 remarks = #{remarks,jdbcType=VARCHAR},

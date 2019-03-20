@@ -151,6 +151,9 @@ public class VoliceServiceImpl implements IVoliceService {
 	@Autowired
 	private BotSentenceDeployMapper botSentenceDeployMapper;
 	
+	@Autowired
+	private BotSentenceApprovalServiceImpl botSentenceApprovalService;
+	
 	private static String NAS_UPLAOD_SYSTEM_CODE="09";
 	
 	private NasUtil nasUtile=new NasUtil();
@@ -868,16 +871,21 @@ public class VoliceServiceImpl implements IVoliceService {
 			
 			List<String> allList = new ArrayList<>();
 			
+			UUID jobId = UUID.randomUUID();
+			
 			ReturnData<PublishBotstenceTaskVO> robot_result = iProcessSchedule.publishResource(resouceReq);
 			if("0".equals(robot_result.getCode()) && null != robot_result.getBody().getSubJobIds() && robot_result.getBody().getSubJobIds().size() > 0) {
-				allList.addAll(robot_result.getBody().getSubJobIds());
+				//allList.addAll(robot_result.getBody().getSubJobIds());
+				logger.info("保存robot任务...");
+				botSentenceApprovalService.saveDeploy(robot_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
 			}
 			resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
 			ReturnData<PublishBotstenceTaskVO> freeswitch_result = iProcessSchedule.publishResource(resouceReq);
 			if("0".equals(freeswitch_result.getCode()) && null != freeswitch_result.getBody().getSubJobIds() && freeswitch_result.getBody().getSubJobIds().size() > 0) {
-				allList.addAll(freeswitch_result.getBody().getSubJobIds());
+				//allList.addAll(freeswitch_result.getBody().getSubJobIds());
+				logger.info("保存freeswitch任务...");
+				botSentenceApprovalService.saveDeploy(freeswitch_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
 			}
-			
 			
 			// 加密
 			fileCrypter(dir);
@@ -904,13 +912,12 @@ public class VoliceServiceImpl implements IVoliceService {
 				ReturnData<PublishBotstenceTaskVO> sellbot_result = iProcessSchedule.publishResource(resouceReq);
 				
 				if("0".equals(sellbot_result.getCode()) && null != sellbot_result.getBody().getSubJobIds() && sellbot_result.getBody().getSubJobIds().size() > 0) {
-					allList.addAll(sellbot_result.getBody().getSubJobIds());
+					//allList.addAll(sellbot_result.getBody().getSubJobIds());
+					logger.info("保存sellbot任务...");
+					botSentenceApprovalService.saveDeploy(sellbot_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
 				}
 				
-				
-				UUID uuid = UUID.randomUUID();
-				
-				if(null != allList && allList.size() > 0) {
+				/*if(null != allList && allList.size() > 0) {
 					logger.info("共返回" + allList.size() + "条任务");
 					int index = 1;
 					for(String temp : allList) {
@@ -926,7 +933,7 @@ public class VoliceServiceImpl implements IVoliceService {
 						botSentenceDeployMapper.insert(deploy);
 						index++;
 					}
-				}
+				}*/
 				return true;
 			}
 			

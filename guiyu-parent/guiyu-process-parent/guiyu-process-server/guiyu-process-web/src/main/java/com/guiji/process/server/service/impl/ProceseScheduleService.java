@@ -6,6 +6,7 @@ import com.guiji.common.model.process.ProcessStatusEnum;
 import com.guiji.common.model.process.ProcessTypeEnum;
 import com.guiji.process.core.vo.*;
 import com.guiji.process.model.ProcessReleaseVO;
+import com.guiji.process.model.PublishBotstenceTaskVO;
 import com.guiji.process.server.exception.GuiyuProcessExceptionEnum;
 import com.guiji.process.server.model.DeviceProcessConstant;
 import com.guiji.process.server.model.ProcessTask;
@@ -35,7 +36,6 @@ public class ProceseScheduleService implements IProceseScheduleService {
     private IProcessInstanceManageService processInstanceManageService;
     @Autowired
     private IProcessAgentManageService processAgentManageService;
-
     @Override
     public List<ProcessInstanceVO> getTTS(String model, int requestCount) {
         if (StringUtils.isEmpty(model)) {
@@ -121,8 +121,9 @@ public class ProceseScheduleService implements IProceseScheduleService {
     }
 
     @Override
-    public void publishResource(ProcessTypeEnum processTypeEnum, String tmplId,String file,Long userId) {
+    public PublishBotstenceTaskVO publishResource(ProcessTypeEnum processTypeEnum, String tmplId, String file, Long userId) {
         CmdTypeEnum cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
+        PublishBotstenceTaskVO publisthBotstenceTaskVo = new PublishBotstenceTaskVO();
         if(processTypeEnum == ProcessTypeEnum.SELLBOT)
         {
             cmdType = CmdTypeEnum.PULBLISH_SELLBOT_BOTSTENCE;
@@ -137,7 +138,7 @@ public class ProceseScheduleService implements IProceseScheduleService {
         }
         else
         {
-            return;
+            return publisthBotstenceTaskVo;
         }
 
         List<String> parameters = new ArrayList<String>();
@@ -148,10 +149,11 @@ public class ProceseScheduleService implements IProceseScheduleService {
         Map<Object, Object> allAgent = (Map<Object, Object>) processAgentManageService.query();
         if(allAgent == null || allIp == null)
         {
-            return;
+            return publisthBotstenceTaskVo;
         }
-
+        List<String> subJobIds = new ArrayList<String>();
         String jobId = IdGenUtil.uuid();
+        publisthBotstenceTaskVo.setJobId(jobId);
         Map<String,ProcessTask> processTaskMap = new ConcurrentHashMap<String,ProcessTask>();
         for (Map.Entry<Object, Object> agentEnv: allAgent.entrySet()) {
             ProcessInstanceVO agent = (ProcessInstanceVO) agentEnv.getValue();
@@ -168,7 +170,10 @@ public class ProceseScheduleService implements IProceseScheduleService {
             processTask.setUserId(userId);
             processTask.setReqKey(reqKey);
             processTaskMap.put(reqKey,processTask);
+
+            subJobIds.add(reqKey);
         }
+        publisthBotstenceTaskVo.setSubJobIds(subJobIds);
         List<String> jobList = (List<String>) redisUtil.get("GY_PROCESS_JOB");
         if (jobList == null) {
             jobList = new ArrayList<String>();
@@ -177,11 +182,14 @@ public class ProceseScheduleService implements IProceseScheduleService {
             jobList.add(jobId);
         }
         redisUtil.set("GY_PROCESS_JOB",jobList);
-        redisUtil.set(jobId,processTaskMap,3600);
+        redisUtil.set(jobId,processTaskMap);
+        redisUtil.expire(jobId,3600);
+
 
         for (Map.Entry<String, ProcessTask> entry: processTaskMap.entrySet()) {
             deviceManageService.cmd(entry.getValue().getProcessInstanceVO(), cmdType, parameters,userId,entry.getKey());
         }
+        return publisthBotstenceTaskVo;
     }
 
 

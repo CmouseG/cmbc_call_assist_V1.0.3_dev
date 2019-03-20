@@ -12,6 +12,8 @@ public class PublishBotstenceResultMsgVO implements Serializable {
 
     private ProcessTypeEnum processTypeEnum;
 
+    private String subJobId;
+
     private String tmplId;
 
     private Integer result;//发布结果0成功，1失败
@@ -40,12 +42,21 @@ public class PublishBotstenceResultMsgVO implements Serializable {
         this.result = result;
     }
 
+    public String getSubJobId() {
+        return subJobId;
+    }
+
+    public void setSubJobId(String subJobId) {
+        this.subJobId = subJobId;
+    }
+
     @Override
     public String toString() {
         return "PublishBotstenceResultMsgVO{" +
                 "processTypeEnum=" + processTypeEnum +
                 ", tmplId='" + tmplId + '\'' +
                 ", result='" + result + '\'' +
+                ", subJobId='" + subJobId + '\'' +
                 '}';
     }
 }

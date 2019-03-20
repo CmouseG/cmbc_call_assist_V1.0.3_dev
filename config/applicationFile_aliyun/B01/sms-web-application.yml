@@ -81,6 +81,4 @@ xxl:
       logpath: /home/logs/guiyu-ai-web
       logretentiondays: -1
     accessToken:
-    
-#cmpp服务地址
-cmppServiceUrl: http://172.16.167.139:38000/sendMsg
+

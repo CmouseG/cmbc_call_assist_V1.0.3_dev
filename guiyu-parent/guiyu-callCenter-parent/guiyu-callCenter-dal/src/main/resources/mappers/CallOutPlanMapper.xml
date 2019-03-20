@@ -175,7 +175,7 @@
         agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
         accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,intervened,
-        isdel, isread
+        isdel, isread, params
         from call_out_plan a
         <if test="_parameter != null" >
             <include refid="Example_Where_Clause2" />

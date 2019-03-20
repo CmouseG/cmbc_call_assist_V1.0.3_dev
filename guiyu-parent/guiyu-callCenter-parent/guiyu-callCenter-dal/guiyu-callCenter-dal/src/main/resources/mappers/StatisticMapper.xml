@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.dao.StatisticMapper" >
+
+    <update id="updateTodayCountAndDruation" parameterType="com.guiji.callcenter.dao.entity.ReportCallToday" >
+        update report_call_today
+        set call_count = call_count +1,duration_all=duration_all+ #{durationAll,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+
+    </update>
+
+    <select id="countReportCallToday30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
+        org_code AS orgCode,accurate_intent AS intent,
+        IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
+        3 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id AS tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time > CURRENT_DATE()
+        AND bill_sec &gt;=30
+        GROUP BY org_code,accurate_intent,reasonShow,temp_id
+    </select>
+    <select id="countReportCallToday10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
+        org_code AS orgCode,accurate_intent AS intent,
+        IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
+        2 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id AS tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time > CURRENT_DATE()
+        AND bill_sec &lt;30 and bill_sec &gt;= 10
+        GROUP BY org_code,accurate_intent,reasonShow,temp_id
+    </select>
+    <select id="countReportCallToday5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
+        org_code AS orgCode,accurate_intent AS intent,
+        IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
+        1 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id AS tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time > CURRENT_DATE()
+        AND bill_sec &lt;10 and bill_sec &gt;= 5
+        GROUP BY org_code,accurate_intent,reasonShow,temp_id
+    </select>
+    <select id="countReportCallToday0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT
+        DATE_FORMAT(CURRENT_DATE(),'%Y-%m-%d') AS callDate ,
+        org_code AS orgCode,accurate_intent AS intent,
+        IF(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') AS reasonShow,
+        0 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id AS tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time > CURRENT_DATE()
+        AND bill_sec &lt; 5
+        GROUP BY org_code,accurate_intent,reasonShow,temp_id
+    </select>
+    <select id="countReportCallDayDruation30" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        org_code as orgCode,accurate_intent as intent,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason,
+        3 AS durationType, COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+        AND create_time &lt; CURRENT_DATE()
+        AND bill_sec &gt;=30
+        GROUP BY org_code,accurate_intent,reason,temp_id
+    </select>
+    <select id="countReportCallDayDruation10" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        org_code as orgCode,accurate_intent as intent,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason, 2 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+        AND create_time &lt; CURRENT_DATE()
+        AND bill_sec &lt;30 and bill_sec &gt;= 10
+        GROUP BY org_code,accurate_intent,reason,temp_id
+    </select>
+    <select id="countReportCallDayDruation5" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        org_code as orgCode,accurate_intent as intent,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason, 1 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+        AND create_time &lt; CURRENT_DATE()
+        AND bill_sec &lt;10 and bill_sec &gt;= 5
+        GROUP BY org_code,accurate_intent,reason,temp_id
+    </select>
+    <select id="countReportCallDayDruation0" resultType="com.guiji.callcenter.dao.entity.ReportCallDay">
+        SELECT DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d') AS callDate ,
+        org_code as orgCode,accurate_intent as intent,
+        if(accurate_intent = 'F' OR accurate_intent = 'W',LEFT(reason,49),'已接通') as reason, 0 AS durationType,
+        COUNT(*) AS callCount,SUM(bill_sec) AS durationAll,temp_id as tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time &gt;= DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY)
+        AND create_time &lt; CURRENT_DATE()
+        AND bill_sec &lt; 5
+        GROUP BY org_code,accurate_intent,reason,temp_id
+    </select>
+
+    <insert id="insertReportCallDay" parameterType="java.util.List">
+        INSERT INTO report_call_day (
+        call_date, duration_type,intent, reason, call_count,duration_all,org_code,tempid)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.callDate,jdbcType=VARCHAR}, #{item.durationType,jdbcType=INTEGER}, #{item.intent,jdbcType=VARCHAR},
+            #{item.reason,jdbcType=VARCHAR}, #{item.callCount,jdbcType=INTEGER}, #{item.durationAll,jdbcType=BIGINT},
+            #{item.orgCode,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <insert id="insertReportCallToday" parameterType="java.util.List">
+        INSERT INTO report_call_today (
+        call_date, duration_type,intent, reason, call_count,duration_all,org_code,tempid)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.callDate,jdbcType=VARCHAR}, #{item.durationType,jdbcType=INTEGER}, #{item.intent,jdbcType=VARCHAR},
+            #{item.reasonShow,jdbcType=VARCHAR}, #{item.callCount,jdbcType=INTEGER}, #{item.durationAll,jdbcType=BIGINT},
+            #{item.orgCode,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteReportCallDay">
+        delete from report_call_day
+        WHERE
+        call_date = DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 1 DAY),'%Y-%m-%d')
+    </delete>
+
+    <select id="countReportCallHourConnect" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
+        SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
+        sum(bill_sec) as duration,count(*) as connectCount,org_code as orgCode, 0 as outCount,temp_id as tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+        and create_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+        and
+        accurate_intent != 'F' and accurate_intent != 'W'
+        group by org_code,temp_id
+    </select>
+    <select id="countReportCallHourOut" resultType="com.guiji.callcenter.dao.entity.ReportCallHour">
+        SELECT STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s') AS callTime ,
+        sum(bill_sec) as duration,count(*) as outCount,org_code as orgCode, 0 as connectCount,temp_id as tempid
+        FROM
+        call_out_plan
+        WHERE
+        create_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+        and create_time &lt;  STR_TO_DATE(DATE_FORMAT(NOW(),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+        group by org_code,temp_id
+    </select>
+
+    <insert id="insertReportCallHour" parameterType="java.util.List">
+        INSERT INTO report_call_hour (
+        call_time,
+        out_count,
+        connect_count,
+        duration ,
+        org_code ,
+        tempid)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.callTime,jdbcType=TIMESTAMP}, #{item.outCount,jdbcType=INTEGER}, #{item.connectCount,jdbcType=INTEGER},
+            #{item.duration,jdbcType=BIGINT}, #{item.orgCode,jdbcType=VARCHAR}, #{item.tempid,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getDashboardOverViewTodayDurationAll" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(duration_all) AS durationAll,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
+        FROM report_call_today
+        <if test="orgCode != null" >
+            WHERE org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getDashboardOverViewTodayNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT  SUM(call_count) AS notConnect, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
+        FROM report_call_today
+        WHERE (intent = 'F' OR intent = 'W')
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getDashboardOverViewTodayConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT  SUM(call_count) AS connect,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
+        FROM report_call_today WHERE intent != 'F' AND intent != 'W'
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getDashboardOverViewTodayDuration5" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(call_count) AS duration5, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
+        FROM report_call_today WHERE duration_type = 1
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getDashboardOverViewTodayDuration10" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(call_count) AS duration10, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
+        FROM report_call_today WHERE duration_type = 2
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getDashboardOverViewTodayDuration30" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(call_count) AS duration30, DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate
+        FROM report_call_today WHERE duration_type = 3
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="getDashboardOverViewAgoDurationAll" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(duration_all) AS durationAll,call_date AS callDate
+        FROM report_call_day  WHERE call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  call_date
+        ORDER BY callDate
+    </select>
+    <select id="getDashboardOverViewAgoNotConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT  SUM(call_count) AS notConnect,  call_date AS callDate
+        FROM report_call_day  WHERE (intent = 'F' OR intent = 'W') AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  call_date
+        ORDER BY callDate
+    </select>
+    <select id="getDashboardOverViewAgoConnect" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT  SUM(call_count) AS connect, call_date AS callDate
+        FROM report_call_day WHERE intent != 'F' AND intent != 'W' AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY call_date
+        ORDER BY callDate
+    </select>
+    <select id="getDashboardOverViewAgoDuration5" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(call_count) AS duration5, call_date AS callDate
+        FROM report_call_day WHERE duration_type = 1 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  call_date
+        ORDER BY callDate
+    </select>
+    <select id="getDashboardOverViewAgoDuration10" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(call_count) AS duration10, call_date AS callDate
+        FROM report_call_day WHERE duration_type = 2 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  org_code,call_date
+        ORDER BY callDate
+    </select>
+    <select id="getDashboardOverViewAgoDuration30" resultType="com.guiji.callcenter.dao.entityext.DashboardOverView">
+        SELECT SUM(call_count) AS duration30,  call_date AS callDate
+        FROM report_call_day WHERE duration_type = 3 AND  call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date&lt;=#{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            AND org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  call_date
+        ORDER BY callDate
+    </select>
+
+    <select id="getIntentCountAgo" resultType="com.guiji.callcenter.dao.entityext.IntentCount">
+        SELECT SUM(call_count) AS callCount,  call_date AS callDate, intent
+        FROM report_call_day
+        where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR} and intent  IS NOT NULL
+        <if test="orgCode != null" >
+            and org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  callDate,intent
+        ORDER BY  callDate
+    </select>
+    <select id="getIntentCountToday" resultType="com.guiji.callcenter.dao.entityext.IntentCount">
+        SELECT SUM(call_count) AS callCount,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate,   intent
+        FROM report_call_today
+        where intent  IS NOT NULL
+        <if test="orgCode != null" >
+            and org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  intent
+    </select>
+    <select id="getConnectDataHour" resultType="com.guiji.callcenter.dao.entityext.CallCountHour">
+        SELECT CONCAT(IF(LENGTH(HOUR(call_time))=1,'0',''),HOUR(call_time),':00') AS callHour , SUM(out_count) AS outCount ,SUM(connect_count) AS connectCount , SUM(duration) AS duration
+        FROM report_call_hour
+        WHERE call_time &gt;= #{startDate,jdbcType=TIMESTAMP} AND call_time &lt; DATE_ADD(#{endDate,jdbcType=TIMESTAMP},INTERVAL 1 DAY)
+        <if test="orgCode != null" >
+            and org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  callHour
+        ORDER BY callHour
+    </select>
+    <delete id="deleteReportCallHour">
+        delete from report_call_hour where call_time &gt;= STR_TO_DATE(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 HOUR),'%Y-%m-%d %H:00:00'),'%Y-%m-%d %H:%i:%s')
+    </delete>
+
+    <select id="getReasonCountAgo" resultType="com.guiji.callcenter.dao.entityext.ReasonCount">
+        SELECT SUM(call_count) AS callCount,  call_date AS callDate, IF(ISNULL(reason),'其他',reason) AS reason
+        FROM report_call_day
+        where call_date &gt;=#{startDate,jdbcType=VARCHAR} AND call_date &lt;= #{endDate,jdbcType=VARCHAR}
+        <if test="orgCode != null" >
+            and org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  callDate,reason
+        ORDER BY  callDate
+    </select>
+    <select id="getReasonCountToday" resultType="com.guiji.callcenter.dao.entityext.ReasonCount">
+        SELECT SUM(call_count) AS callCount,DATE_FORMAT(NOW(),'%Y-%m-%d') as callDate,   IF(ISNULL(reason),'其他',reason) AS reason
+        FROM report_call_today
+        where 1=1
+        <if test="orgCode != null" >
+            and org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+        <if test="tempId != null" >
+            AND tempid = #{tempId,jdbcType=VARCHAR}
+        </if>
+        GROUP BY  reason
+    </select>
+    <update id="reportCallTodayTruncate">
+        truncate table report_call_today
+    </update>
+    <delete id="deleteCallTodayTruncate">
+        delete  from report_call_today
+    </delete>
+    <select id="getErrorMaths" resultType="com.guiji.callcenter.dao.entity.ErrorMatch">
+        select error_name as errorName,en_name as enName
+        from error_match
+        group by error_name,en_name
+    </select>
+    <select id="getLineCountAndConcurrent" resultType="java.util.HashMap">
+        SELECT COUNT(a.line_id) AS lineCount, IF(SUM(a.max_concurrent_calls) IS NULL,0,SUM(a.max_concurrent_calls)) AS lineConcurrent
+        FROM  line_info a
+        <if test="customerId != null" >
+            WHERE  a.customer_id = #{customerId,jdbcType=VARCHAR}
+        </if>
+        <if test="orgCode != null" >
+            WHERE  a.org_code like #{orgCode,jdbcType=VARCHAR}
+        </if>
+
+    </select>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.callcenter.daoNoSharing.LineRateMapper" >
+
+
+  <select id="getLineRateFromResult" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+    SELECT
+    #{lineId} as lineId,
+    ROUND( IF(COUNT(*)!=0,SUM(successed)/COUNT(*),0) ,4) AS rate
+    FROM call_line_result
+    WHERE line_id = #{lineId}
+    AND create_time >=#{startTime}
+    AND create_time &lt;=#{endTime}
+  </select>
+
+  <select id="getLineRateAllFromResult" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+    SELECT
+    line_id AS lineId,
+    ROUND( IF(COUNT(*)!=0,SUM(successed)/COUNT(*),0) ,4) AS rate
+    FROM call_line_result
+    WHERE  create_time >=#{startTime}
+    AND create_time &lt;=#{endTime}
+    GROUP BY line_id
+  </select>
+
+
+  <select id="getLineRateFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+    SELECT lineId,
+    ROUND( IF(SUM(allCount)!=0,SUM(successCount)/SUM(allCount),0) ,4) AS rate
+    FROM(
+    SELECT
+    line_id AS lineId,
+    SUM(all_count) AS allCount,
+    SUM(success_count) AS successCount
+    FROM call_line_day_report
+    WHERE  day_time >=#{startTime}
+    AND day_time &lt;=#{middleTime}
+    AND line_id = #{lineId}
+
+    UNION ALL
+
+    SELECT
+    line_id AS lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount
+    FROM call_line_result
+    WHERE  create_time >=#{middleTime}
+    AND create_time &lt;=#{endTime}
+    AND line_id = #{lineId}
+    ) a
+    where a.lineId is not null
+    GROUP BY lineId
+  </select>
+
+  <select id="getLineRateAllFromDayReport" resultType="com.guiji.ccmanager.entity.LineRateResponse">
+
+    SELECT lineId,
+    ROUND( IF(SUM(allCount)!=0,SUM(successCount)/SUM(allCount),0) ,4) AS rate
+    FROM(
+    SELECT
+    line_id AS lineId,
+    SUM(all_count) AS allCount,
+    SUM(success_count) AS successCount
+    FROM call_line_day_report
+    WHERE  day_time >=#{startTime}
+    AND day_time &lt;=#{middleTime}
+    GROUP BY line_id
+
+    UNION ALL
+
+    SELECT
+    line_id AS lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount
+    FROM call_line_result
+    WHERE  create_time >=#{middleTime}
+    AND create_time &lt;=#{endTime}
+    GROUP BY line_id
+    ) a
+    where a.lineId is not null
+    GROUP BY lineId
+  </select>
+
+
+  <select id="countDayReport" resultType="com.guiji.callcenter.dao.entity.CallLineDayReport">
+    SELECT
+    line_id as lineId,
+    COUNT(*) AS allCount,
+    SUM(successed) AS successCount,
+    #{endTime} as dayTime
+    FROM
+    call_line_result
+    WHERE
+    create_time &lt; #{endTime}
+    AND create_time >= DATE_SUB(#{endTime},INTERVAL 1 DAY)
+    GROUP BY
+    line_id
+  </select>
+
+
+  <insert id="insertCallLineDayReportBatch" parameterType="java.util.List">
+    INSERT INTO  call_line_day_report (
+    day_time,
+    line_id,
+    success_count,
+    all_count
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.dayTime} ,
+      #{item.lineId} ,
+      #{item.successCount} ,
+      #{item.allCount}
+      )
+    </foreach>
+  </insert>
+
+
+</mapper>

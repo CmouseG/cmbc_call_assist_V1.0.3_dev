@@ -41,4 +41,7 @@ public interface FileRecordsMapper {
     int queryFileRecordCount(@Param("record") FileRecords queryRecord,
                              @Param("startTime") Date startTime,
                              @Param("endTime") Date endTime);
+
+
+    FileRecords queryFileRecordById(@Param("id") Long id);
 }

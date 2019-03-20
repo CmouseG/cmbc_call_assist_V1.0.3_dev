@@ -1,13 +1,14 @@
 package com.guiji.dispatch.controller;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.guiji.common.exception.GuiyuException;
@@ -16,6 +17,9 @@ import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +53,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 public class FileController {
+
+	private Logger logger = LoggerFactory.getLogger(FileController.class);
 
 	@Autowired
 	private FileInterface file;
@@ -111,6 +117,15 @@ public class FileController {
 		return jsonObject;
 	}
 
+	/**
+	 * 下载
+	 * @param isDesensitization
+	 * @param dtos
+	 * @param resp
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws WriteException
+	 */
 	@PostMapping(value = "downloadChooseNum")
 	public Result.ReturnData<Object> downloadChooseNum(@RequestHeader Integer isDesensitization,
 													   @RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
@@ -160,15 +175,6 @@ public class FileController {
 
 		sheet.setColumnView(0, 12);
 		sheet.setColumnView(1, 12);
-
-		/*sheet.addCell(new Label(0, 0, "批次"));
-		sheet.addCell(new Label(1, 0, "号码"));
-		sheet.addCell(new Label(2, 0, "计划状态"));
-		sheet.addCell(new Label(3, 0, "话术"));
-		sheet.addCell(new Label(4, 0, "线路"));
-		sheet.addCell(new Label(5, 0, "计划日期"));
-		sheet.addCell(new Label(6, 0, "计划时间"));
-		sheet.addCell(new Label(7, 0, "所属用户"));*/
 
 		sheet.addCell(new Label(0, 0, "批次"));
 		sheet.addCell(new Label(1, 0, "号码"));
@@ -296,7 +302,7 @@ public class FileController {
 
 
 
-	//查询计划列表
+	//导出计划列表
 	@ApiOperation(value="导出计划列表", notes="导出计划列表")
 	@RequestMapping(value = "dispatch/file/downloadPlanList", method = {RequestMethod.POST, RequestMethod.GET})
 	public Result.ReturnData<Object> downloadPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
@@ -430,5 +436,69 @@ public class FileController {
 		wb.write();
 		wb.close();
 
+	}
+
+
+	//下载导入记录文件
+	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
+	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
+	public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
+									 @RequestParam(required = false, name = "id") Long id)
+			throws UnsupportedEncodingException, WriteException {
+		FileRecords fileRecords = file.queryFileRecordById(id);
+		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())){
+			String fileUrl = fileRecords.getUrl();
+			String fileType = fileUrl.substring(fileUrl.lastIndexOf("."), fileUrl.length());
+
+			//创建url连接;
+			File file = new File(fileUrl);
+			InputStream is = null;
+			OutputStream os = null;
+			//创建url连接;
+			HttpURLConnection urlconn = null;
+			try {
+				URL url = new URL(fileUrl);
+				urlconn = (HttpURLConnection)url.openConnection();
+				//链接远程服务器;
+				urlconn.connect();
+
+			//	is = new BufferedInputStream(new FileInputStream(file));
+				is = new BufferedInputStream(urlconn.getInputStream());
+				byte[] buffer = new byte[is.available()];
+				is.read(buffer);
+
+			//	response.reset();
+				String fileName = "导入记录" + fileType;
+				HttpDownload.setHeader(response, fileName);
+
+				os = new BufferedOutputStream(response.getOutputStream());
+				os.write(buffer);
+				os.flush();
+			}catch(Exception e){
+				logger.error("", e);
+			}finally{
+				if(null != is){
+					try {
+						is.close();
+					} catch (IOException e) {
+						log.error("is.close error:" + e);
+						e.printStackTrace();
+					}
+				}
+
+				if(null != os){
+					try {
+						os.close();
+					} catch (IOException e) {
+						log.error("os.close error:" + e);
+						e.printStackTrace();
+					}
+				}
+
+				if(null != urlconn){
+					urlconn.disconnect();
+				}
+			}
+		}
 	}
 }

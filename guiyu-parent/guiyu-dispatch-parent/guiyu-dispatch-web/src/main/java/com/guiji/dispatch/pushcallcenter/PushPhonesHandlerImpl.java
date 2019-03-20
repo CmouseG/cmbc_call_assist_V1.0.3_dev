@@ -224,6 +224,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		if(StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(templateId)) {
 			//用户资源
 			UserResourceCache userResource = getUserResource(userId);
+			if(null == userResource){//如果修改机器人配置数量，ROBOT_USER_RESOURCE延迟获取
+				return bool;
+			}
 			//该模板配置的机器人数量，默认0
 			int templateCfgAiNum = 0;
 			//用户分配的机器人数量，默认0

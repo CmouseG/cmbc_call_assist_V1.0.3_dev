@@ -21,12 +21,15 @@ public class SellbotReceiver {
 	
 	@RabbitHandler
 	public void process(String message) {
-		logger.info("接收部署回调...");
-		logger.info("response报文: " + message);
-		PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message,PublishBotstenceResultMsgVO.class);
-		//logger.info("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO.toString());
-		resolver.resolver(publishBotstenceResultMsgVO);
-		//logger.debug("fanoutPublishBotstence.SELLBOT Receiver SELLBOT  : " + publishBotstenceResultMsgVO);
+		try {
+			logger.info("接收部署回调...");
+			logger.info("response报文: " + message);
+			PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message,PublishBotstenceResultMsgVO.class);
+			resolver.resolver(publishBotstenceResultMsgVO);
+		}catch(Exception e) {
+			logger.error("接收部署回调殿堂...", e);
+		}
+		
 	}
 
 }

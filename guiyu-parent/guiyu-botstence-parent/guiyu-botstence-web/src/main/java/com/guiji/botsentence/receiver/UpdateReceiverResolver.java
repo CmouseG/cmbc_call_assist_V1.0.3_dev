@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
@@ -58,6 +59,7 @@ public class UpdateReceiverResolver {
 	@Autowired
 	BotSentenceDeployMapper botSentenceDeployMapper;
 
+	@Transactional
 	public void resolver(PublishBotstenceResultMsgVO param){
 		logger.info("resolver---start");
 		logger.info("接收部署参数: " + param.toString());
@@ -91,7 +93,7 @@ public class UpdateReceiverResolver {
 			    
 			  //如果全部部署成功，则设置状态为部署成功
 				BotSentenceDeployExample deployExample1 = new BotSentenceDeployExample();
-				deployExample1.createCriteria().andTemplateIdEqualTo(tempId).andStatusEqualTo("1");
+				deployExample1.createCriteria().andTemplateIdEqualTo(tempId).andStatusEqualTo("1").andJobIdEqualTo(deploy.getJobId());
 				int num = botSentenceDeployMapper.countByExample(deployExample1);
 				if(num == 0) {
 					logger.info("当前话术: " + tempId + "部署成功...");

@@ -865,9 +865,19 @@ public class VoliceServiceImpl implements IVoliceService {
 			resouceReq.setFile(uplaodFileName);
 			resouceReq.setTmplId(templateId);
 			resouceReq.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
-			iProcessSchedule.publishResource(resouceReq);
+			
+			List<String> allList = new ArrayList<>();
+			
+			ReturnData<PublishBotstenceTaskVO> robot_result = iProcessSchedule.publishResource(resouceReq);
+			if("0".equals(robot_result.getCode()) && null != robot_result.getBody().getSubJobIds() && robot_result.getBody().getSubJobIds().size() > 0) {
+				allList.addAll(robot_result.getBody().getSubJobIds());
+			}
 			resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
-			iProcessSchedule.publishResource(resouceReq);
+			ReturnData<PublishBotstenceTaskVO> freeswitch_result = iProcessSchedule.publishResource(resouceReq);
+			if("0".equals(freeswitch_result.getCode()) && null != freeswitch_result.getBody().getSubJobIds() && freeswitch_result.getBody().getSubJobIds().size() > 0) {
+				allList.addAll(freeswitch_result.getBody().getSubJobIds());
+			}
+			
 			
 			// 加密
 			fileCrypter(dir);
@@ -891,25 +901,31 @@ public class VoliceServiceImpl implements IVoliceService {
 				//部署
 				
 				resouceReq.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
-				ReturnData<PublishBotstenceTaskVO> result = iProcessSchedule.publishResource(resouceReq);
-				if("0".equals(result.getCode())) {
-					String jobId = result.getBody().getJobId();
-					List<String> list = result.getBody().getSubJobIds();
-					if(null != list && list.size() > 0) {
-						for(String temp : list) {
-							BotSentenceDeploy deploy = new BotSentenceDeploy();
-							deploy.setJobId(jobId);
-							deploy.setSubJobId(temp);
-							deploy.setStatus("1");//默认表示失败
-							deploy.setCrtTime(new Date(System.currentTimeMillis()));
-							deploy.setCrtUser(userId);
-							deploy.setProcessId(processId);
-							deploy.setTemplateId(templateId);
-							botSentenceDeployMapper.insert(deploy);
-						}
+				ReturnData<PublishBotstenceTaskVO> sellbot_result = iProcessSchedule.publishResource(resouceReq);
+				
+				if("0".equals(sellbot_result.getCode()) && null != sellbot_result.getBody().getSubJobIds() && sellbot_result.getBody().getSubJobIds().size() > 0) {
+					allList.addAll(sellbot_result.getBody().getSubJobIds());
+				}
+				
+				
+				UUID uuid = UUID.randomUUID();
+				
+				if(null != allList && allList.size() > 0) {
+					logger.info("共返回" + allList.size() + "条任务");
+					int index = 1;
+					for(String temp : allList) {
+						logger.info("任务【" + index + "】的任务号:  " + temp) ;
+						BotSentenceDeploy deploy = new BotSentenceDeploy();
+						deploy.setJobId(uuid.toString());
+						deploy.setSubJobId(temp);
+						deploy.setStatus("1");//默认表示失败
+						deploy.setCrtTime(new Date(System.currentTimeMillis()));
+						deploy.setCrtUser(userId);
+						deploy.setProcessId(processId);
+						deploy.setTemplateId(templateId);
+						botSentenceDeployMapper.insert(deploy);
+						index++;
 					}
-				}else {
-					return false;
 				}
 				return true;
 			}

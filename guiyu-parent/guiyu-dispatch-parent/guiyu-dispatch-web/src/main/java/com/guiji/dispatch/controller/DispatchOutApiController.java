@@ -188,7 +188,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> lineIsUsed(Integer lineId) {
+	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<String> userIdList) {
 		ReturnData<Boolean> res = new ReturnData<>();
 		DispatchPlanExample planEx = new DispatchPlanExample();
 		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))

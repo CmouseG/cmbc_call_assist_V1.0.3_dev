@@ -449,7 +449,8 @@ public class FileController {
 		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())){
 			String fileUrl = fileRecords.getUrl();
 			String fileType = fileUrl.substring(fileUrl.lastIndexOf("."), fileUrl.length());
-
+			response.reset();
+			HttpDownload.setHeader(response, "导入记录" + fileType);
 			//创建url连接;
 			File file = new File(fileUrl);
 			InputStream is = null;
@@ -464,15 +465,15 @@ public class FileController {
 
 			//	is = new BufferedInputStream(new FileInputStream(file));
 				is = new BufferedInputStream(urlconn.getInputStream());
-				byte[] buffer = new byte[is.available()];
-				is.read(buffer);
-
-			//	response.reset();
-				String fileName = "导入记录" + fileType;
-				HttpDownload.setHeader(response, fileName);
-
 				os = new BufferedOutputStream(response.getOutputStream());
-				os.write(buffer);
+
+				byte[] buffer = new byte[is.available()];
+				int len;
+				while((len =is.read(buffer))>0){
+					os.write(buffer, 0, len);
+					logger.info(">>>>>>>>" + len+"");
+					logger.info(">>>>>>>>" + buffer+"");
+				}
 				os.flush();
 			}catch(Exception e){
 				logger.error("", e);

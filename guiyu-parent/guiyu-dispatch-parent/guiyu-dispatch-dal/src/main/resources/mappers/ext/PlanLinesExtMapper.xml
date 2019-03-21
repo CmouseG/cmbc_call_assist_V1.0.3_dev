@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.ext.PlanLinesExtMapper">
+
+	<select id="queryLinesByPlan" resultType="com.guiji.dispatch.dao.entity.DispatchLines">
+		SELECT
+			id           ,
+			planuuid     ,
+			create_time  ,
+			line_id      ,
+			line_name    ,
+			line_amount  ,
+			overtArea    ,
+			line_type
+		FROM dispatch_lines
+		WHERE planuuid = #{planUuid}
+	</select>
+
+	<select id="totalLineIsUsed" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+		(
+			SELECT
+				*
+			FROM dispatch_lines_0
+			WHERE line_id = #{lineId}
+			UNION
+			SELECT
+				*
+			FROM dispatch_lines_1
+			WHERE line_id = #{lineId}
+			UNION
+			SELECT
+				*
+			FROM dispatch_lines_2
+			WHERE line_id = #{lineId}
+			UNION
+			SELECT
+				*
+			FROM dispatch_lines_3
+			WHERE line_id = #{lineId}
+			UNION
+			SELECT
+				*
+			FROM dispatch_lines_4
+			WHERE line_id = #{lineId}
+		) l,
+		(
+			SELECT
+				*
+			FROM dispatch_plan_0
+			WHERE is_del = 0
+				AND status_plan = 1
+				AND user_id	IN
+					<foreach collection="userIdList" item="userId"  open="(" close=")" separator=",">
+						#{userId}
+					</foreach>
+			UNION
+			SELECT
+				*
+			FROM dispatch_plan_1
+			WHERE is_del = 0
+				AND status_plan = 1
+				AND user_id	IN
+				<foreach collection="userIdList" item="userId"  open="(" close=")" separator=",">
+					#{userId}
+				</foreach>
+			UNION
+			SELECT
+				*
+			FROM dispatch_plan_2
+			WHERE is_del = 0
+				AND user_id	IN
+				<foreach collection="userIdList" item="userId"  open="(" close=")" separator=",">
+					#{userId}
+				</foreach>
+		) p
+		WHERE l.planuuid = p.plan_uuid
+
+	</select>
+
+</mapper>

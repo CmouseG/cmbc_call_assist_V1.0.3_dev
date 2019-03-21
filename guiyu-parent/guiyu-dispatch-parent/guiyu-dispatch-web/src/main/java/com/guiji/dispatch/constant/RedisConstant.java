@@ -15,5 +15,10 @@ public class RedisConstant {
 
         //是否已经外推消息
         public final static String MSG_NOTIFY_FLAG_ = "MSG_NOTIFY_FLAG_";
+
+        //临时保存查询计划列表用户名称
+        public final static String QUERY_PLANLIST_USERNAME_TMP = "QUERY_PLANLIST_USERNAME_TMP_";
+        //临时保存查询计划列表用户名称有效时间长度
+        public final static long QUERY_PLANLIST_USERNAME_TMP_TIMELONG = 10L;
     }
 }

@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guiji.dispatch.dao.ext.PlanLinesExtMapper;
 import com.guiji.dispatch.enums.SysDelEnum;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +51,11 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	private ILinesService lineService;
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
+
+	@Autowired
+	private PlanLinesExtMapper planLinesExtMapper;
+
+
 	/**
 	 * 完成
 	 *
@@ -70,10 +76,10 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	/**
 	 * 返回可以拨打的任务给呼叫中心
-	 *
-	 * @param schedule
-	 *            请求参数
-	 * @return 响应报文
+	 * @param userId
+	 * @param requestCount
+	 * @param lineId
+	 * @return
 	 */
 	@Override
 	@GetMapping(value = "out/queryAvailableSchedules")
@@ -190,6 +196,16 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Override
 	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<String> userIdList) {
 		ReturnData<Boolean> res = new ReturnData<>();
+		int count = planLinesExtMapper.totalLineIsUsed(lineId, userIdList);
+		if(count >0){
+			res.body = true;
+		}else{
+			res.body = false;
+		}
+		return res;
+
+		/*
+		ReturnData<Boolean> res = new ReturnData<>();
 		DispatchPlanExample planEx = new DispatchPlanExample();
 		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
 				.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
@@ -211,6 +227,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		}
 		res.body = false;
 		return res;
+		*/
 	}
 
 	/**

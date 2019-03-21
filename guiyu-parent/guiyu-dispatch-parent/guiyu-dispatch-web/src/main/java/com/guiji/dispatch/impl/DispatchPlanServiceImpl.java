@@ -11,10 +11,11 @@ import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.*;
 import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
-import com.guiji.dispatch.dao.ext.DispatchPlanExtMapper;
+import com.guiji.dispatch.dao.ext.PlanLinesExtMapper;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
@@ -41,6 +42,7 @@ import com.guiji.robot.model.HsParam;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -112,7 +114,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
     private GateWayLineService gateWayLineService;
 
 	@Autowired
-	private com.guiji.dispatch.dao.ext.DispatchPlanExtMapper planMapper;
+	private com.guiji.dispatch.dao.ext.PlanExtMapper planExtMapper;
+
+	@Autowired
+	private PlanLinesExtMapper planLinesExtMapper;
 
 	/**
 	 * 单个任务导入
@@ -1352,6 +1357,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<String> phones = new ArrayList<>();
 		for (int i = 0; i < plans.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = plans.getMobile().get(i);
+			logger.info("phone"+i, JsonUtils.bean2Json(phones));
+			logger.info("批量加入"+i, JsonUtils.bean2Json(dispatchPlan));
 			//路线类型
 			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
 
@@ -1538,6 +1545,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 转换userName
 				loopB:for (DispatchPlan dis : selectByExample) {
 					if(planUuid.equals(dis.getPlanUuid())) {
+						/*
 						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
 						if (user.getBody() != null) {
 							dis.setUserName(user.getBody().getUsername());
@@ -1554,6 +1562,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
 							dis.setPhone(phoneNumber);
 						}
+						*/
+						dis.setUserName(this.getUserName(dis.getUserId()));
 
 						resList.add(dis);
 						continue loopA;
@@ -1654,12 +1664,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public List<DispatchLines> queryLineByPlan(String planUuid) {
-		if(!StringUtils.isEmpty(planUuid)){
-			return null;
-		}else{
-			return null;
-		}
-
+		return !StringUtils.isEmpty(planUuid)?planLinesExtMapper.queryLinesByPlan(planUuid):null;
 	}
 
 	@Override
@@ -1735,7 +1740,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
-		List<DispatchPlanVo> selectByExample = planMapper.queryPlanListByPage(example, queryPlanDto.getIsDesensitization());
+		List<DispatchPlanVo> selectByExample = planExtMapper.queryPlanListByPage(example, queryPlanDto.getIsDesensitization());
 		List<DispatchPlanVo> resList = new ArrayList<DispatchPlanVo>();
 		if(null != selectByExample && selectByExample.size()>0){
 			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
@@ -1748,10 +1753,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 转换userName
 				loopB:for (DispatchPlanVo dis : selectByExample) {
 					if(planUuid.equals(dis.getPlanUuid())) {
-						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
+						dis.setUserName(this.getUserName(dis.getUserId()));
+						/*ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
 						if (user.getBody() != null) {
 							dis.setUserName(user.getBody().getUsername());
-						}
+						}*/
 
 						/*List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
 						dis.setLines(queryLinesByPlanUUID);*/
@@ -1778,5 +1784,31 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		page.setList(resList);
 		page.setTotalItemAndPageNumber(count);
 		return page;
+	}
+
+	/**
+	 * 获取用户名称
+	 * @param userId
+	 * @return
+	 */
+	private String getUserName(Integer userId){
+		String userName = "";
+		try {
+			Object userNameObj = redisUtil.get(RedisConstant.RedisConstantKey.QUERY_PLANLIST_USERNAME_TMP + userId);
+			if (null != userNameObj) {
+				userName = (String) userNameObj;
+			} else {
+				SysUser user = ResHandler.getResObj(auth.getUserById(Long.valueOf(userId)));
+				if (null != user) {
+					userName = user.getUsername();
+					redisUtil.set(RedisConstant.RedisConstantKey.QUERY_PLANLIST_USERNAME_TMP + userId,
+							userName,
+							RedisConstant.RedisConstantKey.QUERY_PLANLIST_USERNAME_TMP_TIMELONG);
+				}
+			}
+		}catch(Exception e){
+			logger.error("获取用户名称异常", e);
+		}
+		return userName;
 	}
 }

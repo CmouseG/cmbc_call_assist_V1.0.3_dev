@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DispatchPlanExtMapper {
+public interface PlanExtMapper {
 
     List<DispatchPlanVo> queryPlanListByPage(@Param("example") DispatchPlanExample example,
                                              @Param("isDesensitization") Integer isDesensitization);

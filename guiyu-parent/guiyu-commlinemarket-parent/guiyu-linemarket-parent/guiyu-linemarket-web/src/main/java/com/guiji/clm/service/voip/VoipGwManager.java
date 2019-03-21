@@ -370,11 +370,13 @@ public class VoipGwManager {
 				for(VoipGwPort port : portList) {
 					if(port.getLineId()!=null) {
 						//调用调度中心检查线路是否在使用
-						Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsed(port.getLineId());
-						log.error("线路编号:{},调用调度中心检查是否使用中，返回结果：{}",port.getLineId(),inUsedFlag);
-						if(inUsedFlag.getBody().booleanValue()) {
-							//在使用抛出异常，不能直接删除
-							throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+						if(StrUtils.isNotEmpty(port.getUserId())) {
+							Result.ReturnData<Boolean> inUsedFlag = iDispatchPlanOut.lineIsUsedByUserId(port.getLineId(),Integer.valueOf(port.getUserId()));
+							log.error("线路编号:{},调用调度中心检查是否使用中，返回结果：{}",port.getLineId(),inUsedFlag);
+							if(inUsedFlag.getBody().booleanValue()) {
+								//在使用抛出异常，不能直接删除
+								throw new ClmException(ClmErrorEnum.CLM1809310.getErrorCode(),ClmErrorEnum.CLM1809310.getErrorMsg());
+							}
 						}
 						// 复制一份记录取消计费数据
 						VoipGwPort feePort = new VoipGwPort();
@@ -388,7 +390,6 @@ public class VoipGwManager {
 					if(port.getLineId()!=null) {
 						log.info("调用呼叫中心删除线路：{}",port.getLineId());
 						iLineOperation.deleteLineInfo(port.getLineId());
-						//TODO 调用费用中心删除费用
 					}
 				}
 				/**3、调用fsag**/

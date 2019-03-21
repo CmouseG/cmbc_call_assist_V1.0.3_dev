@@ -56,6 +56,7 @@ public class CallOutPlanRegistration {
     private String  customerMobile;
     private String customerName;
     private String  remark;
+    private String  params;
 
     private String  userName;
 
@@ -267,5 +268,13 @@ public class CallOutPlanRegistration {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 }

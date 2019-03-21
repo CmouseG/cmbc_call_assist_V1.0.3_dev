@@ -71,6 +71,7 @@
 				*
 			FROM dispatch_plan_2
 			WHERE is_del = 0
+				AND status_plan = 1
 				AND user_id	IN
 				<foreach collection="userIdList" item="userId"  open="(" close=")" separator=",">
 					#{userId}

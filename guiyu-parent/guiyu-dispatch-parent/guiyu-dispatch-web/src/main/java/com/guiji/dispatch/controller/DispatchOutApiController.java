@@ -167,6 +167,14 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Override
 	public ReturnData<Boolean> lineIsUsedByUserId(Integer lineId, Integer userId) {
 		ReturnData<Boolean> res = new ReturnData<>();
+		List<String> userIdList = new ArrayList<>();
+		userIdList.add(userId + "");
+		int count = planLinesExtMapper.totalLineIsUsed(lineId, userIdList);
+		res.body = count>0?true:false;
+		return res;
+
+		/*
+		ReturnData<Boolean> res = new ReturnData<>();
 		// 查询当前任务中心
 		DispatchPlanExample planEx = new DispatchPlanExample();
 		planEx.createCriteria().andUserIdEqualTo(userId)
@@ -191,17 +199,14 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		}
 		res.body = false;
 		return res;
+		*/
 	}
 
 	@Override
 	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<String> userIdList) {
 		ReturnData<Boolean> res = new ReturnData<>();
 		int count = planLinesExtMapper.totalLineIsUsed(lineId, userIdList);
-		if(count >0){
-			res.body = true;
-		}else{
-			res.body = false;
-		}
+		res.body = count>0?true:false;
 		return res;
 
 		/*

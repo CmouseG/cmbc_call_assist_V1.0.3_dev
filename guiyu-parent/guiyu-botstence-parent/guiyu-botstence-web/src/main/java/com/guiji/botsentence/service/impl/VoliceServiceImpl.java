@@ -45,6 +45,7 @@ import org.w3c.dom.DOMImplementationList;
 import com.google.common.io.Files;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.dao.BotSentenceBranchMapper;
+import com.guiji.botsentence.dao.BotSentenceDeployMapper;
 import com.guiji.botsentence.dao.BotSentenceDomainMapper;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
@@ -52,6 +53,7 @@ import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceBranch;
 import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
+import com.guiji.botsentence.dao.entity.BotSentenceDeploy;
 import com.guiji.botsentence.dao.entity.BotSentenceDomain;
 import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
 import com.guiji.botsentence.dao.entity.BotSentenceOptions;
@@ -87,6 +89,7 @@ import com.guiji.component.result.ServerResult;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.process.api.IProcessSchedule;
+import com.guiji.process.model.PublishBotstenceTaskVO;
 import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.utils.NasUtil;
 import com.jcraft.jsch.JSchException;
@@ -144,6 +147,12 @@ public class VoliceServiceImpl implements IVoliceService {
 	
 	@Autowired
 	private IDispatchPlanOut iDispatchPlanOut;
+	
+	@Autowired
+	private BotSentenceDeployMapper botSentenceDeployMapper;
+	
+	@Autowired
+	private BotSentenceApprovalServiceImpl botSentenceApprovalService;
 	
 	private static String NAS_UPLAOD_SYSTEM_CODE="09";
 	
@@ -859,9 +868,24 @@ public class VoliceServiceImpl implements IVoliceService {
 			resouceReq.setFile(uplaodFileName);
 			resouceReq.setTmplId(templateId);
 			resouceReq.setProcessTypeEnum(ProcessTypeEnum.ROBOT);
-			iProcessSchedule.publishResource(resouceReq);
+			
+			List<String> allList = new ArrayList<>();
+			
+			UUID jobId = UUID.randomUUID();
+			
+			ReturnData<PublishBotstenceTaskVO> robot_result = iProcessSchedule.publishResource(resouceReq);
+			if("0".equals(robot_result.getCode()) && null != robot_result.getBody().getSubJobIds() && robot_result.getBody().getSubJobIds().size() > 0) {
+				//allList.addAll(robot_result.getBody().getSubJobIds());
+				logger.info("保存robot任务...");
+				botSentenceApprovalService.saveDeploy(robot_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
+			}
 			resouceReq.setProcessTypeEnum(ProcessTypeEnum.FREESWITCH);
-			iProcessSchedule.publishResource(resouceReq);
+			ReturnData<PublishBotstenceTaskVO> freeswitch_result = iProcessSchedule.publishResource(resouceReq);
+			if("0".equals(freeswitch_result.getCode()) && null != freeswitch_result.getBody().getSubJobIds() && freeswitch_result.getBody().getSubJobIds().size() > 0) {
+				//allList.addAll(freeswitch_result.getBody().getSubJobIds());
+				logger.info("保存freeswitch任务...");
+				botSentenceApprovalService.saveDeploy(freeswitch_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
+			}
 			
 			// 加密
 			fileCrypter(dir);
@@ -885,7 +909,31 @@ public class VoliceServiceImpl implements IVoliceService {
 				//部署
 				
 				resouceReq.setProcessTypeEnum(ProcessTypeEnum.SELLBOT);
-				iProcessSchedule.publishResource(resouceReq);
+				ReturnData<PublishBotstenceTaskVO> sellbot_result = iProcessSchedule.publishResource(resouceReq);
+				
+				if("0".equals(sellbot_result.getCode()) && null != sellbot_result.getBody().getSubJobIds() && sellbot_result.getBody().getSubJobIds().size() > 0) {
+					//allList.addAll(sellbot_result.getBody().getSubJobIds());
+					logger.info("保存sellbot任务...");
+					botSentenceApprovalService.saveDeploy(sellbot_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
+				}
+				
+				/*if(null != allList && allList.size() > 0) {
+					logger.info("共返回" + allList.size() + "条任务");
+					int index = 1;
+					for(String temp : allList) {
+						logger.info("任务【" + index + "】的任务号:  " + temp) ;
+						BotSentenceDeploy deploy = new BotSentenceDeploy();
+						deploy.setJobId(uuid.toString());
+						deploy.setSubJobId(temp);
+						deploy.setStatus("1");//默认表示失败
+						deploy.setCrtTime(new Date(System.currentTimeMillis()));
+						deploy.setCrtUser(userId);
+						deploy.setProcessId(processId);
+						deploy.setTemplateId(templateId);
+						botSentenceDeployMapper.insert(deploy);
+						index++;
+					}
+				}*/
 				return true;
 			}
 			

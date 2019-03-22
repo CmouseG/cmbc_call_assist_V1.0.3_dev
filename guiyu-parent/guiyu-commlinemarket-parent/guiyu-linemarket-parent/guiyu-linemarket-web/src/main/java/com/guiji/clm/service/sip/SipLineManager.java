@@ -194,10 +194,12 @@ public class SipLineManager {
 				throw new ClmException(ClmErrorEnum.CLM1809313.getErrorCode(),ClmErrorEnum.CLM1809313.getErrorMsg());
 			}
 			/**下边的情况是 自备线路的删除了**/
+			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
+			List<String> inUseUserList = this.getLineUsers(exclusiveList);
 			/**1、检查是否有在使用**/
-			if(sipLineBaseInfo.getLineId()!=null) {
+			if(sipLineBaseInfo.getLineId()!=null && inUseUserList!=null && !inUseUserList.isEmpty()) {
 				//调用调度中心检查线路是否在使用
-				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId());
+				Result.ReturnData<Boolean> inUsedFlag = IDispatchPlanOut.lineIsUsed(sipLineBaseInfo.getLineId(),inUseUserList);
 				log.error("线路编号:{}调用调度中心检查是否使用中，返回结果：",sipLineBaseInfo.getLineId(),inUsedFlag);
 				if(inUsedFlag.getBody().booleanValue()) {
 					//在使用抛出异常，不能直接删除
@@ -208,7 +210,6 @@ public class SipLineManager {
 			log.info("调用呼叫中心删除线路：{}",sipLineBaseInfo.getLineId());
 			iLineOperation.deleteLineInfo(sipLineBaseInfo.getLineId());
 			/**3、删除计费**/
-			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
 			if(exclusiveList!=null && !exclusiveList.isEmpty()) {
 				for(SipLineExclusive sipLineExclusive:exclusiveList) {
 					//删除已分配线路
@@ -806,5 +807,23 @@ public class SipLineManager {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 获取线路归属人
+	 * @param exclusiveList
+	 * @return
+	 */
+	private List<String> getLineUsers(List<SipLineExclusive> exclusiveList){
+		if(exclusiveList!=null && !exclusiveList.isEmpty()) {
+			List<String> userList = new ArrayList<String>();
+			for(SipLineExclusive line : exclusiveList) {
+				if(StrUtils.isNotEmpty(line.getBelongUser())) {
+					userList.add(line.getBelongUser());
+				}
+			}
+			return userList;
+		}
+		return null;
 	}
 }

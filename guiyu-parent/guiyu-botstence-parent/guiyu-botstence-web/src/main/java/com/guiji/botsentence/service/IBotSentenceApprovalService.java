@@ -36,4 +36,6 @@ public interface IBotSentenceApprovalService {
 	public void deployTestSellbotByAgent(String processId);
 	
 	public void publishSentence(String processId,String userId);
+	
+	public void saveDeploy(List<String> list, String jobId, String processId, String templateId, String userId);
 }

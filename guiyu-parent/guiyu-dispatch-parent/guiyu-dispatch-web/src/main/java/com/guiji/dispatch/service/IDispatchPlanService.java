@@ -14,6 +14,7 @@ import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.sys.ResultPage;
+import com.guiji.dispatch.vo.DispatchPlanVo;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 
@@ -271,5 +272,7 @@ public interface IDispatchPlanService {
 
 	//根据plan_uuid查询线路列表
 	List<DispatchLines> queryLineByPlan(String planUuid);
+
+	ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page);
 }
 

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.ext.PlanExtMapper">
+
+	<sql id="Example_Where_Clause" >
+		<where >
+			<foreach collection="example.oredCriteria" item="criteria" separator="or" >
+				<if test="criteria.valid" >
+					<trim prefix="(" suffix=")" prefixOverrides="and" >
+						<foreach collection="criteria.criteria" item="criterion" >
+							<choose >
+								<when test="criterion.noValue" >
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue" >
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue" >
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue" >
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+
+	<sql id="Base_Column_List" >
+		id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
+		recall, recall_params, robot, line, result, call_agent, clean, call_data, call_hour,
+		gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name,
+		batch_name, flag, org_code, city_name, city_code, line_type
+	</sql>
+
+	<select id="queryPlanListByPage" resultType="com.guiji.dispatch.vo.DispatchPlanVo">
+		SELECT
+			GROUP_CONCAT(l.line_id) AS lineIdArr, GROUP_CONCAT(l.line_name) AS lineNameArr,
+			IF(0=#{isDesensitization}, CONCAT(SUBSTR(p.phone, 1, 3),'****',SUBSTR(p.phone, 8, LENGTH(p.phone))), p.phone) AS phone_des,
+			p.*
+		FROM
+		(
+		SELECT
+			<include refid="Base_Column_List"/>
+		FROM dispatch_plan
+			<if test="example != null">
+				<include refid="Example_Where_Clause"/>
+				<if test="example.orderByClause != null">
+					ORDER BY ${example.orderByClause}
+				</if>
+				<if test="example.limitStart != null and example.limitStart>=0" >
+					LIMIT #{example.limitStart} , #{example.limitEnd}
+				</if>
+			</if>
+
+		) p
+		LEFT JOIN dispatch_lines l ON p.plan_uuid = l.planuuid
+		GROUP BY p.plan_uuid
+	</select>
+
+</mapper>

@@ -53,8 +53,6 @@ public class CallOutPlan implements Serializable {
 
     private String hangupCode;
 
-    private String originateCmd;
-
     private String remarks;
 
     private Boolean hasTts;
@@ -78,6 +76,8 @@ public class CallOutPlan implements Serializable {
     private Integer isAnswer;
 
     private Boolean intervened;
+
+    private String params;
 
     private String lineName;
 
@@ -275,14 +275,6 @@ public class CallOutPlan implements Serializable {
         this.hangupCode = hangupCode == null ? null : hangupCode.trim();
     }
 
-    public String getOriginateCmd() {
-        return originateCmd;
-    }
-
-    public void setOriginateCmd(String originateCmd) {
-        this.originateCmd = originateCmd == null ? null : originateCmd.trim();
-    }
-
     public String getRemarks() {
         return remarks;
     }
@@ -379,6 +371,14 @@ public class CallOutPlan implements Serializable {
         this.intervened = intervened;
     }
 
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params == null ? null : params.trim();
+    }
+
     public String getLineName() {
         return lineName;
     }
@@ -417,7 +417,6 @@ public class CallOutPlan implements Serializable {
         sb.append(", accurateIntent=").append(accurateIntent);
         sb.append(", reason=").append(reason);
         sb.append(", hangupCode=").append(hangupCode);
-        sb.append(", originateCmd=").append(originateCmd);
         sb.append(", remarks=").append(remarks);
         sb.append(", hasTts=").append(hasTts);
         sb.append(", aiId=").append(aiId);
@@ -430,6 +429,7 @@ public class CallOutPlan implements Serializable {
         sb.append(", isCancel=").append(isCancel);
         sb.append(", isAnswer=").append(isAnswer);
         sb.append(", intervened=").append(intervened);
+        sb.append(", params=").append(params);
         sb.append(", lineName=").append(lineName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

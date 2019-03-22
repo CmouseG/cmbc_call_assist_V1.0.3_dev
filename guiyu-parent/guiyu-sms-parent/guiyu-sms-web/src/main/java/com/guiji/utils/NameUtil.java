@@ -15,12 +15,10 @@ public class NameUtil
 	private static final Logger logger = LoggerFactory.getLogger(NameUtil.class);
 
 	@Autowired
-	IAuth auth;
-	@Autowired
-	RedisUtil redisUtil;
+	private static IAuth auth;
 
-	public String getUserName(String userId) {
-        String cacheName = (String) redisUtil.get(userId);
+	public static String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT(userId);
         if (cacheName != null) {
             return cacheName;
         } else {
@@ -29,7 +27,7 @@ public class NameUtil
                 if(result!=null && result.getBody()!=null) {
                     String userName = result.getBody().getUsername();
                     if (userName != null) {
-                    	redisUtil.set(userId, userName);
+                    	LocalCacheUtil.set(userId, userName, LocalCacheUtil.HARF_HOUR);
                         return userName;
                     }
                 }

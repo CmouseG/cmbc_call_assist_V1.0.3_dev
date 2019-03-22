@@ -11,9 +11,11 @@ import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.*;
 import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
+import com.guiji.dispatch.dao.ext.PlanLinesExtMapper;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
@@ -30,6 +32,7 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.ResHandler;
+import com.guiji.dispatch.vo.DispatchPlanVo;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.robot.api.IRobotRemote;
@@ -39,6 +42,7 @@ import com.guiji.robot.model.HsParam;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -108,6 +112,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
     private GateWayLineService gateWayLineService;
+
+	@Autowired
+	private com.guiji.dispatch.dao.ext.PlanExtMapper planExtMapper;
+
+	@Autowired
+	private PlanLinesExtMapper planLinesExtMapper;
 
 	/**
 	 * 单个任务导入
@@ -1347,6 +1357,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		List<String> phones = new ArrayList<>();
 		for (int i = 0; i < plans.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = plans.getMobile().get(i);
+			logger.info("phone"+i, JsonUtils.bean2Json(phones));
+			logger.info("批量加入"+i, JsonUtils.bean2Json(dispatchPlan));
 			//路线类型
 			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
 
@@ -1364,7 +1376,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setGmtCreate(DateUtil.getCurrent4Time());
 			bean.setGmtModified(DateUtil.getCurrent4Time());
 			//号码去重
-			if(phones.contains(bean.getPhone())){
+			if(phones.contains(bean.getPhone().trim())){
 				logger.info("当前批量加入号码存在重复号码，已经过滤");
 				continue;
 			}
@@ -1373,7 +1385,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			if(phone ==null){
 				continue;
 			}
-			bean.setPhone(phone);
+			bean.setPhone(phone.trim());
 			// 查询用户名称
 			ReturnData<SysUser> SysUser = authService.getUserById(userId);
 			if (SysUser != null) {
@@ -1533,6 +1545,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				// 转换userName
 				loopB:for (DispatchPlan dis : selectByExample) {
 					if(planUuid.equals(dis.getPlanUuid())) {
+						/*
 						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
 						if (user.getBody() != null) {
 							dis.setUserName(user.getBody().getUsername());
@@ -1549,6 +1562,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
 							dis.setPhone(phoneNumber);
 						}
+						*/
+						dis.setUserName(this.getUserName(dis.getUserId()));
 
 						resList.add(dis);
 						continue loopA;
@@ -1649,11 +1664,151 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public List<DispatchLines> queryLineByPlan(String planUuid) {
-		if(!StringUtils.isEmpty(planUuid)){
-			return null;
-		}else{
-			return null;
+		return !StringUtils.isEmpty(planUuid)?planLinesExtMapper.queryLinesByPlan(planUuid):null;
+	}
+
+	@Override
+	public ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page) {
+		Integer pageNo = page.getPageNo();
+		Integer pageSize = page.getPageSize();
+		DispatchPlanExample example = new DispatchPlanExample();
+		example.setLimitStart((pageNo - 1) * pageSize);
+		example.setLimitEnd(pageSize);
+		example.setOrderByClause("`gmt_create` DESC");
+		Criteria createCriteria = example.createCriteria();
+		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
+			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
+		}
+		if (!StringUtils.isEmpty(queryPlanDto.getStartCallData()) && !StringUtils.isEmpty(queryPlanDto.getEndCallData())) {
+			createCriteria.andCallDataBetween(Integer.valueOf(queryPlanDto.getStartCallData()), Integer.valueOf(queryPlanDto.getEndCallData()));
 		}
 
+		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
+			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
+			List<Integer> ids = new ArrayList<>();
+			if (queryPlanDto.getPlanStatus().contains(",")) {
+				String[] split = queryPlanDto.getPlanStatus().split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+				}
+				createCriteria.andStatusPlanIn(ids);
+			} else {
+				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
+			}
+		}
+		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			try {
+				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(queryPlanDto.getStartTime()).getTime()), new Timestamp(sdf.parse(queryPlanDto.getEndTime()).getTime()));
+			} catch (ParseException e) {
+				logger.error("error", e);
+			}
+		}
+
+		if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
+			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
+		}
+
+		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+			List<Integer> ids = new ArrayList<>();
+			if (queryPlanDto.getReplayType().contains(",")) {
+				String[] split = queryPlanDto.getReplayType().split(",");
+				for (String sp : split) {
+					ids.add(Integer.valueOf(sp));
+				}
+				createCriteria.andReplayTypeIn(ids);
+			} else {
+				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
+			}
+		}
+
+		if(null != queryPlanDto.getResultList()
+				&& queryPlanDto.getResultList().size()>0){
+			createCriteria.andResultIn(queryPlanDto.getResultList());
+		}
+
+		if (!queryPlanDto.isSuperAdmin()) {
+			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+		} else {
+			// // 超级用户
+			// if (selectUserId != null) {
+			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
+			// }
+		}
+		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
+
+		List<DispatchPlanVo> selectByExample = planExtMapper.queryPlanListByPage(example, queryPlanDto.getIsDesensitization());
+		List<DispatchPlanVo> resList = new ArrayList<DispatchPlanVo>();
+		if(null != selectByExample && selectByExample.size()>0){
+			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
+			for(DispatchPlanVo dis : selectByExample){
+				planUuidSet.add(dis.getPlanUuid());
+			}
+
+		//	Integer isDesensitization = queryPlanDto.getIsDesensitization();
+			loopA:for(String planUuid : planUuidSet) {
+				// 转换userName
+				loopB:for (DispatchPlanVo dis : selectByExample) {
+					if(planUuid.equals(dis.getPlanUuid())) {
+						dis.setUserName(this.getUserName(dis.getUserId()));
+						/*ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
+						if (user.getBody() != null) {
+							dis.setUserName(user.getBody().getUsername());
+						}*/
+
+						/*List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
+						dis.setLines(queryLinesByPlanUUID);*/
+
+						/*// isDesensitization
+						if (isDesensitization.equals(0)) {
+							if (dis.getPhone().length() <= 7) {
+								continue;
+							}
+							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
+							dis.setPhone(phoneNumber);
+						}*/
+
+						resList.add(dis);
+						continue loopA;
+					}
+				}
+			}
+		}
+
+
+
+		int count = dispatchPlanMapper.countByExample(example);
+		page.setList(resList);
+		page.setTotalItemAndPageNumber(count);
+		return page;
+	}
+
+	/**
+	 * 获取用户名称
+	 * @param userId
+	 * @return
+	 */
+	private String getUserName(Integer userId){
+		String userName = "";
+		try {
+			Object userNameObj = redisUtil.get(RedisConstant.RedisConstantKey.QUERY_PLANLIST_USERNAME_TMP + userId);
+			if (null != userNameObj) {
+				userName = (String) userNameObj;
+			} else {
+				SysUser user = ResHandler.getResObj(auth.getUserById(Long.valueOf(userId)));
+				if (null != user) {
+					userName = user.getUsername();
+					redisUtil.set(RedisConstant.RedisConstantKey.QUERY_PLANLIST_USERNAME_TMP + userId,
+							userName,
+							RedisConstant.RedisConstantKey.QUERY_PLANLIST_USERNAME_TMP_TIMELONG);
+				}
+			}
+		}catch(Exception e){
+			logger.error("获取用户名称异常", e);
+		}
+		return userName;
 	}
 }

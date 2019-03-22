@@ -19,15 +19,15 @@ public class IModularLogsServiceImpl implements IModularLogsService {
 	@Override
 	public boolean notifyLogs(ModularLogs modularLogs) {
 		// 第一个参数指定队列，第二个参数来指定路由的key，第三个参数指定消息
-		rabbitTemplate.convertAndSend("dispatch.ModularLogs", JsonUtils.bean2Json(modularLogs));
+	//	rabbitTemplate.convertAndSend("dispatch.ModularLogs", JsonUtils.bean2Json(modularLogs));
 		return true;
 	}
 
 	@Override
 	public boolean notifyLogsList(List<ModularLogs> modularLogsList) {
-		for (ModularLogs logs : modularLogsList) {
+		/*for (ModularLogs logs : modularLogsList) {
 			rabbitTemplate.convertAndSend("dispatch.ModularLogs", JsonUtils.bean2Json(logs));
-		}
+		}*/
 		return true;
 	}
 

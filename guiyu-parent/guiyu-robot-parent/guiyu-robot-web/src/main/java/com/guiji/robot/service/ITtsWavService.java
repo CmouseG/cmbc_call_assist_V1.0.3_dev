@@ -1,12 +1,12 @@
 package com.guiji.robot.service;
 
-import java.util.List;
-
 import com.guiji.robot.dao.entity.TtsCallbackHis;
 import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.model.HsParam;
 import com.guiji.robot.model.TtsCallback;
 import com.guiji.robot.model.TtsVoiceReq;
+
+import java.util.List;
 
 /** 
 * @ClassName: TtsWavService 
@@ -78,6 +78,6 @@ public interface ITtsWavService {
 	 * TTS合成后的回调服务（同步）
 	 * @param ttsCallbackList
 	 */
-	void syncTtsCallBack(List<TtsCallback> ttsCallbackList) throws InterruptedException;
+	void syncTtsCallBack(List<TtsCallback> ttsCallbackList);
 	
 }

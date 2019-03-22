@@ -1,21 +1,5 @@
 package com.guiji.robot.service.impl;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.guiji.ai.api.IAi;
 import com.guiji.ai.vo.AsynPostReqVO;
@@ -33,22 +17,25 @@ import com.guiji.robot.dao.entity.TtsWavHis;
 import com.guiji.robot.dao.entity.TtsWavHisExample;
 import com.guiji.robot.exception.AiErrorEnum;
 import com.guiji.robot.exception.RobotException;
-import com.guiji.robot.model.HsParam;
-import com.guiji.robot.model.TtsCallback;
-import com.guiji.robot.model.TtsComposeCheckRsp;
-import com.guiji.robot.model.TtsVoice;
-import com.guiji.robot.model.TtsVoiceReq;
+import com.guiji.robot.model.*;
 import com.guiji.robot.service.ITtsWavService;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.TtsTempData;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.SystemUtil;
 import com.guiji.robot.util.WavMergeUtil;
-import com.guiji.utils.BeanUtil;
-import com.guiji.utils.JsonUtils;
-import com.guiji.utils.NasUtil;
-import com.guiji.utils.NetFileDownUtil;
-import com.guiji.utils.StrUtils;
+import com.guiji.utils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
+import java.util.*;
+import java.util.regex.Matcher;
 
 /** 
 * @ClassName: TtsWavServiceImpl 
@@ -281,7 +268,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	 * @param ttsCallbackList
 	 */
     @Transactional
-	public void syncTtsCallBack(List<TtsCallback> ttsCallbackList) throws InterruptedException {
+	public void syncTtsCallBack(List<TtsCallback> ttsCallbackList) {
 		doTtsCallback(ttsCallbackList);
 	}
 

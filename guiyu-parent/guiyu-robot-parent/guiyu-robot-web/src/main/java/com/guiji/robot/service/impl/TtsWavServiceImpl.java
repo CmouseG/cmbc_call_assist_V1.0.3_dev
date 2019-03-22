@@ -273,9 +273,18 @@ public class TtsWavServiceImpl implements ITtsWavService{
 		}
 		return true;
 	}
-	
-	
-	
+
+	/**
+	 * 临时策略
+	 * 同步调用TTS合成服务，完成后回调通知
+	 * TTS合成后的回调服务
+	 * @param ttsCallbackList
+	 */
+    @Transactional
+	public void syncTtsCallBack(List<TtsCallback> ttsCallbackList) throws InterruptedException {
+		doTtsCallback(ttsCallbackList);
+	}
+
 	/**
 	 * 异步调用TTS合成服务，完成后回调通知
 	 * TTS合成后的回调服务
@@ -284,6 +293,10 @@ public class TtsWavServiceImpl implements ITtsWavService{
 	@Transactional
 	@Async
 	public void asynTtsCallback(List<TtsCallback> ttsCallbackList) {
+		doTtsCallback(ttsCallbackList);
+	}
+	
+	private void doTtsCallback(List<TtsCallback> ttsCallbackList) {
 		String tmpFilePath = SystemUtil.getRootPath()+tempFilePath; //临时文件存放目录
 		String hushuDirPath = SystemUtil.getRootPath()+hushuDir; //话术模板存放目录
 		if(ListUtil.isNotEmpty(ttsCallbackList)) {
@@ -345,7 +358,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 						}else {
 							logger.info("TTS AI服务返回合成{}不是终态",ttsCallback.getStatus());
 						}
-						
+
 					}else {
 						logger.error("根据busiId:{}本地无数据..",busiId);
 					}
@@ -355,8 +368,6 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			}
 		}
 	}
-	
-	
 	/**
 	 * TTS合成后，将TTS合成的消息放到MQ中
 	 */

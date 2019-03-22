@@ -73,5 +73,11 @@ public interface ITtsWavService {
 	 * @param ttsCallbackList
 	 */
 	void asynTtsCallback(List<TtsCallback> ttsCallbackList);
+
+	/**
+	 * TTS合成后的回调服务（同步）
+	 * @param ttsCallbackList
+	 */
+	void syncTtsCallBack(List<TtsCallback> ttsCallbackList) throws InterruptedException;
 	
 }

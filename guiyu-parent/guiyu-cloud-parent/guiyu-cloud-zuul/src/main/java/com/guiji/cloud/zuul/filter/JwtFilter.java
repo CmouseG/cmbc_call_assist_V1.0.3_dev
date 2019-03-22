@@ -75,12 +75,14 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                String orgCode = jwtConfig.getOrgCodeByToken(tok);
                Boolean isSuperAdmin = jwtConfig.getSuperAdminByToken(tok);
                Integer isDesensitization = jwtConfig.getIsDesensitizationByToken(tok);
+               Long orgId = jwtConfig.getOrgIdByToken(tok);
 
                RequestContext ctx = RequestContext.getCurrentContext();
                ctx.addZuulRequestHeader("userId", String.valueOf(userId));
                ctx.addZuulRequestHeader("orgCode", orgCode);
                ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin.toString());
                ctx.addZuulRequestHeader("isDesensitization", isDesensitization.toString());
+               ctx.addZuulRequestHeader("orgId", String.valueOf(orgId));
            }catch (Exception e){
                flag =false;
            }

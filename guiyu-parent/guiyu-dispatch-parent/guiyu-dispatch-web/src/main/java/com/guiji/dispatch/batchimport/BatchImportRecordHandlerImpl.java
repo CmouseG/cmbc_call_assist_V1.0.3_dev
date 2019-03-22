@@ -2,11 +2,11 @@ package com.guiji.dispatch.batchimport;
 
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
-import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.GateWayLineService;
 import com.guiji.dispatch.service.IBlackListService;
 import com.guiji.dispatch.service.IPhoneRegionService;
@@ -42,7 +42,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
 	
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 
 	@Autowired
 	private IPhoneRegionService phoneRegionService;
@@ -98,23 +98,11 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		Integer lineType = null != vo.getLineType() ? vo.getLineType() : PlanLineTypeEnum.SIP.getType();
 		vo.setLineType(lineType);
 		// 加入线路
-		List<DispatchLines> lineList = vo.getLines();
-
-		try
+		List<DispatchBatchLine> lineList = vo.getLines();
+		//加入线路
+		for (DispatchBatchLine lines : lineList)
 		{
-			//加入线路
-			for (DispatchLines lines : lineList)
-			{
-				lines.setCreateTime(DateUtil.getCurrent4Time());
-				lines.setPlanuuid(vo.getPlanUuid());
-				lines.setLineType(vo.getLineType());
-				// lineService.insertLines(lines);
-
-				fanoutSender.send("fanout.dispatch.BatchImportSaveLineDB", JsonUtils.bean2Json(lines));
-			}
-		} catch (Exception e)
-		{
-			// doNothing
+			lines.setLineType(vo.getLineType());
 		}
 
 		try
@@ -169,7 +157,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		CheckParamsReq req = new CheckParamsReq();
 		HsParam hsParam = new HsParam();
 		hsParam.setParams(dispatchPlan.getParams());
-		hsParam.setSeqid(dispatchPlan.getPlanUuid());
+		hsParam.setSeqid(dispatchPlan.getPlanUuidLong() + "");
 		hsParam.setTemplateId(dispatchPlan.getRobot());
 		List<HsParam> list = new ArrayList<>();
 		list.add(hsParam);

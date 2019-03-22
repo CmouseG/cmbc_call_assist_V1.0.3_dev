@@ -11,6 +11,11 @@ public class BaseDto implements Serializable {
     private String operOrgCode;
 
     /**
+     * 企业组织编码
+     */
+    private int operOrgId;
+
+    /**
      * 企业用户ID
      */
     private String operUserId;
@@ -55,5 +60,15 @@ public class BaseDto implements Serializable {
 
     public void setIsDesensitization(Integer isDesensitization) {
         this.isDesensitization = isDesensitization;
+    }
+
+    public int getOperOrgId()
+    {
+        return operOrgId;
+    }
+
+    public void setOperOrgId(int operOrgId)
+    {
+        this.operOrgId = operOrgId;
     }
 }

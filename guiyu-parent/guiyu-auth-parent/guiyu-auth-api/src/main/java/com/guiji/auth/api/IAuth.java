@@ -3,19 +3,18 @@ package com.guiji.auth.api;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import com.guiji.auth.model.SysUserRoleVo;
-import com.guiji.component.result.Result;
-import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysUserExt;
-import com.guiji.user.vo.SysUserVo;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.guiji.auth.model.SysUserRoleVo;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.dao.entity.SysUserExt;
 
 @FeignClient("guiyu-auth-web")
 public interface IAuth {

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
@@ -32,9 +31,22 @@ import com.guiji.notice.entity.MessageSend;
 import com.guiji.sms.api.ISms;
 import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.wechat.vo.SendMsgReqVO;
 import com.rabbitmq.client.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 任务回调之后做处理
@@ -79,7 +91,9 @@ public class SuccesPhone4MQLisener {
 			MQSuccPhoneDto mqSuccPhoneDto = JsonUtils.json2Bean(message, MQSuccPhoneDto.class);
 			logger.info("当前队列任务接受的uuid：" + mqSuccPhoneDto.getPlanuuid());
 			DispatchPlanExample ex = new DispatchPlanExample();
-			ex.createCriteria().andPlanUuidEqualTo(mqSuccPhoneDto.getPlanuuid());
+
+			Integer orgId = IdUtils.doParse(Long.valueOf(mqSuccPhoneDto.getPlanuuid())).getOrgId();
+			ex.createCriteria().andPlanUuidEqualTo(Long.valueOf(mqSuccPhoneDto.getPlanuuid())).andOrgIdEqualTo(orgId);
 			List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
 			if (list.size() <= 0) {
 				logger.info("当前队列任务回调 uuid错误！");
@@ -132,7 +146,6 @@ public class SuccesPhone4MQLisener {
 			redisUtil.expire(redisKey, 60);//失效时间
 		}
 	}
-
 	/**
 	 * 消息通知
 	 * @param dispatchPlan
@@ -151,7 +164,7 @@ public class SuccesPhone4MQLisener {
 		int batchCount = dispatchPlanMapper.countByExample(ex1);*/
 
 		//统计计划数量(已完成，计划中，暂停中，停止中)
-		TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId());
+		TotalPlanCountVo totalCount = dispatchPlanService.totalPlanCountByBatch(dispatchPlan.getBatchId(), dispatchPlan.getOrgId());
 	//	if (count == 0) {
 		if (totalCount.getFinishCount()>0 && totalCount.getDoingCount() == 0
 				) {//&& totalCount.getStopCount()==0 && totalCount.getSuspendCount()==0

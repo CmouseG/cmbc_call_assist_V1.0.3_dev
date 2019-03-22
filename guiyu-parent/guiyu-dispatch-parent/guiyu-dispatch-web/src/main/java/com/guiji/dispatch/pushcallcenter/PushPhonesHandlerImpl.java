@@ -7,7 +7,7 @@ import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.PushRecords;
 import com.guiji.dispatch.enums.GateWayLineStatusEnum;
@@ -18,6 +18,7 @@ import com.guiji.dispatch.vo.GateWayLineOccupyVo;
 import com.guiji.robot.model.UserResourceCache;
 import com.guiji.robot.service.vo.AiInuseCache;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.beanutils.BeanUtils;
@@ -123,7 +124,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setRemarks(dispatchRedis.getAttach());
 									List<Integer> lines = new ArrayList<>();
 									boolean isSimPush = false;//是否是SIM卡推送
-									for (DispatchLines line : dispatchRedis.getLines()) {
+									for (DispatchBatchLine line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
 									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
 										//	logger.info("推送网关SIM卡拨打用户网关线路:{}", JsonUtils.bean2Json(line));
@@ -154,11 +155,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
                                     }
 									callBean.setLineList(lines);
 								} catch (IllegalAccessException e) {
-									updateStatusSync(dispatchRedis.getPlanUuid());
+									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 									continue;
 								} catch (InvocationTargetException e) {
-									updateStatusSync(dispatchRedis.getPlanUuid());
+									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									logger.info("---------BeanUtils.copyProperties转换失败-----------", e);
 									continue;
 								}
@@ -167,7 +168,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								if(userIdList!=null){
 									if (userIdList.contains(String.valueOf(callBean.getUserId()))) {
 										logger.info("startMakeCall>>>>>>>>>>>>>>>>>>>当前用户处于欠费" + callBean.getUserId());
-										updateStatusSync(dispatchRedis.getPlanUuid());
+										updateStatusSync(dispatchRedis.getPlanUuidLong());
 										continue;
 									}
 								}
@@ -175,7 +176,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								if(userIdList == null){
 									logger.info(">>>>>>>>>>>>>>>>>>...当前userIdList为null");
 									Thread.sleep(2000);
-									updateStatusSync(dispatchRedis.getPlanUuid());
+									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									continue;
 								}
 								// 增加推送次数
@@ -186,7 +187,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								// 记录推送记录
 								insertPush(dispatchRedis);
 								if (!startMakeCall.success) {
-									updateStatusSync(dispatchRedis.getPlanUuid());
+									updateStatusSync(dispatchRedis.getPlanUuidLong());
 									logger.info("启动呼叫中心任务失败");
 									// 减少推送次数
 									cutVariable(callBean, queueCount);
@@ -337,11 +338,13 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 		redisUtil.expire(queueName, 300);
 	}
 
-	public void updateStatusSync(String planUUID) {
-		List<String> list = new ArrayList<>();
+	public void updateStatusSync(long planUUID) {
+		List<Long> list = new ArrayList<>();
 		list.add(planUUID);
 		if (list.size() > 0) {
-			disMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0);
+			List<Integer> orgIds = new ArrayList<>();
+			orgIds.add(IdUtils.doParse(Long.valueOf(planUUID)).getOrgId());
+			disMapper.updateDispatchPlanListByStatusSYNC(list, Constant.STATUS_SYNC_0, orgIds);
 		}
 	}
 
@@ -353,7 +356,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 			logger.error("error", e);
 		}
 		record.setPhone(dispatchPlan.getPhone());
-		record.setPlanuuid(dispatchPlan.getPlanUuid());
+		record.setPlanuuid(dispatchPlan.getPlanUuidLong());
 		record.setUserId(dispatchPlan.getUserId());
 		record.setLine(dispatchPlan.getLine());
 		record.setRobot(dispatchPlan.getRobot());

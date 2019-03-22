@@ -1,25 +1,25 @@
 package com.guiji.dispatch.pushcallcenter;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import com.guiji.auth.api.IAuth;
+import com.guiji.auth.api.IOrg;
+import com.guiji.component.result.Result;
+import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.service.IGetPhonesInterface;
+import com.guiji.dispatch.util.Constant;
+import com.guiji.dispatch.util.ResHandler;
+import com.guiji.utils.IdGengerator.IdUtils;
+import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
-import com.guiji.dispatch.dao.DispatchLinesMapper;
-import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.line.ILinesService;
-import com.guiji.dispatch.service.IGetPhonesInterface;
-import com.guiji.dispatch.util.Constant;
-import com.guiji.utils.RedisUtil;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
@@ -30,10 +30,16 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 	private DispatchPlanMapper dispatchMapper;
 
 	@Autowired
-	private ILinesService linesService;
+	private IDispatchBatchLineService linesService;
 
 	@Autowired
 	private RedisUtil redisUtils;
+
+	@Autowired
+	private IOrg orgService;
+
+	@Autowired
+	private IAuth auth;
 
 	/**
 	 * 根据用户 线路 模板 时间 查询任务信息
@@ -55,7 +61,10 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setRobot(robot);
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
-		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis);
+
+		List<Integer> orgIds = new ArrayList<>();
+		orgIds.add(ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId))).getId().intValue());
+		List<DispatchPlan> selectByCallHour = dispatchMapper.selectByCallHour(dis, orgIds);
 		if(null != selectByCallHour) {
 			// 如果当前用户已经欠费的话，那么就删除
 			List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
@@ -68,17 +77,32 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 				}
 			}
 
-			List<String> ids = new ArrayList<>();
+			List<Long> ids = new ArrayList<>();
 			for (DispatchPlan plan : planList) {
-				ids.add(plan.getPlanUuid());
+				ids.add(plan.getPlanUuidLong());
 			}
 			if (ids.size() > 0) {
-				dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);
+				dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1, orgIds);
 			}
+
+			Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
 			// 查询出每个任务下对应的线路
 			for (DispatchPlan bean : planList) {
-				List<DispatchLines> queryLinesByPlanUUID = linesService.queryLinesByPlanUUID(bean.getPlanUuid());
-				bean.setLines(queryLinesByPlanUUID);
+
+				List<DispatchBatchLine> linesVO = null;
+				if(!tmpMap.containsKey(bean.getBatchId()))
+				{
+					linesVO = linesService.queryListByBatchId(bean.getBatchId());
+					if(linesVO != null)
+					{
+						tmpMap.put(bean.getBatchId(), linesVO);
+					}
+				}
+
+				if(tmpMap.containsKey(bean.getBatchId()))
+				{
+					bean.setLines(tmpMap.get(bean.getBatchId()));
+				}
 			}
 		}
 		return planList;
@@ -101,7 +125,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setFlag(Constant.IS_FLAG_2);
 		List<PlanUserIdLineRobotDto> planUserIdLineRobotDtos = new ArrayList<>();
 		// 去掉line分组
-		List<DispatchPlan> selectPlanGroupByUserIdLineRobot = dispatchMapper.selectPlanGroupByUserIdLineRobot(dis);
+		List<DispatchPlan> selectPlanGroupByUserIdLineRobot = dispatchMapper.selectPlanGroupByUserIdLineRobot(dis, getAllOrgIds());
 		// 查询欠费用户
 		List<String> userIdList = (List<String>) redisUtils.get("USER_BILLING_DATA");
 		boolean hasArrearage = null != userIdList?true:false;
@@ -154,34 +178,7 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		// groupby
 		List<Integer> userIds = new ArrayList<>();
 
-		List<DispatchPlan> selectByCallHour4UserId = dispatchMapper.selectByCallHour4UserId(dis);
-		for (DispatchPlan dto : selectByCallHour4UserId) {
-			userIds.add(dto.getUserId());
-		}
-		return userIds;
-	}
-
-	public List<Integer> getUsersByParams(Integer userId, Integer limit, Integer statusPlan, Integer statusSync,
-			String flag) {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallHour(String.valueOf(hour));
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(statusPlan);
-		dis.setStatusSync(statusSync);
-		dis.setFlag(flag);
-		dis.setUserId(userId);
-		dis.setLimitStart(0);
-		dis.setLimitEnd(limit);
-		// groupby
-		List<Integer> userIds = new ArrayList<>();
-
-		List<DispatchPlan> selectByCallHour4UserId = dispatchMapper.selectByCallHour4UserId(dis);
+		List<DispatchPlan> selectByCallHour4UserId = dispatchMapper.selectByCallHour4UserId(dis, getAllOrgIds());
 		for (DispatchPlan dto : selectByCallHour4UserId) {
 			userIds.add(dto.getUserId());
 		}
@@ -192,60 +189,22 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 	 * 恢复任务中心同步状态
 	 */
 	@Override
-	public boolean resetPhoneSyncStatus(List<String> planuuidIds) {
-		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_0);
+	public boolean resetPhoneSyncStatus(List<Long> planuuidIds) {
+
+		List<Integer> orgIds = new ArrayList<>();
+		for (Long str : planuuidIds) {
+
+			Integer orgId = IdUtils.doParse(str).getOrgId();
+			if(!orgIds.contains(orgId))
+			{
+				orgIds.add(orgId);
+			}
+		}
+		int result = dispatchMapper.updateDispatchPlanListByStatusSYNC(planuuidIds, Constant.STATUS_SYNC_0, orgIds);
 		return result > 0 ? true : false;
 	}
 
-	/**
-	 * 找出当前可以拨打的号码用户
-	 * 
-	 * @param callHour
-	 * @return userids
-	 */
-	@Override
-	public List<Integer> getUserIdsByCallHour(String callHour) {
-		DispatchPlan dis = new DispatchPlan();
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setCallHour(callHour);
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		dis.setFlag(Constant.IS_FLAG_2);
-		List<Integer> userIds = new ArrayList<>();
-		List<DispatchPlan> selectByCallHour4UserId = dispatchMapper.selectByCallHour4UserId(dis);
-		for (DispatchPlan dto : selectByCallHour4UserId) {
-			userIds.add(dto.getUserId());
-		}
-		// logger.info("getUserIdsByCallHour..."+userIds.size());
-		return userIds;
-	}
 
-	/**
-	 * 根据拨打时间 用户id 查询出线路
-	 */
-	@Override
-	public List<Integer> getPhonesByCallHourAndUserId(String callhour, Integer userId) {
-		DispatchPlan dis = new DispatchPlan();
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setCallHour(callhour);
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		dis.setFlag(Constant.IS_FLAG_2);
-		List<Integer> lineIds = new ArrayList<>();
-		List<DispatchPlan> selectByCallHour4UserId = dispatchMapper.selectByCallHour4LineId(dis);
-		for (DispatchPlan dto : selectByCallHour4UserId) {
-			lineIds.add(dto.getLine());
-		}
-		return lineIds;
-	}
 
 	@Override
 	public List<DispatchPlan> getUsersByParamsByUserId(Integer userId, Integer limit, Integer statusPlan,
@@ -266,17 +225,27 @@ public class IGetPhonesInterfaceImpl implements IGetPhonesInterface {
 		dis.setLimitStart(0);
 		dis.setLimitEnd(limit);
 
-		return dispatchMapper.selectByCallHour(dis);
+		List<Integer> orgIds = new ArrayList<>();
+		orgIds.add(ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId))).getId().intValue());
+		return dispatchMapper.selectByCallHour(dis,  orgIds);
 	}
 
-	@Override
-	public Integer getCountByUserId(Integer userId, Integer statusPlan, Integer statusSync, String flag) {
-		DispatchPlan dis = new DispatchPlan();
-		dis.setUserId(userId);
-		dis.setStatusPlan(statusPlan);
-		dis.setFlag(flag);
-		dis.setStatusSync(statusSync);
-		return dispatchMapper.getCountByUserId(dis);
+
+	private List<Integer> getAllOrgIds()
+	{
+		Result.ReturnData<List<Integer>> resp = orgService.getAllOrgId();
+		List<Integer> result = null;
+		if (resp != null && resp.getBody() != null) {
+			result = resp.getBody();
+		}
+
+		if(result == null)
+		{
+			result = new ArrayList<>();
+		}
+
+		return  result;
 	}
+
 
 }

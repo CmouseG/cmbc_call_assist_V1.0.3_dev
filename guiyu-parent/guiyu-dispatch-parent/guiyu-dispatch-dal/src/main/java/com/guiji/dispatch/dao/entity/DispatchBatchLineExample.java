@@ -2,10 +2,9 @@ package com.guiji.dispatch.dao.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class DispatchLinesExample {
+public class DispatchBatchLineExample {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -16,7 +15,7 @@ public class DispatchLinesExample {
 
     protected Integer limitEnd;
 
-    public DispatchLinesExample() {
+    public DispatchBatchLineExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -186,133 +185,63 @@ public class DispatchLinesExample {
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidIsNull() {
-            addCriterion("planuuid is null");
+        public Criteria andBatchIdIsNull() {
+            addCriterion("batch_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidIsNotNull() {
-            addCriterion("planuuid is not null");
+        public Criteria andBatchIdIsNotNull() {
+            addCriterion("batch_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidEqualTo(long value) {
-            addCriterion("planuuid =", value, "planuuid");
+        public Criteria andBatchIdEqualTo(Integer value) {
+            addCriterion("batch_id =", value, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotEqualTo(long value) {
-            addCriterion("planuuid <>", value, "planuuid");
+        public Criteria andBatchIdNotEqualTo(Integer value) {
+            addCriterion("batch_id <>", value, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidGreaterThan(long value) {
-            addCriterion("planuuid >", value, "planuuid");
+        public Criteria andBatchIdGreaterThan(Integer value) {
+            addCriterion("batch_id >", value, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidGreaterThanOrEqualTo(long value) {
-            addCriterion("planuuid >=", value, "planuuid");
+        public Criteria andBatchIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("batch_id >=", value, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidLessThan(long value) {
-            addCriterion("planuuid <", value, "planuuid");
+        public Criteria andBatchIdLessThan(Integer value) {
+            addCriterion("batch_id <", value, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidLessThanOrEqualTo(long value) {
-            addCriterion("planuuid <=", value, "planuuid");
+        public Criteria andBatchIdLessThanOrEqualTo(Integer value) {
+            addCriterion("batch_id <=", value, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidLike(long value) {
-            addCriterion("planuuid like", value, "planuuid");
+        public Criteria andBatchIdIn(List<Integer> values) {
+            addCriterion("batch_id in", values, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotLike(long value) {
-            addCriterion("planuuid not like", value, "planuuid");
+        public Criteria andBatchIdNotIn(List<Integer> values) {
+            addCriterion("batch_id not in", values, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidIn(List<Long> values) {
-            addCriterion("planuuid in", values, "planuuid");
+        public Criteria andBatchIdBetween(Integer value1, Integer value2) {
+            addCriterion("batch_id between", value1, value2, "batchId");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotIn(List<Long> values) {
-            addCriterion("planuuid not in", values, "planuuid");
-            return (Criteria) this;
-        }
-
-        public Criteria andPlanuuidBetween(long value1, long value2) {
-            addCriterion("planuuid between", value1, value2, "planuuid");
-            return (Criteria) this;
-        }
-
-        public Criteria andPlanuuidNotBetween(long value1, long value2) {
-            addCriterion("planuuid not between", value1, value2, "planuuid");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIsNull() {
-            addCriterion("create_time is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIsNotNull() {
-            addCriterion("create_time is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeEqualTo(Date value) {
-            addCriterion("create_time =", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotEqualTo(Date value) {
-            addCriterion("create_time <>", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeGreaterThan(Date value) {
-            addCriterion("create_time >", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("create_time >=", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeLessThan(Date value) {
-            addCriterion("create_time <", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
-            addCriterion("create_time <=", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIn(List<Date> values) {
-            addCriterion("create_time in", values, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotIn(List<Date> values) {
-            addCriterion("create_time not in", values, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeBetween(Date value1, Date value2) {
-            addCriterion("create_time between", value1, value2, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
-            addCriterion("create_time not between", value1, value2, "createTime");
+        public Criteria andBatchIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("batch_id not between", value1, value2, "batchId");
             return (Criteria) this;
         }
 
@@ -373,6 +302,186 @@ public class DispatchLinesExample {
 
         public Criteria andLineIdNotBetween(Integer value1, Integer value2) {
             addCriterion("line_id not between", value1, value2, "lineId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdIsNull() {
+            addCriterion("user_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdIsNotNull() {
+            addCriterion("user_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdEqualTo(Integer value) {
+            addCriterion("user_id =", value, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdNotEqualTo(Integer value) {
+            addCriterion("user_id <>", value, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdGreaterThan(Integer value) {
+            addCriterion("user_id >", value, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("user_id >=", value, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdLessThan(Integer value) {
+            addCriterion("user_id <", value, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdLessThanOrEqualTo(Integer value) {
+            addCriterion("user_id <=", value, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdIn(List<Integer> values) {
+            addCriterion("user_id in", values, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdNotIn(List<Integer> values) {
+            addCriterion("user_id not in", values, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdBetween(Integer value1, Integer value2) {
+            addCriterion("user_id between", value1, value2, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("user_id not between", value1, value2, "userId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIsNull() {
+            addCriterion("org_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIsNotNull() {
+            addCriterion("org_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdEqualTo(Integer value) {
+            addCriterion("org_id =", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotEqualTo(Integer value) {
+            addCriterion("org_id <>", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdGreaterThan(Integer value) {
+            addCriterion("org_id >", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("org_id >=", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdLessThan(Integer value) {
+            addCriterion("org_id <", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdLessThanOrEqualTo(Integer value) {
+            addCriterion("org_id <=", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIn(List<Integer> values) {
+            addCriterion("org_id in", values, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotIn(List<Integer> values) {
+            addCriterion("org_id not in", values, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdBetween(Integer value1, Integer value2) {
+            addCriterion("org_id between", value1, value2, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("org_id not between", value1, value2, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeIsNull() {
+            addCriterion("line_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeIsNotNull() {
+            addCriterion("line_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeEqualTo(Integer value) {
+            addCriterion("line_type =", value, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeNotEqualTo(Integer value) {
+            addCriterion("line_type <>", value, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeGreaterThan(Integer value) {
+            addCriterion("line_type >", value, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("line_type >=", value, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeLessThan(Integer value) {
+            addCriterion("line_type <", value, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("line_type <=", value, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeIn(List<Integer> values) {
+            addCriterion("line_type in", values, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeNotIn(List<Integer> values) {
+            addCriterion("line_type not in", values, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeBetween(Integer value1, Integer value2) {
+            addCriterion("line_type between", value1, value2, "lineType");
+            return (Criteria) this;
+        }
+
+        public Criteria andLineTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("line_type not between", value1, value2, "lineType");
             return (Criteria) this;
         }
 

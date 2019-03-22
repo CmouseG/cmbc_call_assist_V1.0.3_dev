@@ -16,6 +16,7 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,19 +33,21 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 	private DispatchPlan dispatchPlanParam;
 	private int batchId;
 	private Long userId;
-	private String orgCode;	
+	private String orgCode;
+	private Integer orgId;
 	//自建参数
 	DispatchPlan dispatchPlan = null;
 	Integer fileRecordId = null;
 	List<String> phones = new ArrayList<>();
 	int count;
 	//构造
-	public BatchImportExcelListener(DispatchPlan dispatchPlanParam, int batchId, Long userId, String orgCode)
+	public BatchImportExcelListener(DispatchPlan dispatchPlanParam, int batchId, Long userId, String orgCode, Integer orgId)
 	{
 		this.dispatchPlanParam = dispatchPlanParam;
 		this.batchId = batchId;
 		this.userId = userId;
 		this.orgCode = orgCode;
+		this.orgId = orgId;
 		
 		dispatchPlan = new DispatchPlan();
 		fileRecordId = dispatchPlanParam.getFileRecordId();
@@ -70,12 +73,16 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		{
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
 
+			logger.info("批量导入开始，invoke,dispatchPlan:{},userId:{},orgCode:{},orgId:{}",dispatchPlan,userId,orgCode,orgId);
+
 			if (dispatchPlan == null) {
 				dispatchPlan = new DispatchPlan();
 				dispatchPlan.setFileRecordId(fileRecordId);
 				dispatchPlan.setPhone(row.getPhone());
 				dispatchPlan.setParams(row.getParamaters());
 				dispatchPlan.setAttach(row.getAttach());
+
+
 				saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN, i.intValue());
 				return;
 			}
@@ -91,6 +98,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 			dispatchPlan.setBatchId(batchId);
 			dispatchPlan.setUserId(userId.intValue());
 			dispatchPlan.setOrgCode(orgCode);
+			dispatchPlan.setOrgId(orgId);
 			//查询号码归属地
 //			String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
 //			dispatchPlan.setCityName(cityName);
@@ -108,7 +116,8 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 			count = count + 1;
 			phones.add(dispatchPlan.getPhone());
 		} catch (Exception e) {
-			saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN);
+			logger.error("导入失败, 第{}行发生异常", i, e);
+			//saveFileErrorRecords(dispatchPlan, BatchImportErrorCodeEnum.UNKNOWN);
 			logger.error("导入失败, 第{}行发生异常", i, e);
 		}
 		
@@ -132,7 +141,7 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		dispatchPlan.setPhone(phone);
 		dispatchPlan.setAttach(attach);
 		dispatchPlan.setParams(params);
-		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+		dispatchPlan.setPlanUuid(SnowflakeIdWorker.nextId(this.orgId));
 		dispatchPlan.setGmtModified(DateUtil.getCurrent4Time());
 		dispatchPlan.setGmtCreate(DateUtil.getCurrent4Time());
 

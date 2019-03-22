@@ -1,28 +1,13 @@
 package com.guiji.dispatch.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.botsentence.api.IBotSentenceProcess;
+import com.guiji.botsentence.api.entity.BotSentenceProcess;
+import com.guiji.botsentence.api.entity.ServerResult;
 import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
 import com.guiji.clm.api.LineMarketRemote;
-import com.guiji.clm.model.SipLineVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.api.IThirdApiOut;
@@ -32,23 +17,14 @@ import com.guiji.dispatch.bean.ThirdCheckParams;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.FileErrorRecordsMapper;
-import com.guiji.dispatch.dao.ThirdImportErrorMapper;
 import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
-import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
-import com.guiji.dispatch.dao.entity.DispatchPlanExample;
+import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
-import com.guiji.dispatch.dao.entity.FileErrorRecordsExample;
-import com.guiji.dispatch.dao.entity.FileRecordsExample;
-import com.guiji.dispatch.dao.entity.ThirdImportError;
-import com.guiji.dispatch.dao.entity.ThirdInterfaceRecords;
-import com.guiji.dispatch.dao.entity.ThirdInterfaceRecordsExample;
-import com.guiji.dispatch.line.ILinesService;
-import com.guiji.dispatch.model.DispatchLines;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.model.DispatchBatchLine;
 import com.guiji.dispatch.model.DispatchPlan;
-import com.guiji.dispatch.model.DispatchPlanApi;
-import com.guiji.dispatch.model.DispatchPlanList;
-import com.guiji.dispatch.model.PlanCallInfoCount;
-import com.guiji.dispatch.model.PlanResultInfo;
+import com.guiji.dispatch.model.*;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.thirdapi.ThirdApiImportQueueHandler;
@@ -56,11 +32,18 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
-import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.guiji.botsentence.api.IBotSentenceProcess;
-import com.guiji.botsentence.api.entity.BotSentenceProcess;
-import com.guiji.botsentence.api.entity.ServerResult;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 第三方接口
@@ -96,16 +79,16 @@ public class ThirdApiController implements IThirdApiOut {
 	@Autowired
 	private LineMarketRemote lineMarket;
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 	@Autowired
 	private IPhoneRegionService phoneRegionService;
 
 	@Override
 	@GetMapping(value = "out/getCalldetail")
-	public ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetail(String phone,
+	public ReturnData<Page<com.guiji.dispatch.model.CallPlanDetailRecordVO>> getCalldetail(long userId, String phone,
 			String batchNumber, int pagenum, int pagesize) {
 		Page<com.guiji.dispatch.model.CallPlanDetailRecordVO> page = new Page<>();
-		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(phone,
+		List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens = dispatchPlanService.queryDispatchPlanByPhoens(userId, phone,
 				batchNumber, pagenum, pagesize);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andPhoneEqualTo(phone).andBatchNameEqualTo(batchNumber);
@@ -127,9 +110,9 @@ public class ThirdApiController implements IThirdApiOut {
 
 	@Override
 	@GetMapping(value = "out/getcall4BatchName")
-	public ReturnData<PlanCallInfoCount> getcall4BatchName(String batchName, int pagenum, int pagesize) {
-		int countAlready = dispatchPlanService.getcall4BatchName(batchName, Constant.STATUSPLAN_1);
-		int countNo = dispatchPlanService.getcall4BatchName(batchName, Constant.STATUSPLAN_2);
+	public ReturnData<PlanCallInfoCount> getcall4BatchName(long userId, String batchName, int pagenum, int pagesize) {
+		int countAlready = dispatchPlanService.getcall4BatchName(userId, batchName, Constant.STATUSPLAN_1);
+		int countNo = dispatchPlanService.getcall4BatchName(userId, batchName, Constant.STATUSPLAN_2);
 		PlanCallInfoCount info = new PlanCallInfoCount();
 		info.setSuccCount(countNo);
 		info.setPlanCount(countAlready);
@@ -186,7 +169,7 @@ public class ThirdApiController implements IThirdApiOut {
 	}
 
 	/**
-	 * @param dispatchPlanList
+	 * @param jsonList
 	 * @return
 	 */
 	@Override
@@ -226,6 +209,21 @@ public class ThirdApiController implements IThirdApiOut {
 		batch.setOrgCode(user.getBody().getOrgCode());
 		batchMapper.insert(batch);
 
+		//路线类型
+		Integer lineType = null != parseObject.getLineType()?parseObject.getLineType(): PlanLineTypeEnum.SIP.getType();
+		// 加入线路
+		List<DispatchBatchLine> lineList = parseObject.getLines();
+		for (DispatchBatchLine lines : lineList) {
+
+			com.guiji.dispatch.dao.entity.DispatchBatchLine newLine = new com.guiji.dispatch.dao.entity.DispatchBatchLine();
+			BeanUtils.copyProperties(lines,newLine);
+
+			newLine.setBatchId(batch.getId());
+			newLine.setLineType(lineType);
+			newLine.setOrgId(parseObject.getOrgId());
+			newLine.setUserId(batch.getUserId());
+			lineService.insert(newLine);
+		}
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> fails = new ArrayList<>();
 		List<com.guiji.dispatch.dao.entity.DispatchPlan> succ = new ArrayList<>();
 		List<String> phones = new ArrayList<>();
@@ -243,7 +241,7 @@ public class ThirdApiController implements IThirdApiOut {
 				errorMsg = true;
 				continue;
 			}
-			bean.setPlanUuid(IdGenUtil.uuid());
+			bean.setPlanUuid(SnowflakeIdWorker.nextId(bean.getOrgId()));
 			bean.setBatchId(batch.getId());
 			bean.setUserId(Integer.valueOf(parseObject.getUserId()));
 //			bean.setLine(Integer.valueOf(parseObject.getLine()));
@@ -272,15 +270,6 @@ public class ThirdApiController implements IThirdApiOut {
 				errorMsg = true;
 				continue;
 			}
-			// 加入线路
-			List<com.guiji.dispatch.dao.entity.DispatchLines> list = new ArrayList<>();
-			for (DispatchLines line : parseObject.getLines()) {
-				com.guiji.dispatch.dao.entity.DispatchLines newLine = new com.guiji.dispatch.dao.entity.DispatchLines();
-				BeanUtils.copyProperties(line,newLine);
-				newLine.setPlanuuid(dispatchPlan.getPlanUuid());
-				list.add(newLine);
-			}
-			bean.setLines(list);
 			// 查询号码归属地
 			String cityName = phoneRegionService.queryPhoneRegion(dispatchPlan.getPhone());
 			bean.setCityName(cityName);

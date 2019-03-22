@@ -17,7 +17,7 @@ import com.xxl.job.core.handler.annotation.JobHandler;
 public class RefreshLineDataHandler extends IJobHandler{
 
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 
 	@Override
 	public ReturnT<String> execute(String arg0) throws Exception {

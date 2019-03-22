@@ -1,6 +1,7 @@
 package com.guiji.cloud.zuul.controller;
 
 import com.guiji.auth.api.IApiLogin;
+import com.guiji.auth.api.IAuth;
 import com.guiji.cloud.api.ILogin;
 import com.guiji.cloud.zuul.config.AuthUtil;
 import com.guiji.cloud.zuul.config.JwtConfig;
@@ -8,7 +9,9 @@ import com.guiji.cloud.zuul.entity.JwtToken;
 import com.guiji.cloud.zuul.entity.WxAccount;
 import com.guiji.cloud.zuul.service.ZuulService;
 import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import org.apache.shiro.SecurityUtils;
@@ -34,6 +37,8 @@ public class LoginController implements ILogin {
     JwtConfig jwtConfig;
     @Autowired
     IApiLogin iApiLogin;
+    @Autowired
+    IAuth auth;
 
 
     /**
@@ -59,6 +64,11 @@ public class LoginController implements ILogin {
                     }
                 }
             }
+            long orgId = -1;
+            ReturnData<SysOrganization> result = auth.getOrgByUserId(userId);
+            if(result != null && result.getBody() != null) {
+            	orgId = result.getBody().getId();
+            }
             SysUser sysUser = sysUserMapper.getUserById(userId);
             WxAccount wxAccount = new WxAccount();
             wxAccount.setUserId(userId);
@@ -66,6 +76,7 @@ public class LoginController implements ILogin {
             wxAccount.setSuperAdmin(isSuperAdmin);
             wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
             wxAccount.setLastTime(new Date());
+            wxAccount.setOrgId(orgId);
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
             JwtToken token = new JwtToken(jwtToken);
             Map<String, Object> map = new HashMap<String, Object>();
@@ -74,6 +85,7 @@ public class LoginController implements ILogin {
             map.put("token", jwtToken);
             map.put("username", sysUser.getUsername());
             map.put("isDesensitization", sysUser.getIsDesensitization());
+            map.put("orgId", orgId);
             return Result.ok(map);
         } catch (Exception e) {
             return Result.error("00010003");
@@ -110,6 +122,11 @@ public class LoginController implements ILogin {
                     }
                 }
             }
+            long orgId = -1;
+            ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
+            if(returnData != null && returnData.getBody() != null) {
+            	orgId = returnData.getBody().getId();
+            }
 
             WxAccount wxAccount = new WxAccount();
             wxAccount.setUserId(userId);
@@ -117,6 +134,7 @@ public class LoginController implements ILogin {
             wxAccount.setSuperAdmin(isSuperAdmin);
             wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
             wxAccount.setLastTime(new Date());
+            wxAccount.setOrgId(orgId);
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
 
             Map<String, Object> map = new HashMap<String, Object>();

@@ -1,7 +1,7 @@
 package com.guiji.dispatch.impl;
 
 import com.guiji.dispatch.constant.RedisConstant;
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.enums.GateWayLineStatusEnum;
 import com.guiji.dispatch.service.GateWayLineService;
 import com.guiji.dispatch.vo.GateWayLineOccupyVo;
@@ -30,9 +30,9 @@ public class GateWayLineServiceImpl implements GateWayLineService {
      * @param lineList
      */
     @Override
-    public void setGatewayLineRedis(List<DispatchLines> lineList) {
+    public void setGatewayLineRedis(List<DispatchBatchLine> lineList) {
         if (null != lineList && lineList.size() > 0) {
-            for (DispatchLines line : lineList) {
+            for (DispatchBatchLine line : lineList) {
                 Integer lineId = line.getLineId();
                 try {
                     String gatewayLineKey = RedisConstant.RedisConstantKey.gatewayLineKey + lineId;

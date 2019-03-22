@@ -1,17 +1,20 @@
-package com.guiji.dispatch.model;
+package com.guiji.dispatch.dao.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
-public class DispatchLines implements Serializable {
+public class DispatchBatchLine implements Serializable {
     private Integer id;
 
-    private String planuuid;
-
-    private Date createTime;
+    private Integer batchId;
 
     private Integer lineId;
+
+    private Integer userId;
+
+    private Integer orgId;
+
+    private Integer lineType;
 
     private String lineName;
 
@@ -29,20 +32,12 @@ public class DispatchLines implements Serializable {
         this.id = id;
     }
 
-    public String getPlanuuid() {
-        return planuuid;
+    public Integer getBatchId() {
+        return batchId;
     }
 
-    public void setPlanuuid(String planuuid) {
-        this.planuuid = planuuid == null ? null : planuuid.trim();
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setBatchId(Integer batchId) {
+        this.batchId = batchId;
     }
 
     public Integer getLineId() {
@@ -51,6 +46,30 @@ public class DispatchLines implements Serializable {
 
     public void setLineId(Integer lineId) {
         this.lineId = lineId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
+    public Integer getLineType() {
+        return lineType;
+    }
+
+    public void setLineType(Integer lineType) {
+        this.lineType = lineType;
     }
 
     public String getLineName() {
@@ -84,9 +103,11 @@ public class DispatchLines implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", planuuid=").append(planuuid);
-        sb.append(", createTime=").append(createTime);
+        sb.append(", batchId=").append(batchId);
         sb.append(", lineId=").append(lineId);
+        sb.append(", userId=").append(userId);
+        sb.append(", orgId=").append(orgId);
+        sb.append(", lineType=").append(lineType);
         sb.append(", lineName=").append(lineName);
         sb.append(", lineAmount=").append(lineAmount);
         sb.append(", overtarea=").append(overtarea);

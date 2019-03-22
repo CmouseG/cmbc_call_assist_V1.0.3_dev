@@ -1,28 +1,29 @@
 package com.guiji.dispatch.bean;
 
-import java.util.List;
-
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
+
+import java.util.List;
 
 
 public class BatchDispatchPlanList {
 	private String batchName;
 	private String robot;
-	private List<DispatchLines> lines;
+	private List<DispatchBatchLine> lines;
 	private String clean;
 	private String callHour;
 	private String callDate;
 	private String robotName;
 	private String lineName;
 	private List<DispatchPlan> mobile;
+	private Integer lineType;
 
 
-	public List<DispatchLines> getLines() {
+	public List<DispatchBatchLine> getLines() {
 		return lines;
 	}
 
-	public void setLines(List<DispatchLines> lines) {
+	public void setLines(List<DispatchBatchLine> lines) {
 		this.lines = lines;
 	}
 
@@ -92,11 +93,12 @@ public class BatchDispatchPlanList {
 		this.mobile = mobile;
 	}
 
-	
-	
-	
-	
-	
-	
-	
+
+	public Integer getLineType() {
+		return lineType;
+	}
+
+	public void setLineType(Integer lineType) {
+		this.lineType = lineType;
+	}
 }

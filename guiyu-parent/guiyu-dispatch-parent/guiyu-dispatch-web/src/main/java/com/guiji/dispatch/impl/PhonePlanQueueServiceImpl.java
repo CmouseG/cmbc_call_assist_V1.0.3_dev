@@ -4,7 +4,7 @@ import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.utils.DateUtil;
@@ -34,7 +34,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	@Autowired
 	private DistributedLockHandler distributedLockHandler;
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 
 	@Override
 	public void execute() throws Exception {
@@ -121,13 +121,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				try {
 					if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
 						//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
-						List<String> planUuids = new ArrayList<String>();
+						List<Long> planUuids = new ArrayList<Long>();
 						while (true) {
 							DispatchPlan dispatchPlan = (DispatchPlan)redisUtil.lrightPop(queueKey);
 							if(dispatchPlan == null) {
 								break;
 							} else {
-								planUuids.add(dispatchPlan.getPlanUuid());
+								planUuids.add(dispatchPlan.getPlanUuidLong());
 							}
 						}
 						if(planUuids.size()>0){
@@ -156,13 +156,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 				try {
 					if (distributedLockHandler.tryLock(queueLock)) { // 默认锁设置
 						//将redis拨打队列中的计划在数据库中status_sync状态回退到未进队列状态，并清空redis拨打队列
-						List<String> planUuids = new ArrayList<String>();
+						List<Long> planUuids = new ArrayList<Long>();
 						while (true) {
 							DispatchPlan dispatchPlan = (DispatchPlan)redisUtil.lrightPop(queueKey);
 							if(dispatchPlan == null) {
 								break;
 							} else {
-								planUuids.add(dispatchPlan.getPlanUuid());
+								planUuids.add(dispatchPlan.getPlanUuidLong());
 							}
 						}
 						if(planUuids.size()>0){

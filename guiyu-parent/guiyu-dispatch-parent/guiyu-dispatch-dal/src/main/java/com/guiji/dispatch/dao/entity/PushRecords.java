@@ -38,6 +38,10 @@ public class PushRecords implements Serializable {
         this.planuuid = planuuid == null ? null : planuuid.trim();
     }
 
+    public void setPlanuuid(long planuuid) {
+        this.planuuid = planuuid +"";
+    }
+
     public String getPhone() {
         return phone;
     }

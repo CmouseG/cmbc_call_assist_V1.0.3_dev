@@ -125,66 +125,6 @@ public class DispatchPlanExample {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andIdIsNull() {
-            addCriterion("id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdIsNotNull() {
-            addCriterion("id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdEqualTo(Integer value) {
-            addCriterion("id =", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdNotEqualTo(Integer value) {
-            addCriterion("id <>", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdGreaterThan(Integer value) {
-            addCriterion("id >", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("id >=", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdLessThan(Integer value) {
-            addCriterion("id <", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdLessThanOrEqualTo(Integer value) {
-            addCriterion("id <=", value, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdIn(List<Integer> values) {
-            addCriterion("id in", values, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdNotIn(List<Integer> values) {
-            addCriterion("id not in", values, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdBetween(Integer value1, Integer value2) {
-            addCriterion("id between", value1, value2, "id");
-            return (Criteria) this;
-        }
-
-        public Criteria andIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("id not between", value1, value2, "id");
-            return (Criteria) this;
-        }
-
         public Criteria andPlanUuidIsNull() {
             addCriterion("plan_uuid is null");
             return (Criteria) this;
@@ -195,62 +135,52 @@ public class DispatchPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidEqualTo(String value) {
+        public Criteria andPlanUuidEqualTo(long value) {
             addCriterion("plan_uuid =", value, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidNotEqualTo(String value) {
+        public Criteria andPlanUuidNotEqualTo(long value) {
             addCriterion("plan_uuid <>", value, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidGreaterThan(String value) {
+        public Criteria andPlanUuidGreaterThan(long value) {
             addCriterion("plan_uuid >", value, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidGreaterThanOrEqualTo(String value) {
+        public Criteria andPlanUuidGreaterThanOrEqualTo(long value) {
             addCriterion("plan_uuid >=", value, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidLessThan(String value) {
+        public Criteria andPlanUuidLessThan(long value) {
             addCriterion("plan_uuid <", value, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidLessThanOrEqualTo(String value) {
+        public Criteria andPlanUuidLessThanOrEqualTo(long value) {
             addCriterion("plan_uuid <=", value, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidLike(String value) {
-            addCriterion("plan_uuid like", value, "planUuid");
-            return (Criteria) this;
-        }
-
-        public Criteria andPlanUuidNotLike(String value) {
-            addCriterion("plan_uuid not like", value, "planUuid");
-            return (Criteria) this;
-        }
-
-        public Criteria andPlanUuidIn(List<String> values) {
+        public Criteria andPlanUuidIn(List<Long> values) {
             addCriterion("plan_uuid in", values, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidNotIn(List<String> values) {
+        public Criteria andPlanUuidNotIn(List<Long> values) {
             addCriterion("plan_uuid not in", values, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidBetween(String value1, String value2) {
+        public Criteria andPlanUuidBetween(long value1, long value2) {
             addCriterion("plan_uuid between", value1, value2, "planUuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanUuidNotBetween(String value1, String value2) {
+        public Criteria andPlanUuidNotBetween(long value1, long value2) {
             addCriterion("plan_uuid not between", value1, value2, "planUuid");
             return (Criteria) this;
         }
@@ -2014,6 +1944,71 @@ public class DispatchPlanExample {
             addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
+
+
+        /////////////////////////////////////////
+
+
+        public Criteria andOrgIdIsNull() {
+            addCriterion("org_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIsNotNull() {
+            addCriterion("org_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdEqualTo(Integer value) {
+            addCriterion("org_id =", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotEqualTo(Integer value) {
+            addCriterion("org_id <>", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdGreaterThan(Integer value) {
+            addCriterion("org_id >", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("org_id >=", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdLessThan(Integer value) {
+            addCriterion("org_id <", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdLessThanOrEqualTo(Integer value) {
+            addCriterion("org_id <=", value, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdIn(List<Integer> values) {
+            addCriterion("org_id in", values, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotIn(List<Integer> values) {
+            addCriterion("org_id not in", values, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdBetween(Integer value1, Integer value2) {
+            addCriterion("org_id between", value1, value2, "orgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("org_id not between", value1, value2, "orgId");
+            return (Criteria) this;
+        }
+
     }
 
     public static class Criteria extends GeneratedCriteria {

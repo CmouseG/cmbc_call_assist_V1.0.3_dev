@@ -36,11 +36,12 @@ public class BatchImportService implements IBatchImportService {
 
 	@Async("asyncBatchImportExecutor")
 	@Override
-	public void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode)
+	public void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode, Integer orgId)
 	{
 		try
 		{
-			BatchImportExcelListener excelListener = new BatchImportExcelListener(dispatchPlanParam, batchId, userId, orgCode);
+			logger.info("批量导入开始，批次ID:{},dispatchPlanParam:{},userId:{},orgCode:{},orgId:{}",batchId,dispatchPlanParam,userId,orgCode,orgId);
+			BatchImportExcelListener excelListener = new BatchImportExcelListener(dispatchPlanParam, batchId, userId, orgCode, orgId);
 			excelListener.setBatchImportQueueHandler(batchImportQueueHandler);
 			excelListener.setBlackService(blackService);
 			excelListener.setFileRecordErrorService(fileRecordErrorService);

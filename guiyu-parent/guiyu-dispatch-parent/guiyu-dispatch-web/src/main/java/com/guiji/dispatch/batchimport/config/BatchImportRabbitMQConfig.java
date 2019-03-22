@@ -16,25 +16,12 @@ import org.springframework.context.annotation.Configuration;
 public class BatchImportRabbitMQConfig
 {
     @Bean("batchImportRabbitFactory")
-    public SimpleRabbitListenerContainerFactory containerFactory(SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory) {
+    public SimpleRabbitListenerContainerFactory containerFactory(
+            SimpleRabbitListenerContainerFactoryConfigurer configurer,
+            ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConcurrentConsumers(50);  //设置线程数
-        factory.setMaxConcurrentConsumers(200); //最大线程数
-
-        //        ExecutorService service= Executors.newFixedThreadPool(100);
-//        factory.setTaskExecutor(service);
-//        factory.setPrefetchCount(5);
-
-        configurer.configure(factory, connectionFactory);
-        return factory;
-    }
-
-    @Bean("batchImportSaveDBRabbitFactory")
-    public SimpleRabbitListenerContainerFactory batchImportSaveDBRabbitFactory(SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory)
-    {
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConcurrentConsumers(50);  //设置线程数
-        factory.setMaxConcurrentConsumers(200); //最大线程数
+        factory.setConcurrentConsumers(50); // 设置线程数
+        factory.setMaxConcurrentConsumers(200); // 最大线程数
 
         //        ExecutorService service= Executors.newFixedThreadPool(100);
         //        factory.setTaskExecutor(service);
@@ -44,12 +31,13 @@ public class BatchImportRabbitMQConfig
         return factory;
     }
 
-    @Bean("batchImportSaveLineDBRabbitFactory")
-    public SimpleRabbitListenerContainerFactory batchImportSaveLineDBRabbitFactory(SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory)
-    {
+    @Bean("batchImportSaveDBRabbitFactory")
+    public SimpleRabbitListenerContainerFactory batchImportSaveDBRabbitFactory(
+            SimpleRabbitListenerContainerFactoryConfigurer configurer,
+            ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConcurrentConsumers(10);  //设置线程数
-        factory.setMaxConcurrentConsumers(100); //最大线程数
+        factory.setConcurrentConsumers(50); // 设置线程数
+        factory.setMaxConcurrentConsumers(200); // 最大线程数
 
         //        ExecutorService service= Executors.newFixedThreadPool(100);
         //        factory.setTaskExecutor(service);

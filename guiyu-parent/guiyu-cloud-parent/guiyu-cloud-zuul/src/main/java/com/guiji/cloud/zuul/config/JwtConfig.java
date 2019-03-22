@@ -49,6 +49,7 @@ public class JwtConfig {
                 .withClaim("isSuperAdmin", wxAccount.getSuperAdmin())
                 .withClaim("isDesensitization", wxAccount.getIsDesensitization())
                 .withClaim("jwt-id", jwtId)
+                .withClaim("orgId", wxAccount.getOrgId())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
@@ -77,6 +78,7 @@ public class JwtConfig {
                     .withClaim("isSuperAdmin", getSuperAdminByToken(redisToken))
                     .withClaim("isDesensitization", getIsDesensitizationByToken(redisToken))
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
+                    .withClaim("orgId", getOrgIdByToken(redisToken))
                     .acceptExpiresAt(System.currentTimeMillis() + expire_time*1000 )  //JWT 正确的配置续期姿势
                     .build();
             //3 . 验证token
@@ -90,7 +92,7 @@ public class JwtConfig {
         }
     }
 
-    /**
+	/**
      * 校验refresh token是否正确
      */
     public String verifyRefreshToken(String token) throws Exception {
@@ -108,6 +110,7 @@ public class JwtConfig {
             Boolean isSuperAdmin = getSuperAdminByToken(redisToken);
             Integer isDesensitization = getIsDesensitizationByToken(redisToken);
             String oldJwtId = getJwtIdByToken(redisToken);
+            Long orgId = getOrgIdByToken(redisToken);
 
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("userId", userId)
@@ -115,6 +118,7 @@ public class JwtConfig {
                     .withClaim("isSuperAdmin", isSuperAdmin)
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
                     .withClaim("isDesensitization", isDesensitization)
+                    .withClaim("orgId", orgId)
                     .acceptExpiresAt(System.currentTimeMillis() + refresh_time*1000 )  //JWT 正确的配置续期姿势
                     .build();
             //3 . 验证token
@@ -129,6 +133,7 @@ public class JwtConfig {
                     .withClaim("isSuperAdmin", isSuperAdmin)
                     .withClaim("jwt-id", newJwtId)
                     .withClaim("isDesensitization", isDesensitization)
+                    .withClaim("orgId", orgId)
                     .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
                     .sign(algorithm);
             //2 . Redis缓存JWT,
@@ -174,4 +179,9 @@ public class JwtConfig {
     public Integer getIsDesensitizationByToken(String token) throws JWTDecodeException {
         return JWT.decode(token).getClaim("isDesensitization").asInt();
     }
+    
+    public Long getOrgIdByToken(String token) throws JWTDecodeException
+	{
+    	return JWT.decode(token).getClaim("orgId").asLong();
+	}
 }

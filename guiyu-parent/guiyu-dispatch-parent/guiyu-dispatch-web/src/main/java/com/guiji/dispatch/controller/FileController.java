@@ -1,50 +1,39 @@
 package com.guiji.dispatch.controller;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.guiji.common.exception.GuiyuException;
-import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
-import com.guiji.dispatch.exception.DispatchCodeExceptionEnum;
-import com.guiji.dispatch.service.IDispatchPlanService;
-import com.guiji.dispatch.vo.DownLoadPlanVo;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUuidDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.FileErrorRecordsMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.dao.entity.DispatchPlanExample;
-import com.guiji.dispatch.dao.entity.FileErrorRecords;
-import com.guiji.dispatch.dao.entity.FileErrorRecordsExample;
-import com.guiji.dispatch.dao.entity.FileRecords;
-import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.dao.entity.*;
+import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.FileInterface;
+import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.HttpDownload;
-
+import com.guiji.dispatch.vo.DownLoadPlanVo;
+import com.guiji.utils.IdGengerator.IdUtils;
+import io.swagger.annotations.ApiOperation;
 import jxl.Workbook;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
-import jxl.write.Label;
-import jxl.write.WritableCellFormat;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
+import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.Boolean;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -57,7 +46,7 @@ public class FileController {
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
 	@Autowired
-	private ILinesService lineServiceImpl;
+	private IDispatchBatchLineService lineServiceImpl;
 
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
@@ -74,11 +63,11 @@ public class FileController {
 	 */
 	@GetMapping(value = "queryFileRecords")
 	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
-												@RequestParam(required = true, name = "pagesize") int pagesize,
-												@RequestParam(required = false, name = "batchName") String batchName,
-												@RequestParam(required = false, name = "startTime") String startTime,
-												@RequestParam(required = false, name = "endTime") String endTime,
-												@RequestHeader String orgCode) {
+			@RequestParam(required = true, name = "pagesize") int pagesize,
+			@RequestParam(required = false, name = "batchName") String batchName,
+			@RequestParam(required = false, name = "startTime") String startTime,
+			@RequestParam(required = false, name = "endTime") String endTime,
+			@RequestHeader String orgCode) {
 		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
 				endTime,orgCode);
 		return queryFileInterface;
@@ -113,14 +102,21 @@ public class FileController {
 
 	@PostMapping(value = "downloadChooseNum")
 	public Result.ReturnData<Object> downloadChooseNum(@RequestHeader Integer isDesensitization,
-													   @RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
+			@RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
-		List<String> ids = new ArrayList<>();
+		List<Long> ids = new ArrayList<>();
+		List<Integer> orgIds = new ArrayList<>();
 		for (int i = 0; i < dtos.length; i++) {
-			ids.add(dtos[i].getPlanuuid());
+			ids.add(Long.valueOf(dtos[i].getPlanuuid()));
+
+			Integer orgId = IdUtils.doParse(Long.valueOf(dtos[i].getPlanuuid())).getOrgId();
+			if(!orgIds.contains(orgId))
+			{
+				orgIds.add(orgId);
+			}
 		}
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidIn(ids);
+		ex.createCriteria().andPlanUuidIn(ids).andOrgIdIn(orgIds);
 
 		List<DownLoadPlanVo> selectByExample = dispatchMapper.queryDownloadPlanList(ex);
 		String fileName = "任务导出结果详情.xls";
@@ -182,12 +178,10 @@ public class FileController {
 		sheet.addCell(new Label(9, 0, "计划时间"));
 		sheet.addCell(new Label(10, 0, "所属用户"));
 		sheet.addCell(new Label(11, 0, "添加日期"));
-
-
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
 			//查询线路
-			List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuid());
+			List<DispatchBatchLine> queryLinesByPlanUUID = lineServiceImpl.queryListByBatchId(dispatchPlan.getBatchId());
 			int k = 0;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
 			k++;
@@ -211,7 +205,7 @@ public class FileController {
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;
 			String lineName="";
-			for(DispatchLines lines : queryLinesByPlanUUID){
+			for(DispatchBatchLine lines : queryLinesByPlanUUID){
 				lineName = lineName +""+ lines.getLineName()+",";
 			}
 			String lineNames = lineName.substring(0, lineName.length()-1);
@@ -233,7 +227,7 @@ public class FileController {
 
 	@GetMapping(value = "downloadErrorRecords")
 	public Result.ReturnData<Object> downloadErrorRecords(@RequestHeader Integer isDesensitization,
-														  @RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
+			@RequestParam(required = true, name = "fileRecordId") String fileRecordId, HttpServletResponse resp)
 			throws UnsupportedEncodingException, WriteException {
 		List<FileErrorRecords> queryErrorRecords = file.queryErrorRecords(fileRecordId);
 		String fileName = "错误详情结果.xls";
@@ -388,7 +382,7 @@ public class FileController {
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
 			//查询线路
-			//	List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuid());
+			//	List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuidLong());
 			int k = 0;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
 			k++;

@@ -1,13 +1,5 @@
 package com.guiji.dispatch.thirdinterface;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
 import com.guiji.ccmanager.api.ICallPlanDetail;
@@ -20,6 +12,13 @@ import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
 import com.guiji.utils.HttpClientUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 回调成功调用第三方接口
@@ -49,7 +48,7 @@ public class SuccPhonesThirdInterfaceImpl implements SuccPhonesThirdInterface {
 				String callRecordUrl = user.getBody().getCallRecordUrl();
 				JSONObject jsonObject = new JSONObject();
 				List<String> ids = new ArrayList<>();
-				ids.add(dis.getPlanUuid());
+				ids.add(dis.getPlanUuidLong() + "");
 				ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail
 						.getCallPlanDetailRecord(ids);
 				jsonObject.put("data", callPlanDetailRecord.getBody());

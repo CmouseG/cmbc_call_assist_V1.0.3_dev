@@ -5,15 +5,16 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.api.IBotSentenceProcess;
 import com.guiji.botsentence.api.entity.BotSentenceProcess;
 import com.guiji.botsentence.api.entity.ServerResult;
-import com.guiji.ccmanager.api.ICallManagerOut;
 import com.guiji.common.model.SysFileReqVO;
 import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dao.entity.FileRecords;
+import com.guiji.dispatch.enums.PlanLineTypeEnum;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
@@ -42,12 +43,12 @@ public class AsynFileServiceImpl implements AsynFileService {
 	private IBatchImportService batchImportService;
 
 	@Autowired
-	private ICallManagerOut callManagerOut;
+	private IDispatchBatchLineService lineService;
 	@Autowired
 	private IBotSentenceProcess Process;
 
 	@Override
-	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String str, String orgCode)
+	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String str, String orgCode, Integer orgId)
 			throws Exception {
 		List<DispatchPlan> succ = new ArrayList<>();
 
@@ -81,11 +82,22 @@ public class AsynFileServiceImpl implements AsynFileService {
 		FileRecords FileRecord = saveFileRecord(fileName, dispatchPlanBatch, dispatchPlan, userId, orgCode, file);
 		dispatchPlan.setFileRecordId(FileRecord.getId().intValue());
 
-		//		String path = "/opt/home/" + UUID.randomUUID();
-		//		HttpDownload.downLoadFromUrl(FileRecord.getUrl(), fileName, path);
+		//路线类型
+		Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType(): PlanLineTypeEnum.SIP.getType();
+		dispatchPlan.setLineType(lineType);
+		// 加入线路
+		List<DispatchBatchLine> lineList = dispatchPlan.getLines();
+		for (DispatchBatchLine lines : lineList) {
+			lines.setBatchId(dispatchPlanBatch.getId());
+			lines.setLineType(dispatchPlan.getLineType());
+			lines.setOrgId(orgId);
+			lines.setUserId(userId.intValue());
+			lines.setLineType(lineType);
+			lineService.insert(lines);
+		}
 
 		// 导入
-		batchImportService.batchImport(new BufferedInputStream(file.getInputStream()), dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode);
+		batchImportService.batchImport(new BufferedInputStream(file.getInputStream()), dispatchPlanBatch.getId(), dispatchPlan, userId, orgCode, orgId);
 	}
 
 	private FileRecords saveFileRecord(String fileName, DispatchPlanBatch dispatchPlanBatch, DispatchPlan dispatchPlan,
@@ -94,7 +106,7 @@ public class AsynFileServiceImpl implements AsynFileService {
 		ReturnData<SysUser> user = authService.getUserById(userId);
 		// 线路
 		String lineName="";
-		for(DispatchLines lines : dispatchPlan.getLines()){
+		for(DispatchBatchLine lines : dispatchPlan.getLines()){
 			lineName = lineName +""+ lines.getLineName()+",";
 		}
 		

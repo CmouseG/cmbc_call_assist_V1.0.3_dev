@@ -43,7 +43,7 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCalldetail")
-	public Result.ReturnData getCalldetail(@RequestParam(required = false, name = "phone") String phone,
+	public Result.ReturnData getCalldetail(@RequestParam(required = false, name = "batch_number") long userId,@RequestParam(required = false, name = "phone") String phone,
 			@RequestParam(required = false, name = "batch_number") String batchNumber,
 			@RequestParam(required = false, name = "pagenum") String pagenum,
 			@RequestParam(required = false, name = "pagesize") String pagesize) {
@@ -88,7 +88,7 @@ public class ThirdApiController {
 		if(phone.length()!=11){
 			return Result.error("0303028");
 		}
-		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(phone, batchNumber, Integer.valueOf(pagenum),
+		ReturnData<Page<CallPlanDetailRecordVO>> calldetail = thirdApi.getCalldetail(userId, phone, batchNumber, Integer.valueOf(pagenum),
 				Integer.valueOf(pagesize));
 		jsonObject.put("data", calldetail.getBody());
 		return Result.ok(jsonObject);
@@ -103,7 +103,7 @@ public class ThirdApiController {
 	 * @return
 	 */
 	@GetMapping("/getCallInfoByBatchId")
-	public Result.ReturnData getCallInfoByBatchId(
+	public Result.ReturnData getCallInfoByBatchId(@RequestParam(required = false, name = "userId") long userId,
 			@RequestParam(required = false, name = "batch_number") String batchNumber,
 			@RequestParam(required = false, name = "pagenum") String pagenum,
 			@RequestParam(required = false, name = "pagesize") String pagesize) {
@@ -134,7 +134,7 @@ public class ThirdApiController {
 		if (Integer.valueOf(pagesize) <= 0) {
 			pagesize = "1";
 		}
-		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(batchNumber, Integer.valueOf(pagenum),  Integer.valueOf(pagesize));
+		ReturnData<PlanCallInfoCount> getcall4BatchName = thirdApi.getcall4BatchName(userId, batchNumber, Integer.valueOf(pagenum),  Integer.valueOf(pagesize));
 		jsonObject.put("data", getcall4BatchName.getBody());
 		return Result.ok(jsonObject);
 	}

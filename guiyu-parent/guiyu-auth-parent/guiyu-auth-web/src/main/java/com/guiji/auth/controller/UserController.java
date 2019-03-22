@@ -289,7 +289,9 @@ public class UserController implements IAuth {
 	@RequestMapping("/user/getUserExtByUserId")
 	public ReturnData<SysUserExt> getUserExtByUserId(Long userId) throws UnsupportedEncodingException {
 		SysUserExt sysUserExt = service.getUserExtByUserId(userId);
-		sysUserExt.setWechat(URLDecoder.decode(sysUserExt.getWechat(), "utf-8"));
+		if (sysUserExt != null && sysUserExt.getWechat() != null) {
+			sysUserExt.setWechat(URLDecoder.decode(sysUserExt.getWechat(), "utf-8"));
+		}
 		return Result.ok(sysUserExt);
 	}
 

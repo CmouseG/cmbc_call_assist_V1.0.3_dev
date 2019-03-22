@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
@@ -28,12 +29,14 @@ import com.guiji.auth.api.IAuth;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.dao.BotPublishSentenceLogMapper;
 import com.guiji.botsentence.dao.BotSentenceBranchMapper;
+import com.guiji.botsentence.dao.BotSentenceDeployMapper;
 import com.guiji.botsentence.dao.BotSentenceDomainMapper;
 import com.guiji.botsentence.dao.BotSentenceProcessMapper;
 import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import com.guiji.botsentence.dao.entity.BotPublishSentenceLog;
 import com.guiji.botsentence.dao.entity.BotSentenceBranch;
 import com.guiji.botsentence.dao.entity.BotSentenceBranchExample;
+import com.guiji.botsentence.dao.entity.BotSentenceDeploy;
 import com.guiji.botsentence.dao.entity.BotSentenceDomain;
 import com.guiji.botsentence.dao.entity.BotSentenceDomainExample;
 import com.guiji.botsentence.dao.entity.BotSentenceProcess;
@@ -111,6 +114,9 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	
 	@Autowired
 	private IAuth iAuth;
+	
+	@Autowired
+	private BotSentenceDeployMapper botSentenceDeployMapper;
 	
 	private static String FILE_SEPARATOR = System.getProperty("file.separator");
 	
@@ -820,5 +826,27 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	    	throw new CommonException("话术部署失败!");
 	    }
 	    
+	}
+
+	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void saveDeploy(List<String> list, String jobId, String processId, String templateId, String userId) {
+		if(null != list && list.size() > 0) {
+			logger.info("共返回" + list.size() + "条任务");
+			int index = 1;
+			for(String temp : list) {
+				logger.info("任务【" + index + "】的任务号:  " + temp) ;
+				BotSentenceDeploy deploy = new BotSentenceDeploy();
+				deploy.setJobId(jobId);
+				deploy.setSubJobId(temp);
+				deploy.setStatus("1");//默认表示失败
+				deploy.setCrtTime(new Date(System.currentTimeMillis()));
+				deploy.setCrtUser(userId);
+				deploy.setProcessId(processId);
+				deploy.setTemplateId(templateId);
+				botSentenceDeployMapper.insert(deploy);
+				index++;
+			}
+		}
 	}
 }

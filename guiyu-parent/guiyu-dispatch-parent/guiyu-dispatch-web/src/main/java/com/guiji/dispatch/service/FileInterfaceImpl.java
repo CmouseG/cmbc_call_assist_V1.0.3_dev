@@ -117,4 +117,8 @@ public class FileInterfaceImpl implements FileInterface {
 		return result > 0 ? true : false;
 	}
 
+	@Override
+	public FileRecords queryFileRecordById(Long id) {
+		return recordMapper.queryFileRecordById(id);
+	}
 }

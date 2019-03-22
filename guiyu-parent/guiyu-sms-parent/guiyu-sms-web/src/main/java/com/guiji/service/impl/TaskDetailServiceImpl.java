@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
-import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.model.TaskReq;
 import com.guiji.service.TaskDetailService;
@@ -27,14 +26,12 @@ import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.sms.vo.TaskDetailListReqVO;
 import com.guiji.sms.vo.TaskDetailListRspVO;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.NameUtil;
 import com.guiji.utils.RedisUtil;
 
 @Service
 public class TaskDetailServiceImpl implements TaskDetailService
 {
-	private static final Logger logger = LoggerFactory.getLogger(TaskDetailServiceImpl.class);
-	
 	@Autowired
 	IAuth auth;
 	@Autowired
@@ -112,7 +109,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		} else {
 			detail.setSmsContent("【短信内容】" + taskReq.getSmsContent());
 		}
-		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
+		detail.setUserName(NameUtil.getUserName(String.valueOf(taskReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(taskReq.getUserId());
 		detail.setOrgCode(sysOrganization.body.getCode());
 		for(SmsRecord record : records)
@@ -146,7 +143,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		} else {
 			detail.setSmsContent("【短信内容】" + config.getSmsContent());
 		}
-		detail.setUserName(getUserName(String.valueOf(sendMReq.getUserId())));
+		detail.setUserName(NameUtil.getUserName(String.valueOf(sendMReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(sendMReq.getUserId().longValue());
 		detail.setOrgCode(sysOrganization.body.getCode());
 		detail.setPhone(record.getPhone());
@@ -157,27 +154,6 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		}
 		taskDetailMapper.insertSelective(detail);
 	}
-	
-	public String getUserName(String userId) {
-        String cacheName = (String) redisUtil.get(userId);
-        if (cacheName != null) {
-            return cacheName;
-        } else {
-            try {
-                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
-                if(result!=null && result.getBody()!=null) {
-                    String userName = result.getBody().getUsername();
-                    if (userName != null) {
-                    	redisUtil.set(userId, userName);
-                        return userName;
-                    }
-                }
-            } catch (Exception e) {
-            	logger.error(" auth.getUserName error :" + e);
-            }
-        }
-        return "";
-    }
 
 	@Override
 	public MsgResultVO getTaskDetail(String planuuid)

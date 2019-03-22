@@ -26,7 +26,6 @@
     <result column="accurate_intent" property="accurateIntent" jdbcType="VARCHAR" />
     <result column="reason" property="reason" jdbcType="VARCHAR" />
     <result column="hangup_code" property="hangupCode" jdbcType="VARCHAR" />
-    <result column="originate_cmd" property="originateCmd" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
     <result column="has_tts" property="hasTts" jdbcType="BIT" />
     <result column="ai_id" property="aiId" jdbcType="VARCHAR" />
@@ -39,66 +38,67 @@
     <result column="is_cancel" property="isCancel" jdbcType="INTEGER" />
     <result column="is_answer" property="isAnswer" jdbcType="INTEGER" />
     <result column="intervened" property="intervened" jdbcType="BIT" />
+    <result column="params" property="params" jdbcType="VARCHAR" />
     <result column="line_name" property="lineName" jdbcType="VARCHAR" />
   </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Example_Where_Clause2" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and a.${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and a.${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and a.${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and a.${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Example_Where_Clause2" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and a.${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and a.${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and a.${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and a.${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
+        </where>
+    </sql>
   <sql id="Update_By_Example_Where_Clause" >
     <where >
       <foreach collection="example.oredCriteria" item="criteria" separator="or" >
@@ -132,9 +132,9 @@
     call_id, plan_uuid, phone_num, customer_id, temp_id, line_id, serverId, agent_id, 
     agent_answer_time, agent_channel_uuid, agent_group_id, agent_start_time, create_time, 
     call_start_time, hangup_time, answer_time, duration, bill_sec, call_direction, call_state, 
-    hangup_direction, accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, 
-    ai_id, freason, isdel, isread, org_code, batch_id, talk_num, is_cancel, is_answer, 
-    intervened
+    hangup_direction, accurate_intent, reason, hangup_code, remarks, has_tts, ai_id, 
+    freason, isdel, isread, org_code, batch_id, talk_num, is_cancel, is_answer, intervened, 
+    params
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.CallOutPlanExample" >
     select
@@ -174,8 +174,8 @@
         temp_id, agent_id, agent_answer_time,a.customer_id,a.line_id,
         agent_group_id, agent_start_time, create_time, ifnull(call_start_time,create_time) as call_start_time,
         hangup_time, answer_time, duration, bill_sec, call_direction, call_state, hangup_direction,
-        accurate_intent, reason, hangup_code, originate_cmd, remarks, has_tts, ai_id, freason,intervened,
-        isdel, isread
+        accurate_intent, reason, hangup_code, remarks, has_tts, ai_id, freason,intervened,
+        isdel, isread, params
         from call_out_plan a
         <if test="_parameter != null" >
             <include refid="Example_Where_Clause2" />
@@ -264,11 +264,11 @@
       answer_time, duration, bill_sec, 
       call_direction, call_state, hangup_direction, 
       accurate_intent, reason, hangup_code, 
-      originate_cmd, remarks, has_tts, 
-      ai_id, freason, isdel, 
-      isread, org_code, batch_id, 
-      talk_num, is_cancel, is_answer, 
-      intervened)
+      remarks, has_tts, ai_id, 
+      freason, isdel, isread, 
+      org_code, batch_id, talk_num, 
+      is_cancel, is_answer, intervened, 
+      params)
     values (#{planUuid,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR},
       #{customerId,jdbcType=INTEGER}, #{tempId,jdbcType=VARCHAR}, #{lineId,jdbcType=INTEGER}, 
       #{serverid,jdbcType=VARCHAR}, #{agentId,jdbcType=VARCHAR}, #{agentAnswerTime,jdbcType=TIMESTAMP}, 
@@ -277,11 +277,11 @@
       #{answerTime,jdbcType=TIMESTAMP}, #{duration,jdbcType=INTEGER}, #{billSec,jdbcType=INTEGER}, 
       #{callDirection,jdbcType=INTEGER}, #{callState,jdbcType=INTEGER}, #{hangupDirection,jdbcType=INTEGER}, 
       #{accurateIntent,jdbcType=VARCHAR}, #{reason,jdbcType=VARCHAR}, #{hangupCode,jdbcType=VARCHAR}, 
-      #{originateCmd,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, 
-      #{aiId,jdbcType=VARCHAR}, #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, 
-      #{isread,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR}, #{batchId,jdbcType=INTEGER}, 
-      #{talkNum,jdbcType=INTEGER}, #{isCancel,jdbcType=INTEGER}, #{isAnswer,jdbcType=INTEGER}, 
-      #{intervened,jdbcType=BIT})
+      #{remarks,jdbcType=VARCHAR}, #{hasTts,jdbcType=BIT}, #{aiId,jdbcType=VARCHAR}, 
+      #{freason,jdbcType=INTEGER}, #{isdel,jdbcType=INTEGER}, #{isread,jdbcType=INTEGER}, 
+      #{orgCode,jdbcType=VARCHAR}, #{batchId,jdbcType=INTEGER}, #{talkNum,jdbcType=INTEGER}, 
+      #{isCancel,jdbcType=INTEGER}, #{isAnswer,jdbcType=INTEGER}, #{intervened,jdbcType=BIT}, 
+      #{params,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.CallOutPlan" useGeneratedKeys="true" keyProperty="callId">
     insert into call_out_plan
@@ -358,9 +358,6 @@
       <if test="hangupCode != null" >
         hangup_code,
       </if>
-      <if test="originateCmd != null" >
-        originate_cmd,
-      </if>
       <if test="remarks != null" >
         remarks,
       </if>
@@ -396,6 +393,9 @@
       </if>
       <if test="intervened != null" >
         intervened,
+      </if>
+      <if test="params != null" >
+        params,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -471,9 +471,6 @@
       <if test="hangupCode != null" >
         #{hangupCode,jdbcType=VARCHAR},
       </if>
-      <if test="originateCmd != null" >
-        #{originateCmd,jdbcType=VARCHAR},
-      </if>
       <if test="remarks != null" >
         #{remarks,jdbcType=VARCHAR},
       </if>
@@ -509,6 +506,9 @@
       </if>
       <if test="intervened != null" >
         #{intervened,jdbcType=BIT},
+      </if>
+      <if test="params != null" >
+        #{params,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -593,9 +593,6 @@
       <if test="record.hangupCode != null" >
         hangup_code = #{record.hangupCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.originateCmd != null" >
-        originate_cmd = #{record.originateCmd,jdbcType=VARCHAR},
-      </if>
       <if test="record.remarks != null" >
         remarks = #{record.remarks,jdbcType=VARCHAR},
       </if>
@@ -631,6 +628,9 @@
       </if>
       <if test="record.intervened != null" >
         intervened = #{record.intervened,jdbcType=BIT},
+      </if>
+      <if test="record.params != null" >
+        params = #{record.params,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -708,9 +708,6 @@
             <if test="hangupCode != null" >
                 hangup_code = #{hangupCode,jdbcType=VARCHAR},
             </if>
-            <if test="originateCmd != null" >
-                originate_cmd = #{originateCmd,jdbcType=VARCHAR},
-            </if>
             <if test="remarks != null" >
                 remarks = #{remarks,jdbcType=VARCHAR},
             </if>
@@ -753,8 +750,8 @@
         <if test="record.callState != null" >
             call_state = #{record.callState,jdbcType=INTEGER},
         </if>
-      reason = IF(accurate_intent IS NULL,#{record.reason,jdbcType=VARCHAR},reason ),
-      accurate_intent = IF(accurate_intent IS NULL,#{record.accurateIntent,jdbcType=VARCHAR}, accurate_intent)
+        reason = IF(accurate_intent IS NULL,#{record.reason,jdbcType=VARCHAR},reason ),
+        accurate_intent = IF(accurate_intent IS NULL,#{record.accurateIntent,jdbcType=VARCHAR}, accurate_intent)
         <if test="_parameter != null" >
             <include refid="Update_By_Example_Where_Clause" />
         </if>
@@ -785,7 +782,6 @@
       accurate_intent = #{record.accurateIntent,jdbcType=VARCHAR},
       reason = #{record.reason,jdbcType=VARCHAR},
       hangup_code = #{record.hangupCode,jdbcType=VARCHAR},
-      originate_cmd = #{record.originateCmd,jdbcType=VARCHAR},
       remarks = #{record.remarks,jdbcType=VARCHAR},
       has_tts = #{record.hasTts,jdbcType=BIT},
       ai_id = #{record.aiId,jdbcType=VARCHAR},
@@ -797,7 +793,8 @@
       talk_num = #{record.talkNum,jdbcType=INTEGER},
       is_cancel = #{record.isCancel,jdbcType=INTEGER},
       is_answer = #{record.isAnswer,jdbcType=INTEGER},
-      intervened = #{record.intervened,jdbcType=BIT}
+      intervened = #{record.intervened,jdbcType=BIT},
+      params = #{record.params,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -874,9 +871,6 @@
       <if test="hangupCode != null" >
         hangup_code = #{hangupCode,jdbcType=VARCHAR},
       </if>
-      <if test="originateCmd != null" >
-        originate_cmd = #{originateCmd,jdbcType=VARCHAR},
-      </if>
       <if test="remarks != null" >
         remarks = #{remarks,jdbcType=VARCHAR},
       </if>
@@ -913,6 +907,9 @@
       <if test="intervened != null" >
         intervened = #{intervened,jdbcType=BIT},
       </if>
+      <if test="params != null" >
+        params = #{params,jdbcType=VARCHAR},
+      </if>
     </set>
     where call_id = #{callId,jdbcType=BIGINT}
   </update>
@@ -941,7 +938,6 @@
       accurate_intent = #{accurateIntent,jdbcType=VARCHAR},
       reason = #{reason,jdbcType=VARCHAR},
       hangup_code = #{hangupCode,jdbcType=VARCHAR},
-      originate_cmd = #{originateCmd,jdbcType=VARCHAR},
       remarks = #{remarks,jdbcType=VARCHAR},
       has_tts = #{hasTts,jdbcType=BIT},
       ai_id = #{aiId,jdbcType=VARCHAR},
@@ -953,7 +949,8 @@
       talk_num = #{talkNum,jdbcType=INTEGER},
       is_cancel = #{isCancel,jdbcType=INTEGER},
       is_answer = #{isAnswer,jdbcType=INTEGER},
-      intervened = #{intervened,jdbcType=BIT}
+      intervened = #{intervened,jdbcType=BIT},
+      params = #{params,jdbcType=VARCHAR}
     where call_id = #{callId,jdbcType=BIGINT}
   </update>
 </mapper>

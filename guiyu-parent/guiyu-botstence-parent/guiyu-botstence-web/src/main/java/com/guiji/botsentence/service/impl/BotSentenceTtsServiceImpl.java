@@ -421,7 +421,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	}
 	
 	
-	//@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId) {
 		//保存本地生成TTS任务
 		Long taskId = null;

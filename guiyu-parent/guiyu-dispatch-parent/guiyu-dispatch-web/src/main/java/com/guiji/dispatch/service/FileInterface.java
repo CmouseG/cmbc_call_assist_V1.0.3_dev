@@ -14,4 +14,8 @@ public interface FileInterface {
 	public 	List<FileErrorRecords> queryErrorRecords(String fileRecordId);
 
 	boolean deleteFileRecordsById(Integer id);
+
+	//查询文件导入记录
+	FileRecords queryFileRecordById(Long id);
+
 }

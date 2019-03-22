@@ -25,7 +25,7 @@ public class ModularLogsOutController implements IModularLogsOut {
 	public ReturnData<Boolean> notifyLogs(@RequestBody ModularLogs modularLogs) {
 		ReturnData<Boolean> data = new ReturnData<>();
 		// 第一个参数指定队列，第二个参数来指定路由的key，第三个参数指定消息
-		rabbitTemplate.convertAndSend("dispatch.ModularLogs", JsonUtils.bean2Json(modularLogs));
+	//	rabbitTemplate.convertAndSend("dispatch.ModularLogs", JsonUtils.bean2Json(modularLogs));
 		data.body = true;
 		return data;
 	}

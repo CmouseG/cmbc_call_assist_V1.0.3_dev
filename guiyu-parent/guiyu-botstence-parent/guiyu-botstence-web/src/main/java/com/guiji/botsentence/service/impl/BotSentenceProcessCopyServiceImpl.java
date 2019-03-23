@@ -351,6 +351,11 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 			for(VoliceInfoVO vo : voliceList) {
 				voliceMap.put(vo.getOldVoliceId(), vo.getVoliceId());
 			}
+			Map<String, String> intentIdMap = new HashMap<>();
+			for(IntentVO vo : intentsList) {
+				intentIdMap.put(vo.getOldIntentId()+"", vo.getId().toString());
+			}
+			
 			
 			for(BotSentenceBranch branch : branchList_new) {
 				//设置branch的intents数据
@@ -358,9 +363,19 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 				String newIntent = "";
 				List<String> newIntentList = new ArrayList<>();
 				List<String> newIntentList2 = new ArrayList<>();
-				newIntentList.add(oldIntent);
+				List<String> oldIntentIdList = new ArrayList<>();
+				//newIntentList.add(oldIntent);
 				if(StringUtils.isNotBlank(oldIntent)) {
-					String[] intentArray = oldIntent.split(",");
+					oldIntentIdList = BotSentenceUtil.StringToList(oldIntent);
+					for(String oldIntentId : oldIntentIdList) {
+						if(intentIdMap.containsKey(oldIntentId)) {
+							newIntentList.add(intentIdMap.get(oldIntentId));
+						}
+					}
+					newIntent = BotSentenceUtil.listToString(newIntentList);
+					
+					
+					/*String[] intentArray = oldIntent.split(",");
 					for(int i = 0 ; i < intentArray.length ; i++) {
 						for(IntentVO vo : intentsList) {
 							if(newIntentList.contains((vo.getOldIntentId()) + "")) {
@@ -381,7 +396,7 @@ public class BotSentenceProcessCopyServiceImpl implements IBotSentenceProcessCop
 						}
 					}else {
 						newIntent = null;
-					}
+					}*/
 					
 				}else {
 					newIntent = null;

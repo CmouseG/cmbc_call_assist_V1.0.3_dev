@@ -3926,7 +3926,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 * 生成TTS录音信息
 	 */
 	@Override
-	@Transactional
+	//@Transactional
 	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId) {
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);

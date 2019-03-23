@@ -1,6 +1,5 @@
 package com.guiji.dispatch.dao.ext;
 
-import com.guiji.dispatch.dao.entity.DispatchLines;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.vo.DispatchPlanVo;
 import org.apache.ibatis.annotations.Param;

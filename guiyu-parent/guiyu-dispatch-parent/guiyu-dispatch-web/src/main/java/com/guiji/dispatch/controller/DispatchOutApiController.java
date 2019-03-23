@@ -204,7 +204,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> lineIsUsed(Integer lineId) {
+	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<String> userIdList) {
 		return lineIsUsedByUserId(lineId, null);
 	}
 

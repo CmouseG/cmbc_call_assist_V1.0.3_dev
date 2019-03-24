@@ -1656,7 +1656,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				//删除被删掉的文案volice
 				for(String deleteId : oldRespList) {
-					voliceInfoMapper.deleteByPrimaryKey(new Long(deleteId));
+					voliceServiceImpl.deleteVolice(branch.getProcessId(), deleteId);
 				}
 				resp = "["+ BotSentenceUtil.listToString(respList)+"]";
 				branch.setResponse("["+ BotSentenceUtil.listToString(respList)+"]");
@@ -3164,19 +3164,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						continue;
 					}
 
-					voliceInfoMapper.deleteByPrimaryKey(volice.getVoliceId());
-
-					//删除TTS任务信息
-					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
-					ttsExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(volice.getVoliceId().toString());
-					botSentenceTtsTaskMapper.deleteByExample(ttsExample);
-					logger.info("删除TTS任务信息");
-
-					//删除备用话术信息
-					BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
-					backExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(volice.getVoliceId());
-					botSentenceTtsBackupMapper.deleteByExample(backExample);
-					logger.info("删除备用话术信息");
+					voliceServiceImpl.deleteVolice(processId, volice.getVoliceId().toString());
 				}
 			}
 

@@ -25,19 +25,21 @@ import com.guiji.sms.dao.entity.SmsRecord;
 import com.guiji.utils.MapUtil;
 
 /**
- * 深圳信用卡2
+ * 企业信使
  */
-public class ShenzhenCredit2 implements ISendMsgByContent
+public class Qyxs implements ISendMsgByContent
 {
-	private static final Logger logger = LoggerFactory.getLogger(ShenzhenCredit2.class);
-	
-	private String url = "http://120.25.248.27:8888/sms.aspx";
+	private static final Logger logger = LoggerFactory.getLogger(Qyxs.class);
 
 	@Override
 	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent) throws Exception
 	{
 		List<SmsRecord> records = new ArrayList<>();
 		SmsRecord record = null;
+		
+		String sms_ip = MapUtil.getString(params, "sms_ip", 0);
+		String sms_port = MapUtil.getString(params, "sms_port", 0);
+		String url = "http://"+sms_ip+":"+sms_port+"/sms.aspx";
 		
 		String userid = MapUtil.getString(params, "userId", 0);
 		String account = MapUtil.getString(params, "account", 0);
@@ -49,12 +51,10 @@ public class ShenzhenCredit2 implements ISendMsgByContent
 			paramsList.add(new BasicNameValuePair("userid", userid));
 			paramsList.add(new BasicNameValuePair("account", account));
 			paramsList.add(new BasicNameValuePair("password", password));
-			paramsList.add(new BasicNameValuePair("content", msgContent));
-			paramsList.add(new BasicNameValuePair("sendTime", ""));
-			paramsList.add(new BasicNameValuePair("action", "send"));
-			paramsList.add(new BasicNameValuePair("extno", ""));
 			paramsList.add(new BasicNameValuePair("mobile", phone));
-			record = send(paramsList);
+			paramsList.add(new BasicNameValuePair("content", msgContent));
+			paramsList.add(new BasicNameValuePair("action", "send"));
+			record = send(paramsList, url);
 			record.setPhone(phone);
 			records.add(record);
 		}
@@ -65,27 +65,31 @@ public class ShenzhenCredit2 implements ISendMsgByContent
 	public SmsRecord sendMessage(Map<String, Object> params, String phone, String msgContent) throws Exception
 	{
 		SmsRecord record = null;
+		
+		String sms_ip = MapUtil.getString(params, "sms_ip", 0);
+		String sms_port = MapUtil.getString(params, "sms_port", 0);
+		String url = "http://"+sms_ip+":"+sms_port+"/sms.aspx";
+		
 		String userid = MapUtil.getString(params, "userId", 0);
 		String account = MapUtil.getString(params, "account", 0);
 		String password = MapUtil.getString(params, "password", 0);
+		
 		List<NameValuePair> paramsList = new ArrayList<NameValuePair>();
 		paramsList.add(new BasicNameValuePair("userid", userid));
 		paramsList.add(new BasicNameValuePair("account", account));
 		paramsList.add(new BasicNameValuePair("password", password));
-		paramsList.add(new BasicNameValuePair("content", msgContent));
-		paramsList.add(new BasicNameValuePair("sendTime", ""));
-		paramsList.add(new BasicNameValuePair("action", "send"));
-		paramsList.add(new BasicNameValuePair("extno", ""));
 		paramsList.add(new BasicNameValuePair("mobile", phone));
-		record = send(paramsList);
+		paramsList.add(new BasicNameValuePair("content", msgContent));
+		paramsList.add(new BasicNameValuePair("action", "send"));
+		record = send(paramsList, url);
 		record.setPhone(phone);
 		return record;
 	}
 	
-	private SmsRecord send(List<NameValuePair> paramsList) throws JSONException
+	private SmsRecord send(List<NameValuePair> paramsList, String url) throws JSONException
 	{
 		SmsRecord record = new SmsRecord();
-		String result = doPost(paramsList); // 发送请求
+		String result = doPost(paramsList, url); // 发送请求
 		JSONObject jsonResult = XML.toJSONObject(result);
 		// 返回参数
 		JSONObject returnsms = jsonResult.getJSONObject("returnsms");
@@ -108,7 +112,7 @@ public class ShenzhenCredit2 implements ISendMsgByContent
 		return record;
 	}
 	
-	private String doPost(List<NameValuePair> paramsList)
+	private String doPost(List<NameValuePair> paramsList, String url)
 	{
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;

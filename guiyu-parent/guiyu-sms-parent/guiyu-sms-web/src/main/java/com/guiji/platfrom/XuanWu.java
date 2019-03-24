@@ -27,7 +27,7 @@ import com.guiji.utils.MapUtil;
 public class XuanWu implements ISendMsgByContent
 {
 	private static final Logger logger = LoggerFactory.getLogger(XuanWu.class);
-	private static String URL = "http://211.147.239.62:9051/api/v1.0.0/message/mass/send";
+	private static String url = "http://211.147.239.62:9051/api/v1.0.0/message/mass/send";
 	
 	@Override
 	public List<SmsRecord> sendMessage(Map<String, Object> params, List<String> phoneList, String msgContent) throws Exception
@@ -35,7 +35,7 @@ public class XuanWu implements ISendMsgByContent
 		List<SmsRecord> records = new ArrayList<>();
 		String username = MapUtil.getString(params, "username", 0);
 		String password = MapUtil.getString(params, "password", 0);
-		HttpURLConnection conn = getConnection(URL, username, password);
+		HttpURLConnection conn = getConnection(url, username, password);
 		for(String phone : phoneList)
 		{
 			SmsRecord record = writeResponse(conn, getJsonContent(phone, msgContent));
@@ -51,7 +51,7 @@ public class XuanWu implements ISendMsgByContent
 		SmsRecord record = null;
 		String username = MapUtil.getString(params, "username", 0);
 		String password = MapUtil.getString(params, "password", 0);
-		HttpURLConnection conn = getConnection(URL, username, password);
+		HttpURLConnection conn = getConnection(url, username, password);
 		record = writeResponse(conn, getJsonContent(phone, msgContent));
 		record.setPhone(phone);
 		return record;

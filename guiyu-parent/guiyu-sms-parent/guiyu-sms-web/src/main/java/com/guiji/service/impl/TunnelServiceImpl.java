@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.service.TunnelService;
 import com.guiji.sms.dao.SmsTunnelMapper;
@@ -18,8 +19,9 @@ import com.guiji.sms.vo.TunnelListReqVO;
 import com.guiji.sms.vo.TunnelListRspVO;
 import com.guiji.sms.vo.TunnelReqVO;
 import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.JsonUtils;
-import com.guiji.utils.NameUtil;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
 
 @Service
@@ -67,9 +69,9 @@ public class TunnelServiceImpl implements TunnelService
 		tunnelVO.setPlatformName(tunnel.getPlatformName());
 		tunnelVO.setTunnelName(tunnel.getTunnelName());
 		tunnelVO.setCompanyName(tunnel.getCompanyName());
-		tunnelVO.setCreateUser(NameUtil.getUserName(tunnel.getCreateId().toString()));
+		tunnelVO.setCreateUser(getUserName(tunnel.getCreateId().toString()));
 		tunnelVO.setCreateTime(tunnel.getCreateTime());
-		tunnelVO.setUpdateUser(NameUtil.getUserName(tunnel.getUpdateId().toString()));
+		tunnelVO.setUpdateUser(getUserName(tunnel.getUpdateId().toString()));
 		tunnelVO.setUpdateTime(tunnel.getUpdateTime());
 		tunnelVO.setPlatformConfig(tunnel.getPlatformConfig());
 		return tunnelVO;
@@ -134,4 +136,25 @@ public class TunnelServiceImpl implements TunnelService
 		}
 		return tunnelNameList;
 	}
+	
+	public String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT(userId);
+        if (cacheName != null) {
+            return cacheName;
+        } else {
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                    	LocalCacheUtil.set(userId, userName, LocalCacheUtil.HARF_HOUR);
+                        return userName;
+                    }
+                }
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

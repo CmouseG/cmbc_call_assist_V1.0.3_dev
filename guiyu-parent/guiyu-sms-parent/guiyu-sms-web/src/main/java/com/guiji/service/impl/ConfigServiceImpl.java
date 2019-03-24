@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.service.ConfigService;
 import com.guiji.sms.dao.SmsConfigMapper;
@@ -19,7 +20,8 @@ import com.guiji.sms.vo.ConfigListRspVO;
 import com.guiji.sms.vo.ConfigReqVO;
 import com.guiji.sms.vo.SmsConfigVO;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.utils.NameUtil;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
 
 @Service
@@ -75,7 +77,7 @@ public class ConfigServiceImpl implements ConfigService
 		configVO.setAuditingStatus(config.getAuditingStatus());
 		configVO.setRunStatus(config.getRunStatus());
 		configVO.setCompanyName(config.getCompanyName());
-		configVO.setCreateUser(NameUtil.getUserName(config.getCreateId().toString()));
+		configVO.setCreateUser(getUserName(config.getCreateId().toString()));
 		configVO.setCreateTime(config.getCreateTime());
 		return configVO;
 	}
@@ -193,4 +195,25 @@ public class ConfigServiceImpl implements ConfigService
 		Long count = configMapper.countByExample(example);
 		return count.intValue();
 	}
+	
+	public String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT(userId);
+        if (cacheName != null) {
+            return cacheName;
+        } else {
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                    	LocalCacheUtil.set(userId, userName, LocalCacheUtil.HARF_HOUR);
+                        return userName;
+                    }
+                }
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

@@ -6,12 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.model.TaskReq;
 import com.guiji.service.TaskDetailService;
@@ -26,7 +25,8 @@ import com.guiji.sms.vo.SendMReqVO;
 import com.guiji.sms.vo.TaskDetailListReqVO;
 import com.guiji.sms.vo.TaskDetailListRspVO;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.utils.NameUtil;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
 
 @Service
@@ -109,7 +109,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		} else {
 			detail.setSmsContent("【短信内容】" + taskReq.getSmsContent());
 		}
-		detail.setUserName(NameUtil.getUserName(String.valueOf(taskReq.getUserId())));
+		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(taskReq.getUserId());
 		detail.setOrgCode(sysOrganization.body.getCode());
 		for(SmsRecord record : records)
@@ -143,7 +143,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		} else {
 			detail.setSmsContent("【短信内容】" + config.getSmsContent());
 		}
-		detail.setUserName(NameUtil.getUserName(String.valueOf(sendMReq.getUserId())));
+		detail.setUserName(getUserName(String.valueOf(sendMReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(sendMReq.getUserId().longValue());
 		detail.setOrgCode(sysOrganization.body.getCode());
 		detail.setPhone(record.getPhone());
@@ -178,4 +178,25 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		msgResult.setSendTime(detail.getSendTime());
 		return msgResult;
 	}
+	
+	public String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT(userId);
+        if (cacheName != null) {
+            return cacheName;
+        } else {
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                    	LocalCacheUtil.set(userId, userName, LocalCacheUtil.HARF_HOUR);
+                        return userName;
+                    }
+                }
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

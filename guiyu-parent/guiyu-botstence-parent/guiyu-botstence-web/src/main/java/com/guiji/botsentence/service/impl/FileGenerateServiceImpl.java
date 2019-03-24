@@ -406,75 +406,77 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 				if(!Constant.DOMAIN_TYPE_AGENT.equals(botSentenceDomain.getType())) {
 					intentExample.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("拒绝").andBranchNameEqualTo("negative");
 					List<BotSentenceBranch> intentList = botSentenceBranchMapper.selectByExample(intentExample);
-					List<String> keywords = getIntentKeys(intentList.get(0).getIntents());
-					
-					String keywords_str = "";
-					for(String temp : keywords) {
-						keywords_str = keywords_str + "," + temp;
-					}
-					if(keywords_str.length() > 0) {
-						keywords_str = keywords_str.substring(1, keywords_str.length());
-					}
-					keywords_str = "[" + keywords_str + "]";
-					
-					List<String> keywordsList = BotSentenceUtil.getKeywords(keywords_str);
-					String singleKeywordStr = keywordsList.get(0);
-					String complexywordStr = keywordsList.get(1);
-					String [] single_array = singleKeywordStr.split(",");
-					
-					List<String> allKeyWords2 = new ArrayList<>();
-					for(String temp : allKeywords) {
-						String [] array = temp.split(",");
-						if(null != array && array.length > 0) {
-							for(int i = 0 ; i < array.length ; i++) {
-								if(StringUtils.isNotBlank(array[i])) {
-									allKeyWords2.add(array[i]);
+					if(null != intentList && intentList.size() > 0) {
+						List<String> keywords = getIntentKeys(intentList.get(0).getIntents());
+						
+						String keywords_str = "";
+						for(String temp : keywords) {
+							keywords_str = keywords_str + "," + temp;
+						}
+						if(keywords_str.length() > 0) {
+							keywords_str = keywords_str.substring(1, keywords_str.length());
+						}
+						keywords_str = "[" + keywords_str + "]";
+						
+						List<String> keywordsList = BotSentenceUtil.getKeywords(keywords_str);
+						String singleKeywordStr = keywordsList.get(0);
+						String complexywordStr = keywordsList.get(1);
+						String [] single_array = singleKeywordStr.split(",");
+						
+						List<String> allKeyWords2 = new ArrayList<>();
+						for(String temp : allKeywords) {
+							String [] array = temp.split(",");
+							if(null != array && array.length > 0) {
+								for(int i = 0 ; i < array.length ; i++) {
+									if(StringUtils.isNotBlank(array[i])) {
+										allKeyWords2.add(array[i]);
+									}
 								}
 							}
 						}
-					}
-					
-					List<String> allRefuseKeyWords = new ArrayList<>();
-					for(String temp : single_array) {
-						String [] array = temp.split(",");
-						if(null != array && array.length > 0) {
-							for(int i = 0 ; i < array.length ; i++) {
-								if(StringUtils.isNotBlank(array[i])) {
-									allRefuseKeyWords.add(array[i]);
+						
+						List<String> allRefuseKeyWords = new ArrayList<>();
+						for(String temp : single_array) {
+							String [] array = temp.split(",");
+							if(null != array && array.length > 0) {
+								for(int i = 0 ; i < array.length ; i++) {
+									if(StringUtils.isNotBlank(array[i])) {
+										allRefuseKeyWords.add(array[i]);
+									}
 								}
 							}
 						}
-					}
-					
-					for(String keyword : allKeyWords2) {
-						if(allRefuseKeyWords.contains(keyword)){
-							allRefuseKeyWords.remove(keyword);
+						
+						for(String keyword : allKeyWords2) {
+							if(allRefuseKeyWords.contains(keyword)){
+								allRefuseKeyWords.remove(keyword);
+							}
 						}
+						
+						List<String> newRefuseKeyWords = new ArrayList<>();
+						String newRefuseKeyWordsStr = "";
+						
+						for(String temp : allRefuseKeyWords) {
+							newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + temp;
+						}
+						if(StringUtils.isNotBlank(complexywordStr)) {
+							newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + complexywordStr;
+						}
+						
+						if(newRefuseKeyWordsStr.length() > 0) {
+							newRefuseKeyWordsStr = newRefuseKeyWordsStr.substring(1, newRefuseKeyWordsStr.length());
+						}
+						newRefuseKeyWords.add(newRefuseKeyWordsStr);
+						
+						Map map = new HashMap();
+						refuseBranchNodeVO.setNext(domainName);
+						refuseBranchNodeVO.setKeys(newRefuseKeyWords);
+						refuseBranchNodeVO.setEnd("结束");
+						refuseBranchNodeVO.setIs_special_limit_free(true);
+						refuseBranchNodeVO.setResponse(refuseResponse);
+						map.put("refuse_" + domainName, refuseBranchNodeVO);
+						branchShow.add(map);
 					}
-					
-					List<String> newRefuseKeyWords = new ArrayList<>();
-					String newRefuseKeyWordsStr = "";
-					
-					for(String temp : allRefuseKeyWords) {
-						newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + temp;
-					}
-					if(StringUtils.isNotBlank(complexywordStr)) {
-						newRefuseKeyWordsStr = newRefuseKeyWordsStr + "," + complexywordStr;
-					}
-					
-					if(newRefuseKeyWordsStr.length() > 0) {
-						newRefuseKeyWordsStr = newRefuseKeyWordsStr.substring(1, newRefuseKeyWordsStr.length());
-					}
-					newRefuseKeyWords.add(newRefuseKeyWordsStr);
-					
-					Map map = new HashMap();
-					refuseBranchNodeVO.setNext(domainName);
-					refuseBranchNodeVO.setKeys(newRefuseKeyWords);
-					refuseBranchNodeVO.setEnd("结束");
-					refuseBranchNodeVO.setIs_special_limit_free(true);
-					refuseBranchNodeVO.setResponse(refuseResponse);
-					map.put("refuse_" + domainName, refuseBranchNodeVO);
-					branchShow.add(map);
 				}
 			}
 			

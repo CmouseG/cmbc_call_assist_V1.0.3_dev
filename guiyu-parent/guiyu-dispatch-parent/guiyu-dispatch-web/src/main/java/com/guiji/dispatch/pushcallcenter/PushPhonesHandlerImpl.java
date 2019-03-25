@@ -115,7 +115,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									continue;
 								}
 								DispatchPlan dispatchRedis = (DispatchPlan) obj;
-
+								logger.info("DispatchPlan :{}", JsonUtils.bean2Json(dispatchRedis));
 								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
                                 GateWayLineOccupyVo occupyLine = null;
 								try {

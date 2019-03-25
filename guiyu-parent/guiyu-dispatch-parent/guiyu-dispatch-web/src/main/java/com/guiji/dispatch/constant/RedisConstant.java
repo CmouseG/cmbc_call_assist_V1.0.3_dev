@@ -5,7 +5,7 @@ public class RedisConstant {
     public static interface RedisConstantKey{
 
         //用户线路机器人分配数据
-        public static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_A_";
+        public static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
 
         //网关线路KEY
         public final static String gatewayLineKey = "redis_gateway_line_key_";

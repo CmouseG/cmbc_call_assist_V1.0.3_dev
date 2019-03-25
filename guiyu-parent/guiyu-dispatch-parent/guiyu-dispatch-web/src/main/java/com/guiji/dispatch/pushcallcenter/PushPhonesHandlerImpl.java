@@ -48,7 +48,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 
-	private static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_A_";
+	private static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
 
 	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT_";
 
@@ -107,9 +107,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
+								logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								if(null != obj) {
 									//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
+
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
 								}
@@ -124,6 +126,9 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 									callBean.setRemarks(dispatchRedis.getAttach());
 									List<Integer> lines = new ArrayList<>();
 									boolean isSimPush = false;//是否是SIM卡推送
+
+									logger.info("BeanUtils.copyProperties :{}", JsonUtils.bean2Json(obj));
+
 									for (DispatchBatchLine line : dispatchRedis.getLines()) {
 									    //判断是否网关路线，如果是网关路线则需要判断线路是否被占用
 									    if(PlanLineTypeEnum.GATEWAY.getType() == line.getLineType()){//网关路线
@@ -143,7 +148,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 											callBean.setSimCall(false);
                                         }
 									}
-
+									logger.info("BeanUtils.lines :{}", JsonUtils.bean2Json(lines));
 									//SIM网关路线，不推送呼叫中，重新入栈推送队列
 									if(PlanLineTypeEnum.GATEWAY.getType() == dispatchRedis.getLineType()
 										&& !isSimPush){

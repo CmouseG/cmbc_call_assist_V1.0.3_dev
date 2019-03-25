@@ -35,7 +35,7 @@ public class TtsSuccMQListener {
 		long planUUid = Long.valueOf(checkRes.getSeqId());
 		ex.createCriteria().andPlanUuidEqualTo(planUUid).andOrgIdEqualTo(IdUtils.doParse(planUUid).getOrgId());
 		List<DispatchPlan> selectByExample = dispatchMapper.selectByExample(ex);
-		logger.info("当前ttsOK查询数据结果:"+selectByExample.size());
+        logger.info("当前ttsOK查询数据结果:" + JsonUtils.bean2Json(selectByExample));
 		if(selectByExample.size()>0){
 			DispatchPlan dispatchPlan = selectByExample.get(0);
 			dispatchPlan.setFlag(Constant.IS_FLAG_2);

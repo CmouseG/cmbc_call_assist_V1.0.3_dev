@@ -150,11 +150,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private boolean offline;
 	
 	@Override
-	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state) {
-		
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
-		
+	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		if(StringUtils.isNotBlank(templateName)) {
@@ -165,9 +161,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			criteria.andStateEqualTo(state);
 		}
 		
-		criteria.andOrgCodeLike(orgCode+"%");
-		
 		criteria.andStateNotEqualTo("99");
+		
+		if(1 == authLevel) {//查询本人
+			criteria.andCrtUserEqualTo(userId);
+		}else if(2 == authLevel) {//查询本组织
+			criteria.andOrgCodeEqualTo(orgCode);
+		}else if(3 == authLevel) {//查询本组织及以下
+			criteria.andOrgCodeLike(orgCode+"%");
+		}
 		
 		//计算分页
 		int limitStart = (pageNo-1)*pageSize;
@@ -180,10 +182,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	}
 
 	@Override
-	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state) {
-
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
+	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		
@@ -195,10 +194,16 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			criteria.andStateEqualTo(state);
 		}
 		
-		criteria.andOrgCodeLike(orgCode+"%");
-		//criteria.andAccountNoEqualTo(String.valueOf(userId));
-		
 		criteria.andStateNotEqualTo("99");
+		
+		if(1 == authLevel) {//查询本人
+			criteria.andCrtUserEqualTo(userId);
+		}else if(2 == authLevel) {//查询本组织
+			criteria.andOrgCodeEqualTo(orgCode);
+		}else if(3 == authLevel) {//查询本组织及以下
+			criteria.andOrgCodeLike(orgCode+"%");
+		}
+		
 		return botSentenceProcessMapper.countByExample(example);
 	
 	}
@@ -209,17 +214,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public String createBotSentenceTemplate(BotSentenceProcessVO paramVO, String userId) {
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String userName=data.getBody().getUsername();
-		String orgCode=paramVO.getOrgCode();
-		String orgName=paramVO.getOrgName();
-		if(org.springframework.util.StringUtils.isEmpty(paramVO.getOrgCode())){
-			orgCode=data.getBody().getOrgCode();
-			orgName=data.getBody().getOrgName();
-		}
-		
-		if(!orgCode.endsWith(".")) {
-			orgCode = orgCode + ".";
-		}
-		
+
+		String orgCode=data.getBody().getOrgCode();
+		String orgName=data.getBody().getOrgName();
 		
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
@@ -1656,7 +1653,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				//删除被删掉的文案volice
 				for(String deleteId : oldRespList) {
-					voliceInfoMapper.deleteByPrimaryKey(new Long(deleteId));
+					voliceServiceImpl.deleteVolice(branch.getProcessId(), deleteId);
 				}
 				resp = "["+ BotSentenceUtil.listToString(respList)+"]";
 				branch.setResponse("["+ BotSentenceUtil.listToString(respList)+"]");
@@ -3127,7 +3124,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		if(null != domainNames && domainNames.size() > 0) {
 			//删除原来其它domain指向当前节点的next数据
 			BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
-			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames);
+			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames).andIsShowEqualTo("1");
 			botSentenceBranchMapper.deleteByExample(branchExample2);
 
 			//删除录音信息
@@ -3164,19 +3161,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						continue;
 					}
 
-					voliceInfoMapper.deleteByPrimaryKey(volice.getVoliceId());
-
-					//删除TTS任务信息
-					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
-					ttsExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(volice.getVoliceId().toString());
-					botSentenceTtsTaskMapper.deleteByExample(ttsExample);
-					logger.info("删除TTS任务信息");
-
-					//删除备用话术信息
-					BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
-					backExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(volice.getVoliceId());
-					botSentenceTtsBackupMapper.deleteByExample(backExample);
-					logger.info("删除备用话术信息");
+					voliceServiceImpl.deleteVolice(processId, volice.getVoliceId().toString());
 				}
 			}
 
@@ -3927,7 +3912,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 */
 	@Override
 	//@Transactional
-	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId) {
+	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId, String model) {
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);
 		List<VoliceInfo> list = voliceInfoMapper.selectByExample(example);
@@ -3952,7 +3937,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					List<BotSentenceTtsTask> tasklist = botSentenceTtsTaskMapper.selectByExample(ttsExample);
 					if(null != tasklist && tasklist.size() > 0) {
 						for(BotSentenceTtsTask ttsTask : tasklist) {
-							botSentenceTtsService.saveAndSentTTS(ttsTask, processId, true, userId);
+							botSentenceTtsService.saveAndSentTTS(ttsTask, processId, true, userId, model);
 						}
 					}
 				}else {
@@ -3962,7 +3947,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					ttsTask.setBusiId(temp.getVoliceId().toString());
 					ttsTask.setBusiType("03");
 					
-					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts, userId);
+					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts, userId, model);
 				}
 		}
 		
@@ -3984,7 +3969,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				ttsTask.setBusiId(backup.getBackupId());
 				ttsTask.setBusiType("02");
 				ttsTask.setContent(backup.getContent());
-				botSentenceTtsService.saveAndSentTTS(ttsTask, processId, false, userId);
+				botSentenceTtsService.saveAndSentTTS(ttsTask, processId, false, userId, model);
 			}
 		}
 	}
@@ -4244,78 +4229,16 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 */
 	@Override
 	public List<BotSentenceTemplateTradeVO> queryIndustryListByAccountNo(String accountNo, String userId) {
-		List<BotSentenceTemplateTradeVO> results = new ArrayList<>();
-		
-		List<String> industryIdList = new ArrayList<>();
-		List<String> parentIndustryIdList = new ArrayList<>();
-		
-		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		List<String> templateIdList = new ArrayList<>();
 		ReturnData<SysOrganization> org = iAuth.getOrgByUserId(new Long(userId));
 		String orgCode=org.getBody().getCode();
 		ReturnData<List<String>> returnData= orgService.getIndustryByOrgCode(orgCode);
-		industryIdList = returnData.getBody();
-		/*UserAccountTradeRelationExample example1 = new UserAccountTradeRelationExample();
-		example1.createCriteria().andAccountNoEqualTo(accountNo);
-		List<UserAccountTradeRelation> relationList = userAccountTradeRelationMapper.selectByExample(example1);*/
-		if(null != industryIdList && industryIdList.size() > 0) {
-			//过滤掉二级行业下没有模板的数据
-			for(int i = industryIdList.size()-1 ; i >=0 ; i--) {
-				BotSentenceTemplateExample example = new BotSentenceTemplateExample();
-				example.createCriteria().andIndustryIdLike(industryIdList.get(i) + "%");
-				int num = botSentenceTemplateMapper.countByExample(example);
-				if(num == 0) {
-					industryIdList.remove(i);
-				}
-			}
+		templateIdList = returnData.getBody();
+		if(null != templateIdList && templateIdList.size() > 0) {
+			List<BotSentenceTemplateTradeVO> list = this.queryTradeListByTemplateIdList(templateIdList);
+			return list;
 		}
-		
-		for(String industryId : industryIdList) {
-			//获取上级行业
-			BotSentenceTrade trade = getBotSentenceTrade(industryId);
-			if(null != trade && !parentIndustryIdList.contains(trade.getParentId())) {
-				parentIndustryIdList.add(trade.getParentId());
-			}
-		}
-		
-		
-		for(String industryId : parentIndustryIdList) {
-			//获取上级行业
-			BotSentenceTrade parentTrade = getBotSentenceTrade(industryId);
-			
-			BotSentenceTemplateTradeVO parentVo = new BotSentenceTemplateTradeVO();
-			parentVo.setValue(parentTrade.getIndustryId());
-			parentVo.setLabel(parentTrade.getIndustryName());
-			parentVo.setLevel(parentTrade.getLevel());
-			//获取下级行业
-			List<BotSentenceTrade> trades = getChildIndustryList(parentTrade.getIndustryId());
-			if(null != trades && trades.size() > 0) {
-				List<BotSentenceTemplateTradeVO> tradeVOList = new ArrayList<>();
-				for(BotSentenceTrade trade : trades) {
-					if(industryIdList.contains(trade.getIndustryId())) {
-						BotSentenceTemplateTradeVO tradeVO = new BotSentenceTemplateTradeVO();
-						tradeVO.setValue(trade.getIndustryId());
-						tradeVO.setLabel(trade.getIndustryName());
-						tradeVO.setLevel(trade.getLevel());
-						List<BotSentenceTrade> childIndustryList = getChildIndustryList(trade.getIndustryId());
-						if(null != childIndustryList && childIndustryList.size() > 0) {
-							List<BotSentenceTemplateTradeVO> childVOList = new ArrayList<>();
-							for(BotSentenceTrade childTrade : childIndustryList) {
-								BotSentenceTemplateTradeVO childVo = new BotSentenceTemplateTradeVO();
-								childVo.setValue(childTrade.getIndustryId());
-								childVo.setLabel(childTrade.getIndustryName());
-								childVo.setLevel(childTrade.getLevel());
-								childVOList.add(childVo);
-							}
-							tradeVO.setChildren(childVOList);
-						}
-						tradeVOList.add(tradeVO);
-					}
-				}
-				parentVo.setChildren(tradeVOList);
-			}
-			results.add(parentVo);
-		}
-		return results;
+		return null;
 	}
 	
 	/**

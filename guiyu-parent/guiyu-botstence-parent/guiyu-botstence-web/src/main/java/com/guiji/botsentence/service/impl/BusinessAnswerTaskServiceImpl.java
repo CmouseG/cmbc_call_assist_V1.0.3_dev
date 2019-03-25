@@ -339,20 +339,7 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 		String[] resp_array = BotSentenceUtil.getResponses(resp);
 		if(null != resp_array && resp_array.length > 0) {
 			for(int i = 0 ; i < resp_array.length ; i++) {
-				logger.info("删除录音信息: " + resp_array[i]);
-				voliceInfoMapper.deleteByPrimaryKey(new Long(resp_array[i]));
-				
-				//删除TTS任务信息
-				BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
-				ttsExample.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andBusiIdEqualTo(resp_array[i]);
-				botSentenceTtsTaskMapper.deleteByExample(ttsExample);
-				logger.info("删除TTS任务信息");
-				
-				//删除备用话术信息
-				BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
-				backExample.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andVoliceIdEqualTo(new Long(resp_array[i]));
-				botSentenceTtsBackupMapper.deleteByExample(backExample);
-				logger.info("删除备用话术信息");
+				voliceServiceImpl.deleteVolice(branch.getProcessId(), resp_array[i]);
 			}
 		}
 		
@@ -447,19 +434,7 @@ public class BusinessAnswerTaskServiceImpl implements  BusinessAnswerTaskService
 				responses = responses.substring(1, responses.length() - 1);
 				String array[] = responses.split(",");
 				for(String temp : array) {
-					voliceInfoMapper.deleteByPrimaryKey(new Long(temp));
-
-					//删除TTS任务信息
-					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
-					ttsExample.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andBusiIdEqualTo(temp);
-					botSentenceTtsTaskMapper.deleteByExample(ttsExample);
-					logger.info("删除TTS任务信息");
-					
-					//删除备用话术信息
-					BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
-					backExample.createCriteria().andProcessIdEqualTo(branch.getProcessId()).andVoliceIdEqualTo(new Long(temp));
-					botSentenceTtsBackupMapper.deleteByExample(backExample);
-					logger.info("删除备用话术信息");
+					voliceServiceImpl.deleteVolice(branch.getProcessId(), temp);
 				}
 			}
 			

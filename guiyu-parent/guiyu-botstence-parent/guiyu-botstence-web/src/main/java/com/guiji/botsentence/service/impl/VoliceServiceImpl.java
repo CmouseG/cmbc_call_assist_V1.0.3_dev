@@ -94,6 +94,7 @@ import com.guiji.process.model.UpgrateResouceReq;
 import com.guiji.utils.NasUtil;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
+import com.netflix.discovery.converters.Auto;
 
 @Service
 public class VoliceServiceImpl implements IVoliceService {
@@ -153,6 +154,9 @@ public class VoliceServiceImpl implements IVoliceService {
 	
 	@Autowired
 	private BotSentenceApprovalServiceImpl botSentenceApprovalService;
+	
+	@Autowired
+	private VoliceServiceImpl voliceService;
 	
 	private static String NAS_UPLAOD_SYSTEM_CODE="09";
 	
@@ -1112,8 +1116,9 @@ public class VoliceServiceImpl implements IVoliceService {
 	@Transactional
 	public void deleteRefuseVolice(String processId, String voliceId, String domainName) {
 		if (StringUtils.isNotBlank(processId) && StringUtils.isNotBlank(voliceId)) {
-			voliceInfoMapper.deleteByPrimaryKey(new Long(voliceId));
-
+			
+			voliceService.deleteVolice(processId, voliceId);
+			
 			// 删除话术流程对当前挽回话术的依赖关系
 			botSentenceProcessService.deleteRefuseBranch(processId, domainName, voliceId);
 
@@ -2010,6 +2015,27 @@ public class VoliceServiceImpl implements IVoliceService {
 		}
 		
 		return null;
+	}
+
+	/**
+	 * 删除一个录音信息
+	 */
+	@Override
+	public void deleteVolice(String processId, String voliceId) {
+		logger.info("删除录音信息: " + voliceId);
+		voliceInfoMapper.deleteByPrimaryKey(new Long(voliceId));
+		
+		//删除TTS任务信息
+		BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
+		ttsExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(voliceId);
+		botSentenceTtsTaskMapper.deleteByExample(ttsExample);
+		logger.info("删除TTS任务信息");
+		
+		//删除备用话术信息
+		BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
+		backExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(new Long(voliceId));
+		botSentenceTtsBackupMapper.deleteByExample(backExample);
+		logger.info("删除备用话术信息");
 	}
 
 }

@@ -42,9 +42,9 @@ public interface IBotSentenceProcessService {
 	 * @param accountNo
 	 * @param state
 	 */
-	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state);
+	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state, int authLevel, String orgCode);
 
-	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state);
+	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state, int authLevel, String orgCode);
 
 	/**
 	 * 根据现有的话术模板创建一套新模板
@@ -112,7 +112,7 @@ public interface IBotSentenceProcessService {
 	
 	public List<BotSentenceProcess> queryBotSentenceProcessListByAccountNo(String accountNo);	
 	
-	public void generateTTS(List<VoliceInfoExt> list, String processId, String userId);
+	public void generateTTS(List<VoliceInfoExt> list, String processId, String userId, String model);
 	
 	public List<BotSentenceDomain> getAllDomainList(String processId);
 	

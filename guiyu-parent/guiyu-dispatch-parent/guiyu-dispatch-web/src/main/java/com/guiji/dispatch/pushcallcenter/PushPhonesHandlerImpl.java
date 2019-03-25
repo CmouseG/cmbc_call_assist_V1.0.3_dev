@@ -96,7 +96,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Integer callMax = null !=dto.getMaxRobotCount()?dto.getMaxRobotCount():0;
-							//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
+								logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId() + "", dto.getBotenceName(), callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}
@@ -108,7 +108,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
 								if(null != obj) {
-								//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
+									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;

@@ -44,7 +44,7 @@ public class CreateTableOfShardingMQListener
 		{
 			planTableService.createPlanTable(orgId);
 
-			fanoutSender.send("fanout.dispatch.creatOrgDone.add",""+orgId);
+			fanoutSender.send("fanout.dispatch.creatOrgDone", "" + orgId);
 		} catch (Exception e)
 		{
 			logger.error(e.getMessage());

@@ -197,7 +197,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 						ttsWavHis.setErrorMsg("TTS合成失败,发生异常...");
 					}
 					//独立事务保存-更新，放入异常信息
-					ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
+					aiNewTransService.recordTtsWav(ttsWavHis);
 				}
 			}
 		}
@@ -414,7 +414,7 @@ public class TtsWavServiceImpl implements ITtsWavService{
 			String jsonTxtStr = JSON.toJSONString(ttsTempDataMap);	//key-要合成的txt文本 json
 			ttsWavHis.setBusiId(busiId);
 			ttsWavHis.setTtsTxtJsonData(jsonTxtStr);
-			ttsWavHis = aiNewTransService.recordTtsWav(ttsWavHis);
+			aiNewTransService.recordTtsWav(ttsWavHis);
 			//开始拼装调用
 			AsynPostReqVO ttsReqVO = new AsynPostReqVO();
 			ttsReqVO.setBusId(busiId);	//唯一key

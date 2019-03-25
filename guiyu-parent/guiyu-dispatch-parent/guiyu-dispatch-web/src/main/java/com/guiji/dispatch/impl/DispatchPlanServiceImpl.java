@@ -1031,10 +1031,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  Criteria createCriteria = example.createCriteria();
 	  createCriteria.andOrgIdEqualTo(queryPlanDto.getOperOrgId());
 
-	  logger.info(
-			  "now do queryPlanList:{}:",
-			  (null != queryPlanDto) ? JsonUtils.bean2Json(queryPlanDto) : null);
-
 	  if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
 		  createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
 	  }
@@ -1098,10 +1094,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	  List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 
-	  logger.info(
-			  "now do queryPlanList.selectByExample:{}:",
-			  (null != queryPlanDto) ? JsonUtils.bean2Json(selectByExample) : null);
-
 	  List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
 	  if (null != selectByExample && selectByExample.size() > 0) {
 		  LinkedHashSet<Long> planUuidSet = new LinkedHashSet<Long>();
@@ -1157,9 +1149,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			  resList.add(dis);
 		  }
 	  }
-	  logger.info(
-			  "now do queryPlanList.resList:{}:",
-			  (null != queryPlanDto) ? JsonUtils.bean2Json(resList) : null);
+
 	  int count = dispatchPlanMapper.countByExample(example);
 	  page.setList(resList);
 	  page.setTotalItemAndPageNumber(count);
@@ -1287,10 +1277,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	private List<Integer> getSubOrgIdsByUserId(Integer userId)
 	{
-		logger.info("获取getSubOrgIdsByUserId，userId：{}，",userId);
 		SysOrganization userOrg = ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId)));
-
-		logger.info("获取getSubOrgIdsByUserId，userId：{}，user:{}",userId,userOrg);
 
 		return getSubOrgIds(userOrg.getId().intValue());
 	}

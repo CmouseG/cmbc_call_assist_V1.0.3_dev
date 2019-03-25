@@ -221,10 +221,6 @@ public class DispatchPlanController {
 		page.setRecords(resPage.getList());
 		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
 
-		logger.info(
-				"now do queryPlanList.查询计划列表:{}:",
-				(null != page) ? JsonUtils.bean2Json(page) : null);
-
 		return page;
 	}
 

@@ -69,14 +69,15 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	@Override
 	public void pushHandler() {
 
+		boolean flg = false;
 		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
-		while (true) {
+		while (flg) {
 			try {
 				Lock redisPlanQueueLock = new Lock("redisPlanQueueLock", "redisPlanQueueLock");
 				if (distributedLockHandler.isLockExist(redisPlanQueueLock)) {
 					logger.info("redis锁了  redisPlanQueueLock");
 					Thread.sleep(500);
-					break;
+					continue;
 				}
 				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>) redisUtil
 						.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);

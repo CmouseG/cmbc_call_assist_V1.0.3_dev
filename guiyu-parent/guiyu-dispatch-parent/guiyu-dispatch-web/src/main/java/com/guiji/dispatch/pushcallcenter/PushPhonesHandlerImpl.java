@@ -112,7 +112,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								long queueSize = redisUtil.lGetListSize(queue);
 
 								if (queueSize > 0) {
-									logger.info("queueSize REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{},{}", queueSize, JsonUtils.bean2Json(obj));
+									logger.info("queueSize REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{},{}", queueSize, obj);
 								}
 
 								if(null != obj) {

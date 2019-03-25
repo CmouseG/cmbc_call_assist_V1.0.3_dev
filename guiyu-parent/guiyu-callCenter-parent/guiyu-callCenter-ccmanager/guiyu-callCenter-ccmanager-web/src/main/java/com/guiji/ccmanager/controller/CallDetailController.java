@@ -438,7 +438,7 @@ public class CallDetailController implements ICallPlanDetail {
                 registration += "客户电话："+callPlan.getCustomerMobile()+"\r\n";
             }
             if(callPlan.getCustomerAddr()!=null){
-                registration += "客户地址："+callPlan.getCustomerAddr();
+                registration += "客户地址："+callPlan.getCustomerAddr()+"\r\n";
             }
             if(registration.equals("")){
                 registration = "暂无信息";

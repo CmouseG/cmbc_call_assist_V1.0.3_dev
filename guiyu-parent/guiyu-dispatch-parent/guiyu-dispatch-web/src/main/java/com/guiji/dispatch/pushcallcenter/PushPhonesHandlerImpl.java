@@ -76,7 +76,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 				if (distributedLockHandler.isLockExist(redisPlanQueueLock)) {
 					logger.info("redis锁了  redisPlanQueueLock");
 					Thread.sleep(500);
-					continue;
+					break;
 				}
 				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>) redisUtil
 						.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
@@ -107,7 +107,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
-								logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
+
 								if(null != obj) {
 									//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}

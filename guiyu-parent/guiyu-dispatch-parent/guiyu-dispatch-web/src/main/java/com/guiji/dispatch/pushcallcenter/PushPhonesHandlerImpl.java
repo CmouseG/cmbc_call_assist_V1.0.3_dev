@@ -103,6 +103,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 								//判断用户模板是否有可用机器人
 								if(!checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
+									logger.info("判断用户模板是否有可用机器人 :{}", dto.getUserId());
 									continue;
 								}
 

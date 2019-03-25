@@ -96,26 +96,25 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								}
 
 								Integer callMax = null !=dto.getMaxRobotCount()?dto.getMaxRobotCount():0;
-								logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId() + "", dto.getBotenceName(), callMax, redisUserIdCount);
+								//	logger.info("用户:{},模板:{},callMax:{},redisUserIdCount:{}", dto.getUserId()+"", dto.getBotenceName(),  callMax, redisUserIdCount);
 								if (callMax <= redisUserIdCount) {
 									continue;
 								}
 
 								//判断用户模板是否有可用机器人
 								if(!checkUserAvailableRobot(dto.getUserId()+"", dto.getBotenceName())){
-									logger.info("判断用户模板是否有可用机器人 :{}", dto.getUserId());
 									continue;
 								}
 
 								Object obj = (Object) redisUtil.lrightPop(queue);
 								if(null != obj) {
-									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
+									//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
 								if (obj == null || !(obj instanceof DispatchPlan)) {
 									continue;
 								}
 								DispatchPlan dispatchRedis = (DispatchPlan) obj;
-								logger.info("DispatchPlan :{}", JsonUtils.bean2Json(dispatchRedis));
+
 								com.guiji.calloutserver.entity.DispatchPlan callBean = new com.guiji.calloutserver.entity.DispatchPlan();
                                 GateWayLineOccupyVo occupyLine = null;
 								try {

@@ -17,10 +17,9 @@ import org.springframework.stereotype.Component;
  * Description:
  */
 @Component
-@RabbitListener(queues = "fanoutPublishBotstence.FREESWITCH")
 public class BotstenceMqListener {
 
-    private final Logger logger = LoggerFactory.getLogger(BotstenceMqListener.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     RedisUtil redisUtil;
 
@@ -29,18 +28,22 @@ public class BotstenceMqListener {
      * 1、
      * @param message
      */
+    @RabbitListener(queues = "fanoutPublishBotstence.FREESWITCH")
     @RabbitHandler
     public void process(String message) {
-        PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message,PublishBotstenceResultMsgVO.class);
-        if (publishBotstenceResultMsgVO.getProcessTypeEnum() == ProcessTypeEnum.FREESWITCH) {
-            logger.info("接收MQ监听消息{}",publishBotstenceResultMsgVO);
-            //话术模板发布，如果在内存中已经有的模板，需要将缓存中模板清空，重新获取
-            String tempId = publishBotstenceResultMsgVO.getTmplId();
-            logger.info("开始清楚缓存...[{}]",tempId);
+        try {
+            PublishBotstenceResultMsgVO publishBotstenceResultMsgVO = JsonUtils.json2Bean(message, PublishBotstenceResultMsgVO.class);
+            if (publishBotstenceResultMsgVO.getProcessTypeEnum() == ProcessTypeEnum.FREESWITCH) {
+                logger.info("接收MQ监听消息{}", publishBotstenceResultMsgVO);
+                //话术模板发布，如果在内存中已经有的模板，需要将缓存中模板清空，重新获取
+                String tempId = publishBotstenceResultMsgVO.getTmplId();
+                logger.info("开始清楚缓存...[{}]", tempId);
 
-            String key = "calloutserver_wavlength_"+tempId;
-            redisUtil.del(key);
-
+                String key = "calloutserver_wavlength_" + tempId;
+                redisUtil.del(key);
+            }
+        }catch (Exception e){
+            logger.error("处理队列数据出现异常",e);
         }
     }
 }

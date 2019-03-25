@@ -150,7 +150,11 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private boolean offline;
 	
 	@Override
-	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
+public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state) {
+		
+		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		String orgCode=data.getBody().getOrgCode();
+		
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		if(StringUtils.isNotBlank(templateName)) {
@@ -161,15 +165,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			criteria.andStateEqualTo(state);
 		}
 		
-		criteria.andStateNotEqualTo("99");
+		criteria.andOrgCodeLike(orgCode+"%");
 		
-		if(1 == authLevel) {//查询本人
-			criteria.andCrtUserEqualTo(userId);
-		}else if(2 == authLevel) {//查询本组织
-			criteria.andOrgCodeEqualTo(orgCode);
-		}else if(3 == authLevel) {//查询本组织及以下
-			criteria.andOrgCodeLike(orgCode+"%");
-		}
+		criteria.andStateNotEqualTo("99");
 		
 		//计算分页
 		int limitStart = (pageNo-1)*pageSize;
@@ -182,7 +180,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	}
 
 	@Override
-	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
+	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state) {
+
+		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		String orgCode=data.getBody().getOrgCode();
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		
@@ -194,16 +195,10 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			criteria.andStateEqualTo(state);
 		}
 		
+		criteria.andOrgCodeLike(orgCode+"%");
+		//criteria.andAccountNoEqualTo(String.valueOf(userId));
+		
 		criteria.andStateNotEqualTo("99");
-		
-		if(1 == authLevel) {//查询本人
-			criteria.andCrtUserEqualTo(userId);
-		}else if(2 == authLevel) {//查询本组织
-			criteria.andOrgCodeEqualTo(orgCode);
-		}else if(3 == authLevel) {//查询本组织及以下
-			criteria.andOrgCodeLike(orgCode+"%");
-		}
-		
 		return botSentenceProcessMapper.countByExample(example);
 	
 	}
@@ -214,9 +209,17 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public String createBotSentenceTemplate(BotSentenceProcessVO paramVO, String userId) {
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String userName=data.getBody().getUsername();
-
-		String orgCode=data.getBody().getOrgCode();
-		String orgName=data.getBody().getOrgName();
+		String orgCode=paramVO.getOrgCode();
+		String orgName=paramVO.getOrgName();
+		if(org.springframework.util.StringUtils.isEmpty(paramVO.getOrgCode())){
+			orgCode=data.getBody().getOrgCode();
+			orgName=data.getBody().getOrgName();
+		}
+		
+		if(!orgCode.endsWith(".")) {
+			orgCode = orgCode + ".";
+		}
+		
 		
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
@@ -1388,7 +1391,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		
 		
-		//在忙，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
+		//投诉，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
 		BotSentenceBranchExample example7 = new BotSentenceBranchExample();
 		example7.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("投诉").andBranchNameEqualTo("negative");
 		List<BotSentenceBranch> list7 = botSentenceBranchMapper.selectByExample(example7);
@@ -1400,7 +1403,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			vo.setHuashu("投诉默认触发结束_失败");//话术
 			//vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setLuoji("触发投诉关键词时，机器人走该话术，投诉关键词在编辑——自定义汇中可查看");//逻辑
+			vo.setLuoji("触发投诉关键词时，机器人走该话术，投诉关键词位于【编辑——自定义】中");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -1417,7 +1420,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			branchList.add(vo);
 		}
 		
-		//在忙，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
+		//号码过滤，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
 		BotSentenceBranchExample example8 = new BotSentenceBranchExample();
 		example8.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("号码过滤").andBranchNameEqualTo("special");
 		List<BotSentenceBranch> list8 = botSentenceBranchMapper.selectByExample(example8);
@@ -1429,7 +1432,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			vo.setHuashu("号码过滤默认触发结束_失败");//话术
 			//vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setLuoji("触发号码过滤关键词时，机器人走该话术，号码过滤关键词在编辑——自定义中可查看");//逻辑
+			vo.setLuoji("触发号码过滤关键词时，机器人走该话术，号码过滤关键词位于【编辑——自定义】中");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -3435,6 +3438,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public void updateProcessState(String processId, String userId) {
 		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		process.setTestState(Constant.TEST_STATE_UNDEPLOY);
+		logger.info("当前话术流程状态: " + process.getState());
 		if(Constant.APPROVE_PASS.equals(process.getState()) || Constant.APPROVE_NOTPASS.equals(process.getState()) || Constant.APPROVE_ONLINE.equals(process.getState())
 				|| Constant.ERROR.equals(process.getState())) {
 			process.setState(Constant.APPROVE_MAEKING);
@@ -3973,6 +3977,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			}
 		}
 	}
+		//更新话术流程状态
+		this.updateProcessState(processId, userId);
 	}
 	
 	
@@ -4229,16 +4235,78 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 */
 	@Override
 	public List<BotSentenceTemplateTradeVO> queryIndustryListByAccountNo(String accountNo, String userId) {
-		List<String> templateIdList = new ArrayList<>();
+		List<BotSentenceTemplateTradeVO> results = new ArrayList<>();
+		
+		List<String> industryIdList = new ArrayList<>();
+		List<String> parentIndustryIdList = new ArrayList<>();
+		
+		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		ReturnData<SysOrganization> org = iAuth.getOrgByUserId(new Long(userId));
 		String orgCode=org.getBody().getCode();
 		ReturnData<List<String>> returnData= orgService.getIndustryByOrgCode(orgCode);
-		templateIdList = returnData.getBody();
-		if(null != templateIdList && templateIdList.size() > 0) {
-			List<BotSentenceTemplateTradeVO> list = this.queryTradeListByTemplateIdList(templateIdList);
-			return list;
+		industryIdList = returnData.getBody();
+		/*UserAccountTradeRelationExample example1 = new UserAccountTradeRelationExample();
+		example1.createCriteria().andAccountNoEqualTo(accountNo);
+		List<UserAccountTradeRelation> relationList = userAccountTradeRelationMapper.selectByExample(example1);*/
+		if(null != industryIdList && industryIdList.size() > 0) {
+			//过滤掉二级行业下没有模板的数据
+			for(int i = industryIdList.size()-1 ; i >=0 ; i--) {
+				BotSentenceTemplateExample example = new BotSentenceTemplateExample();
+				example.createCriteria().andIndustryIdLike(industryIdList.get(i) + "%");
+				int num = botSentenceTemplateMapper.countByExample(example);
+				if(num == 0) {
+					industryIdList.remove(i);
+				}
+			}
 		}
-		return null;
+		
+		for(String industryId : industryIdList) {
+			//获取上级行业
+			BotSentenceTrade trade = getBotSentenceTrade(industryId);
+			if(null != trade && !parentIndustryIdList.contains(trade.getParentId())) {
+				parentIndustryIdList.add(trade.getParentId());
+			}
+		}
+		
+		
+		for(String industryId : parentIndustryIdList) {
+			//获取上级行业
+			BotSentenceTrade parentTrade = getBotSentenceTrade(industryId);
+			
+			BotSentenceTemplateTradeVO parentVo = new BotSentenceTemplateTradeVO();
+			parentVo.setValue(parentTrade.getIndustryId());
+			parentVo.setLabel(parentTrade.getIndustryName());
+			parentVo.setLevel(parentTrade.getLevel());
+			//获取下级行业
+			List<BotSentenceTrade> trades = getChildIndustryList(parentTrade.getIndustryId());
+			if(null != trades && trades.size() > 0) {
+				List<BotSentenceTemplateTradeVO> tradeVOList = new ArrayList<>();
+				for(BotSentenceTrade trade : trades) {
+					if(industryIdList.contains(trade.getIndustryId())) {
+						BotSentenceTemplateTradeVO tradeVO = new BotSentenceTemplateTradeVO();
+						tradeVO.setValue(trade.getIndustryId());
+						tradeVO.setLabel(trade.getIndustryName());
+						tradeVO.setLevel(trade.getLevel());
+						List<BotSentenceTrade> childIndustryList = getChildIndustryList(trade.getIndustryId());
+						if(null != childIndustryList && childIndustryList.size() > 0) {
+							List<BotSentenceTemplateTradeVO> childVOList = new ArrayList<>();
+							for(BotSentenceTrade childTrade : childIndustryList) {
+								BotSentenceTemplateTradeVO childVo = new BotSentenceTemplateTradeVO();
+								childVo.setValue(childTrade.getIndustryId());
+								childVo.setLabel(childTrade.getIndustryName());
+								childVo.setLevel(childTrade.getLevel());
+								childVOList.add(childVo);
+							}
+							tradeVO.setChildren(childVOList);
+						}
+						tradeVOList.add(tradeVO);
+					}
+				}
+				parentVo.setChildren(tradeVOList);
+			}
+			results.add(parentVo);
+		}
+		return results;
 	}
 	
 	/**

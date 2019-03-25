@@ -1,8 +1,13 @@
 package com.guiji.dispatch.state;
 
-import java.util.List;
-
+import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.DispatchPlanExample;
+import com.guiji.dispatch.util.Constant;
+import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.utils.IdGengerator.IdUtils;
+import com.guiji.utils.JsonUtils;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -11,13 +16,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.dao.entity.DispatchPlanExample;
-import com.guiji.dispatch.util.Constant;
-import com.guiji.robot.model.TtsComposeCheckRsp;
-import com.guiji.utils.JsonUtils;
-import com.rabbitmq.client.Channel;
+import java.util.List;
 
 
 
@@ -33,9 +32,10 @@ public class TtsSuccMQListener {
 		TtsComposeCheckRsp checkRes = JsonUtils.json2Bean(message, TtsComposeCheckRsp.class);
 		logger.info("接受到当前合成成功的tts:"+checkRes.getSeqId()+"----"+checkRes.getStatus());
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidEqualTo(Integer.valueOf(checkRes.getSeqId())).andOrgIdEqualTo(IdUtils.doParse(Long.valueOf(checkRes.getSeqId())).getOrgId());
+		long planUUid = Long.valueOf(checkRes.getSeqId());
+		ex.createCriteria().andPlanUuidEqualTo(planUUid).andOrgIdEqualTo(IdUtils.doParse(planUUid).getOrgId());
 		List<DispatchPlan> selectByExample = dispatchMapper.selectByExample(ex);
-		logger.info("当前ttsOK查询数据结果:"+selectByExample.size());
+        logger.info("当前ttsOK查询数据结果:" + JsonUtils.bean2Json(selectByExample));
 		if(selectByExample.size()>0){
 			DispatchPlan dispatchPlan = selectByExample.get(0);
 			dispatchPlan.setFlag(Constant.IS_FLAG_2);

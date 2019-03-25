@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.guiji.auth.api.IAuth;
-import com.guiji.auth.model.UserAuth;
 import com.guiji.botsentence.constant.Constant;
 import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceProcess;
@@ -59,8 +57,6 @@ import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
 import com.guiji.common.exception.CommonException;
 import com.guiji.component.result.ServerResult;
-import com.guiji.component.result.Result.ReturnData;
-import com.guiji.user.dao.entity.SysUser;
 
 /**
  * 微信小程序相关前后台服务类
@@ -93,9 +89,6 @@ public class WeChatAppletController {
 	
 	@Autowired
     ISelfTestService selfTestService;
-	
-	@Autowired
-	private IAuth iAuth;
     
     @Autowired
     BotSentenceApprovalServiceImpl botSentenceApprovalService;
@@ -134,10 +127,8 @@ public class WeChatAppletController {
 		if(StringUtils.isBlank(userId)) {
 			throw new CommonException("用户账号为空");
 		}
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
-		ReturnData<UserAuth> result = iAuth.queryUserDataAuth(new Long(userId));
-		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(100, 1, null, userId, userId, null, result.getBody().getAuthLevel(), orgCode);
+		
+		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(100, 1, null, userId, userId, null);
 		//List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessListByAccountNo(accountNo);
 		List<BotSentenceProcessVO> results = new ArrayList<>();
 		if(null != list) {

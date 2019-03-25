@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,7 @@ import com.guiji.component.result.ServerResult;
 @Controller
 @RequestMapping("volice")
 public class VoliceContoller {
-	
+	private Logger logger = LoggerFactory.getLogger(VoliceContoller.class);
 	@Autowired
 	private IVoliceService service;
 	
@@ -135,6 +137,7 @@ public class VoliceContoller {
 				}
 				
 				//更新话术流程状态
+				logger.info("开始更新话术流程状态");
 				botSentenceProcessService.updateProcessState(processId, userId);
 				
 				return ServerResult.createBySuccess(voliceUrl);

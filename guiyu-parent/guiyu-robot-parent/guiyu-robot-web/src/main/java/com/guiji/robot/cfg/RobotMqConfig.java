@@ -14,11 +14,18 @@ import org.springframework.context.annotation.Configuration;
 public class RobotMqConfig {
 	//TTS合成回调
 	public static final String QUENE_TTS_OK = "robot.ttsok";
-	
-	
+
+	//tts合成回调，自己生产消费
+    public final static String TTS_CALLBACK_QUEUE = "robot.ttscallback";
+
     @Bean
     public Queue ttsOk() {
         return new Queue(QUENE_TTS_OK);
+    }
+
+    @Bean
+    public Queue ttsCallback() {
+        return new Queue(TTS_CALLBACK_QUEUE);
     }
     
 }

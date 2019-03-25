@@ -30,8 +30,6 @@ public class BatchImportMQListener {
 		try
 		{
 			handler.preCheck(vo);
-
-			//handler.saveDB(vo);
 			//logger.info("结束异步调用，{}", System.currentTimeMillis() - start);
 		} catch (Exception e)
 		{

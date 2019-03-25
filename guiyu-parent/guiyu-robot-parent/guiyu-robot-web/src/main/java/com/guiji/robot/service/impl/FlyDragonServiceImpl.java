@@ -122,9 +122,7 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);
 		if(StrUtils.isNotEmpty(flydragonRsp)) {
 			String result = StringEscapeUtils.unescapeJava(flydragonRsp);
-			JSONObject jsonObject = JSON.parseObject(result);
-			String matched = jsonObject.getString("matched");	//	返回是否匹配
-			return "{\"matched\": "+matched+"}";
+			return result;
 		}else {
 			log.error("调用飞龙接口返回异常，url:{},请求信息：{}，返回结果：{}!",url,json,flydragonRsp);
 			throw new RobotException(AiErrorEnum.AI00060036.getErrorCode(),AiErrorEnum.AI00060036.getErrorMsg());

@@ -1,9 +1,19 @@
 package com.guiji.dispatch.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.dispatch.api.IDispatchPlanOut;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
+import com.guiji.dispatch.dao.entity.DispatchPlanExample;
 import com.guiji.dispatch.enums.SysDelEnum;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.model.DispatchPlan;
+import com.guiji.dispatch.model.PlanCountVO;
+import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IResourcePoolService;
+import com.guiji.utils.IdGengerator.IdUtils;
+import com.guiji.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,20 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guiji.component.result.Result;
-import com.guiji.component.result.Result.ReturnData;
-import com.guiji.dispatch.api.IDispatchPlanOut;
-import com.guiji.dispatch.dao.DispatchLinesMapper;
-import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
-import com.guiji.dispatch.dao.entity.DispatchPlanExample;
-import com.guiji.dispatch.line.ILinesService;
-import com.guiji.dispatch.model.DispatchPlan;
-import com.guiji.dispatch.model.PlanCountVO;
-import com.guiji.dispatch.service.IDispatchPlanService;
-import com.guiji.dispatch.service.IResourcePoolService;
-import com.guiji.dispatch.util.Constant;
-import com.guiji.utils.RedisUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class DispatchOutApiController implements IDispatchPlanOut {
@@ -47,7 +45,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Autowired
 	private DispatchPlanMapper mapper;
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
 	/**
@@ -70,10 +68,10 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	/**
 	 * 返回可以拨打的任务给呼叫中心
-	 *
-	 * @param schedule
-	 *            请求参数
-	 * @return 响应报文
+	 * @param userId
+	 * @param requestCount
+	 * @param lineId
+	 * @return
 	 */
 	@Override
 	@GetMapping(value = "out/queryAvailableSchedules")
@@ -132,7 +130,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Override
 	public ReturnData<PlanCountVO> getPlanCountByUserId(String orgCode) {
-		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode);
+		PlanCountVO planCountByUserId = dispatchPlanService.getPlanCountByUserId(orgCode, null);
 		ReturnData<PlanCountVO> result = new ReturnData<>();
 		result.body = planCountByUserId;
 		return result;
@@ -140,7 +138,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 
 	@Override
 	public ReturnData<Boolean> opertationStopPlanByUserId(String orgCode, String type) {
-		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode, type);
+		boolean stopPlanByorgCode = dispatchPlanService.stopPlanByorgCode(orgCode, null, type);
 		ReturnData<Boolean> result = new ReturnData<>();
 		result.body = stopPlanByorgCode;
 		return result;
@@ -149,7 +147,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Override
 	public ReturnData<Boolean> updateLabelByUUID(String planuuid, String label) {
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidEqualTo(planuuid);
+		ex.createCriteria().andPlanUuidEqualTo(Long.valueOf(planuuid)).andOrgIdEqualTo(IdUtils.doParse(Long.valueOf(planuuid)).getOrgId());
 		com.guiji.dispatch.dao.entity.DispatchPlan dis = new com.guiji.dispatch.dao.entity.DispatchPlan();
 		dis.setResult(label);
 		int count = mapper.updateByExampleSelective(dis, ex);
@@ -162,55 +160,52 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	public ReturnData<Boolean> lineIsUsedByUserId(Integer lineId, Integer userId) {
 		ReturnData<Boolean> res = new ReturnData<>();
 		// 查询当前任务中心
+		List<DispatchBatchLine> lines = null;
+		if(userId != null)
+		{
+			lines = lineService.queryListByUserIdLineId(Long.valueOf(userId), lineId);
+		}
+		else
+		{
+			lines = lineService.queryListByLineId(lineId);
+		}
+
+		if(lines == null || lines.isEmpty())
+		{
+			res.body = false;
+			return res;
+		}
+
+		List<Integer> orgIds = new ArrayList<>();
+		List<Integer> batchIds = new ArrayList<>();
+		for (DispatchBatchLine line : lines) {
+			orgIds.add(line.getOrgId());
+			batchIds.add(line.getBatchId());
+		}
+
 		DispatchPlanExample planEx = new DispatchPlanExample();
-		planEx.createCriteria().andUserIdEqualTo(userId)
+		DispatchPlanExample.Criteria criteria = planEx.createCriteria();
+		criteria
 				.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
 				.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
-		int count = dispatchMapper.countByExample(planEx);
-
-		int limitNum = 5000;
-		int times = (count%limitNum==0)?count/limitNum:(count/limitNum+1);
-		for(int i=0; i<times; i++){
-			planEx.setLimitStart(i*limitNum);
-			planEx.setLimitEnd(i*limitNum + limitNum);
-			planEx.setOrderByClause("gmt_create DESC");
-			List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
-			for (com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2) {
-				Integer result = lineService.countLineId(dis.getPlanUuid());
-				if (result > 0) {
-					res.body = true;
-					return res;
-				}
-			}
+		if(userId != null)
+		{
+			criteria.andUserIdEqualTo(userId);
 		}
+
+		int count = dispatchMapper.countByExample(planEx);
+		if (count > 0) {
+			res.body = true;
+			return res;
+		}
+
 		res.body = false;
 		return res;
 	}
 
 	@Override
 	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<String> userIdList) {
-		ReturnData<Boolean> res = new ReturnData<>();
-		DispatchPlanExample planEx = new DispatchPlanExample();
-		planEx.createCriteria().andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
-				.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
-		int count = dispatchMapper.countByExample(planEx);
-		List<com.guiji.dispatch.dao.entity.DispatchPlan> selectByExample2 = dispatchMapper.selectByExample(planEx);
-		int limitNum = 5000;
-		int times = (count%limitNum==0)?count/limitNum:(count/limitNum+1);
-		for(int i=0; i<times; i++) {
-			planEx.setLimitStart(i * limitNum);
-			planEx.setLimitEnd(i * limitNum + limitNum);
-			planEx.setOrderByClause("gmt_create DESC");
-			for(com.guiji.dispatch.dao.entity.DispatchPlan dis : selectByExample2){
-				Integer result = lineService.countLineIdAndUUid(dis.getPlanUuid(),lineId);
-				if(result>0){
-					res.body = true;
-					return res;
-				}
-			}
-		}
-		res.body = false;
-		return res;
+		return lineIsUsedByUserId(lineId, null);
 	}
 
 	/**
@@ -221,7 +216,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@Override
 	public ReturnData<DispatchPlan> queryDispatchPlanById(String planUuid) {
 		com.guiji.dispatch.dao.entity.DispatchPlan  plan = !StringUtils.isEmpty(planUuid)?
-				dispatchPlanService.queryDispatchPlanById(planUuid):null;
+				dispatchPlanService.queryDispatchPlanById(Long.valueOf(planUuid)):null;
 		DispatchPlan dispatchPlan = null;
 		if(null != plan){
 			dispatchPlan = new DispatchPlan();
@@ -240,7 +235,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	@RequestMapping(value = "/dispatch/queryPlanRemarkById", method = {RequestMethod.GET})
 	public ReturnData<String> queryPlanRemarkById(String planUuid) {
 		String planAttach = !StringUtils.isEmpty(planUuid)?
-				dispatchPlanService.queryPlanRemarkById(planUuid):null;
+				dispatchPlanService.queryPlanRemarkById(Long.valueOf(planUuid)):null;
 		return new ReturnData<String>(planAttach);
 	}
 

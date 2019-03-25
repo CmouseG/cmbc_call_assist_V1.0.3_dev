@@ -1,13 +1,5 @@
 package com.guiji.dispatch.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.model.ModularLogs;
@@ -18,6 +10,13 @@ import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.TtsComposeCheckRsp;
 import com.guiji.robot.model.TtsVoiceReq;
 import com.guiji.utils.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 请求号码资源
@@ -53,7 +52,7 @@ public class PhonesResResultHandler implements IPhonesResResult {
 		List<ModularLogs> beforeLogs = new ArrayList<>();
 		for (DispatchPlan dis : list) {
 			TtsVoiceReq req = new TtsVoiceReq();
-			req.setSeqid(dis.getPlanUuid());
+			req.setSeqid(dis.getPlanUuidLong() + "");
 			req.setTemplateId(dis.getRobot());
 			ttsVoiceReqList.add(req);
 
@@ -65,7 +64,7 @@ public class PhonesResResultHandler implements IPhonesResResult {
 			}
 			log.setModularName(Constant.MODULAR_NAME_DISPATCH);
 			log.setStatus(Constant.MODULAR_STATUS_START);
-			log.setPlanUuid(dis.getPlanUuid());
+			log.setPlanUuid(dis.getPlanUuidLong() + "");
 			log.setPhone(dis.getPhone());
 			log.setBatchName(dis.getBatchName());
 			beforeLogs.add(log);
@@ -96,7 +95,7 @@ public class PhonesResResultHandler implements IPhonesResResult {
 					if (tts.getStatus() == 1) {
 						DispatchPlan dis = new DispatchPlan();
 						dis.setFlag(Constant.IS_FLAG_2);
-						dis.setPlanUuid(tts.getSeqId());
+						dis.setPlanUuid(Long.valueOf(tts.getSeqId()));
 						successList.add(dis);
 					} else {
 						logger.info("tts校验参数返回结果...." +tts.getStatus());

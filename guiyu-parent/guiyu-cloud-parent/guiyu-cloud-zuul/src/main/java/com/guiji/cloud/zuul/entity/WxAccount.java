@@ -11,8 +11,19 @@ public class WxAccount {
     private String orgCode;
     private Date lastTime;
     private Integer isDesensitization;
+    private Long orgId;
 
-    public Integer getId() {
+    public Long getOrgId()
+	{
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId)
+	{
+		this.orgId = orgId;
+	}
+
+	public Integer getId() {
         return id;
     }
 

@@ -10,7 +10,7 @@ spring:
     username: ai
     password: ai@1234
   redis:
-    database: 8
+    database: 9
     host: 192.168.1.81
     port: 6379
     password: 123456

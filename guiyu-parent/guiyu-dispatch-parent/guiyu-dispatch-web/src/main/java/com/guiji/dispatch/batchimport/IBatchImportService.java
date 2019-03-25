@@ -6,5 +6,5 @@ import java.io.InputStream;
 
 public interface IBatchImportService {
 
-    void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode);
+    void batchImport(InputStream inputStream, int batchId, DispatchPlan dispatchPlanParam, Long userId, String orgCode, Integer orgId);
 }

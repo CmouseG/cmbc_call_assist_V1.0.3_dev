@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.dispatch.dao.DispatchPlanMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.dispatch.dao.entity.DispatchPlan" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="plan_uuid" property="planUuid" jdbcType="CHAR" />
+    <result column="plan_uuid" property="planUuid" jdbcType="BIGINT" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="batch_id" property="batchId" jdbcType="INTEGER" />
     <result column="phone" property="phone" jdbcType="VARCHAR" />
@@ -31,6 +30,7 @@
     <result column="batch_name" property="batchName" jdbcType="VARCHAR" />
     <result column="flag" property="flag" jdbcType="VARCHAR" />
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
     <result column="city_name" property="cityName" jdbcType="VARCHAR" />
     <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
     <result column="line_type" property="lineType" jdbcType="INTEGER" />
@@ -94,7 +94,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
+    plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour,
     gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name,
     batch_name, flag, org_code, city_name, city_code, line_type
@@ -117,15 +117,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
     from dispatch_plan
-    where id = #{id,jdbcType=INTEGER}
+    where plan_uuid = #{planUuid,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from dispatch_plan
-    where id = #{id,jdbcType=INTEGER}
+    where plan_uuid = #{planUuid,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     delete from dispatch_plan
@@ -134,7 +134,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
-    insert into dispatch_plan (id, plan_uuid, user_id,
+    insert into dispatch_plan (plan_uuid, user_id,
       batch_id, phone, attach,
       params, status_plan, status_sync,
       recall, recall_params, robot,
@@ -143,9 +143,9 @@
       gmt_create, gmt_modified, is_tts,
       username, replay_type, is_del,
       line_name, robot_name, batch_name,
-      flag, org_code, city_name,
+      flag, org_code,org_id, city_name,
       city_code, line_type)
-    values (#{id,jdbcType=INTEGER}, #{planUuid,jdbcType=CHAR}, #{userId,jdbcType=INTEGER},
+    values ( #{planUuid,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER},
       #{batchId,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{attach,jdbcType=VARCHAR},
       #{params,jdbcType=VARCHAR}, #{statusPlan,jdbcType=INTEGER}, #{statusSync,jdbcType=INTEGER},
       #{recall,jdbcType=INTEGER}, #{recallParams,jdbcType=VARCHAR}, #{robot,jdbcType=VARCHAR},
@@ -154,15 +154,12 @@
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isTts,jdbcType=INTEGER},
       #{username,jdbcType=VARCHAR}, #{replayType,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER},
       #{lineName,jdbcType=VARCHAR}, #{robotName,jdbcType=VARCHAR}, #{batchName,jdbcType=VARCHAR},
-      #{flag,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR},
+      #{flag,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR},#{orgId,jdbcType=INTEGER}, #{cityName,jdbcType=VARCHAR},
       #{cityCode,jdbcType=VARCHAR}, #{lineType})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     insert into dispatch_plan
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="planUuid != null" >
         plan_uuid,
       </if>
@@ -247,6 +244,9 @@
       <if test="orgCode != null" >
         org_code,
       </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
       <if test="cityName != null" >
         city_name,
       </if>
@@ -258,11 +258,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="planUuid != null" >
-        #{planUuid,jdbcType=CHAR},
+        #{planUuid,jdbcType=BIGINT},
       </if>
       <if test="userId != null" >
         #{userId,jdbcType=INTEGER},
@@ -345,6 +342,9 @@
       <if test="orgCode != null" >
         #{orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
       <if test="cityName != null" >
         #{cityName,jdbcType=VARCHAR},
       </if>
@@ -365,12 +365,6 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update dispatch_plan
     <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=INTEGER},
-      </if>
-      <if test="record.planUuid != null" >
-        plan_uuid = #{record.planUuid,jdbcType=CHAR},
-      </if>
       <if test="record.userId != null" >
         user_id = #{record.userId,jdbcType=INTEGER},
       </if>
@@ -452,6 +446,9 @@
       <if test="record.orgCode != null" >
         org_code = #{record.orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.orgId != null" >
+        org_id = #{record.orgId,jdbcType=INTEGER},
+      </if>
       <if test="record.cityName != null" >
         city_name = #{record.cityName,jdbcType=VARCHAR},
       </if>
@@ -468,9 +465,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update dispatch_plan
-    set id = #{record.id,jdbcType=INTEGER},
-    plan_uuid = #{record.planUuid,jdbcType=CHAR},
-    user_id = #{record.userId,jdbcType=INTEGER},
+    set   user_id = #{record.userId,jdbcType=INTEGER},
     batch_id = #{record.batchId,jdbcType=INTEGER},
     phone = #{record.phone,jdbcType=VARCHAR},
     attach = #{record.attach,jdbcType=VARCHAR},
@@ -507,9 +502,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     update dispatch_plan
     <set >
-      <if test="planUuid != null" >
-        plan_uuid = #{planUuid,jdbcType=CHAR},
-      </if>
       <if test="userId != null" >
         user_id = #{userId,jdbcType=INTEGER},
       </if>
@@ -601,11 +593,11 @@
         line_type = #{lineType},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where plan_uuid = #{planUuid,jdbcType=BIGINT} and org_id=#{orgId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.dispatch.dao.entity.DispatchPlan" >
     update dispatch_plan
-    set plan_uuid = #{planUuid,jdbcType=CHAR},
+    set
       user_id = #{userId,jdbcType=INTEGER},
       batch_id = #{batchId,jdbcType=INTEGER},
       phone = #{phone,jdbcType=VARCHAR},
@@ -636,79 +628,88 @@
       city_name = #{cityName,jdbcType=VARCHAR},
       city_code = #{cityCode,jdbcType=VARCHAR},
       line_type = #{lineType}
-    where id = #{id,jdbcType=INTEGER}
+    where plan_uuid = #{planUuid,jdbcType=BIGINT}  and org_id=#{orgId,jdbcType=BIGINT}
   </update>
-  <select id="selectByCallHour" resultMap="BaseResultMap"
-          parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+  <select id="selectByCallHour" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List" />
     from dispatch_plan
-    <if test="callHour != null">
-      where find_in_set(#{callHour},call_hour)
+    <if test="record.callHour != null">
+      where find_in_set(#{record.callHour},call_hour)
     </if>
-    <if test="userId != null">
-      and user_id = #{userId}
+    <if test="record.userId != null">
+      and user_id = #{record.userId}
     </if>
-    <if test="robot != null">
-      and robot = #{robot}
+    <if test="record.robot != null">
+      and robot = #{record.robot}
     </if>
-    <if test="callData != null">
-      and call_data = #{callData}
+    <if test="record.callData != null">
+      and call_data = #{record.callData}
     </if>
-    <if test="isDel != null">
-      and is_del = #{isDel}
+    <if test="record.isDel != null">
+      and is_del = #{record.isDel}
     </if>
-    <if test="statusPlan != null">
-      and status_plan = #{statusPlan}
+    <if test="record.statusPlan != null">
+      and status_plan = #{record.statusPlan}
     </if>
-    <if test="statusSync != null">
-      and status_sync = #{statusSync}
+    <if test="record.statusSync != null">
+      and status_sync = #{record.statusSync}
     </if>
-    <if test="line != null">
-      and line = #{line}
+    <if test="record.line != null">
+      and line = #{record.line}
     </if>
-    <if test="flag != null">
-      and flag = #{flag}
+    <if test="record.flag != null">
+      and flag = #{record.flag}
     </if>
-    order by `gmt_create` ASC
-    <if test="limitStart != null and limitStart>=0">
-      limit #{limitStart} , #{limitEnd}
+    <if test="orgIds != null">
+      and org_id in
+      <foreach item="item" index="index" collection="orgIds" open="("
+               separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by `plan_uuid` ASC
+    <if test="record.limitStart != null and record.limitStart>=0">
+      limit #{record.limitStart} , #{record.limitEnd}
     </if>
   </select>
 
-  <select id="selectByCallHour4UserId" resultMap="BaseResultMap"
-          parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+  <select id="selectByCallHour4UserId" resultMap="BaseResultMap">
     select
     user_id
     from dispatch_plan
-    <if test="callHour != null">
-      where find_in_set(#{callHour},call_hour)
+    <if test="record.callHour != null">
+      where find_in_set(#{record.callHour},call_hour)
     </if>
-    <if test="userId != null">
-      and user_id = #{userId}
+    <if test="record.userId != null">
+      and user_id = #{record.userId}
     </if>
-    <if test="callData != null">
-      and call_data = #{callData}
+    <if test="record.callData != null">
+      and call_data = #{record.callData}
     </if>
-    <if test="isDel != null">
-      and is_del = #{isDel}
+    <if test="record.isDel != null">
+      and is_del = #{record.isDel}
     </if>
-    <if test="statusPlan != null">
-      and status_plan = #{statusPlan}
+    <if test="record.statusPlan != null">
+      and status_plan = #{record.statusPlan}
     </if>
-    <if test="statusSync != null">
-      and status_sync = #{statusSync}
+    <if test="record.statusSync != null">
+      and status_sync = #{record.statusSync}
     </if>
-    <if test="line != null">
-      and line = #{line}
+    <if test="record.line != null">
+      and line = #{record.line}
     </if>
-    <if test="flag != null">
-      and flag = #{flag}
+    <if test="record.flag != null">
+      and flag = #{record.flag}
+    </if>
+    <if test="orgIds != null">
+      and org_id in
+      <foreach item="item" index="index" collection="orgIds" open="("
+               separator="," close=")">
+        #{item}
+      </foreach>
     </if>
     group by user_id
-    <if test="limitStart != null and limitStart>=0">
-      limit #{limitStart} , #{limitEnd}
-    </if>
   </select>
 
 
@@ -738,6 +739,9 @@
     <if test="flag != null">
       and flag = #{flag}
     </if>
+    <if test="orgId != null">
+      and org_id = #{orgId}
+    </if>
     group by line
     <if test="limitStart != null and limitStart>=0">
       limit #{limitStart} , #{limitEnd}
@@ -746,7 +750,7 @@
 
 
   <insert id="insertDispatchPlanList" parameterType="java.util.List">
-    insert into dispatch_plan (id, plan_uuid, user_id,
+    insert into dispatch_plan (plan_uuid, user_id,
     batch_id, phone,
     attach,
     params, status_plan, status_sync,
@@ -758,12 +762,12 @@
     username, replay_type, is_del,
     line_name,
     robot_name, batch_name,
-    flag,org_code)
+    flag,org_code, org_id)
     values
     <foreach collection="list" item="item" index="index"
              separator=",">
-      (#{item.id,jdbcType=INTEGER},
-      #{item.planUuid,jdbcType=CHAR}, #{item.userId,jdbcType=INTEGER},
+      (
+      #{item.planUuid,jdbcType=BIGINT}, #{item.userId,jdbcType=INTEGER},
       #{item.batchId,jdbcType=INTEGER}, #{item.phone,jdbcType=VARCHAR},
       #{item.attach,jdbcType=VARCHAR},
       #{item.params,jdbcType=VARCHAR},
@@ -785,46 +789,22 @@
       #{item.robotName,jdbcType=VARCHAR},
       #{item.batchName,jdbcType=VARCHAR},
       #{item.flag,jdbcType=VARCHAR},
-      #{item.orgCode,jdbcType=VARCHAR})
+      #{item.orgCode,jdbcType=VARCHAR}}, #{item.orgId,jdbcType=INTEGER})
     </foreach>
   </insert>
 
-  <update id="updateDispatchPlanList" parameterType="map">
-    update dispatch_plan
-    set flag = #{flag}
-    where plan_uuid in
-    <foreach item="item" index="index" collection="params" open="("
-             separator="," close=")">
-      #{item}
-    </foreach>
-  </update>
 
-  <update id="updateDispatchPlanListByStatus" parameterType="map">
-    update dispatch_plan
-    set status_plan = #{status}
-    where plan_uuid in
-    <foreach item="item" index="index" collection="params" open="("
-             separator="," close=")">
-      #{item}
-    </foreach>
-  </update>
-
-  <update id="updateDispatchPlanListByStatus4Redis" parameterType="map">
-    update dispatch_plan
-    set status_plan = #{status}
-    where plan_uuid in
-    <foreach item="item" index="index" collection="params" open="("
-             separator="," close=")">
-      #{item}
-    </foreach>
-
-  </update>
 
   <update id="updateDispatchPlanListByStatusSYNC" parameterType="map">
     update dispatch_plan
     set status_sync = #{status}
     where plan_uuid in
     <foreach item="item" index="index" collection="params" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
+    and org_id in
+    <foreach item="item" index="index" collection="orgIds" open="("
              separator="," close=")">
       #{item}
     </foreach>
@@ -846,89 +826,101 @@
     <if test="userId != null">
       and user_id = #{userId}
     </if>
+    <if test="orgId != null">
+      and org_id = #{orgId}
+    </if>
   </select>
 
 
-  <select id="selectPlanGroupByUserIdLineRobot" resultMap="BaseResultMap"
-          parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+  <select id="selectPlanGroupByUserIdLineRobot" resultMap="BaseResultMap" >
     select
     user_id,robot
-    from dispatch_plan
-    <if test="callHour != null">
-      where find_in_set(#{callHour},call_hour)
+    from dispatch_plan  where 1=1
+    <if test="dis.callHour != null">
+      and find_in_set(#{dis.callHour},call_hour)
     </if>
-    <if test="userId != null">
-      and user_id = #{userId}
+    <if test="dis.userId != null">
+      and user_id = #{dis.userId}
     </if>
-    <if test="callData != null">
-      and call_data = #{callData}
+    <if test="dis.callData != null">
+      and call_data = #{dis.callData}
     </if>
-    <if test="isDel != null">
-      and is_del = #{isDel}
+    <if test="dis.isDel != null">
+      and is_del = #{dis.isDel}
     </if>
-    <if test="statusPlan != null">
-      and status_plan = #{statusPlan}
+    <if test="dis.statusPlan != null">
+      and status_plan = #{dis.statusPlan}
     </if>
-    <if test="statusSync != null">
-      and status_sync = #{statusSync}
+    <if test="dis.statusSync != null">
+      and status_sync = #{dis.statusSync}
     </if>
-    <if test="flag != null">
-      and flag = #{flag}
+    <if test="dis.flag != null">
+      and flag = #{dis.flag}
+    </if>
+    <if test="orgIds != null">
+      and org_id in
+      <foreach item="item" index="index" collection="orgIds" open="("
+               separator="," close=")">
+        #{item}
+      </foreach>
     </if>
     group by user_id,robot
-    <if test="limitStart != null and limitStart>=0">
-      limit #{limitStart} , #{limitEnd}
-    </if>
   </select>
 
-  <select id="selectPlanGroupByUserId" resultMap="BaseResultMap"
-          parameterType="com.guiji.dispatch.dao.entity.DispatchPlan">
+  <select id="selectPlanGroupByUserId" resultMap="BaseResultMap" >
     select
     user_id
-    from dispatch_plan
-    <if test="callHour != null">
-      where find_in_set(#{callHour},call_hour)
+    from dispatch_plan where 1=1
+    <if test="dis.callHour != null">
+      and find_in_set(#{dis.callHour},call_hour)
     </if>
-    <if test="userId != null">
-      and user_id = #{userId}
+    <if test="dis.userId != null">
+      and user_id = #{dis.userId}
     </if>
-    <if test="callData != null">
-      and call_data = #{callData}
+    <if test="dis.callData != null">
+      and call_data = #{dis.callData}
     </if>
-    <if test="isDel != null">
-      and is_del = #{isDel}
+    <if test="dis.isDel != null">
+      and is_del = #{dis.isDel}
     </if>
-    <if test="statusPlan != null">
-      and status_plan = #{statusPlan}
+    <if test="dis.statusPlan != null">
+      and status_plan = #{dis.statusPlan}
     </if>
-    <if test="statusSync != null">
-      and status_sync = #{statusSync}
+    <if test="dis.statusSync != null">
+      and status_sync = #{dis.statusSync}
     </if>
-    <if test="flag != null">
-      and flag = #{flag}
+    <if test="dis.flag != null">
+      and flag = #{dis.flag}
+    </if>
+    <if test="orgIds != null">
+      and org_id in
+      <foreach item="item" index="index" collection="orgIds" open="("
+               separator="," close=")">
+        #{item}
+      </foreach>
     </if>
     group by user_id
-    <if test="limitStart != null and limitStart>=0">
-      limit #{limitStart} , #{limitEnd}
-    </if>
   </select>
 
   <select id="totalPlanCount" resultType="com.guiji.dispatch.vo.TotalPlanCountVo">
     SELECT
-      COUNT(id) AS totalCount,
+      COUNT(plan_uuid) AS totalCount,
       IFNULL(SUM(status_plan = 1),0) AS doingCount,
       IFNULL(SUM(status_plan = 2),0) AS finishCount,
       IFNULL(SUM(status_plan = 3),0) AS suspendCount,
       IFNULL(SUM(status_plan = 4),0) AS stopCount
-    FROM dispatch_plan_${tableNum}
+    FROM dispatch_plan
     WHERE is_del = 0
         <if test="plan != null">
             <if test="plan.orgCode != null">
-            AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '%'))
+              AND (org_code = #{plan.orgCode} OR org_code LIKE CONCAT(#{plan.orgCode}, '%'))
             </if>
             <if test="plan.batchId != null">
                 AND batch_id = #{plan.batchId}
             </if>
+          <if test="plan.orgId != null">
+            AND org_id = #{plan.orgId}
+          </if>
         </if>
     <if test="beginDate != null and endDate != null">
       AND gmt_create BETWEEN #{beginDate} AND #{endDate}
@@ -940,16 +932,15 @@
       SELECT
         <include refid="Base_Column_List"/>
       FROM dispatch_plan
-      WHERE plan_uuid = #{planUuid}
+      WHERE plan_uuid = #{planUuid} and org_id = #{orgId}
   </select>
 
   <select id="queryPlanRemarkById" resultType="java.lang.String">
     SELECT
       attach
     FROM dispatch_plan
-    WHERE plan_uuid = #{planUuid}
+    WHERE plan_uuid = #{planUuid} and org_id = #{orgId}
   </select>
-
 
 
   <select id="queryDownloadPlanList"
@@ -1004,5 +995,4 @@
         limit #{limitStart} , #{limitEnd}
       </if>
   </select>
-
 </mapper>

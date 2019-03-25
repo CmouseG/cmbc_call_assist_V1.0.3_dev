@@ -13,10 +13,8 @@ public class DispatchPlan implements Serializable {
 	private Integer limitStart;
 
 	private Integer limitEnd;
-	
-    private Integer id;
 
-    private String planUuid;
+    private long planUuid;
 
     private Integer userId;
 
@@ -81,12 +79,17 @@ public class DispatchPlan implements Serializable {
 	
     private String orgCode;
 
+    /**
+     * 组织ID
+     */
+    private Integer orgId;
+
     private Integer fileRecordId;
 
     /**
      * 线路
      */
-    List<DispatchLines> lines;
+    List<DispatchBatchLine> lines;
 
     /**
      * 线路类型 1-SIP 2-路由网关
@@ -116,11 +119,11 @@ public class DispatchPlan implements Serializable {
 		this.cityCode = cityCode;
 	}
 
-	public List<DispatchLines> getLines() {
+	public List<DispatchBatchLine> getLines() {
 		return lines;
 	}
 
-	public void setLines(List<DispatchLines> lines) {
+	public void setLines(List<DispatchBatchLine> lines) {
 		this.lines = lines;
 	}
 
@@ -176,24 +179,20 @@ public class DispatchPlan implements Serializable {
 		return userName;
 	}
 
-	public void setUserName(String userName) {
+    public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
-	public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getPlanUuid() {
+    public long getPlanUuidLong() {
         return planUuid;
     }
 
-    public void setPlanUuid(String planUuid) {
-        this.planUuid = planUuid == null ? null : planUuid.trim();
+    public String getPlanUuid() {
+        return planUuid + "";
+    }
+
+    public void setPlanUuid(long planUuid) {
+        this.planUuid = planUuid;
     }
 
     public Integer getUserId() {
@@ -420,13 +419,20 @@ public class DispatchPlan implements Serializable {
         this.lineType = lineType;
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
         sb.append(", planUuid=").append(planUuid);
         sb.append(", userId=").append(userId);
         sb.append(", batchId=").append(batchId);

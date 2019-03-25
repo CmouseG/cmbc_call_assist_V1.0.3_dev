@@ -30,6 +30,8 @@ public class QueryPlanListDto extends PageDto {
 
     private String userId;
 
+    private String orgId;
+
     /**
      * 意向标签条件列表
      */
@@ -113,5 +115,13 @@ public class QueryPlanListDto extends PageDto {
 
     public void setResultList(List<String> resultList) {
         this.resultList = resultList;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 }

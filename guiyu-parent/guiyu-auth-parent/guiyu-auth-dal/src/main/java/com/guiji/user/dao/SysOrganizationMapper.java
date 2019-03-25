@@ -1,13 +1,12 @@
 package com.guiji.user.dao;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysOrganizationExample;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 public interface SysOrganizationMapper {
     int countByExample(SysOrganizationExample example);
@@ -46,19 +45,27 @@ public interface SysOrganizationMapper {
 
     int countRobotByUserId(String code);
 
-    void insertOrganizationProduct(@Param("organizationId")Long organizationId,@Param("userId")Long userId,@Param("product")List<Integer> product);
+    void insertOrganizationProduct(@Param("organizationId") Long organizationId, @Param("userId") Long userId, @Param("product") List<Integer> product);
 
-    void updateOrganizationProduct(@Param("organizationId")Long organizationId,@Param("userId")Long userId,@Param("product")List<Integer> product);
+    void updateOrganizationProduct(@Param("organizationId") Long organizationId, @Param("userId") Long userId, @Param("product") List<Integer> product);
 
     List<Integer> getProductByOrganizationId(Long organizationId);
 
-    void insertOrganizationIndustry(@Param("organizationId")Long organizationId,@Param("orgCode")String orgCode,@Param("userId")Long userId,@Param("industryIds")List<String> industryIds);
+    void insertOrganizationIndustry(@Param("organizationId") Long organizationId, @Param("orgCode") String orgCode, @Param("userId") Long userId, @Param("industryIds") List<String> industryIds);
 
-    void updateOrganizationIndustry(@Param("organizationId")Long organizationId,@Param("orgCode")String orgCode,@Param("userId")Long userId,@Param("industryIds")List<String> industryIds);
+    void updateOrganizationIndustry(@Param("organizationId") Long organizationId, @Param("orgCode") String orgCode, @Param("userId") Long userId, @Param("industryIds") List<String> industryIds);
 
     List<String> getIndustryByOrganizationId(Long organizationId);
 
     List<String> getIndustryByOrgCode(String orgCode);
 
     public List<SysOrganization> getOrgByOrgCodeOrgName(@Param("orgCode")String orgCode,@Param("orgName")String orgName);
+
+	List<Integer> getSubOrgIdByOrgId(@Param("orgId") Integer orgId);
+
+	List<Integer> getAllOrgId();
+
+	void updateUsableByOrgId(@Param("orgId") Integer orgId);
+
+	List<Map> querySubOrgByOrgId(@Param("orgId") Integer orgId);
 }

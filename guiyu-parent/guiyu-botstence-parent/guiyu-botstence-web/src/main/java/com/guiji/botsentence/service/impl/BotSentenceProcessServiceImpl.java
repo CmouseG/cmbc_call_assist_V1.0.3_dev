@@ -1656,7 +1656,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				//删除被删掉的文案volice
 				for(String deleteId : oldRespList) {
-					voliceInfoMapper.deleteByPrimaryKey(new Long(deleteId));
+					voliceServiceImpl.deleteVolice(branch.getProcessId(), deleteId);
 				}
 				resp = "["+ BotSentenceUtil.listToString(respList)+"]";
 				branch.setResponse("["+ BotSentenceUtil.listToString(respList)+"]");
@@ -3127,7 +3127,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		if(null != domainNames && domainNames.size() > 0) {
 			//删除原来其它domain指向当前节点的next数据
 			BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
-			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames);
+			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames).andIsShowEqualTo("1");
 			botSentenceBranchMapper.deleteByExample(branchExample2);
 
 			//删除录音信息
@@ -3164,19 +3164,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						continue;
 					}
 
-					voliceInfoMapper.deleteByPrimaryKey(volice.getVoliceId());
-
-					//删除TTS任务信息
-					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
-					ttsExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(volice.getVoliceId().toString());
-					botSentenceTtsTaskMapper.deleteByExample(ttsExample);
-					logger.info("删除TTS任务信息");
-
-					//删除备用话术信息
-					BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
-					backExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(volice.getVoliceId());
-					botSentenceTtsBackupMapper.deleteByExample(backExample);
-					logger.info("删除备用话术信息");
+					voliceServiceImpl.deleteVolice(processId, volice.getVoliceId().toString());
 				}
 			}
 
@@ -3926,8 +3914,8 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 * 生成TTS录音信息
 	 */
 	@Override
-	@Transactional
-	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId) {
+	//@Transactional
+	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId, String model) {
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);
 		List<VoliceInfo> list = voliceInfoMapper.selectByExample(example);
@@ -3952,7 +3940,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					List<BotSentenceTtsTask> tasklist = botSentenceTtsTaskMapper.selectByExample(ttsExample);
 					if(null != tasklist && tasklist.size() > 0) {
 						for(BotSentenceTtsTask ttsTask : tasklist) {
-							botSentenceTtsService.saveAndSentTTS(ttsTask, processId, true, userId);
+							botSentenceTtsService.saveAndSentTTS(ttsTask, processId, true, userId, model);
 						}
 					}
 				}else {
@@ -3962,7 +3950,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					ttsTask.setBusiId(temp.getVoliceId().toString());
 					ttsTask.setBusiType("03");
 					
-					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts, userId);
+					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts, userId, model);
 				}
 		}
 		
@@ -3984,7 +3972,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				ttsTask.setBusiId(backup.getBackupId());
 				ttsTask.setBusiType("02");
 				ttsTask.setContent(backup.getContent());
-				botSentenceTtsService.saveAndSentTTS(ttsTask, processId, false, userId);
+				botSentenceTtsService.saveAndSentTTS(ttsTask, processId, false, userId, model);
 			}
 		}
 	}

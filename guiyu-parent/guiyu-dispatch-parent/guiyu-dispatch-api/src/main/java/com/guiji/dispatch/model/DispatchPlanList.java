@@ -13,16 +13,18 @@ public class DispatchPlanList implements Serializable{
 	private String callDate;
 	private String userId;
 	private List<DispatchPlan> mobile;
-    List<DispatchLines> lines;
+	private List<DispatchBatchLine> lines;
+	private Integer lineType;
+	private Integer orgId;
     private static final long serialVersionUID = 1L;
 	
     
     
-	public List<DispatchLines> getLines() {
+	public List<DispatchBatchLine> getLines() {
 		return lines;
 	}
 
-	public void setLines(List<DispatchLines> lines) {
+	public void setLines(List<DispatchBatchLine> lines) {
 		this.lines = lines;
 	}
 
@@ -99,4 +101,19 @@ public class DispatchPlanList implements Serializable{
 //		this.mobile = mobile;
 //	}
 
+	public Integer getLineType() {
+		return lineType;
+	}
+
+	public void setLineType(Integer lineType) {
+		this.lineType = lineType;
+	}
+
+	public Integer getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Integer orgId) {
+		this.orgId = orgId;
+	}
 }

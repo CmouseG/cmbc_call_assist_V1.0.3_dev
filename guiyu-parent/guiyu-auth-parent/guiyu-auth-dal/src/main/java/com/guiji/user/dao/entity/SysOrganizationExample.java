@@ -744,6 +744,76 @@ public class SysOrganizationExample {
             addCriterion("del_flag not between", value1, value2, "delFlag");
             return (Criteria) this;
         }
+        
+        public Criteria andUsableIsNull() {
+            addCriterion("usable is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableIsNotNull() {
+            addCriterion("usable is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableEqualTo(Integer value) {
+            addCriterion("usable =", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableNotEqualTo(Integer value) {
+            addCriterion("usable <>", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableGreaterThan(Integer value) {
+            addCriterion("usable >", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableGreaterThanOrEqualTo(Integer value) {
+            addCriterion("usable >=", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableLessThan(Integer value) {
+            addCriterion("usable <", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableLessThanOrEqualTo(Integer value) {
+            addCriterion("usable <=", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableLike(Integer value) {
+            addCriterion("usable like", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableNotLike(Integer value) {
+            addCriterion("usable not like", value, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableIn(List<Integer> values) {
+            addCriterion("usable in", values, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableNotIn(List<Integer> values) {
+            addCriterion("usable not in", values, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableBetween(Integer value1, Integer value2) {
+            addCriterion("usable between", value1, value2, "usable");
+            return (Criteria) this;
+        }
+
+        public Criteria andUsableNotBetween(Integer value1, Integer value2) {
+            addCriterion("usable not between", value1, value2, "usable");
+            return (Criteria) this;
+        }
 
         public Criteria andBotstenceIsNull() {
             addCriterion("botstence is null");

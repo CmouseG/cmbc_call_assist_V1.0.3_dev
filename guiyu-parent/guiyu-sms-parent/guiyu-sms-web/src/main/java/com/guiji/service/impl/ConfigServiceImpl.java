@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +21,12 @@ import com.guiji.sms.vo.ConfigReqVO;
 import com.guiji.sms.vo.SmsConfigVO;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
 
 @Service
 public class ConfigServiceImpl implements ConfigService
 {
-	private static final Logger logger = LoggerFactory.getLogger(ConfigServiceImpl.class);
-	
 	@Autowired
 	IAuth auth;
 	@Autowired
@@ -199,25 +196,24 @@ public class ConfigServiceImpl implements ConfigService
 		return count.intValue();
 	}
 	
-	
 	public String getUserName(String userId) {
-		String cacheName = (String) redisUtil.get(userId);
-		if (cacheName != null) {
-			return cacheName;
-		} else {
-			try {
-				Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
-				if(result!=null && result.getBody()!=null) {
-					String userName = result.getBody().getUsername();
-					if (userName != null) {
-						redisUtil.set(userId, userName);
-						return userName;
-					}
-				}
-			} catch (Exception e) {
-				logger.error(" auth.getUserName error :" + e);
-			}
-		}
-		return "";
-	}
+        String cacheName = LocalCacheUtil.getT(userId);
+        if (cacheName != null) {
+            return cacheName;
+        } else {
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                    	LocalCacheUtil.set(userId, userName, LocalCacheUtil.HARF_HOUR);
+                        return userName;
+                    }
+                }
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

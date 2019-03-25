@@ -2,6 +2,7 @@ package com.guiji.dispatch.state;
 
 import java.util.List;
 
+import com.guiji.utils.IdGengerator.IdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -32,7 +33,7 @@ public class TtsSuccMQListener {
 		TtsComposeCheckRsp checkRes = JsonUtils.json2Bean(message, TtsComposeCheckRsp.class);
 		logger.info("接受到当前合成成功的tts:"+checkRes.getSeqId()+"----"+checkRes.getStatus());
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidEqualTo(checkRes.getSeqId());
+		ex.createCriteria().andPlanUuidEqualTo(Integer.valueOf(checkRes.getSeqId())).andOrgIdEqualTo(IdUtils.doParse(Long.valueOf(checkRes.getSeqId())).getOrgId());
 		List<DispatchPlan> selectByExample = dispatchMapper.selectByExample(ex);
 		logger.info("当前ttsOK查询数据结果:"+selectByExample.size());
 		if(selectByExample.size()>0){

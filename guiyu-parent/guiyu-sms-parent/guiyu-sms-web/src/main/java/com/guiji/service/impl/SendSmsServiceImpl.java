@@ -12,8 +12,9 @@ import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.model.TaskReq;
 import com.guiji.platfrom.Cmpp;
 import com.guiji.platfrom.Junlong;
-import com.guiji.platfrom.ShenzhenCredit2;
+import com.guiji.platfrom.Qyxs;
 import com.guiji.platfrom.Welink;
+import com.guiji.platfrom.XuanWu;
 import com.guiji.platfrom.Ytx;
 import com.guiji.platfrom.Zxy;
 import com.guiji.service.RecordService;
@@ -88,12 +89,15 @@ public class SendSmsServiceImpl implements SendSmsService
 		} else if ("zxy".equals(identification)) {
 			logger.info("通过<专信云>群发短信...");
 			records = new Zxy().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
-		} else if ("zxy".equals(identification)) {
-			logger.info("通过<深圳信用卡2专属>群发短信...");
-			records = new ShenzhenCredit2().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("qyxs".equals(identification)) {
+			logger.info("通过<企业信使>群发短信...");
+			records = new Qyxs().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		} else if ("jl".equals(identification)) {
 			logger.info("通过<君隆科技>群发短信...");
 			records = new Junlong().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
+		} else if ("xw".equals(identification)) {
+			logger.info("通过<玄武科技>群发短信...");
+			records = new XuanWu().sendMessage(params, taskReq.getPhoneList(), taskReq.getSmsContent());
 		}
 		
 		recordService.saveRecord(records, platform.getPlatformName()); //保存发送记录

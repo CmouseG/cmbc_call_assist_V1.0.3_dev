@@ -13,6 +13,7 @@ import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
 import com.guiji.botsentence.api.entity.ServerResult;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
+import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
@@ -27,6 +28,8 @@ import com.guiji.utils.RedisUtil;
 @Service
 public class OrganizationService {
 
+	@Autowired
+	QueueSender queueSender;
 	@Autowired
 	private SysOrganizationMapper sysOrganizationMapper;
 	@Autowired
@@ -49,10 +52,11 @@ public class OrganizationService {
 		/*int num=sysOrganizationMapper.countCode(record.getCode());
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
-		sysOrganizationMapper.insert(record);
+		sysOrganizationMapper.insertSelective(record);
 		sysOrganizationMapper.insertOrganizationProduct(record.getId(),record.getCreateId(),record.getProduct());
 		sysOrganizationMapper.insertOrganizationIndustry(record.getId(),record.getCode(),record.getCreateId(),record.getIndustryIds());
 		noticeSetting.addNoticeSetting(record.getCode());
+		queueSender.send("OrgIdMQ.direct.Auth", record.getId().toString());
 	}
 	
 	public void delte(SysOrganization record){
@@ -138,7 +142,7 @@ public class OrganizationService {
 	
 	public List<SysOrganization> getOrgNotOpen(){
 		SysOrganizationExample example=new SysOrganizationExample();
-		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0).andTypeNotEqualTo(1);
+		example.createCriteria().andDelFlagEqualTo(0).andOpenEqualTo(0).andTypeNotEqualTo(1).andUsableEqualTo(1);
 		return sysOrganizationMapper.selectByExample(example);
 	}
 	
@@ -235,6 +239,19 @@ public class OrganizationService {
 	public List<BotSentenceTemplateTradeVO> getIndustrysByOrgCode(String orgCode) {
 		ServerResult<List<BotSentenceTemplateTradeVO>> botSentenceTemplateTradeVOList = botSentenceTradeService.queryTradeListByTradeIdList(sysOrganizationMapper.getIndustryByOrgCode(orgCode));
 		return botSentenceTemplateTradeVOList.getData();
+	}
+
+	public List<Integer> getSubOrgIdByOrgId(Integer orgId) {
+		return sysOrganizationMapper.getSubOrgIdByOrgId(orgId);
+	}
+
+	public List<Integer> getAllOrgId() {
+		return sysOrganizationMapper.getAllOrgId();
+	}
+
+	public List<Map> querySubOrgByOrgId(Integer orgId)
+	{
+		return sysOrganizationMapper.querySubOrgByOrgId(orgId);
 	}
 
 }

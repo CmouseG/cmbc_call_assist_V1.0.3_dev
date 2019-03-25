@@ -122,4 +122,6 @@ public interface IVoliceService {
 	public String uploadOneVoliceOffline(String processId, String voliceId, MultipartFile multipartFile, String type, String userId) throws IOException;
 
 	public VoliceInfo getVoliceByWavName(String processId, String wavName);
+	
+	public void deleteVolice(String processId, String voliceId);
 }

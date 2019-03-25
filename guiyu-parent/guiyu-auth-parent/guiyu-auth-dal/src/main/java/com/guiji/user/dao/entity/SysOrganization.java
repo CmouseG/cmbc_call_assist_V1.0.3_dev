@@ -38,10 +38,22 @@ public class SysOrganization implements Serializable {
     private List<Integer> product;
 
     private List<String> industryIds;
-
+    
+    private Integer usable;
+    
     private static final long serialVersionUID = 1L;
+    
+    public Integer getUsable()
+	{
+		return usable;
+	}
 
-    public Long getId() {
+	public void setUsable(Integer usable)
+	{
+		this.usable = usable;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -214,6 +226,7 @@ public class SysOrganization implements Serializable {
         sb.append(", subCode=").append(subCode);
         sb.append(", product=").append(product);
         sb.append(", industryIds=").append(industryIds);
+        sb.append(", usable=").append(usable);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -32,23 +32,26 @@ import io.swagger.annotations.ApiOperation;
 public interface IThirdApiOut {
 
 	@ApiOperation(value = "分页查询通话记录")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "phone", value = "手机号码", dataType = "String", paramType = "query"),
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "userId", value = "用户id", dataType = "Long", paramType = "query"),
+			@ApiImplicitParam(name = "phone", value = "手机号码", dataType = "String", paramType = "query"),
 			@ApiImplicitParam(name = "batchNumber", value = "批次标识", dataType = "String", paramType = "query"),
 			@ApiImplicitParam(name = "pagenum", value = "分页字段", dataType = "int", paramType = "query"),
 			@ApiImplicitParam(name = "pagesize", value = "分页字段", dataType = "int", paramType = "query") })
 	@GetMapping(value = "out/getCalldetail")
-	ReturnData<Page<CallPlanDetailRecordVO>> getCalldetail(@RequestParam("phone") String phone,
+	ReturnData<Page<CallPlanDetailRecordVO>> getCalldetail(@RequestParam("userId") long userId,@RequestParam("phone") String phone,
 			@RequestParam("batchNumber") String batchNumber, @RequestParam("pagenum") int pagenum,
 			@RequestParam("pagesize") int pagesize);
 
 
 	@ApiOperation(value = "通过批次号查询该批次的拨打情况")
 	@ApiImplicitParams({
+			@ApiImplicitParam(name = "userId", value = "用户id", dataType = "Long", paramType = "query"),
 			@ApiImplicitParam(name = "batchName", value = "批量名称", dataType = "String", paramType = "query"),
 			@ApiImplicitParam(name = "pagenum", value = "分页字段", dataType = "int", paramType = "query"),
 			@ApiImplicitParam(name = "pagesize", value = "分页字段", dataType = "int", paramType = "query")})
 	@GetMapping(value = "out/getcall4BatchName")
-	ReturnData<PlanCallInfoCount> getcall4BatchName(@RequestParam("batchName") String batchName,@RequestParam("pagenum") int pagenum, @RequestParam("pagesize") int pagesize);
+	ReturnData<PlanCallInfoCount> getcall4BatchName(@RequestParam("userId") long userId,@RequestParam("batchName") String batchName,@RequestParam("pagenum") int pagenum, @RequestParam("pagesize") int pagesize);
 
 	@ApiOperation(value = "通过批次号分页查询该批次任务的号码列表")
 	@ApiImplicitParams({

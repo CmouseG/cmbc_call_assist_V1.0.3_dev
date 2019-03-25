@@ -35,14 +35,17 @@ public class UserIdZuulFilter extends ZuulFilter {
 		System.out.println("****************"+userIdObj);
 		Object isSuperAdminObj = SecurityUtils.getSubject().getSession().getAttribute("isSuperAdmin");
 		Object isDesensitizationObj = SecurityUtils.getSubject().getSession().getAttribute("isDesensitization");
+		Object orgIdObj = SecurityUtils.getSubject().getSession().getAttribute("orgId");
 		try {
 			String userId=userIdObj.toString();
 			String isSuperAdmin = isSuperAdminObj.toString();
 			String isDesensitization = isDesensitizationObj.toString();
+			String orgId = orgIdObj.toString();
 			ctx.addZuulRequestHeader("userId", userId);
 			ctx.addZuulRequestHeader("orgCode", orgCode.toString());
 			ctx.addZuulRequestHeader("isSuperAdmin", isSuperAdmin);
 			ctx.addZuulRequestHeader("isDesensitization", isDesensitization);
+			ctx.addZuulRequestHeader("orgId", orgId);
 		} catch (NullPointerException e) {
 			logger.error("userIdZuulFilter:" + e.getMessage());
 			//处理下一些特殊不需要user的场景

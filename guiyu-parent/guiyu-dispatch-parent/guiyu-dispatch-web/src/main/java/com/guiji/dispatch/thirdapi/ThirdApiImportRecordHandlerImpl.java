@@ -4,13 +4,11 @@ import com.guiji.component.result.Result;
 import com.guiji.dispatch.batchimport.BatchImportErrorCodeEnum;
 import com.guiji.dispatch.batchimport.IBatchImportFieRecordErrorService;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
-import com.guiji.dispatch.dao.ThirdImportErrorMapper;
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.FileErrorRecords;
-import com.guiji.dispatch.dao.entity.ThirdImportError;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
-import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.GateWayLineService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
@@ -41,7 +39,7 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 	private IBatchImportFieRecordErrorService fileRecordErrorService;
 	
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 
 	@Autowired
 	private GateWayLineService gateWayLineService;
@@ -60,7 +58,7 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 				List<CheckResult> body = checkParams.getBody();
 				CheckResult checkResult = body.get(0);
 				if (!checkResult.isPass()) {
-					saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
+					saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
 					logger.info("机器人合成失败, 电话号码{}, 错误信息为{}", vo.getPhone(), checkResult.getCheckMsg());
 					return;
 				}else{
@@ -68,13 +66,15 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 					Integer lineType = null != vo.getLineType()?vo.getLineType():PlanLineTypeEnum.SIP.getType();
 					vo.setLineType(lineType);
 					// 加入线路
-					List<DispatchLines> lineList = vo.getLines();
+					List<DispatchBatchLine> lineList = vo.getLines();
 					//mod by xujin
-					for(DispatchLines line : lineList){
-						line.setCreateTime(DateUtil.getCurrent4Time());
-						line.setPlanuuid(vo.getPlanUuid());
+					for(DispatchBatchLine line : lineList){
+						line.setBatchId(vo.getBatchId());
+						line.setLineType(vo.getLineType());
+						line.setOrgId(vo.getOrgId());
+						line.setUserId(vo.getUserId().intValue());
 						line.setLineType(lineType);
-						lineService.insertLines(line);
+						lineService.insert(line);
 					}
 					int insert = dispatchPlanMapper.insert(vo);
 					if(insert>0){
@@ -88,7 +88,7 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 			}
 		} else {
 			logger.info("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
-			saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_PARAM);
+			saveErrorRecords(vo, BatchImportErrorCodeEnum.SELLBOT_CHECK_ERROR);
 			logger.info("机器人合成失败, 电话号码{}, 请求校验参数失败,请检查机器人的参数", vo.getPhone());
 			return;
 		}
@@ -115,7 +115,7 @@ public class ThirdApiImportRecordHandlerImpl implements IThirdApiImportRecordHan
 		CheckParamsReq req = new CheckParamsReq();
 		HsParam hsParam = new HsParam();
 		hsParam.setParams(dispatchPlan.getParams());
-		hsParam.setSeqid(dispatchPlan.getPlanUuid());
+		hsParam.setSeqid(dispatchPlan.getPlanUuidLong() + "");
 		hsParam.setTemplateId(dispatchPlan.getRobot());
 		List<HsParam> list = new ArrayList<>();
 		list.add(hsParam);

@@ -1,7 +1,9 @@
 package com.guiji.dispatch.mq;
 
-import java.io.IOException;
-
+import com.guiji.dispatch.dao.ModularLogsMapper;
+import com.guiji.dispatch.dao.entity.ModularLogs;
+import com.guiji.utils.JsonUtils;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -10,10 +12,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.guiji.dispatch.dao.ModularLogsMapper;
-import com.guiji.dispatch.dao.entity.ModularLogs;
-import com.guiji.utils.JsonUtils;
-import com.rabbitmq.client.Channel;
+import java.io.IOException;
 
 
 @Component
@@ -29,7 +28,7 @@ public class ModularMqListener {
 		try {
 			ModularLogs logs = JsonUtils.json2Bean(message, ModularLogs.class);
 //			DispatchPlanExample ex = new DispatchPlanExample();
-//			ex.createCriteria().andPlanUuidEqualTo(logs.getPlanUuid());
+//			ex.createCriteria().andPlanUuidEqualTo(logs.getPlanUuidLong());
 //			List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
 //			DispatchPlan dispatchPlan = null;
 //			if (selectByExample.size() > 0) {

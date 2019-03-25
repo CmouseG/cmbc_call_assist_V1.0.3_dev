@@ -1,14 +1,19 @@
 package com.guiji.dispatch.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import com.guiji.dispatch.dao.entity.DispatchLines;
+import com.alibaba.fastjson.JSONObject;
+import com.guiji.common.model.Page;
+import com.guiji.dispatch.batchimport.AsynFileService;
+import com.guiji.dispatch.bean.BatchDispatchPlanList;
+import com.guiji.dispatch.bean.IdsDto;
+import com.guiji.dispatch.bean.MessageDto;
+import com.guiji.dispatch.dao.entity.DispatchBatchLine;
+import com.guiji.dispatch.dao.entity.DispatchPlan;
+import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dto.QueryPlanListDto;
+import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
-import com.guiji.dispatch.vo.DispatchPlanVo;
+import com.guiji.dispatch.util.Log;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
@@ -18,17 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONObject;
-import com.guiji.ccmanager.entity.LineConcurrent;
-import com.guiji.common.model.Page;
-import com.guiji.dispatch.batchimport.AsynFileService;
-import com.guiji.dispatch.bean.BatchDispatchPlanList;
-import com.guiji.dispatch.bean.IdsDto;
-import com.guiji.dispatch.bean.MessageDto;
-import com.guiji.dispatch.dao.entity.DispatchPlan;
-import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
-import com.guiji.dispatch.service.IDispatchPlanService;
-import com.guiji.dispatch.util.Log;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 public class DispatchPlanController {
@@ -43,15 +40,16 @@ public class DispatchPlanController {
 	 * @param dispatchPlan
 	 * @param userId
 	 * @param orgCode
+	 * @param orgId
 	 * @return
 	 */
 	@PostMapping("addSchedule")
 	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId,
-			@RequestHeader String orgCode) {
+			@RequestHeader String orgCode, @RequestHeader Integer orgId) {
 		logger.info("单个任务导入begin,dispatchPaln:{}:", (null != dispatchPlan)? JsonUtils.bean2Json(dispatchPlan):null);
 		MessageDto dto = new MessageDto();
 		try {
-			dto = dispatchPlanService.addSchedule(dispatchPlan, userId, orgCode);
+			dto = dispatchPlanService.addSchedule(dispatchPlan, userId, orgCode, orgId);
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
@@ -67,8 +65,8 @@ public class DispatchPlanController {
 	@PostMapping("queryDispatchPlanBatch")
 	@Log(info = "查询批量信息")
 	public List<DispatchPlanBatch> queryDispatchPlanBatch(@RequestHeader Long userId,
-			@RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
-		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin, orgCode);
+			@RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer orgId) {
+		return dispatchPlanService.queryDispatchPlanBatch(userId, isSuperAdmin, orgCode, orgId);
 	}
 
 	/**
@@ -81,12 +79,13 @@ public class DispatchPlanController {
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
 	public MessageDto batchImport( @RequestParam("file") MultipartFile file, @RequestHeader Long userId,
-			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan, @RequestHeader String orgCode,
+			@RequestParam(required = true, name = "dispatchPlan") String dispatchPlan,
+								   @RequestHeader String orgCode, @RequestHeader Integer orgId,
 			@RequestParam(required = true, name = "fileName") String fileName) {
 		logger.info("batchImport start");
 		MessageDto batchImport = new MessageDto();
 		try {
-			asynFileService.batchPlanImport(fileName, userId, file, dispatchPlan, orgCode);
+			asynFileService.batchPlanImport(fileName, userId, file, dispatchPlan, orgCode, orgId);
 		} catch (Exception e) {
 			batchImport.setResult(false);
 			batchImport.setMsg(e.getMessage());
@@ -97,35 +96,6 @@ public class DispatchPlanController {
 
 	}
 
-	/**
-	 * 根据参数查询任务计划
-	 * 
-	 * @param phone
-	 * @param planStatus
-	 * @param startTime
-	 * @param endTime
-	 * @param pagenum
-	 * @param pagesize
-	 * @return
-	 */
-	@PostMapping("queryDispatchPlanByParams")
-	@Log(info = "查询任务计划")
-	public Page<DispatchPlan> queryDispatchPlanByParams(@RequestParam(required = false, name = "phone") String phone,
-			@RequestParam(required = false, name = "planStatus") String planStatus,
-			@RequestParam(required = false, name = "startTime") String startTime,
-			@RequestParam(required = false, name = "endTime") String endTime,
-			@RequestParam(required = false, name = "batchId") Integer batchId,
-			@RequestParam(required = false, name = "replayType") String replayType,
-			@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize, @RequestHeader Long userId,
-			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin,
-			@RequestParam(required = false, name = "selectUserId") Integer selectUserId,
-			@RequestParam(required = false, name = "startCallData") String startCallData,
-			@RequestParam(required = false, name = "endCallData") String endCallData,
-			@RequestHeader Integer isDesensitization) {
-		return dispatchPlanService.queryDispatchPlanByParams(phone, planStatus, startTime, endTime, batchId, replayType,
-				pagenum, pagesize, userId, isSuperAdmin, selectUserId, startCallData, endCallData, orgCode,isDesensitization);
-	}
 
 	/**
 	 * 批量修改任务状态
@@ -135,6 +105,7 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("batchUpdatePlans")
 	public boolean batchUpdatePlans(@RequestBody IdsDto[] dto) {
+		logger.info("deleteAllPlanByBatchId:{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null);
 		return dispatchPlanService.batchUpdatePlans(dto);
 	}
 
@@ -147,8 +118,8 @@ public class DispatchPlanController {
 	@PostMapping("operationAllPlanByBatchId")
 	@Log(info = "一键修改状态")
 	public MessageDto operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
-			@RequestParam(required = true, name = "status") String status, @RequestHeader Long userId) {
-		return dispatchPlanService.operationAllPlanByBatchId(batchId, status, userId);
+			@RequestParam(required = true, name = "status") String status, @RequestHeader Long userId, @RequestParam(required = true, name = "orgId") Integer orgId) {
+		return dispatchPlanService.operationAllPlanByBatchId(batchId, status, userId, orgId);
 	}
 
 	/**
@@ -158,6 +129,7 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("deleteAllPlanByBatchId")
 	public boolean deleteAllPlanByBatchId(@RequestBody IdsDto[] dto) {
+		logger.info("deleteAllPlanByBatchId:{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null);
 		return dispatchPlanService.batchDeletePlans(dto);
 	}
 
@@ -166,29 +138,14 @@ public class DispatchPlanController {
 	 * @param plans
 	 * @param userId
 	 * @param orgCode
+	 * @param orgId
 	 * @return
 	 */
 	@PostMapping("batchInsertDisplanPlan")
 	public boolean batchInsertDisplanPlan(@RequestBody BatchDispatchPlanList plans, @RequestHeader Long userId,
-			@RequestHeader String orgCode) {
+			@RequestHeader String orgCode, @RequestHeader Integer orgId) {
 
-		return dispatchPlanService.batchInsertDisplanPlan(plans, userId, orgCode);
-
-		// // 对号码进行去重
-		// Map<String, DispatchPlan> succList = new HashMap<>();
-		//
-		// for (int i = 0; i < dispatchPlans.length; i++) {
-		// if (!succList.containsKey(dispatchPlans[i].getPhone())) {
-		// succList.put(dispatchPlans[i].getPhone(), dispatchPlans[i]);
-		// }
-		// }
-		// for (Entry<String, DispatchPlan> entry : succList.entrySet()) {
-		// try {
-		// dispatchPlanService.addSchedule(entry.getValue(), userId,orgCode);
-		// } catch (Exception e) {
-		// logger.error(e.getMessage());
-		// }
-		// }
+		return dispatchPlanService.batchInsertDisplanPlan(plans, userId, orgCode, orgId);
 	}
 
 	@PostMapping("checkBatchName")
@@ -196,17 +153,6 @@ public class DispatchPlanController {
 		return dispatchPlanService.checkBatchId(batchName);
 	}
 
-	/**
-	 * 获取客户线路列表
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	@PostMapping("outLineinfos")
-	@Log(info = "获取客户线路列表")
-	public List<LineConcurrent> outLineinfos(@RequestHeader Long userId) {
-		return dispatchPlanService.outLineinfos(String.valueOf(userId));
-	}
 
 	/**
 	 * 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
@@ -217,8 +163,8 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("getServiceStatistics")
 	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
-			@RequestHeader String orgCode) {
-		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin, orgCode);
+			@RequestHeader String orgCode, @RequestHeader Integer orgId) {
+		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin, orgCode, orgId);
 	}
 
 	/**
@@ -231,27 +177,28 @@ public class DispatchPlanController {
 	@PostMapping("getData")
 	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
-			@RequestHeader String orgCode, @RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin, orgCode);
+			@RequestHeader String orgCode, @RequestHeader Integer orgId,
+			@RequestHeader Boolean isSuperAdmin) {
+		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin, orgCode, orgId);
 	}
 
 
 	//根据用户统计当天计划数量
 	@Log(info ="根据用户统计当天计划数量")
 	@PostMapping("totalPlanCountByUserDate")
-	public TotalPlanCountVo totalPlanCountByUserDate(@RequestHeader String userId){
+	public TotalPlanCountVo totalPlanCountByUserDate(@RequestHeader String userId, @RequestHeader Integer orgId){
 		String dateStr = new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_SHORT).format(new Date());
 	//	beginDate = dateStr + " " + DateTimeUtils.DEFAULT_DATE_START_TIME;
 	//	endDate = dateStr + " " + DateTimeUtils.DEFAULT_DATE_END_TIME;
-		return dispatchPlanService.totalPlanCountByUserDate(userId, dateStr, dateStr);
+		return dispatchPlanService.totalPlanCountByUserDate(userId, dateStr, dateStr, orgId);
 	}
 
 	//查询计划列表
 	@ApiOperation(value="查询计划列表", notes="查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryPlanList", method = {RequestMethod.POST, RequestMethod.GET})
 	public Page<DispatchPlan> queryPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
-												  @RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
-												  @RequestBody QueryPlanListDto queryPlanDto){
+											@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
+											@RequestBody QueryPlanListDto queryPlanDto) {
 		if(null == queryPlanDto){
 			queryPlanDto = new QueryPlanListDto();
 			queryPlanDto.setPageNo(1);
@@ -273,42 +220,17 @@ public class DispatchPlanController {
 		page.setPageSize(pageSize);
 		page.setRecords(resPage.getList());
 		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
+
+		logger.info(
+				"now do queryPlanList.查询计划列表:{}:",
+				(null != page) ? JsonUtils.bean2Json(page) : null);
+
 		return page;
 	}
 
 	@ApiOperation(value="查询计划列表", notes="查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryLineByPlan", method = {RequestMethod.POST, RequestMethod.GET})
-	public List<DispatchLines> queryLineByPlan(){
+	public List<DispatchBatchLine> queryLineByPlan(){
 		return null;
-	}
-
-
-	@ApiOperation(value="查询计划列表", notes="查询计划列表")
-	@RequestMapping(value = "/dispatch/plan/queryPlanListByPage", method = {RequestMethod.POST, RequestMethod.GET})
-	public Page<DispatchPlanVo> queryPlanListByPage(@RequestHeader Long userId, @RequestHeader String orgCode,
-											@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
-											@RequestBody QueryPlanListDto queryPlanDto){
-		if(null == queryPlanDto){
-			queryPlanDto = new QueryPlanListDto();
-			queryPlanDto.setPageNo(1);
-		}else{
-			queryPlanDto.setPageNo(queryPlanDto.getPageNo()>0?queryPlanDto.getPageNo():1);
-		}
-
-		queryPlanDto.setOperUserId(userId+"");
-		queryPlanDto.setOperOrgCode(orgCode);
-		queryPlanDto.setSuperAdmin(isSuperAdmin);
-		queryPlanDto.setIsDesensitization(isDesensitization);
-
-		ResultPage<DispatchPlanVo> resPage = new ResultPage<DispatchPlanVo>(queryPlanDto);
-		resPage = dispatchPlanService.queryPlanListByPage(queryPlanDto, resPage);
-		Page<DispatchPlanVo> page = new Page<>();
-		Integer pageNo = queryPlanDto.getPageNo();
-		Integer pageSize = queryPlanDto.getPageSize();
-		page.setPageNo(pageNo);
-		page.setPageSize(pageSize);
-		page.setRecords(resPage.getList());
-		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
-		return page;
 	}
 }

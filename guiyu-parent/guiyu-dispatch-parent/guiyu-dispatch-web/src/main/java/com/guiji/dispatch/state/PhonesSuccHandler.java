@@ -118,7 +118,7 @@
 //				}
 //				List<String> ids = new ArrayList<>();
 //				for (DispatchPlan dis : list) {
-//					ids.add(dis.getPlanUuid());
+//					ids.add(dis.getPlanUuidLong());
 //				}
 //				if (ids.size() > 0) {
 //					dispatchMapper.updateDispatchPlanListByStatusSYNC(ids, Constant.STATUS_SYNC_1);

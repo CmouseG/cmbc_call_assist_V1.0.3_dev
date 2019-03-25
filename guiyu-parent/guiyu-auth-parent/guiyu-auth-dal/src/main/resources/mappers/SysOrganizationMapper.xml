@@ -114,7 +114,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysOrganization" keyProperty="id" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysOrganization" useGeneratedKeys="true" keyProperty="id">
     insert into sys_organization (id, `name`, code, 
       `type`, robot, line,botstence,
       `open`, del_flag, create_id, 
@@ -126,7 +126,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},#{subCode,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysOrganization" useGeneratedKeys="true" keyProperty="id">
     insert into sys_organization
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -394,7 +394,7 @@
   
   
   <select id="getOrgByUserId" resultMap="BaseResultMap">
-  	select * from sys_organization where code like CONCAT(#{orgCode},'%') and del_flag='0' and case type when 2 then OPEN = '1' else OPEN = '0' end
+  	select * from sys_organization where code like CONCAT((SELECT org_code from sys_user where id=#{userId}),'%') and del_flag='0' and case type when 2 then OPEN = '1' else OPEN = '0' end
   </select>
   
   <select id="existChildren" resultType="boolean">
@@ -457,5 +457,25 @@
     select * from sys_organization where code like CONCAT(#{orgCode},'%') and name like CONCAT('%',#{orgName},'%') and del_flag='0' and case type when 2 then OPEN = '1' else OPEN = '0' end
   </select>
 
-
+  <select id="getSubOrgIdByOrgId" resultType="int">
+  	SELECT t.id FROM `sys_organization` t
+	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'.%')
+	AND t.usable = 1
+  </select>
+  
+  <select id="getAllOrgId" resultType="int">
+  	SELECT t.id FROM `sys_organization` t WHERE t.usable = 1
+  </select>
+  
+  <update id="updateUsableByOrgId">
+  	UPDATE sys_organization t SET t.usable = 1
+	WHERE t.id = #{orgId}
+  </update>
+  
+  <select id="querySubOrgByOrgId" parameterType="java.lang.Integer" resultType="java.util.Map">
+  	SELECT t.id, t.`name` FROM `sys_organization` t
+	WHERE t.`code` LIKE CONCAT((SELECT t.`code` FROM sys_organization t WHERE t.id = #{orgId}),'.%')
+	AND t.usable = 1
+  </select>
+  
 </mapper>

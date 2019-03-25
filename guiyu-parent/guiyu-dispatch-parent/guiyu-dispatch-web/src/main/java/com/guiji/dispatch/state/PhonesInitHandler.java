@@ -1,19 +1,18 @@
 package com.guiji.dispatch.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.HsParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 
@@ -43,7 +42,7 @@ public class PhonesInitHandler implements IPhonesInit {
 		for (DispatchPlan dispatchPlan : list) {
 			HsParam hsParam = new HsParam();
 			hsParam.setParams(dispatchPlan.getParams());
-			hsParam.setSeqid(dispatchPlan.getPlanUuid());
+			hsParam.setSeqid(dispatchPlan.getPlanUuidLong() + "");
 			hsParam.setTemplateId(dispatchPlan.getRobot());
 			sendData.add(hsParam);
 		}

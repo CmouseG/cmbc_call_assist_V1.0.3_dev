@@ -2,48 +2,47 @@ package com.guiji.dispatch.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.auth.api.IAuth;
+import com.guiji.auth.api.IOrg;
 import com.guiji.ccmanager.api.ICallPlanDetail;
-import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.ccmanager.vo.CallPlanDetailRecordVO;
-import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
 import com.guiji.dispatch.bean.MQSuccPhoneDto;
 import com.guiji.dispatch.bean.MessageDto;
-import com.guiji.dispatch.dao.*;
+import com.guiji.dispatch.dao.DispatchPlanBatchMapper;
+import com.guiji.dispatch.dao.DispatchPlanMapper;
+import com.guiji.dispatch.dao.ThirdInterfaceRecordsMapper;
 import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
-import com.guiji.dispatch.dao.ext.DispatchPlanExtMapper;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
-import com.guiji.dispatch.enums.PlanTableNumEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
-import com.guiji.dispatch.line.ILinesService;
+import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.pushcallcenter.SuccessPhoneMQService;
 import com.guiji.dispatch.service.*;
-import com.guiji.dispatch.sms.IMessageService;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.dispatch.util.DaoHandler;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.ResHandler;
-import com.guiji.dispatch.vo.DispatchPlanVo;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.CheckParamsReq;
 import com.guiji.robot.model.CheckResult;
 import com.guiji.robot.model.HsParam;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.DateUtil;
-import com.guiji.utils.IdGenUtil;
+import com.guiji.utils.IdGengerator.IdUtils;
+import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -54,8 +53,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class DispatchPlanServiceImpl implements IDispatchPlanService {
@@ -69,6 +66,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private IAuth authService;
+
+	@Autowired
+	private IOrg orgService;
 
 	@Autowired
 	private RedisUtil redisUtil;
@@ -86,14 +86,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	private ThirdInterfaceRecordsMapper thirdInterfaceRecordsMapper;
 
 	@Autowired
-	private UserSmsConfigMapper userSmsConfigMapper;
-
-	@Autowired
-	private SmsTunnelMapper smsTunnerMapper;
-	@Autowired
-	private IMessageService msgService;
-
-	@Autowired
 	private IDispatchPlanPutCalldata planPutCalldata;
 	@Autowired
 	private SuccessPhoneMQService successPhoneMQService;
@@ -104,15 +96,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	IPhonePlanQueueService phonePlanQueueService;
 
 	@Autowired
-	private ILinesService lineService;
+	private IDispatchBatchLineService lineService;
 	@Autowired
 	private IPhoneRegionService phoneRegionService;
 
 	@Autowired
     private GateWayLineService gateWayLineService;
-
-	@Autowired
-	private com.guiji.dispatch.dao.ext.DispatchPlanExtMapper planMapper;
 
 	/**
 	 * 单个任务导入
@@ -123,10 +112,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 * @throws Exception
 	 */
 	@Override
-	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode) throws Exception {
+	public MessageDto addSchedule(DispatchPlan dispatchPlan, Long userId, String orgCode, Integer orgId) throws Exception {
 		boolean checkPhoneInBlackList = blackService.checkPhoneInBlackList(dispatchPlan.getPhone(), orgCode);
 		MessageDto dto = new MessageDto();
-		dispatchPlan.setPlanUuid(IdGenUtil.uuid());
+		dispatchPlan.setPlanUuid(SnowflakeIdWorker.nextId(orgId));
 		// 检查参数
 		ReturnData<List<CheckResult>> checkParams = checkParams(dispatchPlan);
 		if (checkParams.success) {
@@ -182,16 +171,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		dispatchPlan.setIsTts(Constant.IS_TTS_0);
 		dispatchPlan.setFlag(Constant.IS_FLAG_0);
 		dispatchPlan.setOrgCode(orgCode);
+		dispatchPlan.setOrgId(orgId);	//组织ID
 		//路线类型
         Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
 		dispatchPlan.setLineType(lineType);
         // 加入线路
-        List<DispatchLines> lineList = dispatchPlan.getLines();
-		for (DispatchLines lines : lineList) {
-			lines.setCreateTime(DateUtil.getCurrent4Time());
-			lines.setPlanuuid(dispatchPlan.getPlanUuid());
+        List<DispatchBatchLine> lineList = dispatchPlan.getLines();
+		for (DispatchBatchLine lines : lineList) {
+			lines.setBatchId(dispatchPlanBatch.getId());
 			lines.setLineType(dispatchPlan.getLineType());
-			lineService.insertLines(lines);
+			lines.setOrgId(orgId);
+			lines.setUserId(userId.intValue());
+			lines.setLineType(lineType);
+			lineService.insert(lines);
 		}
 
 		// 查询号码归属地
@@ -212,7 +204,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		CheckParamsReq req = new CheckParamsReq();
 		HsParam hsParam = new HsParam();
 		hsParam.setParams(dispatchPlan.getParams());
-		hsParam.setSeqid(dispatchPlan.getPlanUuid());
+		hsParam.setSeqid(dispatchPlan.getPlanUuidLong() + "");
 		hsParam.setTemplateId(dispatchPlan.getRobot());
 		List<HsParam> list = new ArrayList<>();
 		list.add(hsParam);
@@ -222,80 +214,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return checkParams;
 	}
 
-	@Override
-	public Page<DispatchPlan> querySchedules(Integer userId, int pagenum, int pagesize) {
-		Page<DispatchPlan> page = new Page<>();
-		page.setPageNo(pagenum);
-		page.setPageSize((pagesize));
-		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.setLimitStart((pagenum - 1) * pagesize);
-		ex.setLimitEnd(pagesize);
-		if (userId != 0) {
-			ex.createCriteria().andUserIdEqualTo(userId);
-		}
-		ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0);
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
-		int count = dispatchPlanMapper.countByExample(ex);
-		page.setRecords(selectByExample);
-		page.setTotal(count);
-		return page;
-	}
-
-	@Override
-	public boolean pauseSchedule(String planUuid) {
-		DispatchPlan dispatchPlan = new DispatchPlan();
-		dispatchPlan.setPlanUuid(planUuid);
-		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_3);
-		int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
-		return result > 0 ? true : false;
-	}
-
-	@Override
-	public boolean resumeSchedule(String planUuid) {
-		DispatchPlan dispatchPlan = new DispatchPlan();
-		dispatchPlan.setPlanUuid(planUuid);
-		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_1);
-		int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
-		return result > 0 ? true : false;
-	}
-
-	@Override
-	public boolean cancelSchedule(String planUuid) {
-		DispatchPlan dispatchPlan = new DispatchPlan();
-		dispatchPlan.setPlanUuid(planUuid);
-		dispatchPlan.setStatusPlan(Constant.STATUSPLAN_4);
-		int result = dispatchPlanMapper.updateByExampleSelective(dispatchPlan, new DispatchPlanExample());
-		return result > 0 ? true : false;
-	}
-
-	@Override
-	public boolean OperationAllDispatchByUserId(Integer userId, Integer status) {
-		DispatchPlan dispatchPlan = new DispatchPlan();
-		dispatchPlan.setUserId(userId);
-		dispatchPlan.setStatusPlan(status);
-		logger.info("OperationAllDispatchByUserId updateByExample");
-		int result = dispatchPlanMapper.updateByExample(dispatchPlan, new DispatchPlanExample());
-		logger.info("OperationAllDispatchByUserId end");
-		return result > 0 ? true : false;
-	}
-
-
-	public boolean isNumeric(String str) {
-		Pattern pattern = Pattern.compile("[0-9]*");
-		Matcher isNum = pattern.matcher(str);
-		if (!isNum.matches()) {
-			return false;
-		}
-		return true;
-	}
-
-	public boolean isNull(Cell cell) {
-		if (cell == null) {
-			return false;
-		} else {
-			return true;
-		}
-	}
 
 	@Override
 	public boolean successSchedule(String planUuid, String label) {
@@ -309,125 +227,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		successPhoneMQService.insertCallBack4MQ(dto);
 		return true;
 
-		//
-		// DispatchPlanExample ex = new DispatchPlanExample();
-		// ex.createCriteria().andPlanUuidEqualTo(planUuid);
-		// List<DispatchPlan> list = dispatchPlanMapper.selectByExample(ex);
-		// DispatchPlan sendSMsDispatchPlan = null;
-		// logger.info("回调完成通知查询结果:" + list.size());
-		// if (list.size() <= 0) {
-		// logger.info("回调完成通知查询结果 uuid错误！");
-		// return false;
-		// } else {
-		// sendSMsDispatchPlan = list.get(0);
-		// }
-		//
-		// boolean checkRes = checkLastNum(list.get(0));
-		// if (checkRes) {
-		// // 回调批次拨打结束通知。
-		// logger.info("回调批次拨打结束通知开始 ");
-		// ReturnData<SysUser> user =
-		// auth.getUserById(list.get(0).getUserId().longValue());
-		// if (user.getBody() != null) {
-		// String batchRecordUrl = user.getBody().getBatchRecordUrl();
-		// if (batchRecordUrl != null && batchRecordUrl != "") {
-		// JSONObject jsonObject = new JSONObject();
-		// jsonObject.put("batch_number", list.get(0).getBatchName());
-		// jsonObject.put("operate", user.getBody().getUsername());
-		// String sendHttpPost = "";
-		// try {
-		// sendHttpPost = HttpClientUtil.doPostJson(batchRecordUrl,
-		// jsonObject.toString());
-		// } catch (Exception e) {
-		// if (insertThirdInterface(batchRecordUrl, jsonObject)) {
-		// logger.info("回调错误记录新增成功...");
-		// }
-		// logger.error("error", e);
-		// }
-		// logger.info("回调批次拨打结束通知结果 :" + sendHttpPost);
-		// }
-		// } else {
-		// logger.info("successSchedule 用户不存在");
-		// }
-		// }
-		//
-		// List<String> ids = new ArrayList<>();
-		// ids.add(list.get(0).getPlanUuid());
-		// ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord =
-		// callPlanDetail.getCallPlanDetailRecord(ids);
-		// ReturnData<SysUser> user =
-		// auth.getUserById(list.get(0).getUserId().longValue());
-		// if (user.getBody() != null) {
-		// if (user.getBody().getCallRecordUrl() != null &&
-		// user.getBody().getCallRecordUrl() != "") {
-		// logger.info("通话记录通知开始");
-		// JSONObject jsonObject = new JSONObject();
-		// jsonObject.put("data", callPlanDetailRecord.getBody());
-		// boolean insertThirdInterface =
-		// insertThirdInterface(user.getBody().getCallRecordUrl(), jsonObject);
-		// logger.info("通话记录通知结果 :" + insertThirdInterface);
-		// }
-		// }
-		//
-		// if (list.size() > 0) {
-		// DispatchPlan dispatchPlan = list.get(0);
-		// dispatchPlan.setStatusPlan(Constant.STATUSPLAN_2);// 2计划完成
-		// // 0不重播非0表示重播次数
-		// // if (dispatchPlan.getRecall() > 0) {
-		// // // 获取重播条件
-		// // String recallParams = dispatchPlan.getRecallParams();
-		// // ReplayDto replayDto = JSONObject.parseObject(recallParams,
-		// // ReplayDto.class);
-		// // // 查询语音记录
-		// // ReturnData<CallOutPlan> callRecordById =
-		// // callManagerFeign.getCallRecordById(planUuid);
-		// //
-		// // if (callRecordById.getBody() != null) {
-		// // // 意图
-		// // if
-		// //
-		// (replayDto.getLabel().contains(callRecordById.getBody().getAccurateIntent()))
-		// // {
-		// // if (callRecordById.getBody().getAccurateIntent().equals("F")) {
-		// // // F类判断挂断类型
-		// // if
-		// //
-		// (replayDto.getLabelType().contains(callRecordById.getBody().getReason()))
-		// // {
-		// // // 创建
-		// // }
-		// // } else {
-		// // // 创建
-		// // }
-		// // }
-		// // }
-		// // }
-		// int result =
-		// dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
-		// logger.info("回调完成通知修改结果" + result);
-		//
-		// logger.info("---------------------发送短信------------------------");
-		// logger.info("---------------------发送短信------------------------");
-		// logger.info("---------------------发送短信------------------------");
-		// logger.info("---------------------发送短信------------------------");
-		// boolean resultmsg = SendSms(sendSMsDispatchPlan, label);
-		// logger.info("---------------------发送短信------------------------");
-		// logger.info("---------------------发送短信------------------------");
-		// logger.info("---------------------发送短信------------------------");
-		// logger.info("---------------------发送短信------------------------");
-		//
-		// // 判断下一批计算是否还有相同的推送任务，如果没有则设置redis失效时间为0
-		// // List<DispatchPlan> queryAvailableSchedules =
-		// // queryAvailableSchedules(dispatchPlan.getUserId(), 1,
-		// // dispatchPlan.getLine(), new DispatchPlan(), false);
-		// // if (queryAvailableSchedules.size() <= 0) {
-		// // String key = dispatchPlan.getUserId() + "-" +
-		// // dispatchPlan.getRobot() + "-" + dispatchPlan.getLine();
-		// // redisUtil.del(key);
-		// // logger.info("当前计划没有下一批任务:" + key + "删除了redis缓存");
-		// // }
-		//
-		// }
 	}
 
 
@@ -477,182 +276,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return true;
 	}
 
-	public static String getTimeByMinute(int minute) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MINUTE, minute);
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
-	}
 
-	@Override
-	public boolean dispatchPlanBatch(DispatchPlanBatch dispatchPlanBatch) {
-		int insert = dispatchPlanBatchMapper.insert(dispatchPlanBatch);
-		return insert > 0 ? true : false;
-	}
-
-	@Override
-	public Page<DispatchPlan> queryDispatchPlanByBatchId(Integer batchId, int pagenum, int pagesize) {
-		Page<DispatchPlan> page = new Page<>();
-		page.setPageNo(pagenum);
-		page.setPageSize((pagesize));
-		DispatchPlanExample example = new DispatchPlanExample();
-		example.setLimitStart((pagenum - 1) * pagesize);
-		example.setLimitEnd(pagesize);
-		example.createCriteria().andBatchIdEqualTo(batchId).andIsDelEqualTo(Constant.IS_DEL_0);
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		int count = dispatchPlanMapper.countByExample(example);
-		page.setRecords(selectByExample);
-		page.setTotal(count);
-		return page;
-	}
-
-	@Override
-	public Page<DispatchPlan> queryDispatchPlanByParams(String phone, String planStatus, String startTime, String endTime, Integer batchId, String replayType, int pagenum, int pagesize, Long userId, boolean isSuperAdmin, Integer selectUserId, String startCallData, String endCallData, String orgCode, Integer isDesensitization)
-	{
-		Page<DispatchPlan> page = new Page<>();
-		page.setPageNo(pagenum);
-		page.setPageSize((pagesize));
-		DispatchPlanExample example = new DispatchPlanExample();
-		example.setLimitStart((pagenum - 1) * pagesize);
-		example.setLimitEnd(pagesize);
-		example.setOrderByClause("`gmt_create` DESC");
-		Criteria createCriteria = example.createCriteria();
-		if (phone != null && phone != "") {
-			createCriteria.andPhoneEqualTo(phone);
-		}
-		if (startCallData != null && startCallData != "" && endCallData != null && endCallData != "") {
-			createCriteria.andCallDataBetween(Integer.valueOf(startCallData), Integer.valueOf(endCallData));
-		}
-
-		if (selectUserId != null && selectUserId != 0) {
-			createCriteria.andUserIdEqualTo(selectUserId);
-		}
-
-		if (planStatus != null && planStatus != "") {
-			List<Integer> ids = new ArrayList<>();
-			if (planStatus.contains(",")) {
-				String[] split = planStatus.split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andStatusPlanIn(ids);
-			} else {
-				createCriteria.andStatusPlanEqualTo(Integer.valueOf(planStatus));
-			}
-		}
-		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			try {
-				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(startTime).getTime()), new Timestamp(sdf.parse(endTime).getTime()));
-			} catch (ParseException e) {
-				logger.error("error", e);
-			}
-		}
-
-		if (batchId != null && batchId != 0) {
-			createCriteria.andBatchIdEqualTo(batchId);
-		}
-
-		if (replayType != null && replayType != "") {
-			List<Integer> ids = new ArrayList<>();
-			if (replayType.contains(",")) {
-				String[] split = replayType.split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andReplayTypeIn(ids);
-			} else {
-				createCriteria.andReplayTypeEqualTo(Integer.valueOf(replayType));
-			}
-		}
-
-		if (!isSuperAdmin) {
-			createCriteria.andOrgCodeLike(orgCode + "%");
-		} else {
-			// // 超级用户
-			// if (selectUserId != null) {
-			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
-			// }
-		}
-		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
-
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
-		if(null != selectByExample && selectByExample.size()>0){
-			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
-			for(DispatchPlan dis : selectByExample){
-				planUuidSet.add(dis.getPlanUuid());
-			}
-
-			loopA:for(String planUuid : planUuidSet) {
-				// 转换userName
-				loopB:for (DispatchPlan dis : selectByExample) {
-					if(planUuid.equals(dis.getPlanUuid())) {
-						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
-						if (user.getBody() != null) {
-							dis.setUserName(user.getBody().getUsername());
-						}
-
-						List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
-						dis.setLines(queryLinesByPlanUUID);
-
-						// isDesensitization
-						if (isDesensitization.equals(0)) {
-							if (dis.getPhone().length() <= 7) {
-								continue;
-							}
-							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
-							dis.setPhone(phoneNumber);
-						}
-
-						resList.add(dis);
-						continue loopA;
-					}
-				}
-			}
-		}
-
-
-
-		int count = dispatchPlanMapper.countByExample(example);
-		page.setRecords(resList);
-		page.setTotal(count);
-		return page;
-	}
-
-	// private void getBatchNames(List<DispatchPlan> selectByExample) {
-	// DispatchPlanBatchExample ex = new DispatchPlanBatchExample();
-	// List<Integer> ids = new ArrayList<>();
-	// for (DispatchPlan dispatchPlan : selectByExample) {
-	// ids.add(dispatchPlan.getBatchId());
-	// }
-	// ex.createCriteria().andIdIn(ids);
-	//
-	// if (ids.size() > 0) {
-	// List<DispatchPlanBatch> Batch =
-	// dispatchPlanBatchMapper.selectByExample(ex);
-	//
-	// for (DispatchPlanBatch batchBean : Batch) {
-	// for (DispatchPlan plan : selectByExample) {
-	// if (batchBean.getId().equals(plan.getBatchId())) {
-	// plan.setBatchName(batchBean.getName());
-	// }
-	// }
-	// }
-	// }
-	// }
-
-	@Override
-	public List<LineConcurrent> outLineinfos(String userId) {
-		DispatchPlanExample ex = new DispatchPlanExample();
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallHour("12");
-		// dis.setStatusPlan(statusPlan);
-		List<DispatchPlan> selectByCallHour = dispatchPlanMapper.selectByCallHour(dis);
-		// ReturnData<List<LineConcurrent>> outLineinfos =
-		// callManagerFeign.getLineInfos(userId);
-		// return outLineinfos.getBody();
-		return null;
-	}
 
 	@Override
 	public List<DispatchPlan> queryAvailableSchedules(Integer userId, int requestCount, int lineId,
@@ -668,60 +292,32 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return planPutCalldata.get(userId, requestCount, lineId);
 	}
 
-	@Override
-	public List<DispatchPlan> selectPhoneByDate() {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
-
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setCallHour(String.valueOf(hour));
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		// flag
-		dis.setFlag(Constant.IS_FLAG_0);
-		// 设置分页
-		dis.setLimitStart(0);
-		dis.setLimitEnd(1000);
-		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		return phones;
-	}
-
-	@Override
-	public boolean deleteSchedule(String planUuid) {
-		DispatchPlan dis = new DispatchPlan();
-		dis.setIsDel(Constant.IS_DEL_1);
-		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidEqualTo(planUuid);
-		int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
-		return result > 0 ? true : false;
-	}
 
 	@Override
 	public boolean batchUpdatePlans(IdsDto[] dto) {
 
 		DispatchPlan dis = new DispatchPlan();
-		List<String> planUUids = new ArrayList<>();
+		List<Long> planUUids = new ArrayList<>();
+		List<Integer> orgIds = new ArrayList<>();
 		for (IdsDto bean : dto)
 		{
 			if (StringUtils.isNotEmpty(bean.getPlanuuid()))
 			{
-				planUUids.add(bean.getPlanuuid());
+				planUUids.add(Long.valueOf(bean.getPlanuuid()));
 
 				dis.setStatusPlan(bean.getStatus().intValue());
+
+				if (!orgIds.contains(bean.getOrgId())) {
+					orgIds.add(bean.getOrgId());
+				}
 			}
 		}
-
+		logger.info("now do batchUpdatePlans:{},{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null, orgIds);
 		dis.setGmtModified(DateUtil.getCurrent4Time());
 
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidIn(planUUids);
+		ex.createCriteria().andOrgIdIn(orgIds).andPlanUuidIn(planUUids);
 		dispatchPlanMapper.updateByExampleSelective(dis, ex);
-
 
 		if (dto.length > 0) {
 			IdsDto bean = dto[0];
@@ -740,7 +336,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 * 停止之后不能暂停 不能恢复
 	 */
 	@Override
-	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId) {
+	public MessageDto operationAllPlanByBatchId(Integer batchId, String status, Long userId, Integer orgId) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
@@ -770,6 +366,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 
 		createCriteria.andUserIdEqualTo(userId.intValue());
+		createCriteria.andOrgIdEqualTo(orgId);
 
 		Integer converStatus = Integer.valueOf(status);
 
@@ -797,26 +394,33 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Override
 	public boolean batchDeletePlans(IdsDto[] dto) {
 
-		List<String> planUUids = new ArrayList<>();
+		List<Long> planUUids = new ArrayList<>();
 		List<Integer> batchIds = new ArrayList<>();
+		List<Integer> orgIds = new ArrayList<>();
+		Map<Integer, IdsDto> tmpMap = new HashMap<>();
 		for (IdsDto bean : dto)
 		{
 			if (StringUtils.isNotEmpty(bean.getPlanuuid()))
 			{
-				planUUids.add(bean.getPlanuuid());
+				planUUids.add(Long.valueOf(bean.getPlanuuid()));
 			}
 
 			if (!batchIds.contains(bean.getBatchid()))
 			{
 				batchIds.add(bean.getBatchid());
+				tmpMap.put(bean.getBatchid(), bean);
+			}
+			if (!orgIds.contains(bean.getOrgId())) {
+				orgIds.add(bean.getOrgId());
 			}
 		}
-
+		logger.info("now do batchDeletePlans:{},{},{},{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null, batchIds, orgIds, tmpMap);
 		DispatchPlan dispatchPlan = new DispatchPlan();
 		dispatchPlan.setIsDel(Constant.IS_DEL_1);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria createCriteria = ex.createCriteria();
 
+		createCriteria.andOrgIdIn(orgIds);
 		createCriteria.andPlanUuidIn(planUUids);
 
 		dispatchPlanMapper.updateByExampleSelective(dispatchPlan, ex);
@@ -825,12 +429,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		{
 			// 当前批次都删除了 那么就不显示批次信息了
 			DispatchPlanExample batch = new DispatchPlanExample();
-			batch.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(batchId);
+			batch.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andBatchIdEqualTo(batchId).andOrgIdEqualTo(tmpMap.get(batchId).getOrgId());
+			;
 			int countByExample = dispatchPlanMapper.countByExample(batch);
 
 			if (countByExample <= 0) {
 				DispatchPlanBatchExample bex = new DispatchPlanBatchExample();
-				bex.createCriteria().andIdEqualTo(batchId);
+				bex.createCriteria().andOrgIdEqualTo(tmpMap.get(batchId).getOrgId()).andIdEqualTo(batchId);
 				DispatchPlanBatch batchDto = new DispatchPlanBatch();
 				// 不显示
 				batchDto.setStatusShow(Constant.BATCH_STATUS_NO);
@@ -845,7 +450,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode) {
+	public List<DispatchPlanBatch> queryDispatchPlanBatch(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId) {
 		// 批量信息
 		DispatchPlanBatchExample example = new DispatchPlanBatchExample();
 		com.guiji.dispatch.dao.entity.DispatchPlanBatchExample.Criteria createCriteria = example.createCriteria();
@@ -853,12 +458,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// createCriteria.andUserIdEqualTo(userId.intValue());
 			createCriteria.andOrgCodeLike(orgCode + "%");
 		}
+
 		createCriteria.andStatusShowEqualTo(Constant.BATCH_STATUS_SHOW);
 		return dispatchPlanBatchMapper.selectByExample(example);
 	}
 
 	@Override
 	public boolean updateReplayDate(Boolean flag) {
+
+		List<Integer> allOrgIds = getAllOrgIds();
+
 		if (flag) {
 			Date d = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -878,11 +487,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			DispatchPlanExample ex = new DispatchPlanExample();
 			// 如果刷新日期操作 刷新拨打时间小于当前凌晨的日期的号码
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
-					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);
 			dispatchPlanMapper.updateByExampleSelective(dis, ex);
 			DispatchPlanExample ex1 = new DispatchPlanExample();
 			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_0).andCallDataLessThan(Integer.valueOf(dateNowStr))
-					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_3).andOrgIdIn(allOrgIds);
 
             dis.setStatusPlan(Constant.STATUSPLAN_3);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex1);
@@ -902,11 +511,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 			DispatchPlanExample ex = new DispatchPlanExample();
 			ex.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
-					.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);
 			int result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 			DispatchPlanExample ex1 = new DispatchPlanExample();
 			ex1.createCriteria().andCleanEqualTo(Constant.IS_CLEAN_1).andCallDataLessThan(Integer.valueOf(dateNowStr))
-					.andStatusPlanEqualTo(Constant.STATUSPLAN_3);
+					.andStatusPlanEqualTo(Constant.STATUSPLAN_3).andOrgIdIn(allOrgIds);
 			dispatchPlanMapper.updateByExampleSelective(dis, ex1);
 			return result > 0 ? true : false;
 		}
@@ -922,10 +531,20 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public boolean batchUpdateFlag(List<DispatchPlan> list, String flag) {
-		List<String> ids = new ArrayList<>();
+		List<Long> ids = new ArrayList<>();
 
+		List<Integer> orgIds = new ArrayList<>();
 		for (DispatchPlan dispatchPlan : list) {
-			ids.add(dispatchPlan.getPlanUuid());
+			if (!ids.contains(dispatchPlan.getPlanUuidLong()))
+			{
+				ids.add(dispatchPlan.getPlanUuidLong());
+			}
+
+			Integer orgId = IdUtils.doParse(Long.valueOf(dispatchPlan.getPlanUuidLong())).getOrgId();
+			if(!orgIds.contains(orgId))
+			{
+				orgIds.add(orgId);
+			}
 		}
 		int result = -1;
 		// for (String id : ids) {
@@ -938,61 +557,32 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// Map<String, Object> = new
 		// map.put("flag",flag);
 		// map.put("list", ids);
-		result = dispatchPlanMapper.updateDispatchPlanList(ids, flag);
+
+		DispatchPlanExample ex = new DispatchPlanExample();
+		ex.createCriteria().andOrgIdIn(orgIds).andPlanUuidIn(ids);
+
+		DispatchPlan dis = new DispatchPlan();
+		dis.setFlag(flag);
+
+		result = dispatchPlanMapper.updateByExampleSelective(dis, ex);
 		return result > 0 ? true : false;
 	}
 
-	@Override
-	public List<DispatchPlan> selectPhoneByDateAndFlag(String flag, Integer stausPlan, Integer statusSYNC) {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
-
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setCallHour(String.valueOf(hour));
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(stausPlan);
-		dis.setStatusSync(statusSYNC);
-		dis.setFlag(flag);
-		dis.setLimitStart(0);
-		dis.setLimitEnd(1000);
-		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		return phones;
-	}
 
 	@Override
-	public int getcall4BatchName(String batchName, Integer status) {
+	public int getcall4BatchName(Long userId, String batchName, Integer status) {
+
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andBatchNameEqualTo(batchName).andStatusPlanEqualTo(status)
-				.andIsDelEqualTo(Constant.IS_DEL_0);
+				.andIsDelEqualTo(Constant.IS_DEL_0).andOrgIdIn(getSubOrgIdsByUserId(userId.intValue()));
 		int result = dispatchPlanMapper.countByExample(ex);
 		return result;
 	}
 
 	@Override
-	public Page<DispatchPlan> queryDispatchPlan(String batchName, int pagenum, int pagesize) {
-		Page<DispatchPlan> page = new Page<>();
-		page.setPageNo(pagenum);
-		page.setPageSize((pagesize));
-		DispatchPlanExample example = new DispatchPlanExample();
-		example.setLimitStart((pagenum - 1) * pagesize);
-		example.setLimitEnd(pagesize);
-		// example.setOrderByClause("`gmt_create` DESC");
-		example.createCriteria().andBatchNameEqualTo(batchName);
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		int countByExample = dispatchPlanMapper.countByExample(example);
-
-		page.setRecords(selectByExample);
-		page.setTotal(countByExample);
-		return page;
-	}
-
-	@Override
-	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(String phone, String batchName, int pagenum,
+	public List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(Long userId, String phone, String batchName, int pagenum,
 			int pagesize) {
+
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
 		if (phone != null && phone != "") {
@@ -1006,7 +596,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			example.setLimitStart((pagenum - 1) * pagesize);
 			example.setLimitEnd(pagesize);
 		}
-
+		createCriteria.andOrgIdIn(getSubOrgIdsByUserId(userId.intValue()));
 		example.setLimitStart((pagenum - 1) * pagesize);
 		example.setLimitEnd(pagesize);
 
@@ -1014,7 +604,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		List<String> ids = new ArrayList<>();
 		for (DispatchPlan dis : selectByExample) {
-			ids.add(dis.getPlanUuid());
+			ids.add(dis.getPlanUuidLong() + "");
 		}
 		if (ids.size() > 0) {
 			ReturnData<List<CallPlanDetailRecordVO>> callPlanDetailRecord = callPlanDetail.getCallPlanDetailRecord(ids);
@@ -1026,26 +616,33 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, String orgCode) {
+	public JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId) {
 		JSONObject jsonObject = new JSONObject();
+
+		List<Integer> allOrgIds = getAllOrgIds();
+		List<Integer> subOrgIds = getSubOrgIds(orgId);
 		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
 		int countNums = 0;
+		DispatchPlanExample ex = new DispatchPlanExample();
+
 		if (!isSuperAdmin) {
-			DispatchPlanExample ex = new DispatchPlanExample();
-			ex.createCriteria().andOrgCodeLike(orgCode + "%");
+
+			ex.createCriteria().andOrgIdIn(subOrgIds);
+
 			countNums = dispatchPlanMapper.countByExample(ex);
 		} else {
-			countNums = dispatchPlanMapper.countByExample(new DispatchPlanExample());
+			ex.createCriteria().andOrgIdIn(allOrgIds);
+			countNums = dispatchPlanMapper.countByExample(ex);
 		}
 
-		DispatchPlanExample ex = new DispatchPlanExample();
+		ex = new DispatchPlanExample();
 		if (!isSuperAdmin) {
 			// 不是超级管理员就是通过orgCode查询
 			ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
-					.andOrgCodeLike(orgCode + "%");
+					.andOrgIdIn(subOrgIds);
 		} else {
 			// 超级管理员查询所有
-			ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1);
+			ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);;
 		}
 		int noCallNums = dispatchPlanMapper.countByExample(ex);
 
@@ -1053,9 +650,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Criteria andStatusPlanEqualTo2 = ex1.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 		if (!isSuperAdmin) {
-			andStatusPlanEqualTo2.andOrgCodeLike(orgCode + "%");
+			andStatusPlanEqualTo2.andOrgIdIn(subOrgIds);
 		}
-		ex1.setOrderByClause("`gmt_create` ASC");
+		else
+		{
+			andStatusPlanEqualTo2.andOrgIdIn(allOrgIds);
+		}
+		ex1.setOrderByClause("`plan_uuid` ASC");
 		ex1.setLimitStart(0);
 		ex1.setLimitEnd(1);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex1);
@@ -1069,9 +670,13 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		Criteria andStatusPlanEqualTo3 = ex2.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0)
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
 		if (!isSuperAdmin) {
-			andStatusPlanEqualTo3.andOrgCodeLike(orgCode + "%");
+			andStatusPlanEqualTo3.andOrgIdIn(subOrgIds);
 		}
-		ex2.setOrderByClause("`gmt_create` DESC");
+		else
+		{
+			andStatusPlanEqualTo3.andOrgIdIn(allOrgIds);
+		}
+		ex2.setOrderByClause("`plan_uuid` DESC");
 		ex2.setLimitStart(0);
 		ex2.setLimitEnd(1);
 		List<DispatchPlan> selectByExample2 = dispatchPlanMapper.selectByExample(ex2);
@@ -1102,7 +707,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Override
 	public JSONObject getServiceStatistics(Long userId, String startTime, String endTime, Boolean isSuperAdmin,
-			String orgCode) {
+			String orgCode, Integer orgId) {
 		DispatchPlanExample ex = new DispatchPlanExample();
 		Criteria createCriteria = ex.createCriteria();
 		if (startTime != null && startTime != "" && endTime != null && endTime != "") {
@@ -1115,8 +720,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				logger.error("error", e);
 			}
 		}
+
+		List<Integer> allOrgIds = getAllOrgIds();
+		List<Integer> subOrgIds = getSubOrgIds(orgId);
+
 		if (!isSuperAdmin) {
-			createCriteria.andOrgCodeLike(orgCode + "%");
+			createCriteria.andOrgIdIn(subOrgIds);
+		}
+		else
+		{
+			createCriteria.andOrgIdIn(allOrgIds);
 		}
 
 		DispatchPlanExample ex1 = new DispatchPlanExample();
@@ -1134,7 +747,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 		}
 		if (!isSuperAdmin) {
-			createCriteria1.andOrgCodeLike(orgCode + "%");
+			createCriteria1.andOrgIdIn(subOrgIds);
+		}
+		else
+		{
+			createCriteria1.andOrgIdIn(allOrgIds);
 		}
 
 		int taskCount = dispatchPlanMapper.countByExample(ex);
@@ -1162,7 +779,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	 * @return
 	 */
 	@Override
-	public TotalPlanCountVo totalPlanCountByUserDate(String userId, String beginDate, String endDate) {
+	public TotalPlanCountVo totalPlanCountByUserDate(String userId, String beginDate, String endDate, Integer orgId) {
 		if(!StringUtils.isEmpty(userId)) {
 			SysUser user = ResHandler.getResObj(auth.getUserById(Long.valueOf(userId)));
 			String orgCode = null != user ? user.getOrgCode() : null;
@@ -1177,17 +794,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 			DispatchPlan plan = new DispatchPlan();
 			plan.setOrgCode(orgCode);
+			plan.setOrgId(orgId);
 			TotalPlanCountVo total = new TotalPlanCountVo();
 			int totalCount = 0, doingCount = 0, finishCount = 0, suspendCount=0, stopCount=0;
-			PlanTableNumEnum[] tables = PlanTableNumEnum.values();
-			for(PlanTableNumEnum tableNum : tables){
-				TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(tableNum.getNum(), plan, beginDate, endDate);
-				totalCount += totalNum.getTotalCount();
-				doingCount += totalNum.getDoingCount();
-				finishCount += totalNum.getFinishCount();
-				suspendCount += totalNum.getSuspendCount();
-				stopCount += totalNum.getStopCount();
-			}
+
+			TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(plan, beginDate, endDate);
+			totalCount += totalNum.getTotalCount();
+			doingCount += totalNum.getDoingCount();
+			finishCount += totalNum.getFinishCount();
+			suspendCount += totalNum.getSuspendCount();
+			stopCount += totalNum.getStopCount();
 			/*
 			TotalPlanCountVo total0 = dispatchPlanMapper.totalPlanCount(0, plan, beginDate, endDate);//
 			TotalPlanCountVo total1 = dispatchPlanMapper.totalPlanCount(1, plan, beginDate, endDate);//
@@ -1211,20 +827,18 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public TotalPlanCountVo totalPlanCountByBatch(Integer batchId) {
+	public TotalPlanCountVo totalPlanCountByBatch(Integer batchId, Integer orgId) {
 		DispatchPlan plan = new DispatchPlan();
 		plan.setBatchId(batchId);
+		plan.setOrgId(orgId);
 		TotalPlanCountVo total = new TotalPlanCountVo();
 		int totalCount = 0, doingCount = 0, finishCount = 0, suspendCount=0, stopCount=0;
-		PlanTableNumEnum[] tables = PlanTableNumEnum.values();
-		for(PlanTableNumEnum tableNum : tables){
-			TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(tableNum.getNum(), plan, null, null);
-			totalCount += totalNum.getTotalCount();
-			doingCount += totalNum.getDoingCount();
-			finishCount += totalNum.getFinishCount();
-			suspendCount += totalNum.getSuspendCount();
-			stopCount += totalNum.getStopCount();
-		}
+		TotalPlanCountVo totalNum = dispatchPlanMapper.totalPlanCount(plan, null, null);
+		totalCount += totalNum.getTotalCount();
+		doingCount += totalNum.getDoingCount();
+		finishCount += totalNum.getFinishCount();
+		suspendCount += totalNum.getSuspendCount();
+		stopCount += totalNum.getStopCount();
 		total.setTotalCount(totalCount);
 		total.setDoingCount(doingCount);
 		total.setFinishCount(finishCount);
@@ -1233,75 +847,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return total;
 	}
 
-	@Override
-	public boolean insertDispatchPlanList(List<DispatchPlan> list) {
-		int result = dispatchPlanMapper.insertDispatchPlanList(list);
-		return result > 0 ? true : false;
-	}
-
-	// public boolean checkBalckList(DispatchPlan dispatchPlan) {
-	// if (redisUtil.get("blackList") != null) {
-	// Map<String, BlackList> base = (Map) redisUtil.get("blackList");
-	// if (base.containsKey(dispatchPlan.getPhone())) {
-	// return true;
-	// } else {
-	// return false;
-	// }
-	// }
-	// return false;
-	// }
 
 	@Override
-	public List<DispatchPlan> selectPhoneByDate4Redis(Integer userId, String flag, Integer limit, Integer lineId) {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
+	public PlanCountVO getPlanCountByUserId(String orgCode, Integer orgId) {
 
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setCallHour(String.valueOf(hour));
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		dis.setFlag(flag);
-		dis.setLimitStart(0);
-		dis.setLimitEnd(limit);
-		dis.setUserId(userId);
-		dis.setLine(lineId);
-		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour(dis);
-		return phones;
-	}
-
-	@Override
-	public List<DispatchPlan> selectPhoneByDate4UserId(String flag, Integer limit) {
-		Date d = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		String dateNowStr = sdf.format(d);
-		Calendar now = Calendar.getInstance();
-		int hour = now.get(Calendar.HOUR_OF_DAY);
-		DispatchPlan dis = new DispatchPlan();
-		dis.setCallData(Integer.valueOf(dateNowStr));
-		dis.setCallHour(String.valueOf(hour));
-		dis.setIsDel(Constant.IS_DEL_0);
-		dis.setStatusPlan(Constant.STATUSPLAN_1);
-		dis.setStatusSync(Constant.STATUS_SYNC_0);
-		dis.setFlag(flag);
-		dis.setLimitStart(0);
-		dis.setLimitEnd(limit);
-		List<DispatchPlan> phones = dispatchPlanMapper.selectByCallHour4UserId(dis);
-		return phones;
-	}
-
-	@Override
-	public PlanCountVO getPlanCountByUserId(String orgCode) {
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String dateNowStr = sdf.format(d);
 		DispatchPlanExample ex = new DispatchPlanExample();
 		ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
 				.andOrgCodeLike(orgCode + "%");
+		if(null != orgId){
+			ex.createCriteria().andOrgIdEqualTo(orgId);
+		}
 		// 总数
 		int countByExample = dispatchPlanMapper.countByExample(ex);
 
@@ -1318,7 +876,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean stopPlanByorgCode(String orgCode, String type) {
+	public boolean stopPlanByorgCode(String orgCode, Integer orgId, String type) {
 		logger.info("orgCode{},type{}", orgCode, type);
 		DispatchPlanExample example = new DispatchPlanExample();
 		Criteria createCriteria = example.createCriteria();
@@ -1330,6 +888,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanNotEqualTo(Constant.STATUSPLAN_2);
 			createCriteria.andOrgCodeEqualTo(orgCode);
 		}
+		createCriteria.andOrgIdIn(getSubOrgIdsByUserId(orgId));
 
 		DispatchPlan updateRecord = new DispatchPlan();
 		updateRecord.setStatusPlan(Constant.STATUSPLAN_4);
@@ -1339,7 +898,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public boolean batchInsertDisplanPlan(BatchDispatchPlanList plans, Long userId, String orgCode) {
+	public boolean batchInsertDisplanPlan(BatchDispatchPlanList plans, Long userId, String orgCode, Integer orgId) {
 		DispatchPlanBatch batch = new DispatchPlanBatch();
 		batch.setName(plans.getBatchName());
 		batch.setUserId(userId.intValue());
@@ -1349,15 +908,26 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		batch.setOrgCode(orgCode);
 		dispatchPlanBatchMapper.insert(batch);
 
+		//路线类型
+		Integer lineType = null != plans.getLineType()?plans.getLineType():PlanLineTypeEnum.SIP.getType();
+		// 加入线路
+		List<DispatchBatchLine> lineList = plans.getLines();
+		for (DispatchBatchLine lines : lineList) {
+			lines.setBatchId(batch.getId());
+			lines.setLineType(lineType);
+			lines.setOrgId(orgId);
+			lines.setUserId(userId.intValue());
+			lineService.insert(lines);
+		}
+
 		List<String> phones = new ArrayList<>();
 		for (int i = 0; i < plans.getMobile().size(); i++) {
 			DispatchPlan dispatchPlan = plans.getMobile().get(i);
-			//路线类型
-			Integer lineType = null != dispatchPlan.getLineType()?dispatchPlan.getLineType():PlanLineTypeEnum.SIP.getType();
+
 
 			com.guiji.dispatch.dao.entity.DispatchPlan bean = new com.guiji.dispatch.dao.entity.DispatchPlan();
 			BeanUtils.copyProperties(dispatchPlan, bean);
-			bean.setPlanUuid(IdGenUtil.uuid());
+			bean.setPlanUuid(SnowflakeIdWorker.nextId(orgId));
 			bean.setBatchId(batch.getId());
 			bean.setUserId(userId.intValue());
 			// bean.setLine(Integer.valueOf(plans.getLine()));
@@ -1369,16 +939,16 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setGmtCreate(DateUtil.getCurrent4Time());
 			bean.setGmtModified(DateUtil.getCurrent4Time());
 			//号码去重
-			if(phones.contains(bean.getPhone().trim())){
+			if(phones.contains(bean.getPhone())){
 				logger.info("当前批量加入号码存在重复号码，已经过滤");
 				continue;
 			}
 			// 查询手机号
-			String phone = queryPhone(dispatchPlan.getPlanUuid());
+			String phone = queryPhone(dispatchPlan.getPlanUuidLong(), orgId);
 			if(phone ==null){
 				continue;
 			}
-			bean.setPhone(phone.trim());
+			bean.setPhone(phone);
 			// 查询用户名称
 			ReturnData<SysUser> SysUser = authService.getUserById(userId);
 			if (SysUser != null) {
@@ -1388,6 +958,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			bean.setStatusPlan(Constant.STATUSPLAN_1);
 			bean.setStatusSync(Constant.STATUS_SYNC_0);
 			bean.setOrgCode(orgCode);
+			bean.setOrgId(orgId);//组织ID
 			bean.setBatchName(plans.getBatchName());
 			bean.setIsTts(Constant.IS_TTS_0);
 			bean.setReplayType(Constant.REPLAY_TYPE_0);
@@ -1401,14 +972,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			}
 
 			dispatchPlan.setLineType(lineType);	//线路类型		1-SIP， 2-SIM
-			// 加入线路
-			List<DispatchLines> lineList = plans.getLines();
-			for (DispatchLines lines : lineList) {
-				lines.setCreateTime(DateUtil.getCurrent4Time());
-				lines.setPlanuuid(bean.getPlanUuid());
-				lines.setLineType(lineType);
-				lineService.insertLines(lines);
-			}
 			// 查询号码归属地
 			String cityName = phoneRegionService.queryPhoneRegion(bean.getPhone());
 			bean.setCityName(cityName);
@@ -1419,16 +982,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 					//设置加入路由网关路线redis及状态
 					gateWayLineService.setGatewayLineRedis(lineList);
 				}
-
-				phones.add(bean.getPhone());
 			}
+			phones.add(bean.getPhone());
 		}
 		return true;
 	}
 
-	private String queryPhone(String planUuid) {
+	private String queryPhone(long planUuid, int orgId) {
 		DispatchPlanExample ex = new DispatchPlanExample();
-		ex.createCriteria().andPlanUuidEqualTo(planUuid);
+		ex.createCriteria().andPlanUuidEqualTo(planUuid).andOrgIdEqualTo(orgId);
 		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(ex);
 		if (selectByExample.size() <= 0) {
 			logger.info("queryPhone planuuid  error ");
@@ -1438,137 +1000,171 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public DispatchPlan queryDispatchPlanById(String planUuId) {
-		return dispatchPlanMapper.queryDispatchPlanById(planUuId);
+	public DispatchPlan queryDispatchPlanById(long planUuId) {
+		return dispatchPlanMapper.queryDispatchPlanById(planUuId, IdUtils.doParse(planUuId).getOrgId());
 	}
 
 	@Override
-	public String queryPlanRemarkById(String planUuid) {
-		return dispatchPlanMapper.queryPlanRemarkById(planUuid);
+	public String queryPlanRemarkById(long planUuid) {
+		return dispatchPlanMapper.queryPlanRemarkById(planUuid, IdUtils.doParse(planUuid).getOrgId());
 	}
 
-	/**
-	 * 查询计划列表
-	 * @param queryPlanDto
-	 * @return
-	 */
-	@Override
-	public ResultPage<DispatchPlan> queryPlanList(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlan> page) {
-		Integer pageNo = page.getPageNo();
-		Integer pageSize = page.getPageSize();
-		DispatchPlanExample example = new DispatchPlanExample();
-		example.setLimitStart((pageNo - 1) * pageSize);
-		example.setLimitEnd(pageSize);
-		example.setOrderByClause("`gmt_create` DESC");
-		Criteria createCriteria = example.createCriteria();
-		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
-			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
-		}
-		if (!StringUtils.isEmpty(queryPlanDto.getStartCallData()) && !StringUtils.isEmpty(queryPlanDto.getEndCallData())) {
-			createCriteria.andCallDataBetween(Integer.valueOf(queryPlanDto.getStartCallData()), Integer.valueOf(queryPlanDto.getEndCallData()));
-		}
+  /**
+   * 查询计划列表
+   *
+   * @param queryPlanDto
+   * @return
+   */
+  @Override
+  public ResultPage<DispatchPlan> queryPlanList(
+		  QueryPlanListDto queryPlanDto, ResultPage<DispatchPlan> page) {
 
-		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
-			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
-		}
+	  if (queryPlanDto.getOperOrgId() <= 0) {
+		  return page;
+	  }
+	  Integer pageNo = page.getPageNo();
+	  Integer pageSize = page.getPageSize();
+	  DispatchPlanExample example = new DispatchPlanExample();
+	  example.setLimitStart((pageNo - 1) * pageSize);
+	  example.setLimitEnd(pageSize);
+	  example.setOrderByClause("`plan_uuid` DESC");
+	  Criteria createCriteria = example.createCriteria();
+	  createCriteria.andOrgIdEqualTo(queryPlanDto.getOperOrgId());
 
-		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
-			List<Integer> ids = new ArrayList<>();
-			if (queryPlanDto.getPlanStatus().contains(",")) {
-				String[] split = queryPlanDto.getPlanStatus().split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andStatusPlanIn(ids);
-			} else {
-				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
-			}
-		}
-		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			try {
-				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(queryPlanDto.getStartTime()).getTime()), new Timestamp(sdf.parse(queryPlanDto.getEndTime()).getTime()));
-			} catch (ParseException e) {
-				logger.error("error", e);
-			}
-		}
+	  logger.info(
+			  "now do queryPlanList:{}:",
+			  (null != queryPlanDto) ? JsonUtils.bean2Json(queryPlanDto) : null);
 
-		if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
-			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
-		}
+	  if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
+		  createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
+	  }
+	  if (!StringUtils.isEmpty(queryPlanDto.getStartCallData())
+			  && !StringUtils.isEmpty(queryPlanDto.getEndCallData())) {
+		  createCriteria.andCallDataBetween(
+				  Integer.valueOf(queryPlanDto.getStartCallData()),
+				  Integer.valueOf(queryPlanDto.getEndCallData()));
+	  }
 
-		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
-			List<Integer> ids = new ArrayList<>();
-			if (queryPlanDto.getReplayType().contains(",")) {
-				String[] split = queryPlanDto.getReplayType().split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andReplayTypeIn(ids);
-			} else {
-				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
-			}
-		}
+	  if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
+		  createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
+	  }
 
-		if(null != queryPlanDto.getResultList()
-				&& queryPlanDto.getResultList().size()>0){
-			createCriteria.andResultIn(queryPlanDto.getResultList());
-		}
+	  if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
+		  List<Integer> ids = new ArrayList<>();
+		  if (queryPlanDto.getPlanStatus().contains(",")) {
+			  String[] split = queryPlanDto.getPlanStatus().split(",");
+			  for (String sp : split) {
+				  ids.add(Integer.valueOf(sp));
+			  }
+			  createCriteria.andStatusPlanIn(ids);
+		  } else {
+			  createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
+		  }
+	  }
+	  if (!StringUtils.isEmpty(queryPlanDto.getStartTime())
+			  && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
+		  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		  try {
+			  createCriteria.andGmtCreateBetween(
+					  new Timestamp(sdf.parse(queryPlanDto.getStartTime()).getTime()),
+					  new Timestamp(sdf.parse(queryPlanDto.getEndTime()).getTime()));
+		  } catch (ParseException e) {
+			  logger.error("error", e);
+		  }
+	  }
 
-		if (!queryPlanDto.isSuperAdmin()) {
-			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
-		} else {
-			// // 超级用户
-			// if (selectUserId != null) {
-			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
-			// }
-		}
-		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
+	  if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
+		  createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
+	  }
 
-		List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-		List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
-		if(null != selectByExample && selectByExample.size()>0){
-			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
-			for(DispatchPlan dis : selectByExample){
-				planUuidSet.add(dis.getPlanUuid());
-			}
+	  if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
+		  List<Integer> ids = new ArrayList<>();
+		  if (queryPlanDto.getReplayType().contains(",")) {
+			  String[] split = queryPlanDto.getReplayType().split(",");
+			  for (String sp : split) {
+				  ids.add(Integer.valueOf(sp));
+			  }
+			  createCriteria.andReplayTypeIn(ids);
+		  } else {
+			  createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
+		  }
+	  }
 
-			Integer isDesensitization = queryPlanDto.getIsDesensitization();
-			loopA:for(String planUuid : planUuidSet) {
-				// 转换userName
-				loopB:for (DispatchPlan dis : selectByExample) {
-					if(planUuid.equals(dis.getPlanUuid())) {
-						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
-						if (user.getBody() != null) {
-							dis.setUserName(user.getBody().getUsername());
-						}
+	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {
+		  createCriteria.andResultIn(queryPlanDto.getResultList());
+	  }
 
-						List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
-						dis.setLines(queryLinesByPlanUUID);
+	  createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
-						// isDesensitization
-						if (isDesensitization.equals(0)) {
-							if (dis.getPhone().length() <= 7) {
-								continue;
-							}
-							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
-							dis.setPhone(phoneNumber);
-						}
+	  List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
 
-						resList.add(dis);
-						continue loopA;
-					}
-				}
-			}
-		}
+	  logger.info(
+			  "now do queryPlanList.selectByExample:{}:",
+			  (null != queryPlanDto) ? JsonUtils.bean2Json(selectByExample) : null);
 
+	  List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
+	  if (null != selectByExample && selectByExample.size() > 0) {
+		  LinkedHashSet<Long> planUuidSet = new LinkedHashSet<Long>();
 
+		  Integer isDesensitization = queryPlanDto.getIsDesensitization();
+		  Map<Integer, List<DispatchBatchLine>> tmpMap = new HashMap<>();
+		  Map<Integer, SysUser> tmpUserMap = new HashMap<>();
+		  // 转换userName
+		  for (DispatchPlan dis : selectByExample) {
+			  if (planUuidSet.contains(dis.getPlanUuidLong())) {
+				  continue;
+			  }
 
-		int count = dispatchPlanMapper.countByExample(example);
-		page.setList(resList);
-		page.setTotalItemAndPageNumber(count);
-		return page;
-	}
+			  planUuidSet.add(dis.getPlanUuidLong());
+
+			  dis.setOrgId(queryPlanDto.getOperOrgId());
+        // 转换userName
+			  if (!tmpUserMap.containsKey(dis.getUserId())) {
+				  ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
+				  if (user.getBody() != null) {
+					  tmpUserMap.put(dis.getUserId(), user.getBody());
+				  }
+			  }
+			  if (tmpUserMap.containsKey(dis.getUserId())) {
+				  dis.setUserName(tmpUserMap.get(dis.getUserId()).getUsername());
+			  }
+
+			  List<DispatchBatchLine> linesVO = null;
+			  if (!tmpMap.containsKey(dis.getBatchId())) {
+				  linesVO = lineService.queryListByBatchId(dis.getBatchId());
+				  if (linesVO != null) {
+					  tmpMap.put(dis.getBatchId(), linesVO);
+				  }
+			  }
+
+			  if (tmpMap.containsKey(dis.getBatchId())) {
+				  dis.setLines(tmpMap.get(dis.getBatchId()));
+			  }
+
+			  // isDesensitization
+			  if (isDesensitization.equals(0)) {
+				  if (dis.getPhone().length() <= 7) {
+
+					  continue;
+				  }
+				  String phoneNumber =
+						  dis.getPhone().substring(0, 3)
+								  + "****"
+								  + dis.getPhone().substring(7, dis.getPhone().length());
+				  dis.setPhone(phoneNumber);
+			  }
+
+			  resList.add(dis);
+		  }
+	  }
+	  logger.info(
+			  "now do queryPlanList.resList:{}:",
+			  (null != queryPlanDto) ? JsonUtils.bean2Json(resList) : null);
+	  int count = dispatchPlanMapper.countByExample(example);
+	  page.setList(resList);
+	  page.setTotalItemAndPageNumber(count);
+	  return page;
+  }
 
 	/**
 	 * 查询下载计划数据
@@ -1582,7 +1178,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		DispatchPlanExample example = new DispatchPlanExample();
 		example.setLimitStart(startIdx);
 		example.setLimitEnd(pageSize);
-		example.setOrderByClause("`gmt_create` DESC");
+		example.setOrderByClause("`plan_uuid` DESC");
 		Criteria createCriteria = example.createCriteria();
 		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
 			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
@@ -1638,13 +1234,15 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andResultIn(queryPlanDto.getResultList());
 		}
 
-		if (!queryPlanDto.isSuperAdmin() && !StringUtils.isEmpty(queryPlanDto.getOperOrgCode())) {
-			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
-		} else {
-			// // 超级用户
-			// if (selectUserId != null) {
-			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
-			// }
+		List<Integer> allOrgIds = getAllOrgIds();
+		List<Integer> subOrgIds = getSubOrgIds(queryPlanDto.getOperOrgId());
+
+		if (!queryPlanDto.isSuperAdmin()) {
+			createCriteria.andOrgIdIn(subOrgIds);
+		}
+		else
+		{
+			createCriteria.andOrgIdIn(allOrgIds);
 		}
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
@@ -1652,131 +1250,48 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		return list;
 	}
 
-	@Override
-	public List<DispatchLines> queryLineByPlan(String planUuid) {
-		if(!StringUtils.isEmpty(planUuid)){
-			return null;
-		}else{
-			return null;
+
+	private List<Integer> getAllOrgIds()
+	{
+		ReturnData<List<Integer>>  resp = orgService.getAllOrgId();
+		List<Integer> result = null;
+		if (resp != null && resp.getBody() != null) {
+			result = resp.getBody();
 		}
 
+		if(result == null)
+		{
+			result = new ArrayList<>();
+		}
+
+		return  result;
 	}
 
-	@Override
-	public ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page) {
-		Integer pageNo = page.getPageNo();
-		Integer pageSize = page.getPageSize();
-		DispatchPlanExample example = new DispatchPlanExample();
-		example.setLimitStart((pageNo - 1) * pageSize);
-		example.setLimitEnd(pageSize);
-		example.setOrderByClause("`gmt_create` DESC");
-		Criteria createCriteria = example.createCriteria();
-		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
-			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
-		}
-		if (!StringUtils.isEmpty(queryPlanDto.getStartCallData()) && !StringUtils.isEmpty(queryPlanDto.getEndCallData())) {
-			createCriteria.andCallDataBetween(Integer.valueOf(queryPlanDto.getStartCallData()), Integer.valueOf(queryPlanDto.getEndCallData()));
+	private List<Integer> getSubOrgIds(Integer orgId)
+	{
+		ReturnData<List<Integer>>  resp = orgService.getSubOrgIdByOrgId(orgId);
+		List<Integer> result = null;
+		if (resp != null && resp.getBody() != null) {
+			result = resp.getBody();
 		}
 
-		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
-			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
+		if(result == null)
+		{
+			result = new ArrayList<>();
 		}
 
-		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
-			List<Integer> ids = new ArrayList<>();
-			if (queryPlanDto.getPlanStatus().contains(",")) {
-				String[] split = queryPlanDto.getPlanStatus().split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andStatusPlanIn(ids);
-			} else {
-				createCriteria.andStatusPlanEqualTo(Integer.valueOf(queryPlanDto.getPlanStatus()));
-			}
-		}
-		if (!StringUtils.isEmpty(queryPlanDto.getStartTime()) && !StringUtils.isEmpty(queryPlanDto.getEndTime())) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			try {
-				createCriteria.andGmtCreateBetween(new Timestamp(sdf.parse(queryPlanDto.getStartTime()).getTime()), new Timestamp(sdf.parse(queryPlanDto.getEndTime()).getTime()));
-			} catch (ParseException e) {
-				logger.error("error", e);
-			}
-		}
+		result.add(orgId);
 
-		if (queryPlanDto.getBatchId() != null && queryPlanDto.getBatchId() != 0) {
-			createCriteria.andBatchIdEqualTo(queryPlanDto.getBatchId());
-		}
+		return result;
+	}
 
-		if (!StringUtils.isEmpty(queryPlanDto.getReplayType())) {
-			List<Integer> ids = new ArrayList<>();
-			if (queryPlanDto.getReplayType().contains(",")) {
-				String[] split = queryPlanDto.getReplayType().split(",");
-				for (String sp : split) {
-					ids.add(Integer.valueOf(sp));
-				}
-				createCriteria.andReplayTypeIn(ids);
-			} else {
-				createCriteria.andReplayTypeEqualTo(Integer.valueOf(queryPlanDto.getReplayType()));
-			}
-		}
+	private List<Integer> getSubOrgIdsByUserId(Integer userId)
+	{
+		logger.info("获取getSubOrgIdsByUserId，userId：{}，",userId);
+		SysOrganization userOrg = ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId)));
 
-		if(null != queryPlanDto.getResultList()
-				&& queryPlanDto.getResultList().size()>0){
-			createCriteria.andResultIn(queryPlanDto.getResultList());
-		}
+		logger.info("获取getSubOrgIdsByUserId，userId：{}，user:{}",userId,userOrg);
 
-		if (!queryPlanDto.isSuperAdmin()) {
-			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
-		} else {
-			// // 超级用户
-			// if (selectUserId != null) {
-			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
-			// }
-		}
-		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
-
-		List<DispatchPlanVo> selectByExample = planMapper.queryPlanListByPage(example, queryPlanDto.getIsDesensitization());
-		List<DispatchPlanVo> resList = new ArrayList<DispatchPlanVo>();
-		if(null != selectByExample && selectByExample.size()>0){
-			LinkedHashSet<String> planUuidSet = new LinkedHashSet<String>();
-			for(DispatchPlanVo dis : selectByExample){
-				planUuidSet.add(dis.getPlanUuid());
-			}
-
-		//	Integer isDesensitization = queryPlanDto.getIsDesensitization();
-			loopA:for(String planUuid : planUuidSet) {
-				// 转换userName
-				loopB:for (DispatchPlanVo dis : selectByExample) {
-					if(planUuid.equals(dis.getPlanUuid())) {
-						ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
-						if (user.getBody() != null) {
-							dis.setUserName(user.getBody().getUsername());
-						}
-
-						/*List<DispatchLines> queryLinesByPlanUUID = lineService.queryLinesByPlanUUID(planUuid);
-						dis.setLines(queryLinesByPlanUUID);*/
-
-						/*// isDesensitization
-						if (isDesensitization.equals(0)) {
-							if (dis.getPhone().length() <= 7) {
-								continue;
-							}
-							String phoneNumber = dis.getPhone().substring(0, 3) + "****" + dis.getPhone().substring(7, dis.getPhone().length());
-							dis.setPhone(phoneNumber);
-						}*/
-
-						resList.add(dis);
-						continue loopA;
-					}
-				}
-			}
-		}
-
-
-
-		int count = dispatchPlanMapper.countByExample(example);
-		page.setList(resList);
-		page.setTotalItemAndPageNumber(count);
-		return page;
+		return getSubOrgIds(userOrg.getId().intValue());
 	}
 }

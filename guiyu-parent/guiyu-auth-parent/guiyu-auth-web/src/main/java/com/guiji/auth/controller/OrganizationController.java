@@ -1,28 +1,32 @@
 package com.guiji.auth.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.guiji.auth.api.IOrg;
+import com.guiji.auth.exception.CheckConditionException;
+import com.guiji.auth.model.OrgVO;
+import com.guiji.auth.service.OrganizationService;
+import com.guiji.auth.service.UserService;
+import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
+import com.guiji.common.model.Page;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guiji.auth.api.IOrg;
-import com.guiji.auth.exception.CheckConditionException;
-import com.guiji.auth.service.OrganizationService;
-import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
-import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
-import com.guiji.component.result.Result.ReturnData;
-import com.guiji.user.dao.entity.SysOrganization;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("organization")
 public class OrganizationController implements IOrg{
 
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private OrganizationService organizationService;
 
@@ -138,6 +142,35 @@ public class OrganizationController implements IOrg{
 	@RequestMapping("getIndustrysByOrgCode")
 	public ReturnData<List<BotSentenceTemplateTradeVO>> getIndustrysByOrgCode(String orgCode){
 		return Result.ok(organizationService.getIndustrysByOrgCode(orgCode));
+	}
+
+	@RequestMapping("getSubOrgIdByOrgId")
+	public ReturnData<List<Integer>> getSubOrgIdByOrgId(Integer orgId) {
+		return Result.ok(organizationService.getSubOrgIdByOrgId(orgId));
+	}
+
+	@RequestMapping("getAllOrgId")
+	public ReturnData<List<Integer>> getAllOrgId() {
+		return Result.ok(organizationService.getAllOrgId());
+	}
+
+	@RequestMapping("queryAllOrgByUserId")
+	public ReturnData<List<OrgVO>> queryAllOrgByUserId(@RequestHeader Long userId) {
+		List<OrgVO> organizationList = new ArrayList<>();
+		SysOrganization organization = userService.getOrgByUserId(userId);
+		List<Map> orgVOMap = organizationService.querySubOrgByOrgId(organization.getId().intValue());
+		for (Map orgMap : orgVOMap) {
+			OrgVO orgVo = new OrgVO();
+			orgVo.setOrgId((Integer) orgMap.get("id"));
+			orgVo.setOrgName((String) orgMap.get("name"));
+			organizationList.add(orgVo);
+		}
+
+		OrgVO orgVo = new OrgVO();
+		orgVo.setOrgId(organization.getId().intValue());
+		orgVo.setOrgName(organization.getName());
+		organizationList.add(orgVo);
+		return Result.ok(organizationList);
 	}
 	
 }

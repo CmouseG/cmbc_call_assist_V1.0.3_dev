@@ -196,62 +196,62 @@ public class DispatchLinesExample {
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidEqualTo(String value) {
+        public Criteria andPlanuuidEqualTo(long value) {
             addCriterion("planuuid =", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotEqualTo(String value) {
+        public Criteria andPlanuuidNotEqualTo(long value) {
             addCriterion("planuuid <>", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidGreaterThan(String value) {
+        public Criteria andPlanuuidGreaterThan(long value) {
             addCriterion("planuuid >", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidGreaterThanOrEqualTo(String value) {
+        public Criteria andPlanuuidGreaterThanOrEqualTo(long value) {
             addCriterion("planuuid >=", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidLessThan(String value) {
+        public Criteria andPlanuuidLessThan(long value) {
             addCriterion("planuuid <", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidLessThanOrEqualTo(String value) {
+        public Criteria andPlanuuidLessThanOrEqualTo(long value) {
             addCriterion("planuuid <=", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidLike(String value) {
+        public Criteria andPlanuuidLike(long value) {
             addCriterion("planuuid like", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotLike(String value) {
+        public Criteria andPlanuuidNotLike(long value) {
             addCriterion("planuuid not like", value, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidIn(List<String> values) {
+        public Criteria andPlanuuidIn(List<Long> values) {
             addCriterion("planuuid in", values, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotIn(List<String> values) {
+        public Criteria andPlanuuidNotIn(List<Long> values) {
             addCriterion("planuuid not in", values, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidBetween(String value1, String value2) {
+        public Criteria andPlanuuidBetween(long value1, long value2) {
             addCriterion("planuuid between", value1, value2, "planuuid");
             return (Criteria) this;
         }
 
-        public Criteria andPlanuuidNotBetween(String value1, String value2) {
+        public Criteria andPlanuuidNotBetween(long value1, long value2) {
             addCriterion("planuuid not between", value1, value2, "planuuid");
             return (Criteria) this;
         }

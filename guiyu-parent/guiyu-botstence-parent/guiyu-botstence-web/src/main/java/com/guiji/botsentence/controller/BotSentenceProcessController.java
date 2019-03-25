@@ -81,13 +81,14 @@ public class BotSentenceProcessController {
 	 * @param accountNo
 	 */
 	@RequestMapping(value="queryBotSentenceProcessListByPage")
-	public ServerResult<Page<BotSentenceProcessVO>> queryBotSentenceProcessListByPage(@JsonParam int pageSize, @JsonParam int pageNo, @JsonParam String templateName, @JsonParam String accountNo, @RequestHeader String userId, @JsonParam String state) {
+	public ServerResult<Page<BotSentenceProcessVO>> queryBotSentenceProcessListByPage(@JsonParam int pageSize, @JsonParam int pageNo, @JsonParam String templateName, @JsonParam String accountNo, 
+			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel, @JsonParam String state) {
 		Page<BotSentenceProcessVO> page = new Page<BotSentenceProcessVO>();
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
-		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(pageSize, pageNo, templateName, accountNo, userId, state);
+		List<BotSentenceProcess> list = botSentenceProcessService.queryBotSentenceProcessList(pageSize, pageNo, templateName, accountNo, userId, state, authLevel, orgCode);
 		
-		int totalNum = botSentenceProcessService.countBotSentenceProcess(templateName, accountNo, userId, state);
+		int totalNum = botSentenceProcessService.countBotSentenceProcess(templateName, accountNo, userId, state, authLevel, orgCode);
 		if(null != list) {
 			
 			List<BotSentenceProcessVO> results = new ArrayList<>();
@@ -165,7 +166,8 @@ public class BotSentenceProcessController {
 	 * @param accountNo
 	 */
 	@RequestMapping(value="createBotSentenceProcess")
-	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO, @RequestHeader String userId) {
+	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO, 
+			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader String authLevel) {
 		if(null != paramVO && StringUtils.isNotBlank(paramVO.getProcessId()) && 
 				StringUtils.isNotBlank(paramVO.getTemplateName())) {
 			paramVO.setFlag("00");
@@ -444,7 +446,7 @@ public class BotSentenceProcessController {
 		String accountNo = userId;
 		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryIndustryListByAccountNo(accountNo, userId);
 		
-		if(null != list && list.size() > 0) {
+		/*if(null != list && list.size() > 0) {
 			for(BotSentenceTemplateTradeVO trade : list) {
 				if(null != trade.getChildren()) {
 					for(BotSentenceTemplateTradeVO trade1 : trade.getChildren()) {
@@ -473,7 +475,7 @@ public class BotSentenceProcessController {
 					}
 				}
 			}
-		}
+		}*/
 		
 		
 		return ServerResult.createBySuccess(list);

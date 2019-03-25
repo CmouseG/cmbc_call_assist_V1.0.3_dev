@@ -303,7 +303,6 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 					BotSentenceOptions exist = botSentenceOptionsMapper.selectByPrimaryKey(options.getOptionsId());
 					exist.setVoice(null);
 					botSentenceOptionsMapper.updateByPrimaryKey(exist);
-					
 					voliceService.deleteVolice(process.getProcessId(), options.getVoice());
 				}
 			}

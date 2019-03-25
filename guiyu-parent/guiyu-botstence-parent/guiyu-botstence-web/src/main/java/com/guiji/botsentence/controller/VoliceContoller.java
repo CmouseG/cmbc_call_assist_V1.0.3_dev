@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExt;
 import com.guiji.botsentence.service.IVoliceService;
+import com.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
 import com.guiji.botsentence.vo.RefuseVoliceVO;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.ExcelUtil;
@@ -30,6 +31,9 @@ public class VoliceContoller {
 	
 	@Autowired
 	private IVoliceService service;
+	
+	@Autowired
+	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
 	@Value("${offline}")
 	private boolean offline;
@@ -91,6 +95,8 @@ public class VoliceContoller {
 				}else {
 					list=service.uploadVoliceZip(processId, inStream, userId);
 				}
+				//更新话术流程状态
+				botSentenceProcessService.updateProcessState(processId, userId);
 				return ServerResult.createBySuccess(list);
 			}
 		} catch (IOException e) {
@@ -127,6 +133,9 @@ public class VoliceContoller {
 				}else {
 					voliceUrl = service.uploadOneVolice(processId, voliceId, multipartFile, type, userId);
 				}
+				
+				//更新话术流程状态
+				botSentenceProcessService.updateProcessState(processId, userId);
 				
 				return ServerResult.createBySuccess(voliceUrl);
 			}else {

@@ -116,7 +116,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     @Override
     public Map<String, Double> refreshWavLength(String tempId) {
 
-        String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
+        String key = "calloutserver_wavlength_"+tempId;
 
         if (tempId.endsWith("_en")) {
             tempId = tempId.substring(0,tempId.length()-3)+"_rec";
@@ -144,7 +144,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
     @Override
     public Map<String, Double> getwavlength(String tempId){
 
-        String key = "calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId;
+        String key = "calloutserver_wavlength_"+tempId;
 
         if(redisUtil.get(key)==null){
 
@@ -213,7 +213,7 @@ public class FsAgentManagerImpl implements FsAgentManager {
             }
         }
 
-        Object map = redisUtil.get("calloutserver_"+eurekaManager.getInstanceId()+"_wavlength_"+tempId);
+        Object map = redisUtil.get("calloutserver_wavlength_"+tempId);
 
         if (map != null && ((Map<String, Double>) map).get(filename) != null) {
             return ((Map<String, Double>) map).get(filename);

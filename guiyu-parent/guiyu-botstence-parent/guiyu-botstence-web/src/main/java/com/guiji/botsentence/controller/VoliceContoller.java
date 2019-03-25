@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExt;
 import com.guiji.botsentence.service.IVoliceService;
+import com.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
 import com.guiji.botsentence.vo.RefuseVoliceVO;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.ExcelUtil;
@@ -27,9 +30,12 @@ import com.guiji.component.result.ServerResult;
 @Controller
 @RequestMapping("volice")
 public class VoliceContoller {
-	
+	private Logger logger = LoggerFactory.getLogger(VoliceContoller.class);
 	@Autowired
 	private IVoliceService service;
+	
+	@Autowired
+	private BotSentenceProcessServiceImpl botSentenceProcessService;
 	
 	@Value("${offline}")
 	private boolean offline;
@@ -91,6 +97,8 @@ public class VoliceContoller {
 				}else {
 					list=service.uploadVoliceZip(processId, inStream, userId);
 				}
+				//更新话术流程状态
+				botSentenceProcessService.updateProcessState(processId, userId);
 				return ServerResult.createBySuccess(list);
 			}
 		} catch (IOException e) {
@@ -127,6 +135,10 @@ public class VoliceContoller {
 				}else {
 					voliceUrl = service.uploadOneVolice(processId, voliceId, multipartFile, type, userId);
 				}
+				
+				//更新话术流程状态
+				logger.info("开始更新话术流程状态");
+				botSentenceProcessService.updateProcessState(processId, userId);
 				
 				return ServerResult.createBySuccess(voliceUrl);
 			}else {

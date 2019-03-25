@@ -422,12 +422,16 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 	
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId) {
+	public void saveAndSentTTS(BotSentenceTtsTask temp, String processId, boolean isNeedTts, String userId, String model) {
+		if(StringUtils.isBlank(model)) {
+			model = "mh";
+		}
+		temp.setSoundType(model);
 		//保存本地生成TTS任务
 		Long taskId = null;
 		//查询当前文案内容是否已经合成过，如果合成过，则不再重新合成
 		BotSentenceTtsTaskExample example = new BotSentenceTtsTaskExample();
-		example.createCriteria().andStatusEqualTo(Constant.TTS_FINISH).andVoliceUrlIsNotNull().andContentEqualTo(temp.getContent().trim());
+		example.createCriteria().andStatusEqualTo(Constant.TTS_FINISH).andVoliceUrlIsNotNull().andContentEqualTo(temp.getContent().trim()).andSoundTypeEqualTo(model);
 		List<BotSentenceTtsTask> taskList = botSentenceTtsTaskMapper.selectByExample(example);
 		if(null != taskList && taskList.size() > 0) {
 			logger.info("当前录音已合成过，可直接使用....");
@@ -524,7 +528,7 @@ public class BotSentenceTtsServiceImpl implements IBotSentenceTtsService {
 		SynPostReqVO req = new SynPostReqVO();
 		List<String> contents = new ArrayList<>();
 		req.setContent(temp.getContent());
-		req.setModel("mh");//TTS合成声音模型
+		req.setModel(model);//TTS合成声音模型
 	    logger.info("请求参数: " + req.toString());
 	    //botSentenceProcessServiceImpl.generateTTSCallback(taskId.toString(), "test-"+System.currentTimeMillis());
     	ReturnData<String> result = null;

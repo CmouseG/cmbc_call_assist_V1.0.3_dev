@@ -28,6 +28,7 @@ import com.guiji.botsentence.dao.BotSentenceOptionsLevelMapper;
 import com.guiji.botsentence.dao.BotSentenceOptionsMapper;
 import com.guiji.botsentence.dao.BotSentenceSurveyIntentMapper;
 import com.guiji.botsentence.dao.BotSentenceSurveyMapper;
+import com.guiji.botsentence.dao.BotSentenceTtsBackupMapper;
 import com.guiji.botsentence.dao.BotSentenceTtsTaskMapper;
 import com.guiji.botsentence.dao.VoliceInfoMapper;
 import com.guiji.botsentence.dao.entity.BotSentenceBranch;
@@ -46,6 +47,7 @@ import com.guiji.botsentence.dao.entity.BotSentenceSurvey;
 import com.guiji.botsentence.dao.entity.BotSentenceSurveyExample;
 import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntent;
 import com.guiji.botsentence.dao.entity.BotSentenceSurveyIntentExample;
+import com.guiji.botsentence.dao.entity.BotSentenceTtsBackupExample;
 import com.guiji.botsentence.dao.entity.BotSentenceTtsTaskExample;
 import com.guiji.botsentence.dao.entity.VoliceInfo;
 import com.guiji.botsentence.dao.entity.VoliceInfoExample;
@@ -119,6 +121,9 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	
 	@Autowired
 	private BotSentenceTtsTaskMapper botSentenceTtsTaskMapper;
+	
+	@Autowired
+	private BotSentenceTtsBackupMapper botSentenceTtsBackupMapper;
 	
 	@Override
 	@Transactional
@@ -298,7 +303,7 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 					BotSentenceOptions exist = botSentenceOptionsMapper.selectByPrimaryKey(options.getOptionsId());
 					exist.setVoice(null);
 					botSentenceOptionsMapper.updateByPrimaryKey(exist);
-					voliceInfoMapper.deleteByPrimaryKey(new Long(options.getVoice()));
+					voliceService.deleteVolice(process.getProcessId(), options.getVoice());
 				}
 			}
 		}
@@ -1039,7 +1044,9 @@ public class BotsentenceVariableServiceImpl implements IBotsentenceVariableServi
 	@Transactional
 	@Override
 	public void deleteSilenceVolice(String processId, String voliceId, String userId) {
-		voliceInfoMapper.deleteByPrimaryKey(new Long(voliceId));
+		
+		voliceService.deleteVolice(processId, voliceId);
+		
 		BotSentenceBranch positiveBranch = botSentenceProcessService.getPositiveBranch(processId, "静音");
 		String resp = positiveBranch.getResponse();
 		if(StringUtils.isNotBlank(resp) && resp.length() > 2) {

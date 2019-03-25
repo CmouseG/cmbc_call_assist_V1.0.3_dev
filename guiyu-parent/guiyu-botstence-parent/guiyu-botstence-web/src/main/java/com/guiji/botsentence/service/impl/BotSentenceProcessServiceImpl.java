@@ -150,7 +150,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private boolean offline;
 	
 	@Override
-	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state) {
+public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state) {
 		
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String orgCode=data.getBody().getOrgCode();
@@ -1391,7 +1391,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		}
 		
 		
-		//在忙，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
+		//投诉，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
 		BotSentenceBranchExample example7 = new BotSentenceBranchExample();
 		example7.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("投诉").andBranchNameEqualTo("negative");
 		List<BotSentenceBranch> list7 = botSentenceBranchMapper.selectByExample(example7);
@@ -1403,7 +1403,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			vo.setHuashu("投诉默认触发结束_失败");//话术
 			//vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setLuoji("触发投诉关键词时，机器人走该话术，投诉关键词在编辑——自定义汇中可查看");//逻辑
+			vo.setLuoji("触发投诉关键词时，机器人走该话术，投诉关键词位于【编辑——自定义】中");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -1420,7 +1420,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 			branchList.add(vo);
 		}
 		
-		//在忙，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
+		//号码过滤，话术为domain为结束_在忙的enter，取resp，关键词为domain为结束_在忙的enter，取intents
 		BotSentenceBranchExample example8 = new BotSentenceBranchExample();
 		example8.createCriteria().andProcessIdEqualTo(processId).andDomainEqualTo("号码过滤").andBranchNameEqualTo("special");
 		List<BotSentenceBranch> list8 = botSentenceBranchMapper.selectByExample(example8);
@@ -1432,7 +1432,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 			vo.setHuashu("号码过滤默认触发结束_失败");//话术
 			//vo.setVoliceUrl(volice.getVoliceUrl());//录音URL
-			vo.setLuoji("触发号码过滤关键词时，机器人走该话术，号码过滤关键词在编辑——自定义中可查看");//逻辑
+			vo.setLuoji("触发号码过滤关键词时，机器人走该话术，号码过滤关键词位于【编辑——自定义】中");//逻辑
 			vo.setYujin(branch.getDomain());//语境
 			vo.setTitle(branch.getDomain());
 			vo.setBranchId(branch.getBranchId());
@@ -1656,7 +1656,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				
 				//删除被删掉的文案volice
 				for(String deleteId : oldRespList) {
-					voliceInfoMapper.deleteByPrimaryKey(new Long(deleteId));
+					voliceServiceImpl.deleteVolice(branch.getProcessId(), deleteId);
 				}
 				resp = "["+ BotSentenceUtil.listToString(respList)+"]";
 				branch.setResponse("["+ BotSentenceUtil.listToString(respList)+"]");
@@ -3127,7 +3127,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		if(null != domainNames && domainNames.size() > 0) {
 			//删除原来其它domain指向当前节点的next数据
 			BotSentenceBranchExample branchExample2 = new BotSentenceBranchExample();
-			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames);
+			branchExample2.createCriteria().andProcessIdEqualTo(processId).andNextIn(domainNames).andIsShowEqualTo("1");
 			botSentenceBranchMapper.deleteByExample(branchExample2);
 
 			//删除录音信息
@@ -3164,19 +3164,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 						continue;
 					}
 
-					voliceInfoMapper.deleteByPrimaryKey(volice.getVoliceId());
-
-					//删除TTS任务信息
-					BotSentenceTtsTaskExample ttsExample = new BotSentenceTtsTaskExample();
-					ttsExample.createCriteria().andProcessIdEqualTo(processId).andBusiIdEqualTo(volice.getVoliceId().toString());
-					botSentenceTtsTaskMapper.deleteByExample(ttsExample);
-					logger.info("删除TTS任务信息");
-
-					//删除备用话术信息
-					BotSentenceTtsBackupExample backExample = new BotSentenceTtsBackupExample();
-					backExample.createCriteria().andProcessIdEqualTo(processId).andVoliceIdEqualTo(volice.getVoliceId());
-					botSentenceTtsBackupMapper.deleteByExample(backExample);
-					logger.info("删除备用话术信息");
+					voliceServiceImpl.deleteVolice(processId, volice.getVoliceId().toString());
 				}
 			}
 
@@ -3450,6 +3438,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	public void updateProcessState(String processId, String userId) {
 		BotSentenceProcess process = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		process.setTestState(Constant.TEST_STATE_UNDEPLOY);
+		logger.info("当前话术流程状态: " + process.getState());
 		if(Constant.APPROVE_PASS.equals(process.getState()) || Constant.APPROVE_NOTPASS.equals(process.getState()) || Constant.APPROVE_ONLINE.equals(process.getState())
 				|| Constant.ERROR.equals(process.getState())) {
 			process.setState(Constant.APPROVE_MAEKING);
@@ -3927,7 +3916,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	 */
 	@Override
 	//@Transactional
-	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId) {
+	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId, String model) {
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);
 		List<VoliceInfo> list = voliceInfoMapper.selectByExample(example);
@@ -3952,7 +3941,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					List<BotSentenceTtsTask> tasklist = botSentenceTtsTaskMapper.selectByExample(ttsExample);
 					if(null != tasklist && tasklist.size() > 0) {
 						for(BotSentenceTtsTask ttsTask : tasklist) {
-							botSentenceTtsService.saveAndSentTTS(ttsTask, processId, true, userId);
+							botSentenceTtsService.saveAndSentTTS(ttsTask, processId, true, userId, model);
 						}
 					}
 				}else {
@@ -3962,7 +3951,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 					ttsTask.setBusiId(temp.getVoliceId().toString());
 					ttsTask.setBusiType("03");
 					
-					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts, userId);
+					botSentenceTtsService.saveAndSentTTS(ttsTask, processId, isNeedTts, userId, model);
 				}
 		}
 		
@@ -3984,10 +3973,12 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 				ttsTask.setBusiId(backup.getBackupId());
 				ttsTask.setBusiType("02");
 				ttsTask.setContent(backup.getContent());
-				botSentenceTtsService.saveAndSentTTS(ttsTask, processId, false, userId);
+				botSentenceTtsService.saveAndSentTTS(ttsTask, processId, false, userId, model);
 			}
 		}
 	}
+		//更新话术流程状态
+		this.updateProcessState(processId, userId);
 	}
 	
 	

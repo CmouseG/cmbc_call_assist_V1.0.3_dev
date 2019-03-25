@@ -411,9 +411,9 @@ public class BotSentenceProcessController {
 	 */
 	@RequestMapping(value="generateTTS")
 	@Async
-	public ServerResult<FlowInfoVO> generateTTS(@JsonParam GenerateTTSVO param, @JsonParam String processId, @RequestHeader String userId){
+	public ServerResult<FlowInfoVO> generateTTS(@JsonParam GenerateTTSVO param, @JsonParam String processId, @RequestHeader String userId, @JsonParam String model){
 		//@JsonParam GenerateTTSVO param, 
-		botSentenceProcessService.generateTTS(param.getList(), processId, userId);
+		botSentenceProcessService.generateTTS(param.getList(), processId, userId, model);
 		return ServerResult.createBySuccess();
 	}
 	

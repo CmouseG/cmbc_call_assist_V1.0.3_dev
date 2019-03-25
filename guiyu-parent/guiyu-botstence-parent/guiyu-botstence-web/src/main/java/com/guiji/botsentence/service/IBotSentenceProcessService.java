@@ -112,7 +112,7 @@ public interface IBotSentenceProcessService {
 	
 	public List<BotSentenceProcess> queryBotSentenceProcessListByAccountNo(String accountNo);	
 	
-	public void generateTTS(List<VoliceInfoExt> list, String processId, String userId);
+	public void generateTTS(List<VoliceInfoExt> list, String processId, String userId, String model);
 	
 	public List<BotSentenceDomain> getAllDomainList(String processId);
 	

@@ -8,6 +8,7 @@ import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
 import com.guiji.utils.DateUtil;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +108,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
 	@Override
 	public boolean pushPlan2Queue(List<DispatchPlan> dispatchPlanList,String queue) {
-		logger.info("推入要拨打电话数据KEY:{}",queue);
+		logger.info("推入要拨打电话数据KEY:{},{}", queue, JsonUtils.bean2Json(dispatchPlanList));
 		return redisUtil.leftPushAll(queue, dispatchPlanList);
 	}
 

@@ -69,7 +69,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	@Override
 	public void pushHandler() {
 
-		boolean flg = false;
+		boolean flg = true;
 		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 		while (flg) {
 			try {
@@ -110,7 +110,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 								Object obj = (Object) redisUtil.lrightPop(queue);
 
 								if(null != obj) {
-									//	logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
+									logger.info("redis REDIS_PLAN_QUEUE_USER_LINE_ROBOT_user_id_templId :{}", JsonUtils.bean2Json(obj));
 								}
 
 								if (obj == null || !(obj instanceof DispatchPlan)) {
@@ -178,7 +178,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 										continue;
 									}
 								}
-								
+
 								if(userIdList == null){
 									logger.info(">>>>>>>>>>>>>>>>>>...当前userIdList为null");
 									Thread.sleep(2000);

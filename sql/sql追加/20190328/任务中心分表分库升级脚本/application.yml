@@ -1,0 +1,20 @@
+server:
+  port: 28031
+spring:
+  application:
+    name: demo
+
+
+  #数据源
+  datasource:
+    url: jdbc:mysql://192.168.1.57:3306/guiyu_dispatch?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&verifyServerCertificate=false&allowMultiQueries=true
+    username: dispatch
+    password: dispatch@1234
+    driver-class-name: com.mysql.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath*:mappers/*.xml
+  config-location: classpath:config/mybatis-config.xml
+jdbc:
+  type: mysql
+

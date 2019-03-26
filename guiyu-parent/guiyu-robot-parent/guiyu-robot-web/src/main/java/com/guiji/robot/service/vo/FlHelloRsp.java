@@ -20,7 +20,7 @@ public class FlHelloRsp {
 	//当前域
 	private String answered_domain;
 	//意图级别
-	private String intent;
+	private String accurate_intent;
 	//AI回复
 	private String answer;
 	//客户说的话

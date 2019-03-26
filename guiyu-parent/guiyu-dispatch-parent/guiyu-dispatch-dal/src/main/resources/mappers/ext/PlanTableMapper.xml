@@ -32,7 +32,7 @@
            robot_name           VARCHAR(32) COMMENT 'robot名称',
            batch_name           VARCHAR(32) COMMENT '批次名称',
            flag                 VARCHAR(32) COMMENT '洗号码标识',
-           org_code             VARCHAR(8) not null COMMENT '组织编码',
+           org_code             VARCHAR(64) not null COMMENT '组织编码',
            org_id               INT(32) COMMENT '组织ID',
            city_name            VARCHAR(32) COMMENT '城市名',
            city_code            VARCHAR(32) COMMENT '城市code',

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.service.PlatformService;
 import com.guiji.sms.dao.SmsPlatformMapper;
@@ -21,7 +22,8 @@ import com.guiji.sms.vo.PlatformReqVO;
 import com.guiji.sms.vo.PlatformRspVO;
 import com.guiji.sms.vo.SmsPlatformVO;
 import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.utils.NameUtil;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
 
 @Service
@@ -70,9 +72,9 @@ public class PlatformServiceImpl implements PlatformService
 		platformVO.setPlatformName(platform.getPlatformName());
 		platformVO.setPlatformParams(platform.getPlatformParams());
 		platformVO.setIdentification(platform.getIdentification());
-		platformVO.setCreateUser(NameUtil.getUserName(platform.getCreateId().toString()));
+		platformVO.setCreateUser(getUserName(platform.getCreateId().toString()));
 		platformVO.setCreateTime(platform.getCreateTime());
-		platformVO.setUpdateUser(NameUtil.getUserName(platform.getUpdateId().toString()));
+		platformVO.setUpdateUser(getUserName(platform.getUpdateId().toString()));
 		platformVO.setUpdateTime(platform.getUpdateTime());
 		return platformVO;
 	}
@@ -136,4 +138,25 @@ public class PlatformServiceImpl implements PlatformService
 		platformMapper.deleteByPrimaryKey(id);
 		redisUtil.del(platName);
 	}
+	
+	public String getUserName(String userId) {
+        String cacheName = LocalCacheUtil.getT(userId);
+        if (cacheName != null) {
+            return cacheName;
+        } else {
+            try {
+                Result.ReturnData<SysUser> result = auth.getUserById(Long.valueOf(userId));
+                if(result!=null && result.getBody()!=null) {
+                    String userName = result.getBody().getUsername();
+                    if (userName != null) {
+                    	LocalCacheUtil.set(userId, userName, LocalCacheUtil.HARF_HOUR);
+                        return userName;
+                    }
+                }
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+        return "";
+    }
 }

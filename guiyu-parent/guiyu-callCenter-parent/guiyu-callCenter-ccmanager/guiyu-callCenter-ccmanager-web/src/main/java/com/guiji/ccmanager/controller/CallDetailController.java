@@ -443,6 +443,9 @@ public class CallDetailController implements ICallPlanDetail {
             if(callPlan.getRemark()!=null){
                 registration += "备注信息："+callPlan.getRemark();
             }
+            if(callPlan.getRemark()!=null){
+                registration += "备注信息："+callPlan.getRemark();
+            }
             if(registration.equals("")){
                 registration = "暂无信息";
             }

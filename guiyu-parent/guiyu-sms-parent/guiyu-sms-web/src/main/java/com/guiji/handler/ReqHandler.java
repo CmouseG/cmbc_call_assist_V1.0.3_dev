@@ -11,8 +11,9 @@ import org.springframework.stereotype.Component;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.platfrom.Cmpp;
 import com.guiji.platfrom.Junlong;
-import com.guiji.platfrom.ShenzhenCredit2;
+import com.guiji.platfrom.Qyxs;
 import com.guiji.platfrom.Welink;
+import com.guiji.platfrom.XuanWu;
 import com.guiji.platfrom.Ytx;
 import com.guiji.platfrom.Zxy;
 import com.guiji.service.ConfigService;
@@ -72,12 +73,15 @@ public class ReqHandler
 		} else if ("zxy".equals(identification)) {
 			logger.info("通过<专信云>发送短信...");
 			record = new Zxy().sendMessage(params, phone, smsContent);
-		} else if ("szCredit2".equals(identification)) {
-			logger.info("通过<深圳信用卡2专属>发送短信...");
-			record = new ShenzhenCredit2().sendMessage(params, phone, smsContent);
+		} else if ("qyxs".equals(identification)) {
+			logger.info("通过<企业信使>发送短信...");
+			record = new Qyxs().sendMessage(params, phone, smsContent);
 		} else if ("jl".equals(identification)) {
 			logger.info("通过<君隆科技>发送短信...");
 			record = new Junlong().sendMessage(params, phone, smsContent);
+		} else if ("xw".equals(identification)) {
+			logger.info("通过<玄武科技>发送短信...");
+			record = new XuanWu().sendMessage(params, phone, smsContent);
 		}
 		
 		recordService.saveRecord(record, platform.getPlatformName()); //保存发送记录

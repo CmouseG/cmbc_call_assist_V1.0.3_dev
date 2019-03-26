@@ -178,10 +178,10 @@ public class FileController {
 		sheet.addCell(new Label(9, 0, "计划时间"));
 		sheet.addCell(new Label(10, 0, "所属用户"));
 		sheet.addCell(new Label(11, 0, "添加日期"));
+
+		Map<Integer, String> batchLineMap = new HashMap<>();
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
-			//查询线路
-			List<DispatchBatchLine> queryLinesByPlanUUID = lineServiceImpl.queryListByBatchId(dispatchPlan.getBatchId());
 			int k = 0;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
 			k++;
@@ -204,11 +204,24 @@ public class FileController {
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;
-			String lineName="";
-			for(DispatchBatchLine lines : queryLinesByPlanUUID){
-				lineName = lineName +""+ lines.getLineName()+",";
+			//查询线路
+			String lineNames = "";
+			if (!batchLineMap.containsKey(dispatchPlan.getBatchId())) {
+				List<DispatchBatchLine> queryLinesByPlanUUID = lineServiceImpl.queryListByBatchId(dispatchPlan.getBatchId());
+
+				if (queryLinesByPlanUUID != null && !queryLinesByPlanUUID.isEmpty()) {
+					String lineName = "";
+					//查询线路
+					for (DispatchBatchLine lines : queryLinesByPlanUUID) {
+						lineName = lineName + "" + lines.getLineName() + ",";
+					}
+
+					lineNames = lineName.substring(0, lineName.length() - 1);
+					batchLineMap.put(dispatchPlan.getBatchId(), lineNames);
+				}
+			} else {
+				lineNames = batchLineMap.get(dispatchPlan.getBatchId());
 			}
-			String lineNames = lineName.substring(0, lineName.length()-1);
 			sheet.addCell(new Label(k, i + 1, lineNames));
 			k++;
 			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallData())));
@@ -379,10 +392,10 @@ public class FileController {
 		sheet.addCell(new Label(10, 0, "所属用户"));
 		sheet.addCell(new Label(11, 0, "添加日期"));
 
+		Map<Integer, String> batchLineMap = new HashMap<>();
 		for (int i = 0; i < selectByExample.size(); i++) {
 			DownLoadPlanVo dispatchPlan = selectByExample.get(i);
-			//查询线路
-			//	List<DispatchLines> queryLinesByPlanUUID = lineServiceImpl.queryLinesByPlanUUID(dispatchPlan.getPlanUuidLong());
+
 			int k = 0;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getBatchName()));
 			k++;
@@ -405,12 +418,27 @@ public class FileController {
 			k++;
 			sheet.addCell(new Label(k, i + 1, dispatchPlan.getRobotName()));
 			k++;
-			String lineName="";
-			/*for(DispatchLines lines : queryLinesByPlanUUID){
-				lineName = lineName +""+ lines.getLineName()+",";
-			}*/
-			//String lineNames = lineName.substring(0, lineName.length()-1);
-			sheet.addCell(new Label(k, i + 1, ""));
+
+			//查询线路
+			String lineNames = "";
+			if (!batchLineMap.containsKey(dispatchPlan.getBatchId())) {
+				List<DispatchBatchLine> queryLinesByPlanUUID = lineServiceImpl.queryListByBatchId(dispatchPlan.getBatchId());
+
+				if (queryLinesByPlanUUID != null && !queryLinesByPlanUUID.isEmpty()) {
+					String lineName = "";
+					//查询线路
+					for (DispatchBatchLine lines : queryLinesByPlanUUID) {
+						lineName = lineName + "" + lines.getLineName() + ",";
+					}
+
+					lineNames = lineName.substring(0, lineName.length() - 1);
+					batchLineMap.put(dispatchPlan.getBatchId(), lineNames);
+				}
+			} else {
+				lineNames = batchLineMap.get(dispatchPlan.getBatchId());
+			}
+
+			sheet.addCell(new Label(k, i + 1, lineNames));
 			k++;
 			sheet.addCell(new Label(k, i + 1, String.valueOf(dispatchPlan.getCallData())));
 			k++;

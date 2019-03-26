@@ -30,6 +30,11 @@ public class BaseDto implements Serializable {
      */
     private Integer isDesensitization;
 
+    /**
+     * 数据查询权限（1-本人;2-本组织;3-本组织及下级组织）
+     */
+    private Integer authLevel;
+
     public String getOperOrgCode() {
         return operOrgCode;
     }
@@ -70,5 +75,13 @@ public class BaseDto implements Serializable {
     public void setOperOrgId(int operOrgId)
     {
         this.operOrgId = operOrgId;
+    }
+
+    public Integer getAuthLevel() {
+        return authLevel;
+    }
+
+    public void setAuthLevel(Integer authLevel) {
+        this.authLevel = authLevel;
     }
 }

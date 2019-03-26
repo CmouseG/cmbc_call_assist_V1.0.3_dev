@@ -44,7 +44,7 @@ public class CallBack4MQListener {
 	@Autowired
 	private RedisUtil redisUtil;
 
-	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT";
+	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT_";
 
 	@RabbitHandler
 	public void process(String message, Channel channel, Message message2) {

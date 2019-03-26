@@ -107,8 +107,11 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
 	@Override
 	public boolean pushPlan2Queue(List<DispatchPlan> dispatchPlanList,String queue) {
-		logger.info("推入要拨打电话数据KEY:{}",queue);
-		return redisUtil.leftPushAll(queue, dispatchPlanList);
+		logger.info("推入要拨打电话数据KEY:{},{}", queue, dispatchPlanList.size());
+		boolean result = redisUtil.leftPushAll(queue, dispatchPlanList);
+
+		logger.info("推入要拨打电话数据KEY:{},{}", queue, redisUtil.lGetListSize(queue));
+		return result;
 	}
 
 	@Override

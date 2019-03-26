@@ -209,13 +209,10 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 	public String createBotSentenceTemplate(BotSentenceProcessVO paramVO, String userId) {
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String userName=data.getBody().getUsername();
-		String orgCode=paramVO.getOrgCode();
-		String orgName=paramVO.getOrgName();
-		if(org.springframework.util.StringUtils.isEmpty(paramVO.getOrgCode())){
-			orgCode=data.getBody().getOrgCode();
-			orgName=data.getBody().getOrgName();
-		}
+		String orgCode=data.getBody().getOrgCode();
 		
+		ReturnData<SysOrganization> data2=iAuth.getOrgByUserId(new Long(userId));
+		String orgName = data2.getBody().getName();
 		if(!orgCode.endsWith(".")) {
 			orgCode = orgCode + ".";
 		}

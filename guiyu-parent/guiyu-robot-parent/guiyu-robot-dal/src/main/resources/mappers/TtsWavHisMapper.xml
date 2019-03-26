@@ -135,7 +135,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.robot.dao.entity.TtsWavHis" >
+  <insert id="insert" parameterType="com.guiji.robot.dao.entity.TtsWavHis" keyProperty="id" useGeneratedKeys="true">
     insert into tts_wav_his (id, seq_id, busi_id, 
       template_id, req_params, tts_txt_json_data, 
       `status`, error_msg, error_type, 

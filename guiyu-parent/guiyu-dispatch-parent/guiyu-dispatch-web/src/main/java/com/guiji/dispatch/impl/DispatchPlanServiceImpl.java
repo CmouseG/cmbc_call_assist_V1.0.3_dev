@@ -623,25 +623,32 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
 		int countNums = 0;
 		DispatchPlanExample ex = new DispatchPlanExample();
-
+		Criteria createCriteria = ex.createCriteria();
 		if (!isSuperAdmin) {
 
-			ex.createCriteria().andOrgIdIn(subOrgIds);
-
+			createCriteria.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria.andOrgCodeLike(orgCode + "%");
+			}
 			countNums = dispatchPlanMapper.countByExample(ex);
 		} else {
-			ex.createCriteria().andOrgIdIn(allOrgIds);
+			createCriteria.andOrgIdIn(allOrgIds);
 			countNums = dispatchPlanMapper.countByExample(ex);
 		}
 
 		ex = new DispatchPlanExample();
+		createCriteria = ex.createCriteria();
 		if (!isSuperAdmin) {
 			// 不是超级管理员就是通过orgCode查询
-			ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
+			createCriteria.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
 					.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria.andOrgCodeLike(orgCode + "%");
+			}
 		} else {
 			// 超级管理员查询所有
-			ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);;
+			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);
+			;
 		}
 		int noCallNums = dispatchPlanMapper.countByExample(ex);
 
@@ -650,6 +657,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 		if (!isSuperAdmin) {
 			andStatusPlanEqualTo2.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				andStatusPlanEqualTo2.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -670,6 +680,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
 		if (!isSuperAdmin) {
 			andStatusPlanEqualTo3.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				andStatusPlanEqualTo3.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -725,6 +738,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		if (!isSuperAdmin) {
 			createCriteria.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -747,6 +763,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		if (!isSuperAdmin) {
 			createCriteria1.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria1.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{

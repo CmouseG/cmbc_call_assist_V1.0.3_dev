@@ -15,7 +15,6 @@ import com.guiji.dispatch.service.IPhoneRegionService;
 import com.guiji.dispatch.util.Constant;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.DateUtil;
-import com.guiji.utils.IdGenUtil;
 import com.guiji.utils.IdGengerator.SnowflakeIdWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +71,6 @@ public class BatchImportExcelListener extends AnalysisEventListener<Object>
 		try
 		{
 			dispatchPlan = doWithOneRow(row, dispatchPlanParam);
-
-			logger.info("批量导入开始，invoke,dispatchPlan:{},userId:{},orgCode:{},orgId:{}",dispatchPlan,userId,orgCode,orgId);
 
 			if (dispatchPlan == null) {
 				dispatchPlan = new DispatchPlan();

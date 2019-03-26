@@ -76,6 +76,6 @@ xxl:
       logretentiondays: -1
     accessToken: 
 
-ttsUrl: http://localhost:18061/ 
+ttsUrl: http://192.168.1.78:38002/
 notifyUrl: http://192.168.1.78:18000/ai/callback
 

@@ -11,7 +11,8 @@
         COUNT(call_id) AS totalCalls,
         <!--ADDDATE(min(create_time),INTERVAL -MINUTE(min(create_time)) % 5 MINUTE) AS createTime,-->
         SUBSTRING(GROUP_CONCAT(phone_num),1,119) AS phoneNum,
-        SUM(is_answer) AS answerCalls
+        SUM(is_answer) AS answerCalls,
+        customer_id as userId
 
         FROM
         call_out_plan
@@ -21,7 +22,7 @@
         AND
         call_state>6
 
-        GROUP BY hangup_code,line_id,is_cancel,org_code
+        GROUP BY hangup_code,line_id,is_cancel,org_code,customer_id
     </select>
 
 

@@ -2,6 +2,7 @@ package com.guiji.ccmanager.controller;
 
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.vo.LinePort;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.fsline.api.IFsLine;
 import com.guiji.fsline.entity.FsLineVO;
@@ -32,6 +33,7 @@ public class FsLineController {
     private DiscoveryClient discoveryClient;
 
     @ApiOperation(value = "获取所有的fsline对应的freeswitch对外端口列表")
+    @Jurisdiction("callCenter_lineInfoList_detailLines")
     @GetMapping(value="getFsOutLines")
     public List getFsOutLines(){
 

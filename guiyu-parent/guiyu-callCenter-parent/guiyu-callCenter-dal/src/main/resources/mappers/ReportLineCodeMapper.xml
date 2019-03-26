@@ -11,6 +11,7 @@
     <result column="answer_calls" property="answerCalls" jdbcType="INTEGER" />
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
     <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,7 +73,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, create_time, line_id, hangup_code, is_cancel, total_calls, answer_calls, phone_num, 
-    org_code
+    org_code, user_id
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.callcenter.dao.entity.ReportLineCodeExample" >
     select
@@ -111,12 +112,12 @@
   <insert id="insert" parameterType="com.guiji.callcenter.dao.entity.ReportLineCode" >
     insert into report_line_code (id, create_time, line_id, 
       hangup_code, is_cancel, total_calls, 
-      answer_calls, phone_num, org_code
-      )
+      answer_calls, phone_num, org_code, 
+      user_id)
     values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{lineId,jdbcType=INTEGER}, 
       #{hangupCode,jdbcType=VARCHAR}, #{isCancel,jdbcType=INTEGER}, #{totalCalls,jdbcType=INTEGER}, 
-      #{answerCalls,jdbcType=INTEGER}, #{phoneNum,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}
-      )
+      #{answerCalls,jdbcType=INTEGER}, #{phoneNum,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.callcenter.dao.entity.ReportLineCode" >
     insert into report_line_code
@@ -148,6 +149,9 @@
       <if test="orgCode != null" >
         org_code,
       </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -176,6 +180,9 @@
       </if>
       <if test="orgCode != null" >
         #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -215,6 +222,9 @@
       <if test="record.orgCode != null" >
         org_code = #{record.orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.userId != null" >
+        user_id = #{record.userId,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -230,7 +240,8 @@
       total_calls = #{record.totalCalls,jdbcType=INTEGER},
       answer_calls = #{record.answerCalls,jdbcType=INTEGER},
       phone_num = #{record.phoneNum,jdbcType=VARCHAR},
-      org_code = #{record.orgCode,jdbcType=VARCHAR}
+      org_code = #{record.orgCode,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -262,6 +273,9 @@
       <if test="orgCode != null" >
         org_code = #{orgCode,jdbcType=VARCHAR},
       </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -274,7 +288,8 @@
       total_calls = #{totalCalls,jdbcType=INTEGER},
       answer_calls = #{answerCalls,jdbcType=INTEGER},
       phone_num = #{phoneNum,jdbcType=VARCHAR},
-      org_code = #{orgCode,jdbcType=VARCHAR}
+      org_code = #{orgCode,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

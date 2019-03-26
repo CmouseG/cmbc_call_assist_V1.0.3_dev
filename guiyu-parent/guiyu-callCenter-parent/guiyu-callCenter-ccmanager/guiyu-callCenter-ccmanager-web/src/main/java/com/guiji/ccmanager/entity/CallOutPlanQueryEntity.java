@@ -28,6 +28,7 @@ public class CallOutPlanQueryEntity {
     String isRead;
     Boolean isSuperAdmin;
     String intervened;
+    Integer authLevel;
 
 }
 

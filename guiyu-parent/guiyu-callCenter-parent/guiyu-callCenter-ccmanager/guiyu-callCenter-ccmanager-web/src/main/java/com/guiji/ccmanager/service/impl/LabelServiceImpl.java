@@ -17,7 +17,7 @@ public class LabelServiceImpl implements LabelService {
     ReportCallDayMapper reportCallDayMapper;
 
     @Override
-    public List<String> getAllLabelOneMonth(String orgCode) {
+    public List<String> getAllLabelOneMonth(String orgCode,Long userId,Integer authLevel) {
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MONTH, -1);
@@ -25,8 +25,8 @@ public class LabelServiceImpl implements LabelService {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateStr = sdf.format(date);
-        List<String> allLableList =reportCallDayMapper.getAllLabelFromDate(orgCode, dateStr);
-        List<String> todayLableList =reportCallDayMapper.getAllLabelFromToday(orgCode);
+        List<String> allLableList =reportCallDayMapper.getAllLabelFromDate(orgCode, dateStr,userId,authLevel);
+        List<String> todayLableList =reportCallDayMapper.getAllLabelFromToday(orgCode,userId,authLevel);
 
         if(allLableList!=null && allLableList.size()>0){
 

@@ -39,7 +39,7 @@ public class StatisticServiceImpl implements StatisticService {
     AuthService authService;
 
     @Override
-    public List<DashboardOverView> getDashboardOverView(String orgCode, String startDate, String endDate, String tempId) {
+    public List<DashboardOverView> getDashboardOverView(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
@@ -49,12 +49,12 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<DashboardOverView> listAgoDurationAll = statisticMapper.getDashboardOverViewAgoDurationAll(startDate,endDate,orgCode, tempId);
-            List<DashboardOverView> listAgoNotConnect = statisticMapper.getDashboardOverViewAgoNotConnect(startDate,endDate,orgCode, tempId);
-            List<DashboardOverView> listAgoConnect = statisticMapper.getDashboardOverViewAgoConnect(startDate,endDate,orgCode, tempId);
-            List<DashboardOverView> listAgoDuration5 = statisticMapper.getDashboardOverViewAgoDuration5(startDate,endDate,orgCode, tempId);
-            List<DashboardOverView> listAgoDuration10 = statisticMapper.getDashboardOverViewAgoDuration10(startDate,endDate,orgCode, tempId);
-            List<DashboardOverView> listAgoDuration30 = statisticMapper.getDashboardOverViewAgoDuration30(startDate,endDate,orgCode, tempId);
+            List<DashboardOverView> listAgoDurationAll = statisticMapper.getDashboardOverViewAgoDurationAll(startDate,endDate,orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listAgoNotConnect = statisticMapper.getDashboardOverViewAgoNotConnect(startDate,endDate,orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listAgoConnect = statisticMapper.getDashboardOverViewAgoConnect(startDate,endDate,orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listAgoDuration5 = statisticMapper.getDashboardOverViewAgoDuration5(startDate,endDate,orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listAgoDuration10 = statisticMapper.getDashboardOverViewAgoDuration10(startDate,endDate,orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listAgoDuration30 = statisticMapper.getDashboardOverViewAgoDuration30(startDate,endDate,orgCode, tempId,authLevel,userId);
             if(listAgoDurationAll!=null && listAgoDurationAll.size()>0){
                 for(DashboardOverView durationAll:listAgoDurationAll){
                     if(listAgoNotConnect!=null && listAgoNotConnect.size()>0) {
@@ -99,12 +99,12 @@ public class StatisticServiceImpl implements StatisticService {
 
         //今天
         if(endDate.equals(today)){
-            List<DashboardOverView> listTodayDurationAll = statisticMapper.getDashboardOverViewTodayDurationAll(orgCode, tempId);
-            List<DashboardOverView> listTodayNotConnect = statisticMapper.getDashboardOverViewTodayNotConnect(orgCode, tempId);
-            List<DashboardOverView> listTodayConnect = statisticMapper.getDashboardOverViewTodayConnect(orgCode, tempId);
-            List<DashboardOverView> listTodayDuration5 = statisticMapper.getDashboardOverViewTodayDuration5(orgCode, tempId);
-            List<DashboardOverView> listTodayDuration10 = statisticMapper.getDashboardOverViewTodayDuration10(orgCode, tempId);
-            List<DashboardOverView> listTodayDuration30 = statisticMapper.getDashboardOverViewTodayDuration30(orgCode, tempId);
+            List<DashboardOverView> listTodayDurationAll = statisticMapper.getDashboardOverViewTodayDurationAll(orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listTodayNotConnect = statisticMapper.getDashboardOverViewTodayNotConnect(orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listTodayConnect = statisticMapper.getDashboardOverViewTodayConnect(orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listTodayDuration5 = statisticMapper.getDashboardOverViewTodayDuration5(orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listTodayDuration10 = statisticMapper.getDashboardOverViewTodayDuration10(orgCode, tempId,authLevel,userId);
+            List<DashboardOverView> listTodayDuration30 = statisticMapper.getDashboardOverViewTodayDuration30(orgCode, tempId,authLevel,userId);
 
             if(listTodayDurationAll!=null && listTodayDurationAll.size()>0){
                 for(DashboardOverView durationAll:listTodayDurationAll){
@@ -152,7 +152,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<Map<String, Object>> getIntentCount(String orgCode, Long userId, String startDate, String endDate, String tempId) throws ParseException {
+    public List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) throws ParseException {
 
         String[] arr = {"A","B","C","D","E","F","W"};
         try{
@@ -169,7 +169,7 @@ public class StatisticServiceImpl implements StatisticService {
             typeList.add("W");
         }
 
-        List<IntentCount> list = getIntentCountList(orgCode, startDate, endDate, tempId);
+        List<IntentCount> list = getIntentCountList(authLevel,userId,orgCode, startDate, endDate, tempId);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date sDate = sdf.parse(startDate);
@@ -220,7 +220,7 @@ public class StatisticServiceImpl implements StatisticService {
         return resList;
     }
 
-    public List<IntentCount> getIntentCountList(String orgCode, String startDate, String endDate, String tempId) {
+    public List<IntentCount> getIntentCountList(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 
@@ -228,13 +228,13 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,orgCode,tempId);
+            List<IntentCount> listAgo = statisticMapper.getIntentCountAgo(startDate,endDate,orgCode,tempId,authLevel,userId);
             listResult.addAll(listAgo);
         }
 
         //今天
         if(endDate.equals(today)){
-            List<IntentCount> listToday = statisticMapper.getIntentCountToday(orgCode,tempId);
+            List<IntentCount> listToday = statisticMapper.getIntentCountToday(orgCode,tempId,authLevel,userId);
             listResult.addAll(listToday);
         }
 
@@ -242,13 +242,13 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public List<CallCountHour> getConnectDataHour(String orgCode, Date startDate, Date endDate, String tempId){
-        List<CallCountHour> list = statisticMapper.getConnectDataHour(startDate,endDate,orgCode,tempId);
+    public List<CallCountHour> getConnectDataHour(int authLevel,long userId,String orgCode, Date startDate, Date endDate, String tempId){
+        List<CallCountHour> list = statisticMapper.getConnectDataHour(startDate,endDate,orgCode,tempId,authLevel,userId);
         return list;
     }
 
     @Override
-    public List<ReasonCount> getConnectReasonDay(String orgCode, String startDate, String endDate, String tempId){
+    public List<ReasonCount> getConnectReasonDay(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(new Date());
 
@@ -256,13 +256,13 @@ public class StatisticServiceImpl implements StatisticService {
 
         //非今天
         if(!startDate.equals(today)){
-            List<ReasonCount> listAgo = statisticMapper.getReasonCountAgo(startDate,endDate,orgCode,tempId);
+            List<ReasonCount> listAgo = statisticMapper.getReasonCountAgo(startDate,endDate,orgCode,tempId,authLevel,userId);
             listResult.addAll(listAgo);
         }
 
         //今天
         if(endDate.equals(today)){
-            List<ReasonCount> listToday = statisticMapper.getReasonCountToday(orgCode,tempId);
+            List<ReasonCount> listToday = statisticMapper.getReasonCountToday(orgCode,tempId,authLevel,userId);
             listResult.addAll(listToday);
         }
 
@@ -275,14 +275,14 @@ public class StatisticServiceImpl implements StatisticService {
         return statisticMapper.getErrorMaths();
     }
 
-    @Override
-    public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode) {
-
-        if(authService.isAgentOrCompanyAdmin(userId) ){//企业管理员 或者是代理商
-            return statisticMapper.getLineCountAndConcurrent(null,orgCode+"%");
-        }else{
-            return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId),null);
-        }
-    }
+//    @Override
+//    public Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode) {
+//
+//        if(authService.isAgentOrCompanyAdmin(userId) ){//企业管理员 或者是代理商
+//            return statisticMapper.getLineCountAndConcurrent(null,orgCode+"%");
+//        }else{
+//            return statisticMapper.getLineCountAndConcurrent(isSuperAdmin ? null:String.valueOf(userId),null);
+//        }
+//    }
 
 }

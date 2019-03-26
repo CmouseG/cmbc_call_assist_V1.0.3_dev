@@ -21,6 +21,8 @@ public class ReportCallToday implements Serializable {
 
     private String callDate;
 
+    private Integer userId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -95,6 +97,14 @@ public class ReportCallToday implements Serializable {
         this.callDate = callDate == null ? null : callDate.trim();
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -110,6 +120,7 @@ public class ReportCallToday implements Serializable {
         sb.append(", tempid=").append(tempid);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", callDate=").append(callDate);
+        sb.append(", userId=").append(userId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

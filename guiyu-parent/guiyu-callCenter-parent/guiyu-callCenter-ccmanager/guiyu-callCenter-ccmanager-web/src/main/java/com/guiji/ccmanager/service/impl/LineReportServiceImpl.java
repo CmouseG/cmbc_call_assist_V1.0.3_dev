@@ -12,6 +12,7 @@ import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.model.SipLineVO;
 import com.guiji.component.result.Result;
 import com.guiji.utils.BeanUtil;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public class LineReportServiceImpl implements LineReportService {
     }
 
 
-    public List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime, String orgCode) {
+    public List<LineMonitorRreport> getLineMonitorReport(Integer lineId, Long userId, Date startTime, String orgCode, Integer authLevel) {
 
         if (lineId != null) {
 
@@ -111,9 +112,9 @@ public class LineReportServiceImpl implements LineReportService {
             resultLineMonitorRreport.setRate(0f);
             resultLineMonitorRreport.setHistory(0f);
 
-            List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime, orgCode);
+            List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, startTime, orgCode, authLevel, userId);
             //统计半年的数据
-            List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, DateUtils.getHalfYearDate(), orgCode);
+            List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByLineId(lineId, DateUtils.getHalfYearDate(), orgCode, authLevel, userId);
             if (reportList != null && reportList.size() > 0) {
                 LineMonitorRreport report = reportList.get(0);
                 resultLineMonitorRreport.setAnswerNum(report.getAnswerNum());
@@ -134,8 +135,8 @@ public class LineReportServiceImpl implements LineReportService {
             List<SipLineVO> listLine = returnData.getBody();
             if(listLine!=null && listLine.size()>0){
 
-                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode + "%", startTime);
-                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode + "%", DateUtils.getHalfYearDate());
+                List<LineMonitorRreport> reportList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode, authLevel, userId, startTime);
+                List<LineMonitorRreport> halfYearList = stastisticReportLineMapper.getLineMonitorReportByUserId(orgCode, authLevel, userId, DateUtils.getHalfYearDate());
 
                 List<LineMonitorRreport> retrunList = new ArrayList();
 
@@ -176,21 +177,21 @@ public class LineReportServiceImpl implements LineReportService {
     }
 
     @Override
-    public Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime, String orgCode) {
-        orgCode +="%";
-        List<Map> overViewMapList = stastisticReportLineMapper.getLineHangupCodeOverView(lineId, startTime, enTime, orgCode);
+    public Map getLineHangupDetail(Integer lineId, Date startTime, Date enTime, String orgCode,Integer userId, Integer authLevel) {
+
+        List<Map> overViewMapList = stastisticReportLineMapper.getLineHangupCodeOverView(lineId, startTime, enTime, orgCode, userId, authLevel);
         if (overViewMapList != null && overViewMapList.size() > 0) {
             Map overViewMap = overViewMapList.get(0);
 
-            List<Map> errorSumMapList = stastisticReportLineMapper.getLineHangupCodeErrorSum(lineId, startTime, enTime, orgCode);
+            List<Map> errorSumMapList = stastisticReportLineMapper.getLineHangupCodeErrorSum(lineId, startTime, enTime, orgCode, userId, authLevel);
             if(errorSumMapList!=null && errorSumMapList.size()>0){
                 Map errorSumMap = new HashMap();
                 for(Map map :errorSumMapList){
                     errorSumMap.put(map.get("hangup_code"),map.get("totalCalls"));
                 }
 
-                List<Map> errorNumsMapList = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNums(lineId, startTime, enTime, orgCode));
-                List<Map> errorNumsMapListCancel = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNumsCancel(lineId, startTime, enTime, orgCode));
+                List<Map> errorNumsMapList = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNums(lineId, startTime, enTime, orgCode, userId, authLevel));
+                List<Map> errorNumsMapListCancel = subPhoneNum(stastisticReportLineMapper.getLineHangupCodeErrorNumsCancel(lineId, startTime, enTime, orgCode, userId, authLevel));
                 if(errorNumsMapList!=null && errorNumsMapListCancel != null && errorNumsMapListCancel.size()>0){
                     errorNumsMapList.addAll(errorNumsMapListCancel);
                 }

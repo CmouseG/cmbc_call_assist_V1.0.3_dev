@@ -14,7 +14,16 @@
         FROM report_line_status m
         WHERE m.create_time >=#{startTime}
         AND m.line_id = #{lineId}
-        AND m.org_code = #{orgCode}
+
+        <if test="authLevel ==1" >
+            AND m.user_id = #{userId}
+        </if>
+        <if test="authLevel ==2" >
+            AND m.org_code = #{orgCode}
+        </if>
+        <if test="authLevel ==3" >
+            AND m.org_code like CONCAT(#{orgCode},'%')
+        </if>
         GROUP BY m.line_id
     </select>
 
@@ -31,7 +40,15 @@
             IFNULL(SUM(m.answer_num)/SUM(m.total_num),0) AS rate
             FROM report_line_status m
             WHERE m.create_time >=#{startTime}
-            AND m.org_code LIKE #{orgCode}
+            <if test="authLevel ==1" >
+                AND m.user_id = #{userId}
+            </if>
+            <if test="authLevel ==2" >
+                AND m.org_code = #{orgCode}
+            </if>
+            <if test="authLevel ==3" >
+                AND m.org_code like CONCAT(#{orgCode},'%')
+            </if>
             GROUP BY m.line_id
         )a,line_info b
         WHERE a.lineId = b.line_id
@@ -49,7 +66,16 @@
         from report_line_code
         where
         line_id = #{lineId}
-        and org_code LIKE #{orgCode}
+
+        <if test="authLevel ==1" >
+            AND user_id = #{userId}
+        </if>
+        <if test="authLevel ==2" >
+            AND org_code = #{orgCode}
+        </if>
+        <if test="authLevel ==3" >
+            AND org_code like CONCAT(#{orgCode},'%')
+        </if>
         and create_time >=#{startTime}
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}
@@ -65,7 +91,15 @@
         from report_line_code
         where
         line_id = #{lineId}
-        and org_code LIKE #{orgCode}
+        <if test="authLevel ==1" >
+            AND user_id = #{userId}
+        </if>
+        <if test="authLevel ==2" >
+            AND org_code = #{orgCode}
+        </if>
+        <if test="authLevel ==3" >
+            AND org_code like CONCAT(#{orgCode},'%')
+        </if>
         and create_time >=#{startTime}
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}
@@ -87,6 +121,15 @@
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}
         </if>
+        <if test="authLevel ==1" >
+            AND user_id = #{userId}
+        </if>
+        <if test="authLevel ==2" >
+            AND org_code = #{orgCode}
+        </if>
+        <if test="authLevel ==3" >
+            AND org_code like CONCAT(#{orgCode},'%')
+        </if>
         and hangup_code is not null
         group by hangup_code
     </select>
@@ -98,10 +141,18 @@
         from report_line_code
         where
         line_id = #{lineId}
-        and org_code LIKE #{orgCode}
         and create_time >=#{startTime}
         <if test="enTime != null" >
             and create_time &lt;= #{enTime}
+        </if>
+        <if test="authLevel ==1" >
+            AND user_id = #{userId}
+        </if>
+        <if test="authLevel ==2" >
+            AND org_code = #{orgCode}
+        </if>
+        <if test="authLevel ==3" >
+            AND org_code like CONCAT(#{orgCode},'%')
         </if>
         and  is_cancel = 1
 
@@ -120,12 +171,12 @@
 
     <insert id="insertReportLineCodeBatch" parameterType="java.util.List">
         INSERT INTO  report_line_code (
-        create_time,line_id,hangup_code,is_cancel,total_calls,answer_calls,phone_num,org_code)
+        create_time,line_id,hangup_code,is_cancel,total_calls,answer_calls,phone_num,org_code,user_id)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.createTime}, #{item.lineId}, #{item.hangupCode},
             #{item.isCancel}, #{item.totalCalls}, #{item.answerCalls},
-            #{item.phoneNum}, #{item.orgCode}
+            #{item.phoneNum}, #{item.orgCode}, #{item.userId}
             )
         </foreach>
     </insert>
@@ -137,21 +188,22 @@
         sum(total_calls) as totalNum,
         sum(answer_calls) as answerNum,
         sum(answer_calls)/sum(total_calls) as rate,
-        create_time as createTime
+        create_time as createTime,
+        user_id as userId
         FROM
         report_line_code
         WHERE
         create_time = #{createTime}
-        GROUP BY line_id,org_code
+        GROUP BY line_id,org_code,user_id
     </select>
 
     <insert id="insertReportLineStatusBatch" parameterType="java.util.List">
         INSERT INTO  report_line_status (
-        line_id,answer_num,total_num,rate,create_time,org_code)
+        line_id,answer_num,total_num,rate,create_time,org_code,user_id)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.lineId}, #{item.answerNum}, #{item.totalNum},
-            #{item.rate}, #{item.createTime}, #{item.orgCode}
+            #{item.rate}, #{item.createTime}, #{item.orgCode}, #{item.userId}
             )
         </foreach>
     </insert>

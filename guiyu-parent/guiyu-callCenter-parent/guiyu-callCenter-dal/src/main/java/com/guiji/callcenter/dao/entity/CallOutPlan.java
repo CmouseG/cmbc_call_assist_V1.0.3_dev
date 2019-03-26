@@ -77,9 +77,9 @@ public class CallOutPlan implements Serializable {
 
     private Boolean intervened;
 
-    private String params;
-
     private String lineName;
+
+    private String params;
 
     private static final long serialVersionUID = 1L;
 
@@ -371,20 +371,20 @@ public class CallOutPlan implements Serializable {
         this.intervened = intervened;
     }
 
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params == null ? null : params.trim();
-    }
-
     public String getLineName() {
         return lineName;
     }
 
     public void setLineName(String lineName) {
         this.lineName = lineName;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 
     @Override
@@ -429,8 +429,8 @@ public class CallOutPlan implements Serializable {
         sb.append(", isCancel=").append(isCancel);
         sb.append(", isAnswer=").append(isAnswer);
         sb.append(", intervened=").append(intervened);
-        sb.append(", params=").append(params);
         sb.append(", lineName=").append(lineName);
+        sb.append(", params=").append(params);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

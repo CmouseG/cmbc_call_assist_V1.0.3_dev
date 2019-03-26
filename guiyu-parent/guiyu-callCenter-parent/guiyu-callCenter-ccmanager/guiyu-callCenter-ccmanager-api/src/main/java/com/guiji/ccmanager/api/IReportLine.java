@@ -16,8 +16,9 @@ public interface IReportLine {
 
     @ApiOperation(value = "线路监控信息")
     @GetMapping(value = "getLineMonitorReport")
-    Result.ReturnData getLineMonitorReport(@RequestParam(value="lineId") String lineId,@RequestParam(value="dimension") String dimension,
-                                                  @RequestParam(value="orgCode")  String orgCode, @RequestParam(value="userId") Long userId);
+    Result.ReturnData getLineMonitorReport(@RequestParam(value = "lineId") String lineId, @RequestParam(value = "dimension") String dimension,
+                                           @RequestParam(value = "orgCode") String orgCode, @RequestParam(value = "userId") Long userId,
+                                           @RequestParam(value = "authLevel") Integer authLevel);
 
 
     @ApiOperation(value = "线路错误信息")
@@ -27,5 +28,6 @@ public interface IReportLine {
     })
     @GetMapping(value = "getLineHangupDetail")
     Result.ReturnData getLineHangupDetail(@RequestParam(value="lineId") String lineId,@RequestParam(value="startTime") String startTime,
-                                                 @RequestParam(value="enTime") String enTime, @RequestParam(value="orgCode")  String orgCode) throws ParseException;
+                                          @RequestParam(value="enTime") String enTime, @RequestParam(value="orgCode")  String orgCode,
+                                          @RequestParam(value = "userId") Integer userId,@RequestParam(value = "authLevel") Integer authLevel) throws ParseException;
 }

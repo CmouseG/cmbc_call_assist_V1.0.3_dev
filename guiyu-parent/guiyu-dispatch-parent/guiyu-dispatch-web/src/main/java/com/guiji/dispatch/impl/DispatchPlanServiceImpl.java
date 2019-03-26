@@ -312,7 +312,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 			}
 		}
-		logger.info("now do batchUpdatePlans:{},{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null, orgIds);
 		dis.setGmtModified(DateUtil.getCurrent4Time());
 
 		DispatchPlanExample ex = new DispatchPlanExample();

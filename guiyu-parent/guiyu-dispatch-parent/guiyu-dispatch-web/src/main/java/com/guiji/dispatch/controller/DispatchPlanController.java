@@ -105,7 +105,6 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("batchUpdatePlans")
 	public boolean batchUpdatePlans(@RequestBody IdsDto[] dto) {
-		logger.info("deleteAllPlanByBatchId:{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null);
 		return dispatchPlanService.batchUpdatePlans(dto);
 	}
 

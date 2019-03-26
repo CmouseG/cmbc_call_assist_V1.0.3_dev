@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class ExportregistrationsVO {
     private String regIds;
-    private Long userId;
+    private Long agentId;
+    private int authLevel;
+    private String orgCode;
 }

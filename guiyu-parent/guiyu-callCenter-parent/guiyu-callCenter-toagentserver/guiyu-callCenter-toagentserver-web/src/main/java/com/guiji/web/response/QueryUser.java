@@ -9,7 +9,7 @@ import lombok.Data;
 public class QueryUser {
     private Long userId;
     private String userName;
-    private EUserRole userRole;
+   // private EUserRole userRole;
     private String userPwd;
     private EAnswerType answerType;
     private EUserState userState;

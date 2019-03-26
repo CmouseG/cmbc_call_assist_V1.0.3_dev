@@ -12,14 +12,12 @@ import com.guiji.service.AgentService;
 import com.guiji.service.QueueService;
 import com.guiji.toagentserver.api.IAgentGroup;
 import com.guiji.toagentserver.entity.AgentGroupInfo;
+import com.guiji.toagentserver.entity.AgentMembrVO;
 import com.guiji.toagentserver.entity.FsInfoVO;
 import com.guiji.web.response.AgentSumResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +77,26 @@ public class ExternalController implements IAgentGroup{
         return Result.ok();
     }
 
+    @Override
+    public Result.ReturnData syncAgentMembers(@RequestBody List<AgentMembrVO> agentMembers) {
+        agentService.syncAgentMembers(agentMembers);
+        return Result.ok();
+    }
+
+    @Override
+    public Result.ReturnData delAgentMembers(@RequestBody List<Long> customerIds) {
+        agentService.delAgentMembers(customerIds);
+        return Result.ok();
+    }
+
+
     @RequestMapping(path = "/agentsum", method = RequestMethod.GET)
-    public Result.ReturnData<AgentSumResponse> getAgentStateSum(@RequestParam String orgCode){
+    public Result.ReturnData<AgentSumResponse> getAgentStateSum(@RequestParam String orgCode,@RequestHeader Long userId){
         log.info("收到获取座席状态统计，orgCode[{}]", orgCode);
+        Agent agentUser = agentService.getAgentByCustomerId(userId);
+        if(agentUser==null){
+            return Result.ok(null);
+        }
         AgentSumResponse agentSumResponse = new AgentSumResponse();
         List<Agent> agentList = agentService.findByOrgCode(orgCode);
         if(agentList!=null && agentList.size()>0){

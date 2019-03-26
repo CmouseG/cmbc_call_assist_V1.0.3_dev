@@ -1,9 +1,8 @@
 package com.guiji.web.controller;
 
-import com.guiji.callcenter.dao.entity.Agent;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.config.ErrorConstant;
-import com.guiji.entity.CustomSessionVar;
 import com.guiji.service.RegistrationService;
 import com.guiji.web.request.RegistrationRequest;
 import com.guiji.web.response.Paging;
@@ -11,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
 
 @Slf4j
 @RestController
@@ -26,13 +23,23 @@ public class RegistrationResource {
      *
      * @return
      */
+    @Jurisdiction("callCenter_checklist_defquery")
     @RequestMapping(path = "/registrations", method = RequestMethod.GET)
-    public Result.ReturnData<Paging> getRegistrations(HttpSession session,
-                                                      @RequestParam(value = "pageNo", defaultValue = "0") Integer page,
-                                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
-        Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        log.info("收到获取所有登记信息的请求pageNo:[{}],pageSize:[{}]",page,size);
-        Paging paging =  registrationService.getRegistrations(agent,page,size);
+    public Result.ReturnData<Paging> getRegistrations(@RequestParam(value = "pageNo", defaultValue = "0") Integer page,
+                                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
+                                                      @RequestHeader int authLevel,
+                                                      @RequestHeader Long userId,
+                                                      @RequestHeader String orgCode) {
+        log.info("收到获取所有登记信息的请求pageNo:[{}],pageSize:[{}]，authLevel[{}],userId[{}],orgCode[{}]",page,size,authLevel,userId,orgCode);
+        Paging paging = null;
+        try {
+            paging = registrationService.getRegistrations(page,size,authLevel,userId,orgCode);
+        } catch (Exception e) {
+            log.warn("查询登记信息出现异常", e);
+            if(e.getMessage().equals("0307014")){
+                return Result.error("0307014");
+            }
+        }
         return Result.ok(paging);
     }
 
@@ -42,6 +49,7 @@ public class RegistrationResource {
      * @param regId
      * @return
      */
+    @Jurisdiction("callCenter_checklist_delete")
     @RequestMapping(path = "/registrations/{regId}", method = RequestMethod.DELETE)
     public Result.ReturnData deleteRegistration(@PathVariable String regId) {
         log.info("收到删除登记信息请求regId:[{}]", regId);
@@ -58,19 +66,21 @@ public class RegistrationResource {
      * @param request
      * @return
      */
+    @Jurisdiction("callCenter_workPlatform_submit")
     @RequestMapping(path = "/registrations", method = RequestMethod.POST)
-    public Result.ReturnData addRegistration(@RequestBody RegistrationRequest request, HttpSession session) {
+    public Result.ReturnData addRegistration(@RequestBody RegistrationRequest request,@RequestHeader Long userId) {
         log.info("收到新增登记信息请求:[{}]", request.toString());
         if(StringUtils.isBlank(request.getRecordId())){
             return Result.error("0307010");
         }
-        Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
         try {
-            registrationService.addRegistration(request, agent);
+            registrationService.addRegistration(request, userId);
         } catch (Exception e) {
             log.warn("新增登记信息出现异常", e);
             if(e.getMessage().equals("0307013")){
                 return Result.error("0307013");
+            }else if(e.getMessage().equals("0307014")){
+                return Result.error("0307014");
             }
         }
         return Result.ok();
@@ -83,11 +93,18 @@ public class RegistrationResource {
      * @param request
      * @return
      */
+    @Jurisdiction("callCenter_checklist_edit")
     @RequestMapping(path = "/registrations/{regId}", method = RequestMethod.PUT)
-    public Result.ReturnData updateRegistration(@PathVariable String regId, @RequestBody RegistrationRequest request, HttpSession session) {
+    public Result.ReturnData updateRegistration(@PathVariable String regId, @RequestBody RegistrationRequest request,@RequestHeader Long userId) {
         log.info("收到更新登记信息请求regId:[{}],RegistrationRequest:[{}]",regId, request.toString());
-        Agent agent = (Agent) session.getAttribute(CustomSessionVar.LOGIN_USER);
-        registrationService.updateRegistration(regId, request, agent);
+        try {
+            registrationService.updateRegistration(regId, request, userId);
+        } catch (Exception e) {
+            log.warn("更新登记信息出现异常", e);
+            if(e.getMessage().equals("0307014")){
+                return Result.error("0307014");
+            }
+        }
         return Result.ok();
     }
 }

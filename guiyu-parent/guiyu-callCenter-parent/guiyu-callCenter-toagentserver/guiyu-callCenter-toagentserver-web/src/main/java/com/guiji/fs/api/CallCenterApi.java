@@ -114,7 +114,7 @@ public class CallCenterApi {
         //只能坐席被分配了队列，队列被重载的时候，才能看到新增加的坐席
         String cmd1 = String.format("callcenter_config agent add %s callback", agent.getAgentId());
         String cmd2 = String.format("callcenter_config agent set contact %s %s", agent.getAgentId(), agent.getContact());
-        String cmd3 = String.format("callcenter_config agent set status %s Available", agent.getAgentId());
+        String cmd3 = String.format("callcenter_config agent set status %s Logged Out", agent.getAgentId());
         String cmd4 = String.format("callcenter_config agent set max_no_answer %s 999999", agent.getAgentId());
         String cmd5 = String.format("callcenter_config agent set wrap_up_time %s 10", agent.getAgentId());
         String cmd6 = String.format("callcenter_config agent set reject_delay_time %s 10", agent.getAgentId());

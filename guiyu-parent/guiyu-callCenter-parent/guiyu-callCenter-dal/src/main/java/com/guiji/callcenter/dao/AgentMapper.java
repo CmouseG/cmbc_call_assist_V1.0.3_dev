@@ -96,7 +96,6 @@ public interface AgentMapper {
      */
     int updateByPrimaryKey(Agent record);
 
-
     Long selectMaxUserId();
 
     Long selectMinUserId();

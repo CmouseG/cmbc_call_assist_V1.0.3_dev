@@ -31,4 +31,6 @@ public class ErrorConstant {
 
     public static String EXCP_TOAGENT_REGISTRATION_IS_IN="0307013";
 
+
+    public static String USER_NOT_AGENT = "0307014";
 }

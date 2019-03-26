@@ -14,6 +14,7 @@ import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.Log;
+import com.guiji.dispatch.vo.DispatchPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
@@ -225,7 +226,36 @@ public class DispatchPlanController {
 
 	@ApiOperation(value="查询计划列表", notes="查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryLineByPlan", method = {RequestMethod.POST, RequestMethod.GET})
-	public List<DispatchBatchLine> queryLineByPlan(){
-		return null;
+	public List<DispatchBatchLine> queryLineByPlan(@RequestParam(required = true, name = "planUuid") long planUuid) {
+		return dispatchPlanService.queryLineByPlan(planUuid);
+	}
+
+	@ApiOperation(value = "查询计划列表", notes = "查询计划列表")
+	@RequestMapping(value = "/dispatch/plan/queryPlanListByPage", method = {RequestMethod.POST, RequestMethod.GET})
+	public Page<DispatchPlanVo> queryPlanListByPage(@RequestHeader Long userId, @RequestHeader String orgCode,
+													@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
+													@RequestBody QueryPlanListDto queryPlanDto) {
+		if (null == queryPlanDto) {
+			queryPlanDto = new QueryPlanListDto();
+			queryPlanDto.setPageNo(1);
+		} else {
+			queryPlanDto.setPageNo(queryPlanDto.getPageNo() > 0 ? queryPlanDto.getPageNo() : 1);
+		}
+
+		queryPlanDto.setOperUserId(userId + "");
+		queryPlanDto.setOperOrgCode(orgCode);
+		queryPlanDto.setSuperAdmin(isSuperAdmin);
+		queryPlanDto.setIsDesensitization(isDesensitization);
+
+		ResultPage<DispatchPlanVo> resPage = new ResultPage<DispatchPlanVo>(queryPlanDto);
+		resPage = dispatchPlanService.queryPlanListByPage(queryPlanDto, resPage);
+		Page<DispatchPlanVo> page = new Page<>();
+		Integer pageNo = queryPlanDto.getPageNo();
+		Integer pageSize = queryPlanDto.getPageSize();
+		page.setPageNo(pageNo);
+		page.setPageSize(pageSize);
+		page.setRecords(resPage.getList());
+		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
+		return page;
 	}
 }

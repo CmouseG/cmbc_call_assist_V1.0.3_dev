@@ -9,6 +9,7 @@ import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.dao.entity.DispatchPlanBatch;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
+import com.guiji.dispatch.model.DispatchBatchLine;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
@@ -35,7 +36,6 @@ public interface IDispatchPlanService {
    * @return 响应报文
    */
   boolean successSchedule(String planUuid, String label);
-
 
   /**
    * 批量修改状态
@@ -94,8 +94,8 @@ public interface IDispatchPlanService {
 
   int getcall4BatchName(Long userId, String batchName, Integer status);
 
-  List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(Long userId,
-                                                         String phone, String batchName, int pagenum, int pagesize);
+    List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(
+            Long userId, String phone, String batchName, int pagenum, int pagesize);
 
   JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId);
 
@@ -107,21 +107,24 @@ public interface IDispatchPlanService {
       String orgCode,
       Integer orgId);
 
-	/**
-	 * 根据用户ID统计计划数据
-	 * @param userId
-	 * @param startTime
-	 * @param endTime
-	 * @return
-	 */
-	TotalPlanCountVo totalPlanCountByUserDate(String userId, String startTime, String endTime, Integer orgId);
+    /**
+     * 根据用户ID统计计划数据
+     *
+     * @param userId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    TotalPlanCountVo totalPlanCountByUserDate(
+            String userId, String startTime, String endTime, Integer orgId);
 
-	/**
-	 * 根据批次ID统计计划数据
-	 * @param batchId
-	 * @return
-	 */
-	TotalPlanCountVo totalPlanCountByBatch(Integer batchId, Integer orgId);
+    /**
+     * 根据批次ID统计计划数据
+     *
+     * @param batchId
+     * @return
+     */
+    TotalPlanCountVo totalPlanCountByBatch(Integer batchId, Integer orgId);
 
   List<DispatchPlan> queryAvailableSchedules(
       Integer userId, int requestCount, int lineId, DispatchPlan isSuccess, boolean flag);
@@ -139,9 +142,13 @@ public interface IDispatchPlanService {
   // 查询任务计划备注
   String queryPlanRemarkById(long planUuid);
 
-	//查询计划列表
-	ResultPage<DispatchPlan> queryPlanList(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlan> page);
+    // 查询计划列表
+    ResultPage<DispatchPlan> queryPlanList(
+            QueryPlanListDto queryPlanDto, ResultPage<DispatchPlan> page);
 
-	//查询计划列表
-	List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
+    // 查询计划列表
+    List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
+
+    List<DispatchBatchLine> queryLineByPlan(long planUuid);
+ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page);
 }

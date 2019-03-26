@@ -453,4 +453,69 @@ public class FileController {
 		wb.close();
 
 	}
+
+
+	//下载导入记录文件
+	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
+	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
+	public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
+									 @RequestParam(required = false, name = "id") Long id)
+			throws UnsupportedEncodingException, WriteException {
+		FileRecords fileRecords = file.queryFileRecordById(id);
+		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())){
+			String fileUrl = fileRecords.getUrl();
+			String fileType = fileUrl.substring(fileUrl.lastIndexOf("."), fileUrl.length());
+			response.reset();
+			HttpDownload.setHeader(response, "导入记录" + fileType);
+			//创建url连接;
+			File file = new File(fileUrl);
+			InputStream is = null;
+			OutputStream os = null;
+			//创建url连接;
+			HttpURLConnection urlconn = null;
+			try {
+				URL url = new URL(fileUrl);
+				urlconn = (HttpURLConnection)url.openConnection();
+				//链接远程服务器;
+				urlconn.connect();
+
+			//	is = new BufferedInputStream(new FileInputStream(file));
+				is = new BufferedInputStream(urlconn.getInputStream());
+				os = new BufferedOutputStream(response.getOutputStream());
+
+				byte[] buffer = new byte[is.available()];
+				int len;
+				while((len =is.read(buffer))>0){
+					os.write(buffer, 0, len);
+					logger.info(">>>>>>>>" + len+"");
+					logger.info(">>>>>>>>" + buffer+"");
+				}
+				os.flush();
+			}catch(Exception e){
+				logger.error("", e);
+			}finally{
+				if(null != is){
+					try {
+						is.close();
+					} catch (IOException e) {
+						log.error("is.close error:" + e);
+						e.printStackTrace();
+					}
+				}
+
+				if(null != os){
+					try {
+						os.close();
+					} catch (IOException e) {
+						log.error("os.close error:" + e);
+						e.printStackTrace();
+					}
+				}
+
+				if(null != urlconn){
+					urlconn.disconnect();
+				}
+			}
+		}
+	}
 }

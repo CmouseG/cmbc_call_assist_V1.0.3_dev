@@ -2,11 +2,10 @@ package com.guiji.dispatch.api;
 
 import java.util.List;
 
+import com.guiji.dispatch.model.ExportFileDto;
+import com.guiji.dispatch.model.ExportFileRecordVo;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.guiji.dispatch.model.DispatchPlan;
 import com.guiji.dispatch.model.PlanCountVO;
@@ -141,6 +140,21 @@ public interface IDispatchPlanOut {
    @ApiOperation(value="根据uuId查询计划任务备注")
    @RequestMapping(value="/dispatch/queryPlanRemarkById", method={RequestMethod.GET})
    Result.ReturnData<String> queryPlanRemarkById(@RequestParam("planUuid") String planUuid);
+
+   @ApiOperation(value="新增文件导出记录")
+   @RequestMapping(value="/dispatch/out/addExportFile", method={RequestMethod.POST})
+   Result.ReturnData<ExportFileRecordVo> addExportFile(@RequestBody ExportFileDto exportFileDto);
+
+    /**
+     * 变更文件导出记录状态
+     * @param recordId  记录唯一ID
+     * @param status    状态 0-进行中 1-已完成 2-取消  3-删除 4-失败
+     * @return
+     */
+   @ApiOperation(value="变更文件导出记录状态")
+   @RequestMapping(value="/dispatch/out/updExportFile", method={RequestMethod.POST})
+   Result.ReturnData<Boolean> updExportFile(@RequestParam("recordId") String recordId, @RequestParam("status") Integer status,
+                                            @RequestParam("fileGenerateUrl") String fileGenerateUrl);
 
 }
 

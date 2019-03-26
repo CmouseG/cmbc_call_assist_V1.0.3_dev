@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.dispatch.dao.ext.ExportFileRecordMapper">
+
+
+	<insert id="addExportFileRecord">
+		INSERT INTO export_file_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="recordId != null">
+				record_id,
+			</if>
+			<if test="busiType != null">
+				busi_type,
+			</if>
+			<if test="busiId != null">
+				busi_id,
+			</if>
+			<if test="fileType != null">
+				file_type,
+			</if>
+			<if test="fileSize != null">
+				file_size,
+			</if>
+			<if test="fileOriginalUrl != null">
+				file_original_url,
+			</if>
+			<if test="fileGenerateUrl != null">
+				file_generate_url,
+			</if>
+			<if test="batchId != null">
+				batch_id,
+			</if>
+			<if test="batchName != null">
+				batch_name,
+			</if>
+			<if test="totalNum != null">
+				total_num,
+			</if>
+			<if test="successNum != null">
+				success_num,
+			</if>
+			<if test="failNum != null">
+				failNum,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="orgCode != null">
+				org_code,
+			</if>
+			<if test="addTime != null">
+				add_time,
+			</if>
+			<if test="updTime != null">
+				upd_time,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="recordId != null">
+				#{recordId},
+			</if>
+			<if test="busiType != null">
+				#{busiType},
+			</if>
+			<if test="busiId != null">
+				#{busiId},
+			</if>
+			<if test="fileType != null">
+				#{fileType},
+			</if>
+			<if test="fileSize != null">
+				#{fileSize},
+			</if>
+			<if test="fileOriginalUrl != null">
+				#{fileOriginalUrl},
+			</if>
+			<if test="fileGenerateUrl != null">
+				#{fileGenerateUrl},
+			</if>
+			<if test="batchId != null">
+				#{batchId},
+			</if>
+			<if test="batchName != null">
+				#{batchName},
+			</if>
+			<if test="totalNum != null">
+				#{totalNum},
+			</if>
+			<if test="successNum != null">
+				#{successNum},
+			</if>
+			<if test="failNum != null">
+				#{failNum},
+			</if>
+			<if test="status != null">
+				#{status},
+			</if>
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="userName != null">
+				#{userName},
+			</if>
+			<if test="orgCode != null">
+				#{orgCode},
+			</if>
+			<if test="addTime != null">
+				#{addTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updTime != null">
+				#{updTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updExportFileRecordState">
+		UPDATE export_file_record
+		<set>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="updTime != null">
+				upd_time = #{updTime},
+			</if>
+		</set>
+		WHERE record_id = #{recordId}
+	</update>
+
+	<select id="queryExportFileRecordByPage" resultType="com.guiji.dispatch.entity.ExportFileRecord">
+		SELECT
+			id               ,
+			record_id        ,
+			busi_type        ,
+			busi_id          ,
+			file_type        ,
+			file_size        ,
+			file_original_url,
+			file_generate_url,
+			batch_id         ,
+			batch_name       ,
+			total_num        ,
+			success_num      ,
+			fail_num         ,
+			STATUS           ,
+			user_id          ,
+			user_name        ,
+			org_code         ,
+			add_time         ,
+			upd_time         ,
+			del_flag
+		FROM export_file_record r
+		WHERE r.del_flag = 0
+		<if test="queryRecord != null">
+			<if test="queryRecord.recordId != null">
+				AND record_id = #{queryRecord.recordId}
+			</if>
+			<if test="queryRecord.busiType != null">
+				AND busi_type = #{queryRecord.busiType}
+			</if>
+			<if test="queryRecord.busiId != null">
+				AND busi_id = #{queryRecord.busiId}
+			</if>
+			<if test="queryRecord.fileType != null">
+				AND file_type = #{queryRecord.fileType}
+			</if>
+			<if test="queryRecord.status != null">
+				AND status = #{queryRecord.status}
+			</if>
+			<if test="queryRecord.userName != null">
+				AND user_name LIKE CONCAT('%', #{queryRecord.userName},'%')
+			</if>
+			<if test="queryRecord.orgCode != null and queryRecord.orgCode != ''" >
+				AND (org_code = #{queryRecord.orgCode} OR org_code LIKE CONCAT(#{queryRecord.orgCode}, '%'))
+			</if>
+		</if>
+		ORDER BY add_time DESC
+		<if test="page != null and page.isPage ">
+			<!--<if test="page.orderBy != null " >
+                order by ${page.orderBy}	${page.sort}
+            </if>-->
+			<if test="page.indexStart != null " >
+				limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+			</if>
+		</if>
+
+	</select>
+
+	<select id="queryExportFileRecordCount" resultType="java.lang.Integer">
+		SELECT
+			COUNT(id)
+		FROM export_file_record r
+		WHERE r.del_flag = 0
+		<if test="queryRecord != null">
+			<if test="queryRecord.recordId != null">
+				AND record_id = #{queryRecord.recordId}
+			</if>
+			<if test="queryRecord.busiType != null">
+				AND busi_type = #{queryRecord.busiType}
+			</if>
+			<if test="queryRecord.busiId != null">
+				AND busi_id = #{queryRecord.busiId}
+			</if>
+			<if test="queryRecord.fileType != null">
+				AND file_type = #{queryRecord.fileType}
+			</if>
+			<if test="queryRecord.status != null">
+				AND status = #{queryRecord.status}
+			</if>
+			<if test="queryRecord.userName != null">
+				AND user_name LIKE CONCAT('%', #{queryRecord.userName},'%')
+			</if>
+			<if test="queryRecord.orgCode != null and queryRecord.orgCode != ''" >
+				AND (org_code = #{queryRecord.orgCode} OR org_code LIKE CONCAT(#{queryRecord.orgCode}, '%'))
+			</if>
+		</if>
+	</select>
+
+    <select id="queryExpertFileRecordById" resultType="com.guiji.dispatch.entity.ExportFileRecord">
+		SELECT
+			id               ,
+			record_id        ,
+			busi_type        ,
+			busi_id          ,
+			file_type        ,
+			file_size        ,
+			file_original_url,
+			file_generate_url,
+			batch_id         ,
+			batch_name       ,
+			total_num        ,
+			success_num      ,
+			fail_num         ,
+			STATUS           ,
+			user_id          ,
+			user_name        ,
+			org_code         ,
+			add_time         ,
+			upd_time         ,
+			del_flag
+		FROM export_file_record
+		WHERE record_id = #{recordId}
+	</select>
+
+	<update id="delExpertFileRecord">
+		UPDATE export_file_record
+		<set>
+			status = ${@com.guiji.dispatch.enums.ExportFileStatusEnum@DEL.getStatus()},
+			del_flag = ${@com.guiji.dispatch.enums.SysDelEnum@DEL.getState()},
+			upd_time = #{delTime}
+		</set>
+		WHERE record_id IN
+		<foreach collection="recordIdList" item="recordId" open="(" close=")" separator="," >
+			#{recordId}
+		</foreach>
+	</update>
+
+	<update id="endExportFile">
+		UPDATE export_file_record
+		<set>
+			status = #{status},
+			file_original_url = #{fileUrl},
+			file_generate_url = #{fileUrl},
+			file_size = #{fileSize},
+			upd_time = #{delTime}
+		</set>
+		WHERE record_id = #{recordId}
+	</update>
+</mapper>

@@ -6,13 +6,18 @@ import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.entity.DispatchBatchLine;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample;
+import com.guiji.dispatch.entity.ExportFileRecord;
 import com.guiji.dispatch.enums.SysDelEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.model.DispatchPlan;
+import com.guiji.dispatch.model.ExportFileDto;
+import com.guiji.dispatch.model.ExportFileRecordVo;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.service.IResourcePoolService;
 import com.guiji.utils.IdGengerator.IdUtils;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,10 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	private IDispatchBatchLineService lineService;
 	@Autowired
 	private DispatchPlanMapper dispatchMapper;
+
+	@Autowired
+	private IExportFileService exportFileService;
+
 	/**
 	 * 完成
 	 *
@@ -239,5 +245,33 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		return new ReturnData<String>(planAttach);
 	}
 
+	/**
+	 * 新增文件导出记录
+	 * @param exportFileDto
+	 * @return
+	 */
+	@ApiOperation(value="查询任务计划备注", notes="查询任务计划备注")
+	@Override
+	public ReturnData<ExportFileRecordVo> addExportFile(@RequestBody ExportFileDto exportFileDto) {
+		logger.info("新增文件导出记录入参", JsonUtils.bean2Json(exportFileDto));
+		ExportFileRecord record = exportFileService.addExportFile(exportFileDto);
+		ExportFileRecordVo recordVo = null;
+		if(null != record){
+			recordVo = new ExportFileRecordVo();
+			BeanUtils.copyProperties(record, recordVo, ExportFileRecordVo.class);
+		}
+		return new ReturnData<ExportFileRecordVo>(recordVo);
+	}
 
+	/**
+	 * 变更文件导出记录状态和文件导出地址
+	 * @param recordId
+	 * @param status
+	 * @return
+	 */
+	@Override
+	public ReturnData<Boolean> updExportFile(String recordId, Integer status, String fileGenerateUrl) {
+		boolean bool =  exportFileService.endExportFile(recordId, status, fileGenerateUrl);
+		return new ReturnData<Boolean>(bool);
+	}
 }

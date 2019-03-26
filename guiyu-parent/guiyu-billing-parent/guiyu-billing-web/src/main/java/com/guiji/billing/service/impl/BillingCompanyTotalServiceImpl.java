@@ -12,6 +12,7 @@ import com.guiji.billing.utils.ResHandler;
 import com.guiji.billing.vo.TotalChargingItemDetailVo;
 import com.guiji.billing.vo.TotalChargingItemVo;
 import com.guiji.user.dao.entity.SysOrganization;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +38,15 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
      */
     @Override
     public List<TotalChargingItemVo> totalCompanyChargingItem(QueryTotalChargingItemDto queryTotalChargingItemDto, ResultPage<TotalChargingItemVo> page) {
-        //获取用户ID
-        String userId = null != queryTotalChargingItemDto.getUserId()?
-                queryTotalChargingItemDto.getUserId():AuthConstant.superUserId;
-        //获取企业组织 code后面不带点.
-        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():AuthConstant.superOrgCode;    //org.getCode() + AuthConstant.orgSuffix
+        String orgCode = queryTotalChargingItemDto.getOrgCode();
+        if(StringUtils.isEmpty(orgCode)) {
+            //获取用户ID
+            String userId = null != queryTotalChargingItemDto.getUserId() ? queryTotalChargingItemDto.getUserId() : AuthConstant.superUserId;
+            //获取企业组织
+            SysOrganization org = getApiService.getOrgByUserId(userId);
+            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
+        }
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalCompanyChargingByDate(queryTotalChargingItemDto.getOperUserId(),
@@ -68,13 +71,15 @@ public class BillingCompanyTotalServiceImpl implements BillingCompanyTotalServic
      */
     @Override
     public int totalCompanyChargingCount(QueryTotalChargingItemDto queryTotalChargingItemDto) {
-        //获取用户ID
-        String userId = null != queryTotalChargingItemDto.getUserId()?
-                queryTotalChargingItemDto.getUserId():AuthConstant.superUserId;
-        //获取企业组织 code后面不带点.
-        SysOrganization org = getApiService.getOrgByUserId(userId);
         //获取企业组织编码
-        String orgCode = null != org?org.getCode():AuthConstant.superOrgCode;   //(org.getCode() + AuthConstant.orgSuffix)
+        String orgCode = queryTotalChargingItemDto.getOrgCode();
+        if(StringUtils.isEmpty(orgCode)) {
+            //获取用户ID
+            String userId = null != queryTotalChargingItemDto.getUserId() ? queryTotalChargingItemDto.getUserId() : AuthConstant.superUserId;
+            //获取企业组织
+            SysOrganization org = getApiService.getOrgByUserId(userId);
+            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
+        }
         if(null != queryTotalChargingItemDto && null != queryTotalChargingItemDto.getType()){
             if(1 == queryTotalChargingItemDto.getType()){//按日查询
                 return billingCompanyTotalMapper.totalChargingCountByDate(queryTotalChargingItemDto.getOperUserId(),

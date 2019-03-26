@@ -332,11 +332,9 @@ public class UserController implements IAuth {
 	}
 
 	@Override
-	public ReturnData<List<SysUser>> getUserByOpenId(String openId)
+	@RequestMapping("/user/getUserByOpenId")
+	public ReturnData<List<SysUser>> getUserByOpenId(@RequestParam("openId") String openId)
 	{
 		return Result.ok(service.getUserByOpenId(openId));
 	}
-
-	
-
 }

@@ -12,7 +12,7 @@ public interface IApiLogin {
 	@GetMapping("getUserByAccess")
 	Result.ReturnData<SysUser> getUserByAccess(@RequestParam("accessKey")String accessKey, @RequestParam("secretKey")String secretKey);
 	
-	@GetMapping("getUserByAccess")
-	Result.ReturnData<Boolean> WxLogin(@RequestParam("userName")String userName, @RequestParam("password")String password);
+	@GetMapping("getUserIdByCheckLogin")
+	Result.ReturnData<Long> getUserIdByCheckLogin(@RequestParam("userName")String userName, @RequestParam("password")String password);
 	
 }

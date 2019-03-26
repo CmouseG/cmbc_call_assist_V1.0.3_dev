@@ -25,10 +25,10 @@ public class ApiLoginController implements IApiLogin {
     }
 
 	@Override
-	@GetMapping("WxLogin")
-	public ReturnData<Boolean> WxLogin(@RequestParam("userName")String userName, @RequestParam("password")String password)
+	@GetMapping("getUserIdByCheckLogin")
+	public ReturnData<Long> getUserIdByCheckLogin(@RequestParam("userName")String userName, @RequestParam("password")String password)
 	{
-		Boolean flag = service.WxLogin(userName, password);
-		return Result.ok(flag);
+		Long userId = service.getUserIdByCheckLogin(userName, password);
+		return Result.ok(userId);
 	}
 }

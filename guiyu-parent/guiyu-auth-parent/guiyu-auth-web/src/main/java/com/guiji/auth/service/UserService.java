@@ -31,6 +31,7 @@ import com.guiji.user.dao.entity.SysUserExample;
 import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.user.vo.UserParamVo;
 import com.guiji.utils.RedisUtil;
+import org.springframework.util.CollectionUtils;
 
 
 @Service
@@ -317,16 +318,16 @@ public class UserService {
 		return mapper.getUserByOpenId(openId);
 	}
 
-	public Boolean WxLogin(String userName, String password)
+	public Long getUserIdByCheckLogin(String userName, String password)
 	{
-		Boolean flag = false;
 		SysUserExample example = new SysUserExample();
-		example.createCriteria().andUsernameEqualTo(userName).andPasswordEqualTo(password);
-		int count = mapper.countByExample(example);
-		if(count > 0)
-		{
-			flag = true;
+		example.createCriteria().andUsernameEqualTo(userName).andPasswordEqualTo(AuthUtil.encrypt(password));
+		List<SysUser> sysUsers = mapper.selectByExample(example);
+
+		if(CollectionUtils.isEmpty(sysUsers)){
+			return null;
 		}
-		return flag;
+
+		return sysUsers.get(0).getId();
 	}
 }

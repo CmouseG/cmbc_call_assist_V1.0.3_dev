@@ -58,6 +58,6 @@ public interface IAuth {
 	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId) throws UnsupportedEncodingException;
 	
 	@RequestMapping("/user/getUserByOpenId")
-	public ReturnData<List<SysUser>> getUserByOpenId(@RequestParam("OpenId") String openId);
+	ReturnData<List<SysUser>> getUserByOpenId(@RequestParam("openId") String openId);
 	
 }

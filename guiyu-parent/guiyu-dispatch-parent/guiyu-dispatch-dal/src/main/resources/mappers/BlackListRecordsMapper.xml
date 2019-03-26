@@ -251,7 +251,7 @@
     FROM black_list_records
     WHERE 1 = 1
     <if test="blackRecord != null">
-      <if test="blackRecord.userId != null">
+      <if test="blackRecord.authLevel == 1 and blackRecord.userId != null">
         AND user_id = #{blackRecord.userId}
       </if>
       <if test="blackRecord.type != null">
@@ -260,7 +260,10 @@
       <if test="blackRecord.phone != null and blackRecord.phone != ''">
         AND phone = #{blackRecord.phone}
       </if>
-      <if test="blackRecord.orgCode != null and blackRecord.orgCode != ''" >
+      <if test="blackRecord.authLevel == 2 and blackRecord.orgCode != null and blackRecord.orgCode != ''" >
+        AND org_code = #{blackRecord.orgCode}
+      </if>
+      <if test="blackRecord.authLevel == 3 and blackRecord.orgCode != null and blackRecord.orgCode != ''" >
         AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '%'))
       </if>
     </if>
@@ -280,7 +283,7 @@
     FROM black_list_records
     WHERE 1 = 1
       <if test="blackRecord != null">
-        <if test="blackRecord.userId != null">
+        <if test="blackRecord.authLevel == 1 and blackRecord.userId != null">
           AND user_id = #{blackRecord.userId}
         </if>
         <if test="blackRecord.type != null">
@@ -289,7 +292,10 @@
         <if test="blackRecord.phone != null and blackRecord.phone != ''">
           AND phone = #{blackRecord.phone}
         </if>
-        <if test="blackRecord.orgCode != null and blackRecord.orgCode != ''" >
+        <if test="blackRecord.authLevel == 2 and blackRecord.orgCode != null and blackRecord.orgCode != ''" >
+          AND org_code = #{blackRecord.orgCode}
+        </if>
+        <if test="blackRecord.authLevel == 3 and blackRecord.orgCode != null and blackRecord.orgCode != ''" >
           AND (org_code = #{blackRecord.orgCode} OR org_code LIKE CONCAT(#{blackRecord.orgCode}, '%'))
         </if>
       </if>

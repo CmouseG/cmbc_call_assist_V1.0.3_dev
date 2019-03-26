@@ -147,21 +147,13 @@ public class BotSentenceGradeServiceImpl implements IBotSentenceGradeService {
 				}else {
 					evaluate = "接通时长" + detail.getValue2() + detail.getValue3();
 				}
-			}else if("05".equals(detail.getType())) {//触发业务问答次数
-				if("0".equals(detail.getValue3())) {//如果触 发业务问答次数等于0 
-					if(StringUtils.isNotBlank(evaluate)) {
-						evaluate = evaluate + " and (一般问题['进入次数']" + detail.getValue2() + detail.getValue3() + ")"; 
-					}else {
-						evaluate = " 一般问题['进入次数']" + detail.getValue2() + detail.getValue3(); 
-					}
+			}else if("05".equals(detail.getType())) {
+				if(StringUtils.isNotBlank(evaluate)) {
+					evaluate = evaluate + " and ('一般回答计数'" + detail.getValue2() + detail.getValue3() + ")"; 
 				}else {
-					if(StringUtils.isNotBlank(evaluate)) {
-						evaluate = evaluate + " and ('一般问题' in 经过域 and 一般问题['进入次数']" + detail.getValue2() + detail.getValue3() + ")"; 
-					}else {
-						evaluate = "'一般问题' in 经过域 and 一般问题['进入次数']" + detail.getValue2() + detail.getValue3(); 
-					}
+					evaluate = "'一般回答计数'" + detail.getValue2() + detail.getValue3(); 
 				}
-			}else if("06".equals(detail.getType())) {//触发业务问答次数
+			}else if("06".equals(detail.getType())) {//触发某个业务问答
 				if(StringUtils.isNotBlank(evaluate)) {
 					evaluate = evaluate + " and ('一般问题' in 经过域 and " + "'" + detail.getValue2() + ".responses'" + " in 一般问题['进入分支'])"; 
 				}else {

@@ -74,18 +74,38 @@
 	   	set ignore_but_negative = null where process_id= #{processId} and domain_name=#{domainName}
   </update>
   
-  <update id="updateNotMatchLess4ToByDomain" parameterType="string" >
+  <!-- 删除节点 -->
+  
+  <update id="deleteNotMatchLess4ToByDomain" parameterType="string" >
 	    update bot_sentence_domain
 	   	set not_match_less4_to = null where process_id= #{processId} and not_match_less4_to=#{domainName}
   </update>
   
-  <update id="updateNotMatchToByDomain" parameterType="string" >
+  <update id="deleteNotMatchToByDomain" parameterType="string" >
 	    update bot_sentence_domain
 	   	set not_match_to = null where process_id= #{processId} and not_match_to=#{domainName}
   </update>
   
-  <update id="updateNotWordsToByDomain" parameterType="string" >
+  <update id="deleteNotWordsToByDomain" parameterType="string" >
 	    update bot_sentence_domain
 	   	set no_words_to = null where process_id= #{processId} and no_words_to=#{domainName}
   </update>
+  
+  <!-- 修改节点名称 -->
+  
+  <update id="updateNotMatchLess4ToByDomain" parameterType="string" >
+	    update bot_sentence_domain
+	   	set not_match_less4_to = #{newDomainName} where process_id= #{processId} and not_match_less4_to=#{domainName}
+  </update>
+  
+  <update id="updateNotMatchToByDomain" parameterType="string" >
+	    update bot_sentence_domain
+	   	set not_match_to = #{newDomainName} where process_id= #{processId} and not_match_to=#{domainName}
+  </update>
+  
+  <update id="updateNotWordsToByDomain" parameterType="string" >
+	    update bot_sentence_domain
+	   	set no_words_to = #{newDomainName} where process_id= #{processId} and no_words_to=#{domainName}
+  </update>
+  
 </mapper>

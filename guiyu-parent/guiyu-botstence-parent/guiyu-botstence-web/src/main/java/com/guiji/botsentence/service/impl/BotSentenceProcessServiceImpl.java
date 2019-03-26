@@ -2121,7 +2121,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 			}
 		}
 		
-		this.updateValiableDomainName(domain.getProcessId(), oldDomainName, newDomainName, "update");
+		
 		
 		domain.setType(blankDomain.getType());
 		domain.setDomainName(blankDomain.getLabel());
@@ -2131,6 +2131,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 		domain.setLstUpdateUser(userId);
 		botSentenceDomainMapper.updateByPrimaryKey(domain);
 		
+		this.updateValiableDomainName(domain.getProcessId(), oldDomainName, newDomainName, "update");
 		
 		if(StringUtils.isNotBlank(domainId) && domainId.equals(blankDomain.getId())) {//如果修改的是当前domain才需要更新以下数据，否则只要更新上面的坐标即可
 			//第三步：更新branch表的domain
@@ -4877,13 +4878,13 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 			}
 			
 			//用户回复未超过4个字，且未匹配到关键词时，回复某个主流程
-			botSentenceDomainExtMapper.updateNotMatchLess4ToByDomain(processId, domainName);
+			botSentenceDomainExtMapper.deleteNotMatchLess4ToByDomain(processId, domainName);
 			
 			//用户回复超过4个字，且未匹配到关键词时，将用户的回复配置为
-			botSentenceDomainExtMapper.updateNotMatchToByDomain(processId, domainName);
+			botSentenceDomainExtMapper.deleteNotMatchToByDomain(processId, domainName);
 			
 			//用户回复无声音时，将用户的回复配置为
-			botSentenceDomainExtMapper.updateNotWordsToByDomain(processId, domainName);
+			botSentenceDomainExtMapper.deleteNotWordsToByDomain(processId, domainName);
 			
 			//删除相应的意向
 			BotSentenceGradeRuleExample ruleExample = new BotSentenceGradeRuleExample();
@@ -4892,8 +4893,16 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 		}else if("update".equals(type)) {
 			//更新意向
 			botSentenceGradeRuleExtMapper.updateValue2ByDomain(newDomainName, processId, domainName);
+			
+			//用户回复未超过4个字，且未匹配到关键词时，回复某个主流程
+			botSentenceDomainExtMapper.updateNotMatchLess4ToByDomain(processId, domainName, newDomainName);
+			
+			//用户回复超过4个字，且未匹配到关键词时，将用户的回复配置为
+			botSentenceDomainExtMapper.updateNotMatchToByDomain(processId, domainName, newDomainName);
+			
+			//用户回复无声音时，将用户的回复配置为
+			botSentenceDomainExtMapper.updateNotWordsToByDomain(processId, domainName, newDomainName);
 		}
-		
 	}
 	
 }

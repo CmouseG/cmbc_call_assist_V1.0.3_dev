@@ -304,4 +304,9 @@ public class UserService {
 		sysUserExt.setUpdateTime(new Date());
 		sysUserExtMapper.updateByUserId(sysUserExt);
 	}
+
+	public List<SysUser> getUserByOpenId(String openId)
+	{
+		return mapper.getUserByOpenId(openId);
+	}
 }

@@ -169,7 +169,7 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		rsp.setIntent_name(jsonObject.getString("intent_name"));
 		rsp.setUserinfo(jsonObject.getString("userinfo"));
 		rsp.setScene_name(jsonObject.getString("scene_name"));
-		rsp.setIntent(jsonObject.getString("accurate_intent"));
+		rsp.setAccurate_intent(jsonObject.getString("accurate_intent"));
 		rsp.setEnd(jsonObject.getString("end"));
 		rsp.setAnswer(jsonObject.getString("answer"));
 		rsp.setSentence(jsonObject.getString("sentence"));

@@ -58,6 +58,7 @@ public class CallOutPlanRegistration {
     private String  remark;
 
     private String  userName;
+    private String  params;
 
     private static final long serialVersionUID = 1L;
 
@@ -267,5 +268,13 @@ public class CallOutPlanRegistration {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 }

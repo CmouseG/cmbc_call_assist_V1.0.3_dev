@@ -411,9 +411,11 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.addCell(new Label(7, 0 , "所属者",format));
         sheet.addCell(new Label(8, 0 , "拨打时长",format));
         sheet.addCell(new Label(9, 0 , "接听时长",format));
-        sheet.addCell(new Label(10, 0 , "通话记录",format));
-        sheet.addCell(new Label(11, 0 , "客户信息",format));
-        sheet.addCell(new Label(12, 0 , "登记历史",format));
+        sheet.addCell(new Label(10, 0 , "变量参数",format));
+        sheet.addCell(new Label(11, 0 , "通话记录",format));
+        sheet.addCell(new Label(12, 0 , "客户信息",format));
+        sheet.addCell(new Label(13, 0 , "登记历史",format));
+
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(int i=1;i<=listPlan.size();i++){
@@ -428,9 +430,10 @@ public class CallDetailController implements ICallPlanDetail {
             sheet.addCell(new Label(7, i , callPlan.getUserName(),format));
             sheet.addCell(new Label(8, i , callPlan.getDuration()!=null? DateUtils.secondToTime(callPlan.getDuration()): "",format));
             sheet.addCell(new Label(9, i , callPlan.getBillSec()!=null? DateUtils.secondToTime(callPlan.getBillSec()): "",format));
-            sheet.addCell(new Label(10, i , map.get(callPlan.getCallId().toString()),format));
+            sheet.addCell(new Label(10, i , callPlan.getParams()!=null? callPlan.getParams(): "",format));
+            sheet.addCell(new Label(11, i , map.get(callPlan.getCallId().toString()),format));
 
-            sheet.addCell(new Label(11, i , callPlan.getRemarks()!=null ? callPlan.getRemarks() : "暂无信息",format));
+            sheet.addCell(new Label(12, i , callPlan.getRemarks()!=null ? callPlan.getRemarks() : "暂无信息",format));
 
             String registration = "";
             if(callPlan.getCustomerName()!=null){
@@ -440,12 +443,15 @@ public class CallDetailController implements ICallPlanDetail {
                 registration += "客户电话："+callPlan.getCustomerMobile()+"\r\n";
             }
             if(callPlan.getCustomerAddr()!=null){
-                registration += "客户地址："+callPlan.getCustomerAddr();
+                registration += "客户地址："+callPlan.getCustomerAddr()+"\r\n";
+            }
+            if(callPlan.getRemark()!=null){
+                registration += "备注信息："+callPlan.getRemark();
             }
             if(registration.equals("")){
                 registration = "暂无信息";
             }
-            sheet.addCell(new Label(12, i , registration,format));
+            sheet.addCell(new Label(13, i , registration,format));
         }
 
         wb.write();

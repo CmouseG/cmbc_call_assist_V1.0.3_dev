@@ -15,8 +15,8 @@
             a.customer_id as customerId , a.temp_id as tempId,  a.agent_answer_time as agentAnswerTime,
             a.agent_start_time as agentStartTime, a.create_time as createTime, ifnull(a.call_start_time,a.create_time) as callStartTime,
             a.hangup_time as hangupTime, a.answer_time as answerTime, a.duration, a.bill_sec as billSec,
-            a.accurate_intent as accurateIntent, a.reason, a.hangup_code as hangupCode, a.remarks, a.freason,
-            b.customer_addr as customerAddr, b.customer_mobile as customerMobile, b.customer_name as customerName ,b.remark
+            a.accurate_intent as accurateIntent, a.reason, a.hangup_code as hangupCode, a.remarks, a.freason,a.params,
+        b.customer_addr as customerAddr, b.customer_mobile as customerMobile, b.customer_name as customerName ,b.remark
             from call_out_plan a
             left join registration b on a.plan_uuid = b.plan_uuid
 

@@ -10,6 +10,7 @@ import com.guiji.billing.entity.BillingAcctChargingTotal;
 import com.guiji.billing.entity.BillingAcctReconciliation;
 import com.guiji.billing.service.BillingTotalAnalysisService;
 import com.guiji.billing.service.GetApiService;
+import com.guiji.billing.service.GetAuthUtil;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.utils.IdWorker;
@@ -38,6 +39,9 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
 
     @Autowired
     private BillingTotalAnalysisMapper billingTotalAnalysisMapper;
+
+    @Autowired
+    private GetAuthUtil getAuthUtil;
 
     @Autowired
     private GetApiService getApiService;
@@ -147,15 +151,9 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
      */
     @Override
     public List<BillingTotalChargingConsumerVo> totalChargingByDate(QueryAcctChargingTotalDto queryAcctChargingTotalDto, ResultPage<BillingTotalChargingConsumerVo> page) {
-        //获取企业组织编码
-        String orgCode = queryAcctChargingTotalDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryAcctChargingTotalDto.getUserId() ? queryAcctChargingTotalDto.getUserId() : AuthConstant.superUserId;
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryAcctChargingTotalDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryAcctChargingTotalDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryAcctChargingTotalDto.getOrgCode());//获取企业组织编码
         String beginDate = queryAcctChargingTotalDto.getBeginDate();
         String endDate = queryAcctChargingTotalDto.getEndDate();
         if(!StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate)){
@@ -205,15 +203,9 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
      */
     @Override
     public List<BillingTotalChargingConsumerVo> totalChargingByMonth(QueryAcctChargingTotalDto queryAcctChargingTotalDto, ResultPage<BillingTotalChargingConsumerVo> page) {
-        //获取企业组织编码
-        String orgCode = queryAcctChargingTotalDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryAcctChargingTotalDto.getUserId() ? queryAcctChargingTotalDto.getUserId() : AuthConstant.superUserId;
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryAcctChargingTotalDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryAcctChargingTotalDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryAcctChargingTotalDto.getOrgCode());//获取企业组织编码
         String beginMonth = queryAcctChargingTotalDto.getBeginMonth();
         String endMonth = queryAcctChargingTotalDto.getEndMonth();
         if(!StringUtils.isEmpty(beginMonth) && StringUtils.isEmpty(endMonth)){
@@ -226,15 +218,9 @@ public class BillingTotalAnalysisServiceImpl implements BillingTotalAnalysisServ
 
     @Override
     public int totalChargingCountByMonth(QueryAcctChargingTotalDto queryAcctChargingTotalDto) {
-        //获取企业组织编码
-        String orgCode = queryAcctChargingTotalDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryAcctChargingTotalDto.getUserId() ? queryAcctChargingTotalDto.getUserId() : AuthConstant.superUserId;
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryAcctChargingTotalDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryAcctChargingTotalDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryAcctChargingTotalDto.getOrgCode());//获取企业组织编码
         String beginMonth = queryAcctChargingTotalDto.getBeginMonth();
         String endMonth = queryAcctChargingTotalDto.getEndMonth();
         if(!StringUtils.isEmpty(beginMonth) && StringUtils.isEmpty(endMonth)){

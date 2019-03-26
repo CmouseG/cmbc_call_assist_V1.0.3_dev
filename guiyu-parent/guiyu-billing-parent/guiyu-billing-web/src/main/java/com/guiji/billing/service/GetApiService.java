@@ -10,4 +10,6 @@ public interface GetApiService {
      * @return
      */
     SysOrganization getOrgByUserId(String userId);
+
+
 }

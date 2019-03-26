@@ -7,6 +7,7 @@ import com.guiji.billing.dto.QueryRechargeDto;
 import com.guiji.billing.enums.ChargingTypeEnum;
 import com.guiji.billing.service.BillingSysRechargeService;
 import com.guiji.billing.service.GetApiService;
+import com.guiji.billing.service.GetAuthUtil;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DateTimeUtils;
 import com.guiji.billing.utils.ResHandler;
@@ -29,7 +30,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
     private BillingSysRechargeMapper billingSysRechargeMapper;
 
     @Autowired
-    private GetApiService getApiService;
+    private GetAuthUtil getAuthUtil;
 
     /**
      * 查询公司充值记录
@@ -39,15 +40,9 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
      */
     @Override
     public List<SysRechargeTotalVo> queryCompanyRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<SysRechargeTotalVo> page) {
-        //获取企业组织编码
-        String orgCode = queryRechargeDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryRechargeDto.getUserId() ? queryRechargeDto.getUserId() : AuthConstant.superUserId;
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryRechargeDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryRechargeDto.getOrgCode());//获取企业组织编码
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -56,7 +51,7 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
             beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
         return billingSysRechargeMapper.queryCompanyRechargeTotal(queryRechargeDto.getCompanyName(), orgCode,
-                ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(), beginDate, endDate, page);
+                ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(), beginDate, endDate, authLevel, page);
     }
 
     /**
@@ -66,15 +61,9 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
      */
     @Override
     public int queryCompanyRechargeCount(QueryRechargeDto queryRechargeDto) {
-        //获取企业组织编码
-        String orgCode = queryRechargeDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryRechargeDto.getUserId() ? queryRechargeDto.getUserId() : "1";
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryRechargeDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryRechargeDto.getOrgCode());//获取企业组织编码
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -83,6 +72,6 @@ public class BillingSysRechargeServiceImpl implements BillingSysRechargeService 
             beginDate = DateTimeUtils.getDateByString(DateTimeUtils.DEFAULT_BEGIN_TIME, DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL);
         }
         return billingSysRechargeMapper.queryCompanyRechargeCount(queryRechargeDto.getCompanyName(), orgCode,
-                ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(), beginDate, endDate);
+                ChargingTypeEnum.RECHARGE.getType(), queryRechargeDto.getFeeMode(), beginDate, endDate, authLevel);
     }
 }

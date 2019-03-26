@@ -83,12 +83,14 @@ public class BillingUserAcctController {
     @ApiOperation(value="查询用户账户充值记录列表", notes="查询用户账户充值记录列表")
     @RequestMapping(value = "/queryUserRechargeTotal", method = {RequestMethod.POST})
     public ResultPage<UserRechargeTotalVo> queryUserRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto,
-                                                                  @RequestHeader String userId, @RequestHeader String orgCode){
+                                                                  @RequestHeader String userId, @RequestHeader String orgCode,
+                                                                  @RequestHeader Integer authLevel){
         if(null == queryRechargeDto){
             queryRechargeDto = new QueryRechargeDto();
         }
         queryRechargeDto.setUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
+        queryRechargeDto.setAuthLevel(authLevel);
         ResultPage<UserRechargeTotalVo> page = new ResultPage<UserRechargeTotalVo>(queryRechargeDto);
         List<UserRechargeTotalVo> list = billingUserAcctService.queryUserRechargeTotal(queryRechargeDto, page);
         page.setList(list);

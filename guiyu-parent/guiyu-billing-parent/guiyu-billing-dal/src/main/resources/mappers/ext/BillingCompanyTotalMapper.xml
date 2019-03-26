@@ -20,11 +20,16 @@
       WHERE r.account_id = c.account_id
         AND r.user_charging_id = t.user_charging_id
         AND r.oper_duration <![CDATA[ > ]]> 0
-        <if test="orgCode != null">
-          AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
-        </if>
-        <if test="operUserId != null">
-          AND r.oper_user_id = #{operUserId}
+        <if test="authLevel != null">
+          <if test="authLevel == 2 and orgCode != null">
+            AND c.org_code = #{orgCode}
+          </if>
+          <if test="authLevel == 3 and orgCode != null">
+            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+          </if>
+          <if test="authLevel == 1 and operUserId != null">
+            AND r.oper_user_id = #{operUserId}
+          </if>
         </if>
         <if test="beginMonth != null and endMonth != null">
           AND r.create_time BETWEEN #{beginMonth} AND #{endMonth}
@@ -57,11 +62,16 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
-          <if test="orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
-          </if>
-          <if test="operUserId != null">
-            AND r.oper_user_id = #{operUserId}
+          <if test="authLevel != null">
+            <if test="authLevel == 2 and orgCode != null">
+              AND c.org_code = #{orgCode}
+            </if>
+            <if test="authLevel == 3 and orgCode != null">
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            </if>
+            <if test="authLevel == 1 and operUserId != null">
+              AND r.oper_user_id = #{operUserId}
+            </if>
           </if>
           <if test="beginMonth != null and endMonth != null">
             AND r.create_time BETWEEN #{beginMonth} AND #{endMonth}
@@ -91,11 +101,16 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
-          <if test="orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
-          </if>
-          <if test="operUserId != null">
-            AND r.oper_user_id = #{operUserId}
+          <if test="authLevel != null">
+            <if test="authLevel == 2 and orgCode != null">
+              AND c.org_code = #{orgCode}
+            </if>
+            <if test="authLevel == 3 and orgCode != null">
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            </if>
+            <if test="authLevel == 1 and operUserId != null">
+              AND r.oper_user_id = #{operUserId}
+            </if>
           </if>
           <if test="beginDate != null and endDate != null">
             AND r.create_time BETWEEN #{beginDate} AND #{endDate}
@@ -128,11 +143,16 @@
         WHERE r.account_id = c.account_id
           AND r.user_charging_id = t.user_charging_id
           AND r.oper_duration <![CDATA[ > ]]> 0
-          <if test="orgCode != null">
-            AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
-          </if>
-          <if test="operUserId != null">
-            AND r.oper_user_id = #{operUserId}
+          <if test="authLevel != null">
+            <if test="authLevel == 2 and orgCode != null">
+              AND c.org_code = #{orgCode}
+            </if>
+            <if test="authLevel == 3 and orgCode != null">
+              AND ( c.org_code = #{orgCode} OR c.org_code LIKE CONCAT(#{orgCode},'.%') )
+            </if>
+            <if test="authLevel == 1 and operUserId != null">
+              AND r.oper_user_id = #{operUserId}
+            </if>
           </if>
           <if test="beginDate != null and endDate != null">
             AND r.create_time BETWEEN #{beginDate} AND #{endDate}

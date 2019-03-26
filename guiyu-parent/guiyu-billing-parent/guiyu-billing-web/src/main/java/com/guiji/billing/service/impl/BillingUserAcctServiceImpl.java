@@ -16,6 +16,7 @@ import com.guiji.billing.exception.BaseException;
 import com.guiji.billing.service.AcctNotifyService;
 import com.guiji.billing.service.BillingUserAcctService;
 import com.guiji.billing.service.GetApiService;
+import com.guiji.billing.service.GetAuthUtil;
 import com.guiji.billing.service.msg.MsgNotifyComponent;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.utils.DaoHandler;
@@ -67,6 +68,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
 
     @Autowired
     private MsgNotifyComponent msgNotifyComponent;
+
+    @Autowired
+    private GetAuthUtil getAuthUtil;
 
     @Autowired
     private IdWorker idWorker;
@@ -461,15 +465,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public List<UserRechargeTotalVo> queryUserRechargeTotal(QueryRechargeDto queryRechargeDto, ResultPage<UserRechargeTotalVo> page) {
         String accountId = queryRechargeDto.getAccountId();
-        //获取企业组织编码
-        String orgCode = queryRechargeDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryRechargeDto.getUserId() ? queryRechargeDto.getUserId() : AuthConstant.superUserId;
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryRechargeDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryRechargeDto.getOrgCode());//获取企业组织编码
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){
@@ -489,15 +487,9 @@ public class BillingUserAcctServiceImpl implements BillingUserAcctService {
     @Override
     public int queryUserRechargeCount(QueryRechargeDto queryRechargeDto) {
         String accountId = queryRechargeDto.getAccountId();
-        //获取企业组织编码
-        String orgCode = queryRechargeDto.getOrgCode();
-        if(StringUtils.isEmpty(orgCode)) {
-            //获取用户ID
-            String userId = null != queryRechargeDto.getUserId() ? queryRechargeDto.getUserId() : AuthConstant.superUserId;
-            //获取企业组织
-            SysOrganization org = getApiService.getOrgByUserId(userId);
-            orgCode =  null != org?org.getCode(): AuthConstant.superOrgCode;
-        }
+        Integer authLevel = queryRechargeDto.getAuthLevel();//操作用户权限等级
+        String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryRechargeDto.getUserId());//获取用户ID
+        String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryRechargeDto.getOrgCode());//获取企业组织编码
         Date beginDate = queryRechargeDto.getBeginDate();
         Date endDate = queryRechargeDto.getEndDate();
         if(null != beginDate && null == endDate){

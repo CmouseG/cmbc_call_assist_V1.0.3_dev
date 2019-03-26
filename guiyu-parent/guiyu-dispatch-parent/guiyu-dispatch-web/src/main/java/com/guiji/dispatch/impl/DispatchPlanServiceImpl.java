@@ -1088,7 +1088,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {
 		  createCriteria.andResultIn(queryPlanDto.getResultList());
 	  }
-
+	  if (!queryPlanDto.isSuperAdmin()) {
+		  createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+	  }
 	  createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
 	  List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);

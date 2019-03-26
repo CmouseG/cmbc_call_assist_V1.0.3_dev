@@ -226,8 +226,8 @@ public class DispatchPlanController {
 
 	@ApiOperation(value="查询计划列表", notes="查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryLineByPlan", method = {RequestMethod.POST, RequestMethod.GET})
-	public List<DispatchBatchLine> queryLineByPlan(@RequestParam(required = true, name = "planUuid") long planUuid) {
-		return dispatchPlanService.queryLineByPlan(planUuid);
+	public List<DispatchBatchLine> queryLineByPlan(@RequestParam(required = true, name = "batchId") Integer batchId) {
+		return dispatchPlanService.queryLineByPlan(batchId);
 	}
 
 	@ApiOperation(value = "查询计划列表", notes = "查询计划列表")

@@ -12,6 +12,7 @@ import com.guiji.dispatch.dto.QueryPlanListDto;
 import com.guiji.dispatch.model.DispatchBatchLine;
 import com.guiji.dispatch.model.PlanCountVO;
 import com.guiji.dispatch.sys.ResultPage;
+import com.guiji.dispatch.vo.DispatchPlanVo;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.dispatch.vo.TotalPlanCountVo;
 
@@ -149,6 +150,7 @@ public interface IDispatchPlanService {
     // 查询计划列表
     List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
 
-    List<DispatchBatchLine> queryLineByPlan(long planUuid);
-ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page);
+    List<DispatchBatchLine> queryLineByPlan(Integer batchId);
+
+    ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page);
 }

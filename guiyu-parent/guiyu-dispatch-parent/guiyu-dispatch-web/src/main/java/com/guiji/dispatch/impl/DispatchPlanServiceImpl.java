@@ -1132,7 +1132,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			  planUuidSet.add(dis.getPlanUuidLong());
 
 			  dis.setOrgId(queryPlanDto.getOperOrgId());
-        // 转换userName
+			  // 转换userName
 			  if (!tmpUserMap.containsKey(dis.getUserId())) {
 				  ReturnData<SysUser> user = auth.getUserById(Long.valueOf(dis.getUserId()));
 				  if (user.getBody() != null) {
@@ -1263,9 +1263,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	}
 
 	@Override
-	public List<DispatchBatchLine> queryLineByPlan(long planUuid) {
-		// TODO zhujiayu
-		return null;
+	public List<DispatchBatchLine> queryLineByPlan(Integer batchId) {
+		return lineService.queryListByBatchId(batchId);
 	}
 
 	@Override
@@ -1275,7 +1274,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		DispatchPlanExample example = new DispatchPlanExample();
 		example.setLimitStart((pageNo - 1) * pageSize);
 		example.setLimitEnd(pageSize);
-		example.setOrderByClause("`gmt_create` DESC");
+		example.setOrderByClause("`plan_uuid` DESC");
 		Criteria createCriteria = example.createCriteria();
 		if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
 			createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
@@ -1287,6 +1286,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		if (!StringUtils.isEmpty(queryPlanDto.getUserId())) {
 			createCriteria.andUserIdEqualTo(Integer.valueOf(queryPlanDto.getUserId()));
 		}
+		createCriteria.andOrgIdEqualTo(queryPlanDto.getOperOrgId());
 
 		if (!StringUtils.isEmpty(queryPlanDto.getPlanStatus())) {
 			List<Integer> ids = new ArrayList<>();
@@ -1339,6 +1339,11 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			// createCriteria.andUserIdEqualTo(selectUserId.intValue());
 			// }
 		}
+
+		if (!queryPlanDto.isSuperAdmin()) {
+			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+		}
+
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
 		List<DispatchPlanVo> selectByExample = planExtMapper.queryPlanListByPage(example, queryPlanDto.getIsDesensitization());

@@ -48,6 +48,7 @@ public class JwtConfig {
                 .withClaim("orgCode", wxAccount.getOrgCode())
                 .withClaim("isSuperAdmin", wxAccount.getSuperAdmin())
                 .withClaim("isDesensitization", wxAccount.getIsDesensitization())
+                .withClaim("authLevel", wxAccount.getAuthLevel())
                 .withClaim("jwt-id", jwtId)
                 .withClaim("orgId", wxAccount.getOrgId())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
@@ -77,6 +78,7 @@ public class JwtConfig {
                     .withClaim("orgCode", getOrgCodeByToken(redisToken))
                     .withClaim("isSuperAdmin", getSuperAdminByToken(redisToken))
                     .withClaim("isDesensitization", getIsDesensitizationByToken(redisToken))
+                    .withClaim("authLevel", getAuthLevelByToken(redisToken))
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
                     .withClaim("orgId", getOrgIdByToken(redisToken))
                     .acceptExpiresAt(System.currentTimeMillis() + expire_time*1000 )  //JWT 正确的配置续期姿势
@@ -109,6 +111,7 @@ public class JwtConfig {
             String orgCode = getOrgCodeByToken(redisToken);
             Boolean isSuperAdmin = getSuperAdminByToken(redisToken);
             Integer isDesensitization = getIsDesensitizationByToken(redisToken);
+            Integer authLevel = getAuthLevelByToken(redisToken);
             String oldJwtId = getJwtIdByToken(redisToken);
             Long orgId = getOrgIdByToken(redisToken);
 
@@ -118,6 +121,7 @@ public class JwtConfig {
                     .withClaim("isSuperAdmin", isSuperAdmin)
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
                     .withClaim("isDesensitization", isDesensitization)
+					.withClaim("authLevel", authLevel)
                     .withClaim("orgId", orgId)
                     .acceptExpiresAt(System.currentTimeMillis() + refresh_time*1000 )  //JWT 正确的配置续期姿势
                     .build();
@@ -133,6 +137,7 @@ public class JwtConfig {
                     .withClaim("isSuperAdmin", isSuperAdmin)
                     .withClaim("jwt-id", newJwtId)
                     .withClaim("isDesensitization", isDesensitization)
+					.withClaim("authLevel", authLevel)
                     .withClaim("orgId", orgId)
                     .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
                     .sign(algorithm);
@@ -180,6 +185,13 @@ public class JwtConfig {
         return JWT.decode(token).getClaim("isDesensitization").asInt();
     }
     
+	/**
+     * 根据Token 获取authLevel
+     */
+    public Integer getAuthLevelByToken(String token) throws JWTDecodeException {
+        return JWT.decode(token).getClaim("authLevel").asInt();
+    }
+	
     public Long getOrgIdByToken(String token) throws JWTDecodeException
 	{
     	return JWT.decode(token).getClaim("orgId").asLong();

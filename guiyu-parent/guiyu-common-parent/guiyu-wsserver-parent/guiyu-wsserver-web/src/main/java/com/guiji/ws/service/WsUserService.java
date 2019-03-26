@@ -96,17 +96,7 @@ public class WsUserService {
 	 * @return
 	 */
 	private boolean hasAssistRole(String userId) {
-		List<SysRole> roleList = dataLocalCacheUtil.queryUserRole(userId);
-		if(roleList!=null && !roleList.isEmpty()) {
-			for(SysRole role : roleList) {
-				//TODO 现在没有协呼角色，暂时拥有企业管理员的用户就可以做协呼
-				if(3==role.getId()) {
-					//协呼
-					return true;
-				}
-			}
-		}
-		return false;
+		return dataLocalCacheUtil.isAgentUser(userId);
 	}
 	
 	

@@ -35,7 +35,7 @@ public class JdbcRealm extends AuthorizingRealm{
 	 * 因为创建了 JWTToken 用于替换Shiro原生 token,所以必须在此方法中显式的进行替换，否则在进行判断时会一直失败
 	 */
 	@Override
-	public boolean supports(AuthenticationToken token) {
+	public boolean supports(AuthenticationToken token) { 
 		return token instanceof JwtToken;
 	}
 	
@@ -51,7 +51,7 @@ public class JdbcRealm extends AuthorizingRealm{
 
 		String username = (String) getAvailablePrincipal(principals);
 
-		Set<String> permissions = userMapper.getPermissions(username);
+		Set<String> permissions = null;//userMapper.getPermissions(username);
 
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		info.setStringPermissions(permissions);

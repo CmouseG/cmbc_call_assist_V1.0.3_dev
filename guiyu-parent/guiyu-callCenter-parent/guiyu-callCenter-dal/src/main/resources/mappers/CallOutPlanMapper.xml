@@ -218,7 +218,7 @@
                  index="index" open="in(" close=")" separator=",">
             #{idList[${index}]}
         </foreach>
-        order by a.call_id desc
+        order by a.create_time desc
     </select>
 
     <select id="countCallRecordList" resultType="java.lang.Integer" parameterType="java.util.Map" >

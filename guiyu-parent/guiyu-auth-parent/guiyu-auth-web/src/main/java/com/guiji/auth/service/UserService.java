@@ -2,28 +2,35 @@ package com.guiji.auth.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.guiji.auth.model.SysUserRoleVo;
-import com.guiji.clm.api.LineMarketRemote;
-import com.guiji.clm.model.SipLineVO;
-import com.guiji.notice.api.INoticeSetting;
-import com.guiji.user.dao.SysUserExtMapper;
-import com.guiji.user.dao.entity.*;
-import com.guiji.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.auth.exception.CheckConditionException;
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.auth.util.AuthUtil;
 import com.guiji.ccmanager.api.ICallManagerOut;
-import com.guiji.ccmanager.entity.LineConcurrent;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgVO;
+import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.dao.entity.SysUserExample;
+import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.user.vo.UserParamVo;
+import com.guiji.utils.RedisUtil;
 
 
 @Service
@@ -308,5 +315,18 @@ public class UserService {
 	public List<SysUser> getUserByOpenId(String openId)
 	{
 		return mapper.getUserByOpenId(openId);
+	}
+
+	public Boolean WxLogin(String userName, String password)
+	{
+		Boolean flag = false;
+		SysUserExample example = new SysUserExample();
+		example.createCriteria().andUsernameEqualTo(userName).andPasswordEqualTo(password);
+		int count = mapper.countByExample(example);
+		if(count > 0)
+		{
+			flag = true;
+		}
+		return flag;
 	}
 }

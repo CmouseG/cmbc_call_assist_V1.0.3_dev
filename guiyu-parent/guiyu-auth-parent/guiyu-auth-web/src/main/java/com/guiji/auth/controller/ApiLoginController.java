@@ -3,6 +3,7 @@ package com.guiji.auth.controller;
 import com.guiji.auth.api.IApiLogin;
 import com.guiji.auth.service.UserService;
 import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
 import com.guiji.user.dao.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,4 +23,12 @@ public class ApiLoginController implements IApiLogin {
         SysUser sysUser =  service.getUserByAccess(accessKey, secretKey);
         return Result.ok(sysUser);
     }
+
+	@Override
+	@GetMapping("WxLogin")
+	public ReturnData<Boolean> WxLogin(@RequestParam("userName")String userName, @RequestParam("password")String password)
+	{
+		Boolean flag = service.WxLogin(userName, password);
+		return Result.ok(flag);
+	}
 }

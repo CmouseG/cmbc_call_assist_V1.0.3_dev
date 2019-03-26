@@ -15,7 +15,7 @@ public class TaskReq
 	private Integer smsTemplateId;
 	private String smsContent;
 	private Date sendTime;
-	private long userId;
+	private Long userId;
 	private String companyName;
 	private int taskId;
 	

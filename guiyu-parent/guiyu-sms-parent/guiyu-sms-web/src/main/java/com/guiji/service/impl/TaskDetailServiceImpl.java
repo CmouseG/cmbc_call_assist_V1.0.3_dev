@@ -44,14 +44,19 @@ public class TaskDetailServiceImpl implements TaskDetailService
 	 * @throws ParseException 
 	 */
 	@Override
-	public TaskDetailListRspVO getTaskDetailList(TaskDetailListReqVO taskDetailListReq, Long userId) throws ParseException
+	public TaskDetailListRspVO getTaskDetailList(TaskDetailListReqVO taskDetailListReq, Long userId, Integer authLevel, String orgCode) throws ParseException
 	{
 		TaskDetailListRspVO taskDetailListRsp = new TaskDetailListRspVO();
 		
 		SmsTaskDetailExample example = new SmsTaskDetailExample();
 		Criteria criteria = example.createCriteria();
-		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		criteria.andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		if(authLevel == 1) {
+			criteria.andCreateIdEqualTo(userId.intValue());
+		} else if(authLevel == 2) {
+			criteria.andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			criteria.andOrgCodeLike(orgCode + "%");
+		}
 		if(StringUtils.isNotEmpty(taskDetailListReq.getTaskName())){
 			criteria.andTaskNameEqualTo(taskDetailListReq.getTaskName());
 		}
@@ -109,6 +114,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		} else {
 			detail.setSmsContent("【短信内容】" + taskReq.getSmsContent());
 		}
+		detail.setCreateId(taskReq.getUserId().intValue());
 		detail.setUserName(getUserName(String.valueOf(taskReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(taskReq.getUserId());
 		detail.setOrgCode(sysOrganization.body.getCode());
@@ -143,6 +149,7 @@ public class TaskDetailServiceImpl implements TaskDetailService
 		} else {
 			detail.setSmsContent("【短信内容】" + config.getSmsContent());
 		}
+		detail.setCreateId(sendMReq.getUserId());
 		detail.setUserName(getUserName(String.valueOf(sendMReq.getUserId())));
 		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(sendMReq.getUserId().longValue());
 		detail.setOrgCode(sysOrganization.body.getCode());

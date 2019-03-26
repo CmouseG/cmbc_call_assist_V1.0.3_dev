@@ -16,9 +16,8 @@ public interface TaskDetailService
 
 	/**
 	 * 获取短信任务详情列表
-	 * @throws ParseException 
 	 */
-	TaskDetailListRspVO getTaskDetailList(TaskDetailListReqVO taskDetailListReq, Long userId) throws ParseException;
+	TaskDetailListRspVO getTaskDetailList(TaskDetailListReqVO taskDetailListReq, Long userId, Integer authLevel, String orgCode) throws ParseException;
 
 	/**
 	 * 删除短信任务详情

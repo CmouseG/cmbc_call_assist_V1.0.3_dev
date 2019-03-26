@@ -40,15 +40,19 @@ public class PlatformServiceImpl implements PlatformService
 	 * 获取短信平台列表
 	 */
 	@Override
-	public PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq, Long userId)
+	public PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq, Long userId, Integer authLevel, String orgCode)
 	{
-		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		
 		PlatformListRspVO platformListRsp = new PlatformListRspVO();
 		List<SmsPlatformVO> platformVOList = new ArrayList<>();
 
 		SmsPlatformExample example = new SmsPlatformExample();
-		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId.intValue());
+		} else if(authLevel == 2) {
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andOrgCodeLike(orgCode + "%");
+		}
 		platformListRsp.setTotalCount(platformMapper.selectByExample(example).size()); // 总条数
 
 		example.setLimitStart((platformListReq.getPageNum() - 1) * platformListReq.getPageSize());

@@ -40,14 +40,19 @@ public class ConfigServiceImpl implements ConfigService
 	 * 获取短信配置列表
 	 */
 	@Override
-	public ConfigListRspVO getConfigList(ConfigListReqVO configListReq, Long userId)
+	public ConfigListRspVO getConfigList(ConfigListReqVO configListReq, Long userId, Integer authLevel, String orgCode)
 	{
 		ConfigListRspVO configListRsp = new ConfigListRspVO();
 		List<SmsConfigVO> configVOList = new ArrayList<>();
 
 		SmsConfigExample example = new SmsConfigExample();
-		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId.intValue());
+		} else if(authLevel == 2) {
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andOrgCodeLike(orgCode + "%");
+		}
 		configListRsp.setTotalCount(configMapper.selectByExampleWithBLOBs(example).size()); // 总条数
 
 		example.setLimitStart((configListReq.getPageNum() - 1) * configListReq.getPageSize());

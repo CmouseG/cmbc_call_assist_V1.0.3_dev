@@ -22,6 +22,8 @@ public class SmsTaskDetail implements Serializable {
 
     private Date sendTime;
 
+    private Integer createId;
+
     private String userName;
 
     private String orgCode;
@@ -102,6 +104,14 @@ public class SmsTaskDetail implements Serializable {
         this.sendTime = sendTime;
     }
 
+    public Integer getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Integer createId) {
+        this.createId = createId;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -141,6 +151,7 @@ public class SmsTaskDetail implements Serializable {
         sb.append(", companyName=").append(companyName);
         sb.append(", tunnelName=").append(tunnelName);
         sb.append(", sendTime=").append(sendTime);
+        sb.append(", createId=").append(createId);
         sb.append(", userName=").append(userName);
         sb.append(", orgCode=").append(orgCode);
         sb.append(", smsContent=").append(smsContent);

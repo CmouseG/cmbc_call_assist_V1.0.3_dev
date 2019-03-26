@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.entity.SmsConstants;
@@ -62,15 +63,15 @@ public class SmsController implements ISms
 	 * 获取短信平台列表
 	 */
 	@PostMapping(value = "getPlatformList")
-	public ReturnData<PlatformListRspVO> getPlatformList(@RequestBody PlatformListReqVO platformListReq, @RequestHeader Long userId)
+	public ReturnData<PlatformListRspVO> getPlatformList(@RequestBody PlatformListReqVO platformListReq,
+			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode)
 	{
 		PlatformListRspVO platformListRsp = new PlatformListRspVO();
 		try
 		{
 			logger.info("获取短信平台列表...");
-			platformListRsp = platformService.getPlatformList(platformListReq, userId);
-			
-		} catch (Exception e){
+			platformListRsp = platformService.getPlatformList(platformListReq, userId, authLevel, orgCode);
+		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return Result.error(SmsConstants.Error_Request);
 		}
@@ -80,15 +81,17 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信平台
 	 */
+	@Jurisdiction("smsCenter_platformManage_add")
 	@PostMapping(value = "addPlatform")
-	public ReturnData<String> addPlatform(@RequestBody PlatformReqVO platformReq, @RequestHeader Long userId)
+	public ReturnData<String> addPlatform(@RequestBody PlatformReqVO platformReq, @RequestHeader Long userId,
+			@RequestHeader String orgCode)
 	{
 		try
 		{
 			logger.info("新增短信平台...");
 			platformService.addPlatform(platformReq, userId);
-			
-		} catch (Exception e){
+
+		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return Result.error(SmsConstants.Error_Request);
 		}
@@ -98,6 +101,7 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信平台
 	 */
+	@Jurisdiction(value = "smsCenter_platformManage_delete")
 	@GetMapping(value = "delPlatform")
 	public ReturnData<String> delPlatform(Integer id, String platName)
 	{
@@ -114,18 +118,18 @@ public class SmsController implements ISms
 	}
 
 	/**
-	 *获取短信通道列表
+	 * 获取短信通道列表
 	 */
 	@PostMapping(value = "getTunnelList")
-	public ReturnData<TunnelListRspVO> getTunnelList(@RequestBody TunnelListReqVO tunnelListReq, @RequestHeader Long userId)
+	public ReturnData<TunnelListRspVO> getTunnelList(@RequestBody TunnelListReqVO tunnelListReq,
+			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode)
 	{
 		TunnelListRspVO tunnelListRsp = new TunnelListRspVO();
 		try
 		{
 			logger.info("获取短信通道列表...");
-			tunnelListRsp = tunnelService.getTunnelList(tunnelListReq, userId);
-			
-		} catch (Exception e){
+			tunnelListRsp = tunnelService.getTunnelList(tunnelListReq, userId, authLevel, orgCode);
+		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return Result.error(SmsConstants.Error_Request);
 		}
@@ -154,6 +158,7 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信通道
 	 */
+	@Jurisdiction("smsCenter_smsManage_add")
 	@PostMapping(value = "addTunnel")
 	public ReturnData<String> addTunnel(@RequestBody TunnelReqVO tunnelReq, @RequestHeader Long userId)
 	{
@@ -172,6 +177,7 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信通道
 	 */
+	@Jurisdiction("smsCenter_smsManage_delete")
 	@GetMapping(value = "delTunnel")
 	public ReturnData<String> delTunnel(Integer id, String tunnelName)
 	{
@@ -191,15 +197,15 @@ public class SmsController implements ISms
 	 * 获取短信配置列表
 	 */
 	@PostMapping(value = "getConfigList")
-	public ReturnData<ConfigListRspVO> getConfigList(@RequestBody ConfigListReqVO configListReq, @RequestHeader Long userId)
+	public ReturnData<ConfigListRspVO> getConfigList(@RequestBody ConfigListReqVO configListReq,
+			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode)
 	{
 		ConfigListRspVO configListRsp = new ConfigListRspVO();
 		try
 		{
 			logger.info("获取短信配置列表...");
-			configListRsp = configService.getConfigList(configListReq, userId);
-			
-		} catch (Exception e){
+			configListRsp = configService.getConfigList(configListReq, userId, authLevel, orgCode);
+		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return Result.error(SmsConstants.Error_Request);
 		}
@@ -228,6 +234,7 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信配置
 	 */
+	@Jurisdiction("smsCenter_smsConfigList_add")
 	@PostMapping(value = "addConfig")
 	public ReturnData<String> addConfig(@RequestBody ConfigReqVO configReq, @RequestHeader Long userId)
 	{
@@ -246,6 +253,7 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信配置
 	 */
+	@Jurisdiction(value = "smsCenter_smsConfigList_delete")
 	@GetMapping(value = "delConfig")
 	public ReturnData<String> delConfig(Integer id)
 	{
@@ -264,6 +272,7 @@ public class SmsController implements ISms
 	/**
 	 * 编辑短信配置
 	 */
+	@Jurisdiction("smsCenter_smsConfigList_edit")
 	@PostMapping(value = "updateConfig")
 	public ReturnData<String> updateConfig(@RequestBody ConfigReqVO configReq, @RequestHeader Long userId)
 	{
@@ -282,6 +291,7 @@ public class SmsController implements ISms
 	/**
 	 * 短信配置一键停止
 	 */
+	@Jurisdiction("smsCenter_smsConfigList_oneKeyStop")
 	@GetMapping(value = "stopConfig")
 	public ReturnData<String> stopConfig(Integer id)
 	{
@@ -300,6 +310,7 @@ public class SmsController implements ISms
 	/**
 	 * 短信配置审核
 	 */
+	@Jurisdiction(value = "smsCenter_smsConfigList_auditing")
 	@GetMapping(value = "auditingConfig")
 	public ReturnData<String> auditingConfig(Integer id)
 	{
@@ -319,15 +330,15 @@ public class SmsController implements ISms
 	 * 获取短信任务列表
 	 */
 	@PostMapping(value = "getTaskList")
-	public ReturnData<TaskListRspVO> getTaskList(@RequestBody TaskListReqVO taskListReq, @RequestHeader Long userId)
+	public ReturnData<TaskListRspVO> getTaskList(@RequestBody TaskListReqVO taskListReq, @RequestHeader Long userId,
+			@RequestHeader Integer authLevel, @RequestHeader String orgCode)
 	{
 		TaskListRspVO taskListRsp = new TaskListRspVO();
 		try
 		{
 			logger.info("获取短信任务列表...");
-			taskListRsp = taskService.getTaskList(taskListReq, userId);
-			
-		} catch (Exception e){
+			taskListRsp = taskService.getTaskList(taskListReq, userId, authLevel, orgCode);
+		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return Result.error(SmsConstants.Error_Request);
 		}
@@ -337,6 +348,7 @@ public class SmsController implements ISms
 	/**
 	 * 短信任务一键停止
 	 */
+	@Jurisdiction("smsCenter_smsGroupTask_onKeyStopTask")
 	@GetMapping(value = "stopTask")
 	public ReturnData<String> stopTask(Integer id)
 	{
@@ -355,6 +367,7 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信任务
 	 */
+	@Jurisdiction("smsCenter_smsGroupTask_delete")
 	@GetMapping(value = "delTask")
 	public ReturnData<String> delTask(Integer id)
 	{
@@ -373,6 +386,7 @@ public class SmsController implements ISms
 	/**
 	 * 审核短信任务
 	 */
+	@Jurisdiction("smsCenter_smsGroupTask_auditing")
 	@GetMapping(value = "auditingTask")
 	public ReturnData<String> auditingTask(Integer id)
 	{
@@ -392,15 +406,16 @@ public class SmsController implements ISms
 	 * 获取短信任务详情列表
 	 */
 	@PostMapping(value = "getTaskDetailList")
-	public ReturnData<TaskDetailListRspVO> getTaskDetailList(@RequestBody TaskDetailListReqVO taskDetailListReq, @RequestHeader Long userId)
+	public ReturnData<TaskDetailListRspVO> getTaskDetailList(@RequestBody TaskDetailListReqVO taskDetailListReq,
+			@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode)
 	{
 		TaskDetailListRspVO taskDetailListRsp = new TaskDetailListRspVO();
 		try
 		{
 			logger.info("获取短信任务详情列表...");
-			taskDetailListRsp = taskDetailService.getTaskDetailList(taskDetailListReq, userId);
-			
-		} catch (Exception e){
+			taskDetailListRsp = taskDetailService.getTaskDetailList(taskDetailListReq, userId, authLevel, orgCode);
+
+		} catch (Exception e) {
 			logger.error("请求失败！", e);
 			return Result.error(SmsConstants.Error_Request);
 		}
@@ -410,6 +425,7 @@ public class SmsController implements ISms
 	/**
 	 * 删除短信任务详情
 	 */
+	@Jurisdiction(value = "smsCenter_smsSendList_delete")
 	@GetMapping(value = "delTaskDetail")
 	public ReturnData<String> delTaskDetail(Integer id)
 	{
@@ -428,6 +444,7 @@ public class SmsController implements ISms
 	/**
 	 * 新增短信任务
 	 */
+	@Jurisdiction("smsCenter_smsGroupTask_add")
 	@PostMapping(value = "addTask")
 	public ReturnData<String> addTask(TaskReqVO taskReqVO, @RequestHeader Long userId)
 	{
@@ -446,6 +463,7 @@ public class SmsController implements ISms
 	/**
 	 * 编辑短信任务
 	 */
+	@Jurisdiction("smsCenter_smsGroupTask_edit")
 	@PostMapping(value = "updateTask")
 	public ReturnData<String> updateTask(TaskReqVO taskReqVO, @RequestHeader Long userId)
 	{

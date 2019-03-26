@@ -38,14 +38,20 @@ public class TunnelServiceImpl implements TunnelService
 	 * 获取短信通道列表
 	 */
 	@Override
-	public TunnelListRspVO getTunnelList(TunnelListReqVO tunnelListReq, Long userId)
+	public TunnelListRspVO getTunnelList(TunnelListReqVO tunnelListReq, Long userId, Integer authLevel, String orgCode)
 	{
-		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
+
 		TunnelListRspVO tunnelListRsp = new TunnelListRspVO();
 		List<SmsTunnelVO> tunnelVOList = new ArrayList<>();
 		
 		SmsTunnelExample example = new SmsTunnelExample();
-		example.createCriteria().andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId.intValue());
+		} else if(authLevel == 2) {
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andOrgCodeLike(orgCode + "%");
+		}
 		tunnelListRsp.setTotalCount(tunnelMapper.selectByExampleWithBLOBs(example).size()); //总条数
 		
 		example.setLimitStart((tunnelListReq.getPageNum() - 1) * tunnelListReq.getPageSize());

@@ -11,7 +11,7 @@ public interface TunnelService
 	/**
 	 * 获取短信通道列表
 	 */
-	TunnelListRspVO getTunnelList(TunnelListReqVO tunnelListReq, Long userId);
+	TunnelListRspVO getTunnelList(TunnelListReqVO tunnelListReq, Long userId, Integer authLevel, String orgCode);
 
 	/**
 	 * 新增短信通道

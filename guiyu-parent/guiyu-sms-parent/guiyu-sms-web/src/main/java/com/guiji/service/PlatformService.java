@@ -12,8 +12,10 @@ public interface PlatformService
 
 	/**
 	 * 获取短信平台列表
+	 * @param authLevel 
+	 * @param userId 
 	 */
-	PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq, Long userId);
+	PlatformListRspVO getPlatformList(PlatformListReqVO platformListReq, Long userId, Integer authLevel, String orgCode);
 
 	/**
 	 * 新增短信平台

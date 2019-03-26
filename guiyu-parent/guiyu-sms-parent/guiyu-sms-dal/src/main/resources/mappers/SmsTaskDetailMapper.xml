@@ -11,6 +11,7 @@
     <result column="company_name" jdbcType="VARCHAR" property="companyName" />
     <result column="tunnel_name" jdbcType="VARCHAR" property="tunnelName" />
     <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="create_id" jdbcType="INTEGER" property="createId" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
   </resultMap>
@@ -77,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, planuuid, task_name, phone, send_type, send_status, company_name, tunnel_name, 
-    send_time, user_name, org_code
+    send_time, create_id, user_name, org_code
   </sql>
   <sql id="Blob_Column_List">
     sms_content
@@ -97,9 +98,6 @@
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0">
-      limit #{limitStart} , #{limitEnd}
     </if>
   </select>
   <select id="selectByExample" parameterType="com.guiji.sms.dao.entity.SmsTaskDetailExample" resultMap="BaseResultMap">
@@ -142,13 +140,13 @@
     insert into sms_task_detail (id, planuuid, task_name, 
       phone, send_type, send_status, 
       company_name, tunnel_name, send_time, 
-      user_name, org_code, sms_content
-      )
+      create_id, user_name, org_code, 
+      sms_content)
     values (#{id,jdbcType=INTEGER}, #{planuuid,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{sendType,jdbcType=INTEGER}, #{sendStatus,jdbcType=INTEGER}, 
       #{companyName,jdbcType=VARCHAR}, #{tunnelName,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, 
-      #{userName,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{smsContent,jdbcType=LONGVARCHAR}
-      )
+      #{createId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, 
+      #{smsContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.guiji.sms.dao.entity.SmsTaskDetail">
     insert into sms_task_detail
@@ -179,6 +177,9 @@
       </if>
       <if test="sendTime != null">
         send_time,
+      </if>
+      <if test="createId != null">
+        create_id,
       </if>
       <if test="userName != null">
         user_name,
@@ -217,6 +218,9 @@
       </if>
       <if test="sendTime != null">
         #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
       </if>
       <if test="userName != null">
         #{userName,jdbcType=VARCHAR},
@@ -265,6 +269,9 @@
       <if test="record.sendTime != null">
         send_time = #{record.sendTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.createId != null">
+        create_id = #{record.createId,jdbcType=INTEGER},
+      </if>
       <if test="record.userName != null">
         user_name = #{record.userName,jdbcType=VARCHAR},
       </if>
@@ -290,6 +297,7 @@
       company_name = #{record.companyName,jdbcType=VARCHAR},
       tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
       send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      create_id = #{record.createId,jdbcType=INTEGER},
       user_name = #{record.userName,jdbcType=VARCHAR},
       org_code = #{record.orgCode,jdbcType=VARCHAR},
       sms_content = #{record.smsContent,jdbcType=LONGVARCHAR}
@@ -308,6 +316,7 @@
       company_name = #{record.companyName,jdbcType=VARCHAR},
       tunnel_name = #{record.tunnelName,jdbcType=VARCHAR},
       send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      create_id = #{record.createId,jdbcType=INTEGER},
       user_name = #{record.userName,jdbcType=VARCHAR},
       org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -341,6 +350,9 @@
       <if test="sendTime != null">
         send_time = #{sendTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
       <if test="userName != null">
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
@@ -363,6 +375,7 @@
       company_name = #{companyName,jdbcType=VARCHAR},
       tunnel_name = #{tunnelName,jdbcType=VARCHAR},
       send_time = #{sendTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=INTEGER},
       user_name = #{userName,jdbcType=VARCHAR},
       org_code = #{orgCode,jdbcType=VARCHAR},
       sms_content = #{smsContent,jdbcType=LONGVARCHAR}
@@ -378,6 +391,7 @@
       company_name = #{companyName,jdbcType=VARCHAR},
       tunnel_name = #{tunnelName,jdbcType=VARCHAR},
       send_time = #{sendTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=INTEGER},
       user_name = #{userName,jdbcType=VARCHAR},
       org_code = #{orgCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}

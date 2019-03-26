@@ -45,14 +45,19 @@ public class TaskServiceImpl implements TaskService
 	 * @throws Exception 
 	 */
 	@Override
-	public TaskListRspVO getTaskList(TaskListReqVO taskListReq, Long userId) throws Exception
+	public TaskListRspVO getTaskList(TaskListReqVO taskListReq, Long userId, Integer authLevel, String orgCode) throws Exception
 	{
 		TaskListRspVO taskListRsp = new TaskListRspVO();
 		
 		SmsTaskExample example = new SmsTaskExample();
 		Criteria criteria = example.createCriteria();
-		ReturnData<SysOrganization> sysOrganization = auth.getOrgByUserId(userId);
-		criteria.andOrgCodeLike(sysOrganization.body.getCode()+"%");
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId.intValue());
+		} else if(authLevel == 2) {
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andOrgCodeLike(orgCode + "%");
+		}
 		if(taskListReq.getStatus() != null){
 			criteria.andSendStatusEqualTo(taskListReq.getStatus()); //任务状态
 		}
@@ -221,7 +226,7 @@ public class TaskServiceImpl implements TaskService
 					smsTask.getTunnelName(), smsTask.getSmsTemplateId(), smsTask.getSmsContent());
 			taskReq.setSendTime(new Date());
 			taskReq.setCompanyName(smsTask.getCompanyName());
-			taskReq.setUserId(smsTask.getCreateId());
+			taskReq.setUserId(smsTask.getCreateId().longValue());
 			sendSmsService.pushTaskToMQ(taskReq); // 发送
 		}
 		taskMapper.updateByPrimaryKeySelective(smsTask); //编辑

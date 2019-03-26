@@ -11,9 +11,8 @@ public interface TaskService
 {
 	/**
 	 * 获取短信任务列表
-	 * @throws Exception 
 	 */
-	TaskListRspVO getTaskList(TaskListReqVO taskListReq, Long userId) throws Exception;
+	TaskListRspVO getTaskList(TaskListReqVO taskListReq, Long userId, Integer authLevel, String orgCode) throws Exception;
 
 	/**
 	 * 短信任务一键停止
@@ -27,8 +26,6 @@ public interface TaskService
 
 	/**
 	 * 新增/编辑短信任务
-	 * @param userId 
-	 * @throws Exception 
 	 */
 	void addTask(TaskReqVO taskReq, Long userId) throws Exception;
 

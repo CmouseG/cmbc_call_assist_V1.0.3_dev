@@ -13,6 +13,12 @@ public class WeChatEnvProperties {
 
     private String keFuUrl;
 
+    private String keFuBindUrl;
+
+    private String keFuBindAccessToken;
+
+    private String userLoginUrl;
+
     public String getAppId() {
         return appId;
     }
@@ -43,5 +49,29 @@ public class WeChatEnvProperties {
 
     public void setKeFuUrl(String keFuUrl) {
         this.keFuUrl = keFuUrl;
+    }
+
+    public String getKeFuBindUrl() {
+        return keFuBindUrl;
+    }
+
+    public void setKeFuBindUrl(String keFuBindUrl) {
+        this.keFuBindUrl = keFuBindUrl;
+    }
+
+    public String getKeFuBindAccessToken() {
+        return keFuBindAccessToken;
+    }
+
+    public void setKeFuBindAccessToken(String keFuBindAccessToken) {
+        this.keFuBindAccessToken = keFuBindAccessToken;
+    }
+
+    public String getUserLoginUrl() {
+        return userLoginUrl;
+    }
+
+    public void setUserLoginUrl(String userLoginUrl) {
+        this.userLoginUrl = userLoginUrl;
     }
 }

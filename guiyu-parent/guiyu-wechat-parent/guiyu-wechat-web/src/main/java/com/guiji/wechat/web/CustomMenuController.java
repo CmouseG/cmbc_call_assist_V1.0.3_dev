@@ -1,9 +1,18 @@
 package com.guiji.wechat.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.guiji.auth.api.IApiLogin;
 import com.guiji.auth.api.IAuth;
+import com.guiji.component.result.Result;
+import com.guiji.guiyu.message.component.FanoutSender;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.wechat.dtos.AuthAccessTokenDto;
 import com.guiji.wechat.dtos.CustomMenuCreateDto;
+import com.guiji.wechat.dtos.KeFuBindDto;
+import com.guiji.wechat.dtos.WeChatUserDto;
+import com.guiji.wechat.messages.UserBindWeChatMessage;
+import com.guiji.wechat.service.api.WeChatCommonApi;
 import com.guiji.wechat.util.AccessToken;
 import com.guiji.wechat.util.constants.WeChatConstant;
 import com.guiji.wechat.util.properties.WeChatEnvProperties;
@@ -17,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,6 +35,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+
+import static com.guiji.wechat.util.constants.RabbitMqConstant.USER_BIND_WECHAT_EXCHANGE;
 
 @RestController
 @RequestMapping("wechat/custom/menu")
@@ -36,11 +50,16 @@ public class CustomMenuController {
 
     private static final String GUEST = "微信游客";
 
+    private static final String STATIC_GUIJI_DOMAIN = "tel.guiji.ai";
+
     @Resource
     private RestTemplate restTemplate;
 
     @Resource
     private IAuth iAuth;
+
+    @Resource
+    private IApiLogin iApiLogin;
 
     @Resource
     private WeChatUrlProperty weChatUrlProperty;
@@ -50,6 +69,12 @@ public class CustomMenuController {
 
     @Resource
     private AccessToken accessToken;
+
+    @Resource
+    private FanoutSender fanoutSender;
+
+    @Resource
+    private WeChatCommonApi weChatCommonApi;
 
     @PostMapping("create")
     public ResponseEntity<String> createMenu(@RequestBody CustomMenuCreateDto customMenuCreateDto){
@@ -86,33 +111,6 @@ public class CustomMenuController {
         return restTemplate.getForEntity(builder.build().toUri(), String.class);
     }
 
-    @GetMapping("auth")
-    public ModelAndView auth(HttpServletRequest request){
-        logger.info("weChat auth request parameterMap:{}", JSON.toJSONString(request.getParameterMap()));
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatUrlProperty.getAuthAccessTokenUrl())
-                .queryParam(WeChatConstant.PARAM_APPID, weChatEnvProperties.getAppId())
-                .queryParam(WeChatConstant.PARAM_SECRET, weChatEnvProperties.getAppSecret())
-                .queryParam(WeChatConstant.PARAM_CODE, request.getParameter(WeChatConstant.PARAM_CODE))
-                .queryParam(WeChatConstant.PARAM_GRANT_TYPE, "authorization_code");
-
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().toUri(), String.class);
-
-        AuthAccessTokenDto authAccessTokenDto = JSON.parseObject(responseEntity.getBody(), AuthAccessTokenDto.class);
-
-        logger.info("weChat auth responseEntity:{}", JSON.toJSONString(authAccessTokenDto));
-
-        if(authAccessTokenDto == null || StringUtils.isBlank(authAccessTokenDto.getOpenid())){
-            logger.error("failed get weChat auth!");
-            return new ModelAndView("redirect:" + weChatEnvProperties.getKeFuUrl());
-        }
-
-
-
-        // TODO: 19-3-25  
-        return new ModelAndView("redirect:" + buildKeFuUrl("xiong"));
-    }
-
     @GetMapping("create/kefu")
     public void createAuthMenu(){
 
@@ -134,13 +132,129 @@ public class CustomMenuController {
         createMenu(createDto);
     }
 
+    @GetMapping("auth")
+    public ModelAndView auth(HttpServletRequest request){
+        logger.info("weChat auth request parameterMap:{}", JSON.toJSONString(request.getParameterMap()));
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatUrlProperty.getAuthAccessTokenUrl())
+                .queryParam(WeChatConstant.PARAM_APPID, weChatEnvProperties.getAppId())
+                .queryParam(WeChatConstant.PARAM_SECRET, weChatEnvProperties.getAppSecret())
+                .queryParam(WeChatConstant.PARAM_CODE, request.getParameter(WeChatConstant.PARAM_CODE))
+                .queryParam(WeChatConstant.PARAM_GRANT_TYPE, "authorization_code");
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().toUri(), String.class);
+
+        AuthAccessTokenDto authAccessTokenDto = JSON.parseObject(responseEntity.getBody(), AuthAccessTokenDto.class);
+
+        logger.info("weChat auth responseEntity:{}", JSON.toJSONString(authAccessTokenDto));
+
+        if(authAccessTokenDto == null || StringUtils.isBlank(authAccessTokenDto.getOpenid())){
+            logger.error("failed get weChat auth!");
+            return new ModelAndView("redirect:" + buildKeFuUrl(GUEST));
+        }
+
+        String openId = authAccessTokenDto.getOpenid();
+        String userName = getUserNameByCheckUserBind(openId);
+        if(StringUtils.isNotBlank(userName)){
+            keFuBind(openId, userName, STATIC_GUIJI_DOMAIN);
+            return new ModelAndView("redirect:" + buildKeFuUrl(userName));
+        }
+
+        return new ModelAndView("redirect:" + buildLoginUrl(openId));
+    }
+
+
+    @PostMapping("login")
+    public Result.ReturnData<Boolean> checkLogin(@RequestParam("openId") String openId,
+                                                 @RequestParam("userName") String userName,
+                                                 @RequestParam("password") String password){
+
+        logger.info("wechat check login, openId:{}, userName:{}, password:{}", openId, userName, password);
+
+        Long userId;
+
+        try{
+            userId = iApiLogin.getUserIdByCheckLogin(userName, password).getBody();
+        }catch (Exception e){
+            logger.error("failed get userId by check login", e);
+            return Result.ok(false);
+        }
+
+        if(null == userId){
+            return Result.ok(false);
+        }
+
+        keFuBind(openId, userName, STATIC_GUIJI_DOMAIN);
+        sendUserBindWeChatMessage(openId, userId);
+
+        return Result.ok(true);
+    }
+
+
     private String buildKeFuUrl(String userName){
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getKeFuUrl())
-                .queryParam("guiji_hostname", "tel.guiji.ai")
+                .queryParam("guiji_hostname", STATIC_GUIJI_DOMAIN)
                 .queryParam("name", userName);
 
         return builder.build().toUri().toString();
     }
 
+    private String buildLoginUrl(String openId){
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getUserLoginUrl())
+                .queryParam("openId", openId);
+
+        return builder.build().toUri().toString();
+    }
+
+    private String getUserNameByCheckUserBind(String openId){
+        try{
+            List<SysUser> userList = iAuth.getUserByOpenId(openId).getBody();
+            logger.info("openId:{}, userList:{}", openId, JSON.toJSON(userList));
+
+            if(CollectionUtils.isEmpty(userList)){
+                return null;
+            }
+            return userList.get(0).getUsername();
+        }catch (Exception e){
+            logger.error("failed get user by openId", e);
+            return null;
+        }
+    }
+
+    private void keFuBind(String openId, String userName, String domain){
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getKeFuBindUrl());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        headers.add("access-token", weChatEnvProperties.getKeFuBindAccessToken());
+
+        KeFuBindDto keFuBindDto = KeFuBindDto.build()
+                .setDomain(domain)
+                .setAccount(userName)
+                .setOpen_id(openId);
+
+        HttpEntity<String> entity = new HttpEntity<>(JSON.toJSONString(keFuBindDto), headers);
+
+        restTemplate.postForEntity(builder.build().toUri(), entity, String.class);
+        logger.info("kefu bind url:{}, entity:{}", builder.build().toUri(), JSON.toJSONString(entity));
+    }
+
+    private void sendUserBindWeChatMessage(String openId, Long userId){
+
+        WeChatUserDto weChatUserDto = weChatCommonApi.getWeChatUserInfo(openId);
+        UserBindWeChatMessage message = new UserBindWeChatMessage();
+
+        message.setWeChatNickName(weChatUserDto.getNickname());
+        message.setOpenId(openId);
+        message.setBindTime(new Date());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userId", String.valueOf(userId));
+        message.setCallbackParameter(jsonObject.toJSONString());
+
+        fanoutSender.send(USER_BIND_WECHAT_EXCHANGE, JSON.toJSONString(message));
+        logger.info("after login, send user bind weChat message:{}", JSON.toJSONString(message));
+    }
 }

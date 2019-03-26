@@ -113,6 +113,13 @@ public class WeChatController implements WeChatApi {
         return Result.ok();
     }
 
+    @PostMapping(value = "wechat/send/message")
+    @ResponseBody
+    public Result.ReturnData<String> sendMessage(@RequestBody SendMsgReqVO sendMsgReqVO) {
+        return send(sendMsgReqVO);
+    }
+
+
     private QRCodeRpsVO generateQRCodeTicket(QRCodeReqVO qrCodeReqVO) {
         String accessToken = stringRedisTemplate.opsForValue().get(WeChatConstant.ACCESS_TOKEN_CACHE_KEY);
 

@@ -72,3 +72,6 @@ wechat:
   appSecret: b494d62fad8cffa7355faa5e1ca906f7
   authRedirectUrl: http://kxdu66.natappfree.cc/wechat/custom/menu/auth
   keFuUrl: http://talk.guiji.ai:8080/im/text/18c0VV.html
+  keFuBindUrl: https://talk.guiji.ai/oa/manager
+  keFuBindAccessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzaV9taWRkbGVfZ3JvdW5kIiwiaWF0IjoxNTUxOTMwMzc0LCJkYXRhIjp7Im9hIjoic2lfbWlkZGxlX2dyb3VuZF9vZmZpY2lhbF9hY2NvdW50In0sImV4cCI6MTg2NzI5MDM3NH0.kIFBLWkkiJtdtMWwbGSXVPSAJqnIIuQzDEXuCEzraCE
+  userLoginUrl: https://www.bing.com

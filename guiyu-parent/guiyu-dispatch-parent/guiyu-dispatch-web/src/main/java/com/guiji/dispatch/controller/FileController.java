@@ -22,14 +22,18 @@ import jxl.format.BorderLineStyle;
 import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.Boolean;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +42,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 public class FileController {
+
+	private Logger logger = LoggerFactory.getLogger(FileController.class);
 
 	@Autowired
 	private FileInterface file;

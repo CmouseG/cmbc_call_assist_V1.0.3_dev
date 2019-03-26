@@ -39,7 +39,7 @@ public class AvailableTemplateService {
 		//ReturnData<SysUser> data=iAuth.getUserById(userId);
 		String orgCode=data.getBody().getCode();
 		BotAvailableTemplateExample example=new BotAvailableTemplateExample();
-		example.createCriteria().andOrgCodeLike(orgCode+"%");
+		example.createCriteria().andOrgCodeLike(orgCode+".%");
 		List<BotAvailableTemplate> list = botAvailableTemplateMapper.selectByExample(example);
 		if(null != list && list.size() > 0) {
 			for(BotAvailableTemplate template : list) {

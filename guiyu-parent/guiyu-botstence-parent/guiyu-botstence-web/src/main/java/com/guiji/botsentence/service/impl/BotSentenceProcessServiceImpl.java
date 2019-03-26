@@ -150,11 +150,7 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 	private boolean offline;
 	
 	@Override
-public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state) {
-		
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
-		
+	public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pageNo, String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		if(StringUtils.isNotBlank(templateName)) {
@@ -165,9 +161,15 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 			criteria.andStateEqualTo(state);
 		}
 		
-		criteria.andOrgCodeLike(orgCode+"%");
-		
 		criteria.andStateNotEqualTo("99");
+		
+		if(1 == authLevel) {//查询本人
+			criteria.andCrtUserEqualTo(userId);
+		}else if(2 == authLevel) {//查询本组织
+			criteria.andOrgCodeEqualTo(orgCode);
+		}else if(3 == authLevel) {//查询本组织及以下
+			criteria.andOrgCodeLike(orgCode+"%");
+		}
 		
 		//计算分页
 		int limitStart = (pageNo-1)*pageSize;
@@ -180,10 +182,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 	}
 
 	@Override
-	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state) {
-
-		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
-		String orgCode=data.getBody().getOrgCode();
+	public int countBotSentenceProcess(String templateName, String accountNo, String userId, String state, int authLevel, String orgCode) {
 		BotSentenceProcessExample example = new BotSentenceProcessExample();
 		Criteria criteria = example.createCriteria();
 		
@@ -195,10 +194,16 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 			criteria.andStateEqualTo(state);
 		}
 		
-		criteria.andOrgCodeLike(orgCode+"%");
-		//criteria.andAccountNoEqualTo(String.valueOf(userId));
-		
 		criteria.andStateNotEqualTo("99");
+		
+		if(1 == authLevel) {//查询本人
+			criteria.andCrtUserEqualTo(userId);
+		}else if(2 == authLevel) {//查询本组织
+			criteria.andOrgCodeEqualTo(orgCode);
+		}else if(3 == authLevel) {//查询本组织及以下
+			criteria.andOrgCodeLike(orgCode+"%");
+		}
+		
 		return botSentenceProcessMapper.countByExample(example);
 	
 	}
@@ -210,13 +215,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 		ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
 		String userName=data.getBody().getUsername();
 		String orgCode=data.getBody().getOrgCode();
-		
-		ReturnData<SysOrganization> data2=iAuth.getOrgByUserId(new Long(userId));
-		String orgName = data2.getBody().getName();
-		if(!orgCode.endsWith(".")) {
-			orgCode = orgCode + ".";
-		}
-		
+		String orgName=data.getBody().getOrgName();
 		
 		long time1 = System.currentTimeMillis();
 		logger.info("============" + time1);
@@ -1663,7 +1662,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 					String[] respArray = branch.getResponse().substring(1,branch.getResponse().length()-1).split(",");
 					
 					for(int i = 0 ; i < respArray.length ; i++) {
-						voliceInfoMapper.deleteByPrimaryKey(new Long(respArray[i]));
+						voliceServiceImpl.deleteVolice(branch.getProcessId(), respArray[i]);
 					}
 				}
 				//拒绝不需要文案，则设置拒绝的branch为空
@@ -2121,8 +2120,6 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 			}
 		}
 		
-		
-		
 		domain.setType(blankDomain.getType());
 		domain.setDomainName(blankDomain.getLabel());
 		domain.setPositionY(blankDomain.getY());
@@ -2132,6 +2129,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 		botSentenceDomainMapper.updateByPrimaryKey(domain);
 		
 		this.updateValiableDomainName(domain.getProcessId(), oldDomainName, newDomainName, "update");
+		
 		
 		if(StringUtils.isNotBlank(domainId) && domainId.equals(blankDomain.getId())) {//如果修改的是当前domain才需要更新以下数据，否则只要更新上面的坐标即可
 			//第三步：更新branch表的domain
@@ -3915,6 +3913,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 	@Override
 	//@Transactional
 	public void generateTTS(List<VoliceInfoExt> list2, String processId, String userId, String model) {
+
 		VoliceInfoExample example = new VoliceInfoExample();
 		example.createCriteria().andProcessIdEqualTo(processId);
 		List<VoliceInfo> list = voliceInfoMapper.selectByExample(example);
@@ -4233,78 +4232,16 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 	 */
 	@Override
 	public List<BotSentenceTemplateTradeVO> queryIndustryListByAccountNo(String accountNo, String userId) {
-		List<BotSentenceTemplateTradeVO> results = new ArrayList<>();
-		
-		List<String> industryIdList = new ArrayList<>();
-		List<String> parentIndustryIdList = new ArrayList<>();
-		
-		//ReturnData<SysUser> data=iAuth.getUserById(new Long(userId));
+		List<String> templateIdList = new ArrayList<>();
 		ReturnData<SysOrganization> org = iAuth.getOrgByUserId(new Long(userId));
 		String orgCode=org.getBody().getCode();
 		ReturnData<List<String>> returnData= orgService.getIndustryByOrgCode(orgCode);
-		industryIdList = returnData.getBody();
-		/*UserAccountTradeRelationExample example1 = new UserAccountTradeRelationExample();
-		example1.createCriteria().andAccountNoEqualTo(accountNo);
-		List<UserAccountTradeRelation> relationList = userAccountTradeRelationMapper.selectByExample(example1);*/
-		if(null != industryIdList && industryIdList.size() > 0) {
-			//过滤掉二级行业下没有模板的数据
-			for(int i = industryIdList.size()-1 ; i >=0 ; i--) {
-				BotSentenceTemplateExample example = new BotSentenceTemplateExample();
-				example.createCriteria().andIndustryIdLike(industryIdList.get(i) + "%");
-				int num = botSentenceTemplateMapper.countByExample(example);
-				if(num == 0) {
-					industryIdList.remove(i);
-				}
-			}
+		templateIdList = returnData.getBody();
+		if(null != templateIdList && templateIdList.size() > 0) {
+			List<BotSentenceTemplateTradeVO> list = this.queryTradeListByTemplateIdList(templateIdList);
+			return list;
 		}
-		
-		for(String industryId : industryIdList) {
-			//获取上级行业
-			BotSentenceTrade trade = getBotSentenceTrade(industryId);
-			if(null != trade && !parentIndustryIdList.contains(trade.getParentId())) {
-				parentIndustryIdList.add(trade.getParentId());
-			}
-		}
-		
-		
-		for(String industryId : parentIndustryIdList) {
-			//获取上级行业
-			BotSentenceTrade parentTrade = getBotSentenceTrade(industryId);
-			
-			BotSentenceTemplateTradeVO parentVo = new BotSentenceTemplateTradeVO();
-			parentVo.setValue(parentTrade.getIndustryId());
-			parentVo.setLabel(parentTrade.getIndustryName());
-			parentVo.setLevel(parentTrade.getLevel());
-			//获取下级行业
-			List<BotSentenceTrade> trades = getChildIndustryList(parentTrade.getIndustryId());
-			if(null != trades && trades.size() > 0) {
-				List<BotSentenceTemplateTradeVO> tradeVOList = new ArrayList<>();
-				for(BotSentenceTrade trade : trades) {
-					if(industryIdList.contains(trade.getIndustryId())) {
-						BotSentenceTemplateTradeVO tradeVO = new BotSentenceTemplateTradeVO();
-						tradeVO.setValue(trade.getIndustryId());
-						tradeVO.setLabel(trade.getIndustryName());
-						tradeVO.setLevel(trade.getLevel());
-						List<BotSentenceTrade> childIndustryList = getChildIndustryList(trade.getIndustryId());
-						if(null != childIndustryList && childIndustryList.size() > 0) {
-							List<BotSentenceTemplateTradeVO> childVOList = new ArrayList<>();
-							for(BotSentenceTrade childTrade : childIndustryList) {
-								BotSentenceTemplateTradeVO childVo = new BotSentenceTemplateTradeVO();
-								childVo.setValue(childTrade.getIndustryId());
-								childVo.setLabel(childTrade.getIndustryName());
-								childVo.setLevel(childTrade.getLevel());
-								childVOList.add(childVo);
-							}
-							tradeVO.setChildren(childVOList);
-						}
-						tradeVOList.add(tradeVO);
-					}
-				}
-				parentVo.setChildren(tradeVOList);
-			}
-			results.add(parentVo);
-		}
-		return results;
+		return null;
 	}
 	
 	/**
@@ -4903,6 +4840,7 @@ public List<BotSentenceProcess> queryBotSentenceProcessList(int pageSize, int pa
 			//用户回复无声音时，将用户的回复配置为
 			botSentenceDomainExtMapper.updateNotWordsToByDomain(processId, domainName, newDomainName);
 		}
+		
 	}
 	
 }

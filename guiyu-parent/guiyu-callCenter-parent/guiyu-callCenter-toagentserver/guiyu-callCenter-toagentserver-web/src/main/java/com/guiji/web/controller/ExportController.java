@@ -1,5 +1,6 @@
 package com.guiji.web.controller;
 
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.service.*;
 import com.guiji.web.request.ExportcalldetailsVO;
 import com.guiji.web.request.ExportregistrationsVO;
@@ -29,10 +30,11 @@ public class ExportController {
      *
      * @return
      */
+    @Jurisdiction("callCenter_checklist_exportTable")
     @RequestMapping(path = "/exportregistrations", method = RequestMethod.POST)
     public ApiResponse getExportRegistrations(@RequestBody ExportregistrationsVO vo, HttpServletResponse response) {
         log.info("收到批量导出指定的登记历史的请求");
-        registrationService.getExportRegistrations(vo.getRegIds(), vo.getUserId(), response);
+        registrationService.getExportRegistrations(vo.getRegIds(), vo.getAgentId(),vo.getAuthLevel(),vo.getOrgCode(), response);
         return null;
     }
 

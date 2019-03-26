@@ -2,6 +2,7 @@ package com.guiji.service;
 
 import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.entity.EUserState;
+import com.guiji.toagentserver.entity.AgentMembrVO;
 import com.guiji.web.request.AgentRequest;
 import com.guiji.web.request.CrmUserVO;
 import com.guiji.web.response.Paging;
@@ -18,25 +19,22 @@ import java.util.List;
  * @Description:
  */
 public interface AgentService {
-    boolean createAgent(AgentRequest request,Agent create,Long crmUserid)throws Exception;
 
-    boolean updateAgent(String userId, AgentRequest request, Agent agent)throws Exception;
+    boolean updateAgent(String agentId, AgentRequest request,Long customerId)throws Exception;
 
-    boolean deleteAgent(String userId);
-
-    boolean agentState(AgentRequest request, Agent agent)throws Exception;
+    boolean agentState(AgentRequest request);
 
     QueryAgent getAgent(String userId);
 
-    Paging getAllAgent(Agent agent,String crmLoginId,String queueId, Integer page, Integer size);
+    Paging getAllAgent(Long customerId,String crmLoginId,String queueId, Integer page, Integer size,int authLevel,String orgCode)throws Exception;
 
     QueryCalls agentcalls(String userId);
 
-    QueryUser getUser(Agent agent);
+    QueryUser getUser(Long customerId);
 
     void update(Agent agent);
 
-    boolean isAgentLogin(Agent agent);
+    boolean isAgentLogin(Long customerId)throws Exception;
 
     boolean agentVertoState(Agent agent);
 
@@ -59,9 +57,13 @@ public interface AgentService {
 
     void initCallcenter();
 
-    Agent initUser(CrmUserVO crmUserVO);
-
-
     boolean agentStateByVerto(EUserState eUserState, Agent agent);
+
+
+    boolean syncAgentMembers( List<AgentMembrVO> agentMembers);
+
+    boolean  delAgentMembers( List<Long> customerIds);
+
+    Agent getAgentByCustomerId(Long customerId);
 
 }

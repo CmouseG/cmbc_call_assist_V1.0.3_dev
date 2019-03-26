@@ -1,5 +1,8 @@
 package com.guiji.util;
 
+import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
+import com.guiji.utils.NasUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,26 +73,6 @@ public class FileUtil {
     }
 
     /**
-     * 获取wav文件的播放时长, 单位为秒
-     * @param fileName
-     * @return
-     */
-    public static Double getWavDuration(String fileName){
-        File file = new File(fileName);
-        AudioInputStream audioInputStream = null;
-        try {
-            audioInputStream = AudioSystem.getAudioInputStream(file);
-            AudioFormat format = audioInputStream.getFormat();
-            long frames = audioInputStream.getFrameLength();
-            Double durationInSeconds = (frames+0.0) / format.getFrameRate();
-            return durationInSeconds;
-        } catch (Exception e) {
-            log.warn("获取wav时长出现异常", e);
-        }
-        return null;
-    }
-
-    /**
      * 将多个文件压缩为zip包
      * @param srcFiles
      * @param zipFile
@@ -140,6 +123,19 @@ public class FileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //上传配置文件，并保存到nas中
+    public static String uploadConfig(Long userId, String configPath,String appName) {
+        NasUtil nasUtil = new NasUtil();
+        SysFileReqVO reqVO = new SysFileReqVO();
+        reqVO.setThumbImageFlag("0");
+        reqVO.setUserId(userId);
+        reqVO.setBusiType("freeswitch_config");
+        reqVO.setSysCode(appName);
+        reqVO.setBusiId("callcenter.conf.xml");
+        SysFileRspVO fileRspVO = nasUtil.uploadNas(reqVO, new File(configPath));
+        return fileRspVO.getSkUrl();
     }
 }
 

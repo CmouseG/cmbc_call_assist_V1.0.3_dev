@@ -1,6 +1,5 @@
 package com.guiji.service;
 
-import com.guiji.callcenter.dao.entity.Agent;
 import com.guiji.callcenter.dao.entity.Queue;
 import com.guiji.web.request.QueueInfo;
 import com.guiji.web.response.Paging;
@@ -15,11 +14,11 @@ import java.util.List;
  * @Description:
  */
 public interface QueueService {
-    boolean addQueue(QueueInfo QueueInfo, Agent agent) throws Exception;
+    boolean addQueue(QueueInfo QueueInfo,String orgCodet,Long customerId) throws Exception;
     boolean deleteQueue(String queueId);
-    void updateQueue(String queueId, QueueInfo QueueInfo, Agent agent)throws Exception;
+    void updateQueue(String queueId, QueueInfo QueueInfo, Long customerId,String orgCode)throws Exception;
 
-    Paging queryQueues(Agent agent, String queueName, Integer page, Integer size,String systemUserId);
+    Paging queryQueues( String queueName, Integer page, Integer size,String systemUserId,String orgCode,int authLevel,Long customerId)throws Exception;
     QueryQueue getQueue(String queueId);
 
     Queue findByQueueId(Long queueId);

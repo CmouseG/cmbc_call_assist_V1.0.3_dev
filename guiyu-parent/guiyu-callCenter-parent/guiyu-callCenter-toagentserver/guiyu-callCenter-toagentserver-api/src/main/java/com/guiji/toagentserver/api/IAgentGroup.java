@@ -2,6 +2,7 @@ package com.guiji.toagentserver.api;
 
 import com.guiji.component.result.Result;
 import com.guiji.toagentserver.entity.AgentGroupInfo;
+import com.guiji.toagentserver.entity.AgentMembrVO;
 import com.guiji.toagentserver.entity.FsInfoVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,5 +37,23 @@ public interface IAgentGroup {
     })
     @RequestMapping(value = "/untying/{lineId}", method = RequestMethod.DELETE)
     Result.ReturnData  untyingLineinfos(@PathVariable(value = "lineId") String lineId);
+
+
+    @ApiOperation(value = "同步坐席用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(name = "loginAccount", value = "登录名", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "customerName", value = "用户名", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "org_code", value = "企业编码", dataType = "String", paramType = "query")
+    })
+    @RequestMapping(value = "/syncAgentMembers", method = RequestMethod.POST)
+    Result.ReturnData  syncAgentMembers(@RequestBody List<AgentMembrVO> agentMembers);
+
+    @ApiOperation(value = "删除坐席用户")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "customerId", value = "用户id", dataType = "Long", paramType = "query")
+    })
+    @RequestMapping(value = "/delAgentMembers", method = RequestMethod.POST)
+    Result.ReturnData  delAgentMembers(@RequestBody List<Long> customerIds);
 
 }

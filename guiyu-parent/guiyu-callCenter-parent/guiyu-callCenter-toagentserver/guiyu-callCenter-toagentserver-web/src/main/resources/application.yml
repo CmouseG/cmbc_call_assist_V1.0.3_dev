@@ -8,6 +8,9 @@ jdbc_driver0: com.mysql.jdbc.Driver
 jdbc_url0: jdbc:mysql://192.168.1.81:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
 jdbc_username0: callcenter
 jdbc_password0: callcenter@1234
+#jdbc_url0: jdbc:mysql://127.0.0.1:3306/guiyu_callcenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+#jdbc_username0: root
+#jdbc_password0: root
 validationQuery: SELECT 1
 #数据库连接配置
 mybatis:
@@ -25,13 +28,15 @@ eureka:
         defaultZone: http://guiyu-cloud-registeration:18001/eureka/
 
 fs:
-   homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+   #homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+   homeDir: /home/freeswitch/fs1
    serverEslTimeout : 2
    reconnectSleepTime : 1000
    wssUrl: verto.gallery.btows.com
 
 fsbot:
-     homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+     #homeDir: C:/Program Files/FreeSWITCH/conf/autoload_configs
+     homeDir: /home/apps/callcenter/toagentserver
      recordingsDir: ${fs.homeDir}/recordings/
      recordingsDirZip: ${fs.homeDir}/recordings/zip/
      noAuth: true

@@ -105,6 +105,8 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	@Autowired
     private GateWayLineService gateWayLineService;
 
+	@Autowired
+	private com.guiji.dispatch.dao.ext.PlanExtMapper planExtMapper;
 	/**
 	 * 单个任务导入
 	 * @param dispatchPlan

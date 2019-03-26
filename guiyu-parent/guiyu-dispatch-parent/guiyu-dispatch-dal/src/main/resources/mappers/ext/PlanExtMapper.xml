@@ -33,10 +33,10 @@
 	</sql>
 
 	<sql id="Base_Column_List" >
-		id, plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
+		plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
 		recall, recall_params, robot, line, result, call_agent, clean, call_data, call_hour,
 		gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name,
-		batch_name, flag, org_code, city_name, city_code, line_type
+		batch_name, flag, org_code,org_id, city_name, city_code, line_type
 	</sql>
 
 	<select id="queryPlanListByPage" resultType="com.guiji.dispatch.vo.DispatchPlanVo">
@@ -60,7 +60,7 @@
 			</if>
 
 		) p
-		LEFT JOIN dispatch_lines l ON p.plan_uuid = l.planuuid
+		LEFT JOIN dispatch_batch_line l ON p.batch_id = l.id
 		GROUP BY p.plan_uuid
 	</select>
 

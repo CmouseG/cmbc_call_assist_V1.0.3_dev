@@ -16,11 +16,14 @@ public class DispatchPlan implements Serializable {
 
     private long planUuid;
 
+    private long planUuidLong;
+
     private Integer userId;
 
     private Integer batchId;
 
     private String phone;
+
 
     /**
      * 附加参数，备注
@@ -89,7 +92,7 @@ public class DispatchPlan implements Serializable {
     /**
      * 线路
      */
-    List<DispatchBatchLine> lines;
+    private List<DispatchBatchLine> lines;
 
     /**
      * 线路类型 1-SIP 2-路由网关
@@ -193,6 +196,7 @@ public class DispatchPlan implements Serializable {
 
     public void setPlanUuid(long planUuid) {
         this.planUuid = planUuid;
+        this.planUuidLong = planUuid;
     }
 
     public Integer getUserId() {
@@ -427,43 +431,54 @@ public class DispatchPlan implements Serializable {
         this.orgId = orgId;
     }
 
+    public void setPlanUuidLong(long planUuidLong) {
+
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", planUuid=").append(planUuid);
-        sb.append(", userId=").append(userId);
-        sb.append(", batchId=").append(batchId);
-        sb.append(", phone=").append(phone);
-        sb.append(", attach=").append(attach);
-        sb.append(", params=").append(params);
-        sb.append(", statusPlan=").append(statusPlan);
-        sb.append(", statusSync=").append(statusSync);
-        sb.append(", recall=").append(recall);
-        sb.append(", recallParams=").append(recallParams);
-        sb.append(", robot=").append(robot);
-        sb.append(", line=").append(line);
-        sb.append(", result=").append(result);
-        sb.append(", callAgent=").append(callAgent);
-        sb.append(", clean=").append(clean);
-        sb.append(", callData=").append(callData);
-        sb.append(", callHour=").append(callHour);
-        sb.append(", gmtCreate=").append(gmtCreate);
-        sb.append(", gmtModified=").append(gmtModified);
-        sb.append(", isTts=").append(isTts);
-        sb.append(", username=").append(username);
-        sb.append(", replayType=").append(replayType);
-        sb.append(", isDel=").append(isDel);
-        sb.append(", lineName=").append(lineName);
-        sb.append(", robotName=").append(robotName);
-        sb.append(", batchName=").append(batchName);
-        sb.append(", flag=").append(flag);
-        sb.append(", orgCode=").append(orgCode);
-        sb.append(", lineType=").append(lineType);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "DispatchPlan{" +
+                "statusShow=" + statusShow +
+                ", isSuccess=" + isSuccess +
+                ", limitStart=" + limitStart +
+                ", limitEnd=" + limitEnd +
+                ", planUuid=" + planUuid +
+                ", planUuidLong=" + planUuidLong +
+                ", userId=" + userId +
+                ", batchId=" + batchId +
+                ", phone='" + phone + '\'' +
+                ", attach='" + attach + '\'' +
+                ", params='" + params + '\'' +
+                ", statusPlan=" + statusPlan +
+                ", statusSync=" + statusSync +
+                ", recall=" + recall +
+                ", recallParams='" + recallParams + '\'' +
+                ", robot='" + robot + '\'' +
+                ", line=" + line +
+                ", result='" + result + '\'' +
+                ", callAgent='" + callAgent + '\'' +
+                ", clean=" + clean +
+                ", callData=" + callData +
+                ", callHour='" + callHour + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                ", gmtModified=" + gmtModified +
+                ", isTts=" + isTts +
+                ", username='" + username + '\'' +
+                ", replayType=" + replayType +
+                ", isDel=" + isDel +
+                ", lineName='" + lineName + '\'' +
+                ", robotName='" + robotName + '\'' +
+                ", batchName='" + batchName + '\'' +
+                ", flag='" + flag + '\'' +
+                ", robotIds=" + robotIds +
+                ", userName='" + userName + '\'' +
+                ", orgCode='" + orgCode + '\'' +
+                ", orgId=" + orgId +
+                ", fileRecordId=" + fileRecordId +
+                ", lines=" + lines +
+                ", lineType=" + lineType +
+                ", cityName='" + cityName + '\'' +
+                ", cityCode='" + cityCode + '\'' +
+                '}';
     }
 }

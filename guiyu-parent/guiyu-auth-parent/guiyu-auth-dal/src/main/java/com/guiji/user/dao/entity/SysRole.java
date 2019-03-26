@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class SysRole implements Serializable {
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -24,13 +24,17 @@ public class SysRole implements Serializable {
 
     private Integer superAdmin;
 
+    private Integer dataAuthLevel;
+
+    private String orgCode;
+
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -87,7 +91,8 @@ public class SysRole implements Serializable {
     }
 
     public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;    }
+        this.delFlag = delFlag;
+    }
 
     public Integer getInitRole() {
         return initRole;
@@ -103,6 +108,22 @@ public class SysRole implements Serializable {
 
     public void setSuperAdmin(Integer superAdmin) {
         this.superAdmin = superAdmin;
+    }
+
+    public Integer getDataAuthLevel() {
+        return dataAuthLevel;
+    }
+
+    public void setDataAuthLevel(Integer dataAuthLevel) {
+        this.dataAuthLevel = dataAuthLevel;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
     @Override
@@ -121,6 +142,8 @@ public class SysRole implements Serializable {
         sb.append(", delFlag=").append(delFlag);
         sb.append(", initRole=").append(initRole);
         sb.append(", superAdmin=").append(superAdmin);
+        sb.append(", dataAuthLevel=").append(dataAuthLevel);
+        sb.append(", orgCode=").append(orgCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

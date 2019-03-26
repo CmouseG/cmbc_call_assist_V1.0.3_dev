@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.user.dao.ext.SysRoleMapperExt" >
+  
+  <select id="getRoles" resultType="com.guiji.user.dao.entity.SysRole">
+    select id,name,init_role as initRole,super_admin as superAdmin from sys_role where del_flag=0
+  </select>
+
+  <insert id="addMenus">
+    delete from sys_menu_role where role_id=#{roleId};
+    insert into sys_menu_role(role_id,menu_id,create_time,update_time) values
+    <foreach collection="menuIds" item="item" separator=",">
+      (#{roleId},#{item},now(),now())
+    </foreach>
+    ;
+  </insert>
+  
+  <select id="countByParamVo" resultType="int">
+  	SELECT count(1) from sys_role where del_flag=0
+  	<if test="roleName != '' ">
+			and name=#{roleName}	
+	</if>
+  </select>
+  
+  <select id="selectByParamVo" resultType="map">
+  	 select a.id,a.name,a.desc,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName,a.init_role as initRole 
+  	 from sys_role a
+	 LEFT JOIN sys_user b on a.create_id =b.id
+	 where a.del_flag=0
+	 <if test="roleName != '' ">
+			and name like concat('%',#{roleName},'%')	
+	 </if>
+	 order by a.create_time desc
+	 limit ${(pageNo-1)*pageSize}, #{pageSize}
+  </select>
+  
+  <select id="existRoleName" resultType="boolean">
+  	select count(1)>0 from sys_role where name=#{name} 
+  	<if test="id != null">
+  		and id!=#{id}
+  	</if>
+  </select>
+</mapper>

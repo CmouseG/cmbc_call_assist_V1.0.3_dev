@@ -1,54 +1,75 @@
 package com.guiji.auth.service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.guiji.auth.enm.AuthObjTypeEnum;
+import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.SysRoleMapper;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysRoleExample;
+import com.guiji.user.dao.ext.SysRoleMapperExt;
 import com.guiji.user.vo.RoleParamVo;
+import com.guiji.utils.StrUtils;
 
 @Service
 public class RoleService {
-	
+	@Autowired
+	PrivilegeService privilegeService;
 	@Autowired
 	private SysRoleMapper mapper;
+	@Autowired
+	private SysRoleMapperExt mapperExt;
 	
-	public void insert(SysRole role,String[] menuIds){
+	@Transactional
+	public void insert(SysRole role,String orgCode,String[] menuIds){
 		role.setCreateTime(new Date());
 		role.setUpdateTime(new Date());
 		role.setInitRole(1);//接口增加的角色都是非初始化数据，只有初始化才是
 		role.setSuperAdmin(1);//接口增加的角色都是非超级管理员，只有初始化才是
 		mapper.insert(role);
-		mapper.addMenus(role.getId(),menuIds);
+//		mapperExt.addMenus(role.getId(),menuIds);
+		//角色绑定菜单
+		if(menuIds!=null && menuIds.length>0) {
+			List<String> menuIdList = menuIds==null?null:Arrays.asList(menuIds);
+			privilegeService.savePrivlegeTree(role.getCreateId().intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
+		}
 	}
 	
-	public void delete(Long id){
-		mapper.deleteByPrimaryKey(id);
+	@Transactional
+	public void delete(Long id,Long userId){
+		mapper.deleteByPrimaryKey(id.intValue());
+		privilegeService.delProivilegeTree(userId.intValue(), id.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 	}
 	
-	public void update(SysRole role,String[] menuIds){
+	@Transactional
+	public void update(SysRole role,String orgCode,String[] menuIds){
 		role.setUpdateTime(new Date());
 		mapper.updateByPrimaryKeySelective(role);
-		mapper.addMenus(role.getId(),menuIds);
+//		mapperExt.addMenus(role.getId(),menuIds);
+		//角色绑定菜单
+		List<String> menuIdList = menuIds==null?null:Arrays.asList(menuIds);
+		privilegeService.savePrivlegeTree(role.getUpdateId().intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), role.getId().toString(), ResourceTypeEnum.MENU.getCode(), menuIdList);
 	}
 	
 	public SysRole getRoleId(Long id){
-		return mapper.selectByPrimaryKey(id);
+		return mapper.selectByPrimaryKey(id.intValue());
 	}
 	
 	public List<SysRole> getRoles(){
-		return mapper.getRoles();
+		return mapperExt.getRoles();
 	}
 	
 	public Page<Object> getRoleByPage(RoleParamVo param){
 		Page<Object> page=new Page<Object>();
-		int count=mapper.countByParamVo(param);
-		List<Object> list=mapper.selectByParamVo(param);
+		int count=mapperExt.countByParamVo(param);
+		List<Object> list=mapperExt.selectByParamVo(param);
 		page.setTotal(count);
 		page.setRecords(list);
 		return page;
@@ -60,7 +81,22 @@ public class RoleService {
 		return mapper.selectByExample(example);
 	} 
 	
+	
+	/**
+	 * 查询某个组织的所有角色
+	 * @param orgCode
+	 * @return
+	 */
+	public List<SysRole> getRolesByOrg(String orgCode){
+		if(StrUtils.isNotEmpty(orgCode)) {
+			SysRoleExample example = new SysRoleExample();
+			example.createCriteria().andOrgCodeEqualTo(orgCode).andDelFlagEqualTo(0);
+			return mapper.selectByExample(example);
+		}
+		return null;
+	}
+	
 	public boolean existRoleName(SysRole role){
-		return mapper.existRoleName(role);
+		return mapperExt.existRoleName(role);
 	}
 }

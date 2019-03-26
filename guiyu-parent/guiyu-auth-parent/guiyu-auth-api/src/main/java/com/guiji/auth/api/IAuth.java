@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.guiji.auth.model.SysUserRoleVo;
+import com.guiji.auth.model.UserAuth;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysMenu;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
@@ -56,4 +58,31 @@ public interface IAuth {
 	@RequestMapping("/user/getUserExtByUserId")
 	public ReturnData<SysUserExt> getUserExtByUserId(@RequestParam("userId") Long userId) throws UnsupportedEncodingException;
 	
+	/**
+	 * 查询某个用户的菜单或者按钮
+	 * @param userId
+	 * @param menuType
+	 * @return
+	 */
+	@RequestMapping("/user/querySysMenuByUser")
+	public ReturnData<List<SysMenu>> querySysMenuByUser(@RequestParam("userId")Long userId,@RequestParam("menuType")Integer menuType);
+	
+	/**
+	 * 查询用户数据权限服务
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping("/user/queryUserDataAuth")
+	public ReturnData<UserAuth> queryUserDataAuth(@RequestParam("userId")Long userId);
+	
+	@RequestMapping("/user/getUserByName")
+	public ReturnData<List<SysUser>> getUserByName(String username);
+	
+	/**
+	 * 校验用户是否人工坐席
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping("/user/isAgentUser")
+	public ReturnData<Boolean> isAgentUser(@RequestParam("userId") Integer userId);
 }

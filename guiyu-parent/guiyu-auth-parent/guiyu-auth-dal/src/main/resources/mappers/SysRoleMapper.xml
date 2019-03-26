@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.guiji.user.dao.SysRoleMapper" >
   <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysRole" >
-    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="desc" property="desc" jdbcType="VARCHAR" />
     <result column="create_id" property="createId" jdbcType="BIGINT" />
@@ -12,6 +12,8 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="init_role" property="initRole" jdbcType="INTEGER" />
     <result column="super_admin" property="superAdmin" jdbcType="INTEGER" />
+    <result column="data_auth_level" property="dataAuthLevel" jdbcType="INTEGER" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -73,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, `name`, `desc`, create_id, create_time, update_id, update_time, del_flag, init_role, 
-    super_admin
+    super_admin, data_auth_level, org_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysRoleExample" >
     select
@@ -93,15 +95,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from sys_role
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_role
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <delete id="deleteByExample" parameterType="com.guiji.user.dao.entity.SysRoleExample" >
     delete from sys_role
@@ -109,22 +111,19 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysRole" useGeneratedKeys="true" keyProperty="id">
-    insert into sys_role (id, `name`, `desc`, 
-      create_id, create_time, update_id, 
-      update_time, del_flag, init_role, 
-      super_admin)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
-      #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}, #{initRole,jdbcType=INTEGER},
-      #{superAdmin,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysRole" useGeneratedKeys="true" keyProperty="id" >
+    insert into sys_role (`name`, `desc`, create_id, 
+      create_time, update_id, update_time, 
+      del_flag, init_role, super_admin, 
+      data_auth_level, org_code)
+    values (#{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{delFlag,jdbcType=INTEGER}, #{initRole,jdbcType=INTEGER}, #{superAdmin,jdbcType=INTEGER}, 
+      #{dataAuthLevel,jdbcType=INTEGER}, #{orgCode,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysRole" >
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysRole" useGeneratedKeys="true" keyProperty="id" >
     insert into sys_role
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
       <if test="name != null" >
         `name`,
       </if>
@@ -152,11 +151,14 @@
       <if test="superAdmin != null" >
         super_admin,
       </if>
+      <if test="dataAuthLevel != null" >
+        data_auth_level,
+      </if>
+      <if test="orgCode != null" >
+        org_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
@@ -184,6 +186,12 @@
       <if test="superAdmin != null" >
         #{superAdmin,jdbcType=INTEGER},
       </if>
+      <if test="dataAuthLevel != null" >
+        #{dataAuthLevel,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.guiji.user.dao.entity.SysRoleExample" resultType="java.lang.Integer" >
@@ -196,7 +204,7 @@
     update sys_role
     <set >
       <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
+        id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.name != null" >
         `name` = #{record.name,jdbcType=VARCHAR},
@@ -225,6 +233,12 @@
       <if test="record.superAdmin != null" >
         super_admin = #{record.superAdmin,jdbcType=INTEGER},
       </if>
+      <if test="record.dataAuthLevel != null" >
+        data_auth_level = #{record.dataAuthLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.orgCode != null" >
+        org_code = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -232,7 +246,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update sys_role
-    set id = #{record.id,jdbcType=BIGINT},
+    set id = #{record.id,jdbcType=INTEGER},
       `name` = #{record.name,jdbcType=VARCHAR},
       `desc` = #{record.desc,jdbcType=VARCHAR},
       create_id = #{record.createId,jdbcType=BIGINT},
@@ -241,7 +255,9 @@
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       del_flag = #{record.delFlag,jdbcType=INTEGER},
       init_role = #{record.initRole,jdbcType=INTEGER},
-      super_admin = #{record.superAdmin,jdbcType=INTEGER}
+      super_admin = #{record.superAdmin,jdbcType=INTEGER},
+      data_auth_level = #{record.dataAuthLevel,jdbcType=INTEGER},
+      org_code = #{record.orgCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -276,8 +292,14 @@
       <if test="superAdmin != null" >
         super_admin = #{superAdmin,jdbcType=INTEGER},
       </if>
+      <if test="dataAuthLevel != null" >
+        data_auth_level = #{dataAuthLevel,jdbcType=INTEGER},
+      </if>
+      <if test="orgCode != null" >
+        org_code = #{orgCode,jdbcType=VARCHAR},
+      </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.guiji.user.dao.entity.SysRole" >
     update sys_role
@@ -289,47 +311,9 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       del_flag = #{delFlag,jdbcType=INTEGER},
       init_role = #{initRole,jdbcType=INTEGER},
-      super_admin = #{superAdmin,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
+      super_admin = #{superAdmin,jdbcType=INTEGER},
+      data_auth_level = #{dataAuthLevel,jdbcType=INTEGER},
+      org_code = #{orgCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
-
-
-  <select id="getRoles" resultType="com.guiji.user.dao.entity.SysRole">
-    select id,name,init_role as initRole,super_admin as superAdmin from sys_role where del_flag=0
-  </select>
-
-  <insert id="addMenus">
-    delete from sys_menu_role where role_id=#{roleId};
-    insert into sys_menu_role(role_id,menu_id,create_time,update_time) values
-    <foreach collection="menuIds" item="item" separator=",">
-      (#{roleId},#{item},now(),now())
-    </foreach>
-    ;
-  </insert>
-  
-  <select id="countByParamVo" resultType="int">
-  	SELECT count(1) from sys_role where del_flag=0
-  	<if test="roleName != '' ">
-			and name=#{roleName}	
-	</if>
-  </select>
-  
-  <select id="selectByParamVo" resultType="map">
-  	 select a.id,a.name,a.desc,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName,a.init_role as initRole 
-  	 from sys_role a
-	 LEFT JOIN sys_user b on a.create_id =b.id
-	 where a.del_flag=0
-	 <if test="roleName != '' ">
-			and name like concat('%',#{roleName},'%')	
-	 </if>
-	 order by a.create_time desc
-	 limit ${(pageNo-1)*pageSize}, #{pageSize}
-  </select>
-  
-  <select id="existRoleName" resultType="boolean">
-  	select count(1)>0 from sys_role where name=#{name} 
-  	<if test="id != null">
-  		and id!=#{id}
-  	</if>
-  </select>
 </mapper>

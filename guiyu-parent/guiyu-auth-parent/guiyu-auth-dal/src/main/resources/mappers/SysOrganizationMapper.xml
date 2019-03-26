@@ -356,38 +356,19 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   
-  <select id="selectByPage" resultType="map">
-  	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line,ifnull(a.botstence,0) as botstence
-	from sys_organization a
-	LEFT JOIN sys_user b on a.create_id=b.id
-	LEFT JOIN sys_user c on a.update_id=c.id
-	LEFT JOIN sys_organization d on d.`code`=LEFT(a.`code`, LENGTH(a.`code`) - LOCATE('.', REVERSE(a.`code`))) and d.type=1
-	where a.del_flag=0
-	ORDER  BY a.update_time desc
-	limit ${(pageNo-1)*pageSize}, #{pageSize}
-  </select>
-  
   <select id="selectOpenByPage" resultType="map">
   	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line,ifnull(a.botstence,0) as botstence
+	b.username as createName,c.username as updateName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line 
 	from sys_organization a
 	LEFT JOIN sys_user b on a.create_id=b.id
 	LEFT JOIN sys_user c on a.update_id=c.id
-	LEFT JOIN sys_organization d on d.`code`=SUBSTRING_INDEX(a.`code`, '.', 1) and d.type=1
 	where a.del_flag=0 and a.open='1'
-	ORDER  BY a.update_time desc
-	limit ${(pageNo-1)*pageSize}, #{pageSize}
-  </select>
-  
-  <select id="selectOpenByPage2" resultType="map">
-  	select a.id,a.name,a.code,a.sub_code,a.type,a.create_time as createTime,a.update_time as updateTime,
-	b.username as createName,c.username as updateName,ifnull(d.`name`,'') as parentName,ifnull(a.robot,0) as robot,ifnull(a.line,0) as line 
-	from sys_organization a
-	LEFT JOIN sys_user b on a.create_id=b.id
-	LEFT JOIN sys_user c on a.update_id=c.id
-	LEFT JOIN sys_organization d on d.`code`=SUBSTRING_INDEX(a.`code`, '.', 1) and d.type=1
-	where a.del_flag=0 and a.open='1'
+	<if test="orgName != null">
+		AND a.`name` LIKE CONCAT('%',#{orgName},'%')
+	</if>
+	<if test="orgCode != null">
+		AND a.`code` LIKE CONCAT(#{orgCode},'%')
+	</if>
 	ORDER  BY a.update_time desc
 	limit ${(pageNo-1)*pageSize}, #{pageSize}
   </select>
@@ -429,21 +410,10 @@
   <select id="getProductByOrganizationId" resultType="java.lang.Integer">
     select a.product from sys_organization_product a where a.organization_id=#{organizationId}
   </select>
-
-  <insert id="insertOrganizationIndustry" parameterType="java.util.List">
-    insert into sys_organization_industry(organization_id,org_code,industry_id,create_id,update_id,create_time,update_time,del_flag) values
-    <foreach collection="industryIds" item="item" index="index" separator=",">
-      (#{organizationId},#{orgCode},#{item},#{userId},#{userId},now(),now(),0)
-    </foreach>
-  </insert>
-
-  <insert id="updateOrganizationIndustry" parameterType="java.util.List">
-    delete from sys_organization_industry where organization_id=#{organizationId};
-    insert into sys_organization_industry(organization_id,org_code,industry_id,create_id,update_id,create_time,update_time,del_flag) values
-    <foreach collection="industryIds" item="item" index="index" separator=",">
-      (#{organizationId},#{orgCode},#{item},#{userId},#{userId},now(),now(),0)
-    </foreach>
-  </insert>
+  
+  <select id="getOrgByProductId" resultType="java.lang.Integer">
+    select a.organization_id from sys_organization_product a where a.product=#{productId} and del_flag=0
+  </select>
 
   <select id="getIndustryByOrganizationId" resultType="java.lang.String">
     select a.industry_id as industryId from sys_organization_industry a where a.organization_id=#{organizationId}

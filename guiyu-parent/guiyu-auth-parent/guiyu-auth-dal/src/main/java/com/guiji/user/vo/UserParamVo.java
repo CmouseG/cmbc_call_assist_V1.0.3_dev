@@ -9,10 +9,34 @@ public class UserParamVo {
 	private int pageSize = 20;
 	
 	private String userName="";
-	
-	private String roleId="";
+	private String roleName="";
+	private String orgName="";
+	private Integer status;
 
+	private Long userId;
+	private Integer authLevel;
 	private String orgCode;
+
+	
+	public Long getUserId()
+	{
+		return userId;
+	}
+
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+
+	public Integer getAuthLevel()
+	{
+		return authLevel;
+	}
+
+	public void setAuthLevel(Integer authLevel)
+	{
+		this.authLevel = authLevel;
+	}
 
 	public int getPageNo() {
 		return pageNo;
@@ -44,14 +68,6 @@ public class UserParamVo {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-
-	public String getRoleId() {
-		return roleId;
-	}
-
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
 	}
 
 	public String getOrgCode() {

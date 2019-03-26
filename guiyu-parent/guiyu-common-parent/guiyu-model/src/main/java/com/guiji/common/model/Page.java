@@ -9,7 +9,6 @@ import java.util.List;
  * @author administrator
  *
  */
-@SuppressWarnings("rawtypes")
 public class Page<T> implements java.io.Serializable{
 
 	/**
@@ -24,6 +23,10 @@ public class Page<T> implements java.io.Serializable{
 	private int totalPage = 1;//total page number
 	private int totalRecord;//the record number
 	
+	private Long userId;
+	private Integer authLevel;
+	private String orgCode;
+	private String orgName;
 	
 	private List<T> records;
 
@@ -55,7 +58,7 @@ public class Page<T> implements java.io.Serializable{
 			this.pageSize = pageSize;
 		}
 	}
-	
+
 	public void setPageNo(int pageNo) {
 		if(pageNo < 1){
 			this.pageNo = 1;
@@ -122,4 +125,38 @@ public class Page<T> implements java.io.Serializable{
 	public List<T> getRecords() {
 		return records;
 	}
+	public Long getUserId()
+	{
+		return userId;
+	}
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+	public Integer getAuthLevel()
+	{
+		return authLevel;
+	}
+	public void setAuthLevel(Integer authLevel)
+	{
+		this.authLevel = authLevel;
+	}
+	public String getOrgCode()
+	{
+		return orgCode;
+	}
+	public void setOrgCode(String orgCode)
+	{
+		this.orgCode = orgCode;
+	}
+	
+	public String getOrgName()
+	{
+		return orgName;
+	}
+	public void setOrgName(String orgName)
+	{
+		this.orgName = orgName;
+	}
+	
 }

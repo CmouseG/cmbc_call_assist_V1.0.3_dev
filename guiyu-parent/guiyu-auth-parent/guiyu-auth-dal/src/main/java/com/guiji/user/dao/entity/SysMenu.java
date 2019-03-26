@@ -37,6 +37,8 @@ public class SysMenu implements Serializable {
     private String remarks;
 
     private Integer delFlag;
+    
+    private Integer sysType;
 
     private List<SysMenu> child=new ArrayList<>();
 
@@ -178,7 +180,14 @@ public class SysMenu implements Serializable {
         this.child = child;
     }
 
-    @Override
+	public Integer getSysType() {
+		return sysType;
+	}
+	public void setSysType(Integer sysType) {
+		this.sysType = sysType;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -200,6 +209,7 @@ public class SysMenu implements Serializable {
         sb.append(", appid=").append(appid);
         sb.append(", remarks=").append(remarks);
         sb.append(", delFlag=").append(delFlag);
+        sb.append(", sysType=").append(sysType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

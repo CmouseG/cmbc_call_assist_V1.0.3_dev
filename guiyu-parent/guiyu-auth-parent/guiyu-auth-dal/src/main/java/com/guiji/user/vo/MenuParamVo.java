@@ -8,6 +8,10 @@ public class MenuParamVo {
 	
 	private int pageSize = 20;
 	
+	private Integer pid;
+	
+	private Integer type;
+	
 	private String menuName="";
 
 	public int getPageNo() {
@@ -42,6 +46,40 @@ public class MenuParamVo {
 		this.menuName = menuName;
 	}
 
-	
-	
+	/**
+	 * @return the pid
+	 */
+	public Integer getPid() {
+		return pid;
+	}
+
+	/**
+	 * @param pid the pid to set
+	 */
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Integer getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "MenuParamVo [pageNo=" + pageNo + ", totalPage=" + totalPage + ", pageSize=" + pageSize + ", pid=" + pid
+				+ ", type=" + type + ", menuName=" + menuName + "]";
+	}
 }

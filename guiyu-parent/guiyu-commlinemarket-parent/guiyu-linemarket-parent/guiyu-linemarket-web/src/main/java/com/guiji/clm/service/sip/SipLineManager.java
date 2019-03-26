@@ -95,7 +95,7 @@ public class SipLineManager {
 		}
 		if(StrUtils.isEmpty(sipLineBaseInfo.getOrgCode())) {
 			//设置企业
-			SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(sipLineBaseInfo.getCrtUser());
+			SysOrganization sysOrganization = dataLocalCacheUtil.queryOrgByUser(sipLineBaseInfo.getCrtUser());
 			if(sysOrganization!=null) {
 				sipLineBaseInfo.setOrgCode(sysOrganization.getCode());
 			}
@@ -350,7 +350,7 @@ public class SipLineManager {
 		SysOrganization sysOrganization = null;
 		if(StrUtils.isEmpty(sipLineApply.getApplyOrgCode())) {
 			//设置企业
-			sysOrganization = dataLocalCacheUtil.queryUserRealOrg(sipLineApply.getApplyUser());
+			sysOrganization = dataLocalCacheUtil.queryOrgByUser(sipLineApply.getApplyUser());
 			if(sysOrganization!=null) {
 				sipLineApply.setApplyOrgCode(sysOrganization.getCode());
 			}

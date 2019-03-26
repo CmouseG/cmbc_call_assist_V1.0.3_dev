@@ -55,6 +55,10 @@ public class RobotConstants {
 	public static final String LOCK_ROBOT_AIPOOL_INIT = "LOCK_ROBOT_AIPOOL_INIT";	//资源锁-机器人池初始化
 	public static final String LOCK_ROBOT_AIPOOL_ASSIGN = "LOCK_ROBOT_AIPOOL_ASSIGN";	//资源锁-机器人池分配锁
 	
+	public static final int USER_DATA_AUTH_ME = 1;	//数据查询权限-本人
+	public static final int USER_DATA_AUTH_ORG = 2;	//数据查询权限-本组织
+	public static final int USER_DATA_AUTH_ORGTREE = 3;	//数据查询权限-本组织以及下级组织
+	
 	/**
 	 * 话术模板版本
 	 */

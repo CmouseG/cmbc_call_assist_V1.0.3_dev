@@ -22,7 +22,7 @@ import com.guiji.clm.util.DataLocalCacheUtil;
 import com.guiji.clm.vo.LineAssignInfo;
 import com.guiji.clm.vo.SipLineExclusiveQueryCondition;
 import com.guiji.component.result.Result;
-import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.StrUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,10 +51,10 @@ public class LineController {
 	 */
 	@RequestMapping(value = "/getLineInfos4Allot")
     public Result.ReturnData<List<LineAssignInfo>> getLineInfos4Allot(@RequestParam(value="customerId",required=true) String customerId) {
-		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(customerId);
-		if(sysOrganization!=null) {
+		SysUser sysUser = dataLocalCacheUtil.queryUser(customerId);
+		if(sysUser!=null) {
 			SipLineExclusiveQueryCondition condition = new SipLineExclusiveQueryCondition();
-			condition.setOrgCode(sysOrganization.getCode());	//查询本企业下线路
+			condition.setOrgCode(sysUser.getOrgCode());	//查询本企业下线路
 			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}}); //正常状态
 			List<SipLineExclusive> list = sipLineExclusiveService.querySipLineExclusiveList(condition);
 			if(list!=null && !list.isEmpty()) {

@@ -14,7 +14,7 @@ import com.guiji.robot.model.AiFlowMsgPushReq;
 import com.guiji.robot.service.vo.CallInfo;
 import com.guiji.robot.service.vo.CallSentence;
 import com.guiji.robot.util.DataLocalCacheUtil;
-import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.BeanUtil;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
@@ -128,8 +128,8 @@ public class CallDealService {
 		if(callInfo!=null) {
 			//将此通电话编号入队给其他电话使用
 			//获取机构
-			SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
-			redisUtil.rightPush(NEXT_INCR_KEY+org.getCode(),callInfo.getIncr());
+			SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
+			redisUtil.rightPush(NEXT_INCR_KEY+sysUser.getOrgCode(),callInfo.getIncr());
 			//清除电话cache
 			aiCacheService.delUserCall(userId, seqId);
 		}
@@ -155,8 +155,8 @@ public class CallDealService {
 	 */
 	private long getNextIncrNo(AiCallStartReq aiCallStartReq) {
 		//获取机构
-		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(aiCallStartReq.getUserId());
-		Object obj = redisUtil.lrightPop(NEXT_INCR_KEY+org.getCode());
+		SysUser sysUser = dataLocalCacheUtil.queryUser(aiCallStartReq.getUserId());
+		Object obj = redisUtil.lrightPop(NEXT_INCR_KEY+sysUser.getOrgCode());
 		if(obj!=null) {
 			if(obj instanceof Long) {
 				return (Long)obj;

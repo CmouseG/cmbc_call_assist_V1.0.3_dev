@@ -1,6 +1,7 @@
 package com.guiji.notice.controller;
 
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.notice.constant.Constant;
 import com.guiji.notice.service.MailService;
@@ -51,6 +52,7 @@ public class MailController {
 
 
     @ApiOperation(value = "站内信，删除,id以逗号拼接")
+    @Jurisdiction("newsCenter_newsMail_delete")
     @GetMapping(value = "deleteMailById")
     public Result.ReturnData deleteMailById(String id) {
         if (StringUtils.isBlank(id)) {

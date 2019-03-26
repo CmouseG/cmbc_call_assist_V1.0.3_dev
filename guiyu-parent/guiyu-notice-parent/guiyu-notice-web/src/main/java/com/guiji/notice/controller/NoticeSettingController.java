@@ -1,6 +1,7 @@
 package com.guiji.notice.controller;
 
 import com.guiji.auth.api.IAuth;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.notice.constant.Constant;
@@ -117,6 +118,7 @@ public class NoticeSettingController implements INoticeSetting {
     }
 
     @ApiOperation(value = "提醒设置，编辑消息接收者,确定提交调用该方法。用户Id以逗号连接")
+    @Jurisdiction("newsCenter_receiveSetting_editReceiver")
     @GetMapping(value = "setReceivers")
     public Result.ReturnData setReceivers(@NotNull(message="消息接受者id不能为空") @Pattern(regexp = "^(\\d+(,\\d+)*)*$", message = "消息接受者id格式错误")  String receiverIds,
                                           @NotEmpty(message="id不能为空") String id) {
@@ -126,6 +128,7 @@ public class NoticeSettingController implements INoticeSetting {
     }
 
     @ApiOperation(value = "提醒设置，恢复默认设置")
+    @Jurisdiction("newsCenter_receiveSetting_reDefault")
     @GetMapping(value = "restoreDefaultSettings")
     public Result.ReturnData restoreDefaultSettings(@RequestHeader Long userId) {
         Result.ReturnData<SysOrganization> returnData = auth.getOrgByUserId(userId);
@@ -154,6 +157,7 @@ public class NoticeSettingController implements INoticeSetting {
     }
 
     @ApiOperation(value = "修改意向标签,勾选的标签以逗号拼接传递到labels字段")
+    @Jurisdiction("newsCenter_receiveSetting_noticeType1")
     @GetMapping(value = "updateNoticeIntent")
     public Result.ReturnData updateNoticeIntent(@RequestHeader Long userId,@NotNull(message="标签不能不传") String labels) {
 

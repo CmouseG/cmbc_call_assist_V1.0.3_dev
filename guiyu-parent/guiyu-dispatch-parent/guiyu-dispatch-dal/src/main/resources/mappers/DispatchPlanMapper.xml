@@ -97,7 +97,7 @@
     plan_uuid, user_id, batch_id, phone, attach, params, status_plan, status_sync,
     recall, recall_params, robot, line, `result`, call_agent, clean, call_data, call_hour,
     gmt_create, gmt_modified, is_tts, username, replay_type, is_del, line_name, robot_name,
-    batch_name, flag, org_code, city_name, city_code, line_type
+    batch_name, flag, org_code,org_id,  city_name, city_code, line_type
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.dispatch.dao.entity.DispatchPlanExample" >
     select
@@ -951,7 +951,6 @@
           distinct
         </if>
         'true' as QUERYID,
-        id              ,
         plan_uuid       ,
         user_id         ,
         batch_id        ,
@@ -980,6 +979,7 @@
         batch_name      ,
         flag            ,
         org_code        ,
+    org_id ,
         city_name       ,
         city_code       ,
         line_type       ,

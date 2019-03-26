@@ -36,6 +36,7 @@ public class BatchImportSaveDBMQListener
 		{
 			e.printStackTrace();
 			logger.error(e.getMessage());
+			logger.info("BatchImportSaveDBMQListener.process:{}", vo, e);
 		}
 
 	}

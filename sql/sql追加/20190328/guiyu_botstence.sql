@@ -1,0 +1,1 @@
+ALTER TABLE guiyu_botstence.bot_sentence_grade_rule MODIFY COLUMN remark VARCHAR(256) COMMENT '意向备注';

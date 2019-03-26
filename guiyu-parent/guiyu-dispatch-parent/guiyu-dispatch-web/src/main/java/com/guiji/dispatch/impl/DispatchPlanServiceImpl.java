@@ -312,7 +312,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				}
 			}
 		}
-		logger.info("now do batchUpdatePlans:{},{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null, orgIds);
 		dis.setGmtModified(DateUtil.getCurrent4Time());
 
 		DispatchPlanExample ex = new DispatchPlanExample();
@@ -624,25 +623,32 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		// 累计任务号码总数，累计拨打号码总数，最后计划日期，最后拨打日期，累计服务天数
 		int countNums = 0;
 		DispatchPlanExample ex = new DispatchPlanExample();
-
+		Criteria createCriteria = ex.createCriteria();
 		if (!isSuperAdmin) {
 
-			ex.createCriteria().andOrgIdIn(subOrgIds);
-
+			createCriteria.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria.andOrgCodeLike(orgCode + "%");
+			}
 			countNums = dispatchPlanMapper.countByExample(ex);
 		} else {
-			ex.createCriteria().andOrgIdIn(allOrgIds);
+			createCriteria.andOrgIdIn(allOrgIds);
 			countNums = dispatchPlanMapper.countByExample(ex);
 		}
 
 		ex = new DispatchPlanExample();
+		createCriteria = ex.createCriteria();
 		if (!isSuperAdmin) {
 			// 不是超级管理员就是通过orgCode查询
-			ex.createCriteria().andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
+			createCriteria.andStatusPlanEqualTo(Constant.STATUSPLAN_1).andIsDelEqualTo(Constant.IS_DEL_0)
 					.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria.andOrgCodeLike(orgCode + "%");
+			}
 		} else {
 			// 超级管理员查询所有
-			ex.createCriteria().andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);;
+			createCriteria.andIsDelEqualTo(Constant.IS_DEL_0).andStatusPlanEqualTo(Constant.STATUSPLAN_1).andOrgIdIn(allOrgIds);
+			;
 		}
 		int noCallNums = dispatchPlanMapper.countByExample(ex);
 
@@ -651,6 +657,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_1);
 		if (!isSuperAdmin) {
 			andStatusPlanEqualTo2.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				andStatusPlanEqualTo2.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -671,6 +680,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 				.andStatusPlanEqualTo(Constant.STATUSPLAN_2);
 		if (!isSuperAdmin) {
 			andStatusPlanEqualTo3.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				andStatusPlanEqualTo3.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -726,6 +738,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		if (!isSuperAdmin) {
 			createCriteria.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -748,6 +763,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 		}
 		if (!isSuperAdmin) {
 			createCriteria1.andOrgIdIn(subOrgIds);
+			if (StringUtils.isNotEmpty(orgCode)) {
+				createCriteria1.andOrgCodeLike(orgCode + "%");
+			}
 		}
 		else
 		{
@@ -1031,10 +1049,6 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  Criteria createCriteria = example.createCriteria();
 	  createCriteria.andOrgIdEqualTo(queryPlanDto.getOperOrgId());
 
-	  logger.info(
-			  "now do queryPlanList:{}:",
-			  (null != queryPlanDto) ? JsonUtils.bean2Json(queryPlanDto) : null);
-
 	  if (!StringUtils.isEmpty(queryPlanDto.getPhone())) {
 		  createCriteria.andPhoneEqualTo(queryPlanDto.getPhone());
 	  }
@@ -1093,14 +1107,12 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {
 		  createCriteria.andResultIn(queryPlanDto.getResultList());
 	  }
-
+	  if (!queryPlanDto.isSuperAdmin()) {
+		  createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+	  }
 	  createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
 	  List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
-
-	  logger.info(
-			  "now do queryPlanList.selectByExample:{}:",
-			  (null != queryPlanDto) ? JsonUtils.bean2Json(selectByExample) : null);
 
 	  List<DispatchPlan> resList = new ArrayList<DispatchPlan>();
 	  if (null != selectByExample && selectByExample.size() > 0) {
@@ -1157,9 +1169,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			  resList.add(dis);
 		  }
 	  }
-	  logger.info(
-			  "now do queryPlanList.resList:{}:",
-			  (null != queryPlanDto) ? JsonUtils.bean2Json(resList) : null);
+
 	  int count = dispatchPlanMapper.countByExample(example);
 	  page.setList(resList);
 	  page.setTotalItemAndPageNumber(count);
@@ -1287,10 +1297,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	private List<Integer> getSubOrgIdsByUserId(Integer userId)
 	{
-		logger.info("获取getSubOrgIdsByUserId，userId：{}，",userId);
 		SysOrganization userOrg = ResHandler.getResObj(auth.getOrgByUserId(Long.valueOf(userId)));
-
-		logger.info("获取getSubOrgIdsByUserId，userId：{}，user:{}",userId,userOrg);
 
 		return getSubOrgIds(userOrg.getId().intValue());
 	}

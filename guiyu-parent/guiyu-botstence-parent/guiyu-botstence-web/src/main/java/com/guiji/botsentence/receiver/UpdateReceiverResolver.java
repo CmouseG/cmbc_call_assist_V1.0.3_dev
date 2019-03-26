@@ -69,9 +69,9 @@ public class UpdateReceiverResolver {
 
 		for(int i = 0 ; i < 4 ; i++) {
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				logger.error("系统等待10秒异常...", e);
+				logger.error("系统等待5秒异常...", e);
 			}
 			
 			BotSentenceDeployExample deployExample = new BotSentenceDeployExample();

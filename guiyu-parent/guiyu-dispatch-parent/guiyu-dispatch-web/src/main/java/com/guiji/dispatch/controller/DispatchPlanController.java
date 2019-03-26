@@ -105,7 +105,6 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("batchUpdatePlans")
 	public boolean batchUpdatePlans(@RequestBody IdsDto[] dto) {
-		logger.info("deleteAllPlanByBatchId:{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null);
 		return dispatchPlanService.batchUpdatePlans(dto);
 	}
 
@@ -220,10 +219,6 @@ public class DispatchPlanController {
 		page.setPageSize(pageSize);
 		page.setRecords(resPage.getList());
 		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
-
-		logger.info(
-				"now do queryPlanList.查询计划列表:{}:",
-				(null != page) ? JsonUtils.bean2Json(page) : null);
 
 		return page;
 	}

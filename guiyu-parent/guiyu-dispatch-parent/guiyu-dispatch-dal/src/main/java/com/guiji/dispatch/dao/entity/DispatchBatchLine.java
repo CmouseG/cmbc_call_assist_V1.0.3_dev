@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class DispatchBatchLine implements Serializable {
+
+
+    private static final long serialVersionUID = 1L;
     private Integer id;
 
     private Integer batchId;
@@ -21,8 +24,6 @@ public class DispatchBatchLine implements Serializable {
     private BigDecimal lineAmount;
 
     private String overtarea;
-
-    private static final long serialVersionUID = 1L;
 
     public Integer getId() {
         return id;
@@ -98,21 +99,16 @@ public class DispatchBatchLine implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", batchId=").append(batchId);
-        sb.append(", lineId=").append(lineId);
-        sb.append(", userId=").append(userId);
-        sb.append(", orgId=").append(orgId);
-        sb.append(", lineType=").append(lineType);
-        sb.append(", lineName=").append(lineName);
-        sb.append(", lineAmount=").append(lineAmount);
-        sb.append(", overtarea=").append(overtarea);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "DispatchBatchLine{" +
+                "id=" + id +
+                ", batchId=" + batchId +
+                ", lineId=" + lineId +
+                ", userId=" + userId +
+                ", orgId=" + orgId +
+                ", lineType=" + lineType +
+                ", lineName='" + lineName + '\'' +
+                ", lineAmount=" + lineAmount +
+                ", overtarea='" + overtarea + '\'' +
+                '}';
     }
 }

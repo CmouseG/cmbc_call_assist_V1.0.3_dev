@@ -4,6 +4,7 @@ import com.guiji.callcenter.dao.entity.CallOutPlan;
 import com.guiji.calloutserver.api.IAssistCall;
 import com.guiji.ccmanager.constant.Constant;
 import com.guiji.ccmanager.service.AssistCallService;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.utils.FeignBuildUtil;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
+/**
+ * 废弃
+ */
 @RestController
 @Validated
 public class AssistCallController {
@@ -75,6 +79,7 @@ public class AssistCallController {
     }
 
     @ApiOperation(value = "协呼，转人工并且关闭机器人")
+    @Jurisdiction("callCenter_workPlatform_helpCallHandUp")
     @GetMapping("/assistToAgentAndCloseRobot")
     public Result.ReturnData assistToAgentAndCloseRobot(@NotEmpty(message = "callId不能为空") String callId,@NotEmpty(message = "agentGroupId不能为空") String agentGroupId){
         log.info("协呼get assistToAgentAndCloseRobot request callId[{}],agentGroupId[{}]",callId,agentGroupId);

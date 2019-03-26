@@ -15,16 +15,22 @@ public interface StastisticReportLineMapper {
 
     void insertReportLineCodeBatch(List<ReportLineCode> list);
 
-    List<LineMonitorRreport> getLineMonitorReportByLineId(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("orgCode") String orgCode);
+    List<LineMonitorRreport> getLineMonitorReportByLineId(@Param("lineId") Integer lineId, @Param("startTime") Date startTime,
+                                                          @Param("orgCode") String orgCode, @Param("authLevel") Integer authLevel,@Param("userId") Long userId);
 
-    List<LineMonitorRreport> getLineMonitorReportByUserId(@Param("orgCode") String orgCode, @Param("startTime") Date startTime);
+    List<LineMonitorRreport> getLineMonitorReportByUserId(@Param("orgCode") String orgCode, @Param("authLevel") Integer authLevel,@Param("userId") Long userId,
+                                                          @Param("startTime") Date startTime);
 
-    List<Map> getLineHangupCodeOverView(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime, @Param("orgCode") String orgCode);
+    List<Map> getLineHangupCodeOverView(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime,
+                                        @Param("orgCode") String orgCode, @Param("userId") Integer userId, @Param("authLevel") Integer authLevel);
 
-    List<Map> getLineHangupCodeErrorSum(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime, @Param("orgCode") String orgCode);
+    List<Map> getLineHangupCodeErrorSum(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime,
+                                        @Param("orgCode") String orgCode, @Param("userId") Integer userId, @Param("authLevel") Integer authLevel);
 
-    List<Map> getLineHangupCodeErrorNums(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime, @Param("orgCode") String orgCode);
-    List<Map> getLineHangupCodeErrorNumsCancel(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime, @Param("orgCode") String orgCode);
+    List<Map> getLineHangupCodeErrorNums(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime,
+                                         @Param("orgCode") String orgCode, @Param("userId") Integer userId, @Param("authLevel") Integer authLevel);
+    List<Map> getLineHangupCodeErrorNumsCancel(@Param("lineId") Integer lineId, @Param("startTime") Date startTime, @Param("enTime") Date enTime,
+                                               @Param("orgCode") String orgCode, @Param("userId") Integer userId, @Param("authLevel") Integer authLevel);
 
     List<ReportLineStatus> selectReportLineStatusFromCode(@Param("createTime") Date createTime);
 

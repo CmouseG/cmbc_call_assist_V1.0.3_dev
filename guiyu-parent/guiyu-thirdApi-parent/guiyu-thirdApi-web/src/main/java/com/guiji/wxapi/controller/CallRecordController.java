@@ -37,8 +37,9 @@ public class CallRecordController {
 
     @ApiOperation(value = "获取通话记录标签")
     @GetMapping("getCallLabel")
-    public Result.ReturnData<List<String>> getCallIntent(@RequestHeader Long userId, @RequestHeader String orgCode) {
-        return iLabel.getAllLabelOneMonth(orgCode,userId);
+    public Result.ReturnData<List<String>> getCallIntent(@RequestHeader Long userId, @RequestHeader String orgCode,
+                                                         @RequestHeader Integer authLevel) {
+        return iLabel.getAllLabelOneMonth(orgCode,userId, authLevel);
     }
 
     @ApiOperation(value = "获取单条通话记录详情")
@@ -103,7 +104,8 @@ public class CallRecordController {
     @ApiOperation(value = "获取通话记录列表")
     @GetMapping("getCallRecordList")
     public Result.ReturnData<Map> getCallRecordList(String size, String page, String time, String label, @RequestHeader Integer isDesensitization,
-                                                    @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode) {
+                                                    @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode,
+                                                    @RequestHeader Integer authLevel) {
 
         if(StringUtils.isBlank(label)){
             return Result.error(Constant.ERROR_PARAM);
@@ -125,6 +127,7 @@ public class CallRecordController {
         callRecordReq.setSuperAdmin(isSuperAdmin);
         callRecordReq.setUserId(userId);
         callRecordReq.setIsDesensitization(isDesensitization);
+        callRecordReq.setAuthLevel(authLevel);
 
         Result.ReturnData<Map> result = iCallPlanDetail.getCallRecordList(callRecordReq);
 

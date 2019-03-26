@@ -8,6 +8,7 @@ import com.guiji.ccmanager.vo.LineInfo4Page;
 import com.guiji.ccmanager.vo.LineInfoAddVO;
 import com.guiji.ccmanager.vo.LineInfoUpdateVO;
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -46,6 +47,7 @@ public class LineInfoController {
             @ApiImplicitParam(name = "pageSize", value = "每页数量", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true)
     })
+    @Jurisdiction("callCenter_lineInfoList_defquery")
     @GetMapping(value = "getLineInfos")
     public Result.ReturnData<Page<LineInfo4Page>> getLineInfoByCustom(String lineName, String pageSize, String pageNo, @RequestHeader String orgCode,
                                                                       @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin) {
@@ -85,6 +87,7 @@ public class LineInfoController {
     }
 
     @ApiOperation(value = "修改线路接口")
+    @Jurisdiction("callCenter_lineInfoList_edit")
     @PostMapping(value = "updateLineInfo")
     public Result.ReturnData<Boolean> updateLineInfo(@RequestBody @Validated LineInfoUpdateVO lineInfoVO, @RequestHeader Long userId) {
         if (lineInfoVO.getLineId() == 0) {
@@ -100,6 +103,7 @@ public class LineInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "线路id", dataType = "String", paramType = "query", required = true)
     })
+    @Jurisdiction("callCenter_lineInfoList_delete")
     @PostMapping(value = "deleteLineInfo/{id}")
     public Result.ReturnData<Boolean> deleteLineInfo(@PathVariable("id") String id) {
         log.info("get request deleteLineInfo，id[{}]", id);

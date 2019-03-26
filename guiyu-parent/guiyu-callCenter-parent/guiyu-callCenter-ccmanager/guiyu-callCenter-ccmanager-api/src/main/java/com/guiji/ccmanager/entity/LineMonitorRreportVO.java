@@ -18,6 +18,8 @@ public class LineMonitorRreportVO implements Serializable {
     private String sip_port;
     private String lineName;
     private String orgCode;
+    private Long userId;
+    private Integer authLevel;
 
     public Integer getLineId() {
         return lineId;
@@ -113,5 +115,21 @@ public class LineMonitorRreportVO implements Serializable {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Integer getAuthLevel() {
+        return authLevel;
+    }
+
+    public void setAuthLevel(Integer authLevel) {
+        this.authLevel = authLevel;
     }
 }

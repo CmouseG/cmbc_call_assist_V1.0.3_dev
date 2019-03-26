@@ -16,12 +16,12 @@ import java.util.Map;
  * @Description:
  */
 public interface CallDetailService {
-    List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode,
+    List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
                                             int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization);
 
     CallPlanDetailRecordVO getCallDetail(BigInteger callId);
 
-    int callrecordCount(Date start, Date end, Boolean isSuperAdmin, String customerId, String orgCode, CallRecordListReq callRecordListReq);
+    int callrecordCount(Date start, Date end, Integer authLevel, String customerId, String orgCode, CallRecordListReq callRecordListReq);
 
     String getDialogue(String callId);
 
@@ -47,5 +47,5 @@ public interface CallDetailService {
 
     List<CallOutPlan> getCallRecordListByPhone(String phone);
 
-    List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> callIds, Long userId, Boolean isSuperAdmin, Integer isDesensitization);
+    List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> callIds, Integer isDesensitization);
 }

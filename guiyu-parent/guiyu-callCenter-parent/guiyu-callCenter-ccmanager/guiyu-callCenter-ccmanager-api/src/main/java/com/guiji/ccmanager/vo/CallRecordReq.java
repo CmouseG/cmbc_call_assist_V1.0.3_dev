@@ -12,6 +12,7 @@ public class CallRecordReq  implements Serializable {
     private Integer isDesensitization;  //用于确定是否对电话号码进行加密
     private Boolean isSuperAdmin;
     private String orgCode;
+    private Integer authLevel;
 
     private static final long serialVersionUID = 1L;
 
@@ -80,6 +81,14 @@ public class CallRecordReq  implements Serializable {
         this.isDesensitization = isDesensitization;
     }
 
+    public Integer getAuthLevel() {
+        return authLevel;
+    }
+
+    public void setAuthLevel(Integer authLevel) {
+        this.authLevel = authLevel;
+    }
+
     @Override
     public String toString() {
         return "CallRecordReq{" +
@@ -90,6 +99,7 @@ public class CallRecordReq  implements Serializable {
                 ", userId=" + userId +
                 ", secretId=" + isDesensitization +
                 ", isSuperAdmin=" + isSuperAdmin +
+                ", authLevel=" + authLevel +
                 ", orgCode='" + orgCode + '\'' +
                 '}';
     }

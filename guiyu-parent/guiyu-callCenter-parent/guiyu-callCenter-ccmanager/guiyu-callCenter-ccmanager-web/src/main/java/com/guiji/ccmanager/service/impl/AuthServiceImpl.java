@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         List<SysRole> listRole = result.getBody();
         if(listRole!=null && listRole.size()>0){
             for(SysRole sysRole:listRole){
-                if(sysRole.getId()==5){
+                if(sysRole.getName().equals("企业客服")){
                     return true;
                 }
             }

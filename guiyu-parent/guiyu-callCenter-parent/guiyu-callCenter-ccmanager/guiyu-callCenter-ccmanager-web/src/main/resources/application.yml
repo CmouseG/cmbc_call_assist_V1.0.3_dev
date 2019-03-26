@@ -62,8 +62,8 @@ properties:
 ribbon:
   ReadTimeout: 60000
   ConnectTimeout: 60000
-#download.path: D:\\downloads
-download.path: /home/apps/callcenter/ccmanager/dowlands
+download.path: D:\\downloads
+#download.path: /home/apps/callcenter/ccmanager/dowlands
 #xxl-job admin中心配置
 xxl:
   job:

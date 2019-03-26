@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * @Auther: 黎阳
+ * @Auther: 黎阳  废弃
  * @Date: 2018/12/6 0006 11:08
  * @Description:
  */

@@ -74,23 +74,24 @@ public class CallDetailServiceImpl implements CallDetailService {
         if (callOutPlanQueryEntity.getEndDate() != null) {
             criteria.andCreateTimeLessThan(callOutPlanQueryEntity.getEndDate());
         }
+
+        long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
+        if(authService.isSeat(userId)){//客服
+            String userName = authService.getUserName(userId);
+            AgentExample agentExample = new AgentExample();
+            agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
+            List<Agent> listAgent = agentMapper.selectByExample(agentExample);
+            Long agentId = listAgent.get(0).getUserId();
+            criteria.andAgentIdEqualTo(String.valueOf(agentId));
+        }else if(callOutPlanQueryEntity.getAuthLevel() ==1) {
+            criteria.andCustomerIdEqualTo(Integer.valueOf(callOutPlanQueryEntity.getCustomerId()));
+        }else if(callOutPlanQueryEntity.getAuthLevel() ==2) {
+            criteria.andOrgCodeEqualTo(callOutPlanQueryEntity.getOrgCode());
+        }else if(callOutPlanQueryEntity.getAuthLevel() ==3) {
+            criteria.andOrgCodeLike(callOutPlanQueryEntity.getOrgCode()+"%");
+        }
         if(StringUtils.isNotBlank(queryUser)){
             criteria.andCustomerIdEqualTo(Integer.valueOf(queryUser));
-        }
-        if(!callOutPlanQueryEntity.getIsSuperAdmin()){//不是管理员
-            long userId = Long.valueOf(callOutPlanQueryEntity.getCustomerId());
-            if (authService.isAgentOrCompanyAdmin(userId) ) {//代理商 或者企业管理员
-                criteria.andOrgCodeLike(callOutPlanQueryEntity.getOrgCode()+"%");
-            } else if(authService.isSeat(userId)){//客服
-                String userName = authService.getUserName(userId);
-                AgentExample agentExample = new AgentExample();
-                agentExample.createCriteria().andCrmLoginIdEqualTo(userName);
-                List<Agent> listAgent = agentMapper.selectByExample(agentExample);
-                Long agentId = listAgent.get(0).getUserId();
-                criteria.andAgentIdEqualTo(String.valueOf(agentId));
-            }else {
-                criteria.andCustomerIdEqualTo(Integer.valueOf(callOutPlanQueryEntity.getCustomerId()));
-            }
         }
         if (StringUtils.isNotBlank(callOutPlanQueryEntity.getPhoneNum())) {
             criteria.andPhoneNumLike("%"+callOutPlanQueryEntity.getPhoneNum()+"%");
@@ -162,6 +163,8 @@ public class CallDetailServiceImpl implements CallDetailService {
             map.put("time", callRecordReq.getTime() - 1);
         if (callRecordReq.getAccurateIntent() != null)
             map.put("accurateIntent", callRecordReq.getAccurateIntent());
+        if (callRecordReq.getAuthLevel() != null)
+            map.put("authLevel", callRecordReq.getAuthLevel());
         List<BigInteger> ids = callOutPlanMapper.selectCallPlanRecordIds4Encrypt(map);
         if(ids!=null && ids.size()>0){
             List<Map> list = callOutPlanMapper.selectCallPlanRecord4Encrypt(ids,callRecordReq.getIsDesensitization());
@@ -188,7 +191,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode,
+    public List<CallOutPlan4ListSelect> callrecord(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode,
                                                    int pageSize, int pageNo, CallRecordListReq callRecordListReq, Integer isDesensitization) {
 
         CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
@@ -197,7 +200,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanQueryEntity.setEndDate(endDate);
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
-        callOutPlanQueryEntity.setIsSuperAdmin(isSuperAdmin);
+        callOutPlanQueryEntity.setAuthLevel(authLevel);
         CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
         int limitStart = (pageNo - 1) * pageSize;
         example.setLimitStart(limitStart);
@@ -247,7 +250,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public int callrecordCount(Date startDate, Date endDate, Boolean isSuperAdmin, String customerId, String orgCode, CallRecordListReq callRecordListReq) {
+    public int callrecordCount(Date startDate, Date endDate, Integer authLevel, String customerId, String orgCode, CallRecordListReq callRecordListReq) {
 
         CallOutPlanQueryEntity callOutPlanQueryEntity = new CallOutPlanQueryEntity();
         BeanUtil.copyProperties(callRecordListReq, callOutPlanQueryEntity);
@@ -255,7 +258,7 @@ public class CallDetailServiceImpl implements CallDetailService {
         callOutPlanQueryEntity.setEndDate(endDate);
         callOutPlanQueryEntity.setCustomerId(customerId);
         callOutPlanQueryEntity.setOrgCode(orgCode);
-        callOutPlanQueryEntity.setIsSuperAdmin(isSuperAdmin);
+        callOutPlanQueryEntity.setAuthLevel(authLevel);
         CallOutPlanExample example = getExample(callOutPlanQueryEntity,callRecordListReq.getCustomerId());
 
         return callOutPlanMapper.countByExample(example);
@@ -439,7 +442,7 @@ public class CallDetailServiceImpl implements CallDetailService {
     }
 
     @Override
-    public List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> idList, Long userID, Boolean isSuperAdmin, Integer isDesensitization) {
+    public List<CallOutPlanRegistration> getCallPlanList(List<BigInteger> idList, Integer isDesensitization) {
 
         List<CallOutPlanRegistration> list = callPlanExportMapper.selectExportCallPlanDetail(idList,isDesensitization);
 

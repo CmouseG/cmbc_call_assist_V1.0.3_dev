@@ -11,5 +11,6 @@ import java.util.List;
 public interface ILabel {
 
     @GetMapping("getAllLabelOneMonth")
-    Result.ReturnData<List<String>> getAllLabelOneMonth(@RequestParam(value="orgCode") String orgCode,@RequestParam(value="userId") Long userId);
+    Result.ReturnData<List<String>> getAllLabelOneMonth(@RequestParam(value="orgCode") String orgCode,@RequestParam(value="userId") Long userId,
+                                                        @RequestParam(value="authLevel") Integer authLevel);
 }

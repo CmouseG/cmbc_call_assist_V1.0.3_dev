@@ -18,15 +18,15 @@ import java.util.Map;
 public interface StatisticService {
 //    List<Map> getIntentCountOnTime(Long userId, String startDate, String endDate) throws ParseException;
 
-    List<DashboardOverView> getDashboardOverView(String orgCode, String startDate, String endDate, String tempId);
+    List<DashboardOverView> getDashboardOverView(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId);
 
-    List<Map<String, Object>> getIntentCount(String orgCode, Long userId, String startDate, String endDate, String tempId) throws ParseException;
+    List<Map<String, Object>> getIntentCount(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId) throws ParseException;
 
-    List<CallCountHour> getConnectDataHour(String orgCode, Date startDate, Date endDate, String tempId);
+    List<CallCountHour> getConnectDataHour(int authLevel,long userId,String orgCode, Date startDate, Date endDate, String tempId);
 
-    List<ReasonCount> getConnectReasonDay(String orgCode, String startDate, String endDate, String tempId);
+    List<ReasonCount> getConnectReasonDay(int authLevel,long userId,String orgCode, String startDate, String endDate, String tempId);
 
     List<ErrorMatch> getErrorMaths();
 
-    Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode);
+//    Map getLineCountAndConcurrent(Long userId, Boolean isSuperAdmin, String orgCode);
 }

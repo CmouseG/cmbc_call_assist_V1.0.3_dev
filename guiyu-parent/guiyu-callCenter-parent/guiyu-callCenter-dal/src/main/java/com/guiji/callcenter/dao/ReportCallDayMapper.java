@@ -28,6 +28,7 @@ public interface ReportCallDayMapper {
 
     int updateByPrimaryKey(ReportCallDay record);
 
-    List<String> getAllLabelFromDate(@Param("orgCode") String orgCode,@Param("callDate") String callDate);
-    List<String> getAllLabelFromToday(@Param("orgCode") String orgCode);
+    List<String> getAllLabelFromDate(@Param("orgCode") String orgCode,@Param("callDate") String callDate,
+                                     @Param("userId") Long userId,@Param("authLevel") Integer authLevel);
+    List<String> getAllLabelFromToday(@Param("orgCode") String orgCode, @Param("userId") Long userId,@Param("authLevel") Integer authLevel);
 }

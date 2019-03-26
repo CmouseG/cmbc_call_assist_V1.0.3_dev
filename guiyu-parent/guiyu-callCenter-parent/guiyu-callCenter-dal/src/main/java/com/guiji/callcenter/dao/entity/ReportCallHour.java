@@ -18,6 +18,8 @@ public class ReportCallHour implements Serializable {
 
     private String orgCode;
 
+    private Integer userId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -76,6 +78,14 @@ public class ReportCallHour implements Serializable {
         this.orgCode = orgCode == null ? null : orgCode.trim();
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -89,6 +99,7 @@ public class ReportCallHour implements Serializable {
         sb.append(", duration=").append(duration);
         sb.append(", tempid=").append(tempid);
         sb.append(", orgCode=").append(orgCode);
+        sb.append(", userId=").append(userId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -12,6 +12,7 @@ import com.guiji.ccmanager.utils.HttpDownload;
 import com.guiji.ccmanager.utils.ZipUtil;
 import com.guiji.ccmanager.vo.*;
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.api.IDispatchPlanOut;
 import com.guiji.utils.DateUtil;
@@ -142,9 +143,11 @@ public class CallDetailController implements ICallPlanDetail {
             @ApiImplicitParam(name = "pageNo", value = "第几页，从1开始", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "intervened", value = "是否已介入，0:未介入,1:已介入,不传或其他值则是全部", dataType = "String", paramType = "query")
     })
+    @Jurisdiction("callCenter_callHistory_defquery")
     @GetMapping(value = "getCallRecord")
-    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
-                                                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) {
+    public Result.ReturnData<Page<CallOutPlan4ListSelect>> getCallRecord(CallRecordListReq callRecordListReq, @RequestHeader Long userId,
+                                                                         @RequestHeader String orgCode, @RequestHeader Integer isDesensitization,
+                                                                         @RequestHeader Integer authLevel) {
 
         log.info("get request getCallRecord，callRecordListReq[{}]",callRecordListReq);
 
@@ -164,9 +167,9 @@ public class CallDetailController implements ICallPlanDetail {
         int pageSizeInt = Integer.parseInt(callRecordListReq.getPageSize());
         int pageNoInt = Integer.parseInt(callRecordListReq.getPageNo());
 
-        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,isSuperAdmin,String.valueOf(userId),orgCode, pageSizeInt,pageNoInt,
+        List<CallOutPlan4ListSelect> list = callDetailService.callrecord(start,end,authLevel,String.valueOf(userId),orgCode, pageSizeInt,pageNoInt,
                 callRecordListReq, isDesensitization);
-        int count = callDetailService.callrecordCount(start,end,isSuperAdmin,String.valueOf(userId),orgCode, callRecordListReq);
+        int count = callDetailService.callrecordCount(start,end,authLevel,String.valueOf(userId),orgCode, callRecordListReq);
 
         Page<CallOutPlan4ListSelect> page = new Page<CallOutPlan4ListSelect>();
         page.setPageNo(pageNoInt);
@@ -189,6 +192,7 @@ public class CallDetailController implements ICallPlanDetail {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callId", value = "callId", dataType = "String", paramType = "query", required = true)
     })
+    @Jurisdiction("callCenter_callHistory_detail")
     @GetMapping(value="getCallDetail")
     public Result.ReturnData<CallPlanDetailRecordVO> getCallDetail(@RequestParam(value="callId") String callId,@RequestHeader Integer isDesensitization,
                                                                    @RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin){
@@ -321,6 +325,7 @@ public class CallDetailController implements ICallPlanDetail {
 
 
     @ApiOperation(value = "下载通话记录Excel压缩包,callIds以逗号分隔")
+    @Jurisdiction("callCenter_callHistory_exportOne")
     @PostMapping(value="downloadDialogueZip")
     public String downloadDialogueZip(@RequestBody Map reqMap,HttpServletResponse resp,@RequestHeader Long userId,
                                       @RequestHeader Boolean isSuperAdmin, @RequestHeader String orgCode, @RequestHeader Integer isDesensitization) throws UnsupportedEncodingException {
@@ -342,7 +347,7 @@ public class CallDetailController implements ICallPlanDetail {
         }
         //生成文件
         Map<String,String> map = callDetailService.getDialogues(idList);
-        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList,userId,isSuperAdmin,isDesensitization);
+        List<CallOutPlanRegistration> listPlan = callDetailService.getCallPlanList(idList,isDesensitization);
 
         if(listPlan==null || listPlan.size()==0){
             return "无通话记录";
@@ -393,10 +398,9 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.setColumnView(7, 10);
         sheet.setColumnView(8, 10);
         sheet.setColumnView(9, 10);
-        sheet.setColumnView(10, 20);
-        sheet.setColumnView(11, 100);
+        sheet.setColumnView(10, 100);
+        sheet.setColumnView(11, 20);
         sheet.setColumnView(12, 20);
-        sheet.setColumnView(13, 20);
         sheet.addCell(new Label(0, 0 , "被叫电话",format));
         sheet.addCell(new Label(1, 0 , "意向标签",format));
         sheet.addCell(new Label(2, 0 , "意向备注",format));
@@ -407,10 +411,9 @@ public class CallDetailController implements ICallPlanDetail {
         sheet.addCell(new Label(7, 0 , "所属者",format));
         sheet.addCell(new Label(8, 0 , "拨打时长",format));
         sheet.addCell(new Label(9, 0 , "接听时长",format));
-        sheet.addCell(new Label(10, 0 , "变量参数",format));
-        sheet.addCell(new Label(11, 0 , "通话记录",format));
-        sheet.addCell(new Label(12, 0 , "客户信息",format));
-        sheet.addCell(new Label(13, 0 , "登记历史",format));
+        sheet.addCell(new Label(10, 0 , "通话记录",format));
+        sheet.addCell(new Label(11, 0 , "客户信息",format));
+        sheet.addCell(new Label(12, 0 , "登记历史",format));
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(int i=1;i<=listPlan.size();i++){
@@ -425,10 +428,9 @@ public class CallDetailController implements ICallPlanDetail {
             sheet.addCell(new Label(7, i , callPlan.getUserName(),format));
             sheet.addCell(new Label(8, i , callPlan.getDuration()!=null? DateUtils.secondToTime(callPlan.getDuration()): "",format));
             sheet.addCell(new Label(9, i , callPlan.getBillSec()!=null? DateUtils.secondToTime(callPlan.getBillSec()): "",format));
-            sheet.addCell(new Label(10, i , callPlan.getParams()!=null? callPlan.getParams(): "",format));
-            sheet.addCell(new Label(11, i , map.get(callPlan.getCallId().toString()),format));
+            sheet.addCell(new Label(10, i , map.get(callPlan.getCallId().toString()),format));
 
-            sheet.addCell(new Label(12, i , callPlan.getRemarks()!=null ? callPlan.getRemarks() : "暂无信息",format));
+            sheet.addCell(new Label(11, i , callPlan.getRemarks()!=null ? callPlan.getRemarks() : "暂无信息",format));
 
             String registration = "";
             if(callPlan.getCustomerName()!=null){
@@ -438,16 +440,12 @@ public class CallDetailController implements ICallPlanDetail {
                 registration += "客户电话："+callPlan.getCustomerMobile()+"\r\n";
             }
             if(callPlan.getCustomerAddr()!=null){
-                registration += "客户地址："+callPlan.getCustomerAddr()+"\r\n";
+                registration += "客户地址："+callPlan.getCustomerAddr();
             }
-            if(callPlan.getRemark()!=null){
-                registration += "备注信息："+callPlan.getRemark();
-            }
-
             if(registration.equals("")){
                 registration = "暂无信息";
             }
-            sheet.addCell(new Label(13, i , registration,format));
+            sheet.addCell(new Label(12, i , registration,format));
         }
 
         wb.write();
@@ -456,6 +454,7 @@ public class CallDetailController implements ICallPlanDetail {
 
 
     @ApiOperation(value = "下载通话记录压缩包,callIds以逗号分隔")
+    @Jurisdiction("callCenter_callHistory_exportVideos")
     @PostMapping(value="downloadRecordZip")
     public String downloadRecordZip(@RequestBody Map reqMap, HttpServletResponse resp) throws UnsupportedEncodingException {
         log.info("---------------start downloadRecordZip----------");
@@ -515,6 +514,7 @@ public class CallDetailController implements ICallPlanDetail {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "callIds", value = "callIds", dataType = "String", paramType = "query", required = true)
     })
+    @Jurisdiction("callCenter_callHistory_delete,callCenter_callHistory_batchDeletes")
     @GetMapping(value="delRecord")
     public Result.ReturnData<Boolean> delRecord(@RequestParam String callIds){
         if(StringUtils.isBlank(callIds)){

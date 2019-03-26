@@ -47,7 +47,7 @@ public class LineReportController implements IReportLine {
     @ApiOperation(value = "线路监控信息")
     @GetMapping(value = "getLineMonitorReport")
     public Result.ReturnData getLineMonitorReport(String lineId, String dimension,
-                                                  String orgCode,  Long userId){
+                                                  String orgCode,  Long userId, Integer authLevel){
 
         if(StringUtils.isBlank(dimension)){
             dimension = "now";
@@ -62,7 +62,8 @@ public class LineReportController implements IReportLine {
         }
         log.info("=============="+start);
 
-        List<LineMonitorRreport> list = lineReportService.getLineMonitorReport(StringUtils.isNotBlank(lineId) ? Integer.valueOf(lineId) : null, userId, start, orgCode);
+        List<LineMonitorRreport> list = lineReportService.getLineMonitorReport(StringUtils.isNotBlank(lineId) ? Integer.valueOf(lineId) : null,
+                                                                                 userId, start, orgCode,authLevel);
         List<LineMonitorRreportVO> listVO = new ArrayList();
         if (list != null && list.size() > 0) {
             for (LineMonitorRreport lineMonitorRreport : list) {
@@ -70,6 +71,8 @@ public class LineReportController implements IReportLine {
                 BeanUtil.copyProperties(lineMonitorRreport, lineMonitorRreportVO);
 
                 lineMonitorRreportVO.setOrgCode(orgCode);
+                lineMonitorRreportVO.setAuthLevel(authLevel);
+                lineMonitorRreportVO.setUserId(userId);
                 float history = lineMonitorRreport.getHistory();
                 float low = (float)(history*0.85);
                 float high =(float) (history*1.15);
@@ -101,7 +104,8 @@ public class LineReportController implements IReportLine {
             @ApiImplicitParam(name = "endDate", value = "结束时间,yyyy-MM-dd HH:mm:ss格式", dataType = "String", paramType = "query")
     })
     @GetMapping(value = "getLineHangupDetail")
-    public Result.ReturnData getLineHangupDetail(String lineId,String startTime, String enTime, String orgCode) throws ParseException {
+    public Result.ReturnData getLineHangupDetail(String lineId,String startTime, String enTime, String orgCode,
+                                                 Integer userId, Integer authLevel) throws ParseException {
 
         Date end = null;
         Date start = null;
@@ -116,7 +120,7 @@ public class LineReportController implements IReportLine {
             end = DateUtil.stringToDate(enTime,"yyyy-MM-dd HH:mm:ss");
         }
 
-        Map map = lineReportService.getLineHangupDetail(Integer.valueOf(lineId),start,end, orgCode);
+        Map map = lineReportService.getLineHangupDetail(Integer.valueOf(lineId),start,end, orgCode, userId, authLevel);
         return Result.ok(map);
     }
 

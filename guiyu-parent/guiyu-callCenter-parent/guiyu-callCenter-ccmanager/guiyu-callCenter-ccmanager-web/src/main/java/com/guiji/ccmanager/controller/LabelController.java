@@ -31,9 +31,9 @@ public class LabelController implements ILabel {
 
     @ApiOperation(value = "获取最近1个月所有的通话记录标签")
     @GetMapping("getAllLabelOneMonth")
-    public Result.ReturnData<List<String>> getAllLabelOneMonth(String orgCode,Long userId) {
+    public Result.ReturnData<List<String>> getAllLabelOneMonth(String orgCode,Long userId,Integer authLevel) {
 
-        List<String> list = labelService.getAllLabelOneMonth(orgCode);
+        List<String> list = labelService.getAllLabelOneMonth(orgCode,userId,authLevel);
 
         List<String> authLabel = new ArrayList<>();
         try{

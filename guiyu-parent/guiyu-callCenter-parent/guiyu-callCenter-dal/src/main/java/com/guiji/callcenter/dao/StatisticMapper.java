@@ -39,30 +39,47 @@ public interface StatisticMapper {
 
     void insertReportCallHour(List<ReportCallHour> listOut);
 
-    List<DashboardOverView> getDashboardOverViewAgoDurationAll(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewAgoNotConnect(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewAgoConnect(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewAgoDuration5(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewAgoDuration10(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewAgoDuration30(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,@Param("tempId") String tempId);
+    List<DashboardOverView> getDashboardOverViewAgoDurationAll(@Param("startDate") String startDate,@Param("endDate") String endDate, @Param("orgCode") String orgCode,
+                                                               @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewAgoNotConnect(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,
+                                                              @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewAgoConnect(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,
+                                                           @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewAgoDuration5(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,
+                                                             @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewAgoDuration10(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,
+                                                              @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewAgoDuration30(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("orgCode") String orgCode,
+                                                              @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
 
-    List<DashboardOverView> getDashboardOverViewTodayDurationAll(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewTodayNotConnect(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewTodayConnect(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewTodayDuration5(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewTodayDuration10(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<DashboardOverView> getDashboardOverViewTodayDuration30(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
+    List<DashboardOverView> getDashboardOverViewTodayDurationAll(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                                                 @Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewTodayNotConnect(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                                                @Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewTodayConnect(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                                             @Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewTodayDuration5(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                                               @Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewTodayDuration10(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                                                @Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<DashboardOverView> getDashboardOverViewTodayDuration30(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                                                @Param("authLevel") int authLevel,@Param("userId") long userId);
 
-    List<IntentCount> getIntentCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<IntentCount> getIntentCountToday(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
+    List<IntentCount> getIntentCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("orgCode") String orgCode,
+                                        @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<IntentCount> getIntentCountToday(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                          @Param("authLevel") int authLevel,@Param("userId") long userId);
 
-    List<CallCountHour> getConnectDataHour(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("orgCode") String orgCode,@Param("tempId") String tempId);
+    List<CallCountHour> getConnectDataHour(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("orgCode") String orgCode,
+                                           @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
 
 
-    List<ReasonCount> getReasonCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("orgCode") String orgCode,@Param("tempId") String tempId);
-    List<ReasonCount> getReasonCountToday(@Param("orgCode") String orgCode,@Param("tempId") String tempId);
+    List<ReasonCount> getReasonCountAgo(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("orgCode") String orgCode,
+                                        @Param("tempId") String tempId,@Param("authLevel") int authLevel,@Param("userId") long userId);
+    List<ReasonCount> getReasonCountToday(@Param("orgCode") String orgCode,@Param("tempId") String tempId,
+                                          @Param("authLevel") int authLevel,@Param("userId") long userId);
 
-//    void reportCallTodayTruncate();
+    //    void reportCallTodayTruncate();
     void deleteCallTodayTruncate();
 
     void deleteReportCallHour();

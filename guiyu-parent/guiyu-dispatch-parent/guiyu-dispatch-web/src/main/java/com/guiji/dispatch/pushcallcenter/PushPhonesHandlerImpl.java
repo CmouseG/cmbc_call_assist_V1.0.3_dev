@@ -69,7 +69,7 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 	@Override
 	public void pushHandler() {
 
-		boolean flg = false;
+		boolean flg = true;
 		Lock pushHandlerLock = new Lock("pushHandler", "pushHandler");
 		while (flg) {
 			try {

@@ -114,6 +114,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		} catch (Exception e)
 		{
 			// doNothing
+			logger.info("BatchImportRecordHandlerImpl.saveDB:{}", vo, e);
 		}
 
 		vo.setGmtModified(DateUtil.getCurrent4Time());
@@ -135,6 +136,7 @@ public class BatchImportRecordHandlerImpl implements IBatchImportRecordHandler {
 		} catch (Exception e)
 		{
 			// doNothing
+			logger.info("BatchImportRecordHandlerImpl.saveDB:{}", vo, e);
 		}
 	}
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.guiji.common.model.Page;
 import com.guiji.robot.dao.entity.UserAiCfgBaseInfo;
 import com.guiji.robot.dao.entity.UserAiCfgInfo;
+import com.guiji.robot.service.vo.UserAiCfgBaseCondition;
 import com.guiji.robot.service.vo.UserAiCfgQueryCondition;
 
 /** 
@@ -53,7 +54,7 @@ public interface IUserAiCfgService {
 	 * @param userId
 	 * @return
 	 */
-	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(int pageNo, int pageSize,String userId);
+	public Page<UserAiCfgBaseInfo> queryUserAiCfgBaseInfoFroPageByUserId(UserAiCfgBaseCondition condition);
 	
 	/**
 	 * 按用户查询用户配置的模板分配的机器人数量

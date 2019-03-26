@@ -32,7 +32,7 @@ import com.guiji.robot.util.DataLocalCacheUtil;
 import com.guiji.robot.util.ListUtil;
 import com.guiji.robot.util.ReadTxtUtil;
 import com.guiji.robot.util.SystemUtil;
-import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
 import com.guiji.utils.StrUtils;
@@ -395,10 +395,10 @@ public class AiCacheService {
 	public void cacheUserCalls(String userId,CallInfo callInfo){
 		if(StrUtils.isNotEmpty(userId) && callInfo!=null) {
 			callInfo.setExpire(System.currentTimeMillis());
-			SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+			SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put(callInfo.getSeqId(), callInfo);
-			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId, map, 5*60);	//放入缓存，5分钟
+			redisUtil.hmset(RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId, map, 5*60);	//放入缓存，5分钟
 		}
 	}
 	/**
@@ -408,9 +408,9 @@ public class AiCacheService {
 	 * @return
 	 */
 	public CallInfo queryUserCall(String userId,String seqId) {
-		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+		SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
 		//查询某通电话
-		String key = RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId;
+		String key = RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId;
 		Object cacheObj = redisUtil.hget(key, seqId);
 		if(cacheObj != null) {
 			CallInfo callInfo = (CallInfo) cacheObj;
@@ -429,8 +429,8 @@ public class AiCacheService {
 	 * @return
 	 */
 	public List<CallInfo> queryUserCallList(String userId){
-		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
-		String key = RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId;
+		SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
+		String key = RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId;
 		Map<Object,Object> allMap = redisUtil.hmget(key);
 		if(allMap != null && !allMap.isEmpty()) {
 			List<CallInfo> list = new ArrayList<CallInfo>();
@@ -470,16 +470,16 @@ public class AiCacheService {
 	 * @param userId
 	 */
 	public void delUserCalls(String userId) {
-		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
-		redisUtil.del(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId);
+		SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
+		redisUtil.del(RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId);
 	}
 	/**
 	 * 删除某个用户某通电话
 	 * @param userId
 	 */
 	public void delUserCall(String userId,String seqId) {
-		SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
-		redisUtil.hdel(RobotConstants.ROBOT_USER_CALL+org.getCode()+"_"+userId,seqId);
+		SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
+		redisUtil.hdel(RobotConstants.ROBOT_USER_CALL+sysUser.getOrgCode()+"_"+userId,seqId);
 	}
 	/**************************************end****************************************/
 	

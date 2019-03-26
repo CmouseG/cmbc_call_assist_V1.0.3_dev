@@ -36,10 +36,10 @@ public class DataLocalCacheUtil {
 	 * @param userId
 	 * @return
 	 */
-	public SysOrganization queryUserRealOrg(String userId) {
+	public SysOrganization queryOrgByUser(String userId) {
 		if(StrUtils.isNotEmpty(userId)) {
 			//先从缓存中取
-			SysOrganization org = LocalCacheUtil.getT("KEY_USER_ORG"+userId);
+			SysOrganization org = LocalCacheUtil.getT("KEY_USR_ORG"+userId);
 			if(org!=null) {
 				//缓存中有，直接取
 				return org;
@@ -47,11 +47,11 @@ public class DataLocalCacheUtil {
 				//缓存中没有,重新查，并放入内存
 				ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userId));
 				if(orgData != null && orgData.getBody()!=null) {
-					//内存1个小时有效
-					LocalCacheUtil.set("KEY_USER_ORG"+userId, orgData.getBody(), LocalCacheUtil.TEN_MIN);
+					//内存10分钟有效
+					LocalCacheUtil.set("KEY_USR_ORG"+orgData, orgData.getBody(), LocalCacheUtil.TEN_MIN);
 					return orgData.getBody();
 				}else {
-					log.error("用户ID:{},查询不到用户所属企业信息，返回：{}",userId,orgData);
+					log.error("用户:{},查询不到企业信息",userId,orgData);
 				}
 			}
 		}

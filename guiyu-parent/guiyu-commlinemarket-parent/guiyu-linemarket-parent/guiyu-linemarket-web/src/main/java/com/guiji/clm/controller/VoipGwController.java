@@ -22,6 +22,7 @@ import com.guiji.clm.vo.VoipGwPortQueryCondition;
 import com.guiji.clm.vo.VoipGwPortVO;
 import com.guiji.clm.vo.VoipGwQueryCondition;
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
 
@@ -49,6 +50,7 @@ public class VoipGwController {
 	 * @param voipGwInfo
 	 * @return
 	 */
+	@Jurisdiction("setPort_save")
 	@RequestMapping(value = "/gwInit", method = RequestMethod.POST)
 	public Result.ReturnData<VoipGwInfo> receiveSellbotCallback(
 			@RequestBody VoipGwInfo voipGwInfo,@RequestHeader Long userId){
@@ -85,21 +87,15 @@ public class VoipGwController {
 	public Result.ReturnData<Page<VoipGwInfoVO>> queryVoipGwPage(
 			@RequestBody VoipGwQueryCondition condition,
 			@RequestHeader Long userId, 
-			@RequestHeader Boolean isSuperAdmin
+			@RequestHeader Boolean isSuperAdmin,
+			@RequestHeader String orgCode
 			){
 		if(!isSuperAdmin) {
 			//不是超管,按企业查询，超管查询全部
-			SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
-			if(sysOrganization!=null) {
-				String orgCode = sysOrganization.getCode();
-				if(condition == null) {
-					condition=new VoipGwQueryCondition();
-				}
-				condition.setOrgCode(orgCode);
-			}else {
-				log.error("用户：{}所属企业为空,不能查询",userId);
-				return Result.ok();
+			if(condition == null) {
+				condition=new VoipGwQueryCondition();
 			}
+			condition.setOrgCode(orgCode);
 		}
 		if(condition.getGwStatus()==null) {
 			//默认查询正常数据
@@ -130,6 +126,7 @@ public class VoipGwController {
 	 * @param userId 用户id
 	 * @return
 	 */
+	@Jurisdiction("setPort_insertCard,setPort_changeCard")
 	@RequestMapping(value = "/assignGwPort", method = RequestMethod.POST)
 	public Result.ReturnData assignGwPort(
 			@RequestBody List<VoipGwPort> gwPortList,
@@ -148,6 +145,7 @@ public class VoipGwController {
 	 * @param userId
 	 * @return
 	 */
+	@Jurisdiction("setPort_pullCard")
 	@RequestMapping(value = "/unAssignGwPort", method = RequestMethod.POST)
 	public Result.ReturnData unAssignGwPort(@RequestBody List<Integer> gwPortIdList,@RequestHeader Long userId){
 		if(gwPortIdList!=null && !gwPortIdList.isEmpty()) {
@@ -184,7 +182,8 @@ public class VoipGwController {
 	@RequestMapping(value = "/queryVoipPortForPage", method = RequestMethod.POST)
 	public Result.ReturnData<Page<VoipGwPortVO>> queryVoipPortForPage(
 			@RequestBody VoipGwPortQueryCondition condition,
-			@RequestHeader Long userId){
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode){
 		if(condition == null) {
 			condition = new VoipGwPortQueryCondition();
 		}
@@ -192,10 +191,7 @@ public class VoipGwController {
 			//默认查询正常数据
 			condition.setGwStatus(new ArrayList<Integer>(){{add(VoipGwStatusEnum.OK.getCode());}});
 		}
-		//临时
-		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
-		condition.setOrgCode(sysOrganization.getCode());
-		//
+		condition.setOrgCode(orgCode);
 		Page<VoipGwPortVO> portPage = voipGwManager.queryVoipGwPortListWrapForPage(condition);
 		return Result.ok(portPage);
 	}

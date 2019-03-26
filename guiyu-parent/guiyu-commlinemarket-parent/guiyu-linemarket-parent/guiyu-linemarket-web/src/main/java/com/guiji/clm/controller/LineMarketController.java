@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guiji.clm.constant.ClmConstants;
 import com.guiji.clm.dao.entity.SipLineApply;
 import com.guiji.clm.dao.entity.SipLineBaseInfo;
 import com.guiji.clm.dao.entity.SipLineExclusive;
@@ -34,6 +35,7 @@ import com.guiji.clm.vo.SipLineInfoQueryCondition;
 import com.guiji.clm.vo.SipLineShareQueryCondition;
 import com.guiji.clm.vo.SipLineShareVO;
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
@@ -80,7 +82,8 @@ public class LineMarketController {
 	public Result.ReturnData querySipLineExclusiveNum(
 			@RequestHeader Long userId,
 			@RequestHeader String orgCode,
-			@RequestHeader Boolean isSuperAdmin){
+			@RequestHeader Boolean isSuperAdmin,
+			@RequestHeader Integer authLevel){
 		SipLineQuery query = new SipLineQuery();
 		List<Integer> lineStatusList = new ArrayList<Integer>();
 		lineStatusList.add(SipLineStatusEnum.OK.getCode());	//正常线路
@@ -88,23 +91,11 @@ public class LineMarketController {
 		if(isSuperAdmin) {
 			//查询全部
 		}else {
-			//如果有管理员角色，按企业查询
-			boolean isAdmin = false;
-			List<SysRole> roleList = dataLocalCacheUtil.queryUserRole(userId.toString());
-			if(roleList!=null && !roleList.isEmpty()) {
-				for(SysRole role : roleList) {
-					if("管理员".equals(role.getName())) {
-						//TODO  如果是管理员，先简单判断吧，后续可以增加企业编号字段来确定，现在表里的orgcode是企业真实code，不能直接使用
-						isAdmin = true;
-						break;
-					}
-				}
-			}
-			if(isAdmin) {
-				SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
-				query.setOrgCode(sysOrganization.getCode());
-			}else {
+			//如果数据查询权限是本人，那么查询本人线路数据，其他查询企业线路
+			if(ClmConstants.USER_DATA_AUTH_ME == authLevel) {
 				query.setUserId(userId.toString());
+			}else {
+				query.setOrgCode(orgCode);
 			}
 		}
 		Integer totalNum = sipLineExclusiveMapperExt.querySipLineExclusiveNum(query);
@@ -117,6 +108,7 @@ public class LineMarketController {
 	 * @param userId
 	 * @return
 	 */
+	@Jurisdiction("lineMarket_newLine,lineMarket_edit")
 	@RequestMapping(value = "/saveSipLine", method = RequestMethod.POST)
 	public Result.ReturnData<SipLineBaseInfo> saveSipLine(
 			@RequestBody SipLineBaseInfo sipLineBaseInfo,
@@ -136,6 +128,7 @@ public class LineMarketController {
 	 * @param id
 	 * @return
 	 */
+	@Jurisdiction("lineMarket_delete")
 	@RequestMapping(value = "/delThirdSipLine", method = RequestMethod.POST)
 	public Result.ReturnData delThirdSipLine(@RequestParam(value="id",required=true) Integer id){
 		sipLineManager.delThirdSipLineCfg(id);
@@ -148,6 +141,7 @@ public class LineMarketController {
 	 * @param id
 	 * @return
 	 */
+	@Jurisdiction("lineMarket_effectable")
 	@RequestMapping(value = "/effectThirdSip", method = RequestMethod.POST)
 	public Result.ReturnData effectThirdSip(
 			@RequestParam(value="id",required=true) Integer id,
@@ -204,6 +198,7 @@ public class LineMarketController {
 	 * @param sipLineApply
 	 * @return
 	 */
+	@Jurisdiction("comManage_application")
 	@RequestMapping(value = "/sipLineApply", method = RequestMethod.POST) 
 	public Result.ReturnData sipLineApply(@RequestBody SipLineApply sipLineApply,@RequestHeader Long userId){
 		sipLineApply.setApplyUser(userId.toString());
@@ -251,6 +246,7 @@ public class LineMarketController {
 	 * @param sipLineApply
 	 * @return
 	 */
+	@Jurisdiction("approveAdmin_approve")
 	@RequestMapping(value = "/approveSipLine", method = RequestMethod.POST)
 	public Result.ReturnData approveSipLine(@RequestBody SipLineApply sipLineApply,@RequestHeader Long userId){
 		sipLineApply.setApproveUser(userId.toString());
@@ -285,7 +281,10 @@ public class LineMarketController {
 	 * @return
 	 */
 	@RequestMapping(value = "/queryMyExclusiveSipLine", method = RequestMethod.POST)
-	public Result.ReturnData<List<SipLineExclusiveVO>> queryMyExclusiveSipLine(@RequestBody SipLineExclusiveQueryCondition condition,@RequestHeader Long userId){
+	public Result.ReturnData<List<SipLineExclusiveVO>> queryMyExclusiveSipLine(
+			@RequestBody SipLineExclusiveQueryCondition condition,
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode){
 		if(condition==null) condition=new SipLineExclusiveQueryCondition();
 		if(StrUtils.isEmpty(condition.getUserId())) {
 			condition.setUserId(userId.toString());
@@ -294,10 +293,7 @@ public class LineMarketController {
 			//默认查询正常
 			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
 		}
-		//临时
-		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
-		condition.setOrgCode(sysOrganization.getCode());
-		//
+		condition.setOrgCode(orgCode);
 		List<SipLineExclusive> list = sipLineExclusiveService.querySipLineExclusiveList(condition);
 		return Result.ok(this.exclusiveLine2VO(list));
 	}
@@ -310,16 +306,14 @@ public class LineMarketController {
 	@RequestMapping(value = "/queryConditionExclusiveSipLinePage", method = RequestMethod.POST)
 	public Result.ReturnData<Page<SipLineExclusiveVO>> queryConditionExclusiveSipLinePage(
 			@RequestBody SipLineExclusiveQueryCondition condition,
-			@RequestHeader Long userId){
+			@RequestHeader Long userId,
+			@RequestHeader String orgCode){
 		if(condition==null) condition=new SipLineExclusiveQueryCondition();
 		if(condition.getStatusList()==null || condition.getStatusList().isEmpty()) {
 			//默认查询正常
 			condition.setStatusList(new ArrayList<Integer>(){{add(SipLineStatusEnum.OK.getCode());}});
 		}
-		//临时
-		SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(userId.toString());
-		condition.setOrgCode(sysOrganization.getCode());
-		//
+		condition.setOrgCode(orgCode);
 		Page<SipLineExclusive> page = sipLineExclusiveService.querySipLineExclusiveForPageByCondition(condition);
 		Page<SipLineExclusiveVO> rtnPage = new Page<SipLineExclusiveVO>(condition.getPageNo(),page.getTotalRecord(),this.exclusiveLine2VO(page.getRecords()));
 		return Result.ok(rtnPage);

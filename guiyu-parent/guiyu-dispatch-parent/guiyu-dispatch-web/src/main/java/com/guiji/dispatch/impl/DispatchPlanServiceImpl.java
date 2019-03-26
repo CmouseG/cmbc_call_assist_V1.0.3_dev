@@ -18,6 +18,7 @@ import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dao.entity.DispatchPlanExample.Criteria;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
 import com.guiji.dispatch.dto.QueryPlanListDto;
+import com.guiji.dispatch.enums.AuthLevelEnum;
 import com.guiji.dispatch.enums.PlanLineTypeEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.exception.BaseException;
@@ -107,6 +108,10 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 	@Autowired
 	private com.guiji.dispatch.dao.ext.PlanExtMapper planExtMapper;
+
+	@Autowired
+	private GetAuthUtil getAuthUtil;
+
 	/**
 	 * 单个任务导入
 	 * @param dispatchPlan
@@ -1111,9 +1116,23 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 	  if (null != queryPlanDto.getResultList() && queryPlanDto.getResultList().size() > 0) {
 		  createCriteria.andResultIn(queryPlanDto.getResultList());
 	  }
-	  if (!queryPlanDto.isSuperAdmin()) {
+	  /*if (!queryPlanDto.isSuperAdmin()) {
 		  createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+	  }*/
+
+	  Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
+	  String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
+	  String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
+	  if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){
+		  createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
 	  }
+	  if(AuthLevelEnum.ORG.getLevel() == authLevel && !StringUtils.isEmpty(orgCode)){
+		  createCriteria.andOrgCodeEqualTo(orgCode);
+	  }
+	  if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel && !StringUtils.isEmpty(orgCode)){
+		  createCriteria.andOrgCodeLike(orgCode + "%");
+	  }
+
 	  createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);
 
 	  List<DispatchPlan> selectByExample = dispatchPlanMapper.selectByExample(example);
@@ -1333,7 +1352,7 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 			createCriteria.andResultIn(queryPlanDto.getResultList());
 		}
 
-		if (!queryPlanDto.isSuperAdmin()) {
+		/*if (!queryPlanDto.isSuperAdmin()) {
 			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
 		} else {
 			// // 超级用户
@@ -1344,6 +1363,19 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		if (!queryPlanDto.isSuperAdmin()) {
 			createCriteria.andOrgCodeLike(queryPlanDto.getOperOrgCode() + "%");
+		}*/
+
+		Integer authLevel = queryPlanDto.getAuthLevel();//操作用户权限等级
+		String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryPlanDto.getOperUserId());//获取用户ID
+		String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryPlanDto.getOperOrgCode());//获取企业组织编码
+		if(AuthLevelEnum.USER.getLevel() == authLevel && !StringUtils.isEmpty(userId)){
+			createCriteria.andUserIdEqualTo(Integer.valueOf(userId));
+		}
+		if(AuthLevelEnum.ORG.getLevel() == authLevel && !StringUtils.isEmpty(orgCode)){
+			createCriteria.andOrgCodeEqualTo(orgCode);
+		}
+		if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel && !StringUtils.isEmpty(orgCode)){
+			createCriteria.andOrgCodeLike(orgCode + "%");
 		}
 
 		createCriteria.andIsDelEqualTo(Constant.IS_DEL_0);

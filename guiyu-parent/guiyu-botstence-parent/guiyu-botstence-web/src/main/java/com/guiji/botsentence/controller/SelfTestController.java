@@ -17,6 +17,7 @@ import com.guiji.botsentence.service.impl.BotSentenceApprovalServiceImpl;
 import com.guiji.botsentence.service.impl.BotSentenceProcessServiceImpl;
 import com.guiji.botsentence.vo.ResponseSelfTestVO;
 import com.guiji.botsentence.vo.SelfTestVO;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.ServerResult;
 
 /**
@@ -41,6 +42,7 @@ public class SelfTestController {
     IAIManager iaiManager;
 
     @PostMapping("/selftest")
+    @Jurisdiction("botsentence_maker_test")
     public ServerResult<ResponseSelfTestVO> selfTest(@RequestBody SelfTestVO request, @RequestHeader String userId){
         log.info("收到自测请求[{}]", request);
         if(StringUtils.isNotBlank(request.getTempId())) {

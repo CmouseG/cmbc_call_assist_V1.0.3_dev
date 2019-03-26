@@ -9,6 +9,7 @@ import com.guiji.botsentence.service.BotSentenceKeyWordsService;
 import com.guiji.botsentence.service.IBotSentenceKeyWordsValidateService;
 import com.guiji.botsentence.vo.*;
 import com.guiji.component.client.config.JsonParam;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.ServerResult;
 
 import javax.websocket.server.PathParam;
@@ -37,6 +38,7 @@ public class BotSentenceKeyWordsController {
      * @return
      */
     @RequestMapping(value = "importKeyWords", method = RequestMethod.POST)
+    @Jurisdiction("botsentence_keywords_import")
     public ServerResult importKeyWords(@RequestParam("file") MultipartFile multipartFile, @RequestParam("industryId") String industryId, @RequestHeader String userId) {
         if (StringUtils.isBlank(industryId)) {
             return ServerResult.createByErrorMessage("参数异常");

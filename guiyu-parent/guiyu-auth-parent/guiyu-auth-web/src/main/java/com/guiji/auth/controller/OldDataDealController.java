@@ -81,6 +81,7 @@ public class OldDataDealController {
 	Map<Integer,SysRole> newAndOldRoleMap = new HashMap<Integer,SysRole>();	//新老role映射关系
 	Set<Integer> sysRoleSet = new HashSet<Integer>();	//系统级角色（未删除重建的）
 	Integer workPlatformMenuId = null;	//个人中心或者坐席工作台菜单
+	Map<Integer,List<String>> addButtonsMap = new HashMap<Integer,List<String>>();	//新增的按钮，key-父菜单id,value-新增的按钮id
 	/**
 	 * START
 	 * @return
@@ -119,6 +120,25 @@ public class OldDataDealController {
 		SysMenuExample example = new SysMenuExample();
 		example.createCriteria().andTypeEqualTo(1);
 		allMenu = sysMenuMapper.selectByExample(example);
+		
+		//新增的按钮  pid-ids
+		SysMenuExample exampleb = new SysMenuExample();
+		example.createCriteria().andTypeEqualTo(2);
+		List<SysMenu> buttonList = sysMenuMapper.selectByExample(exampleb);
+		if(buttonList!=null && !buttonList.isEmpty()) {
+			for(SysMenu button:buttonList) {
+				Integer pid = button.getPid();
+				if(pid!=null) {
+					List<String> ids = addButtonsMap.get(pid);
+					if(ids==null) {
+						ids = new ArrayList<String>();
+					}
+					ids.add(button.getId().toString());
+					addButtonsMap.put(pid, ids);
+				}
+			}
+		}
+		
 		//组织
 		allOrgs = sysOrganizationMapper.selectByExample(new SysOrganizationExample());
 		//角色
@@ -167,6 +187,7 @@ public class OldDataDealController {
 		orgRolUserMap = new HashMap<String,Map<Integer,Set<Integer>>>();
 		newAndOldRoleMap = new HashMap<Integer,SysRole>();	//新老role映射关系
 		sysRoleSet = new HashSet<Integer>();	//系统级角色（未删除重建的）
+		addButtonsMap = new HashMap<Integer,List<String>>();
 	}
 	
 	/**
@@ -332,6 +353,10 @@ public class OldDataDealController {
 						//如果当前是坐席工作台菜单，那么默认拥有坐席操作权限
 						buttonList.add(AuthConstants.MENU_AGENT_MEMBER+"");
 					}
+					//添加前端新增的按钮权限
+					if(addButtonsMap.get(menuId.intValue())!=null) {
+						buttonList.addAll(addButtonsMap.get(menuId.intValue()));
+					}
 				}
 				if(buttonList!=null && !buttonList.isEmpty()) {
 					privilegeService.savePrivlege(1, oldRole.getOrgCode(), AuthObjTypeEnum.ROLE.getCode(), newRoleId.toString(), ResourceTypeEnum.MENU.getCode(), buttonList);
@@ -358,6 +383,10 @@ public class OldDataDealController {
 					if(menuId.intValue()==workPlatformMenuId) {
 						//如果当前是坐席工作台菜单，那么默认拥有坐席操作权限
 						buttonList.add(AuthConstants.MENU_AGENT_MEMBER+"");
+					}
+					//添加前端新增的按钮权限
+					if(addButtonsMap.get(menuId.intValue())!=null) {
+						buttonList.addAll(addButtonsMap.get(menuId.intValue()));
 					}
 				}
 				if(buttonList!=null && !buttonList.isEmpty()) {
@@ -400,6 +429,10 @@ public class OldDataDealController {
 					//如果当前是坐席工作台菜单，那么默认拥有坐席操作权限
 					buttonList.add(AuthConstants.MENU_AGENT_MEMBER+"");
 				}
+				//添加前端新增的按钮权限
+				if(addButtonsMap.get(menuId.intValue())!=null) {
+					buttonList.addAll(addButtonsMap.get(menuId.intValue()));
+				}
 			}
 		}
 		for(SysOrganization org : allOrgs) {
@@ -415,6 +448,7 @@ public class OldDataDealController {
 	/**
 	 * 请求auth相关redis缓存
 	 */
+	@RequestMapping("flushAuthCache")
 	public void step8() {
 		redisUtil.delVague("REDIS_USER_BY_USERID_");
 		redisUtil.delVague("REDIS_ROLE_BY_USERID_");

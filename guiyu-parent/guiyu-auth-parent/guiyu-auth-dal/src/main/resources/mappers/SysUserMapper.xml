@@ -612,7 +612,7 @@
     select
     <include refid="Base_Column_List" />
     from sys_user
-    where id in (select user_id from sys_role_user where role_id <![CDATA[<>]]> 1;)
+    where id in (select user_id from sys_role_user where role_id <![CDATA[<>]]> 1)
   </select>
 
   <select id="getAllUserByOrgCode" resultMap="BaseResultMap">

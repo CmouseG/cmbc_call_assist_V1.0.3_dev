@@ -5,7 +5,10 @@ import com.guiji.billing.service.BillingSysRechargeService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.vo.SysRechargeTotalVo;
 import com.guiji.billing.vo.UserRechargeTotalVo;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/billing/sysRecharge")
 public class BillingSysRechargeController {
+
+    private Logger logger = LoggerFactory.getLogger(BillingSysRechargeController.class);
 
     @Autowired
     private BillingSysRechargeService billingSysRechargeService;
@@ -34,6 +39,7 @@ public class BillingSysRechargeController {
         queryRechargeDto.setUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
         queryRechargeDto.setAuthLevel(authLevel);
+        logger.info("/queryCompanyRechargeTotal", JsonUtils.bean2Json(queryRechargeDto));
         ResultPage<SysRechargeTotalVo> page = new ResultPage<SysRechargeTotalVo>(queryRechargeDto);
         List<SysRechargeTotalVo> list = billingSysRechargeService.queryCompanyRechargeTotal(queryRechargeDto, page);
         page.setList(list);

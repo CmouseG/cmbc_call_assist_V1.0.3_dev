@@ -6,6 +6,7 @@ import com.guiji.billing.service.BillingUserAcctService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.vo.UserRechargeTotalVo;
 import com.guiji.component.jurisdiction.Jurisdiction;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,7 @@ public class BillingUserAcctController {
         queryRechargeDto.setUserId(userId);
         queryRechargeDto.setOrgCode(orgCode);
         queryRechargeDto.setAuthLevel(authLevel);
+        logger.info("/queryUserRechargeTotal", JsonUtils.bean2Json(queryRechargeDto));
         ResultPage<UserRechargeTotalVo> page = new ResultPage<UserRechargeTotalVo>(queryRechargeDto);
         List<UserRechargeTotalVo> list = billingUserAcctService.queryUserRechargeTotal(queryRechargeDto, page);
         page.setList(list);

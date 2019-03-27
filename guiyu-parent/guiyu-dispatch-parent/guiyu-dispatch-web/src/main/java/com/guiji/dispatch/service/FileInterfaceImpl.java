@@ -98,7 +98,7 @@ public class FileInterfaceImpl implements FileInterface {
 		//过滤权限
 		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId);//获取用户ID
 		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
-		queryRecord.setUserId(Integer.valueOf(userId));
+		queryRecord.setUserId(null != userId?Integer.valueOf(userId):null);
 		queryRecord.setOrgCode(orgCode);
 		queryRecord.setAuthLevel(authLevel);
 

@@ -5,7 +5,10 @@ import com.guiji.billing.service.BillingCompanyTotalService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.vo.TotalChargingItemDetailVo;
 import com.guiji.billing.vo.TotalChargingItemVo;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/billing/companyTotal")
 public class BillingCompanyTotalController {
+
+    private Logger logger = LoggerFactory.getLogger(BillingCompanyTotalController.class);
 
     @Autowired
     private BillingCompanyTotalService billingCompanyTotalService;
@@ -33,6 +38,7 @@ public class BillingCompanyTotalController {
         queryTotalChargingItemDto.setUserId(userId);
         queryTotalChargingItemDto.setOrgCode(orgCode);
         queryTotalChargingItemDto.setAuthLevel(authLevel);
+        logger.info("/totalCompanyChargingItem", JsonUtils.bean2Json(queryTotalChargingItemDto));
         ResultPage<TotalChargingItemVo> page = new ResultPage<TotalChargingItemVo>(queryTotalChargingItemDto);
         List<TotalChargingItemVo> list = billingCompanyTotalService.totalCompanyChargingItem(queryTotalChargingItemDto, page);
         page.setList(list);

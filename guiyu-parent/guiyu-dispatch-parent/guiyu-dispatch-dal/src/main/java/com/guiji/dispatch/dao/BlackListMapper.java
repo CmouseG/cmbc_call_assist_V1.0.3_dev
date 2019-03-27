@@ -2,6 +2,7 @@ package com.guiji.dispatch.dao;
 
 import java.util.List;
 
+import com.guiji.dispatch.dto.QueryBlackListDto;
 import com.guiji.dispatch.sys.ResultPage;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,9 +37,9 @@ public interface BlackListMapper {
 
 	/**********add by qianxin begin******************/
 	//查询黑名单列表
-    List<BlackList> queryBlackList(@Param("black") BlackList black,
+    List<BlackList> queryBlackList(@Param("black") QueryBlackListDto black,
                                    @Param("page") ResultPage<BlackList> page);
 
     //查询黑名单数量
-    int queryBlackCount(@Param("black") BlackList black);
+    int queryBlackCount(@Param("black") QueryBlackListDto black);
 }

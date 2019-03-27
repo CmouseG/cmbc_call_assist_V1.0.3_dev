@@ -7,6 +7,7 @@ import com.guiji.billing.entity.BillingAcctReconciliation;
 import com.guiji.billing.service.BillingTotalAnalysisService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.vo.BillingTotalChargingConsumerVo;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class BillingTotalAnalysisController {
         queryAcctChargingTotalDto.setUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
         queryAcctChargingTotalDto.setAuthLevel(authLevel);
+        logger.info("/totalChargingByDate", JsonUtils.bean2Json(queryAcctChargingTotalDto));
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByDate(queryAcctChargingTotalDto, page);
         page.setList(list);
@@ -58,6 +60,7 @@ public class BillingTotalAnalysisController {
         queryAcctChargingTotalDto.setUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
         queryAcctChargingTotalDto.setAuthLevel(authLevel);
+        logger.info("/totalChargingByMonth", JsonUtils.bean2Json(queryAcctChargingTotalDto));
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByMonth(queryAcctChargingTotalDto, page);
         page.setList(list);

@@ -49,7 +49,7 @@ public class ResultPage<T> implements Serializable {
 	/**
 	 * 总条数
 	 */
-	private long totalTtemNumber;
+	private long totalItemNumber;
 
 	/**
 	 * 总页数
@@ -218,12 +218,12 @@ public class ResultPage<T> implements Serializable {
 		this.sort = sort;
 	}
 
-	public long getTotalTtemNumber() {
-		return totalTtemNumber;
+	public long getTotalItemNumber() {
+		return totalItemNumber;
 	}
 
-	public void setTotalTtemNumber(long totalTtemNumber) {
-		this.totalTtemNumber = totalTtemNumber;
+	public void setTotalItemNumber(long totalItemNumber) {
+		this.totalItemNumber = totalItemNumber;
 	}
 
 	public int getTotalPageNumber() {
@@ -257,7 +257,7 @@ public class ResultPage<T> implements Serializable {
 	 */
 	public void setTotalItemAndPageNumber(long totalItemNumber) {
 		if (totalItemNumber > 0) {
-			this.setTotalTtemNumber(totalItemNumber);
+			this.setTotalItemNumber(totalItemNumber);
 			// 计算总页数
 			int totalPageNumber = 1;
 			if (this.isPage) {// 是否需要分页
@@ -309,26 +309,13 @@ public class ResultPage<T> implements Serializable {
 		this.hasNextPage = hasNextPage;
 	}
 
-	/**
-	 * 获取上一页
-	 * 
-	 * @return
-	 */
-	public long getPrePage() {
-		prePage = this.getPageNo();
-		if (this.isHasPrePage()) {
-			prePage = this.getPageNo() - 1;
-		}
-		return prePage;
-	}
-
 	public void setPrePage(long prePage) {
 		this.prePage = prePage;
 	}
 
 	/**
 	 * 获取下一页
-	 * 
+	 *
 	 * @return
 	 */
 	public long getNextPage() {
@@ -337,6 +324,19 @@ public class ResultPage<T> implements Serializable {
 			nextPage = this.getPageNo() + 1;
 		}
 		return nextPage;
+	}
+
+	/**
+	 * 获取上一页
+	 *
+	 * @return
+	 */
+	public long getPrePage() {
+		prePage = this.getPageNo();
+		if (this.isHasPrePage()) {
+			prePage = this.getPageNo() - 1;
+		}
+		return prePage;
 	}
 
 	public void setNextPage(long nextPage) {

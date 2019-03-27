@@ -28,7 +28,7 @@ public class ImClientProtocolBO {
     private final Logger logger = LoggerFactory.getLogger(ImClientProtocolBO.class);
     public static Channel channelGlobal = null;
     public static List<OperateVO> operateVOList = new ArrayList<OperateVO>();
-    public static long operateIntervalTime = 30000;//命令操作间隔30s
+    public static long operateIntervalTime = 1000;//命令操作间隔30s
 
     private static ImClientProtocolBO instance = new ImClientProtocolBO();
 

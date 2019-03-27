@@ -32,7 +32,7 @@ declare intNumber int default 1;
 declare orgCode varchar(32);
 
 
-declare orgCodes cursor for select a.org_code from sys_user a,sys_role_user b where a.id = b.user_id and b.role_id in(4,5);/*取出来所有需要循环的数据*/
+declare orgCodes cursor for select a.org_code from guiyu_base.sys_user a,guiyu_base.sys_role_user b where a.id = b.user_id and b.role_id in(4,5);/*取出来所有需要循环的数据*/
 declare continue handler for not FOUND set isDone = 1;
 open orgCodes;
 

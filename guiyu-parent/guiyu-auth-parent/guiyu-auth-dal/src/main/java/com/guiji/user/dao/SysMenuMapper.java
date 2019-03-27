@@ -42,9 +42,7 @@ public interface SysMenuMapper {
 
     String getPermissionsByUrl(String url);
 
-    public int countByParamVo(MenuParamVo param);
-
-    public List<Object> selectByParamVo(MenuParamVo param);
-
     public List<String> getPermissions();
+    
+    List<SysMenu> getUserMenus(@Param("roleId")Integer roleId,@Param("menuType")Integer menuType);
 }

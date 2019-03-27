@@ -6,7 +6,7 @@ package com.guiji.billing.constants;
 public enum BusiTypeEnum {
 
     //账户
-    BILLING_ACCT("BILLING_ACCT","01","账户", "计费中心"),
+    BILLING_ACCT("BILLING_ACCT","10","账户", "计费中心"),
 
     ;
 

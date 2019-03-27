@@ -73,7 +73,7 @@ public class ShiroRealmConfig {
 
                 String username = (String) getAvailablePrincipal(principals);
 
-                Set<String> permissions = userMapper.getPermissions(username);
+                Set<String> permissions = null;//userMapper.getPermissions(username);
 
                 SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
                 info.setStringPermissions(permissions);

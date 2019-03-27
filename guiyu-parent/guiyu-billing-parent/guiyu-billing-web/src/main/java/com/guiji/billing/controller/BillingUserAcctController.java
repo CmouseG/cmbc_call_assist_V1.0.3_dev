@@ -5,6 +5,7 @@ import com.guiji.billing.entity.*;
 import com.guiji.billing.service.BillingUserAcctService;
 import com.guiji.billing.sys.ResultPage;
 import com.guiji.billing.vo.UserRechargeTotalVo;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public class BillingUserAcctController {
 
     /*********充值    begin***********************/
     //管理员充值(系统侧使用)
+    @Jurisdiction("financeCenter_rechargeManage_recharge")
     @ApiOperation(value="企业账户充值", notes="企业账户充值")
     @RequestMapping(value = "/recharge", method = {RequestMethod.POST})
     public boolean recharge(@RequestBody RechargeDto rechargeDto,
@@ -81,11 +83,14 @@ public class BillingUserAcctController {
     @ApiOperation(value="查询用户账户充值记录列表", notes="查询用户账户充值记录列表")
     @RequestMapping(value = "/queryUserRechargeTotal", method = {RequestMethod.POST})
     public ResultPage<UserRechargeTotalVo> queryUserRechargeTotal(@RequestBody QueryRechargeDto queryRechargeDto,
-                                                                  @RequestHeader String userId){
+                                                                  @RequestHeader String userId, @RequestHeader String orgCode,
+                                                                  @RequestHeader Integer authLevel){
         if(null == queryRechargeDto){
             queryRechargeDto = new QueryRechargeDto();
         }
         queryRechargeDto.setUserId(userId);
+        queryRechargeDto.setOrgCode(orgCode);
+        queryRechargeDto.setAuthLevel(authLevel);
         ResultPage<UserRechargeTotalVo> page = new ResultPage<UserRechargeTotalVo>(queryRechargeDto);
         List<UserRechargeTotalVo> list = billingUserAcctService.queryUserRechargeTotal(queryRechargeDto, page);
         page.setList(list);
@@ -103,6 +108,7 @@ public class BillingUserAcctController {
 */
 
     //编辑充值附件快照(系统侧使用)
+    @Jurisdiction("financeCenter_rechargeManage_edit")
     @ApiOperation(value="编辑变更充值附件快照", notes="编辑变更充值附件快照")
     @RequestMapping(value = "/editRechargeSnapshot", method = {RequestMethod.POST, RequestMethod.GET})
     public boolean editRechargeSnapshot(@RequestBody EditRechargeSnapshotDto editRechargeSnapshotDto){
@@ -187,7 +193,8 @@ public class BillingUserAcctController {
         return billingUserAcctService.addUserAcctSet(userAcctSetDto);
     }
 
-    //修改账户推送设置
+    //修改账户推送设置(企业账户阈值设置)
+    @Jurisdiction("financeCenter_accountPandect_edit")
     @ApiOperation(value="修改账户推送设置", notes="修改账户推送设置")
     @RequestMapping(value = "/updUserAcctSet", method = {RequestMethod.POST})
     public boolean updUserAcctSet(@RequestBody UserAcctSetDto userAcctSetDto){

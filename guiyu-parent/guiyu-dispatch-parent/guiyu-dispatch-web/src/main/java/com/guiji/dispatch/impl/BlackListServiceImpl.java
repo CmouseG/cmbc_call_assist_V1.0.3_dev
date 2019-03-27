@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.service.GetAuthUtil;
 import com.guiji.dispatch.sys.ResultPage;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -53,6 +54,9 @@ public class BlackListServiceImpl implements IBlackListService {
 	private BlackListImportQueueHandler blackListMQ;
 	@Autowired
 	private BlackListRecordsMapper blackRecordsMapper;
+
+	@Autowired
+	private GetAuthUtil getAuthUtil;
 
 	@Override
 	public void batchPlanImport(String fileName, Long userId, MultipartFile file, String orgCode) throws Exception {
@@ -216,7 +220,7 @@ public class BlackListServiceImpl implements IBlackListService {
 	}
 
 	@Override
-	public Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId) {
+	public Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId, Integer authLevel) {
 		Page<BlackList> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -232,9 +236,15 @@ public class BlackListServiceImpl implements IBlackListService {
 		}
 		List<BlackList> result = blackListMapper.selectByExample(example);
 		*/
+
+		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, operUserId, orgCode);//获取企业组织编码
+
 		BlackList blackParam = new BlackList();
 		blackParam.setPhone(phone);
+		blackParam.setUserId(Integer.valueOf(operUserId));
 		blackParam.setOrgCode(orgCode);
+		blackParam.setAuthLevel(authLevel);
 		blackParam.setStatus(Constant.BATCH_STATUS_SHOW);
 		ResultPage<BlackList> pageRes = new ResultPage<BlackList>(pagenum, pagesize);
 		pageRes.setOrderBy("gmt_create");

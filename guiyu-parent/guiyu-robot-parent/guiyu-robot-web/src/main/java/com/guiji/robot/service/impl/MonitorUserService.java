@@ -14,8 +14,8 @@ import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.robot.service.vo.MonitorCallData;
 import com.guiji.robot.util.DataLocalCacheUtil;
 import com.guiji.robot.util.ListUtil;
-import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.ws.api.WsOnlineUserApi;
 import com.guiji.ws.model.OnlineUser;
 import com.guiji.ws.model.WsSenceEnum;
@@ -69,17 +69,17 @@ public class MonitorUserService {
 					return data;
 				}else {
 					//当前人员是可以协呼的人员
-					SysOrganization org = dataLocalCacheUtil.queryUserRealOrg(userId);
+					SysUser sysUser = dataLocalCacheUtil.queryUser(userId);
 					//协呼人员按企业处理
 					data.setOneUserDataFlag(false); 
-					data.setOrgCode(org.getCode());
+					data.setOrgCode(sysUser.getOrgCode());
 					//获取可以协呼的用户列表
-					List<OnlineUser> assistUserList = this.getAssistUserList(org.getCode());
+					List<OnlineUser> assistUserList = this.getAssistUserList(sysUser.getOrgCode());
 					//把用户也排下序，这样分配数据的列表会尽量保持一致
 					assistUserList.sort(Comparator.comparing(OnlineUser::getUserId));
 					if(assistUserList!=null && !assistUserList.isEmpty()) {
 						//获取企业下所有实时通话数据
-						List<CallInfo> orgCallList = this.queryOrgCallList(org.getCode());
+						List<CallInfo> orgCallList = this.queryOrgCallList(sysUser.getOrgCode());
 						if(orgCallList!=null && !orgCallList.isEmpty()) {
 							//按incr编号升序排序
 							orgCallList.sort(Comparator.comparing(CallInfo::getIncr));

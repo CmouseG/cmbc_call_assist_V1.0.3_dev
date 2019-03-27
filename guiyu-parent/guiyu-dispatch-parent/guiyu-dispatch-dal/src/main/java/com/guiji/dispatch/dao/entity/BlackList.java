@@ -28,6 +28,8 @@ public class BlackList implements Serializable {
 
     private Integer status;
 
+    private Integer authLevel;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -124,6 +126,14 @@ public class BlackList implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getAuthLevel() {
+        return authLevel;
+    }
+
+    public void setAuthLevel(Integer authLevel) {
+        this.authLevel = authLevel;
     }
 
     @Override

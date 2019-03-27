@@ -34,6 +34,7 @@ import com.guiji.botsentence.vo.DomainVO;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.common.exception.CommonException;
 import com.guiji.component.model.Page;
 import com.guiji.component.result.ServerResult;
@@ -205,6 +206,7 @@ public class BotSentenceApprovalController {
 	 */
 	@RequestMapping("downloadTemplate")
 	@Transactional
+	@Jurisdiction("botsentence_approve_export")
 	public void downloadTemplate(@JsonParam String processId, @JsonParam String selectedList, HttpServletResponse resp, @RequestHeader String userId) throws Exception{
 		BotSentenceProcess botSentenceProcess = botSentenceProcessMapper.selectByPrimaryKey(processId);
 		String templateId = botSentenceProcess.getTemplateId();

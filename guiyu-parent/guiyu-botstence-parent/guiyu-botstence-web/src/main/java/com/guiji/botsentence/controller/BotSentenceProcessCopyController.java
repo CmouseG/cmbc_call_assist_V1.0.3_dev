@@ -24,6 +24,7 @@ import com.guiji.common.exception.CommonException;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.model.Page;
 import com.guiji.component.result.ServerResult;
 
@@ -38,6 +39,7 @@ public class BotSentenceProcessCopyController {
 	private BotSentenceProcessMapper botSentenceProcessMapper;
 	
 	@RequestMapping(value="copy")
+	@Jurisdiction("botsentence_maker_market_get")
 	public ServerResult<String> copy(@JsonParam String processId, @JsonParam String orgCode, @RequestHeader String userId, 
 			@JsonParam String tempalteName) {
 		String newProcessId = botSentenceProcessCopyService.copy(processId, orgCode, userId, tempalteName);
@@ -45,6 +47,7 @@ public class BotSentenceProcessCopyController {
 	}
 	
 	@RequestMapping(value="share")
+	@Jurisdiction("botsentence_maker_toShare")
 	public ServerResult saveBotStenceShare(@JsonParam BotSentenceShareVO share, @RequestHeader String userId) {
 		share.setUserId(userId);
 		botSentenceProcessCopyService.saveBotStenceShare(share);
@@ -116,6 +119,7 @@ public class BotSentenceProcessCopyController {
 	}
 	
 	@RequestMapping(value="cancelShare")
+	@Jurisdiction("botsentence_maker_cancelShare")
 	public ServerResult cancelShare(@JsonParam String processId, @RequestHeader String userId) {
 		botSentenceProcessCopyService.cancelShare(processId, userId);
 		return ServerResult.createBySuccess();

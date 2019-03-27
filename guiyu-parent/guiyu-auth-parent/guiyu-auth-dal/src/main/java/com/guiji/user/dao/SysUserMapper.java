@@ -39,19 +39,15 @@ public interface SysUserMapper {
     //
     void addRole(@Param("userId")Long userId,@Param("roleIds")Long roleIds);
     
-    Set<String> getPermissions(String principal);
-    
     String getPassword(String principal);
     
     Long getUserId(@Param("username")String username,@Param("password")String password); 
     
     Long getUserIdForLogin(@Param("username")String username,@Param("password")String password);
     
-    List<Map<String,String>> getUserByName(String userName);
+    List<SysUser> getUserByName(String userName);
     
     List<SysRole> getRoleByUserId(Long id);
-    
-    List<String> getPermByRoleId(Long roleId);
     
     int count();
     
@@ -78,8 +74,6 @@ public interface SysUserMapper {
     public List<SysUser> getAllCompanyUser();
 
     public List<SysUser> getAllUserByOrgCode(String orgCode);
-
-    public List<SysUser> getAllUserByOrgCodeForWeb(String orgCode);
 
     void addUserExt(@Param("userId")Long userId);
 

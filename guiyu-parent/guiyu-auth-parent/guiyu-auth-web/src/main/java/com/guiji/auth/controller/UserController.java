@@ -6,44 +6,49 @@ import java.net.URLDecoder;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.druid.support.json.JSONUtils;
-import com.guiji.auth.model.SysUserRoleVo;
-import com.guiji.auth.model.UserIdVo;
-import com.guiji.auth.service.OrganizationService;
-import com.guiji.auth.util.RandomValidateCodeUtil;
-import com.guiji.user.dao.entity.SysOrganization;
-import com.guiji.user.dao.entity.SysUserExt;
-import com.guiji.utils.JsonUtils;
-import com.guiji.wechat.api.WeChatApi;
-import com.guiji.wechat.vo.QRCodeReqVO;
-import com.guiji.wechat.vo.QRCodeRpsVO;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.exception.CheckConditionException;
+import com.guiji.auth.model.SysUserRoleVo;
+import com.guiji.auth.model.UserAuth;
+import com.guiji.auth.model.UserIdVo;
+import com.guiji.auth.service.OrganizationService;
 import com.guiji.auth.service.UserService;
 import com.guiji.auth.util.AuthUtil;
+import com.guiji.auth.util.DataLocalCacheUtil;
 import com.guiji.common.model.Page;
-import com.guiji.component.aspect.SysOperaLog;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysMenu;
+import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.user.vo.SysUserVo;
 import com.guiji.user.vo.UserParamVo;
+import com.guiji.utils.JsonUtils;
 import com.guiji.utils.RedisUtil;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.guiji.wechat.api.WeChatApi;
+import com.guiji.wechat.vo.QRCodeReqVO;
+import com.guiji.wechat.vo.QRCodeRpsVO;
 
 /**
  * Created by ty on 2018/10/22.
@@ -60,9 +65,12 @@ public class UserController implements IAuth {
 	private OrganizationService organizationService;
 	@Autowired
 	private WeChatApi weChatApi;
+	@Autowired
+	DataLocalCacheUtil dataLocalCacheUtil;
 
 	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
 
+	@Jurisdiction("system_usr_add")
 	@RequestMapping("/user/regist")
 	public SysUser insert(SysUserVo param, @RequestHeader Long userId) throws Exception {
 		SysUser user = new SysUser();
@@ -103,6 +111,7 @@ public class UserController implements IAuth {
 		return Date.from(zdt.toInstant());
 	}
 
+	@Jurisdiction("system_usr_edit")
 	@RequestMapping("/user/update")
 	public void update(SysUserVo param, @RequestHeader Long userId) throws CheckConditionException {
 		SysUser user = new SysUser();
@@ -138,8 +147,13 @@ public class UserController implements IAuth {
 	}
 
 	@RequestMapping("/user/getUserByPage")
-	public Page<Object> getUserByPage(UserParamVo param, @RequestHeader Long userId) {
-		return service.getUserByPage(param, userId);
+	public Page<Object> getUserByPage(UserParamVo param, @RequestHeader Long userId, 
+			@RequestHeader Integer authLevel, @RequestHeader String orgCode)
+	{
+		param.setUserId(userId);
+		param.setAuthLevel(authLevel);
+		param.setOrgCode(orgCode);
+		return service.getUserByPage(param);
 	}
 
 	@RequestMapping("/user/getUserById")
@@ -149,10 +163,11 @@ public class UserController implements IAuth {
 	}
 
 	@RequestMapping("/user/getUserByName")
-	public List<Map<String, String>> getUserByName(String username) {
-		return service.getUserByName(username);
+	public ReturnData<List<SysUser>> getUserByName(String username) {
+		return Result.ok(service.getUserByName(username));
 	}
 
+	@Jurisdiction("personCenter_myselfInfo_basicInfo_revisePwd")
 	@RequestMapping("/user/changePassword")
 	public void changePassword(String newPass, String oldPass, @RequestHeader Long userId)
 			throws CheckConditionException {
@@ -167,6 +182,7 @@ public class UserController implements IAuth {
 		return Result.ok();
 	}
 
+	@Jurisdiction("personCenter_myselfInfo_getData_save")
 	@RequestMapping("/user/updateUserData")
 	public void updateUserData(SysUser user, @RequestHeader Long userId) {
 		user.setId(userId);
@@ -271,16 +287,12 @@ public class UserController implements IAuth {
 		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCode(orgCode));
 	}
 
-	@RequestMapping("/user/getAllUserByOrgCodeForWeb")
-	public ReturnData<List<SysUser>> getAllUserByOrgCodeForWeb(@RequestParam("orgCode") String orgCode) {
-		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCodeForWeb(orgCode));
-	}
-
 	@RequestMapping("/user/getAllUserRoleByOrgCode")
 	public ReturnData<List<SysUserRoleVo>> getAllUserRoleByOrgCode(@RequestParam("orgCode") String orgCode) {
 		return new ReturnData<List<SysUserRoleVo>>(service.getAllUserRoleByOrgCode(orgCode));
 	}
 
+	@Jurisdiction("personCenter_myselfInfo_basicInfo_reviseEmail,personCenter_myselfInfo_basicInfo_revisePhone")
 	@RequestMapping("/user/updateUserExt")
 	public void updateUserExt(SysUserExt sysUserExt) {
 		service.updateUserExt(sysUserExt);
@@ -298,6 +310,7 @@ public class UserController implements IAuth {
 	/**
 	 * 生成验证码
 	 */
+	@Jurisdiction("personCenter_myselfInfo_basicInfo_bindwx")
 	@RequestMapping(value = "/user/getQRCode")
 	public void getQRCode(Long userId, HttpServletResponse response) {
 		QRCodeReqVO request = new QRCodeReqVO();
@@ -328,11 +341,60 @@ public class UserController implements IAuth {
 
 	}
 
+	@Jurisdiction("personCenter_myselfInfo_basicInfo_unBindwx")
 	@RequestMapping("/user/userUnBindWechat")
 	public void userUnBindWechat(Long userId) {
 		service.userUnBindWechat(userId);
 	}
 
+	/**
+	 * 查询某个用户的菜单或者按钮
+	 * @param userId
+	 * @param menuType
+	 * @return
+	 */
+	@Jurisdiction(value = "system_user_defquery")
+	@RequestMapping("/user/querySysMenuByUser")
+	public ReturnData<List<SysMenu>> querySysMenuByUser(Long userId,Integer menuType) {
+		List<SysMenu> list = service.querySysMenuByUser(userId.intValue(), menuType);
+		return Result.ok(list);
+	}
+	
 
+	/**
+	 * 提供给权限注解切面调用
+	 */
+	@RequestMapping("/user/queryButtonByUser")
+	public ReturnData<List<String>> queryButtonByUser(Long userId)
+	{
+		List<String> urlList = new ArrayList<>();
+		List<SysMenu> sysMenuList = service.querySysMenuByUser(userId.intValue(), 2);
+		if (sysMenuList != null && !sysMenuList.isEmpty()) {
+			for (SysMenu sysMenu : sysMenuList) {
+				urlList.add(sysMenu.getUrl());
+			}
+		}
+		return Result.ok(urlList);
+	}
 
+	/**
+	 * 查询用户数据查询权限
+	 */
+	@RequestMapping("/user/queryUserDataAuth")
+	public ReturnData<UserAuth> queryUserDataAuth(Long userId){
+		UserAuth userAuth = dataLocalCacheUtil.queryUserAuth(userId.intValue());
+		return Result.ok(userAuth);
+	}
+
+	
+	/**
+	 * 校验用户是否人工坐席
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping("/user/isAgentUser")
+	public ReturnData<Boolean> isAgentUser(@RequestParam("userId") Integer userId){
+		boolean isAgent = service.isAgentUser(userId);
+		return Result.ok(isAgent);
+	}
 }

@@ -39,6 +39,7 @@ import com.guiji.botsentence.vo.GenerateTTSVO;
 import com.guiji.component.client.config.JsonParam;
 import com.guiji.component.client.util.BeanUtil;
 import com.guiji.component.client.util.DateUtil;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.model.Page;
 import com.guiji.component.result.ServerResult;
 
@@ -166,6 +167,7 @@ public class BotSentenceProcessController {
 	 * @param accountNo
 	 */
 	@RequestMapping(value="createBotSentenceProcess")
+	@Jurisdiction("botsentence_maker_addTemplate")
 	public ServerResult<String> createBotSentenceProcess(@JsonParam BotSentenceProcessVO paramVO, 
 			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader String authLevel) {
 		if(null != paramVO && StringUtils.isNotBlank(paramVO.getProcessId()) && 
@@ -211,6 +213,7 @@ public class BotSentenceProcessController {
 	 * @param processId
 	 */
 	@RequestMapping(value="updateTemplateName")
+	@Jurisdiction("botsentence_maker_setName")
 	public ServerResult updateTemplateName(@JsonParam String processId, @JsonParam String templateName, @JsonParam String industry, @RequestHeader String userId) {
 		botSentenceProcessService.updateBotSentenceTemplate(processId, templateName, industry, userId);
 		return ServerResult.createBySuccess();
@@ -221,6 +224,7 @@ public class BotSentenceProcessController {
 	 * @param processId
 	 */
 	@RequestMapping(value="deleteTemplate")
+	@Jurisdiction("botsentence_maker_delete")
 	public ServerResult deleteTemplate(@JsonParam String processId, @RequestHeader String userId) {
 		botSentenceProcessService.delete(processId, userId);
 		return ServerResult.createBySuccess();
@@ -544,6 +548,7 @@ public class BotSentenceProcessController {
 	}
 	
 	@RequestMapping(value="saveIndustry")
+	@Jurisdiction("botsentence_mytemplate_save")
 	public ServerResult saveTrade(@JsonParam String industryName, @JsonParam String industryId, @RequestHeader("userId") String userId){
 		botSentenceProcessService.saveTrade(industryName, industryId, userId);
 		industryUtil.initIndustry();

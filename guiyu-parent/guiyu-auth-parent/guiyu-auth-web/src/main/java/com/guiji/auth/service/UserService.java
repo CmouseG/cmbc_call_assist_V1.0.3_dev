@@ -7,17 +7,27 @@ import java.util.*;
 import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.clm.api.LineMarketRemote;
 import com.guiji.clm.model.SipLineVO;
+import com.guiji.notice.api.INoticeSend;
 import com.guiji.notice.api.INoticeSetting;
+import com.guiji.notice.entity.MessageSend;
+import com.guiji.user.dao.SysMenuMapper;
+import com.guiji.user.dao.SysRoleUserMapper;
 import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.entity.*;
+import com.guiji.utils.LocalCacheUtil;
 import com.guiji.utils.RedisUtil;
+import com.guiji.wechat.api.WeChatApi;
+import com.guiji.wechat.vo.SendMsgReqVO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.guiji.auth.constants.AuthConstants;
+import com.guiji.auth.enm.AuthObjTypeEnum;
+import com.guiji.auth.enm.MenuTypeEnum;
+import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.util.AuthUtil;
-import com.guiji.ccmanager.api.ICallManagerOut;
-import com.guiji.ccmanager.entity.LineConcurrent;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
 import com.guiji.robot.api.IRobotRemote;
@@ -36,9 +46,6 @@ public class UserService {
 	private IRobotRemote iRobotRemote;
 	
 	@Autowired
-	private ICallManagerOut iCallManagerOut;
-
-	@Autowired
 	private OrganizationService organizationService;
 
 	@Autowired
@@ -49,9 +56,23 @@ public class UserService {
 
 	@Autowired
 	private RedisUtil redisUtil;
+	
+	@Autowired
+	SysMenuMapper sysMenuMapper;
+	@Autowired
+	PrivilegeService privilegeService;
 
 	@Autowired
 	private LineMarketRemote lineMarketRemote;
+	
+	@Autowired
+    private WeChatApi weChatApi;
+	
+	@Autowired
+	private SysRoleUserMapper sysRoleUserMapper;
+	
+	@Autowired
+	AgentGroupChangeService agentGroupChangeService;
 
 	private static final String REDIS_USER_BY_ID = "REDIS_USER_BY_USERID_";
 
@@ -63,17 +84,12 @@ public class UserService {
 	 * @param user
 	 */
 	public void insert(SysUser user,Long roleId){
-        if (roleId == 4) {
-			String orgCode = organizationService.getSubOrgCode(user.getOrgCode());
-			user.setOrgCode(orgCode);
-		}
-
-		user.setOrgCode(user.getOrgCode() + ".");
 		user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
 		mapper.insertSelective(user);
 		mapper.insertUserRole(user.getId(),roleId);
 		mapper.addUserExt(user.getId());
+		agentGroupChangeService.bindAgentMembers(user, roleId);
 		noticeSetting.addNoticeSettingReceiver(user.getId());
 	}
 	
@@ -114,7 +130,7 @@ public class UserService {
 		return sysUser;
 	}
 	
-	public List<Map<String,String>> getUserByName(String userName){
+	public List<SysUser> getUserByName(String userName){
 		return mapper.getUserByName(userName);
 	}
 	
@@ -131,32 +147,14 @@ public class UserService {
 		SysOrganization sysOrganization = (SysOrganization) redisUtil.get(REDIS_ORG_BY_USERID+userId);
 		if (sysOrganization == null) {
 			SysUser sysUser = mapper.getUserById(userId);
-			List<SysRole> sysRoleList = mapper.getRoleByUserId(userId);
-			String orgCode = null;
-			if (sysUser != null) {
-				orgCode = sysUser.getOrgCode().substring(0,sysUser.getOrgCode().lastIndexOf("."));
-				if (sysRoleList != null && sysRoleList.size() > 0 && (sysRoleList.get(0).getId() == 4 || sysRoleList.get(0).getId() == 5)) {
-					orgCode = orgCode.substring(0,orgCode.lastIndexOf("."));
-				}
-				sysOrganization = organizationService.getOrgByCode(orgCode);
-				//根据组织查询产品系列
-
-
-			}
+			String orgCode = sysUser.getOrgCode();
+			sysOrganization = organizationService.getOrgByCode(orgCode);
 			redisUtil.set(REDIS_ORG_BY_USERID+userId,sysOrganization);
 		}
 		return sysOrganization;
 	}
 	
-	public List<String> getPermByRoleId(Long roleId){
-		return mapper.getPermByRoleId(roleId);
-	}
-	
-	public Page<Object>  getUserByPage(UserParamVo param,Long userId){
-		SysUser loginUser = mapper.getUserById(userId);
-		if (loginUser != null) {
-			param.setOrgCode(loginUser.getOrgCode());
-		}
+	public Page<Object>  getUserByPage(UserParamVo param){
 		Page<Object> page=new Page<>();
 		int count=mapper.countByParamVo(param);
 		List<Object> userList=mapper.selectByParamVo(param);
@@ -191,7 +189,6 @@ public class UserService {
 		Map<String,Object> result=new HashMap<>();
 		SysUser user=mapper.selectByPrimaryKey(userId);
 		ReturnData<UserAiCfgVO> custAccount=iRobotRemote.queryCustAccount(String.valueOf(userId));
-		//ReturnData<List<LineConcurrent>> callData=iCallManagerOut.getLineInfos(String.valueOf(userId));
 		ReturnData<List<SipLineVO>> callData= lineMarketRemote.queryUserSipLineList(String.valueOf(userId));
 		result.put("user", user);
 		result.put("robot", custAccount.getBody());
@@ -244,17 +241,34 @@ public class UserService {
 			return list.get(0);
 		}
 		return null;
-
     }
 
 	public List<SysUser> getAllUserByOrgCode(String orgCode){
 		List<SysUser> sysUserList = mapper.getAllUserByOrgCode(orgCode);
 		return sysUserList;
 	}
-
-	public List<SysUser> getAllUserByOrgCodeForWeb(String orgCode){
-		List<SysUser> sysUserList = mapper.getAllUserByOrgCodeForWeb(orgCode);
-		return sysUserList;
+	
+	/**
+	 * 查询拥有某个角色的用户列表
+	 * @param roleId
+	 * @return
+	 */
+	public List<SysUser> queryUserByRoleId(Integer roleId){
+		if(roleId != null) {
+			SysRoleUserExample userRoleExample = new SysRoleUserExample();
+			userRoleExample.createCriteria().andRoleIdEqualTo(roleId).andDelFlagEqualTo(0);
+			List<SysRoleUser> roleUserList = sysRoleUserMapper.selectByExample(userRoleExample);
+			if(roleUserList!=null && !roleUserList.isEmpty()) {
+				List<Long> userList = new ArrayList<Long>();
+				for(SysRoleUser roleUser : roleUserList) {
+					userList.add(roleUser.getUserId());
+				}
+				SysUserExample userExample = new SysUserExample();
+				userExample.createCriteria().andIdIn(userList).andDelFlagEqualTo(0);
+				return mapper.selectByExample(userExample);
+			}
+		}
+		return null;
 	}
 
 	public List<SysUserRoleVo> getAllUserRoleByOrgCode(String orgCode){
@@ -282,8 +296,14 @@ public class UserService {
 		sysUserExtMapper.updateByPrimaryKeySelective(sysUserExt);
 	}
 
-	public SysUserExt getUserExtByUserId(Long id){
-		return mapper.getSysUserExtByUserId(id);
+	public SysUserExt getUserExtByUserId(Long id)
+	{
+		SysUserExt sysUserExt = LocalCacheUtil.getT("UserExt_"+id);
+		if(sysUserExt == null){
+			sysUserExt = mapper.getSysUserExtByUserId(id);
+			LocalCacheUtil.set("UserExt_"+id, sysUserExt, LocalCacheUtil.TEN_MIN);
+		}
+		return sysUserExt;
 	}
 
 	public void userBindWechat(Long userId,String weChat,String weChatOpenId) throws UnsupportedEncodingException {
@@ -303,5 +323,72 @@ public class UserService {
 		sysUserExt.setWechatStatus(0);//未绑定
 		sysUserExt.setUpdateTime(new Date());
 		sysUserExtMapper.updateByUserId(sysUserExt);
+		SendMsgReqVO sendMsgReqVO = new SendMsgReqVO();
+		sendMsgReqVO.setOpenID(getUserExtByUserId(userId).getWechatOpenid());
+	    sendMsgReqVO.setTemplateId("4czraHpgK6M0TNjfHVLoxAADaN18g0CefQHsXi2f6Bc"); //解绑模版
+	    sendMsgReqVO.addData("first", "您已成功与硅基帐号解除绑定");
+	    sendMsgReqVO.addData("keyword1", getUserById(userId).getUsername());
+	    sendMsgReqVO.addData("keyword2", "该微信已不能接收到硅基的推送消息");
+	    sendMsgReqVO.addData("remark", "如需再绑定，请在个人中心进行绑定");
+		weChatApi.send(sendMsgReqVO);
+	}
+	
+	/**
+	 * 查询用户权限范围内的菜单或者按钮
+	 * @param userId
+	 * @param menuType
+	 * @return
+	 */
+	public List<SysMenu> querySysMenuByUser(Integer userId,Integer menuType){
+		if(userId!=null && menuType!=null) {
+			List<SysRole> roleList = this.getRoleByUserId(Long.valueOf(userId));
+			if(roleList!=null && !roleList.isEmpty()) {
+				//现在用户只有1个角色
+				SysRole sysRole = roleList.get(0);
+				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
+				List<SysMenu> buttonList = new ArrayList<SysMenu>();
+				Iterator<SysMenu> it = allMenus.iterator();
+				while(it.hasNext()){
+					SysMenu sysMenu = it.next();
+				    if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()){
+				    	//加入按钮列表
+				    	buttonList.add(sysMenu);
+				        //从菜单列表中移除
+				    	it.remove();
+				    }
+				}
+				if(MenuTypeEnum.MENU.getCode()==menuType) {
+					return allMenus;
+				}else if(MenuTypeEnum.BUTTON.getCode()==menuType) {
+					return buttonList;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 是否坐席人员
+	 * @param userId
+	 * @return
+	 */
+	public boolean isAgentUser(Integer userId) {
+		if(userId!=null) {
+			List<SysRole> roleList = this.getRoleByUserId(Long.valueOf(userId));
+			if(roleList!=null && !roleList.isEmpty()) {
+				//现在用户只有1个角色
+				SysRole sysRole = roleList.get(0);
+				List<SysPrivilege> privilegeList = privilegeService.queryPrivilegeListByAuth(sysRole.getId().toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
+				if(privilegeList!=null && !privilegeList.isEmpty()) {
+					for(SysPrivilege sysPrivilege:privilegeList) {
+						if(AuthConstants.MENU_AGENT_MEMBER == Integer.valueOf(sysPrivilege.getResourceId())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -11,6 +11,7 @@ public class WxAccount {
     private String orgCode;
     private Date lastTime;
     private Integer isDesensitization;
+	private Integer authLevel;
     private Long orgId;
 
     public Long getOrgId()
@@ -70,4 +71,10 @@ public class WxAccount {
     public void setIsDesensitization(Integer isDesensitization) {
         this.isDesensitization = isDesensitization;
     }
+	public Integer getAuthLevel() {
+		return authLevel;
+	}
+	public void setAuthLevel(Integer authLevel) {
+		this.authLevel = authLevel;
+	}
 }

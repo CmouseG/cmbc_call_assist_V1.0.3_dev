@@ -33,15 +33,13 @@ public interface SysOrganizationMapper {
     
     List<Object> selectByPage(Page page);
     
-    public List<SysOrganization> getOrgByUserId(String orgCode);
+    public List<SysOrganization> getOrgByUserId(Long userId);
     
     public boolean existChildren(SysOrganization record);
     
     public int countCode(String code);
     
-    public List<Object> selectOpenByPage(Page page); 
-    
-    public List<Map> selectOpenByPage2(Page page);
+    public List<Map> selectOpenByPage(Page page);
 
     int countRobotByUserId(String code);
 
@@ -50,6 +48,8 @@ public interface SysOrganizationMapper {
     void updateOrganizationProduct(@Param("organizationId") Long organizationId, @Param("userId") Long userId, @Param("product") List<Integer> product);
 
     List<Integer> getProductByOrganizationId(Long organizationId);
+    
+    List<Integer> getOrgByProductId(Integer productId);
 
     void insertOrganizationIndustry(@Param("organizationId") Long organizationId, @Param("orgCode") String orgCode, @Param("userId") Long userId, @Param("industryIds") List<String> industryIds);
 

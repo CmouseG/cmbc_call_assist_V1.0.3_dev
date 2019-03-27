@@ -3,6 +3,7 @@ package com.guiji.dispatch.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUuidDto;
 import com.guiji.dispatch.dao.DispatchPlanMapper;
@@ -79,6 +80,12 @@ public class FileController {
 		return queryFileInterface;
 	}
 
+	/**
+	 * 删除文件记录
+	 * @param id
+	 * @return
+	 */
+	@Jurisdiction("taskCenter_importRecord_delete")
 	@PostMapping(value = "deleteFileRecordsById")
 	public boolean deleteFileRecordsById(@RequestParam(required = true, name = "id") Integer id) {
 		return file.deleteFileRecordsById(id);
@@ -106,6 +113,7 @@ public class FileController {
 		return jsonObject;
 	}
 
+	@Jurisdiction("taskCenter_phonelist_batchExport")
 	@PostMapping(value = "downloadChooseNum")
 	public Result.ReturnData<Object> downloadChooseNum(@RequestHeader Integer isDesensitization,
 			@RequestBody PlanUuidDto[] dtos, HttpServletResponse resp)

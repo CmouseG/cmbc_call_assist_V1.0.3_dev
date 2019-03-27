@@ -1,5 +1,6 @@
 package com.guiji.dispatch.controller;
 
+import com.guiji.component.jurisdiction.Jurisdiction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ public class BlackListController {
 	 * @param orgCode
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_blackList_add")
 	@PostMapping("saveBlackList")
 	public boolean saveBlackList(@RequestBody BlackList blackList, @RequestHeader Long userId,@RequestHeader String orgCode) {
 		return blackListService.save(blackList,userId,orgCode);
@@ -37,16 +39,18 @@ public class BlackListController {
 	 * @param phone
 	 * @return 
 	 */
+	@Jurisdiction("taskCenter_blackList_delete")
 	@PostMapping("deleteBlackListById")
 	public boolean deleteBlackListById(@RequestParam(required = true, name = "id") String id) {
 		return blackListService.delete(id);
 	}
 	/**
-	 * 修改
+	 * 修改黑名单列表
 	 * @param blackList
 	 * @param userId
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_blackList_edit")
 	@PostMapping("updateBlackList")
 	public boolean updateBlackList(@RequestBody BlackList blackList,@RequestHeader Long userId) {
 		return blackListService.update(blackList,userId);
@@ -62,11 +66,18 @@ public class BlackListController {
 	@PostMapping("selectBlackList")
 	public Page<BlackList> selectBlackList(	@RequestParam(required = false, name = "phone")  String phone,@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode,
-			@RequestHeader Integer isDesensitization,@RequestHeader Long userId){
-		return blackListService.queryBlackListByParams(pagenum, pagesize,phone,orgCode,isDesensitization,userId);
+			@RequestHeader Integer isDesensitization,@RequestHeader Long userId, @RequestHeader Integer authLevel){
+		return blackListService.queryBlackListByParams(pagenum, pagesize,phone,orgCode,isDesensitization,userId, authLevel);
 	}
-	
-	
+
+	/**
+	 * 上传导入黑名单文件
+	 * @param file
+	 * @param userId
+	 * @param orgCode
+	 * @return
+	 */
+	@Jurisdiction("taskCenter_blackList_batchImport")
 	@Log(info = "文件上传")
 	@PostMapping("batchImportBlackList")
 	public MessageDto batchImportBlackList(@RequestParam("file") MultipartFile file, @RequestHeader Long userId, @RequestHeader String orgCode) {
@@ -89,6 +100,7 @@ public class BlackListController {
 	 * @param orgCode
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_blackList_batchImportDetail")
 	@PostMapping("selectBlackListRecords")
 	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode){

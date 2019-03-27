@@ -25,11 +25,14 @@ public class BillingCompanyTotalController {
     @ApiOperation(value="话费分析", notes="话费分析")
     @RequestMapping(value = "/totalCompanyChargingItem", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultPage<TotalChargingItemVo> totalCompanyChargingItem(@RequestBody QueryTotalChargingItemDto queryTotalChargingItemDto,
-                                                                    @RequestHeader String userId){
+                                                                    @RequestHeader String userId, @RequestHeader String orgCode,
+                                                                    @RequestHeader Integer authLevel){
         if(null == queryTotalChargingItemDto){
             queryTotalChargingItemDto = new QueryTotalChargingItemDto();
         }
         queryTotalChargingItemDto.setUserId(userId);
+        queryTotalChargingItemDto.setOrgCode(orgCode);
+        queryTotalChargingItemDto.setAuthLevel(authLevel);
         ResultPage<TotalChargingItemVo> page = new ResultPage<TotalChargingItemVo>(queryTotalChargingItemDto);
         List<TotalChargingItemVo> list = billingCompanyTotalService.totalCompanyChargingItem(queryTotalChargingItemDto, page);
         page.setList(list);

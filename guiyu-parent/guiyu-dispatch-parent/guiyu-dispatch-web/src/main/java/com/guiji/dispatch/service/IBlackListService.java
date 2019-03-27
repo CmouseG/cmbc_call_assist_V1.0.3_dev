@@ -21,7 +21,7 @@ public interface IBlackListService {
 
 	boolean setBlackPhoneStatus(DispatchPlan dispatchPlan);
 
-	Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId);
+	Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId, Integer authLevel);
 	
 	Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, String orgCode);
 }

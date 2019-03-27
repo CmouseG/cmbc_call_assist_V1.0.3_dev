@@ -14,8 +14,11 @@ import com.guiji.user.dao.SysUserMapper;
 import com.guiji.user.dao.entity.SysOrganization;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping
 public class LoginController implements ILogin {
+	private Logger logger = LoggerFactory.getLogger(LoginController.class);
     private final static int SUPER_ADMIN = 0;
 
     @Autowired
@@ -76,6 +80,14 @@ public class LoginController implements ILogin {
             wxAccount.setSuperAdmin(isSuperAdmin);
             wxAccount.setIsDesensitization(sysUser.getIsDesensitization());
             wxAccount.setLastTime(new Date());
+            Integer authLevel = null;
+            if(sysRoles.get(0).getDataAuthLevel()==null) {
+            	logger.error("用户：{}，没有配置数据查询权限，默认最低权限，查询本人数据..",username);
+            	authLevel = 1;
+            }else {
+            	authLevel = sysRoles.get(0).getDataAuthLevel();
+            }
+            wxAccount.setAuthLevel(authLevel);
             wxAccount.setOrgId(orgId);
             String jwtToken = jwtConfig.createTokenByWxAccount(wxAccount);
             JwtToken token = new JwtToken(jwtToken);
@@ -86,6 +98,7 @@ public class LoginController implements ILogin {
             map.put("username", sysUser.getUsername());
             map.put("isDesensitization", sysUser.getIsDesensitization());
             map.put("orgId", orgId);
+            map.put("authLevel", authLevel);
             return Result.ok(map);
         } catch (Exception e) {
             return Result.error("00010003");

@@ -140,4 +140,32 @@ public class DataLocalCacheUtil {
 		return null;
 	}
 	
+	
+	/**
+	 * 校验用户是否坐席
+	 * @param userId
+	 * @return
+	 */
+	public boolean isAgentUser(String userId) {
+		if(StrUtils.isNotEmpty(userId)) {
+			//先从缓存中取
+			Boolean isAgent = LocalCacheUtil.getT("KEY_USER_AGENT"+userId);
+			if(isAgent!=null) {
+				//缓存中有，直接取
+				return isAgent;
+			}else{
+				//缓存中没有,重新查，并放入内存
+				ReturnData<Boolean> isAgentData = iAuth.isAgentUser(Integer.valueOf(userId));
+				if(isAgentData != null && isAgentData.getBody()!=null) {
+					//内存10分钟有效
+					LocalCacheUtil.set("KEY_USER_AGENT"+userId, isAgentData.getBody(), LocalCacheUtil.TEN_MIN);
+					return isAgentData.getBody();
+				}else {
+					log.error("用户ID:{},查询不到用户是否坐席信息，返回：{}",userId,isAgentData);
+				}
+			}
+		}
+		return false;
+	}
+	
 }

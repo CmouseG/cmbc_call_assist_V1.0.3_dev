@@ -53,7 +53,7 @@ management:
   security:
     enabled: false
 mybatis:   
-  mapperLocations: classpath*:mappers/*.xml  
+  mapperLocations: classpath*:mappers/**/*.xml
   config-location: classpath:config/mybatis-config.xml      
   
 properties:

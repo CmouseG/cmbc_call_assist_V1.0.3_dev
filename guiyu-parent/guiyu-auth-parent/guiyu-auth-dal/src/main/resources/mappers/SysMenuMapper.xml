@@ -18,6 +18,7 @@
     <result column="appid" property="appid" jdbcType="INTEGER" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="sys_type" property="sysType" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -79,7 +80,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, `name`, description, url, pid, permission, is_show, create_id, create_time, update_id, 
-    update_time, `type`, `level`, appid, remarks, del_flag
+    update_time, `type`, `level`, appid, remarks, del_flag, sys_type
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysMenuExample" >
     select
@@ -115,21 +116,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysMenu" >
+  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysMenu" useGeneratedKeys="true" keyProperty="id">
     insert into sys_menu (id, `name`, description, 
       url, pid, permission, 
       is_show, create_id, create_time, 
       update_id, update_time, `type`, 
       `level`, appid, remarks, 
-      del_flag)
+      del_flag,sys_type)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{url,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, #{permission,jdbcType=VARCHAR}, 
       #{isShow,jdbcType=INTEGER}, #{createId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
       #{level,jdbcType=INTEGER}, #{appid,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=INTEGER})
+      #{delFlag,jdbcType=INTEGER},#{sysType,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysMenu" >
+  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysMenu" useGeneratedKeys="true" keyProperty="id">
     insert into sys_menu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -180,6 +181,9 @@
       <if test="delFlag != null" >
         del_flag,
       </if>
+      <if test="sysType != null" >
+        sys_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -229,6 +233,9 @@
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="sysType != null" >
+        #{sysType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -289,6 +296,9 @@
       <if test="record.delFlag != null" >
         del_flag = #{record.delFlag,jdbcType=INTEGER},
       </if>
+      <if test="record.sysType != null" >
+        sys_type = #{record.sysType,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -311,7 +321,8 @@
       `level` = #{record.level,jdbcType=INTEGER},
       appid = #{record.appid,jdbcType=INTEGER},
       remarks = #{record.remarks,jdbcType=VARCHAR},
-      del_flag = #{record.delFlag,jdbcType=INTEGER}
+      del_flag = #{record.delFlag,jdbcType=INTEGER},
+      sys_type = #{record.sysType,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -364,6 +375,9 @@
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
+      <if test="sysType != null" >
+        sys_type = #{sysType,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -383,17 +397,18 @@
       `level` = #{level,jdbcType=INTEGER},
       appid = #{appid,jdbcType=INTEGER},
       remarks = #{remarks,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=INTEGER}
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      sys_type = #{sysType,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
   <select id="getMenuByUserId" resultType="com.guiji.user.dao.entity.SysMenu">
-    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
+    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks,d.sys_type as sysType
     from sys_user a
     LEFT JOIN sys_role_user b on a.id=b.user_id
-    LEFT JOIN sys_menu_role c on b.role_id=c.role_id
-    LEFT JOIN sys_menu d on d.id=c.menu_id
-    where a.id=#{id} and d.del_flag=0
+    LEFT JOIN sys_privilege c on b.role_id=c.auth_id
+    LEFT JOIN sys_menu d on d.id=c.resource_id
+    where a.id=#{id} and d.del_flag=0 and c.auth_type=3 and c.resource_type=1
     ORDER by pid
   </select>
 
@@ -403,7 +418,7 @@
   </select>
 
   <select id="getAllMenus" resultType="com.guiji.user.dao.entity.SysMenu">
-    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks
+    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks,d.sys_type as sysType
     from sys_menu d where d.del_flag=0 and pid is not null
     ORDER by pid
   </select>
@@ -416,27 +431,13 @@
     SELECT permission FROM `sys_menu` where url=#{url} and type=2
   </select>
 
-
-  <select id="countByParamVo" resultType="int">
-    select count(1) from sys_menu where del_flag=0
-    <if test="menuName != '' ">
-      and name=#{menuName}
-    </if>
-  </select>
-
-  <select id="selectByParamVo" resultType="map">
-    SELECT a.id,a.name,a.description,a.url,a.type,DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,b.username as createName,a.pid,a.level
-    from sys_menu a
-    LEFT JOIN sys_user b on a.create_id=b.id
-    where a.del_flag=0
-    <if test="menuName !='' ">
-      and a.name like concat('%',#{menuName},'%')
-    </if>
-    order by a.create_time desc
-    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-  </select>
-
   <select id="getPermissions" resultType="string">
     SELECT url from sys_menu where del_flag=0 and type=2
+  </select>
+  
+  <select id="getUserMenus" resultType="com.guiji.user.dao.entity.SysMenu">
+    select d.id,d.name,d.description,d.pid,d.url,d.permission,d.type,d.level,d.appid,d.remarks,d.sys_type as sysType
+    from sys_menu d,sys_privilege s where d.id=s.resource_id and d.del_flag=0 and pid is not null and d.type=#{menuType} and s.auth_id=#{roleId} and s.auth_Type=3 and s.resource_type=1
+    ORDER by pid
   </select>
 </mapper>

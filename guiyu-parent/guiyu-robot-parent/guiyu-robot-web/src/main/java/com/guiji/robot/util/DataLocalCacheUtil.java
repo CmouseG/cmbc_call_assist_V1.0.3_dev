@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.guiji.auth.api.IAuth;
 import com.guiji.auth.api.IOrg;
+import com.guiji.auth.model.UserAuth;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.robot.constants.RobotConstants;
 import com.guiji.robot.service.impl.AiCacheService;
 import com.guiji.robot.service.vo.HsReplace;
 import com.guiji.user.dao.entity.SysOrganization;
@@ -36,26 +38,29 @@ public class DataLocalCacheUtil {
 	
 	
 	/**
-	 * 查询用户所属真实企业信息缓存 
+	 * 查询用户数据查询权限
 	 * @param userId
 	 * @return
 	 */
-	public SysOrganization queryUserRealOrg(String userId) {
+	public UserAuth queryUserAuth(String userId) {
 		if(StrUtils.isNotEmpty(userId)) {
 			//先从缓存中取
-			SysOrganization org = LocalCacheUtil.getT("KEY_USER_ORG"+userId);
-			if(org!=null) {
+			UserAuth ua = LocalCacheUtil.getT("KEY_USER_AUTH"+userId);
+			if(ua!=null) {
 				//缓存中有，直接取
-				return org;
+				return ua;
 			}else{
 				//缓存中没有,重新查，并放入内存
-				ReturnData<SysOrganization> orgData = iAuth.getOrgByUserId(Long.valueOf(userId));
-				if(orgData != null && orgData.getBody()!=null) {
-					//内存1个小时有效
-					LocalCacheUtil.set("KEY_USER_ORG"+userId, orgData.getBody(), LocalCacheUtil.TEN_MIN);
-					return orgData.getBody();
+				ReturnData<UserAuth> userAuthData = iAuth.queryUserDataAuth(Long.valueOf(userId));
+				if(userAuthData != null && userAuthData.getBody()!=null) {
+					//内存10分钟有效
+					LocalCacheUtil.set("KEY_USER_AUTH"+userId, userAuthData.getBody(), LocalCacheUtil.TEN_MIN);
+					return userAuthData.getBody();
 				}else {
-					log.error("用户ID:{},查询不到用户所属企业信息，返回：{}",userId,orgData);
+					log.error("用户ID:{},查询不到用户数据查询权限，默认查询本人",userId);
+					ua = new UserAuth();
+					ua.setAuthLevel(RobotConstants.USER_DATA_AUTH_ME);
+					return ua;
 				}
 			}
 		}

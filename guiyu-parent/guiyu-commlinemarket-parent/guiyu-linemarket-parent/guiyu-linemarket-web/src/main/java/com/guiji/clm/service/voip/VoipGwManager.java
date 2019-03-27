@@ -107,7 +107,7 @@ public class VoipGwManager {
 				}
 				if(StrUtils.isEmpty(voipGwInfo.getOrgCode())) {
 					//设置企业
-					SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(voipGwInfo.getUserId());
+					SysOrganization sysOrganization = dataLocalCacheUtil.queryOrgByUser(voipGwInfo.getUserId());
 					if(sysOrganization!=null) {
 						voipGwInfo.setOrgCode(sysOrganization.getCode());
 					}
@@ -278,7 +278,7 @@ public class VoipGwManager {
 			port.setUserId(gwPort.getUserId());
 			//设置企业
 			if(StrUtils.isEmpty(gwPort.getOrgCode()) && StrUtils.isNotEmpty(gwPort.getUserId())) {
-				SysOrganization sysOrganization = dataLocalCacheUtil.queryUserRealOrg(gwPort.getUserId());
+				SysOrganization sysOrganization = dataLocalCacheUtil.queryOrgByUser(gwPort.getUserId());
 				if(sysOrganization!=null) {
 					port.setOrgCode(sysOrganization.getCode());
 				}

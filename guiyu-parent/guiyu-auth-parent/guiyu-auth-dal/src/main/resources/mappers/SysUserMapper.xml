@@ -444,14 +444,6 @@
     select password from sys_user where username=#{userName} and status=1 and del_flag=0
   </select>
 
-  <select id="getPermissions" resultType="string">
-    select DISTINCT d.permission from sys_user a
-    LEFT JOIN sys_role_user b on a.id=b.user_id
-    LEFT JOIN sys_menu_role c on b.role_id =c.role_id
-    LEFT JOIN sys_menu d on d.id=c.menu_id
-    where a.username=#{userName} and d.permission is not null
-  </select>
-
   <select id="getUserId" resultType="long">
     select id from sys_user t 
     where t.username = #{username} 
@@ -467,23 +459,12 @@
   </select>
 
 
-  <!-- <select id="getUserByName" resultType="com.guiji.user.dao.entity.SysUser">
-      select id,username,`password`,`status` from sys_user where username=#{username}
-  </select> -->
-
   <select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
-    select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin
+    select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin,a.data_auth_level as dataAuthLevel,a.org_code as orgCode
     from sys_role a
     LEFT JOIN sys_role_user b on a.id=b.role_id
     LEFT JOIN sys_user c on c.id=b.user_id
     where c.id=#{id}
-  </select>
-
-  <select id="getPermByRoleId" resultType="string">
-    select a.permission from sys_menu a
-    LEFT JOIN sys_menu_role b on a.id=b.menu_id
-    LEFT JOIN sys_role c on c.id=b.role_id
-    where c.id=#{roleId}
   </select>
 
   <select id="count" resultType="int">
@@ -511,7 +492,6 @@
     LEFT JOIN sys_role c on c.id=b.role_id
     LEFT JOIN sys_user_login_record d on d.user_id=a.id
     where a.del_flag=0 and a.username=#{username}
-
   </select>
 
   <insert id="insertUserRole">
@@ -527,38 +507,69 @@
   </select>
 
   <select id="countByParamVo" resultType="int">
-    select count(1) from sys_user where del_flag=0
-    <if test="userName != '' ">
-      and username=#{userName}
+    select count(1) from sys_user a 
+    LEFT JOIN sys_role_user b ON a.id = b.user_id
+	LEFT JOIN sys_role c ON c.id = b.role_id
+	LEFT JOIN sys_organization f ON a.org_code = f.`code`
+    where a.del_flag = 0
+    <if test="authLevel == 1">
+		and a.create_id = #{userId}
+	</if>
+	<if test="authLevel == 2">
+		and a.org_code = #{orgCode}
+	</if>
+	<if test="authLevel == 3">
+		and a.org_code like CONCAT(#{orgCode},'%')
+	</if>
+	<if test="userName != '' ">
+      and a.username like concat(#{userName},'%')
     </if>
-    <if test="orgCode != null ">
-      and (org_code = #{orgCode} or org_code like CONCAT(#{orgCode},'%'))
+    <if test="roleName != '' ">
+      and c.`name` like concat(#{roleName},'%')
+    </if>
+    <if test="orgName != '' ">
+      and f.`name` like concat(#{orgName},'%')
+    </if>
+    <if test="status != null ">
+      and a.`status` = #{status}
     </if>
   </select>
 
   <select id="selectByParamVo" resultType="map">
-    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,a.is_desensitization as isDesensitization,
-    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
-    e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel
-    from sys_user a
-    LEFT JOIN sys_role_user b on a.id=b.user_id
-    LEFT JOIN sys_role c on c.id=b.role_id
-    LEFT JOIN sys_user_login_record d on d.user_id=a.id
-    left join sys_user e on e.id=a.create_id
-    left join sys_organization f on (case when b.role_id in(4,5) then f.code=LEFT(left(a.org_code,length(a.org_code)-1), LENGTH(left(a.org_code,length(a.org_code)-1)) - LOCATE('.', REVERSE(left(a.org_code,length(a.org_code)-1)))) else f.code= left(a.org_code,length(a.org_code)-1) end)
-    where a.del_flag=0
-    <if test="userName != '' ">
+	SELECT a.id, a.username, c.id AS roleId, c.`name` AS roleName, a.`status`, a.org_code AS orgCode, f.`name` AS orgName,
+	DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') AS vaildTime, DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') AS startTime,
+	c.init_role AS initRole, c.super_admin AS superAdmin, a.is_desensitization AS isDesensitization,
+	DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') AS createTime, e.username AS createName, a.inten_label AS intenLabel
+	FROM sys_user a
+	LEFT JOIN sys_role_user b ON a.id = b.user_id
+	LEFT JOIN sys_role c ON c.id = b.role_id
+	LEFT JOIN sys_user e ON e.id = a.create_id
+	LEFT JOIN sys_organization f ON a.org_code = f.`code`
+	WHERE a.del_flag = 0
+	<if test="authLevel == 1">
+		and a.create_id = #{userId}
+	</if>
+	<if test="authLevel == 2">
+		and a.org_code = #{orgCode}
+	</if>
+	<if test="authLevel == 3">
+		and a.org_code like CONCAT(#{orgCode},'%')
+	</if>
+	<if test="userName != '' ">
       and a.username like concat(#{userName},'%')
     </if>
-    <if test="roleId !='' ">
-      and c.id like concat('%',#{roleId},'%')
+    <if test="roleName != '' ">
+      and c.`name` like concat(#{roleName},'%')
     </if>
-    <if test="orgCode != null ">
-      and (a.org_code = #{orgCode} or a.org_code like CONCAT(#{orgCode},'%'))
+    <if test="orgName != '' ">
+      and f.`name` like concat(#{orgName},'%')
     </if>
-    order by a.create_time desc
-    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-  </select>
+    <if test="status != null ">
+      and a.`status` = #{status}
+    </if>
+	order by a.create_time desc
+	LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+</select>
 
   <select id="getSecretKey" resultType="string">
     SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
@@ -610,15 +621,6 @@
   </select>
 
   <select id="getAllUserByOrgCode" resultMap="BaseResultMap">
-    select
-    id, username,`status`, push_type, call_record_url, batch_record_url,
-    inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,
-    update_time, del_flag, vaild_time,start_time,is_desensitization
-    from sys_user
-    where org_code like CONCAT(#{orgCode},'.%')
-  </select>
-
-  <select id="getAllUserByOrgCodeForWeb" resultMap="BaseResultMap">
     select
     id, username,`status`, push_type, call_record_url, batch_record_url,
     inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,

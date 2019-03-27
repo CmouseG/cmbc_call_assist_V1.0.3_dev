@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 public class SysOrganization implements Serializable {
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -38,12 +38,22 @@ public class SysOrganization implements Serializable {
     private List<Integer> product;
 
     private List<String> industryIds;
-    
+    private List<String> menuIds;
     private Integer usable;
     
     private static final long serialVersionUID = 1L;
-    
-    public Integer getUsable()
+
+    public List<String> getMenuIds()
+	{
+		return menuIds;
+	}
+
+	public void setMenuIds(List<String> menuIds)
+	{
+		this.menuIds = menuIds;
+	}
+
+	public Integer getUsable()
 	{
 		return usable;
 	}
@@ -52,12 +62,12 @@ public class SysOrganization implements Serializable {
 	{
 		this.usable = usable;
 	}
-
-	public Long getId() {
+	
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -107,6 +117,14 @@ public class SysOrganization implements Serializable {
 
     public void setDelFlag(Integer delFlag) {
         this.delFlag = delFlag;
+    }
+
+    public Integer getOpen() {
+        return open;
+    }
+
+    public void setOpen(Integer open) {
+        this.open = open;
     }
 
     public Long getCreateId() {
@@ -173,14 +191,6 @@ public class SysOrganization implements Serializable {
         this.botstence = botstence;
     }
 
-    public Integer getOpen() {
-		return open;
-	}
-
-	public void setOpen(Integer open) {
-		this.open = open;
-	}
-
     public String getSubCode() {
         return subCode;
     }
@@ -219,6 +229,7 @@ public class SysOrganization implements Serializable {
         sb.append(", line=").append(line);
         sb.append(", botstence=").append(botstence);
         sb.append(", delFlag=").append(delFlag);
+        sb.append(", open=").append(open);
         sb.append(", createId=").append(createId);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateId=").append(updateId);
@@ -227,6 +238,7 @@ public class SysOrganization implements Serializable {
         sb.append(", product=").append(product);
         sb.append(", industryIds=").append(industryIds);
         sb.append(", usable=").append(usable);
+		sb.append(", menuIds=").append(menuIds);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

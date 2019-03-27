@@ -31,11 +31,14 @@ public class BillingTotalAnalysisController {
     @ApiOperation(value="汇总报表按日", notes="汇总报表按日")
     @RequestMapping(value = "/totalChargingByDate", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultPage<BillingTotalChargingConsumerVo> totalAcctChargingByDay(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto,
-                                                                             @RequestHeader String userId){
+                                                                             @RequestHeader String userId, @RequestHeader String orgCode,
+                                                                             @RequestHeader Integer authLevel){
         if(null == queryAcctChargingTotalDto){
             queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
         }
         queryAcctChargingTotalDto.setUserId(userId);
+        queryAcctChargingTotalDto.setOrgCode(orgCode);
+        queryAcctChargingTotalDto.setAuthLevel(authLevel);
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByDate(queryAcctChargingTotalDto, page);
         page.setList(list);
@@ -47,11 +50,14 @@ public class BillingTotalAnalysisController {
     @ApiOperation(value="汇总报表按月", notes="汇总报表按月")
     @RequestMapping(value = "/totalChargingByMonth", method = {RequestMethod.POST, RequestMethod.GET})
     public ResultPage<BillingTotalChargingConsumerVo> totalChargingByMonth(@RequestBody QueryAcctChargingTotalDto queryAcctChargingTotalDto,
-                                                                           @RequestHeader String orgCode){
+                                                                           @RequestHeader String userId, @RequestHeader String orgCode,
+                                                                           @RequestHeader Integer authLevel){
         if(null == queryAcctChargingTotalDto){
             queryAcctChargingTotalDto = new QueryAcctChargingTotalDto();
         }
+        queryAcctChargingTotalDto.setUserId(userId);
         queryAcctChargingTotalDto.setOrgCode(orgCode);
+        queryAcctChargingTotalDto.setAuthLevel(authLevel);
         ResultPage<BillingTotalChargingConsumerVo> page = new ResultPage<BillingTotalChargingConsumerVo>(queryAcctChargingTotalDto);
         List<BillingTotalChargingConsumerVo> list = billingTotalAnalysisService.totalChargingByMonth(queryAcctChargingTotalDto, page);
         page.setList(list);

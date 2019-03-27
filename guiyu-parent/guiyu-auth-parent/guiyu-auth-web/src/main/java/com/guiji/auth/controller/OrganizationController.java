@@ -1,25 +1,28 @@
 package com.guiji.auth.controller;
 
-import com.guiji.auth.api.IOrg;
-import com.guiji.auth.exception.CheckConditionException;
-import com.guiji.auth.model.OrgVO;
-import com.guiji.auth.service.OrganizationService;
-import com.guiji.auth.service.UserService;
-import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
-import com.guiji.common.model.Page;
-import com.guiji.component.result.Result;
-import com.guiji.component.result.Result.ReturnData;
-import com.guiji.user.dao.entity.SysOrganization;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.guiji.auth.api.IOrg;
+import com.guiji.auth.exception.CheckConditionException;
+import com.guiji.auth.model.OrgRoleInfo;
+import com.guiji.auth.model.OrgVO;
+import com.guiji.auth.model.OrganizationVO;
+import com.guiji.auth.service.OrganizationService;
+import com.guiji.auth.service.UserService;
+import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
+import com.guiji.component.result.Result;
+import com.guiji.component.result.Result.ReturnData;
+import com.guiji.user.dao.entity.SysOrganization;
 
 @RestController
 @RequestMapping("organization")
@@ -30,8 +33,9 @@ public class OrganizationController implements IOrg{
 	@Autowired
 	private OrganizationService organizationService;
 
+	@Jurisdiction("system_organization_add")
 	@RequestMapping("add")
-	public SysOrganization add(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+	public SysOrganization add(SysOrganization record,@RequestHeader long userId,@RequestHeader String orgCode) throws CheckConditionException{
 		if(!organizationService.checkName(record.getName())){
 			throw new CheckConditionException("00010009");
 		}
@@ -41,10 +45,11 @@ public class OrganizationController implements IOrg{
 		record.setUpdateId(userId);
 		record.setCreateTime(new Date());
 		record.setUpdateTime(new Date());
-		organizationService.add(record);
+		organizationService.add(record,userId,orgCode);
 		return record;
 	}
 	
+	@Jurisdiction("system_organization_delete")
 	@RequestMapping("delete")
 	public void delte(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
 		if(organizationService.existChildren(record)){
@@ -55,21 +60,23 @@ public class OrganizationController implements IOrg{
 		organizationService.delte(record);
 	}
 	
+	@Jurisdiction("system_organization_edit,system_account_add,system_account_robot")
 	@RequestMapping("update")
-	public void update(SysOrganization record,@RequestHeader long userId) throws CheckConditionException{
+	public void update(SysOrganization record,
+			@RequestHeader long userId,@RequestHeader String orgCode) throws CheckConditionException{
 		if(!StringUtils.isEmpty(record.getName())){
-			if(!organizationService.checkName(record.getName(),record.getId())){
+			if(!organizationService.checkName(record.getName(),record.getId().longValue())){
 				throw new CheckConditionException("00010009");
 			}
 		}
 		record.setUpdateId(userId);
 		record.setUpdateTime(new Date());
-		organizationService.update(record);
+		organizationService.update(record,userId,orgCode);
 	}
 	
 	@RequestMapping("selectByPage")
-	public Page<Object> selectByPage(Page<Object> page){
-		return organizationService.selectByPage(page);
+	public Page<OrganizationVO> selectByPage(Page<Object> page,String orgName,Integer type, @RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode){
+		return organizationService.selectByPage(page, userId, authLevel, orgCode,orgName,type);
 	}
 	
 	@RequestMapping("selectOpenByPage")
@@ -85,6 +92,17 @@ public class OrganizationController implements IOrg{
 	@RequestMapping("getOrgByType")
 	public List<SysOrganization> getOrgByType(Integer type){
 		return organizationService.getOrgByType(type);
+	}
+	
+	
+	/**
+	 * 获取企业树
+	 * @param orgCode
+	 * @return
+	 */
+	@RequestMapping("getAuthOrgList")
+	public List<SysOrganization> getAuthOrgList(@RequestHeader String orgCode){
+		return organizationService.getAuthOrgList(orgCode);
 	}
 	
 	/**
@@ -121,11 +139,6 @@ public class OrganizationController implements IOrg{
 		return organizationService.getProductByOrganizationId(organizationId);
 	}
 
-	@RequestMapping("getIndustryByOrganizationId")
-	public List<String> getIndustryByOrganizationId(Long organizationId){
-		return organizationService.getIndustryByOrganizationId(organizationId);
-	}
-
 	@RequestMapping("getIndustryByOrgCode")
 	public ReturnData<List<String>> getIndustryByOrgCode(String orgCode){
 		return Result.ok(organizationService.getIndustryByOrgCode(orgCode));
@@ -135,25 +148,59 @@ public class OrganizationController implements IOrg{
 	public List<SysOrganization> getOrgByOrgCodeOrgName(String orgCode,String orgName){
 		return organizationService.getOrgByOrgCodeOrgName(orgCode,orgName);
 	}
+	
+	
+	/**
+	 * 产品管理使用
+	 * 行业模板树
+	 * @param productId 产品id
+	 * @return
+	 */
+	@RequestMapping("getTemplateTradeByTopOrg")
+	public ReturnData<Map<String,Object>> getTemplateTradeByTopOrg(Integer productId){
+		return Result.ok(organizationService.getTemplateTradeByTopOrg(productId));
+	}
+
+	
+	/**
+	 * 组织管理使用
+	 * 查询产品-行业
+	 * 以及本企业-行业 数据-树形结构
+	 * @param productId 产品id
+	 * @param orgCode 选择的组织code
+	 * @return
+	 */
+	@RequestMapping("getTemplateTradeByProductAndOrg")
+	public ReturnData<Map<String,Object>> getTemplateTradeByProductAndOrg(Integer productId,String orgCode){
+		return Result.ok(organizationService.getTemplateTradeByProductAndOrg(productId,orgCode));
+	}
+	
+	
+	/**
+	 * 组织管理使用
+	 * 按组织查询
+	 * 行业-模板权限 查询
+	 * 查询上级企业/本企业的行业-模板树形数据
+	 * @param orgCode
+	 * @return
+	 */
+	@RequestMapping("getIndustrysByOrgId")
+	public ReturnData<Map<String,Object>> getTemplateTradeByOrg(
+			String parentCode,
+			String targetOrgCode){
+		return Result.ok(organizationService.getTemplateTradeByOrg(parentCode,targetOrgCode));
+	}
 
 	/**
-	 * 前台使用
+	 * 查询 组织-角色 树
+	 * @param orgCode
+	 * @return
 	 */
-	@RequestMapping("getIndustrysByOrgCode")
-	public ReturnData<List<BotSentenceTemplateTradeVO>> getIndustrysByOrgCode(String orgCode){
-		return Result.ok(organizationService.getIndustrysByOrgCode(orgCode));
+	@RequestMapping("getAuthOrgTree")
+	public ReturnData<List<OrgRoleInfo>> getAuthOrgTree(@RequestHeader String orgCode){
+		return Result.ok(organizationService.getAuthOrgTree(orgCode,true));
 	}
-
-	@RequestMapping("getSubOrgIdByOrgId")
-	public ReturnData<List<Integer>> getSubOrgIdByOrgId(Integer orgId) {
-		return Result.ok(organizationService.getSubOrgIdByOrgId(orgId));
-	}
-
-	@RequestMapping("getAllOrgId")
-	public ReturnData<List<Integer>> getAllOrgId() {
-		return Result.ok(organizationService.getAllOrgId());
-	}
-
+		
 	@RequestMapping("queryAllOrgByUserId")
 	public ReturnData<List<OrgVO>> queryAllOrgByUserId(@RequestHeader Long userId) {
 		List<OrgVO> organizationList = new ArrayList<>();
@@ -171,6 +218,16 @@ public class OrganizationController implements IOrg{
 		orgVo.setOrgName(organization.getName());
 		organizationList.add(orgVo);
 		return Result.ok(organizationList);
+	}
+
+	@RequestMapping("getSubOrgIdByOrgId")
+	public ReturnData<List<Integer>> getSubOrgIdByOrgId(Integer orgId) {
+		return Result.ok(organizationService.getSubOrgIdByOrgId(orgId));
+	}
+
+	@RequestMapping("getAllOrgId")
+	public ReturnData<List<Integer>> getAllOrgId() {
+		return Result.ok(organizationService.getAllOrgId());
 	}
 	
 }

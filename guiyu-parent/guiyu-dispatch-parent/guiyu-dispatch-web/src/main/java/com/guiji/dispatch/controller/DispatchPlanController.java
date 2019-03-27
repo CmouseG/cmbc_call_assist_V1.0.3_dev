@@ -2,6 +2,7 @@ package com.guiji.dispatch.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.common.model.Page;
+import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.dispatch.batchimport.AsynFileService;
 import com.guiji.dispatch.bean.BatchDispatchPlanList;
 import com.guiji.dispatch.bean.IdsDto;
@@ -44,6 +45,7 @@ public class DispatchPlanController {
 	 * @param orgId
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_phonelist_addPlan")
 	@PostMapping("addSchedule")
 	public MessageDto addSchedule(@RequestBody DispatchPlan dispatchPlan, @RequestHeader Long userId,
 			@RequestHeader String orgCode, @RequestHeader Integer orgId) {
@@ -77,6 +79,7 @@ public class DispatchPlanController {
 	 * @param file
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_phonelist_addBatchPlan")
 	@Log(info = "文件上传")
 	@PostMapping("batchImport")
 	public MessageDto batchImport( @RequestParam("file") MultipartFile file, @RequestHeader Long userId,
@@ -104,6 +107,7 @@ public class DispatchPlanController {
 	 * @param dto
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_phonelist_batchRecover,taskCenter_phonelist_batchStop,taskCenter_phonelist_batchPause")
 	@PostMapping("batchUpdatePlans")
 	public boolean batchUpdatePlans(@RequestBody IdsDto[] dto) {
 		return dispatchPlanService.batchUpdatePlans(dto);
@@ -115,6 +119,7 @@ public class DispatchPlanController {
 	 * @param batchId
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_phonelist_oneKeyStop,taskCenter_phonelist_oneKeyPause,taskCenter_phonelist_oneKeyRecover")
 	@PostMapping("operationAllPlanByBatchId")
 	@Log(info = "一键修改状态")
 	public MessageDto operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
@@ -127,6 +132,7 @@ public class DispatchPlanController {
 	 * @param dto
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_phonelist_batchDelete,taskCenter_phonelist_delete")
 	@PostMapping("deleteAllPlanByBatchId")
 	public boolean deleteAllPlanByBatchId(@RequestBody IdsDto[] dto) {
 		logger.info("deleteAllPlanByBatchId:{}:", (null != dto) ? JsonUtils.bean2Json(dto) : null);
@@ -141,6 +147,7 @@ public class DispatchPlanController {
 	 * @param orgId
 	 * @return
 	 */
+	@Jurisdiction("taskCenter_phonelist_batchJoin")
 	@PostMapping("batchInsertDisplanPlan")
 	public boolean batchInsertDisplanPlan(@RequestBody BatchDispatchPlanList plans, @RequestHeader Long userId,
 			@RequestHeader String orgCode, @RequestHeader Integer orgId) {
@@ -196,7 +203,7 @@ public class DispatchPlanController {
 	//查询计划列表
 	@ApiOperation(value="查询计划列表", notes="查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryPlanList", method = {RequestMethod.POST, RequestMethod.GET})
-	public Page<DispatchPlan> queryPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
+	public Page<DispatchPlan> queryPlanList(@RequestHeader Long userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
 											@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
 											@RequestBody QueryPlanListDto queryPlanDto) {
 		if(null == queryPlanDto){
@@ -210,6 +217,7 @@ public class DispatchPlanController {
 		queryPlanDto.setOperOrgCode(orgCode);
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
+		queryPlanDto.setAuthLevel(authLevel);
 
 		ResultPage<DispatchPlan> resPage = new ResultPage<DispatchPlan>(queryPlanDto);
 		resPage = dispatchPlanService.queryPlanList(queryPlanDto, resPage);
@@ -232,7 +240,7 @@ public class DispatchPlanController {
 
 	@ApiOperation(value = "查询计划列表", notes = "查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryPlanListByPage", method = {RequestMethod.POST, RequestMethod.GET})
-	public Page<DispatchPlanVo> queryPlanListByPage(@RequestHeader Long userId, @RequestHeader String orgCode,
+	public Page<DispatchPlanVo> queryPlanListByPage(@RequestHeader Long userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
 													@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
 													@RequestBody QueryPlanListDto queryPlanDto) {
 		if (null == queryPlanDto) {
@@ -246,6 +254,7 @@ public class DispatchPlanController {
 		queryPlanDto.setOperOrgCode(orgCode);
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
+		queryPlanDto.setAuthLevel(authLevel);
 
 		ResultPage<DispatchPlanVo> resPage = new ResultPage<DispatchPlanVo>(queryPlanDto);
 		resPage = dispatchPlanService.queryPlanListByPage(queryPlanDto, resPage);

@@ -135,52 +135,52 @@ public class SysRoleExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Long value) {
+        public Criteria andIdEqualTo(Integer value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Long value) {
+        public Criteria andIdNotEqualTo(Integer value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Long value) {
+        public Criteria andIdGreaterThan(Integer value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Long value) {
+        public Criteria andIdLessThan(Integer value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Long value) {
+        public Criteria andIdLessThanOrEqualTo(Integer value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Long> values) {
+        public Criteria andIdIn(List<Integer> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Long> values) {
+        public Criteria andIdNotIn(List<Integer> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Long value1, Long value2) {
+        public Criteria andIdBetween(Integer value1, Integer value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Long value1, Long value2) {
+        public Criteria andIdNotBetween(Integer value1, Integer value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -752,6 +752,136 @@ public class SysRoleExample {
 
         public Criteria andSuperAdminNotBetween(Integer value1, Integer value2) {
             addCriterion("super_admin not between", value1, value2, "superAdmin");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelIsNull() {
+            addCriterion("data_auth_level is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelIsNotNull() {
+            addCriterion("data_auth_level is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelEqualTo(Integer value) {
+            addCriterion("data_auth_level =", value, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelNotEqualTo(Integer value) {
+            addCriterion("data_auth_level <>", value, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelGreaterThan(Integer value) {
+            addCriterion("data_auth_level >", value, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelGreaterThanOrEqualTo(Integer value) {
+            addCriterion("data_auth_level >=", value, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelLessThan(Integer value) {
+            addCriterion("data_auth_level <", value, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelLessThanOrEqualTo(Integer value) {
+            addCriterion("data_auth_level <=", value, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelIn(List<Integer> values) {
+            addCriterion("data_auth_level in", values, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelNotIn(List<Integer> values) {
+            addCriterion("data_auth_level not in", values, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelBetween(Integer value1, Integer value2) {
+            addCriterion("data_auth_level between", value1, value2, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataAuthLevelNotBetween(Integer value1, Integer value2) {
+            addCriterion("data_auth_level not between", value1, value2, "dataAuthLevel");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIsNull() {
+            addCriterion("org_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIsNotNull() {
+            addCriterion("org_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeEqualTo(String value) {
+            addCriterion("org_code =", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotEqualTo(String value) {
+            addCriterion("org_code <>", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeGreaterThan(String value) {
+            addCriterion("org_code >", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("org_code >=", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLessThan(String value) {
+            addCriterion("org_code <", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLessThanOrEqualTo(String value) {
+            addCriterion("org_code <=", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeLike(String value) {
+            addCriterion("org_code like", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotLike(String value) {
+            addCriterion("org_code not like", value, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeIn(List<String> values) {
+            addCriterion("org_code in", values, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotIn(List<String> values) {
+            addCriterion("org_code not in", values, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeBetween(String value1, String value2) {
+            addCriterion("org_code between", value1, value2, "orgCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrgCodeNotBetween(String value1, String value2) {
+            addCriterion("org_code not between", value1, value2, "orgCode");
             return (Criteria) this;
         }
     }

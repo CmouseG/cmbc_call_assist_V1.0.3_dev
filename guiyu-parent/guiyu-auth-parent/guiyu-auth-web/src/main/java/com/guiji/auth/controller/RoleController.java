@@ -70,7 +70,7 @@ public class RoleController {
 	
 	
 	/**
-	 * 根据组织代码查询组织下角色
+	 * 鏍规嵁orgCode鏌ヨ瑙掕壊
 	 * @param orgCode
 	 * @return
 	 */

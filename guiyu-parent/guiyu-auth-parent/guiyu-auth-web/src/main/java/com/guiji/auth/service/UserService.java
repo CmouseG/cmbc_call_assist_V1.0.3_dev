@@ -216,12 +216,9 @@ public class UserService {
 		return key;
 	}
 
-	public List<Object>  selectLikeUserName(UserParamVo param,Long userId){
-		SysUser loginUser = mapper.getUserById(userId);
-		if (loginUser != null) {
-			param.setOrgCode(loginUser.getOrgCode());
-		}
-		List<Object> userList=mapper.selectLikeUserName(param);
+	public List<Object>  selectLikeUserName(UserParamVo param, Long userId, Integer authLevel, String orgCode)
+	{
+		List<Object> userList=mapper.selectLikeUserName(param, userId.intValue(), authLevel, orgCode);
 		return userList;
 	}
 

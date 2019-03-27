@@ -69,7 +69,7 @@ public interface SysUserMapper {
     
     public SysUser getUserById(Long id);
 
-    public List<Object> selectLikeUserName(UserParamVo param);
+    public List<Object> selectLikeUserName(@Param("param")UserParamVo param, @Param("userId")Integer userId, @Param("authLevel")Integer authLevel, @Param("orgCode")String orgCode);
 
     public List<SysUser> getAllCompanyUser();
 

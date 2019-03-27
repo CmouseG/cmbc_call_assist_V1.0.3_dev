@@ -591,33 +591,28 @@
   </select>
 
   <select id="selectLikeUserName" resultType="map">
-    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,
-    e.username as createName,f.`name` as orgName,DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') as vaildTime,DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') as startTime,a.org_code as orgCode,a.inten_label as intenLabel,a.is_desensitization as isDesensitization
-    from sys_user a
-    LEFT JOIN sys_role_user b on a.id=b.user_id
-    LEFT JOIN sys_role c on c.id=b.role_id
-    LEFT JOIN sys_user_login_record d on d.user_id=a.id
-    left join sys_user e on e.id=a.create_id
-    left join sys_organization f on (case when b.role_id in(4,5) then f.code=LEFT(left(a.org_code,length(a.org_code)-1), LENGTH(left(a.org_code,length(a.org_code)-1)) - LOCATE('.', REVERSE(left(a.org_code,length(a.org_code)-1)))) else f.code= left(a.org_code,length(a.org_code)-1) end)
-    where a.del_flag=0
-    <if test="userName != '' ">
-      and a.username like concat('%',#{userName},'%')
+    select a.id, a.username from sys_user a
+    where a.del_flag = 0
+    <if test="authLevel == 1">
+		and a.create_id = #{userId}
+	</if>
+	<if test="authLevel == 2">
+		and a.org_code = #{orgCode}
+	</if>
+	<if test="authLevel == 3">
+		and a.org_code like CONCAT(#{orgCode},'%')
+	</if>
+	<if test="param.userName != '' ">
+     	and a.username like concat('%',#{param.userName},'%')
     </if>
-    <if test="roleId !='' ">
-      and c.id like concat('%',#{roleId},'%')
-    </if>
-    <if test="orgCode != null ">
-      and a.org_code like CONCAT(#{orgCode},'%')
-    </if>
-    order by a.create_time desc
+    	order by a.create_time desc
   </select>
 
   <select id="getAllCompanyUser" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from sys_user
-    where id in (select user_id from sys_role_user where role_id in (3,4,5))
+    where id in (select user_id from sys_role_user where role_id <![CDATA[<>]]> 1;)
   </select>
 
   <select id="getAllUserByOrgCode" resultMap="BaseResultMap">

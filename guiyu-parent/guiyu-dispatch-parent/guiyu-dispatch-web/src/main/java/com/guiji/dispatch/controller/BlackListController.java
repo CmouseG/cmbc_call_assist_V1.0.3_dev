@@ -123,7 +123,7 @@ public class BlackListController {
 		queryBlackParam.setOrgCode(orgCode);
 		queryBlackParam.setAuthLevel(authLevel);
 
-		logger.info("/selectBlackListRecords", JsonUtils.bean2Json(queryBlackParam));
+		logger.info("/selectBlackListRecords:{}", JsonUtils.bean2Json(queryBlackParam));
 		return blackListService.queryBlackListRecords(pagenum, pagesize,queryBlackParam);
 	}
 

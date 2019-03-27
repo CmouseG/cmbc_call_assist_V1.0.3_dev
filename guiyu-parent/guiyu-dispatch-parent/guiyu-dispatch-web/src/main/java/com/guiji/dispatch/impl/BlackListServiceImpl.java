@@ -237,7 +237,7 @@ public class BlackListServiceImpl implements IBlackListService {
 		blackParam.setOrgCode(orgCode);
 		blackParam.setAuthLevel(authLevel);
 		blackParam.setStatus(Constant.BATCH_STATUS_SHOW);
-		logger.info("com.guiji.dispatch.impl.BlackListServiceImpl.queryBlackListByParams", JsonUtils.bean2Json(blackParam));
+		logger.info("com.guiji.dispatch.impl.BlackListServiceImpl.queryBlackListByParams:{}", JsonUtils.bean2Json(blackParam));
 		ResultPage<BlackList> pageRes = new ResultPage<BlackList>(pagenum, pagesize);
 		pageRes.setOrderBy("gmt_create");
 		pageRes.setSort("DESC");

@@ -372,6 +372,7 @@ public class FileController {
 		queryPlanDto.setIsDesensitization(isDesensitization);
 		queryPlanDto.setAuthLevel(authLevel);
 
+		logger.info("/dispatch/file/downloadPlanList:{}", JsonUtils.bean2Json(queryPlanDto));
 		//查询导出数据
 		List<DownLoadPlanVo> selectByExample = dispatchPlanService.queryDownloadPlanList(queryPlanDto);
 		String fileName = "任务导出结果详情.xls";

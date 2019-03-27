@@ -218,7 +218,7 @@ public class DispatchPlanController {
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
 		queryPlanDto.setAuthLevel(authLevel);
-		logger.info("/dispatch/plan/queryPlanList", JsonUtils.bean2Json(queryPlanDto));
+		logger.info("/dispatch/plan/queryPlanList:{}", JsonUtils.bean2Json(queryPlanDto));
 		ResultPage<DispatchPlan> resPage = new ResultPage<DispatchPlan>(queryPlanDto);
 		resPage = dispatchPlanService.queryPlanList(queryPlanDto, resPage);
 		Page<DispatchPlan> page = new Page<>();
@@ -255,7 +255,7 @@ public class DispatchPlanController {
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
 		queryPlanDto.setAuthLevel(authLevel);
-		logger.info("/dispatch/plan/queryPlanListByPage", JsonUtils.bean2Json(queryPlanDto));
+		logger.info("/dispatch/plan/queryPlanListByPage:{}", JsonUtils.bean2Json(queryPlanDto));
 		ResultPage<DispatchPlanVo> resPage = new ResultPage<DispatchPlanVo>(queryPlanDto);
 		resPage = dispatchPlanService.queryPlanListByPage(queryPlanDto, resPage);
 		Page<DispatchPlanVo> page = new Page<>();

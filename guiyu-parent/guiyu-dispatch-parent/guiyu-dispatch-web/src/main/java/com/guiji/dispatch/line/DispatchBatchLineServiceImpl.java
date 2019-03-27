@@ -129,13 +129,17 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
 
 	@Override
 	public void getLineRate() {
-		//查询两个月的接通率
-		ReturnData<List<LineRateResponse>> lineRateAll = lineRate.getLineRateAll(getStartTime(), getnowEndTime());
-		if (lineRateAll.getBody() != null) {
-			logger.info("查询线路监控数量>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lineRateAll.getBody().size());
-			redisUtils.set("LINE_RATE_DATA", lineRateAll.getBody());
-		} else {
-			logger.info("查询线路监控为null>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		try {
+			//查询两个月的接通率
+			ReturnData<List<LineRateResponse>> lineRateAll = lineRate.getLineRateAll(getStartTime(), getnowEndTime());
+			if (lineRateAll.getBody() != null) {
+				logger.info("查询线路监控数量>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lineRateAll.getBody().size());
+				redisUtils.set("LINE_RATE_DATA", lineRateAll.getBody());
+			} else {
+				logger.info("查询线路监控为null>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			}
+		}catch(Exception e){
+			logger.error("查询两个月接通率异常", e);
 		}
 	}
 

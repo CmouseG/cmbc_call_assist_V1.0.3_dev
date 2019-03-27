@@ -10,9 +10,9 @@ update guiyu_sms.sms_task set org_code = concat(org_code,'.') where org_code <> 
 update guiyu_sms.sms_task_detail set org_code = concat(org_code,'.') where org_code <> '1';
 update guiyu_sms.sms_tunnel set org_code = concat(org_code,'.') where org_code <> '1';
 update guiyu_linemarket.sip_line_apply set org_code = concat(org_code,'.') where org_code <> '1';
-update guiyu_linemarket.sip_line_apply set org_code = concat(org_code,'.') where org_code <> '1';
+update guiyu_linemarket.sip_line_apply set apply_org_code = concat(apply_org_code,'.') where org_code <> '1';
 update guiyu_linemarket.sip_line_base_info set org_code = concat(org_code,'.') where org_code <> '1';
-update guiyu_linemarket.sip_line_base_info set org_code = concat(org_code,'.') where org_code <> '1';
+update guiyu_linemarket.sip_line_base_info set belong_org_code = concat(belong_org_code,'.') where org_code <> '1';
 update guiyu_linemarket.sip_line_exclusive set org_code = concat(org_code,'.') where org_code <> '1';
 update guiyu_linemarket.sip_line_share set org_code = concat(org_code,'.') where org_code <> '1';
 update guiyu_linemarket.voip_gw_info set org_code = concat(org_code,'.') where org_code <> '1';
@@ -32,7 +32,7 @@ declare intNumber int default 1;
 declare orgCode varchar(32);
 
 
-declare orgCodes cursor for select a.org_code from sys_user a,sys_role_user b where a.id = b.user_id and b.role_id in(4,5);/*取出来所有需要循环的数据*/
+declare orgCodes cursor for select a.org_code from guiyu_base.sys_user a,guiyu_base.sys_role_user b where a.id = b.user_id and b.role_id in(4,5);/*取出来所有需要循环的数据*/
 declare continue handler for not FOUND set isDone = 1;
 open orgCodes;
 

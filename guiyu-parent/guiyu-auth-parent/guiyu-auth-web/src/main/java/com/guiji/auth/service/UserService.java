@@ -398,9 +398,17 @@ public class UserService {
 		}
 		return false;
 	}
-	
-	public List<SysUser> getAllUserByOrgCodeForWeb(String orgCode){
-		List<SysUser> sysUserList = mapper.getAllUserByOrgCodeForWeb(orgCode);
-		return sysUserList;
+
+	public Integer getUserCount(Long userId, Integer authLevel, String orgCode)
+	{
+		SysUserExample example = new SysUserExample();
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andOrgCodeLike(orgCode + "%");
+		}
+		return mapper.countByExample(example);
 	}
 }

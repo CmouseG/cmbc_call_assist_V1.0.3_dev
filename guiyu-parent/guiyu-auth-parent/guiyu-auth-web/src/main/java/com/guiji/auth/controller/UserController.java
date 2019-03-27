@@ -397,4 +397,9 @@ public class UserController implements IAuth {
 		boolean isAgent = service.isAgentUser(userId);
 		return Result.ok(isAgent);
 	}
+	
+	@RequestMapping("/user/getAllUserByOrgCodeForWeb")
+	public ReturnData<List<SysUser>> getAllUserByOrgCodeForWeb(@RequestParam("orgCode") String orgCode) {
+		return new ReturnData<List<SysUser>>(service.getAllUserByOrgCodeForWeb(orgCode));
+	}
 }

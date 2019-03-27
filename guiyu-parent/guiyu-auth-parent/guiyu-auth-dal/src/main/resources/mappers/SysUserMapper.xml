@@ -1,638 +1,699 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.user.dao.SysUserMapper" >
-  <resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysUser" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="username" property="username" jdbcType="VARCHAR" />
-    <result column="password" property="password" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="push_type" property="pushType" jdbcType="INTEGER" />
-    <result column="call_record_url" property="callRecordUrl" jdbcType="VARCHAR" />
-    <result column="batch_record_url" property="batchRecordUrl" jdbcType="VARCHAR" />
-    <result column="inten_label" property="intenLabel" jdbcType="VARCHAR" />
-    <result column="access_key" property="accessKey" jdbcType="VARCHAR" />
-    <result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
-    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
-    <result column="create_id" property="createId" jdbcType="BIGINT" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="update_id" property="updateId" jdbcType="BIGINT" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
-    <result column="vaild_time" property="vaildTime" jdbcType="DATE" />
-    <result column="start_time" property="startTime" jdbcType="DATE" />
-    <result column="is_desensitization" property="isDesensitization" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List" >
-    id, username, `password`, `status`, push_type, call_record_url, batch_record_url,
-    inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,
-    update_time, del_flag, vaild_time,start_time,is_desensitization
-  </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.user.dao.entity.SysUserExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from sys_user
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-    <if test="limitStart != null and limitStart>=0" >
-      limit #{limitStart} , #{limitEnd}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select
-    <include refid="Base_Column_List" />
-    from sys_user
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from sys_user
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.guiji.user.dao.entity.SysUserExample" >
-    delete from sys_user
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
+<mapper namespace="com.guiji.user.dao.SysUserMapper">
+	<resultMap id="BaseResultMap" type="com.guiji.user.dao.entity.SysUser">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="push_type" property="pushType" jdbcType="INTEGER" />
+		<result column="call_record_url" property="callRecordUrl"
+			jdbcType="VARCHAR" />
+		<result column="batch_record_url" property="batchRecordUrl"
+			jdbcType="VARCHAR" />
+		<result column="inten_label" property="intenLabel" jdbcType="VARCHAR" />
+		<result column="access_key" property="accessKey" jdbcType="VARCHAR" />
+		<result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+		<result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+		<result column="create_id" property="createId" jdbcType="BIGINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_id" property="updateId" jdbcType="BIGINT" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+		<result column="vaild_time" property="vaildTime" jdbcType="DATE" />
+		<result column="start_time" property="startTime" jdbcType="DATE" />
+		<result column="is_desensitization" property="isDesensitization"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem"
+										open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		id, username, `password`, `status`, push_type, call_record_url,
+		batch_record_url,
+		inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,
+		update_time, del_flag, vaild_time,start_time,is_desensitization
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="com.guiji.user.dao.entity.SysUserExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		'true' as QUERYID,
+		<include refid="Base_Column_List" />
+		from sys_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<if test="limitStart != null and limitStart>=0">
+			limit #{limitStart} , #{limitEnd}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from sys_user
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_user
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.guiji.user.dao.entity.SysUserExample">
+		delete from sys_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.guiji.user.dao.entity.SysUser"
+		useGeneratedKeys="true" keyProperty="id">
 
-    insert into sys_user (id, username, `password`,
-    `status`, push_type, call_record_url,
-    batch_record_url, inten_label, access_key,
-    secret_key, org_code, create_id,
-    create_time, update_id, update_time,
-    del_flag, vaild_time,start_time,is_desensitization)
-    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-    #{status,jdbcType=INTEGER}, #{pushType,jdbcType=INTEGER}, #{callRecordUrl,jdbcType=VARCHAR},
-    #{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR},
-    #{secretKey,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT},
-    #{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
-    #{delFlag,jdbcType=INTEGER}, #{vaildTime,jdbcType=DATE}, #{startTime,jdbcType=DATE},#{isDesensitization,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
-    insert into sys_user
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="username != null" >
-        username,
-      </if>
-      <if test="password != null" >
-        `password`,
-      </if>
-      <if test="status != null" >
-        `status`,
-      </if>
-      <if test="pushType != null" >
-        push_type,
-      </if>
-      <if test="callRecordUrl != null" >
-        call_record_url,
-      </if>
-      <if test="batchRecordUrl != null" >
-        batch_record_url,
-      </if>
-      <if test="intenLabel != null" >
-        inten_label,
-      </if>
-      <if test="accessKey != null" >
-        access_key,
-      </if>
-      <if test="secretKey != null" >
-        secret_key,
-      </if>
-      <if test="orgCode != null" >
-        org_code,
-      </if>
-      <if test="createId != null" >
-        create_id,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="updateId != null" >
-        update_id,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="delFlag != null" >
-        del_flag,
-      </if>
-      <if test="vaildTime != null" >
-        vaild_time,
-      </if>
-      <if test="startTime != null" >
-        start_time,
-      </if>
-      <if test="isDesensitization != null" >
-        is_desensitization,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="username != null" >
-        #{username,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null" >
-        #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=INTEGER},
-      </if>
-      <if test="pushType != null" >
-        #{pushType,jdbcType=INTEGER},
-      </if>
-      <if test="callRecordUrl != null" >
-        #{callRecordUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="batchRecordUrl != null" >
-        #{batchRecordUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="intenLabel != null" >
-        #{intenLabel,jdbcType=VARCHAR},
-      </if>
-      <if test="accessKey != null" >
-        #{accessKey,jdbcType=VARCHAR},
-      </if>
-      <if test="secretKey != null" >
-        #{secretKey,jdbcType=VARCHAR},
-      </if>
-      <if test="orgCode != null" >
-        #{orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="createId != null" >
-        #{createId,jdbcType=BIGINT},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateId != null" >
-        #{updateId,jdbcType=BIGINT},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="delFlag != null" >
-        #{delFlag,jdbcType=INTEGER},
-      </if>
-      <if test="vaildTime != null" >
-        #{vaildTime,jdbcType=DATE},
-      </if>
-      <if test="startTime != null" >
-        #{startTime,jdbcType=DATE},
-      </if>
-      <if test="isDesensitization != null" >
-        #{isDesensitization,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.guiji.user.dao.entity.SysUserExample" resultType="java.lang.Integer" >
-    select count(*) from sys_user
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update sys_user
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.username != null" >
-        username = #{record.username,jdbcType=VARCHAR},
-      </if>
-      <if test="record.password != null" >
-        `password` = #{record.password,jdbcType=VARCHAR},
-      </if>
-      <if test="record.status != null" >
-        `status` = #{record.status,jdbcType=INTEGER},
-      </if>
-      <if test="record.pushType != null" >
-        push_type = #{record.pushType,jdbcType=INTEGER},
-      </if>
-      <if test="record.callRecordUrl != null" >
-        call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="record.batchRecordUrl != null" >
-        batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="record.intenLabel != null" >
-        inten_label = #{record.intenLabel,jdbcType=VARCHAR},
-      </if>
-      <if test="record.accessKey != null" >
-        access_key = #{record.accessKey,jdbcType=VARCHAR},
-      </if>
-      <if test="record.secretKey != null" >
-        secret_key = #{record.secretKey,jdbcType=VARCHAR},
-      </if>
-      <if test="record.orgCode != null" >
-        org_code = #{record.orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="record.createId != null" >
-        create_id = #{record.createId,jdbcType=BIGINT},
-      </if>
-      <if test="record.createTime != null" >
-        create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.updateId != null" >
-        update_id = #{record.updateId,jdbcType=BIGINT},
-      </if>
-      <if test="record.updateTime != null" >
-        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.delFlag != null" >
-        del_flag = #{record.delFlag,jdbcType=INTEGER},
-      </if>
-      <if test="record.vaildTime != null" >
-        vaild_time = #{record.vaildTime,jdbcType=DATE},
-      </if>
-      <if test="record.startTime != null" >
-        start_time = #{record.startTime,jdbcType=DATE},
-      </if>
-      <if test="record.isDesensitization != null" >
-        `is_desensitization` = #{record.isDesensitization,jdbcType=INTEGER},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update sys_user
-    set id = #{record.id,jdbcType=BIGINT},
-    username = #{record.username,jdbcType=VARCHAR},
-    `password` = #{record.password,jdbcType=VARCHAR},
-    `status` = #{record.status,jdbcType=INTEGER},
-    push_type = #{record.pushType,jdbcType=INTEGER},
-    call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
-    batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
-    inten_label = #{record.intenLabel,jdbcType=VARCHAR},
-    access_key = #{record.accessKey,jdbcType=VARCHAR},
-    secret_key = #{record.secretKey,jdbcType=VARCHAR},
-    org_code = #{record.orgCode,jdbcType=VARCHAR},
-    create_id = #{record.createId,jdbcType=BIGINT},
-    create_time = #{record.createTime,jdbcType=TIMESTAMP},
-    update_id = #{record.updateId,jdbcType=BIGINT},
-    update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-    del_flag = #{record.delFlag,jdbcType=INTEGER},
-    vaild_time = #{record.vaildTime,jdbcType=DATE},
-    start_time = #{record.startTime,jdbcType=DATE},
-    `is_desensitization` = #{record.isDesensitization,jdbcType=INTEGER}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.user.dao.entity.SysUser" >
-    update sys_user
-    <set >
-      <if test="username != null" >
-        username = #{username,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null" >
-        `password` = #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null" >
-        `status` = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="pushType != null" >
-        push_type = #{pushType,jdbcType=INTEGER},
-      </if>
-      <if test="callRecordUrl != null" >
-        call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="batchRecordUrl != null" >
-        batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="intenLabel != null" >
-        inten_label = #{intenLabel,jdbcType=VARCHAR},
-      </if>
-      <if test="accessKey != null" >
-        access_key = #{accessKey,jdbcType=VARCHAR},
-      </if>
-      <if test="secretKey != null" >
-        secret_key = #{secretKey,jdbcType=VARCHAR},
-      </if>
-      <if test="orgCode != null" >
-        org_code = #{orgCode,jdbcType=VARCHAR},
-      </if>
-      <if test="createId != null" >
-        create_id = #{createId,jdbcType=BIGINT},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateId != null" >
-        update_id = #{updateId,jdbcType=BIGINT},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=INTEGER},
-      </if>
-      <if test="vaildTime != null" >
-        vaild_time = #{vaildTime,jdbcType=DATE},
-      </if>
-      <if test="startTime != null" >
-        start_time = #{startTime,jdbcType=DATE},
-      </if>
-      <if test="isDesensitization != null" >
-        `is_desensitization` = #{isDesensitization,jdbcType=INTEGER},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.guiji.user.dao.entity.SysUser" >
-    update sys_user
-    set username = #{username,jdbcType=VARCHAR},
-    `password` = #{password,jdbcType=VARCHAR},
-    `status` = #{status,jdbcType=INTEGER},
-    push_type = #{pushType,jdbcType=INTEGER},
-    call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
-    batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
-    inten_label = #{intenLabel,jdbcType=VARCHAR},
-    access_key = #{accessKey,jdbcType=VARCHAR},
-    secret_key = #{secretKey,jdbcType=VARCHAR},
-    org_code = #{orgCode,jdbcType=VARCHAR},
-    create_id = #{createId,jdbcType=BIGINT},
-    create_time = #{createTime,jdbcType=TIMESTAMP},
-    update_id = #{updateId,jdbcType=BIGINT},
-    update_time = #{updateTime,jdbcType=TIMESTAMP},
-    del_flag = #{delFlag,jdbcType=INTEGER},
-    vaild_time = #{vaildTime,jdbcType=DATE},
-    start_time = #{startTime,jdbcType=DATE}，
-    `is_desensitization` = #{isDesensitization,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+		insert into sys_user (id, username, `password`,
+		`status`, push_type, call_record_url,
+		batch_record_url, inten_label, access_key,
+		secret_key, org_code, create_id,
+		create_time, update_id, update_time,
+		del_flag, vaild_time,start_time,is_desensitization)
+		values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER}, #{pushType,jdbcType=INTEGER}, #{callRecordUrl,jdbcType=VARCHAR},
+		#{batchRecordUrl,jdbcType=VARCHAR}, #{intenLabel,jdbcType=VARCHAR},
+		#{accessKey,jdbcType=VARCHAR},
+		#{secretKey,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{createId,jdbcType=BIGINT},
+		#{createTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{delFlag,jdbcType=INTEGER}, #{vaildTime,jdbcType=DATE},
+		#{startTime,jdbcType=DATE},#{isDesensitization,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.guiji.user.dao.entity.SysUser"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into sys_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="username != null">
+				username,
+			</if>
+			<if test="password != null">
+				`password`,
+			</if>
+			<if test="status != null">
+				`status`,
+			</if>
+			<if test="pushType != null">
+				push_type,
+			</if>
+			<if test="callRecordUrl != null">
+				call_record_url,
+			</if>
+			<if test="batchRecordUrl != null">
+				batch_record_url,
+			</if>
+			<if test="intenLabel != null">
+				inten_label,
+			</if>
+			<if test="accessKey != null">
+				access_key,
+			</if>
+			<if test="secretKey != null">
+				secret_key,
+			</if>
+			<if test="orgCode != null">
+				org_code,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateId != null">
+				update_id,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+			<if test="vaildTime != null">
+				vaild_time,
+			</if>
+			<if test="startTime != null">
+				start_time,
+			</if>
+			<if test="isDesensitization != null">
+				is_desensitization,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="pushType != null">
+				#{pushType,jdbcType=INTEGER},
+			</if>
+			<if test="callRecordUrl != null">
+				#{callRecordUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="batchRecordUrl != null">
+				#{batchRecordUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="intenLabel != null">
+				#{intenLabel,jdbcType=VARCHAR},
+			</if>
+			<if test="accessKey != null">
+				#{accessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="secretKey != null">
+				#{secretKey,jdbcType=VARCHAR},
+			</if>
+			<if test="orgCode != null">
+				#{orgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=BIGINT},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateId != null">
+				#{updateId,jdbcType=BIGINT},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="vaildTime != null">
+				#{vaildTime,jdbcType=DATE},
+			</if>
+			<if test="startTime != null">
+				#{startTime,jdbcType=DATE},
+			</if>
+			<if test="isDesensitization != null">
+				#{isDesensitization,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.guiji.user.dao.entity.SysUserExample"
+		resultType="java.lang.Integer">
+		select count(*) from sys_user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update sys_user
+		<set>
+			<if test="record.id != null">
+				id = #{record.id,jdbcType=BIGINT},
+			</if>
+			<if test="record.username != null">
+				username = #{record.username,jdbcType=VARCHAR},
+			</if>
+			<if test="record.password != null">
+				`password` = #{record.password,jdbcType=VARCHAR},
+			</if>
+			<if test="record.status != null">
+				`status` = #{record.status,jdbcType=INTEGER},
+			</if>
+			<if test="record.pushType != null">
+				push_type = #{record.pushType,jdbcType=INTEGER},
+			</if>
+			<if test="record.callRecordUrl != null">
+				call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="record.batchRecordUrl != null">
+				batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="record.intenLabel != null">
+				inten_label = #{record.intenLabel,jdbcType=VARCHAR},
+			</if>
+			<if test="record.accessKey != null">
+				access_key = #{record.accessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="record.secretKey != null">
+				secret_key = #{record.secretKey,jdbcType=VARCHAR},
+			</if>
+			<if test="record.orgCode != null">
+				org_code = #{record.orgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="record.createId != null">
+				create_id = #{record.createId,jdbcType=BIGINT},
+			</if>
+			<if test="record.createTime != null">
+				create_time = #{record.createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.updateId != null">
+				update_id = #{record.updateId,jdbcType=BIGINT},
+			</if>
+			<if test="record.updateTime != null">
+				update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.delFlag != null">
+				del_flag = #{record.delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="record.vaildTime != null">
+				vaild_time = #{record.vaildTime,jdbcType=DATE},
+			</if>
+			<if test="record.startTime != null">
+				start_time = #{record.startTime,jdbcType=DATE},
+			</if>
+			<if test="record.isDesensitization != null">
+				`is_desensitization` = #{record.isDesensitization,jdbcType=INTEGER},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update sys_user
+		set id = #{record.id,jdbcType=BIGINT},
+		username = #{record.username,jdbcType=VARCHAR},
+		`password` = #{record.password,jdbcType=VARCHAR},
+		`status` = #{record.status,jdbcType=INTEGER},
+		push_type = #{record.pushType,jdbcType=INTEGER},
+		call_record_url = #{record.callRecordUrl,jdbcType=VARCHAR},
+		batch_record_url = #{record.batchRecordUrl,jdbcType=VARCHAR},
+		inten_label = #{record.intenLabel,jdbcType=VARCHAR},
+		access_key = #{record.accessKey,jdbcType=VARCHAR},
+		secret_key = #{record.secretKey,jdbcType=VARCHAR},
+		org_code = #{record.orgCode,jdbcType=VARCHAR},
+		create_id = #{record.createId,jdbcType=BIGINT},
+		create_time = #{record.createTime,jdbcType=TIMESTAMP},
+		update_id = #{record.updateId,jdbcType=BIGINT},
+		update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+		del_flag = #{record.delFlag,jdbcType=INTEGER},
+		vaild_time = #{record.vaildTime,jdbcType=DATE},
+		start_time = #{record.startTime,jdbcType=DATE},
+		`is_desensitization` = #{record.isDesensitization,jdbcType=INTEGER}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.guiji.user.dao.entity.SysUser">
+		update sys_user
+		<set>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				`password` = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				`status` = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="pushType != null">
+				push_type = #{pushType,jdbcType=INTEGER},
+			</if>
+			<if test="callRecordUrl != null">
+				call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="batchRecordUrl != null">
+				batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="intenLabel != null">
+				inten_label = #{intenLabel,jdbcType=VARCHAR},
+			</if>
+			<if test="accessKey != null">
+				access_key = #{accessKey,jdbcType=VARCHAR},
+			</if>
+			<if test="secretKey != null">
+				secret_key = #{secretKey,jdbcType=VARCHAR},
+			</if>
+			<if test="orgCode != null">
+				org_code = #{orgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=BIGINT},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=BIGINT},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="vaildTime != null">
+				vaild_time = #{vaildTime,jdbcType=DATE},
+			</if>
+			<if test="startTime != null">
+				start_time = #{startTime,jdbcType=DATE},
+			</if>
+			<if test="isDesensitization != null">
+				`is_desensitization` = #{isDesensitization,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.guiji.user.dao.entity.SysUser">
+		update sys_user
+		set username = #{username,jdbcType=VARCHAR},
+		`password` = #{password,jdbcType=VARCHAR},
+		`status` = #{status,jdbcType=INTEGER},
+		push_type = #{pushType,jdbcType=INTEGER},
+		call_record_url = #{callRecordUrl,jdbcType=VARCHAR},
+		batch_record_url = #{batchRecordUrl,jdbcType=VARCHAR},
+		inten_label = #{intenLabel,jdbcType=VARCHAR},
+		access_key = #{accessKey,jdbcType=VARCHAR},
+		secret_key = #{secretKey,jdbcType=VARCHAR},
+		org_code = #{orgCode,jdbcType=VARCHAR},
+		create_id = #{createId,jdbcType=BIGINT},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		update_id = #{updateId,jdbcType=BIGINT},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		del_flag = #{delFlag,jdbcType=INTEGER},
+		vaild_time = #{vaildTime,jdbcType=DATE},
+		start_time = #{startTime,jdbcType=DATE}，
+		`is_desensitization` = #{isDesensitization,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
 
-  <insert id="addRole">
-    delete from sys_role_user where user_id=#{userId};
-    insert into sys_role_user(user_id,role_id,create_time)
-    values (#{userId},#{roleIds},now());
-  </insert>
+	<insert id="addRole">
+		delete from sys_role_user where user_id=#{userId};
+		insert into sys_role_user(user_id,role_id,create_time)
+		values (#{userId},#{roleIds},now());
+	</insert>
 
-  <select id="getPassword" resultType="string">
-    select password from sys_user where username=#{userName} and status=1 and del_flag=0
-  </select>
+	<select id="getPassword" resultType="string">
+		select password from sys_user where username=#{userName} and status=1 and
+		del_flag=0
+	</select>
 
-  <select id="getUserId" resultType="long">
-    select id from sys_user t 
-    where t.username = #{username} 
-    and t.password = #{password} 
-  </select>
-  
-  <select id="getUserIdForLogin" resultType="long">
-    select id from sys_user t 
-    where t.username = #{username} 
-    and t.password = #{password} 
-    and t.status = 1 
-    and (t.vaild_time >= curdate() OR ISNULL(t.vaild_time))
-  </select>
+	<select id="getUserId" resultType="long">
+		select id from sys_user t
+		where t.username = #{username}
+		and t.password = #{password}
+	</select>
+
+	<select id="getUserIdForLogin" resultType="long">
+		select id from sys_user t
+		where t.username = #{username}
+		and t.password = #{password}
+		and t.status = 1
+		and (t.vaild_time >= curdate() OR ISNULL(t.vaild_time))
+	</select>
 
 
-  <select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
-    select a.id,a.name,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin as superAdmin,a.data_auth_level as dataAuthLevel,a.org_code as orgCode
-    from sys_role a
-    LEFT JOIN sys_role_user b on a.id=b.role_id
-    LEFT JOIN sys_user c on c.id=b.user_id
-    where c.id=#{id}
-  </select>
+	<select id="getRoleByUserId" resultType="com.guiji.user.dao.entity.SysRole">
+		select a.id,a.name,a.create_time as createTime,a.update_time as
+		updateTime,a.del_flag as delFlag,a.init_role as initRole,a.super_admin
+		as superAdmin,a.data_auth_level as dataAuthLevel,a.org_code as orgCode
+		from sys_role a
+		LEFT JOIN sys_role_user b on a.id=b.role_id
+		LEFT JOIN sys_user c on c.id=b.user_id
+		where c.id=#{id}
+	</select>
 
-  <select id="count" resultType="int">
-    select count(1) from sys_user where del_flag=0
-  </select>
+	<select id="count" resultType="int">
+		select count(1) from sys_user where del_flag=0
+	</select>
 
-  <select id="getUsersByPage" resultType="map">
-    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,e.username as createName,a.is_desensitization as isDesensitization
-    from sys_user a
-    LEFT JOIN sys_role_user b on a.id=b.user_id
-    LEFT JOIN sys_role c on c.id=b.role_id
-    LEFT JOIN sys_user_login_record d on d.user_id=a.id
-    left join sys_user e on e.id=a.create_id
-    where a.del_flag=0
-    LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-    order by a.create_time desc
-  </select>
+	<select id="getUsersByPage" resultType="map">
+		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as
+		vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as
+		initRole,c.super_admin as superAdmin,
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as
+		createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as
+		lastTime,e.username as createName,a.is_desensitization as
+		isDesensitization
+		from sys_user a
+		LEFT JOIN sys_role_user b on a.id=b.user_id
+		LEFT JOIN sys_role c on c.id=b.role_id
+		LEFT JOIN sys_user_login_record d on d.user_id=a.id
+		left join sys_user e on e.id=a.create_id
+		where a.del_flag=0
+		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+		order by a.create_time desc
+	</select>
 
-  <select id="getUserByName" resultType="map">
-    select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as initRole,c.super_admin as superAdmin,
-    DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as lastTime,a.is_desensitization as isDesensitization
-    from sys_user a
-    LEFT JOIN sys_role_user b on a.id=b.user_id
-    LEFT JOIN sys_role c on c.id=b.role_id
-    LEFT JOIN sys_user_login_record d on d.user_id=a.id
-    where a.del_flag=0 and a.username=#{username}
-  </select>
+	<select id="getUserByName" resultType="map">
+		select a.id,a.username,c.`name` as roleName,a.status,a.vaild_time as
+		vaildTime,a.start_time as startTime,c.id as roleId,c.init_role as
+		initRole,c.super_admin as superAdmin,
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') as
+		createTime,DATE_FORMAT(d.last_login_time,'%Y-%m-%d %H:%i:%s') as
+		lastTime,a.is_desensitization as isDesensitization
+		from sys_user a
+		LEFT JOIN sys_role_user b on a.id=b.user_id
+		LEFT JOIN sys_role c on c.id=b.role_id
+		LEFT JOIN sys_user_login_record d on d.user_id=a.id
+		where a.del_flag=0 and a.username=#{username}
+	</select>
 
-  <insert id="insertUserRole">
-    insert into sys_role_user(user_id,role_id,create_time,update_time)
-    values(#{userId},#{roleId},now(),now())
-  </insert>
+	<insert id="insertUserRole">
+		insert into sys_role_user(user_id,role_id,create_time,update_time)
+		values(#{userId},#{roleId},now(),now())
+	</insert>
 
-  <select id="existUserName" resultType="boolean">
-    select count(1)!=0 from sys_user where username=#{username}
-    <if test="id != null ">
-      and id!=#{id}
-    </if>
-  </select>
+	<select id="existUserName" resultType="boolean">
+		select count(1)!=0 from sys_user where username=#{username}
+		<if test="id != null ">
+			and id!=#{id}
+		</if>
+	</select>
 
-  <select id="countByParamVo" resultType="int">
-    select count(1) from sys_user a 
-    LEFT JOIN sys_role_user b ON a.id = b.user_id
-	LEFT JOIN sys_role c ON c.id = b.role_id
-	LEFT JOIN sys_organization f ON a.org_code = f.`code`
-    where a.del_flag = 0
-    <if test="authLevel == 1">
-		and a.create_id = #{userId}
-	</if>
-	<if test="authLevel == 2">
-		and a.org_code = #{orgCode}
-	</if>
-	<if test="authLevel == 3">
-		and a.org_code like CONCAT(#{orgCode},'%')
-	</if>
-	<if test="userName != '' ">
-      and a.username like concat(#{userName},'%')
-    </if>
-    <if test="roleName != '' ">
-      and c.`name` like concat(#{roleName},'%')
-    </if>
-    <if test="orgName != '' ">
-      and f.`name` like concat(#{orgName},'%')
-    </if>
-    <if test="status != null ">
-      and a.`status` = #{status}
-    </if>
-  </select>
+	<select id="countByParamVo" resultType="int">
+		select count(1) from sys_user a
+		LEFT JOIN sys_role_user b ON a.id = b.user_id
+		LEFT JOIN sys_role c ON c.id = b.role_id
+		LEFT JOIN sys_organization f ON a.org_code = f.`code`
+		where a.del_flag = 0
+		<if test="authLevel == 1">
+			and a.create_id = #{userId}
+		</if>
+		<if test="authLevel == 2">
+			and a.org_code = #{orgCode}
+		</if>
+		<if test="authLevel == 3">
+			and a.org_code like CONCAT(#{orgCode},'%')
+		</if>
+		<if test="userName != '' ">
+			and a.username like concat(#{userName},'%')
+		</if>
+		<if test="roleName != '' ">
+			and c.`name` like concat(#{roleName},'%')
+		</if>
+		<if test="orgName != '' ">
+			and f.`name` like concat(#{orgName},'%')
+		</if>
+		<if test="status != null ">
+			and a.`status` = #{status}
+		</if>
+	</select>
 
-  <select id="selectByParamVo" resultType="map">
-	SELECT a.id, a.username, c.id AS roleId, c.`name` AS roleName, a.`status`, a.org_code AS orgCode, f.`name` AS orgName,
-	DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') AS vaildTime, DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') AS startTime,
-	c.init_role AS initRole, c.super_admin AS superAdmin, a.is_desensitization AS isDesensitization,
-	DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') AS createTime, e.username AS createName, a.inten_label AS intenLabel
-	FROM sys_user a
-	LEFT JOIN sys_role_user b ON a.id = b.user_id
-	LEFT JOIN sys_role c ON c.id = b.role_id
-	LEFT JOIN sys_user e ON e.id = a.create_id
-	LEFT JOIN sys_organization f ON a.org_code = f.`code`
-	WHERE a.del_flag = 0
-	<if test="authLevel == 1">
-		and a.create_id = #{userId}
-	</if>
-	<if test="authLevel == 2">
-		and a.org_code = #{orgCode}
-	</if>
-	<if test="authLevel == 3">
-		and a.org_code like CONCAT(#{orgCode},'%')
-	</if>
-	<if test="userName != '' ">
-      and a.username like concat(#{userName},'%')
-    </if>
-    <if test="roleName != '' ">
-      and c.`name` like concat(#{roleName},'%')
-    </if>
-    <if test="orgName != '' ">
-      and f.`name` like concat(#{orgName},'%')
-    </if>
-    <if test="status != null ">
-      and a.`status` = #{status}
-    </if>
-	order by a.create_time desc
-	LIMIT ${(pageNo-1)*pageSize},#{pageSize}
-</select>
+	<select id="selectByParamVo" resultType="map">
+		SELECT a.id, a.username, c.id AS roleId, c.`name` AS roleName,
+		a.`status`, a.org_code AS orgCode, f.`name` AS orgName,
+		DATE_FORMAT(a.vaild_time,'%Y-%m-%d %H:%i:%s') AS vaildTime,
+		DATE_FORMAT(a.start_time,'%Y-%m-%d %H:%i:%s') AS startTime,
+		c.init_role AS initRole, c.super_admin AS superAdmin,
+		a.is_desensitization AS isDesensitization,
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%s') AS createTime,
+		e.username AS createName, a.inten_label AS intenLabel
+		FROM sys_user a
+		LEFT JOIN sys_role_user b ON a.id = b.user_id
+		LEFT JOIN sys_role c ON c.id = b.role_id
+		LEFT JOIN sys_user e ON e.id = a.create_id
+		LEFT JOIN sys_organization f ON a.org_code = f.`code`
+		WHERE a.del_flag = 0
+		<if test="authLevel == 1">
+			and a.create_id = #{userId}
+		</if>
+		<if test="authLevel == 2">
+			and a.org_code = #{orgCode}
+		</if>
+		<if test="authLevel == 3">
+			and a.org_code like CONCAT(#{orgCode},'%')
+		</if>
+		<if test="userName != '' ">
+			and a.username like concat(#{userName},'%')
+		</if>
+		<if test="roleName != '' ">
+			and c.`name` like concat(#{roleName},'%')
+		</if>
+		<if test="orgName != '' ">
+			and f.`name` like concat(#{orgName},'%')
+		</if>
+		<if test="status != null ">
+			and a.`status` = #{status}
+		</if>
+		order by a.create_time desc
+		LIMIT ${(pageNo-1)*pageSize},#{pageSize}
+	</select>
 
-  <select id="getSecretKey" resultType="string">
-    SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
-    limit 1
-  </select>
+	<select id="getSecretKey" resultType="string">
+		SELECT secret_key FROM `sys_user` where access_key=#{accessKey}
+		limit 1
+	</select>
 
-  <select id="checkSecretKey" resultType="boolean">
-    SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
-  </select>
+	<select id="checkSecretKey" resultType="boolean">
+		SELECT count(1)>0 FROM `sys_user` where access_key=#{accessKey}
+	</select>
 
-  <select id="getUserById" resultType="com.guiji.user.dao.entity.SysUser">
-    SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as callRecordUrl,
-    a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as accessKey,
-    a.secret_key as secretKey,a.org_code as orgCode,a.create_id as createId,a.create_time as createTime,
-    a.update_id as updateId,a.update_time as updateTime,a.vaild_time as vaildTime,a.start_time as startTime,b.`name` as orgName,a.is_desensitization as isDesensitization
-    from sys_user a
-    LEFT JOIN sys_organization b on left(a.org_code,length(a.org_code)-1)=b.`code`
-    where a.id=#{userId}
-  </select>
+	<select id="getUserById" resultType="com.guiji.user.dao.entity.SysUser">
+		SELECT a.id,a.username,a.status,a.push_type as pushType,a.call_record_url as
+		callRecordUrl,
+		a.batch_record_url as batchRecordUrl,a.inten_label as intenLabel,a.access_key as
+		accessKey,
+		a.secret_key as secretKey,a.org_code as orgCode,a.create_id as
+		createId,a.create_time as createTime,
+		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as
+		vaildTime,a.start_time as startTime,b.`name` as
+		orgName,a.is_desensitization as isDesensitization
+		from sys_user a
+		LEFT JOIN sys_organization b on
+		left(a.org_code,length(a.org_code)-1)=b.`code`
+		where a.id=#{userId}
+	</select>
 
-  <select id="selectLikeUserName" resultType="map">
-    select a.id, a.username from sys_user a
-    where a.del_flag = 0
-    <if test="authLevel == 1">
-		and a.create_id = #{userId}
-	</if>
-	<if test="authLevel == 2">
-		and a.org_code = #{orgCode}
-	</if>
-	<if test="authLevel == 3">
-		and a.org_code like CONCAT(#{orgCode},'%')
-	</if>
-	<if test="param.userName != '' ">
-     	and a.username like concat('%',#{param.userName},'%')
-    </if>
-    	order by a.create_time desc
-  </select>
+	<select id="selectLikeUserName" resultType="map">
+		select a.id, a.username from sys_user a
+		where a.del_flag = 0
+		<if test="authLevel == 1">
+			and a.create_id = #{userId}
+		</if>
+		<if test="authLevel == 2">
+			and a.org_code = #{orgCode}
+		</if>
+		<if test="authLevel == 3">
+			and a.org_code like CONCAT(#{orgCode},'%')
+		</if>
+		<if test="param.userName != '' ">
+			and a.username like concat('%',#{param.userName},'%')
+		</if>
+		order by a.create_time desc
+	</select>
 
-  <select id="getAllCompanyUser" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from sys_user
-    where id in (select user_id from sys_role_user where role_id <![CDATA[<>]]> 1)
-  </select>
+	<select id="getAllCompanyUser" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_user
+		where id in (select user_id from sys_role_user where role_id <![CDATA[<>]]>
+		1)
+	</select>
 
-  <select id="getAllUserByOrgCode" resultMap="BaseResultMap">
-    select
-    id, username,`status`, push_type, call_record_url, batch_record_url,
-    inten_label, access_key, secret_key, org_code, create_id, create_time, update_id,
-    update_time, del_flag, vaild_time,start_time,is_desensitization
-    from sys_user
-    where org_code like CONCAT(#{orgCode},'%')
-  </select>
+	<select id="getAllUserByOrgCode" resultMap="BaseResultMap">
+		select
+		id, username,`status`, push_type, call_record_url, batch_record_url,
+		inten_label, access_key, secret_key, org_code, create_id, create_time,
+		update_id,
+		update_time, del_flag, vaild_time,start_time,is_desensitization
+		from sys_user
+		where org_code like CONCAT(#{orgCode},'%')
+	</select>
 
-  <insert id="addUserExt">
-    delete from sys_user_ext where user_id=#{userId};
-    insert into sys_user_ext(user_id,create_time,update_time)
-    values (#{userId},now(),now());
-  </insert>
+	<insert id="addUserExt">
+		delete from sys_user_ext where user_id=#{userId};
+		insert into sys_user_ext(user_id,create_time,update_time)
+		values (#{userId},now(),now());
+	</insert>
 
-  <select id="getSysUserExtByUserId" resultType="com.guiji.user.dao.entity.SysUserExt">
-    select a.id,a.user_id as userId,a.name,a.email,a.mobile,a.remarks,a.api_url as apiUrl,a.create_time as createTime,a.update_time as updateTime,a.del_flag as delFlag,a.wechat,a.wechat_openid as wechatOpenid,a.wechat_status as wechatStatus
-    from sys_user_ext a
-    where a.user_id=#{userId}
-  </select>
+	<select id="getSysUserExtByUserId" resultType="com.guiji.user.dao.entity.SysUserExt">
+		select
+		a.id,a.user_id as userId,a.name,a.email,a.mobile,a.remarks,a.api_url
+		as apiUrl,a.create_time as createTime,a.update_time as
+		updateTime,a.del_flag as delFlag,a.wechat,a.wechat_openid as
+		wechatOpenid,a.wechat_status as wechatStatus
+		from sys_user_ext a
+		where
+		a.user_id=#{userId}
+	</select>
+
+	<select id="getAllUserByOrgCodeForWeb" resultMap="BaseResultMap">
+		select
+		id,
+		username,`status`, push_type, call_record_url, batch_record_url,
+		inten_label, access_key, secret_key, org_code, create_id, create_time,
+		update_id,
+		update_time, del_flag,
+		vaild_time,start_time,is_desensitization
+		from sys_user
+		where org_code
+		like CONCAT(#{orgCode},'%')
+	</select>
+
 </mapper>

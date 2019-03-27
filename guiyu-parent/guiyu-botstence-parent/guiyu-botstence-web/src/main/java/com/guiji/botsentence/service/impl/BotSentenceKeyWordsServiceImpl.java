@@ -617,6 +617,9 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
         System.out.println(intentName);
     }
 
+    /**
+     * type=00 表示通用对话保存
+     */
 	@Override
 	@Transactional
 	public String saveIntent(String domain, String processId, String templateId, List<BotSentenceIntentVO> list, String type, BotSentenceBranch branch, String userId) {
@@ -678,6 +681,10 @@ public class BotSentenceKeyWordsServiceImpl implements BotSentenceKeyWordsServic
                 		keywordsJson = "";
                 	}else {
                 		//throw new CommonException("意图【"+botSentenceIntentVO.getName()+"】的关键词不能为空");
+                		if("自定义".equals(intent.getName())) {
+                			intent.setKeywords("[]");
+                			botSentenceIntentMapper.updateByPrimaryKeyWithBLOBs(intent);
+                		}
                 		continue;
                 	}
                 }

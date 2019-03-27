@@ -12,11 +12,17 @@ import java.util.Properties;
  */
 public class WhiteIPUtil {
     private static Properties properties;
+    private static String getWhiteIP;
     private static final String WHITEIP = "whiteIP";
 
     public static String getIps(){
-        return properties.getProperty(WHITEIP);
+        return getWhiteIP;
 
+    }
+
+    @Autowired(required = true)
+    public void getWhiteIp(@Qualifier("getWhiteIP") String getWhiteIP) {
+        this.getWhiteIP = getWhiteIP;
     }
 
     @Autowired(required = true)

@@ -19,6 +19,8 @@ import java.util.Properties;
 public class WhiteipProperties {
     @Value("${properties.whiteIP}")
     private String whiteIPPropertiesPath;
+    @Value("${whiteIP:}")
+    private String whiteIP;
 
     @Bean(name="whiteIPProperties")
     public Properties init() throws IOException {
@@ -27,4 +29,11 @@ public class WhiteipProperties {
         props.load(new InputStreamReader(defaultResource.getInputStream(),"utf-8"));
         return props;
     }
+
+    @Bean(name="getWhiteIP")
+    public String getWhiteIP() throws IOException {
+        return whiteIP;
+    }
+
+
 }

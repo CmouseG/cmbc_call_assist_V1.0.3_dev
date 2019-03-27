@@ -1,0 +1,2 @@
+1.所有装了process-agent服务都需要升级jar
+2.所有装了process-agent服务的机器中的python脚本需要升级。包括freeswich、robot、sellbot

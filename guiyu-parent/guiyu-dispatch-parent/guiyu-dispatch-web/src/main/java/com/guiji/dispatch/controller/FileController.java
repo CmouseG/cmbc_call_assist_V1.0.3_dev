@@ -74,9 +74,9 @@ public class FileController {
 			@RequestParam(required = false, name = "batchName") String batchName,
 			@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime,
-			@RequestHeader String orgCode) {
+			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel) {
 		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
-				endTime,orgCode);
+				endTime, userId, orgCode, authLevel);
 		return queryFileInterface;
 	}
 

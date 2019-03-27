@@ -9,7 +9,9 @@ import com.guiji.dispatch.dao.entity.FileRecords;
 public interface FileInterface {
 
 	//查询文件记录
-	public Page<FileRecords> queryFileInterface( int pagenum, int pagesize, String batchName, String startTime, String endTime,String orgCode);
+	public Page<FileRecords> queryFileInterface( int pagenum, int pagesize,
+												 String batchName, String startTime, String endTime,
+												 String userId, String orgCode, Integer authLevel);
 	
 	public 	List<FileErrorRecords> queryErrorRecords(String fileRecordId);
 

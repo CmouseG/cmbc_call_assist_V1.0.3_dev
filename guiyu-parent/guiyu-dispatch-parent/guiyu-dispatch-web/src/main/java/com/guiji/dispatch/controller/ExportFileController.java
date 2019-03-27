@@ -33,7 +33,14 @@ public class ExportFileController {
     @ApiOperation(value="查询文件导出记录", notes="查询文件导出记录")
     @RequestMapping(value = "/queryExportFileRecordByPage", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public ResultPage<ExportFileRecord> queryExportFileRecordByPage(@RequestBody QueryExportFileRecordDto queryDto){
+    public ResultPage<ExportFileRecord> queryExportFileRecordByPage(@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
+                                                                    @RequestBody QueryExportFileRecordDto queryDto){
+        if(null == queryDto){
+            queryDto = new QueryExportFileRecordDto();
+        }
+        queryDto.setOperUserId(userId);
+        queryDto.setOperOrgCode(orgCode);
+        queryDto.setAuthLevel(authLevel);
         ResultPage<ExportFileRecord> page = new ResultPage<ExportFileRecord>(queryDto);
         List<ExportFileRecord> list = exportFileService.queryExportFileRecordByPage(queryDto, page);
         page.setList(list);

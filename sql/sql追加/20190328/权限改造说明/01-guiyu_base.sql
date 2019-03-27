@@ -74,7 +74,7 @@ update sys_user set org_code='1' where org_code='1.';
 
 update sys_menu set sys_type=1 where name in ('菜单维护','数据字典','进程管理','进程任务','机器人实时配置');
 
-insert into sys_privilege(auth_id,auth_type,resource_id,resource_type,org_code,crt_user,crt_time,update_time,update_user) select 1,2,temp.template_id,2,org.code,1,'2019-03-16 00:00:00','2019-03-16 00:00:00',1 from guiyu_base.sys_organization_industry rel,guiyu_base.sys_organization org,guiyu_botstence.bot_sentence_template temp where rel.organization_id=org.id and rel.industry_id=left(temp.industry_id, 4);
+insert into sys_privilege(auth_id,auth_type,resource_id,resource_type,org_code,crt_user,crt_time,update_time,update_user) select org.id,2,temp.template_id,2,org.code,1,'2019-03-16 00:00:00','2019-03-16 00:00:00',1 from guiyu_base.sys_organization_industry rel,guiyu_base.sys_organization org,guiyu_botstence.bot_sentence_template temp where rel.organization_id=org.id and rel.industry_id=left(temp.industry_id, 4);
 
 INSERT INTO sys_menu (id, name, description, url, pid, permission, is_show, create_id, create_time, update_id, update_time, type, level, appid, remarks, del_flag) select 50,'人工坐席',null,'callCenter_workPlatform_agent',id,'callCenter_workPlatform_agent',1,1,'2019-03-16 00:00:00',1,'2019-03-16 00:00:00',2,3,0,0,0 from sys_menu where url='/callCenter/workPlatform';    
 

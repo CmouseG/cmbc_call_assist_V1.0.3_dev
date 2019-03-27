@@ -27,9 +27,19 @@ public class QueryExportFileRecordDto extends PageDto {
     private Integer fileType;
 
     /**
+     * 用户ID
+     */
+    private String userId;
+
+    /**
      * 用户名称
      */
     private String userName;
+
+    /**
+     * 企业组织Code
+     */
+    private String orgCode;
 
     /**
      * 创建日期
@@ -82,5 +92,21 @@ public class QueryExportFileRecordDto extends PageDto {
 
     public void setAddTime(Date addTime) {
         this.addTime = addTime;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
     }
 }

@@ -294,10 +294,6 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 				jsonObject.put("com_domain", comDomian);
 			}
 			
-			//设置一般问题的
-			if("一般问题".equals(domainName) && null != botSentenceOptions.getSpecialLimitStart() && botSentenceOptions.getSpecialLimitStart()) {
-				jsonObject.put("is_special_limit_free", botSentenceOptions.getSpecialLimitStart());
-			}
 			
 			List<String> refuseResponse = new ArrayList<>();
 			BranchRefuseVO refuseBranchNodeVO = new BranchRefuseVO();
@@ -371,6 +367,12 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 								}
 								BranchNodeVO.setUser_ask(userAsk);
 								BranchNodeVO.setResponse(getVolies(botSentenceBranch.getResponse(), voliceMap));
+								
+								//设置一般问题的
+								if("一般问题".equals(domainName) && null != botSentenceOptions.getSpecialLimitStart() && botSentenceOptions.getSpecialLimitStart()) {
+									BranchNodeVO.setIs_special_limit_free(botSentenceOptions.getSpecialLimitStart());
+								}
+								
 								map.put(branchName, BranchNodeVO);
 								branchShow.add(map);
 								allKeywords.addAll(keywords);
@@ -397,6 +399,15 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 						}
 					}
 				}
+				
+				/*//设置重复次数是否受限
+				if(null != botSentenceOptions.getSpecialLimitStart() && botSentenceOptions.getSpecialLimitStart()) {
+					//写入每个流程
+					if(null != botSentenceDomain.getIsSpecialLimitFree() && botSentenceDomain.getIsSpecialLimitFree()) {
+						jsonObject.put("is_special_limit_free", botSentenceDomain.getIsSpecialLimitFree());
+					}
+				}*/
+				
 			}
 			
 			
@@ -574,13 +585,7 @@ public class FileGenerateServiceImpl implements IFileGenerateService {
 				}
 			}
 			
-			//设置重复次数是否受限
-			if(null != botSentenceOptions.getSpecialLimitStart() && botSentenceOptions.getSpecialLimitStart()) {
-				//写入每个流程
-				if(null != botSentenceDomain.getIsSpecialLimitFree() && botSentenceDomain.getIsSpecialLimitFree()) {
-					jsonObject.put("is_special_limit_free", botSentenceDomain.getIsSpecialLimitFree());
-				}
-			}
+			
 			
 			//设置坐标
 			jsonObject.put("position_x", botSentenceDomain.getPositionX());

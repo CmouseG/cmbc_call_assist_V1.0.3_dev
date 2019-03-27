@@ -9,6 +9,7 @@ import com.guiji.dispatch.enums.ByteSizeUnitEnum;
 import com.guiji.dispatch.enums.SysDefaultExceptionEnum;
 import com.guiji.dispatch.enums.SysDelEnum;
 import com.guiji.dispatch.model.ExportFileDto;
+import com.guiji.dispatch.service.GetAuthUtil;
 import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DaoHandler;
@@ -32,6 +33,9 @@ public class ExportFileServiceImpl implements IExportFileService {
 
     @Autowired
     private ExportFileRecordMapper exportFileRecordMapper;
+
+    @Autowired
+    private GetAuthUtil getAuthUtil;
 
     @Override
     public boolean updExportFileStatus(String recordId, Integer status) {
@@ -73,22 +77,36 @@ public class ExportFileServiceImpl implements IExportFileService {
 
     @Override
     public List<ExportFileRecord> queryExportFileRecordByPage(QueryExportFileRecordDto queryDto, ResultPage<ExportFileRecord> page) {
-        ExportFileRecord queryRecordDto = null;
+    //    ExportFileRecord queryRecordDto = null;
         if(null != queryDto){
-            queryRecordDto = new ExportFileRecord();
-            BeanUtils.copyProperties(queryDto, queryRecordDto, ExportFileRecord.class);
+            /*queryRecordDto = new ExportFileRecord();
+            BeanUtils.copyProperties(queryDto, queryRecordDto, ExportFileRecord.class);*/
+
+            //权限过滤
+            Integer authLevel = queryDto.getAuthLevel();//操作用户权限等级
+            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryDto.getOperUserId());//获取用户ID
+            String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryDto.getOperOrgCode());//获取企业组织编码
+            queryDto.setUserId(userId);
+            queryDto.setOrgCode(orgCode);
         }
-        return exportFileRecordMapper.queryExportFileRecordByPage(queryRecordDto, page);
+        return exportFileRecordMapper.queryExportFileRecordByPage(queryDto, page);
     }
 
     @Override
     public int queryExportFileRecordCount(QueryExportFileRecordDto queryDto) {
-        ExportFileRecord queryRecordDto = null;
+    //    ExportFileRecord queryRecordDto = null;
         if(null != queryDto){
-            queryRecordDto = new ExportFileRecord();
-            BeanUtils.copyProperties(queryDto, queryRecordDto, ExportFileRecord.class);
+            /*queryRecordDto = new ExportFileRecord();
+            BeanUtils.copyProperties(queryDto, queryRecordDto, ExportFileRecord.class);*/
+
+            //权限过滤
+            Integer authLevel = queryDto.getAuthLevel();//操作用户权限等级
+            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryDto.getOperUserId());//获取用户ID
+            String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryDto.getOperOrgCode());//获取企业组织编码
+            queryDto.setUserId(userId);
+            queryDto.setOrgCode(orgCode);
         }
-        return exportFileRecordMapper.queryExportFileRecordCount(queryRecordDto);
+        return exportFileRecordMapper.queryExportFileRecordCount(queryDto);
     }
 
     @Override

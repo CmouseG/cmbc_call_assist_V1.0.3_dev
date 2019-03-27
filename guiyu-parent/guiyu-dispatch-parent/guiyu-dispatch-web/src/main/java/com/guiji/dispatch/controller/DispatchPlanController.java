@@ -227,7 +227,7 @@ public class DispatchPlanController {
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
 		page.setRecords(resPage.getList());
-		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
+		page.setTotal(Long.valueOf(resPage.getTotalItemNumber()).intValue());
 
 		return page;
 	}
@@ -264,7 +264,7 @@ public class DispatchPlanController {
 		page.setPageNo(pageNo);
 		page.setPageSize(pageSize);
 		page.setRecords(resPage.getList());
-		page.setTotal(Long.valueOf(resPage.getTotalTtemNumber()).intValue());
+		page.setTotal(Long.valueOf(resPage.getTotalItemNumber()).intValue());
 		return page;
 	}
 }

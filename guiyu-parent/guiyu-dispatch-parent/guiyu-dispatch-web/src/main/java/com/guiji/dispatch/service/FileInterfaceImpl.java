@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.guiji.dispatch.dto.QueryFileRecordsDto;
+import com.guiji.dispatch.enums.AuthLevelEnum;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +35,9 @@ public class FileInterfaceImpl implements FileInterface {
 	@Autowired
 	private FileErrorRecordsMapper errorMapper;
 
+	@Autowired
+	private GetAuthUtil getAuthUtil;
+
 	/**
 	 * 查询文件记录
 	 * @param pagenum
@@ -44,8 +49,9 @@ public class FileInterfaceImpl implements FileInterface {
 	 * @return
 	 */
 	@Override
-	public Page<FileRecords> queryFileInterface(int pagenum, int pagesize, String batchName, String startTime,
-												String endTime,String orgCode) {
+	public Page<FileRecords> queryFileInterface(int pagenum, int pagesize,
+												String batchName, String startTime, String endTime,
+												String userId, String orgCode, Integer authLevel) {
 		Page<FileRecords> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -74,10 +80,10 @@ public class FileInterfaceImpl implements FileInterface {
 		page.setRecords(selectByExample);
 		page.setTotal(count);
 		*/
-		FileRecords queryRecord = new FileRecords();
+		QueryFileRecordsDto queryRecord = new QueryFileRecordsDto();
 		queryRecord.setStatus(Constant.FILE_SHOW);
 		queryRecord.setBatchName(batchName);
-		queryRecord.setOrgCode(orgCode);
+
 		Date beginDate = null, endDate = null;
 		if (!StringUtils.isEmpty(startTime) && !StringUtils.isEmpty(endTime)) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -88,6 +94,14 @@ public class FileInterfaceImpl implements FileInterface {
 				logger.error("queryFileInterface 转换失败");
 			}
 		}
+
+		//过滤权限
+		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId);//获取用户ID
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
+		queryRecord.setUserId(Integer.valueOf(userId));
+		queryRecord.setOrgCode(orgCode);
+		queryRecord.setAuthLevel(authLevel);
+
 		ResultPage<FileRecords> pageRes = new ResultPage<FileRecords>(pagenum, pagesize);
 		pageRes.setOrderBy("create_time");
 		pageRes.setSort("DESC");

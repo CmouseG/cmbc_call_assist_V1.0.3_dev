@@ -6,6 +6,7 @@ import com.guiji.dispatch.dao.entity.FileRecordsExample;
 import java.util.Date;
 import java.util.List;
 
+import com.guiji.dispatch.dto.QueryFileRecordsDto;
 import com.guiji.dispatch.sys.ResultPage;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,12 +34,12 @@ public interface FileRecordsMapper {
     int updateByPrimaryKey(FileRecords record);
 
     List<FileRecords> queryFileRecordList(//@Param("example") FileRecordsExample example,
-                                          @Param("record") FileRecords queryRecord,
+                                          @Param("record") QueryFileRecordsDto queryRecord,
                                           @Param("startTime") Date startTime,
                                           @Param("endTime") Date endTime,
                                           @Param("page") ResultPage<FileRecords> page);
 
-    int queryFileRecordCount(@Param("record") FileRecords queryRecord,
+    int queryFileRecordCount(@Param("record") QueryFileRecordsDto queryRecord,
                              @Param("startTime") Date startTime,
                              @Param("endTime") Date endTime);
 

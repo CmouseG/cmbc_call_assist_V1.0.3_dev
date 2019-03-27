@@ -178,10 +178,16 @@
 			<if test="queryRecord.status != null">
 				AND status = #{queryRecord.status}
 			</if>
+			<if test="queryRecord.authLevel == 1 and queryRecord.userId != null">
+				AND user_id = #{queryRecord.userId}
+			</if>
 			<if test="queryRecord.userName != null">
 				AND user_name LIKE CONCAT('%', #{queryRecord.userName},'%')
 			</if>
-			<if test="queryRecord.orgCode != null and queryRecord.orgCode != ''" >
+			<if test="queryRecord.authLevel == 2 and queryRecord.orgCode != null and queryRecord.orgCode != ''" >
+				AND org_code = #{queryRecord.orgCode}
+			</if>
+			<if test="queryRecord.authLevel == 3 and queryRecord.orgCode != null and queryRecord.orgCode != ''" >
 				AND (org_code = #{queryRecord.orgCode} OR org_code LIKE CONCAT(#{queryRecord.orgCode}, '%'))
 			</if>
 		</if>
@@ -218,10 +224,16 @@
 			<if test="queryRecord.status != null">
 				AND status = #{queryRecord.status}
 			</if>
+			<if test="queryRecord.authLevel == 1 and queryRecord.userId != null">
+				AND user_id = #{queryRecord.userId}
+			</if>
 			<if test="queryRecord.userName != null">
 				AND user_name LIKE CONCAT('%', #{queryRecord.userName},'%')
 			</if>
-			<if test="queryRecord.orgCode != null and queryRecord.orgCode != ''" >
+			<if test="queryRecord.authLevel == 2 and queryRecord.orgCode != null and queryRecord.orgCode != ''" >
+				AND org_code = #{queryRecord.orgCode}
+			</if>
+			<if test="queryRecord.authLevel == 3 and queryRecord.orgCode != null and queryRecord.orgCode != ''" >
 				AND (org_code = #{queryRecord.orgCode} OR org_code LIKE CONCAT(#{queryRecord.orgCode}, '%'))
 			</if>
 		</if>

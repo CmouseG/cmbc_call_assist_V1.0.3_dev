@@ -460,7 +460,13 @@
         <if test="record.batchName != null">
           AND batch_name LIKE CONCAT('%',#{record.batchName},'%')
         </if>
-        <if test="record.orgCode != null and record.orgCode != ''" >
+        <if test="record.authLevel == 1 and record.userId != null">
+          AND user_id = #{record.userId}
+        </if>
+        <if test="record.authLevel == 2 and record.orgCode != null and record.orgCode != ''">
+          AND org_code = #{record.orgCode}
+        </if>
+        <if test="record.authLevel == 3 and record.orgCode != null and record.orgCode != ''" >
           AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '%'))
         </if>
         <if test="record.status != null">
@@ -490,7 +496,13 @@
       <if test="record.batchName != null">
         AND batch_name LIKE CONCAT('%',#{record.batchName},'%')
       </if>
-      <if test="record.orgCode != null and record.orgCode != ''" >
+      <if test="record.authLevel == 1 and record.userId != null">
+        AND user_id = #{record.userId}
+      </if>
+      <if test="record.authLevel == 2 and record.orgCode != null and record.orgCode != ''">
+        AND org_code = #{record.orgCode}
+      </if>
+      <if test="record.authLevel == 3 and record.orgCode != null and record.orgCode != ''" >
         AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '%'))
       </if>
       <if test="record.status != null">

@@ -93,6 +93,7 @@ public class FileController {
 			@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime,
 			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel) {
+		logger.info("userId:{},orgCode:{},authLevel:{}", userId, orgCode, authLevel);
 		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
 				endTime, userId, orgCode, authLevel);
 		return queryFileInterface;
@@ -338,7 +339,7 @@ public class FileController {
 	//查询计划列表
 	@ApiOperation(value="导出计划列表", notes="导出计划列表")
 	@RequestMapping(value = "dispatch/file/downloadPlanList", method = {RequestMethod.POST, RequestMethod.GET})
-	public Result.ReturnData<Object> downloadPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
+	public Result.ReturnData<Object> downloadPlanList(@RequestHeader Long userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
 													  @RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
 													  HttpServletResponse resp,
 													  @RequestBody QueryDownloadPlanListDto queryPlanDto)
@@ -369,6 +370,7 @@ public class FileController {
 		queryPlanDto.setOperOrgCode(orgCode);
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
+		queryPlanDto.setAuthLevel(authLevel);
 
 		//查询导出数据
 		List<DownLoadPlanVo> selectByExample = dispatchPlanService.queryDownloadPlanList(queryPlanDto);

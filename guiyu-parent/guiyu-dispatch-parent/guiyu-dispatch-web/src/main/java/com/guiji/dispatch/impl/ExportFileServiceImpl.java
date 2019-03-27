@@ -88,6 +88,7 @@ public class ExportFileServiceImpl implements IExportFileService {
             String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryDto.getOperOrgCode());//获取企业组织编码
             queryDto.setUserId(userId);
             queryDto.setOrgCode(orgCode);
+            queryDto.setAuthLevel(authLevel);
         }
         return exportFileRecordMapper.queryExportFileRecordByPage(queryDto, page);
     }
@@ -105,6 +106,7 @@ public class ExportFileServiceImpl implements IExportFileService {
             String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryDto.getOperOrgCode());//获取企业组织编码
             queryDto.setUserId(userId);
             queryDto.setOrgCode(orgCode);
+            queryDto.setAuthLevel(authLevel);
         }
         return exportFileRecordMapper.queryExportFileRecordCount(queryDto);
     }

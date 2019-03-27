@@ -6,6 +6,7 @@ import com.guiji.dispatch.entity.ExportFileRecord;
 import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.HttpDownload;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
 import jxl.write.WriteException;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,7 @@ public class ExportFileController {
         queryDto.setOperUserId(userId);
         queryDto.setOperOrgCode(orgCode);
         queryDto.setAuthLevel(authLevel);
+        logger.info("/queryExportFileRecordByPage", JsonUtils.bean2Json(queryDto));
         ResultPage<ExportFileRecord> page = new ResultPage<ExportFileRecord>(queryDto);
         List<ExportFileRecord> list = exportFileService.queryExportFileRecordByPage(queryDto, page);
         page.setList(list);

@@ -11,6 +11,7 @@ public class BranchSpecialQuestionVO extends BranchNegativeVO{
 
 	private String user_ask;
 	private boolean end_to_enter;
+	private boolean is_special_limit_free;
     
 	public String getUser_ask() {
 		return user_ask;
@@ -24,5 +25,12 @@ public class BranchSpecialQuestionVO extends BranchNegativeVO{
 	public void setEnd_to_enter(boolean end_to_enter) {
 		this.end_to_enter = end_to_enter;
 	}
+	public boolean getIs_special_limit_free() {
+		return is_special_limit_free;
+	}
+	public void setIs_special_limit_free(boolean is_special_limit_free) {
+		this.is_special_limit_free = is_special_limit_free;
+	}
+	
 	
 }

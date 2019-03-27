@@ -60,7 +60,7 @@ public class MenuService {
 	}
 	
 	/**
-	 * ²éÑ¯ËùÓĞ²Ëµ¥-Ö»²é²Ëµ¥
+	 * æŸ¥è¯¢æ‰€æœ‰èœå•-åªæŸ¥èœå•
 	 * @return
 	 */
 	public List<SysMenu> getAllMenus(){
@@ -72,29 +72,29 @@ public class MenuService {
 	}
 	
 	/**
-	 * È¨ÏŞ¹ÜÀíÖĞ²Ëµ¥Ñ¡Ôñ
-	 * »ñÈ¡µ±Ç°ÓÃ»§¿ÉÒÔ¸³È¨µÄËùÓĞ²Ëµ¥£¬ÒÔ¼°ÒÑ¾­Ñ¡ÔñµÄ²Ëµ¥ÁĞ±í
-	 * @param roleId ½ÇÉ«ID
-	 * @param userId µ±Ç°²Ù×÷ÓÃ»§
-	 * @param orgCode µ±Ç°²Ù×÷ÓÃ»§ËùÊôÆóÒµ
-	 * @param targetOrgCode Ä¿±êÆóÒµ
+	 * æƒé™ç®¡ç†ä¸­èœå•é€‰æ‹©
+	 * è·å–å½“å‰ç”¨æˆ·å¯ä»¥èµ‹æƒçš„æ‰€æœ‰èœå•ï¼Œä»¥åŠå·²ç»é€‰æ‹©çš„èœå•åˆ—è¡¨
+	 * @param roleId è§’è‰²ID
+	 * @param userId å½“å‰æ“ä½œç”¨æˆ·
+	 * @param orgCode å½“å‰æ“ä½œç”¨æˆ·æ‰€å±ä¼ä¸š
+	 * @param targetOrgCode ç›®æ ‡ä¼ä¸š
 	 * @return
 	 */
 	public Map<String,Object> getOrgRoleAuthMenus(Long roleId,Integer userId,String orgCode,String targetOrgCode){
 		Map<String,Object> map=new HashMap<String,Object>();
-		//»ñÈ¡µ±Ç°ÓÃ»§µÄÈ¨ÏŞ·¶Î§
+		//è·å–å½“å‰ç”¨æˆ·çš„æƒé™èŒƒå›´
 		PrivlegeAuth privlegeAuth = privilegeService.getUserAuthLevel(userId, orgCode, targetOrgCode);
 		if(privlegeAuth!=null) {
-			//²éÑ¯µ±Ç°ÓÃ»§²Ëµ¥·¶Î§ÁĞ±í
+			//æŸ¥è¯¢å½“å‰ç”¨æˆ·èœå•èŒƒå›´åˆ—è¡¨
 			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(privlegeAuth.getAuthType(), privlegeAuth.getAuthId());
-			//Æ´×°Ê÷ĞÎ½á¹¹
+			//æ‹¼è£…æ ‘å½¢ç»“æ„
 			if(allMenus!=null) {
 				map.put("menus", parseTree(allMenus,true));
 			}
 		}
 		List<Long> selected= new ArrayList<Long>();
 		if(roleId!=null) {
-			//²éÑ¯¸Ã½ÇÉ«µÄ²Ëµ¥È¨ÏŞ
+			//æŸ¥è¯¢è¯¥è§’è‰²çš„èœå•æƒé™
 			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(roleId.toString(), AuthObjTypeEnum.ROLE.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
 				for(SysPrivilege privilege:menuList) {
@@ -107,21 +107,21 @@ public class MenuService {
 	}
 	
 	/**
-	 * ²úÆ·¹ÜÀíÖĞÑ¡Ôñ²Ëµ¥Ñ¡ÖĞ×´Ì¬
+	 * äº§å“ç®¡ç†ä¸­é€‰æ‹©èœå•é€‰ä¸­çŠ¶æ€
 	 * @param productId
 	 * @return
 	 */
 	public Map<String,Object> getProductAuthMenus(Long productId){
 		Map<String,Object> map=new HashMap<String,Object>();
 		List<SysMenu> allMenu=mapper.getAllMenus();
-		//»ñÈ¡µ±Ç°ÓÃ»§µÄÈ¨ÏŞ·¶Î§
+		//è·å–å½“å‰ç”¨æˆ·çš„æƒé™èŒƒå›´
 		if(allMenu!=null) {
-			//Æ´×°Ê÷ĞÎ½á¹¹
+			//æ‹¼è£…æ ‘å½¢ç»“æ„
 			map.put("menus", parseTree(allMenu,true));
 		}
 		List<Long> selected= new ArrayList<Long>();
 		if(productId!=null) {
-			//²éÑ¯¸Ã²úÆ·µÄ²Ëµ¥È¨ÏŞ
+			//æŸ¥è¯¢è¯¥äº§å“çš„èœå•æƒé™
 			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(productId.toString(), AuthObjTypeEnum.PRODUCT.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
 				for(SysPrivilege privilege:menuList) {
@@ -135,34 +135,34 @@ public class MenuService {
 	
 	
 	/**
-	 * ×éÖ¯¹ÜÀíÖĞÑ¡Ôñ²Ëµ¥Ñ¡ÖĞ×´Ì¬
+	 * ç»„ç»‡ç®¡ç†ä¸­é€‰æ‹©èœå•é€‰ä¸­çŠ¶æ€
 	 * @param productId
 	 * @return
 	 */
 	public Map<String,Object> getOrgAuthMenus(Long productId,String parentOrgCode,String targetOrgCode){
 		Map<String,Object> map=new HashMap<String,Object>();
-		//»ñÈ¡µ±Ç°ÓÃ»§µÄÈ¨ÏŞ·¶Î§
+		//è·å–å½“å‰ç”¨æˆ·çš„æƒé™èŒƒå›´
 		if(productId!=null) {
-			//²éÑ¯²úÆ··¶Î§ÁĞ±í
+			//æŸ¥è¯¢äº§å“èŒƒå›´åˆ—è¡¨
 			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.PRODUCT.getCode(), productId.toString());
-			//Æ´×°Ê÷ĞÎ½á¹¹
+			//æ‹¼è£…æ ‘å½¢ç»“æ„
 			if(allMenus!=null) {
 				map.put("menus", parseTree(allMenus,true));
 			}
 		}else if(StrUtils.isNotEmpty(parentOrgCode)) {
-			//²éÑ¯ÉÏ¼¶ÆóÒµ²Ëµ¥·¶Î§ÁĞ±í
+			//æŸ¥è¯¢ä¸Šçº§ä¼ä¸šèœå•èŒƒå›´åˆ—è¡¨
 			SysOrganization parentOrganization = organizationService.getOrgByCode(parentOrgCode);
 			List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ORG.getCode(), parentOrganization.getId().toString());
-			//Æ´×°Ê÷ĞÎ½á¹¹
+			//æ‹¼è£…æ ‘å½¢ç»“æ„
 			if(allMenus!=null) {
 				map.put("menus", parseTree(allMenus,true));
 			}
 		}else {
-			throw new GuiyuException("²úÆ·±àºÅºÍÉÏ¼¶ÆóÒµ±àºÅ²»ÄÜ¶¼Îª¿Õ!");
+			throw new GuiyuException("äº§å“ç¼–å·å’Œä¸Šçº§ä¼ä¸šç¼–å·ä¸èƒ½éƒ½ä¸ºç©º!");
 		}
 		List<Long> selected= new ArrayList<Long>();
 		if(StrUtils.isNotEmpty(targetOrgCode)) {
-			//²éÑ¯±¾×éÖ¯µÄ²Ëµ¥È¨ÏŞ
+			//æŸ¥è¯¢æœ¬ç»„ç»‡çš„èœå•æƒé™
 			SysOrganization organization = organizationService.getOrgByCode(targetOrgCode);
 			List<SysPrivilege> menuList = privilegeService.queryPrivilegeListByAuth(organization.getId().toString(), AuthObjTypeEnum.ORG.getCode(), ResourceTypeEnum.MENU.getCode());
 			if(menuList!=null&&!menuList.isEmpty()) {
@@ -176,7 +176,7 @@ public class MenuService {
 	}
 	
 	/**
-	 * ·µ»ØÓÃ»§ÓĞÈ¨µÄ²Ëµ¥ÁĞ±íÒÔ¼°°´Å¥ÁĞ±í
+	 * è¿”å›ç”¨æˆ·æœ‰æƒçš„èœå•åˆ—è¡¨ä»¥åŠæŒ‰é’®åˆ—è¡¨
 	 * @param userId
 	 * @return
 	 */
@@ -185,7 +185,7 @@ public class MenuService {
 			Map<String,Object> map = new HashMap<String,Object>();
 			List<SysRole> roleList = userService.getRoleByUserId(Long.valueOf(userId));
 			if(roleList!=null && !roleList.isEmpty()) {
-				//ÏÖÔÚÓÃ»§Ö»ÓĞ1¸ö½ÇÉ«
+				//ç°åœ¨ç”¨æˆ·åªæœ‰1ä¸ªè§’è‰²
 				SysRole sysRole = roleList.get(0);
 				List<SysMenu> allMenus = privilegeService.queryMenuTreeByLowId(AuthObjTypeEnum.ROLE.getCode(), sysRole.getId().toString());
 				Map<String,SysMenu> buttonMap = new HashMap<String,SysMenu>();
@@ -193,9 +193,9 @@ public class MenuService {
 				while(it.hasNext()){
 					SysMenu sysMenu = it.next();
 				    if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()){
-				    	//¼ÓÈë°´Å¥ÁĞ±í
+				    	//åŠ å…¥æŒ‰é’®åˆ—è¡¨
 				    	buttonMap.put(sysMenu.getUrl(), sysMenu);
-				        //´Ó²Ëµ¥ÁĞ±íÖĞÒÆ³ı
+				        //ä»èœå•åˆ—è¡¨ä¸­ç§»é™¤
 				    	it.remove();
 				    }
 				}
@@ -220,9 +220,9 @@ public class MenuService {
 	}
 	
 	/**
-	 * ½«²Ëµ¥×ªÎªÊ÷ĞÎ½á¹¹£¬
+	 * å°†èœå•è½¬ä¸ºæ ‘å½¢ç»“æ„ï¼Œ
 	 * @param allMenu
-	 * @param filterSysMenuFlag ÊÇ·ñÒª¹ıÂËµôÏµÍ³²Ëµ¥£¨ºÜ¶àµØ·½µÄ²Ëµ¥ÏÔÊ¾ÊÇÒª·ÖÅäµÄ£¬ÓĞĞ©²Ëµ¥²»ÄÜ·ÖÅä³öÈ¥£©
+	 * @param filterSysMenuFlag æ˜¯å¦è¦è¿‡æ»¤æ‰ç³»ç»Ÿèœå•ï¼ˆå¾ˆå¤šåœ°æ–¹çš„èœå•æ˜¾ç¤ºæ˜¯è¦åˆ†é…çš„ï¼Œæœ‰äº›èœå•ä¸èƒ½åˆ†é…å‡ºå»ï¼‰
 	 * @return
 	 */
 	private List<SysMenu> parseTree(List<SysMenu> allMenu,boolean filterSysMenuFlag){
@@ -230,7 +230,7 @@ public class MenuService {
 		List<SysMenu> list=new ArrayList<>();
 		for(SysMenu item : allMenu) {
 			if(filterSysMenuFlag && item.getSysType()!=null && 1==item.getSysType()) {
-				//¹ıÂËµôÏµÍ³²Ëµ¥
+				//è¿‡æ»¤æ‰ç³»ç»Ÿèœå•
 				continue;
 			}
 			Integer pid=item.getPid();
@@ -249,7 +249,7 @@ public class MenuService {
 	}
 	
 	/**
-	 * ·ÖÒ³²éÑ¯²Ëµ¥
+	 * åˆ†é¡µæŸ¥è¯¢èœå•
 	 * @param param
 	 * @return
 	 */
@@ -258,8 +258,8 @@ public class MenuService {
 		int totalRecord = 0;
 		int pageNo = param.getPageNo();
 		int pageSize = param.getPageSize();
-		int limitStart = (pageNo-1)*pageSize;	//ÆğÊ¼ÌõÊı
-		int limitEnd = pageSize;	//²éÑ¯ÌõÊı
+		int limitStart = (pageNo-1)*pageSize;	//èµ·å§‹æ¡æ•°
+		int limitEnd = pageSize;	//æŸ¥è¯¢æ¡æ•°
 		SysMenuExample example = new SysMenuExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andDelFlagEqualTo(0);
@@ -272,7 +272,7 @@ public class MenuService {
 		if(StrUtils.isNotEmpty(param.getMenuName())) {
 			criteria.andNameLike("%"+param.getMenuName()+"%");
 		}
-		//²éÑ¯×ÜÊı
+		//æŸ¥è¯¢æ€»æ•°
 		totalRecord = mapper.countByExample(example);
 		if(totalRecord > 0) {
 			example.setLimitStart(limitStart);
@@ -283,14 +283,14 @@ public class MenuService {
 				for(SysMenu menu : list) {
 					MenuVO vo = new MenuVO();
 					BeanUtil.copyProperties(menu, vo);
-					//Ìî³ä´´½¨ÈË
+					//å¡«å……åˆ›å»ºäºº
 					if(menu.getCreateId()!=null) {
 						SysUser sysUser = dataLocalCacheUtil.queryUser(menu.getCreateId().intValue());
 						if(sysUser!=null) {
 							vo.setCreateName(sysUser.getUsername());
 						}
 					}
-					//Ìî³ä¸üĞÂÈË
+					//å¡«å……æ›´æ–°äºº
 					if(menu.getUpdateId()!=null) {
 						SysUser sysUser = dataLocalCacheUtil.queryUser(menu.getUpdateId().intValue());
 						if(sysUser!=null) {

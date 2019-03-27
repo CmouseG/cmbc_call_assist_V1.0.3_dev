@@ -15,9 +15,39 @@ public class UserParamVo {
 
 	private Long userId;
 	private Integer authLevel;
-	private String orgCode;
+	private String orgCode="";
 
 	
+	public String getRoleName()
+	{
+		return roleName;
+	}
+
+	public void setRoleName(String roleName)
+	{
+		this.roleName = roleName;
+	}
+
+	public String getOrgName()
+	{
+		return orgName;
+	}
+
+	public void setOrgName(String orgName)
+	{
+		this.orgName = orgName;
+	}
+
+	public Integer getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(Integer status)
+	{
+		this.status = status;
+	}
+
 	public Long getUserId()
 	{
 		return userId;

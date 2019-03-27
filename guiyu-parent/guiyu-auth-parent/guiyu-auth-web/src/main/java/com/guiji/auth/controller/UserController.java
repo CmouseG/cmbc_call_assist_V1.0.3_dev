@@ -217,8 +217,8 @@ public class UserController implements IAuth {
 	}
 
 	@RequestMapping("/user/selectLikeUserName")
-	public List<Object> selectLikeUserName(UserParamVo param, @RequestHeader Long userId) {
-		return service.selectLikeUserName(param, userId);
+	public List<Object> selectLikeUserName(UserParamVo param, @RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode) {
+		return service.selectLikeUserName(param, userId, authLevel, orgCode);
 	}
 
 	@RequestMapping("/user/getAllCompanyUser")

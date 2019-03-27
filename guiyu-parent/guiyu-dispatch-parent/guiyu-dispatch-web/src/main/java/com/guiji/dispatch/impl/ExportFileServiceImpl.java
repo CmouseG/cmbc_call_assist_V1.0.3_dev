@@ -81,14 +81,6 @@ public class ExportFileServiceImpl implements IExportFileService {
         if(null != queryDto){
             /*queryRecordDto = new ExportFileRecord();
             BeanUtils.copyProperties(queryDto, queryRecordDto, ExportFileRecord.class);*/
-
-            //权限过滤
-            Integer authLevel = queryDto.getAuthLevel();//操作用户权限等级
-            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryDto.getOperUserId());//获取用户ID
-            String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryDto.getOperOrgCode());//获取企业组织编码
-            queryDto.setUserId(userId);
-            queryDto.setOrgCode(orgCode);
-            queryDto.setAuthLevel(authLevel);
         }
         return exportFileRecordMapper.queryExportFileRecordByPage(queryDto, page);
     }
@@ -99,14 +91,6 @@ public class ExportFileServiceImpl implements IExportFileService {
         if(null != queryDto){
             /*queryRecordDto = new ExportFileRecord();
             BeanUtils.copyProperties(queryDto, queryRecordDto, ExportFileRecord.class);*/
-
-            //权限过滤
-            Integer authLevel = queryDto.getAuthLevel();//操作用户权限等级
-            String userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryDto.getOperUserId());//获取用户ID
-            String orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryDto.getOperOrgCode());//获取企业组织编码
-            queryDto.setUserId(userId);
-            queryDto.setOrgCode(orgCode);
-            queryDto.setAuthLevel(authLevel);
         }
         return exportFileRecordMapper.queryExportFileRecordCount(queryDto);
     }

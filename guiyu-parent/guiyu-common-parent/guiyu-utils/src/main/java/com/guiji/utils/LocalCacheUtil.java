@@ -22,6 +22,19 @@ public class LocalCacheUtil {
     private static Map<String, Long> expireTimeMap = new HashMap<String, Long>();
     
     /**
+     * 删除缓存
+     */
+    public static void del(String key)
+    {
+    	if(cacheMap.containsKey(key)){
+    		cacheMap.remove(key);
+    	}
+    	if(expireTimeMap.containsKey(key)){
+    		expireTimeMap.remove(key);
+    	}
+    }
+    
+    /**
      * 获取指定的value，如果key不存在或者已过期，则返回null
      * @param key
      * @return

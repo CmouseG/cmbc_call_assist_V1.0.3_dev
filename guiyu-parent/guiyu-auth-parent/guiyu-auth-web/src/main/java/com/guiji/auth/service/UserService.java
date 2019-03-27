@@ -301,6 +301,7 @@ public class UserService {
 	public void updateUserExt(SysUserExt sysUserExt) {
 		sysUserExt.setUpdateTime(new Date());
 		sysUserExtMapper.updateByPrimaryKeySelective(sysUserExt);
+		LocalCacheUtil.del("UserExt_"+sysUserExt.getUserId());
 	}
 
 	public SysUserExt getUserExtByUserId(Long id)
@@ -399,6 +400,9 @@ public class UserService {
 		return false;
 	}
 
+	/**
+	 * 获取首页账号数
+	 */
 	public Integer getUserCount(Long userId, Integer authLevel, String orgCode)
 	{
 		SysUserExample example = new SysUserExample();

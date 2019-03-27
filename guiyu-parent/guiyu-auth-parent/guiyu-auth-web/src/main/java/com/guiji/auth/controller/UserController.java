@@ -398,6 +398,9 @@ public class UserController implements IAuth {
 		return Result.ok(isAgent);
 	}
 	
+	/**
+	 * 获取首页账号数
+	 */
 	@RequestMapping("/user/getUserCount")
 	public ReturnData<Integer> getUserCount(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode) {
 		return Result.ok(service.getUserCount(userId,authLevel,orgCode));

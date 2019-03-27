@@ -7,7 +7,8 @@
 1、01-guiyu_base.sql
 2、02-guiyu_base.sql
 3、03-batchModifyOrgCodeWithRole.sql
-4、04-guiyu_botstence.sql
+4、04-batchModifyOrgto1.sql
+5、05-guiyu_botstence.sql
 
 三、更新应用
 

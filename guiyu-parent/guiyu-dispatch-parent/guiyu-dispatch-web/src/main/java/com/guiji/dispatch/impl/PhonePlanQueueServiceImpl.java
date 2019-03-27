@@ -3,6 +3,7 @@ package com.guiji.dispatch.impl;
 import com.guiji.component.lock.DistributedLockHandler;
 import com.guiji.component.lock.Lock;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
+import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.dao.entity.DispatchPlan;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
 import com.guiji.dispatch.service.IGetPhonesInterface;
@@ -25,8 +26,6 @@ import java.util.Set;
 public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 	static Logger logger = LoggerFactory.getLogger(PhonePlanQueueServiceImpl.class);
 	private static final String REDIS_SYSTEM_MAX_PLAN = "REDIS_SYSTEM_MAX_PLAN";
-	private static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
-	private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 	@Autowired
 	private RedisUtil redisUtil;
 	@Autowired
@@ -53,13 +52,13 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 					logger.error("从redis获取系统最大并发数失败，获取的最大并发数为0");
 				}
 				String hour = String.valueOf(DateUtil.getCurrentHour());
-				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>)redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
 				if (userLineRobotList != null) {
 					//根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
 					for (UserLineBotenceVO dto : userLineRobotList) {
 						//mod by xujin
 //						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getLineId()+"_"+dto.getBotenceName();
-						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getBotenceName();
+						String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT+dto.getUserId()+"_"+dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.lock" + queue,"dispatch.lock" + queue);
 						try {
 							if (distributedLockHandler.tryLock(queueLock, 1000L))
@@ -116,7 +115,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
 	@Override
 	public boolean cleanQueue() {
-		Set<String> queueKeys = redisUtil.getAllKeyMatch(REDIS_PLAN_QUEUE_USER_LINE_ROBOT);
+		Set<String> queueKeys = redisUtil.getAllKeyMatch(RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT);
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
 				//1.获取redis锁，将拨打计划的redis锁住
@@ -151,7 +150,7 @@ public class PhonePlanQueueServiceImpl implements IPhonePlanQueueService {
 
 	@Override
 	public boolean cleanQueueByUserId(String userId) {
-		Set<String> queueKeys = redisUtil.getAllKeyMatch(REDIS_PLAN_QUEUE_USER_LINE_ROBOT+userId);
+		Set<String> queueKeys = redisUtil.getAllKeyMatch(RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT+userId);
 		if (queueKeys != null) {
 			for (String queueKey : queueKeys) {
 				//1.获取redis锁，将拨打计划的redis锁住

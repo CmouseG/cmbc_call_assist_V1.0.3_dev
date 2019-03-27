@@ -46,10 +46,6 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(PushPhonesHandlerImpl.class);
 
-	private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
-
-	private static final String REDIS_PLAN_QUEUE_USER_LINE_ROBOT = "REDIS_PLAN_QUEUE_USER_LINE_ROBOT_";
-
 	private static final String REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT = "REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT_";
 
 	@Autowired
@@ -80,11 +76,11 @@ public class PushPhonesHandlerImpl implements IPushPhonesHandler {
 					continue;
 				}
 				List<UserLineBotenceVO> userLineRobotList = (List<UserLineBotenceVO>) redisUtil
-						.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+						.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
 				if (userLineRobotList != null) {
 					// 根据用户、模板、线路组合插入拨打电话队列，如果队列长度小于最大并发数的2倍，则往队列中填充3倍最大并发数的计划
 					for (UserLineBotenceVO dto : userLineRobotList) {
-						String queue = REDIS_PLAN_QUEUE_USER_LINE_ROBOT + dto.getUserId() + "_" + dto.getBotenceName();
+						String queue = RedisConstant.RedisConstantKey.REDIS_PLAN_QUEUE_USER_LINE_ROBOT + dto.getUserId() + "_" + dto.getBotenceName();
 						String queueCount = REDIS_CALL_QUEUE_USER_LINE_ROBOT_COUNT + dto.getUserId() + "_"
 								+ dto.getBotenceName();
 						Lock queueLock = new Lock("dispatch.callphone.lock" + queue, "dispatch.callphone.lock" + queue);

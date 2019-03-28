@@ -199,7 +199,6 @@ public class CustAiAccountController {
         condition.setQUserId(qUserId);
         condition.setOrgCode(orgCode);
         condition.setAuthLevel(authLevel);
-        condition.setUserId(userId.toString());
         List<UserAiCfgBaseInfoVO> rtnList = new ArrayList<UserAiCfgBaseInfoVO>();
         Page<UserAiCfgBaseInfo> page = iUserAiCfgService.queryUserAiCfgBaseInfoFroPageByUserId(condition);
         List<UserAiCfgBaseInfo> list = page.getRecords();

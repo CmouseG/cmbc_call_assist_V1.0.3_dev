@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guiji.auth.exception.CheckConditionException;
 import com.guiji.auth.service.RoleService;
+import com.guiji.auth.service.UserService;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.vo.RoleParamVo;
 import com.guiji.utils.StrUtils;
 
@@ -21,7 +24,9 @@ import com.guiji.utils.StrUtils;
 public class RoleController {
 
 	@Autowired
-	private RoleService service;
+	private RoleService roleService;
+	@Autowired
+	private UserService userService;
 	
 	@Jurisdiction("system_role_add")
 	@RequestMapping("insert")
@@ -31,13 +36,17 @@ public class RoleController {
 		role.setCreateTime(new Date());
 		role.setUpdateTime(new Date());
 		role.setDelFlag(0);
-		service.insert(role,orgCode,menuIds);
+		roleService.insert(role,orgCode,menuIds);
 	}
 	
 	@Jurisdiction("system_role_delete")
 	@RequestMapping("delete")
 	public void delete(Long id,@RequestHeader Long userId){
-		service.delete(id,userId);
+		List<SysUser> users = userService.queryUserByRoleId(id.intValue());
+		if(users.size() > 0) {
+			throw new GuiyuException("该角色下存在绑定用户，请先将用户解绑再删除！");
+		}
+		roleService.delete(id,userId);
 	}
 	
 	@Jurisdiction("system_role_edit")
@@ -45,27 +54,27 @@ public class RoleController {
 	public void update(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws CheckConditionException{
 		role.setUpdateId(userId);
 		role.setUpdateTime(new Date());
-		service.update(role,orgCode,menuIds);
+		roleService.update(role,orgCode,menuIds);
 	}
 	
 	@RequestMapping("getRoleById")
 	public SysRole getRoleId(Long id){
-		return service.getRoleId(id);
+		return roleService.getRoleId(id);
 	}
 	
 	@RequestMapping("getRoles")
 	public List<SysRole> getRoles(){
-		return service.getRoles();
+		return roleService.getRoles();
 	}
 	
 	@RequestMapping("/getRoleByPage")
 	public Page<Object> getRoleByPage(RoleParamVo param){
-		return service.getRoleByPage(param);
+		return roleService.getRoleByPage(param);
 	}
 	
 	@RequestMapping("getRoleByName")
 	public List<SysRole> getRoleByName(String name){
-		return service.getRoleByName(name);
+		return roleService.getRoleByName(name);
 	}
 	
 	
@@ -77,7 +86,7 @@ public class RoleController {
 	@RequestMapping("queryRoleByOrgCode")
 	public List<SysRole> queryRoleByOrgCode(String orgCode){
 		if(StrUtils.isNotEmpty(orgCode)) {
-			return service.getRolesByOrg(orgCode);
+			return roleService.getRolesByOrg(orgCode);
 		}
 		return null;
 	}

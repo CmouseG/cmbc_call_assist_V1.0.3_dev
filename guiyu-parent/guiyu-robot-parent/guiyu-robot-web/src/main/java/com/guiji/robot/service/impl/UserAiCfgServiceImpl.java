@@ -331,10 +331,10 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
             com.guiji.robot.dao.entity.UserAiCfgBaseInfoExample.Criteria criteria = example.createCriteria();
             if (condition.getAuthLevel() != null) {
                 if (RobotConstants.USER_DATA_AUTH_ME == condition.getAuthLevel()) {
-                    criteria.andUserIdEqualTo(condition.getUserId().toString());
+                    criteria.andUserIdEqualTo(condition.getUserId());
                 } else {
-                    if (null != condition.getQUserId()) {
-                        criteria.andUserIdEqualTo(condition.getQUserId().toString());
+                    if (StrUtils.isNotEmpty(condition.getQUserId())) {
+                        criteria.andUserIdEqualTo(condition.getQUserId());
                     }
                     if (RobotConstants.USER_DATA_AUTH_ORG == condition.getAuthLevel()) {
                         criteria.andOrgCodeEqualTo(condition.getOrgCode());
@@ -343,8 +343,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
                     }
                 }
             } else {
-                if (null != condition.getQUserId()) {
-                    criteria.andUserIdEqualTo(condition.getQUserId().toString());
+                if (StrUtils.isNotEmpty(condition.getQUserId())) {
+                    criteria.andUserIdEqualTo(condition.getQUserId());
                 }
             }
         }

@@ -448,7 +448,7 @@ public class BotSentenceProcessController {
 	@RequestMapping(value="queryIndustryListByAccountNo")
 	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByAccountNo(@RequestHeader String userId) {
 		String accountNo = userId;
-		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryIndustryListByAccountNo(accountNo, userId);
+		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(accountNo, "template");
 		
 		/*if(null != list && list.size() > 0) {
 			for(BotSentenceTemplateTradeVO trade : list) {
@@ -490,8 +490,8 @@ public class BotSentenceProcessController {
 	
 	@RequestMapping(value="queryIndustryListByOrgCode")
 	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@JsonParam String orgCode) {
-		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryIndustryListByOrgCode(orgCode);
-		
+		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(orgCode,"template");
+		/*
 		if(null != list && list.size() > 0) {
 			for(BotSentenceTemplateTradeVO trade : list) {
 				if(null != trade.getChildren()) {
@@ -508,7 +508,7 @@ public class BotSentenceProcessController {
 									for(BotSentenceTemplate template : templateList) {
 										BotSentenceTemplateTradeVO vo = new BotSentenceTemplateTradeVO();
 										vo.setLabel(template.getTemplateName());
-										vo.setValue(template.getProcessId());
+										vo.setValue(template.getTemplateId());
 										children.add(vo);
 									}
 									trade2.setChildren(children);
@@ -521,7 +521,7 @@ public class BotSentenceProcessController {
 					}
 				}
 			}
-		}
+		}*/
 		
 		
 		return ServerResult.createBySuccess(list);

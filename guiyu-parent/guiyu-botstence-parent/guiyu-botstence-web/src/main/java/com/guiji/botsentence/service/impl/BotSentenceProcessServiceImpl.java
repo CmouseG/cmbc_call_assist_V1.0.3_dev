@@ -227,9 +227,15 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		//查询已生效的话术模板
 		//BotSentenceProcess botSentenceTemplate = botSentenceProcessMapper.selectByPrimaryKey(paramVO.getProcessId());
-		BotSentenceTemplate botSentenceTemplate = botSentenceTemplateMapper.selectByPrimaryKey(paramVO.getProcessId());
-		if(null == botSentenceTemplate) {
+		BotSentenceTemplateExample templateExample = new BotSentenceTemplateExample();
+		templateExample.createCriteria().andTemplateIdEqualTo(paramVO.getProcessId());
+		List<BotSentenceTemplate> templateList = botSentenceTemplateMapper.selectByExample(templateExample);
+		
+		BotSentenceTemplate botSentenceTemplate = null;
+		if(null != templateList && templateList.size() > 0) {
 			throw new CommonException("创建模板失败，行业模板不存在!");
+		}else {
+			botSentenceTemplate = templateList.get(0);
 		}
 		
 		//保存话术流程信息

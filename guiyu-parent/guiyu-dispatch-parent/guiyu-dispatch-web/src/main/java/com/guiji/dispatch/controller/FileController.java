@@ -21,9 +21,11 @@ import com.guiji.dispatch.model.ExportFileDto;
 import com.guiji.dispatch.service.FileInterface;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IExportFileService;
+import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.HttpDownload;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
+import com.guiji.dispatch.vo.FileRecordsListVo;
 import com.guiji.utils.IdGengerator.IdUtils;
 import com.guiji.utils.JsonUtils;
 import com.guiji.utils.NasUtil;
@@ -92,14 +94,14 @@ public class FileController {
 	 * @return
 	 */
 	@GetMapping(value = "queryFileRecords")
-	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
+	public Page<FileRecordsListVo> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,
 			@RequestParam(required = false, name = "batchName") String batchName,
 			@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime,
 			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel) {
 		logger.info("userId:{},orgCode:{},authLevel:{}", userId, orgCode, authLevel);
-		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
+		Page<FileRecordsListVo> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
 				endTime, userId, orgCode, authLevel);
 		return queryFileInterface;
 	}
@@ -756,6 +758,5 @@ public class FileController {
 			return generateFile;
 		}
 	}
-
 
 }

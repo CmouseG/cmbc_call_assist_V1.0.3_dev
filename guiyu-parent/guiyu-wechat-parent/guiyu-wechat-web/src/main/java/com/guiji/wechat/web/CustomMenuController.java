@@ -150,22 +150,31 @@ public class CustomMenuController {
 
         if(authAccessTokenDto == null || StringUtils.isBlank(authAccessTokenDto.getOpenid())){
             logger.error("failed get weChat auth!");
-            return new ModelAndView("redirect:" + buildKeFuUrl(GUEST));
+            return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, GUEST));
         }
 
         String openId = authAccessTokenDto.getOpenid();
         String userName = getUserNameByCheckUserBind(openId);
         if(StringUtils.isNotBlank(userName)){
             keFuBind(openId, userName, STATIC_GUIJI_DOMAIN);
-            return new ModelAndView("redirect:" + buildKeFuUrl(userName));
+            return new ModelAndView("redirect:" + buildKeFuUrl(STATIC_GUIJI_DOMAIN, userName));
         }
 
         return new ModelAndView("redirect:" + buildLoginUrl(openId));
     }
 
+    @GetMapping("goto/kefu")
+    public ModelAndView gotoKeFu(@RequestParam(value = "domain", required = false, defaultValue = STATIC_GUIJI_DOMAIN) String domain,
+                                 @RequestParam("userName") String userName){
+        logger.info("goto kefu request domain:{}, userName:{}", domain, userName);
+
+        return new ModelAndView("redirect:" + buildKeFuUrl(domain, userName));
+    }
+
 
     @PostMapping("login")
-    public Result.ReturnData<Boolean> checkLogin(@RequestParam("openId") String openId,
+    public Result.ReturnData<Boolean> checkLogin(@RequestParam(value = "domain", required = false, defaultValue = STATIC_GUIJI_DOMAIN) String domain,
+                                                 @RequestParam("openId") String openId,
                                                  @RequestParam("userName") String userName,
                                                  @RequestParam("password") String password){
 
@@ -177,35 +186,31 @@ public class CustomMenuController {
             userId = iApiLogin.getUserIdByCheckLogin(userName, password).getBody();
         }catch (Exception e){
             logger.error("failed get userId by check login", e);
-            return Result.ok(false);
+            return Result.error("1000612");
         }
 
         if(null == userId){
-            return Result.ok(false);
+            return Result.error("1000613");
         }
 
-        keFuBind(openId, userName, STATIC_GUIJI_DOMAIN);
+        keFuBind(openId, userName, domain);
         sendUserBindWeChatMessage(openId, userId);
 
         return Result.ok(true);
     }
 
 
-    private String buildKeFuUrl(String userName){
+    private String buildKeFuUrl(String domain, String userName){
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getKeFuUrl())
-                .queryParam("guiji_hostname", STATIC_GUIJI_DOMAIN)
+                .queryParam("guiji_hostname", domain)
                 .queryParam("name", userName);
 
         return builder.build().toUri().toString();
     }
 
     private String buildLoginUrl(String openId){
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(weChatEnvProperties.getUserLoginUrl())
-                .queryParam("openId", openId);
-
-        return builder.build().toUri().toString();
+        return weChatEnvProperties.getUserLoginUrl() + "?openId=" + openId;
     }
 
     private String getUserNameByCheckUserBind(String openId){

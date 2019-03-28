@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 
 @Controller
-@RequestMapping("admin")
+@RequestMapping("wechat/admin")
 public class AdminController {
 
     @Resource

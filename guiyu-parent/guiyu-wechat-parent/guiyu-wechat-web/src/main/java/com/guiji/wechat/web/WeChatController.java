@@ -43,7 +43,7 @@ public class WeChatController implements WeChatApi {
     @Resource
     private WeChatUrlProperty weChatUrlProperty;
 
-    @PostMapping("show/qrcode")
+    @PostMapping("wechat/show/qrcode")
     public void show(@RequestBody QRCodeReqVO qrCodeReqVO, HttpServletResponse response) throws Exception {
 
         Result.ReturnData<QRCodeRpsVO> returnData = getQRCode(qrCodeReqVO);

@@ -333,8 +333,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
                 if (RobotConstants.USER_DATA_AUTH_ME == condition.getAuthLevel()) {
                     criteria.andUserIdEqualTo(condition.getUserId().toString());
                 } else {
-                    if (CollectionUtils.isNotEmpty(condition.getUserIds())) {
-                        criteria.andUserIdIn(condition.getUserIds());
+                    if (null != condition.getQUserId()) {
+                        criteria.andUserIdEqualTo(condition.getQUserId().toString());
                     }
                     if (RobotConstants.USER_DATA_AUTH_ORG == condition.getAuthLevel()) {
                         criteria.andOrgCodeEqualTo(condition.getOrgCode());
@@ -343,8 +343,8 @@ public class UserAiCfgServiceImpl implements IUserAiCfgService {
                     }
                 }
             } else {
-                if (CollectionUtils.isNotEmpty(condition.getUserIds())) {
-                    criteria.andUserIdIn(condition.getUserIds());
+                if (null != condition.getQUserId()) {
+                    criteria.andUserIdEqualTo(condition.getQUserId().toString());
                 }
             }
         }

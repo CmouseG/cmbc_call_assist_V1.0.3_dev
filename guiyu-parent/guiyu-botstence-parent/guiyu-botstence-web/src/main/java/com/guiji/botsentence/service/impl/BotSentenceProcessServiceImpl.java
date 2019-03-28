@@ -233,9 +233,9 @@ public class BotSentenceProcessServiceImpl implements IBotSentenceProcessService
 		
 		BotSentenceTemplate botSentenceTemplate = null;
 		if(null != templateList && templateList.size() > 0) {
-			throw new CommonException("创建模板失败，行业模板不存在!");
-		}else {
 			botSentenceTemplate = templateList.get(0);
+		}else {
+			throw new CommonException("创建模板失败，行业模板不存在!");
 		}
 		
 		//保存话术流程信息

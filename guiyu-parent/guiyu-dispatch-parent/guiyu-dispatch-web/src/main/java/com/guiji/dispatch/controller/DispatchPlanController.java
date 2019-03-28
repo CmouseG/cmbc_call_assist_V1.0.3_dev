@@ -123,7 +123,7 @@ public class DispatchPlanController {
 	@PostMapping("operationAllPlanByBatchId")
 	@Log(info = "一键修改状态")
 	public MessageDto operationAllPlanByBatchId(@RequestParam(required = true, name = "batchId") Integer batchId,
-			@RequestParam(required = true, name = "status") String status, @RequestHeader Long userId, @RequestParam(required = true, name = "orgId") Integer orgId) {
+			@RequestParam(required = true, name = "status") String status, @RequestHeader Long userId, @RequestHeader Integer orgId) {
 		return dispatchPlanService.operationAllPlanByBatchId(batchId, status, userId, orgId);
 	}
 

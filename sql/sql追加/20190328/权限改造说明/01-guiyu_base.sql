@@ -67,6 +67,7 @@ ALTER TABLE sys_menu ADD (sys_type int comment '系统菜单标识：1-系统菜
 update sys_role set data_auth_level=1;
 update sys_role set data_auth_level=3 where id in (1,3);
 
+update sys_organization set sub_code=concat(sub_code,'.') where sub_code is not null;
 
 update sys_organization set code = CONCAT(code,'.') where id <> 1;
 

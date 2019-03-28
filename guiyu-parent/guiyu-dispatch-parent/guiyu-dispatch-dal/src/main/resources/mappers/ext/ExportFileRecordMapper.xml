@@ -296,7 +296,6 @@
 		UPDATE export_file_record
 		<set>
 			status = #{status},
-			file_original_url = #{fileUrl},
 			file_generate_url = #{fileUrl},
 			file_size = #{fileSize},
 			upd_time = #{delTime}

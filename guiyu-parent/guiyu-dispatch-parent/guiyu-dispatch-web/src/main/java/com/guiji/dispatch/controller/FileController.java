@@ -78,6 +78,9 @@ public class FileController {
 	@Autowired
 	private IExportFileService exportFileService;
 
+	@Value("${file.tmpPath}")
+	private String tmpPath;
+
 	/**
 	 * 查询文件记录
 	 * @param pagenum
@@ -567,12 +570,14 @@ public class FileController {
 			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords, userId, orgCode));
 			boolean bool = false;
 			String fileUrl = fileRecords.getUrl();//"http://192.168.1.57:8080/group1/M00/01/23/wKgBOVybN92AO6QJAAApcQroVSU36.xlsx";
+			File generateFile = null;	//生成文件
+			File zipFile = null;		//压缩文件
 			SysFileRspVO resFile = null;
 			try{
 				//生成导出文件
-				File generateFile = this.generateFile(fileUrl);
+				generateFile = this.generateFile(fileUrl);
 				//压缩文件
-				File zipFile = this.generateZipFile(generateFile);
+				zipFile = this.generateZipFile(generateFile);
 				//上传压缩文件
 				resFile = this.uploadFile(zipFile);
 				bool = true;
@@ -583,6 +588,10 @@ public class FileController {
 				exportFileService.endExportFile(recordRes.getRecordId(),
 						bool ? ExportFileStatusEnum.FINISH.getStatus() : ExportFileStatusEnum.FAIL.getStatus(),
 						null != resFile ? resFile.getSkUrl() : null);
+
+				if(null != generateFile){
+
+				}
 			}
 		}else{
 			throw new GuiyuException("下载文件不存在");
@@ -655,7 +664,7 @@ public class FileController {
 			String fileName = excelFile.getName();
 			fileInputStream = new FileInputStream(excelFile);
 			//放入压缩zip包中;
-			zipOutputStream.putNextEntry(new ZipEntry(this.tmpPath + File.separator  + fileName));
+			zipOutputStream.putNextEntry(new ZipEntry( fileName));//this.tmpPath + File.separator  +
 			//读取文件;
 			while ((len = fileInputStream.read(buf)) > 0) {
 				zipOutputStream.write(buf, 0, len);
@@ -748,205 +757,5 @@ public class FileController {
 		}
 	}
 
-	//下载导入记录文件
-	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
-	@RequestMapping(value = "dispatch/file/importRecord", method = {RequestMethod.POST, RequestMethod.GET})
-	public void importRecord(HttpServletRequest request, HttpServletResponse response,
-							 @RequestParam(required = false, name = "id") Long id,
-							 @RequestHeader String userId, @RequestHeader String orgCode)
-			throws UnsupportedEncodingException, WriteException {
-		FileRecords fileRecords = file.queryFileRecordById(id);
-		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())){
-
-			//增加导出文件记录
-			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords, userId, orgCode));
-			boolean bool = false;
-
-			String fileUrl = "http://192.168.1.57:8080/group1/M00/01/23/wKgBOVybN92AO6QJAAApcQroVSU36.xlsx";//fileRecords.getUrl();
-			String fileType = fileUrl.substring(fileUrl.lastIndexOf("."), fileUrl.length());
-			response.reset();
-			HttpDownload.setHeader(response, "导入记录" + fileType);
-			//创建url连接;
-			File file = new File(fileUrl);
-			InputStream is = null;
-			OutputStream os = null;
-			//创建url连接;
-			HttpURLConnection urlconn = null;
-			try {
-				URL url = new URL(fileUrl);
-				urlconn = (HttpURLConnection)url.openConnection();
-				//链接远程服务器;
-				urlconn.connect();
-
-				//	org.apache.poi.ss.usermodel.Workbook resWorkbook = this.getResExcel(file, request);
-			//	os = response.getOutputStream();//new BufferedOutputStream(response.getOutputStream());
-				is = urlconn.getInputStream();//new BufferedInputStream(urlconn.getInputStream());
-				//	WritableWorkbook book = this.writeWorkbook(file, is, os, request, response);
-				File excelFile = this.writeWorkbook(file, is, os, request, response);
-				File zipFile = this.generateZipFile(excelFile);
-				this.uploadFile(zipFile);
-
-				os.flush();
-				/*
-				//	is = new BufferedInputStream(new FileInputStream(file));
-				is = new BufferedInputStream(urlconn.getInputStream());
-				os = new BufferedOutputStream(response.getOutputStream());
-
-				byte[] buffer = new byte[is.available()];
-				int len;
-				while((len =is.read(buffer))>0){
-					os.write(buffer, 0, len);
-				}
-				os.flush();
-				*/
-
-				bool = true;
-			}catch(Exception e){
-				logger.error("", e);
-			}finally{
-				if(null != is){
-					try {
-						is.close();
-					} catch (IOException e) {
-						log.error("is.close error:" + e);
-						e.printStackTrace();
-					}
-				}
-
-				if(null != os){
-					try {
-						os.close();
-					} catch (IOException e) {
-						log.error("os.close error:" + e);
-						e.printStackTrace();
-					}
-				}
-
-				if(null != urlconn){
-					urlconn.disconnect();
-				}
-
-				//导出结果变更
-				exportFileService.endExportFile(recordRes.getRecordId(),
-						bool? ExportFileStatusEnum.FINISH.getStatus():ExportFileStatusEnum.FAIL.getStatus(),
-						fileUrl);
-			}
-		}else{
-			throw new GuiyuException("下载文件不存在");
-		}
-	}
-
-	@Value("${file.tmpPath}")
-	private String tmpPath;
-	//	private WritableWorkbook writeWorkbook(File file, InputStream in, OutputStream out, HttpServletRequest request, HttpServletResponse response) throws IOException, WriteException {
-	private File writeWorkbook(File file, InputStream in, OutputStream out, HttpServletRequest request, HttpServletResponse response) throws IOException, WriteException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHSS");
-		String path = sdf.format(new Date());
-	//	tmpPath= request.getRealPath("/");//+path;
-		File f = new File(tmpPath+ file.getName());
-
-		out = new FileOutputStream(f);
-		WritableWorkbook wb = Workbook.createWorkbook(out);//Workbook.createWorkbook(f); //
-		WritableSheet sheet = wb.createSheet("sheet1", 0);
-		WritableCellFormat format = new WritableCellFormat();
-		format.setBorder(Border.ALL, BorderLineStyle.THIN);
-		format.setWrap(true);
-
-		sheet.setColumnView(0, 12);
-		sheet.setColumnView(1, 12);
-
-		/*sheet.addCell(new Label(0, 0, "号码"));
-		sheet.addCell(new Label(1, 0, "变量参数"));
-		sheet.addCell(new Label(2, 0, "附件参数"));*/
-
-		/*sheet.addCell(new Label(0, 0, "批次"));
-		sheet.addCell(new Label(1, 0, "号码"));
-		sheet.addCell(new Label(2, 0, "变量参数"));
-		sheet.addCell(new Label(3, 0, "附件参数"));
-		sheet.addCell(new Label(4, 0, "计划状态"));
-		sheet.addCell(new Label(5, 0, "意向标签"));
-		sheet.addCell(new Label(6, 0, "话术"));
-		sheet.addCell(new Label(7, 0, "线路"));
-		sheet.addCell(new Label(8, 0, "计划日期"));
-		sheet.addCell(new Label(9, 0, "计划时间"));
-		sheet.addCell(new Label(10, 0, "所属用户"));
-		sheet.addCell(new Label(11, 0, "添加日期"));*/
-
-		InputStream is = null;
-		try {
-			//输入文件
-			// 创建输入流，读取Excel
-			//	is = in;
-			/*// jxl提供的Workbook类
-			jxl.Workbook readWorkbook = jxl.Workbook.getWorkbook(in);
-			jxl.Sheet readSheet = readWorkbook.getSheet(0);
-		//	int rowCount = readSheet.getRows();
-		//	rowCount = rowCount > 1000001 ? 1000001 : rowCount;*/
-
-
-
-
-
-			org.apache.poi.ss.usermodel.Workbook wb1 = WorkbookFactory.create(in);
-			Sheet s = wb1.getSheetAt(0);
-			int maxRowNum = s.getLastRowNum();
-			int minRowNum = s.getFirstRowNum();
-			int rowCount = maxRowNum > 1000001 ? 1000001 : maxRowNum;
-
-
-/*
-        // 创建一行：从第二行开始，跳过属性列
-        Row row = sheet.createRow(0);
-		Cell first = row.createCell(0);
-        first.setCellValue("phone(手机号码)");
-        Cell second = row.createCell(1);
-        second.setCellValue("params(变量;多个变量用|分隔)");
-        Cell third = row.createCell(2);
-        third.setCellValue("attach(附加参数;可以作为第三方系统的唯一标识)");
-*/
-
-			for (int i = 0; i < rowCount; i++) {
-
-				/*String phone = readSheet.getCell(i, 0).getContents();
-				String params = readSheet.getCell(i, 1).getContents();
-				String attach = readSheet.getCell(i, 2).getContents();*/
-				Row row = s.getRow(i);
-				String phone = null;
-				String params = null;
-				String attach = null;
-
-				for(int j=0; j<=2; j++){
-					Cell cell = row.getCell(j);
-					if(null != cell){
-						cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						switch (j){
-							case 0:phone=cell.getStringCellValue(); break;
-							case 1:params = cell.getStringCellValue(); break;
-							case 2:params = cell.getStringCellValue(); break;
-						}
-					}
-				}
-
-				int k = 0;
-				sheet.addCell(new Label(k, i + 1, phone));//变量参数
-				k++;
-				sheet.addCell(new Label(k, i + 1, params));//变量参数
-				k++;
-				sheet.addCell(new Label(k, i + 1, attach));//附件参数
-				k++;
-			}
-		}catch(Exception e){
-			logger.error("", e);
-		}finally{
-			if(null != is){
-				is.close();
-			}
-		}
-
-		wb.write();
-		wb.close();
-		//	return wb;
-		return f;
-	}
 
 }

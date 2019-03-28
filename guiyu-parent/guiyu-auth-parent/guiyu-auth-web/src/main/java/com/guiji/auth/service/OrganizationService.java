@@ -24,6 +24,7 @@ import com.guiji.botsentence.api.entity.BotSentenceTemplateTradeVO;
 import com.guiji.botsentence.api.entity.ServerResult;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result;
+import com.guiji.guiyu.message.component.QueueSender;
 import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgBaseInfoVO;
@@ -46,6 +47,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OrganizationService {
 
+	@Autowired
+	private QueueSender queueSender;
 	@Autowired
 	private SysOrganizationMapper sysOrganizationMapper;
 	@Autowired
@@ -85,6 +88,7 @@ public class OrganizationService {
 		String code=record.getCode()+"."+(num+1);*/
 		record.setCode(subCode);
 		sysOrganizationMapper.insert(record);
+		queueSender.send("OrgIdMQ.direct.Auth", record.getId().toString());
 		if(record.getProduct()!=null && !record.getProduct().isEmpty()) {
 			//如果参数产品不为空，那么以选择的产品为准
 			sysOrganizationMapper.insertOrganizationProduct(record.getId().longValue(),record.getCreateId(),record.getProduct());

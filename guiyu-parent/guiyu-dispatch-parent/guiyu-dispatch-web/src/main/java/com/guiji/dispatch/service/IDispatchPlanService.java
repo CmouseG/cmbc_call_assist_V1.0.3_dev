@@ -98,7 +98,7 @@ public interface IDispatchPlanService {
     List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(
             Long userId, String phone, String batchName, int pagenum, int pagesize);
 
-  JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId);
+  JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, Integer authLevel, String orgCode, Integer orgId);
 
   JSONObject getServiceStatistics(
       Long userId,
@@ -106,7 +106,8 @@ public interface IDispatchPlanService {
       String endTime,
       Boolean isSuperAdmin,
       String orgCode,
-      Integer orgId);
+      Integer orgId,
+      Integer authLevel);
 
     /**
      * 根据用户ID统计计划数据
@@ -150,7 +151,12 @@ public interface IDispatchPlanService {
     // 查询计划列表
     List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
 
+    //查询计划线路
     List<DispatchBatchLine> queryLineByPlan(Integer batchId);
 
+    //分页查询计划
     ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page);
+
+    //查询批次数量
+    int queryPlanCountByBatch(Integer batchId);
 }

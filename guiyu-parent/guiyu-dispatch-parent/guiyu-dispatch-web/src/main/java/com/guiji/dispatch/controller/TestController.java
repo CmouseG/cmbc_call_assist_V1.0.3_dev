@@ -76,7 +76,7 @@ public class TestController {
     @Autowired
     private IExportFileService exportFileService;
 
-    @ApiOperation(value="", notes="")
+    @ApiOperation(value="新增导出记录", notes="新增导出记录")
     @RequestMapping(value = "/addExportFile", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public ExportFileRecord addExportFile(@RequestBody ExportFileDto exportFileDto){

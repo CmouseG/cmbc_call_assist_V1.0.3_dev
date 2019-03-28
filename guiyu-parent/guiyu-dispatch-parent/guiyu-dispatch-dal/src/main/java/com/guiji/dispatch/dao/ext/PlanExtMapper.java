@@ -12,4 +12,6 @@ public interface PlanExtMapper {
 
     List<DispatchPlanVo> queryPlanListByPage(@Param("example") DispatchPlanExample example,
                                              @Param("isDesensitization") Integer isDesensitization);
+
+    int queryPlanCountByBatch(@Param("batchId") Integer batchId);
 }

@@ -16,6 +16,8 @@ public interface IDispatchBatchLineService {
 
 	List<DispatchBatchLine> queryListByUserIdLineId(Long userId, Integer lineId);
 
+	List<DispatchBatchLine> queryListByUserIdLineId(List<Integer> userIdList, Integer lineId);
+
 	void insert(DispatchBatchLine dispatchBatchLine);
 
 	void deleteByBatchId(Integer batchId);

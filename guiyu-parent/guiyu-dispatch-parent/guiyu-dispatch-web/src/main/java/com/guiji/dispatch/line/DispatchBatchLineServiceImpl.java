@@ -95,7 +95,14 @@ public class DispatchBatchLineServiceImpl implements IDispatchBatchLineService
         return dispatchBatchLineMapper.selectByExample(example);
     }
 
-    @Override
+	@Override
+	public List<DispatchBatchLine> queryListByUserIdLineId(List<Integer> userIdList, Integer lineId) {
+		DispatchBatchLineExample example = new DispatchBatchLineExample();
+		example.createCriteria().andUserIdIn(userIdList).andLineIdEqualTo(lineId);
+		return dispatchBatchLineMapper.selectByExample(example);
+	}
+
+	@Override
 	public void insert(DispatchBatchLine dispatchBatchLine)
 	{
 		dispatchBatchLineMapper.insertSelective(dispatchBatchLine);

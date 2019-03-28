@@ -1,0 +1,86 @@
+server:
+  port: 18020
+
+spring:
+  application:
+    name: guiyu-wechat-web
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql:none
+  redis:
+    database: 9
+    host: 192.168.1.81
+    port: 6379
+    password: 123456
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+  rabbitmq:
+    host: 192.168.1.81
+    port: 5672
+    virtual-host: /
+    username: guiyu
+    password: 123456
+  zipkin:
+    rabbitmq:
+      queue: zipkin
+    sleuth:
+      sampler:
+        percentage: 0.5
+
+endpoints:
+  health:
+    sensitive: false
+    enabled: true
+management:
+  security:
+    enabled: false
+
+#数据库连接配置
+#mybatis:
+#  mapper-locations: classpath*:mappers/**/*.xml
+#jdbc:
+#  type: mysql
+
+#注册中心配置
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://guiyu-cloud-registeration:18001/eureka/
+
+#网关地址
+gateway:
+  host: http://guiyu-cloud-zuul:18000/
+
+properties:
+  error: properties/error.properties
+
+rabbit:
+  general:
+    fanout:
+      exchange: fanoutWechatUserBindExchange
+      queue: fanoutWechatUserBindQueue
+
+wechat:
+  appId: wx48cdbc777bc59a15
+  appSecret: b494d62fad8cffa7355faa5e1ca906f7
+  authRedirectUrl: http://hrbdh9.natappfree.cc/wechat/custom/menu/auth
+  keFuUrl: http://talk.guiji.ai:8080/im/text/18c0VV.html
+  keFuBindUrl: https://talk.guiji.ai/oa/manager
+  keFuBindAccessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzaV9taWRkbGVfZ3JvdW5kIiwiaWF0IjoxNTUxOTMwMzc0LCJkYXRhIjp7Im9hIjoic2lfbWlkZGxlX2dyb3VuZF9vZmZpY2lhbF9hY2NvdW50In0sImV4cCI6MTg2NzI5MDM3NH0.kIFBLWkkiJtdtMWwbGSXVPSAJqnIIuQzDEXuCEzraCE
+  userLoginUrl: http://192.168.6.57:8080/#/bindPageToChat
+
+# 线上配置
+#wechat:
+#  appId: wx1558a28a6907c3e8
+#  appSecret: ebdb772d4b503378aabc5dac1d877015
+#  authRedirectUrl: https://tel.guiji.ai/wechat/custom/menu/auth
+#  keFuUrl: http://talk.guiji.ai:8080/im/text/18c0VV.html
+#  keFuBindUrl: https://talk.guiji.ai/oa/manager
+#  keFuBindAccessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzaV9taWRkbGVfZ3JvdW5kIiwiaWF0IjoxNTUxOTMwMzc0LCJkYXRhIjp7Im9hIjoic2lfbWlkZGxlX2dyb3VuZF9vZmZpY2lhbF9hY2NvdW50In0sImV4cCI6MTg2NzI5MDM3NH0.kIFBLWkkiJtdtMWwbGSXVPSAJqnIIuQzDEXuCEzraCE
+#  userLoginUrl: https://www.bing.com

@@ -624,10 +624,8 @@
 		a.update_id as updateId,a.update_time as updateTime,a.vaild_time as
 		vaildTime,a.start_time as startTime,b.`name` as
 		orgName,a.is_desensitization as isDesensitization
-		from sys_user a
-		LEFT JOIN sys_organization b on
-		left(a.org_code,length(a.org_code)-1)=b.`code`
-		where a.id=#{userId}
+		from sys_user a,sys_organization b 
+		where a.org_code = b.code and a.id=#{userId}
 	</select>
 
 	<select id="selectLikeUserName" resultType="map">

@@ -40,7 +40,7 @@ public class RoleController {
 		service.delete(id,userId);
 	}
 	
-	@Jurisdiction("system_role_update")
+	@Jurisdiction("system_role_edit")
 	@RequestMapping("update")
 	public void update(SysRole role,String[] menuIds,@RequestHeader Long userId,@RequestHeader String orgCode) throws CheckConditionException{
 		role.setUpdateId(userId);

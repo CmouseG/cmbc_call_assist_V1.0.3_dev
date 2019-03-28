@@ -98,7 +98,7 @@ public interface IDispatchPlanService {
     List<CallPlanDetailRecordVO> queryDispatchPlanByPhoens(
             Long userId, String phone, String batchName, int pagenum, int pagesize);
 
-  JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, String orgCode, Integer orgId);
+  JSONObject getServiceStatistics(Long userId, Boolean isSuperAdmin, Integer authLevel, String orgCode, Integer orgId);
 
   JSONObject getServiceStatistics(
       Long userId,
@@ -106,7 +106,8 @@ public interface IDispatchPlanService {
       String endTime,
       Boolean isSuperAdmin,
       String orgCode,
-      Integer orgId);
+      Integer orgId,
+      Integer authLevel);
 
     /**
      * 根据用户ID统计计划数据

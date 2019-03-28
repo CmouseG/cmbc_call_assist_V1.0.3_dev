@@ -169,9 +169,10 @@ public class DispatchPlanController {
 	 * @return
 	 */
 	@PostMapping("getServiceStatistics")
-	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Boolean isSuperAdmin,
-			@RequestHeader String orgCode, @RequestHeader Integer orgId) {
-		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin, orgCode, orgId);
+	public JSONObject getServiceStatistics(@RequestHeader Long userId, @RequestHeader Integer authLevel,
+                                           @RequestHeader String orgCode, @RequestHeader Integer orgId,
+                                           @RequestHeader Boolean isSuperAdmin) {
+		return dispatchPlanService.getServiceStatistics(userId, isSuperAdmin, authLevel, orgCode, orgId);
 	}
 
 	/**
@@ -183,10 +184,11 @@ public class DispatchPlanController {
 	 */
 	@PostMapping("getData")
 	public JSONObject getData(@RequestParam(required = false, name = "startTime") String startTime,
-			@RequestParam(required = false, name = "endTime") String endTime, @RequestHeader Long userId,
+			@RequestParam(required = false, name = "endTime") String endTime,
+            @RequestHeader Long userId,@RequestHeader Integer authLevel,
 			@RequestHeader String orgCode, @RequestHeader Integer orgId,
 			@RequestHeader Boolean isSuperAdmin) {
-		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin, orgCode, orgId);
+		return dispatchPlanService.getServiceStatistics(userId, startTime, endTime, isSuperAdmin, orgCode, orgId, authLevel);
 	}
 
 
@@ -203,7 +205,8 @@ public class DispatchPlanController {
 	//查询计划列表
 	@ApiOperation(value="查询计划列表", notes="查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryPlanList", method = {RequestMethod.POST, RequestMethod.GET})
-	public Page<DispatchPlan> queryPlanList(@RequestHeader Long userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
+	public Page<DispatchPlan> queryPlanList(@RequestHeader Long userId, @RequestHeader Integer authLevel,
+                                            @RequestHeader String orgCode, @RequestHeader Integer orgId,
 											@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
 											@RequestBody QueryPlanListDto queryPlanDto) {
 		if(null == queryPlanDto){
@@ -218,6 +221,7 @@ public class DispatchPlanController {
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
 		queryPlanDto.setAuthLevel(authLevel);
+        queryPlanDto.setOperOrgId(orgId);
 		logger.info("/dispatch/plan/queryPlanList:{}", JsonUtils.bean2Json(queryPlanDto));
 		ResultPage<DispatchPlan> resPage = new ResultPage<DispatchPlan>(queryPlanDto);
 		resPage = dispatchPlanService.queryPlanList(queryPlanDto, resPage);
@@ -240,7 +244,8 @@ public class DispatchPlanController {
 
 	@ApiOperation(value = "查询计划列表", notes = "查询计划列表")
 	@RequestMapping(value = "/dispatch/plan/queryPlanListByPage", method = {RequestMethod.POST, RequestMethod.GET})
-	public Page<DispatchPlanVo> queryPlanListByPage(@RequestHeader Long userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
+	public Page<DispatchPlanVo> queryPlanListByPage(@RequestHeader Long userId, @RequestHeader Integer authLevel,
+                                                    @RequestHeader String orgCode, @RequestHeader Integer orgId,
 													@RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
 													@RequestBody QueryPlanListDto queryPlanDto) {
 		if (null == queryPlanDto) {
@@ -255,6 +260,7 @@ public class DispatchPlanController {
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
 		queryPlanDto.setAuthLevel(authLevel);
+        queryPlanDto.setOperOrgId(orgId);
 		logger.info("/dispatch/plan/queryPlanListByPage:{}", JsonUtils.bean2Json(queryPlanDto));
 		ResultPage<DispatchPlanVo> resPage = new ResultPage<DispatchPlanVo>(queryPlanDto);
 		resPage = dispatchPlanService.queryPlanListByPage(queryPlanDto, resPage);

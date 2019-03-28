@@ -446,9 +446,8 @@ public class BotSentenceProcessController {
 	}
 	
 	@RequestMapping(value="queryIndustryListByAccountNo")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByAccountNo(@RequestHeader String userId) {
-		String accountNo = userId;
-		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(accountNo, "template");
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByAccountNo(@RequestHeader String userId, @RequestHeader String orgCode) {
+		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(orgCode, "template");
 		
 		/*if(null != list && list.size() > 0) {
 			for(BotSentenceTemplateTradeVO trade : list) {
@@ -489,7 +488,7 @@ public class BotSentenceProcessController {
 	
 	
 	@RequestMapping(value="queryIndustryListByOrgCode")
-	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@JsonParam String orgCode) {
+	public ServerResult<List<BotSentenceTemplateTradeVO>> queryIndustryListByOrgCode(@RequestHeader String orgCode) {
 		List<BotSentenceTemplateTradeVO> list = botSentenceProcessService.queryTemplateTreeByOrgCode(orgCode,"template");
 		/*
 		if(null != list && list.size() > 0) {

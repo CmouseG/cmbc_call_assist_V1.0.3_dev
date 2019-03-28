@@ -83,6 +83,7 @@ public class FlyDragonServiceImpl implements ISellbotService{
 		flHelloReq.setSeqid(sellbotSayhelloReq.getSeqId());
 		flHelloReq.setCfg_name(sellbotSayhelloReq.getCfg());
 		flHelloReq.setCur_dialog_content(sellbotSayhelloReq.getSentence());
+		flHelloReq.setSilence_exceed(sellbotSayhelloReq.getSilence_exceed());
 		flHelloReq.setCur_dialog_status(1); //会话中
 		String json = JsonUtils.bean2Json(flHelloReq);
 		String flydragonRsp = HttpClientUtil.doPostJson(url, json);

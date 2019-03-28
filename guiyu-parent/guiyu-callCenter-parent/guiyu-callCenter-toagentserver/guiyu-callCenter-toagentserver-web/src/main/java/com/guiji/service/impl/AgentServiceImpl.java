@@ -336,9 +336,17 @@ public class AgentServiceImpl implements AgentService {
             }
         } else { //如果没有传queueId
             if (authLevel == 2) {
-                example.createCriteria().andOrgCodeEqualTo(orgCode);
+                if (!Strings.isNullOrEmpty(crmLoginId)) {
+                    example.createCriteria().andOrgCodeEqualTo(orgCode).andCrmLoginIdLike("%"+crmLoginId+"%");
+                }else{
+                    example.createCriteria().andOrgCodeEqualTo(orgCode);
+                }
             } else if (authLevel == 3) {
-                example.createCriteria().andOrgCodeLike(orgCode + "%");
+                if (!Strings.isNullOrEmpty(crmLoginId)) {
+                    example.createCriteria().andOrgCodeLike(orgCode + "%").andCrmLoginIdLike("%"+crmLoginId+"%");
+                }else{
+                    example.createCriteria().andOrgCodeLike(orgCode + "%");
+                }
             }
         }
         example.setOrderByClause("update_time DESC");

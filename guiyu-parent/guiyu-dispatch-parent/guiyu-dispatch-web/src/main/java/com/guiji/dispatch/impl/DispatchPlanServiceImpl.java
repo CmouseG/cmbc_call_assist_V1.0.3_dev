@@ -1540,4 +1540,9 @@ public class DispatchPlanServiceImpl implements IDispatchPlanService {
 
 		return getSubOrgIds(userOrg.getId().intValue());
 	}
+
+	@Override
+	public int queryPlanCountByBatch(Integer batchId) {
+		return planExtMapper.queryPlanCountByBatch(batchId);
+	}
 }

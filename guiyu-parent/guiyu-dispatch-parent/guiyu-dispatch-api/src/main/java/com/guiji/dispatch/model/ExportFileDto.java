@@ -29,6 +29,26 @@ public class ExportFileDto implements Serializable {
      */
     private String fileOriginalUrl;
 
+    /**
+     * 导出操作人ID
+     */
+    private String userId;
+
+    /**
+     * 导出操作人所属orgCode
+     */
+    private String orgCode;
+
+    /**
+     * 创建者
+     */
+    private String createName;
+
+    /**
+     * 创建日期
+     */
+    private String createTime;
+
     public String getBusiType() {
         return busiType;
     }
@@ -67,5 +87,37 @@ public class ExportFileDto implements Serializable {
 
     public void setFileOriginalUrl(String fileOriginalUrl) {
         this.fileOriginalUrl = fileOriginalUrl;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

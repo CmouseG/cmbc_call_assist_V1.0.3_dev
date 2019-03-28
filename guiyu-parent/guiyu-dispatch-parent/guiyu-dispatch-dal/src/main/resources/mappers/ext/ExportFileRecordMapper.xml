@@ -54,6 +54,12 @@
 			<if test="orgCode != null">
 				org_code,
 			</if>
+			<if test="createName != null">
+				create_name,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
 			<if test="addTime != null">
 				add_time,
 			</if>
@@ -113,6 +119,12 @@
 			<if test="orgCode != null">
 				#{orgCode},
 			</if>
+			<if test="createName != null">
+				#{createName},
+			</if>
+			<if test="createTime != null">
+				#{createTime},
+			</if>
 			<if test="addTime != null">
 				#{addTime,jdbcType=TIMESTAMP},
 			</if>
@@ -157,6 +169,8 @@
 			user_id          ,
 			user_name        ,
 			org_code         ,
+			create_name		 ,
+			create_time	     ,
 			add_time         ,
 			upd_time         ,
 			del_flag

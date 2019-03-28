@@ -151,7 +151,12 @@ public interface IDispatchPlanService {
     // 查询计划列表
     List<DownLoadPlanVo> queryDownloadPlanList(QueryDownloadPlanListDto queryPlanDto);
 
+    //查询计划线路
     List<DispatchBatchLine> queryLineByPlan(Integer batchId);
 
+    //分页查询计划
     ResultPage<DispatchPlanVo> queryPlanListByPage(QueryPlanListDto queryPlanDto, ResultPage<DispatchPlanVo> page);
+
+    //查询批次数量
+    int queryPlanCountByBatch(Integer batchId);
 }

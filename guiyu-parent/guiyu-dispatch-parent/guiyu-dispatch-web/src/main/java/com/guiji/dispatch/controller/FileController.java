@@ -21,6 +21,7 @@ import com.guiji.dispatch.model.ExportFileDto;
 import com.guiji.dispatch.service.FileInterface;
 import com.guiji.dispatch.service.IDispatchPlanService;
 import com.guiji.dispatch.service.IExportFileService;
+import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.HttpDownload;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
 import com.guiji.utils.IdGengerator.IdUtils;
@@ -557,14 +558,15 @@ public class FileController {
 	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
 	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
 	public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
-							 @RequestParam(required = false, name = "id") Long id)
+							 @RequestParam(required = false, name = "id") Long id,
+							 @RequestHeader String userId, @RequestHeader String orgCode)
 			throws UnsupportedEncodingException, WriteException {
 		FileRecords fileRecords = file.queryFileRecordById(id);
 		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())) {
 			//增加导出文件记录
-			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords));
+			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords, userId, orgCode));
 			boolean bool = false;
-			String fileUrl = fileRecords.getUrl();//"http://192.168.1.57:8080/group1/M00/01/23/wKgBOVybN92AO6QJAAApcQroVSU36.xlsx";//fileRecords.getUrl();
+			String fileUrl = fileRecords.getUrl();//"http://192.168.1.57:8080/group1/M00/01/23/wKgBOVybN92AO6QJAAApcQroVSU36.xlsx";
 			SysFileRspVO resFile = null;
 			try{
 				//生成导出文件
@@ -573,6 +575,7 @@ public class FileController {
 				File zipFile = this.generateZipFile(generateFile);
 				//上传压缩文件
 				resFile = this.uploadFile(zipFile);
+				bool = true;
 			}catch(Exception e){
 				logger.error("导出文件异常", e);
 			}finally {
@@ -591,13 +594,21 @@ public class FileController {
 	 * @param fileRecords
 	 * @return
 	 */
-	private ExportFileDto getExportFileData(FileRecords fileRecords){
+	private ExportFileDto getExportFileData(FileRecords fileRecords, String userId, String orgCode){
 		ExportFileDto data = new ExportFileDto();
 		data.setBusiId(fileRecords.getId()+"");
 		data.setBusiType(BusiTypeEnum.DISPATCH.getType());
 		data.setFileOriginalUrl(fileRecords.getUrl());
 		data.setFileType(FileTypeEnum.EXECL.getType());
-		data.setTotalNum(0);
+		Integer batchId = fileRecords.getBatchid();
+		if(null != batchId){
+			int batchCount = dispatchPlanService.queryPlanCountByBatch(batchId);
+			data.setTotalNum(batchCount);
+		}
+		data.setUserId(userId);
+		data.setOrgCode(orgCode);
+		data.setCreateName(fileRecords.getUserName());
+		data.setCreateTime(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL).format(fileRecords.getCreateTime()));
 		return data;
 	}
 
@@ -741,13 +752,14 @@ public class FileController {
 	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
 	@RequestMapping(value = "dispatch/file/importRecord", method = {RequestMethod.POST, RequestMethod.GET})
 	public void importRecord(HttpServletRequest request, HttpServletResponse response,
-							 @RequestParam(required = false, name = "id") Long id)
+							 @RequestParam(required = false, name = "id") Long id,
+							 @RequestHeader String userId, @RequestHeader String orgCode)
 			throws UnsupportedEncodingException, WriteException {
 		FileRecords fileRecords = file.queryFileRecordById(id);
 		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())){
 
 			//增加导出文件记录
-			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords));
+			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords, userId, orgCode));
 			boolean bool = false;
 
 			String fileUrl = "http://192.168.1.57:8080/group1/M00/01/23/wKgBOVybN92AO6QJAAApcQroVSU36.xlsx";//fileRecords.getUrl();

@@ -250,7 +250,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	 * @param exportFileDto
 	 * @return
 	 */
-	@ApiOperation(value="查询任务计划备注", notes="查询任务计划备注")
+	@ApiOperation(value="新增导出记录", notes="新增导出记录")
 	@Override
 	public ReturnData<ExportFileRecordVo> addExportFile(@RequestBody ExportFileDto exportFileDto) {
 		logger.info("新增文件导出记录入参", JsonUtils.bean2Json(exportFileDto));

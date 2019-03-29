@@ -103,30 +103,27 @@ public class TemplateServiceImpl implements TemplateService {
         sysFileReqVO.setSysCode(recordReqVO.getSysCode());
         sysFileReqVO.setUserId(recordReqVO.getUserId());
         sysFileReqVO.setThumbImageFlag("0");
-        String uploadFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();//原文件路径
+        String uploadOriginalFile = fsConfig.getHomeDir()+"/recordings/" + record.getFileName();//原文件路径
         String uploadTempFile =  fsConfig.getHomeDir()+"/recordings/temp_" + record.getFileName();//截取后的文件路径
-        SysFileRspVO sysFileRspVO;
-        if(FileUtil.isExist(uploadTempFile)) {//如果截取后的文件存在，则上传截取后的文件
+        String uploadOFile; //要上传的文件
+        if(FileUtil.isExist(uploadTempFile)) { //如果截取后的文件存在，则上传截取后的文件
             logger.info("上传截取后的录音文件：{{}]",uploadTempFile);
-             sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadTempFile));
+            uploadOFile = uploadTempFile;
         }else{
-            if(!FileUtil.isExist(uploadFile)) {//如果源文件也不存在，直接抛出异常
-                logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadFile);
+            if(!FileUtil.isExist(uploadOriginalFile)) {//如果源文件也不存在，直接抛出异常
+                logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadOriginalFile);
                 throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
             }
             //如果截取文件不存在，源文件存在，则上传源文件
-            logger.info("上传原录音文件：{{}]",uploadFile);
-            sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadFile));
+            logger.info("上传原录音文件：{{}]",uploadOriginalFile);
+            uploadOFile = uploadOriginalFile;
         }
-//        if(!FileUtil.isExist(uploadFile)) {//如果源文件也不存在，直接抛出异常
-//            logger.info("上传录音失败,录音文件不存在，文件名为:[{}]",uploadFile);
-//            throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_RECORDING_NOTEXIST);
-//        }
-//        SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadFile));
+        SysFileRspVO sysFileRspVO = new NasUtil().uploadNas(sysFileReqVO, new File(uploadOFile));
         if(sysFileRspVO==null){
-            logger.info("上传录音失败,失败的文件为:[{}]",uploadFile);
+            logger.info("上传录音失败,失败的文件为:[{}]",uploadOFile);
             throw new GuiyuException(FsagentExceptionEnum.EXCP_FSAGENT_UPLOAD_ERROR);
        }
+        FileUtil.delete(uploadOFile);
         record.setFileUrl(sysFileRspVO.getSkUrl());
         return record;
     }

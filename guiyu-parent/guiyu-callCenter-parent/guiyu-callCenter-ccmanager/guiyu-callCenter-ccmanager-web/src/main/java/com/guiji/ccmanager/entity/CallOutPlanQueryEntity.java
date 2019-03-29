@@ -2,7 +2,9 @@ package com.guiji.ccmanager.entity;
 
 import lombok.Data;
 
+import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 /**
  * author:liyang
@@ -29,6 +31,8 @@ public class CallOutPlanQueryEntity {
     Boolean isSuperAdmin;
     String intervened;
     Integer authLevel;
+
+    List<BigInteger> notInList;
 
 }
 

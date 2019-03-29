@@ -528,7 +528,7 @@ public class VoipGwManager {
 					if(simPortList!=null && !simPortList.isEmpty()) {
 						for(SimPort simPort : simPortList) {
 							//如果是鼎信，匹配端口，如果是三汇，匹配用户名
-							if(!(BrandConfig.DINGXIN.equals(voipGwInfo.getGwBrand()) && voipGwPort.getPort().equals(simPort.getPortNumber())) &&
+							if(!(BrandConfig.DINGXIN.equals(voipGwInfo.getGwBrand()) && voipGwPort.getPort().equals(simPort.getPortNumber()+1)) &&
 									!(BrandConfig.SYNWAY.equals(voipGwInfo.getGwBrand()) && voipGwPort.getSipAccount().equals(simPort.getPortNumber()))) continue;
 							vo.setSipMatched(true); //账号匹配了
 							vo.setPortRegStatus(simPort.getRegStatusId()); //端口注册状态

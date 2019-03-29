@@ -18,6 +18,7 @@ import com.guiji.auth.model.OrgVO;
 import com.guiji.auth.model.OrganizationVO;
 import com.guiji.auth.service.OrganizationService;
 import com.guiji.auth.service.UserService;
+import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
@@ -38,6 +39,11 @@ public class OrganizationController implements IOrg{
 	public SysOrganization add(SysOrganization record,@RequestHeader long userId,@RequestHeader String orgCode) throws CheckConditionException{
 		if(!organizationService.checkName(record.getName())){
 			throw new CheckConditionException("00010009");
+		}
+		int leval = orgCode.length()-orgCode.replaceAll(".", "").length();
+		if(leval > 5)
+		{
+			throw new GuiyuException("00010018", "对不起，组织结构层级不能超过5层！");
 		}
 		record.setOpen(0);
 		record.setDelFlag(0);

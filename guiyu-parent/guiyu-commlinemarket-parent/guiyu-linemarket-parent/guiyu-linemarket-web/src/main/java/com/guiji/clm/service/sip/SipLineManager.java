@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,7 +196,7 @@ public class SipLineManager {
 			}
 			/**下边的情况是 自备线路的删除了**/
 			List<SipLineExclusive> exclusiveList = sipLineExclusiveService.queryBySipLineId(sipLineBaseInfo.getId());
-			List<String> inUseUserList = this.getLineUsers(exclusiveList);
+			List<Integer> inUseUserList = this.getLineUsers(exclusiveList);
 			/**1、检查是否有在使用**/
 			if(sipLineBaseInfo.getLineId()!=null && inUseUserList!=null && !inUseUserList.isEmpty()) {
 				//调用调度中心检查线路是否在使用
@@ -814,12 +815,12 @@ public class SipLineManager {
 	 * @param exclusiveList
 	 * @return
 	 */
-	private List<String> getLineUsers(List<SipLineExclusive> exclusiveList){
+	private List<Integer> getLineUsers(List<SipLineExclusive> exclusiveList){
 		if(exclusiveList!=null && !exclusiveList.isEmpty()) {
-			List<String> userList = new ArrayList<String>();
+			List<Integer> userList = new ArrayList<>();
 			for(SipLineExclusive line : exclusiveList) {
 				if(StrUtils.isNotEmpty(line.getBelongUser())) {
-					userList.add(line.getBelongUser());
+					userList.add(Integer.valueOf(line.getBelongUser()));
 				}
 			}
 			return userList;

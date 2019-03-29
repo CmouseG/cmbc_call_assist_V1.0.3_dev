@@ -31,7 +31,7 @@ public class VoipGatewayController implements VoipGatewayRemote {
      * @param companyId
      * @return
      */
-    public Result.ReturnData<Company> queryCompanyById(@RequestParam(value = "brand") String gwBrand, @RequestParam(value = "companyId", required = true) Integer companyId) {
+    public Result.ReturnData<Company> queryCompanyById(@RequestParam(value = "brand", required = true) String gwBrand, @RequestParam(value = "companyId", required = true) Integer companyId) {
         Company company = voipgatewayService.queryCompanyById(gwBrand, companyId);
         return Result.ok(company);
     }
@@ -43,7 +43,7 @@ public class VoipGatewayController implements VoipGatewayRemote {
      * @param devName
      * @return
      */
-    public Result.ReturnData<GwDevtbl> queryCompanyByDevName(@RequestParam(value = "brand") String gwBrand, @RequestParam(value = "devName", required = true) String devName) {
+    public Result.ReturnData<GwDevtbl> queryCompanyByDevName(@RequestParam(value = "brand", required = true) String gwBrand, @RequestParam(value = "devName", required = true) String devName) {
         GwDevtbl gwDevtbl = voipgatewayService.queryCompanyByDevName(gwBrand, devName);
         return Result.ok(gwDevtbl);
     }
@@ -56,7 +56,7 @@ public class VoipGatewayController implements VoipGatewayRemote {
      * @return
      */
     public Result.ReturnData<GwDevtbl> queryGwDevByDevId(
-            @RequestParam(value = "brand") String gwBrand,
+            @RequestParam(value = "brand", required = true) String gwBrand,
             @RequestParam(value = "companyId", required = true) Integer companyId,
             @RequestParam(value = "devId", required = true) Integer devId) {
         GwDevtbl gwDevtbl = voipgatewayService.queryGwDevByDevId(gwBrand, companyId, devId);
@@ -70,7 +70,7 @@ public class VoipGatewayController implements VoipGatewayRemote {
      * @param devName
      * @return
      */
-    public Result.ReturnData<List<GwDevtbl>> queryGwDevtblListByCompId(@RequestParam(value = "brand") String gwBrand, @RequestParam(value = "companyId", required = true) Integer companyId) {
+    public Result.ReturnData<List<GwDevtbl>> queryGwDevtblListByCompId(@RequestParam(value = "brand", required = true) String gwBrand, @RequestParam(value = "companyId", required = true) Integer companyId) {
         List<GwDevtbl> list = voipgatewayService.queryGwDevtblListByCompId(gwBrand, companyId);
         return Result.ok(list);
     }
@@ -84,7 +84,7 @@ public class VoipGatewayController implements VoipGatewayRemote {
      * @return
      */
     public Result.ReturnData<List<SimPort>> querySimPortListByDevId(
-            @RequestParam(value = "brand") String gwBrand,
+            @RequestParam(value = "brand", required = true) String gwBrand,
             @RequestParam(value = "companyId", required = true) Integer companyId,
             @RequestParam(value = "devId", required = true) Integer devId) {
         List<SimPort> list = voipgatewayService.querySimPortListByDevId(gwBrand, companyId, devId);

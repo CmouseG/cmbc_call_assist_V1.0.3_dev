@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.guiji.dispatch.dto.QueryBlackListDto;
 import com.guiji.dispatch.service.GetAuthUtil;
 import com.guiji.dispatch.sys.ResultPage;
+import com.guiji.utils.JsonUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -220,32 +222,22 @@ public class BlackListServiceImpl implements IBlackListService {
 	}
 
 	@Override
-	public Page<BlackList> queryBlackListByParams(int pagenum, int pagesize, String phone, String orgCode,Integer isDesensitization,Long userId, Integer authLevel) {
+	public Page<BlackList> queryBlackListByParams(int pagenum, int pagesize,
+												  String phone, String orgCode,Integer isDesensitization, Long userId, Integer authLevel) {
 		Page<BlackList> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
-		/*
-		BlackListExample example = new BlackListExample();
-		example.setLimitStart((pagenum - 1) * pagesize);
-		example.setLimitEnd(pagesize);
-		example.setOrderByClause("`gmt_create` DESC");
-		Criteria andStatusEqualTo = example.createCriteria().andOrgCodeEqualTo(orgCode).andOrgCodeLike(orgCode + ".%")
-				.andStatusEqualTo(Constant.BATCH_STATUS_SHOW);
-		if (phone != null && !phone.equals("")) {
-			andStatusEqualTo.andPhoneEqualTo(phone);
-		}
-		List<BlackList> result = blackListMapper.selectByExample(example);
-		*/
 
 		String operUserId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId+"");//获取用户ID
 		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, operUserId, orgCode);//获取企业组织编码
 
-		BlackList blackParam = new BlackList();
+		QueryBlackListDto blackParam = new QueryBlackListDto();
 		blackParam.setPhone(phone);
-		blackParam.setUserId(Integer.valueOf(operUserId));
+		blackParam.setUserId(null != operUserId?Integer.valueOf(operUserId):null);
 		blackParam.setOrgCode(orgCode);
 		blackParam.setAuthLevel(authLevel);
 		blackParam.setStatus(Constant.BATCH_STATUS_SHOW);
+		logger.info("com.guiji.dispatch.impl.BlackListServiceImpl.queryBlackListByParams:{}", JsonUtils.bean2Json(blackParam));
 		ResultPage<BlackList> pageRes = new ResultPage<BlackList>(pagenum, pagesize);
 		pageRes.setOrderBy("gmt_create");
 		pageRes.setSort("DESC");
@@ -315,7 +307,7 @@ public class BlackListServiceImpl implements IBlackListService {
 	 * @return
 	 */
 	@Override
-	public Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, String orgCode) {
+	public Page<BlackListRecords> queryBlackListRecords(int pagenum, int pagesize, QueryBlackListDto queryBlackParam) {
 		Page<BlackListRecords> page = new Page<>();
 		page.setPageNo(pagenum);
 		page.setPageSize((pagesize));
@@ -332,13 +324,14 @@ public class BlackListServiceImpl implements IBlackListService {
 		List<BlackListRecords> result = blackRecordsMapper.selectByExample(example);
 		int countByExample = blackRecordsMapper.countByExample(example);
 		*/
-		BlackListRecords blackRecord = new BlackListRecords();
-		blackRecord.setOrgCode(orgCode);
+		/*BlackListRecords blackRecord = new BlackListRecords();
+		blackRecord.setOrgCode(orgCode);*/
+
 		ResultPage<BlackListRecords> pageRes = new ResultPage<BlackListRecords>(pagenum, pagesize);
 		pageRes.setOrderBy("create_time");
 		pageRes.setSort("DESC");
-		List<BlackListRecords> result = blackRecordsMapper.queryBlackListRecords(blackRecord, pageRes);
-		int countByExample = blackRecordsMapper.queryBlackRecordsCount(blackRecord);
+		List<BlackListRecords> result = blackRecordsMapper.queryBlackListRecords(queryBlackParam, pageRes);
+		int countByExample = blackRecordsMapper.queryBlackRecordsCount(queryBlackParam);
 		page.setRecords(result);
 		page.setTotal(countByExample);
 		return page;

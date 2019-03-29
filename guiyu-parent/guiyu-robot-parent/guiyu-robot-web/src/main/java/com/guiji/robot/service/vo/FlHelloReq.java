@@ -29,4 +29,6 @@ public class FlHelloReq {
 	private String key;
 	//张三|12 
 	private String val;
+	//静音超时事件
+	private Boolean silence_exceed;
 }

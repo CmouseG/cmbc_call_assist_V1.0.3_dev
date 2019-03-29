@@ -64,4 +64,11 @@
 		GROUP BY p.plan_uuid
 	</select>
 
+    <select id="queryPlanCountByBatch" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM dispatch_plan
+		WHERE batch_id = #{batchId}
+	</select>
+
 </mapper>

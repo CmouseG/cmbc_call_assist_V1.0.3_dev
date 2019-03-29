@@ -1,0 +1,20 @@
+顺序执行：
+一、配置文件更新
+1、guiyu-auth-web
+     application.yml中mapperLocations: classpath*:mappers/*.xml   改为 mapperLocations: classpath*:mappers/**/*.xml
+
+二、脚本更新
+1、01-guiyu_base.sql
+2、02-guiyu_base.sql
+3、03-batchModifyOrgCodeWithRole.sql
+4、04-batchModifyOrgto1.sql
+5、05-guiyu_botstence.sql
+
+三、更新应用
+
+四、执行命令，调用服务，初始化auth数据
+curl -X POST http://IP:18011/batch/initData
+
+五、完成
+
+//TODO 、产品挂的模板、菜单权限需要测试按真实情况初始化好再准备脚本

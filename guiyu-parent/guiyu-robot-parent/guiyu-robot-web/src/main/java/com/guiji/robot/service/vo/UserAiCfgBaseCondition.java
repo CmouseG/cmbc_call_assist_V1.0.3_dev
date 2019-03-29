@@ -23,6 +23,6 @@ public class UserAiCfgBaseCondition {
     private String userId;
     //企业
     private String orgCode;
-    //根据所有者用户名模糊查询时，获取到的idList
-    private List<String> userIds;
+    //所属者查询
+    private String qUserId;
 }

@@ -6,6 +6,8 @@ import java.util.Date;
 
 public class QueryExportFileRecordDto extends PageDto {
 
+    private static final long serialVersionUID = -4756419065477693025L;
+
     /**
      * 记录ID唯一标识
      */
@@ -25,6 +27,11 @@ public class QueryExportFileRecordDto extends PageDto {
      * 文件类型  1-execl文件 2-音频文件 3-视频文件
      */
     private Integer fileType;
+
+    /**
+     * 状态 0-进行中 1-已完成 2-取消  3-删除 4-失败
+     */
+    private Integer status;
 
     /**
      * 用户ID
@@ -108,5 +115,13 @@ public class QueryExportFileRecordDto extends PageDto {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

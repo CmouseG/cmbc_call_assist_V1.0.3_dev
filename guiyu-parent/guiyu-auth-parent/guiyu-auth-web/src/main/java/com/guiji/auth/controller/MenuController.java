@@ -53,30 +53,30 @@ public class MenuController {
 		if(2==menu.getType()){
 			menu.setPermission(menu.getUrl().replace("/", ":"));
 		}
-		//ĞÂÔö²Ëµ¥
+		//æ–°å¢èœå•
 		service.insert(menu);
 		List<String> buttonList = new ArrayList<String>();
 		if(1==menu.getType()) {
-			//ĞÂÔö³õÊ¼»¯µÄ²éÑ¯°´Å¥
+			//æ–°å¢åˆå§‹åŒ–çš„æŸ¥è¯¢æŒ‰é’®
 			SysMenu queryButton = new SysMenu();
 			BeanUtil.copyProperties(menu, queryButton);
 			queryButton.setId(null);
-			queryButton.setPid(menu.getId()); //¸¸¼¶id
-			queryButton.setName(menu.getName()+"-²éÑ¯");
+			queryButton.setPid(menu.getId()); //çˆ¶çº§id
+			queryButton.setName(menu.getName()+"-æŸ¥è¯¢");
 			queryButton.setLevel(menu.getLevel()+1);
 			queryButton.setType(MenuTypeEnum.BUTTON.getCode());
 			queryButton.setPermission(queryButton.getUrl().replace("/", ":").substring(1));
 			queryButton.setUrl(queryButton.getUrl().replace("/", "_").substring(1)+"_defquery");
 			service.insert(queryButton);
-			//¸ø³¬¹ÜºÍÏµÍ³×éÖ¯ ×Ô¶¯¹ØÁª
+			//ç»™è¶…ç®¡å’Œç³»ç»Ÿç»„ç»‡ è‡ªåŠ¨å…³è”
 			buttonList.add(queryButton.getId().toString());
 		}else if(2==menu.getType()) {
-			//Èç¹ûÊÇ°´Å¥£¬Ö±½Ó¹Ò¸ø³¬¹ÜºÍÏµÍ³×éÖ¯
+			//å¦‚æœæ˜¯æŒ‰é’®ï¼Œç›´æ¥æŒ‚ç»™è¶…ç®¡å’Œç³»ç»Ÿç»„ç»‡
 			buttonList.add(menu.getId().toString());
 		}
-		//¶¥²ã×éÖ¯Ôö¼Ó¹ØÏµ
+		//é¡¶å±‚ç»„ç»‡å¢åŠ å…³ç³»
 		privilegeService.savePrivlege(userId.intValue(), orgCode, AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, ResourceTypeEnum.MENU.getCode(),buttonList);
-		//³¬¹ÜÔö¼Ó¹ØÏµ
+		//è¶…ç®¡å¢åŠ å…³ç³»
 		privilegeService.savePrivlege(userId.intValue(), orgCode, AuthObjTypeEnum.ROLE.getCode(), AuthConstants.ROOT_ROLE_ADMIN, ResourceTypeEnum.MENU.getCode(),buttonList);
 	}
 	
@@ -88,21 +88,21 @@ public class MenuController {
 			service.delete(id);
 			List<String> buttonList = new ArrayList<String>();
 			if(MenuTypeEnum.BUTTON.getCode()==sysMenu.getType()) {
-				//Èç¹ûÊÇ°´Å¥£¬ÄÇÃ´É¾³ı×ÊÔ´
+				//å¦‚æœæ˜¯æŒ‰é’®ï¼Œé‚£ä¹ˆåˆ é™¤èµ„æº
 				buttonList.add(id.toString());
-				//É¾³ı¹ØÏµ
+				//åˆ é™¤å…³ç³»
 				privilegeService.delPrivilegeTree(AuthConstants.ROOT_ORG_CODE,userId.intValue(), AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, buttonList, ResourceTypeEnum.MENU.getCode());
 			}else if(MenuTypeEnum.MENU.getCode()==sysMenu.getType()) {
-				//²éÑ¯ÏÂ¼¶°´Å¥
+				//æŸ¥è¯¢ä¸‹çº§æŒ‰é’®
 				SysMenuExample example = new SysMenuExample();
 				example.createCriteria().andPidEqualTo(id).andTypeEqualTo(MenuTypeEnum.BUTTON.getCode());
 				List<SysMenu> buttons = mapper.selectByExample(example);
 				if(buttons!=null &&!buttons.isEmpty()) {
 					for(SysMenu button : buttons) {
-						service.delete(button.getId()); //É¾³ı°´Å¥
+						service.delete(button.getId()); //åˆ é™¤æŒ‰é’®
 						buttonList.add(button.getId().toString());
 					}
-					//É¾³ı¹ØÏµ
+					//åˆ é™¤å…³ç³»
 					privilegeService.delPrivilegeTree(AuthConstants.ROOT_ORG_CODE,userId.intValue(), AuthObjTypeEnum.ORG.getCode(), AuthConstants.ROOT_ORG_CODE, buttonList, ResourceTypeEnum.MENU.getCode());
 				}
 			}
@@ -115,14 +115,14 @@ public class MenuController {
 		if(1==menu.getType() && !"/".equals(menu.getUrl())&&!Pattern.matches(URL_MATCH, menu.getUrl())){
 			throw new CheckConditionException("00010008");
 		}
-		SysMenu extMenu = service.getMenuById(menu.getId());	//¿âÀï²Ëµ¥Êı¾İ
+		SysMenu extMenu = service.getMenuById(menu.getId());	//åº“é‡Œèœå•æ•°æ®
 		if(!extMenu.getUrl().equals(menu.getUrl()) || !extMenu.getName().equals(menu.getName())) {
-			//²Ëµ¥Ãû³Æ»òÕßurl±ä¸üÁË£¬¸üĞÂÄ¬ÈÏ²éÑ¯°´Å¥
+			//èœå•åç§°æˆ–è€…urlå˜æ›´äº†ï¼Œæ›´æ–°é»˜è®¤æŸ¥è¯¢æŒ‰é’®
 			SysMenuExample example = new SysMenuExample();
 			example.createCriteria().andPidEqualTo(menu.getId()).andTypeEqualTo(2).andDelFlagEqualTo(0).andUrlEqualTo(extMenu.getUrl()+"/defquery");
 			List<SysMenu> queryButtonList = mapper.selectByExample(example);
 			if(queryButtonList!=null && !queryButtonList.isEmpty()) {
-				queryButtonList.get(0).setName(menu.getName()+"-²éÑ¯");
+				queryButtonList.get(0).setName(menu.getName()+"-æŸ¥è¯¢");
 				queryButtonList.get(0).setUrl(menu.getUrl().replace("/", "_")+"_defquery");
 				queryButtonList.get(0).setPermission(menu.getUrl().replace("/", ":").substring(1));
 				mapper.updateByPrimaryKey(queryButtonList.get(0));
@@ -156,7 +156,7 @@ public class MenuController {
 	}
 	
 	/**
-	 * ²éÑ¯ËùÓĞ²Ëµ¥
+	 * æŸ¥è¯¢æ‰€æœ‰èœå•
 	 * @param roleId
 	 * @return
 	 */
@@ -166,7 +166,7 @@ public class MenuController {
 	}
 	
 	/**
-	 * ²úÆ·¹ÜÀíÖĞÑ¡Ôñ²Ëµ¥Ñ¡ÖĞ×´Ì¬
+	 * äº§å“ç®¡ç†ä¸­é€‰æ‹©èœå•é€‰ä¸­çŠ¶æ€
 	 * @param productId
 	 * @return
 	 */
@@ -178,7 +178,7 @@ public class MenuController {
 	
 	
 	/**
-	 * ²éÑ¯×éÖ¯µÄ²Ëµ¥È¨ÏŞ£¬×ÜµÄÈç¹û´«²úÆ·ÄÇÃ´°´²úÆ·²é£¬Èç¹û¸øÉÏ¼¶ÆóÒµ±àºÅ°´ÉÏ¼¶ÆóÒµ±àºÅ²éÑ¯·¶Î§
+	 * æŸ¥è¯¢ç»„ç»‡çš„èœå•æƒé™ï¼Œæ€»çš„å¦‚æœä¼ äº§å“é‚£ä¹ˆæŒ‰äº§å“æŸ¥ï¼Œå¦‚æœç»™ä¸Šçº§ä¼ä¸šç¼–å·æŒ‰ä¸Šçº§ä¼ä¸šç¼–å·æŸ¥è¯¢èŒƒå›´
 	 * @param productId
 	 * @param parentOrgCode
 	 * @param targetOrgCode
@@ -194,7 +194,7 @@ public class MenuController {
 	
 	
 	/**
-	 * È¨ÏŞ¹ÜÀíÖĞ²Ëµ¥Ñ¡Ôñ
+	 * æƒé™ç®¡ç†ä¸­èœå•é€‰æ‹©
 	 * @param roleId
 	 * @param targetOrgCode
 	 * @param userId

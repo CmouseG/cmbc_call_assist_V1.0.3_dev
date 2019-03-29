@@ -2,15 +2,14 @@ package com.guiji.user.dao;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.guiji.user.dao.entity.SysUserExt;
 import org.apache.ibatis.annotations.Param;
 
 import com.guiji.common.model.Page;
 import com.guiji.user.dao.entity.SysRole;
 import com.guiji.user.dao.entity.SysUser;
 import com.guiji.user.dao.entity.SysUserExample;
+import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.user.vo.UserParamVo;
 
 public interface SysUserMapper {
@@ -69,7 +68,7 @@ public interface SysUserMapper {
     
     public SysUser getUserById(Long id);
 
-    public List<Object> selectLikeUserName(UserParamVo param);
+    public List<Object> selectLikeUserName(@Param("param")UserParamVo param, @Param("userId")Integer userId, @Param("authLevel")Integer authLevel, @Param("orgCode")String orgCode);
 
     public List<SysUser> getAllCompanyUser();
 

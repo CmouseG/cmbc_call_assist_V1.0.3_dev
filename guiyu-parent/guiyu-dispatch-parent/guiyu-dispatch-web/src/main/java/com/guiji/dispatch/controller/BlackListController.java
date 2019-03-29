@@ -1,12 +1,13 @@
 package com.guiji.dispatch.controller;
 
 import com.guiji.component.jurisdiction.Jurisdiction;
+import com.guiji.dispatch.dto.QueryBlackListDto;
+import com.guiji.dispatch.service.GetAuthUtil;
+import com.guiji.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.guiji.common.model.Page;
@@ -19,8 +20,13 @@ import com.guiji.dispatch.util.Log;
 @RestController
 public class BlackListController {
 
+	private Logger logger = LoggerFactory.getLogger(BlackListController.class);
+
 	@Autowired
 	private IBlackListService blackListService;
+
+	@Autowired
+	private GetAuthUtil getAuthUtil;
 
 	/**
 	 * 保存黑名单
@@ -36,7 +42,7 @@ public class BlackListController {
 	}
 	/**
 	 * 删除号码
-	 * @param phone
+	 * @param id
 	 * @return 
 	 */
 	@Jurisdiction("taskCenter_blackList_delete")
@@ -103,8 +109,22 @@ public class BlackListController {
 	@Jurisdiction("taskCenter_blackList_batchImportDetail")
 	@PostMapping("selectBlackListRecords")
 	public Page<BlackListRecords> selectBlackListRecords(@RequestParam(required = true, name = "pagenum") int pagenum,
-			@RequestParam(required = true, name = "pagesize") int pagesize,@RequestHeader String orgCode){
-		return blackListService.queryBlackListRecords(pagenum, pagesize,orgCode);
+														 @RequestParam(required = true, name = "pagesize") int pagesize,
+														 @RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
+														 @RequestBody QueryBlackListDto queryBlackParam){
+		if(queryBlackParam == null){
+			queryBlackParam = new QueryBlackListDto();
+		}
+
+		//过滤权限
+		userId = getAuthUtil.getUserIdByAuthLevel(authLevel, queryBlackParam.getUserId()+"");//获取用户ID
+		orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, queryBlackParam.getOrgCode());//获取企业组织编码
+		queryBlackParam.setUserId(null != userId ?Integer.valueOf(userId):null);
+		queryBlackParam.setOrgCode(orgCode);
+		queryBlackParam.setAuthLevel(authLevel);
+
+		logger.info("/selectBlackListRecords:{}", JsonUtils.bean2Json(queryBlackParam));
+		return blackListService.queryBlackListRecords(pagenum, pagesize,queryBlackParam);
 	}
 
 	

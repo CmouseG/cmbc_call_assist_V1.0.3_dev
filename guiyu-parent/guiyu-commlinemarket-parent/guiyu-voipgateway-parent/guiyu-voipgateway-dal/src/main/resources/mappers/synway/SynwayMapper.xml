@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.guiji.voipgateway.dao.SynwayMapper" >
+<mapper namespace="com.guiji.voipgateway.synway.dao.SynwayMapper" >
   
   
   <!-- 查询库中某个schema中某个名称开头的表列表-->
-  <select id="queryShareTabNameList" resultType="java.lang.String" parameterType="com.guiji.voipgateway.dao.entity.ShareTabQuery">
+  <select id="queryShareTabNameList" resultType="java.lang.String" parameterType="com.guiji.voipgateway.synway.dao.entity.ShareTabQuery">
     select 
     TABLE_NAME from 
     information_schema.tables 

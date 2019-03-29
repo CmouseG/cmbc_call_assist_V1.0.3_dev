@@ -2,22 +2,12 @@ package com.guiji.auth.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
-
-import com.guiji.auth.model.SysUserRoleVo;
-import com.guiji.clm.api.LineMarketRemote;
-import com.guiji.clm.model.SipLineVO;
-import com.guiji.notice.api.INoticeSend;
-import com.guiji.notice.api.INoticeSetting;
-import com.guiji.notice.entity.MessageSend;
-import com.guiji.user.dao.SysMenuMapper;
-import com.guiji.user.dao.SysRoleUserMapper;
-import com.guiji.user.dao.SysUserExtMapper;
-import com.guiji.user.dao.entity.*;
-import com.guiji.utils.LocalCacheUtil;
-import com.guiji.utils.RedisUtil;
-import com.guiji.wechat.api.WeChatApi;
-import com.guiji.wechat.vo.SendMsgReqVO;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,13 +17,33 @@ import com.guiji.auth.enm.AuthObjTypeEnum;
 import com.guiji.auth.enm.MenuTypeEnum;
 import com.guiji.auth.enm.ResourceTypeEnum;
 import com.guiji.auth.exception.CheckConditionException;
+import com.guiji.auth.model.SysUserRoleVo;
 import com.guiji.auth.util.AuthUtil;
+import com.guiji.clm.api.LineMarketRemote;
+import com.guiji.clm.model.SipLineVO;
 import com.guiji.common.model.Page;
 import com.guiji.component.result.Result.ReturnData;
+import com.guiji.notice.api.INoticeSetting;
 import com.guiji.robot.api.IRobotRemote;
 import com.guiji.robot.model.UserAiCfgVO;
+import com.guiji.user.dao.SysMenuMapper;
+import com.guiji.user.dao.SysRoleUserMapper;
+import com.guiji.user.dao.SysUserExtMapper;
 import com.guiji.user.dao.SysUserMapper;
+import com.guiji.user.dao.entity.SysMenu;
+import com.guiji.user.dao.entity.SysOrganization;
+import com.guiji.user.dao.entity.SysPrivilege;
+import com.guiji.user.dao.entity.SysRole;
+import com.guiji.user.dao.entity.SysRoleUser;
+import com.guiji.user.dao.entity.SysRoleUserExample;
+import com.guiji.user.dao.entity.SysUser;
+import com.guiji.user.dao.entity.SysUserExample;
+import com.guiji.user.dao.entity.SysUserExt;
 import com.guiji.user.vo.UserParamVo;
+import com.guiji.utils.LocalCacheUtil;
+import com.guiji.utils.RedisUtil;
+import com.guiji.wechat.api.WeChatApi;
+import com.guiji.wechat.vo.SendMsgReqVO;
 
 
 @Service
@@ -216,12 +226,9 @@ public class UserService {
 		return key;
 	}
 
-	public List<Object>  selectLikeUserName(UserParamVo param,Long userId){
-		SysUser loginUser = mapper.getUserById(userId);
-		if (loginUser != null) {
-			param.setOrgCode(loginUser.getOrgCode());
-		}
-		List<Object> userList=mapper.selectLikeUserName(param);
+	public List<Object>  selectLikeUserName(UserParamVo param, Long userId, Integer authLevel, String orgCode)
+	{
+		List<Object> userList=mapper.selectLikeUserName(param, userId.intValue(), authLevel, orgCode);
 		return userList;
 	}
 
@@ -294,6 +301,7 @@ public class UserService {
 	public void updateUserExt(SysUserExt sysUserExt) {
 		sysUserExt.setUpdateTime(new Date());
 		sysUserExtMapper.updateByPrimaryKeySelective(sysUserExt);
+		LocalCacheUtil.del("UserExt_"+sysUserExt.getUserId());
 	}
 
 	public SysUserExt getUserExtByUserId(Long id)
@@ -390,5 +398,21 @@ public class UserService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 获取首页账号数
+	 */
+	public Integer getUserCount(Long userId, Integer authLevel, String orgCode)
+	{
+		SysUserExample example = new SysUserExample();
+		if(authLevel == 1) {
+			example.createCriteria().andCreateIdEqualTo(userId);
+		} else if(authLevel == 2) {
+			example.createCriteria().andOrgCodeEqualTo(orgCode);
+		}else if(authLevel == 3) {
+			example.createCriteria().andOrgCodeLike(orgCode + "%");
+		}
+		return mapper.countByExample(example);
 	}
 }

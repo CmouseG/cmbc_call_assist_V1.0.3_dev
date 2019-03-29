@@ -129,7 +129,7 @@ public interface IDispatchPlanOut {
             @ApiImplicitParam(name = "lineId", value = "lineId", dataType = "Integer", paramType = "query"),
     })
     @GetMapping(value="out/lineIsUsed")
-    Result.ReturnData<Boolean> lineIsUsed(@RequestParam("lineId") Integer lineId, @RequestParam("userIdList") List<String> userIdList);
+    Result.ReturnData<Boolean> lineIsUsed(@RequestParam("lineId") Integer lineId, @RequestParam("userIdList") List<Integer> userIdList);
 
 
     //查询计划任务

@@ -28,8 +28,6 @@ public class BlackList implements Serializable {
 
     private Integer status;
 
-    private Integer authLevel;
-
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -128,34 +126,21 @@ public class BlackList implements Serializable {
         this.status = status;
     }
 
-    public Integer getAuthLevel() {
-        return authLevel;
-    }
-
-    public void setAuthLevel(Integer authLevel) {
-        this.authLevel = authLevel;
-    }
-
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", phone=").append(phone);
-        sb.append(", remark=").append(remark);
-        sb.append(", gmtCreate=").append(gmtCreate);
-        sb.append(", gmtModified=").append(gmtModified);
-        sb.append(", type=").append(type);
-        sb.append(", userId=").append(userId);
-        sb.append(", updateUserId=").append(updateUserId);
-        sb.append(", orgCode=").append(orgCode);
-        sb.append(", createUserName=").append(createUserName);
-        sb.append(", updateUserName=").append(updateUserName);
-        sb.append(", status=").append(status);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "BlackList{" +
+                "id=" + id +
+                ", phone='" + phone + '\'' +
+                ", remark='" + remark + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                ", gmtModified=" + gmtModified +
+                ", type='" + type + '\'' +
+                ", userId=" + userId +
+                ", updateUserId=" + updateUserId +
+                ", orgCode='" + orgCode + '\'' +
+                ", createUserName='" + createUserName + '\'' +
+                ", updateUserName='" + updateUserName + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

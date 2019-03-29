@@ -524,4 +524,51 @@
       </if>
   </select>
 
+
+  <select id="queryFileRecordListPage" resultType="com.guiji.dispatch.vo.FileRecordsListVo" >
+    SELECT
+      COUNT(e.id) as error_count,
+      a.*
+    FROM
+    (
+      SELECT
+      <include refid="Base_Column_List" />
+      FROM file_records
+      WHERE 1 = 1
+      <if test="record != null" >
+        <if test="record.batchName != null">
+          AND batch_name LIKE CONCAT('%',#{record.batchName},'%')
+        </if>
+        <if test="record.authLevel == 1 and record.userId != null">
+          AND user_id = #{record.userId}
+        </if>
+        <if test="record.authLevel == 2 and record.orgCode != null and record.orgCode != ''">
+          AND org_code = #{record.orgCode}
+        </if>
+        <if test="record.authLevel == 3 and record.orgCode != null and record.orgCode != ''" >
+          AND (org_code = #{record.orgCode} OR org_code LIKE CONCAT(#{record.orgCode}, '%'))
+        </if>
+        <if test="record.status != null">
+          AND status = #{record.status}
+        </if>
+        <if test="startTime != null and endTime != null">
+          AND create_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+      </if>
+      ORDER BY create_time DESC
+      <if test="page != null and page.isPage ">
+        <!--<if test="page.orderBy != null " >
+          order by ${page.orderBy}	${page.sort}
+        </if>-->
+        <if test="page.indexStart != null " >
+          limit #{page.indexStart,jdbcType=BIGINT}, #{page.pageSize,jdbcType=INTEGER}
+        </if>
+      </if>
+    )a
+    LEFT JOIN file_error_records e
+      ON a.id = e.file_records_id
+    GROUP BY a.id
+    ORDER BY a.create_time DESC
+  </select>
+
 </mapper>

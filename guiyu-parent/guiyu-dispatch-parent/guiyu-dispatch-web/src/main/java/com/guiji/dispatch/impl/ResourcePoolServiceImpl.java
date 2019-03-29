@@ -8,6 +8,7 @@ import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUserIdLineRobotDto;
 import com.guiji.dispatch.bean.UserLineBotenceVO;
 import com.guiji.dispatch.bean.UserResourceDto;
+import com.guiji.dispatch.constant.RedisConstant;
 import com.guiji.dispatch.entity.DispatchRobotOp;
 import com.guiji.dispatch.service.IGetPhonesInterface;
 import com.guiji.dispatch.service.IPhonePlanQueueService;
@@ -40,7 +41,6 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
     private static final String REDIS_SYSTEM_MAX_ROBOT = "REDIS_SYSTEM_MAX_ROBOT";
     private static final String REDIS_SYSTEM_MAX_LINE = "REDIS_SYSTEM_MAX_LINE";
     private static final String REDIS_SYSTEM_MAX_PLAN_BY = "REDIS_SYSTEM_MAX_PLAN_BY";
-    private static final String REDIS_USER_ROBOT_LINE_MAX_PLAN = "REDIS_USER_ROBOT_LINE_MAX_PLAN";
 
     @Autowired
     private RedisUtil redisUtil;
@@ -159,12 +159,12 @@ public class ResourcePoolServiceImpl implements IResourcePoolService {
                     userLineBotenceVOS.addAll(opList);
                 }
                 //从redis获取用户机器人分配数据
-                List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>) redisUtil.get(REDIS_USER_ROBOT_LINE_MAX_PLAN);
+                List<UserLineBotenceVO> userLineBotenceVOSFromRedis = (List<UserLineBotenceVO>)redisUtil.get(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN);
 
                 if(!isEquals(userLineBotenceVOS, userLineBotenceVOSFromRedis))
                 {
                     phonePlanQueueService.cleanQueue();
-                    redisUtil.set(REDIS_USER_ROBOT_LINE_MAX_PLAN,userLineBotenceVOS);
+                    redisUtil.set(RedisConstant.RedisConstantKey.REDIS_USER_ROBOT_LINE_MAX_PLAN,userLineBotenceVOS);
                 }
 
                 logger.info("根据用户模板线路分配拨打号码比例#end");

@@ -198,6 +198,10 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 		{
 			criteria.andUserIdEqualTo(userId);
 		}
+		if(null != batchIds && batchIds.size()>0){
+			criteria.andBatchIdIn(batchIds);
+		}
+
 
 		int count = dispatchMapper.countByExample(planEx);
 		if (count > 0) {
@@ -210,8 +214,30 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	}
 
 	@Override
-	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<String> userIdList) {
-		return lineIsUsedByUserId(lineId, null);
+	public ReturnData<Boolean> lineIsUsed(Integer lineId, List<Integer> userIdList) {
+		boolean bool = false;
+		if(null != lineId && null != userIdList && userIdList.size()>0) {
+			//查询用户、线路关联数据
+			List<DispatchBatchLine> batchLineList = lineService.queryListByUserIdLineId(userIdList, lineId);
+			if (null != batchLineList && batchLineList.size() > 0) {
+				//获取批次ID列表
+				List<Integer> batchIdList = new ArrayList<Integer>();
+				for (DispatchBatchLine batchLine : batchLineList) {
+					batchIdList.add(batchLine.getBatchId());
+				}
+
+				DispatchPlanExample planEx = new DispatchPlanExample();
+				DispatchPlanExample.Criteria criteria = planEx.createCriteria();
+				criteria.andStatusPlanEqualTo(Integer.valueOf(com.guiji.dispatch.model.Constant.STATUSPLAN_PLANING))
+						.andIsDelEqualTo(SysDelEnum.NORMAL.getState());
+				criteria.andUserIdIn(userIdList);
+				criteria.andBatchIdIn(batchIdList);
+				//查询“计划中”状态数据
+				int count = dispatchMapper.countByExample(planEx);
+				bool = count>0?true:false;
+			}
+		}
+		return new ReturnData<Boolean>(bool);
 	}
 
 	/**
@@ -250,7 +276,7 @@ public class DispatchOutApiController implements IDispatchPlanOut {
 	 * @param exportFileDto
 	 * @return
 	 */
-	@ApiOperation(value="查询任务计划备注", notes="查询任务计划备注")
+	@ApiOperation(value="新增导出记录", notes="新增导出记录")
 	@Override
 	public ReturnData<ExportFileRecordVo> addExportFile(@RequestBody ExportFileDto exportFileDto) {
 		logger.info("新增文件导出记录入参", JsonUtils.bean2Json(exportFileDto));

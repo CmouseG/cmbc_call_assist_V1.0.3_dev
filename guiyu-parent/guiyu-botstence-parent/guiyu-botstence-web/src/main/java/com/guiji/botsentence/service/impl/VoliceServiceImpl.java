@@ -498,6 +498,21 @@ public class VoliceServiceImpl implements IVoliceService {
 					} else {
 						vo.setHasVolice("否");
 					}
+					
+					if(null != backup.getTimes()) {
+						vo.setTimes(backup.getTimes());
+					}else {
+						if(StringUtils.isNotBlank(backup.getBackup())) {
+							vo.setTimes(backup.getBackup().length()/6);
+							if(vo.getTimes() == 0) {
+								vo.setTimes(1);
+							}
+						}else {
+							vo.setTimes(0);
+						}
+					}
+					
+					
 					voliceInfo_list.add(vo);
 
 					index++;
@@ -522,6 +537,20 @@ public class VoliceServiceImpl implements IVoliceService {
 			} else {
 				vo.setHasVolice("否");
 			}
+			
+			if(null != volice.getTimes()) {
+				vo.setTimes(volice.getTimes());
+			}else {
+				if(StringUtils.isNotBlank(volice.getContent())) {
+					vo.setTimes(volice.getContent().length()/6);
+					if(vo.getTimes() == 0) {
+						vo.setTimes(1);
+					}
+				}else {
+					vo.setTimes(0);
+				}
+			}
+			
 			voliceInfo_list.add(vo);
 		}
 		
@@ -544,6 +573,20 @@ public class VoliceServiceImpl implements IVoliceService {
 				} else {
 					vo.setHasVolice("否");
 				}
+				
+				if(null != voliceInfo.getTimes()) {
+					vo.setTimes(voliceInfo.getTimes());
+				}else {
+					if(StringUtils.isNotBlank(voliceInfo.getContent())) {
+						vo.setTimes(voliceInfo.getContent().length()/6);
+						if(vo.getTimes() == 0) {
+							vo.setTimes(1);
+						}
+					}else {
+						vo.setTimes(0);
+					}
+				}
+				
 				voliceInfo_list.add(vo);
 				index++;
 			}
@@ -921,6 +964,7 @@ public class VoliceServiceImpl implements IVoliceService {
 					botSentenceApprovalService.saveDeploy(sellbot_result.getBody().getSubJobIds(), jobId.toString(), processId, templateId, userId);
 				}
 				
+				
 				/*if(null != allList && allList.size() > 0) {
 					logger.info("共返回" + allList.size() + "条任务");
 					int index = 1;
@@ -1132,7 +1176,8 @@ public class VoliceServiceImpl implements IVoliceService {
 		String wavName = "/home/sellbot/dist/app/wav/shyjw_rec/27.wav";
 		int index = wavName.lastIndexOf("/");
 		wavName = wavName.substring(index+1, wavName.length());
-		System.out.println(wavName);
+		System.out.println(10/3);
+		
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -1243,6 +1288,19 @@ public class VoliceServiceImpl implements IVoliceService {
 					} else {
 						vo.setHasVolice("否");
 					}
+					
+					if(null != task.getTimes()) {
+						vo.setTimes(task.getTimes());
+					}else {
+						if(StringUtils.isNotBlank(task.getContent())) {
+							vo.setTimes(task.getContent().length()/6);
+							if(vo.getTimes() == 0) {
+								vo.setTimes(1);
+							}
+						}else {
+							vo.setTimes(0);
+						}
+					}
 					voliceInfo_list.add(vo);
 				}
 			}
@@ -1262,6 +1320,18 @@ public class VoliceServiceImpl implements IVoliceService {
 					vo.setHasVolice("是");
 				} else {
 					vo.setHasVolice("否");
+				}
+				if(null != volice.getTimes()) {
+					vo.setTimes(volice.getTimes());
+				}else {
+					if(StringUtils.isNotBlank(volice.getContent())) {
+						vo.setTimes(volice.getContent().length()/6);
+						if(vo.getTimes() == 0) {
+							vo.setTimes(1);
+						}
+					}else {
+						vo.setTimes(0);
+					}
 				}
 			}
 			voliceInfo_list.add(vo);

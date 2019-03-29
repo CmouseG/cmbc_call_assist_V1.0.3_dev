@@ -2,6 +2,8 @@ package com.guiji.dispatch.service;
 
 import com.guiji.user.dao.entity.SysOrganization;
 
+import java.util.List;
+
 public interface GetApiService {
 
     /**
@@ -11,5 +13,5 @@ public interface GetApiService {
      */
     SysOrganization getOrgByUserId(String userId);
 
-
+    List<Integer> getSubOrgIdByOrgId(Integer orgId);
 }

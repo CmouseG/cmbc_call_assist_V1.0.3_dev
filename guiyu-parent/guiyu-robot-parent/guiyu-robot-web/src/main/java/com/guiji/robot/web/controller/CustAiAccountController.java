@@ -188,7 +188,7 @@ public class CustAiAccountController {
     public Result.ReturnData<Page<UserAiCfgBaseInfoVO>> queryUserAiCfgBaseInfoByUserId(
             @RequestParam(value = "pageNo", required = true) int pageNo,
             @RequestParam(value = "pageSize", required = true) int pageSize,
-            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "qUserId", required = false) String qUserId,
             @RequestHeader Integer userId,
             @RequestHeader String orgCode,
             @RequestHeader Integer authLevel) {
@@ -196,17 +196,7 @@ public class CustAiAccountController {
         condition.setPageNo(pageNo);
         condition.setPageSize(pageSize);
         condition.setUserId(userId.toString());
-        List<String> userIds = Lists.newArrayList();
-        if (StrUtils.isNotEmpty(username)) {
-            ReturnData<List<SysUser>> userData = iAuth.getUserByName(username);
-            if (userData != null && CollectionUtils.isNotEmpty(userData.getBody())) {
-                List<SysUser> users = userData.getBody();
-                users.forEach(obj -> {
-                    userIds.add(obj.getId().toString());
-                });
-            }
-        }
-        condition.setUserIds(userIds);
+        condition.setQUserId(qUserId);
         condition.setOrgCode(orgCode);
         condition.setAuthLevel(authLevel);
         List<UserAiCfgBaseInfoVO> rtnList = new ArrayList<UserAiCfgBaseInfoVO>();

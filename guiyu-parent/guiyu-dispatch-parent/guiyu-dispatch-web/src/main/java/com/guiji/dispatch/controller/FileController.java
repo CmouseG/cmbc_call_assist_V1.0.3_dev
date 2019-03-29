@@ -3,6 +3,8 @@ package com.guiji.dispatch.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.guiji.common.exception.GuiyuException;
 import com.guiji.common.model.Page;
+import com.guiji.common.model.SysFileReqVO;
+import com.guiji.common.model.SysFileRspVO;
 import com.guiji.component.jurisdiction.Jurisdiction;
 import com.guiji.component.result.Result;
 import com.guiji.dispatch.bean.PlanUuidDto;
@@ -10,12 +12,23 @@ import com.guiji.dispatch.dao.DispatchPlanMapper;
 import com.guiji.dispatch.dao.FileErrorRecordsMapper;
 import com.guiji.dispatch.dao.entity.*;
 import com.guiji.dispatch.dto.QueryDownloadPlanListDto;
+import com.guiji.dispatch.entity.ExportFileRecord;
+import com.guiji.dispatch.enums.BusiTypeEnum;
+import com.guiji.dispatch.enums.ExportFileStatusEnum;
+import com.guiji.dispatch.enums.FileTypeEnum;
 import com.guiji.dispatch.line.IDispatchBatchLineService;
+import com.guiji.dispatch.model.ExportFileDto;
 import com.guiji.dispatch.service.FileInterface;
 import com.guiji.dispatch.service.IDispatchPlanService;
+import com.guiji.dispatch.service.IExportFileService;
+import com.guiji.dispatch.sys.ResultPage;
+import com.guiji.dispatch.util.DateTimeUtils;
 import com.guiji.dispatch.util.HttpDownload;
 import com.guiji.dispatch.vo.DownLoadPlanVo;
+import com.guiji.dispatch.vo.FileRecordsListVo;
 import com.guiji.utils.IdGengerator.IdUtils;
+import com.guiji.utils.JsonUtils;
+import com.guiji.utils.NasUtil;
 import io.swagger.annotations.ApiOperation;
 import jxl.Workbook;
 import jxl.format.Border;
@@ -24,9 +37,15 @@ import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,10 +54,10 @@ import java.io.*;
 import java.lang.Boolean;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @RestController
@@ -58,6 +77,12 @@ public class FileController {
 	@Autowired
 	private IDispatchPlanService dispatchPlanService;
 
+	@Autowired
+	private IExportFileService exportFileService;
+
+	@Value("${file.tmpPath}")
+	private String tmpPath;
+
 	/**
 	 * 查询文件记录
 	 * @param pagenum
@@ -69,13 +94,14 @@ public class FileController {
 	 * @return
 	 */
 	@GetMapping(value = "queryFileRecords")
-	public Page<FileRecords> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
+	public Page<FileRecordsListVo> queryFileInterface(@RequestParam(required = true, name = "pagenum") int pagenum,
 			@RequestParam(required = true, name = "pagesize") int pagesize,
 			@RequestParam(required = false, name = "batchName") String batchName,
 			@RequestParam(required = false, name = "startTime") String startTime,
 			@RequestParam(required = false, name = "endTime") String endTime,
 			@RequestHeader String userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel) {
-		Page<FileRecords> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
+		logger.info("userId:{},orgCode:{},authLevel:{}", userId, orgCode, authLevel);
+		Page<FileRecordsListVo> queryFileInterface = file.queryFileInterface(pagenum, pagesize, batchName, startTime,
 				endTime, userId, orgCode, authLevel);
 		return queryFileInterface;
 	}
@@ -320,7 +346,7 @@ public class FileController {
 	//查询计划列表
 	@ApiOperation(value="导出计划列表", notes="导出计划列表")
 	@RequestMapping(value = "dispatch/file/downloadPlanList", method = {RequestMethod.POST, RequestMethod.GET})
-	public Result.ReturnData<Object> downloadPlanList(@RequestHeader Long userId, @RequestHeader String orgCode,
+	public Result.ReturnData<Object> downloadPlanList(@RequestHeader Long userId, @RequestHeader String orgCode, @RequestHeader Integer authLevel,
 													  @RequestHeader Boolean isSuperAdmin, @RequestHeader Integer isDesensitization,
 													  HttpServletResponse resp,
 													  @RequestBody QueryDownloadPlanListDto queryPlanDto)
@@ -351,7 +377,9 @@ public class FileController {
 		queryPlanDto.setOperOrgCode(orgCode);
 		queryPlanDto.setSuperAdmin(isSuperAdmin);
 		queryPlanDto.setIsDesensitization(isDesensitization);
+		queryPlanDto.setAuthLevel(authLevel);
 
+		logger.info("/dispatch/file/downloadPlanList:{}", JsonUtils.bean2Json(queryPlanDto));
 		//查询导出数据
 		List<DownLoadPlanVo> selectByExample = dispatchPlanService.queryDownloadPlanList(queryPlanDto);
 		String fileName = "任务导出结果详情.xls";
@@ -471,8 +499,8 @@ public class FileController {
 
 	//下载导入记录文件
 	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
-	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
-	public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
+	@RequestMapping(value = "dispatch/file/downloadImportRecord_bak", method = {RequestMethod.POST, RequestMethod.GET})
+	public void downloadImportRecord_bak(HttpServletRequest request, HttpServletResponse response,
 									 @RequestParam(required = false, name = "id") Long id)
 			throws UnsupportedEncodingException, WriteException {
 		FileRecords fileRecords = file.queryFileRecordById(id);
@@ -501,8 +529,6 @@ public class FileController {
 				int len;
 				while((len =is.read(buffer))>0){
 					os.write(buffer, 0, len);
-					logger.info(">>>>>>>>" + len+"");
-					logger.info(">>>>>>>>" + buffer+"");
 				}
 				os.flush();
 			}catch(Exception e){
@@ -532,4 +558,205 @@ public class FileController {
 			}
 		}
 	}
+
+	//下载导入记录文件
+	@ApiOperation(value="下载导入记录文件", notes="下载导入记录文件")
+	@RequestMapping(value = "dispatch/file/downloadImportRecord", method = {RequestMethod.POST, RequestMethod.GET})
+	public void downloadImportRecord(HttpServletRequest request, HttpServletResponse response,
+							 @RequestParam(required = false, name = "id") Long id,
+							 @RequestHeader String userId, @RequestHeader String orgCode)
+			throws UnsupportedEncodingException, WriteException {
+		FileRecords fileRecords = file.queryFileRecordById(id);
+		if(null != fileRecords && !StringUtils.isEmpty(fileRecords.getUrl())) {
+			//增加导出文件记录
+			ExportFileRecord recordRes = exportFileService.addExportFile(this.getExportFileData(fileRecords, userId, orgCode));
+			boolean bool = false;
+			String fileUrl = fileRecords.getUrl();//"http://192.168.1.57:8080/group1/M00/01/23/wKgBOVybN92AO6QJAAApcQroVSU36.xlsx";
+			File generateFile = null;	//生成文件
+			File zipFile = null;		//压缩文件
+			SysFileRspVO resFile = null;
+			try{
+				//生成导出文件
+				generateFile = this.generateFile(fileUrl);
+				//压缩文件
+				zipFile = this.generateZipFile(generateFile);
+				//上传压缩文件
+				resFile = this.uploadFile(zipFile);
+				bool = true;
+			}catch(Exception e){
+				logger.error("导出文件异常", e);
+			}finally {
+				//导出结果变更
+				exportFileService.endExportFile(recordRes.getRecordId(),
+						bool ? ExportFileStatusEnum.FINISH.getStatus() : ExportFileStatusEnum.FAIL.getStatus(),
+						null != resFile ? resFile.getSkUrl() : null);
+
+				if(null != generateFile){
+
+				}
+			}
+		}else{
+			throw new GuiyuException("下载文件不存在");
+		}
+	}
+
+	/**
+	 * 封装
+	 * @param fileRecords
+	 * @return
+	 */
+	private ExportFileDto getExportFileData(FileRecords fileRecords, String userId, String orgCode){
+		ExportFileDto data = new ExportFileDto();
+		data.setBusiId(fileRecords.getId()+"");
+		data.setBusiType(BusiTypeEnum.DISPATCH.getType());
+		data.setFileOriginalUrl(fileRecords.getUrl());
+		data.setFileType(FileTypeEnum.EXECL.getType());
+		Integer batchId = fileRecords.getBatchid();
+		if(null != batchId){
+			int batchCount = dispatchPlanService.queryPlanCountByBatch(batchId);
+			data.setTotalNum(batchCount);
+		}
+		data.setUserId(userId);
+		data.setOrgCode(orgCode);
+		data.setCreateName(fileRecords.getUserName());
+		data.setCreateTime(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_FORMAT_PATTERN_FULL).format(fileRecords.getCreateTime()));
+		return data;
+	}
+
+
+	/**
+	 * 上传nas文件
+	 * @param zipFile
+	 * @return
+	 */
+	private SysFileRspVO uploadFile(File zipFile){
+		try {
+			Long fileRecordId = System.currentTimeMillis();
+			SysFileReqVO sysFileReqVO = new SysFileReqVO();
+			sysFileReqVO.setBusiId(System.currentTimeMillis() + "");
+			sysFileReqVO.setBusiType("dispatch"); // 上传的影像文件业务类型
+			sysFileReqVO.setSysCode("02"); // 文件上传系统码
+			sysFileReqVO.setThumbImageFlag("0"); // 是否需要生成缩略图,0-无需生成，1-生成，默认不生成缩略图
+			SysFileRspVO sysFileRsp = new NasUtil().uploadNas(sysFileReqVO, zipFile);
+			System.out.println(JsonUtils.bean2Json(sysFileRsp));
+			return sysFileRsp;
+		}catch(Exception e){
+			logger.error("上传nas异常", e);
+			throw new GuiyuException("上传nas异常", e);
+		}
+	}
+
+	/**
+	 * 生成.zip文件;
+	 * @param excelFile
+	 * @return
+	 * @throws IOException
+	 */
+	public File generateZipFile(File excelFile){
+		File file = new File(this.tmpPath + File.separator + excelFile.getName() +".zip");
+		ZipOutputStream zipOutputStream = null;
+		try {
+			zipOutputStream = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+			//	File[] files = new File(path).listFiles();
+			FileInputStream fileInputStream = null;
+			byte[] buf = new byte[1024];
+			int len = 0;
+		/*if(files!=null && files.length > 0){
+			for(File excelFile:files){*/
+			String fileName = excelFile.getName();
+			fileInputStream = new FileInputStream(excelFile);
+			//放入压缩zip包中;
+			zipOutputStream.putNextEntry(new ZipEntry( fileName));//this.tmpPath + File.separator  +
+			//读取文件;
+			while ((len = fileInputStream.read(buf)) > 0) {
+				zipOutputStream.write(buf, 0, len);
+			}
+			//关闭;
+			zipOutputStream.closeEntry();
+			if (fileInputStream != null) {
+				fileInputStream.close();
+			}
+			/*}
+		}*/
+		}catch(IOException ex){
+			logger.error("生成.zip文件异常", ex);
+			throw new GuiyuException("生成zip文件异常", ex);
+		}catch(Exception e){
+			logger.error("生成.zip文件异常", e);
+			throw new GuiyuException("生成zip文件异常", e);
+		}finally {
+			if (zipOutputStream != null) {
+				try {
+					zipOutputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return file;
+
+		/*File f = new File(lj);
+		InputStream istream = new FileInputStream(f);
+		return istream;*/
+	}
+
+	/**
+	 * 生成导出文件
+	 * @param fileUrl
+	 * @return
+	 */
+	private File generateFile(String fileUrl){
+		File file = new File(fileUrl);
+		File generateFile = new File(this.tmpPath + File.separator + file.getName());
+		InputStream is = null;
+		OutputStream os = null;
+		//创建url连接;
+		HttpURLConnection urlconn = null;
+		try {
+			URL url = new URL(fileUrl);
+			urlconn = (HttpURLConnection)url.openConnection();
+			//链接远程服务器;
+			urlconn.connect();
+			//	is = new BufferedInputStream(new FileInputStream(file));
+			is = new BufferedInputStream(urlconn.getInputStream());
+			os = new BufferedOutputStream(new FileOutputStream(generateFile));
+
+			byte[] buffer = new byte[is.available()];
+			int len;
+			while((len =is.read(buffer))>0){
+				os.write(buffer, 0, len);
+
+			}
+			os.flush();
+		}catch(Exception e){
+			logger.error("生成导出文件异常", e);
+			throw new GuiyuException("生成导出文件异常", e);
+		}finally{
+			if(null != is){
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("is.close error:" + e);
+					e.printStackTrace();
+				}
+			}
+
+			if(null != os){
+				try {
+					os.close();
+				} catch (IOException e) {
+					log.error("os.close error:" + e);
+					e.printStackTrace();
+				}
+			}
+
+			if(null != urlconn){
+				urlconn.disconnect();
+			}
+
+			return generateFile;
+		}
+	}
+
 }

@@ -2,17 +2,17 @@ package com.guiji.voipgateway.service.impl;
 
 import java.util.List;
 
+import com.guiji.voipgateway.service.ThirdGateWayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.guiji.utils.StrUtils;
 import com.guiji.voipgateway.constants.VoipGatewayConstants;
-import com.guiji.voipgateway.dao.SynwayMapper;
-import com.guiji.voipgateway.dao.entity.ShareTabQuery;
+import com.guiji.voipgateway.synway.dao.SynwayMapper;
+import com.guiji.voipgateway.synway.dao.entity.ShareTabQuery;
 import com.guiji.voipgateway.model.Company;
 import com.guiji.voipgateway.model.GwDevtbl;
 import com.guiji.voipgateway.model.SimPort;
-import com.guiji.voipgateway.service.VoipgatewayService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 * @version V1.0  
 */
 @Slf4j
-@Service
-public class SynwayServiceImpl implements VoipgatewayService{
+@Service("synwayService")
+public class SynwayServiceImpl implements ThirdGateWayService {
 	@Autowired
 	SynwayMapper synwayMapper;
 	

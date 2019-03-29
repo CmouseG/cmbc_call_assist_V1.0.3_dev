@@ -1,0 +1,1150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.voipgateway.dingxin.dao.TblSimMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.voipgateway.dingxin.dao.entity.TblSim" >
+    <id column="uuid" property="uuid" jdbcType="INTEGER" />
+    <result column="rec_status" property="recStatus" jdbcType="INTEGER" />
+    <result column="imsi" property="imsi" jdbcType="CHAR" />
+    <result column="alias" property="alias" jdbcType="CHAR" />
+    <result column="admin_status" property="adminStatus" jdbcType="INTEGER" />
+    <result column="opr_status" property="oprStatus" jdbcType="INTEGER" />
+    <result column="run_status" property="runStatus" jdbcType="INTEGER" />
+    <result column="action_status" property="actionStatus" jdbcType="INTEGER" />
+    <result column="action_result" property="actionResult" jdbcType="INTEGER" />
+    <result column="alm_status_bits" property="almStatusBits" jdbcType="INTEGER" />
+    <result column="domain_uuid" property="domainUuid" jdbcType="INTEGER" />
+    <result column="grp_uuid" property="grpUuid" jdbcType="INTEGER" />
+    <result column="promotion_grp_uuid" property="promotionGrpUuid" jdbcType="INTEGER" />
+    <result column="orig_zone_uuid" property="origZoneUuid" jdbcType="INTEGER" />
+    <result column="last_site_uuid" property="lastSiteUuid" jdbcType="INTEGER" />
+    <result column="next_site_uuid" property="nextSiteUuid" jdbcType="INTEGER" />
+    <result column="bkp_uuid" property="bkpUuid" jdbcType="INTEGER" />
+    <result column="local_gwp_uuid" property="localGwpUuid" jdbcType="INTEGER" />
+    <result column="lock_gwp_uuid" property="lockGwpUuid" jdbcType="INTEGER" />
+    <result column="icc_id" property="iccId" jdbcType="CHAR" />
+    <result column="bind_imei" property="bindImei" jdbcType="CHAR" />
+    <result column="pin1_code" property="pin1Code" jdbcType="CHAR" />
+    <result column="pin2_code" property="pin2Code" jdbcType="CHAR" />
+    <result column="puk1_code" property="puk1Code" jdbcType="CHAR" />
+    <result column="puk2_code" property="puk2Code" jdbcType="CHAR" />
+    <result column="operator" property="operator" jdbcType="CHAR" />
+    <result column="mobile" property="mobile" jdbcType="CHAR" />
+    <result column="sim_number" property="simNumber" jdbcType="CHAR" />
+    <result column="smsc" property="smsc" jdbcType="CHAR" />
+    <result column="money_type" property="moneyType" jdbcType="INTEGER" />
+    <result column="prepaid_fee" property="prepaidFee" jdbcType="DECIMAL" />
+    <result column="total_cost" property="totalCost" jdbcType="DECIMAL" />
+    <result column="last_balance" property="lastBalance" jdbcType="REAL" />
+    <result column="cur_balance" property="curBalance" jdbcType="REAL" />
+    <result column="left_call_time" property="leftCallTime" jdbcType="INTEGER" />
+    <result column="prom_call_time" property="promCallTime" jdbcType="INTEGER" />
+    <result column="last_group_time" property="lastGroupTime" jdbcType="TIMESTAMP" />
+    <result column="last_load_time" property="lastLoadTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_bind_time" property="lastBindTime" jdbcType="TIMESTAMP" />
+    <result column="last_used_time" property="lastUsedTime" jdbcType="TIMESTAMP" />
+    <result column="last_prom_time" property="lastPromTime" jdbcType="TIMESTAMP" />
+    <result column="last_balance_time" property="lastBalanceTime" jdbcType="TIMESTAMP" />
+    <result column="deactive_reason" property="deactiveReason" jdbcType="INTEGER" />
+    <result column="last_deactive_reason" property="lastDeactiveReason" jdbcType="INTEGER" />
+    <result column="blocked_flag" property="blockedFlag" jdbcType="INTEGER" />
+    <result column="low_balance_flag" property="lowBalanceFlag" jdbcType="INTEGER" />
+    <result column="no_balance_flag" property="noBalanceFlag" jdbcType="INTEGER" />
+    <result column="promotion_status" property="promotionStatus" jdbcType="INTEGER" />
+    <result column="promotion_count" property="promotionCount" jdbcType="INTEGER" />
+    <result column="promotion_time" property="promotionTime" jdbcType="TIMESTAMP" />
+    <result column="promotion_report" property="promotionReport" jdbcType="CHAR" />
+    <result column="hbm_acd_short_count" property="hbmAcdShortCount" jdbcType="INTEGER" />
+    <result column="hbm_acd_fail_count" property="hbmAcdFailCount" jdbcType="INTEGER" />
+    <result column="hbm_acd_sms_count" property="hbmAcdSmsCount" jdbcType="INTEGER" />
+    <result column="hbm_sms_fail_count" property="hbmSmsFailCount" jdbcType="INTEGER" />
+    <result column="hbm_call_fail_count" property="hbmCallFailCount" jdbcType="INTEGER" />
+    <result column="hbm_dtmf_fail_count" property="hbmDtmfFailCount" jdbcType="INTEGER" />
+    <result column="hbm_reg_fail_count" property="hbmRegFailCount" jdbcType="INTEGER" />
+    <result column="sim_recharged_flag" property="simRechargedFlag" jdbcType="INTEGER" />
+    <result column="paid_list_uuid" property="paidListUuid" jdbcType="INTEGER" />
+    <result column="local_sim_flag" property="localSimFlag" jdbcType="INTEGER" />
+    <result column="detail_desc" property="detailDesc" jdbcType="CHAR" />
+    <result column="set_cur_balance" property="setCurBalance" jdbcType="REAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    uuid, rec_status, imsi, `alias`, admin_status, opr_status, run_status, action_status, 
+    action_result, alm_status_bits, domain_uuid, grp_uuid, promotion_grp_uuid, orig_zone_uuid, 
+    last_site_uuid, next_site_uuid, bkp_uuid, local_gwp_uuid, lock_gwp_uuid, icc_id, 
+    bind_imei, pin1_code, pin2_code, puk1_code, puk2_code, `operator`, mobile, sim_number, 
+    smsc, money_type, prepaid_fee, total_cost, last_balance, cur_balance, left_call_time, 
+    prom_call_time, last_group_time, last_load_time, create_time, last_bind_time, last_used_time, 
+    last_prom_time, last_balance_time, deactive_reason, last_deactive_reason, blocked_flag, 
+    low_balance_flag, no_balance_flag, promotion_status, promotion_count, promotion_time, 
+    promotion_report, hbm_acd_short_count, hbm_acd_fail_count, hbm_acd_sms_count, hbm_sms_fail_count, 
+    hbm_call_fail_count, hbm_dtmf_fail_count, hbm_reg_fail_count, sim_recharged_flag, 
+    paid_list_uuid, local_sim_flag, detail_desc, set_cur_balance
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSimExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tbl_sim
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_sim
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tbl_sim
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSimExample" >
+    delete from tbl_sim
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSim" >
+    insert into tbl_sim (uuid, rec_status, imsi, 
+      `alias`, admin_status, opr_status, 
+      run_status, action_status, action_result, 
+      alm_status_bits, domain_uuid, grp_uuid, 
+      promotion_grp_uuid, orig_zone_uuid, last_site_uuid, 
+      next_site_uuid, bkp_uuid, local_gwp_uuid, 
+      lock_gwp_uuid, icc_id, bind_imei, 
+      pin1_code, pin2_code, puk1_code, 
+      puk2_code, `operator`, mobile, 
+      sim_number, smsc, money_type, 
+      prepaid_fee, total_cost, last_balance, 
+      cur_balance, left_call_time, prom_call_time, 
+      last_group_time, last_load_time, create_time, 
+      last_bind_time, last_used_time, last_prom_time, 
+      last_balance_time, deactive_reason, last_deactive_reason, 
+      blocked_flag, low_balance_flag, no_balance_flag, 
+      promotion_status, promotion_count, promotion_time, 
+      promotion_report, hbm_acd_short_count, hbm_acd_fail_count, 
+      hbm_acd_sms_count, hbm_sms_fail_count, hbm_call_fail_count, 
+      hbm_dtmf_fail_count, hbm_reg_fail_count, sim_recharged_flag, 
+      paid_list_uuid, local_sim_flag, detail_desc, 
+      set_cur_balance)
+    values (#{uuid,jdbcType=INTEGER}, #{recStatus,jdbcType=INTEGER}, #{imsi,jdbcType=CHAR}, 
+      #{alias,jdbcType=CHAR}, #{adminStatus,jdbcType=INTEGER}, #{oprStatus,jdbcType=INTEGER}, 
+      #{runStatus,jdbcType=INTEGER}, #{actionStatus,jdbcType=INTEGER}, #{actionResult,jdbcType=INTEGER}, 
+      #{almStatusBits,jdbcType=INTEGER}, #{domainUuid,jdbcType=INTEGER}, #{grpUuid,jdbcType=INTEGER}, 
+      #{promotionGrpUuid,jdbcType=INTEGER}, #{origZoneUuid,jdbcType=INTEGER}, #{lastSiteUuid,jdbcType=INTEGER}, 
+      #{nextSiteUuid,jdbcType=INTEGER}, #{bkpUuid,jdbcType=INTEGER}, #{localGwpUuid,jdbcType=INTEGER}, 
+      #{lockGwpUuid,jdbcType=INTEGER}, #{iccId,jdbcType=CHAR}, #{bindImei,jdbcType=CHAR}, 
+      #{pin1Code,jdbcType=CHAR}, #{pin2Code,jdbcType=CHAR}, #{puk1Code,jdbcType=CHAR}, 
+      #{puk2Code,jdbcType=CHAR}, #{operator,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, 
+      #{simNumber,jdbcType=CHAR}, #{smsc,jdbcType=CHAR}, #{moneyType,jdbcType=INTEGER}, 
+      #{prepaidFee,jdbcType=DECIMAL}, #{totalCost,jdbcType=DECIMAL}, #{lastBalance,jdbcType=REAL}, 
+      #{curBalance,jdbcType=REAL}, #{leftCallTime,jdbcType=INTEGER}, #{promCallTime,jdbcType=INTEGER}, 
+      #{lastGroupTime,jdbcType=TIMESTAMP}, #{lastLoadTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastBindTime,jdbcType=TIMESTAMP}, #{lastUsedTime,jdbcType=TIMESTAMP}, #{lastPromTime,jdbcType=TIMESTAMP}, 
+      #{lastBalanceTime,jdbcType=TIMESTAMP}, #{deactiveReason,jdbcType=INTEGER}, #{lastDeactiveReason,jdbcType=INTEGER}, 
+      #{blockedFlag,jdbcType=INTEGER}, #{lowBalanceFlag,jdbcType=INTEGER}, #{noBalanceFlag,jdbcType=INTEGER}, 
+      #{promotionStatus,jdbcType=INTEGER}, #{promotionCount,jdbcType=INTEGER}, #{promotionTime,jdbcType=TIMESTAMP}, 
+      #{promotionReport,jdbcType=CHAR}, #{hbmAcdShortCount,jdbcType=INTEGER}, #{hbmAcdFailCount,jdbcType=INTEGER}, 
+      #{hbmAcdSmsCount,jdbcType=INTEGER}, #{hbmSmsFailCount,jdbcType=INTEGER}, #{hbmCallFailCount,jdbcType=INTEGER}, 
+      #{hbmDtmfFailCount,jdbcType=INTEGER}, #{hbmRegFailCount,jdbcType=INTEGER}, #{simRechargedFlag,jdbcType=INTEGER}, 
+      #{paidListUuid,jdbcType=INTEGER}, #{localSimFlag,jdbcType=INTEGER}, #{detailDesc,jdbcType=CHAR}, 
+      #{setCurBalance,jdbcType=REAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSim" >
+    insert into tbl_sim
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="recStatus != null" >
+        rec_status,
+      </if>
+      <if test="imsi != null" >
+        imsi,
+      </if>
+      <if test="alias != null" >
+        `alias`,
+      </if>
+      <if test="adminStatus != null" >
+        admin_status,
+      </if>
+      <if test="oprStatus != null" >
+        opr_status,
+      </if>
+      <if test="runStatus != null" >
+        run_status,
+      </if>
+      <if test="actionStatus != null" >
+        action_status,
+      </if>
+      <if test="actionResult != null" >
+        action_result,
+      </if>
+      <if test="almStatusBits != null" >
+        alm_status_bits,
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid,
+      </if>
+      <if test="grpUuid != null" >
+        grp_uuid,
+      </if>
+      <if test="promotionGrpUuid != null" >
+        promotion_grp_uuid,
+      </if>
+      <if test="origZoneUuid != null" >
+        orig_zone_uuid,
+      </if>
+      <if test="lastSiteUuid != null" >
+        last_site_uuid,
+      </if>
+      <if test="nextSiteUuid != null" >
+        next_site_uuid,
+      </if>
+      <if test="bkpUuid != null" >
+        bkp_uuid,
+      </if>
+      <if test="localGwpUuid != null" >
+        local_gwp_uuid,
+      </if>
+      <if test="lockGwpUuid != null" >
+        lock_gwp_uuid,
+      </if>
+      <if test="iccId != null" >
+        icc_id,
+      </if>
+      <if test="bindImei != null" >
+        bind_imei,
+      </if>
+      <if test="pin1Code != null" >
+        pin1_code,
+      </if>
+      <if test="pin2Code != null" >
+        pin2_code,
+      </if>
+      <if test="puk1Code != null" >
+        puk1_code,
+      </if>
+      <if test="puk2Code != null" >
+        puk2_code,
+      </if>
+      <if test="operator != null" >
+        `operator`,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="simNumber != null" >
+        sim_number,
+      </if>
+      <if test="smsc != null" >
+        smsc,
+      </if>
+      <if test="moneyType != null" >
+        money_type,
+      </if>
+      <if test="prepaidFee != null" >
+        prepaid_fee,
+      </if>
+      <if test="totalCost != null" >
+        total_cost,
+      </if>
+      <if test="lastBalance != null" >
+        last_balance,
+      </if>
+      <if test="curBalance != null" >
+        cur_balance,
+      </if>
+      <if test="leftCallTime != null" >
+        left_call_time,
+      </if>
+      <if test="promCallTime != null" >
+        prom_call_time,
+      </if>
+      <if test="lastGroupTime != null" >
+        last_group_time,
+      </if>
+      <if test="lastLoadTime != null" >
+        last_load_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="lastBindTime != null" >
+        last_bind_time,
+      </if>
+      <if test="lastUsedTime != null" >
+        last_used_time,
+      </if>
+      <if test="lastPromTime != null" >
+        last_prom_time,
+      </if>
+      <if test="lastBalanceTime != null" >
+        last_balance_time,
+      </if>
+      <if test="deactiveReason != null" >
+        deactive_reason,
+      </if>
+      <if test="lastDeactiveReason != null" >
+        last_deactive_reason,
+      </if>
+      <if test="blockedFlag != null" >
+        blocked_flag,
+      </if>
+      <if test="lowBalanceFlag != null" >
+        low_balance_flag,
+      </if>
+      <if test="noBalanceFlag != null" >
+        no_balance_flag,
+      </if>
+      <if test="promotionStatus != null" >
+        promotion_status,
+      </if>
+      <if test="promotionCount != null" >
+        promotion_count,
+      </if>
+      <if test="promotionTime != null" >
+        promotion_time,
+      </if>
+      <if test="promotionReport != null" >
+        promotion_report,
+      </if>
+      <if test="hbmAcdShortCount != null" >
+        hbm_acd_short_count,
+      </if>
+      <if test="hbmAcdFailCount != null" >
+        hbm_acd_fail_count,
+      </if>
+      <if test="hbmAcdSmsCount != null" >
+        hbm_acd_sms_count,
+      </if>
+      <if test="hbmSmsFailCount != null" >
+        hbm_sms_fail_count,
+      </if>
+      <if test="hbmCallFailCount != null" >
+        hbm_call_fail_count,
+      </if>
+      <if test="hbmDtmfFailCount != null" >
+        hbm_dtmf_fail_count,
+      </if>
+      <if test="hbmRegFailCount != null" >
+        hbm_reg_fail_count,
+      </if>
+      <if test="simRechargedFlag != null" >
+        sim_recharged_flag,
+      </if>
+      <if test="paidListUuid != null" >
+        paid_list_uuid,
+      </if>
+      <if test="localSimFlag != null" >
+        local_sim_flag,
+      </if>
+      <if test="detailDesc != null" >
+        detail_desc,
+      </if>
+      <if test="setCurBalance != null" >
+        set_cur_balance,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=INTEGER},
+      </if>
+      <if test="recStatus != null" >
+        #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="imsi != null" >
+        #{imsi,jdbcType=CHAR},
+      </if>
+      <if test="alias != null" >
+        #{alias,jdbcType=CHAR},
+      </if>
+      <if test="adminStatus != null" >
+        #{adminStatus,jdbcType=INTEGER},
+      </if>
+      <if test="oprStatus != null" >
+        #{oprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="runStatus != null" >
+        #{runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionStatus != null" >
+        #{actionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionResult != null" >
+        #{actionResult,jdbcType=INTEGER},
+      </if>
+      <if test="almStatusBits != null" >
+        #{almStatusBits,jdbcType=INTEGER},
+      </if>
+      <if test="domainUuid != null" >
+        #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="grpUuid != null" >
+        #{grpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="promotionGrpUuid != null" >
+        #{promotionGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="origZoneUuid != null" >
+        #{origZoneUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lastSiteUuid != null" >
+        #{lastSiteUuid,jdbcType=INTEGER},
+      </if>
+      <if test="nextSiteUuid != null" >
+        #{nextSiteUuid,jdbcType=INTEGER},
+      </if>
+      <if test="bkpUuid != null" >
+        #{bkpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localGwpUuid != null" >
+        #{localGwpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockGwpUuid != null" >
+        #{lockGwpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="iccId != null" >
+        #{iccId,jdbcType=CHAR},
+      </if>
+      <if test="bindImei != null" >
+        #{bindImei,jdbcType=CHAR},
+      </if>
+      <if test="pin1Code != null" >
+        #{pin1Code,jdbcType=CHAR},
+      </if>
+      <if test="pin2Code != null" >
+        #{pin2Code,jdbcType=CHAR},
+      </if>
+      <if test="puk1Code != null" >
+        #{puk1Code,jdbcType=CHAR},
+      </if>
+      <if test="puk2Code != null" >
+        #{puk2Code,jdbcType=CHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="simNumber != null" >
+        #{simNumber,jdbcType=CHAR},
+      </if>
+      <if test="smsc != null" >
+        #{smsc,jdbcType=CHAR},
+      </if>
+      <if test="moneyType != null" >
+        #{moneyType,jdbcType=INTEGER},
+      </if>
+      <if test="prepaidFee != null" >
+        #{prepaidFee,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCost != null" >
+        #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="lastBalance != null" >
+        #{lastBalance,jdbcType=REAL},
+      </if>
+      <if test="curBalance != null" >
+        #{curBalance,jdbcType=REAL},
+      </if>
+      <if test="leftCallTime != null" >
+        #{leftCallTime,jdbcType=INTEGER},
+      </if>
+      <if test="promCallTime != null" >
+        #{promCallTime,jdbcType=INTEGER},
+      </if>
+      <if test="lastGroupTime != null" >
+        #{lastGroupTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoadTime != null" >
+        #{lastLoadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBindTime != null" >
+        #{lastBindTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUsedTime != null" >
+        #{lastUsedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastPromTime != null" >
+        #{lastPromTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBalanceTime != null" >
+        #{lastBalanceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deactiveReason != null" >
+        #{deactiveReason,jdbcType=INTEGER},
+      </if>
+      <if test="lastDeactiveReason != null" >
+        #{lastDeactiveReason,jdbcType=INTEGER},
+      </if>
+      <if test="blockedFlag != null" >
+        #{blockedFlag,jdbcType=INTEGER},
+      </if>
+      <if test="lowBalanceFlag != null" >
+        #{lowBalanceFlag,jdbcType=INTEGER},
+      </if>
+      <if test="noBalanceFlag != null" >
+        #{noBalanceFlag,jdbcType=INTEGER},
+      </if>
+      <if test="promotionStatus != null" >
+        #{promotionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="promotionCount != null" >
+        #{promotionCount,jdbcType=INTEGER},
+      </if>
+      <if test="promotionTime != null" >
+        #{promotionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="promotionReport != null" >
+        #{promotionReport,jdbcType=CHAR},
+      </if>
+      <if test="hbmAcdShortCount != null" >
+        #{hbmAcdShortCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmAcdFailCount != null" >
+        #{hbmAcdFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmAcdSmsCount != null" >
+        #{hbmAcdSmsCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmSmsFailCount != null" >
+        #{hbmSmsFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmCallFailCount != null" >
+        #{hbmCallFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmDtmfFailCount != null" >
+        #{hbmDtmfFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmRegFailCount != null" >
+        #{hbmRegFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="simRechargedFlag != null" >
+        #{simRechargedFlag,jdbcType=INTEGER},
+      </if>
+      <if test="paidListUuid != null" >
+        #{paidListUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localSimFlag != null" >
+        #{localSimFlag,jdbcType=INTEGER},
+      </if>
+      <if test="detailDesc != null" >
+        #{detailDesc,jdbcType=CHAR},
+      </if>
+      <if test="setCurBalance != null" >
+        #{setCurBalance,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSimExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_sim
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_sim
+    <set >
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.recStatus != null" >
+        rec_status = #{record.recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.imsi != null" >
+        imsi = #{record.imsi,jdbcType=CHAR},
+      </if>
+      <if test="record.alias != null" >
+        `alias` = #{record.alias,jdbcType=CHAR},
+      </if>
+      <if test="record.adminStatus != null" >
+        admin_status = #{record.adminStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.oprStatus != null" >
+        opr_status = #{record.oprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.runStatus != null" >
+        run_status = #{record.runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.actionStatus != null" >
+        action_status = #{record.actionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.actionResult != null" >
+        action_result = #{record.actionResult,jdbcType=INTEGER},
+      </if>
+      <if test="record.almStatusBits != null" >
+        alm_status_bits = #{record.almStatusBits,jdbcType=INTEGER},
+      </if>
+      <if test="record.domainUuid != null" >
+        domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.grpUuid != null" >
+        grp_uuid = #{record.grpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.promotionGrpUuid != null" >
+        promotion_grp_uuid = #{record.promotionGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.origZoneUuid != null" >
+        orig_zone_uuid = #{record.origZoneUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastSiteUuid != null" >
+        last_site_uuid = #{record.lastSiteUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.nextSiteUuid != null" >
+        next_site_uuid = #{record.nextSiteUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.bkpUuid != null" >
+        bkp_uuid = #{record.bkpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.localGwpUuid != null" >
+        local_gwp_uuid = #{record.localGwpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lockGwpUuid != null" >
+        lock_gwp_uuid = #{record.lockGwpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.iccId != null" >
+        icc_id = #{record.iccId,jdbcType=CHAR},
+      </if>
+      <if test="record.bindImei != null" >
+        bind_imei = #{record.bindImei,jdbcType=CHAR},
+      </if>
+      <if test="record.pin1Code != null" >
+        pin1_code = #{record.pin1Code,jdbcType=CHAR},
+      </if>
+      <if test="record.pin2Code != null" >
+        pin2_code = #{record.pin2Code,jdbcType=CHAR},
+      </if>
+      <if test="record.puk1Code != null" >
+        puk1_code = #{record.puk1Code,jdbcType=CHAR},
+      </if>
+      <if test="record.puk2Code != null" >
+        puk2_code = #{record.puk2Code,jdbcType=CHAR},
+      </if>
+      <if test="record.operator != null" >
+        `operator` = #{record.operator,jdbcType=CHAR},
+      </if>
+      <if test="record.mobile != null" >
+        mobile = #{record.mobile,jdbcType=CHAR},
+      </if>
+      <if test="record.simNumber != null" >
+        sim_number = #{record.simNumber,jdbcType=CHAR},
+      </if>
+      <if test="record.smsc != null" >
+        smsc = #{record.smsc,jdbcType=CHAR},
+      </if>
+      <if test="record.moneyType != null" >
+        money_type = #{record.moneyType,jdbcType=INTEGER},
+      </if>
+      <if test="record.prepaidFee != null" >
+        prepaid_fee = #{record.prepaidFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.totalCost != null" >
+        total_cost = #{record.totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="record.lastBalance != null" >
+        last_balance = #{record.lastBalance,jdbcType=REAL},
+      </if>
+      <if test="record.curBalance != null" >
+        cur_balance = #{record.curBalance,jdbcType=REAL},
+      </if>
+      <if test="record.leftCallTime != null" >
+        left_call_time = #{record.leftCallTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.promCallTime != null" >
+        prom_call_time = #{record.promCallTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastGroupTime != null" >
+        last_group_time = #{record.lastGroupTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastLoadTime != null" >
+        last_load_time = #{record.lastLoadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastBindTime != null" >
+        last_bind_time = #{record.lastBindTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastUsedTime != null" >
+        last_used_time = #{record.lastUsedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastPromTime != null" >
+        last_prom_time = #{record.lastPromTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastBalanceTime != null" >
+        last_balance_time = #{record.lastBalanceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deactiveReason != null" >
+        deactive_reason = #{record.deactiveReason,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastDeactiveReason != null" >
+        last_deactive_reason = #{record.lastDeactiveReason,jdbcType=INTEGER},
+      </if>
+      <if test="record.blockedFlag != null" >
+        blocked_flag = #{record.blockedFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.lowBalanceFlag != null" >
+        low_balance_flag = #{record.lowBalanceFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.noBalanceFlag != null" >
+        no_balance_flag = #{record.noBalanceFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.promotionStatus != null" >
+        promotion_status = #{record.promotionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.promotionCount != null" >
+        promotion_count = #{record.promotionCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.promotionTime != null" >
+        promotion_time = #{record.promotionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.promotionReport != null" >
+        promotion_report = #{record.promotionReport,jdbcType=CHAR},
+      </if>
+      <if test="record.hbmAcdShortCount != null" >
+        hbm_acd_short_count = #{record.hbmAcdShortCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hbmAcdFailCount != null" >
+        hbm_acd_fail_count = #{record.hbmAcdFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hbmAcdSmsCount != null" >
+        hbm_acd_sms_count = #{record.hbmAcdSmsCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hbmSmsFailCount != null" >
+        hbm_sms_fail_count = #{record.hbmSmsFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hbmCallFailCount != null" >
+        hbm_call_fail_count = #{record.hbmCallFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hbmDtmfFailCount != null" >
+        hbm_dtmf_fail_count = #{record.hbmDtmfFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.hbmRegFailCount != null" >
+        hbm_reg_fail_count = #{record.hbmRegFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.simRechargedFlag != null" >
+        sim_recharged_flag = #{record.simRechargedFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.paidListUuid != null" >
+        paid_list_uuid = #{record.paidListUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.localSimFlag != null" >
+        local_sim_flag = #{record.localSimFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.detailDesc != null" >
+        detail_desc = #{record.detailDesc,jdbcType=CHAR},
+      </if>
+      <if test="record.setCurBalance != null" >
+        set_cur_balance = #{record.setCurBalance,jdbcType=REAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_sim
+    set uuid = #{record.uuid,jdbcType=INTEGER},
+      rec_status = #{record.recStatus,jdbcType=INTEGER},
+      imsi = #{record.imsi,jdbcType=CHAR},
+      `alias` = #{record.alias,jdbcType=CHAR},
+      admin_status = #{record.adminStatus,jdbcType=INTEGER},
+      opr_status = #{record.oprStatus,jdbcType=INTEGER},
+      run_status = #{record.runStatus,jdbcType=INTEGER},
+      action_status = #{record.actionStatus,jdbcType=INTEGER},
+      action_result = #{record.actionResult,jdbcType=INTEGER},
+      alm_status_bits = #{record.almStatusBits,jdbcType=INTEGER},
+      domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      grp_uuid = #{record.grpUuid,jdbcType=INTEGER},
+      promotion_grp_uuid = #{record.promotionGrpUuid,jdbcType=INTEGER},
+      orig_zone_uuid = #{record.origZoneUuid,jdbcType=INTEGER},
+      last_site_uuid = #{record.lastSiteUuid,jdbcType=INTEGER},
+      next_site_uuid = #{record.nextSiteUuid,jdbcType=INTEGER},
+      bkp_uuid = #{record.bkpUuid,jdbcType=INTEGER},
+      local_gwp_uuid = #{record.localGwpUuid,jdbcType=INTEGER},
+      lock_gwp_uuid = #{record.lockGwpUuid,jdbcType=INTEGER},
+      icc_id = #{record.iccId,jdbcType=CHAR},
+      bind_imei = #{record.bindImei,jdbcType=CHAR},
+      pin1_code = #{record.pin1Code,jdbcType=CHAR},
+      pin2_code = #{record.pin2Code,jdbcType=CHAR},
+      puk1_code = #{record.puk1Code,jdbcType=CHAR},
+      puk2_code = #{record.puk2Code,jdbcType=CHAR},
+      `operator` = #{record.operator,jdbcType=CHAR},
+      mobile = #{record.mobile,jdbcType=CHAR},
+      sim_number = #{record.simNumber,jdbcType=CHAR},
+      smsc = #{record.smsc,jdbcType=CHAR},
+      money_type = #{record.moneyType,jdbcType=INTEGER},
+      prepaid_fee = #{record.prepaidFee,jdbcType=DECIMAL},
+      total_cost = #{record.totalCost,jdbcType=DECIMAL},
+      last_balance = #{record.lastBalance,jdbcType=REAL},
+      cur_balance = #{record.curBalance,jdbcType=REAL},
+      left_call_time = #{record.leftCallTime,jdbcType=INTEGER},
+      prom_call_time = #{record.promCallTime,jdbcType=INTEGER},
+      last_group_time = #{record.lastGroupTime,jdbcType=TIMESTAMP},
+      last_load_time = #{record.lastLoadTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      last_bind_time = #{record.lastBindTime,jdbcType=TIMESTAMP},
+      last_used_time = #{record.lastUsedTime,jdbcType=TIMESTAMP},
+      last_prom_time = #{record.lastPromTime,jdbcType=TIMESTAMP},
+      last_balance_time = #{record.lastBalanceTime,jdbcType=TIMESTAMP},
+      deactive_reason = #{record.deactiveReason,jdbcType=INTEGER},
+      last_deactive_reason = #{record.lastDeactiveReason,jdbcType=INTEGER},
+      blocked_flag = #{record.blockedFlag,jdbcType=INTEGER},
+      low_balance_flag = #{record.lowBalanceFlag,jdbcType=INTEGER},
+      no_balance_flag = #{record.noBalanceFlag,jdbcType=INTEGER},
+      promotion_status = #{record.promotionStatus,jdbcType=INTEGER},
+      promotion_count = #{record.promotionCount,jdbcType=INTEGER},
+      promotion_time = #{record.promotionTime,jdbcType=TIMESTAMP},
+      promotion_report = #{record.promotionReport,jdbcType=CHAR},
+      hbm_acd_short_count = #{record.hbmAcdShortCount,jdbcType=INTEGER},
+      hbm_acd_fail_count = #{record.hbmAcdFailCount,jdbcType=INTEGER},
+      hbm_acd_sms_count = #{record.hbmAcdSmsCount,jdbcType=INTEGER},
+      hbm_sms_fail_count = #{record.hbmSmsFailCount,jdbcType=INTEGER},
+      hbm_call_fail_count = #{record.hbmCallFailCount,jdbcType=INTEGER},
+      hbm_dtmf_fail_count = #{record.hbmDtmfFailCount,jdbcType=INTEGER},
+      hbm_reg_fail_count = #{record.hbmRegFailCount,jdbcType=INTEGER},
+      sim_recharged_flag = #{record.simRechargedFlag,jdbcType=INTEGER},
+      paid_list_uuid = #{record.paidListUuid,jdbcType=INTEGER},
+      local_sim_flag = #{record.localSimFlag,jdbcType=INTEGER},
+      detail_desc = #{record.detailDesc,jdbcType=CHAR},
+      set_cur_balance = #{record.setCurBalance,jdbcType=REAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSim" >
+    update tbl_sim
+    <set >
+      <if test="recStatus != null" >
+        rec_status = #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="imsi != null" >
+        imsi = #{imsi,jdbcType=CHAR},
+      </if>
+      <if test="alias != null" >
+        `alias` = #{alias,jdbcType=CHAR},
+      </if>
+      <if test="adminStatus != null" >
+        admin_status = #{adminStatus,jdbcType=INTEGER},
+      </if>
+      <if test="oprStatus != null" >
+        opr_status = #{oprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="runStatus != null" >
+        run_status = #{runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionStatus != null" >
+        action_status = #{actionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionResult != null" >
+        action_result = #{actionResult,jdbcType=INTEGER},
+      </if>
+      <if test="almStatusBits != null" >
+        alm_status_bits = #{almStatusBits,jdbcType=INTEGER},
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="grpUuid != null" >
+        grp_uuid = #{grpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="promotionGrpUuid != null" >
+        promotion_grp_uuid = #{promotionGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="origZoneUuid != null" >
+        orig_zone_uuid = #{origZoneUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lastSiteUuid != null" >
+        last_site_uuid = #{lastSiteUuid,jdbcType=INTEGER},
+      </if>
+      <if test="nextSiteUuid != null" >
+        next_site_uuid = #{nextSiteUuid,jdbcType=INTEGER},
+      </if>
+      <if test="bkpUuid != null" >
+        bkp_uuid = #{bkpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localGwpUuid != null" >
+        local_gwp_uuid = #{localGwpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockGwpUuid != null" >
+        lock_gwp_uuid = #{lockGwpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="iccId != null" >
+        icc_id = #{iccId,jdbcType=CHAR},
+      </if>
+      <if test="bindImei != null" >
+        bind_imei = #{bindImei,jdbcType=CHAR},
+      </if>
+      <if test="pin1Code != null" >
+        pin1_code = #{pin1Code,jdbcType=CHAR},
+      </if>
+      <if test="pin2Code != null" >
+        pin2_code = #{pin2Code,jdbcType=CHAR},
+      </if>
+      <if test="puk1Code != null" >
+        puk1_code = #{puk1Code,jdbcType=CHAR},
+      </if>
+      <if test="puk2Code != null" >
+        puk2_code = #{puk2Code,jdbcType=CHAR},
+      </if>
+      <if test="operator != null" >
+        `operator` = #{operator,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="simNumber != null" >
+        sim_number = #{simNumber,jdbcType=CHAR},
+      </if>
+      <if test="smsc != null" >
+        smsc = #{smsc,jdbcType=CHAR},
+      </if>
+      <if test="moneyType != null" >
+        money_type = #{moneyType,jdbcType=INTEGER},
+      </if>
+      <if test="prepaidFee != null" >
+        prepaid_fee = #{prepaidFee,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCost != null" >
+        total_cost = #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="lastBalance != null" >
+        last_balance = #{lastBalance,jdbcType=REAL},
+      </if>
+      <if test="curBalance != null" >
+        cur_balance = #{curBalance,jdbcType=REAL},
+      </if>
+      <if test="leftCallTime != null" >
+        left_call_time = #{leftCallTime,jdbcType=INTEGER},
+      </if>
+      <if test="promCallTime != null" >
+        prom_call_time = #{promCallTime,jdbcType=INTEGER},
+      </if>
+      <if test="lastGroupTime != null" >
+        last_group_time = #{lastGroupTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoadTime != null" >
+        last_load_time = #{lastLoadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBindTime != null" >
+        last_bind_time = #{lastBindTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUsedTime != null" >
+        last_used_time = #{lastUsedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastPromTime != null" >
+        last_prom_time = #{lastPromTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastBalanceTime != null" >
+        last_balance_time = #{lastBalanceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deactiveReason != null" >
+        deactive_reason = #{deactiveReason,jdbcType=INTEGER},
+      </if>
+      <if test="lastDeactiveReason != null" >
+        last_deactive_reason = #{lastDeactiveReason,jdbcType=INTEGER},
+      </if>
+      <if test="blockedFlag != null" >
+        blocked_flag = #{blockedFlag,jdbcType=INTEGER},
+      </if>
+      <if test="lowBalanceFlag != null" >
+        low_balance_flag = #{lowBalanceFlag,jdbcType=INTEGER},
+      </if>
+      <if test="noBalanceFlag != null" >
+        no_balance_flag = #{noBalanceFlag,jdbcType=INTEGER},
+      </if>
+      <if test="promotionStatus != null" >
+        promotion_status = #{promotionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="promotionCount != null" >
+        promotion_count = #{promotionCount,jdbcType=INTEGER},
+      </if>
+      <if test="promotionTime != null" >
+        promotion_time = #{promotionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="promotionReport != null" >
+        promotion_report = #{promotionReport,jdbcType=CHAR},
+      </if>
+      <if test="hbmAcdShortCount != null" >
+        hbm_acd_short_count = #{hbmAcdShortCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmAcdFailCount != null" >
+        hbm_acd_fail_count = #{hbmAcdFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmAcdSmsCount != null" >
+        hbm_acd_sms_count = #{hbmAcdSmsCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmSmsFailCount != null" >
+        hbm_sms_fail_count = #{hbmSmsFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmCallFailCount != null" >
+        hbm_call_fail_count = #{hbmCallFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmDtmfFailCount != null" >
+        hbm_dtmf_fail_count = #{hbmDtmfFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="hbmRegFailCount != null" >
+        hbm_reg_fail_count = #{hbmRegFailCount,jdbcType=INTEGER},
+      </if>
+      <if test="simRechargedFlag != null" >
+        sim_recharged_flag = #{simRechargedFlag,jdbcType=INTEGER},
+      </if>
+      <if test="paidListUuid != null" >
+        paid_list_uuid = #{paidListUuid,jdbcType=INTEGER},
+      </if>
+      <if test="localSimFlag != null" >
+        local_sim_flag = #{localSimFlag,jdbcType=INTEGER},
+      </if>
+      <if test="detailDesc != null" >
+        detail_desc = #{detailDesc,jdbcType=CHAR},
+      </if>
+      <if test="setCurBalance != null" >
+        set_cur_balance = #{setCurBalance,jdbcType=REAL},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblSim" >
+    update tbl_sim
+    set rec_status = #{recStatus,jdbcType=INTEGER},
+      imsi = #{imsi,jdbcType=CHAR},
+      `alias` = #{alias,jdbcType=CHAR},
+      admin_status = #{adminStatus,jdbcType=INTEGER},
+      opr_status = #{oprStatus,jdbcType=INTEGER},
+      run_status = #{runStatus,jdbcType=INTEGER},
+      action_status = #{actionStatus,jdbcType=INTEGER},
+      action_result = #{actionResult,jdbcType=INTEGER},
+      alm_status_bits = #{almStatusBits,jdbcType=INTEGER},
+      domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      grp_uuid = #{grpUuid,jdbcType=INTEGER},
+      promotion_grp_uuid = #{promotionGrpUuid,jdbcType=INTEGER},
+      orig_zone_uuid = #{origZoneUuid,jdbcType=INTEGER},
+      last_site_uuid = #{lastSiteUuid,jdbcType=INTEGER},
+      next_site_uuid = #{nextSiteUuid,jdbcType=INTEGER},
+      bkp_uuid = #{bkpUuid,jdbcType=INTEGER},
+      local_gwp_uuid = #{localGwpUuid,jdbcType=INTEGER},
+      lock_gwp_uuid = #{lockGwpUuid,jdbcType=INTEGER},
+      icc_id = #{iccId,jdbcType=CHAR},
+      bind_imei = #{bindImei,jdbcType=CHAR},
+      pin1_code = #{pin1Code,jdbcType=CHAR},
+      pin2_code = #{pin2Code,jdbcType=CHAR},
+      puk1_code = #{puk1Code,jdbcType=CHAR},
+      puk2_code = #{puk2Code,jdbcType=CHAR},
+      `operator` = #{operator,jdbcType=CHAR},
+      mobile = #{mobile,jdbcType=CHAR},
+      sim_number = #{simNumber,jdbcType=CHAR},
+      smsc = #{smsc,jdbcType=CHAR},
+      money_type = #{moneyType,jdbcType=INTEGER},
+      prepaid_fee = #{prepaidFee,jdbcType=DECIMAL},
+      total_cost = #{totalCost,jdbcType=DECIMAL},
+      last_balance = #{lastBalance,jdbcType=REAL},
+      cur_balance = #{curBalance,jdbcType=REAL},
+      left_call_time = #{leftCallTime,jdbcType=INTEGER},
+      prom_call_time = #{promCallTime,jdbcType=INTEGER},
+      last_group_time = #{lastGroupTime,jdbcType=TIMESTAMP},
+      last_load_time = #{lastLoadTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      last_bind_time = #{lastBindTime,jdbcType=TIMESTAMP},
+      last_used_time = #{lastUsedTime,jdbcType=TIMESTAMP},
+      last_prom_time = #{lastPromTime,jdbcType=TIMESTAMP},
+      last_balance_time = #{lastBalanceTime,jdbcType=TIMESTAMP},
+      deactive_reason = #{deactiveReason,jdbcType=INTEGER},
+      last_deactive_reason = #{lastDeactiveReason,jdbcType=INTEGER},
+      blocked_flag = #{blockedFlag,jdbcType=INTEGER},
+      low_balance_flag = #{lowBalanceFlag,jdbcType=INTEGER},
+      no_balance_flag = #{noBalanceFlag,jdbcType=INTEGER},
+      promotion_status = #{promotionStatus,jdbcType=INTEGER},
+      promotion_count = #{promotionCount,jdbcType=INTEGER},
+      promotion_time = #{promotionTime,jdbcType=TIMESTAMP},
+      promotion_report = #{promotionReport,jdbcType=CHAR},
+      hbm_acd_short_count = #{hbmAcdShortCount,jdbcType=INTEGER},
+      hbm_acd_fail_count = #{hbmAcdFailCount,jdbcType=INTEGER},
+      hbm_acd_sms_count = #{hbmAcdSmsCount,jdbcType=INTEGER},
+      hbm_sms_fail_count = #{hbmSmsFailCount,jdbcType=INTEGER},
+      hbm_call_fail_count = #{hbmCallFailCount,jdbcType=INTEGER},
+      hbm_dtmf_fail_count = #{hbmDtmfFailCount,jdbcType=INTEGER},
+      hbm_reg_fail_count = #{hbmRegFailCount,jdbcType=INTEGER},
+      sim_recharged_flag = #{simRechargedFlag,jdbcType=INTEGER},
+      paid_list_uuid = #{paidListUuid,jdbcType=INTEGER},
+      local_sim_flag = #{localSimFlag,jdbcType=INTEGER},
+      detail_desc = #{detailDesc,jdbcType=CHAR},
+      set_cur_balance = #{setCurBalance,jdbcType=REAL}
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+</mapper>

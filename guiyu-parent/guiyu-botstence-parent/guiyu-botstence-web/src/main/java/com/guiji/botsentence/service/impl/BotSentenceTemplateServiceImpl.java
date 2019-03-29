@@ -177,5 +177,18 @@ public class BotSentenceTemplateServiceImpl implements IBotSentenceTemplateServi
 		example.setOrderByClause(" crt_time");
 		return botSentenceTemplateMapper.selectByExample(example);
 	}
+	
+	@Override
+	public BotSentenceTemplate getBotSentenceTemplateByTemplateId(String templateId) {
+		if(StringUtils.isNotBlank(templateId)) {
+			BotSentenceTemplateExample example = new BotSentenceTemplateExample();
+			example.createCriteria().andTemplateIdEqualTo(templateId);
+			List<BotSentenceTemplate> list = botSentenceTemplateMapper.selectByExample(example);
+			if(null != list && list.size() > 0) {
+				return list.get(0);
+			}
+		}
+		return null;
+	}
 
 }

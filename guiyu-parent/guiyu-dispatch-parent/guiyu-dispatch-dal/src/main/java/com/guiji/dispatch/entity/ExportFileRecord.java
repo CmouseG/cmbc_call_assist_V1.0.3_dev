@@ -67,6 +67,16 @@ public class ExportFileRecord extends BaseBean {
 
     private String orgCode;
 
+    /**
+     * 创建者
+     */
+    private String createName;
+
+    /**
+     * 创建日期
+     */
+    private String createTime;
+
     public String getRecordId() {
         return recordId;
     }
@@ -193,5 +203,21 @@ public class ExportFileRecord extends BaseBean {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

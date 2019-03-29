@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.voipgateway.dingxin.dao.TblPortMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.voipgateway.dingxin.dao.entity.TblPort" >
+    <id column="uuid" property="uuid" jdbcType="INTEGER" />
+    <result column="rec_status" property="recStatus" jdbcType="INTEGER" />
+    <result column="ne_uuid" property="neUuid" jdbcType="INTEGER" />
+    <result column="shelf_no" property="shelfNo" jdbcType="INTEGER" />
+    <result column="slot_no" property="slotNo" jdbcType="INTEGER" />
+    <result column="port_no" property="portNo" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="alias" property="alias" jdbcType="CHAR" />
+    <result column="admin_status" property="adminStatus" jdbcType="INTEGER" />
+    <result column="opr_status" property="oprStatus" jdbcType="INTEGER" />
+    <result column="run_status" property="runStatus" jdbcType="INTEGER" />
+    <result column="action_status" property="actionStatus" jdbcType="INTEGER" />
+    <result column="action_result" property="actionResult" jdbcType="INTEGER" />
+    <result column="alm_status_bits" property="almStatusBits" jdbcType="INTEGER" />
+    <result column="domain_uuid" property="domainUuid" jdbcType="INTEGER" />
+    <result column="port_policy_uuid" property="portPolicyUuid" jdbcType="INTEGER" />
+    <result column="port_grp_uuid" property="portGrpUuid" jdbcType="INTEGER" />
+    <result column="lock_port_uuid" property="lockPortUuid" jdbcType="INTEGER" />
+    <result column="lock_sim_uuid" property="lockSimUuid" jdbcType="INTEGER" />
+    <result column="lock_bkp_uuid" property="lockBkpUuid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    uuid, rec_status, ne_uuid, shelf_no, slot_no, port_no, `type`, `alias`, admin_status, 
+    opr_status, run_status, action_status, action_result, alm_status_bits, domain_uuid, 
+    port_policy_uuid, port_grp_uuid, lock_port_uuid, lock_sim_uuid, lock_bkp_uuid
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPortExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tbl_port
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_port
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tbl_port
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPortExample" >
+    delete from tbl_port
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPort" >
+    insert into tbl_port (uuid, rec_status, ne_uuid, 
+      shelf_no, slot_no, port_no, 
+      `type`, `alias`, admin_status, 
+      opr_status, run_status, action_status, 
+      action_result, alm_status_bits, domain_uuid, 
+      port_policy_uuid, port_grp_uuid, lock_port_uuid, 
+      lock_sim_uuid, lock_bkp_uuid)
+    values (#{uuid,jdbcType=INTEGER}, #{recStatus,jdbcType=INTEGER}, #{neUuid,jdbcType=INTEGER}, 
+      #{shelfNo,jdbcType=INTEGER}, #{slotNo,jdbcType=INTEGER}, #{portNo,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{alias,jdbcType=CHAR}, #{adminStatus,jdbcType=INTEGER}, 
+      #{oprStatus,jdbcType=INTEGER}, #{runStatus,jdbcType=INTEGER}, #{actionStatus,jdbcType=INTEGER}, 
+      #{actionResult,jdbcType=INTEGER}, #{almStatusBits,jdbcType=INTEGER}, #{domainUuid,jdbcType=INTEGER}, 
+      #{portPolicyUuid,jdbcType=INTEGER}, #{portGrpUuid,jdbcType=INTEGER}, #{lockPortUuid,jdbcType=INTEGER}, 
+      #{lockSimUuid,jdbcType=INTEGER}, #{lockBkpUuid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPort" >
+    insert into tbl_port
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="recStatus != null" >
+        rec_status,
+      </if>
+      <if test="neUuid != null" >
+        ne_uuid,
+      </if>
+      <if test="shelfNo != null" >
+        shelf_no,
+      </if>
+      <if test="slotNo != null" >
+        slot_no,
+      </if>
+      <if test="portNo != null" >
+        port_no,
+      </if>
+      <if test="type != null" >
+        `type`,
+      </if>
+      <if test="alias != null" >
+        `alias`,
+      </if>
+      <if test="adminStatus != null" >
+        admin_status,
+      </if>
+      <if test="oprStatus != null" >
+        opr_status,
+      </if>
+      <if test="runStatus != null" >
+        run_status,
+      </if>
+      <if test="actionStatus != null" >
+        action_status,
+      </if>
+      <if test="actionResult != null" >
+        action_result,
+      </if>
+      <if test="almStatusBits != null" >
+        alm_status_bits,
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid,
+      </if>
+      <if test="portPolicyUuid != null" >
+        port_policy_uuid,
+      </if>
+      <if test="portGrpUuid != null" >
+        port_grp_uuid,
+      </if>
+      <if test="lockPortUuid != null" >
+        lock_port_uuid,
+      </if>
+      <if test="lockSimUuid != null" >
+        lock_sim_uuid,
+      </if>
+      <if test="lockBkpUuid != null" >
+        lock_bkp_uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=INTEGER},
+      </if>
+      <if test="recStatus != null" >
+        #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="neUuid != null" >
+        #{neUuid,jdbcType=INTEGER},
+      </if>
+      <if test="shelfNo != null" >
+        #{shelfNo,jdbcType=INTEGER},
+      </if>
+      <if test="slotNo != null" >
+        #{slotNo,jdbcType=INTEGER},
+      </if>
+      <if test="portNo != null" >
+        #{portNo,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="alias != null" >
+        #{alias,jdbcType=CHAR},
+      </if>
+      <if test="adminStatus != null" >
+        #{adminStatus,jdbcType=INTEGER},
+      </if>
+      <if test="oprStatus != null" >
+        #{oprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="runStatus != null" >
+        #{runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionStatus != null" >
+        #{actionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionResult != null" >
+        #{actionResult,jdbcType=INTEGER},
+      </if>
+      <if test="almStatusBits != null" >
+        #{almStatusBits,jdbcType=INTEGER},
+      </if>
+      <if test="domainUuid != null" >
+        #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="portPolicyUuid != null" >
+        #{portPolicyUuid,jdbcType=INTEGER},
+      </if>
+      <if test="portGrpUuid != null" >
+        #{portGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockPortUuid != null" >
+        #{lockPortUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockSimUuid != null" >
+        #{lockSimUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockBkpUuid != null" >
+        #{lockBkpUuid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPortExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_port
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_port
+    <set >
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.recStatus != null" >
+        rec_status = #{record.recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.neUuid != null" >
+        ne_uuid = #{record.neUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.shelfNo != null" >
+        shelf_no = #{record.shelfNo,jdbcType=INTEGER},
+      </if>
+      <if test="record.slotNo != null" >
+        slot_no = #{record.slotNo,jdbcType=INTEGER},
+      </if>
+      <if test="record.portNo != null" >
+        port_no = #{record.portNo,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null" >
+        `type` = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.alias != null" >
+        `alias` = #{record.alias,jdbcType=CHAR},
+      </if>
+      <if test="record.adminStatus != null" >
+        admin_status = #{record.adminStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.oprStatus != null" >
+        opr_status = #{record.oprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.runStatus != null" >
+        run_status = #{record.runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.actionStatus != null" >
+        action_status = #{record.actionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.actionResult != null" >
+        action_result = #{record.actionResult,jdbcType=INTEGER},
+      </if>
+      <if test="record.almStatusBits != null" >
+        alm_status_bits = #{record.almStatusBits,jdbcType=INTEGER},
+      </if>
+      <if test="record.domainUuid != null" >
+        domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.portPolicyUuid != null" >
+        port_policy_uuid = #{record.portPolicyUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.portGrpUuid != null" >
+        port_grp_uuid = #{record.portGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lockPortUuid != null" >
+        lock_port_uuid = #{record.lockPortUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lockSimUuid != null" >
+        lock_sim_uuid = #{record.lockSimUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lockBkpUuid != null" >
+        lock_bkp_uuid = #{record.lockBkpUuid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_port
+    set uuid = #{record.uuid,jdbcType=INTEGER},
+      rec_status = #{record.recStatus,jdbcType=INTEGER},
+      ne_uuid = #{record.neUuid,jdbcType=INTEGER},
+      shelf_no = #{record.shelfNo,jdbcType=INTEGER},
+      slot_no = #{record.slotNo,jdbcType=INTEGER},
+      port_no = #{record.portNo,jdbcType=INTEGER},
+      `type` = #{record.type,jdbcType=INTEGER},
+      `alias` = #{record.alias,jdbcType=CHAR},
+      admin_status = #{record.adminStatus,jdbcType=INTEGER},
+      opr_status = #{record.oprStatus,jdbcType=INTEGER},
+      run_status = #{record.runStatus,jdbcType=INTEGER},
+      action_status = #{record.actionStatus,jdbcType=INTEGER},
+      action_result = #{record.actionResult,jdbcType=INTEGER},
+      alm_status_bits = #{record.almStatusBits,jdbcType=INTEGER},
+      domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      port_policy_uuid = #{record.portPolicyUuid,jdbcType=INTEGER},
+      port_grp_uuid = #{record.portGrpUuid,jdbcType=INTEGER},
+      lock_port_uuid = #{record.lockPortUuid,jdbcType=INTEGER},
+      lock_sim_uuid = #{record.lockSimUuid,jdbcType=INTEGER},
+      lock_bkp_uuid = #{record.lockBkpUuid,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPort" >
+    update tbl_port
+    <set >
+      <if test="recStatus != null" >
+        rec_status = #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="neUuid != null" >
+        ne_uuid = #{neUuid,jdbcType=INTEGER},
+      </if>
+      <if test="shelfNo != null" >
+        shelf_no = #{shelfNo,jdbcType=INTEGER},
+      </if>
+      <if test="slotNo != null" >
+        slot_no = #{slotNo,jdbcType=INTEGER},
+      </if>
+      <if test="portNo != null" >
+        port_no = #{portNo,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="alias != null" >
+        `alias` = #{alias,jdbcType=CHAR},
+      </if>
+      <if test="adminStatus != null" >
+        admin_status = #{adminStatus,jdbcType=INTEGER},
+      </if>
+      <if test="oprStatus != null" >
+        opr_status = #{oprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="runStatus != null" >
+        run_status = #{runStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionStatus != null" >
+        action_status = #{actionStatus,jdbcType=INTEGER},
+      </if>
+      <if test="actionResult != null" >
+        action_result = #{actionResult,jdbcType=INTEGER},
+      </if>
+      <if test="almStatusBits != null" >
+        alm_status_bits = #{almStatusBits,jdbcType=INTEGER},
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="portPolicyUuid != null" >
+        port_policy_uuid = #{portPolicyUuid,jdbcType=INTEGER},
+      </if>
+      <if test="portGrpUuid != null" >
+        port_grp_uuid = #{portGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockPortUuid != null" >
+        lock_port_uuid = #{lockPortUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockSimUuid != null" >
+        lock_sim_uuid = #{lockSimUuid,jdbcType=INTEGER},
+      </if>
+      <if test="lockBkpUuid != null" >
+        lock_bkp_uuid = #{lockBkpUuid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblPort" >
+    update tbl_port
+    set rec_status = #{recStatus,jdbcType=INTEGER},
+      ne_uuid = #{neUuid,jdbcType=INTEGER},
+      shelf_no = #{shelfNo,jdbcType=INTEGER},
+      slot_no = #{slotNo,jdbcType=INTEGER},
+      port_no = #{portNo,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=INTEGER},
+      `alias` = #{alias,jdbcType=CHAR},
+      admin_status = #{adminStatus,jdbcType=INTEGER},
+      opr_status = #{oprStatus,jdbcType=INTEGER},
+      run_status = #{runStatus,jdbcType=INTEGER},
+      action_status = #{actionStatus,jdbcType=INTEGER},
+      action_result = #{actionResult,jdbcType=INTEGER},
+      alm_status_bits = #{almStatusBits,jdbcType=INTEGER},
+      domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      port_policy_uuid = #{portPolicyUuid,jdbcType=INTEGER},
+      port_grp_uuid = #{portGrpUuid,jdbcType=INTEGER},
+      lock_port_uuid = #{lockPortUuid,jdbcType=INTEGER},
+      lock_sim_uuid = #{lockSimUuid,jdbcType=INTEGER},
+      lock_bkp_uuid = #{lockBkpUuid,jdbcType=INTEGER}
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+</mapper>

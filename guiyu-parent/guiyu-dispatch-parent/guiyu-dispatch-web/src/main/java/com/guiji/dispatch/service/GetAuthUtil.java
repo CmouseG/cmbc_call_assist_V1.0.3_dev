@@ -1,11 +1,15 @@
 package com.guiji.dispatch.service;
 
+import com.guiji.component.result.Result;
 import com.guiji.dispatch.constant.AuthConstant;
 import com.guiji.dispatch.enums.AuthLevelEnum;
 import com.guiji.user.dao.entity.SysOrganization;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class GetAuthUtil {
@@ -34,6 +38,23 @@ public class GetAuthUtil {
                 return orgCode;
             }*/
             return orgCode;
+        }else{
+            return null;
+        }
+    }
+
+    public List<Integer> getOrgIdsByAuthLevel(Integer authLevel, Integer orgId){
+        if(null != authLevel
+                && (AuthLevelEnum.ORG.getLevel() == authLevel || AuthLevelEnum.ORG_EXT.getLevel() == authLevel)){
+            List<Integer> orgIds = new ArrayList<Integer>();
+            if(AuthLevelEnum.ORG.getLevel() == authLevel){
+                orgIds.add(orgId);
+            }
+
+            if(AuthLevelEnum.ORG_EXT.getLevel() == authLevel){
+                orgIds = getApiService.getSubOrgIdByOrgId(orgId);
+            }
+            return orgIds;
         }else{
             return null;
         }

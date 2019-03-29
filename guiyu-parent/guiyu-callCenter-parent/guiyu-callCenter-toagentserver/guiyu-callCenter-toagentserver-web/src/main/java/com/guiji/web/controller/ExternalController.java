@@ -94,7 +94,7 @@ public class ExternalController implements IAgentGroup{
     public Result.ReturnData<AgentSumResponse> getAgentStateSum(@RequestParam String orgCode,@RequestHeader Long userId){
         log.info("收到获取座席状态统计，orgCode[{}]", orgCode);
         Agent agentUser = agentService.getAgentByCustomerId(userId);
-        if(agentUser==null){
+        if(agentUser==null||orgCode.equals("1")){
             return Result.ok(null);
         }
         AgentSumResponse agentSumResponse = new AgentSumResponse();

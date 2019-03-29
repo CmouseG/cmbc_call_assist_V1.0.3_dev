@@ -26,10 +26,11 @@ public interface VoipGatewayRemote {
 	/**
 	 * 根据公司编号查找公司信息
 	 * @param companyId
+	 * @param gwBrand 网关品牌：三汇，鼎信
 	 * @return
 	 */
     @PostMapping(value = "/remote/queryCompanyById")
-	Result.ReturnData<Company> queryCompanyById(@RequestParam(value="companyId",required=true) Integer companyId);
+	Result.ReturnData<Company> queryCompanyById(@RequestParam(value = "brand")String gwBrand, @RequestParam(value="companyId",required=true) Integer companyId);
     
     
     /**
@@ -38,7 +39,7 @@ public interface VoipGatewayRemote {
      * @return
      */
     @PostMapping(value = "/remote/queryCompanyByDevName")
-	Result.ReturnData<GwDevtbl> queryCompanyByDevName(@RequestParam(value="devName",required=true) String devName);
+	Result.ReturnData<GwDevtbl> queryCompanyByDevName(@RequestParam(value = "brand")String gwBrand, @RequestParam(value="devName",required=true) String devName);
     
     
     /**
@@ -48,6 +49,7 @@ public interface VoipGatewayRemote {
      */
     @PostMapping(value = "/remote/queryGwDevByDevId")
 	Result.ReturnData<GwDevtbl> queryGwDevByDevId(
+			@RequestParam(value = "brand")String gwBrand,
 			@RequestParam(value="companyId",required=true) Integer companyId,
 			@RequestParam(value="devId",required=true) Integer devId);
     
@@ -57,7 +59,7 @@ public interface VoipGatewayRemote {
      * @return
      */
     @PostMapping(value = "/remote/queryGwDevtblListByCompId")
-	Result.ReturnData<List<GwDevtbl>> queryGwDevtblListByCompId(@RequestParam(value="companyId",required=true) Integer companyId);
+	Result.ReturnData<List<GwDevtbl>> queryGwDevtblListByCompId(@RequestParam(value = "brand")String gwBrand, @RequestParam(value="companyId",required=true) Integer companyId);
     
     
     /**
@@ -68,6 +70,7 @@ public interface VoipGatewayRemote {
      */
     @PostMapping(value = "/remote/querySimPortListByDevId")
 	Result.ReturnData<List<SimPort>> querySimPortListByDevId(
+			@RequestParam(value = "brand")String gwBrand,
 			@RequestParam(value="companyId",required=true) Integer companyId,
 			@RequestParam(value="devId",required=true) Integer devId);
 }

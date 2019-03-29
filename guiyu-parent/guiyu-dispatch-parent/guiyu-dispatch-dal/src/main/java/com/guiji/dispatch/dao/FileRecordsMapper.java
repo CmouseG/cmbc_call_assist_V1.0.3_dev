@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.guiji.dispatch.dto.QueryFileRecordsDto;
 import com.guiji.dispatch.sys.ResultPage;
+import com.guiji.dispatch.vo.FileRecordsListVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface FileRecordsMapper {
@@ -45,4 +46,11 @@ public interface FileRecordsMapper {
 
 
     FileRecords queryFileRecordById(@Param("id") Long id);
+
+
+    //分页查询导入记录及失败数量
+    List<FileRecordsListVo> queryFileRecordListPage(@Param("record") QueryFileRecordsDto queryRecord,
+                                                    @Param("startTime") Date startTime,
+                                                    @Param("endTime") Date endTime,
+                                                    @Param("page") ResultPage<FileRecords> page);
 }

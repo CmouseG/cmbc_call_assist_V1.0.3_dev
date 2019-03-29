@@ -217,8 +217,8 @@ public class UserController implements IAuth {
 	}
 
 	@RequestMapping("/user/selectLikeUserName")
-	public List<Object> selectLikeUserName(UserParamVo param, @RequestHeader Long userId) {
-		return service.selectLikeUserName(param, userId);
+	public List<Object> selectLikeUserName(UserParamVo param, @RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode) {
+		return service.selectLikeUserName(param, userId, authLevel, orgCode);
 	}
 
 	@RequestMapping("/user/getAllCompanyUser")
@@ -396,5 +396,13 @@ public class UserController implements IAuth {
 	public ReturnData<Boolean> isAgentUser(@RequestParam("userId") Integer userId){
 		boolean isAgent = service.isAgentUser(userId);
 		return Result.ok(isAgent);
+	}
+	
+	/**
+	 * 获取首页账号数
+	 */
+	@RequestMapping("/user/getUserCount")
+	public ReturnData<Integer> getUserCount(@RequestHeader Long userId, @RequestHeader Integer authLevel, @RequestHeader String orgCode) {
+		return Result.ok(service.getUserCount(userId,authLevel,orgCode));
 	}
 }

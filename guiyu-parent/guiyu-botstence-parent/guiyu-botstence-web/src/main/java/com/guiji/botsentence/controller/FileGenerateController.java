@@ -65,12 +65,13 @@ public class FileGenerateController {
 	    File file = fileGenerateService.fileGenerate(processId, dirName, null, userId);
 	    
 	    boolean result = fileGenerateService.autoDeploy(file, dirName, processId, templateId, userId);
+	    file.delete();
 	    if(result) {
 	    	return ServerResult.createBySuccess();
 	    }else {
 	    	return ServerResult.createByError();
 	    }
-		
+	    
 		
 	}
 

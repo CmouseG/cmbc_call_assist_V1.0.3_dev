@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.guiji.voipgateway.dingxin.dao.TblGwMapper" >
+  <resultMap id="BaseResultMap" type="com.guiji.voipgateway.dingxin.dao.entity.TblGw" >
+    <id column="uuid" property="uuid" jdbcType="INTEGER" />
+    <result column="rec_status" property="recStatus" jdbcType="INTEGER" />
+    <result column="ne_uuid" property="neUuid" jdbcType="INTEGER" />
+    <result column="alias" property="alias" jdbcType="CHAR" />
+    <result column="domain_uuid" property="domainUuid" jdbcType="INTEGER" />
+    <result column="default_grp_uuid" property="defaultGrpUuid" jdbcType="INTEGER" />
+    <result column="virtual_sim_flag" property="virtualSimFlag" jdbcType="INTEGER" />
+    <result column="gwp_num" property="gwpNum" jdbcType="INTEGER" />
+    <result column="work_mode" property="workMode" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    uuid, rec_status, ne_uuid, `alias`, domain_uuid, default_grp_uuid, virtual_sim_flag, 
+    gwp_num, work_mode
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from tbl_gw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tbl_gw
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tbl_gw
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwExample" >
+    delete from tbl_gw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGw" >
+    insert into tbl_gw (uuid, rec_status, ne_uuid, 
+      `alias`, domain_uuid, default_grp_uuid, 
+      virtual_sim_flag, gwp_num, work_mode
+      )
+    values (#{uuid,jdbcType=INTEGER}, #{recStatus,jdbcType=INTEGER}, #{neUuid,jdbcType=INTEGER}, 
+      #{alias,jdbcType=CHAR}, #{domainUuid,jdbcType=INTEGER}, #{defaultGrpUuid,jdbcType=INTEGER}, 
+      #{virtualSimFlag,jdbcType=INTEGER}, #{gwpNum,jdbcType=INTEGER}, #{workMode,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGw" >
+    insert into tbl_gw
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="recStatus != null" >
+        rec_status,
+      </if>
+      <if test="neUuid != null" >
+        ne_uuid,
+      </if>
+      <if test="alias != null" >
+        `alias`,
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid,
+      </if>
+      <if test="defaultGrpUuid != null" >
+        default_grp_uuid,
+      </if>
+      <if test="virtualSimFlag != null" >
+        virtual_sim_flag,
+      </if>
+      <if test="gwpNum != null" >
+        gwp_num,
+      </if>
+      <if test="workMode != null" >
+        work_mode,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=INTEGER},
+      </if>
+      <if test="recStatus != null" >
+        #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="neUuid != null" >
+        #{neUuid,jdbcType=INTEGER},
+      </if>
+      <if test="alias != null" >
+        #{alias,jdbcType=CHAR},
+      </if>
+      <if test="domainUuid != null" >
+        #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="defaultGrpUuid != null" >
+        #{defaultGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="virtualSimFlag != null" >
+        #{virtualSimFlag,jdbcType=INTEGER},
+      </if>
+      <if test="gwpNum != null" >
+        #{gwpNum,jdbcType=INTEGER},
+      </if>
+      <if test="workMode != null" >
+        #{workMode,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGwExample" resultType="java.lang.Integer" >
+    select count(*) from tbl_gw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update tbl_gw
+    <set >
+      <if test="record.uuid != null" >
+        uuid = #{record.uuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.recStatus != null" >
+        rec_status = #{record.recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.neUuid != null" >
+        ne_uuid = #{record.neUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.alias != null" >
+        `alias` = #{record.alias,jdbcType=CHAR},
+      </if>
+      <if test="record.domainUuid != null" >
+        domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.defaultGrpUuid != null" >
+        default_grp_uuid = #{record.defaultGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="record.virtualSimFlag != null" >
+        virtual_sim_flag = #{record.virtualSimFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.gwpNum != null" >
+        gwp_num = #{record.gwpNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.workMode != null" >
+        work_mode = #{record.workMode,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update tbl_gw
+    set uuid = #{record.uuid,jdbcType=INTEGER},
+      rec_status = #{record.recStatus,jdbcType=INTEGER},
+      ne_uuid = #{record.neUuid,jdbcType=INTEGER},
+      `alias` = #{record.alias,jdbcType=CHAR},
+      domain_uuid = #{record.domainUuid,jdbcType=INTEGER},
+      default_grp_uuid = #{record.defaultGrpUuid,jdbcType=INTEGER},
+      virtual_sim_flag = #{record.virtualSimFlag,jdbcType=INTEGER},
+      gwp_num = #{record.gwpNum,jdbcType=INTEGER},
+      work_mode = #{record.workMode,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGw" >
+    update tbl_gw
+    <set >
+      <if test="recStatus != null" >
+        rec_status = #{recStatus,jdbcType=INTEGER},
+      </if>
+      <if test="neUuid != null" >
+        ne_uuid = #{neUuid,jdbcType=INTEGER},
+      </if>
+      <if test="alias != null" >
+        `alias` = #{alias,jdbcType=CHAR},
+      </if>
+      <if test="domainUuid != null" >
+        domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      </if>
+      <if test="defaultGrpUuid != null" >
+        default_grp_uuid = #{defaultGrpUuid,jdbcType=INTEGER},
+      </if>
+      <if test="virtualSimFlag != null" >
+        virtual_sim_flag = #{virtualSimFlag,jdbcType=INTEGER},
+      </if>
+      <if test="gwpNum != null" >
+        gwp_num = #{gwpNum,jdbcType=INTEGER},
+      </if>
+      <if test="workMode != null" >
+        work_mode = #{workMode,jdbcType=INTEGER},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.guiji.voipgateway.dingxin.dao.entity.TblGw" >
+    update tbl_gw
+    set rec_status = #{recStatus,jdbcType=INTEGER},
+      ne_uuid = #{neUuid,jdbcType=INTEGER},
+      `alias` = #{alias,jdbcType=CHAR},
+      domain_uuid = #{domainUuid,jdbcType=INTEGER},
+      default_grp_uuid = #{defaultGrpUuid,jdbcType=INTEGER},
+      virtual_sim_flag = #{virtualSimFlag,jdbcType=INTEGER},
+      gwp_num = #{gwpNum,jdbcType=INTEGER},
+      work_mode = #{workMode,jdbcType=INTEGER}
+    where uuid = #{uuid,jdbcType=INTEGER}
+  </update>
+</mapper>

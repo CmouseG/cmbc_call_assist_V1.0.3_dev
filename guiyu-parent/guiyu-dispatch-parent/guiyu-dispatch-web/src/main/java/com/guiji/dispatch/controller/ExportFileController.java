@@ -3,9 +3,11 @@ package com.guiji.dispatch.controller;
 import com.guiji.dispatch.dto.DelExportFileRecordDto;
 import com.guiji.dispatch.dto.QueryExportFileRecordDto;
 import com.guiji.dispatch.entity.ExportFileRecord;
+import com.guiji.dispatch.service.GetAuthUtil;
 import com.guiji.dispatch.service.IExportFileService;
 import com.guiji.dispatch.sys.ResultPage;
 import com.guiji.dispatch.util.HttpDownload;
+import com.guiji.utils.JsonUtils;
 import io.swagger.annotations.ApiOperation;
 import jxl.write.WriteException;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +32,9 @@ public class ExportFileController {
     @Autowired
     private IExportFileService exportFileService;
 
+    @Autowired
+    private GetAuthUtil getAuthUtil;
+
     @ApiOperation(value="查询文件导出记录", notes="查询文件导出记录")
     @RequestMapping(value = "/queryExportFileRecordByPage", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
@@ -38,9 +43,13 @@ public class ExportFileController {
         if(null == queryDto){
             queryDto = new QueryExportFileRecordDto();
         }
-        queryDto.setOperUserId(userId);
-        queryDto.setOperOrgCode(orgCode);
+        //权限过滤
+        userId = getAuthUtil.getUserIdByAuthLevel(authLevel, userId);//获取用户ID
+        orgCode = getAuthUtil.getOrgCodeByAuthLevel(authLevel, userId, orgCode);//获取企业组织编码
+        queryDto.setUserId(userId);
+        queryDto.setOrgCode(orgCode);
         queryDto.setAuthLevel(authLevel);
+        logger.info("/queryExportFileRecordByPage:{}", JsonUtils.bean2Json(queryDto));
         ResultPage<ExportFileRecord> page = new ResultPage<ExportFileRecord>(queryDto);
         List<ExportFileRecord> list = exportFileService.queryExportFileRecordByPage(queryDto, page);
         page.setList(list);

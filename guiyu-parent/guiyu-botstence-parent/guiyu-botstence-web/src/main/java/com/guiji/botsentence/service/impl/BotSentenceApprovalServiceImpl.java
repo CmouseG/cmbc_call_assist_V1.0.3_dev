@@ -770,7 +770,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	    if(StringUtils.isNotBlank(message)) {
 	    	throw new CommonException("机器" + message + "部署失败!");
 	    }
-	    
+	    file.delete();
 	    botSentenceProcess.setTestState(Constant.TEST_STATE_ONLINE);//已上线
 	    botSentenceProcessMapper.updateByPrimaryKeySelective(botSentenceProcess);
 	}
@@ -825,7 +825,7 @@ public class BotSentenceApprovalServiceImpl implements IBotSentenceApprovalServi
 	    if(!b) {
 	    	throw new CommonException("话术部署失败!");
 	    }
-	    
+	    file.delete();
 	}
 
 	@Override
